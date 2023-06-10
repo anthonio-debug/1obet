@@ -66,7 +66,7 @@ var corsOptions = {
 };
 app.use(cors(corsOptions));
 app.get('/', (req, res) => {
-  res.send('<h2> This is the homepage of 1obet.com </h2>');
+  res.send('<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.com </h2></body>');
 });
 
 // Allowed Apis on this server
