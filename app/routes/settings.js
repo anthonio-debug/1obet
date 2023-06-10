@@ -286,23 +286,29 @@ function getDefaultBetSizes(req, res) {
   });
 }
 
-function getDefaultSettings(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+function getSideBarMenu(req, res) {
+  let type = req.decoded.role == 5 ? 0 : 1;
+  let onlyCompany = false;
+  if (req.decoded.role == 0) {
+    onlyCompany = true;
   }
-
-  Settings.find({}, (err, results) => {
+  SideBarMenu.find({ 
+      $or: [
+        { type: type }, 
+        { onlyCompany: onlyCompany }
+      ]  
+    }, (err, results) => {
     if (err) {
       return res.status(404).json({ message: 'settings not found' });
     }
     return res.json({
       success: true,
-      message: 'Setting Data Found successfully',
+      message: 'Side Bar Menu Records',
       results: results,
     });
   });
 }
+
 
 function getSideBarMenu(req, res) {
   let type = req.decoded.role == 5 ? 0 : 1;
