@@ -21,8 +21,8 @@ function addMarketType(req, res) {
   const marketType = new MarketType(req.body);
   marketType.marketId = uuidv4();
   marketType.save((err, marketType) => {
-    if (err && err.code === 11000) {
-      if (err.keyPattern.name === 1)
+    if (err && err.code == 11000) {
+      if (err.keyPattern.name == 1)
         return res.status(404).send({ message: 'market type already present' });
     }
     if (err || !marketType) {
@@ -48,8 +48,8 @@ function addSubMarketTypes(req, res) {
     subMarketType.marketId = data.marketId;
     subMarketType.subMarketId = uuidv4(); // Generate a unique UUID
     subMarketType.save((err, marketType) => {
-      if (err && err.code === 11000) {
-        if (err.keyPattern.name === 1)
+      if (err && err.code == 11000) {
+        if (err.keyPattern.name == 1)
           return res
             .status(404)
             .send({ message: 'sub market type already present' });
@@ -272,7 +272,7 @@ function getAllMarketTypes(req, res) {
 
 //         // Add blocked submarketIds to blockedSubMarkets array
 //         const blockedSubMarketIds = subMarketTypePayload
-//           .filter((subMarket) => subMarket.status === 0)
+//           .filter((subMarket) => subMarket.status == 0)
 //           .map((subMarket) => subMarket.subMarketId);
 //         blockedSubMarkets.push(...blockedSubMarketIds);
 //       }
@@ -286,7 +286,7 @@ function getAllMarketTypes(req, res) {
 //       }
 
 //       // Add blocked market places to blockedMarketPlaces array
-//       if (req.body.status[marketIdString] === 0) {
+//       if (req.body.status[marketIdString] == 0) {
 //         blockedMarketPlaces.push(marketType.marketId);
 //       }
 //     }
@@ -328,8 +328,8 @@ async function addAllowedMarketTypes(req, res) {
     const marketIds = req.body.marketId;
 
     if (
-      req.body.marketId.length === 0 &&
-      Object.keys(req.body.status).length === 0
+      req.body.marketId.length == 0 &&
+      Object.keys(req.body.status).length == 0
     ) {
       // code to execute if both marketId and status are empty
 
@@ -406,13 +406,13 @@ async function addAllowedMarketTypes(req, res) {
 
           // Add blocked submarketIds to blockedSubMarkets array
           const blockedSubMarketIds = subMarketTypePayload
-            .filter((subMarket) => subMarket.status === 0)
+            .filter((subMarket) => subMarket.status == 0)
             .map((subMarket) => subMarket.subMarketId);
           blockedSubMarkets.push(...blockedSubMarketIds);
         }
 
         // Add blocked market places to blockedMarketPlaces array
-        if (req.body.status[marketIdString] === 0) {
+        if (req.body.status[marketIdString] == 0) {
           blockedMarketPlaces.push(marketType.marketId);
         }
 

@@ -5,26 +5,26 @@ module.exports.validate = (method) => {
   switch (method) {
     case 'updateDefaultTheme': {
       return [
-        body('oldThemeName', 'please enter oldThemeName')
+        body('_id', 'please enter _id')
           .exists()
           .isString()
-          .withMessage('oldThemeName must be string'),
-        body('newThemeName', 'please enter newThemeName')
+          .withMessage('_id must be string'),
+        body('defaultThemeName', 'please enter defaultThemeName')
           .exists()
           .isString()
-          .withMessage('newThemeName must be string'),
+          .withMessage('defaultThemeName must be string'),
       ];
     }
     case 'updateDefaultLoginPage': {
       return [
-        body('oldLoginPage', 'please enter oldLoginPage')
+        body('_id', 'please enter _id')
           .exists()
           .isString()
-          .withMessage('oldLoginPage must be string'),
-        body('newLoginPage', 'please enter newLoginPage')
+          .withMessage('_id must be string'),
+        body('defaultLoginPage', 'please enter defaultLoginPage')
           .exists()
           .isString()
-          .withMessage('newLoginPage must be string'),
+          .withMessage('defaultLoginPage must be string'),
       ];
     }
     case 'addTermsAndConditions': {
@@ -48,62 +48,42 @@ module.exports.validate = (method) => {
     }
     case 'updateDefaultExchange': {
       return [
-        body('currency', 'please enter currency')
+        body('exchangeRates')
+          .isArray({ min: 1 })
+          .withMessage('exchangeRates must be a non-empty array'),
+        body('exchangeRates.*.currency')
           .exists()
+          .withMessage('currency is required')
           .isString()
-          .withMessage('currency must be string'),
-        body('exchangeAmount', 'please enter exchangeAmount')
+          .withMessage('currency must be a string'),
+        body('exchangeRates.*.exchangeAmount')
           .exists()
-          .isInt()
-          .withMessage('exchangeAmount must be Number'),
+          .withMessage('exchangeAmount is required')
+          .isNumeric()
+          .withMessage('exchangeAmount must be a number'),
+        body('exchangeRates.*._id')
+          .exists()
+          .withMessage('_id is required')
+          .isString()
+          .withMessage('_id must be a string'),
       ];
     }
     case 'updateDefaultBetSizes': {
       return [
-        body('soccer', 'please enter valid soccer amount')
+        body('betLimits', 'betLimits are required')
           .exists()
-          .isInt({ min: 0 })
-          .withMessage('soccer must be a positive integer'),
-        body('tennis', 'please enter valid tennis amount')
+          .isArray({ min: 0 })
+          .withMessage('betLimits must be array'),
+        body('betLimits.*.maxAmount')
           .exists()
-          .isInt({ min: 0 })
-          .withMessage('tennis must be a positive integer'),
-        body('cricket', 'please enter valid cricket amount')
+          .withMessage('maxAmount is required')
+          .isInt()
+          .withMessage('maxAmount must be a number'),
+        body('betLimits.*._id')
           .exists()
-          .isInt({ min: 0 })
-          .withMessage('cricket must be a positive integer'),
-        body('fancy', 'please enter valid fancy amount')
-          .exists()
-          .isInt({ min: 0 })
-          .withMessage('fancy must be a positive integer'),
-        body('races', 'please enter valid races amount')
-          .exists()
-          .isInt({ min: 0 })
-          .withMessage('races must be a positive integer'),
-        body('casino', 'please enter valid casino amount')
-          .exists()
-          .isInt({ min: 0 })
-          .withMessage('casino must be a positive integer'),
-        body('greyHound', 'please enter valid greyHound amount')
-          .exists()
-          .isInt({ min: 0 })
-          .withMessage('greyHound must be a positive integer'),
-        body('bookMaker', 'please enter valid bookMaker amount')
-          .exists()
-          .isInt({ min: 0 })
-          .withMessage('bookMaker must be a positive integer'),
-        body('iceHockey', 'please enter valid iceHockey amount')
-          .exists()
-          .isInt({ min: 0 })
-          .withMessage('iceHockey must be a positive integer'),
-        body('snooker', 'please enter valid snooker amount')
-          .exists()
-          .isInt({ min: 0 })
-          .withMessage('snooker must be a positive integer'),
-        body('kabbadi', 'please enter valid kabbadi amount')
-          .exists()
-          .isInt({ min: 0 })
-          .withMessage('kabbadi must be a positive integer'),
+          .withMessage('_id is required')
+          .isString()
+          .withMessage('_id must be a string'),
       ];
     }
   }

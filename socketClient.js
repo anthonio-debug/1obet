@@ -37,10 +37,10 @@ socket.on('betResult', (data) => {
   console.log(`Bet ID ${betId} result: ${result}`);
 
   // Handle the bet result
-  if (result === 'win') {
+  if (result == 'win') {
     // Handle winning bets
     handleWinningBet(betId);
-  } else if (result === 'lose') {
+  } else if (result == 'lose') {
     // Handle losing bets
     handleLosingBet(betId);
   } else {

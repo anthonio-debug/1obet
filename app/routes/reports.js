@@ -1,7 +1,7 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 let config = require('config');
-const CashDeposit = require('../models/cashDeposit');
+const CashDeposit = require('../models/deposits');
 const User = require('../models/user');
 
 const reportValidator = require('../validators/reports');
@@ -174,17 +174,9 @@ function cashCreditLedger(req, res) {
 
 function getFinalReport(req, res) {
   let query = {};
-  if (req.decoded.login.role === '1') {
-    query.superAdminId = String(req.decoded.userId);
-  } else if (req.decoded.login.role === '2') {
-    query.parentId = String(req.decoded.userId);
-  } else if (req.decoded.login.role === '3') {
-    query.adminId = String(req.decoded.userId);
-  } else if (req.decoded.login.role === '4') {
-    query.masterId = String(req.decoded.userId);
-  }
-  if (req.decoded.login.role === '5') {
-    query.userId = null;
+
+  if (req.decoded.login.role !== '5') {
+    query.userId = parseInt(req.decoded.createdBy);
   }
 
   User.aggregate(
@@ -278,21 +270,12 @@ function getFinalReport(req, res) {
 function getClientList(req, res) {
   // Initialize variables with default values
   let query = { isDeleted: false };
-  let countQuery = {};
+  let countQuery = { isDeleted: false };
 
   if (req.query.userId) {
     const userId = parseInt(req.query.userId);
     query = { userId, isDeleted: false };
-
-    countQuery = {
-      $or: [
-        { superAdminId: userId },
-        { createdBy: userId },
-        { adminId: userId },
-        { parentId: userId },
-        { masterId: userId },
-      ],
-    };
+    countQuery.createdBy = userId;
   }
   // Retrieve the desired fields from the User collection
   User.findOne(query)
@@ -314,8 +297,8 @@ function getClientList(req, res) {
         // Combine the User fields and user count into a single response object
         const response = {
           creditRecieved: results.credit,
-          creditRemaining: results.credit - results.clientPL,
-          cash: results.clientPL,
+          creditRemaining: results.creditRemaining,
+          cash: results.cash,
           plDownline: results.balance,
           balanceUpline: results.clientPL,
           users: count,

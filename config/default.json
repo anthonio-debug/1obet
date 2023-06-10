@@ -1,11 +1,17 @@
 {
-    "PORT": 3000,
-    "DBHost":"mongodb://127.0.0.1/Bet99",
-    "DBHostLive": "mongodb+srv://umar:ahmad123@cluster0.dillplp.mongodb.net/Bet99?retryWrites=true&w=majority",
-    "secret": "umarIsLove",
-    "apisFileName": "config/settings/apis/allApis.json",
-    "saltRounds": 10,
-    "EMAIL": "xoxsuperapp@gmail.com",
-    "PASSWORD": "jggqqhqarpuhbrft",
-    "pageSize": 10
+  "PORT": 3000,
+  "DBHost": "mongodb://127.0.0.1/Bet99",
+  "DBHostLive": "mongodb+srv://umar:ahmad123@cluster0.dillplp.mongodb.net/Bet99?retryWrites=true&w=majority",
+  "secret": "umarIsLove",
+  "apisFileName": "config/settings/apis/allApis.json",
+  "saltRounds": 10,
+  "EMAIL": "xoxsuperapp@gmail.com",
+  "PASSWORD": "jggqqhqarpuhbrft",
+  "pageSize": 10,
+  "apiUrl": "https://stage.game-program.com/api/seamless/provider",
+  "api_password": "6w9GNrsxZsHBeC795N",
+  "api_login": "1obet_mc_s",
+  "language": "en",
+  "play_for_fun": false,
+  "currency": "EUR"
 }

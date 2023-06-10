@@ -16,6 +16,8 @@ let marketTypesSchema = new Schema({
   darkIcon: { type: String },
   route: { type: String },
   link: { type: String },
+  maxLimit: { type: Number, default: 500000 },
+  minLimit: { type: Number, default:200 },
 });
 
 marketTypesSchema.pre('save', function (next) {

@@ -7,7 +7,7 @@ function checkAccess(req, res, next, roles, jsonAccess) {
 	let method = req.method
 	let role = req.decoded.role
 	//console.log(role)
-	if (role === 3) {
+	if (role == 3) {
 		//Class Here to GetInstance of Roles in Object. After that it will update after Add or Update Role
 		//  ssTODO Note: Here Needs to be Implement the Roles base authentication via acl list
 		//  Sub Role Base Authentication for admin portal.

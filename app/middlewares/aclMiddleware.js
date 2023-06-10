@@ -8,7 +8,7 @@ function checkAccess(req, res, next) {
   url = url.split('?')[0]
 
   //if role is subadmin then check if he has access of the api or not
-  if (role === 3) {
+  if (role == 3) {
     Users.findOne({
       email: req.decoded.user, apis: {
         $in: [url]

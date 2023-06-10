@@ -188,18 +188,18 @@ const BetRateList = {
 
     switch (sportsId) {
       case 1: // if sportsId is 1 (e.g. cricket)
-        if (selectedTeam === teams[0]) {
+        if (selectedTeam == teams[0]) {
           betRateList = [1.5, 2.0, 2.5, 3.0];
-        } else if (selectedTeam === teams[1]) {
+        } else if (selectedTeam == teams[1]) {
           betRateList = [2.0, 2.5, 3.0, 3.5];
         } else {
           throw new Error('Invalid team');
         }
         break;
       case 2: // if sportsId is 2 (e.g. basketball)
-        if (selectedTeam === teams[0]) {
+        if (selectedTeam == teams[0]) {
           betRateList = [1.2, 1.5, 2.0, 2.5];
-        } else if (selectedTeam === teams[1]) {
+        } else if (selectedTeam == teams[1]) {
           betRateList = [1.5, 2.0, 2.5, 3.0];
         } else {
           throw new Error('Invalid team');

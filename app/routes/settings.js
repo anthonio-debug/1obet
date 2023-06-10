@@ -8,7 +8,8 @@ const termsAndConditions = require('../models/termsAndConditions');
 const PrivacyPolicy = require('../models/privacyPolicy');
 
 const Exchanges = require('../models/exchanges');
-const MaxBetSize = require('../models/maxBetSizes');
+const MaxBetSize = require('../models/betLimits');
+const SideBarMenu = require('../models/sidebarMenu');
 
 const loginRouter = express.Router();
 const router = express.Router();
@@ -23,31 +24,22 @@ function updateDefaultTheme(req, res) {
       .status(404)
       .send({ message: 'only company can add default theme' });
   }
-  User.findOne({ role: req.decoded.role }, (err, user) => {
-    if (err || !user) {
-      return res.status(404).send({ message: 'User not found' });
-    }
-    Settings.findOneAndUpdate(
-      { defaultThemeName: req.body.oldThemeName },
-      { $set: { defaultThemeName: req.body.newThemeName } },
-      { new: true },
-      (err, theme) => {
-        if (err || !theme) {
-          return res.status(404).send({ message: 'theme not found' });
-        }
-        if (req.body.oldThemeName === req.body.newThemeName) {
-          return res
-            .status(404)
-            .send({ message: 'both theme name cannot be same' });
-        }
-        return res.send({
-          success: true,
-          message: 'Theme added successfully',
-          results: theme,
-        });
+  Settings.findOneAndUpdate(
+    { _id: req.body._id },
+    { $set: { defaultThemeName: req.body.defaultThemeName } },
+    { new: true },
+    (err, theme) => {
+      if (err || !theme) {
+        return res.status(404).send({ message: 'theme not found' });
       }
-    );
-  });
+
+      return res.send({
+        success: true,
+        message: 'Theme updated successfully',
+        results: theme,
+      });
+    }
+  );
 }
 
 function updateDefaultLoginPage(req, res) {
@@ -60,32 +52,23 @@ function updateDefaultLoginPage(req, res) {
       .status(404)
       .send({ message: 'only company can add default login page' });
   }
-  User.findOne({ role: req.decoded.role }, (err, user) => {
-    if (err || !user) {
-      return res.status(404).send({ message: 'User not found' });
-    }
 
-    Settings.findOneAndUpdate(
-      { defaultLoginPage: req.body.oldLoginPage },
-      { $set: { defaultLoginPage: req.body.newLoginPage } },
-      { new: true },
-      (err, loginPage) => {
-        if (err || !loginPage) {
-          return res.status(404).send({ message: 'loginPage not found' });
-        }
-        if (req.body.oldLoginPage === req.body.newLoginPage) {
-          return res
-            .status(404)
-            .send({ message: 'both loginPage cannot be same' });
-        }
-        return res.send({
-          success: true,
-          message: 'Default Login Page added successfully',
-          results: loginPage,
-        });
+  Settings.findOneAndUpdate(
+    { _id: req.body._id },
+    { $set: { defaultLoginPage: req.body.defaultLoginPage } },
+    { new: true },
+    (err, loginPage) => {
+      if (err || !loginPage) {
+        return res.status(404).send({ message: 'loginPage not found' });
       }
-    );
-  });
+
+      return res.send({
+        success: true,
+        message: 'Default Login Page added successfully',
+        results: loginPage,
+      });
+    }
+  );
 }
 
 function addTermsAndConditions(req, res) {
@@ -98,20 +81,22 @@ function addTermsAndConditions(req, res) {
       .status(404)
       .send({ message: 'only company can add terms and conditions' });
   }
-
-  let tncAndPrivacyPolicy = new termsAndConditions({
-    termAndConditionsContent: req.body.termAndConditionsContent,
-  });
-
-  tncAndPrivacyPolicy.save((err, results) => {
-    if (err || !results)
-      return res.status(404).send({ message: 'Data Not Saved' });
-    return res.send({
-      success: true,
-      message: 'Terms And Conditions Added Successfully',
-      results: results,
-    });
-  });
+  //server _id
+  termsAndConditions.findOneAndUpdate(
+    { _id: '6460b601fe9cc89998d9eb29' },
+    { $set: { termAndConditionsContent: req.body.termAndConditionsContent } },
+    { new: true },
+    (err, results) => {
+      if (err || !results) {
+        return res.status(404).send({ message: 'Data Not Saved' });
+      }
+      return res.send({
+        success: true,
+        message: 'Terms And Conditions Added Successfully',
+        results: results,
+      });
+    }
+  );
 }
 
 function GetAllTermsAndConditions(req, res) {
@@ -148,19 +133,24 @@ function addPrivacyPolicy(req, res) {
       .status(404)
       .send({ message: 'only company can add privacy policies' });
   }
-  let privacyPolicyContent = new PrivacyPolicy({
-    privacyPolicyContent: req.body.privacyPolicyContent,
-  });
 
-  privacyPolicyContent.save((err, results) => {
-    if (err || !results)
-      return res.status(404).send({ message: 'Data Not Saved' });
-    return res.send({
-      success: true,
-      message: 'Privacy Policy Added Successfully',
-      results: results,
-    });
-  });
+  //server _id
+  PrivacyPolicy.findOneAndUpdate(
+    { _id: '64647166707979d7b58f4417' },
+    { $set: { privacyPolicyContent: req.body.privacyPolicyContent } },
+    { new: true },
+    (err, results) => {
+      if (err || !results) {
+        return res.status(404).send({ message: 'Data Not Saved' });
+      }
+
+      return res.send({
+        success: true,
+        message: 'Privacy Policy Added Successfully',
+        results: results,
+      });
+    }
+  );
 }
 
 function GetAllPrivacyPolicy(req, res) {
@@ -197,10 +187,24 @@ function updateDefaultExchange(req, res) {
       .send({ message: 'only company can add default exchange rate' });
   }
 
-  Exchanges.findOneAndUpdate(
-    { currency: req.body.currency },
-    { $set: { exchangeAmount: req.body.exchangeAmount } },
-    { new: true },
+  const exchangeRates = req.body.exchangeRates;
+
+  const updatedExchangeRates = exchangeRates.map((exchangeRates) => ({
+    updateOne: {
+      filter: { _id: exchangeRates._id },
+      update: {
+        $set: {
+          currency: exchangeRates.currency,
+          exchangeAmount: exchangeRates.exchangeAmount,
+        },
+      },
+      upsert: false,
+    },
+  }));
+
+  Exchanges.bulkWrite(
+    updatedExchangeRates,
+    { ordered: false },
     (err, exchanges) => {
       if (err || !exchanges) {
         return res.status(404).send({ message: 'exchanges not found' });
@@ -208,7 +212,6 @@ function updateDefaultExchange(req, res) {
       return res.send({
         success: true,
         message: 'Exchange Rate updated successfully',
-        results: exchanges,
       });
     }
   );
@@ -238,52 +241,106 @@ function updateDefaultBetSizes(req, res) {
       .json({ message: 'Only company can add default bet sizes' });
   }
 
-  const {
-    soccer,
-    tennis,
-    cricket,
-    fancy,
-    races,
-    casino,
-    greyHound,
-    bookMaker,
-    iceHockey,
-    snooker,
-    kabbadi,
-  } = req.body;
+  const { betLimits } = req.body;
 
-  MaxBetSize.findOneAndUpdate(
-    { userId: req.decoded.userId },
-    {
-      $set: {
-        soccer,
-        tennis,
-        cricket,
-        fancy,
-        races,
-        casino,
-        greyHound,
-        bookMaker,
-        iceHockey,
-        snooker,
-        kabbadi,
-      },
-    },
-    { new: true, upsert: true },
-    (err, maxBetSize) => {
-      if (err) {
-        return res.status(404).json({ message: 'Server error' });
-      }
+  const updatePromises = betLimits.map((betLimit) => {
+    return MaxBetSize.findOneAndUpdate(
+      { _id: betLimit._id },
+      { $set: { maxAmount: betLimit.maxAmount } },
+      { new: true, upsert: true }
+    );
+  });
+
+  Promise.all(updatePromises)
+    .then((updatedBetLimits) => {
       return res.json({
         success: true,
         message: 'Max bet sizes updated successfully',
-        results: maxBetSize,
+        results: updatedBetLimits,
       });
-    }
-  );
+    })
+    .catch((err) => {
+      console.log('err', err);
+      return res.status(500).json({ message: 'Server error' });
+    });
 }
 
-module.exports = updateDefaultBetSizes;
+function getDefaultBetSizes(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  if (req.decoded.role !== '0') {
+    return res.status(404).json({ message: 'Unauthrized' });
+  }
+  MaxBetSize.find({}, (err, results) => {
+    if (err) {
+      return res.status(404).json({ message: 'bet sizes not found' });
+    }
+    return res.json({
+      success: true,
+      message: 'Max bet sizes Found successfully',
+      results: results,
+    });
+  });
+}
+
+function getDefaultSettings(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  Settings.find({}, (err, results) => {
+    if (err) {
+      return res.status(404).json({ message: 'settings not found' });
+    }
+    return res.json({
+      success: true,
+      message: 'Setting Data Found successfully',
+      results: results,
+    });
+  });
+}
+
+function getSideBarMenu(req, res) {
+  let type = req.decoded.role == 5 ? 0 : 1;
+  
+  
+  SideBarMenu.find({ 
+      $or: [
+        { type: type }, 
+        { onlyCompany: onlyCompany }
+      ]  
+    }, (err, results) => {
+    if (err) {
+      return res.status(404).json({ message: 'settings not found' });
+    }
+    return res.json({
+      success: true,
+      message: 'Side Bar Menu Records',
+      results: results,
+    });
+  });
+}
+
+//for only backend
+function addSideBarMenu(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  if (req.decoded.role !== '0') {
+    return res.status(404).send({ message: 'you are not authorized' });
+  }
+  const menu = new SideBarMenu(req.body);
+  menu.save((err, results) => {
+    if (err)
+      return res.status(404).send({ message: 'side bar menu not saved' });
+    return res.send({ message: 'menu record saved', results });
+  });
+}
 
 loginRouter.post(
   '/updateDefaultTheme',
@@ -320,5 +377,10 @@ loginRouter.post(
 );
 
 loginRouter.get('/GetExchangeRates', GetExchangeRates);
+loginRouter.get('/getDefaultBetSizes', getDefaultBetSizes);
+router.get('/getDefaultSettings', getDefaultSettings);
+
+loginRouter.get('/getSideBarMenu', getSideBarMenu);
+router.get('/addSideBarMenu', addSideBarMenu);
 
 module.exports = { loginRouter, router };

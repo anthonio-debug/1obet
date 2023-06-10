@@ -1,9 +1,9 @@
 const mongoose = require('mongoose');
-const BetSizes = require('./betSizes');
 let Global = require('../global/settings');
 /**
  * [betSchema description]
  *  @status [ 1 active), 2 (settled), 3 (cancelled), 4 (voided)]
+ * @type [ 0(back), 1 (lay) ]
  */
 const betSchema = new mongoose.Schema({
   marketId: { type: String, required: true },
@@ -19,11 +19,12 @@ const betSchema = new mongoose.Schema({
   winningAmount: { type: Number },
   loosingAmount: { type: Number },
   subMarketId: { type: String },
-
   event: { type: String, default: '' },
   runner: { type: String, default: '' },
   position: { type: Number, default: 0 },
   name: { type: String },
+  matchStatus: { type: String },
+  type: { type: Number },
 });
 
 betSchema.pre('save', function (next) {

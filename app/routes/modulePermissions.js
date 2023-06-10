@@ -24,8 +24,8 @@ function addModulePermissions(req, res) {
     const permission = new modulePermissions(req.body);
     permission.permissionId = data ? data.permissionId + 1 : 0;
     permission.save((err,permission) => {
-        if (err && err.code === 11000) {
-            if (err.keyPattern.module === 1)
+        if (err && err.code == 11000) {
+            if (err.keyPattern.module == 1)
               return res.status(404).send({ message: "module already present" });
           }
         if (err) {

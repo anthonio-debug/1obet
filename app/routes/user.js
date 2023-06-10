@@ -7,6 +7,9 @@ let config = require('config');
 const User = require('../models/user');
 const LoginActivity = require('../models/loginActivity');
 const Settings = require('../models/settings');
+const BetLimits = require('../models/betLimits');
+const UserBetSizes = require('../models/userBetSizes');
+const axios = require('axios');
 
 var getIP = require('ipware')().get_ip;
 
@@ -14,17 +17,15 @@ const router = express.Router();
 const loginRouter = express.Router();
 const app = express();
 
-function registerUser(req, res) {
+async function registerUser(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  if (
-    req.body.role == '3' ||
-    req.body.role == '4' ||
-    req.body.role == '2' ||
-    req.body.role == '1'
-  ) {
+  if (req.decoded.role == '5') {
+    return res.status(404).send({ message: 'you are not allowed to do this ' });
+  }
+  if (req.body.role !== '5') {
     if (!req.body.downLineShare) {
       return res.status(404).send({ message: 'downLineShare is required' });
     }
@@ -35,21 +36,19 @@ function registerUser(req, res) {
       if (err) return res.status(404).send({ message: 'user not found', err });
 
       const user = new User(req.body);
-      // Check if the user's role is 5, and if so, set downLineShare to null
-      // Ignore downLineShare field if role is 5
-      if (req.body.role === '5') {
+      // Check if the user's role is 5, and if so, set downLineShare to null Ignore downLineShare field if role is 5
+      if (req.body.role == '5') {
         req.body.downLineShare = undefined;
       }
-      // Find all users with the same username as the one provided in the request body
-      const usersWithSameName = await User.find({
-        userName: req.body.userName,
-      });
       // Check if the downline share is greater than the parent's downline share
       const parentUser = await User.findOne({ userId: req.decoded.userId });
-      if (parentUser.downLineShare < req.body.downLineShare) {
+      if (
+        (parentUser.role !== '0' &&
+          parentUser.downLineShare < req.body.downLineShare) ||
+        req.body.downLineShare >= 100
+      ) {
         return res.status(404).send({
-          message:
-            "downLineShare cannot be greater than parent user's downLineShare",
+          message: `Max allowed downline share is 0 - ${parentUser.downLineShare}`,
         });
       }
       // Update their isDeleted field to true using updateMany()
@@ -59,25 +58,6 @@ function registerUser(req, res) {
       );
 
       user.userId = data.userId + 1;
-      user.id = user._id;
-
-      if (req.decoded.role == '1') user.superAdminId = req.decoded.userId;
-      if (req.decoded.role == '2') {
-        user.parentId = req.decoded.userId;
-        user.superAdminId = req.decoded.superAdminId;
-      }
-
-      if (req.decoded.role == '3') {
-        user.superAdminId = req.decoded.superAdminId;
-        user.parentId = req.decoded.parentId;
-        user.adminId = req.decoded.userId;
-      }
-      if (req.decoded.role == '4') {
-        user.adminId = req.decoded.adminId;
-        user.superAdminId = req.decoded.superAdminId;
-        user.parentId = req.decoded.parentId;
-        user.masterId = req.decoded.userId;
-      }
       if (req.body.isActive == true) {
         user.status = 1;
       } else {
@@ -92,13 +72,84 @@ function registerUser(req, res) {
       );
       user.token = token;
       user.createdBy = req.decoded.userId;
-      user.save((err, user) => {
-        if (err || !user)
-          return res.status(404).send({ message: 'user not registered', err });
-        return res.send({
-          message: 'Register Success',
-          success: true,
-          results: user,
+
+      BetLimits.find({}, (err, betLimits) => {
+        console.log('betLimits.amount', betLimits.maxAmount);
+        if (err || !betLimits) {
+          return res.status(404).send({ message: 'bet limits not found' });
+        }
+        user.save((err, user) => {
+          if (err || !user)
+            return res
+              .status(404)
+              .send({ message: 'user not registered', err });
+
+          const userbetSizesData = betLimits.map((betLimit) => ({
+            userId: user.userId,
+            betLimitId: betLimit._id,
+            amount: betLimit.maxAmount,
+            name: betLimit.name,
+            // marketId: betLimit.marketId
+          }));
+
+          UserBetSizes.insertMany(
+            userbetSizesData,
+            async (err, insertedDocs) => {
+              if (err) return res.send({ message: err });
+
+              let user_username = 'user_' + user.userId;
+              console.log('user_username', user_username);
+
+              // try {
+              //   const response = await axios.post(config.apiUrl, {
+              //     api_password: config.api_password,
+              //     api_login: config.api_login,
+              //     method: 'playerExists',
+              //     user_username,
+              //     currency: config.currency,
+              //   });
+              //   let data = response.data.response;
+              //   console.log('API Response:', response.data);
+              // } catch (error) {
+              //   console.error(error);
+              //   res.status(404).send({
+              //     success: false,
+              //     message: 'Failed to get already exist player',
+              //     results: error,
+              //   });
+              // }
+
+              if (req.body.role == '5') {
+                try {
+                  const response = await axios.post(config.apiUrl, {
+                    api_password: config.api_password,
+                    api_login: config.api_login,
+                    method: 'createPlayer',
+                    user_username,
+                    user_password: user_username,
+                    user_nickname: user_username,
+                    currency: config.currency,
+                  });
+                  let data = response.data.response;
+                  console.log('API Response:', response.data);
+                  user.remoteId = data.id;
+                  user.save();
+                } catch (error) {
+                  console.error(error);
+                  res.status(404).send({
+                    success: false,
+                    message: 'Failed to create player',
+                    results: error,
+                  });
+                }
+              }
+              return res.send({
+                message: 'Register Success',
+                success: true,
+                results: user,
+              });
+            }
+          );
         });
       });
     });
@@ -112,14 +163,12 @@ function login(req, res) {
   User.findOne(
     {
       userName: req.body.userName,
-      status: 1,
-      isActive: true,
       isDeleted: false,
     },
     (err, user) => {
       if (err || !user)
         return res.status(404).send({ message: 'user not found' });
-      if (user.isActive === false || user.status === 0)
+      if (user.isActive == false || user.status == 0)
         return res.status(404).send({ message: 'Account Inactive' });
       // check if user password is matched or not.
       bcrypt.compare(req.body.password, user.password, function (err, result) {
@@ -129,10 +178,7 @@ function login(req, res) {
         var token = getNonExpiringToken(
           user.userId,
           user.createdBy,
-          user.role,
-          user.parentId,
-          user.superAdminId,
-          user.adminId
+          user.role
         );
         user.token = token;
         var ipInfo = getIP(req);
@@ -206,124 +252,22 @@ function getNonExpiringToken(
   userId,
   createdBy,
   role,
-  parentId,
-  superAdminId,
-  adminId
 ) {
   const payload = {
     userId: userId,
     createdBy: createdBy,
     role: role,
-    parentId: parentId,
-    superAdminId: superAdminId,
-    adminId: adminId,
-  };
+    };
   var token = jwt.sign(payload, config.secret, {});
   return token;
 }
+
 app.set('secret', config.secret);
-
-//   This will ensure that only users with roles that are allowed to access the endpoint can load user balance.
-
-function loadUserBalance(req, res) {
-  const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
-  }
-  if (
-    req.body.role == req.decoded.role &&
-    req.body.userId == req.decoded.userId
-  ) {
-    return res
-      .status(404)
-      .send({ message: 'You cannot recharge balance to yourself ' });
-  }
-  // Find the user who is initiating the balance transfer
-  User.findOne(
-    { role: req.decoded.role, userId: req.decoded.userId },
-    (err, user) => {
-      if (err || !user) {
-        return res.status(404).send({ message: 'User not found' });
-      }
-
-      // Check if the user has enough balance to transfer the requested amount
-      if (user.balance < req.body.loadedAmount) {
-        return res.status(404).send({ message: 'Insufficient balance' });
-      }
-
-      // Deduct the loaded amount from the user's balance
-      user.balance -= req.body.loadedAmount;
-      user.save();
-
-      // Deduct the loaded amount from the user's recharge amount
-      Recharge.findOne(
-        { role: req.decoded.role, userId: req.decoded.userId },
-        (err, recharge) => {
-          if (err || !recharge) {
-            return res
-              .status(404)
-              .send({ message: ' recharge amount not found' });
-          }
-          recharge.amount -= req.body.loadedAmount;
-          recharge.save();
-
-          // Find the recipient user in the user
-
-          User.findOne(
-            { role: req.body.role, userId: req.body.userId },
-            (err, recipientUser) => {
-              if (err || !recipientUser) {
-                return res
-                  .status(404)
-                  .send({ message: 'Recipient User not found' });
-              }
-              // Add the loaded amount in the recipient user's account
-              recipientUser.balance += req.body.loadedAmount;
-              recipientUser.save();
-
-              // Find the recipient user in the recharge table
-
-              Recharge.findOne(
-                { userId: req.body.userId, role: req.body.role },
-                (err, recipientRecharge) => {
-                  if (err || !recipientRecharge) {
-                    return res.status(404).send({
-                      message: 'Recipient user recharge not found',
-                    });
-                  }
-
-                  // Add the loaded amount to the recipient user's balance
-                  recipientRecharge.amount += req.body.loadedAmount;
-                  recipientRecharge.loadedAmount = req.body.loadedAmount;
-                  recipientRecharge.loadedBy = req.decoded.role;
-                  recipientRecharge.save((err, results) => {
-                    if (err || !results) {
-                      return res.status(404).send({
-                        message: 'Failed to update recharge data',
-                      });
-                    }
-                    return res.send({
-                      success: true,
-                      message: 'Loaded user balance successfully',
-                      results: results,
-                    });
-                  });
-                }
-              );
-            }
-          );
-        }
-      );
-    }
-  );
-}
 
 function getAllUsers(req, res) {
   // Initialize variables with default values
   let query = {};
-  // if (req.decoded.login.role == '0') {
-  //   query = {};
-  // }
+
   let page = 1;
   let sort = -1;
   let sortValue = 'createdAt';
@@ -349,27 +293,10 @@ function getAllUsers(req, res) {
 
   if (req.query.userId) {
     const userId = parseInt(req.query.userId);
-    query = {
-      $or: [
-        { superAdminId: userId },
-        { createdBy: userId },
-        { adminId: userId },
-        { parentId: userId },
-        { masterId: userId },
-      ],
-      isDeleted: false,
-    };
-  } else if (req.decoded.login.role == '0') {
-    query = {};
-  } else if (req.decoded.login.role === '1') {
-    query.superAdminId = req.decoded.userId;
-  } else if (req.decoded.login.role === '2') {
-    query.parentId = req.decoded.userId;
-  } else if (req.decoded.login.role === '3') {
-    query.adminId = req.decoded.userId;
-  } else if (req.decoded.login.role === '4') {
-    query.masterId = req.decoded.userId;
-  } else if (req.decoded.login.role === '5') {
+    query.createdBy = userId;
+  } else if (req.decoded.login.role !== '5') {
+    query.createdBy = req.decoded.userId;
+  } else if (req.decoded.login.role == '5') {
     query.userId = null;
   }
   if (req.query.userName) {
@@ -388,78 +315,12 @@ function getAllUsers(req, res) {
       return res.send({
         success: true,
         message: 'Users Record Found',
+        total: results.total,
         results: results,
       });
     }
   );
 }
-// function getAllUsers(req, res) {
-//   // Initialize variables with default values
-//   let query = {};
-//   if (req.decoded.login.role == '0') {
-//     query = {};
-//   }
-//   let page = 1;
-//   let sort = -1;
-//   let sortValue = 'createdAt';
-//   var limit = config.pageSize;
-//   if (req.query.numRecords) {
-//     if (isNaN(req.query.numRecords))
-//       return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-//     if (req.query.numRecords < 0)
-//       return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-//     if (req.query.numRecords > 100)
-//       return res.status(404).send({
-//         message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100',
-//       });
-//     limit = Number(req.query.numRecords);
-//   }
-//   if (req.query.sortValue) sortValue = req.query.sortValue;
-//   if (req.query.sort) {
-//     sort = Number(req.query.sort);
-//   }
-//   if (req.query.page) {
-//     page = Number(req.query.page);
-//   }
-//   if (req.decoded.login.role == '0') {
-//     query = {};
-//   }
-//   if (req.decoded.login.role === '1') {
-//     query.superAdminId = req.decoded.userId;
-//   } else if (req.decoded.login.role === '2') {
-//     query.parentId = req.decoded.userId;
-//   } else if (req.decoded.login.role === '3') {
-//     query.adminId = req.decoded.userId;
-//   } else if (req.decoded.login.role === '4') {
-//     query.masterId = req.decoded.userId;
-//   }
-//   if (req.decoded.login.role === '5') {
-//     query.userId = null;
-//   }
-//   if (req.query.userId) {
-//     query.userId = req.query.userId;
-//   }
-//   if (req.query.userName) {
-//     query.userName = req.query.userName;
-//   }
-//   query.isDeleted = false;
-//   User.paginate(
-//     query,
-//     { page: page, sort: { [sortValue]: sort }, limit: limit },
-//     (err, results) => {
-//       if (results.total == 0) {
-//         return res.status(404).send({ message: 'No records found' });
-//       }
-//       if (err)
-//         return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
-//       return res.send({
-//         success: true,
-//         message: 'Users Record Found',
-//         results: results,
-//       });
-//     }
-//   );
-// }
 
 function changePassword(req, res) {
   const errors = validationResult(req);
@@ -492,8 +353,7 @@ function updateUser(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-
-  User.findOne({ _id: req.body.id }, (err, user) => {
+  User.findOne({ userId: req.body.id }, (err, user) => {
     if (err || !user) {
       return res.status(404).send({ message: 'User not found' });
     }
@@ -517,7 +377,7 @@ function updateUser(req, res) {
         updateData.password = hash;
 
         User.updateOne(
-          { _id: req.body.id },
+          { userId: req.body.id },
           { $set: updateData },
           { new: true },
           (err, updatedUser) => {
@@ -532,9 +392,13 @@ function updateUser(req, res) {
           }
         );
       });
-    } else {
+    } else if (
+      req.body.password == null ||
+      req.body.password == '' ||
+      req.body.password == undefined
+    ) {
       User.updateOne(
-        { _id: req.body.id },
+        { userId: req.body.id },
         { $set: updateData },
         { new: true },
         (err, updatedUser) => {
@@ -636,10 +500,11 @@ function activeUser(req, res) {
   User.findOne({ _id: req.body.id }, (err, result) => {
     if (err || !result)
       return res.status(404).send({ message: 'user not found' });
-    if (result.isActive === true) {
+    if (result.isActive == true) {
       return res.status(404).send({ message: 'user is already active' });
     }
     result.isActive = true;
+    result.status = 1;
     result.save((err, user) => {
       if (err || !user)
         return res.status(404).send({ message: 'user not saved' });
@@ -663,6 +528,7 @@ function deactiveUser(req, res) {
     if (user.isActive == false)
       return res.status(404).send({ message: 'user is already deactivated' });
     user.isActive = false;
+    user.status = 0;
     user.save((err, user) => {
       if (err || !user)
         return res.status(404).send({ message: 'user not saved' });
@@ -683,7 +549,7 @@ function deactiveUser(req, res) {
 //   User.findOne({ _id: req.body.id }, (err, result) => {
 //     if (err || !result)
 //       return res.status(404).send({ message: "user not found" });
-//     if(result.isActive === false ) { return res.status(404).send({message:"user is already deactivated"})}
+//     if(result.isActive == false ) { return res.status(404).send({message:"user is already deactivated"})}
 //       result.isActive = false
 //     return res.send({
 //       success: true,
@@ -695,7 +561,7 @@ function deactiveUser(req, res) {
 function checkValidation(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
+    return res.status(200).send({ errors: errors.errors });
   }
 }
 router.post('/login', userValidation.validate('login'), login);
@@ -704,11 +570,7 @@ loginRouter.post(
   userValidation.validate('registerUser'),
   registerUser
 );
-loginRouter.post(
-  '/loadUserBalance',
-  userValidation.validate('loadUserBalance'),
-  loadUserBalance
-);
+
 loginRouter.get('/getAllUsers', getAllUsers);
 loginRouter.post(
   '/changePassword',
@@ -744,4 +606,5 @@ router.post(
   userValidation.validate('checkValidation'),
   checkValidation
 );
+
 module.exports = { router, loginRouter };

@@ -36,11 +36,8 @@ module.exports.validate = (method) => {
           .isString()
           .withMessage('password must be string')
           .isLength({ min: 8 })
-          .withMessage('password has minimun 8 characters')
-          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)
-          .withMessage(
-            'Please enter a password at least 8 character and contain At least one uppercase. At least one lower case. At least one special character. At least one digit'
-          ),
+          .withMessage('Please enter a password at least 8 character long'),
+        // .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[^a-zA-Z0-9]).{8,}$/)
       ];
     }
     case 'login': {
@@ -56,27 +53,11 @@ module.exports.validate = (method) => {
           .isString()
           .withMessage('password must be string')
           .notEmpty()
-          .withMessage('password cannot be null')
-          .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d@$.!%#?&]/)
-          .withMessage(
-            'Please enter a password at least 8 character and contain At least one uppercase.At least one lower case.At least one special character.At least One digit'
-          ),
-      ];
-    }
-    case 'loadUserBalance': {
-      return [
-        body('userId', 'userId is required')
-          .exists()
-          .isString()
-          .withMessage(' userId must be string'),
-        body('role', 'role is required')
-          .exists()
-          .isString()
-          .withMessage(' role must be string'),
-        body('loadedAmount', 'loadedAmount is required')
-          .exists()
-          .isInt()
-          .withMessage('loadedBalance must be integer'),
+          .withMessage('password cannot be null'),
+        // .matches(/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])[a-zA-Z\d@$.!%#?&]/)
+        // .withMessage(
+        //   'Please enter a password at least 8 character and contain At least one uppercase.At least one lower case.At least one special character.At least One digit'
+        // ),
       ];
     }
     case 'changePassword': {
@@ -89,12 +70,17 @@ module.exports.validate = (method) => {
     }
     case 'updateUser': {
       return [
-        body('password', 'password is required')
-          .optional()
-          .isString()
-          .withMessage(' password must be string')
-          .notEmpty()
-          .withMessage('password cannot be empty'),
+        (req, res, next) => {
+          if (req.body.password) {
+            const password = req.body.password;
+            if (password.length < 8) {
+              return res.status(400).send({
+                message: 'Password must be at least 8 characters long',
+              });
+            }
+          }
+          next();
+        },
         body('isActive', 'isActive is required')
           .optional()
           .isBoolean()
@@ -123,6 +109,7 @@ module.exports.validate = (method) => {
           .withMessage(' notes must be string'),
       ];
     }
+
     case 'searchUsers': {
       return [
         body('userName', 'userName is required')
@@ -161,9 +148,9 @@ module.exports.validate = (method) => {
         check('userName').custom((userName) => {
           return Users.findOne({ userName }).then((user) => {
             if (user == null) {
-              return Promise.reject('user does not exists');
+              return Promise.reject({message:'user does not exists',status:0});
             } else {
-              return Promise.reject('user already exists');
+              return Promise.reject({message:'user already exists',status:1});
             }
           });
         }),

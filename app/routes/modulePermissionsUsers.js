@@ -22,8 +22,8 @@ function addModulePermissionsUser(req, res) {
       permissionUser.module = modules.join(', '); // join modules with comma separator
       permissionUser.allowedModules = modules.filter(module => allowedModules.includes(module)); // filter allowedModules array
       permissionUser.save((err, permission) => {
-        if (err && err.code === 11000) {
-            if (err.keyPattern.userId === 1)
+        if (err && err.code == 11000) {
+            if (err.keyPattern.userId == 1)
               return res.status(404).send({ message: "permission is already assign to this userId" });
           }
         if (err) {

@@ -21,11 +21,11 @@ var jsonContent = JSON.parse(content);
 
 var apisContent = fs.readFileSync(config.apisFileName);
 var jsonApis = JSON.parse(apisContent);
-const cronJob = require('./cronJob/cronJob');
+const { themeCronJob, checkBetStatus } = require('./cronJob/cronJob'); // Import only cronJob2
 
 // Run the cron job
-// cronJob();
-
+themeCronJob();
+// checkBetStatus()
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,
@@ -99,18 +99,19 @@ app.use(function (req, res, next) {
 
 // APIS With Authorization
 app.use('/api', require('./app/routes/user').loginRouter);
-app.use('/api', require('./app/routes/betSizes').loginRouter);
+app.use('/api', require('./app/routes/userBetSizes').loginRouter);
 app.use('/api', require('./app/routes/modulePermissionsUsers').loginRouter);
 app.use('/api', require('./app/routes/modulePermissions').loginRouter);
 app.use('/api', require('./app/routes/marketPlaces').loginRouter);
 app.use('/api', require('./app/routes/betLocks').loginRouter);
-app.use('/api', require('./app/routes/cashDeposit').loginRouter);
-app.use('/api', require('./app/routes/cashCredit').loginRouter);
+app.use('/api', require('./app/routes/deposits').loginRouter);
+app.use('/api', require('./app/routes/credits').loginRouter);
 app.use('/api', require('./app/routes/reports').loginRouter);
 app.use('/api', require('./app/routes/settings').loginRouter);
 app.use('/api', require('./app/routes/betFairGames').loginRouter);
 app.use('/api', require('./app/routes/sportsHighlights').loginRouter);
 app.use('/api', require('./app/routes/bets').loginRouter);
+app.use('/api', require('./app/routes/casinoGames').loginRouter);
 
 // // Allowed Apis for this role
 // app.use(function (req, res, next) {
