@@ -288,9 +288,9 @@ function getDefaultBetSizes(req, res) {
 
 function getSideBarMenu(req, res) {
   let type = req.decoded.role == 5 ? 0 : 1;
-  let onlyCompany = false;
+  let onlyCompany = 0;
   if (req.decoded.role == 0) {
-    onlyCompany = true;
+    onlyCompany = 1;
   }
   SideBarMenu.find({ 
       $or: [
