@@ -252,7 +252,7 @@ db.sidebarmenus.insertMany([
     darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
     marketId: "tyv234543-432453343423-53423d332",
     onlyCompany: 1,
-    type: 1,
+    type: 2,
     link: "/casino-games",
   },
 ]);
