@@ -312,8 +312,10 @@ function getSideBarMenu(req, res) {
 
 function getSideBarMenu(req, res) {
   let type = req.decoded.role == 5 ? 0 : 1;
-  
-  
+  let onlyCompany = 0;
+  if(req.decoded.role == 0){
+    onlyCompany =  1;
+  }
   SideBarMenu.find({ 
       $or: [
         { type: type }, 
