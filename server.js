@@ -7,6 +7,7 @@ let fs = require('fs');
 let cors = require('cors');
 var morgan = require('morgan');
 const https = require('https');
+const option = require('./options')
 const apisMiddleware = require('./app/middlewares/apisMiddleware');
 const loginMiddleWare = require('./app/middlewares/loginMiddleware');
 const aclMiddleware = require('./app/middlewares/aclMiddleware');
@@ -46,20 +47,8 @@ mongoose
 // readFileSync function must use __dirname get current directory
 // require use ./ refer to current directory.
 
-// const option = {
-//   key: fs.readFileSync(__dirname + '/private.pem'),
-//   cert: fs.readFileSync(__dirname + '/certificate.pem'),
-//   chain1: fs.readFileSync(__dirname + '/chain1.pem'),
-//   fullchain1: fs.readFileSync(__dirname + '/fullchain1.pem'),
-// };
-const option = {
-  key: fs.readFileSync('/etc/letsencrypt/archive/1obet.com/privkey1.pem'),
-  cert: fs.readFileSync('/etc/letsencrypt/archive/1obet.com/cert1.pem'),
-  chain1: fs.readFileSync('/etc/letsencrypt/archive/1obet.com/chain1.pem'),
-  fullchain1: fs.readFileSync(
-    '/etc/letsencrypt/archive/1obet.com/fullchain1.pem'
-  ),
-};
+
+
 // console.log('dirname',__dirname);
 // JSON
 app.use(express.json());
