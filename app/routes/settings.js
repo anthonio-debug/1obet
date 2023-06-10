@@ -286,10 +286,28 @@ function getDefaultBetSizes(req, res) {
   });
 }
 
+function getDefaultSettings(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
+  }
+
+  Settings.find({}, (err, results) => {
+    if (err) {
+      return res.status(404).json({ message: 'settings not found' });
+    }
+    return res.json({
+      success: true,
+      message: 'Setting Data Found successfully',
+      results: results,
+    });
+  });
+}
+
 function getSideBarMenu(req, res) {
   let type = req.decoded.role == 5 ? 0 : 1;
   let onlyCompany = 0;
-  if (req.decoded.role == 0) {
+  if (req.decoded.role == -) {
     onlyCompany = 1;
   }
   SideBarMenu.find({ 
@@ -309,29 +327,6 @@ function getSideBarMenu(req, res) {
   });
 }
 
-
-function getSideBarMenu(req, res) {
-  let type = req.decoded.role == 5 ? 0 : 1;
-  let onlyCompany = 0;
-  if(req.decoded.role == 0){
-    onlyCompany =  1;
-  }
-  SideBarMenu.find({ 
-      $or: [
-        { type: type }, 
-        { onlyCompany: onlyCompany }
-      ]  
-    }, (err, results) => {
-    if (err) {
-      return res.status(404).json({ message: 'settings not found' });
-    }
-    return res.json({
-      success: true,
-      message: 'Side Bar Menu Records',
-      results: results,
-    });
-  });
-}
 
 //for only backend
 function addSideBarMenu(req, res) {
