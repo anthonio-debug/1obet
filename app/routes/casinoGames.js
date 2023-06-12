@@ -287,21 +287,33 @@ function addSelectedDashboardGames(req, res) {
   }
 
   const { gameIds } = req.body;
-  const bulkOperations = gameIds.map((gameId) => ({
-    updateMany: {
-      filter: { 'games.id': gameId },
-      update: { $set: { 'games.$.isDashboard': true } }
-    }
-  }));
 
-  SelectedCasino.bulkWrite(bulkOperations, (err, result) => {
-    if (err) {
-      return res.status(404).send({ success: false, message: 'Error updating selected games', err });
+  SelectedCasino.updateMany(
+    {},
+    { $set: { 'games.$[game].isDashboard': true } },
+    { arrayFilters: [{ 'game.id': { $in: gameIds } }], new: true }
+  ).then((result) => {
+    if (result.nModified === 0) {
+      // No documents were modified, handle accordingly
+      return res.status(404).send({ success: false, message: 'No matching games found' });
     }
 
-    return res.send({ success: true, message: 'Selected Dashboard games updated successfully', result });
+    // Update all other games to isDashboard: false
+    SelectedCasino.updateMany(
+      {},
+      { $set: { 'games.$[game].isDashboard': false } },
+      { arrayFilters: [{ 'game.id': { $nin: gameIds } }], new: true }
+    ).then(() => {
+      return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
+    }).catch((err) => {
+      return res.status(500).send({ success: false, message: 'Error updating non-matching games', err });
+    });
+  }).catch((err) => {
+    return res.status(500).send({ success: false, message: 'Error updating selected games', err });
   });
 }
+
+
 
 
 loginRouter.post('/addCasinoGameDetails', addCasinoGameDetails);
