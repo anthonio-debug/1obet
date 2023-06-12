@@ -313,7 +313,7 @@ function getSideBarMenu(req, res) {
   }else{
     type = [1];
   }
-  SideBarMenu.find({ 
+  SideBarMenu.find(
     { type: { $in: type } }, 
     (err, results) => {
     if (err) {
