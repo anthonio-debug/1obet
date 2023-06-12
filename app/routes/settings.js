@@ -314,7 +314,7 @@ function getSideBarMenu(req, res) {
     type = [1];
   }
   SideBarMenu.find(
-    { type: { $in:  [1,2] } }, 
+    { type: { $in:  type } }, 
     (err, results) => {
     if (err) {
       return res.status(404).json({ message: 'settings not found' });
