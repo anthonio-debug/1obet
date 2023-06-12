@@ -311,7 +311,7 @@ function getSideBarMenu(req, res) {
     onlyCompany = 1;
   }
   SideBarMenu.find({ 
-      $or: [
+      $and: [
         { type: type }, 
         { onlyCompany: onlyCompany }
       ]  
