@@ -311,10 +311,8 @@ function getSideBarMenu(req, res) {
     onlyCompany = 1;
   }
   SideBarMenu.find({ 
-      $and: [
-        { type: type }, 
-        { onlyCompany: onlyCompany }
-      ]  
+    type: type, 
+    onlyCompany: onlyCompany
     }, (err, results) => {
     if (err) {
       return res.status(404).json({ message: 'settings not found' });
