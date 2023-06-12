@@ -305,9 +305,13 @@ function getDefaultSettings(req, res) {
 }
 
 function getSideBarMenu(req, res) {
-  let type = req.decoded.role == 5 ? [0] : [1];
-  if (req.decoded.role == 0) {
-    type = [1,2]
+  let type = []
+  if(req.decoded.role == 5){
+    type = [0]
+  }else if(req.decoded.role == 0){
+     [1,2]
+  }else{
+    type = [1];
   }
   SideBarMenu.find({ 
     $in: [
