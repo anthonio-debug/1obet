@@ -19,21 +19,11 @@ async function addBetLock(req, res) {
     const { selectedUsers, allUsers, marketId, subMarketId, betLockStatus } =
       req.body;
     const query = { isDeleted: false };
-    if (req.decoded.login.role == '1') {
-      query.superAdminId = req.decoded.userId;
-    } else if (req.decoded.login.role == '2') {
-      query.parentId = req.decoded.userId;
-    } else if (req.decoded.login.role == '3') {
-      query.adminId = req.decoded.userId;
-    } else if (req.decoded.login.role == '4') {
-      query.masterId = req.decoded.userId;
-    }
+    query.createdBy = req.decoded.userId;
 
     let loginUser = await User.findOne({ userId: req.decoded.userId });
-    if (
-      loginUser.betLockStatus == true ||
-      loginUser.matchOddsStatus == true
-    ) {
+    console.log('loginUser', loginUser);
+    if (loginUser.betLockStatus == true || loginUser.matchOddsStatus == true) {
       return res.status(404).send({ message: 'Market Locked by the dealer' });
     }
 
