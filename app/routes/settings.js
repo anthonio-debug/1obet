@@ -305,17 +305,17 @@ function getDefaultSettings(req, res) {
 }
 
 function getSideBarMenu(req, res) {
-  let type = req.decoded.role == 5 ? 0 : 1;
-  let onlyCompany = 0;
-  if (req.decoded.role == 0) {
-    onlyCompany = 1;
+  let type = []
+  if(req.decoded.role == 5){
+    type = [0]
+  }else if(req.decoded.role == 0){
+    type = [1,2]
+  }else{
+    type = [1];
   }
-  SideBarMenu.find({ 
-      $or: [
-        { type: type }, 
-        { onlyCompany: onlyCompany }
-      ]  
-    }, (err, results) => {
+  SideBarMenu.find(
+    { type: { $in:  [1,2] } }, 
+    (err, results) => {
     if (err) {
       return res.status(404).json({ message: 'settings not found' });
     }
