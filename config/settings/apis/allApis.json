@@ -66,5 +66,7 @@
   "getGamesByName",
   "getBetRates",
   "getSideBarMenu",
-  "addSideBarMenu"
+  "addSideBarMenu",
+  "getMatchedBets",
+  "addSelectedDashboardGames"
 ]

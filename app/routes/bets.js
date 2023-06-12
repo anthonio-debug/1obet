@@ -370,10 +370,49 @@ function getBetRates(req, res) {
     }
   );
 }
+
+function getMatchedBets(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).send({ errors: errors.array() });
+  }
+  
+  User.findOne({ userId: req.decoded.userId }, (err, loginUser) => {
+    if (err || !loginUser) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+    User.findOne({ userId: loginUser.createdBy }, (err, parentUser) => {
+      if (err || !parentUser) {
+        return res.status(404).send({ message: 'User not found' });
+      }
+    Bets.find({ userId: req.query.userId }, (err, result) => {
+      if (err || !result || result.length === 0) {
+        return res.status(404).send({ message: 'Matched bets not found' });
+      }
+
+      const matchedBets = result.map(bet => ({
+        prize: bet.betRate,
+        size: bet.betAmount,
+        bettor: loginUser.userName,
+        master: parentUser.userName
+      }));
+
+      return res.send({
+        success: true,
+        message: 'Matched bets record found',
+        data: matchedBets
+      });
+    });
+  })
+  });
+}
+
+
 loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
 loginRouter.post('/getUserBets', getUserBets);
 loginRouter.get('/betFunds', betFunds);
 loginRouter.post('/createBetRates', createBetRates);
 loginRouter.get('/getBetRates', getBetRates);
+loginRouter.get('/getMatchedBets', getMatchedBets);
 
 module.exports = { loginRouter, getParents };

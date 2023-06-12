@@ -52,6 +52,7 @@ const selectedCasinoSchema = new mongoose.Schema({
       image_square: { type: String },
       image_background: { type: String },
       image_bw: { type: String },
+      isDashboard: { type: Boolean, default: false },
     },
   ],
 });

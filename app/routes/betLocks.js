@@ -23,7 +23,7 @@ async function addBetLock(req, res) {
 
     let loginUser = await User.findOne({ userId: req.decoded.userId });
     console.log('loginUser', loginUser);
-    if (loginUser.betLockStatus == true || loginUser.matchOddsStatus == true) {
+    if (loginUser.betLockStatus == true) {
       return res.status(404).send({ message: 'Market Locked by the dealer' });
     }
 

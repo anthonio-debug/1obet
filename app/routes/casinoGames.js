@@ -280,6 +280,30 @@ function getGamesByName(req, res) {
   });
 }
 
+function addSelectedDashboardGames(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).send({ errors: errors.array() });
+  }
+
+  const { gameIds } = req.body;
+  const bulkOperations = gameIds.map((gameId) => ({
+    updateMany: {
+      filter: { 'games.id': gameId },
+      update: { $set: { 'games.$.isDashboard': true } }
+    }
+  }));
+
+  SelectedCasino.bulkWrite(bulkOperations, (err, result) => {
+    if (err) {
+      return res.status(404).send({ success: false, message: 'Error updating selected games', err });
+    }
+
+    return res.send({ success: true, message: 'Selected Dashboard games updated successfully', result });
+  });
+}
+
+
 loginRouter.post('/addCasinoGameDetails', addCasinoGameDetails);
 
 loginRouter.get('/getAllCasinoCategories', getAllCasinoCategories);
@@ -297,5 +321,6 @@ loginRouter.post(
 loginRouter.post('/getGame', getGame);
 loginRouter.get('/getDashboardGames', getDashboardGames);
 loginRouter.get('/getGamesByName', getGamesByName);
+loginRouter.post('/addSelectedDashboardGames', addSelectedDashboardGames);
 
 module.exports = { loginRouter };
