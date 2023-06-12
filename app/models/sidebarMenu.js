@@ -13,8 +13,7 @@ let sideBarSchema = new Schema({
   type: { type: Number, default: 0 },
   marketId: { type: String },
   updatedAt: { type: Number },
-  createdAt: { type: Number },
-  onlyCompany:{ type: Number },
+  createdAt: { type: Number }
 });
 
 sideBarSchema.pre('save', function (next) {

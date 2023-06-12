@@ -309,12 +309,12 @@ function getSideBarMenu(req, res) {
   if(req.decoded.role == 5){
     type = [0]
   }else if(req.decoded.role == 0){
-     [1,2]
+    type = [1,2]
   }else{
     type = [1];
   }
   SideBarMenu.find(
-    { type: { $in: type } }, 
+    { type: { $in:  [1,2] } }, 
     (err, results) => {
     if (err) {
       return res.status(404).json({ message: 'settings not found' });
