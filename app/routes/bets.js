@@ -371,40 +371,67 @@ function getBetRates(req, res) {
   );
 }
 
-function getMatchedBets(req, res) {
+async function getMatchedBets(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.array() });
   }
-  
-  User.findOne({ userId: req.decoded.userId }, (err, loginUser) => {
-    if (err || !loginUser) {
+
+  try {
+    const loginUser = await User.findOne({ userId: req.decoded.userId });
+    if (!loginUser) {
       return res.status(404).send({ message: 'User not found' });
     }
-    User.findOne({ userId: loginUser.createdBy }, (err, parentUser) => {
-      if (err || !parentUser) {
-        return res.status(404).send({ message: 'User not found' });
-      }
-    Bets.find({ userId: req.query.userId }, (err, result) => {
-      if (err || !result || result.length === 0) {
-        return res.status(404).send({ message: 'Matched bets not found' });
-      }
 
-      const matchedBets = result.map(bet => ({
-        prize: bet.betRate,
-        size: bet.betAmount,
-        bettor: loginUser.userName,
-        master: parentUser.userName
-      }));
+    const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
+    const userIDs = userOfLoginUser.map(user => user.userId);
 
-      return res.send({
-        success: true,
-        message: 'Matched bets record found',
-        data: matchedBets
-      });
+    let filteredBettors = [];
+    const bettorCreators = {};
+
+    if (loginUser.role === '5') {
+      filteredBettors = [loginUser];
+      bettorCreators[loginUser.userId] = loginUser.userName;
+    } else {
+      filteredBettors = await User.find({ createdBy: { $in: userIDs }, role: '5', isDeleted: false });
+      for (const user of userOfLoginUser) {
+        if (user.role === '5') {
+          filteredBettors.push(user);
+          bettorCreators[user.userId] = user.userName;
+        } else {
+          bettorCreators[user.userId] = user.userName;
+        }
+      }
+    }
+
+    const bettorUserIds = filteredBettors.map(user => user.userId);
+
+    if (bettorUserIds.length === 0) {
+      return res.status(404).send({ message: 'Bettor not found' });
+    }
+
+    const result = await Bets.find({ userId: { $in: bettorUserIds } }).exec();
+
+    if (!result || result.length === 0) {
+      return res.status(404).send({ message: 'Matched bets not found' });
+    }
+    const matchedBets = result.map(bet =>
+       ({
+      prize: bet.betRate,
+      size: bet.betAmount,
+      runner: bet.runner,
+      bettor: bettorCreators[bet.userId] || 'N/A',
+      master: loginUser.role == '5' ? bettorCreators[bet.userId] || loginUser.role != '5' : bettorCreators[bet.userId] || 'N/A'
+    }));
+
+    return res.send({
+      success: true,
+      message: 'Matched bets record found',
+      data: matchedBets
     });
-  })
-  });
+  } catch (err) {
+    return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
+  }
 }
 
 
