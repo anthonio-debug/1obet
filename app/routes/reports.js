@@ -176,7 +176,7 @@ function getFinalReport(req, res) {
   let query = {};
 
   if (req.decoded.login.role !== '5') {
-    query.userId = req.decoded.userId
+    query.createdBy = String(req.decoded.userId)
   }
 
   User.aggregate(
