@@ -68,5 +68,6 @@
   "getSideBarMenu",
   "addSideBarMenu",
   "getMatchedBets",
-  "addSelectedDashboardGames"
+  "addSelectedDashboardGames",
+  "FakeBetsList"
 ]

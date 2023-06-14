@@ -5,9 +5,10 @@ mongoose.set('debug', true);
 // let Global = require('../global/settings')
 
 let betRatesSchema = new Schema({
-  betRate: { type: Number },
-  updatedAt: { type: Number },
-  createdAt: { type: Number },
+  match     : { type: String },
+  teams     : { type: Array },
+  updatedAt : { type: Number },
+  createdAt : { type: Number },
 });
 
 betRatesSchema.pre('save', function (next) {

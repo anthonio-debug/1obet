@@ -25,6 +25,7 @@ const betSchema = new mongoose.Schema({
   name: { type: String },
   matchStatus: { type: String },
   type: { type: Number },
+  isFake: { type: Number, default: 0 }
 });
 
 betSchema.pre('save', function (next) {

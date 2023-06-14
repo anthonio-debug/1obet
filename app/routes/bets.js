@@ -332,18 +332,77 @@ function betFunds(req, res) {
 }
 
 function createBetRates(req, res) {
-  const recordsToCreate = 2000;
-  const dummyData = [];
+  const recordsToCreate = 100;
+  const AllbetRates = [];
   let betRate = 1;
-
   for (let i = 0; i < recordsToCreate; i++) {
     const roundedBetRate = Number(betRate.toFixed(1));
-    let createdAt = new Date().getTime() / 1000
-    dummyData.push({ betRate: roundedBetRate, createdAt });
-    betRate += 0.1;
+    AllbetRates.push(roundedBetRate);
+    betRate += 0.2;
   }
-
-  betRates.insertMany(dummyData)
+  const betRatesData = [
+    {
+      match: "PAK vs AUS",
+      teams: [
+        {
+          name:"Pakistan",
+          back: AllbetRates,
+          lay: AllbetRates
+        },
+        {
+          name:"AUS",
+          back: AllbetRates,
+          lay: AllbetRates
+        },
+        {
+          name:"draw",
+          back: AllbetRates,
+          lay: AllbetRates
+        },
+      ]
+    },
+    {
+      match: "PAK vs IND",
+      teams: [
+        {
+          name:"Pakistan",
+          back: AllbetRates,
+          lay: AllbetRates
+        },
+        {
+          name:"IND",
+          back: AllbetRates,
+          lay: AllbetRates
+        },
+        {
+          name:"draw",
+          back: AllbetRates,
+          lay: AllbetRates
+        },
+      ]
+    },
+    {
+      match: "IND vs AUS",
+      teams: [
+        {
+          name:"IND",
+          back: AllbetRates,
+          lay: AllbetRates
+        },
+        {
+          name:"AUS",
+          back: AllbetRates,
+          lay: AllbetRates
+        },
+        {
+          name:"draw",
+          back: AllbetRates,
+          lay: AllbetRates
+        },
+      ]
+    },
+  ];
+  betRates.insertMany(betRatesData)
     .then(() => {
       res.status(200).json({ message: 'Dummy data created successfully.' });
     })
@@ -352,19 +411,63 @@ function createBetRates(req, res) {
     });
 }
 
-function getBetRates(req, res) {
+async function getBetRates(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
+    ;
   }
-  betRates.find(
+  // console.log("req.query.id", req.query.id );
+  // const match = betRates.aggregate([
+  //   {
+  //     $match: {
+  //       _id: req.query.id,
+  //     }
+  //   }
+  // ]);
+
+  const match = await betRates.aggregate([
+    {
+      $match: {
+        _id: req.query.id, // Replace _id with the appropriate field name
+      }
+    }
+  ]);
+
+  return res.send({
+    success: true,
+    message: 'bets rate records',
+    results: match,
+  });
+  // betRates.find(
+  //   {},
+  //   (err, result) => {
+  //     if (err || !result)
+  //       return res.status(404).send({ message: 'bets rate not found' });
+  //     return res.send({
+  //       success: true,
+  //       message: 'bets rate record found',
+  //       results: result,
+  //     });
+  //   }
+  // );
+}
+
+
+async function FakeBetsList(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+    ;
+  }
+  Bets.find(
     {},
     (err, result) => {
       if (err || !result)
         return res.status(404).send({ message: 'bets rate not found' });
       return res.send({
         success: true,
-        message: 'bets rate record found',
+        message: 'bets records',
         results: result,
       });
     }
@@ -441,5 +544,10 @@ loginRouter.get('/betFunds', betFunds);
 loginRouter.post('/createBetRates', createBetRates);
 loginRouter.get('/getBetRates', getBetRates);
 loginRouter.get('/getMatchedBets', getMatchedBets);
+loginRouter.get('/FakeBetsList', FakeBetsList);
+
+
+
+
 
 module.exports = { loginRouter, getParents };
