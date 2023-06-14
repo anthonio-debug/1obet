@@ -231,23 +231,8 @@ db.sidebarmenus.insertMany([
     type: 1,
     link: "/all-world-casino",
   },
-  {
-    name: "Casino Games",
-    lightIcon: "https://1obet.com/assets/light-icons/royal-casino.png",
-    darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
-    marketId: "tyv234543-432453343423-53423d332",
-    type: 2,
-    link: "/casino-games",
-  },
-  {
-    name: "Dashboard Games",
-    lightIcon: "https://1obet.com/assets/light-icons/royal-casino.png",
-    darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
-    marketId: "tyv234543-432453343423-53423d332",
-    type: 2,
-    link: "/dashboard-games",
-  },
 ]);
+
 
 db.bets.insertMany([
   {
