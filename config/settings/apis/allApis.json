@@ -70,5 +70,6 @@
   "getMatchedBets",
   "addSelectedDashboardGames",
   "FakeBetsList",
-  "getDailyPLReport"
+  "getDailyPLReport",
+  "deleteFakeBet"
 ]

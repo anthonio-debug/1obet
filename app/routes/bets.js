@@ -455,23 +455,49 @@ async function getBetRates(req, res) {
 
 
 async function FakeBetsList(req, res) {
-  const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
-    ;
+  try {
+    Bets.find(
+      {isFake: 1},
+      (err, result) => {
+        if (err || !result){
+          return res.status(404).send({ message: 'bets rate not found' });
+        }
+        return res.send({
+          success: true,
+          message: 'Bets List',
+          results: result,
+        });
+      }
+    );
+  }catch (error) {
+    return res.send({
+      success: false,
+      message: 'Some thing went wrong',
+      results: error,
+    });
   }
-  Bets.find(
-    {},
-    (err, result) => {
-      if (err || !result)
-        return res.status(404).send({ message: 'bets rate not found' });
-      return res.send({
-        success: true,
-        message: 'bets records',
-        results: result,
-      });
+}
+
+
+
+async function deleteFakeBet(req, res) {
+  try {
+    const betId = req.params.id;
+    
+    const deletedBet = await Bets.findByIdAndDelete(betId);
+    if (!deletedBet) {
+      return res.status(404).json({ message: 'Bet not found' });
     }
-  );
+
+    return res.status(200).send({ message: 'Bet deleted successfully', success: true });
+
+  } catch (error) {
+    return res.send({
+      success: false,
+      message: 'Some thing went wrong',
+      results: error,
+    });
+  }
 }
 
 async function getMatchedBets(req, res) {
@@ -545,6 +571,8 @@ loginRouter.post('/createBetRates', createBetRates);
 loginRouter.get('/getBetRates', getBetRates);
 loginRouter.get('/getMatchedBets', getMatchedBets);
 loginRouter.get('/FakeBetsList', FakeBetsList);
+loginRouter.delete('/deleteFakeBet/:id', deleteFakeBet);
+
 
 
 
