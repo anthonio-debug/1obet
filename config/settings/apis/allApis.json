@@ -69,5 +69,6 @@
   "addSideBarMenu",
   "getMatchedBets",
   "addSelectedDashboardGames",
-  "FakeBetsList"
+  "FakeBetsList",
+  "getDailyPLReport"
 ]
