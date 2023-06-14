@@ -5,6 +5,7 @@ const CashDeposit = require('../models/deposits');
 const User = require('../models/user');
 
 const reportValidator = require('../validators/reports');
+const Deposits = require('../models/deposits');
 const loginRouter = express.Router();
 
 function cashDepositLedger(req, res) {
@@ -266,7 +267,6 @@ function getFinalReport(req, res) {
   );
 }
 
-//to do
 function getClientList(req, res) {
   // Initialize variables with default values
   let query = { isDeleted: false };
@@ -416,19 +416,160 @@ function GetAllCashDepositLedger(req, res) {
   );
 }
 
+function getDailyPLReport(req, res) {
+  let query = {};
+
+  if (req.decoded.login.role !== '5') {
+    query.createdBy = String(req.decoded.userId);
+  }
+
+  const startDate = req.query.startDate;
+  const endDate = req.query.endDate;
+
+  User.aggregate([
+    {
+      $match: query,
+    },
+    {
+      $lookup: {
+        from: "deposits",
+        localField: "userId",
+        foreignField: "userId",
+        as: "deposits",
+      },
+    },
+    {
+      $unwind: "$deposits",
+    },
+    {
+      $match: {
+        "deposits.cashOrCredit": "Bet",
+        "deposits.createdAt": {
+          $gte: startDate,
+          $lte: endDate,
+        },
+      },
+    },
+    {
+      $group: {
+        _id: "$userId",
+        name: { $last: "$userName" },
+        amount: { $last: "$deposits.availableBalance" },
+        event: { $last: "Cricket" }
+      },
+    },
+    {
+      $group: {
+        _id: null,
+        positiveClients: {
+          $push: {
+            $cond: {
+              if: { $gte: ["$amount", 0] },
+              then: {
+                userName: "$name",
+                amount: "$amount",
+                event: "$event"       
+              },
+              else: null,
+            },
+          },
+        },
+        negativeClients: {
+          $push: {
+            $cond: {
+              if: { $lt: ["$amount", 0] },
+              then: {
+                userName: "$name",
+                amount: "$amount",
+                event: "$event"
+              },
+              else: null,
+            },
+          },
+        },
+        totalPositiveAvailableBalance: {
+          $sum: {
+            $cond: {
+              if: { $gte: ["$amount", 0] },
+              then: "$amount",
+              else: 0,
+            },
+          },
+        },
+        totalNegativeAvailableBalance: {
+          $sum: {
+            $cond: {
+              if: { $lt: ["$amount", 0] },
+              then: "$amount",
+              else: 0,
+            },
+          },
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        positiveClients: {
+          $filter: {
+            input: "$positiveClients",
+            cond: { $ne: ["$$this", null] },
+          },
+        },
+        negativeClients: {
+          $filter: {
+            input: "$negativeClients",
+            cond: { $ne: ["$$this", null] },
+          },
+        },
+        totalPositiveAvailableBalance: 1,
+        totalNegativeAvailableBalance: 1,
+      },
+    },
+  ],
+
+  (err, result) => {
+    if (err) {
+      return res.status(404).send({ message: "Daily P/L record not found", err });
+    }
+
+    const { positiveClients, negativeClients } = result[0];
+    const totalPositiveAvailableBalance = result[0].totalPositiveAvailableBalance;
+    const totalNegativeAvailableBalance = result[0].totalNegativeAvailableBalance;
+
+    return res.send({
+      success: true,
+      message: "Daily P/L Report Found",
+      results: {
+        totalPositiveAvailableBalance,
+        totalNegativeAvailableBalance,
+        positiveClients,
+        negativeClients,
+      },
+    });
+  });
+}
+
 loginRouter.post(
   '/cashDepositLedger',
   reportValidator.validate('cashDepositLedger'),
   cashDepositLedger
 );
+
 loginRouter.post(
   '/cashCreditLedger',
   reportValidator.validate('cashDepositLedger'),
   cashCreditLedger
 );
+
 loginRouter.get('/getFinalReport', getFinalReport);
+
 loginRouter.post('/GetAllCashCreditLedger', GetAllCashCreditLedger);
+
 loginRouter.post('/GetAllCashDepositLedger', GetAllCashDepositLedger);
 
 loginRouter.get('/getCLientList', getClientList);
+
+loginRouter.get('/getDailyPLReport', getDailyPLReport);
+
 module.exports = { loginRouter };

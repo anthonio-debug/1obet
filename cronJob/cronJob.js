@@ -25,9 +25,8 @@ const checkBetStatus = (req) => {
 
           if (bet.type == 0 && bet.runner == match.winningTeam) {
             console.log('in winning cas of back');
-
             console.log(`Bet ${bet._id} won!`);
-            handleWinningBet(bet);
+            handleWinningBet(req,bet);
 
           }else if(bet.type == 0 && bet.runner != match.winningTeam){
             console.log('in loosing cas of back');
@@ -38,8 +37,7 @@ const checkBetStatus = (req) => {
           }else if (bet.type == 1 && bet.runner != match.winningTeam) {
             console.log(`Bet ${bet._id} won!`);
             console.log('in wiining cas of lay');
-
-            handleWinningBet(bet);
+            handleWinningBet(req, bet)
           }else if(bet.type == 1  && bet.runner == match.winningTeam){
             console.log(`Bet ${bet._id} lost.`);
             console.log('in loosing cas of lay');
@@ -227,6 +225,34 @@ async function handleWinningBet(req, bet) {
   userToUpdate.exposure         += TotalLoosingAmount;
   await userToUpdate.save();
 
+  let lastMaxWithdraw = await Cash.findOne({
+    userId: userToUpdate.userId,
+  }).sort({
+    _id: -1,
+  });
+  let cash = new Cash({
+    userId: userToUpdate.userId,
+    description: bet.name,
+    createdBy: 0,
+    amount: TotalLoosingAmount + remainingAmount,
+    balance: lastMaxWithdraw
+      ? lastMaxWithdraw.balance + remainingAmount
+      : remainingAmount,
+
+    availableBalance: lastMaxWithdraw
+      ? lastMaxWithdraw.availableBalance + remainingAmount
+      : remainingAmount,
+
+    maxWithdraw: lastMaxWithdraw
+      ? lastMaxWithdraw.maxWithdraw + remainingAmount
+      : remainingAmount,
+    cashOrCredit: 'Bet',
+    cash: lastMaxWithdraw
+    ? lastMaxWithdraw.cash + remainingAmount
+    : remainingAmount,
+  });
+  await cash.save();
+
   const parentUserIds = await getParents(userId);
   const parentUser = await User.find({
     userId: {
@@ -245,19 +271,40 @@ async function handleWinningBet(req, bet) {
     prev = current
   });
 
-  parentUser.forEach(user => {
+  parentUser.forEach(async user => {
     user.exposure += (user.commission / 100 ) * totalRemainingAmount;
     user.balance  -= (user.commission / 100 ) * remainingAmount;
     user.clientPL += user.downLineShare != 100 ? ((100 - user.downLineShare) / 100 ) * remainingAmount : 0
     user.save()
+    let lastMaxWithdraw = await Cash.findOne({
+      userId: user.userId,
+    }).sort({
+      _id: -1,
+    });
+
+    let cash = await new Cash({
+      userId: user.userId,
+      description: bet.name,
+      createdBy: 0,
+      amount: (user.commission / 100 ) * remainingAmount,
+      balance: lastMaxWithdraw
+        ? lastMaxWithdraw.balance  - (user.commission / 100 ) * remainingAmount
+        : -(user.commission / 100 ) * remainingAmount,
+  
+      availableBalance: lastMaxWithdraw
+        ? lastMaxWithdraw.availableBalance - (user.commission / 100 ) * remainingAmount
+        : -(user.commission / 100 ) * remainingAmount,
+  
+      maxWithdraw: lastMaxWithdraw
+        ? lastMaxWithdraw.maxWithdraw - (user.commission / 100 ) * remainingAmount
+        : -(user.commission / 100 ) * remainingAmount,
+      cashOrCredit: 'Bet',
+      cash: lastMaxWithdraw
+      ? lastMaxWithdraw.cash - (user.commission / 100 ) * remainingAmount
+      :  -(user.commission / 100 ) * remainingAmount,
+    });
+    cash.save();
   });
-    // Create and save BetsTransaction document
-  let betsTransaction = new BetsTransaction({
-    clientPL: userToUpdate.clientPL,
-    availableBalance: userToUpdate.availableBalance,
-    userId: userToUpdate.userId,
-  });
-  await betsTransaction.save();
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
 }
 
