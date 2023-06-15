@@ -141,7 +141,7 @@ db.sidebarmenus.insertMany([
     darkIcon: "https://1obet.com/assets/dark-icons/current-position.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 1,
-    link: "/reports",
+    link: "/book-detail",
   },
   {
     name: "Bet Lock",
