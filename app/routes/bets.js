@@ -446,7 +446,11 @@ function getRandomRates(match) {
     });
   }
 
-  return randomRates;
+
+  return {
+    match : match.match,
+    teams: randomRates
+  }
 }
 
 function getRandomSubset(arr, size) {
