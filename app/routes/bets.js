@@ -332,9 +332,9 @@ function betFunds(req, res) {
 }
 
 function createBetRates(req, res) {
-  const recordsToCreate = 100;
+  const recordsToCreate = 15;
   const AllbetRates = [];
-  let betRate = 1;
+  let betRate = 1.5;
   for (let i = 0; i < recordsToCreate; i++) {
     const roundedBetRate = Number(betRate.toFixed(1));
     AllbetRates.push(roundedBetRate);
