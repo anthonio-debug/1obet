@@ -504,6 +504,26 @@ async function deleteFakeBet(req, res) {
   }
 }
 
+async function getAllUserIDs(createdByIDs) {
+  const userIDs = [];
+
+  if (createdByIDs.length === 0) {
+    return userIDs;
+  }
+  console.log('Created By:', createdByIDs);
+
+  const users = await User.find({ createdBy: { $in: createdByIDs } }, { userId: 1, userName: 1, createdBy: 1 }).lean();
+
+  for (const user of users) {
+    userIDs.push(user.userId);
+  }
+
+  const subUserIDs = await getAllUserIDs(userIDs);
+  userIDs.push(...subUserIDs);
+
+  return userIDs;
+}
+
 async function getMatchedBets(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -515,36 +535,29 @@ async function getMatchedBets(req, res) {
     if (!loginUser) {
       return res.status(404).send({ message: 'User not found' });
     }
-     
+
     const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
     const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
-    const userIDs = userOfLoginUser.map(user => user.userId);
-    const filteredMasterUserIds = userOfLoginUser.map(user => user.createdBy);
-    let filteredBettors = [];
+    const createdByIDs = userOfLoginUser.map(user => user.userId);
+    const userIDs = await getAllUserIDs(createdByIDs);
+
+    if (loginUser.role == '5') {
+      userIDs.push(loginUser.userId);
+    }
+    const filteredBettors = await User.find({ userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] } }).select('userId userName createdBy');
     const bettorCreators = {};
+    const masterNames = {};
 
-    if (loginUser.role === '5') {
-      filteredBettors = [loginUser];
-      bettorCreators[loginUser.userId] = loginUser.userName;
-    } else {
-      filteredBettors = await User.find({ createdBy: { $in: userIDs } });
-      filteredMaster = await User.find({ userId: { $in: filteredMasterUserIds } });
-      for (const user of userOfLoginUser) {
-        if (user.role === '5') {
-          filteredBettors.push(user);
-          bettorCreators[user.userId] = user.userName;
-        } else {
-          bettorCreators[user.userId] = user.userName;
-        }
-      }
+    const createdByUserIds = filteredBettors.map(user => user.userId);
+    const masterUsers = await User.find({ userId: { $in: createdByUserIds } }).select('userId userName');
+    for (const user of filteredBettors) {
+      bettorCreators[user.userId] = user.userName;
+      const filteredMaster = masterUsers.find(master => master.userId == user.createdBy);
+      const masterUserName = filteredMaster ? filteredMaster.userName : 'N/A';
+      masterNames[user.userId] = masterUserName;
     }
 
-    const bettorUserIds = filteredBettors.map(user => user.userId);
-    if (bettorUserIds.length === 0) {
-      return res.status(404).send({ message: 'Bettor not found' });
-    }
-
-    const result = await Bets.find({ userId: { $in: bettorUserIds } }).exec();
+    const result = await Bets.find({ userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] } }).exec();
 
     if (!result || result.length === 0) {
       return res.status(404).send({ message: 'Matched bets not found' });
@@ -552,10 +565,10 @@ async function getMatchedBets(req, res) {
 
     const matchedBets = result.map(bet => {
       let masterName = '';
-      if (loginUser.role == '5') {
+      if (loginUser.role === '5') {
         masterName = bettorMaster.userName;
       } else {
-        masterName = bettorCreators[bet.userId] || 'N/A';
+        masterName = masterNames[bet.userId] || 'N/A';
       }
 
       return {
