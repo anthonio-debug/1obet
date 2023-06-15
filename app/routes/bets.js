@@ -415,42 +415,42 @@ async function getBetRates(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
-    ;
   }
-  // console.log("req.query.id", req.query.id );
-  // const match = betRates.aggregate([
-  //   {
-  //     $match: {
-  //       _id: req.query.id,
-  //     }
-  //   }
-  // ]);
 
-  const match = await betRates.aggregate([
-    {
-      $match: {
-        _id: req.query.id, // Replace _id with the appropriate field name
-      }
-    }
-  ]);
+  const match = await betRates.findOne({ _id: req.query.id });
+  if (!match) {
+    return res.status(404).send({ message: 'bets rate not found' });
+  }
 
+  const randomRates = getRandomRates(match);
+  
   return res.send({
     success: true,
     message: 'bets rate records',
-    results: match,
+    results: randomRates,
   });
-  // betRates.find(
-  //   {},
-  //   (err, result) => {
-  //     if (err || !result)
-  //       return res.status(404).send({ message: 'bets rate not found' });
-  //     return res.send({
-  //       success: true,
-  //       message: 'bets rate record found',
-  //       results: result,
-  //     });
-  //   }
-  // );
+}
+
+function getRandomRates(match) {
+  const randomRates = [];
+
+  for (const team of match.teams) {
+    const randomBackRates = getRandomSubset(team.back, 3);
+    const randomLayRates = getRandomSubset(team.lay, 3);
+
+    randomRates.push({
+      name: team.name,
+      back: randomBackRates,
+      lay: randomLayRates,
+    });
+  }
+
+  return randomRates;
+}
+
+function getRandomSubset(arr, size) {
+  const shuffled = arr.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, size);
 }
 
 
@@ -511,10 +511,11 @@ async function getMatchedBets(req, res) {
     if (!loginUser) {
       return res.status(404).send({ message: 'User not found' });
     }
-
+     
+    const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
     const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
     const userIDs = userOfLoginUser.map(user => user.userId);
-
+    const filteredMasterUserIds = userOfLoginUser.map(user => user.createdBy);
     let filteredBettors = [];
     const bettorCreators = {};
 
@@ -522,7 +523,8 @@ async function getMatchedBets(req, res) {
       filteredBettors = [loginUser];
       bettorCreators[loginUser.userId] = loginUser.userName;
     } else {
-      filteredBettors = await User.find({ createdBy: { $in: userIDs }, role: '5', isDeleted: false });
+      filteredBettors = await User.find({ createdBy: { $in: userIDs } });
+      filteredMaster = await User.find({ userId: { $in: filteredMasterUserIds } });
       for (const user of userOfLoginUser) {
         if (user.role === '5') {
           filteredBettors.push(user);
@@ -534,7 +536,6 @@ async function getMatchedBets(req, res) {
     }
 
     const bettorUserIds = filteredBettors.map(user => user.userId);
-
     if (bettorUserIds.length === 0) {
       return res.status(404).send({ message: 'Bettor not found' });
     }
@@ -544,14 +545,23 @@ async function getMatchedBets(req, res) {
     if (!result || result.length === 0) {
       return res.status(404).send({ message: 'Matched bets not found' });
     }
-    const matchedBets = result.map(bet =>
-       ({
-      prize: bet.betRate,
-      size: bet.betAmount,
-      runner: bet.runner,
-      bettor: bettorCreators[bet.userId] || 'N/A',
-      master: loginUser.role == '5' ? bettorCreators[bet.userId] || loginUser.role != '5' : bettorCreators[bet.userId] || 'N/A'
-    }));
+
+    const matchedBets = result.map(bet => {
+      let masterName = '';
+      if (loginUser.role == '5') {
+        masterName = bettorMaster.userName;
+      } else {
+        masterName = bettorCreators[bet.userId] || 'N/A';
+      }
+
+      return {
+        prize: bet.betRate,
+        size: bet.betAmount,
+        runner: bet.runner,
+        bettor: bettorCreators[bet.userId] || 'N/A',
+        master: masterName
+      };
+    });
 
     return res.send({
       success: true,
@@ -572,10 +582,5 @@ loginRouter.get('/getBetRates', getBetRates);
 loginRouter.get('/getMatchedBets', getMatchedBets);
 loginRouter.get('/FakeBetsList', FakeBetsList);
 loginRouter.delete('/deleteFakeBet/:id', deleteFakeBet);
-
-
-
-
-
 
 module.exports = { loginRouter, getParents };
