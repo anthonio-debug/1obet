@@ -51,8 +51,13 @@ async function placeBet(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const { marketId, selectedTeam, betAmount, betRate, matchId, subMarketId } = req.body;
-
+ 
+  const { selectedTeam, betAmount, betRate, matchId, subMarketId } = req.body;
+  const marketplace = await SubMarketType.findOne({ subMarketId }).exec();
+    if (!marketplace) {
+      return res.status(404).send({ message: 'marketplaces not found' });
+    }
+  const marketId = marketplace.marketId
   const userId = req.decoded.userId;
   if (req.decoded.login.role !== '5') {
     return res.status(404).send({ message: 'You are not allowed to bet' });

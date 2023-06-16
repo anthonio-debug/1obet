@@ -79,10 +79,9 @@ async function registerUser(req, res) {
           return res.status(404).send({ message: 'bet limits not found' });
         }
         user.save((err, user) => {
-          if (err || !user)
-            return res
-              .status(404)
-              .send({ message: 'user not registered', err });
+          if (err || !user) {
+            return res.status(404).send({ message: 'user not registered', err });
+          }
 
           const userbetSizesData = betLimits.map((betLimit) => ({
             userId: user.userId,
@@ -564,6 +563,7 @@ function checkValidation(req, res) {
     return res.status(200).send({ errors: errors.errors });
   }
 }
+
 router.post('/login', userValidation.validate('login'), login);
 loginRouter.post(
   '/register',
