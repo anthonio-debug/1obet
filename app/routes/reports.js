@@ -416,137 +416,240 @@ function GetAllCashDepositLedger(req, res) {
   );
 }
 
+// function getDailyPLReport(req, res) {
+//   let query = {};
+
+//   if (req.decoded.login.role !== '5') {
+//     query.createdBy = String(req.decoded.userId);
+//   }
+
+//   const startDate = req.query.startDate;
+//   const endDate = req.query.endDate;
+
+//   User.aggregate([
+//     {
+//       $match: query,
+//     },
+//     {
+//       $lookup: {
+//         from: "deposits",
+//         localField: "userId",
+//         foreignField: "userId",
+//         as: "deposits",
+//       },
+//     },
+//     {
+//       $unwind: "$deposits",
+//     },
+//     {
+//       $match: {
+//         "deposits.cashOrCredit": "Bet",
+//         "deposits.createdAt": {
+//           $gte: startDate,
+//           $lte: endDate,
+//         },
+//       },
+//     },
+//     {
+//       $group: {
+//         _id: "$userId",
+//         name: { $last: "$userName" },
+//         amount: { $last: "$deposits.availableBalance" },
+//         event: { $last: "Cricket" }
+//       },
+//     },
+//     {
+//       $group: {
+//         _id: null,
+//         positiveClients: {
+//           $push: {
+//             $cond: {
+//               if: { $gte: ["$amount", 0] },
+//               then: {
+//                 userName: "$name",
+//                 amount: "$amount",
+//                 event: "$event"       
+//               },
+//               else: null,
+//             },
+//           },
+//         },
+//         negativeClients: {
+//           $push: {
+//             $cond: {
+//               if: { $lt: ["$amount", 0] },
+//               then: {
+//                 userName: "$name",
+//                 amount: "$amount",
+//                 event: "$event"
+//               },
+//               else: null,
+//             },
+//           },
+//         },
+//         totalPositiveAvailableBalance: {
+//           $sum: {
+//             $cond: {
+//               if: { $gte: ["$amount", 0] },
+//               then: "$amount",
+//               else: 0,
+//             },
+//           },
+//         },
+//         totalNegativeAvailableBalance: {
+//           $sum: {
+//             $cond: {
+//               if: { $lt: ["$amount", 0] },
+//               then: "$amount",
+//               else: 0,
+//             },
+//           },
+//         },
+//       },
+//     },
+//     {
+//       $project: {
+//         _id: 0,
+//         positiveClients: {
+//           $filter: {
+//             input: "$positiveClients",
+//             cond: { $ne: ["$$this", null] },
+//           },
+//         },
+//         negativeClients: {
+//           $filter: {
+//             input: "$negativeClients",
+//             cond: { $ne: ["$$this", null] },
+//           },
+//         },
+//         totalPositiveAvailableBalance: 1,
+//         totalNegativeAvailableBalance: 1,
+//       },
+//     },
+//   ],
+
+//   (err, result) => {
+//     if (err) {
+//       return res.status(404).send({ message: "Daily P/L record not found", err });
+//     }
+//     if (!result || result.length === 0 || !result[0].positiveClients || !result[0].negativeClients) {
+//       return res.status(404).send({ message: "Daily P/L record not found" });
+//     }
+//     const { positiveClients, negativeClients } = result[0];
+//     const totalPositiveAvailableBalance = result[0].totalPositiveAvailableBalance;
+//     const totalNegativeAvailableBalance = result[0].totalNegativeAvailableBalance;
+
+//     return res.send({
+//       success: true,
+//       message: "Daily P/L Report Found",
+//       results: {
+//         totalPositiveAvailableBalance,
+//         totalNegativeAvailableBalance,
+//         positiveClients,
+//         negativeClients,
+//       },
+//     });
+//   });
+// }
+
 function getDailyPLReport(req, res) {
   let query = {};
+  let depositsQuery = {};
+  let userId = String(req.decoded.userId);
 
   if (req.decoded.login.role !== '5') {
-    query.createdBy = String(req.decoded.userId);
+    query.createdBy = userId;
   }
 
-  const startDate = req.query.startDate;
-  const endDate = req.query.endDate;
+  if (req.body.endDate && req.body.startDate) {
+    depositsQuery.createdAt = {
+      $gte: req.body.startDate,
+      $lte: req.body.endDate,
+    };
+  }
 
-  User.aggregate([
-    {
-      $match: query,
-    },
-    {
-      $lookup: {
-        from: "deposits",
-        localField: "userId",
-        foreignField: "userId",
-        as: "deposits",
-      },
-    },
-    {
-      $unwind: "$deposits",
-    },
-    {
-      $match: {
-        "deposits.cashOrCredit": "Bet",
-        "deposits.createdAt": {
-          $gte: startDate,
-          $lte: endDate,
-        },
-      },
-    },
-    {
-      $group: {
-        _id: "$userId",
-        name: { $last: "$userName" },
-        amount: { $last: "$deposits.availableBalance" },
-        event: { $last: "Cricket" }
-      },
-    },
-    {
-      $group: {
-        _id: null,
-        positiveClients: {
-          $push: {
-            $cond: {
-              if: { $gte: ["$amount", 0] },
-              then: {
-                userName: "$name",
-                amount: "$amount",
-                event: "$event"       
-              },
-              else: null,
-            },
-          },
-        },
-        negativeClients: {
-          $push: {
-            $cond: {
-              if: { $lt: ["$amount", 0] },
-              then: {
-                userName: "$name",
-                amount: "$amount",
-                event: "$event"
-              },
-              else: null,
-            },
-          },
-        },
-        totalPositiveAvailableBalance: {
-          $sum: {
-            $cond: {
-              if: { $gte: ["$amount", 0] },
-              then: "$amount",
-              else: 0,
-            },
-          },
-        },
-        totalNegativeAvailableBalance: {
-          $sum: {
-            $cond: {
-              if: { $lt: ["$amount", 0] },
-              then: "$amount",
-              else: 0,
-            },
-          },
-        },
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        positiveClients: {
-          $filter: {
-            input: "$positiveClients",
-            cond: { $ne: ["$$this", null] },
-          },
-        },
-        negativeClients: {
-          $filter: {
-            input: "$negativeClients",
-            cond: { $ne: ["$$this", null] },
-          },
-        },
-        totalPositiveAvailableBalance: 1,
-        totalNegativeAvailableBalance: 1,
-      },
-    },
-  ],
-
-  (err, result) => {
+  User.find(query, (err, users) => {
+    console.log('users', users);
     if (err) {
-      return res.status(404).send({ message: "Daily P/L record not found", err });
+      return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+    }
+    if (!users || users.length === 0) {
+      return res.status(404).send({ message: 'No users found' });
     }
 
-    const { positiveClients, negativeClients } = result[0];
-    const totalPositiveAvailableBalance = result[0].totalPositiveAvailableBalance;
-    const totalNegativeAvailableBalance = result[0].totalNegativeAvailableBalance;
+    let createdByIDs = users.map(user => user.userId);
 
-    return res.send({
-      success: true,
-      message: "Daily P/L Report Found",
-      results: {
-        totalPositiveAvailableBalance,
-        totalNegativeAvailableBalance,
-        positiveClients,
-        negativeClients,
-      },
-    });
+    if (req.query.userId) {
+      const specificUserId = parseInt(req.query.userId);
+      if (!createdByIDs.includes(specificUserId)) {
+        return res.status(404).send({ message: 'No records found for the specified user' });
+      }
+      createdByIDs = [specificUserId];
+    }
+
+    Deposits.find({ userId: { $in: createdByIDs }, ...depositsQuery })
+      .exec((err, deposits) => {
+        console.log('deposits', deposits);
+        if (err) {
+          return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+        }
+        if (!deposits || deposits.length === 0) {
+          return res.status(404).send({ message: 'No records found' });
+        }
+
+        // Retrieve user data for mapping
+        const userIds = deposits.map(deposit => deposit.userId);
+        User.find({ userId: { $in: userIds } }, 'userId userName', (err, users) => {
+          if (err) {
+            return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+          }
+
+          // Map user data to deposits
+          const depositMap = {};
+          users.forEach(user => {
+            depositMap[user.userId] = user.userName;
+          });
+
+          const results = deposits.map(deposit => ({
+            userId: deposit.userId,
+            userName: depositMap[deposit.userId],
+            amount: deposit.availableBalance,
+            event: req.query.event ? 'cricket' : null,
+          }));
+
+          if (req.query.event && req.query.marketId) {
+            const specificDeposits = results.filter(deposit => deposit.event === 'cricket');
+            const depositIds = specificDeposits.map(deposit => deposit._id);
+
+            Bets.find({
+              depositId: { $in: depositIds },
+              eventId: req.query.event,
+              marketId: req.query.marketId,
+            }).exec((err, bets) => {
+              console.log('bets', bets);
+              if (err) {
+                return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+              }
+
+              specificDeposits.forEach(deposit => {
+                deposit.bets = bets.filter(bet => bet.depositId.equals(deposit._id));
+              });
+
+              return res.send({
+                success: true,
+                message: 'dail pl records found',
+                results: specificDeposits,
+              });
+            });
+          } else {
+            return res.send({
+              success: true,
+              message: 'daily pl records found',
+              results: results,
+            });
+          }
+        });
+      });
   });
 }
 

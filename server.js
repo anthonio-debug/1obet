@@ -66,7 +66,9 @@ var corsOptions = {
 };
 app.use(cors(corsOptions));
 app.get('/', (req, res) => {
-  res.send('<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.com </h2></body>');
+  res.send(
+    '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.com </h2></body>'
+  );
 });
 
 // Allowed Apis on this server
@@ -77,6 +79,7 @@ app.use(function (req, res, next) {
 //Without Authorization
 app.use('/api', require('./app/routes/user').router);
 app.use('/api', require('./app/routes/settings').router);
+app.use('/api', require('./app/routes/CasinoCalls').router);
 
 // Login middleware
 app.use(function (req, res, next) {

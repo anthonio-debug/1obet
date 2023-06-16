@@ -71,5 +71,9 @@
   "addSelectedDashboardGames",
   "FakeBetsList",
   "getDailyPLReport",
-  "deleteFakeBet"
+  "deleteFakeBet",
+  "balance",
+  "debit",
+  "credit",
+  "rollback"
 ]
