@@ -5,10 +5,6 @@ module.exports.validate = (method) => {
   switch (method) {
     case 'placeBet': {
       return [
-        body('marketId', 'marketId is required')
-          .exists()
-          .isString()
-          .withMessage('marketId must be string'),
         body('selectedTeam', 'selectedTeam is required')
           .exists()
           .isString()

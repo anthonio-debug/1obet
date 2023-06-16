@@ -30,6 +30,12 @@ async function registerUser(req, res) {
       return res.status(404).send({ message: 'downLineShare is required' });
     }
   }
+
+  const userToDelete = await User.findOne({ userName: req.body.userName });
+   if (userToDelete && userToDelete.createdBy != req.decoded.userId) {
+    return res.status(404).send({ message: 'username not available', status: 2 });
+  }
+
   User.findOne()
     .sort({ userId: -1 })
     .exec(async (err, data) => {

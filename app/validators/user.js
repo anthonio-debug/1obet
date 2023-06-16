@@ -1,6 +1,6 @@
 const { body, check } = require('express-validator');
 const Users = require('../models/user');
-const verifySecureLogin = require('../middlewares/loginMiddleware');
+// const verifySecureLogin = require('../middlewares/loginMiddleware');
 
 module.exports.validate = (method) => {
   switch (method) {
@@ -161,14 +161,16 @@ module.exports.validate = (method) => {
       return [
         verifySecureLogin,
         check('userName').notEmpty().withMessage('userName is required'),
-        check('userName').custom(async (userName, {req} ) => {
-          const userId = req.decoded.userId;
-          const user = await Users.findOne({ userName });
+        check('userName').custom(async (userName,
+          //  {req}
+            ) => {
+          // const userId = req.decoded.userId;
+          const user = await Users.findOne({ userName }).exec();
+          // if (user.createdBy != userId) {
+          //   return Promise.reject({message:'Username not available', status: 2});
+          // }
           if (user == null) {
             return Promise.reject({message:'user does not exists', status: 0});
-          }
-          if (user.createdBy != userId) {
-            return Promise.reject({message:'Username not available', status: 2});
           }
           return Promise.reject({message: 'User already exists', status: 1 });
         }),
