@@ -143,7 +143,20 @@ module.exports.validate = (method) => {
           .withMessage('id must be string '),
       ];
     }
-    
+    case 'checkValidation': {
+      return [
+        check('userName').notEmpty().withMessage('userName is required'),
+        check('userName').custom((userName) => {
+          return Users.findOne({ userName }).then((user) => {
+            if (user == null) {
+              return Promise.reject({message:'user does not exists',status:0});
+            } else {
+              return Promise.reject({message:'user already exists',status:1});
+            }
+          });
+        }),
+      ];
+    }
     case 'checkValidation': {
       return [
         verifySecureLogin,
@@ -151,13 +164,13 @@ module.exports.validate = (method) => {
         check('userName').custom(async (userName, {req} ) => {
           const userId = req.decoded.userId;
           const user = await Users.findOne({ userName });
-          if (!user) {
-            return Promise.reject('User does not exist');
+          if (user == null) {
+            return Promise.reject({message:'user does not exists', status: 0});
           }
-          if (user.createdBy !== userId) {
-            return Promise.reject('Username not available');
+          if (user.createdBy != userId) {
+            return Promise.reject({message:'Username not available', status: 2});
           }
-          return Promise.reject('User already exists');
+          return Promise.reject({message: 'User already exists', status: 1 });
         }),
       ];
     }    
