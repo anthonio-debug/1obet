@@ -1,6 +1,6 @@
 const { body, check } = require('express-validator');
 const Users = require('../models/user');
-const { verifySecureLogin } = require('../middlewares/loginMiddleware');
+const verifySecureLogin = require('../middlewares/loginMiddleware');
 
 module.exports.validate = (method) => {
   switch (method) {
@@ -146,11 +146,9 @@ module.exports.validate = (method) => {
     
     case 'checkValidation': {
       return [
+        verifySecureLogin,
         check('userName').notEmpty().withMessage('userName is required'),
-        check('userName').custom(async (userName, { req }) => {
-          if (!req.decoded || !req.decoded.userId) {
-            return Promise.reject('User information is missing');
-          }
+        check('userName').custom(async (userName, {req} ) => {
           const userId = req.decoded.userId;
           const user = await Users.findOne({ userName });
           if (!user) {
