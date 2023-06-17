@@ -75,5 +75,7 @@
   "balance",
   "debit",
   "credit",
-  "rollback"
+  "rollback",
+  "dailyPLSportsWiseReport",
+  "dailyPlMarketsReports"
 ]

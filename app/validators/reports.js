@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+const { body, query } = require('express-validator');
 const messages = require('../messages/messages');
 
 module.exports.validate = (method) => {
@@ -21,15 +21,32 @@ module.exports.validate = (method) => {
     }
     case 'getDailyPLReport': {
       return [
-        body('startDate', 'startDate is required')
-          .optional()
+        query('startDate', 'startDate is required')
+          .exists()
           .isString()
           .withMessage(' startDate must be string'),
-        body('endDate', 'endDate is required')
-          .optional()
+        query('endDate', 'endDate is required')
+          .exists()
           .isString()
           .withMessage('endDate must be string'),
-        body('userId', 'userId is required')
+        query('userId', 'userId is required')
+          .optional()
+          .isInt()
+          .withMessage('userId must be a number'),
+      ];
+    }
+    case 'dailyPLSportsWiseReport': {
+      return [
+        query('userId', 'userId is required')
+          .exists()
+          .isInt()
+          .withMessage('userId must be a number'),
+      ];
+    }
+    
+    case 'dailyPlMarketsReports': {
+      return [
+        query('userId', 'userId is required')
           .optional()
           .isInt()
           .withMessage('userId must be a number'),
