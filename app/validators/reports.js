@@ -19,5 +19,21 @@ module.exports.validate = (method) => {
           .withMessage('userId must be a number'),
       ];
     }
+    case 'getDailyPLReport': {
+      return [
+        body('startDate', 'startDate is required')
+          .optional()
+          .isString()
+          .withMessage(' startDate must be string'),
+        body('endDate', 'endDate is required')
+          .optional()
+          .isString()
+          .withMessage('endDate must be string'),
+        body('userId', 'userId is required')
+          .optional()
+          .isInt()
+          .withMessage('userId must be a number'),
+      ];
+    }
   }
 };

@@ -15,7 +15,8 @@ let depositsSchema = new Schema({
   updatedAt: { type: String },
   createdAt: { type: String },
   cashOrCredit: { type: String },
-  cash: { type : Number }
+  cash: { type : Number },
+  marketId : { type : String },
 });
 
 depositsSchema.plugin(Global.aggregatePaginate);

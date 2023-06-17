@@ -553,6 +553,11 @@ function GetAllCashDepositLedger(req, res) {
 // }
 
 function getDailyPLReport(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+
   let query = {};
   let depositsQuery = {};
   let userId = String(req.decoded.userId);
@@ -569,27 +574,18 @@ function getDailyPLReport(req, res) {
   }
 
   User.find(query, (err, users) => {
-    console.log('users', users);
-    if (err) {
+    if (err || !users) {
       return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
     }
     if (!users || users.length === 0) {
       return res.status(404).send({ message: 'No users found' });
     }
 
-    let createdByIDs = users.map(user => user.userId);
+    let createdByIDs = users.map((user) => user.userId);
+    createdByIDs.push(userId); // Include the logged-in user in the query
 
-    if (req.query.userId) {
-      const specificUserId = parseInt(req.query.userId);
-      if (!createdByIDs.includes(specificUserId)) {
-        return res.status(404).send({ message: 'No records found for the specified user' });
-      }
-      createdByIDs = [specificUserId];
-    }
-
-    Deposits.find({ userId: { $in: createdByIDs }, ...depositsQuery })
-      .exec((err, deposits) => {
-        console.log('deposits', deposits);
+    Deposits.find({ userId: { $in: createdByIDs }, ...depositsQuery }).exec(
+      (err, deposits) => {
         if (err) {
           return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
         }
@@ -598,57 +594,42 @@ function getDailyPLReport(req, res) {
         }
 
         // Retrieve user data for mapping
-        const userIds = deposits.map(deposit => deposit.userId);
-        User.find({ userId: { $in: userIds } }, 'userId userName', (err, users) => {
-          if (err) {
-            return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-          }
+        const userIds = deposits.map((deposit) => deposit.userId);
+        User.find(
+          { userId: { $in: userIds } },
+          'userId userName',
+          (err, users) => {
+            if (err) {
+              return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+            }
 
-          // Map user data to deposits
-          const depositMap = {};
-          users.forEach(user => {
-            depositMap[user.userId] = user.userName;
-          });
-
-          const results = deposits.map(deposit => ({
-            userId: deposit.userId,
-            userName: depositMap[deposit.userId],
-            amount: deposit.availableBalance,
-            event: req.query.event ? 'cricket' : null,
-          }));
-
-          if (req.query.event && req.query.marketId) {
-            const specificDeposits = results.filter(deposit => deposit.event === 'cricket');
-            const depositIds = specificDeposits.map(deposit => deposit._id);
-
-            Bets.find({
-              depositId: { $in: depositIds },
-              eventId: req.query.event,
-              marketId: req.query.marketId,
-            }).exec((err, bets) => {
-              console.log('bets', bets);
-              if (err) {
-                return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-              }
-
-              specificDeposits.forEach(deposit => {
-                deposit.bets = bets.filter(bet => bet.depositId.equals(deposit._id));
-              });
-
-              return res.send({
-                success: true,
-                message: 'dail pl records found',
-                results: specificDeposits,
-              });
+            // Map user data to deposits
+            const depositMap = {};
+            users.forEach((user) => {
+              depositMap[user.userId] = user.userName;
             });
-          } else {
+
+            const results = deposits.reduce((acc, deposit) => {
+              const existingUser = acc.find((user) => user.userId === deposit.userId);
+              if (existingUser) {
+                existingUser.amount += deposit.amount;
+              } else {
+                acc.push({
+                  userId: deposit.userId,
+                  userName: depositMap[deposit.userId],
+                  amount: deposit.amount,
+                });
+              }
+              return acc;
+            }, []);
+
             return res.send({
               success: true,
               message: 'daily pl records found',
               results: results,
             });
           }
-        });
+        )
       });
   });
 }
@@ -673,6 +654,6 @@ loginRouter.post('/GetAllCashDepositLedger', GetAllCashDepositLedger);
 
 loginRouter.get('/getCLientList', getClientList);
 
-loginRouter.get('/getDailyPLReport', getDailyPLReport);
+loginRouter.get('/getDailyPLReport',reportValidator.validate('getDailyPLReport'), getDailyPLReport);
 
 module.exports = { loginRouter };

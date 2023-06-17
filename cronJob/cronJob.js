@@ -135,6 +135,7 @@ async function handleLosingBet(req, bet){
     cash: lastMaxWithdraw
     ? lastMaxWithdraw.cash - loosingAmount
     : - loosingAmount,
+    marketId: bet.marketId
   });
   await cash.save();
 
@@ -194,6 +195,7 @@ async function handleLosingBet(req, bet){
       cash: lastMaxWithdraw
       ? lastMaxWithdraw.cash + (user.commission / 100 ) * TotalLoosingAmount
       :  (user.commission / 100 ) * TotalLoosingAmount,
+      marketId: bet.marketId
     });
     cash.save();
   });
@@ -250,6 +252,7 @@ async function handleWinningBet(req, bet) {
     cash: lastMaxWithdraw
     ? lastMaxWithdraw.cash + remainingAmount
     : remainingAmount,
+    marketId: bet.marketId
   });
   await cash.save();
 
@@ -302,6 +305,7 @@ async function handleWinningBet(req, bet) {
       cash: lastMaxWithdraw
       ? lastMaxWithdraw.cash - (user.commission / 100 ) * remainingAmount
       :  -(user.commission / 100 ) * remainingAmount,
+      marketId: bet.marketId
     });
     cash.save();
   });

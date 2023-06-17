@@ -271,6 +271,10 @@ app.set('secret', config.secret);
 
 function getAllUsers(req, res) {
   // Initialize variables with default values
+  if(req.decoded.role == '5'){
+    return res.status(404).send({message:'you are not allowed to do this'})
+  }
+
   let query = {};
 
   let page = 1;
@@ -358,6 +362,11 @@ function updateUser(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
+
+  if (req.decoded.role == '5') {
+    return res.status(404).send({message:'you are not allowed to do this'})
+  }
+
   User.findOne({ userId: req.body.id }, (err, user) => {
     if (err || !user) {
       return res.status(404).send({ message: 'User not found' });
