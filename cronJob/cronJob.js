@@ -52,10 +52,10 @@ const checkBetStatus = (req) => {
         }
       }
 
-      if (endedMatches.length >= 1) {
-        console.log('Stopping cron job');
-        runningJob.stop();
-      }
+      // if (endedMatches.length >= 1) {
+      //   console.log('Stopping cron job');
+      //   runningJob.stop();
+      // }
     } catch (err) {
       console.error(err);
     }

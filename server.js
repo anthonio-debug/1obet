@@ -26,7 +26,7 @@ const { themeCronJob, checkBetStatus } = require('./cronJob/cronJob'); // Import
 
 // Run the cron job
 themeCronJob();
-// checkBetStatus()
+checkBetStatus()
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,
