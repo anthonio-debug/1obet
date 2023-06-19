@@ -56,8 +56,8 @@ module.exports.validate = (method) => {
           .withMessage('userId must be a number'),
         query('marketId', 'marketId is required')
           .optional()
-          .isInt()
-          .withMessage('marketId must be a number'),
+          .isString()
+          .withMessage('marketId must be a string'),
         query('startDate', 'startDate is required')
           .exists()
           .isString()
