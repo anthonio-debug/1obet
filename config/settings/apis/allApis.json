@@ -74,5 +74,11 @@
   "deleteFakeBet",
   "dailyPLSportsWiseReport",
   "dailyPlMarketsReports",
-  "casino"
+  "casino",
+  "getDailyReport",
+  "dailySportsWiseReport",
+  "dailyMarketsReports",
+  "getCommissionReport",
+  "sportsWiseCommissionReport",
+  "MarketWiseCommissionReport"
 ]
