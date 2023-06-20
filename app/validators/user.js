@@ -175,6 +175,22 @@ module.exports.validate = (method) => {
           return Promise.reject({message: 'User already exists', status: 1 });
         }),
       ];
-    }    
+    } 
+    case 'settlePLAccount': {
+      return [
+        body('id', 'id is required')
+          .exists()
+          .isString()
+          .withMessage('id must be string '),
+        body('availableBalance', 'availableBalance is required')
+          .exists()
+          .isInt()
+          .withMessage('availableBalance must be number '),
+        body('description', 'description is required')
+          .exists()
+          .isString()
+          .withMessage('description must be string ')
+      ];
+    }  
   }
 };

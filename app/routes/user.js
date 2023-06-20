@@ -555,23 +555,45 @@ function deactiveUser(req, res) {
   });
 }
 
-// function settlePLAccount(req, res) {
-//   const errors = validationResult(req);
-//   if (errors.errors.length !== 0) {
-//     return res.status(400).send({ errors: errors.errors });
-//   }
-//   User.findOne({ _id: req.body.id }, (err, result) => {
-//     if (err || !result)
-//       return res.status(404).send({ message: "user not found" });
-//     if(result.isActive == false ) { return res.status(404).send({message:"user is already deactivated"})}
-//       result.isActive = false
-//     return res.send({
-//       success: true,
-//       message: "user deactivated successfully",
-//       results: result
-//     });
-//   });
-// }
+function settlePLAccount(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  User.findOne({ 
+    _id: req.body.id,
+    availableBalance:req.body.availableBalance,
+    description:req.body.description
+  }, (err, result) => {
+    if (err || !result)
+      return res.status(404).send({ message: "user not found" });
+      result.availableBalance -= req.body.availableBalance
+      result.balance -= req.body.availableBalance
+      result.save()
+    return res.send({
+      success: true,
+      message: "user account settled successfully",
+      results: result
+    });
+  });
+}
+
+function getSettlement(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  User.findOne({ _id: req.body.id }, (err, result) => {
+    if (err || !result)
+      return res.status(404).send({ message: "user not found" });
+      return res.send({
+      success: true,
+      message: "user settlement getting successfully",
+      results: `Max amount to transfer: ${result.availableBalance}`
+    });
+  });
+}
+
 function checkValidation(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -610,16 +632,22 @@ router.post(
   userValidation.validate('getSingleUser'),
   getSingleUser
 );
-router.post('/activeUser', userValidation.validate('activeUser'), activeUser);
-router.post(
+loginRouter.post('/activeUser', userValidation.validate('activeUser'), activeUser);
+loginRouter.post(
   '/deactiveUser',
   userValidation.validate('deactiveUser'),
   deactiveUser
 );
-router.post(
+loginRouter.post(
   '/checkValidation',
   userValidation.validate('checkValidation'),
   checkValidation
+);
+
+loginRouter.post('/getSettlement',getSettlement);
+loginRouter.post('/settlePLAccount', 
+  userValidation.validate('settlePLAccount'),
+  settlePLAccount
 );
 
 module.exports = { router, loginRouter };

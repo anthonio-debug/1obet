@@ -81,5 +81,7 @@
   "getCommissionReport",
   "sportsWiseCommissionReport",
   "MarketWiseCommissionReport",
-  "bookDetail2Report"
+  "bookDetail2Report",
+  "settlePLAccount",
+  "getSettlement"
 ]
