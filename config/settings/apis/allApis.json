@@ -83,5 +83,6 @@
   "MarketWiseCommissionReport",
   "bookDetail2Report",
   "settlePLAccount",
-  "getSettlement"
+  "getSettlement",
+  "getCurrentPosition"
 ]

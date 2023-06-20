@@ -108,6 +108,7 @@ app.use('/api', require('./app/routes/dailyPLReports').loginRouter);
 app.use('/api', require('./app/routes/dailyReports').loginRouter);
 app.use('/api', require('./app/routes/commissionReports').loginRouter);
 app.use('/api', require('./app/routes/bookDetail2Reports').loginRouter);
+app.use('/api', require('./app/routes/currentPosition').loginRouter);
 
 // // Allowed Apis for this role
 // app.use(function (req, res, next) {
