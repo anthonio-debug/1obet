@@ -583,7 +583,7 @@ function getSettlement(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  User.findOne({ _id: req.body.id }, (err, result) => {
+  User.findOne({ _id: req.query.id }, (err, result) => {
     if (err || !result)
       return res.status(404).send({ message: "user not found" });
       return res.send({
