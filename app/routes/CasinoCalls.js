@@ -106,8 +106,10 @@ function rollback(req, res) {
 }
 
 function casino(req, res) {
-  const { action } = req.query;
-
+  const { action, remote_id } = req.query;
+  if (!remote_id || !action) {
+    return res.send({ status: '400', msg: 'Invalid Request' });
+  }
   switch (action) {
     case 'balance':
       return balance(req, res);
