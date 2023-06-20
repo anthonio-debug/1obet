@@ -644,7 +644,7 @@ loginRouter.post(
   checkValidation
 );
 
-loginRouter.post('/getSettlement',getSettlement);
+loginRouter.get('/getSettlement',getSettlement);
 loginRouter.post('/settlePLAccount', 
   userValidation.validate('settlePLAccount'),
   settlePLAccount
