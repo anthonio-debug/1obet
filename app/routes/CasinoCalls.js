@@ -4,8 +4,15 @@ const router = express.Router();
 const CasinoDebits = require('../models/casinoCalls');
 
 function balance(req, res) {
-  const remoteId = req.query.remoteId;
-  User.findOne({ remoteId: remoteId }, (err, user) => {
+  const payload = req.query;
+  const casinoDebits = new CasinoDebits(payload);
+  casinoDebits.save((err, savedPayload) => {
+    if (err) {
+      console.error(err);
+      return res.send({ status: '500', msg: 'internal error' });
+    }
+  User.findOne({ remoteId: payload.remote_id }, (err, user) => {
+    console.log('user',user);
     if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
     }
@@ -14,39 +21,38 @@ function balance(req, res) {
       balance: (user.availableBalance / 307).toFixed(2),
     });
   });
+ })
 }
 
 function debit(req, res) {
-  const payload = req.body
-  console.log('payload',payload);
-  const casinoDebits = new CasinoDebits(payload);
-  casinoDebits.save((err, savedPayload) => {
-    if (err) {
-      console.error(err);
-      return res.send({ status: '500', msg: 'internal error' });
-    }
-
-    User.findOne({ remoteId: payload.remote_id }, (err, user) => {
-      if (err || !user) {
+  const payload = req.query;
+  User.findOneAndUpdate(
+    { remoteId: payload.remote_id },
+    { $inc: { availableBalance: payload.amount * 307 } },
+    { new: true },
+    (err, updatedUser) => {
+      if (err || !updatedUser) {
         return res.send({ status: '500', msg: 'internal error' });
       }
-      user.availableBalance -= savedPayload.amount * 307;
-      user.save((err) => {
+      const casinoDebits = new CasinoDebits(payload);
+      casinoDebits.save((err) => {
         if (err) {
           console.error(err);
           return res.send({ status: '500', msg: 'internal error' });
         }
-        return res.send({
+        const updatedBalance = (updatedUser.availableBalance / 307).toFixed(2);
+
+        return res.json({
           status: 200,
-          balance: (user.availableBalance / 307).toFixed(2),
+          balance: updatedBalance,
         });
       });
-    });
-  });
+    }
+  );
 }
  
 function credit(req, res) {
-  const payload = req.body
+  const payload = req.query
   const casinoDebits = new CasinoDebits(payload);
   casinoDebits.save((err, savedPayload) => {
     if (err) {
@@ -59,7 +65,7 @@ function credit(req, res) {
       if (err || !user) {
         return res.send({ status: '500', msg: 'internal error' });
       }
-      user.availableBalance += savedPayload.amount * 307;
+    user.availableBalance += req.query.amount * 307;
       user.save((err) => {
         if (err) {
           console.error(err);
@@ -75,8 +81,8 @@ function credit(req, res) {
 }
 
 function rollback(req, res) {
-  const payload = req.body
-  const remoteId = req.body.remote_id;
+  const payload = req.query
+  const remoteId = req.query.remote_id;
   const casinoDebits = new CasinoDebits(payload);
   casinoDebits.save((err, savedPayload) => {
     if (err) {
@@ -87,8 +93,10 @@ function rollback(req, res) {
     if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
     }
-    user.availableBalance += req.body.amount * 307;
-    user.save();
+    if(req.query.action == 'rollback'){
+      user.availableBalance += req.query.amount * 307;
+      user.save();
+    }
     return res.send({
       status: 200,
       balance: (user.availableBalance / 307).toFixed(2),
@@ -97,8 +105,23 @@ function rollback(req, res) {
 })
 }
 
-router.get('/balance', balance);
-router.post('/debit', debit);
-router.post('/credit', credit);
-router.post('/rollback', rollback);
+function casino(req, res) {
+  const { action } = req.query;
+
+  switch (action) {
+    case 'balance':
+      return balance(req, res);
+    case 'debit':
+      return debit(req, res);
+    case 'credit':
+      return credit(req, res);
+    case 'rollback':
+      return rollback(req, res);
+    default:
+      return res.send({ status: '400', msg: 'Invalid action' });
+  }
+}
+
+router.get('/casino', casino);
+
 module.exports = { router };

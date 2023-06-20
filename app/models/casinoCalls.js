@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 
 const casinoCallsSchema = new mongoose.Schema({
+  action: { type: String, required: false },
   callerId: { type: String, required: false },
   callerPassword: { type: String, required: false },
   callerPrefix: { type: String, required: false },
