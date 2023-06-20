@@ -80,5 +80,6 @@
   "dailyMarketsReports",
   "getCommissionReport",
   "sportsWiseCommissionReport",
-  "MarketWiseCommissionReport"
+  "MarketWiseCommissionReport",
+  "bookDetail2Report"
 ]
