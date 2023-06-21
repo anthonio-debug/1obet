@@ -25,7 +25,7 @@ function bookDetail2Report(req, res) {
   }
 
 
-  User.find({userId: req.query.userId})
+  User.find({userId: req.decoded.userId})
     .then((users) => {
       if (!users || users.length === 0) {
         return res.status(404).send({ message: 'No users found' });
@@ -81,6 +81,6 @@ function bookDetail2Report(req, res) {
     });
 }
 
-loginRouter.get('/bookDetail2Report',reportValidator.validate('dailyPLSportsWiseReport'), bookDetail2Report);
+loginRouter.get('/bookDetail2Report',reportValidator.validate('bookDetail2Report'), bookDetail2Report);
 
 module.exports = { loginRouter };

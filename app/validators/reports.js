@@ -68,5 +68,21 @@ module.exports.validate = (method) => {
           .withMessage('endDate must be string'),
       ];
     }
+    case 'bookDetail2Report': {
+      return [
+        query('userId', 'userId is required')
+          .optional()
+          .isInt()
+          .withMessage('userId must be a number'),
+        query('startDate', 'startDate is required')
+          .exists()
+          .isString()
+          .withMessage(' startDate must be string'),
+        query('endDate', 'endDate is required')
+          .exists()
+          .isString()
+          .withMessage('endDate must be string'),
+      ];
+    }
   }
 };
