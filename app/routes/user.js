@@ -562,8 +562,6 @@ function settlePLAccount(req, res) {
   }
   User.findOne({ 
     _id: req.body.id,
-    availableBalance:req.body.amount,
-    description:req.body.description
   }, (err, result) => {
     if (err || !result)
       return res.status(404).send({ message: "user not found" });
