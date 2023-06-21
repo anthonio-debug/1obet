@@ -140,8 +140,8 @@ async function placeBet(req, res) {
       console.log(`Match not found for sports ID ${marketId}`);
       return res.status(404).send({ message: `Match not found for sports ID ${marketId}` });
     }
-   // Check if the match has ended
 
+    // Check if the match has ended
     // need review 
     if (true == false &&  match.matchEnded) {
       console.log(`Match has already ended for sports ID ${marketId}`);
@@ -156,7 +156,6 @@ async function placeBet(req, res) {
       returnAmount = betAmount * betRate - betAmount;
       winningAmount = betAmount * betRate - betAmount;
       console.log('returnAmount',returnAmount);
-
       loosingAmount = req.body.betAmount;
       remainingAmount = (req.body.betAmount * req.body.betRate) - req.body.betAmount;
       console.log('remainingAmount',remainingAmount);
