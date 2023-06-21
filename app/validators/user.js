@@ -157,35 +157,35 @@ module.exports.validate = (method) => {
         }),
       ];
     }
-    case 'checkValidation': {
-      return [
-        verifySecureLogin,
-        check('userName').notEmpty().withMessage('userName is required'),
-        check('userName').custom(async (userName,
-          //  {req}
-            ) => {
-          // const userId = req.decoded.userId;
-          const user = await Users.findOne({ userName }).exec();
-          // if (user.createdBy != userId) {
-          //   return Promise.reject({message:'Username not available', status: 2});
-          // }
-          if (user == null) {
-            return Promise.reject({message:'user does not exists', status: 0});
-          }
-          return Promise.reject({message: 'User already exists', status: 1 });
-        }),
-      ];
-    } 
+    // case 'checkValidation': {
+    //   return [
+    //     verifySecureLogin,
+    //     check('userName').notEmpty().withMessage('userName is required'),
+    //     check('userName').custom(async (userName,
+    //       //  {req}
+    //         ) => {
+    //       // const userId = req.decoded.userId;
+    //       const user = await Users.findOne({ userName }).exec();
+    //       // if (user.createdBy != userId) {
+    //       //   return Promise.reject({message:'Username not available', status: 2});
+    //       // }
+    //       if (user == null) {
+    //         return Promise.reject({message:'user does not exists', status: 0});
+    //       }
+    //       return Promise.reject({message: 'User already exists', status: 1 });
+    //     }),
+    //   ];
+    // } 
     case 'settlePLAccount': {
       return [
         body('id', 'id is required')
           .exists()
           .isString()
           .withMessage('id must be string '),
-        body('availableBalance', 'availableBalance is required')
+        body('amount', 'amount is required')
           .exists()
           .isInt()
-          .withMessage('availableBalance must be number '),
+          .withMessage('amount must be number '),
         body('description', 'description is required')
           .exists()
           .isString()
