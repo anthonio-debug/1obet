@@ -10,7 +10,34 @@ const MarketType = require('../models/marketTypes');
 const Bets = require('../models/bets');
 const loginRouter = express.Router();
 
-function getDailyReport(req, res) {
+async function getAllChildrens(createdByIDs) {
+  const userIDs = [];
+  const queriedUserIDs = new Set(); // Keep track of queried user IDs
+
+  if (createdByIDs.length === 0) {
+    return userIDs;
+  }
+
+  const uniqueIDs = Array.from(new Set(createdByIDs)); // Remove duplicate IDs
+
+  const users = await User.find(
+    { createdBy: { $in: uniqueIDs } },
+    { userId: 1, userName: 1, createdBy: 1 }
+  ).lean();
+
+  for (const user of users) {
+    if (!queriedUserIDs.has(user.userId)) {
+      userIDs.push(user.userId);
+      queriedUserIDs.add(user.userId);
+    }
+  }
+
+  const subUserIDs = await getAllChildrens(userIDs);
+  userIDs.push(...subUserIDs);
+  return Array.from(new Set(userIDs)); // Ensure unique user IDs in the final array
+}
+
+async function getDailyReport(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
@@ -31,66 +58,145 @@ function getDailyReport(req, res) {
     };
   }
 
-  User.find(query, (err, users) => {
+  User.find(query, async (err, users) => {
     if (err || !users) {
       return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
     }
-    if (!users || users.length === 0) {
+    if (users.length === 0) {
       return res.status(404).send({ message: 'No users found' });
     }
 
     let createdByIDs = users.map((user) => user.userId);
-    createdByIDs.push(userId); // Include the logged-in user in the query
 
-    Deposits.find({ userId: { $in: createdByIDs }, ...depositsQuery }).exec(
-      (err, deposits) => {
+    const allUserIDs = await getAllChildrens(createdByIDs);
+    const combinedArray = [...allUserIDs, ...createdByIDs,userId];
+
+    Deposits.find({ userId: { $in: combinedArray },...depositsQuery }, (err, deposits) => {
+      if (err) {
+        return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+      }
+      if (!deposits || deposits.length === 0) {
+        return res.status(404).send({ message: 'No records found' });
+      }
+
+      // Retrieve user data for mapping
+      const userIds = [...new Set(deposits.map((deposit) => deposit.userId))];
+      User.find({ userId: { $in: userIds } }, 'userId userName', (err, users) => {
         if (err) {
           return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
         }
-        if (!deposits || deposits.length === 0) {
-          return res.status(404).send({ message: 'No records found' });
-        }
 
-        // Retrieve user data for mapping
-        const userIds = deposits.map((deposit) => deposit.userId);
-        User.find(
-          { userId: { $in: userIds } },
-          'userId userName',
-          (err, users) => {
-            if (err) {
-              return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-            }
+        // Map user data to deposits
+        const depositMap = {};
+        users.forEach((user) => {
+          depositMap[user.userId] = user.userName;
+        });
 
-            // Map user data to deposits
-            const depositMap = {};
-            users.forEach((user) => {
-              depositMap[user.userId] = user.userName;
-            });
-
-            const results = deposits.reduce((acc, deposit) => {
-              const existingUser = acc.find((user) => user.userId === deposit.userId);
-              if (existingUser) {
-                existingUser.amount += deposit.amount;
-              } else {
-                acc.push({
-                  userId: deposit.userId,
-                  userName: depositMap[deposit.userId],
-                  amount: deposit.amount,
-                });
-              }
-              return acc;
-            }, []);
-
-            return res.send({
-              success: true,
-              message: 'daily pl records found',
-              results: results,
+        const results = deposits.reduce((acc, deposit) => {
+          const existingUser = acc.find((user) => user.userId === deposit.userId);
+          if (existingUser) {
+            existingUser.amount += deposit.amount;
+          } else {
+            acc.push({
+              userId: deposit.userId,
+              userName: depositMap[deposit.userId],
+              amount: deposit.amount,
             });
           }
-        )
+          return acc;
+        }, []);
+
+        return res.send({
+          success: true,
+          message: 'daily pl records found',
+          results: results,
+        });
       });
+    });
   });
 }
+
+// function getDailyReport(req, res) {
+//   const errors = validationResult(req);
+//   if (errors.errors.length !== 0) {
+//     return res.status(400).send({ errors: errors.errors });
+//   }
+
+//   let query = {};
+//   let depositsQuery = {};
+//   let userId = String(req.decoded.userId);
+
+//   if (req.decoded.role !== '5') {
+//     query.createdBy = userId;
+//   }
+
+//   if (req.query.endDate && req.query.startDate) {
+//     depositsQuery.createdAt = {
+//       $gte: req.query.startDate,
+//       $lte: req.query.endDate,
+//     };
+//   }
+
+//   User.find(query, (err, users) => {
+//     if (err || !users) {
+//       return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+//     }
+//     if (!users || users.length === 0) {
+//       return res.status(404).send({ message: 'No users found' });
+//     }
+
+//     let createdByIDs = users.map((user) => user.userId);
+//     createdByIDs.push(userId); // Include the logged-in user in the query
+
+//     Deposits.find({ userId: { $in: createdByIDs }, ...depositsQuery }).exec(
+//       (err, deposits) => {
+//         if (err) {
+//           return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+//         }
+//         if (!deposits || deposits.length === 0) {
+//           return res.status(404).send({ message: 'No records found' });
+//         }
+
+//         // Retrieve user data for mapping
+//         const userIds = deposits.map((deposit) => deposit.userId);
+//         User.find(
+//           { userId: { $in: userIds } },
+//           'userId userName',
+//           (err, users) => {
+//             if (err) {
+//               return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+//             }
+
+//             // Map user data to deposits
+//             const depositMap = {};
+//             users.forEach((user) => {
+//               depositMap[user.userId] = user.userName;
+//             });
+
+//             const results = deposits.reduce((acc, deposit) => {
+//               const existingUser = acc.find((user) => user.userId === deposit.userId);
+//               if (existingUser) {
+//                 existingUser.amount += deposit.amount;
+//               } else {
+//                 acc.push({
+//                   userId: deposit.userId,
+//                   userName: depositMap[deposit.userId],
+//                   amount: deposit.amount,
+//                 });
+//               }
+//               return acc;
+//             }, []);
+
+//             return res.send({
+//               success: true,
+//               message: 'daily pl records found',
+//               results: results,
+//             });
+//           }
+//         )
+//       });
+//   });
+// }
 
 function dailySportsWiseReport(req, res) {
   const errors = validationResult(req);
