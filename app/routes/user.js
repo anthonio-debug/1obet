@@ -562,13 +562,16 @@ function settlePLAccount(req, res) {
   }
   User.findOne({ 
     _id: req.body.id,
-    availableBalance:req.body.availableBalance,
+    availableBalance:req.body.amount,
     description:req.body.description
   }, (err, result) => {
     if (err || !result)
       return res.status(404).send({ message: "user not found" });
-      result.availableBalance -= req.body.availableBalance
-      result.balance -= req.body.availableBalance
+      if(req.body.amount > result.availableBalance ) {
+        return res.status(404).send(`Max amount to transfer: ${result.availableBalance}`)
+      }
+      result.availableBalance -= req.body.amount
+      result.balance -= req.body.amount
       result.save()
     return res.send({
       success: true,
@@ -589,7 +592,7 @@ function getSettlement(req, res) {
       return res.send({
       success: true,
       message: "user settlement getting successfully",
-      results: `Max amount to transfer: ${result.availableBalance}`
+      results: result.availableBalance
     });
   });
 }
