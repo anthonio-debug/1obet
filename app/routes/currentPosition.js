@@ -10,7 +10,10 @@ function getCurrentPosition(req, res) {
     if (errors.errors.length !== 0) {
       return res.status(400).send({ errors: errors.errors });
     }
-    
+    // User.find({createdBy:String(req.decoded.userId)},(err,users) => {
+    //   if(err||!users) return res.send({ message:'user not found' })
+    // const createdByIDs = users.map(userId==users.userId)
+    // })
     const userId = req.query.userId;
     const marketId = req.query.marketId;
     Deposits.find({ userId: userId, marketId: marketId, }, { _id: 0, amount: 1, createdAt:1 })
