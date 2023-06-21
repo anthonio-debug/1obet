@@ -119,8 +119,8 @@ app.use('/api', require('./app/routes/currentPosition').loginRouter);
 
 // LISTEN HERE
 // Create HTTPs server.
-var server = https.createServer(option, app);
-server.listen(config.PORT, (err) => {
+// var server = https.createServer(option, app);
+app.listen(config.PORT, (err) => {
   if (err) throw new Error(err);
   console.log(`Server is listening on port ${config.PORT}`);
 });
