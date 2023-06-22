@@ -74,6 +74,7 @@ async function placeBet(req, res) {
     if (user.bettingAllowed == false) {
       return res.status(404).send({ message: 'Betting is not allowed for your account' });
     }
+    
     // default maxbetsize should be of that set by company but if the user set his own betsize then his
     // and we cannot place a bet of the amount that is greater than this maxbetsize
 
@@ -103,7 +104,6 @@ async function placeBet(req, res) {
       userId: { $in: [...parentUserIds] },
       isDeleted: false
     }).sort({role: -1});
-    // console.log('parentUser', parentUser);
 
     const blockedMarketPlaces = [];
     const blockedSubMarkets = [];
@@ -114,8 +114,9 @@ async function placeBet(req, res) {
       blockedSubMarkets.push(...obj.blockedSubMarkets);
       blockedSubMarketsByParent.push(...obj.blockedSubMarketsByParent);      
     });
-    const uniqueBlockedMarketPlaces = [...new Set(blockedMarketPlaces)];
-    const uniqueBlockedSubMarkets = [...new Set(blockedSubMarkets)];
+
+    const uniqueBlockedMarketPlaces       = [...new Set(blockedMarketPlaces)];
+    const uniqueBlockedSubMarkets         = [...new Set(blockedSubMarkets)];
     const uniqueBlockedSubMarketsByParent = [...new Set(blockedSubMarketsByParent)];
 
     console.log('uniqueBlockedMarketPlaces', uniqueBlockedMarketPlaces);
@@ -142,11 +143,13 @@ async function placeBet(req, res) {
     }
 
     // Check if the match has ended
+
     // need review 
     if (true == false &&  match.matchEnded) {
       console.log(`Match has already ended for sports ID ${marketId}`);
       return res.status(404).send({ message: `Match has already ended for sports ID ${marketId}` });
     }
+
     let  returnAmount = 0;
     let  winningAmount = 0;
     let  loosingAmount = 0;
