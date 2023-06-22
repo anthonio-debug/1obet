@@ -34,7 +34,7 @@ function getCommissionReport(req, res) {
 
   User.find(query, (err, users) => {
     if (err || !users) {
-      return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+      return res.status(404).send({ message: 'RETRIEVAL FAILED' });
     }
     if (!users || users.length === 0) {
       return res.status(404).send({ message: 'No users found' });
@@ -46,7 +46,7 @@ function getCommissionReport(req, res) {
       ...depositsQuery,
     }).exec((err, deposits) => {
       if (err) {
-        return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+        return res.status(404).send({ message: 'RETRIEVAL FAILED' });
       }
       if (!deposits || deposits.length === 0) {
         return res.status(404).send({ message: 'No records found' });
@@ -59,7 +59,7 @@ function getCommissionReport(req, res) {
         'userId userName',
         (err, users) => {
           if (err) {
-            return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+            return res.status(404).send({ message: 'RETRIEVAL FAILED' });
           }
 
           // Map user data to deposits
@@ -70,7 +70,7 @@ function getCommissionReport(req, res) {
 
           const results = deposits.reduce((acc, deposit) => {
             const existingUser = acc.find(
-              (user) => user.userId === deposit.commissionFrom
+              (user) => user.userId == deposit.commissionFrom
             );
             if (existingUser) {
               existingUser.amount += deposit.amount;
@@ -111,7 +111,7 @@ function sportsWiseCommissionReport(req, res) {
 
   User.find({ userId: req.query.userId })
     .then((users) => {
-      if (!users || users.length === 0) {
+      if (!users || users.length == 0) {
         return res.status(404).send({ message: 'No users found' });
       }
       Deposits.find({ commissionFrom: req.query.userId, ...depositsQuery })

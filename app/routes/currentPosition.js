@@ -33,9 +33,72 @@ function getCurrentPosition(req, res) {
               success: true,
               message: 'current position found',
               results: [{
-                Date: deposits[0].createdAt,
-                Event: bets[0].event,
-                Amount: totalAmount,
+                  "Soccer": [
+                      {
+                          "match": "Accrington v Peterborough / Match Odds",
+                          "amount": 0
+                      },
+                      {
+                          "match": "Alanyaspor v Galatasaray / Match Odds",
+                          "amount": 120274
+                      },
+                      {
+                          "match": "Blackpool v West Brom / Match Odds",
+                          "amount": 0
+                      },
+                      {
+                          "match": "Bragantino SP v Oriente Petrolero / Match Odds",
+                          "amount": 0
+                      }
+                  ],
+                  "Tennis": [
+                      {
+                          "match": "Albot v Coria / Match Odds",
+                          "amount": 50477
+                      },
+                      {
+                          "match": "Arnaldi v Munar / Match Odds",
+                          "amount": 403841
+                      }
+                  ],
+                  "Basketball": [
+                      {
+                          "match": "Lakers vs Celtics",
+                          "amount": 5
+                      },
+                      {
+                          "match": "Warriors vs Rockets",
+                          "amount": 2
+                      }
+                  ],
+                  "Cricket": [
+                      {
+                          "match": "Chennai Super Kings v Sunrisers Hyderabad / Match Odds",
+                          "amount": 0
+                      },
+                      {
+                          "match": "Delhi Capitals v Kolkata Knight Riders / Match Odds",
+                          "amount": 0
+                      }
+                  ],
+                  "Football": [
+                      {
+                          "match": "Manchester United vs Liverpool",
+                          "amount": 4
+                      },
+                      {
+                          "match": "Real Madrid vs Barcelona",
+                          "amount": 3
+                      },
+                      {
+                          "match": "Manchester United vs Liverpool",
+                          "amount": 4
+                      },
+                      {
+                          "match": "Real Madrid vs Barcelona",
+                          "amount": 3
+                      }
+                  ]
               }],
             };
   
