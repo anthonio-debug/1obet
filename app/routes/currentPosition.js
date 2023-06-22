@@ -6,10 +6,7 @@ const Bets = require('../models/bets');
 const loginRouter = express.Router();
 
 function getCurrentPosition(req, res) {
-    const errors = validationResult(req);
-    if (errors.errors.length !== 0) {
-      return res.status(400).send({ errors: errors.errors });
-    }
+
     // User.find({createdBy:String(req.decoded.userId)},(err,users) => {
     //   if(err||!users) return res.send({ message:'user not found' })
     // const createdByIDs = users.map(userId==users.userId)
