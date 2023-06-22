@@ -3,7 +3,7 @@ let Global = require('../global/settings');
 /**
  * [betSchema description]
  *  @status [ 1 active), 2 (settled), 3 (cancelled), 4 (voided)]
- * @type [ 0(back), 1 (lay) ]
+ *  @type [ 0(back), 1 (lay) ]
  */
 const betSchema = new mongoose.Schema({
   marketId: { type: String, required: true },

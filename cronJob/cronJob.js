@@ -115,23 +115,14 @@ async function handleLosingBet(req, bet) {
   let cash = new Cash({
     userId: userToUpdate.userId,
     description: bet.name,
+    betId: bet._id,
     createdBy: 0,
     amount: loosingAmount,
-    balance: lastMaxWithdraw
-      ? lastMaxWithdraw.balance - loosingAmount
-      : -loosingAmount,
-
-    availableBalance: lastMaxWithdraw
-      ? lastMaxWithdraw.availableBalance - loosingAmount
-      : -loosingAmount,
-
-    maxWithdraw: lastMaxWithdraw
-      ? lastMaxWithdraw.maxWithdraw + loosingAmount
-      : loosingAmount,
+    balance: lastMaxWithdraw ? lastMaxWithdraw.balance - loosingAmount : -loosingAmount,
+    availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - loosingAmount : -loosingAmount,
+    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + loosingAmount : loosingAmount,
     cashOrCredit: "Bet",
-    cash: lastMaxWithdraw
-      ? lastMaxWithdraw.cash - loosingAmount
-      : -loosingAmount,
+    cash: lastMaxWithdraw ? lastMaxWithdraw.cash - loosingAmount : -loosingAmount,
     marketId: bet.marketId,
   });
   await cash.save();
@@ -158,6 +149,7 @@ async function handleLosingBet(req, bet) {
     user["commission"] = current - prev;
     prev = current;
   });
+
   let commissionFrom = userToUpdate.userId;
 
   parentUser.forEach(async (user) => {
@@ -174,12 +166,12 @@ async function handleLosingBet(req, bet) {
     let cash = await new Cash({
       userId: user.userId,
       description: bet.name,
+      betId: bet._id,
       createdBy: 0,
       amount: (user.commission / 100) * TotalLoosingAmount,
       balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
       availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
       maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
-      cashOrCredit: "Bet",
       commissionFrom: commissionFrom,
       cashOrCredit: "Commission",
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
@@ -225,6 +217,7 @@ async function handleWinningBet(req, bet) {
   let cash = new Cash({
     userId: userToUpdate.userId,
     description: bet.name,
+    betId: bet._id,
     createdBy: 0,
     amount: TotalLoosingAmount + remainingAmount,
     balance: lastMaxWithdraw
@@ -285,6 +278,7 @@ async function handleWinningBet(req, bet) {
       availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
       maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
       cashOrCredit: "Bet",
+      betId: bet._id,
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
       marketId: bet.marketId,
     });
@@ -301,6 +295,7 @@ async function handleWinningBet(req, bet) {
       availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
       maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
       cashOrCredit: "Commission",
+      betId: bet._id,
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
       marketId: bet.marketId,
     });
