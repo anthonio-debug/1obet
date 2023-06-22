@@ -40,9 +40,7 @@ function getCommissionReport(req, res) {
     }
 
     let createdByIDs = users.map((user) => user.userId);
-    createdByIDs.push(userId); // Include the logged-in user in the query
-
-    Deposits.find({ userId: { $in: createdByIDs }, ...depositsQuery }).exec(
+    Deposits.find({ commissionFrom: { $in: createdByIDs }, ...depositsQuery }).exec(
       (err, deposits) => {
         if (err) {
           return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
@@ -52,7 +50,7 @@ function getCommissionReport(req, res) {
         }
 
         // Retrieve user data for mapping
-        const userIds = deposits.map((deposit) => deposit.userId);
+        const userIds = deposits.map((deposit) => deposit.commissionFrom);
         User.find(
           { userId: { $in: userIds } },
           'userId userName',
@@ -68,13 +66,13 @@ function getCommissionReport(req, res) {
             });
 
             const results = deposits.reduce((acc, deposit) => {
-              const existingUser = acc.find((user) => user.userId === deposit.userId);
+              const existingUser = acc.find((user) => user.userId === deposit.commissionFrom);
               if (existingUser) {
                 existingUser.amount += deposit.amount;
               } else {
                 acc.push({
-                  userId: deposit.userId,
-                  userName: depositMap[deposit.userId],
+                  userId: deposit.commissionFrom,
+                  userName: depositMap[deposit.commissionFrom],
                   amount: deposit.amount,
                 });
               }
@@ -111,11 +109,8 @@ function sportsWiseCommissionReport(req, res) {
     .then((users) => {
       if (!users || users.length === 0) {
         return res.status(404).send({ message: 'No users found' });
-      }
-      const userIds = users.map((user) => user.userId);
-
-
-      Deposits.find({ userId: { $in: userIds },  ...depositsQuery })
+      }     
+      Deposits.find({ commissionFrom: req.query.userId,  ...depositsQuery })
         .exec()
         .then((deposits) => {
           if (!deposits || deposits.length === 0) {
@@ -182,14 +177,14 @@ function MarketWiseCommissionReport(req, res) {
 
   const userId = req.query.userId;
   const marketId = req.query.marketId;
-  Deposits.find({ userId: userId, marketId: marketId, ...depositsQuery }, { _id: 0, amount: 1, createdAt:1 })
+  Deposits.find({ commissionFrom: userId, marketId: marketId, ...depositsQuery }, { _id: 0, amount: 1, createdAt:1 })
     .exec()
     .then((deposits) => {
       if (!deposits || deposits.length === 0) {
         return res.status(404).send({ message: 'No deposit records found' });
       }
 
-      Bets.find({ userId: userId, marketId: marketId }, { _id: 0, event: 1, createdAt: 1 })
+      Bets.find({ marketId: marketId }, { _id: 0, event: 1, createdAt: 1 })
         .exec()
         .then((bets) => {
           if (!bets || bets.length === 0) {
