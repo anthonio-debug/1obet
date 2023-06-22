@@ -17,7 +17,8 @@ let depositsSchema = new Schema({
   cashOrCredit: { type: String },
   cash: { type : Number },
   marketId : { type : String },
-  commissionFrom: { type: Number }
+  commissionFrom: { type: Number },
+  betId: { type: String }
 });
 
 depositsSchema.plugin(Global.aggregatePaginate);
