@@ -19,6 +19,7 @@ function getCommissionReport(req, res) {
 
   let query = {};
   let depositsQuery = {};
+  depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
   let userId = String(req.decoded.userId);
 
   if (req.decoded.role !== '5') {
@@ -101,7 +102,7 @@ function sportsWiseCommissionReport(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   let depositsQuery = {};
-
+  depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
   if (req.query.endDate && req.query.startDate) {
     depositsQuery.createdAt = {
       $gte: req.query.startDate,
@@ -170,7 +171,7 @@ function MarketWiseCommissionReport(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   let depositsQuery = {};
-
+  depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
   if (req.query.endDate && req.query.startDate) {
     depositsQuery.createdAt = {
       $gte: req.query.startDate,
@@ -243,7 +244,7 @@ function MarketWiseCommissionReport(req, res) {
               console.log('results', results);
               const response = {
                 success: true,
-                message: 'Daily PL Markets Reports found',
+                message: 'Daily Commission Wise Markets Reports found',
                 results: results,
               };
 

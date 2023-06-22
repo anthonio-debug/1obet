@@ -9,6 +9,7 @@ const Deposits = require('../models/deposits');
 const MarketType = require('../models/marketTypes');
 const Bets = require('../models/bets');
 const loginRouter = express.Router();
+const cricketMatch = require('../models/cricketMatches');
 
 function getDailyPLReport(req, res) {
   const errors = validationResult(req);
@@ -18,6 +19,7 @@ function getDailyPLReport(req, res) {
 
   let query = {};
   let depositsQuery = {};
+  depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
   let userId = String(req.decoded.userId);
 
   if (req.decoded.role !== '5') {
@@ -98,7 +100,7 @@ function dailyPLSportsWiseReport(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   let depositsQuery = {};
-
+  depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
   if (req.query.endDate && req.query.startDate) {
     depositsQuery.createdAt = {
       $gte: req.query.startDate,
@@ -171,7 +173,7 @@ function dailyPlMarketsReports(req, res) {
 
 
   let depositsQuery = {};
-
+  depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
   if (req.query.endDate && req.query.startDate) {
     depositsQuery.createdAt = {
       $gte: req.query.startDate,
@@ -189,34 +191,82 @@ function dailyPlMarketsReports(req, res) {
         return res.status(404).send({ message: 'No deposit records found' });
       }
 
-      Bets.find({ userId: userId, marketId: marketId }, { _id: 0, event: 1, createdAt: 1 })
+      Bets.find({ userId: userId, marketId: marketId }, { _id: 0, event: 1, createdAt: 1,betId: 1  })
         .exec()
         .then((bets) => {
           if (!bets || bets.length === 0) {
             return res.status(404).send({ message: 'No bet records found' });
           }
-
-          const totalAmount = deposits.reduce((sum, deposit) => sum + deposit.amount, 0);
-
-          const response = {
-            success: true,
-            message: 'Daily PL Markets Reports found',
-            results: [{
-              Date: deposits[0].createdAt,
-              Event: bets[0].event,
-              Amount: totalAmount,
-            }],
-          };
-
-          return res.send(response);
-        })
-        .catch((err) => {
-          return res.status(404).send({ message: 'Error retrieving bet records' });
-        });
-    })
-    .catch((err) => {
-      return res.status(404).send({ message: 'Error retrieving deposit records' });
-    });
+          const betIds = deposits.map((deposit) => deposit.betId);
+          Bets.find({ _id: { $in: betIds }, marketId: marketId }, { _id: 1, event: 1, createdAt: 1, matchId: 1 })
+          .exec()
+          .then((bets) => {
+            if (!bets || bets.length === 0) {
+              return res.status(404).send({ message: 'No bet records found' });
+            }
+            const matchIds = bets.map((bet) => bet.matchId);
+            cricketMatch
+              .find({ id: { $in: matchIds } }, { id: 1, name: 1 })
+              .exec()
+              .then((matches) => {
+                if (!matches || matches.length === 0) {
+                  return res.status(404).send({ message: 'No match records found' });
+                }
+                const matchAmounts = {};
+                // Calculate total amount per match by grouping deposits
+                deposits.forEach((deposit) => {
+                  const bet = bets.find((bet) => bet._id == deposit.betId);
+                  console.log('bet', bet);
+                  if (bet) {
+                    const match = matches.find(
+                      (match) => match.id == bet.matchId
+                    );
+                    console.log('match', match);
+                    if (match) {
+                      if (!matchAmounts[match.id]) {
+                        matchAmounts[match.id] = {
+                          matchName: match.name,
+                          amount: deposit.amount,
+                        };
+                      } else {
+                        matchAmounts[match.id].amount += deposit.amount;
+                      }
+                    }
+                  }
+                });
+  
+                // Sum up the amounts for bets on the same match
+                const results = Object.values(matchAmounts).map(
+                  (matchAmount) => ({
+                    Date: deposits[0].createdAt,
+                    Event: matchAmount.matchName,
+                    Amount: matchAmount.amount,
+                  })
+                );
+                console.log('results', results);
+                const response = {
+                  success: true,
+                  message: 'Daily Markets Reports found',
+                  results: results,
+                };
+  
+                return res.send(response);
+              })
+              .catch((err) => {
+                console.log('Error retrieving match records:', err);
+                return res.status(404).send({ message: 'Error retrieving match records' });
+              });
+          })
+          .catch((err) => {
+            console.log('Error retrieving bet records:', err);
+            return res.status(404).send({ message: 'Error retrieving bet records' });
+          });
+      })
+      .catch((err) => {
+        console.log('Error retrieving deposit records:', err);
+        return res.status(404).send({ message: 'Error retrieving deposit records' });
+      });
+  })
 }
 
 loginRouter.get('/getDailyPLReport',reportValidator.validate('getDailyPLReport'), getDailyPLReport);
