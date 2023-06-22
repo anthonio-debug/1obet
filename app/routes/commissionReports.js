@@ -8,6 +8,7 @@ const reportValidator = require('../validators/reports');
 const Deposits = require('../models/deposits');
 const MarketType = require('../models/marketTypes');
 const Bets = require('../models/bets');
+const cricketMatch = require('../models/cricketMatches');
 const loginRouter = express.Router();
 
 function getCommissionReport(req, res) {
@@ -40,53 +41,57 @@ function getCommissionReport(req, res) {
     }
 
     let createdByIDs = users.map((user) => user.userId);
-    Deposits.find({ commissionFrom: { $in: createdByIDs }, ...depositsQuery }).exec(
-      (err, deposits) => {
-        if (err) {
-          return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-        }
-        if (!deposits || deposits.length === 0) {
-          return res.status(404).send({ message: 'No records found' });
-        }
+    Deposits.find({
+      commissionFrom: { $in: createdByIDs },
+      ...depositsQuery,
+    }).exec((err, deposits) => {
+      if (err) {
+        return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
+      }
+      if (!deposits || deposits.length === 0) {
+        return res.status(404).send({ message: 'No records found' });
+      }
 
-        // Retrieve user data for mapping
-        const userIds = deposits.map((deposit) => deposit.commissionFrom);
-        User.find(
-          { userId: { $in: userIds } },
-          'userId userName',
-          (err, users) => {
-            if (err) {
-              return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-            }
-
-            // Map user data to deposits
-            const depositMap = {};
-            users.forEach((user) => {
-              depositMap[user.userId] = user.userName;
-            });
-
-            const results = deposits.reduce((acc, deposit) => {
-              const existingUser = acc.find((user) => user.userId === deposit.commissionFrom);
-              if (existingUser) {
-                existingUser.amount += deposit.amount;
-              } else {
-                acc.push({
-                  userId: deposit.commissionFrom,
-                  userName: depositMap[deposit.commissionFrom],
-                  amount: deposit.amount,
-                });
-              }
-              return acc;
-            }, []);
-
-            return res.send({
-              success: true,
-              message: 'daily pl records found',
-              results: results,
-            });
+      // Retrieve user data for mapping
+      const userIds = deposits.map((deposit) => deposit.commissionFrom);
+      User.find(
+        { userId: { $in: userIds } },
+        'userId userName',
+        (err, users) => {
+          if (err) {
+            return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
           }
-        )
-      });
+
+          // Map user data to deposits
+          const depositMap = {};
+          users.forEach((user) => {
+            depositMap[user.userId] = user.userName;
+          });
+
+          const results = deposits.reduce((acc, deposit) => {
+            const existingUser = acc.find(
+              (user) => user.userId === deposit.commissionFrom
+            );
+            if (existingUser) {
+              existingUser.amount += deposit.amount;
+            } else {
+              acc.push({
+                userId: deposit.commissionFrom,
+                userName: depositMap[deposit.commissionFrom],
+                amount: deposit.amount,
+              });
+            }
+            return acc;
+          }, []);
+
+          return res.send({
+            success: true,
+            message: 'daily pl records found',
+            results: results,
+          });
+        }
+      );
+    });
   });
 }
 
@@ -104,13 +109,12 @@ function sportsWiseCommissionReport(req, res) {
     };
   }
 
-
-  User.find({userId: req.query.userId})
+  User.find({ userId: req.query.userId })
     .then((users) => {
       if (!users || users.length === 0) {
         return res.status(404).send({ message: 'No users found' });
-      }     
-      Deposits.find({ commissionFrom: req.query.userId,  ...depositsQuery })
+      }
+      Deposits.find({ commissionFrom: req.query.userId, ...depositsQuery })
         .exec()
         .then((deposits) => {
           if (!deposits || deposits.length === 0) {
@@ -127,7 +131,9 @@ function sportsWiseCommissionReport(req, res) {
               });
 
               const results = deposits.reduce((acc, deposit) => {
-                const existingMarket = acc.find((item) => item.name === marketMap[deposit.marketId]);
+                const existingMarket = acc.find(
+                  (item) => item.name === marketMap[deposit.marketId]
+                );
                 if (existingMarket) {
                   existingMarket.amount += deposit.amount;
                 } else {
@@ -163,8 +169,6 @@ function MarketWiseCommissionReport(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-
-
   let depositsQuery = {};
 
   if (req.query.endDate && req.query.startDate) {
@@ -174,48 +178,110 @@ function MarketWiseCommissionReport(req, res) {
     };
   }
 
-
   const userId = req.query.userId;
   const marketId = req.query.marketId;
-  Deposits.find({ commissionFrom: userId, marketId: marketId, ...depositsQuery }, { _id: 0, amount: 1, createdAt:1 })
+  Deposits.find(
+    { commissionFrom: userId, marketId: marketId, ...depositsQuery },
+    { _id: 0, amount: 1, createdAt: 1, betId: 1 }
+  )
     .exec()
     .then((deposits) => {
       if (!deposits || deposits.length === 0) {
         return res.status(404).send({ message: 'No deposit records found' });
       }
-
-      Bets.find({ marketId: marketId }, { _id: 0, event: 1, createdAt: 1 })
+      const betIds = deposits.map((deposit) => deposit.betId);
+      Bets.find(
+        { _id: { $in: betIds }, marketId: marketId },
+        { _id: 1, event: 1, createdAt: 1, matchId: 1 }
+      )
         .exec()
         .then((bets) => {
           if (!bets || bets.length === 0) {
             return res.status(404).send({ message: 'No bet records found' });
           }
+          const matchIds = bets.map((bet) => bet.matchId);
+          cricketMatch
+            .find({ id: { $in: matchIds } }, { id: 1, name: 1 })
+            .exec()
+            .then((matches) => {
+              if (!matches || matches.length === 0) {
+                return res
+                  .status(404)
+                  .send({ message: 'No match records found' });
+              }
+              const matchAmounts = {};
+              // Calculate total amount per match by grouping deposits
+              deposits.forEach((deposit) => {
+                const bet = bets.find((bet) => bet._id == deposit.betId);
+                console.log('bet', bet);
+                if (bet) {
+                  const match = matches.find(
+                    (match) => match.id == bet.matchId
+                  );
+                  console.log('match', match);
+                  if (match) {
+                    if (!matchAmounts[match.id]) {
+                      matchAmounts[match.id] = {
+                        matchName: match.name,
+                        amount: deposit.amount,
+                      };
+                    } else {
+                      matchAmounts[match.id].amount += deposit.amount;
+                    }
+                  }
+                }
+              });
 
-          const totalAmount = deposits.reduce((sum, deposit) => sum + deposit.amount, 0);
+              // Sum up the amounts for bets on the same match
+              const results = Object.values(matchAmounts).map(
+                (matchAmount) => ({
+                  Date: deposits[0].createdAt,
+                  Event: matchAmount.matchName,
+                  Amount: matchAmount.amount,
+                })
+              );
+              console.log('results', results);
+              const response = {
+                success: true,
+                message: 'Daily PL Markets Reports found',
+                results: results,
+              };
 
-          const response = {
-            success: true,
-            message: 'Daily PL Markets Reports found',
-            results: [{
-              Date: deposits[0].createdAt,
-              Event: bets[0].event,
-              Amount: totalAmount,
-            }],
-          };
-
-          return res.send(response);
+              return res.send(response);
+            })
+            .catch((err) => {
+              return res
+                .status(404)
+                .send({ message: 'Error retrieving match records' });
+            });
         })
         .catch((err) => {
-          return res.status(404).send({ message: 'Error retrieving bet records' });
+          return res
+            .status(404)
+            .send({ message: 'Error retrieving bet records' });
         });
     })
     .catch((err) => {
-      return res.status(404).send({ message: 'Error retrieving deposit records' });
+      return res
+        .status(404)
+        .send({ message: 'Error retrieving deposit records' });
     });
 }
 
-loginRouter.get('/getCommissionReport',reportValidator.validate('getDailyPLReport'), getCommissionReport);
-loginRouter.get('/sportsWiseCommissionReport',reportValidator.validate('dailyPLSportsWiseReport'), sportsWiseCommissionReport);
-loginRouter.get('/MarketWiseCommissionReport',reportValidator.validate('dailyPlMarketsReports'), MarketWiseCommissionReport);
+loginRouter.get(
+  '/getCommissionReport',
+  reportValidator.validate('getDailyPLReport'),
+  getCommissionReport
+);
+loginRouter.get(
+  '/sportsWiseCommissionReport',
+  reportValidator.validate('dailyPLSportsWiseReport'),
+  sportsWiseCommissionReport
+);
+loginRouter.get(
+  '/MarketWiseCommissionReport',
+  reportValidator.validate('dailyPlMarketsReports'),
+  MarketWiseCommissionReport
+);
 
 module.exports = { loginRouter };
