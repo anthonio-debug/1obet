@@ -86,5 +86,6 @@
   "getSettlement",
   "getCurrentPosition",
   "updateFakeBet", 
-  "countFakeBets"
+  "countFakeBets",
+  "profitLossReports"
 ]

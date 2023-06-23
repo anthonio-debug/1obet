@@ -179,7 +179,7 @@ function getFinalReport(req, res) {
   let query = {};
 
   if (req.decoded.login.role !== '5') {
-    query.createdBy = String(req.decoded.userId)
+    query.createdBy = String(req.decoded.userId);
   }
 
   User.aggregate(
@@ -314,6 +314,78 @@ function getClientList(req, res) {
     });
 }
 
+function profitLossReports(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+
+  let depositsQuery = {};
+  depositsQuery.cashOrCredit = 'Bet';
+  if (req.query.endDate && req.query.startDate) {
+    depositsQuery.createdAt = {
+      $gte: req.query.startDate,
+      $lte: req.query.endDate,
+    };
+  }
+
+  const userId = req.decoded.userId;
+
+  Deposits.aggregate([
+    { $match: { userId: userId, ...depositsQuery } },
+    {
+      $lookup: {
+        from: 'markettypes',
+        localField: 'marketId',
+        foreignField: 'marketId',
+        as: 'marketInfo',
+      },
+    },
+    { $unwind: '$marketInfo' },
+    {
+      $group: {
+        _id: {
+          date: '$createdAt',
+          market: '$marketInfo.name',
+          marketId: '$marketId',
+        },
+        totalAmount: { $sum: '$amount' },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        Date: '$_id.date',
+        Market: '$_id.market',
+        MarketId: '$_id.marketId',
+        Amount: '$totalAmount',
+      },
+    },
+  ])
+    .exec()
+    .then((results) => {
+      if (!results || results.length === 0) {
+        return res
+          .status(404)
+          .send({ message: 'No profit/loss records found' });
+      }
+
+      const response = {
+        success: true,
+        message: 'Profit/Loss reports found',
+        results: results,
+      };
+
+      return res.send(response);
+    })
+    .catch((err) => {
+      console.log('Error retrieving profit/loss records:', err);
+      return res
+        .status(404)
+        .send({ message: 'Error retrieving profit/loss records' });
+    });
+}
+
 function GetAllCashCreditLedger(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -437,5 +509,6 @@ loginRouter.post('/GetAllCashCreditLedger', GetAllCashCreditLedger);
 loginRouter.post('/GetAllCashDepositLedger', GetAllCashDepositLedger);
 
 loginRouter.get('/getCLientList', getClientList);
+loginRouter.get('/profitLossReports', profitLossReports);
 
 module.exports = { loginRouter };
