@@ -239,11 +239,11 @@ function getUserBets(req, res) {
   var limit = config.pageSize;
   if (req.body.numRecords) {
     if (isNaN(req.body.numRecords))
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+      return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
     if (req.body.numRecords < 0)
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+      return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
     if (req.body.numRecords > 100)
-      return res.status(404).send({
+      return res.status(400).send({
         message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100',
       });
     limit = Number(req.body.numRecords);
@@ -253,17 +253,23 @@ function getUserBets(req, res) {
     sort = Number(req.body.sort);
   }
   if (req.query.page) {
-    page = Number(req.body.page);
+    page = Number(req.query.page);
   }
-  if (req.body.endDate && req.body.startDate) {
+  if (req.body.startDate && req.body.endDate) {
+    const startTimestamp = new Date(req.body.startDate).getTime() / 1000;
+    const endTimestamp = new Date(req.body.endDate).getTime() / 1000;
     query.createdAt = {
-      $gte: req.body.startDate,
-      $lte: req.body.endDate,
+      $gte: startTimestamp,
+      $lte: endTimestamp,
     };
   }
-  if (req.body.userId) {
+  
+  if (req.decoded.role !== '5') {
     query.userId = req.body.userId;
+  } else if (req.decoded.role == '5') {
+    query.userId = req.decoded.userId;
   }
+
   if (req.body.status) {
     query.status = req.body.status;
   }
@@ -289,19 +295,26 @@ function getUserBets(req, res) {
       },
     ];
   }
-  Bets.paginate(
-    query,
-    { page: page, sort: { [sortValue]: sort }, limit: limit },
-    (err, result) => {
-      if (err || !result)
-        return res.status(404).send({ message: 'bets not found' });
-      return res.send({
-        success: true,
-        message: 'bets record found',
-        results: result,
-      });
+
+  User.findOne({ userId: query.userId }, (err, user) => {
+    if (err || !user) {
+      return res.status(404).send({ message: 'User not found' });
     }
-  );
+
+    Bets.paginate(
+      query,
+      { page: page, sort: { [sortValue]: sort }, limit: limit },
+      (err, result) => {
+        if (err || !result)
+          return res.status(404).send({ message: 'Bets not found' });
+        return res.send({
+          success: true,
+          message: 'Bets record found',
+          results: result,
+        });
+      }
+    );
+  });
 }
 
 function betFunds(req, res) {
