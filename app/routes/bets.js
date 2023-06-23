@@ -465,52 +465,6 @@ function getRandomSubset(arr, size) {
   return shuffled.slice(0, size);
 }
 
-
-async function FakeBetsList(req, res) {
-  try {
-    Bets.find(
-      {isFake: 1},
-      (err, result) => {
-        if (err || !result){
-          return res.status(404).send({ message: 'bets rate not found' });
-        }
-        return res.send({
-          success: true,
-          message: 'Bets List',
-          results: result,
-        });
-      }
-    );
-  }catch (error) {
-    return res.send({
-      success: false,
-      message: 'Some thing went wrong',
-      results: error,
-    });
-  }
-}
-
-
-
-async function deleteFakeBet(req, res) {
-  try {
-    const betId = req.params.id;
-    const deletedBet = await Bets.findByIdAndDelete(betId);
-    if (!deletedBet) {
-      return res.status(404).json({ message: 'Bet not found' });
-    }
-
-    return res.status(200).send({ message: 'Bet deleted successfully', success: true });
-
-  } catch (error) {
-    return res.send({
-      success: false,
-      message: 'Some thing went wrong',
-      results: error,
-    });
-  }
-}
-
 async function getAllUserIDs(createdByIDs) {
   const userIDs = [];
 
@@ -597,6 +551,98 @@ async function getMatchedBets(req, res) {
   }
 }
 
+async function FakeBetsList(req, res) {
+  try {
+    Bets.find(
+      {isFake: 1},
+      (err, result) => {
+        if (err || !result){
+          return res.status(404).send({ message: 'bets rate not found' });
+        }
+        return res.send({
+          success: true,
+          message: 'Bets List',
+          results: result,
+        });
+      }
+    );
+  }catch (error) {
+    return res.send({
+      success: false,
+      message: 'Some thing went wrong',
+      results: error,
+    });
+  }
+}
+
+async function updateFakeBet(req, res) {
+  try {
+    const betId = req.params.id;
+    const updateBet = await Bets.findOneAndUpdate(
+      { _id: betId },
+      {
+        $set: {
+          isFake: 0,
+        }
+      }
+    );
+
+    if (!updateBet) {
+      return res.status(404).json({ message: 'Bet not found' });
+    }
+
+    return res.status(200).send({ message: 'Bet successfully updated', success: true });
+
+  } catch (error) {
+    return res.send({
+      success: false,
+      message: 'Some thing went wrong',
+      results: error,
+    });
+  }
+}
+
+async function deleteFakeBet(req, res) {
+  try {
+    const betId = req.params.id;
+    const deletedBet = await Bets.findByIdAndDelete(betId);
+    if (!deletedBet) {
+      return res.status(404).json({ message: 'Bet not found' });
+    }
+
+    return res.status(200).send({ message: 'Bet deleted successfully', success: true });
+
+  } catch (error) {
+    return res.send({
+      success: false,
+      message: 'Some thing went wrong',
+      results: error,
+    });
+  }
+}
+
+async function countFakeBet(req, res) {
+  try {
+    const fakeCount = await Bets.countDocuments(
+      {isFake: 1}
+    );
+
+    return res.send({
+      success: false,
+      message: 'Some thing went wrong',
+      results: {
+        totalFakeBets : fakeCount
+      },
+    });
+  }catch (error) {
+    return res.send({
+      success: false,
+      message: 'Some thing went wrong',
+      results: error,
+    });
+  }
+}
+
 
 loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
 loginRouter.post('/getUserBets', getUserBets);
@@ -606,5 +652,10 @@ loginRouter.get('/getBetRates/:id', getBetRates);
 loginRouter.get('/getMatchedBets', getMatchedBets);
 loginRouter.get('/FakeBetsList', FakeBetsList);
 loginRouter.delete('/deleteFakeBet/:id', deleteFakeBet);
+loginRouter.put('/updateFakeBet/:id', updateFakeBet);
+loginRouter.get('/countFakeBets', countFakeBet);
+
+
+
 
 module.exports = { loginRouter, getParents };

@@ -84,5 +84,7 @@
   "bookDetail2Report",
   "settlePLAccount",
   "getSettlement",
-  "getCurrentPosition"
+  "getCurrentPosition",
+  "updateFakeBet", 
+  "countFakeBets"
 ]
