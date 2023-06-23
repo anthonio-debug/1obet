@@ -14,6 +14,7 @@ const betValidator = require('../validators/bets');
 const maxAllowedBetSizes = require('../models/betLimits');
 const userBetSizes = require('../models/userBetSizes');
 const betRates = require('../models/betRate');
+const MarketType = require('../models/marketTypes');
 
 async function getParents(userId) {
   const parentUserIds = [];
@@ -307,10 +308,32 @@ function getUserBets(req, res) {
       (err, result) => {
         if (err || !result)
           return res.status(404).send({ message: 'Bets not found' });
-        return res.send({
-          success: true,
-          message: 'Bets record found',
-          results: result,
+
+        const marketIds = result.docs.map((bet) => bet.marketId);
+
+        MarketType.find({ marketId: { $in: marketIds } }, (err, markets) => {
+          if (err || !markets)
+            return res.status(404).send({ message: 'MarketTypes not found' });
+
+          const marketMap = new Map();
+          markets.forEach((market) => {
+            marketMap.set(market.marketId, market.name);
+          });
+
+          const betsWithMarketNames = result.docs.map((bet) => {
+            return {
+              ...bet.toObject(),
+              marketName: marketMap.get(bet.marketId),
+            };
+          });
+
+          result.docs = betsWithMarketNames;
+
+          return res.send({
+            success: true,
+            message: 'Bets record found',
+            results: result,
+          });
         });
       }
     );
