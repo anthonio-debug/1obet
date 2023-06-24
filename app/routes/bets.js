@@ -342,36 +342,67 @@ function getUserBets(req, res) {
 
 function betFunds(req, res) {
   const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
+  if (!errors.isEmpty()) {
+    return res.status(400).send({ errors: errors.array() });
   }
 
-  User.findOne({ userId: req.decoded.userId }, (err, user) => {
-    if (err || !user) {
-      return res.send({ message: 'User Not Found' });
-    }
-
-    let results;
-    if (req.decoded.role == '5') {
-      results = {
-        balance: user.balance,
-        liable: user.exposure,
-        credit: user.credit,
-        available: user.availableBalance,
-        activeBets: 3,
-      };
-    } else {
-      results = {
-        balance: 0,
-        liable: user.exposure,
-        credit: 0,
-        available: 0,
-        activeBets: 3,
-      };
-    }
-
-    return res.send({ message: 'Funds Record Found', results: results });
-  });
+  if (req.decoded.role !== '5') {
+    User.find({ createdBy: req.decoded.userId, role: '5' }, (err, users) => {
+      if (err ||!users) {
+        return res.status(404).send({ message: 'Error occurred while querying users.' });
+      }
+      
+      const userIds = users.map(user => user.userId);
+      
+      Bets.find({ userId: { $in: userIds } }, (err, bets) => {
+        if (err ||!bets) {
+          return res.status(404).send({ message: 'Error occurred in bets.' });
+        }
+        
+        const activeBets = bets.filter(bet => bet.status === 1).length;
+        
+        User.findOne({ userId: req.decoded.userId }, (err, user) => {
+          if (err || !user) {
+            return res.status(404).send({ message: 'User Not Found' });
+          }
+          
+          const results = {
+            balance: 0,
+            liable: user.exposure,
+            credit: 0,
+            available: 0,
+            activeBets: activeBets,
+          };
+          
+          return res.send({ message: 'Funds Record Found', results: results });
+        });
+      });
+    });
+  } else {
+    Bets.find({ userId: req.decoded.userId }, (err, bets) => {
+      if (err) {
+        return res.status(404).send({ message: 'Error occurred in bets.' });
+      }
+      
+      User.findOne({ userId: req.decoded.userId }, (err, user) => {
+        if (err || !user) {
+          return res.send({ message: 'User Not Found' });
+        }
+        
+        const activeBets = bets.filter(bet => bet.status === 1).length;
+        
+        const results = {
+          balance: user.balance,
+          liable: user.exposure,
+          credit: user.credit,
+          available: user.availableBalance,
+          activeBets: activeBets,
+        };
+        
+        return res.send({ message: 'Funds Record Found', results: results });
+      });
+    });
+  }
 }
 
 function createBetRates(req, res) {
