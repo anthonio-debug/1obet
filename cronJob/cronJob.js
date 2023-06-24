@@ -5,7 +5,6 @@ const CricketMatch = require("../app/models/cricketMatches");
 const User = require("../app/models/user");
 const Settings = require("../app/models/settings");
 const Cash = require("../app/models/deposits");
-const BetsTransaction = require("../app/models/betTransactions");
 const { getParents } = require("../app/routes/bets");
 let runningJob;
 
@@ -352,13 +351,6 @@ async function handleDrawBet(req, bet) {
     user.save();
   });
 
-  // Create and save BetsTransaction document
-  let betsTransaction = new BetsTransaction({
-    clientPL: userToUpdate.clientPL,
-    availableBalance: userToUpdate.availableBalance,
-    userId: userToUpdate.userId,
-  });
-  await betsTransaction.save();
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
 }
 
