@@ -26,7 +26,7 @@ const userSchema = new Schema({
   balance: { type: Number, default: 0, required: true },
   createdBy: { type: String, default: '0' },
   downLineShare: { type: Number, default: 0 },
-  bettingAllowed: { type: Boolean, default: false },
+  bettingAllowed: { type: Boolean, default: true },
   canSettlePL: { type: Boolean, default: true },
   updatedBy: { type: Number },
   updatedAt: { type: Number },
