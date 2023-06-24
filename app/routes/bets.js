@@ -257,8 +257,8 @@ function getUserBets(req, res) {
     page = Number(req.query.page);
   }
   if (req.body.startDate && req.body.endDate) {
-    const startTimestamp = new Date(req.body.startDate).getTime() / 1000;
-    const endTimestamp = new Date(req.body.endDate).getTime() / 1000;
+    const startTimestamp = new Date(req.body.startDate).getTime() ;
+    const endTimestamp = new Date(req.body.endDate).getTime() ;
     query.createdAt = {
       $gte: startTimestamp,
       $lte: endTimestamp,
