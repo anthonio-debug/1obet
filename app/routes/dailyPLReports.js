@@ -190,13 +190,6 @@ function dailyPlMarketsReports(req, res) {
       if (!deposits || deposits.length === 0) {
         return res.status(404).send({ message: 'No deposit records found' });
       }
-
-      Bets.find({ userId: userId, marketId: marketId }, { _id: 0, event: 1, createdAt: 1,betId: 1  })
-        .exec()
-        .then((bets) => {
-          if (!bets || bets.length === 0) {
-            return res.status(404).send({ message: 'No bet records found' });
-          }
           const betIds = deposits.map((deposit) => deposit.betId);
           Bets.find({ _id: { $in: betIds }, marketId: marketId }, { _id: 1, event: 1, createdAt: 1, matchId: 1 })
           .exec()
@@ -266,7 +259,6 @@ function dailyPlMarketsReports(req, res) {
         console.log('Error retrieving deposit records:', err);
         return res.status(404).send({ message: 'Error retrieving deposit records' });
       });
-  })
 }
 
 loginRouter.get('/getDailyPLReport',reportValidator.validate('getDailyPLReport'), getDailyPLReport);
