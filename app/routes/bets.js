@@ -367,10 +367,10 @@ function betFunds(req, res) {
           }
           
           const results = {
-            balance: 0,
+            balance: user.balance,
             liable: user.exposure,
-            credit: 0,
-            available: 0,
+            credit: user.credit,
+            available: user.availableBalance,
             activeBets: activeBets,
           };
           
