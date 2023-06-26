@@ -80,7 +80,7 @@ db.sidebarmenus.insertMany([
     link: "/bet-fair-games",
   },
   {
-    name: "All World Casino",
+    name: "120 British Casino",
     lightIcon: "https://1obet.com/assets/light-icons/royal-casino.png",
     darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
     marketId: "tyv234543-432453343423-53423d332",
@@ -224,7 +224,7 @@ db.sidebarmenus.insertMany([
     link: "/bet-fair-games",
   },
   {
-    name: "All World Casino",
+    name: "120 British Casino",
     lightIcon: "https://1obet.com/assets/light-icons/royal-casino.png",
     darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
     marketId: "tyv234543-432453343423-53423d332",
