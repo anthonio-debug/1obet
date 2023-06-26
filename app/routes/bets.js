@@ -240,11 +240,11 @@ function getUserBets(req, res) {
   var limit = config.pageSize;
   if (req.body.numRecords) {
     if (isNaN(req.body.numRecords))
-      return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
     if (req.body.numRecords < 0)
-      return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
     if (req.body.numRecords > 100)
-      return res.status(400).send({
+      return res.status(404).send({
         message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100',
       });
     limit = Number(req.body.numRecords);
@@ -253,8 +253,8 @@ function getUserBets(req, res) {
   if (req.body.sort) {
     sort = Number(req.body.sort);
   }
-  if (req.query.page) {
-    page = Number(req.query.page);
+  if (req.body.page) {
+    page = Number(req.body.page);
   }
   if (req.body.startDate && req.body.endDate) {
     const startTimestamp = new Date(req.body.startDate).getTime() / 1000;
@@ -264,7 +264,7 @@ function getUserBets(req, res) {
       $lte: endTimestamp,
     };
   }
-  
+   
   if (req.decoded.role !== '5') {
     query.userId = req.body.userId;
   } else if (req.decoded.role == '5') {
@@ -301,43 +301,20 @@ function getUserBets(req, res) {
     if (err || !user) {
       return res.status(404).send({ message: 'User not found' });
     }
-
-    Bets.paginate(
-      query,
-      { page: page, sort: { [sortValue]: sort }, limit: limit },
-      (err, result) => {
-        if (err || !result)
-          return res.status(404).send({ message: 'Bets not found' });
-
-        const marketIds = result.docs.map((bet) => bet.marketId);
-
-        MarketType.find({ marketId: { $in: marketIds } }, (err, markets) => {
-          if (err || !markets)
-            return res.status(404).send({ message: 'MarketTypes not found' });
-
-          const marketMap = new Map();
-          markets.forEach((market) => {
-            marketMap.set(market.marketId, market.name);
-          });
-
-          const betsWithMarketNames = result.docs.map((bet) => {
-            return {
-              ...bet.toObject(),
-              marketName: marketMap.get(bet.marketId),
-            };
-          });
-
-          result.docs = betsWithMarketNames;
-
-          return res.send({
-            success: true,
-            message: 'Bets record found',
-            results: result,
-          });
-        });
-      }
-    );
-  });
+  Bets.paginate(
+    query,
+    { page: page, sort: { [sortValue]: sort }, limit: limit },
+    (err, result) => {
+      if (err || !result)
+        return res.status(404).send({ message: 'bets not found' });
+      return res.send({
+        success: true,
+        message: 'bets record found',
+        results: result,
+      });
+    }
+  );
+});
 }
 
 function betFunds(req, res) {

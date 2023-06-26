@@ -73,7 +73,7 @@ async function getAllBets(marketId, matchId) {
 async function getEndedMatches() {
   try {
     sportsId = "38d3bc03-8a59-4551-85cf-a35298f75124";
-    id = "64458338-704e-4d0f-b4fa-6af920ab467d";
+    id = "648b28c825e2fe7ca23e55a4";
     const endedMatches = await CricketMatch.find({
       sportsId,
       id,
