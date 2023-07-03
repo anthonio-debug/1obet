@@ -74,7 +74,8 @@ async function registerUser(req, res) {
       var token = getNonExpiringToken(
         user.userId,
         req.decoded.userId,
-        req.body.role
+        req.body.role,
+        user.isActive
       );
       user.token = token;
       user.createdBy = req.decoded.userId;
@@ -257,11 +258,13 @@ function getNonExpiringToken(
   userId,
   createdBy,
   role,
+  isActive
 ) {
   const payload = {
     userId: userId,
     createdBy: createdBy,
     role: role,
+    isActive: isActive
     };
   var token = jwt.sign(payload, config.secret, {});
   return token;

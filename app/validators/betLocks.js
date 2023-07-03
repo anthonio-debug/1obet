@@ -32,10 +32,10 @@ module.exports.validate = (method) => {
           .optional()
           .isBoolean()
           .withMessage('Invalid value for betLockStatus'),
-        body('marketId', 'marketId is required')
-          .exists()
-          .isString()
-          .withMessage('marketId must be string'),
+        // body('marketId', 'marketId is required')
+        //   .exists()
+        //   .isString()
+        //   .withMessage('marketId must be string'),
       ];
     }
   }
