@@ -312,6 +312,8 @@ function getAllUsers(req, res) {
     query.userName = req.query.userName;
   }
   query.isDeleted = false;
+  // Exclude the currently logged-in user from the results
+  query.userId = { $ne: req.decoded.userId };
   User.paginate(
     query,
     { page: page, sort: { [sortValue]: sort }, limit: limit },
