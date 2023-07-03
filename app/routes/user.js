@@ -385,7 +385,11 @@ function updateUser(req, res) {
       updatedBy: req.decoded.userId,
       password: user.password,
     };
-
+    if (req.body.isActive == true) {
+      updateData.status = 1;
+    } else if(req.body.isActive == false){
+      updateData.status = 0;
+    }
     if (req.body.password && req.body.password !== '') {
       bcrypt.hash(req.body.password, config.saltRounds, (err, hash) => {
         if (err) {
