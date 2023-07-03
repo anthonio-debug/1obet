@@ -173,13 +173,13 @@ function login(req, res) {
     (err, user) => {
       if (err || !user)
         return res.status(404).send({ message: 'user not found' });
-      if (user.isActive == false || user.status == 0)
-        return res.status(404).send({ message: 'Account Inactive' });
       // check if user password is matched or not.
       bcrypt.compare(req.body.password, user.password, function (err, result) {
         if (err) return res.status(404).send({ message: 'incorrect password' });
         if (!result)
           return res.status(404).send({ message: 'incorrect password' });
+         if (user.isActive == false || user.status == 0)
+          return res.status(404).send({ message: 'Account Inactive' });
         var token = getNonExpiringToken(
           user.userId,
           user.createdBy,
@@ -274,6 +274,8 @@ function getAllUsers(req, res) {
   if(req.decoded.role == '5'){
     return res.status(404).send({message:'you are not allowed to do this'})
   }
+console.log('role',req.decoded.role);
+console.log('role2',req.decoded.login.role);
 
   let query = {};
 
@@ -303,10 +305,13 @@ function getAllUsers(req, res) {
   if (req.query.userId) {
     const userId = parseInt(req.query.userId);
     query.createdBy = userId;
-  } else if (req.decoded.login.role !== '5') {
+  } else if (req.decoded.login.role !== '0') {
     query.createdBy = req.decoded.userId;
   } else if (req.decoded.login.role == '5') {
     query.userId = null;
+  }
+  else if (req.decoded.login.role == '0') {
+    query.createdBy = req.decoded.login.role;
   }
   if (req.query.userName) {
     query.userName = req.query.userName;
