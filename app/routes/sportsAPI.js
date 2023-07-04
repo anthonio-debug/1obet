@@ -9,7 +9,7 @@ const Odds = require('../models/odds');
 const loginRouter = express.Router();
 
 async function listCompetitions(req, res) {
-  const sportId = req.params.sportId;
+  const sportId = req.params.sportId; // Use req.query to retrieve the sportId parameter
   const url = `${config.sportsAPIUrl}/listCompetitions/${sportId}`;
   console.log('URL:', url);
   try {
@@ -17,35 +17,20 @@ async function listCompetitions(req, res) {
     console.log('Response:', response.data);
     const competitionData = response.data;
 
+    // Create an array to store the created Competition documents
     const competitions = [];
 
+    // Iterate over the competitionData array and create a new Competition document for each competition
     for (const data of competitionData) {
-      let status;
-
-      // Set the status based on the sportId
-      if (sportId == '1') {
-        status = 1;
-      } else if (sportId == '2') {
-        status = 2;
-      } else if (sportId == '4') {
-        status = 3;
-      }
-      // Check if the competition already exists in the database
-      const existingCompetition = await ListCompetitions.find({
+      const competition = new ListCompetitions({
         Id: data.Id,
+        Name: data.Name,
       });
 
-      if (!existingCompetition) {
-        const competition = new ListCompetitions({
-          Id: data.Id,
-          Name: data.Name,
-          Status: status,
-        });
+      // Save the document to the database
+      await competition.save();
 
-        await competition.save();
-
-        competitions.push(competition);
-      }
+      competitions.push(competition);
     }
 
     res.status(200).json({

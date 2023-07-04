@@ -32,8 +32,10 @@ async function registerUser(req, res) {
   }
 
   const userToDelete = await User.findOne({ userName: req.body.userName });
-   if (userToDelete && userToDelete.createdBy != req.decoded.userId) {
-    return res.status(404).send({ message: 'username not available', status: 2 });
+  if (userToDelete && userToDelete.createdBy != req.decoded.userId) {
+    return res
+      .status(404)
+      .send({ message: 'username not available', status: 2 });
   }
 
   User.findOne()
@@ -87,7 +89,9 @@ async function registerUser(req, res) {
         }
         user.save((err, user) => {
           if (err || !user) {
-            return res.status(404).send({ message: 'user not registered', err });
+            return res
+              .status(404)
+              .send({ message: 'user not registered', err });
           }
 
           const userbetSizesData = betLimits.map((betLimit) => ({
@@ -179,13 +183,9 @@ function login(req, res) {
         if (err) return res.status(404).send({ message: 'incorrect password' });
         if (!result)
           return res.status(404).send({ message: 'incorrect password' });
-         if (user.isActive == false || user.status == 0)
+        if (user.isActive == false || user.status == 0)
           return res.status(404).send({ message: 'Account Inactive' });
-        var token = getNonExpiringToken(
-          user.userId,
-          user.createdBy,
-          user.role
-        );
+        var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
         user.token = token;
         var ipInfo = getIP(req);
 
@@ -254,18 +254,13 @@ function saveLoginActivity(detailsForLoginActivity, _callback) {
   );
 }
 
-function getNonExpiringToken(
-  userId,
-  createdBy,
-  role,
-  isActive
-) {
+function getNonExpiringToken(userId, createdBy, role, isActive) {
   const payload = {
     userId: userId,
     createdBy: createdBy,
     role: role,
-    isActive: isActive
-    };
+    isActive: isActive,
+  };
   var token = jwt.sign(payload, config.secret, {});
   return token;
 }
@@ -274,11 +269,11 @@ app.set('secret', config.secret);
 
 function getAllUsers(req, res) {
   // Initialize variables with default values
-  if(req.decoded.role == '5'){
-    return res.status(404).send({message:'you are not allowed to do this'})
+  if (req.decoded.role == '5') {
+    return res.status(404).send({ message: 'you are not allowed to do this' });
   }
-console.log('role',req.decoded.role);
-console.log('role2',req.decoded.login.role);
+  console.log('role', req.decoded.role);
+  console.log('role2', req.decoded.login.role);
 
   let query = {};
 
@@ -312,9 +307,7 @@ console.log('role2',req.decoded.login.role);
     query.createdBy = req.decoded.userId;
   } else if (req.decoded.login.role == '5') {
     query.userId = null;
-  }
-  else if (req.decoded.login.role == '0') {
-    query.createdBy = req.decoded.login.role;
+  } else if (req.decoded.login.role == '0') {
   }
   if (req.query.userName) {
     query.userName = req.query.userName;
@@ -390,7 +383,7 @@ function updateUser(req, res) {
     };
     if (req.body.isActive == true) {
       updateData.status = 1;
-    } else if(req.body.isActive == false){
+    } else if (req.body.isActive == false) {
       updateData.status = 0;
     }
     if (req.body.password && req.body.password !== '') {
@@ -570,23 +563,28 @@ function settlePLAccount(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  User.findOne({ 
-    _id: req.body.id,
-  }, (err, result) => {
-    if (err || !result)
-      return res.status(404).send({ message: "user not found" });
-      if(req.body.amount > result.availableBalance ) {
-        return res.status(404).send(`Max amount to transfer: ${result.availableBalance}`)
+  User.findOne(
+    {
+      _id: req.body.id,
+    },
+    (err, result) => {
+      if (err || !result)
+        return res.status(404).send({ message: 'user not found' });
+      if (req.body.amount > result.availableBalance) {
+        return res
+          .status(404)
+          .send(`Max amount to transfer: ${result.availableBalance}`);
       }
-      result.availableBalance -= req.body.amount
-      result.balance -= req.body.amount
-      result.save()
-    return res.send({
-      success: true,
-      message: "user account settled successfully",
-      results: result
-    });
-  });
+      result.availableBalance -= req.body.amount;
+      result.balance -= req.body.amount;
+      result.save();
+      return res.send({
+        success: true,
+        message: 'user account settled successfully',
+        results: result,
+      });
+    }
+  );
 }
 
 function getSettlement(req, res) {
@@ -596,11 +594,11 @@ function getSettlement(req, res) {
   }
   User.findOne({ _id: req.query.id }, (err, result) => {
     if (err || !result)
-      return res.status(404).send({ message: "user not found" });
-      return res.send({
+      return res.status(404).send({ message: 'user not found' });
+    return res.send({
       success: true,
-      message: "user settlement getting successfully",
-      results: result.availableBalance
+      message: 'user settlement getting successfully',
+      results: result.availableBalance,
     });
   });
 }
@@ -643,7 +641,11 @@ router.post(
   userValidation.validate('getSingleUser'),
   getSingleUser
 );
-loginRouter.post('/activeUser', userValidation.validate('activeUser'), activeUser);
+loginRouter.post(
+  '/activeUser',
+  userValidation.validate('activeUser'),
+  activeUser
+);
 loginRouter.post(
   '/deactiveUser',
   userValidation.validate('deactiveUser'),
@@ -655,8 +657,9 @@ loginRouter.post(
   checkValidation
 );
 
-loginRouter.get('/getSettlement',getSettlement);
-loginRouter.post('/settlePLAccount', 
+loginRouter.get('/getSettlement', getSettlement);
+loginRouter.post(
+  '/settlePLAccount',
   userValidation.validate('settlePLAccount'),
   settlePLAccount
 );
