@@ -109,6 +109,8 @@ app.use('/api', require('./app/routes/bookDetail2Reports').loginRouter);
 app.use('/api', require('./app/routes/currentPosition').loginRouter);
 app.use('/api', require('./app/routes/sportsAPI').loginRouter);
 app.use('/api', require('./app/routes/fancyGames').loginRouter);
+app.use('/api', require('./app/routes/liveTv').loginRouter);
+app.use('/api', require('./app/routes/liveScore').loginRouter);
 
 // // Allowed Apis for this role
 // app.use(function (req, res, next) {

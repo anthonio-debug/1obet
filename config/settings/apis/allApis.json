@@ -94,5 +94,7 @@
   "listMarkets",
   "listInplayEvents",
   "getOdds",
-  "getFancyData"
+  "getFancyData",
+  "liveTv",
+  "liveScore"
 ]

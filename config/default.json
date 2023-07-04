@@ -15,5 +15,7 @@
   "play_for_fun": false,
   "currency": "EUR",
   "sportsAPIUrl": "http://209.250.242.175:33332",
-  "fancyUrl": "https://betfairoddsapi.com:3444"
+  "fancyUrl": "https://betfairoddsapi.com:3444",
+  "liveTvUrl": "https://tvlivestreaming.online/live_tv/index.html?eventId=",
+  "liveScoreUrl": "https://livesportscore.xyz:3443/api/getScoreId"
 }
