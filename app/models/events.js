@@ -1,18 +1,18 @@
 const mongoose = require('mongoose');
 
 const eventSchema = new mongoose.Schema({
-  sport: { type: String, required: true },
-  competitionId: { type: String, required: true },
-  competitionName: { type: String, required: true },
-  Id: { type: String, required: true },
-  name: { type: String, required: true },
+  sport: { type: String, required: false },
+  competitionId: { type: String, required: false },
+  competitionName: { type: String, required: false },
+  Id: { type: String, required: false },
+  name: { type: String, required: false },
   countryCode: { type: String, required: false },
-  timezone: { type: String, required: true },
-  openDate: { type: Date, required: true },
-  inplay: { type: Boolean, required: true },
-  hasFancy: { type: Boolean, required: true },
-  status: { type: String, required: true },
-  isPremium: { type: Boolean, required: true },
+  timezone: { type: String, required: false },
+  openDate: { type: Date, required: false },
+  inplay: { type: Boolean, required: false },
+  hasFancy: { type: Boolean, required: false },
+  status: { type: String, required: false },
+  isPremium: { type: Boolean, required: false },
 });
 
 const Event = mongoose.model('Event', eventSchema);
