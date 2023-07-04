@@ -204,21 +204,21 @@ async function getOdds(req, res) {
     const response = await axios.get(url);
     console.log('response', response.data);
     const oddsData = response.data;
-    const odds = new Odds({
-      updatetime: oddsData.updatetime,
-      marketId: oddsData.marketId,
-      marketName: oddsData.marketName,
-      totalMatched: oddsData.totalMatched,
-      status: oddsData.status,
-      runners: oddsData.runners,
-    });
-    // Save the odds data to the Odds model
-    await odds.save();
+    // const odds = new Odds({
+    //   updatetime: oddsData.updatetime,
+    //   marketId: oddsData.marketId,
+    //   marketName: oddsData.marketName,
+    //   totalMatched: oddsData.totalMatched,
+    //   status: oddsData.status,
+    //   runners: oddsData.runners,
+    // });
+    // // Save the odds data to the Odds model
+    // await odds.save();
 
     res.status(200).json({
       success: true,
       message: 'Odds retrieved successfully',
-      odds: odds,
+      odds: oddsData,
     });
   } catch (error) {
     console.error(error);

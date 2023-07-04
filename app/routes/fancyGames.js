@@ -13,30 +13,30 @@ async function getFancyData(req, res) {
     console.log('response', response.data);
     const fancyData = response.data.data;
 
-    // Create a new CricketMatch document
-    const data = new fancyGames({
-      t1: fancyData.t1,
-      t2: fancyData.t2,
-      t3: fancyData.t3,
-      t4: fancyData.t4,
-      success: fancyData.success,
-      status: fancyData.status,
-      updatetime: fancyData.updatetime,
-      eventTypeId: fancyData.eventTypeId,
-      eventTypeName: fancyData.eventTypeName,
-      eventName: fancyData.eventName,
-      name: fancyData.name,
-      eventdate: fancyData.eventdate,
-      gameId: fancyData.gameId,
-    });
+    // // Create a new fancyData document
+    // const data = new fancyGames({
+    //   t1: fancyData.t1,
+    //   t2: fancyData.t2,
+    //   t3: fancyData.t3,
+    //   t4: fancyData.t4,
+    //   success: fancyData.success,
+    //   status: fancyData.status,
+    //   updatetime: fancyData.updatetime,
+    //   eventTypeId: fancyData.eventTypeId,
+    //   eventTypeName: fancyData.eventTypeName,
+    //   eventName: fancyData.eventName,
+    //   name: fancyData.name,
+    //   eventdate: fancyData.eventdate,
+    //   gameId: fancyData.gameId,
+    // });
 
-    // Save the document to the database
-    await data.save();
+    // // Save the document to the database
+    // await data.save();
 
     res.status(200).json({
       success: true,
       message: 'Fancy data saved successfully',
-      fancyData: data,
+      fancyData: fancyData,
     });
   } catch (error) {
     console.error(error);
