@@ -1,7 +1,7 @@
 const express = require('express');
 let config = require('config');
 const fancyGames = require('../models/fancyGames');
-
+const axios = require('axios');
 const loginRouter = express.Router();
 
 async function getFancyData(req, res) {

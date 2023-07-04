@@ -1,6 +1,10 @@
 const express = require('express');
 let config = require('config');
 const axios = require('axios');
+const ListCompetitions = require('../models/listCompetitions');
+const Event = require('../models/events');
+const ListMarket = require('../models/listMarkets');
+const Odds = require('../models/odds');
 
 const loginRouter = express.Router();
 
@@ -11,18 +15,34 @@ async function listCompetitions(req, res) {
   try {
     const response = await axios.get(url);
     console.log('Response:', response.data);
-    const competitions = response.data;
+    const competitionData = response.data;
+
+    // Create an array to store the created Competition documents
+    const competitions = [];
+
+    // Iterate over the competitionData array and create a new Competition document for each competition
+    for (const data of competitionData) {
+      const competition = new ListCompetitions({
+        Id: data.Id,
+        Name: data.Name,
+      });
+
+      // Save the document to the database
+      await competition.save();
+
+      competitions.push(competition);
+    }
 
     res.status(200).json({
       success: true,
-      message: 'Competitions retrieved successfully',
+      message: 'Competitions retrieved and saved successfully',
       competitions: competitions,
     });
   } catch (error) {
     console.error(error);
     res.status(200).json({
       success: false,
-      message: 'Failed to get competitions',
+      message: 'Failed to retrieve and save competitions',
       error: error.message,
     });
   }
@@ -35,7 +55,31 @@ async function listEventsBySport(req, res) {
     const response = await axios.get(
       `${config.sportsAPIUrl}/listEventsBySport/${sportId}`
     );
-    const events = response.data;
+    console.log('response', response.data);
+    const eventsData = response.data;
+    const events = [];
+
+    for (const eventData of eventsData) {
+      const event = new Event({
+        sport: eventData.sport,
+        competitionId: eventData.competitionId,
+        competitionName: eventData.competitionName,
+        Id: eventData.Id,
+        name: eventData.name,
+        countryCode: eventData.countryCode,
+        timezone: eventData.timezone,
+        openDate: new Date(eventData.openDate),
+        inplay: eventData.inplay,
+        hasFancy: eventData.hasFancy,
+        status: eventData.status,
+        isPremium: eventData.isPremium,
+      });
+
+      events.push(event);
+    }
+
+    // Save all events to the database
+    await Event.insertMany(events);
 
     res.status(200).json({
       success: true,
@@ -82,7 +126,30 @@ async function listMarkets(req, res) {
 
   try {
     const response = await axios.get(url);
-    const markets = response.data;
+    console.log('response', response.data);
+    const marketsData = response.data;
+    const markets = [];
+
+    for (const marketData of marketsData) {
+      const runners = marketData.runners.map((runnerData) => ({
+        selectionId: runnerData.selectionId,
+        runnerName: runnerData.runnerName,
+      }));
+
+      const market = new ListMarket({
+        Updatetime: marketData.Updatetime,
+        marketId: marketData.marketId,
+        marketName: marketData.marketName,
+        totalMatched: marketData.totalMatched,
+        status: marketData.status,
+        runners: runners,
+      });
+
+      markets.push(market);
+    }
+
+    // Save all markets to the database
+    await ListMarket.insertMany(markets);
 
     res.status(200).json({
       success: true,
@@ -135,12 +202,16 @@ async function getOdds(req, res) {
 
   try {
     const response = await axios.get(url);
-    const odds = response.data;
+    console.log('response', response.data);
+    const oddsData = response.data;
+
+    // Save the odds data to the Odds model
+    await Odds.insertMany(oddsData);
 
     res.status(200).json({
       success: true,
       message: 'Odds retrieved successfully',
-      odds: odds,
+      odds: oddsData,
     });
   } catch (error) {
     console.error(error);
