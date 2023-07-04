@@ -13,5 +13,7 @@
   "api_login": "1obet_mc_s",
   "language": "en",
   "play_for_fun": false,
-  "currency": "EUR"
+  "currency": "EUR",
+  "sportsAPIUrl": "http://209.250.242.175:33332",
+  "fancyUrl": "https://betfairoddsapi.com:3444"
 }

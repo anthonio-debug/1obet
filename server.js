@@ -7,7 +7,7 @@ let fs = require('fs');
 let cors = require('cors');
 var morgan = require('morgan');
 const https = require('https');
-const option = require('./option')
+const option = require('./option');
 const apisMiddleware = require('./app/middlewares/apisMiddleware');
 const loginMiddleWare = require('./app/middlewares/loginMiddleware');
 const aclMiddleware = require('./app/middlewares/aclMiddleware');
@@ -26,7 +26,7 @@ const { themeCronJob, checkBetStatus } = require('./cronJob/cronJob'); // Import
 
 // Run the cron job
 themeCronJob();
-checkBetStatus()
+checkBetStatus();
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,
@@ -46,8 +46,6 @@ mongoose
 
 // readFileSync function must use __dirname get current directory
 // require use ./ refer to current directory.
-
-
 
 // console.log('dirname',__dirname);
 // JSON
@@ -109,6 +107,8 @@ app.use('/api', require('./app/routes/dailyReports').loginRouter);
 app.use('/api', require('./app/routes/commissionReports').loginRouter);
 app.use('/api', require('./app/routes/bookDetail2Reports').loginRouter);
 app.use('/api', require('./app/routes/currentPosition').loginRouter);
+app.use('/api', require('./app/routes/sportsAPI').loginRouter);
+app.use('/api', require('./app/routes/fancyGames').loginRouter);
 
 // // Allowed Apis for this role
 // app.use(function (req, res, next) {

@@ -85,7 +85,14 @@
   "settlePLAccount",
   "getSettlement",
   "getCurrentPosition",
-  "updateFakeBet", 
+  "updateFakeBet",
   "countFakeBets",
-  "profitLossReports"
+  "profitLossReports",
+  "listCompetitions",
+  "listEventsBySport",
+  "listEventsByCompetition",
+  "listMarkets",
+  "listInplayEvents",
+  "getOdds",
+  "getFancyData"
 ]
