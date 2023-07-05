@@ -184,7 +184,7 @@ function dailyPlMarketsReports(req, res) {
 
   const userId = req.query.userId;
   const marketId = req.query.marketId;
-  Deposits.find({ userId: userId, marketId: marketId, ...depositsQuery }, { _id: 0, amount: 1, createdAt:1 })
+  Deposits.find({ userId: userId, marketId: marketId, ...depositsQuery }, { _id: 0, amount: 1, createdAt:1,betId:1 })
     .exec()
     .then((deposits) => {
       if (!deposits || deposits.length === 0) {
