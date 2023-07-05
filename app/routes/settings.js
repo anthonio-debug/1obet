@@ -6,6 +6,9 @@ const User = require('../models/user');
 const settingsValidation = require('../validators/settings');
 const termsAndConditions = require('../models/termsAndConditions');
 const PrivacyPolicy = require('../models/privacyPolicy');
+const Competition = require('../models/listCompetitions');
+
+
 
 const Exchanges = require('../models/exchanges');
 const MaxBetSize = require('../models/betLimits');
@@ -328,6 +331,148 @@ function getSideBarMenu(req, res) {
 }
 
 
+function listCompetitions(req, res) {
+  // const marketid = req.body.role;
+  // Competition.find(
+  //   {}, 
+  //   (err, results) => {
+  //   if (err) {
+  //     return res.status(404).json({ message: 'Matches not found' });
+  //   }
+    return res.json({
+      success: true,
+      message: ' Records',
+      results: [
+        {Id:"801976",Name:"Egyptian Premier"},
+        {Id:"6251219",Name:"Indian SuperLeague"},
+        {"Id":"9513","Name":"Portuguese Segunda Liga"},
+        {"Id":"117","Name":"Spanish La Liga"},
+        {"Id":"7129730","Name":"English Championship"},
+        {"Id":"107","Name":"Scottish Championship"},
+        {"Id":"10932509","Name":"English Premier League"},
+        {"Id":"99","Name":"Portuguese Primeira  Liga"}
+      ] ,
+    });
+  // });
+}
+
+function ListEventsBySport(req, res) {
+    return res.json({
+      success: true,
+      message: ' Records',
+      results: [
+        {"sport":"soccer","competitionId":"801976","competitionName":"Egyptian Premier","Id":"30207509","name":"Aswan FC v Ismaily","countryCode":null,"timezone":null,"openDate":"29-12-2020  18:00:00","inplay":false,"hasFancy":false,"status":"OPEN"},
+        {"sport":"soccer","competitionId":"6251219","competitionName ":"Indian Super League","Id":"30207322","name":"Chennaiyin FC v Atletico de  Kolkata","countryCode":null,"timezone":null,"openDate":"29-12-2020 19:30:00","inplay":false,"hasFancy":false,"status":"OPEN"},
+        {"sport":"soccer","competitionId":"9513","competitionName":"Portuguese Segunda Liga","Id":"30203070","name":"Oliveirense v Cova da  Piedade","countryCode":null,"timezone":null,"openDate":"29-12-2020  20:30:00","inplay":false,"hasFancy":false,"status":"OPEN"}
+      ]
+  });
+}
+
+function ListEventsByCompetition(req, res) {
+  return res.json({
+    success: true,
+    message: ' Records',
+    results: [
+      {"competitionId":"101","competitionName":"Russian Premier League","Id":"30073318","name":"Rostov v FC Khimki","countryCode":"RU","timezone":"GMT","openDate":"10/25/2020 1:32:30 PM","inplay":true,"hasFancy":false},{"competitionId":"101","competitionName":"Russian Premier League","Id":"30073311","name":"Akhmat Grozny v FC Ufa","countryCode":"RU","timezone":"GMT","openDate":"10/25/2020 4:00:00 PM","inplay":false,"hasFancy":false}
+    ]
+});
+}
+
+
+function ListInplayEvents(req, res) {
+  return res.json({
+    success: true,
+    message: ' Records',
+    results: [
+      {"sport":"cricket","competitionId":"10328858","competitionName":"Twenty20 Big Bash","Id":"30204688","name":"Melbourne Renegades v Sydney Sixers","countryCode":null,"timezone":null,"openDate":"29-12-2020 12:40:00","inplay":true,"hasFancy":false,"status":"CLOSED"},{"sport":"cricket","competitionId":"10328858","competitionName":"Twenty20 Big Bash","Id":"30205967","name":"Sydney Thunder v Melbourne Stars","countryCode":null,"timezone":null,"openDate":"29-12-2020 13:45:00","inplay":true,"hasFancy":true,"status":"OPEN"},{"sport":"cricket","competitionId":"11365612","competitionName":"Test Matches","Id":"30182810","name":"South Africa v SriLanka","countryCode":null,"timezone":null,"openDate":"29-12-2020 13:30:00","inplay":true,"hasFancy":true,"status":"SUSPENDED"}
+    ]
+});
+}
+
+function ListOddsAPI(req, res) {
+  return res.json({
+    success: true,
+    message: ' Records',
+    results: [
+      {
+        "sport": "soccer",
+        "eventId": "30207509",
+        "MarketId": "1.177393055",
+        "marketName": "Match Odds",
+        "source": 3,
+        "IsMarketDataDelayed": false,
+        "Status": "OPEN",
+        "IsInplay": false,
+        "inplay": false,
+        "NumberOfRunners": 3,
+        "NumberOfActiveRunners": 3,
+        "TotalMatched": 0.0,
+        "Runners": [
+          {
+            "SelectionId": 929566606,
+            "runnerName": "Aswan FC",
+            "Status": "ACTIVE",
+            "LastPriceTraded": null,
+            "TotalMatched": 0.0,
+            "ExchangePrices": {
+              "AvailableToBack": [
+                {"Price": 4.8, "Size": 535.0},
+                {"Price": 4.7, "Size": 58.0},
+                {"Price": 4.6, "Size": 127.0}
+              ],
+              "AvailableToLay": [
+                {"Price": 5.0, "Size": 700.0},
+                {"Price": 5.2, "Size": 1053.0},
+                {"Price": 5.3, "Size": 478.0}
+              ]
+            }
+          },
+          {
+            "SelectionId": 700243574,
+            "runnerName": "Ismaily",
+            "Status": "ACTIVE",
+            "LastPriceTraded": null,
+            "TotalMatched": 0.0,
+            "ExchangePrices": {
+              "AvailableToBack": [
+                {"Price": 1.99, "Size": 1246.0},
+                {"Price": 1.98, "Size": 116.0},
+                {"Price": 1.97, "Size": 4635.0}
+              ],
+              "AvailableToLay": [
+                {"Price": 2.0, "Size": 1600.0},
+                {"Price": 2.02, "Size": 702.0},
+                {"Price": 2.04, "Size": 87.0}
+              ]
+            }
+          },
+          {
+            "SelectionId": 294044778,
+            "runnerName": "The Draw",
+            "Status": "ACTIVE",
+            "LastPriceTraded": null,
+            "TotalMatched": 0.0,
+            "ExchangePrices": {
+              "AvailableToBack": [
+                {"Price": 3.3, "Size": 1319.0},
+                {"Price": 3.25, "Size": 1394.0},
+                {"Price": 3.2, "Size": 1770.0}
+              ],
+              "AvailableToLay": [
+                {"Price": 3.4, "Size": 756.0},
+                {"Price": 3.45, "Size": 46.0},
+                {"Price": 3.5, "Size": 902.0}
+              ]
+            }
+          }
+        ]
+      }
+    ]
+    
+});
+}
+
+
 //for only backend
 function addSideBarMenu(req, res) {
   const errors = validationResult(req);
@@ -385,5 +530,11 @@ router.get('/getDefaultSettings', getDefaultSettings);
 
 loginRouter.get('/getSideBarMenu', getSideBarMenu);
 router.get('/addSideBarMenu', addSideBarMenu);
+
+router.get('/listCompetitions/:id', listCompetitions);
+router.get('/ListEventsBySport/:id', ListEventsBySport);
+router.get('/ListEventsByCompetition/:id', ListEventsByCompetition);
+router.get('/ListInplayEvents/:id', ListInplayEvents);
+router.get('/ListOddsAPI/:id', ListOddsAPI);
 
 module.exports = { loginRouter, router };

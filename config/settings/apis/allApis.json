@@ -96,5 +96,12 @@
   "getOdds",
   "getFancyData",
   "liveTv",
-  "liveScore"
+  "liveScore",
+  "listCompetitions",
+  "ListEventsBySport",
+  "ListEventsByCompetition",
+  "ListInplayEvents", 
+  "ListOddsAPI"
 ]
+
+
