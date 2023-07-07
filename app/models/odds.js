@@ -42,3 +42,4 @@ const oddsSchema = new mongoose.Schema({
 });
 
 const Odds = mongoose.model('Odds', oddsSchema);
+module.exports = Odds;
