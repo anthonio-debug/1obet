@@ -43,6 +43,7 @@ const updateParentUserBalance = async (parentUsers, remainingAmount) => {
   for (const user of parentUsers) {
     user.exposure -= (user.commission / 100) * remainingAmount;
     user.availableBalance -= (user.commission / 100) * remainingAmount;
+    console.log('user.availableBalance',typeof user.availableBalance);
     await user.save();
   }
 };
