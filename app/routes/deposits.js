@@ -138,11 +138,18 @@ async function addCashDeposit(req, res) {
         cash: lastMaxWithdraw
         ? lastMaxWithdraw.cash - req.body.amount
         : -req.body.amount,
+        // balance: parentLastMaxWithdraw
+        // ? parentLastMaxWithdraw.balance - req.body.amount
+        // : -req.body.amount,
+        // availableBalance: parentLastMaxWithdraw
+        // ? parentLastMaxWithdraw.availableBalance - req.body.amount
+        // : -req.body.amount,
       });
       await parentCash.save();
     } 
     
     else if (Dealers.includes(currentUserParent.role) && userToUpdate.role == '5') {
+      console.log('in here');
       userToUpdate.balance += req.body.amount;
       userToUpdate.availableBalance += req.body.amount;
       userToUpdate.clientPL += req.body.amount;
@@ -173,6 +180,7 @@ async function addCashDeposit(req, res) {
         cashOrCredit: 'Cash',
       });
       await cash.save();
+      console.log("cash",cash);
 
       // parent update 
       let parentCash = new Cash({
@@ -187,9 +195,15 @@ async function addCashDeposit(req, res) {
         maxWithdraw: lastMaxWithdraw
         ? lastMaxWithdraw.cash - req.body.amount
         : -req.body.amount,
+        // balance: parentLastMaxWithdraw
+        // ? parentLastMaxWithdraw.balance - req.body.amount
+        // : -req.body.amount,
+        // availableBalance:parentLastMaxWithdraw
+        // ? parentLastMaxWithdraw.availableBalance - req.body.amount
+        // : -req.body.amount
       });
       await parentCash.save();
-
+      console.log("parentCash",parentCash);
     } 
     else {
       return res.status(400).send({ message: 'Invalid User Information' });
@@ -206,7 +220,8 @@ async function addCashDeposit(req, res) {
     return res.status(404).send({ message: 'server error', err });
   }
 }
-
+ 
+//to do need to add balance and availablebalance for cronjob winning bet
 async function withDrawCashDeposit(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {

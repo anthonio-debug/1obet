@@ -5,6 +5,7 @@ const ListCompetitions = require('../models/listCompetitions');
 const Event = require('../models/events');
 const ListMarket = require('../models/listMarkets');
 const Odds = require('../models/odds');
+const inPlayEvents = require('../models/inPlayEvents');
 
 const loginRouter = express.Router();
 
@@ -171,18 +172,24 @@ async function listInplayEvents(req, res) {
 
   try {
     const response = await axios.get(url);
+    console.log('response',response.data);
     const inplayEvents = response.data;
+
+    // Save the inplayEvents data to the collection
+    const eventsToSave = inplayEvents.map(event => ({ ...event, sportsId }));
+    console.log('eventsToSave',eventsToSave);
+    const savedEvents = await inPlayEvents.insertMany(eventsToSave);
 
     res.status(200).json({
       success: true,
-      message: 'Inplay events retrieved successfully',
-      inplayEvents: inplayEvents,
+      message: 'Inplay events retrieved and saved successfully',
+      inplayEvents: savedEvents,
     });
   } catch (error) {
     console.error(error);
     res.status(200).json({
       success: false,
-      message: 'Failed to get inplay events',
+      message: 'Failed to get or save inplay events',
       error: error.message,
     });
   }
@@ -202,18 +209,20 @@ async function getOdds(req, res) {
 
   try {
     const response = await axios.get(url);
-    console.log('response', response.data);
-    const oddsData = response.data;
-    // const odds = new Odds({
-    //   updatetime: oddsData.updatetime,
-    //   marketId: oddsData.marketId,
-    //   marketName: oddsData.marketName,
-    //   totalMatched: oddsData.totalMatched,
-    //   status: oddsData.status,
-    //   runners: oddsData.runners,
-    // });
-    // // Save the odds data to the Odds model
-    // await odds.save();
+    console.log('response===', response.data);
+    console.log('response.data.data', response.data.data);
+
+    const oddsData = response.data.data;
+    const odds = new Odds({
+      updatetime: oddsData.updatetime,
+      marketId: oddsData.marketId,
+      marketName: oddsData.marketName,
+      totalMatched: oddsData.totalMatched,
+      status: oddsData.status,
+      runners: oddsData.runners,
+    });
+    // Save the odds data to the Odds model
+    await odds.save();
 
     res.status(200).json({
       success: true,
@@ -230,14 +239,14 @@ async function getOdds(req, res) {
   }
 }
 
-loginRouter.get('/listCompetitions/:sportId', listCompetitions);
-loginRouter.get('/listEventsBySport/:sportId', listEventsBySport);
+loginRouter.get('/listCompetition/:sportId', listCompetitions);
+loginRouter.get('/listEventBySport/:sportId', listEventsBySport);
 loginRouter.get(
-  '/listEventsByCompetition/:sportId/:competId',
+  '/listEventByCompetition/:sportId/:competId',
   listEventsByCompetition
 );
-loginRouter.get('/listMarkets/:eventId', listMarkets);
-loginRouter.get('/listInplayEvents/:sportsId', listInplayEvents);
+loginRouter.get('/listMarket/:eventId', listMarkets);
+loginRouter.get('/listInplayEvent/:sportsId', listInplayEvents);
 loginRouter.get('/getOdds', getOdds);
 
 module.exports = { loginRouter };
