@@ -296,7 +296,7 @@ async function getOdds(req, res) {
     res.status(200).json({
       success: true,
       message: 'Odds retrieved and saved successfully',
-      odds: newOddsData,
+      odds: newOddsData ? newOddsData: oddsData,
     });
   } catch (error) {
     console.error(error);
