@@ -23,14 +23,14 @@ const oddsSchema = new mongoose.Schema({
       status: String,
       lastPriceTraded: Number,
       totalMatched: Number,
-      exchangePrices: {
-        availableToBack: [
+      ExchangePrices: {
+        AvailableToBack: [
           {
             price: Number,
             size: Number,
           },
         ],
-        availableToLay: [
+        AvailableToLay: [
           {
             price: Number,
             size: Number,
