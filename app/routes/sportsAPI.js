@@ -172,10 +172,12 @@ async function listInplayEvents(req, res) {
 
   try {
     const response = await axios.get(url);
+    console.log('response',response.data);
     const inplayEvents = response.data;
 
     // Save the inplayEvents data to the collection
     const eventsToSave = inplayEvents.map(event => ({ ...event, sportsId }));
+    console.log('eventsToSave',eventsToSave);
     const savedEvents = await inPlayEvents.insertMany(eventsToSave);
 
     res.status(200).json({
@@ -237,14 +239,14 @@ async function getOdds(req, res) {
   }
 }
 
-loginRouter.get('/listCompetitions/:sportId', listCompetitions);
-loginRouter.get('/listEventsBySport/:sportId', listEventsBySport);
+loginRouter.get('/listCompetition/:sportId', listCompetitions);
+loginRouter.get('/listEventBySport/:sportId', listEventsBySport);
 loginRouter.get(
-  '/listEventsByCompetition/:sportId/:competId',
+  '/listEventByCompetition/:sportId/:competId',
   listEventsByCompetition
 );
-loginRouter.get('/listMarkets/:eventId', listMarkets);
-loginRouter.get('/listInplayEvents/:sportsId', listInplayEvents);
+loginRouter.get('/listMarket/:eventId', listMarkets);
+loginRouter.get('/listInplayEvent/:sportsId', listInplayEvents);
 loginRouter.get('/getOdds', getOdds);
 
 module.exports = { loginRouter };
