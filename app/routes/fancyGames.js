@@ -33,7 +33,7 @@ async function getFancyData(req, res) {
 
     // Update or insert the document in the database
     const result = await fancyGames.updateOne(
-      { eventId: fancyData.eventId },
+      { gameId: fancyData.gameId },
       newData,
       { upsert: true }
     );
