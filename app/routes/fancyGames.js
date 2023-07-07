@@ -6,7 +6,7 @@ const loginRouter = express.Router();
 
 async function getFancyData(req, res) {
   const eventId = req.params.eventId;
-  const url = `${config.fancyUrl}/${eventId}`;
+  const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
   console.log('url', url);
   try {
     const response = await axios.get(url);
