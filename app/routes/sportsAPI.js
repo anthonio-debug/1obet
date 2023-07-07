@@ -66,12 +66,9 @@ async function listEventsBySport(req, res) {
     const events = [];
 
     for (const eventData of eventsData) {
-      const existingEvent = await Event.findOne({ Id: eventData.Id, sportsId: sportId });
-
-      if (existingEvent) {
-        events.push(existingEvent);
-      } else {
-        const event = new Event({
+      const filter = { Id: eventData.Id, sportsId: sportId };
+      const update = {
+        $setOnInsert: {
           sport: eventData.sport,
           competitionId: eventData.competitionId,
           competitionName: eventData.competitionName,
@@ -85,19 +82,19 @@ async function listEventsBySport(req, res) {
           status: eventData.status,
           isPremium: eventData.isPremium,
           sportsId: sportId
-        });
+        }
+      };
 
-        events.push(event);
-      }
+      const options = { upsert: true, new: true };
+
+      const updatedEvent = await Event.findOneAndUpdate(filter, update, options);
+      events.push(updatedEvent);
     }
-
-    // Save all non-duplicate events to the database
-    const savedEvents = await Event.insertMany(events, { ordered: false });
 
     res.status(200).json({
       success: true,
       message: 'Events retrieved successfully',
-      events: savedEvents,
+      events: events,
     });
   } catch (error) {
     console.error(error);
@@ -108,6 +105,7 @@ async function listEventsBySport(req, res) {
     });
   }
 }
+
 
  //Id is eventId
  async function listEventsByCompetition(req, res) {
