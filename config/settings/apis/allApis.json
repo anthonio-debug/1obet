@@ -101,7 +101,8 @@
   "listEventsBySport",
   "listEventsByCompetition",
   "listInplayEvents", 
-  "listOddsAPI"
+  "listOddsAPI",
+  "getFancyResult"
 ]
 
 

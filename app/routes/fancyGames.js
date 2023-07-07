@@ -65,7 +65,32 @@ async function getFancyData(req, res) {
   }
 }
 
+async function getFancyResult(req, res) {
+  const eventId = req.params.eventId;
+  const fancyName = req.params.fancyName;
+  const url = `${config.fancyUrl}/fancy_result/${eventId}/${fancyName}`;
+  console.log('url', url);
+
+  try {
+    const response = await axios.get(url);
+    console.log('response', response.data);
+    res.status(200).json({
+      success: true,
+      message: 'Fancy data result found',
+      fancyData: response.data,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({
+      success: false,
+      message: 'Failed to get fancy data',
+      error: error.message,
+    });
+  }
+}
+
 // Define the route for the API
 loginRouter.get('/getFancyData/:eventId', getFancyData);
+loginRouter.get('/getFancyResult/:eventId/:fancyName', getFancyResult);
 
 module.exports = { loginRouter };
