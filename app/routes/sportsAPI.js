@@ -256,7 +256,7 @@ async function getOdds(req, res) {
     console.log('response ===', response.data);
     console.log('response.data.data', response.data.data);
 
-    const oddsData = response.data.data;
+    const oddsData = response.data;
 
     // Create an array to store the new odds data
     const newOddsData = [];
