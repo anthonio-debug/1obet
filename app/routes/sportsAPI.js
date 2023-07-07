@@ -274,7 +274,7 @@ async function getOdds(req, res) {
       console.log('data', data);
       console.log('data.runner', data.Runners);
 
-      const market = await ListMarket.findOne({ MarketId: data.MarketId });
+      const market = await ListMarket.findOne({ marketId: data.MarketId });
 
       if (market) {
         await Odds.updateOne(
