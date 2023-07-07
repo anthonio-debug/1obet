@@ -12,6 +12,8 @@ const marketSchema = new mongoose.Schema({
   totalMatched: { type: Number, required: false },
   status: { type: String, required: false },
   runners: [runnerSchema],
+  eventId: { type: String },
+  sportsId: { type: String }
 });
 
 const Market = mongoose.model('listMarket', marketSchema);

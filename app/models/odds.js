@@ -15,6 +15,7 @@ const oddsSchema = new mongoose.Schema({
   numberOfRunners: Number,
   numberOfActiveRunners: Number,
   totalMatched: Number,
+  sportsId: { type: Number },
   runners: [
     {
       selectionId: Number,
