@@ -9,7 +9,8 @@ const { getParents } = require("../app/routes/bets");
 let runningJob;
 
 const checkBetStatus = (req) => {
-  runningJob = cron.schedule("*/5 * * * * *", async () => {
+   // Start the cron job after a 2-minute delay
+  runningJob = cron.schedule("*/2 * * * *", async () => {
     try {
       const endedMatches = await getEndedMatches();
       console.log("endedMatches", endedMatches);
