@@ -282,7 +282,7 @@ async function getOdds(req, res) {
           {
             $set: {
               updatetime: data.updatetime,
-              updatetime: data.update,
+              update: data.update,
               sport: data.sport,
               eventId: data.eventId,
               marketId: data.MarketId,
@@ -299,7 +299,7 @@ async function getOdds(req, res) {
               runners: data.Runners,
             },
           },
-          { upsert: true }
+          { upsert: true, new: true }
         );
       }
     }
