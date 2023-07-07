@@ -1,3 +1,5 @@
+db.sidebarmenus.deleteMany();
+
 db.sidebarmenus.insertMany([
   {
     name: "Dashboard",
@@ -12,6 +14,7 @@ db.sidebarmenus.insertMany([
     lightIcon: "https://1obet.com/assets/light-icons/cricket.png",
     darkIcon: "https://1obet.com/assets/dark-icons/cricket.png",
     marketId: "tyv234543-432453343423-53423d332",
+    market: 4,
     type: 0,
     link: "/cricket",
   },
@@ -20,6 +23,7 @@ db.sidebarmenus.insertMany([
     lightIcon: "https://1obet.com/assets/light-icons/tennis.png",
     darkIcon: "https://1obet.com/assets/dark-icons/tennis.png",
     marketId: "tyv234543-432453343423-53423d332",
+    market: 2,
     type: 0,
     link: "/tennis",
   },
@@ -28,6 +32,7 @@ db.sidebarmenus.insertMany([
     lightIcon: "https://1obet.com/assets/light-icons/soccer.png",
     darkIcon: "https://1obet.com/assets/dark-icons/soccer.png",
     marketId: "tyv234543-432453343423-53423d332",
+    market: 1,
     type: 0,
     link: "/soccer",
   },
@@ -156,6 +161,7 @@ db.sidebarmenus.insertMany([
     lightIcon: "https://1obet.com/assets/light-icons/cricket.png",
     darkIcon: "https://1obet.com/assets/dark-icons/cricket.png",
     marketId: "tyv234543-432453343423-53423d332",
+    market: 4,
     type: 1,
     link: "/cricket",
   },
@@ -164,6 +170,7 @@ db.sidebarmenus.insertMany([
     lightIcon: "https://1obet.com/assets/light-icons/tennis.png",
     darkIcon: "https://1obet.com/assets/dark-icons/tennis.png",
     marketId: "tyv234543-432453343423-53423d332",
+    market: 2,
     type: 1,
     link: "/tennis",
   },
@@ -172,6 +179,7 @@ db.sidebarmenus.insertMany([
     lightIcon: "https://1obet.com/assets/light-icons/soccer.png",
     darkIcon: "https://1obet.com/assets/dark-icons/soccer.png",
     marketId: "tyv234543-432453343423-53423d332",
+    market: 1,
     type: 1,
     link: "/soccer",
   },
