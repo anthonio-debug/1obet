@@ -23,7 +23,10 @@ async function listCompetitions(req, res) {
 
     // Iterate over the competitionData array and create a new Competition document for each competition
     for (const data of competitionData) {
-      const existingCompetition = await ListCompetitions.findOne({ Id: data.Id, sportsId: sportId });
+      const existingCompetition = await ListCompetitions.findOne({
+        Id: data.Id,
+        sportsId: sportId,
+      });
 
       if (existingCompetition) {
         competitions.push(existingCompetition);
@@ -60,7 +63,9 @@ async function listEventsBySport(req, res) {
   const sportId = req.params.sportId;
 
   try {
-    const response = await axios.get(`${config.sportsAPIUrl}/listEventsBySport/${sportId}`);
+    const response = await axios.get(
+      `${config.sportsAPIUrl}/listEventsBySport/${sportId}`
+    );
     console.log('response', response.data);
     const eventsData = response.data;
     const events = [];
@@ -81,13 +86,17 @@ async function listEventsBySport(req, res) {
           hasFancy: eventData.hasFancy,
           status: eventData.status,
           isPremium: eventData.isPremium,
-          sportsId: sportId
-        }
+          sportsId: sportId,
+        },
       };
 
       const options = { upsert: true, new: true };
 
-      const updatedEvent = await Event.findOneAndUpdate(filter, update, options);
+      const updatedEvent = await Event.findOneAndUpdate(
+        filter,
+        update,
+        options
+      );
       events.push(updatedEvent);
     }
 
@@ -106,9 +115,8 @@ async function listEventsBySport(req, res) {
   }
 }
 
-
- //Id is eventId
- async function listEventsByCompetition(req, res) {
+//Id is eventId
+async function listEventsByCompetition(req, res) {
   const { sportId, competId } = req.params;
   const url = `${config.sportsAPIUrl}/listEventsByCompetition/${sportId}/${competId}`;
 
@@ -124,7 +132,11 @@ async function listEventsBySport(req, res) {
       const update = { sportsId: sportId, ...event };
       const options = { upsert: true, new: true };
 
-      const savedEvent = await eventsByCompetitons.findOneAndUpdate(filter, update, options);
+      const savedEvent = await eventsByCompetitons.findOneAndUpdate(
+        filter,
+        update,
+        options
+      );
       savedEvents.push(savedEvent);
     }
 
@@ -142,7 +154,6 @@ async function listEventsBySport(req, res) {
     });
   }
 }
-
 
 async function listMarkets(req, res) {
   const eventId = req.params.eventId;
@@ -178,7 +189,11 @@ async function listMarkets(req, res) {
       const options = { upsert: true, new: true };
 
       // Update or create the market in the ListMarket model
-      const savedMarket = await ListMarket.findOneAndUpdate(filter, update, options);
+      const savedMarket = await ListMarket.findOneAndUpdate(
+        filter,
+        update,
+        options
+      );
       markets.push(savedMarket);
     }
 
@@ -211,10 +226,14 @@ async function listInplayEvents(req, res) {
 
     for (const event of inplayEvents) {
       const filter = { sportsId: sportsId, Id: event.Id };
-      const update = { $set: { sportsId:sportsId }, $setOnInsert: event };
+      const update = { $set: { sportsId: sportsId }, $setOnInsert: event };
       const options = { upsert: true, new: true };
 
-      const savedEvent = await inPlayEvents.findOneAndUpdate(filter, update, options);
+      const savedEvent = await inPlayEvents.findOneAndUpdate(
+        filter,
+        update,
+        options
+      );
       savedEvents.push(savedEvent);
     }
 
@@ -244,59 +263,51 @@ async function getOdds(req, res) {
   }
 
   try {
-    // Retrieve the existing marketIds from the "odds" collection
-    const existingMarketIds = await Odds.find({ marketId: { $in: marketIds } }).distinct('marketId');
-
-    // Filter out the existing marketIds from the requested marketIds
-    const newMarketIds = marketIds.filter((marketId) => !existingMarketIds.includes(marketId));
-
-    // Fetch the odds data for the new marketIds from the external API
-    const url = `${config.sportsAPIUrl}/odds/?ids=${newMarketIds.join(',')}`;
+    const url = `${config.sportsAPIUrl}/odds/?ids=${marketIds.join(',')}`;
     const response = await axios.get(url);
     console.log('response ===', response.data);
     console.log('response.data.data', response.data.data);
 
     const oddsData = response.data;
 
-    // Create an array to store the new odds data
-    const newOddsData = [];
-
     for (const data of oddsData) {
-      console.log('data',data);
-      console.log('data.runner',data.Runners);
-      const market = await ListMarket.findOne({ MarketId: data.marketId });
+      console.log('data', data);
+      console.log('data.runner', data.Runners);
+
+      const market = await ListMarket.findOne({ MarketId: data.MarketId });
 
       if (market) {
-        const odds = new Odds({
-          updatetime: data.updatetime,
-          updatetime:data.update,
-          sport: data.sport,
-          eventId: data.eventId,
-          marketId: data.MarketId,
-          marketName: data.marketName,
-          source: data.source,
-          isMarketDataDelayed: data.IsMarketDataDelayed,
-          status: data.Status ,
-          isInplay: data.IsInplay,
-          inplay: data.inplay ,
-          numberOfRunners: data.NumberOfRunners,
-          numberOfActiveRunners: data.NumberOfActiveRunners ,
-          totalMatched: data.TotalMatched,
-          sportsId: market.sportsId,
-          runners: data.Runners 
-        });
-
-        newOddsData.push(odds);
+        await Odds.updateOne(
+          { eventId: data.eventId, marketId: data.MarketId },
+          {
+            $set: {
+              updatetime: data.updatetime,
+              updatetime: data.update,
+              sport: data.sport,
+              eventId: data.eventId,
+              marketId: data.MarketId,
+              marketName: data.marketName,
+              source: data.source,
+              isMarketDataDelayed: data.IsMarketDataDelayed,
+              status: data.Status,
+              isInplay: data.IsInplay,
+              inplay: data.inplay,
+              numberOfRunners: data.NumberOfRunners,
+              numberOfActiveRunners: data.NumberOfActiveRunners,
+              totalMatched: data.TotalMatched,
+              sportsId: market.sportsId,
+              runners: data.Runners,
+            },
+          },
+          { upsert: true, new: true }
+        );
       }
     }
-
-    // Save the new odds data to the "odds" collection
-    await Odds.insertMany(newOddsData);
 
     res.status(200).json({
       success: true,
       message: 'Odds retrieved and saved successfully',
-      odds: newOddsData ? newOddsData: oddsData,
+      odds: oddsData,
     });
   } catch (error) {
     console.error(error);
@@ -307,7 +318,6 @@ async function getOdds(req, res) {
     });
   }
 }
-
 
 loginRouter.get('/listCompetition/:sportId', listCompetitions);
 loginRouter.get('/listEventBySport/:sportId', listEventsBySport);
