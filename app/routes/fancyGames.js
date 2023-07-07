@@ -11,7 +11,11 @@ async function getFancyData(req, res) {
   try {
     const response = await axios.get(url);
     console.log('response', response.data);
-    console.log('response.data', response.data.data);
+    console.log('response.data.t1', response.data.t2);
+    console.log('response.data.t2', response.data.t2);
+    console.log('response.data.t3', response.data.t3);
+    console.log('response.data.t4', response.data.t4);
+
     const fancyData = response.data;
 
     // Create a new fancyData document
@@ -33,7 +37,7 @@ async function getFancyData(req, res) {
 
     // Update or insert the document in the database
     const result = await fancyGames.updateOne(
-      { gameId: fancyData.gameId },
+      { gameId: eventId },
       newData,
       { upsert: true }
     );

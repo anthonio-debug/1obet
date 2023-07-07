@@ -30,10 +30,11 @@ const t3DataSchema = new mongoose.Schema({
 });
 
 const fancyGames = new mongoose.Schema({
-  t1: { type: String, required: false },
-  t2: { type: String, required: false },
+  t1: [[[t3DataSchema]]],
+  t2: [[[t3DataSchema]]],
+  t4: [[[t3DataSchema]]],
   t3: [t3DataSchema],
-  t4: { type: String, required: false },
+  t4: [t3DataSchema],
   success: { type: Boolean, required: false },
   status: { type: Number, required: false },
   updatetime: { type: String, required: false },
