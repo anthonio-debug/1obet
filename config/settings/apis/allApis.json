@@ -98,10 +98,10 @@
   "liveTv",
   "liveScore",
   "listCompetitions",
-  "ListEventsBySport",
-  "ListEventsByCompetition",
-  "ListInplayEvents", 
-  "ListOddsAPI"
+  "listEventsBySport",
+  "listEventsByCompetition",
+  "listInplayEvents", 
+  "listOddsAPI"
 ]
 
 
