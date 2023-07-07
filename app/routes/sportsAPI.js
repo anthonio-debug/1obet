@@ -262,17 +262,28 @@ async function getOdds(req, res) {
     const newOddsData = [];
 
     for (const data of oddsData) {
+      console.log('data',data);
+      console.log('data.runner',data.Runners);
       const market = await ListMarket.findOne({ MarketId: data.marketId });
 
       if (market) {
         const odds = new Odds({
           updatetime: data.updatetime,
-          marketId: data.marketId,
+          updatetime:data.update,
+          sport: data.sport,
+          eventId: data.eventId,
+          marketId: data.MarketId,
           marketName: data.marketName,
-          totalMatched: data.totalMatched,
-          status: data.status,
-          runners: data.runners,
+          source: data.source,
+          isMarketDataDelayed: data.IsMarketDataDelayed,
+          status: data.Status ,
+          isInplay: data.IsInplay,
+          inplay: data.inplay ,
+          numberOfRunners: data.NumberOfRunners,
+          numberOfActiveRunners: data.NumberOfActiveRunners ,
+          totalMatched: data.TotalMatched,
           sportsId: market.sportsId,
+          runners: data.Runners 
         });
 
         newOddsData.push(odds);
