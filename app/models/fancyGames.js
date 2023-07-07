@@ -30,9 +30,8 @@ const t3DataSchema = new mongoose.Schema({
 });
 
 const fancyGames = new mongoose.Schema({
-  t1: [[[t3DataSchema]]],
-  t2: [[[t3DataSchema]]],
-  t4: [[[t3DataSchema]]],
+  t1: [[t3DataSchema]],
+  t2: [[t3DataSchema]],
   t3: [t3DataSchema],
   t4: [t3DataSchema],
   success: { type: Boolean, required: false },
