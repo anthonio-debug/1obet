@@ -299,7 +299,7 @@ async function getOdds(req, res) {
               runners: data.Runners,
             },
           },
-          { upsert: true, new: true }
+          { upsert: true }
         );
       }
     }
