@@ -8,12 +8,12 @@ const termsAndConditions = require('../models/termsAndConditions');
 const PrivacyPolicy = require('../models/privacyPolicy');
 const Competition = require('../models/listCompetitions');
 const Odds = require('../models/odds');
-
-
-
 const Exchanges = require('../models/exchanges');
 const MaxBetSize = require('../models/betLimits');
 const SideBarMenu = require('../models/sidebarMenu');
+const inPlayEvents = require('../models/inPlayEvents');
+const EventBySports = require('../models/eventsBySport');
+const EventsByCompetition = require('../models/eventsByCompetition');
 
 const loginRouter = express.Router();
 const router = express.Router();
@@ -332,69 +332,93 @@ function getSideBarMenu(req, res) {
 }
 
 
-function listCompetitions(req, res) {
-  // const marketid = req.body.role;
-  // Competition.find(
-  //   {}, 
-  //   (err, results) => {
-  //   if (err) {
-  //     return res.status(404).json({ message: 'Matches not found' });
-  //   }
-    return res.json({
+async function listCompetitions(req, res) {
+    const sportId = req.params.id;
+  
+    try {
+      const competitions = await Competition.find({ sportsId: sportId });
+  
+      res.status(200).json({
+        success: true,
+        message: 'Records',
+        results: competitions
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(200).json({
+        success: false,
+        message: 'Failed to get competitions',
+        error: error.message
+      });
+    }
+}
+
+async function ListEventsBySport(req, res) {
+  const sportId = req.params.id;
+
+  try {
+    const events = await EventBySports.find({ sportsId: sportId });
+
+    res.status(200).json({
       success: true,
-      message: ' Records',
-      results: [
-        {Id:"801976",Name:"Egyptian Premier"},
-        {Id:"6251219",Name:"Indian SuperLeague"},
-        {"Id":"9513","Name":"Portuguese Segunda Liga"},
-        {"Id":"117","Name":"Spanish La Liga"},
-        {"Id":"7129730","Name":"English Championship"},
-        {"Id":"107","Name":"Scottish Championship"},
-        {"Id":"10932509","Name":"English Premier League"},
-        {"Id":"99","Name":"Portuguese Primeira  Liga"}
-      ] ,
+      message: 'Event By Sports Records',
+      results: events
     });
-  // });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({
+      success: false,
+      message: 'Failed to get events',
+      error: error.message
+    });
+  }
 }
 
-function ListEventsBySport(req, res) {
-    return res.json({
-      success: true,
-      message: ' Records',
-      results: [
-        {"sport":"soccer","competitionId":"801976","competitionName":"Egyptian Premier","Id":"30207509","name":"Aswan FC v Ismaily","countryCode":null,"timezone":null,"openDate":"29-12-2020  18:00:00","inplay":false,"hasFancy":false,"status":"OPEN"},
-        {"sport":"soccer","competitionId":"6251219","competitionName ":"Indian Super League","Id":"30207322","name":"Chennaiyin FC v Atletico de  Kolkata","countryCode":null,"timezone":null,"openDate":"29-12-2020 19:30:00","inplay":false,"hasFancy":false,"status":"OPEN"},
-        {"sport":"soccer","competitionId":"9513","competitionName":"Portuguese Segunda Liga","Id":"30203070","name":"Oliveirense v Cova da  Piedade","countryCode":null,"timezone":null,"openDate":"29-12-2020  20:30:00","inplay":false,"hasFancy":false,"status":"OPEN"}
-      ]
-  });
+async function ListEventsByCompetition(req, res) {
+    const {sportsId,competitionId} = req.params;
+    try {
+      const events = await EventsByCompetition.find({ sportsId: sportsId, competitionId: competitionId });
+  
+      res.status(200).json({
+        success: true,
+        message: 'Event By Competitions Records',
+        results: events
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(200).json({
+        success: false,
+        message: 'Failed to get events',
+        error: error.message
+      });
+    }
 }
 
-function ListEventsByCompetition(req, res) {
-  return res.json({
-    success: true,
-    message: ' Records',
-    results: [
-      {"competitionId":"101","competitionName":"Russian Premier League","Id":"30073318","name":"Rostov v FC Khimki","countryCode":"RU","timezone":"GMT","openDate":"10/25/2020 1:32:30 PM","inplay":true,"hasFancy":false},{"competitionId":"101","competitionName":"Russian Premier League","Id":"30073311","name":"Akhmat Grozny v FC Ufa","countryCode":"RU","timezone":"GMT","openDate":"10/25/2020 4:00:00 PM","inplay":false,"hasFancy":false}
-    ]
-});
-}
 
-
-function ListInplayEvents(req, res) {
-  return res.json({
-    success: true,
-    message: ' Records',
-    results: [
-      {"sport":"cricket","competitionId":"10328858","competitionName":"Twenty20 Big Bash","Id":"30204688","name":"Melbourne Renegades v Sydney Sixers","countryCode":null,"timezone":null,"openDate":"29-12-2020 12:40:00","inplay":true,"hasFancy":false,"status":"CLOSED"},{"sport":"cricket","competitionId":"10328858","competitionName":"Twenty20 Big Bash","Id":"30205967","name":"Sydney Thunder v Melbourne Stars","countryCode":null,"timezone":null,"openDate":"29-12-2020 13:45:00","inplay":true,"hasFancy":true,"status":"OPEN"},{"sport":"cricket","competitionId":"11365612","competitionName":"Test Matches","Id":"30182810","name":"South Africa v SriLanka","countryCode":null,"timezone":null,"openDate":"29-12-2020 13:30:00","inplay":true,"hasFancy":true,"status":"SUSPENDED"}
-    ]
-});
+async function ListInplayEvents(req, res) {
+    const sportsId = req.params.id;
+    try {
+      const inplayEvents = await inPlayEvents.find({ sportsId: sportsId });
+  
+      res.status(200).json({
+        success: true,
+        message: 'Records',
+        results: inplayEvents
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(200).json({
+        success: false,
+        message: 'Failed to get inplay events',
+        error: error.message
+      });
+    }
 }
 
 async function ListOddsAPI(req, res) {
   try {
-    // const marketIds = req.query.ids.split(',').slice(0, 20);
-    const marketIds = 1.215790604
-    const odds = await Odds.find({ marketId: { $in: marketIds } });
+    const eventIds = req.query.ids.split(',').slice(0, 20);
+    const odds = await Odds.find({ eventId: { $in: eventIds } });
 
     return res.json({
       success: true,
@@ -486,7 +510,7 @@ router.get('/addSideBarMenu', addSideBarMenu);
 
 router.get('/listCompetitions/:id', listCompetitions);
 router.get('/ListEventsBySport/:id', ListEventsBySport);
-router.get('/ListEventsByCompetition/:id', ListEventsByCompetition);
+router.get('/ListEventsByCompetition/:sportsId/:competitionId', ListEventsByCompetition);
 router.get('/ListInplayEvents/:id', ListInplayEvents);
 router.get('/ListOddsAPI', ListOddsAPI);
 

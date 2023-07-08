@@ -79,8 +79,6 @@ async function listEventsBySport(req, res) {
     const events = [];
 
     for (const eventData of eventsData) {
-    const competitionExists = await ListCompetitions.find({ Id: eventData.competitionId, sportsId: eventData.sportId });
-    if (competitionExists) {
       const filter = { Id: eventData.Id, sportsId: sportId };
       const update = {
         $setOnInsert: {
@@ -109,7 +107,6 @@ async function listEventsBySport(req, res) {
       );
       events.push(updatedEvent);
     }
-  }
 
     res.status(200).json({
       success: true,
@@ -125,7 +122,6 @@ async function listEventsBySport(req, res) {
     });
   }
 }
-
 
 //Id is eventId
 async function listEventsByCompetition(req, res) {
