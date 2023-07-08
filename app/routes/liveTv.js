@@ -5,7 +5,7 @@ const loginRouter = express.Router();
 
 async function liveTv(req, res) {
   const eventId = req.params.eventId;
-  const url = `${config.liveTvUrl}/${eventId}`;
+  const url = `${config.liveTvUrl}/get_live_tv_url/${eventId}`;
   console.log('url', url);
   try {
     const response = await axios.get(url);
