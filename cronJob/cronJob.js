@@ -452,8 +452,8 @@ const sportsAPICronJob = () => {
 
       // Iterate over sportsIds
       for (const sportId of sportsIds) {
-        await listEventsBySport({ params: { sportId } });
-        await listInplayEvents({ params: { sportsId: sportId } });
+        await listEventsBySport({ params: { sportId } }, null); // Pass null as the second argument since res is not used
+        await listInplayEvents({ params: { sportsId: sportId } }, null); // Pass null as the second argument since res is not used
       }
     } catch (error) {
       console.error('Error running getOdds cron job:', error);

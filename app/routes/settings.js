@@ -396,7 +396,7 @@ async function listEventsByCompetition(req, res) {
 }
 
 async function listInplayEvents(req, res) {
-  const sportsId = req.query.ids;
+  const sportsId = req.query.ids.split(',');;
   try {
     const inplayEvents = await inPlayEvents.find({ sportsId: { $in: sportsId } });
 
@@ -705,4 +705,4 @@ loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);
 
-module.exports = { loginRouter, router, ListOddsAPI };
+module.exports = { loginRouter, router, listOddsAPI };
