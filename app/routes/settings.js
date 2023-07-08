@@ -421,13 +421,18 @@ async function ListOddsAPI(req, res) {
     const url = `${config.liveTvUrl}/get_live_tv_url/${eventIds}`;
     const liveTVResponse = await axios.get(url);
     const liveTVData = liveTVResponse.data;
+    console.log('liveTVData', liveTVData);
 
+    console.log('liveTVResponse', liveTVResponse);
     return res.json({
       success: true,
       message: 'Records',
       results: {
         odds,
-        liveTVData,
+        liveTVData: {
+          scoreUrl: liveTVResponse.scoreUrl || '',
+          streamingUrl: liveTVResponse.streamingUrl || '',
+        },
       },
     });
   } catch (error) {
@@ -438,6 +443,7 @@ async function ListOddsAPI(req, res) {
     });
   }
 }
+
 
 const getOddsCronJob = () => {
   // Cron job to run getOdds every second
