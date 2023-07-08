@@ -108,14 +108,14 @@ async function listEventsBySport(req, res) {
       events.push(updatedEvent);
     }
 
-    res.status(200).json({
+    res.json({
       success: true,
       message: 'Events retrieved successfully',
       events: events,
     });
   } catch (error) {
     console.error(error);
-    res.status(200).json({
+    res.json({
       success: false,
       message: 'Failed to get events',
       error: error.message,
