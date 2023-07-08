@@ -431,8 +431,8 @@ async function ListOddsAPI(req, res) {
       results: {
         odds,
         liveTVData: {
-          scoreUrl: liveTVResponse.scoreUrl || '',
-          streamingUrl: liveTVResponse.streamingUrl || '',
+          scoreUrl: liveTVData.scoreUrl || '',
+          streamingUrl: liveTVData.streamingUrl || '',
         },
       },
     });
