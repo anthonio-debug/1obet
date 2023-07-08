@@ -396,9 +396,9 @@ async function ListEventsByCompetition(req, res) {
 }
 
 async function ListInplayEvents(req, res) {
-  const sportsId = req.params.id;
+  const sportsId = req.query.ids;
   try {
-    const inplayEvents = await inPlayEvents.find({ sportsId: sportsId });
+    const inplayEvents = await inPlayEvents.find({ sportsId: { $in: sportsId } });
 
     res.status(200).json({
       success: true,
@@ -701,7 +701,7 @@ loginRouter.get(
   '/ListEventsByCompetition/:sportsId/:competitionId',
   ListEventsByCompetition
 );
-loginRouter.get('/ListInplayEvents/:id', ListInplayEvents);
+loginRouter.get('/ListInplayEvents', ListInplayEvents);
 loginRouter.get('/ListOddsAPI', ListOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);
 
