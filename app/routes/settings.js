@@ -14,7 +14,7 @@ const SideBarMenu = require('../models/sidebarMenu');
 const inPlayEvents = require('../models/inPlayEvents');
 const EventBySports = require('../models/eventsBySport');
 const EventsByCompetition = require('../models/eventsByCompetition');
-
+const config = require('config')
 const loginRouter = express.Router();
 const router = express.Router();
 
