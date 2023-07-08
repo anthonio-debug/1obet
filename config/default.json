@@ -16,7 +16,7 @@
   "currency": "EUR",
   "sportsAPIUrl": "http://209.250.242.175:33332",
   "fancyUrl": "https://betfairoddsapi.com:3444/api",
-  "liveTvUrl": "https://tvlivestreaming.online/live_tv/index.html?eventId=",
+  "liveTvUrl": "https://livesportscore.xyz:3440/api",
   "liveScoreUrl": "https://livesportscore.xyz:3443/api/getScoreId",
-  "horseRaceUrl":"http://136.244.77.249:33333"
+  "horseRaceUrl": "http://136.244.77.249:33333"
 }

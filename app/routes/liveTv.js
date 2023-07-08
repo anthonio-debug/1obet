@@ -4,8 +4,9 @@ const axios = require('axios');
 const loginRouter = express.Router();
 
 async function liveTv(req, res) {
-  const eventId = req.query.eventId;
-  const url = `${config.liveTvUrl}${eventId}`;
+  const eventId = req.params.eventId;
+  const url = `${config.liveTvUrl}/${eventId}`;
+  console.log('url', url);
   try {
     const response = await axios.get(url);
     console.log('response', response.data);
@@ -27,6 +28,6 @@ async function liveTv(req, res) {
 }
 
 // Define the route for the API
-loginRouter.get('/liveTv', liveTv);
+loginRouter.get('/liveTv/:eventId', liveTv);
 
 module.exports = { loginRouter };
