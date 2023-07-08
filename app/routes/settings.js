@@ -418,11 +418,17 @@ async function ListOddsAPI(req, res) {
   try {
     const eventIds = req.query.ids.split(',').slice(0, 20);
     const odds = await Odds.find({ eventId: { $in: eventIds } });
+    const url = `${config.liveTvUrl}/get_live_tv_url/${eventIds}`;
+    const liveTVResponse = await axios.get(url);
+    const liveTVData = liveTVResponse.data;
 
     return res.json({
       success: true,
       message: 'Records',
-      results: odds,
+      results: {
+        odds,
+        liveTVData,
+      },
     });
   } catch (error) {
     console.error('Error retrieving odds:', error);
@@ -485,7 +491,7 @@ async function racesAPI(req, res) {
           port: 20098,
         },
         {
-          1.186083477: 'movember',
+          '1.186083477': 'movember',
           marketName: 'Ascot 7th Aug - 2m Hcap',
           marketId: '1.186083477',
           marketType: null,
@@ -497,7 +503,7 @@ async function racesAPI(req, res) {
           port: 20099,
         },
         {
-          1.186083484: 'movember',
+          '1.186083484': 'movember',
           marketName: 'Ascot 7th Aug - 1m4f Hcap',
           marketId: '1.186083484',
           marketType: null,
@@ -522,27 +528,27 @@ async function racesAPI(req, res) {
           venue: 'Swindon',
           eventTypeId: 4339,
           countryCode: 'GB',
-          races: {
-            1.186089617: {
-              marketName: 'Swindon 6th Aug - A5 476m',
-              marketId: '1.186089617',
-              marketType: null,
-              eventId: 30765711,
-              eventName: 'Swindon 6th Aug',
-              startTime: '2021-08-06T11:28:00+00:00',
-              open: 0,
-              inplay: 0,
-              port: 20311,
-            },
-          },
+          races: [{
+            id: '1.186089617',
+            marketName: 'Swindon 6th Aug - A5 476m',
+            marketId: '1.186089617',
+            marketType: null,
+            eventId: 30765711,
+            eventName: 'Swindon 6th Aug',
+            startTime: '2021-08-06T11:28:00+00:00',
+            open: 0,
+            inplay: 0,
+            port: 20311,
+          }],
         },
         {
           meetingId: 30765572,
           venue: 'Harlow',
           eventTypeId: 4339,
           countryCode: 'GB',
-          races: {
-            1.186086708: {
+          races: [
+            {
+              id: 1.186086708,
               marketName: 'Harlow 6th Aug - D3 238m',
               marketId: '1.186086708',
               marketType: null,
@@ -553,7 +559,8 @@ async function racesAPI(req, res) {
               inplay: 0,
               port: 20318,
             },
-            '1.186086710': {
+            {
+              id: 1.186086710,
               marketName: 'Harlow 6th Aug - A6 415m',
               marketId: '1.186086710',
               marketType: null,
@@ -564,7 +571,8 @@ async function racesAPI(req, res) {
               inplay: 0,
               port: 20319,
             },
-            1.186086712: {
+            {
+              id: 1.186086712,
               marketName: 'Harlow 6th Aug - A7 415m',
               marketId: '1.186086712',
               marketType: null,
@@ -575,7 +583,8 @@ async function racesAPI(req, res) {
               inplay: 0,
               port: 20320,
             },
-            1.186086714: {
+            {
+              id: 1.186086714,
               marketName: 'Harlow 6th Aug - D2 238m',
               marketId: '1.186086714',
               marketType: null,
@@ -586,80 +595,10 @@ async function racesAPI(req, res) {
               inplay: 0,
               port: 20321,
             },
-          },
+          ],
         },
-        {
-          meetingId: 30765711,
-          venue: 'Swindon',
-          eventTypeId: 4339,
-          countryCode: 'GB',
-          races: {
-            1.186089617: {
-              marketName: 'Swindon 6th Aug - A5 476m',
-              marketId: '1.186089617',
-              marketType: null,
-              eventId: 30765711,
-              eventName: 'Swindon 6th Aug',
-              startTime: '2021-08-06T11:28:00+00:00',
-              open: 0,
-              inplay: 0,
-              port: 20311,
-            },
-          },
-        },
-        {
-          meetingId: 30765572,
-          venue: 'Harlow',
-          eventTypeId: 4339,
-          countryCode: 'GB',
-          races: {
-            1.186086708: {
-              marketName: 'Harlow 6th Aug - D3 238m',
-              marketId: '1.186086708',
-              marketType: null,
-              eventId: 30765572,
-              eventName: 'Harlow 6th Aug',
-              startTime: '2021-08-06T11:31:00+00:00',
-              open: 1,
-              inplay: 0,
-              port: 20318,
-            },
-            '1.186086710': {
-              marketName: 'Harlow 6th Aug - A6 415m',
-              marketId: '1.186086710',
-              marketType: null,
-              eventId: 30765572,
-              eventName: 'Harlow 6th Aug',
-              startTime: '2021-08-06T11:46:00+00:00',
-              open: 1,
-              inplay: 0,
-              port: 20319,
-            },
-            1.186086712: {
-              marketName: 'Harlow 6th Aug - A7 415m',
-              marketId: '1.186086712',
-              marketType: null,
-              eventId: 30765572,
-              eventName: 'Harlow 6th Aug',
-              startTime: '2021-08-06T12:02:00+00:00',
-              open: 1,
-              inplay: 0,
-              port: 20320,
-            },
-            1.186086714: {
-              marketName: 'Harlow 6th Aug - D2 238m',
-              marketId: '1.186086714',
-              marketType: null,
-              eventId: 30765572,
-              eventName: 'Harlow 6th Aug',
-              startTime: '2021-08-06T12:17:00+00:00',
-              open: 1,
-              inplay: 0,
-              port: 20321,
-            },
-          },
-        },
-      ];
+      ];      
+      
       return res.json({
         success: true,
         message: 'Records',
