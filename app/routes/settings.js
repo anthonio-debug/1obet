@@ -351,7 +351,7 @@ async function listCompetitions(req, res) {
   }
 }
 
-async function ListEventsBySport(req, res) {
+async function listEventsBySport(req, res) {
   const sportId = req.params.id;
 
   try {
@@ -372,7 +372,7 @@ async function ListEventsBySport(req, res) {
   }
 }
 
-async function ListEventsByCompetition(req, res) {
+async function listEventsByCompetition(req, res) {
   const { sportsId, competitionId } = req.params;
   try {
     const events = await EventsByCompetition.find({
@@ -395,7 +395,7 @@ async function ListEventsByCompetition(req, res) {
   }
 }
 
-async function ListInplayEvents(req, res) {
+async function listInplayEvents(req, res) {
   const sportsId = req.query.ids;
   try {
     const inplayEvents = await inPlayEvents.find({ sportsId: { $in: sportsId } });
@@ -415,7 +415,7 @@ async function ListInplayEvents(req, res) {
   }
 }
 
-async function ListOddsAPI(req, res) {
+async function listOddsAPI(req, res) {
   try {
     const eventIds = req.query.ids.split(',').slice(0, 20);
     const odds = await Odds.find({ eventId: { $in: eventIds } });
@@ -450,7 +450,7 @@ const getOddsCronJob = () => {
   // Cron job to run getOdds every second
   cron.schedule('* * * * * *', async () => {
     try {
-      const response = await ListOddsAPI(req, res);
+      const response = await listOddsAPI(req, res);
       console.log('log', response);
       const odds = response.results;
       await getOdds(odds);
@@ -696,13 +696,13 @@ loginRouter.get('/getSideBarMenu', getSideBarMenu);
 router.get('/addSideBarMenu', addSideBarMenu);
 
 loginRouter.get('/listCompetitions/:id', listCompetitions);
-loginRouter.get('/ListEventsBySport/:id', ListEventsBySport);
+loginRouter.get('/listEventsBySport/:id', listEventsBySport);
 loginRouter.get(
-  '/ListEventsByCompetition/:sportsId/:competitionId',
-  ListEventsByCompetition
+  '/listEventsByCompetition/:sportsId/:competitionId',
+  listEventsByCompetition
 );
-loginRouter.get('/ListInplayEvents', ListInplayEvents);
-loginRouter.get('/ListOddsAPI', ListOddsAPI);
+loginRouter.get('/listInplayEvents', listInplayEvents);
+loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);
 
 module.exports = { loginRouter, router, ListOddsAPI };
