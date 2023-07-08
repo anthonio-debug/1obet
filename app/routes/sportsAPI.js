@@ -7,6 +7,14 @@ const ListMarket = require('../models/listMarkets');
 const Odds = require('../models/odds');
 const inPlayEvents = require('../models/inPlayEvents');
 const eventsByCompetitons = require('../models/eventsByCompetition');
+const rateLimit = require('express-rate-limit');
+
+// Limit each IP to 60 requests per minute
+const limiter = rateLimit({
+  windowMs: 60 * 1000, // 1 minute
+  max: 60,
+  message: 'Too many requests from this IP, please try again later',
+});
 
 const loginRouter = express.Router();
 
@@ -71,6 +79,8 @@ async function listEventsBySport(req, res) {
     const events = [];
 
     for (const eventData of eventsData) {
+    const competitionExists = await ListCompetitions.find({ Id: eventData.competitionId, sportsId: eventData.sportId });
+    if (competitionExists) {
       const filter = { Id: eventData.Id, sportsId: sportId };
       const update = {
         $setOnInsert: {
@@ -99,6 +109,7 @@ async function listEventsBySport(req, res) {
       );
       events.push(updatedEvent);
     }
+  }
 
     res.status(200).json({
       success: true,
@@ -114,6 +125,7 @@ async function listEventsBySport(req, res) {
     });
   }
 }
+
 
 //Id is eventId
 async function listEventsByCompetition(req, res) {
@@ -253,70 +265,67 @@ async function listInplayEvents(req, res) {
 }
 
 async function getOdds(req, res) {
-  const marketIds = req.query.ids.split(',').slice(0, 20);
+  // Apply rate limiting middleware to the API
+  limiter(req, res, async () => {
+    // marketIds can be more than 20, but only takes the first 20 market IDs in the request:
+    const marketIds = req.query.ids.split(',').slice(0, 20);
 
-  if (marketIds.length > 20) {
-    return res.status(400).json({
-      success: false,
-      message: 'Exceeded maximum limit of 20 market IDs',
-    });
-  }
+    try {
+      const url = `${config.sportsAPIUrl}/odds/?ids=${marketIds.join(',')}`;
+      const response = await axios.get(url);
+      console.log('response ===', response.data);
+      console.log('response.data.data', response.data.data);
 
-  try {
-    const url = `${config.sportsAPIUrl}/odds/?ids=${marketIds.join(',')}`;
-    const response = await axios.get(url);
-    console.log('response ===', response.data);
-    console.log('response.data.data', response.data.data);
+      const oddsData = response.data;
 
-    const oddsData = response.data;
+      for (const data of oddsData) {
+        console.log('data', data);
+        console.log('data.runner', data.Runners);
 
-    for (const data of oddsData) {
-      console.log('data', data);
-      console.log('data.runner', data.Runners);
+        const market = await ListMarket.findOne({ marketId: data.MarketId });
 
-      const market = await ListMarket.findOne({ marketId: data.MarketId });
-
-      if (market) {
-        await Odds.updateOne(
-          { eventId: data.eventId, marketId: data.MarketId },
-          {
-            $set: {
-              updatetime: data.updatetime,
-              update: data.update,
-              sport: data.sport,
-              eventId: data.eventId,
-              marketId: data.MarketId,
-              marketName: data.marketName,
-              source: data.source,
-              isMarketDataDelayed: data.IsMarketDataDelayed,
-              status: data.Status,
-              isInplay: data.IsInplay,
-              inplay: data.inplay,
-              numberOfRunners: data.NumberOfRunners,
-              numberOfActiveRunners: data.NumberOfActiveRunners,
-              totalMatched: data.TotalMatched,
-              sportsId: market.sportsId,
-              runners: data.Runners,
+        if (market) {
+          await Odds.updateOne(
+            { eventId: data.eventId, marketId: data.MarketId },
+            {
+              $set: {
+                updatetime: data.updatetime,
+                update: data.update,
+                sport: data.sport,
+                eventId: data.eventId,
+                marketId: data.MarketId,
+                marketName: data.marketName,
+                source: data.source,
+                isMarketDataDelayed: data.IsMarketDataDelayed,
+                status: data.Status,
+                isInplay: data.IsInplay,
+                inplay: data.inplay,
+                numberOfRunners: data.NumberOfRunners,
+                numberOfActiveRunners: data.NumberOfActiveRunners,
+                totalMatched: data.TotalMatched,
+                sportsId: market.sportsId,
+                runners: data.Runners,
+              },
             },
-          },
-          { upsert: true, new: true }
-        );
+            { upsert: true, new: true }
+          );
+        }
       }
-    }
 
-    res.status(200).json({
-      success: true,
-      message: 'Odds retrieved and saved successfully',
-      odds: oddsData,
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(200).json({
-      success: false,
-      message: 'Failed to get or save odds',
-      error: error.message,
-    });
-  }
+      res.status(200).json({
+        success: true,
+        message: 'Odds retrieved and saved successfully',
+        odds: oddsData,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(200).json({
+        success: false,
+        message: 'Failed to get or save odds',
+        error: error.message,
+      });
+    }
+  });
 }
 
 loginRouter.get('/listCompetition/:sportId', listCompetitions);
@@ -329,4 +338,4 @@ loginRouter.get('/listMarket/:eventId', listMarkets);
 loginRouter.get('/listInplayEvent/:sportsId', listInplayEvents);
 loginRouter.get('/getOdds', getOdds);
 
-module.exports = { loginRouter };
+module.exports = { loginRouter,getOdds };

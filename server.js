@@ -22,11 +22,12 @@ var jsonContent = JSON.parse(content);
 
 var apisContent = fs.readFileSync(config.apisFileName);
 var jsonApis = JSON.parse(apisContent);
-const { themeCronJob, checkBetStatus } = require('./cronJob/cronJob'); // Import only cronJob2
+const { themeCronJob, checkBetStatus,getOddsCronJob } = require('./cronJob/cronJob'); // Import only cronJob2
 
 // Run the cron job
 themeCronJob();
 checkBetStatus();
+// getOddsCronJob()
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,

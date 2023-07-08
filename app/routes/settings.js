@@ -7,6 +7,7 @@ const settingsValidation = require('../validators/settings');
 const termsAndConditions = require('../models/termsAndConditions');
 const PrivacyPolicy = require('../models/privacyPolicy');
 const Competition = require('../models/listCompetitions');
+const Odds = require('../models/odds');
 
 
 
@@ -389,88 +390,40 @@ function ListInplayEvents(req, res) {
 });
 }
 
-function ListOddsAPI(req, res) {
-  return res.json({
-    success: true,
-    message: ' Records',
-    results: [
-      {
-        "sport": "soccer",
-        "eventId": "30207509",
-        "MarketId": "1.177393055",
-        "marketName": "Match Odds",
-        "source": 3,
-        "IsMarketDataDelayed": false,
-        "Status": "OPEN",
-        "IsInplay": false,
-        "inplay": false,
-        "NumberOfRunners": 3,
-        "NumberOfActiveRunners": 3,
-        "TotalMatched": 0.0,
-        "Runners": [
-          {
-            "SelectionId": 929566606,
-            "runnerName": "Aswan FC",
-            "Status": "ACTIVE",
-            "LastPriceTraded": null,
-            "TotalMatched": 0.0,
-            "ExchangePrices": {
-              "AvailableToBack": [
-                {"Price": 4.8, "Size": 535.0},
-                {"Price": 4.7, "Size": 58.0},
-                {"Price": 4.6, "Size": 127.0}
-              ],
-              "AvailableToLay": [
-                {"Price": 5.0, "Size": 700.0},
-                {"Price": 5.2, "Size": 1053.0},
-                {"Price": 5.3, "Size": 478.0}
-              ]
-            }
-          },
-          {
-            "SelectionId": 700243574,
-            "runnerName": "Ismaily",
-            "Status": "ACTIVE",
-            "LastPriceTraded": null,
-            "TotalMatched": 0.0,
-            "ExchangePrices": {
-              "AvailableToBack": [
-                {"Price": 1.99, "Size": 1246.0},
-                {"Price": 1.98, "Size": 116.0},
-                {"Price": 1.97, "Size": 4635.0}
-              ],
-              "AvailableToLay": [
-                {"Price": 2.0, "Size": 1600.0},
-                {"Price": 2.02, "Size": 702.0},
-                {"Price": 2.04, "Size": 87.0}
-              ]
-            }
-          },
-          {
-            "SelectionId": 294044778,
-            "runnerName": "The Draw",
-            "Status": "ACTIVE",
-            "LastPriceTraded": null,
-            "TotalMatched": 0.0,
-            "ExchangePrices": {
-              "AvailableToBack": [
-                {"Price": 3.3, "Size": 1319.0},
-                {"Price": 3.25, "Size": 1394.0},
-                {"Price": 3.2, "Size": 1770.0}
-              ],
-              "AvailableToLay": [
-                {"Price": 3.4, "Size": 756.0},
-                {"Price": 3.45, "Size": 46.0},
-                {"Price": 3.5, "Size": 902.0}
-              ]
-            }
-          }
-        ]
-      }
-    ]
-    
-});
+async function ListOddsAPI(req, res) {
+  try {
+    // const marketIds = req.query.ids.split(',').slice(0, 20);
+    const marketIds = 1.215790604
+    const odds = await Odds.find({ marketId: { $in: marketIds } });
+
+    return res.json({
+      success: true,
+      message: 'Records',
+      results: odds,
+    });
+  } catch (error) {
+    console.error('Error retrieving odds:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error retrieving odds',
+    });
+  }
 }
+
+const getOddsCronJob = () => {
+  // Cron job to run getOdds every second
+  cron.schedule('* * * * * *', async () => {
+    try {
+      const response = await ListOddsAPI(req, res);
+      console.log('log',response);
+      const odds = response.results;
+      await getOdds(odds);
+    } catch (error) {
+      console.error('Error running getOdds cron job:', error);
+    }
+  });
+};
+
 
 
 //for only backend
@@ -535,6 +488,6 @@ router.get('/listCompetitions/:id', listCompetitions);
 router.get('/ListEventsBySport/:id', ListEventsBySport);
 router.get('/ListEventsByCompetition/:id', ListEventsByCompetition);
 router.get('/ListInplayEvents/:id', ListInplayEvents);
-router.get('/ListOddsAPI/:id', ListOddsAPI);
+router.get('/ListOddsAPI', ListOddsAPI);
 
-module.exports = { loginRouter, router };
+module.exports = { loginRouter, router,ListOddsAPI };
