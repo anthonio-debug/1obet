@@ -42,6 +42,7 @@ db.sidebarmenus.insertMany([
     darkIcon: "https://1obet.com/assets/dark-icons/horse-race.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 0,
+    market: 7,
     link: "/horse-race",
   },
   {
@@ -50,6 +51,7 @@ db.sidebarmenus.insertMany([
     darkIcon: "https://1obet.com/assets/dark-icons/greyhound.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 0,
+    market: 4339,
     link: "/greyhound",
   },
   {

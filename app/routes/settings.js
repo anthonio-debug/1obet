@@ -309,17 +309,15 @@ function getDefaultSettings(req, res) {
 }
 
 function getSideBarMenu(req, res) {
-  let type = []
-  if(req.decoded.role == 5){
-    type = [0]
-  }else if(req.decoded.role == 0){
-    type = [1,2]
-  }else{
+  let type = [];
+  if (req.decoded.role == 5) {
+    type = [0];
+  } else if (req.decoded.role == 0) {
+    type = [1, 2];
+  } else {
     type = [1];
   }
-  SideBarMenu.find(
-    { type: { $in:  type } }, 
-    (err, results) => {
+  SideBarMenu.find({ type: { $in: type } }, (err, results) => {
     if (err) {
       return res.status(404).json({ message: 'settings not found' });
     }
@@ -331,26 +329,25 @@ function getSideBarMenu(req, res) {
   });
 }
 
-
 async function listCompetitions(req, res) {
-    const sportId = req.params.id;
-  
-    try {
-      const competitions = await Competition.find({ sportsId: sportId });
-  
-      res.status(200).json({
-        success: true,
-        message: 'Records',
-        results: competitions
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(200).json({
-        success: false,
-        message: 'Failed to get competitions',
-        error: error.message
-      });
-    }
+  const sportId = req.params.id;
+
+  try {
+    const competitions = await Competition.find({ sportsId: sportId });
+
+    res.status(200).json({
+      success: true,
+      message: 'Records',
+      results: competitions,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({
+      success: false,
+      message: 'Failed to get competitions',
+      error: error.message,
+    });
+  }
 }
 
 async function ListEventsBySport(req, res) {
@@ -362,57 +359,59 @@ async function ListEventsBySport(req, res) {
     res.status(200).json({
       success: true,
       message: 'Event By Sports Records',
-      results: events
+      results: events,
     });
   } catch (error) {
     console.error(error);
     res.status(200).json({
       success: false,
       message: 'Failed to get events',
-      error: error.message
+      error: error.message,
     });
   }
 }
 
 async function ListEventsByCompetition(req, res) {
-    const {sportsId,competitionId} = req.params;
-    try {
-      const events = await EventsByCompetition.find({ sportsId: sportsId, competitionId: competitionId });
-  
-      res.status(200).json({
-        success: true,
-        message: 'Event By Competitions Records',
-        results: events
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(200).json({
-        success: false,
-        message: 'Failed to get events',
-        error: error.message
-      });
-    }
+  const { sportsId, competitionId } = req.params;
+  try {
+    const events = await EventsByCompetition.find({
+      sportsId: sportsId,
+      competitionId: competitionId,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Event By Competitions Records',
+      results: events,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({
+      success: false,
+      message: 'Failed to get events',
+      error: error.message,
+    });
+  }
 }
 
-
 async function ListInplayEvents(req, res) {
-    const sportsId = req.params.id;
-    try {
-      const inplayEvents = await inPlayEvents.find({ sportsId: sportsId });
-  
-      res.status(200).json({
-        success: true,
-        message: 'Records',
-        results: inplayEvents
-      });
-    } catch (error) {
-      console.error(error);
-      res.status(200).json({
-        success: false,
-        message: 'Failed to get inplay events',
-        error: error.message
-      });
-    }
+  const sportsId = req.params.id;
+  try {
+    const inplayEvents = await inPlayEvents.find({ sportsId: sportsId });
+
+    res.status(200).json({
+      success: true,
+      message: 'Records',
+      results: inplayEvents,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({
+      success: false,
+      message: 'Failed to get inplay events',
+      error: error.message,
+    });
+  }
 }
 
 async function ListOddsAPI(req, res) {
@@ -439,7 +438,7 @@ const getOddsCronJob = () => {
   cron.schedule('* * * * * *', async () => {
     try {
       const response = await ListOddsAPI(req, res);
-      console.log('log',response);
+      console.log('log', response);
       const odds = response.results;
       await getOdds(odds);
     } catch (error) {
@@ -447,8 +446,6 @@ const getOddsCronJob = () => {
     }
   });
 };
-
-
 
 //for only backend
 function addSideBarMenu(req, res) {
@@ -465,6 +462,217 @@ function addSideBarMenu(req, res) {
       return res.status(404).send({ message: 'side bar menu not saved' });
     return res.send({ message: 'menu record saved', results });
   });
+}
+async function racesAPI(req, res) {
+  try {
+    if (req.params.id === '7') {
+      const odds = [
+        {
+          meetingId: 30765138,
+          venue: 'Ascot',
+          eventTypeId: 7,
+          countryCode: 'GB',
+          races: 'movember',
+          '1.186083470': 'movember',
+          marketName: 'Ascot 7th Aug - 5f Hcap',
+          marketId: '1.186083470',
+          marketType: null,
+          eventId: 30765138,
+          eventName: 'Ascot 7th Aug',
+          startTime: '2021-08-07T11:50:00+00:00',
+          open: 1,
+          inplay: 0,
+          port: 20098,
+        },
+        {
+          1.186083477: 'movember',
+          marketName: 'Ascot 7th Aug - 2m Hcap',
+          marketId: '1.186083477',
+          marketType: null,
+          eventId: 30765138,
+          eventName: 'Ascot 7th Aug',
+          startTime: '2021-08-07T12:25:00+00:00',
+          open: 1,
+          inplay: 0,
+          port: 20099,
+        },
+        {
+          1.186083484: 'movember',
+          marketName: 'Ascot 7th Aug - 1m4f Hcap',
+          marketId: '1.186083484',
+          marketType: null,
+          eventId: 30765138,
+          eventName: 'Ascot 7th Aug',
+          startTime: '2021-08-07T13:00:00+00:00',
+          open: 1,
+          inplay: 0,
+          port: 20100,
+        },
+      ];
+
+      return res.json({
+        success: true,
+        message: 'Records',
+        results: odds,
+      });
+    } else if (req.params.id === '4339') {
+      const greyhound = [
+        {
+          meetingId: 30765711,
+          venue: 'Swindon',
+          eventTypeId: 4339,
+          countryCode: 'GB',
+          races: {
+            1.186089617: {
+              marketName: 'Swindon 6th Aug - A5 476m',
+              marketId: '1.186089617',
+              marketType: null,
+              eventId: 30765711,
+              eventName: 'Swindon 6th Aug',
+              startTime: '2021-08-06T11:28:00+00:00',
+              open: 0,
+              inplay: 0,
+              port: 20311,
+            },
+          },
+        },
+        {
+          meetingId: 30765572,
+          venue: 'Harlow',
+          eventTypeId: 4339,
+          countryCode: 'GB',
+          races: {
+            1.186086708: {
+              marketName: 'Harlow 6th Aug - D3 238m',
+              marketId: '1.186086708',
+              marketType: null,
+              eventId: 30765572,
+              eventName: 'Harlow 6th Aug',
+              startTime: '2021-08-06T11:31:00+00:00',
+              open: 1,
+              inplay: 0,
+              port: 20318,
+            },
+            '1.186086710': {
+              marketName: 'Harlow 6th Aug - A6 415m',
+              marketId: '1.186086710',
+              marketType: null,
+              eventId: 30765572,
+              eventName: 'Harlow 6th Aug',
+              startTime: '2021-08-06T11:46:00+00:00',
+              open: 1,
+              inplay: 0,
+              port: 20319,
+            },
+            1.186086712: {
+              marketName: 'Harlow 6th Aug - A7 415m',
+              marketId: '1.186086712',
+              marketType: null,
+              eventId: 30765572,
+              eventName: 'Harlow 6th Aug',
+              startTime: '2021-08-06T12:02:00+00:00',
+              open: 1,
+              inplay: 0,
+              port: 20320,
+            },
+            1.186086714: {
+              marketName: 'Harlow 6th Aug - D2 238m',
+              marketId: '1.186086714',
+              marketType: null,
+              eventId: 30765572,
+              eventName: 'Harlow 6th Aug',
+              startTime: '2021-08-06T12:17:00+00:00',
+              open: 1,
+              inplay: 0,
+              port: 20321,
+            },
+          },
+        },
+        {
+          meetingId: 30765711,
+          venue: 'Swindon',
+          eventTypeId: 4339,
+          countryCode: 'GB',
+          races: {
+            1.186089617: {
+              marketName: 'Swindon 6th Aug - A5 476m',
+              marketId: '1.186089617',
+              marketType: null,
+              eventId: 30765711,
+              eventName: 'Swindon 6th Aug',
+              startTime: '2021-08-06T11:28:00+00:00',
+              open: 0,
+              inplay: 0,
+              port: 20311,
+            },
+          },
+        },
+        {
+          meetingId: 30765572,
+          venue: 'Harlow',
+          eventTypeId: 4339,
+          countryCode: 'GB',
+          races: {
+            1.186086708: {
+              marketName: 'Harlow 6th Aug - D3 238m',
+              marketId: '1.186086708',
+              marketType: null,
+              eventId: 30765572,
+              eventName: 'Harlow 6th Aug',
+              startTime: '2021-08-06T11:31:00+00:00',
+              open: 1,
+              inplay: 0,
+              port: 20318,
+            },
+            '1.186086710': {
+              marketName: 'Harlow 6th Aug - A6 415m',
+              marketId: '1.186086710',
+              marketType: null,
+              eventId: 30765572,
+              eventName: 'Harlow 6th Aug',
+              startTime: '2021-08-06T11:46:00+00:00',
+              open: 1,
+              inplay: 0,
+              port: 20319,
+            },
+            1.186086712: {
+              marketName: 'Harlow 6th Aug - A7 415m',
+              marketId: '1.186086712',
+              marketType: null,
+              eventId: 30765572,
+              eventName: 'Harlow 6th Aug',
+              startTime: '2021-08-06T12:02:00+00:00',
+              open: 1,
+              inplay: 0,
+              port: 20320,
+            },
+            1.186086714: {
+              marketName: 'Harlow 6th Aug - D2 238m',
+              marketId: '1.186086714',
+              marketType: null,
+              eventId: 30765572,
+              eventName: 'Harlow 6th Aug',
+              startTime: '2021-08-06T12:17:00+00:00',
+              open: 1,
+              inplay: 0,
+              port: 20321,
+            },
+          },
+        },
+      ];
+      return res.json({
+        success: true,
+        message: 'Records',
+        results: greyhound,
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    return res.json({
+      success: false,
+      message: 'error',
+    });
+  }
 }
 
 loginRouter.post(
@@ -508,10 +716,14 @@ router.get('/getDefaultSettings', getDefaultSettings);
 loginRouter.get('/getSideBarMenu', getSideBarMenu);
 router.get('/addSideBarMenu', addSideBarMenu);
 
-router.get('/listCompetitions/:id', listCompetitions);
-router.get('/ListEventsBySport/:id', ListEventsBySport);
-router.get('/ListEventsByCompetition/:sportsId/:competitionId', ListEventsByCompetition);
-router.get('/ListInplayEvents/:id', ListInplayEvents);
-router.get('/ListOddsAPI', ListOddsAPI);
+loginRouter.get('/listCompetitions/:id', listCompetitions);
+loginRouter.get('/ListEventsBySport/:id', ListEventsBySport);
+loginRouter.get(
+  '/ListEventsByCompetition/:sportsId/:competitionId',
+  ListEventsByCompetition
+);
+loginRouter.get('/ListInplayEvents/:id', ListInplayEvents);
+loginRouter.get('/ListOddsAPI', ListOddsAPI);
+loginRouter.get('/racesAPI/:id', racesAPI);
 
-module.exports = { loginRouter, router,ListOddsAPI };
+module.exports = { loginRouter, router, ListOddsAPI };

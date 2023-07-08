@@ -22,12 +22,18 @@ var jsonContent = JSON.parse(content);
 
 var apisContent = fs.readFileSync(config.apisFileName);
 var jsonApis = JSON.parse(apisContent);
-const { themeCronJob, checkBetStatus,getOddsCronJob } = require('./cronJob/cronJob'); // Import only cronJob2
+const {
+  themeCronJob,
+  checkBetStatus,
+  getOddsCronJob,
+  sportsAPICronJob,
+} = require('./cronJob/cronJob'); // Import only cronJob2
 
 // Run the cron job
 themeCronJob();
 checkBetStatus();
 // getOddsCronJob()
+// sportsAPICronJob()
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,
@@ -112,6 +118,7 @@ app.use('/api', require('./app/routes/sportsAPI').loginRouter);
 app.use('/api', require('./app/routes/fancyGames').loginRouter);
 app.use('/api', require('./app/routes/liveTv').loginRouter);
 app.use('/api', require('./app/routes/liveScore').loginRouter);
+app.use('/api', require('./app/routes/Racing').loginRouter);
 
 // // Allowed Apis for this role
 // app.use(function (req, res, next) {
