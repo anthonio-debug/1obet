@@ -8,7 +8,7 @@ const Cash = require("../app/models/deposits");
 const { getParents } = require("../app/routes/bets");
 const { getOdds } = require('../app/routes/sportsAPI');
 const { ListOddsAPI } = require('../app/routes/settings')
-const {listEventsBySport} = require('../app/routes/sportsAPI')
+const {listEventsBySport,listInplayEvents} = require('../app/routes/sportsAPI')
 let runningJob;
 
 const checkBetStatus = (req) => {
@@ -445,11 +445,16 @@ const getOddsCronJob = () => {
 };
 
 const sportsAPICronJob = () => {
-  // Cron job to run getOdds every second
-  cron.schedule('* * * * * *', async () => {
+  // Cron job to run getOdds every 2 minutes
+  cron.schedule('*/2 * * * *', async () => {
     try {
-      // listEventsBySport()
-      // await getOdds();
+      const sportsIds = [1, 2, 4]; // Set the desired sports IDs here
+
+      // Iterate over sportsIds
+      for (const sportId of sportsIds) {
+        await listEventsBySport({ params: { sportId } });
+        await listInplayEvents({ params: { sportsId: sportId } });
+      }
     } catch (error) {
       console.error('Error running getOdds cron job:', error);
     }
