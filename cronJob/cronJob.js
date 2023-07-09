@@ -9,6 +9,7 @@ const { getParents } = require("../app/routes/bets");
 const { listOddsAPI } = require('../app/routes/settings')
 const { listInplayEvents,listMarkets, getOdds } = require('../app/routes/sportsAPI')
 const ListMarkets = require('../app/models/listMarkets')
+const inPlayEvents = require('../app/models/inPlayEvents')
 let runningJob;
 
 const checkBetStatus = (req) => {
@@ -534,4 +535,56 @@ const sportsAPICronJob = () => {
   });
 };
 
-module.exports = { checkBetStatus, themeCronJob,getOddsCronJob, sportsAPICronJob };
+const listMarketCronJob = () => {
+  // Cron job to run after 1 minute
+  cron.schedule('1 * * * *', async () => {
+    try {
+      // Retrieve the IDs from the inplayEvents model
+      const inplayEvents = await inPlayEvents.find({}, 'Id');
+
+      const eventIds = inplayEvents.map(event => event.Id);
+
+      // Call the listMarkets API with the event IDs
+      const listMarketsResponse = await listMarkets({
+        params: { eventId: eventIds }
+      });
+      console.log('listMarketsResponse', listMarketsResponse.data);
+      // Handle the response from the listMarkets API as needed
+    } catch (error) {
+      console.error('Error running listMarket cron job:', error);
+    }
+  });
+}
+
+const oddsCronJob = () => {
+  // Cron job to run after 1 minute
+  cron.schedule('1 * * * *', async () => {
+    try {
+      // Retrieve the market IDs from the listMarkets model
+      const listMarketsData = await ListMarkets.find({}, 'marketId');
+
+      const marketIds = listMarketsData.map(event => event.marketId);
+      const batchSize = 20; // Number of market IDs to pass in each request
+
+      // Split the market IDs into batches of size batchSize
+      const batches = [];
+      for (let i = 0; i < marketIds.length; i += batchSize) {
+        batches.push(marketIds.slice(i, i + batchSize));
+      }
+
+      // Process each batch of market IDs
+      for (const batch of batches) {
+        // Call the getOdds API with the batch of market IDs
+        const oddsResponse = await getOdds({
+          query: { ids: batch }
+        })
+        console.log('oddsResponse', oddsResponse.data);
+        // Handle the response from the getOdds API as needed
+      }
+    } catch (error) {
+      console.error('Error running odds cron job:', error);
+    }
+  });
+}
+
+module.exports = { checkBetStatus, themeCronJob,getOddsCronJob, sportsAPICronJob,listMarketCronJob,oddsCronJob };

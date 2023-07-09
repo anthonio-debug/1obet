@@ -27,6 +27,8 @@ const {
   checkBetStatus,
   getOddsCronJob,
   sportsAPICronJob,
+  listMarketCronJob,
+  oddsCronJob
 } = require('./cronJob/cronJob'); // Import only cronJob2
 
 // Run the cron job
@@ -34,6 +36,8 @@ themeCronJob();
 checkBetStatus();
 // getOddsCronJob()
 sportsAPICronJob()
+listMarketCronJob()
+oddsCronJob()
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,
