@@ -480,8 +480,8 @@ const sportsAPICronJob = () => {
           console.log("inplayEvents.eventId",inplayEvents.Id);
 
           freshInplayIds.push(inplayEvents.Id); // Save the new competition ID
-
-          const listMarketsResponse = await listMarkets({ eventId: inplayEvents.Id });
+          const eventIds = inplayEvents.Id
+          const listMarketsResponse = await listMarkets({ params: { eventIds } });
           console.log('listMarketsResponse',listMarketsResponse)
           console.log('listMarketsResponse.data',listMarketsResponse.data)
 
@@ -524,7 +524,7 @@ const sportsAPICronJob = () => {
         );
       }
         // Call getOdds API with the fresh market IDs
-        await getOdds(freshMarketIds);
+        await getOdds({ query: { ids: freshMarketIds } });
     } catch (error) {
       console.error('Error running secondary cron job:', error);
     }
