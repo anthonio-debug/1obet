@@ -525,7 +525,7 @@ const sportsAPICronJob = () => {
       }
       if (freshMarketIds.length <= 20) {
         // Call getOdds API with the fresh market IDs
-        await getOdds({ query: { ids: freshMarketIds.slice(0, 20) } });
+        await getOdds({ query: { ids: freshMarketIds.join(',') } });
       }
     } catch (error) {
       console.error('Error running secondary cron job:', error);
