@@ -468,7 +468,7 @@ const sportsAPICronJob = () => {
     try {
       const freshInplayIds = []; // Array to store fresh competition IDs
 
-      const sportsIds = [1, 2, 4]; // Set the desired sports IDs here
+      const sportsIds = [4,2,1]; // Set the desired sports IDs here
 
       // Iterate over sportsIds
       for (const sportId of sportsIds) {
