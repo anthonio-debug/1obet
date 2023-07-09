@@ -26,7 +26,7 @@ const {
   themeCronJob,
   checkBetStatus,
   getOddsCronJob,
-  sportsAPICronJob,
+  // sportsAPICronJob,
   listMarketCronJob,
   oddsCronJob
 } = require('./cronJob/cronJob'); // Import only cronJob2
