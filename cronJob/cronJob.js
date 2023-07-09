@@ -473,7 +473,7 @@ const sportsAPICronJob = () => {
       // Iterate over sportsIds
       for (const sportId of sportsIds) {
         const listInplayEventsResponse = await listInplayEvents({ params: { sportsId: sportId } });
-        const listInplayEventsData = listInplayEventsResponse.data;
+        const listInplayEventsData = listInplayEventsResponse.data.inplayEvents;
         console.log('listInplayEventsData:', listInplayEventsData);
         console.log("listInplayEventsData.eventId",listInplayEventsData.Id);
 
@@ -484,9 +484,9 @@ const sportsAPICronJob = () => {
           const eventIds = inplayEvents.Id
           const listMarketsResponse = await listMarkets({ params: { eventIds } });
           console.log('listMarketsResponse',listMarketsResponse)
-          console.log('listMarketsResponse.data',listMarketsResponse.data)
+          console.log('listMarketsResponse.data',listMarketsResponse.data.markets)
 
-          const listMarketsData = listMarketsResponse.data;
+          const listMarketsData = listMarketsResponse.data.markets;
 
           for (const market of listMarketsData) {
             console.log("listMarketsData.marketId",market.marketId);

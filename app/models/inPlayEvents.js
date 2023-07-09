@@ -18,6 +18,6 @@ const inPlayEventsSchema = new mongoose.Schema({
 });
 
 // Create the model
-const inPlayEvents = mongoose.model('inPlayEventsCopy1', inPlayEventsSchema);
+const inPlayEvents = mongoose.model('inPlayEvents', inPlayEventsSchema);
 
 module.exports = inPlayEvents;
