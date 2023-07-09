@@ -493,10 +493,11 @@ const sportsAPICronJob = () => {
 
             const listMarketsResponse = await listMarkets({ params:{ eventId: event.eventId }});
             const listMarketsData = listMarketsResponse.data;
-            console.log('listMarketsData',listMarketsData);
+            console.log('listMarketsData.marketId',listMarketsData.marketId);
 
             for (const market of listMarketsData) {
-              freshMarketIds.push(market.eventId); // Save the new market ID
+              freshMarketIds.push(market.marketId); // Save the new market ID
+              console.log('freshMarketIds',freshMarketIds);
             }
           }
         }

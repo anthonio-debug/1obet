@@ -136,7 +136,6 @@ async function listEventsByCompetition(req, res) {
   try {
     const response = await axios.get(url);
     const events = response.data;
-    console.log('events', events);
 
     const savedEvents = [];
 
@@ -174,7 +173,6 @@ async function listMarkets(req, res) {
 
   try {
     const response = await axios.get(url);
-    console.log('response.data', response.data);
     const marketsData = response.data;
     const markets = [];
 
@@ -231,7 +229,6 @@ async function listInplayEvents(req, res) {
 
   try {
     const response = await axios.get(url);
-    console.log('response', response.data);
     const inplayEvents = response.data;
 
     // Save the inplayEvents data to the collection
@@ -274,14 +271,10 @@ async function getOdds(req, res) {
     try {
       const url = `${config.sportsAPIUrl}/odds/?ids=${marketIds.join(',')}`;
       const response = await axios.get(url);
-      console.log('response ===', response.data);
-      console.log('response.data.data', response.data.data);
 
       const oddsData = response.data;
 
       for (const data of oddsData) {
-        console.log('data', data);
-        console.log('data.runner', data.Runners);
 
         const market = await ListMarket.findOne({ marketId: data.MarketId });
 
