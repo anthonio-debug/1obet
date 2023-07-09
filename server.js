@@ -33,7 +33,7 @@ const {
 themeCronJob();
 checkBetStatus();
 // getOddsCronJob()
-sportsAPICronJob()
+// sportsAPICronJob()
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,

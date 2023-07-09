@@ -13,7 +13,8 @@ const inPlayEventsSchema = new mongoose.Schema({
   openDate: { type: String },
   inplay: { type: Boolean },
   hasFancy: { type: Boolean },
-  status: { type: String }
+  status: { type: String },
+  isPremium:{type: Boolean }
 });
 
 // Create the model

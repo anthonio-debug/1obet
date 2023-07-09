@@ -8,11 +8,11 @@ async function racesTodayMeetings(req, res) {
   try {
     const url = `${config.horseRaceUrl}/meetings/today/${SportsId}`;
     const response = await axios.get(url);
-    console.log('response', response);
+    console.log('response', response.data);
     return res.json({
       success: true,
       message: 'Horse Race Records',
-      results: response,
+      results: response.data,
     });
   } catch (error) {
     console.error('Error retrieving Records:', error);
