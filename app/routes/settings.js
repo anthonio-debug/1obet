@@ -422,9 +422,9 @@ async function listOddsAPI(req, res) {
     const url = `${config.liveTvUrl}/get_live_tv_url/${eventIds}`;
     const liveTVResponse = await axios.get(url);
     const liveTVData = liveTVResponse.data;
-    console.log('liveTVData', liveTVData);
+    // console.log('liveTVData', liveTVData);
 
-    console.log('liveTVResponse', liveTVResponse);
+    // console.log('liveTVResponse', liveTVResponse);
     return res.json({
       success: true,
       message: 'Records',
