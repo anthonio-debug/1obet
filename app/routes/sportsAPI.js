@@ -211,7 +211,7 @@ async function listMarkets(req, res) {
     res.send({
       success: true,
       message: 'Markets retrieved and saved successfully',
-      markets: marketsData,
+      marketsData,
     });
   } catch (error) {
     console.error(error);
@@ -247,10 +247,10 @@ async function listInplayEvents(req, res) {
       savedEvents.push(savedEvent);
     }
 
-    res.status(200).json({
+    res.send({
       success: true,
       message: 'Inplay events retrieved and saved successfully',
-      inplayEvents: savedEvents,
+      savedEvents,
     });
   } catch (error) {
     console.error(error);

@@ -18,6 +18,6 @@ const marketSchema = new mongoose.Schema({
   islocked: { type: Number, default: 0 }
 });
 
-const Market = mongoose.model('listMarket', marketSchema);
+const Market = mongoose.model('listMarketcopy', marketSchema);
 
 module.exports = Market;
