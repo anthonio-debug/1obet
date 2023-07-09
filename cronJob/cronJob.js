@@ -463,8 +463,8 @@ const getOddsCronJob = async (req) => {
 const sportsAPICronJob = () => {
   const freshMarketIds = []; // Declare freshMarketIds outside the cron job
 
-  // Cron job to run every 2 minutes
-  cron.schedule('*/2 * * * *', async () => {
+ // Cron job to run every 1 minute
+ cron.schedule('*/1 * * * *', async () => { 
     try {
       const freshInplayIds = []; // Array to store fresh competition IDs
 
@@ -474,12 +474,17 @@ const sportsAPICronJob = () => {
       for (const sportId of sportsIds) {
         const listInplayEventsResponse = await listInplayEvents({ params: { sportsId: sportId } });
         const listInplayEventsData = listInplayEventsResponse.data;
+        console.log("listInplayEventsData.eventId",listInplayEventsData.Id);
+
         for (const inplayEvents of listInplayEventsData) {
           console.log("inplayEvents.eventId",inplayEvents.Id);
 
           freshInplayIds.push(inplayEvents.Id); // Save the new competition ID
 
-          const listMarketsResponse = await listMarkets({ params: { eventId: inplayEvents.Id } });
+          const listMarketsResponse = await ListMarkets({ eventId: inplayEvents.Id });
+          console.log('listMarketsResponse',listMarketsResponse)
+          console.log('listMarketsResponse.data',listMarketsResponse.data)
+
           const listMarketsData = listMarketsResponse.data;
 
           for (const market of listMarketsData) {
@@ -503,8 +508,8 @@ const sportsAPICronJob = () => {
     }
   });
 
-  // Cron job to run after 1 minute
-  cron.schedule('*/1 * * * *', async () => {
+  // Cron job to run every 1 second
+  cron.schedule('*/1 * * * * *', async () => {
     try {
       const updatedCronTime = new Date(); // Get the current time
 

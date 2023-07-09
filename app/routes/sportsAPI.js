@@ -174,11 +174,11 @@ async function listMarkets(req, res) {
   try {
     const response = await axios.get(url);
     const marketsData = response.data;
-    // const markets = [];
+    const markets = [];
 
     // Get the event details from the eventsByCompetition model
-    const eventDetails = await inPlayEvents.findOne({ Id: eventId });
-
+    const eventDetails = await inPlayEvents.find({ Id: eventId });
+    console.log('eventDetails',eventDetails)
     for (const marketData of marketsData) {
       const runners = marketData.runners.map((runnerData) => ({
         selectionId: runnerData.selectionId,
