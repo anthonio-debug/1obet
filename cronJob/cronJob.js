@@ -536,8 +536,8 @@ const sportsAPICronJob = () => {
 };
 
 const listMarketCronJob = () => {
-  // Cron job to run after 1 minute
-  cron.schedule('*/1 * * * *', async () => {
+  // Cron job to run 12 times per minute
+  cron.schedule('*/5 * * * * *', async () => {
     try {
       // Retrieve the IDs from the inplayEvents model
       const inplayEvents = await inPlayEvents.find({}, 'Id');
@@ -550,7 +550,7 @@ const listMarketCronJob = () => {
         // Call the listMarkets API with each eventId
         const listMarketsResponse = await listMarkets({
           params: { eventId }
-        });
+        }, null);
         console.log('listMarketsResponse', listMarketsResponse.data);
         // Handle the response from the listMarkets API as needed
       }
@@ -561,9 +561,8 @@ const listMarketCronJob = () => {
 }
 
 const oddsCronJob = () => {
-  // Cron job to run after 1 second
-  cron.schedule('* * * * * *', async () => {
-    try {
+ // Cron job to run after 10 seconds
+ cron.schedule('*/10 * * * * *', async () => {    try {
       // Retrieve the market IDs from the listMarkets model
       const listMarketsData = await ListMarkets.find({}, 'marketId');
       console.log('listMarketsData', listMarketsData);
@@ -597,7 +596,7 @@ const oddsCronJob = () => {
         // Call the getOdds API with the query string
         const oddsResponse = await getOdds({
           query: { ids: queryString }
-        });
+        }, null);
         console.log('oddsResponse', oddsResponse);
 
         // Handle the response from the getOdds API as needed
