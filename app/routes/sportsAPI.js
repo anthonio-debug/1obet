@@ -167,8 +167,7 @@ async function listEventsByCompetition(req, res) {
   }
 }
 
-async function listMarkets(req, res) {
-  const eventId = req.params.eventId;
+async function listMarkets(eventId) {
   const url = `${config.sportsAPIUrl}/listMarkets/${eventId}`;
 
   try {
@@ -177,9 +176,9 @@ async function listMarkets(req, res) {
     const markets = [];
 
     // Get the event details from the eventsByCompetition model
-    const eventDetails = await inPlayEvents.find({ Id: eventId });
-    console.log('eventDetails',eventDetails)
+    const eventDetails = inPlayEvents.find({ Id: eventId });
     for (const marketData of marketsData) {
+      console.log('marketData',marketData.status);
       const runners = marketData.runners.map((runnerData) => ({
         selectionId: runnerData.selectionId,
         runnerName: runnerData.runnerName,
@@ -207,15 +206,14 @@ async function listMarkets(req, res) {
       );
       markets.push(savedMarket);
     }
-
-    res.status(200).json({
+    return({
       success: true,
       message: 'Markets retrieved and saved successfully',
-      markets: marketsData,
+      marketsData,
     });
   } catch (error) {
     console.error(error);
-    res.status(200).json({
+    return({
       success: false,
       message: 'Failed to get or save markets',
       error: error.message,

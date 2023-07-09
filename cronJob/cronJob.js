@@ -546,13 +546,10 @@ const listMarketCronJob = () => {
 
       // Iterate over the eventIds
       for (const eventId of eventIds) {
-       
+        console.log('eventId', eventId)
         // Call the listMarkets API with each eventId
-        const listMarketsResponse = await listMarkets({
-          params: { eventId }
-        }, null);
-        console.log('listMarketsResponse', listMarketsResponse.data);
-        // Handle the response from the listMarkets API as needed
+        const listMarketsResponse = await listMarkets(eventId);
+        console.log('listMarketsResponse', listMarketsResponse)
       }
     } catch (error) {
       console.error('Error running listMarket cron job:', error);
