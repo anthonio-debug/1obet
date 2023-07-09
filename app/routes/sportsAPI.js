@@ -208,14 +208,14 @@ async function listMarkets(req, res) {
       markets.push(savedMarket);
     }
 
-    res.status(200).json({
+    res.send({
       success: true,
       message: 'Markets retrieved and saved successfully',
       markets: marketsData,
     });
   } catch (error) {
     console.error(error);
-    res.status(200).json({
+    res.send({
       success: false,
       message: 'Failed to get or save markets',
       error: error.message,
