@@ -7,7 +7,7 @@ const Settings = require("../app/models/settings");
 const Cash = require("../app/models/deposits");
 const { getParents } = require("../app/routes/bets");
 const { listOddsAPI } = require('../app/routes/settings')
-const { listInplayEvents,listMarkets, getOdds } = require('../app/routes/sportsAPI')
+const { listInplayEvents,listMarketsByCronJob, getOdds } = require('../app/routes/sportsAPI')
 const ListMarkets = require('../app/models/listMarkets')
 const inPlayEvents = require('../app/models/inPlayEvents')
 let runningJob;
@@ -548,7 +548,7 @@ const listMarketCronJob = () => {
       for (const eventId of eventIds) {
         console.log('eventId', eventId)
         // Call the listMarkets API with each eventId
-        const listMarketsResponse = await listMarkets(eventId);
+        const listMarketsResponse = await listMarketsByCronJob(eventId);
         console.log('listMarketsResponse', listMarketsResponse)
       }
     } catch (error) {
