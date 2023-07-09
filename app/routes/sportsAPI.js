@@ -264,7 +264,7 @@ async function listInplayEvents(req, res) {
 
 async function getOdds(req, res) {
   // Apply rate limiting middleware to the API
-  limiter(req, res, async () => {
+  // limiter(req, res, async () => {
     // marketIds can be more than 20, but only takes the first 20 market IDs in the request:
     const marketIds = req.query.ids.split(',').slice(0, 20);
 
@@ -319,7 +319,7 @@ async function getOdds(req, res) {
         error: error.message,
       });
     }
-  });
+  // });
 }
 
 loginRouter.get('/listCompetition/:sportId', listCompetitions);
