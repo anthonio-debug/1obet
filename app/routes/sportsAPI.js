@@ -174,39 +174,39 @@ async function listMarkets(req, res) {
   try {
     const response = await axios.get(url);
     const marketsData = response.data;
-    // const markets = [];
+    const markets = [];
 
-    // // Get the event details from the eventsByCompetition model
-    // const eventDetails = await eventsByCompetitons.findOne({ Id: eventId });
+    // Get the event details from the eventsByCompetition model
+    const eventDetails = await inPlayEvents.find({ Id: eventId });
+    console.log('eventDetails',eventDetails)
+    for (const marketData of marketsData) {
+      const runners = marketData.runners.map((runnerData) => ({
+        selectionId: runnerData.selectionId,
+        runnerName: runnerData.runnerName,
+      }));
 
-    // for (const marketData of marketsData) {
-    //   const runners = marketData.runners.map((runnerData) => ({
-    //     selectionId: runnerData.selectionId,
-    //     runnerName: runnerData.runnerName,
-    //   }));
-
-    //   const filter = {
-    //     marketId: marketData.marketId,
-    //     eventId: eventId,
-    //     sportsId: eventDetails.sportsId,
-    //   };
-    //   const update = {
-    //     Updatetime: marketData.Updatetime,
-    //     marketName: marketData.marketName,
-    //     totalMatched: marketData.totalMatched,
-    //     status: marketData.status,
-    //     runners: runners,
-    //   };
-    //   const options = { upsert: true, new: true };
+      const filter = {
+        marketId: marketData.marketId,
+        eventId: eventId,
+        sportsId: eventDetails.sportsId,
+      };
+      const update = {
+        Updatetime: marketData.Updatetime,
+        marketName: marketData.marketName,
+        totalMatched: marketData.totalMatched,
+        status: marketData.status,
+        runners: runners,
+      };
+      const options = { upsert: true, new: true };
 
     //   // Update or create the market in the ListMarket model
-    //   const savedMarket = await ListMarket.findOneAndUpdate(
-    //     filter,
-    //     update,
-    //     options
-    //   );
-    //   markets.push(savedMarket);
-    // }
+      const savedMarket = await ListMarket.findOneAndUpdate(
+        filter,
+        update,
+        options
+      );
+      markets.push(savedMarket);
+    }
 
     res.status(200).json({
       success: true,
@@ -264,12 +264,13 @@ async function listInplayEvents(req, res) {
 
 async function getOdds(req, res) {
   // Apply rate limiting middleware to the API
-  limiter(req, res, async () => {
+  // limiter(req, res, async () => {
     // marketIds can be more than 20, but only takes the first 20 market IDs in the request:
-    const marketIds = req.query.ids.split(',').slice(0, 20);
+    const marketIds = req.query.ids
+    // .split(',').slice(0, 20);
 
     try {
-      const url = `${config.sportsAPIUrl}/odds/?ids=${marketIds.join(',')}`;
+      const url = `${config.sportsAPIUrl}/odds/?ids=${marketIds}`;
       const response = await axios.get(url);
 
       const oddsData = response.data;
@@ -319,7 +320,7 @@ async function getOdds(req, res) {
         error: error.message,
       });
     }
-  });
+  // });
 }
 
 loginRouter.get('/listCompetition/:sportId', listCompetitions);
