@@ -339,4 +339,4 @@ loginRouter.get('/listMarket/:eventId', listMarkets);
 loginRouter.get('/listInplayEvent/:sportsId', listInplayEvents);
 loginRouter.get('/getOdds', getOdds);
 
-module.exports = { loginRouter,getOdds, listEventsBySport,listInplayEvents };
+module.exports = { loginRouter,getOdds, listEventsBySport,listInplayEvents,listEventsByCompetition,listMarkets };

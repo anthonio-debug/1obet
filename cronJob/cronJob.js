@@ -6,9 +6,8 @@ const User = require("../app/models/user");
 const Settings = require("../app/models/settings");
 const Cash = require("../app/models/deposits");
 const { getParents } = require("../app/routes/bets");
-const { getOdds } = require('../app/routes/sportsAPI');
-const { ListOddsAPI } = require('../app/routes/settings')
-const {listEventsBySport,listInplayEvents} = require('../app/routes/sportsAPI')
+const { listOddsAPI } = require('../app/routes/settings')
+const { listInplayEvents, listEventsByCompetition, listMarkets, getOdds } = require('../app/routes/sportsAPI')
 let runningJob;
 
 const checkBetStatus = (req) => {
@@ -432,31 +431,84 @@ const themeCronJob = () => {
   });
 };
 
-const getOddsCronJob = () => {
-  // Cron job to run getOdds every second
-  cron.schedule('* * * * * *', async () => {
-    try {
-      // ListOddsAPI()
-      // await getOdds();
-    } catch (error) {
-      console.error('Error running getOdds cron job:', error);
-    }
-  });
+const getOddsCronJob = async (req) => {
+  try {
+    const req = {
+      query: {
+        ids: '32455848' // Initialize with an empty string
+      }
+    };
+    const res = {
+      json: data => {
+        console.log(data);
+      },
+      status: code => {
+        return {
+          json: data => {
+            console.log(`Status code: ${code}`);
+            console.log(data);
+          }
+        };
+      }
+    };
+
+    await listOddsAPI(req, res); // Pass the req and res objects to listOddsAPI
+    await getOdds(req, res); // Pass the req and res objects to getOdds
+  } catch (error) {
+    console.error('Error running getOdds cron job:', error);
+  }
 };
 
 const sportsAPICronJob = () => {
-  // Cron job to run getOdds every 2 minutes
+  // Cron job to run every 2 minutes
   cron.schedule('*/2 * * * *', async () => {
     try {
+      const freshCompetitionIds = []; // Array to store fresh competition IDs
+      const freshMarketIds = []; // Array to store fresh market IDs
+      const freshCompetitionEventIds = []
       const sportsIds = [1, 2, 4]; // Set the desired sports IDs here
+      console.log('freshCompetitionIds',freshCompetitionIds);
+      console.log('freshMarketIds',freshMarketIds);
+      console.log('freshCompetitionEventIds',freshCompetitionEventIds);
 
       // Iterate over sportsIds
       for (const sportId of sportsIds) {
-        await listEventsBySport({ params: { sportId } }, null); // Pass null as the second argument since res is not used
-        await listInplayEvents({ params: { sportsId: sportId } }, null); // Pass null as the second argument since res is not used
+        const competitionsResponse =  await listInplayEvents({ params: { sportsId: sportId } });
+        const competitionsData = competitionsResponse.data;
+        console.log('competitionsData.competeId',competitionsData.Id);
+        console.log('competitionsData.inplayEvents.competitionId',competitionsData.competId);
+
+        for (const competition of competitionsData) {
+          freshCompetitionIds.push(competition.competitionId); // Save the new competition ID
+          console.log('freshCompetitionIdsAfter',freshCompetitionIds);
+         for (sportId of sportsIds) {
+          const EventsByCompetitionResponse = await listEventsByCompetition({
+           params:{ sportId: sportId, competId: freshCompetitionIds }});
+          
+          const EventsByCompetitionData = EventsByCompetitionResponse.data;
+            console.log('EventsByCompetitionData',EventsByCompetitionData.Id);
+
+          for (const event of EventsByCompetitionData) {
+            freshCompetitionEventIds.push(event.Id); // Save the new event ID
+
+            const listMarketsResponse = await listMarkets({ params:{ eventId: event.eventId }});
+            const listMarketsData = listMarketsResponse.data;
+            console.log('listMarketsData',listMarketsData);
+
+            for (const market of listMarketsData) {
+              freshMarketIds.push(market.eventId); // Save the new market ID
+            }
+          }
+        }
       }
+    }
+      // // Step 3: Remove saved inline events from ListInlineEvents collection
+      // await ListInlineEvents.deleteMany({ eventId: { $in: freshInlineEvents } });
+
+      // // Step 4: Remove saved market IDs from ListMarkets collection
+      // await ListMarkets.deleteMany({ marketId: { $in: freshMarketIds } });
     } catch (error) {
-      console.error('Error running getOdds cron job:', error);
+      console.error('Error running sports API cron job:', error);
     }
   });
 };
