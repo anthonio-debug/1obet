@@ -174,44 +174,44 @@ async function listMarkets(req, res) {
   try {
     const response = await axios.get(url);
     const marketsData = response.data;
-    const markets = [];
+    // const markets = [];
 
-    // Get the event details from the eventsByCompetition model
-    const eventDetails = await eventsByCompetitons.findOne({ Id: eventId });
+    // // Get the event details from the eventsByCompetition model
+    // const eventDetails = await eventsByCompetitons.findOne({ Id: eventId });
 
-    for (const marketData of marketsData) {
-      const runners = marketData.runners.map((runnerData) => ({
-        selectionId: runnerData.selectionId,
-        runnerName: runnerData.runnerName,
-      }));
+    // for (const marketData of marketsData) {
+    //   const runners = marketData.runners.map((runnerData) => ({
+    //     selectionId: runnerData.selectionId,
+    //     runnerName: runnerData.runnerName,
+    //   }));
 
-      const filter = {
-        marketId: marketData.marketId,
-        eventId: eventId,
-        sportsId: eventDetails.sportsId,
-      };
-      const update = {
-        Updatetime: marketData.Updatetime,
-        marketName: marketData.marketName,
-        totalMatched: marketData.totalMatched,
-        status: marketData.status,
-        runners: runners,
-      };
-      const options = { upsert: true, new: true };
+    //   const filter = {
+    //     marketId: marketData.marketId,
+    //     eventId: eventId,
+    //     sportsId: eventDetails.sportsId,
+    //   };
+    //   const update = {
+    //     Updatetime: marketData.Updatetime,
+    //     marketName: marketData.marketName,
+    //     totalMatched: marketData.totalMatched,
+    //     status: marketData.status,
+    //     runners: runners,
+    //   };
+    //   const options = { upsert: true, new: true };
 
-      // Update or create the market in the ListMarket model
-      const savedMarket = await ListMarket.findOneAndUpdate(
-        filter,
-        update,
-        options
-      );
-      markets.push(savedMarket);
-    }
+    //   // Update or create the market in the ListMarket model
+    //   const savedMarket = await ListMarket.findOneAndUpdate(
+    //     filter,
+    //     update,
+    //     options
+    //   );
+    //   markets.push(savedMarket);
+    // }
 
     res.status(200).json({
       success: true,
       message: 'Markets retrieved and saved successfully',
-      markets: markets,
+      markets: marketsData,
     });
   } catch (error) {
     console.error(error);
