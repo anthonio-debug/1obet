@@ -33,7 +33,7 @@ const {
 themeCronJob();
 checkBetStatus();
 // getOddsCronJob()
-sportsAPICronJob()
+// sportsAPICronJob()
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,
@@ -119,6 +119,8 @@ app.use('/api', require('./app/routes/fancyGames').loginRouter);
 app.use('/api', require('./app/routes/liveTv').loginRouter);
 app.use('/api', require('./app/routes/liveScore').loginRouter);
 app.use('/api', require('./app/routes/Racing').loginRouter);
+app.use('/api', require('./app/routes/BettingFigures').loginRouter);
+
 
 // // Allowed Apis for this role
 // app.use(function (req, res, next) {
