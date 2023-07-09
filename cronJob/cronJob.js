@@ -537,19 +537,23 @@ const sportsAPICronJob = () => {
 
 const listMarketCronJob = () => {
   // Cron job to run after 1 minute
-  cron.schedule('1 * * * *', async () => {
+  cron.schedule('*/1 * * * *', async () => {
     try {
       // Retrieve the IDs from the inplayEvents model
       const inplayEvents = await inPlayEvents.find({}, 'Id');
 
-      const eventIds = inplayEvents.map(event => event.Id);
+      const eventIds = inplayEvents.map(event =>parseFloat(event.Id));
 
-      // Call the listMarkets API with the event IDs
-      const listMarketsResponse = await listMarkets({
-        params: { eventId: eventIds }
-      });
-      console.log('listMarketsResponse', listMarketsResponse.data);
-      // Handle the response from the listMarkets API as needed
+      // Iterate over the eventIds
+      for (const eventId of eventIds) {
+       
+        // Call the listMarkets API with each eventId
+        const listMarketsResponse = await listMarkets({
+          params: { eventId }
+        });
+        console.log('listMarketsResponse', listMarketsResponse.data);
+        // Handle the response from the listMarkets API as needed
+      }
     } catch (error) {
       console.error('Error running listMarket cron job:', error);
     }
@@ -557,13 +561,16 @@ const listMarketCronJob = () => {
 }
 
 const oddsCronJob = () => {
-  // Cron job to run after 1 minute
-  cron.schedule('1 * * * *', async () => {
+  // Cron job to run after 1 second
+  cron.schedule('* * * * * *', async () => {
     try {
       // Retrieve the market IDs from the listMarkets model
       const listMarketsData = await ListMarkets.find({}, 'marketId');
+      console.log('listMarketsData', listMarketsData);
 
-      const marketIds = listMarketsData.map(event => event.marketId);
+      const marketIds = listMarketsData.map(event => parseFloat(event.marketId));
+      console.log('marketIds', marketIds);
+
       const batchSize = 20; // Number of market IDs to pass in each request
 
       // Split the market IDs into batches of size batchSize
@@ -572,13 +579,27 @@ const oddsCronJob = () => {
         batches.push(marketIds.slice(i, i + batchSize));
       }
 
+      console.log('Total batches:', batches.length);
+
       // Process each batch of market IDs
-      for (const batch of batches) {
-        // Call the getOdds API with the batch of market IDs
+      for (let i = 0; i < batches.length; i++) {
+        const batch = batches[i];
+        console.log('Batch', i + 1, 'of', batches.length);
+        console.log('Market IDs:', batch);
+
+        // Generate the query string for the getOdds API
+        const queryString = batch.join(',');
+        console.log('Query String:', queryString);
+        console.log('Odds:', {
+          query: { ids: queryString }
+        });
+
+        // Call the getOdds API with the query string
         const oddsResponse = await getOdds({
-          query: { ids: batch }
-        })
-        console.log('oddsResponse', oddsResponse.data);
+          query: { ids: queryString }
+        });
+        console.log('oddsResponse', oddsResponse);
+
         // Handle the response from the getOdds API as needed
       }
     } catch (error) {
