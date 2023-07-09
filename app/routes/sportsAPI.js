@@ -108,20 +108,25 @@ async function listEventsBySport(req, res) {
       events.push(updatedEvent);
     }
 
-    res.json({
-      success: true,
-      message: 'Events retrieved successfully',
-      events: events,
-    });
+    if (res) {
+      res.json({
+        success: true,
+        message: 'Events retrieved successfully',
+        events: events,
+      });
+    }
   } catch (error) {
     console.error(error);
-    res.json({
-      success: false,
-      message: 'Failed to get events',
-      error: error.message,
-    });
+    if (res) {
+      res.json({
+        success: false,
+        message: 'Failed to get events',
+        error: error.message,
+      });
+    }
   }
 }
+
 
 //Id is eventId
 async function listEventsByCompetition(req, res) {
