@@ -104,5 +104,7 @@
   "listOddsAPI",
   "getFancyResult",
   "racesAPI",
-  "racesTodayMeetings"
+  "racesTodayMeetings",
+  "getBettingFigures",
+  "UpdateBettingFigures"
 ]

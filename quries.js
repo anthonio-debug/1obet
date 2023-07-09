@@ -243,6 +243,49 @@ db.sidebarmenus.insertMany([
   },
 ]);
 
+db.bettingfigures.insertMany([
+  {
+    name: "Digit rate" ,
+    amount: 6.5
+  },
+  {
+    name: "Digit rate" ,
+    amount: 17.5
+  },
+  {
+    name: "Digit rate" ,
+    amount: 4.5
+  },
+  {
+    name: "Digit rate" ,
+    amount: 9.5
+  },
+  {
+    name: "Digit rate" ,
+    amount: 3.5
+  },
+  {
+    name: "Digit rate" ,
+    amount: 12.5
+  },
+  {
+    name: "Digit rate" ,
+    amount: 11.5
+  },
+  {
+    name: "Digit rate" ,
+    amount: 7.3
+  },
+  {
+    name: "Digit rate" ,
+    amount: 5.5
+  },
+  {
+    name: "Digit rate" ,
+    amount: 11.6
+  }
+])
+
 db.bets.insertMany([
   {
     marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
@@ -298,4 +341,4 @@ db.bets.insertMany([
     createdAt: 1684403142.32,
     isFake: 1,
   },
-]);
+]);``
