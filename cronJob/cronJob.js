@@ -508,8 +508,8 @@ const sportsAPICronJob = () => {
     }
   });
 
-  // Cron job to run every 1 second
-  cron.schedule('*/1 * * * * *', async () => {
+  // Cron job to run every 3 mints
+  cron.schedule('*/3 * * * *', async () => {
     try {
       const updatedCronTime = new Date(); // Get the current time
 
@@ -525,7 +525,7 @@ const sportsAPICronJob = () => {
       }
       if (freshMarketIds.length <= 20) {
         // Call getOdds API with the fresh market IDs
-        await getOdds({ query: { ids: freshMarketIds.join(',') } });
+        await getOdds({ query: { ids: freshMarketIds } });
       }
     } catch (error) {
       console.error('Error running secondary cron job:', error);

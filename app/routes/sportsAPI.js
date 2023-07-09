@@ -270,7 +270,7 @@ async function getOdds(req, res) {
     // .split(',').slice(0, 20);
 
     try {
-      const url = `${config.sportsAPIUrl}/odds/?ids=${marketIds.join(',')}`;
+      const url = `${config.sportsAPIUrl}/odds/?ids=${marketIds}`;
       const response = await axios.get(url);
 
       const oddsData = response.data;
