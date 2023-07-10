@@ -106,5 +106,6 @@
   "racesAPI",
   "racesTodayMeetings",
   "getBettingFigures",
-  "UpdateBettingFigures"
+  "UpdateBettingFigures",
+  "livesportscore"
 ]

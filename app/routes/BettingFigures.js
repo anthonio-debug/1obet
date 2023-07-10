@@ -1,7 +1,8 @@
-const   express         = require('express');
-const { validationResult } = require('express-validator');
-const   BettingFigure  = require('../models/BettingFigure');
-const   loginRouter     = express.Router();
+const   express              = require('express');
+const  {validationResult }   = require('express-validator');
+const  BettingFigure         = require('../models/BettingFigure');
+const  {default: axios }     = require('axios');
+const  loginRouter           = express.Router();
 
 async function getBettingFigures(req, res) {
     try {
@@ -58,10 +59,30 @@ async function UpdateBettingFigures(req, res) {
         });
     }
 }
+
+async function livesportscore(req, res) {
+    try {
+        const id = req.param.id;
+        const data =  axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+        console.log('data', data)
+        res.json({
+            data : data
+        })
+    } catch (error) {
+        console.error(error);
+        res.status(200).json({
+            success: false,
+            message: 'Failed to get data',
+            error: error.message,
+        });
+    }
+}
   
+
 loginRouter.get('/getBettingFigures', getBettingFigures);
 loginRouter.post('/UpdateBettingFigures', UpdateBettingFigures);
-  module.exports = { loginRouter };
+loginRouter.get('/livesportscore/:id', livesportscore);
+module.exports = { loginRouter };
 
 
   
