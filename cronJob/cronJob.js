@@ -7,7 +7,7 @@ const Settings = require("../app/models/settings");
 const Cash = require("../app/models/deposits");
 const { getParents } = require("../app/routes/bets");
 const { listOddsAPI } = require('../app/routes/settings')
-const { listInplayEvents,listMarketsByCronJob, getOdds } = require('../app/routes/sportsAPI')
+const { listInplayEvents,listMarketsByCronJob, getOdds ,getnewOdds} = require('../app/routes/sportsAPI')
 const ListMarkets = require('../app/models/listMarkets')
 const inPlayEvents = require('../app/models/inPlayEvents')
 let runningJob;
@@ -537,7 +537,7 @@ const sportsAPICronJob = () => {
 
 const listMarketCronJob = () => {
   // Cron job to run 12 times per minute
-  cron.schedule('*/5 * * * * *', async () => {
+  cron.schedule('*/1 * * * *', async () => {
     try {
       // Retrieve the IDs from the inplayEvents model
       const inplayEvents = await inPlayEvents.find({}, 'Id');
@@ -591,9 +591,9 @@ const oddsCronJob = () => {
         });
 
         // Call the getOdds API with the query string
-        const oddsResponse = await getOdds({
+        const oddsResponse = await getnewOdds({
           query: { ids: queryString }
-        }, null);
+        });
         console.log('oddsResponse', oddsResponse);
 
         // Handle the response from the getOdds API as needed

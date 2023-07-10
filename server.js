@@ -36,7 +36,7 @@ themeCronJob();
 checkBetStatus();
 // getOddsCronJob()
 // sportsAPICronJob()
-// oddsCronJob()
+oddsCronJob()
 listMarketCronJob()
 
 // CONNECT THE DATABASE

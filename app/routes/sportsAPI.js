@@ -377,6 +377,157 @@ async function listMarkets(req, res) {
   }
 }
 
+async function getnewOdds(ids) {
+  // Apply rate limiting middleware to the API
+  // limiter(req, res, async () => {
+    // marketIds can be more than 20, but only takes the first 20 market IDs in the request:
+    // .split(',').slice(0, 20);
+
+    try {
+      const url = `${config.sportsAPIUrl}/odds/?ids=${ids}`;
+      const response = await axios.get(url);
+      // const response = [{
+      //   "eventId" : "32472580",
+      //   marketId: '1.215903789',
+      //   "__v" : 0,
+      //   "inplay" : true,
+      //   "isInplay" : true,
+      //   "isMarketDataDelayed" : false,
+      //   "marketName" : "Match Odds",
+      //   "numberOfActiveRunners" : 2,
+      //   "numberOfRunners" : 2,
+      //   "runners" : [
+      //     {
+      //       "runnerName" : "West Indies T10",
+      //       "ExchangePrices" : {
+      //         "AvailableToBack" : [
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      
+      //           },
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      
+      //           },
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      //           }
+      //         ],
+      //         "AvailableToLay" : [
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      
+      //           },
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      
+      //           },
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      
+      //           }
+      //         ]
+      //       },
+      
+      //     },
+      //     {
+      //       "runnerName" : "England T10",
+      //       "ExchangePrices" : {
+      //         "AvailableToBack" : [
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      //           },
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      //           },
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      //           }
+      //         ],
+      //         "AvailableToLay" : [
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      //           },
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      //           },
+      //           {
+      //             "price" : 0,
+      //             "size" : 0,
+      //           }
+      //         ]
+      //       },
+      
+      //     }
+      //   ],
+      //   "source" : 1,
+      //   "sport" : "cricket",
+      //   "sportsId" : null,
+      //   "status" : "OPEN",
+      //   "totalMatched" : 0,
+      //   "update" : "ok",
+      //   "updatetime" : null
+      // }]
+    
+      const oddsData = response.data;
+
+      for (const data of oddsData) {
+
+        const market = await ListMarket.find({ marketId: data.marketId });
+          await Odds.updateOne(
+            { eventId: data.eventId, marketId: data.marketId },
+            {
+              $set: {
+                updatetime: data.updatetime,
+                update: data.update,
+                sport: data.sport,
+                eventId: data.eventId,
+                marketId: data.MarketId,
+                marketName: data.marketName,
+                source: data.source,
+                isMarketDataDelayed: data.IsMarketDataDelayed,
+                status: data.Status,
+                isInplay: data.IsInplay,
+                inplay: data.inplay,
+                numberOfRunners: data.NumberOfRunners,
+                numberOfActiveRunners: data.NumberOfActiveRunners,
+                totalMatched: data.TotalMatched,
+                sportsId: market.sportsId,
+                runners: data.Runners
+              },
+            },
+            { upsert: true, new: true }
+          );
+        }
+
+      return({
+        success: true,
+        message: 'Odds retrieved and saved successfully',
+        odds: oddsData,
+      });
+    } catch (error) {
+      console.error(error);
+      return({
+        success: false,
+        message: 'Failed to get or save odds',
+        error: error.message,
+      });
+    }
+  // });
+}
+
+
 loginRouter.get('/listCompetition/:sportId', listCompetitions);
 loginRouter.get('/listEventBySport/:sportId', listEventsBySport);
 loginRouter.get(
@@ -387,4 +538,4 @@ loginRouter.get('/listMarket/:eventId', listMarkets);
 loginRouter.get('/listInplayEvent/:sportsId', listInplayEvents);
 loginRouter.get('/getOdds', getOdds);
 
-module.exports = { loginRouter,getOdds, listEventsBySport,listInplayEvents,listEventsByCompetition,listMarketsByCronJob };
+module.exports = { loginRouter,getOdds, getnewOdds, listEventsBySport,listInplayEvents,listEventsByCompetition,listMarketsByCronJob };
