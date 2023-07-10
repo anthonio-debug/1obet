@@ -64,6 +64,7 @@ async function livesportscore(req, res) {
     try {
         const id = req.param.id;
         const data =  axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+        console.log(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
         console.log('data', data)
         res.json({
             data : data
