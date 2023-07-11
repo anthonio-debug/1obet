@@ -386,107 +386,14 @@ async function getnewOdds(ids) {
     try {
       const url = `${config.sportsAPIUrl}/odds/?ids=${ids}`;
       const response = await axios.get(url);
-      // const response = [{
-      //   "eventId" : "32472580",
-      //   marketId: '1.215903789',
-      //   "__v" : 0,
-      //   "inplay" : true,
-      //   "isInplay" : true,
-      //   "isMarketDataDelayed" : false,
-      //   "marketName" : "Match Odds",
-      //   "numberOfActiveRunners" : 2,
-      //   "numberOfRunners" : 2,
-      //   "runners" : [
-      //     {
-      //       "runnerName" : "West Indies T10",
-      //       "ExchangePrices" : {
-      //         "AvailableToBack" : [
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      
-      //           },
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      
-      //           },
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      //           }
-      //         ],
-      //         "AvailableToLay" : [
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      
-      //           },
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      
-      //           },
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      
-      //           }
-      //         ]
-      //       },
-      
-      //     },
-      //     {
-      //       "runnerName" : "England T10",
-      //       "ExchangePrices" : {
-      //         "AvailableToBack" : [
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      //           },
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      //           },
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      //           }
-      //         ],
-      //         "AvailableToLay" : [
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      //           },
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      //           },
-      //           {
-      //             "price" : 0,
-      //             "size" : 0,
-      //           }
-      //         ]
-      //       },
-      
-      //     }
-      //   ],
-      //   "source" : 1,
-      //   "sport" : "cricket",
-      //   "sportsId" : null,
-      //   "status" : "OPEN",
-      //   "totalMatched" : 0,
-      //   "update" : "ok",
-      //   "updatetime" : null
-      // }]
     
       const oddsData = response.data;
 
       for (const data of oddsData) {
 
-        const market = await ListMarket.find({ marketId: data.marketId });
-          await Odds.updateOne(
-            { eventId: data.eventId, marketId: data.marketId },
+        const market = await ListMarket.find({ marketId: data.MarketId });
+          await Odds.findOneAndUpdate(
+            { eventId: data.eventId, marketId: data.MarketId },
             {
               $set: {
                 updatetime: data.updatetime,
@@ -526,7 +433,43 @@ async function getnewOdds(ids) {
     }
   // });
 }
+async function listInplayEventsJob(sportsId) {
+  const url = `${config.sportsAPIUrl}/listInplayEvents/${sportsId}`;
 
+  try {
+    const response = await axios.get(url);
+    const inplayEvents = response.data;
+
+    // Save the inplayEvents data to the collection
+    const savedEvents = [];
+
+    for (const event of inplayEvents) {
+      const filter = { sportsId: sportsId, Id: event.Id };
+      const update = { $set: { sportsId: sportsId }, $setOnInsert: event };
+      const options = { upsert: true, new: true };
+
+      const savedEvent = await inPlayEvents.findOneAndUpdate(
+        filter,
+        update,
+        options
+      );
+      savedEvents.push(savedEvent);
+    }
+
+    return({
+      success: true,
+      message: 'Inplay events retrieved and saved successfully',
+      inplayEvents: savedEvents,
+    });
+  } catch (error) {
+    console.error(error);
+    return({
+      success: false,
+      message: 'Failed to get or save inplay events',
+      error: error.message,
+    });
+  }
+}
 
 loginRouter.get('/listCompetition/:sportId', listCompetitions);
 loginRouter.get('/listEventBySport/:sportId', listEventsBySport);
@@ -538,4 +481,4 @@ loginRouter.get('/listMarket/:eventId', listMarkets);
 loginRouter.get('/listInplayEvent/:sportsId', listInplayEvents);
 loginRouter.get('/getOdds', getOdds);
 
-module.exports = { loginRouter,getOdds, getnewOdds, listEventsBySport,listInplayEvents,listEventsByCompetition,listMarketsByCronJob };
+module.exports = { loginRouter,getOdds, getnewOdds,listInplayEventsJob, listEventsBySport,listInplayEvents,listEventsByCompetition,listMarketsByCronJob };

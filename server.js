@@ -36,8 +36,8 @@ themeCronJob();
 checkBetStatus();
 // getOddsCronJob()
 // sportsAPICronJob()
-oddsCronJob()
 listMarketCronJob()
+oddsCronJob()
 
 // CONNECT THE DATABASE
 let options = {

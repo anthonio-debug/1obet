@@ -7,7 +7,7 @@ const Settings = require("../app/models/settings");
 const Cash = require("../app/models/deposits");
 const { getParents } = require("../app/routes/bets");
 const { listOddsAPI } = require('../app/routes/settings')
-const { listInplayEvents,listMarketsByCronJob, getOdds ,getnewOdds} = require('../app/routes/sportsAPI')
+const { listInplayEvents,listMarketsByCronJob, getOdds ,getnewOdds,listInplayEventsJob} = require('../app/routes/sportsAPI')
 const ListMarkets = require('../app/models/listMarkets')
 const inPlayEvents = require('../app/models/inPlayEvents')
 let runningJob;
@@ -472,18 +472,19 @@ const sportsAPICronJob = () => {
       const sportsIds = [4,2,1]; // Set the desired sports IDs here
 
       // Iterate over sportsIds
-      for (const sportId of sportsIds) {
-        const listInplayEventsResponse = await listInplayEvents({ params: { sportsId: sportId } });
-        const listInplayEventsData = listInplayEventsResponse.data.inplayEvents;
+      for (const sportsId of sportsIds) {
+        const listInplayEventsResponse = await listInplayEventsJob(sportsId);
+        const listInplayEventsData = listInplayEventsResponse.data;
         console.log('listInplayEventsData:', listInplayEventsData);
+       const inplayids = listInplayEventsData.map(event =>parseFloat(event.Id));
         console.log("listInplayEventsData.eventId",listInplayEventsData.Id);
 
-        for (const inplayEvents of listInplayEventsData) {
+        for (const inplayEvents of eventIds) {
           console.log("inplayEvents.eventId",inplayEvents.Id);
 
           freshInplayIds.push(inplayEvents.Id); // Save the new competition ID
-          const eventIds = inplayEvents.Id
-          const listMarketsResponse = await listMarkets({ params: { eventIds } });
+          const ids = inplayEvents.Id
+          const listMarketsResponse = await listMarkets(ids);
           console.log('listMarketsResponse',listMarketsResponse)
           console.log('listMarketsResponse.data',listMarketsResponse.data.markets)
 
@@ -539,18 +540,22 @@ const listMarketCronJob = () => {
   // Cron job to run 12 times per minute
   cron.schedule('*/1 * * * *', async () => {
     try {
-      // Retrieve the IDs from the inplayEvents model
-      const inplayEvents = await inPlayEvents.find({}, 'Id');
+      // Retrieve the IDs from the inplayEvents api
+      const sportsIds = [4,2,1]; // Set the desired sports IDs here
 
-      const eventIds = inplayEvents.map(event =>parseFloat(event.Id));
+      // Iterate over sportsIds
+      for (const sportsId of sportsIds) {
 
-      // Iterate over the eventIds
-      for (const eventId of eventIds) {
-        console.log('eventId', eventId)
+        const listInplayEventsResponse = await listInplayEventsJob(sportsId);
+        const listInplayEventsData = listInplayEventsResponse.inplayEvents
+
+        const dummydata = listInplayEventsData.map(async(item)=>{
+          let eventId = item.Id
+          console.log('eventId',eventId);
         // Call the listMarkets API with each eventId
         const listMarketsResponse = await listMarketsByCronJob(eventId);
-        console.log('listMarketsResponse', listMarketsResponse)
-      }
+        })
+     }
     } catch (error) {
       console.error('Error running listMarket cron job:', error);
     }
@@ -559,7 +564,8 @@ const listMarketCronJob = () => {
 
 const oddsCronJob = () => {
  // Cron job to run after 10 seconds
- cron.schedule('*/10 * * * * *', async () => {    try {
+ cron.schedule('*/1 * * * * *', async () => {
+    try {
       // Retrieve the market IDs from the listMarkets model
       const listMarketsData = await ListMarkets.find({}, 'marketId');
       console.log('listMarketsData', listMarketsData);
@@ -586,14 +592,10 @@ const oddsCronJob = () => {
         // Generate the query string for the getOdds API
         const queryString = batch.join(',');
         console.log('Query String:', queryString);
-        console.log('Odds:', {
-          query: { ids: queryString }
-        });
-
+        
         // Call the getOdds API with the query string
-        const oddsResponse = await getnewOdds({
-          query: { ids: queryString }
-        });
+        const oddsResponse = await getnewOdds(queryString)
+        
         console.log('oddsResponse', oddsResponse);
 
         // Handle the response from the getOdds API as needed
