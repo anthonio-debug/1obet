@@ -580,7 +580,7 @@ const oddsCronJob = () => {
         // Update the market IDs with the new cronjobtime and type
         await ListMarkets.updateMany(
           { marketId: { $in: marketIds } },
-          { updatedCronTime, type: 1 }
+          { updatedCronTime, isLocked: 1 }
         );
 
         const batches = [];

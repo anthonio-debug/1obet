@@ -355,7 +355,7 @@ async function listEventsBySport(req, res) {
   const sportId = req.params.id;
 
   try {
-    const events = await inPlayEvents.find({ sportsId: sportId });
+    const events = await inPlayEvents.find({ sportsId: sportId, type: "eventsBySports" });
 
     res.status(200).json({
       success: true,
