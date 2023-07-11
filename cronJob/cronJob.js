@@ -570,17 +570,17 @@ const oddsCronJob = () => {
 
       // Retrieve market IDs from the listMarkets model where cronjobtime is empty and type is 0
       const listMarketsData = await ListMarkets.find(
-        { updatedCronTime: '', isLocked: 0 },
+        { updatedCronTime: '', islocked: 0 },
         'marketId'
       );
 
       const marketIds = listMarketsData.map((event) => parseFloat(event.marketId));
 
-      if (marketIds.length <= 20) {
+      if (marketIds.length > 0) {
         // Update the market IDs with the new cronjobtime and type
         await ListMarkets.updateMany(
           { marketId: { $in: marketIds } },
-          { updatedCronTime, isLocked: 1 }
+          { updatedCronTime, type: 1 }
         );
 
         const batches = [];
@@ -599,7 +599,7 @@ const oddsCronJob = () => {
           // Update the market IDs with updatedCronTime: '', isLocked: 0
           await ListMarkets.updateMany(
             { marketId: { $in: batch } },
-            { updatedCronTime: '', isLocked: 0 }
+            { updatedCronTime: '', islocked: 0 }
           );
 
           // Generate the query string for the getOdds API

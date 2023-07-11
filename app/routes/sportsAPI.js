@@ -177,7 +177,7 @@ async function listMarketsByCronJob(eventId) {
     const markets = [];
 
     // Get the event details from the eventsByCompetition model
-    const eventDetails = inPlayEvents.find({ Id: eventId, type: "eventsBySports" });
+    const eventDetails = inPlayEvents.find({ Id: eventId });
     for (const marketData of marketsData) {
       console.log('marketData',marketData.status);
       const runners = marketData.runners.map((runnerData) => ({
@@ -435,7 +435,7 @@ async function getnewOdds(ids) {
   // });
 }
 async function listInplayEventsJob(sportsId) {
-  const url = `${config.sportsAPIUrl}/listInplayEvents/${sportsId}`;
+  const url = `${config.sportsAPIUrl}/listEventsBySport/${sportsId}`;
 
   try {
     const response = await axios.get(url);
@@ -445,8 +445,8 @@ async function listInplayEventsJob(sportsId) {
     const savedEvents = [];
 
     for (const event of inplayEvents) {
-      const filter = { sportsId: sportsId, Id: event.Id, type: "eventsBySports" };
-      const update = { $set: { sportsId: sportsId, type: "eventsBySports" }, $setOnInsert: event };
+      const filter = { sportsId: sportsId, Id: event.Id };
+      const update = { $set: { sportsId: sportsId }, $setOnInsert: event };
       const options = { upsert: true, new: true };
 
       const savedEvent = await inPlayEvents.findOneAndUpdate(
