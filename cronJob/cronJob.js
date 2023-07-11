@@ -563,47 +563,61 @@ const listMarketCronJob = () => {
 }
 
 const oddsCronJob = () => {
- // Cron job to run after 10 seconds
- cron.schedule('*/1 * * * * *', async () => {
+  cron.schedule('*/1 * * * * *', async () => {
     try {
-      // Retrieve the market IDs from the listMarkets model
-      const listMarketsData = await ListMarkets.find({}, 'marketId');
-      console.log('listMarketsData', listMarketsData);
+      const updatedCronTime = new Date();
+      const batchSize = 20;
 
-      const marketIds = listMarketsData.map(event => parseFloat(event.marketId));
-      console.log('marketIds', marketIds);
+      // Retrieve market IDs from the listMarkets model where cronjobtime is empty and type is 0
+      const listMarketsData = await ListMarkets.find(
+        { updatedCronTime: '', isLocked: 0 },
+        'marketId'
+      );
 
-      const batchSize = 20; // Number of market IDs to pass in each request
+      const marketIds = listMarketsData.map((event) => parseFloat(event.marketId));
 
-      // Split the market IDs into batches of size batchSize
-      const batches = [];
-      for (let i = 0; i < marketIds.length; i += batchSize) {
-        batches.push(marketIds.slice(i, i + batchSize));
-      }
+      if (marketIds.length <= 20) {
+        // Update the market IDs with the new cronjobtime and type
+        await ListMarkets.updateMany(
+          { marketId: { $in: marketIds } },
+          { updatedCronTime, type: 1 }
+        );
 
-      console.log('Total batches:', batches.length);
+        const batches = [];
+        for (let i = 0; i < marketIds.length; i += batchSize) {
+          batches.push(marketIds.slice(i, i + batchSize));
+        }
 
-      // Process each batch of market IDs
-      for (let i = 0; i < batches.length; i++) {
-        const batch = batches[i];
-        console.log('Batch', i + 1, 'of', batches.length);
-        console.log('Market IDs:', batch);
+        console.log('Total batches:', batches.length);
 
-        // Generate the query string for the getOdds API
-        const queryString = batch.join(',');
-        console.log('Query String:', queryString);
-        
-        // Call the getOdds API with the query string
-        const oddsResponse = await getnewOdds(queryString)
-        
-        console.log('oddsResponse', oddsResponse);
+        // Process each batch of market IDs
+        for (let i = 0; i < batches.length; i++) {
+          const batch = batches[i];
+          console.log('Batch', i + 1, 'of', batches.length);
+          console.log('Market IDs:', batch);
 
-        // Handle the response from the getOdds API as needed
+          // Update the market IDs with updatedCronTime: '', isLocked: 0
+          await ListMarkets.updateMany(
+            { marketId: { $in: batch } },
+            { updatedCronTime: '', isLocked: 0 }
+          );
+
+          // Generate the query string for the getOdds API
+          const queryString = batch.join(',');
+          console.log('Query String:', queryString);
+
+          // Call the getOdds API with the query string
+          const oddsResponse = await getnewOdds(queryString);
+
+          console.log('oddsResponse', oddsResponse);
+
+          // Handle the response from the getOdds API as needed
+        }
       }
     } catch (error) {
       console.error('Error running odds cron job:', error);
     }
   });
-}
+};
 
 module.exports = { checkBetStatus, themeCronJob,getOddsCronJob, sportsAPICronJob,listMarketCronJob,oddsCronJob };

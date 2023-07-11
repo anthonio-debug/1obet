@@ -79,7 +79,7 @@ async function listEventsBySport(req, res) {
     const events = [];
 
     for (const eventData of eventsData) {
-      const filter = { Id: eventData.Id, sportsId: sportId };
+      const filter = { Id: eventData.Id, sportsId: sportId,  type: "eventsBySports" };
       const update = {
         $setOnInsert: {
           sport: eventData.sport,
@@ -95,12 +95,13 @@ async function listEventsBySport(req, res) {
           status: eventData.status,
           isPremium: eventData.isPremium,
           sportsId: sportId,
+          type: "eventsBySports"
         },
       };
 
       const options = { upsert: true, new: true };
 
-      const updatedEvent = await Event.findOneAndUpdate(
+      const updatedEvent = await inPlayEvents.findOneAndUpdate(
         filter,
         update,
         options
