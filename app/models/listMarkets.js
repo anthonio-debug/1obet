@@ -15,7 +15,8 @@ const marketSchema = new mongoose.Schema({
   eventId: { type: String },
   sportsId: { type: String },
   updatedCronTime:{ type: String, default: '' },
-  islocked: { type: Number, default: 0 }
+  islocked: { type: Number, default: 0 },
+  eventId:{ type: String }
 });
 
 const Market = mongoose.model('listMarket', marketSchema);

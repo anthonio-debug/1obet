@@ -1,30 +1,30 @@
 const mongoose = require('mongoose');
 
-const raceSchema = new mongoose.Schema({
-  update: String,
-  marketId: String,
-  raceId: String,
-  marketName: String,
-  marketType: String,
-  numberOfWinners: Number,
-  numberOfRunners: Number,
-  numberOfActiveRunners: Number,
-  startTime: Date,
-  result: Boolean,
-  raceNumber: String,
-  inplay: Boolean,
-  status: String
-});
-
 const meetingSchema = new mongoose.Schema({
-  meetingId: Number,
-  name: String,
-  openDate: Date,
-  venue: String,
-  eventTypeId: Number,
-  countryCode: String,
-  meetingGoing: String,
-  races: [raceSchema]
+  meetingId: { type: Number, required: false },
+  name: { type: String },
+  openDate: { type: Date },
+  venue: { type: String },
+  eventTypeId: { type: Number },
+  countryCode: { type: String },
+  meetingGoing: { type: String },
+  races: [
+    {
+      update: { type: String },
+      marketId: { type: String },
+      raceId: { type: String },
+      marketName: { type: String },
+      marketType: { type: String },
+      numberOfWinners: { type: Number },
+      numberOfRunners: { type: Number },
+      numberOfActiveRunners: { type: Number },
+      startTime: { type: Date },
+      result: { type: Boolean },
+      raceNumber: { type: String },
+      inplay: { type: Boolean },
+      status: { type: String }
+    }
+  ]
 });
 
 const eventSchema = new mongoose.Schema({
@@ -41,9 +41,11 @@ const eventSchema = new mongoose.Schema({
   hasFancy: { type: Boolean, required: false },
   status: { type: String, required: false },
   isPremium: { type: Boolean, required: false },
+  //horse schema
   countryCodes: [String],
-  meetings: [meetingSchema]
-});
+  meetings: [meetingSchema],
+  type: { type: String },
+ });
 
 const Event = mongoose.model('eventsBySport', eventSchema);
 

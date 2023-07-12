@@ -6,10 +6,9 @@ const User = require("../app/models/user");
 const Settings = require("../app/models/settings");
 const Cash = require("../app/models/deposits");
 const { getParents } = require("../app/routes/bets");
-const { listOddsAPI } = require('../app/routes/settings')
-const { listInplayEvents,listMarketsByCronJob, getOdds ,getnewOdds,listInplayEventsJob} = require('../app/routes/sportsAPI')
+const { listMarketsByCronJob ,getnewOdds,fancyDataByCronjob,listInplayEventsJob} = require('../app/routes/sportsAPI')
 const ListMarkets = require('../app/models/listMarkets')
-const inPlayEvents = require('../app/models/inPlayEvents')
+const inplayEvents = require('../app/models/inPlayEvents')
 let runningJob;
 
 const checkBetStatus = (req) => {
@@ -433,108 +432,108 @@ const themeCronJob = () => {
   });
 };
 
-const getOddsCronJob = async (req) => {
-  try {
-    const req = {
-      query: {
-        ids: '32455848' // Initialize with an empty string
-      }
-    };
-    const res = {
-      json: data => {
-        console.log(data);
-      },
-      status: code => {
-        return {
-          json: data => {
-            console.log(`Status code: ${code}`);
-            console.log(data);
-          }
-        };
-      }
-    };
+// const getOddsCronJob = async (req) => {
+//   try {
+//     const req = {
+//       query: {
+//         ids: '32455848' // Initialize with an empty string
+//       }
+//     };
+//     const res = {
+//       json: data => {
+//         console.log(data);
+//       },
+//       status: code => {
+//         return {
+//           json: data => {
+//             console.log(`Status code: ${code}`);
+//             console.log(data);
+//           }
+//         };
+//       }
+//     };
 
-    await listOddsAPI(req, res); // Pass the req and res objects to listOddsAPI
-    await getOdds(req, res); // Pass the req and res objects to getOdds
-  } catch (error) {
-    console.error('Error running getOdds cron job:', error);
-  }
-};
+//     await listOddsAPI(req, res); // Pass the req and res objects to listOddsAPI
+//     await getOdds(req, res); // Pass the req and res objects to getOdds
+//   } catch (error) {
+//     console.error('Error running getOdds cron job:', error);
+//   }
+// };
 
-const sportsAPICronJob = () => {
-  const freshMarketIds = []; // Declare freshMarketIds outside the cron job
+// const sportsAPICronJob = () => {
+//   const freshMarketIds = []; // Declare freshMarketIds outside the cron job
 
- // Cron job to run every 1 minute
- cron.schedule('*/1 * * * *', async () => { 
-    try {
-      const freshInplayIds = []; // Array to store fresh competition IDs
+//  // Cron job to run every 1 minute
+//  cron.schedule('*/1 * * * *', async () => { 
+//     try {
+//       const freshInplayIds = []; // Array to store fresh competition IDs
 
-      const sportsIds = [4,2,1]; // Set the desired sports IDs here
+//       const sportsIds = [4,2,1]; // Set the desired sports IDs here
 
-      // Iterate over sportsIds
-      for (const sportsId of sportsIds) {
-        const listInplayEventsResponse = await listInplayEventsJob(sportsId);
-        const listInplayEventsData = listInplayEventsResponse.data;
-        console.log('listInplayEventsData:', listInplayEventsData);
-       const inplayids = listInplayEventsData.map(event =>parseFloat(event.Id));
-        console.log("listInplayEventsData.eventId",listInplayEventsData.Id);
+//       // Iterate over sportsIds
+//       for (const sportsId of sportsIds) {
+//         const listInplayEventsResponse = await listInplayEventsJob(sportsId);
+//         const listInplayEventsData = listInplayEventsResponse.data;
+//         console.log('listInplayEventsData:', listInplayEventsData);
+//        const inplayids = listInplayEventsData.map(event =>parseFloat(event.Id));
+//         console.log("listInplayEventsData.eventId",listInplayEventsData.Id);
 
-        for (const inplayEvents of eventIds) {
-          console.log("inplayEvents.eventId",inplayEvents.Id);
+//         for (const inplayEvents of eventIds) {
+//           console.log("inplayEvents.eventId",inplayEvents.Id);
 
-          freshInplayIds.push(inplayEvents.Id); // Save the new competition ID
-          const ids = inplayEvents.Id
-          const listMarketsResponse = await listMarkets(ids);
-          console.log('listMarketsResponse',listMarketsResponse)
-          console.log('listMarketsResponse.data',listMarketsResponse.data.markets)
+//           freshInplayIds.push(inplayEvents.Id); // Save the new competition ID
+//           const ids = inplayEvents.Id
+//           const listMarketsResponse = await listMarkets(ids);
+//           console.log('listMarketsResponse',listMarketsResponse)
+//           console.log('listMarketsResponse.data',listMarketsResponse.data.markets)
 
-          const listMarketsData = listMarketsResponse.data.markets;
+//           const listMarketsData = listMarketsResponse.data.markets;
 
-          for (const market of listMarketsData) {
-            console.log("listMarketsData.marketId",market.marketId);
+//           for (const market of listMarketsData) {
+//             console.log("listMarketsData.marketId",market.marketId);
 
-            freshMarketIds.push(market.marketId); // Save the new market ID
-          }
-        }
-      }
+//             freshMarketIds.push(market.marketId); // Save the new market ID
+//           }
+//         }
+//       }
 
-      console.log('freshInplayIds', freshInplayIds);
-      console.log('freshMarketIds', freshMarketIds);
+//       console.log('freshInplayIds', freshInplayIds);
+//       console.log('freshMarketIds', freshMarketIds);
 
-      // Step 3: Remove saved inline events from ListInlineEvents collection
-      // await ListInlineEvents.deleteMany({ eventId: { $in: freshInlineEvents } });
+//       // Step 3: Remove saved inline events from ListInlineEvents collection
+//       // await ListInlineEvents.deleteMany({ eventId: { $in: freshInlineEvents } });
 
-      // Step 4: Remove saved market IDs from ListMarkets collection
-      // await ListMarkets.deleteMany({ marketId: { $in: freshMarketIds } });
-    } catch (error) {
-      console.error('Error running sports API cron job:', error);
-    }
-  });
+//       // Step 4: Remove saved market IDs from ListMarkets collection
+//       // await ListMarkets.deleteMany({ marketId: { $in: freshMarketIds } });
+//     } catch (error) {
+//       console.error('Error running sports API cron job:', error);
+//     }
+//   });
 
-  // Cron job to run every 3 mints
-  cron.schedule('*/3 * * * *', async () => {
-    try {
-      const updatedCronTime = new Date(); // Get the current time
+//   // Cron job to run every 3 mints
+//   cron.schedule('*/3 * * * *', async () => {
+//     try {
+//       const updatedCronTime = new Date(); // Get the current time
 
-      // Find data from ListMarkets where cronjobTime is empty and isLocked is 0
-      const marketsToProcess = await ListMarkets.find({ updatedCronTime: '', isLocked: 0 });
-      console.log('ListMarkets',marketsToProcess);
-      if (marketsToProcess.length <= 20) {
-        // Update cronjobTime and isLocked for the matched markets
-        await ListMarkets.updateMany(
-          { _id: { $in: marketsToProcess.map(market => market._id) } },
-          { updatedCronTime: updatedCronTime, isLocked: 1 }
-        );
-      }
-      if (freshMarketIds.length <= 20) {
-        // Call getOdds API with the fresh market IDs
-        await getOdds({ query: { ids: freshMarketIds } });
-      }
-    } catch (error) {
-      console.error('Error running secondary cron job:', error);
-    }
-  });
-};
+//       // Find data from ListMarkets where cronjobTime is empty and isLocked is 0
+//       const marketsToProcess = await ListMarkets.find({ updatedCronTime: '', isLocked: 0 });
+//       console.log('ListMarkets',marketsToProcess);
+//       if (marketsToProcess.length <= 20) {
+//         // Update cronjobTime and isLocked for the matched markets
+//         await ListMarkets.updateMany(
+//           { _id: { $in: marketsToProcess.map(market => market._id) } },
+//           { updatedCronTime: updatedCronTime, isLocked: 1 }
+//         );
+//       }
+//       if (freshMarketIds.length <= 20) {
+//         // Call getOdds API with the fresh market IDs
+//         await getOdds({ query: { ids: freshMarketIds } });
+//       }
+//     } catch (error) {
+//       console.error('Error running secondary cron job:', error);
+//     }
+//   });
+// };
 
 const listMarketCronJob = () => {
   // Cron job to run 12 times per minute
@@ -580,7 +579,7 @@ const oddsCronJob = () => {
         // Update the market IDs with the new cronjobtime and type
         await ListMarkets.updateMany(
           { marketId: { $in: marketIds } },
-          { updatedCronTime, type: 1 }
+          { updatedCronTime, islocked: 1 }
         );
 
         const batches = [];
@@ -597,10 +596,6 @@ const oddsCronJob = () => {
           console.log('Market IDs:', batch);
 
           // Update the market IDs with updatedCronTime: '', isLocked: 0
-          await ListMarkets.updateMany(
-            { marketId: { $in: batch } },
-            { updatedCronTime: '', islocked: 0 }
-          );
 
           // Generate the query string for the getOdds API
           const queryString = batch.join(',');
@@ -613,6 +608,10 @@ const oddsCronJob = () => {
 
           // Handle the response from the getOdds API as needed
         }
+        await ListMarkets.updateMany(
+          { marketId: { $in: marketIds  } },
+          { updatedCronTime: '', islocked: 0 }
+        );
       }
     } catch (error) {
       console.error('Error running odds cron job:', error);
@@ -620,4 +619,24 @@ const oddsCronJob = () => {
   });
 };
 
-module.exports = { checkBetStatus, themeCronJob,getOddsCronJob, sportsAPICronJob,listMarketCronJob,oddsCronJob };
+const fancyDataCronJob = async () => {
+  // Cron job to run every 1 second
+  cron.schedule('* * * * * *', async () => {
+    try {
+      // Retrieve the inplayevents data dynamically from the database
+      const inplayEventsData = await inplayEvents.find().exec();
+
+      // Iterate over the inplayevents data
+      for (const event of inplayEventsData) {
+        const eventId = event.Id;
+        const listInplayEventsResponse = await fancyDataByCronjob(eventId);
+      }
+    } catch (error) {
+      console.error('Error running listMarket cron job:', error);
+    }
+  });
+};
+
+
+
+module.exports = { checkBetStatus, themeCronJob,listMarketCronJob,oddsCronJob,fancyDataCronJob };

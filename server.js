@@ -25,19 +25,17 @@ var jsonApis = JSON.parse(apisContent);
 const {
   themeCronJob,
   checkBetStatus,
-  getOddsCronJob,
-  sportsAPICronJob,
   oddsCronJob,
-  listMarketCronJob
+  listMarketCronJob,
+  fancyDataCronJob
 } = require('./cronJob/cronJob'); // Import only cronJob2
 
 // Run the cron job
 themeCronJob();
 checkBetStatus();
-// getOddsCronJob()
-// sportsAPICronJob()
 listMarketCronJob()
 oddsCronJob()
+fancyDataCronJob()
 
 // CONNECT THE DATABASE
 let options = {

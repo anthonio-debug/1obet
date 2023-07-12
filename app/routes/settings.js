@@ -13,9 +13,9 @@ const MaxBetSize = require('../models/betLimits');
 const SideBarMenu = require('../models/sidebarMenu');
 const inPlayEvents = require('../models/inPlayEvents');
 const EventBySports = require('../models/eventsBySport');
-const EventsByCompetition = require('../models/eventsByCompetition');
 const config = require('config')
-const axios = require('axios')
+const axios = require('axios');
+const FancyGames = require('../models/fancyGames');
 const loginRouter = express.Router();
 const router = express.Router();
 
@@ -375,9 +375,10 @@ async function listEventsBySport(req, res) {
 async function listEventsByCompetition(req, res) {
   const { sportsId, competitionId } = req.params;
   try {
-    const events = await EventsByCompetition.find({
+    const events = await EventBySports.find({
       sportsId: sportsId,
       competitionId: competitionId,
+      type: "eventsByCompetitions"
     });
 
     res.status(200).json({
@@ -422,7 +423,9 @@ async function listOddsAPI(req, res) {
     const url = `${config.liveTvUrl}/get_live_tv_url/${eventIds}`;
     const liveTVResponse = await axios.get(url);
     const liveTVData = liveTVResponse.data;
-    // console.log('liveTVData', liveTVData);
+    const fancyData = await FancyGames.find({ eventId: { $in: eventIds } })
+    
+    console.log('fancyData', fancyData);
 
     // console.log('liveTVResponse', liveTVResponse);
     return res.json({
@@ -434,6 +437,7 @@ async function listOddsAPI(req, res) {
           scoreUrl: liveTVData.scoreUrl || '',
           streamingUrl: liveTVData.streamingUrl || '',
         },
+        fancyData
       },
     });
   } catch (error) {
