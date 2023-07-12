@@ -14,7 +14,8 @@ const inPlayEventsSchema = new mongoose.Schema({
   inplay: { type: Boolean },
   hasFancy: { type: Boolean },
   status: { type: String },
-  isPremium:{type: Boolean }
+  isPremium:{type: Boolean },
+  type: { type: String, default: '' }
 });
 
 // Create the model
