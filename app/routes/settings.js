@@ -482,10 +482,12 @@ function addSideBarMenu(req, res) {
   });
 }
 
-async function racesAPI(req, res) {
+async function racesList(req, res) {
   try {
     const id = req.params.id;
-    const racesData = await Racing.find({ sportsId: id }) 
+    const racesData = await inPlayEvents.find(
+      { sportsId: id },
+      { meetingId:1,countryCode:1,countryCodes:1,eventTypeId:1,races:1,venue:1,sportsId: 1 }) 
       
       return res.json({
         success: true,
@@ -550,6 +552,6 @@ loginRouter.get(
 );
 loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
-loginRouter.get('/racesAPI/:id', racesAPI);
+loginRouter.get('/racesAPI/:id', racesList);
 
 module.exports = { loginRouter, router, listOddsAPI };

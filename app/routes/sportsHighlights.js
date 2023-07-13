@@ -21,11 +21,18 @@ async function getAllSportsHighlight(req, res) {
       totalMatchedMap[odds.eventId] = odds.totalMatched;
     });
 
-    const formattedData = sportsHighlights.map(highlight => ({
-      sport: highlight.sport,
-      name: highlight.name,
-      amount: totalMatchedMap[highlight.Id] || 0
-    }));
+    const formattedData = {};
+
+    sportsHighlights.forEach(highlight => {
+      const { sport, name, Id, _id } = highlight;
+      const amount = totalMatchedMap[Id] || 0;
+
+      if (!formattedData[sport]) {
+        formattedData[sport] = [];
+      }
+
+      formattedData[sport].push({ name, amount,Id,_id });
+    });
 
     return res.send({
       success: true,
