@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const axios = require('axios');
 const config = require('config');
 const loginRouter = express.Router();
-const inPlayEvents = require('../models/inPlayEvents');
+const Racing = require('../models/racing');
 
 async function racesTodayMeetings(req, res) {
   const SportsId = req.params.SportsId;
@@ -11,25 +11,34 @@ async function racesTodayMeetings(req, res) {
     const url = `${config.horseRaceUrl}/meetings/today/${SportsId}`;
     const response = await axios.get(url);
 
-  const horseRacesData = response.data;
-    console.log('horseRacesData',horseRacesData);
-    console.log('meetings',horseRacesData.meetings);
+    const horseRacesData = response.data;
+    console.log('horseRacesData', horseRacesData);
+    console.log('meetings', horseRacesData.meetings);
+    console.log('countryCodes', horseRacesData.countryCodes);
 
-    for (const data of horseRacesData) {
-  // Check if the meeting already exists in the schema and update it if needed
-      await inPlayEvents.findOneAndUpdate(
-        { meetingId: data.meetingId },
-        { $setOnInsert: data },
-        { upsert: true }
-     );
-    }
-      return res.json({
-        success: true,
-        message: 'Horse Race Records',
-        results: meetings,
+    const bulkOperations = [];
+    for (const data of horseRacesData.meetings) {
+      data.countryCodes = horseRacesData.countryCodes;
+      data.sportsId = SportsId;
+      bulkOperations.push({
+        updateOne: {
+          filter: { meetingId: data.meetingId },
+          update: { $setOnInsert: data },
+          upsert: true,
+        },
       });
+    }
+
+    // Perform bulk write operation
+    await Racing.bulkWrite(bulkOperations, { ordered: false });
+
+    return res.json({
+      success: true,
+      message: 'Horse Race Records',
+      results: horseRacesData,
+    });
   } catch (error) {
-    console.error('Error retrieving Records:', error);
+    console.error(error);
     return res.status(200).json({
       success: false,
       message: 'Error retrieving Records',
@@ -38,21 +47,41 @@ async function racesTodayMeetings(req, res) {
 }
 
 
-
 async function racesTomorrowMeetings(req, res) {
   const SportsId = req.params.SportsId;
   try {
-    console.log('config.horseRaceUrl',config.horseRaceUrl);
     const url = `${config.horseRaceUrl}/meetings/tomorrow/${SportsId}`;
     const response = await axios.get(url);
-    console.log('response',url);
+
+    const horseRacesData = response.data;
+    console.log('horseRacesData', horseRacesData);
+    console.log('meetings', horseRacesData.meetings);
+    console.log('countryCodes', horseRacesData.countryCodes);
+
+    const bulkOperations = [];
+    for (const data of horseRacesData.meetings) {
+      data.countryCodes = horseRacesData.countryCodes;
+      data.sportsId = SportsId;
+
+      bulkOperations.push({
+        updateOne: {
+          filter: { meetingId: data.meetingId },
+          update: { $setOnInsert: data },
+          upsert: true,
+        },
+      });
+    }
+
+    // Perform bulk write operation
+    await Racing.bulkWrite(bulkOperations, { ordered: false });
+
     return res.json({
       success: true,
       message: 'Horse Race Records',
-      results: response.data,
+      results: horseRacesData,
     });
   } catch (error) {
-    console.error('Error retrieving Records:', error);
+    console.error(error);
     return res.status(200).json({
       success: false,
       message: 'Error retrieving Records',
