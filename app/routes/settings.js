@@ -538,18 +538,6 @@ async function updateMatchType(req, res) {
   }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
 loginRouter.post(
   '/updateDefaultTheme',
   settingsValidation.validate('updateDefaultTheme'),
@@ -599,6 +587,8 @@ loginRouter.get(
 );
 loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
-loginRouter.get('/racesAPI/:id', racesAPI);
+loginRouter.get('/racesAPI/:id', racesList);
 loginRouter.post('/updateMatchType', updateMatchType);
+
+
 module.exports = { loginRouter, router, listOddsAPI };
