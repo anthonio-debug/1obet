@@ -599,11 +599,6 @@ loginRouter.get(
 );
 loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
-<<<<<<< HEAD
 loginRouter.get('/racesAPI/:id', racesAPI);
 loginRouter.post('/updateMatchType', updateMatchType);
-=======
-loginRouter.get('/racesAPI/:id', racesList);
-
->>>>>>> 37154390b5742668ebbafafb037a4b6b12e525b7
 module.exports = { loginRouter, router, listOddsAPI };

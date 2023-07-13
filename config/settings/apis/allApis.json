@@ -108,12 +108,9 @@
   "getBettingFigures",
   "UpdateBettingFigures",
   "livesportscore",
-<<<<<<< HEAD
-  "placeFigureBets",
-  "updateMatchType"
-=======
   "racesTomorrowMeetings",
   "marketDescription",
   "raceOdds"
->>>>>>> 37154390b5742668ebbafafb037a4b6b12e525b7
+  "placeFigureBets",
+  "updateMatchType"
 ]
