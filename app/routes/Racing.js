@@ -3,7 +3,7 @@ const mongoose = require('mongoose')
 const axios = require('axios');
 const config = require('config');
 const loginRouter = express.Router();
-const Races = require('../models/eventsBySport')
+const inPlayEvents = require('../models/inPlayEvents');
 
 async function racesTodayMeetings(req, res) {
   const SportsId = req.params.SportsId;
@@ -11,33 +11,23 @@ async function racesTodayMeetings(req, res) {
     const url = `${config.horseRaceUrl}/meetings/today/${SportsId}`;
     const response = await axios.get(url);
 
-    const meetings = response.data.meetings;
-    ;
-console.log('meetingId',meetings);
-    if (Array.isArray(meetings)) {
-      for (const meeting of meetings) {
-        const { meetingId, venue, countryCode, races } = meeting;
+  const horseRacesData = response.data;
+    console.log('horseRacesData',horseRacesData);
+    console.log('meetings',horseRacesData.meetings);
 
-        // Check if the meeting already exists in the schema and update it if needed
-        await Event.findOneAndUpdate(
-          { meetingId },
-          { venue, countryCode, races },
-          { upsert: true }
-        );
-      }
-
+    for (const data of horseRacesData) {
+  // Check if the meeting already exists in the schema and update it if needed
+      await inPlayEvents.findOneAndUpdate(
+        { meetingId: data.meetingId },
+        { $setOnInsert: data },
+        { upsert: true }
+     );
+    }
       return res.json({
         success: true,
         message: 'Horse Race Records',
         results: meetings,
       });
-    } else {
-      console.log('Meetings data is not an array:', meetings);
-      return res.status(200).json({
-        success: false,
-        message: 'Invalid response data',
-      });
-    }
   } catch (error) {
     console.error('Error retrieving Records:', error);
     return res.status(200).json({

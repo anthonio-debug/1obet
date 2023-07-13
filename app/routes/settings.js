@@ -423,8 +423,248 @@ async function listOddsAPI(req, res) {
     const url = `${config.liveTvUrl}/get_live_tv_url/${eventIds}`;
     const liveTVResponse = await axios.get(url);
     const liveTVData = liveTVResponse.data;
-    const fancyData = await FancyGames.find({ eventId: { $in: eventIds } })
-    
+    // const fancyData = await FancyGames.find({ eventId: { $in: eventIds } })
+    const fancyData = {
+      "gameId" : "32473059",
+      "eventId" : "32473059",
+      "eventName" : "Middlesex v Northamptonshire / Jul 10 2023  3:30PM (IST)",
+      "eventTypeId" : "4",
+      "eventTypeName" : "cricket",
+      "name" : "Middlesex v Northamptonshire",
+      "status" : 200,
+      "success" : true,
+      "t1" : null,
+      "t2" : [ ],
+      "t3" : [
+              {
+                      "mid" : "1.215908627",
+                      "sid" : "409",
+                      "nat" : "Fall of 3rd wkt NOR 2",
+                      "b1" : "176.00",
+                      "bs1" : "80.00",
+                      "l1" : "176.00",
+                      "ls1" : "100.00",
+                      "b2" : "0.00",
+                      "bs2" : "0.00",
+                      "l2" : "0.00",
+                      "ls2" : "0.00",
+                      "b3" : "0.00",
+                      "bs3" : "0.00",
+                      "l3" : "0.00",
+                      "ls3" : "0.00",
+                      "gtype" : "Fancy",
+                      "utime" : "0",
+                      "gvalid" : "0",
+                      "gstatus" : "",
+                      "remark" : "",
+                      "min" : "100.00",
+                      "max" : "100000.00",
+                      "srno" : "5",
+                      "s1" : "0",
+                      "s2" : "0",
+                      "ballsess" : "1"
+              },
+              {
+                      "mid" : "1.215908627",
+                      "sid" : "425",
+                      "nat" : "L Procter boundaries 2",
+                      "b1" : "5.00",
+                      "bs1" : "100.00",
+                      "l1" : "4.00",
+                      "ls1" : "100.00",
+                      "b2" : "0.00",
+                      "bs2" : "0.00",
+                      "l2" : "0.00",
+                      "ls2" : "0.00",
+                      "b3" : "0.00",
+                      "bs3" : "0.00",
+                      "l3" : "0.00",
+                      "ls3" : "0.00",
+                      "gtype" : "Fancy",
+                      "utime" : "0",
+                      "gvalid" : "0",
+                      "gstatus" : "",
+                      "remark" : "",
+                      "min" : "100.00",
+                      "max" : "10000.00",
+                      "srno" : "8",
+                      "s1" : "0",
+                      "s2" : "0",
+                      "ballsess" : "1"
+              },
+              {
+                      "mid" : "1.215908627",
+                      "sid" : "420",
+                      "nat" : "S Whiteman run 2",
+                      "b1" : "80.00",
+                      "bs1" : "90.00",
+                      "l1" : "80.00",
+                      "ls1" : "110.00",
+                      "b2" : "0.00",
+                      "bs2" : "0.00",
+                      "l2" : "0.00",
+                      "ls2" : "0.00",
+                      "b3" : "0.00",
+                      "bs3" : "0.00",
+                      "l3" : "0.00",
+                      "ls3" : "0.00",
+                      "gtype" : "Fancy",
+                      "utime" : "0",
+                      "gvalid" : "0",
+                      "gstatus" : "",
+                      "remark" : "",
+                      "min" : "100.00",
+                      "max" : "100000.00",
+                      "srno" : "6",
+                      "s1" : "0",
+                      "s2" : "0",
+                      "ballsess" : "1"
+              },
+              {
+                      "mid" : "1.215908627",
+                      "sid" : "423",
+                      "nat" : "L Procter run 2",
+                      "b1" : "59.00",
+                      "bs1" : "90.00",
+                      "l1" : "59.00",
+                      "ls1" : "110.00",
+                      "b2" : "0.00",
+                      "bs2" : "0.00",
+                      "l2" : "0.00",
+                      "ls2" : "0.00",
+                      "b3" : "0.00",
+                      "bs3" : "0.00",
+                      "l3" : "0.00",
+                      "ls3" : "0.00",
+                      "gtype" : "Fancy",
+                      "utime" : "0",
+                      "gvalid" : "0",
+                      "gstatus" : "",
+                      "remark" : "",
+                      "min" : "100.00",
+                      "max" : "100000.00",
+                      "srno" : "6",
+                      "s1" : "0",
+                      "s2" : "0",
+                      "ballsess" : "1"
+              },
+              {
+                      "mid" : "1.215908627",
+                      "sid" : "539",
+                      "nat" : "68 over run NOR 2",
+                      "b1" : "152.00",
+                      "bs1" : "100.00",
+                      "l1" : "151.00",
+                      "ls1" : "100.00",
+                      "b2" : "0.00",
+                      "bs2" : "0.00",
+                      "l2" : "0.00",
+                      "ls2" : "0.00",
+                      "b3" : "0.00",
+                      "bs3" : "0.00",
+                      "l3" : "0.00",
+                      "ls3" : "0.00",
+                      "gtype" : "Fancy",
+                      "utime" : "0",
+                      "gvalid" : "0",
+                      "gstatus" : "",
+                      "remark" : "",
+                      "min" : "100.00",
+                      "max" : "50000.00",
+                      "srno" : "2",
+                      "s1" : "0",
+                      "s2" : "0",
+                      "ballsess" : "1"
+              },
+              {
+                      "mid" : "1.215908627",
+                      "sid" : "549",
+                      "nat" : "Only 69 over run NOR 2",
+                      "b1" : "3.00",
+                      "bs1" : "100.00",
+                      "l1" : "2.00",
+                      "ls1" : "100.00",
+                      "b2" : "0.00",
+                      "bs2" : "0.00",
+                      "l2" : "0.00",
+                      "ls2" : "0.00",
+                      "b3" : "0.00",
+                      "bs3" : "0.00",
+                      "l3" : "0.00",
+                      "ls3" : "0.00",
+                      "gtype" : "Fancy",
+                      "utime" : "0",
+                      "gvalid" : "0",
+                      "gstatus" : "",
+                      "remark" : "",
+                      "min" : "100.00",
+                      "max" : "100000.00",
+                      "srno" : "1",
+                      "s1" : "0",
+                      "s2" : "0",
+                      "ballsess" : "2"
+              },
+              {
+                      "mid" : "1.215908627",
+                      "sid" : "421",
+                      "nat" : "S Whiteman boundaries 2",
+                      "b1" : "8.00",
+                      "bs1" : "100.00",
+                      "l1" : "7.00",
+                      "ls1" : "100.00",
+                      "b2" : "0.00",
+                      "bs2" : "0.00",
+                      "l2" : "0.00",
+                      "ls2" : "0.00",
+                      "b3" : "0.00",
+                      "bs3" : "0.00",
+                      "l3" : "0.00",
+                      "ls3" : "0.00",
+                      "gtype" : "Fancy",
+                      "utime" : "0",
+                      "gvalid" : "0",
+                      "gstatus" : "",
+                      "remark" : "",
+                      "min" : "100.00",
+                      "max" : "10000.00",
+                      "srno" : "8",
+                      "s1" : "0",
+                      "s2" : "0",
+                      "ballsess" : "1"
+              },
+              {
+                      "mid" : "1.215908627",
+                      "sid" : "532",
+                      "nat" : "70 over run NOR 2",
+                      "b1" : "158.00",
+                      "bs1" : "90.00",
+                      "l1" : "158.00",
+                      "ls1" : "110.00",
+                      "b2" : "0.00",
+                      "bs2" : "0.00",
+                      "l2" : "0.00",
+                      "ls2" : "0.00",
+                      "b3" : "0.00",
+                      "bs3" : "0.00",
+                      "l3" : "0.00",
+                      "ls3" : "0.00",
+                      "gtype" : "Fancy",
+                      "utime" : "0",
+                      "gvalid" : "0",
+                      "gstatus" : "",
+                      "remark" : "",
+                      "min" : "100.00",
+                      "max" : "100000.00",
+                      "srno" : "1",
+                      "s1" : "0",
+                      "s2" : "0",
+                      "ballsess" : "1"
+              }
+      ],
+      "t4" : null,
+      "updatetime" : "2023-07-12T13:44:59.864Z"
+  }
+
     console.log('fancyData', fancyData);
 
     // console.log('liveTVResponse', liveTVResponse);
@@ -450,19 +690,19 @@ async function listOddsAPI(req, res) {
 }
 
 
-const getOddsCronJob = () => {
-  // Cron job to run getOdds every second
-  cron.schedule('* * * * * *', async () => {
-    try {
-      const response = await listOddsAPI(req, res);
-      console.log('log', response);
-      const odds = response.results;
-      await getOdds(odds);
-    } catch (error) {
-      console.error('Error running getOdds cron job:', error);
-    }
-  });
-};
+// const getOddsCronJob = () => {
+//   // Cron job to run getOdds every second
+//   cron.schedule('* * * * * *', async () => {
+//     try {
+//       const response = await listOddsAPI(req, res);
+//       console.log('log', response);
+//       const odds = response.results;
+//       await getOdds(odds);
+//     } catch (error) {
+//       console.error('Error running getOdds cron job:', error);
+//     }
+//   });
+// };
 
 //for only backend
 function addSideBarMenu(req, res) {
@@ -480,6 +720,7 @@ function addSideBarMenu(req, res) {
     return res.send({ message: 'menu record saved', results });
   });
 }
+
 async function racesAPI(req, res) {
   try {
     if (req.params.id === '7') {
