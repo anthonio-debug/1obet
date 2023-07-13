@@ -2,15 +2,14 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 const loginRouter = express.Router();
-const SportsHighlight = require('../models/sportsHighlights'); // import SportsHighlight model
 const inPlayEvents = require('../models/inPlayEvents');
 const Odds = require('../models/odds');
 
 // Define the API endpoint
 async function getAllSportsHighlight(req, res) {
   try {
-    const sportsHighlights = await inPlayEvents.find({});
-    console.log('sportsHighlights', sportsHighlights);
+    const sportsIdList = [1, 2, 4]; // List of sportsId to filter
+    const sportsHighlights = await inPlayEvents.find({ sportsId: { $in: sportsIdList } });
 
     const eventIds = sportsHighlights.map(highlight => highlight.Id);
     const oddsData = await Odds.find({ eventId: { $in: eventIds } });
@@ -24,14 +23,14 @@ async function getAllSportsHighlight(req, res) {
     const formattedData = {};
 
     sportsHighlights.forEach(highlight => {
-      const { sport, name, Id, _id } = highlight;
+      const { sport, name, Id, _id,sportsId,matchType } = highlight;
       const amount = totalMatchedMap[Id] || 0;
 
       if (!formattedData[sport]) {
         formattedData[sport] = [];
       }
 
-      formattedData[sport].push({ match:name, amount,Id,_id });
+      formattedData[sport].push({ match:name,sportsId,matchType ,amount,Id,_id });
     });
 
     return res.send({

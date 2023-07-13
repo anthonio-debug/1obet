@@ -23,6 +23,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   status: { type: String },
   isPremium:{type: Boolean },
   type: { type: Number },
+  matchType: { type: String, default:'' },
   //fancy data
   t1: { type: Array },
   t2: { type: Array },
