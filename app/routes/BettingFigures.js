@@ -68,31 +68,38 @@ async function livesportscore(req, res) {
         const response =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
         const data = response.data;
         if(typeof(data[0]) == "string"){
-            const type = await Event.findOne({Id: id}, {_id: 0,match_type:1});
-            const scoreInfo = JSON.parse(data)
-            switch (type) {
-                case 'T20':
+            const type = await Event.findOne({Id: id}, {_id: 0,matchType:1});
+            const scoreInfo = JSON.parse(data).score
+            let score = scoreInfo.score1;
+            if(scoreInfo.activenation2){
+                score = scoreInfo.score2;
+            }
+            scoreInfo.activenation2
+            switch (scoreInfo.matchType) {
+                // case 'T20':
 
-                    break;
-                case 'T10':
+                //     break;
+                // case 'T10':
 
-                    break;
-                case 'OD':
+                //     break;
+                // case 'OD':
 
-                    break;
+                //     break;
                 case 'TEST':
+
                     break;
                 default:
+
                     break;
             }
             const response = {
-                balls: scoreInfo.balls
+                balls: scoreInfo.score
             }
             
             res.json({
                 status: true,
                 msg: "Records",
-                data : eventName
+                data : score
             })
         }else{
             res.json({
@@ -110,11 +117,61 @@ async function livesportscore(req, res) {
         });
     }
 }
+
+async function placeFigureBets(req, res) {
+    try {
+        const id = req.params.id;
+        const type = await Event.findOne({Id: id}, {_id: 0,match_type:1});
+        let currentOver = 0;
+        let totalSessions = 0;
+        let currentSession = 2
+        switch (type) {
+            case 'T20':
+                totalSessions = 8;
+                break;
+            case 'T10':
+                totalSessions = 4;
+                break;
+            case 'OD':
+                totalSessions = 20;
+                break;
+            case 'TEST':
+                totalSessions = 18;
+                break;
+            default:
+                break;
+        }
+        if(currentOver > 3){
+            res.status(200).json({
+                success: false,
+                message: 'betting not Allowed in 4th over',
+            });
+        }else if(currentSession == totalSessions){
+            res.status(200).json({
+                success: false,
+                message: 'betting not Allowed in last Session',
+            });
+        }else {
+
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(200).json({
+            success: false,
+            message: 'Failed to get data',
+            error: error.message,
+        });
+    }
+}
+
+
   
 
 loginRouter.get('/getBettingFigures', getBettingFigures);
 loginRouter.post('/UpdateBettingFigures', UpdateBettingFigures);
 loginRouter.get('/livesportscore/:id', livesportscore);
+loginRouter.post('/placeFigureBets', placeFigureBets);
+
 module.exports = { loginRouter };
 
 

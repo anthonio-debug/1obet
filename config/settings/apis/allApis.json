@@ -107,5 +107,7 @@
   "racesTodayMeetings",
   "getBettingFigures",
   "UpdateBettingFigures",
-  "livesportscore"
+  "livesportscore",
+  "placeFigureBets",
+  "updateMatchType"
 ]
