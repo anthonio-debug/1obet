@@ -110,5 +110,7 @@
   "livesportscore",
   "racesTomorrowMeetings",
   "marketDescription",
-  "raceOdds"
+  "raceOdds",
+  "placeFigureBets",
+  "updateMatchType"
 ]
