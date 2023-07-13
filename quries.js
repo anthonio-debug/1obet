@@ -364,7 +364,7 @@ db.bets.insertMany([
         "dayno": "",
         "isfinished": "0",
         "score1": "277-10 (73.2) & 0-0 (0.0)",
-        "score2": "219-10 (88.4) & 24-0 (6.4)",
+        "score2": "219-10 (88.4),&,24-0 (6.4)",
         "spnballrunningstatus": "",
         "spnmessage": "Day 2 | NOR trail by 34 runs",
         "spnnation1": "MID",
@@ -372,7 +372,7 @@ db.bets.insertMany([
         "spnreqrate1": "",
         "spnreqrate2": "",
         "spnrunrate1": "",
-        "spnrunrate2": "CRR 3.60 "
+        "spnrunrate2": "CRR 3.60"
     }
   }
 */
