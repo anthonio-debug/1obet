@@ -31,7 +31,7 @@ async function getAllSportsHighlight(req, res) {
         formattedData[sport] = [];
       }
 
-      formattedData[sport].push({ name, amount,Id,_id });
+      formattedData[sport].push({ match:name, amount,Id,_id });
     });
 
     return res.send({
