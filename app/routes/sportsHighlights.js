@@ -3,40 +3,34 @@ const express = require('express');
 const { validationResult } = require('express-validator');
 const loginRouter = express.Router();
 const SportsHighlight = require('../models/sportsHighlights'); // import SportsHighlight model
+const inPlayEvents = require('../models/inPlayEvents');
+const Odds = require('../models/odds');
 
 // Define the API endpoint
 async function getAllSportsHighlight(req, res) {
   try {
-    const { searchValue } = req.query;
-    const match = {};
+    const sportsHighlights = await inPlayEvents.find({});
+    console.log('sportsHighlights', sportsHighlights);
 
-    if (searchValue) {
-      const searchRegex = new RegExp(searchValue, 'i');
-      match.$or = [
-        { 'highlights.match': searchRegex },
-        { 'highlights.amount': parseInt(searchValue) },
-      ];
-    }
+    const eventIds = sportsHighlights.map(highlight => highlight.Id);
+    const oddsData = await Odds.find({ eventId: { $in: eventIds } });
 
-    const pipeline = [
-      { $match: match },
-      { $unwind: '$highlights' },
-      { $match: match }, // added a new match stage to match the search value
-      { $group: { _id: '$sport', highlights: { $push: '$highlights' } } },
-      { $replaceRoot: { newRoot: { _id: '$_id', highlights: '$highlights' } } },
-    ];
+    const totalMatchedMap = {};
 
-    const sportsHighlights = await SportsHighlight.aggregate(pipeline);
-
-    const results = {};
-    sportsHighlights.forEach((sport) => {
-      results[sport._id] = sport.highlights;
+    oddsData.forEach(odds => {
+      totalMatchedMap[odds.eventId] = odds.totalMatched;
     });
+
+    const formattedData = sportsHighlights.map(highlight => ({
+      sport: highlight.sport,
+      name: highlight.name,
+      amount: totalMatchedMap[highlight.Id] || 0
+    }));
 
     return res.send({
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
-      results: results,
+      results: formattedData
     });
   } catch (err) {
     console.log(err);
@@ -46,6 +40,10 @@ async function getAllSportsHighlight(req, res) {
     });
   }
 }
+
+
+
+
 
 loginRouter.get('/getAllSportsHighlight', getAllSportsHighlight);
 

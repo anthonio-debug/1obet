@@ -108,5 +108,7 @@
   "getBettingFigures",
   "UpdateBettingFigures",
   "livesportscore",
-  "racesTomorrowMeetings"
+  "racesTomorrowMeetings",
+  "marketDescription",
+  "raceOdds"
 ]

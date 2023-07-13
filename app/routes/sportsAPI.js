@@ -183,8 +183,8 @@ async function listInplayEvents(req, res) {
     const savedEvents = [];
 
     for (const event of inplayEvents) {
-      const filter = { sportsId: sportsId, Id: event.Id, type: "inplayEvents" };
-      const update = { $set: { sportsId: sportsId, type: "inplayEvents" }, $setOnInsert: event };
+      const filter = { sportsId: sportsId, Id: event.Id, type: 1 };
+      const update = { $set: { sportsId: sportsId, type: 1 }, $setOnInsert: event };
       const options = { upsert: true, new: true };
 
       const savedEvent = await inPlayEvents.findOneAndUpdate(
