@@ -1,6 +1,7 @@
 const   express              = require('express');
 const  {validationResult }   = require('express-validator');
 const  BettingFigure         = require('../models/BettingFigure');
+const  Event                 = require('../models/eventsBySport');
 const  {default: axios }     = require('axios');
 const  loginRouter           = express.Router();
 
@@ -62,13 +63,44 @@ async function UpdateBettingFigures(req, res) {
 
 async function livesportscore(req, res) {
     try {
-        const id = req.param.id;
-        const data =  axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+        const id = req.params.id;
         console.log(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
-        console.log('data', data)
-        res.json({
-            data : data
-        })
+        const response =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+        const data = response.data;
+        if(typeof(data[0]) == "string"){
+            const type = await Event.findOne({Id: id}, {_id: 0,match_type:1});
+            const scoreInfo = JSON.parse(data)
+            switch (type) {
+                case 'T20':
+
+                    break;
+                case 'T10':
+
+                    break;
+                case 'OD':
+
+                    break;
+                case 'TEST':
+                    break;
+                default:
+                    break;
+            }
+            const response = {
+                balls: scoreInfo.balls
+            }
+            
+            res.json({
+                status: true,
+                msg: "Records",
+                data : eventName
+            })
+        }else{
+            res.json({
+                status: false,
+                msg : "no information found",
+                data : data[0]
+            })
+        }
     } catch (error) {
         console.error(error);
         res.status(200).json({
