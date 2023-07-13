@@ -178,13 +178,14 @@ async function listInplayEvents(req, res) {
   try {
     const response = await axios.get(url);
     const inplayEvents = response.data;
-
     // Save the inplayEvents data to the collection
     const savedEvents = [];
 
     for (const event of inplayEvents) {
-      const filter = { sportsId: sportsId, Id: event.Id, type: "inplayEvents" };
-      const update = { $set: { sportsId: sportsId, type: "inplayEvents" }, $setOnInsert: event };
+      const matchType = getMatchType(event); // Get the match type based on the event
+      event['matchType'] = matchType; // Add the matchType field to the event
+      const filter = { sportsId: sportsId, Id: event.Id, type: 1 };
+      const update = { $set: { sportsId: sportsId, type: 1 }, $setOnInsert: event };
       const options = { upsert: true, new: true };
 
       const savedEvent = await inPlayEvents.findOneAndUpdate(
@@ -207,6 +208,24 @@ async function listInplayEvents(req, res) {
       message: 'Failed to get or save inplay events',
       error: error.message,
     });
+  }
+}
+
+function getMatchType(event) {
+  const name = event.name || '';
+  const competitionName = event.competitionName || '';
+
+  switch (true) {
+    case name.includes('T20') || name.includes('t20') || name.includes('Twenty20') || competitionName.includes('T20') || competitionName.includes('Twenty20'):
+      return 'T20';
+    case name.includes('ODI') || name.includes('odi') || name.includes('one day') || name.includes('one Day') || competitionName.includes('ODI') || competitionName.includes('one day') || competitionName.includes('one Day') || competitionName.includes('odi'):
+      return 'ODI';
+    case name.includes('T10') || name.includes('t10') || name.includes('ten10') || name.includes('Ten10') || competitionName.includes('T10') || competitionName.includes('t10') || competitionName.includes('ten10') || competitionName.includes('Ten10'):
+      return 'T10';
+    case name.includes('Test') || name.includes('test') || competitionName.includes('Test') || competitionName.includes('test'):
+      return 'Test';
+    default:
+      return '';
   }
 }
 

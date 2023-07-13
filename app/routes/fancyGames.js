@@ -2,6 +2,7 @@ const express = require('express');
 let config = require('config');
 const fancyGames = require('../models/fancyGames');
 const axios = require('axios');
+const inPlayEvents = require('../models/inPlayEvents');
 const loginRouter = express.Router();
 
 async function getFancyData(req, res) {
@@ -32,11 +33,12 @@ async function getFancyData(req, res) {
     name: fancyData?.name,
     eventdate: fancyData?.eventdate,
     gameId: fancyData?.gameId,
-    eventId: eventId
+    eventId: eventId,
+    type: 3
   };
 
     // Update or insert the document in the database
-    const result = await fancyGames.findOneAndUpdate(
+    const result = await inPlayEvents.findOneAndUpdate(
       { gameId: eventId },
       newData,
       { upsert: true }

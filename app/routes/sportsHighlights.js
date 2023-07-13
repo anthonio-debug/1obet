@@ -2,41 +2,41 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 const loginRouter = express.Router();
-const SportsHighlight = require('../models/sportsHighlights'); // import SportsHighlight model
+const inPlayEvents = require('../models/inPlayEvents');
+const Odds = require('../models/odds');
 
 // Define the API endpoint
 async function getAllSportsHighlight(req, res) {
   try {
-    const { searchValue } = req.query;
-    const match = {};
+    const sportsIdList = [1, 2, 4]; // List of sportsId to filter
+    const sportsHighlights = await inPlayEvents.find({ sportsId: { $in: sportsIdList } });
 
-    if (searchValue) {
-      const searchRegex = new RegExp(searchValue, 'i');
-      match.$or = [
-        { 'highlights.match': searchRegex },
-        { 'highlights.amount': parseInt(searchValue) },
-      ];
-    }
+    const eventIds = sportsHighlights.map(highlight => highlight.Id);
+    const oddsData = await Odds.find({ eventId: { $in: eventIds } });
 
-    const pipeline = [
-      { $match: match },
-      { $unwind: '$highlights' },
-      { $match: match }, // added a new match stage to match the search value
-      { $group: { _id: '$sport', highlights: { $push: '$highlights' } } },
-      { $replaceRoot: { newRoot: { _id: '$_id', highlights: '$highlights' } } },
-    ];
+    const totalMatchedMap = {};
 
-    const sportsHighlights = await SportsHighlight.aggregate(pipeline);
+    oddsData.forEach(odds => {
+      totalMatchedMap[odds.eventId] = odds.totalMatched;
+    });
 
-    const results = {};
-    sportsHighlights.forEach((sport) => {
-      results[sport._id] = sport.highlights;
+    const formattedData = {};
+
+    sportsHighlights.forEach(highlight => {
+      const { sport, name, Id, _id,sportsId,matchType } = highlight;
+      const amount = totalMatchedMap[Id] || 0;
+
+      if (!formattedData[sport]) {
+        formattedData[sport] = [];
+      }
+
+      formattedData[sport].push({ match:name,sportsId,matchType ,amount,Id,_id });
     });
 
     return res.send({
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
-      results: results,
+      results: formattedData
     });
   } catch (err) {
     console.log(err);
@@ -46,6 +46,10 @@ async function getAllSportsHighlight(req, res) {
     });
   }
 }
+
+
+
+
 
 loginRouter.get('/getAllSportsHighlight', getAllSportsHighlight);
 
