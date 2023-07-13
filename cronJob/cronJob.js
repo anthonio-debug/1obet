@@ -8,7 +8,8 @@ const Cash = require("../app/models/deposits");
 const { getParents } = require("../app/routes/bets");
 const { listMarketsByCronJob ,getnewOdds,fancyDataByCronjob,listInplayEventsJob} = require('../app/routes/sportsAPI')
 const ListMarkets = require('../app/models/listMarkets')
-const inplayEvents = require('../app/models/inPlayEvents')
+const inplayEvents = require('../app/models/inPlayEvents');
+const FancyGames = require("../app/models/fancyGames");
 let runningJob;
 
 const checkBetStatus = (req) => {
@@ -520,9 +521,9 @@ const fancyDataCronJob = async () => {
   // Cron job to run every 1 mintue
   cron.schedule('*/1 * * * *', async () => {
     try {
-      // Retrieve the inplayevents data dynamically from the database
-      const inplayEventsData = await inplayEvents.find().exec();
-
+      // Retrieve the fancy data dynamically from the database
+    const sportsId = [1,2,4]
+    const inplayEventsData = await inplayEvents.find({ sportsId: { $in: sportsId } }).exec();
       // Iterate over the inplayevents data
       for (const event of inplayEventsData) {
         const eventId = event.Id;
