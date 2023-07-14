@@ -64,43 +64,55 @@ async function UpdateBettingFigures(req, res) {
 async function livesportscore(req, res) {
     try {
         const id = req.params.id;
-        console.log(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
         const response =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
         const data = response.data;
         if(typeof(data[0]) == "string"){
             const type = await Event.findOne({Id: id}, {_id: 0,matchType:1});
             const scoreInfo = JSON.parse(data).score
-            let score = scoreInfo.score1;
-            if(scoreInfo.activenation2){
-                score = scoreInfo.score2;
-            }
-            scoreInfo.activenation2
-            switch (scoreInfo.matchType) {
-                // case 'T20':
-
-                //     break;
-                // case 'T10':
-
-                //     break;
-                // case 'OD':
-
-                //     break;
-                case 'TEST':
-
-                    break;
-                default:
-
-                    break;
-            }
             const response = {
-                balls: scoreInfo.score
+                score: 0,
+                wickets: 0,
+                overs: 0,
+                team : scoreInfo.spnnation1,
+                crr   : scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim(),
+                balls: scoreInfo.balls,
+                type: type
             }
-            
+            let score = scoreInfo.score1;
+
+            if( scoreInfo.activenation2 == 1){
+                response.team    = scoreInfo.spnnation2;
+                response.crr     = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
+                score            = scoreInfo.score2;
+                response.target  = scoreInfo.score1.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0];
+            }
+
+            [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+
+            // let remainigballs = 0
+            // switch (scoreInfo.matchType) {
+            //     case 'T20':
+            //         remainigballs = (20.0 - response.overs) * 6
+            //         break;
+            //     case 'T10':
+            //         remainigballs = (10.0 - response.overs) * 6
+            //         break;
+            //     case 'OD':
+            //         remainigballs = (50.0 - response.overs) * 6
+            //         break;
+            //     case 'TEST':
+            //         break;
+            //     default:
+            //         break;
+            // }
+
+
             res.json({
                 status: true,
-                msg: "Records",
-                data : score
+                msg: "current score information",
+                data: response
             })
+
         }else{
             res.json({
                 status: false,
