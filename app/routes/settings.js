@@ -546,15 +546,16 @@ async function livesportscore(id) {
       const data = response.data;
       console.log('data',data);
       if(typeof(data[0]) == "string"){
-          const type = await inPlayEvents.findOne({Id: id}, {_id: 0,matchType:1}).matchType;
+          const type = await inPlayEvents.findOne({Id: id,"sportsId":'4'}, {_id: 0,matchType:1})
+          console.log('type',type);
           const scoreInfo = JSON.parse(data).score
           const response = {
               score: 0,
               wickets: 0,
               overs: 0,
-              team : scoreInfo.spnnation1,
-              crr   : scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim(),
-              balls: scoreInfo.balls,
+              team : scoreInfo?.spnnation1,
+              crr   : scoreInfo?.spnrunrate1?.substring(scoreInfo?.spnrunrate1?.indexOf(' ') + 1).trim(),
+              balls: scoreInfo?.balls,
               type: type,
               rrr: "0" 
           }
