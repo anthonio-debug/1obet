@@ -499,6 +499,265 @@ async function listMarketsByCronJob(eventId) {
   }
 }
 
+// async function fancyDataByCronjob(eventId) {
+//   const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
+//   console.log('url', url);
+//   try {
+//     const response = await axios.get(url);
+//     const fancyData = response?.data;
+//     // const dummyDataofFancy = {
+//     //   gameId: '32480285',
+//     //   eventId: '32480285',
+//     //   eventName: 'India A v United Arab Emirates / Jul 14 2023 10:00AM (IST)',
+//     //   eventTypeId: '4',
+//     //   eventTypeName: 'cricket',
+//     //   name: 'India A v United Arab Emirates',
+//     //   status: 200,
+//     //   success: true,
+//     //   t1: null,
+//     //   t2: [
+//     //     {
+//     //       bm1: [
+//     //         {
+//     //           mid: '1.216004572',
+//     //           mname: 'Bookmaker',
+//     //           remark: '',
+//     //           remark1: '',
+//     //           min: '100.00',
+//     //           max: '100000.00',
+//     //           sid: '1',
+//     //           nat: 'India A ',
+//     //           b1: '0.75',
+//     //           bs1: '100000.00',
+//     //           l1: '1.25',
+//     //           ls1: '100000.00',
+//     //           s: 'ACTIVE',
+//     //           sr: '1',
+//     //           gtype: 'Match1',
+//     //           utime: '0',
+//     //           b2: '0.00',
+//     //           bs2: '0.00',
+//     //           b3: '0.00',
+//     //           bs3: '0.00',
+//     //           l2: '0.00',
+//     //           ls2: '0.00',
+//     //           l3: '0.00',
+//     //           ls3: '0.00',
+//     //           b1s: 'True',
+//     //           b2s: 'False',
+//     //           b3s: 'False',
+//     //           l1s: 'True',
+//     //           l2s: 'False',
+//     //           l3s: 'False'
+//     //         },
+//     //         {
+//     //           mid: '1.216004572',
+//     //           mname: 'Bookmaker',
+//     //           remark: '',
+//     //           remark1: '',
+//     //           min: '100.00',
+//     //           max: '100000.00',
+//     //           sid: '2',
+//     //           nat: 'United Arab Emirates',
+//     //           b1: '0.00',
+//     //           bs1: '0.00',
+//     //           l1: '0.00',
+//     //           ls1: '0.00',
+//     //           s: 'SUSPENDED',
+//     //           sr: '2',
+//     //           gtype: 'Match1',
+//     //           utime: '0',
+//     //           b2: '0.00',
+//     //           bs2: '0.00',
+//     //           b3: '0.00',
+//     //           bs3: '0.00',
+//     //           l2: '0.00',
+//     //           ls2: '0.00',
+//     //           l3: '0.00',
+//     //           ls3: '0.00',
+//     //           b1s: 'False',
+//     //           b2s: 'False',
+//     //           b3s: 'False',
+//     //           l1s: 'False',
+//     //           l2s: 'False',
+//     //           l3s: 'False'
+//     //         }
+//     //       ],
+//     //       bm2: []
+//     //     }
+//     //   ],
+//     //   t3: [
+//     //     {
+//     //       mid: '1.216004572',
+//     //       sid: '268',
+//     //       nat: '15 over run IND A',
+//     //       b1: '81.00',
+//     //       bs1: '85.00',
+//     //       l1: '81.00',
+//     //       ls1: '115.00',
+//     //       b2: '0.00',
+//     //       bs2: '0.00',
+//     //       l2: '0.00',
+//     //       ls2: '0.00',
+//     //       b3: '0.00',
+//     //       bs3: '0.00',
+//     //       l3: '0.00',
+//     //       ls3: '0.00',
+//     //       gtype: 'Fancy',
+//     //       utime: '0',
+//     //       gvalid: '0',
+//     //       gstatus: '',
+//     //       remark: '',
+//     //       min: '100.00',
+//     //       max: '100000.00',
+//     //       srno: '1',
+//     //       s1: '0',
+//     //       s2: '0',
+//     //       ballsess: '1'
+//     //     },
+//     //     {
+//     //       mid: '1.216004572',
+//     //       sid: '266',
+//     //       nat: '14 over run IND A',
+//     //       b1: '0.00',
+//     //       bs1: '0.00',
+//     //       l1: '0.00',
+//     //       ls1: '0.00',
+//     //       b2: '0.00',
+//     //       bs2: '0.00',
+//     //       l2: '0.00',
+//     //       ls2: '0.00',
+//     //       b3: '0.00',
+//     //       bs3: '0.00',
+//     //       l3: '0.00',
+//     //       ls3: '0.00',
+//     //       gtype: 'Fancy',
+//     //       utime: '0',
+//     //       gvalid: '1',
+//     //       gstatus: 'SUSPENDED',
+//     //       remark: '',
+//     //       min: '100.00',
+//     //       max: '50000.00',
+//     //       srno: '2',
+//     //       s1: '0',
+//     //       s2: '0',
+//     //       ballsess: '1'
+//     //     },
+//     //     {
+//     //       mid: '1.216004572',
+//     //       sid: '265',
+//     //       nat: '13.3 over run IND A',
+//     //       b1: '0.00',
+//     //       bs1: '0.00',
+//     //       l1: '0.00',
+//     //       ls1: '0.00',
+//     //       b2: '0.00',
+//     //       bs2: '0.00',
+//     //       l2: '0.00',
+//     //       ls2: '0.00',
+//     //       b3: '0.00',
+//     //       bs3: '0.00',
+//     //       l3: '0.00',
+//     //       ls3: '0.00',
+//     //       gtype: 'Fancy',
+//     //       utime: '0',
+//     //       gvalid: '1',
+//     //       gstatus: 'Ball Running',
+//     //       remark: '',
+//     //       min: '100.00',
+//     //       max: '50000.00',
+//     //       srno: '2',
+//     //       s1: '0',
+//     //       s2: '0',
+//     //       ballsess: '1'
+//     //     }
+//     //   ],
+//     //   t4: null,
+//     //   updatetime: '2023-07-14T09:50:03.462Z'
+//     // }
+  
+//   const bookMakerData = fancyData?.data?.t2;
+//   // console.log('bookMakerData', bookMakerData)
+//   let arrayOfBookMaker = {BookMaker: [{marketName: 'BookMaker', runners: []}]}
+
+//   if(bookMakerData?.length) {
+//     const dataofbm1  = bookMakerData[0]?.bm1;
+//     // console.log('sfsdfsdfsdf', dataofbm1)
+//     const dummyArray = []
+//     dataofbm1?.forEach((item)=>{         
+//       const AvailableToBackObj = [{
+//         price: Number(item?.b1),
+//         size: Number(item?.bs1)
+//       },
+//       {
+//         price:Number(item?.b2),
+//         size: Number(item?.bs2) 
+//       },
+//       {
+//         price:Number(item?.b3),
+//         size: Number(item?.bs3) 
+//       },
+//     ]
+//     const AvailableToLayObj = [{
+//       price: Number(item?.l1),
+//       size: Number(item?.ls1)
+//     },
+//     {
+//       price: Number(item?.l2),
+//       size: Number(item?.ls2)
+//     },
+//     {
+//       price: Number(item?.l3),
+//       size: Number(item?.ls3) 
+//     },
+//   ]
+//   const ExchangePricesObj = {AvailableToBack: AvailableToBackObj, AvailableToLay:AvailableToLayObj }
+//   const dummyObj = {...item, runnerName: item?.nat, ExchangePrices:ExchangePricesObj}
+// dummyArray.push(dummyObj)
+//     })
+//     arrayOfBookMaker['BookMaker'][0]['runners'] = dummyArray
+//   }
+//   console.log('arrayofbookermaeeeeee',arrayOfBookMaker['BookMaker'][0].runners);
+//     // Create a new fancyData document
+//     const newData = {
+//       t1: fancyData?.data?.t1,
+//       t2: bookMakerData,
+//       t3: fancyData?.data?.t3,
+//       t4: fancyData?.data?.t4,
+//       success: fancyData?.success,
+//       status: fancyData?.status,
+//       updatetime: fancyData?.updatetime,
+//       eventTypeId: fancyData?.eventTypeId,
+//       eventTypeName: fancyData?.eventTypeName,
+//       eventName: fancyData?.eventName,
+//       name: fancyData?.name,
+//       eventdate: fancyData?.eventdate,
+//       gameId: fancyData?.gameId,
+//       eventId: eventId
+//     };
+
+//     // Update or insert the document in the database
+//     const result = await fancyGames.findOneAndUpdate(
+//       { gameId: eventId },
+//       newData,
+//       { upsert: true }
+//     );
+
+//     return {
+//       success: true,
+//       message: 'Fancy data saved successfully',
+//       fancyData: newData,
+//       BookMakerData: arrayOfBookMaker
+//     };
+//   } catch (error) {
+//     console.error(error);
+//     return {
+//       success: false,
+//       message: 'Failed to save fancy data',
+//       error: error.message
+//     };
+//   }
+// }
 async function fancyDataByCronjob(eventId) {
   const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
   console.log('url', url);

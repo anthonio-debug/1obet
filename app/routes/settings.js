@@ -428,6 +428,7 @@ async function listOddsAPI(req, res) {
 
     console.log('fancyData', fancyData);
 
+    const livesportscoreData = await livesportscore(eventIds)
     // console.log('liveTVResponse', liveTVResponse);
     return res.json({
       success: true,
@@ -438,7 +439,8 @@ async function listOddsAPI(req, res) {
           scoreUrl: liveTVData.scoreUrl || '',
           streamingUrl: liveTVData.streamingUrl || '',
         },
-        fancyData
+        fancyData,
+        livesportscoreData
       },
     });
   } catch (error) {
@@ -533,6 +535,58 @@ async function updateMatchType(req, res) {
       res.status(200).json({
           success: false,
           message: 'Failed to save fancy data',
+          error: error.message,
+      });
+  }
+}
+
+async function livesportscore(id) {
+  try {
+      const response =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+      const data = response.data;
+      console.log('data',data);
+      if(typeof(data[0]) == "string"){
+          const type = await inPlayEvents.findOne({Id: id}, {_id: 0,matchType:1}).matchType;
+          const scoreInfo = JSON.parse(data).score
+          const response = {
+              score: 0,
+              wickets: 0,
+              overs: 0,
+              team : scoreInfo.spnnation1,
+              crr   : scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim(),
+              balls: scoreInfo.balls,
+              type: type,
+              rrr: "0" 
+          }
+          let score = scoreInfo.score1;
+          if( scoreInfo.activenation2 == 1){
+
+              response.team    = scoreInfo.spnnation2;
+              response.crr     = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
+              score            = scoreInfo.score2;
+              response.target  = scoreInfo.score1.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0];
+
+          }
+          if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
+
+              response.rrr = scoreInfo.spnreqrate;
+          }
+          else if(scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""){
+
+              scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""
+          }
+
+          [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+          return  response;
+
+      }else{
+          return  data[0];
+      }
+  } catch (error) {
+      console.error(error);
+      return({
+          success: false,
+          message: 'Failed to get data',
           error: error.message,
       });
   }
