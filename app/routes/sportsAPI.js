@@ -223,7 +223,7 @@ function getMatchType(event) {
     case name.includes('T10') || name.includes('t10') || name.includes('ten10') || name.includes('Ten10') || competitionName.includes('T10') || competitionName.includes('t10') || competitionName.includes('ten10') || competitionName.includes('Ten10'):
       return 'T10';
     case name.includes('Test') || name.includes('test') || competitionName.includes('Test') || competitionName.includes('test'):
-      return 'Test';
+      return 'TEST';
     default:
       return '';
   }

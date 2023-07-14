@@ -17,6 +17,8 @@ const config = require('config')
 const axios = require('axios');
 const FancyGames = require('../models/fancyGames');
 const Racing = require('../models/racing');
+const RaceMarkets = require('../models/raceMarkets');
+const RaceOdds = require('../models/raceOdds');
 const loginRouter = express.Router();
 const router = express.Router();
 
@@ -593,6 +595,31 @@ async function livesportscore(id) {
   }
 }
 
+async function racesMarketList(req, res) {
+  try {
+    const racesMarketsData = await RaceMarkets.find({'eventNodes.marketNodes.marketId':req.params.marketId });
+    const raceOddsData = await RaceOdds.findOne({ marketId: req.params.marketId })
+    .sort({ _id: -1 })
+
+    console.log('racesMarketsData', racesMarketsData);
+    return res.json({
+      success: true,
+      message: 'Records',
+      results: {
+        racesMarketsData,
+        raceOddsData
+      },
+    });
+  } catch (error) {
+    console.error('Error retrieving races:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error retrieving races',
+    });
+  }
+}
+
+
 loginRouter.post(
   '/updateDefaultTheme',
   settingsValidation.validate('updateDefaultTheme'),
@@ -644,6 +671,7 @@ loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesList);
 loginRouter.post('/updateMatchType', updateMatchType);
+loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 
 
 module.exports = { loginRouter, router, listOddsAPI };
