@@ -23,14 +23,14 @@ async function getAllSportsHighlight(req, res) {
     const formattedData = {};
 
     sportsHighlights.forEach(highlight => {
-      const { sport, name, Id, _id,sportsId,matchType,inplay, } = highlight;
+      const { sport, name, Id, _id,sportsId,matchType,inplay,iconStatus } = highlight;
       const amount = totalMatchedMap[Id] || 0;
 
       if (!formattedData[sport]) {
         formattedData[sport] = [];
       }
 
-      formattedData[sport].push({ match:name,sportsId,matchType ,amount,Id,_id,inplay });
+      formattedData[sport].push({ match:name,sportsId,matchType ,amount,Id,_id,inplay,iconStatus });
     });
 
     return res.send({

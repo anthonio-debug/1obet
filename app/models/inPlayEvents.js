@@ -24,6 +24,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   isPremium:{type: Boolean },
   type: { type: Number },
   matchType: { type: String, default:'' },
+  iconStatus: { type: Boolean, default: false },
   //fancy data
   t1: { type: Array },
   t2: { type: Array },

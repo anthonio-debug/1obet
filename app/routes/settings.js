@@ -514,10 +514,10 @@ async function updateMatchType(req, res) {
       return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const {_id, matchType} = req.body;
+    const {_id, matchType, iconStatus } = req.body;
      inPlayEvents.findByIdAndUpdate(
         _id,
-        { $set: { matchType: matchType } },
+        { $set: { matchType: matchType, iconStatus: iconStatus } },
           (err, updatedMatch) => {
               if (err) {
                   console.log("Error updating figure:", err);
