@@ -5,7 +5,7 @@ const ListCompetitions = require('../models/listCompetitions');
 const Event = require('../models/eventsBySport');
 const ListMarket = require('../models/listMarkets');
 const Odds = require('../models/odds');
-const inPlayEvents = require('../models/inPlayEvents');
+const inPlayEvents = require('../models/events');
 const rateLimit = require('express-rate-limit');
 const fancyGames = require('../models/fancyGames')
 
@@ -405,7 +405,7 @@ async function getnewOdds(ids) {
 }
 
 async function listInplayEventsJob(sportsId) {
-  const url = `${config.sportsAPIUrl}/listInplayEvents/${sportsId}`;
+  const url = `${config.sportsAPIUrl}/listEventsBySport/${sportsId}`;
 
   try {
     const response = await axios.get(url);

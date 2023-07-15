@@ -2,7 +2,7 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 const loginRouter = express.Router();
-const inPlayEvents = require('../models/inPlayEvents');
+const inPlayEvents = require('../models/events');
 const Odds = require('../models/odds');
 
 // Define the API endpoint

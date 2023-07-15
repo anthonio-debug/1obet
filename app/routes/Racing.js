@@ -4,7 +4,7 @@ const axios = require('axios');
 const config = require('config');
 const loginRouter = express.Router();
 const Racing = require('../models/racing');
-const inPlayEvents = require('../models/inPlayEvents');
+const inPlayEvents = require('../models/events');
 const raceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds')
 
