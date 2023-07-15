@@ -1,7 +1,7 @@
 const   express              = require('express');
 const  {validationResult }   = require('express-validator');
 const  BettingFigure         = require('../models/BettingFigure');
-const  Event                 = require('../models/inPlayEvents');
+const  Event                 = require('../models/events');
 const  {default: axios }     = require('axios');
 const  loginRouter           = express.Router();
 
@@ -67,6 +67,7 @@ async function livesportscore(req, res) {
         const response =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
         const data = response.data;
         if(typeof(data[0]) == "string"){
+
             const type = await Event.findOne({Id: id}, {_id: 0,matchType:1}).matchType;
             const scoreInfo = JSON.parse(data).score
             const response = {
@@ -81,7 +82,6 @@ async function livesportscore(req, res) {
             }
             let score = scoreInfo.score1;
             if( scoreInfo.activenation2 == 1){
-
                 response.team    = scoreInfo.spnnation2;
                 response.crr     = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
                 score            = scoreInfo.score2;
@@ -89,7 +89,6 @@ async function livesportscore(req, res) {
 
             }
             if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
-
                 response.rrr = scoreInfo.spnreqrate;
             }
             else if(scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""){
