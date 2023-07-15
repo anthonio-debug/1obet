@@ -112,5 +112,6 @@
   "marketDescription",
   "raceOdds",
   "placeFigureBets",
-  "updateMatchType"
+  "updateMatchType",
+  "racesMarketList"
 ]

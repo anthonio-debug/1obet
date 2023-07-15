@@ -11,12 +11,14 @@ const Odds = require('../models/odds');
 const Exchanges = require('../models/exchanges');
 const MaxBetSize = require('../models/betLimits');
 const SideBarMenu = require('../models/sidebarMenu');
-const inPlayEvents = require('../models/inPlayEvents');
+const inPlayEvents = require('../models/events');
 const EventBySports = require('../models/eventsBySport');
 const config = require('config')
 const axios = require('axios');
 const FancyGames = require('../models/fancyGames');
 const Racing = require('../models/racing');
+const RaceMarkets = require('../models/raceMarkets');
+const RaceOdds = require('../models/raceOdds');
 const loginRouter = express.Router();
 const router = express.Router();
 
@@ -428,6 +430,7 @@ async function listOddsAPI(req, res) {
 
     console.log('fancyData', fancyData);
 
+    const livesportscoreData = await livesportscore(eventIds)
     // console.log('liveTVResponse', liveTVResponse);
     return res.json({
       success: true,
@@ -438,7 +441,8 @@ async function listOddsAPI(req, res) {
           scoreUrl: liveTVData.scoreUrl || '',
           streamingUrl: liveTVData.streamingUrl || '',
         },
-        fancyData
+        fancyData,
+        livesportscoreData
       },
     });
   } catch (error) {
@@ -510,10 +514,10 @@ async function updateMatchType(req, res) {
       return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const {_id, matchType} = req.body;
+    const {_id, matchType, iconStatus } = req.body;
      inPlayEvents.findByIdAndUpdate(
         _id,
-        { $set: { matchType: matchType } },
+        { $set: { matchType: matchType, iconStatus: iconStatus } },
           (err, updatedMatch) => {
               if (err) {
                   console.log("Error updating figure:", err);
@@ -537,6 +541,84 @@ async function updateMatchType(req, res) {
       });
   }
 }
+
+async function livesportscore(id) {
+  try {
+      const response =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+      const data = response.data;
+      console.log('data',data);
+      if(typeof(data[0]) == "string"){
+          const type = await inPlayEvents.findOne({Id: id,"sportsId":'4'}, {_id: 0,matchType:1})
+          console.log('type',type);
+          const scoreInfo = JSON.parse(data).score
+          const response = {
+              score: 0,
+              wickets: 0,
+              overs: 0,
+              team : scoreInfo?.spnnation1,
+              crr   : scoreInfo?.spnrunrate1?.substring(scoreInfo?.spnrunrate1?.indexOf(' ') + 1).trim(),
+              balls: scoreInfo?.balls,
+              type: type,
+              rrr: "0" 
+          }
+          let score = scoreInfo.score1;
+          if( scoreInfo.activenation2 == 1){
+
+              response.team    = scoreInfo.spnnation2;
+              response.crr     = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
+              score            = scoreInfo.score2;
+              response.target  = scoreInfo.score1.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0];
+
+          }
+          if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
+
+              response.rrr = scoreInfo.spnreqrate;
+          }
+          else if(scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""){
+
+              scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""
+          }
+
+          [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+          return  response;
+
+      }else{
+          return  data[0];
+      }
+  } catch (error) {
+      console.error(error);
+      return({
+          success: false,
+          message: 'Failed to get data',
+          error: error.message,
+      });
+  }
+}
+
+async function racesMarketList(req, res) {
+  try {
+    const racesMarketsData = await RaceMarkets.find({'eventNodes.marketNodes.marketId':req.params.marketId });
+    const raceOddsData = await RaceOdds.findOne({ marketId: req.params.marketId })
+    .sort({ _id: -1 })
+
+    console.log('racesMarketsData', racesMarketsData);
+    return res.json({
+      success: true,
+      message: 'Records',
+      results: {
+        racesMarketsData,
+        raceOddsData
+      },
+    });
+  } catch (error) {
+    console.error('Error retrieving races:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error retrieving races',
+    });
+  }
+}
+
 
 loginRouter.post(
   '/updateDefaultTheme',
@@ -589,6 +671,7 @@ loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesList);
 loginRouter.post('/updateMatchType', updateMatchType);
+loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 
 
 module.exports = { loginRouter, router, listOddsAPI };

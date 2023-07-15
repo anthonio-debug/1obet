@@ -2,7 +2,7 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 const loginRouter = express.Router();
-const inPlayEvents = require('../models/inPlayEvents');
+const inPlayEvents = require('../models/events');
 const Odds = require('../models/odds');
 
 // Define the API endpoint
@@ -23,14 +23,14 @@ async function getAllSportsHighlight(req, res) {
     const formattedData = {};
 
     sportsHighlights.forEach(highlight => {
-      const { sport, name, Id, _id,sportsId,matchType } = highlight;
+      const { sport, name, Id, _id,sportsId,matchType,inplay,iconStatus } = highlight;
       const amount = totalMatchedMap[Id] || 0;
 
       if (!formattedData[sport]) {
         formattedData[sport] = [];
       }
 
-      formattedData[sport].push({ match:name,sportsId,matchType ,amount,Id,_id });
+      formattedData[sport].push({ match:name,sportsId,matchType ,amount,Id,_id,inplay,iconStatus });
     });
 
     return res.send({

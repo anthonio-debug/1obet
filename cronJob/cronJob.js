@@ -8,8 +8,10 @@ const Cash = require("../app/models/deposits");
 const { getParents } = require("../app/routes/bets");
 const { listMarketsByCronJob ,getnewOdds,fancyDataByCronjob,listInplayEventsJob} = require('../app/routes/sportsAPI')
 const ListMarkets = require('../app/models/listMarkets')
-const inplayEvents = require('../app/models/inPlayEvents');
+const inplayEvents = require('../app/models/events');
 const FancyGames = require("../app/models/fancyGames");
+const { todayRaceJob, marketDescriptionCronjob,raceOddsJob }  = require('../app/routes/Racing');
+const RaceMarkets = require("../app/models/raceMarkets");
 let runningJob;
 
 const checkBetStatus = (req) => {
@@ -535,4 +537,67 @@ const fancyDataCronJob = async () => {
   });
 };
 
-module.exports = { checkBetStatus, themeCronJob,listMarketCronJob,oddsCronJob,fancyDataCronJob };
+const todayRaceCronJob = async () => {
+  // Cron job to run every 1 mintue
+  cron.schedule('*/1 * * * *', async () => {
+    try {
+      // Retrieve the fancy data dynamically from the database
+    const racesportsIds = [7,4339]
+    for (const SportId of racesportsIds) {
+      const listRaceDataResponse = await todayRaceJob(SportId);
+      const racesData = listRaceDataResponse.horseRacesData
+    }
+   }
+    catch (error) {
+      console.error('Error running listMarket cron job:', error);
+    }
+  });
+};
+
+const raceMarketsCronJob = async () => {
+  // Cron job to run every 1 minute
+  cron.schedule('*/1 * * * *', async () => {
+    try {
+      // Retrieve the sportsIds dynamically from the database
+      const racesportsIds = [7, 4339];
+
+      const racesData = await inplayEvents.find({ sportsId: { $in: racesportsIds } }).select('races');
+
+      // Extract marketIds using flatMap
+      const marketIds = racesData.flatMap(event => event.races.map(race => race.marketId));
+      // console.log('marketIds',marketIds);
+      // Call marketDescriptionCronjob for each marketId
+      for (const marketId of marketIds) {
+        // console.log('marketId',marketId);
+        await marketDescriptionCronjob(marketId);
+      }
+    } catch (error) {
+      console.error('Error running listMarket cron job:', error);
+    }
+  });
+};
+
+const raceOddsCronJob = async () => {
+
+  cron.schedule('*/1 * * * *', async () => {
+    try {
+      // Retrieve all marketIds from the race odds collection
+      const allMarketIds = await RaceMarkets.find().distinct('eventNodes.marketNodes.marketId');
+      console.log('allMarketIds',allMarketIds);
+      // Create a query string with comma-separated marketIds
+      const queryString = allMarketIds
+      console.log('Query String:', queryString);
+
+      // Call the getOdds API with the query string
+      const oddsResponse = await raceOddsJob(queryString);
+
+      console.log('oddsResponse', oddsResponse);
+
+      // Handle the response from the getOdds API as needed
+    } catch (error) {
+      console.error('Error running odds cron job:', error);
+    }
+  });
+};
+
+module.exports = { checkBetStatus, todayRaceCronJob ,raceOddsCronJob,raceMarketsCronJob,themeCronJob,listMarketCronJob,oddsCronJob,fancyDataCronJob };
