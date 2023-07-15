@@ -405,7 +405,7 @@ async function getnewOdds(ids) {
 }
 
 async function listInplayEventsJob(sportsId) {
-  const url = `${config.sportsAPIUrl}/listInplayEvents/${sportsId}`;
+  const url = `${config.sportsAPIUrl}/listEventsBySport/${sportsId}`;
 
   try {
     const response = await axios.get(url);
