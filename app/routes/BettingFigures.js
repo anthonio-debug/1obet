@@ -1,7 +1,7 @@
 const   express              = require('express');
 const  {validationResult }   = require('express-validator');
 const  BettingFigure         = require('../models/BettingFigure');
-const  Event                 = require('../models/eventsBySport');
+const  Event                 = require('../models/inPlayEvents');
 const  {default: axios }     = require('axios');
 const  loginRouter           = express.Router();
 
@@ -67,7 +67,7 @@ async function livesportscore(req, res) {
         const response =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
         const data = response.data;
         if(typeof(data[0]) == "string"){
-            const type = await Event.findOne({Id: id}, {_id: 0,matchType:1});
+            const type = await Event.findOne({Id: id}, {_id: 0,matchType:1}).matchType;
             const scoreInfo = JSON.parse(data).score
             const response = {
                 score: 0,
@@ -76,41 +76,34 @@ async function livesportscore(req, res) {
                 team : scoreInfo.spnnation1,
                 crr   : scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim(),
                 balls: scoreInfo.balls,
-                type: type
+                type: type,
+                rrr: "0" 
             }
             let score = scoreInfo.score1;
-
             if( scoreInfo.activenation2 == 1){
+
                 response.team    = scoreInfo.spnnation2;
                 response.crr     = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
                 score            = scoreInfo.score2;
                 response.target  = scoreInfo.score1.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0];
+
+            }
+            if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
+
+                response.rrr = scoreInfo.spnreqrate;
+            }
+            else if(scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""){
+
+                scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""
             }
 
             [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
 
-            // let remainigballs = 0
-            // switch (scoreInfo.matchType) {
-            //     case 'T20':
-            //         remainigballs = (20.0 - response.overs) * 6
-            //         break;
-            //     case 'T10':
-            //         remainigballs = (10.0 - response.overs) * 6
-            //         break;
-            //     case 'OD':
-            //         remainigballs = (50.0 - response.overs) * 6
-            //         break;
-            //     case 'TEST':
-            //         break;
-            //     default:
-            //         break;
-            // }
-
-
             res.json({
                 status: true,
                 msg: "current score information",
-                data: response
+                data: response,
+                testing: scoreInfo
             })
 
         }else{
