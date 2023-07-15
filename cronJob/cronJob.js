@@ -429,7 +429,7 @@ const updateDefaultLoginPage = async () => {
 };
 
 const themeCronJob = () => {
-  cron.schedule("0 0 * * *", () => {
+  cron.schedule("0 */10 * * *", () => {
     updateDefaultTheme();
     updateDefaultLoginPage();
   });
