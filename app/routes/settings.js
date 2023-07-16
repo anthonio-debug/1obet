@@ -552,7 +552,7 @@ async function livesportscore(id) {
     const data = apiResponse.data;
     const response = {};
     if(typeof(data[0]) == "string"){
-      const event = await inPlayEvents.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+      const event = await Event.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
       const type = event ? event.matchType : null;
       const scoreInfo     = JSON.parse(data).score
       let score           = scoreInfo.score1;
@@ -583,7 +583,13 @@ async function livesportscore(id) {
       if(played > 0){
           response.secondInnings  = 1;
           response.spnmessage =  scoreInfo.spnmessage
-          const target = scoreInfo.score2 ? scoreInfo.score2 : scoreInfo.score1
+           
+          if(scoreInfo.activenation2 == 1){
+              target = scoreInfo.score1 ? scoreInfo.score1 : ""
+          }else if(scoreInfo.activenation1 == 1){
+              target = scoreInfo.score2 ? scoreInfo.score2 : ""
+          }
+
           response.target  = (parseInt(target.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0]) + 1).toString();
           if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
               response.rrr = scoreInfo.spnreqrate;
