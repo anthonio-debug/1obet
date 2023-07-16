@@ -553,7 +553,7 @@ async function livesportscore(id) {
     const response = {};
     if(typeof(data[0]) == "string"){
 
-        const type          = await Event.findOne({Id: id}, {_id: 0,matchType:1}).matchType;
+        const type          = await inPlayEvents.findOne({Id: id}, {_id: 0,matchType:1}).matchType;
         const scoreInfo     = JSON.parse(data).score
         let score           = scoreInfo.score1;
         let played          = scoreInfo.score2;
@@ -598,7 +598,7 @@ async function livesportscore(id) {
       return data[0]
     }
   } catch (error) {
-      return res.status(200).json({
+      return ({
           success: false,
           message: 'Failed to get data',
           error: error.message,
