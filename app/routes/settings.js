@@ -584,7 +584,8 @@ async function livesportscore(id) {
         if(played > 0){
             response.secondInnings  = 1;
             response.spnmessage =  scoreInfo.spnmessage
-            response.target  = (parseInt(scoreInfo.score1.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0]) + 1).toString();
+            const target = scoreInfo.score2 ? scoreInfo.score2 : scoreInfo.score1
+            response.target  = (parseInt(target.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0]) + 1).toString();
             if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
                 response.rrr = scoreInfo.spnreqrate;
             }
