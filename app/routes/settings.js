@@ -594,15 +594,11 @@ async function livesportscore(id) {
             }
         }
         [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-        res.json({
-            status: true,
-            msg: "current score info",
-            data: response,
-            testing: scoreInfo
-        })
+        return response
+
 
     }else{
-        res.json({
+        return res.json({
             status: false,
             msg : "no information found",
             data : data[0]
