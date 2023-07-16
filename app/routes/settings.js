@@ -598,7 +598,7 @@ async function livesportscore(id) {
       return data[0]
     }
   } catch (error) {
-      return res.status(200).json({
+      return ({
           success: false,
           message: 'Failed to get data',
           error: error.message,
