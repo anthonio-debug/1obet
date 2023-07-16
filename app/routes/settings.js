@@ -355,11 +355,15 @@ async function listCompetitions(req, res) {
 }
 
 async function listEventsBySport(req, res) {
-  const sportId = req.params.id;
-
+  const sportId = req.query.id;
+  const inplay = req.query.inplay
   try {
-    const events = await inPlayEvents.find({ sportsId: sportId });
-
+    let events
+    if(inplay === true || inplay === 'true'){
+       events = await inPlayEvents.find({ inplay: true, sportsId: { $nin: ['7', '4339'] } });
+    }else {
+      events = await inPlayEvents.find({ sportsId: sportId }).sort({ inplay: -1 });
+    }
     res.status(200).json({
       success: true,
       message: 'Event By Sports Records',
@@ -662,7 +666,7 @@ loginRouter.get('/getSideBarMenu', getSideBarMenu);
 router.get('/addSideBarMenu', addSideBarMenu);
 
 loginRouter.get('/listCompetitions/:id', listCompetitions);
-loginRouter.get('/listEventsBySport/:id', listEventsBySport);
+loginRouter.get('/listEventsBySport', listEventsBySport);
 loginRouter.get(
   '/listEventsByCompetition/:sportsId/:competitionId',
   listEventsByCompetition
