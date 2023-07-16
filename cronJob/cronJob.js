@@ -467,57 +467,36 @@ const oddsCronJob = () => {
       const updatedCronTime = new Date();
       const batchSize = 20;
 
-      // Retrieve market IDs from the listMarkets model where cronjobtime is empty and type is 0
-      const listMarketsData = await ListMarkets.find(
-        { updatedCronTime: '', islocked: 0 },
-        'marketId'
-      );
+      // Retrieve all market IDs from the listMarkets model
+      const listMarketsData = await ListMarkets.find({}, 'marketId');
 
       const marketIds = listMarketsData.map((event) => parseFloat(event.marketId));
 
       if (marketIds.length > 0) {
-        // Update the market IDs with the new cronjobtime and type
-        await ListMarkets.updateMany(
-          { marketId: { $in: marketIds } },
-          { updatedCronTime, islocked: 1 }
-        );
-
         const batches = [];
         for (let i = 0; i < marketIds.length; i += batchSize) {
           batches.push(marketIds.slice(i, i + batchSize));
         }
 
-        console.log('Total batches:', batches.length);
-
         // Process each batch of market IDs
         for (let i = 0; i < batches.length; i++) {
           const batch = batches[i];
-          console.log('Batch', i + 1, 'of', batches.length);
-          console.log('Market IDs:', batch);
-
-          // Update the market IDs with updatedCronTime: '', isLocked: 0
 
           // Generate the query string for the getOdds API
           const queryString = batch.join(',');
-          console.log('Query String:', queryString);
 
           // Call the getOdds API with the query string
           const oddsResponse = await getnewOdds(queryString);
 
-          console.log('oddsResponse', oddsResponse);
-
           // Handle the response from the getOdds API as needed
         }
-        await ListMarkets.updateMany(
-          { marketId: { $in: marketIds  } },
-          { updatedCronTime: '', islocked: 0 }
-        );
       }
     } catch (error) {
       console.error('Error running odds cron job:', error);
     }
   });
 };
+
 
 const fancyDataCronJob = async () => {
   // Cron job to run every 1 mintue
