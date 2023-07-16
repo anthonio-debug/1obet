@@ -67,7 +67,7 @@ async function liveScore(id) {
       const data = apiResponse.data;
       const response = {};
       if(typeof(data[0]) == "string"){
-        const event = await Event.findOne({ Id: id }, { _id: 0, matchType: 1 });
+        const event = await Event.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
         const type = event ? event.matchType : null;
         const scoreInfo     = JSON.parse(data).score
         let score           = scoreInfo.score1;

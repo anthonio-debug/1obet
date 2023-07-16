@@ -552,58 +552,58 @@ async function livesportscore(id) {
     const data = apiResponse.data;
     const response = {};
     if(typeof(data[0]) == "string"){
+      const event = await Event.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+      const type = event ? event.matchType : null;
+      const scoreInfo     = JSON.parse(data).score
+      let score           = scoreInfo.score1;
+      let played          = scoreInfo.score2;
+      if(scoreInfo.activenation1 == 1){
+          response.team   =  scoreInfo.spnnation1
+          response.crr    = scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim()
 
-        const type          = await inPlayEvents.findOne({Id: id}, {_id: 0,matchType:1}).matchType;
-        const scoreInfo     = JSON.parse(data).score
-        let score           = scoreInfo.score1;
-        let played          = scoreInfo.score2;
-
-        if(scoreInfo.activenation1 == 1){
-            response.team   =  scoreInfo.spnnation1
-            response.crr    = scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim()
-
-        }
-        else if(scoreInfo.activenation2 == 1){
-            response.team    = scoreInfo.spnnation2;
-            response.crr     = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
-            score            = scoreInfo.score2;
-            played           = scoreInfo.score1;
-        }
+      }
+      else if(scoreInfo.activenation2 == 1){
+          response.team    = scoreInfo.spnnation2;
+          response.crr     = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
+          score            = scoreInfo.score2;
+          played           = scoreInfo.score1;
+      }
         
-        response.type   =  type
-        response.balls  = scoreInfo.balls
+      response.type   = type
+      response.balls  = scoreInfo.balls
 
-        if(type == "TEST"){
-            score = score.split('&');
-            score = score[score.length - 1].trim()
-            played = played.split('&');
-            played = played[played.length - 1].trim();
-        }
-        played = played.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-        played = played.filter(element => element != 0).length;
-        if(played > 0){
-            response.secondInnings  = 1;
-            response.spnmessage =  scoreInfo.spnmessage
-            const target = scoreInfo.score2 ? scoreInfo.score2 : scoreInfo.score1
-            response.target  = (parseInt(target.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0]) + 1).toString();
-            if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
-                response.rrr = scoreInfo.spnreqrate;
-            }
-            else if(scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""){
-                response.rrr = scoreInfo.spnreqrate2;
-            }
-        }
-        [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-        return response
+      if(type == "TEST"){
+          score = score.split('&');
+          score = score[score.length - 1].trim()
+          played = played.split('&');
+          played = played[played.length - 1].trim();
+      }
+      played = played.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+      played = played.filter(element => element != 0).length;
+      if(played > 0){
+          response.secondInnings  = 1;
+          response.spnmessage =  scoreInfo.spnmessage
+          const target = scoreInfo.score2 ? scoreInfo.score2 : scoreInfo.score1
+          response.target  = (parseInt(target.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0]) + 1).toString();
+          if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
+              response.rrr = scoreInfo.spnreqrate;
+          }
+          else if(scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""){
+              response.rrr = scoreInfo.spnreqrate2;
+          }
+      }
+      [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+      return response
     }else{
       return data[0]
     }
   } catch (error) {
-      return ({
+      console.error(error);
+      return {
           success: false,
           message: 'Failed to get data',
           error: error.message,
-      });
+      };
   }
 }
 
