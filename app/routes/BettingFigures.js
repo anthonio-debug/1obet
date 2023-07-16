@@ -61,6 +61,72 @@ async function UpdateBettingFigures(req, res) {
     }
 }
 
+async function liveScore(id) {
+    try {
+        const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+        const data = apiResponse.data;
+        const response = {};
+        if(typeof(data[0]) == "string"){
+
+            const type          = await Event.findOne({Id: id}, {_id: 0,matchType:1}).matchType;
+            const scoreInfo     = JSON.parse(data).score
+            let score           = scoreInfo.score1;
+            let played          = scoreInfo.score2;
+
+            if(scoreInfo.activenation1 == 1){
+                response.team   =  scoreInfo.spnnation1
+                response.crr    = scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim()
+
+            }
+            else if(scoreInfo.activenation2 == 1){
+                response.team    = scoreInfo.spnnation2;
+                response.crr     = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
+                score            = scoreInfo.score2;
+                played           = scoreInfo.score1;
+            }
+            
+            response.type   =  type
+            response.balls  = scoreInfo.balls
+
+            if(type == "TEST"){
+                score = score.split('&');
+                score = score[score.length - 1].trim()
+                played = played.split('&');
+                played = played[played.length - 1].trim();
+            }
+            played = played.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+            played = played.filter(element => element != 0).length;
+            if(played > 0){
+                response.secondInnings  = 1;
+                response.spnmessage =  scoreInfo.spnmessage
+                response.target  = (parseInt(scoreInfo.score1.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0]) + 1).toString();
+                if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
+                    response.rrr = scoreInfo.spnreqrate;
+                }
+                else if(scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""){
+                    response.rrr = scoreInfo.spnreqrate2;
+                }
+            }
+            [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+            return response
+
+        }else{
+            return res.json({
+                status: false,
+                msg : "no information found",
+                data : data[0]
+            })
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(200).json({
+            success: false,
+            message: 'Failed to get data',
+            error: error.message,
+        });
+    }
+}
+
 async function livesportscore(req, res) {
     try {
         const id = req.params.id
@@ -136,39 +202,7 @@ async function livesportscore(req, res) {
 async function placeFigureBets(req, res) {
     try {
         const id = req.params.id;
-        const type = await Event.findOne({Id: id}, {_id: 0,match_type:1});
-        let currentOver = 0;
-        let totalSessions = 0;
-        let currentSession = 2
-        switch (type) {
-            case 'T20':
-                totalSessions = 8;
-                break;
-            case 'T10':
-                totalSessions = 4;
-                break;
-            case 'OD':
-                totalSessions = 20;
-                break;
-            case 'TEST':
-                totalSessions = 18;
-                break;
-            default:
-                break;
-        }
-        if(currentOver > 3){
-            res.status(200).json({
-                success: false,
-                message: 'betting not Allowed in 4th over',
-            });
-        }else if(currentSession == totalSessions){
-            res.status(200).json({
-                success: false,
-                message: 'betting not Allowed in last Session',
-            });
-        }else {
-
-        }
+        liveScore(id)
     } catch (error) {
         console.error(error);
         res.status(200).json({

@@ -548,7 +548,6 @@ async function updateMatchType(req, res) {
 
 async function livesportscore(id) {
   try {
-    const id = req.params.id
     const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
     const data = apiResponse.data;
     const response = {};
