@@ -50,6 +50,7 @@ let options = {
 };
 
 mongoose.set('strictQuery', false);
+mongoose.set({ debug: true });
 mongoose
   .connect(config.DBHost, options)
   .then(() => {

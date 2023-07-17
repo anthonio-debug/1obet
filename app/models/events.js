@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 
-const raceSchema = new mongoose.Schema({
-  marketName: { type: String },
-  marketId: { type: String },
-  marketType: { type: String },
-  startTime: { type: Date },
-  inplay: { type: Number },
-});
+/*
+ [Type]
+  1. InPlayEvent
+  2. Events Competations
+*/
+
+
 // Define the schema
 const inPlayEventsSchema = new mongoose.Schema({
   sportsId:{ type: String },
@@ -22,32 +22,19 @@ const inPlayEventsSchema = new mongoose.Schema({
   hasFancy: { type: Boolean },
   status: { type: String },
   isPremium:{type: Boolean },
-  type: { type: Number },
-  matchType: { type: String, default:'' },
-  iconStatus: { type: Boolean, default: false },
-  //fancy data
-  t1: { type: Array },
-  t2: { type: Array },
-  t3: { type: Array },
-  t4: { type: Array },
-  status: { type: String, required: false },
-  updatetime: { type: String, required: false },
-  eventTypeId: { type: String, required: false },
-  eventTypeName: { type: String, required: false },
-  eventName: { type: String, required: false },
-  eventDate: { type: String, required: false },
-  gameId: { type: String, required: false },
-  eventId:{ type: String },
-
-  //racing schema
+  marketIds:{type: Array, default: [] },
+  type: { type: Number, default: 0 },
+  matchType: { type: String, default: '' },
+  islocked: { type: Boolean , default: false },
+  //required fields for gray and horse raiding
   meetingId: { type: Number },
   venue: { type: String },
   countryCodes: [String],
   meetingGoing: { type: String },
-  races: [raceSchema],
+  races: { type: Array },
 });
 
 // Create the model
-const inPlayEvents = mongoose.model('inPlayEvents', inPlayEventsSchema);
+const inPlayEvents = mongoose.model('inplayevents', inPlayEventsSchema);
 
 module.exports = inPlayEvents;

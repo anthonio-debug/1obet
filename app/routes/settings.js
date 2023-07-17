@@ -11,14 +11,12 @@ const Odds = require('../models/odds');
 const Exchanges = require('../models/exchanges');
 const MaxBetSize = require('../models/betLimits');
 const SideBarMenu = require('../models/sidebarMenu');
-const Events = require('../models/events');
+const inPlayEvents = require('../models/events');
 const EventBySports = require('../models/eventsBySport');
 const config = require('config')
 const axios = require('axios');
 const FancyGames = require('../models/fancyGames');
 const Racing = require('../models/racing');
-const RaceMarkets = require('../models/raceMarkets');
-const RaceOdds = require('../models/raceOdds');
 const loginRouter = express.Router();
 const router = express.Router();
 
@@ -360,9 +358,9 @@ async function listEventsBySport(req, res) {
   try {
     let events
     if(inplay === true || inplay === 'true'){
-       events = await Events.find({ inplay: true, sportsId: { $nin: ['7', '4339'] } });
+       events = await inPlayEvents.find({ inplay: true, sportsId: { $nin: ['7', '4339'] } });
     }else {
-      events = await Events.find({ sportsId: sportId }).sort({ inplay: -1 });
+      events = await inPlayEvents.find({ sportsId: sportId }).sort({ inplay: -1 });
     }
     res.status(200).json({
       success: true,
@@ -406,12 +404,12 @@ async function listEventsByCompetition(req, res) {
 async function listInplayEvents(req, res) {
   const sportsId = req.query.ids.split(',');;
   try {
-    const Events = await Events.find({ sportsId: { $in: sportsId } });
+    const inplayEvents = await inPlayEvents.find({ sportsId: { $in: sportsId } });
 
     res.status(200).json({
       success: true,
       message: 'Records',
-      results: Events,
+      results: inplayEvents,
     });
   } catch (error) {
     console.error(error);
@@ -490,7 +488,7 @@ function addSideBarMenu(req, res) {
   });
 }
 
-async function racesList(req, res) {
+async function racesAPI(req, res) {
   try {
     const id = req.params.id;
     const racesData = await Events.find(
@@ -510,133 +508,6 @@ async function racesList(req, res) {
     });
   }
 }
-
-
-async function updateMatchType(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-      return res.status(400).send({ errors: errors.errors });
-  }
-  try {
-    const {_id, matchType, iconStatus } = req.body;
-    Events.findByIdAndUpdate(
-        _id,
-        { $set: { matchType: matchType, iconStatus: iconStatus } },
-          (err, updatedMatch) => {
-              if (err) {
-                  console.log("Error updating figure:", err);
-              } else {
-                  console.log("Updated match:", updatedMatch);
-              }
-          }
-      );
-      res.status(200).json({
-          success: true,
-          message: 'Updated Successfully'
-      });
-
-
-  }catch (error) {
-      console.error(error);
-      res.status(200).json({
-          success: false,
-          message: 'Failed to save fancy data',
-          error: error.message,
-      });
-  }
-}
-
-async function livesportscore(id) {
-  try {
-    const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
-    const data = apiResponse.data;
-    const response = {};
-    if(typeof(data[0]) == "string"){
-      const event = await inPlayEvents.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
-      const type = event ? event.matchType : null;
-      const scoreInfo     = JSON.parse(data).score
-      let score           = scoreInfo.score1;
-      let played          = scoreInfo.score2;
-      if(scoreInfo.activenation1 == 1){
-          response.team   =  scoreInfo.spnnation1
-          response.crr    = scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim()
-
-      }
-      else if(scoreInfo.activenation2 == 1){
-          response.team    = scoreInfo.spnnation2;
-          response.crr     = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
-          score            = scoreInfo.score2;
-          played           = scoreInfo.score1;
-      }
-        
-      response.type   = type
-      response.balls  = scoreInfo.balls
-
-      if(type == "TEST"){
-          score = score.split('&');
-          score = score[score.length - 1].trim()
-          played = played.split('&');
-          played = played[played.length - 1].trim();
-      }
-      played = played.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-      played = played.filter(element => element != 0).length;
-      if(played > 0){
-          response.secondInnings  = 1;
-          response.spnmessage =  scoreInfo.spnmessage
-           
-          if(scoreInfo.activenation2 == 1){
-              target = scoreInfo.score1 ? scoreInfo.score1 : ""
-          }else if(scoreInfo.activenation1 == 1){
-              target = scoreInfo.score2 ? scoreInfo.score2 : ""
-          }
-
-          response.target  = (parseInt(target.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0]) + 1).toString();
-          if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
-              response.rrr = scoreInfo.spnreqrate;
-          }
-          else if(scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""){
-              response.rrr = scoreInfo.spnreqrate2;
-          }
-      }
-      [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-      return response
-    }else{
-      return data[0]
-    }
-  } catch (error) {
-      console.error(error);
-      return {
-          success: false,
-          message: 'Failed to get data',
-          error: error.message,
-      };
-  }
-}
-
-async function racesMarketList(req, res) {
-  try {
-    const racesMarketsData = await RaceMarkets.find({'eventNodes.marketNodes.marketId':req.params.marketId });
-    const raceOddsData = await RaceOdds.findOne({ marketId: req.params.marketId })
-    .sort({ _id: -1 })
-
-    console.log('racesMarketsData', racesMarketsData);
-    return res.json({
-      success: true,
-      message: 'Records',
-      results: {
-        racesMarketsData,
-        raceOddsData
-      },
-    });
-  } catch (error) {
-    console.error('Error retrieving races:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Error retrieving races',
-    });
-  }
-}
-
 
 loginRouter.post(
   '/updateDefaultTheme',
@@ -680,16 +551,13 @@ loginRouter.get('/getSideBarMenu', getSideBarMenu);
 router.get('/addSideBarMenu', addSideBarMenu);
 
 loginRouter.get('/listCompetitions/:id', listCompetitions);
-loginRouter.get('/listEventsBySport', listEventsBySport);
+loginRouter.get('/listEventsBySport/:id', listEventsBySport);
 loginRouter.get(
   '/listEventsByCompetition/:sportsId/:competitionId',
   listEventsByCompetition
 );
 loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
-loginRouter.get('/racesAPI/:id', racesList);
-loginRouter.post('/updateMatchType', updateMatchType);
-loginRouter.get('/racesMarketList/:marketId', racesMarketList);
-
+loginRouter.get('/racesAPI/:id', racesAPI);
 
 module.exports = { loginRouter, router, listOddsAPI };
