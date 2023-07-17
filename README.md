@@ -8,6 +8,27 @@
 
 # "userName" : "Company"
 
+
+ db.users.insertOne({ 
+    "userName" : "company2", 
+    "password" : '$2b$10$tCxr5JpS1naIk3pRjFBzCuvsiBQz3rn58xDwkZvi1vKuyDA8sgLYC', "reference" : "company2", 
+    "phone" : "03056959889",  
+    "role" : "0",
+    "isActive" : true,
+    "status" : 1,
+    "notes" : "this is note",
+    "userId" : 1021, 
+    "passwordChanged" : false, 
+    "balance" : 5000000000,
+    "isDeleted":false,
+    "clienPL":5000000000,
+    "credit":5000000000,
+    "creditLimit":5000000000, 
+    "createdAt" : 1678044562.685, 
+    "updatedAt" : 1678044562.685, 
+    "downLineShare":100 
+})
+
 default theme and login page for company
 db.settings.insertMany([
 {
