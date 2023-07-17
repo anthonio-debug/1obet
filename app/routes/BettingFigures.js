@@ -128,14 +128,44 @@ async function liveScore(id) {
     }
 }
 
+
+async function SocerliveScore(id) {
+  try {
+    const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+    const data        = apiResponse.data;
+    // if(typeof(data[0]) == "string"){
+      const event = await Event.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+      return JSON.parse(data)
+    // }else{
+    //   return data[0]
+    // }
+  } catch (error) {
+      console.error(error);
+      return {
+          success: false,
+          message: 'Failed to get data',
+          error: error.message,
+      };
+  }
+}
+
+
+
 async function livesportscore(req, res) {
     try {
-        const score = await liveScore(req.params.id)
-        res.status(200).json({
-            success: true,
-            message: 'Live Score ',
-            score:  score
-        });
+      const event = await Event.findOne({ Id: req.params.id }, { _id: 0, matchType: 1, sportsId: 1 });
+      const type = event ? event.matchType : null;
+      let score = {};
+      if(type == 4){
+        score = await liveScore(req.params.id)
+      }else{
+        score = await SocerliveScore(req.params.id)
+      }
+      res.status(200).json({
+          success: true,
+          message: 'Live Score',
+          score:  score
+      });
     }
     catch (error) {
         console.error(error);
