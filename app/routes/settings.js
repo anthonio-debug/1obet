@@ -611,7 +611,7 @@ loginRouter.get('/getSideBarMenu', getSideBarMenu);
 router.get('/addSideBarMenu', addSideBarMenu);
 
 loginRouter.get('/listCompetitions/:id', listCompetitions);
-loginRouter.get('/listEventsBySport/:id', listEventsBySport);
+loginRouter.get('/listEventsBySport', listEventsBySport);
 loginRouter.get(
   '/listEventsByCompetition/:sportsId/:competitionId',
   listEventsByCompetition
