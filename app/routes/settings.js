@@ -11,7 +11,7 @@ const Odds = require('../models/odds');
 const Exchanges = require('../models/exchanges');
 const MaxBetSize = require('../models/betLimits');
 const SideBarMenu = require('../models/sidebarMenu');
-const inPlayEvents = require('../models/events');
+const Events = require('../models/events');
 const EventBySports = require('../models/eventsBySport');
 const config = require('config')
 const axios = require('axios');
@@ -360,9 +360,9 @@ async function listEventsBySport(req, res) {
   try {
     let events
     if(inplay === true || inplay === 'true'){
-       events = await inPlayEvents.find({ inplay: true, sportsId: { $nin: ['7', '4339'] } });
+       events = await Events.find({ inplay: true, sportsId: { $nin: ['7', '4339'] } });
     }else {
-      events = await inPlayEvents.find({ sportsId: sportId }).sort({ inplay: -1 });
+      events = await Events.find({ sportsId: sportId }).sort({ inplay: -1 });
     }
     res.status(200).json({
       success: true,
@@ -406,12 +406,12 @@ async function listEventsByCompetition(req, res) {
 async function listInplayEvents(req, res) {
   const sportsId = req.query.ids.split(',');;
   try {
-    const inplayEvents = await inPlayEvents.find({ sportsId: { $in: sportsId } });
+    const Events = await Events.find({ sportsId: { $in: sportsId } });
 
     res.status(200).json({
       success: true,
       message: 'Records',
-      results: inplayEvents,
+      results: Events,
     });
   } catch (error) {
     console.error(error);
@@ -493,7 +493,7 @@ function addSideBarMenu(req, res) {
 async function racesList(req, res) {
   try {
     const id = req.params.id;
-    const racesData = await inPlayEvents.find(
+    const racesData = await Events.find(
       { sportsId: id },
       { meetingId:1,countryCode:1,countryCodes:1,eventTypeId:1,races:1,venue:1,sportsId: 1 }) 
       
@@ -519,7 +519,7 @@ async function updateMatchType(req, res) {
   }
   try {
     const {_id, matchType, iconStatus } = req.body;
-     inPlayEvents.findByIdAndUpdate(
+    Events.findByIdAndUpdate(
         _id,
         { $set: { matchType: matchType, iconStatus: iconStatus } },
           (err, updatedMatch) => {
@@ -553,7 +553,7 @@ async function livesportscore(id) {
     const response = {};
     if(typeof(data[0]) == "string"){
 
-        const type          = await inPlayEvents.findOne({Id: id}, {_id: 0,matchType:1}).matchType;
+        const type          = await Events.findOne({Id: id}, {_id: 0,matchType:1}).matchType;
         const scoreInfo     = JSON.parse(data).score
         let score           = scoreInfo.score1;
         let played          = scoreInfo.score2;

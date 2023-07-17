@@ -15,11 +15,11 @@ async function addBetLock(req, res) {
     if (!errors.isEmpty()) {
       return res.status(400).send({ errors: errors.errors });
     }
-    console.log('req.body', req.body);
-    const { selectedUsers, allUsers, marketId, subMarketId, betLockStatus } =
+    const { selectedUsers, allUsers, subMarketId, betLockStatus } =
       req.body;
-    const query = { isDeleted: false };
-    query.createdBy = req.decoded.userId;
+    // const query = { isDeleted: false };
+    const query = { isDeleted: false, userId : { $ne: req.decoded.userId  } };
+    query.createdBy = Number(req.decoded.userId);
 
     let loginUser = await User.findOne({ userId: req.decoded.userId });
     console.log('loginUser', loginUser);
@@ -67,7 +67,7 @@ async function addBetLock(req, res) {
           };
         }
 
-        await User.updateOne({ userId: user.userId, ...query }, updateQuery);
+        await User.updateMany({ createdBy: req.decoded.userId, userId: { $ne: req.decoded.userId} }, updateQuery);
       }
     } else if (selectedUsers && selectedUsers.length > 0) {
       foundUsers = await User.find({
