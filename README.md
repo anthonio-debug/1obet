@@ -10,14 +10,14 @@
 
 
  db.users.insertOne({ 
-    "userName" : "company2", 
-    "password" : '$2b$10$tCxr5JpS1naIk3pRjFBzCuvsiBQz3rn58xDwkZvi1vKuyDA8sgLYC', "reference" : "company2", 
+    "userName" : "company3", 
+    "password" : '$2b$10$tCxr5JpS1naIk3pRjFBzCuvsiBQz3rn58xDwkZvi1vKuyDA8sgLYC', "reference" : "company3", 
     "phone" : "03056959889",  
     "role" : "0",
     "isActive" : true,
     "status" : 1,
     "notes" : "this is note",
-    "userId" : 1021, 
+    "userId" : 1110, 
     "passwordChanged" : false, 
     "balance" : 5000000000,
     "isDeleted":false,
