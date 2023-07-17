@@ -28,7 +28,7 @@ function debit(req, res) {
   const payload = req.query;
   User.findOneAndUpdate(
     { remoteId: payload.remote_id },
-    { $inc: { availableBalance: payload.amount * 307 } },
+    { $inc: { availableBalance: -(payload.amount * 307) } },
     { new: true },
     (err, updatedUser) => {
       if (err || !updatedUser) {
