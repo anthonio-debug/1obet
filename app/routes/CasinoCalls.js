@@ -6,16 +6,15 @@ const crypto = require('crypto');
 const config = require('config')
 
 function validateKey(key, payload, salt) {
-  const queryString = Object.keys(payload)
+  const { key: keyParam, ...queryParams } = payload;
+
+  const queryString = Object.keys(queryParams)
     .sort()
-    .map(key => `${key}=${payload[key]}`)
+    .map(key => `${key}=${queryParams[key]}`)
     .join('&');
 
-    console.log('queryString',queryString);
-  const hash = crypto
-    .createHash('sha1')
-    .update(salt + queryString)
-    .digest('hex');
+  const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
+  console.log('queryString',queryString);
   console.log('Hash',hash);
 
   return hash === key;
