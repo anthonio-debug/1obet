@@ -44,7 +44,8 @@ const fancyGames = new mongoose.Schema({
   eventDate: { type: String, required: false },
   gameId: { type: String, required: false },
   type: { type: String },
-  eventId:{ type: String }
+  eventId:{ type: String },
+  createdAt: { type: Number }
 });
 
 const FancyGames = mongoose.model('fancyGames', fancyGames);
