@@ -432,14 +432,14 @@ async function listOddsAPI(req, res) {
 
     console.log('fancyData', fancyData);
 
-    const livesportscoreData = {}
+    let livesportscoreData = {}
 
-    const event = await inPlayEvents.findOne({ Id: req.params.id }, { _id: 0, matchType: 1, sportsId: 1 });
+    const event = await inPlayEvents.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1 });
       const type = event ? event.sportsId : null;
       if(type == 4){
-        livesportscoreData = await cricketLiveScore(req.params.id)
+        livesportscoreData = await cricketLiveScore(eventIds)
       }else{
-        livesportscoreData = await otherLiveScore(req.params.id)
+        livesportscoreData = await otherLiveScore(eventIds)
       }
 
     // console.log('liveTVResponse', liveTVResponse);
