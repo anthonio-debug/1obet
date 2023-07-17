@@ -168,7 +168,7 @@ function credit(req, res) {
 function rollback(req, res) {
   const payload = req.query;
   const remoteId = payload.remote_id;
-  const salt = 'yoursalt'; // Replace with your actual salt value
+  const salt = config.saltKey;
 
   const key = payload.key;
   delete payload.key;
