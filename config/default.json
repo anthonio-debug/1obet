@@ -18,5 +18,6 @@
   "fancyUrl": "https://betfairoddsapi.com:3444/api",
   "liveTvUrl": "https://livesportscore.xyz:3440/api",
   "liveScoreUrl": "https://livesportscore.xyz:3443/api/getScoreId",
-  "horseRaceUrl": "http://136.244.77.249:33333"
+  "horseRaceUrl": "http://136.244.77.249:33333",
+  "saltKey":"Loa0192Jua"
 }
