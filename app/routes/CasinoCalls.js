@@ -61,15 +61,30 @@ function rollback(req, res) {
 
       if (payload.action === 'rollback') {
         user.availableBalance += payload.amount * 307;
-        user.save();
+        user.save((err) => {
+          if (err) {
+            console.error(err);
+            return res.json({
+              status: 500,
+              msg: 'Internal error'
+            });
+          }
+
+          const updatedBalance = (user.availableBalance / 307).toFixed(2);
+
+          return res.json({
+            status: 200,
+            balance: updatedBalance
+          });
+        });
+      } else {
+        const updatedBalance = (user.availableBalance / 307).toFixed(2);
+
+        return res.json({
+          status: 200,
+          balance: updatedBalance
+        });
       }
-
-      const updatedBalance = (user.availableBalance / 307).toFixed(2);
-
-      return res.json({
-        status: 200,
-        balance: updatedBalance
-      });
     });
   });
 }
