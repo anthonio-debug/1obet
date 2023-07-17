@@ -61,7 +61,7 @@ async function UpdateBettingFigures(req, res) {
     }
 }
 
-async function liveScore(id) {
+async function cricketLiveScore(id) {
     try {
       const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
       const data = apiResponse.data;
@@ -128,17 +128,16 @@ async function liveScore(id) {
     }
 }
 
-
-async function SocerliveScore(id) {
+async function otherLiveScore(id) {
   try {
     const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
     const data        = apiResponse.data;
-    // if(typeof(data[0]) == "string"){
+    if(typeof(data[0]) == "string"){
       const event = await Event.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
       return JSON.parse(data)
-    // }else{
-    //   return data[0]
-    // }
+    }else{
+      return data[0]
+    }
   } catch (error) {
       console.error(error);
       return {
@@ -153,13 +152,16 @@ async function SocerliveScore(id) {
 
 async function livesportscore(req, res) {
     try {
+
       const event = await Event.findOne({ Id: req.params.id }, { _id: 0, matchType: 1, sportsId: 1 });
-      const type = event ? event.matchType : null;
+      const type = event ? event.sportsId : null;
+      console.log("event", event);
       let score = {};
+
       if(type == 4){
-        score = await liveScore(req.params.id)
+        score = await cricketLiveScore(req.params.id)
       }else{
-        score = await SocerliveScore(req.params.id)
+        score = await otherLiveScore(req.params.id)
       }
       res.status(200).json({
           success: true,
