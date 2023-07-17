@@ -423,7 +423,7 @@ async function listInplayEvents(req, res) {
 
 async function listOddsAPI(req, res) {
   try {
-    const eventIds = req.query.ids.split(',').slice(0, 20);
+    const eventIds = req.query.ids
     const odds = await Odds.find({ eventId: { $in: eventIds } });
     const url = `${config.liveTvUrl}/get_live_tv_url/${eventIds}`;
     const liveTVResponse = await axios.get(url);
