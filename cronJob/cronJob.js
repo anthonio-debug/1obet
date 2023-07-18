@@ -544,34 +544,60 @@ const raceMarketsCronJob = async () => {
   });
 };
 
-const raceOddsCronJob = async () => {
+// const raceOddsCronJob = async () => {
 
+//   cron.schedule('*/2 * * * * *', async () => {
+//     try {
+  
+//      let batchArray = []
+//      const marketIds = await raceMarkets.distinct('eventNodes.marketNodes.marketId', { islocked: false});
+//     //  let marketIds = await distinctMarketIdsQuery.exec()
+
+//      batchArray.push(...marketIds.slice(0, 20));
+//      if(batchArray.length === 0) {
+//       await Events.updateMany(
+//         { },
+//         {  islocked: false }
+//       );
+//      }
+    
+//     await raceOddsJob(batchArray);
+//     await Events.updateMany(
+//       { marketId: { $in: marketIds  } },
+//       { islocked: true }
+//     );
+
+//     } catch (error) {
+//       console.error('Error running odds cron job:', error);
+//     }
+//   });
+// };
+
+const raceOddsCronJob = async () => {
   cron.schedule('*/2 * * * * *', async () => {
     try {
-  
-     let batchArray = []
-     const marketIds = await raceMarkets.distinct('eventNodes.marketNodes.marketId', { islocked: false});
-    //  let marketIds = await distinctMarketIdsQuery.exec()
+      const batchSize = 20;
+      const marketIds = await raceMarkets.distinct('eventNodes.marketNodes.marketId', { islocked: false });
+      console.log('marketIds', marketIds);
 
-     batchArray.push(...marketIds.slice(0, 20));
-     if(batchArray.length === 0) {
-      await Events.updateMany(
-        { },
-        {  islocked: false }
-      );
-     }
-    
-    await raceOddsJob(batchArray);
-    await Events.updateMany(
-      { marketId: { $in: marketIds  } },
-      { islocked: true }
-    );
+      for (let i = 0; i < marketIds.length; i += batchSize) {
+        const batchArray = marketIds.slice(i, i + batchSize);
+        console.log('batchArray', batchArray);
 
+        await raceOddsJob(batchArray);
+
+        await Events.updateMany({ marketId: { $in: batchArray } }, { islocked: true });
+      }
+
+      if (marketIds.length === 0) {
+        await Events.updateMany({}, { islocked: false });
+      }
     } catch (error) {
       console.error('Error running odds cron job:', error);
     }
   });
 };
+
 // const deleteClosedOddsData = () => {
 //   //run after 5 minutes
 //   cron.schedule('*/1 * * * *', async () => {
