@@ -574,11 +574,23 @@ const raceOddsCronJob = async () => {
 };
 const deleteClosedOddsData = () => {
   //run after 5 minutes
-  cron.schedule("*/5 * * * *", async () => { 
+  cron.schedule('*/1 * * * *', async () => {
     try {
       // Retrieve the IDs from the inplayEvents api
-      await Odds.deleteMany({ status: 'Closed' })
-      await raceOdds.deleteMany({ status: 'Closed' })
+      await Odds.deleteMany({
+        $or: [
+          { status: "closed" },
+          { status: "Closed" },
+          { status: "CLOSED" }
+        ]
+      })
+      await raceOdds.deleteMany.deleteMany({
+        $or: [
+          { status: "closed" },
+          { status: "Closed" },
+          { status: "CLOSED" }
+        ]
+      })
     } catch (error) {
       console.error('Error running listMarket cron job:', error);
     }
