@@ -5,103 +5,41 @@ const CasinoDebits = require('../models/casinoCalls');
 const crypto = require('crypto');
 const config = require('config')
 
-// function validateKey(key, payload, salt) {
-//   const { key: keyParam, ...queryParams } = payload;
-
-//   const queryString = Object.keys(queryParams)
-//     .sort()
-//     .map(key => `${key}=${queryParams[key]}`)
-//     .join('&');
-
+// function createHashKey(salt, queryString) {
 //   const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
-//   console.log('queryString',queryString);
-//   console.log('Hash',hash);
-
-//   return hash === key;
+//   return hash;
 // }
 
-// function rollback(req, res) {
-//   const payload = req.query;
-//   const remoteId = payload.remote_id;
-//   const salt = config.saltKey;
+// const defaultSaltKey = 'Loa0192Jua'; // Replace with your default salt key
 
-//   const key = payload.key;
-//   delete payload.key;
+// const queryString ='callerId=1obet_mc_s&callerPassword=7d4abb4213b10af57967e4e7fa105a9aa0dcc357&callerPrefix=zrf3&action=balance&remote_id=1081553&username=user_8&session_id=&currency=EUR&provider=ez&game_id=157418&game_id_hash=ez_ez-roleta-da-sorte';
 
-//   console.log('Received key:', key);
+// const hashKey = createHashKey(defaultSaltKey, queryString);
+// console.log('Hash key:', hashKey);
 
-//   if (!validateKey(key, payload, salt)) {
-//     console.log('Key validation failed');
-//     return res.json({
-//       status: 403,
-//       msg: 'INCORRECT_KEY_VALIDATION'
-//     });
-//   }
 
-//   console.log('Key validation successful');
-
-//   const casinoDebits = new CasinoDebits(payload);
-//   casinoDebits.save((err, savedPayload) => {
-//     if (err) {
-//       console.error(err);
-//       return res.json({
-//         status: 500,
-//         msg: 'Internal error'
-//       });
-//     }
-
-//     User.findOne({ remoteId }, (err, user) => {
-//       if (err || !user) {
-//         return res.json({
-//           status: 500,
-//           msg: 'Internal error'
-//         });
-//       }
-
-//       if (payload.action === 'rollback') {
-//         user.availableBalance += payload.amount * 307;
-//         user.save((err) => {
-//           if (err) {
-//             console.error(err);
-//             return res.json({
-//               status: 500,
-//               msg: 'Internal error'
-//             });
-//           }
-
-//           const updatedBalance = (user.availableBalance / 307).toFixed(2);
-
-//           return res.json({
-//             status: 200,
-//             balance: updatedBalance
-//           });
-//         });
-//       } else {
-//         const updatedBalance = (user.availableBalance / 307).toFixed(2);
-
-//         return res.json({
-//           status: 200,
-//           balance: updatedBalance
-//         });
-//       }
-//     });
-//   });
-// }
+function createHashKey(salt, queryString) {
+  const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
+  return hash;
+}
 
 function balance(req, res) {
   const payload = req.query;
-  const salt = config.saltKey;
+  const salt = config.saltKey; // Replace with your default salt key
 
   const key = payload.key;
   delete payload.key;
 
   const queryString = Object.keys(payload)
-    .sort()
     .map(key => `${key}=${payload[key]}`)
     .join('&');
-console.log('queryString',queryString);
-  const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
-  console.log('hash',hash);
+
+  const hash = createHashKey(salt, queryString);
+
+  console.log('key:', key);
+  console.log('hash:', hash);
+  console.log('queryString:', queryString);
+
   if (hash !== key) {
     return res.json({
       status: 403,
@@ -115,17 +53,19 @@ console.log('queryString',queryString);
       console.error(err);
       return res.send({ status: '500', msg: 'internal error' });
     }
-  User.findOne({ remoteId: payload.remote_id }, (err, user) => {
-    console.log('user',user);
-    if (err || !user) {
-      return res.send({ status: '500', msg: 'internal error' });
-    }
-    return res.send({
-      status: 200,
-      balance: (user.availableBalance / 307).toFixed(2),
+
+    User.findOne({ remoteId: payload.remote_id }, (err, user) => {
+      console.log('user:', user);
+      if (err || !user) {
+        return res.send({ status: '500', msg: 'internal error' });
+      }
+
+      return res.send({
+        status: 200,
+        balance: (user.availableBalance / 307).toFixed(2),
+      });
     });
   });
- })
 }
 
 function debit(req, res) {
@@ -136,12 +76,14 @@ function debit(req, res) {
   delete payload.key;
 
   const queryString = Object.keys(payload)
-    .sort()
     .map(key => `${key}=${payload[key]}`)
     .join('&');
-console.log('queryString',queryString);
-  const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
-  console.log('hash',hash);
+
+  const hash = createHashKey(salt, queryString);
+
+  console.log('queryString:', queryString);
+  console.log('hash:', hash);
+
   if (hash !== key) {
     return res.json({
       status: 403,
@@ -157,12 +99,14 @@ console.log('queryString',queryString);
       if (err || !updatedUser) {
         return res.send({ status: '500', msg: 'internal error' });
       }
+
       const casinoDebits = new CasinoDebits(payload);
       casinoDebits.save((err) => {
         if (err) {
           console.error(err);
           return res.send({ status: '500', msg: 'internal error' });
         }
+
         const updatedBalance = (updatedUser.availableBalance / 307).toFixed(2);
 
         return res.json({
@@ -175,19 +119,20 @@ console.log('queryString',queryString);
 }
  
 function credit(req, res) {
-  const payload = req.query
+  const payload = req.query;
   const salt = config.saltKey;
 
   const key = payload.key;
   delete payload.key;
 
   const queryString = Object.keys(payload)
-    .sort()
     .map(key => `${key}=${payload[key]}`)
     .join('&');
-console.log('queryString',queryString);
-  const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
-  console.log('hash',hash);
+  console.log('queryString', queryString);
+
+  const hash = createHashKey(salt, queryString);
+  console.log('hash', hash);
+
   if (hash !== key) {
     return res.json({
       status: 403,
@@ -207,7 +152,8 @@ console.log('queryString',queryString);
       if (err || !user) {
         return res.send({ status: '500', msg: 'internal error' });
       }
-    user.availableBalance += req.query.amount * 307;
+
+      user.availableBalance += req.query.amount * 307;
       user.save((err) => {
         if (err) {
           console.error(err);
@@ -231,12 +177,13 @@ function rollback(req, res) {
   delete payload.key;
 
   const queryString = Object.keys(payload)
-    .sort()
     .map(key => `${key}=${payload[key]}`)
     .join('&');
-console.log('queryString',queryString);
-  const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
-  console.log('hash',hash);
+  console.log('queryString', queryString);
+
+  const hash = createHashKey(salt, queryString);
+  console.log('hash', hash);
+
   if (hash !== key) {
     return res.json({
       status: 403,
@@ -291,6 +238,7 @@ console.log('queryString',queryString);
     });
   });
 }
+
 
 // function rollback(req, res) {
 //   const payload = req.query
