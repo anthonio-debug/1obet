@@ -308,33 +308,33 @@ async function marketDescriptionCronjob(marketId) {
   
      console.log("marketListsData", marketListsData)
     // Extract relevant data from raceMarkets
-    const eventTypeData = marketListsData.eventTypes;
-    const eventNodeData = eventTypeData.eventNodes;
-    const eventData = eventNodeData.event;
-    const marketNodeData = eventNodeData.marketNodes;
+    const eventTypeData = marketListsData?.eventTypes;
+    const eventNodeData = eventTypeData?.eventNodes;
+    const eventData = eventNodeData?.event;
+    const marketNodeData = eventNodeData?.marketNodes;
 
     const bulkOperations = [];
 
     // Create bulk update or insert operations for market data
     const updateOperation = {
       updateOne: {
-        filter: { 'eventNodes.marketNodes.marketId': marketNodeData.marketId },
+        filter: { 'eventNodes.marketNodes.marketId': marketNodeData?.marketId },
         update: {
           $setOnInsert: {
-            eventTypeId: eventTypeData.eventTypeId,
+            eventTypeId: eventTypeData?.eventTypeId,
             eventNodes: {
-              eventId: eventNodeData.eventId,
+              eventId: eventNodeData?.eventId,
               event: eventData,
               marketNodes: {
-                marketId: marketNodeData.marketId,
-                isMarketDataDelayed: marketNodeData.isMarketDataDelayed,
-                state: marketNodeData.state,
-                description: marketNodeData.description,
-                rates: marketNodeData.rates,
-                runners: marketNodeData.runners,
+                marketId: marketNodeData?.marketId,
+                isMarketDataDelayed: marketNodeData?.isMarketDataDelayed,
+                state: marketNodeData?.state,
+                description: marketNodeData?.description,
+                rates: marketNodeData?.rates,
+                runners: marketNodeData?.runners,
               },
             },
-            isMarketDataVirtual: marketListsData.isMarketDataVirtual,
+            isMarketDataVirtual: marketListsData?.isMarketDataVirtual,
           },
         },
         upsert: true,

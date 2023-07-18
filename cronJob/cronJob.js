@@ -11,6 +11,9 @@ const ListMarkets = require('../app/models/listMarkets')
 const inplayEvents = require('../app/models/events');
 const { todayRaceJob, marketDescriptionCronjob,raceOddsJob }  = require('../app/routes/Racing');
 const raceMarkets = require('../app/models/raceMarkets');
+const Odds = require('../app/models/odds');
+const raceOdds = require('../app/models/raceOdds');
+
 
 let runningJob;
 
@@ -569,5 +572,17 @@ const raceOddsCronJob = async () => {
     }
   });
 };
+const deleteClosedOddsData = () => {
+  //run after 5 minutes
+  cron.schedule("*/5 * * * *", async () => { 
+    try {
+      // Retrieve the IDs from the inplayEvents api
+      await Odds.deleteMany({ status: 'Closed' })
+      await raceOdds.deleteMany({ status: 'Closed' })
+    } catch (error) {
+      console.error('Error running listMarket cron job:', error);
+    }
+  });
+}
 
-module.exports = { checkBetStatus, themeCronJob,listMarketCronJob,oddsCronJob,fancyDataCronJob , todayRaceCronJob, raceOddsCronJob, raceMarketsCronJob };
+module.exports = { checkBetStatus,deleteClosedOddsData, themeCronJob,listMarketCronJob,oddsCronJob,fancyDataCronJob , todayRaceCronJob, raceOddsCronJob, raceMarketsCronJob };

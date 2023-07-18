@@ -177,9 +177,9 @@ function rollback(req, res) {
     .sort()
     .map(key => `${key}=${payload[key]}`)
     .join('&');
-
+console.log('queryString',queryString);
   const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
-
+  console.log('hash',hash);
   if (hash !== key) {
     return res.json({
       status: 403,

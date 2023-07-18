@@ -329,7 +329,6 @@ async function getnewOdds(ids) {
       const response = await axios.get(url);
       
       const oddsData = response.data;
-    
       let sportIds = {  "soccer" : "1", "cricket" : "4", "tennis" : "2" }
       let data = []
        await oddsData.forEach((element) => {

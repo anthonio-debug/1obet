@@ -30,18 +30,20 @@ const {
   fancyDataCronJob,
   todayRaceCronJob,
   raceMarketsCronJob,
-  raceOddsCronJob
+  raceOddsCronJob,
+  deleteClosedOddsData
 } = require('./cronJob/cronJob'); // Import only cronJob2
 
 // Run the cron job
 themeCronJob();
 checkBetStatus();
-listMarketCronJob()
+// listMarketCronJob()
 oddsCronJob()
 fancyDataCronJob()
-todayRaceCronJob()
-raceMarketsCronJob()
+// todayRaceCronJob()
+// raceMarketsCronJob()
 raceOddsCronJob()
+deleteClosedOddsData()
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,

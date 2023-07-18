@@ -3,7 +3,7 @@ const config = require('config')
 const axios = require('axios')
 const FancyGames = require('../models/fancyGames');
 const Odds = require('../models/odds');
-const inPlayEvents = require('../models/inPlayEvents'); 
+const inPlayEvents = require('../models/events'); 
 const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
 
@@ -17,14 +17,14 @@ async function listOdds(eventId) {
     try {
       const odds = await Odds.findOne({ eventId: eventId }).sort({ createdAt: -1 });
       const fancyData = await FancyGames.findOne({ eventId: eventId }).sort({ createdAt: -1 });
-    
+    console.log('odds',odds.runners);
       const livesportscoreData = await livesportscore(eventId)
       return {
         success: true,
         message: 'Records',
         results: {
-          odds,
-          fancyData,
+          odds: [odds],
+          fancyData: [fancyData],
           livesportscoreData
         },
       }
