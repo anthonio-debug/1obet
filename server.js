@@ -37,11 +37,11 @@ const {
 // Run the cron job
 themeCronJob();
 checkBetStatus();
-// listMarketCronJob()
+listMarketCronJob()
 oddsCronJob()
 fancyDataCronJob()
-// todayRaceCronJob()
-// raceMarketsCronJob()
+todayRaceCronJob()
+raceMarketsCronJob()
 raceOddsCronJob()
 deleteClosedOddsData()
 // CONNECT THE DATABASE

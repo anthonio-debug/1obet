@@ -572,52 +572,19 @@ const raceOddsCronJob = async () => {
     }
   });
 };
-const deleteClosedOddsData = () => {
-  //run after 5 minutes
-  cron.schedule('*/1 * * * *', async () => {
-    try {
-      // Retrieve the IDs from the inplayEvents api
-      await Odds.deleteMany({
-        $or: [
-          { status: "closed" },
-          { status: "Closed" },
-          { status: "CLOSED" }
-        ]
-      })
-      await raceOdds.deleteMany.deleteMany({
-        $or: [
-          { status: "closed" },
-          { status: "Closed" },
-          { status: "CLOSED" }
-        ]
-      })
-    } catch (error) {
-      console.error('Error running listMarket cron job:', error);
-    }
-  });
-}
-
 // const deleteClosedOddsData = () => {
 //   //run after 5 minutes
 //   cron.schedule('*/1 * * * *', async () => {
 //     try {
 //       // Retrieve the IDs from the inplayEvents api
-//       const eventIds = await Odds.distinct("eventId", {
-//         status: { $in: ["closed", "Closed", "CLOSED"] }
-//       });
-      
-//       await Events.deleteMany({ Id: { $in: eventIds } });
-//       await Odds.deleteMany(eventIds)
-//       // await Odds.deleteMany({
-//       //   $or: [
-//       //     { status: "closed", eventId: eventIds  },
-//       //     { status: "Closed", eventId: eventIds  },
-//       //     { status: "CLOSED",eventId: eventIds  }
-//       //   ]
-//       // })
-
-   
-//       await raceOdds.deleteMany({
+//       await Odds.deleteMany({
+//         $or: [
+//           { status: "closed" },
+//           { status: "Closed" },
+//           { status: "CLOSED" }
+//         ]
+//       })
+//       await raceOdds.deleteMany.deleteMany({
 //         $or: [
 //           { status: "closed" },
 //           { status: "Closed" },
@@ -629,5 +596,45 @@ const deleteClosedOddsData = () => {
 //     }
 //   });
 // }
+
+const deleteClosedOddsData = () => {
+  //run after 5 minutes
+  cron.schedule('*/5 * * * *', async () => {
+    try {
+      // Retrieve the IDs from the inplayEvents api
+      const eventIds = await Odds.distinct("eventId", {
+        status: { $in: ["closed", "Closed", "CLOSED"] }
+      });
+      // console.log('eventIds', eventIds);
+      
+      const ids = await Events.find({ Id: { $in: eventIds } });
+      // console.log('ids', ids);
+      
+      const eventIdsToDelete = ids.map(event => event.Id);
+      
+      await Events.deleteMany({ Id: { $in: eventIdsToDelete } });
+      
+      await Odds.deleteMany({ eventId: { $in: eventIds } });
+      // await Odds.deleteMany({
+      //   $or: [
+      //     { status: "closed", eventId: eventIds  },
+      //     { status: "Closed", eventId: eventIds  },
+      //     { status: "CLOSED",eventId: eventIds  }
+      //   ]
+      // })
+
+   
+      await raceOdds.deleteMany({
+        $or: [
+          { status: "closed" },
+          { status: "Closed" },
+          { status: "CLOSED" }
+        ]
+      })
+    } catch (error) {
+      console.error('Error running listMarket cron job:', error);
+    }
+  });
+}
 
 module.exports = { checkBetStatus,deleteClosedOddsData, themeCronJob,listMarketCronJob,oddsCronJob,fancyDataCronJob , todayRaceCronJob, raceOddsCronJob, raceMarketsCronJob };
