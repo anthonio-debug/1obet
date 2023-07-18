@@ -8,7 +8,7 @@ const Cash = require("../app/models/deposits");
 const { getParents } = require("../app/routes/bets");
 const { listMarketsByCronJob ,getnewOdds,fancyDataByCronjob,listInplayEventsJob} = require('../app/routes/sportsAPI')
 const ListMarkets = require('../app/models/listMarkets')
-const inplayEvents = require('../app/models/events');
+const Events = require('../app/models/events');
 const { todayRaceJob, marketDescriptionCronjob,raceOddsJob }  = require('../app/routes/Racing');
 const raceMarkets = require('../app/models/raceMarkets');
 const Odds = require('../app/models/odds');
@@ -470,19 +470,19 @@ const oddsCronJob = () => {
     try {
       let batchArray = []
       const racesportsIds = ["1", "2", "4"];
-      const distinctMarketIdsQuery = inplayEvents.distinct("marketIds", { islocked: false , sportsId: { $in: racesportsIds } });
+      const distinctMarketIdsQuery = Events.distinct("marketIds", { islocked: false , sportsId: { $in: racesportsIds } });
       let marketIds = await distinctMarketIdsQuery.exec()
       
       batchArray.push(...marketIds.slice(0, 20));
 
       if(batchArray.length === 0) {
-        await inplayEvents.updateMany(
+        await Events.updateMany(
           { },
           {  islocked: false }
         );
       }
       await getnewOdds(batchArray);
-      await inplayEvents.updateMany(
+      await Events.updateMany(
         { marketId: { $in: marketIds  } },
         { islocked: true }
       );
@@ -497,7 +497,7 @@ const fancyDataCronJob = async () => {
   cron.schedule('*/2 * * * * *', async () => {
     try {
       // Retrieve the inplayevents data dynamically from the database
-      const inplayEventsData = await inplayEvents.find({ sportsId: '4' }).exec();
+      const inplayEventsData = await Events.find({ sportsId: '4' }).exec();
 
       // Iterate over the inplayevents data
       for (const event of inplayEventsData) {
@@ -533,7 +533,7 @@ const raceMarketsCronJob = async () => {
     try {
       // Retrieve the sportsIds dynamically from the database
       const racesportsIds = ["7", "4339"];
-      const marketIds = await inplayEvents.distinct("marketIds", { sportsId: { $in: racesportsIds } });
+      const marketIds = await Events.distinct("marketIds", { sportsId: { $in: racesportsIds } });
       for (const marketId of marketIds) {
         // console.log('marketId',marketId);
         await marketDescriptionCronjob(marketId);
@@ -555,14 +555,14 @@ const raceOddsCronJob = async () => {
 
      batchArray.push(...marketIds.slice(0, 20));
      if(batchArray.length === 0) {
-      await inplayEvents.updateMany(
+      await Events.updateMany(
         { },
         {  islocked: false }
       );
      }
     
     await raceOddsJob(batchArray);
-    await inplayEvents.updateMany(
+    await Events.updateMany(
       { marketId: { $in: marketIds  } },
       { islocked: true }
     );
@@ -596,5 +596,38 @@ const deleteClosedOddsData = () => {
     }
   });
 }
+
+// const deleteClosedOddsData = () => {
+//   //run after 5 minutes
+//   cron.schedule('*/1 * * * *', async () => {
+//     try {
+//       // Retrieve the IDs from the inplayEvents api
+//       const eventIds = await Odds.distinct("eventId", {
+//         status: { $in: ["closed", "Closed", "CLOSED"] }
+//       });
+      
+//       await Events.deleteMany({ Id: { $in: eventIds } });
+//       await Odds.deleteMany(eventIds)
+//       // await Odds.deleteMany({
+//       //   $or: [
+//       //     { status: "closed", eventId: eventIds  },
+//       //     { status: "Closed", eventId: eventIds  },
+//       //     { status: "CLOSED",eventId: eventIds  }
+//       //   ]
+//       // })
+
+   
+//       await raceOdds.deleteMany({
+//         $or: [
+//           { status: "closed" },
+//           { status: "Closed" },
+//           { status: "CLOSED" }
+//         ]
+//       })
+//     } catch (error) {
+//       console.error('Error running listMarket cron job:', error);
+//     }
+//   });
+// }
 
 module.exports = { checkBetStatus,deleteClosedOddsData, themeCronJob,listMarketCronJob,oddsCronJob,fancyDataCronJob , todayRaceCronJob, raceOddsCronJob, raceMarketsCronJob };

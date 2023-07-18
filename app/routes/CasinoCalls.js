@@ -90,6 +90,25 @@ const config = require('config')
 
 function balance(req, res) {
   const payload = req.query;
+  const salt = config.saltKey;
+
+  const key = payload.key;
+  delete payload.key;
+
+  const queryString = Object.keys(payload)
+    .sort()
+    .map(key => `${key}=${payload[key]}`)
+    .join('&');
+console.log('queryString',queryString);
+  const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
+  console.log('hash',hash);
+  if (hash !== key) {
+    return res.json({
+      status: 403,
+      msg: 'INCORRECT_KEY_VALIDATION'
+    });
+  }
+
   const casinoDebits = new CasinoDebits(payload);
   casinoDebits.save((err, savedPayload) => {
     if (err) {
@@ -111,6 +130,25 @@ function balance(req, res) {
 
 function debit(req, res) {
   const payload = req.query;
+  const salt = config.saltKey;
+
+  const key = payload.key;
+  delete payload.key;
+
+  const queryString = Object.keys(payload)
+    .sort()
+    .map(key => `${key}=${payload[key]}`)
+    .join('&');
+console.log('queryString',queryString);
+  const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
+  console.log('hash',hash);
+  if (hash !== key) {
+    return res.json({
+      status: 403,
+      msg: 'INCORRECT_KEY_VALIDATION'
+    });
+  }
+
   User.findOneAndUpdate(
     { remoteId: payload.remote_id },
     { $inc: { availableBalance: -(payload.amount * 307) } },
@@ -138,6 +176,25 @@ function debit(req, res) {
  
 function credit(req, res) {
   const payload = req.query
+  const salt = config.saltKey;
+
+  const key = payload.key;
+  delete payload.key;
+
+  const queryString = Object.keys(payload)
+    .sort()
+    .map(key => `${key}=${payload[key]}`)
+    .join('&');
+console.log('queryString',queryString);
+  const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
+  console.log('hash',hash);
+  if (hash !== key) {
+    return res.json({
+      status: 403,
+      msg: 'INCORRECT_KEY_VALIDATION'
+    });
+  }
+
   const casinoDebits = new CasinoDebits(payload);
   casinoDebits.save((err, savedPayload) => {
     if (err) {
