@@ -440,7 +440,7 @@ const themeCronJob = () => {
 
 //Complete
 const listMarketCronJob = () => {
-  // Cron job to run 12 times per minute
+   // Cron job to run every 1 minute
   cron.schedule('*/1 * * * *', async () => {
     try {
       // Retrieve the IDs from the inplayEvents api
@@ -466,8 +466,8 @@ const listMarketCronJob = () => {
 }
 
 const oddsCronJob = () => {
-  cron.schedule('*/1 * * * * *', async () => {
-    try {
+  // Cron job to run every 1 minute
+  cron.schedule('*/1 * * * *', async () => {    try {
       let batchArray = []
       const racesportsIds = ["1", "2", "4"];
       const distinctMarketIdsQuery = Events.distinct("marketIds", { islocked: false , sportsId: { $in: racesportsIds } });
@@ -493,9 +493,8 @@ const oddsCronJob = () => {
 };
 
 const fancyDataCronJob = async () => {
-  // Cron job to run every 2 second
-  cron.schedule('*/2 * * * * *', async () => {
-    try {
+  // Cron job to run every 1 minute
+  cron.schedule('*/1 * * * *', async () => {    try {
       // Retrieve the inplayevents data dynamically from the database
       const inplayEventsData = await Events.find({ sportsId: '4' }).exec();
 
@@ -528,8 +527,8 @@ const todayRaceCronJob = async () => {
 };
 
 const raceMarketsCronJob = async () => {
-  // Cron job to run every 2 second
-  cron.schedule('*/2 * * * * *', async () => {
+  // Cron job to run every 1 minute
+  cron.schedule('*/1 * * * *', async () => {
     try {
       // Retrieve the sportsIds dynamically from the database
       const racesportsIds = ["7", "4339"];
@@ -574,7 +573,8 @@ const raceMarketsCronJob = async () => {
 // };
 
 const raceOddsCronJob = async () => {
-  cron.schedule('*/2 * * * * *', async () => {
+  // Cron job to run every 1 minute
+  cron.schedule('*/1 * * * *', async () => {
     try {
       const batchSize = 20;
       const marketIds = await raceMarkets.distinct('eventNodes.marketNodes.marketId', { islocked: false });
