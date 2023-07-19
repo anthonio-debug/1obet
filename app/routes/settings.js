@@ -424,11 +424,17 @@ async function listInplayEvents(req, res) {
 async function listOddsAPI(req, res) {
   try {
     const eventIds = req.query.ids
-    const odds = await Odds.find({ eventId: { $in: eventIds } });
-    const url = `${config.liveTvUrl}/get_live_tv_url/${eventIds}`;
-    const liveTVResponse = await axios.get(url);
-    const liveTVData = liveTVResponse.data;
-    const fancyData = await FancyGames.find({ eventId: { $in: eventIds } })
+    // const odds = await Odds.find({ eventId: { $in: eventIds } });
+    const odds = await Odds.aggregate([
+      { $match: { eventId: eventIds } },
+      { $sort: { createdAt: -1 } },
+      { $group: { _id: "$marketName", odds: { $first: "$$ROOT" } } },
+      { $replaceRoot: { newRoot: "$odds" } }
+    ]).exec()
+    // const url = `${config.liveTvUrl}/get_live_tv_url/${eventIds}`;
+    // const liveTVResponse = await axios.get(url);
+    // const liveTVData = liveTVResponse.data;
+    const fancyData = await FancyGames.findOne({ eventId: { $in: eventIds } }).sort({ createdAt: -1 })
 
     console.log('fancyData', fancyData);
 
@@ -448,11 +454,11 @@ async function listOddsAPI(req, res) {
       message: 'Records',
       results: {
         odds,
-        liveTVData: {
-          scoreUrl: liveTVData.scoreUrl || '',
-          streamingUrl: liveTVData.streamingUrl || '',
-        },
-        fancyData,
+        // liveTVData: {
+        //   scoreUrl: liveTVData.scoreUrl || '',
+        //   streamingUrl: liveTVData.streamingUrl || '',
+        // },
+        fancyData: fancyData ? [fancyData] : [],
         livesportscoreData
       },
     });

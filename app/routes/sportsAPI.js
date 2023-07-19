@@ -423,7 +423,26 @@ async function listMarketsByCronJob(eventId) {
   try {
     const response = await axios.get(url);
     const marketsData = response.data;
-  
+    console.log('MArkertData', marketsData)
+
+
+    var listMarketData = await marketsData.map((element) => ({
+      updateOne: {
+        filter: { marketId: element.marketId },
+        update: {
+          $set: {
+            status: element.status,
+            eventId: eventId,
+            marketName: element.marketName,
+            totalMatched: element.totalMatched
+          },
+        },
+        upsert: true,
+      },
+    }));
+
+    const savedEvents = await ListMarket.bulkWrite(listMarketData);
+     
     let marketIds = []
     marketsData.forEach(element => {
         marketIds.push(element.marketId)

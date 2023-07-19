@@ -363,7 +363,8 @@ async function marketDescriptionCronjob(marketId) {
 
 async function raceOddsJob(ids) {
   try {
-   console.log('Hello =========>', ids)
+   console.log('Hello1 =========>', ids)
+    // ids = ["1.216197191"]
     const url = `${config.horseRaceUrl}/odds/?ids=${ids}`;
     const response = await axios.get(url);
 

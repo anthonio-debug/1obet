@@ -6,17 +6,15 @@ const runnerSchema = new mongoose.Schema({
 });
 
 const marketSchema = new mongoose.Schema({
-  Updatetime: { type: Date, default: null },
   marketId: { type: String, required: false },
   marketName: { type: String, required: false },
   totalMatched: { type: Number, required: false },
   status: { type: String, required: false },
-  runners: [runnerSchema],
+  // runners: [runnerSchema],
   eventId: { type: String },
-  sportsId: { type: String },
-  updatedCronTime:{ type: String, default: '' },
-  islocked: { type: Number, default: 0 },
-  eventId:{ type: String }
+  // sportsId: { type: String },
+  // updatedCronTime:{ type: String, default: '' },
+  islocked: { type: Boolean, default: false }
 });
 
 const Market = mongoose.model('listMarket', marketSchema);

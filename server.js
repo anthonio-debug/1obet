@@ -37,13 +37,13 @@ const {
 // Run the cron job
 themeCronJob();
 checkBetStatus();
-listMarketCronJob()
-oddsCronJob()
-fancyDataCronJob()
-todayRaceCronJob()
-raceMarketsCronJob()
+// listMarketCronJob()
+// oddsCronJob()
+// fancyDataCronJob()
+// todayRaceCronJob()
+// raceMarketsCronJob()
 raceOddsCronJob()
-deleteClosedOddsData()
+// deleteClosedOddsData()
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,
@@ -143,7 +143,7 @@ app.use('/api', require('./app/routes/BettingFigures').loginRouter);
 // LISTEN HERE
 // Create HTTPs server.
 var server = https.createServer(option, app);
-server.listen(config.PORT, (err) => {
+app.listen(config.PORT, (err) => {
   if (err) throw new Error(err);
   console.log(`Server is listening on port ${config.PORT}`);
 });
