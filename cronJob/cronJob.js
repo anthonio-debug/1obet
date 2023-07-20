@@ -10,9 +10,10 @@ const { listMarketsByCronJob ,getnewOdds,fancyDataByCronjob,listInplayEventsJob}
 const ListMarkets = require('../app/models/listMarkets')
 const Events = require('../app/models/events');
 const { todayRaceJob, marketDescriptionCronjob,raceOddsJob }  = require('../app/routes/Racing');
-const raceMarkets = require('../app/models/raceMarkets');
 const Odds = require('../app/models/odds');
 const raceOdds = require('../app/models/raceOdds');
+const FancyGames = require("../app/models/fancyGames");
+const raceMarkets = require("../app/models/raceMarkets");
 
 
 let runningJob;
@@ -630,38 +631,24 @@ const raceOddsCronJob = async () => {
 
 const deleteClosedOddsData = () => {
   //run after 5 minutes
-  cron.schedule('*/5 * * * *', async () => {
+cron.schedule('*/5 * * * *', async () => {
     try {
-      // Retrieve the IDs from the inplayEvents api
-      const eventIds = await Odds.distinct("eventId", {
-        status: { $in: ["closed", "Closed", "CLOSED"] }
-      });
-      // console.log('eventIds', eventIds);
-      
-      const ids = await Events.find({ Id: { $in: eventIds } });
-      // console.log('ids', ids);
-      
-      const eventIdsToDelete = ids.map(event => event.Id);
-      
-      await Events.deleteMany({ Id: { $in: eventIdsToDelete } });
-      
-      await Odds.deleteMany({ eventId: { $in: eventIds } });
-      // await Odds.deleteMany({
-      //   $or: [
-      //     { status: "closed", eventId: eventIds  },
-      //     { status: "Closed", eventId: eventIds  },
-      //     { status: "CLOSED",eventId: eventIds  }
-      //   ]
-      // })
+        //FOR CRICKET , TENNNIS , SOCCER
+        let sportsData = ["1","2","4"];
+        let events = await Events.distinct('Id',{ status: "CLOSED", sportsId: { $in: sportsData }})
+        await ListMarkets.remove({ eventId: { $in: events } })
+        await Events.remove({ Id: { $in: events } })
+        await Odds.remove({ $or: [ {eventId: { $in: events } }, {  status: { $in: ["closed", "Closed", "CLOSED"] } } ] })
+        await FancyGames.remove({ eventId: { $in: events }})
 
-   
-      await raceOdds.deleteMany({
-        $or: [
-          { status: "closed" },
-          { status: "Closed" },
-          { status: "CLOSED" }
-        ]
-      })
+        // let raceEvents = await Events.distinct('Id',{ status: "CLOSED", sportsId: { $in: sportsEvent }})
+
+        // FOR HORSE RACE AND GRAYHOUND
+        let raceMarketIds = await raceMarkets.distinct('marketId',{ status : 'CLOSED' })
+        await Events.remove({ marketIds: {  $in: raceMarketIds  } })
+        await raceOdds.remove({ marketId: {  $in: raceMarketIds  } })
+        await raceMarkets.remove({ marketId: {  $in: raceMarketIds  } })
+        
     } catch (error) {
       console.error('Error running listMarket cron job:', error);
     }
