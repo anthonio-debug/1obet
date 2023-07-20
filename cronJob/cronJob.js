@@ -440,7 +440,7 @@ const themeCronJob = () => {
 
 //Complete
 const listMarketCronJob = () => {
-  // Cron job to run 12 times per minute
+   // Cron job to run every 1 minute
   cron.schedule('*/1 * * * *', async () => {
     try {
       // Retrieve the IDs from the inplayEvents api
@@ -466,26 +466,28 @@ const listMarketCronJob = () => {
 }
 
 const oddsCronJob = () => {
-  cron.schedule('*/1 * * * * *', async () => {
-    try {
-      let batchArray = []
-      const racesportsIds = ["1", "2", "4"];
-      const distinctMarketIdsQuery = Events.distinct("marketIds", { islocked: false , sportsId: { $in: racesportsIds } });
-      let marketIds = await distinctMarketIdsQuery.exec()
+  // Cron job to run every 1 minute
+  cron.schedule('*/5 * * * * *', async () => {    try {
       
-      batchArray.push(...marketIds.slice(0, 20));
-
-      if(batchArray.length === 0) {
-        await Events.updateMany(
+      const marketIds = await ListMarkets.distinct("marketId", { islocked: false });
+      console.log('MarketID', marketIds)
+      if(marketIds.length === 0) {
+        await ListMarkets.updateMany(
           { },
           {  islocked: false }
         );
+      }else {
+        let batchArray = []
+          batchArray.push(...marketIds.slice(0, 20));
+        
+
+        await getnewOdds(batchArray);
+        await ListMarkets.updateMany(
+          { marketId: { $in: batchArray  } },
+          { islocked: true }
+        );
       }
-      await getnewOdds(batchArray);
-      await Events.updateMany(
-        { marketId: { $in: marketIds  } },
-        { islocked: true }
-      );
+    
     } catch (error) {
       console.error('Error running odds cron job:', error);
     }
@@ -493,9 +495,8 @@ const oddsCronJob = () => {
 };
 
 const fancyDataCronJob = async () => {
-  // Cron job to run every 2 second
-  cron.schedule('*/2 * * * * *', async () => {
-    try {
+  // Cron job to run every 1 minute
+  cron.schedule('*/1 * * * *', async () => {    try {
       // Retrieve the inplayevents data dynamically from the database
       const inplayEventsData = await Events.find({ sportsId: '4' }).exec();
 
@@ -515,7 +516,7 @@ const todayRaceCronJob = async () => {
   cron.schedule('*/1 * * * *', async () => {
     try {
       // Retrieve the fancy data dynamically from the database
-    const racesportsIds = [7,4339]
+    const racesportsIds = ["7","4339"]
     for (const SportId of racesportsIds) {
       const listRaceDataResponse = await todayRaceJob(SportId);
       const racesData = listRaceDataResponse.horseRacesData
@@ -528,8 +529,8 @@ const todayRaceCronJob = async () => {
 };
 
 const raceMarketsCronJob = async () => {
-  // Cron job to run every 2 second
-  cron.schedule('*/2 * * * * *', async () => {
+  // Cron job to run every 1 minute
+  cron.schedule('*/1 * * * *', async () => {
     try {
       // Retrieve the sportsIds dynamically from the database
       const racesportsIds = ["7", "4339"];
@@ -548,30 +549,60 @@ const raceOddsCronJob = async () => {
 
   cron.schedule('*/2 * * * * *', async () => {
     try {
-  
-     let batchArray = []
-     const marketIds = await raceMarkets.distinct('eventNodes.marketNodes.marketId', { islocked: false});
-    //  let marketIds = await distinctMarketIdsQuery.exec()
+      const racesportsIds = ["7", "4339"];
+    const marketIds = await Events.distinct("marketIds", { sportsId: { $in: racesportsIds } , islocked: false});
+    //  const marketIds = await raceMarkets.distinct('eventNodes.marketNodes.marketId', { islocked: false});
+     console.log('MarketID ====>', marketIds)
 
-     batchArray.push(...marketIds.slice(0, 20));
-     if(batchArray.length === 0) {
+
+    let batchArray = []
+      batchArray.push(...marketIds.slice(0, 20));
+     if(marketIds.length === 0) {
       await Events.updateMany(
         { },
         {  islocked: false }
       );
      }
-    
-    await raceOddsJob(batchArray);
-    await Events.updateMany(
-      { marketId: { $in: marketIds  } },
-      { islocked: true }
-    );
+      await raceOddsJob(batchArray);
+      await Events.updateMany(
+        { marketIds: { $in: batchArray  } },
+        { islocked: true }
+      );
 
+     
+  
     } catch (error) {
       console.error('Error running odds cron job:', error);
     }
   });
 };
+
+// const raceOddsCronJob = async () => {
+//   // Cron job to run every 1 minute
+//   cron.schedule('*/1 * * * *', async () => {
+//     try {
+//       const batchSize = 20;
+//       const marketIds = await raceMarkets.distinct('eventNodes.marketNodes.marketId', { islocked: false });
+//       console.log('marketIds', marketIds);
+
+//       for (let i = 0; i < marketIds.length; i += batchSize) {
+//         const batchArray = marketIds.slice(i, i + batchSize);
+//         console.log('batchArray', batchArray);
+
+//         await raceOddsJob(batchArray);
+
+//         await Events.updateMany({ marketId: { $in: batchArray } }, { islocked: true });
+//       }
+
+//       if (marketIds.length === 0) {
+//         await Events.updateMany({}, { islocked: false });
+//       }
+//     } catch (error) {
+//       console.error('Error running odds cron job:', error);
+//     }
+//   });
+// };
+
 // const deleteClosedOddsData = () => {
 //   //run after 5 minutes
 //   cron.schedule('*/1 * * * *', async () => {

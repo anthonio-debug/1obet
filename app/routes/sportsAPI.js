@@ -329,6 +329,7 @@ async function getnewOdds(ids) {
       const response = await axios.get(url);
       
       const oddsData = response.data;
+      console.log('data',oddsData);
       let sportIds = {  "soccer" : "1", "cricket" : "4", "tennis" : "2" }
       let data = []
        await oddsData.forEach((element) => {
@@ -369,6 +370,8 @@ async function listInplayEventsJob(sportsId) {
   try {
     const response = await axios.get(url);
     const inplayEvents = response.data;
+    console.log('inplayEvents',inplayEvents);
+ 
     if(inplayEvents){
       var sportsEventData = inplayEvents.map((element) => ({
         updateOne: {
@@ -420,7 +423,26 @@ async function listMarketsByCronJob(eventId) {
   try {
     const response = await axios.get(url);
     const marketsData = response.data;
-  
+    console.log('MArkertData', marketsData)
+
+
+    var listMarketData = await marketsData.map((element) => ({
+      updateOne: {
+        filter: { marketId: element.marketId },
+        update: {
+          $set: {
+            status: element.status,
+            eventId: eventId,
+            marketName: element.marketName,
+            totalMatched: element.totalMatched
+          },
+        },
+        upsert: true,
+      },
+    }));
+
+    const savedEvents = await ListMarket.bulkWrite(listMarketData);
+     
     let marketIds = []
     marketsData.forEach(element => {
         marketIds.push(element.marketId)
