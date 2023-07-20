@@ -171,7 +171,7 @@ function credit(req, res) {
         return res.send({ status: '500', msg: 'internal error' });
       }
 
-      const creditAmount = req.query.amount
+      const creditAmount = payload.amount
       
       if (creditAmount < 0) {
         return res.json({ status: '500', msg: 'Negative amount not allowed!' });
