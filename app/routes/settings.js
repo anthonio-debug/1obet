@@ -440,7 +440,7 @@ async function listOddsAPI(req, res) {
 
     let livesportscoreData = {}
 
-    const event = await inPlayEvents.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1 });
+    const event = await inPlayEvents.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
       const type = event ? event.sportsId : null;
       if(type == 4){
         livesportscoreData = await cricketLiveScore(eventIds)
@@ -459,7 +459,8 @@ async function listOddsAPI(req, res) {
         //   streamingUrl: liveTVData.streamingUrl || '',
         // },
         fancyData: fancyData ? [fancyData] : [],
-        livesportscoreData
+        livesportscoreData,
+       matchData: event
       },
     });
   } catch (error) {
@@ -535,6 +536,9 @@ async function cricketLiveScore(id) {
       const scoreInfo     = JSON.parse(data).score
       let score           = scoreInfo.score1;
       let played          = scoreInfo.score2;
+      response.spnnation1 = scoreInfo.spnnation1;
+      response.spnnation2 = scoreInfo.spnnation2;
+
       if(scoreInfo.activenation1 == 1){
           response.team   =  scoreInfo.spnnation1
           response.crr    = scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim()
@@ -546,7 +550,7 @@ async function cricketLiveScore(id) {
           score            = scoreInfo.score2;
           played           = scoreInfo.score1;
       }
-        
+  
       response.type   = type
       response.balls  = scoreInfo.balls
 

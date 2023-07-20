@@ -392,7 +392,7 @@ async function listInplayEventsJob(sportsId) {
               status: element.status,
               isPremium: element.isPremium,
               type: element.type,
-              matchType: getMatchType(element.competitionName, element.name)
+              matchType: getMatchType(element.competitionName, element.name, sportsId)
             },
           },
           upsert: true,
@@ -517,9 +517,9 @@ async function fancyDataByCronjob(eventId) {
 }
 
 // this method used regex to get the matchType from competitionName 
-function getMatchType(competitionName, name) {
+function getMatchType(competitionName, name, sportsId) {
   const keywords = /(T20|Twenty20|ODI|One Day|T10|Ten10|Test)/i;
-  
+  if (sportsId == '4') {
   const nameMatch = name.match(keywords);
   const competitionNameMatch = competitionName && competitionName.match(keywords);
 
@@ -527,6 +527,7 @@ function getMatchType(competitionName, name) {
     return nameMatch[0];
   } else if (competitionNameMatch) {
     return competitionNameMatch[0];
+  }
   }
   return '';
 }
