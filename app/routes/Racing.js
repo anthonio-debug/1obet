@@ -322,6 +322,9 @@ async function marketDescriptionCronjob(marketId) {
         update: {
           $setOnInsert: {
             eventTypeId: eventTypeData?.eventTypeId,
+            eventId: eventNodeData?.eventId,
+            marketId: marketNodeData?.marketId,
+            status: marketNodeData?.state.status,
             eventNodes: {
               eventId: eventNodeData?.eventId,
               event: eventData,

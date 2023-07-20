@@ -8,6 +8,9 @@ const eventNodeSchema = new mongoose.Schema({
 
 const raceMarketsSchema = new mongoose.Schema({
   eventTypeId: { type : Number },
+  eventId: { type : String },
+  marketId: { type : String },
+  status: { type : String },
   eventNodes: [eventNodeSchema],
   isMarketDataVirtual: { type: Boolean },
   islocked: { type: Boolean , default: false }
