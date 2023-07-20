@@ -38,12 +38,12 @@ const {
 themeCronJob();
 checkBetStatus();
 listMarketCronJob()
-// oddsCronJob()
-// fancyDataCronJob()
-// todayRaceCronJob()
-// raceMarketsCronJob()
-// raceOddsCronJob()
-// deleteClosedOddsData()
+oddsCronJob()
+fancyDataCronJob()
+todayRaceCronJob()
+raceMarketsCronJob()
+raceOddsCronJob()
+deleteClosedOddsData()
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,
