@@ -466,8 +466,9 @@ const listMarketCronJob = () => {
 }
 
 const oddsCronJob = () => {
-  // Cron job to run every 1 minute
-  cron.schedule('*/5 * * * * *', async () => {    try {
+  // Cron job to run every 1 sec
+  cron.schedule('* * * * * *', async () => {
+    try {
       
       const marketIds = await ListMarkets.distinct("marketId", { islocked: false });
       console.log('MarketID', marketIds)
@@ -496,7 +497,8 @@ const oddsCronJob = () => {
 
 const fancyDataCronJob = async () => {
   // Cron job to run every 1 minute
-  cron.schedule('*/1 * * * *', async () => {    try {
+  cron.schedule('*/2 * * * * *', async () => {
+    try {
       // Retrieve the inplayevents data dynamically from the database
       const inplayEventsData = await Events.find({ sportsId: '4' }).exec();
 
