@@ -72,6 +72,9 @@ async function cricketLiveScore(id) {
         const scoreInfo     = JSON.parse(data).score
         let score           = scoreInfo.score1;
         let played          = scoreInfo.score2;
+        response.spnnation1 = scoreInfo.spnnation1;
+        response.spnnation2 = scoreInfo.spnnation2;
+
         if(scoreInfo.activenation1 == 1){
             response.team   =  scoreInfo.spnnation1
             response.crr    = scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim()
@@ -113,6 +116,7 @@ async function cricketLiveScore(id) {
                 response.rrr = scoreInfo.spnreqrate2;
             }
         }
+
         [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
         return response
       }else{
@@ -148,8 +152,6 @@ async function otherLiveScore(id) {
   }
 }
 
-
-
 async function livesportscore(req, res) {
     try {
 
@@ -178,21 +180,6 @@ async function livesportscore(req, res) {
         });
     }
 }
-
-
-// {
-//     "score": {
-//         "team": "NZV",
-//         "crr": "11.20",
-//         "type": "T10",
-//         "secondInnings": 1,
-//         "spnmessage": "SLV won the match",
-//         "target": "126",
-//         "score": "112",
-//         "wickets": "6",
-//         "overs": "10.0"
-//     }
-// }
 
 async function placeFigureBets(req, res) {
     try {
@@ -440,8 +427,6 @@ async function placeBet(req, res) {
       return res.status(404).send({ message: 'Error placing bet' });
     }
 }
-
-  
 
 loginRouter.get('/getBettingFigures', getBettingFigures);
 loginRouter.post('/UpdateBettingFigures', UpdateBettingFigures);
