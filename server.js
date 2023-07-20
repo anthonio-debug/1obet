@@ -37,13 +37,13 @@ const {
 // Run the cron job
 themeCronJob();
 checkBetStatus();
-// listMarketCronJob()
-// oddsCronJob()
-// fancyDataCronJob()
-// todayRaceCronJob()
-// raceMarketsCronJob()
+listMarketCronJob()
+oddsCronJob()
+fancyDataCronJob()
+todayRaceCronJob()
+raceMarketsCronJob()
 raceOddsCronJob()
-// deleteClosedOddsData()
+deleteClosedOddsData()
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,
