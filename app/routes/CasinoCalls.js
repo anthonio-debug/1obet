@@ -60,9 +60,14 @@ function balance(req, res) {
         return res.send({ status: '500', msg: 'internal error' });
       }
 
+      const balance = (user.availableBalance / 307).toFixed(2);
+      if (balance < 0) {
+        return res.json({ status: '500', msg: 'Negative amount not allowed!' });
+      }
+
       return res.send({
         status: 200,
-        balance: (user.availableBalance / 307).toFixed(2),
+        balance: balance,
       });
     });
   });
@@ -91,14 +96,26 @@ function debit(req, res) {
     });
   }
 
-  User.findOneAndUpdate(
-    { remoteId: payload.remote_id },
-    { $inc: { availableBalance: -(payload.amount * 307) } },
-    { new: true },
-    (err, updatedUser) => {
-      if (err || !updatedUser) {
-        return res.send({ status: '500', msg: 'internal error' });
-      }
+  User.findOne({ remoteId: payload.remote_id }, (err, user) => {
+    if (err || !user) {
+      return res.send({ status: '500', msg: 'internal error' });
+    }
+
+    const debitAmount = payload.amount * 307;
+    const updatedBalance = user.availableBalance - debitAmount;
+
+    if (updatedBalance < 0) {
+      return res.json({ status: '500', msg: 'Negative balance not allowed!' });
+    }
+
+    User.findOneAndUpdate(
+      { remoteId: payload.remote_id },
+      { $inc: { availableBalance: -debitAmount } },
+      { new: true },
+      (err, updatedUser) => {
+        if (err || !updatedUser) {
+          return res.send({ status: '500', msg: 'internal error' });
+        }
 
       const casinoDebits = new CasinoDebits(payload);
       casinoDebits.save((err) => {
@@ -116,6 +133,7 @@ function debit(req, res) {
       });
     }
   );
+  });
 }
  
 function credit(req, res) {
@@ -153,7 +171,13 @@ function credit(req, res) {
         return res.send({ status: '500', msg: 'internal error' });
       }
 
-      user.availableBalance += req.query.amount * 307;
+      const creditAmount = req.query.amount * 307;
+      
+      if (creditAmount < 0) {
+        return res.json({ status: '500', msg: 'Negative amount not allowed!' });
+      }
+
+      user.availableBalance += creditAmount;
       user.save((err) => {
         if (err) {
           console.error(err);
@@ -210,7 +234,16 @@ function rollback(req, res) {
       }
 
       if (payload.action === 'rollback') {
-        user.availableBalance += payload.amount * 307;
+        const rollbackAmount = payload.amount * 307;
+
+        if (rollbackAmount < 0) {
+          return res.json({
+            status: 500,
+            msg: 'Negative amount not allowed!'
+          });
+        }
+
+        user.availableBalance += rollbackAmount;
         user.save((err) => {
           if (err) {
             console.error(err);
