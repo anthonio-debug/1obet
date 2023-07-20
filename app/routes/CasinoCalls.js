@@ -60,7 +60,7 @@ function balance(req, res) {
         return res.send({ status: '500', msg: 'internal error' });
       }
 
-      const balance = user.availableBalance 
+      const balance = (user.availableBalance / 307).toFixed(2);
       if (balance < 0) {
         return res.json({ status: '500', msg: 'Negative amount not allowed!' });
       }
@@ -101,7 +101,7 @@ function debit(req, res) {
       return res.send({ status: '500', msg: 'internal error' });
     }
 
-    const debitAmount = payload.amount
+    const debitAmount = payload.amount * 307;
     const updatedBalance = user.availableBalance - debitAmount;
 
     if (updatedBalance < 0) {
@@ -124,7 +124,7 @@ function debit(req, res) {
           return res.send({ status: '500', msg: 'internal error' });
         }
 
-        const updatedBalance = updatedUser.availableBalance
+        const updatedBalance = (updatedUser.availableBalance / 307).toFixed(2);
 
         return res.json({
           status: 200,
@@ -171,7 +171,7 @@ function credit(req, res) {
         return res.send({ status: '500', msg: 'internal error' });
       }
 
-      const creditAmount = payload.amount
+      const creditAmount = req.query.amount * 307;
       
       if (creditAmount < 0) {
         return res.json({ status: '500', msg: 'Negative amount not allowed!' });
@@ -185,7 +185,7 @@ function credit(req, res) {
         }
         return res.send({
           status: 200,
-          balance: user.availableBalance
+          balance: (user.availableBalance / 307).toFixed(2),
         });
       });
     });
@@ -234,7 +234,7 @@ function rollback(req, res) {
       }
 
       if (payload.action === 'rollback') {
-        const rollbackAmount = payload.amount
+        const rollbackAmount = payload.amount * 307;
 
         if (rollbackAmount < 0) {
           return res.json({
@@ -253,7 +253,7 @@ function rollback(req, res) {
             });
           }
 
-          const updatedBalance = user.availableBalance
+          const updatedBalance = (user.availableBalance / 307).toFixed(2);
 
           return res.json({
             status: 200,
@@ -261,7 +261,7 @@ function rollback(req, res) {
           });
         });
       } else {
-        const updatedBalance = user.availableBalance
+        const updatedBalance = (user.availableBalance / 307).toFixed(2);
 
         return res.json({
           status: 200,
