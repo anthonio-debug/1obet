@@ -249,7 +249,7 @@ async function rollback(req, res) {
 
           if(sameTransId > 1){
             return res.json({
-              status: 404,
+              status: 200,
               balance: (user.availableBalance / 307),
             });
           }
