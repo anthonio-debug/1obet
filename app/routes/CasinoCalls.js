@@ -104,11 +104,8 @@ async function debit(req, res) {
     if (updatedBalance < 0) {
       return res.json({ status: '500', msg: 'Negative balance not allowed!' });
     }
-    
-    User.findOneAndUpdate(
-      { remoteId: payload.remote_id },
-      { $inc: { availableBalance: -debitAmount } },
-      { new: true },
+    user.availableBalance -= debitAmount;
+    user.save(
       (err, updatedUser) => {
         if (err || !updatedUser) {
           return res.send({ status: '500', msg: 'internal error' });
@@ -119,14 +116,36 @@ async function debit(req, res) {
             console.error(err);
             return res.send({ status: '500', msg: 'internal error' });
           }
-          const updatedBalance = updatedUser.availableBalance;
             return res.json({
               status: 200,
               balance: updatedBalance,
             });
         });
     }
-  );
+    );
+    
+    // User.findOneAndUpdate(
+    //   { remoteId: payload.remote_id },
+    //   { $inc: { availableBalance: -debitAmount } },
+    //   { new: true },
+    //   (err, updatedUser) => {
+    //     if (err || !updatedUser) {
+    //       return res.send({ status: '500', msg: 'internal error' });
+    //     }
+    //     const casinoDebits = new CasinoDebits(payload);
+    //     casinoDebits.save((err) => {
+    //       if (err) {
+    //         console.error(err);
+    //         return res.send({ status: '500', msg: 'internal error' });
+    //       }
+    //       const updatedBalance = updatedUser.availableBalance;
+    //         return res.json({
+    //           status: 200,
+    //           balance: updatedBalance,
+    //         });
+    //     });
+    // }
+    // );
   });
 }
  
