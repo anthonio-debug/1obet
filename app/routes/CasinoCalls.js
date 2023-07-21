@@ -249,7 +249,7 @@ async function rollback(req, res) {
 
           if(sameTransId > 1){
             return res.json({
-              status: 200,
+              status: 404,
               balance: (user.availableBalance / 307),
             });
           }
@@ -314,32 +314,6 @@ async function rollback(req, res) {
   
 }
 
-
-
-// function rollback(req, res) {
-//   const payload = req.query
-//   const remoteId = req.query.remote_id;
-//   const casinoDebits = new CasinoDebits(payload);
-//   casinoDebits.save((err, savedPayload) => {
-//     if (err) {
-//       console.error(err);
-//       return res.send({ status: '500', msg: 'internal error' });
-//     }
-//   User.findOne({ remoteId: remoteId }, (err, user) => {
-//     if (err || !user) {
-//       return res.send({ status: '500', msg: 'internal error' });
-//     }
-//     if(req.query.action == 'rollback'){
-//       user.availableBalance += req.query.amount * 307;
-//       user.save();
-//     }
-//     return res.send({
-//       status: 200,
-//       balance: (user.availableBalance / 307).toFixed(2),
-//     });
-//   });
-// })
-// }
 
 function casino(req, res) {
   const { action, remote_id } = req.query;
