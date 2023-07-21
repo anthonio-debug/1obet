@@ -64,7 +64,6 @@ function balance(req, res) {
 async function debit(req, res) {
   const payload = req.query;
   const salt = config.saltKey;
-
   const key = payload.key;
   delete payload.key;
 
@@ -84,7 +83,7 @@ async function debit(req, res) {
     });
   }
 
-  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, remote_id: payload.remote_id});
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id});
   User.findOne({ remoteId: payload.remote_id }, (err, user) => {
     if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
@@ -163,7 +162,7 @@ async function credit(req, res) {
   }
 
 
-  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, remote_id: payload.remote_id});
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id});
   const remoteId = payload.remote_id;
   User.findOne({ remoteId: remoteId }, (err, user) => {
     if (err || !user) {
