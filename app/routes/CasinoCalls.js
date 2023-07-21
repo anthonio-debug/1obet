@@ -34,12 +34,6 @@ function balance(req, res) {
     });
   }
 
-  // casinoDebits.save((err, savedPayload) => {
-  //   if (err) {
-  //     console.error(err);
-  //     return res.send({ status: '500', msg: 'internal error' });
-  //   }
-
   const casinoDebits = new CasinoDebits(payload);
   User.findOne({ remoteId: payload.remote_id }, (err, user) => {
     console.log('user:', user);
@@ -47,7 +41,7 @@ function balance(req, res) {
       return res.send({ status: '500', msg: 'internal error' });
     }
 
-    const balance = (user.availableBalance / 307);
+    const balance = user.availableBalance;
     if (balance < 0) {
       return res.json({ status: '500', msg: 'Negative amount not allowed!' });
     }
@@ -89,21 +83,21 @@ async function debit(req, res) {
     if(sameTransId > 0){
       return res.json({
         status: 200,
-        balance: (user.availableBalance / 307),
+        balance: user.availableBalance,
       });
     }
-    if(payload.amount > (user.availableBalance / 307)){
+    if(payload.amount > user.availableBalance){
       return res.json({
         status: 403,
         message: " Insufficient balance amount ",
       });
     }
 
-    let  debitAmount = payload.amount * 307;
+    let  debitAmount = payload.amount;
     if(payload.amount < 0){
       return res.json({
         status: 500,
-        balance: (user.availableBalance / 307)
+        balance: user.availableBalance
       });
     }
 
@@ -126,7 +120,7 @@ async function debit(req, res) {
             console.error(err);
             return res.send({ status: '500', msg: 'internal error' });
           }
-          const updatedBalance = (updatedUser.availableBalance / 307);
+          const updatedBalance = updatedUser.availableBalance;
             return res.json({
               status: 200,
               balance: updatedBalance,
@@ -169,18 +163,18 @@ async function credit(req, res) {
     if(payload.amount < 0){
       return res.json({
         status: 500,
-        balance: (user.availableBalance / 307)
+        balance: user.availableBalance
       });
     }
 
     if(sameTransId > 0){
       return res.json({
         status: 200,
-        balance: (user.availableBalance / 307),
+        balance: user.availableBalance,
       });
     }
 
-    const creditAmount = req.query.amount * 307;
+    const creditAmount = req.query.amount;
     
     if (req.query.amount < 0) {
       return res.json({ status: '500', msg: 'Negative amount not allowed!' });
@@ -200,7 +194,7 @@ async function credit(req, res) {
       })
       return res.send({
         status: 200,
-        balance: (user.availableBalance / 307),
+        balance: user.availableBalance,
       });
     });
   });
@@ -241,13 +235,13 @@ async function rollback(req, res) {
     if(sameTransId == 0){
       return res.json({
         status: 404,
-        balance: (user.availableBalance / 307)
+        balance: user.availableBalance
       });
     }
     if(sameTransId > 1){
       return res.json({
         status: 200,
-        balance: (user.availableBalance / 307)
+        balance: user.availableBalance
       });
     }
 
@@ -263,15 +257,15 @@ async function rollback(req, res) {
           let amount = 0;
           const action = trans.action;
           if(action == "credit"){
-            amount = -(trans.amount * 307);
+            amount = - trans.amount;
           }
           else if(action == "debit"){
-            amount = (trans.amount * 307);
+            amount = trans.amount;
           }
           else if(action == 'rollback'){
             return res.json({
               status: 404,
-              balance: (user.availableBalance / 307)
+              balance: user.availableBalance
             });
           }
 
@@ -297,7 +291,7 @@ async function rollback(req, res) {
               });
               return res.json({
                 status: 404,
-                balance: (user.availableBalance / 307)
+                balance: user.availableBalance
               });
             }  
           })
@@ -305,7 +299,7 @@ async function rollback(req, res) {
       });
 
     } else{
-      const updatedBalance = (user.availableBalance / 307);
+      const updatedBalance = user.availableBalance;
       return res.json({
         status: 404,
         balance: updatedBalance
