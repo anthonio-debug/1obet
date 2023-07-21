@@ -13,8 +13,8 @@ function createHashKey(salt, queryString) {
 
 function balance(req, res) {
   const payload = req.query;
-  const salt = config.saltKey; // Replace with your default salt key
-  const key = payload.key;
+  const salt    = config.saltKey; // Replace with your default salt key
+  const key     = payload.key;
   delete payload.key;
 
   const queryString = Object.keys(payload)
@@ -34,7 +34,7 @@ function balance(req, res) {
     });
   }
 
-  const casinoDebits = new CasinoDebits(payload);
+  // const casinoDebits = new CasinoDebits(payload);
   User.findOne({ remoteId: payload.remote_id }, (err, user) => {
     console.log('user:', user);
     if (err || !user) {
