@@ -89,6 +89,12 @@ async function debit(req, res) {
     if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
     }
+    if(payload.amount > (user.availableBalance/307)){
+      return res.json({
+        status: 403,
+        message: "Insufficient balance amount",
+      });
+    }
 
     if(sameTransId > 0){
       return res.json({
@@ -102,13 +108,6 @@ async function debit(req, res) {
       return res.json({
         status: 500,
         balance: (user.availableBalance / 307)
-      });
-    }
-
-    if(payload.amount > (user.availableBalance/307)){
-      return res.json({
-        status: 403,
-        message: "Insufficient balance amount",
       });
     }
 
@@ -282,6 +281,16 @@ async function rollback(req, res) {
               });
             }
             else {
+              const casinoDebits = new CasinoDebits(payload);
+              casinoDebits.save((err, savedPayload) => {
+                if (err) {
+                  console.error(err);
+                  return res.json({
+                    status: 500,
+                    msg: 'Internal error'
+                  });
+                }
+              });
               return res.json({
                 status: 404,
                 balance: (user.availableBalance / 307)
@@ -297,18 +306,6 @@ async function rollback(req, res) {
       return res.json({
         status: 404,
         balance: updatedBalance
-      });
-    }
-  });
-
-
-  const casinoDebits = new CasinoDebits(payload);
-  casinoDebits.save((err, savedPayload) => {
-    if (err) {
-      console.error(err);
-      return res.json({
-        status: 500,
-        msg: 'Internal error'
       });
     }
   });
