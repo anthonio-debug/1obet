@@ -242,13 +242,13 @@ async function rollback(req, res) {
           })
         }
         else {
-          let amount = (trans.amount * 307);
+          let amount = 0;
           const action = trans.action;
           if(action == "debit"){
             amount = (trans.amount * 307);
           }
           else if(action == "credit"){
-            amount = -amount
+            amount = -(trans.amount * 307);
           }
           else if(action == 'rollback'){
             return res.json({
@@ -256,6 +256,7 @@ async function rollback(req, res) {
               balance: (user.availableBalance / 307)
             });
           }
+          
           user.availableBalance += amount;
           user.save((err) => {
             if (err) {
