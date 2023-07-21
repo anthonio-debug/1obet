@@ -92,7 +92,7 @@ async function debit(req, res) {
 
     if(sameTransId > 0){
       return res.json({
-        status: 500,
+        status: 200,
         balance: user.availableBalance,
       });
     }
