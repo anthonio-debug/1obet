@@ -246,30 +246,32 @@ async function rollback(req, res) {
         else {
           let amount = 0;
           const action = trans.action;
-
           if(sameTransId > 1){
-            return res.json({
-              status: 200,
-              balance: (user.availableBalance / 307),
-            });
-          }
-          else if(sameTransId == 0){
-            return res.json({
-              status: 404,
-              balance: (user.availableBalance / 307),
-            });
-          }
-
-          if(action == "credit"){
-            amount = -(trans.amount * 307);
-          }else if(action == "debit"){
-            amount = (trans.amount * 307);
-          }else if(action == 'rollback'){
             return res.json({
               status: 404,
               balance: (user.availableBalance / 307)
             });
           }
+          else if(sameTransId == 0){
+            return res.json({
+              status: 404,
+              balance: (user.availableBalance / 307)
+            });
+          }
+
+          if(action == "credit"){
+            amount = -(trans.amount * 307);
+          }
+          else if(action == "debit"){
+            amount = (trans.amount * 307);
+          }
+          else if(action == 'rollback'){
+            return res.json({
+              status: 404,
+              balance: (user.availableBalance / 307)
+            });
+          }
+
           user.availableBalance += amount;
           user.save((err) => {
             if (err) {
@@ -309,7 +311,6 @@ async function rollback(req, res) {
         msg: 'Internal error'
       });
     }
-
   });
   
 }
