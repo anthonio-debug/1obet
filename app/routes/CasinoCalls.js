@@ -118,10 +118,18 @@ function debit(req, res) {
 
         const updatedBalance = (updatedUser.availableBalance / 307).toFixed(2);
 
-        return res.json({
-          status: 200,
-          balance: updatedBalance,
-        });
+        if(payload.amount < 0){
+          return res.json({
+            status: 500,
+            balance: updatedBalance,
+          });
+        }else{
+          return res.json({
+            status: 200,
+            balance: updatedBalance,
+          });
+        }
+
       });
     }
   );
