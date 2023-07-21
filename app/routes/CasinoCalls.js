@@ -89,7 +89,10 @@ function debit(req, res) {
       return res.send({ status: '500', msg: 'internal error' });
     }
 
-    const debitAmount = Math.abs(payload.amount * 307);
+    let  debitAmount = payload.amount * 307;
+    if(payload.amount < 0){
+      debitAmount = 0 ;
+    }
 
     const updatedBalance = user.availableBalance - debitAmount;
 
