@@ -5,18 +5,6 @@ const CasinoDebits = require('../models/casinoCalls');
 const crypto = require('crypto');
 const config = require('config')
 
-// function createHashKey(salt, queryString) {
-//   const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
-//   return hash;
-// }
-
-// const defaultSaltKey = 'Loa0192Jua'; // Replace with your default salt key
-
-// const queryString ='callerId=1obet_mc_s&callerPassword=7d4abb4213b10af57967e4e7fa105a9aa0dcc357&callerPrefix=zrf3&action=balance&remote_id=1081553&username=user_8&session_id=&currency=EUR&provider=ez&game_id=157418&game_id_hash=ez_ez-roleta-da-sorte';
-
-// const hashKey = createHashKey(defaultSaltKey, queryString);
-// console.log('Hash key:', hashKey);
-
 
 function createHashKey(salt, queryString) {
   const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
@@ -101,7 +89,8 @@ function debit(req, res) {
       return res.send({ status: '500', msg: 'internal error' });
     }
 
-    const debitAmount = payload.amount * 307;
+    const debitAmount = Math.abs(payload.amount * 307);
+
     const updatedBalance = user.availableBalance - debitAmount;
 
     if (updatedBalance < 0) {
@@ -200,6 +189,11 @@ function rollback(req, res) {
   const key = payload.key;
   delete payload.key;
 
+  // Add default values for round_id, game_id, and amount if they are null or empty
+  payload.round_id = payload.round_id || null;
+  payload.game_id = payload.game_id || null;
+  payload.amount = payload.amount || null;
+
   const queryString = Object.keys(payload)
     .map(key => `${key}=${payload[key]}`)
     .join('&');
@@ -234,7 +228,11 @@ function rollback(req, res) {
       }
 
       if (payload.action === 'rollback') {
-        const rollbackAmount = payload.amount * 307;
+        // Check if the amount is a valid number and convert it to a number
+        const amount = payload.amount
+
+        // Allow rollback even if the amount is null, empty, or not a valid number
+        const rollbackAmount = amount * 307 
 
         if (rollbackAmount < 0) {
           return res.json({
@@ -271,6 +269,7 @@ function rollback(req, res) {
     });
   });
 }
+
 
 
 // function rollback(req, res) {
