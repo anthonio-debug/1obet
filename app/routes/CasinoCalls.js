@@ -61,7 +61,7 @@ function balance(req, res) {
   });
 }
 
-function debit(req, res) {
+async function debit(req, res) {
   const payload = req.query;
   const salt = config.saltKey;
 
@@ -84,9 +84,17 @@ function debit(req, res) {
     });
   }
 
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, remote_id: payload.remote_id});
   User.findOne({ remoteId: payload.remote_id }, (err, user) => {
     if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
+    }
+
+    if(sameTransId > 0){
+      return res.json({
+        status: 500,
+        balance: user.availableBalance,
+      });
     }
 
     let  debitAmount = payload.amount * 307;
@@ -102,6 +110,8 @@ function debit(req, res) {
     if (updatedBalance < 0) {
       return res.json({ status: '500', msg: 'Negative balance not allowed!' });
     }
+
+
 
     User.findOneAndUpdate(
       { remoteId: payload.remote_id },
