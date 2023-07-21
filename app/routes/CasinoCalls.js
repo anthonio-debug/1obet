@@ -146,7 +146,7 @@ async function debit(req, res) {
   });
 }
  
-function credit(req, res) {
+async function credit(req, res) {
   const payload = req.query;
   const salt = config.saltKey;
 
@@ -168,24 +168,33 @@ function credit(req, res) {
     });
   }
 
-  const casinoDebits = new CasinoDebits(payload);
-  casinoDebits.save((err, savedPayload) => {
-    if (err) {
-      console.error(err);
-      return res.send({ status: '500', msg: 'internal error' });
-    }
 
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, remote_id: payload.remote_id});
     const remoteId = payload.remote_id;
     User.findOne({ remoteId: remoteId }, (err, user) => {
       if (err || !user) {
         return res.send({ status: '500', msg: 'internal error' });
       }
 
+      if(sameTransId > 0){
+        return res.json({
+          status: 200,
+          balance: (user.availableBalance / 307),
+        });
+      }
+
       const creditAmount = req.query.amount * 307;
       
-      if (creditAmount < 0) {
+      if (req.query.amount < 0) {
         return res.json({ status: '500', msg: 'Negative amount not allowed!' });
       }
+      const casinoDebits = new CasinoDebits(payload);
+      casinoDebits.save((err, savedPayload) => {
+        if (err) {
+          console.error(err);
+          return res.send({ status: '500', msg: 'internal error' });
+        }
+      })
 
       user.availableBalance += creditAmount;
       user.save((err) => {
@@ -199,7 +208,6 @@ function credit(req, res) {
         });
       });
     });
-  });
 }
 
 async function rollback(req, res) {
