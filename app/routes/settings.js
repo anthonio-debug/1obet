@@ -17,6 +17,8 @@ const config = require('config')
 const axios = require('axios');
 const FancyGames = require('../models/fancyGames');
 const Racing = require('../models/racing');
+const RaceMarkets = require('../models/raceMarkets');
+const RaceOdds = require('../models/raceOdds');
 const loginRouter = express.Router();
 const router = express.Router();
 
@@ -440,7 +442,7 @@ async function listOddsAPI(req, res) {
 
     let livesportscoreData = {}
 
-    const event = await inPlayEvents.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1 });
+    const event = await inPlayEvents.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
       const type = event ? event.sportsId : null;
       if(type == 4){
         livesportscoreData = await cricketLiveScore(eventIds)
@@ -459,7 +461,8 @@ async function listOddsAPI(req, res) {
         //   streamingUrl: liveTVData.streamingUrl || '',
         // },
         fancyData: fancyData ? [fancyData] : [],
-        livesportscoreData
+        livesportscoreData,
+       matchData: event
       },
     });
   } catch (error) {
@@ -535,6 +538,9 @@ async function cricketLiveScore(id) {
       const scoreInfo     = JSON.parse(data).score
       let score           = scoreInfo.score1;
       let played          = scoreInfo.score2;
+      response.spnnation1 = scoreInfo.spnnation1;
+      response.spnnation2 = scoreInfo.spnnation2;
+
       if(scoreInfo.activenation1 == 1){
           response.team   =  scoreInfo.spnnation1
           response.crr    = scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim()
@@ -546,7 +552,7 @@ async function cricketLiveScore(id) {
           score            = scoreInfo.score2;
           played           = scoreInfo.score1;
       }
-        
+  
       response.type   = type
       response.balls  = scoreInfo.balls
 
@@ -611,6 +617,66 @@ async function otherLiveScore(id) {
   }
 }
 
+
+async function racesMarketList(req, res) {
+  try {
+    const racesMarketsData = await RaceMarkets.findOne({'eventNodes.marketNodes.marketId': req.params.marketId });
+    const raceOddsData = await RaceOdds.findOne({ marketId: req.params.marketId })
+    // .sort({ _id: -1 })
+
+console.log('racesMarketsData ==>', racesMarketsData)
+console.log('raceOddsData ==>', raceOddsData)
+      
+if (
+  raceOddsData?.runners &&
+  Array.isArray(raceOddsData?.runners) &&
+  racesMarketsData.eventNodes &&
+  Array.isArray(racesMarketsData?.eventNodes)
+) {
+  const marketNode = racesMarketsData?.eventNodes?.find((eventNode) => eventNode?.marketNodes?.marketId === raceOddsData.marketId);
+
+  if (marketNode && marketNode?.marketNodes?.runners && Array.isArray(marketNode?.marketNodes?.runners)) {
+    const mergedRunners = {};
+
+    raceOddsData?.runners.forEach((runner) => {
+      const matchingRunner = marketNode?.marketNodes?.runners.find((r) => r.selectionId === runner?.selectionId);
+
+      if (matchingRunner) {
+        mergedRunners[runner?.selectionId] = {
+          ...runner,
+          ...matchingRunner,
+        };
+      }
+    });
+
+    // Update the merged runners data into the raceOddsData object
+    raceOddsData.runners = Object.values(mergedRunners);
+  } else {
+    console.error('Invalid data structure. Market runners data not found.');
+  }
+} else {
+  console.error('Invalid data structure. Please check the provided objects.');
+}
+
+    // console.log('racesMarketsData', racesMarketsData);
+    console.log('raceOddsData ===>', raceOddsData)
+    return res.send({
+      success: true,
+      message: 'Records',
+      results: {
+        racesMarketsData,
+        raceOddsData
+      }
+    });
+  } catch (error) {
+    console.error('Error retrieving races:', error);
+    return res.send({
+      success: false,
+      message: 'Error retrieving races',
+    });
+  }
+}
+
 loginRouter.post(
   '/updateDefaultTheme',
   settingsValidation.validate('updateDefaultTheme'),
@@ -661,5 +727,6 @@ loginRouter.get(
 loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);
+loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 
 module.exports = { loginRouter, router, listOddsAPI };

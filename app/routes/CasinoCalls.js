@@ -5,18 +5,6 @@ const CasinoDebits = require('../models/casinoCalls');
 const crypto = require('crypto');
 const config = require('config')
 
-// function createHashKey(salt, queryString) {
-//   const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
-//   return hash;
-// }
-
-// const defaultSaltKey = 'Loa0192Jua'; // Replace with your default salt key
-
-// const queryString ='callerId=1obet_mc_s&callerPassword=7d4abb4213b10af57967e4e7fa105a9aa0dcc357&callerPrefix=zrf3&action=balance&remote_id=1081553&username=user_8&session_id=&currency=EUR&provider=ez&game_id=157418&game_id_hash=ez_ez-roleta-da-sorte';
-
-// const hashKey = createHashKey(defaultSaltKey, queryString);
-// console.log('Hash key:', hashKey);
-
 
 function createHashKey(salt, queryString) {
   const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
@@ -25,9 +13,8 @@ function createHashKey(salt, queryString) {
 
 function balance(req, res) {
   const payload = req.query;
-  const salt = config.saltKey; // Replace with your default salt key
-
-  const key = payload.key;
+  const salt    = config.saltKey; // Replace with your default salt key
+  const key     = payload.key;
   delete payload.key;
 
   const queryString = Object.keys(payload)
@@ -47,31 +34,28 @@ function balance(req, res) {
     });
   }
 
-  const casinoDebits = new CasinoDebits(payload);
-  casinoDebits.save((err, savedPayload) => {
-    if (err) {
-      console.error(err);
+  // const casinoDebits = new CasinoDebits(payload);
+  User.findOne({ remoteId: payload.remote_id }, (err, user) => {
+    console.log('user:', user);
+    if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
     }
 
-    User.findOne({ remoteId: payload.remote_id }, (err, user) => {
-      console.log('user:', user);
-      if (err || !user) {
-        return res.send({ status: '500', msg: 'internal error' });
-      }
+    const balance = user.availableBalance;
+    if (balance < 0) {
+      return res.json({ status: '500', msg: 'Negative amount not allowed!' });
+    }
 
-      return res.send({
-        status: 200,
-        balance: (user.availableBalance / 307).toFixed(2),
-      });
+    return res.send({
+      status: 200,
+      balance: balance,
     });
   });
 }
 
-function debit(req, res) {
+async function debit(req, res) {
   const payload = req.query;
   const salt = config.saltKey;
-
   const key = payload.key;
   delete payload.key;
 
@@ -91,34 +75,82 @@ function debit(req, res) {
     });
   }
 
-  User.findOneAndUpdate(
-    { remoteId: payload.remote_id },
-    { $inc: { availableBalance: -(payload.amount * 307) } },
-    { new: true },
-    (err, updatedUser) => {
-      if (err || !updatedUser) {
-        return res.send({ status: '500', msg: 'internal error' });
-      }
-
-      const casinoDebits = new CasinoDebits(payload);
-      casinoDebits.save((err) => {
-        if (err) {
-          console.error(err);
-          return res.send({ status: '500', msg: 'internal error' });
-        }
-
-        const updatedBalance = (updatedUser.availableBalance / 307).toFixed(2);
-
-        return res.json({
-          status: 200,
-          balance: updatedBalance,
-        });
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, action: 'debit'});
+  User.findOne({ remoteId: payload.remote_id }, (err, user) => {
+    if (err || !user) {
+      return res.send({ status: '500', msg: 'internal error' });
+    }
+    if(sameTransId > 0){
+      return res.json({
+        status: 200,
+        balance: user.availableBalance,
       });
     }
-  );
+    if(parseInt(payload.amount) > user.availableBalance){
+      return res.json({
+        status: 403,
+        message: " Insufficient balance amount",
+      });
+    }
+
+    let  debitAmount = parseInt(payload.amount);
+    if(parseInt(payload.amount) < 0){
+      return res.json({
+        status: 500,
+        balance: user.availableBalance
+      });
+    }
+
+    const updatedBalance = user.availableBalance - debitAmount;
+    if (updatedBalance < 0) {
+      return res.json({ status: '500', msg: 'Negative balance not allowed!' });
+    }
+    user.availableBalance -= debitAmount;
+    user.save(
+      (err, updatedUser) => {
+        if (err || !updatedUser) {
+          return res.send({ status: '500', msg: 'internal error' });
+        }
+        const casinoDebits = new CasinoDebits(payload);
+        casinoDebits.save((err) => {
+          if (err) {
+            console.error(err);
+            return res.send({ status: '500', msg: 'internal error' });
+          }
+            return res.json({
+              status: 200,
+              balance: updatedBalance,
+            });
+        });
+    }
+    );
+    
+    // User.findOneAndUpdate(
+    //   { remoteId: payload.remote_id },
+    //   { $inc: { availableBalance: -debitAmount } },
+    //   { new: true },
+    //   (err, updatedUser) => {
+    //     if (err || !updatedUser) {
+    //       return res.send({ status: '500', msg: 'internal error' });
+    //     }
+    //     const casinoDebits = new CasinoDebits(payload);
+    //     casinoDebits.save((err) => {
+    //       if (err) {
+    //         console.error(err);
+    //         return res.send({ status: '500', msg: 'internal error' });
+    //       }
+    //       const updatedBalance = updatedUser.availableBalance;
+    //         return res.json({
+    //           status: 200,
+    //           balance: updatedBalance,
+    //         });
+    //     });
+    // }
+    // );
+  });
 }
  
-function credit(req, res) {
+async function credit(req, res) {
   const payload = req.query;
   const salt = config.saltKey;
 
@@ -140,35 +172,53 @@ function credit(req, res) {
     });
   }
 
-  const casinoDebits = new CasinoDebits(payload);
-  casinoDebits.save((err, savedPayload) => {
-    if (err) {
-      console.error(err);
+
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, action: 'credit'});
+  const remoteId = payload.remote_id;
+  User.findOne({ remoteId: remoteId }, (err, user) => {
+    if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
     }
+    if(parseInt(payload.amount) < 0){
+      return res.json({
+        status: 500,
+        balance: user.availableBalance
+      });
+    }
 
-    const remoteId = payload.remote_id;
-    User.findOne({ remoteId: remoteId }, (err, user) => {
-      if (err || !user) {
+    if(sameTransId > 0){
+      return res.json({
+        status: 200,
+        balance: user.availableBalance,
+      });
+    }
+
+    // const creditAmount = parseInt(req.query.amount);
+    if ( parseInt(req.query.amount) < 0) {
+      return res.json({ status: '500', msg: 'Negative amount not allowed!' });
+    }
+    user.availableBalance += parseInt(req.query.amount);
+    user.save((err) => {
+      if (err) {
+        console.error(err);
         return res.send({ status: '500', msg: 'internal error' });
       }
-
-      user.availableBalance += req.query.amount * 307;
-      user.save((err) => {
+      const casinoDebits = new CasinoDebits(payload);
+      casinoDebits.save((err, savedPayload) => {
         if (err) {
           console.error(err);
           return res.send({ status: '500', msg: 'internal error' });
         }
-        return res.send({
-          status: 200,
-          balance: (user.availableBalance / 307).toFixed(2),
-        });
+      })
+      return res.send({
+        status: 200,
+        balance: user.availableBalance,
       });
     });
   });
 }
 
-function rollback(req, res) {
+async function rollback(req, res) {
   const payload = req.query;
   const remoteId = payload.remote_id;
   const salt = config.saltKey;
@@ -191,79 +241,91 @@ function rollback(req, res) {
     });
   }
 
-  const casinoDebits = new CasinoDebits(payload);
-  casinoDebits.save((err, savedPayload) => {
-    if (err) {
-      console.error(err);
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id});
+
+  User.findOne({ remoteId }, (err, user) => {
+    if (err || !user) {
       return res.json({
         status: 500,
         msg: 'Internal error'
       });
     }
+    if(sameTransId == 0){
+      return res.json({
+        status: 404,
+        balance: user.availableBalance
+      });
+    }
+    if(sameTransId > 1){
+      return res.json({
+        status: 200,
+        balance: user.availableBalance
+      });
+    }
 
-    User.findOne({ remoteId }, (err, user) => {
-      if (err || !user) {
-        return res.json({
-          status: 500,
-          msg: 'Internal error'
-        });
-      }
-
-      if (payload.action === 'rollback') {
-        user.availableBalance += payload.amount * 307;
-        user.save((err) => {
-          if (err) {
-            console.error(err);
+    if (payload.action == 'rollback') {
+      CasinoDebits.findOne({transaction_id: payload.transaction_id, remoteId: payload.remoteId}, (err, trans)=>{ 
+        if(err || !trans){
+          return res.send({
+            status:404,
+            message:'transaction not found'
+          })
+        }
+        else {
+          let amount = 0;
+          const action = trans.action;
+          if(action == "credit"){
+            amount = - parseInt(trans.amount);
+          }
+          else if(action == "debit"){
+            amount = parseInt(trans.amount);
+          }
+          else if(action == 'rollback'){
             return res.json({
-              status: 500,
-              msg: 'Internal error'
+              status: 404,
+              balance: user.availableBalance
             });
           }
 
-          const updatedBalance = (user.availableBalance / 307).toFixed(2);
-
-          return res.json({
-            status: 200,
-            balance: updatedBalance
-          });
-        });
-      } else {
-        const updatedBalance = (user.availableBalance / 307).toFixed(2);
-
-        return res.json({
-          status: 200,
-          balance: updatedBalance
-        });
-      }
-    });
+          user.availableBalance += amount;
+          user.save((err) => {
+            if (err) {
+              console.error(err);
+              return res.json({
+                status: 500,
+                msg: 'Internal error'
+              });
+            }
+            else {
+              const casinoDebits = new CasinoDebits(payload);
+              casinoDebits.save((err, savedPayload) => {
+                if (err) {
+                  console.error(err);
+                  return res.json({
+                    status: 500,
+                    msg: 'Internal error'
+                  });
+                }
+              });
+              return res.json({
+                status: 404,
+                balance: user.availableBalance
+              });
+            }  
+          })
+        }
+      });
+    } 
+    else{
+      return res.json({
+        status: 404,
+        balance: user.availableBalance
+      });
+    }
   });
+  
 }
 
-
-// function rollback(req, res) {
-//   const payload = req.query
-//   const remoteId = req.query.remote_id;
-//   const casinoDebits = new CasinoDebits(payload);
-//   casinoDebits.save((err, savedPayload) => {
-//     if (err) {
-//       console.error(err);
-//       return res.send({ status: '500', msg: 'internal error' });
-//     }
-//   User.findOne({ remoteId: remoteId }, (err, user) => {
-//     if (err || !user) {
-//       return res.send({ status: '500', msg: 'internal error' });
-//     }
-//     if(req.query.action == 'rollback'){
-//       user.availableBalance += req.query.amount * 307;
-//       user.save();
-//     }
-//     return res.send({
-//       status: 200,
-//       balance: (user.availableBalance / 307).toFixed(2),
-//     });
-//   });
-// })
-// }
 
 function casino(req, res) {
   const { action, remote_id } = req.query;
