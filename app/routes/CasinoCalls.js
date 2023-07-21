@@ -86,15 +86,15 @@ async function debit(req, res) {
         balance: user.availableBalance,
       });
     }
-    if(payload.amount > user.availableBalance){
+    if(parseInt(payload.amount) > user.availableBalance){
       return res.json({
         status: 403,
         message: " Insufficient balance amount ",
       });
     }
 
-    let  debitAmount = payload.amount;
-    if(payload.amount < 0){
+    let  debitAmount = parseInt(payload.amount);
+    if(parseInt(payload.amount) < 0){
       return res.json({
         status: 500,
         balance: user.availableBalance
@@ -160,7 +160,7 @@ async function credit(req, res) {
     if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
     }
-    if(payload.amount < 0){
+    if(parseInt(payload.amount) < 0){
       return res.json({
         status: 500,
         balance: user.availableBalance
@@ -174,9 +174,9 @@ async function credit(req, res) {
       });
     }
 
-    const creditAmount = req.query.amount;
+    const creditAmount = parseInt(req.query.amount);
     
-    if (req.query.amount < 0) {
+    if ( parseInt(req.query.amount) < 0) {
       return res.json({ status: '500', msg: 'Negative amount not allowed!' });
     }
     user.availableBalance += creditAmount;
