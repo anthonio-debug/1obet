@@ -101,7 +101,7 @@ async function debit(req, res) {
     if(payload.amount < 0){
       return res.json({
         status: 500,
-        balance: user.availableBalance * 307, 
+        balance: user.availableBalance
       });
     }
 
