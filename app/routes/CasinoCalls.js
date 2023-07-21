@@ -100,12 +100,11 @@ async function debit(req, res) {
         balance: user.availableBalance
       });
     }
-
     const updatedBalance = user.availableBalance - debitAmount;
-
     if (updatedBalance < 0) {
       return res.json({ status: '500', msg: 'Negative balance not allowed!' });
     }
+    
     User.findOneAndUpdate(
       { remoteId: payload.remote_id },
       { $inc: { availableBalance: -debitAmount } },
@@ -257,10 +256,10 @@ async function rollback(req, res) {
           let amount = 0;
           const action = trans.action;
           if(action == "credit"){
-            amount = - trans.amount;
+            amount = - parseInt(trans.amount);
           }
           else if(action == "debit"){
-            amount = trans.amount;
+            amount = parseInt(trans.amount);
           }
           else if(action == 'rollback'){
             return res.json({
