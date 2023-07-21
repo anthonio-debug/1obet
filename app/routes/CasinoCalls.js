@@ -262,7 +262,7 @@ function rollback(req, res) {
           }
          else {
           const amount = trans.amount;
-          return res.send({ status: 200, balance: amount })
+          return res.send({ status: 200, balance: user.availableBalance })
           }
         });
         user.availableBalance += rollbackAmount;
