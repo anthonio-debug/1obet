@@ -243,7 +243,7 @@ async function rollback(req, res) {
     //   });
     // }
 
-      CasinoDebits.findOne({transaction_id: payload.transaction_id, remote_id: payload.remote_id}, (err, trans)=>{ 
+      CasinoDebits.findOne({transaction_id: payload.transaction_id}, (err, trans)=>{ 
         if(err || !trans){
           return res.send({
             status:404,
