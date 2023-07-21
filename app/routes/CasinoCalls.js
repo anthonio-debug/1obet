@@ -253,6 +253,13 @@ async function rollback(req, res) {
               balance: (user.availableBalance / 307),
             });
           }
+          else if(sameTransId == 0){
+            return res.json({
+              status: 404,
+              balance: (user.availableBalance / 307),
+            });
+          }
+
           if(action == "credit"){
             amount = -(trans.amount * 307);
           }else if(action == "debit"){
