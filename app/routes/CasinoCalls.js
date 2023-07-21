@@ -75,7 +75,7 @@ async function debit(req, res) {
     });
   }
 
-  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id});
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, action: 'debit'});
   User.findOne({ remoteId: payload.remote_id }, (err, user) => {
     if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
@@ -89,7 +89,7 @@ async function debit(req, res) {
     if(parseInt(payload.amount) > user.availableBalance){
       return res.json({
         status: 403,
-        message: " Insufficient balance amount ",
+        message: " Insufficient balance amount",
       });
     }
 
@@ -100,6 +100,7 @@ async function debit(req, res) {
         balance: user.availableBalance
       });
     }
+
     const updatedBalance = user.availableBalance - debitAmount;
     if (updatedBalance < 0) {
       return res.json({ status: '500', msg: 'Negative balance not allowed!' });
@@ -172,7 +173,7 @@ async function credit(req, res) {
   }
 
 
-  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id});
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, action: 'credit'});
   const remoteId = payload.remote_id;
   User.findOne({ remoteId: remoteId }, (err, user) => {
     if (err || !user) {
@@ -192,12 +193,11 @@ async function credit(req, res) {
       });
     }
 
-    const creditAmount = parseInt(req.query.amount);
-    
+    // const creditAmount = parseInt(req.query.amount);
     if ( parseInt(req.query.amount) < 0) {
       return res.json({ status: '500', msg: 'Negative amount not allowed!' });
     }
-    user.availableBalance += creditAmount;
+    user.availableBalance += parseInt(req.query.amount);
     user.save((err) => {
       if (err) {
         console.error(err);
@@ -315,12 +315,11 @@ async function rollback(req, res) {
           })
         }
       });
-
-    } else{
-      const updatedBalance = user.availableBalance;
+    } 
+    else{
       return res.json({
         status: 404,
-        balance: updatedBalance
+        balance: user.availableBalance
       });
     }
   });
