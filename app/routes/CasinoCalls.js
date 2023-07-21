@@ -227,11 +227,18 @@ async function rollback(req, res) {
   }
 
   const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id});
+
   User.findOne({ remoteId }, (err, user) => {
     if (err || !user) {
       return res.json({
         status: 500,
         msg: 'Internal error'
+      });
+    }
+    if(sameTransId == 0){
+      return res.json({
+        status: 404,
+        balance: (user.availableBalance / 307)
       });
     }
 
@@ -252,13 +259,6 @@ async function rollback(req, res) {
               balance: (user.availableBalance / 307)
             });
           }
-          else if(sameTransId == 0){
-            return res.json({
-              status: 404,
-              balance: (user.availableBalance / 307)
-            });
-          }
-
           if(action == "credit"){
             amount = -(trans.amount * 307);
           }
