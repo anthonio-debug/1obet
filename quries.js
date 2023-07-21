@@ -346,6 +346,74 @@ db.bets.insertMany([
 ]);
 
 
+let currentPositionSchema = new Schema({
+  userId: { type: Number, index: true },
+  description: { type: String, required: false },
+  amount: { type: Number, default: 0 },
+  matchId: { type: String },
+  betId: { type: String },
+  updatedAt: { type: String },
+  createdAt: { type: String }
+});
+
+db.bets.insertMany([
+  {
+    marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+    userId: 17,
+    betAmount: 1000,
+    betRate: 1.5,
+    returnAmount: 1500,
+    status: 1,
+    matchId: "64458338-704e-4d0f-b4fa-6af920ab467d",
+    winningAmount: 1200,
+    loosingAmount: 1000,
+    subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+    event: "Pak vs AUS",
+    runner: "Pak",
+    position: 0,
+    matchStatus: "",
+    createdAt: 1684403142.32,
+    isFake: 1,
+  },
+  {
+    marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+    userId: 17,
+    betAmount: 1000,
+    betRate: 1.2,
+    returnAmount: 1200,
+    status: 1,
+    matchId: "64458338-704e-4d0f-b4fa-6af920ab467d",
+    winningAmount: 1200,
+    loosingAmount: 1000,
+    subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+    event: "Pak vs IND",
+    runner: "Pak",
+    position: 0,
+    matchStatus: "",
+    createdAt: 1684403142.32,
+    isFake: 1,
+  },
+  {
+    marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+    userId: 17,
+    betAmount: 1000,
+    betRate: 2.5,
+    returnAmount: 2500,
+    status: 1,
+    matchId: "64458338-704e-4d0f-b4fa-6af920ab467d",
+    winningAmount: 1200,
+    loosingAmount: 1000,
+    subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+    event: "IND vs AUS",
+    runner: "IND",
+    position: 0,
+    matchStatus: "",
+    createdAt: 1684403142.32,
+    isFake: 1,
+  },
+]);
+
+
 /*
   {
     "status": true,
@@ -509,3 +577,22 @@ db.bets.insertMany([
 }
 
 */
+
+
+// let prev = 0;
+// parentUser.forEach(user => {
+//   let current = user.downLineShare;
+//   user["commission"] = current - prev;
+//   prev = current;
+// });
+
+// for (const user of parentUser) {
+//   let CurrentPosition = await new CurrentPosition({
+//     userId: user.userId,
+//     description: "some transection name",
+//     amount: -(user.commission / 100) * remainingAmount,
+//     betId: bet._id,
+//     matchId: matchId,
+//   });
+//   await CurrentPosition.save();
+// }
