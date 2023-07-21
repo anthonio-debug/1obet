@@ -115,9 +115,6 @@ async function debit(req, res) {
     if (updatedBalance < 0) {
       return res.json({ status: '500', msg: 'Negative balance not allowed!' });
     }
-
-
-
     User.findOneAndUpdate(
       { remoteId: payload.remote_id },
       { $inc: { availableBalance: -debitAmount } },
@@ -126,20 +123,18 @@ async function debit(req, res) {
         if (err || !updatedUser) {
           return res.send({ status: '500', msg: 'internal error' });
         }
-
-      const casinoDebits = new CasinoDebits(payload);
-      casinoDebits.save((err) => {
-        if (err) {
-          console.error(err);
-          return res.send({ status: '500', msg: 'internal error' });
-        }
-
-        const updatedBalance = (updatedUser.availableBalance / 307).toFixed(2);
-          return res.json({
-            status: 200,
-            balance: updatedBalance,
-          });
-      });
+        const casinoDebits = new CasinoDebits(payload);
+        casinoDebits.save((err) => {
+          if (err) {
+            console.error(err);
+            return res.send({ status: '500', msg: 'internal error' });
+          }
+          const updatedBalance = (updatedUser.availableBalance / 307);
+            return res.json({
+              status: 200,
+              balance: updatedBalance,
+            });
+        });
     }
   );
   });
@@ -187,20 +182,19 @@ async function credit(req, res) {
     if (req.query.amount < 0) {
       return res.json({ status: '500', msg: 'Negative amount not allowed!' });
     }
-    const casinoDebits = new CasinoDebits(payload);
-    casinoDebits.save((err, savedPayload) => {
-      if (err) {
-        console.error(err);
-        return res.send({ status: '500', msg: 'internal error' });
-      }
-    })
-
     user.availableBalance += creditAmount;
     user.save((err) => {
       if (err) {
         console.error(err);
         return res.send({ status: '500', msg: 'internal error' });
       }
+      const casinoDebits = new CasinoDebits(payload);
+      casinoDebits.save((err, savedPayload) => {
+        if (err) {
+          console.error(err);
+          return res.send({ status: '500', msg: 'internal error' });
+        }
+      })
       return res.send({
         status: 200,
         balance: (user.availableBalance / 307).toFixed(2),
