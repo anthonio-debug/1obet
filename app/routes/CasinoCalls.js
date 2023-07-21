@@ -94,10 +94,10 @@ async function debit(req, res) {
         balance: (user.availableBalance / 307),
       });
     }
-    if(payload.amount > (user.availableBalance/307)){
+    if(payload.amount > (user.availableBalance / 307)){
       return res.json({
         status: 403,
-        message: "Insufficient balance amount",
+        message: " Insufficient balance amount ",
       });
     }
 
@@ -167,6 +167,12 @@ async function credit(req, res) {
   User.findOne({ remoteId: remoteId }, (err, user) => {
     if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
+    }
+    if(payload.amount < 0){
+      return res.json({
+        status: 500,
+        balance: (user.availableBalance / 307)
+      });
     }
 
     if(sameTransId > 0){
