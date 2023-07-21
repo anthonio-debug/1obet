@@ -284,7 +284,7 @@ async function rollback(req, res) {
       const updatedBalance = (user.availableBalance / 307);
       // .toFixed(2);
       return res.json({
-        status: 200,
+        status: 404,
         balance: updatedBalance
       });
     }
