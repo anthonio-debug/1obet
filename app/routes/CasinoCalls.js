@@ -205,7 +205,6 @@ function credit(req, res) {
 
 async function rollback(req, res) {
   const payload = req.query;
-  const remoteId = payload.remote_id;
   const salt = config.saltKey;
 
   const key = payload.key;
@@ -236,13 +235,6 @@ async function rollback(req, res) {
 
     if (payload.action == 'rollback') {
 
-    // if (payload.amount < 0) {
-    //   return res.json({
-    //     status: 500,
-    //     msg: 'Negative amount not allowed!'
-    //   });
-    // }
-
       CasinoDebits.findOne({transaction_id: payload.transaction_id}, (err, trans)=>{ 
         if(err || !trans){
           return res.send({
@@ -257,7 +249,7 @@ async function rollback(req, res) {
             amount = -amount
           }else if(action == 'rollback'){
             return res.json({
-              status: 200,
+              status: 404,
               balance: (user.availableBalance / 307)
             });
           }
