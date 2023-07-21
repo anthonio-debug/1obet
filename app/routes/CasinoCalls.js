@@ -105,6 +105,13 @@ async function debit(req, res) {
       });
     }
 
+    if(payload.amount > (user.availableBalance/307)){
+      return res.json({
+        status: 403,
+        message: "Insufficient balance amount",
+      });
+    }
+
     const updatedBalance = user.availableBalance - debitAmount;
 
     if (updatedBalance < 0) {
@@ -205,9 +212,11 @@ function rollback(req, res) {
   delete payload.key;
 
   // Add default values for round_id, game_id, and amount if they are null or empty
-  payload.round_id = payload.round_id || null;
-  payload.game_id = payload.game_id || null;
-  payload.amount = payload.amount || null;
+  payload.round_id  = payload.round_id || null;
+  payload.game_id   = payload.game_id  || null;
+  payload.amount    = payload.amount   || 0;
+
+
 
   const queryString = Object.keys(payload)
     .map(key => `${key}=${payload[key]}`)
@@ -224,16 +233,8 @@ function rollback(req, res) {
     });
   }
 
-  const casinoDebits = new CasinoDebits(payload);
-  casinoDebits.save((err, savedPayload) => {
-    if (err) {
-      console.error(err);
-      return res.json({
-        status: 500,
-        msg: 'Internal error'
-      });
-    }
 
+    
     User.findOne({ remoteId }, (err, user) => {
       if (err || !user) {
         return res.json({
@@ -244,11 +245,10 @@ function rollback(req, res) {
 
       if (payload.action === 'rollback') {
         // Check if the amount is a valid number and convert it to a number
-        const amount = payload.amount
+        // const amount = payload.amount
 
         // Allow rollback even if the amount is null, empty, or not a valid number
-        const rollbackAmount = amount * 307 
-
+        const rollbackAmount = payload.amount * 307 
         if (rollbackAmount < 0) {
           return res.json({
             status: 500,
@@ -256,6 +256,15 @@ function rollback(req, res) {
           });
         }
 
+        CasinoDebits.findOne({transaction_id: payload.transaction_id, remote_id: payload.remote_id}, (err, trans)=>{ 
+          if(err || !trans){
+              return res.send({status:404,message:'transaction not found'})
+          }
+         else {
+          const amount = trans.amount;
+          return res.send({ status: 200, balance: amount })
+          }
+        });
         user.availableBalance += rollbackAmount;
         user.save((err) => {
           if (err) {
@@ -282,7 +291,19 @@ function rollback(req, res) {
         });
       }
     });
+
+    const casinoDebits = new CasinoDebits(payload);
+    casinoDebits.save((err, savedPayload) => {
+      if (err) {
+        console.error(err);
+        return res.json({
+          status: 500,
+          msg: 'Internal error'
+        });
+      }
+  
   });
+
 }
 
 
