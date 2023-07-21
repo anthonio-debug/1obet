@@ -205,6 +205,7 @@ function credit(req, res) {
 
 async function rollback(req, res) {
   const payload = req.query;
+  const remoteId = payload.remote_id;
   const salt = config.saltKey;
 
   const key = payload.key;
@@ -234,7 +235,6 @@ async function rollback(req, res) {
     }
 
     if (payload.action == 'rollback') {
-      
       CasinoDebits.findOne({transaction_id: payload.transaction_id}, (err, trans)=>{ 
         if(err || !trans){
           return res.send({
@@ -243,10 +243,12 @@ async function rollback(req, res) {
           })
         }
         else {
-          let amount = trans.amount * 307;
+          let amount = 0;
           const action = trans.action;
           if(action == "credit"){
-            amount = -amount
+            amount = -(trans.amount * 307);
+          }else if(action == "debit"){
+            amount = (trans.amount * 307);
           }else if(action == 'rollback'){
             return res.json({
               status: 200,
