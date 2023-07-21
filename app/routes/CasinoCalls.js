@@ -203,7 +203,7 @@ function credit(req, res) {
   });
 }
 
-function rollback(req, res) {
+async function rollback(req, res) {
   const payload = req.query;
   const remoteId = payload.remote_id;
   const salt = config.saltKey;
@@ -234,12 +234,20 @@ function rollback(req, res) {
   }
 
 
-    
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, remote_id: payload.remote_id});
+  
+
     User.findOne({ remoteId }, (err, user) => {
       if (err || !user) {
         return res.json({
           status: 500,
           msg: 'Internal error'
+        });
+      }
+      if(sameTransId > 0){
+        return res.json({
+          status: 200,
+          balance: user.availableBalance,
         });
       }
 
@@ -262,7 +270,7 @@ function rollback(req, res) {
           }
          else {
           const amount = trans.amount;
-          return res.send({ status: 200, balance: rollbackAmount })
+          return res.send({ status: 200, balance: user.balance })
           }
         });
         user.availableBalance += rollbackAmount;
@@ -303,7 +311,7 @@ function rollback(req, res) {
       }
   
   });
-
+  
 }
 
 
