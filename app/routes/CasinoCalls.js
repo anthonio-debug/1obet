@@ -89,17 +89,16 @@ async function debit(req, res) {
     if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
     }
-    if(payload.amount > (user.availableBalance/307)){
-      return res.json({
-        status: 403,
-        message: "Insufficient balance amount",
-      });
-    }
-
     if(sameTransId > 0){
       return res.json({
         status: 200,
         balance: (user.availableBalance / 307),
+      });
+    }
+    if(payload.amount > (user.availableBalance/307)){
+      return res.json({
+        status: 403,
+        message: "Insufficient balance amount",
       });
     }
 
@@ -170,44 +169,44 @@ async function credit(req, res) {
 
 
   const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, remote_id: payload.remote_id});
-    const remoteId = payload.remote_id;
-    User.findOne({ remoteId: remoteId }, (err, user) => {
-      if (err || !user) {
+  const remoteId = payload.remote_id;
+  User.findOne({ remoteId: remoteId }, (err, user) => {
+    if (err || !user) {
+      return res.send({ status: '500', msg: 'internal error' });
+    }
+
+    if(sameTransId > 0){
+      return res.json({
+        status: 200,
+        balance: (user.availableBalance / 307),
+      });
+    }
+
+    const creditAmount = req.query.amount * 307;
+    
+    if (req.query.amount < 0) {
+      return res.json({ status: '500', msg: 'Negative amount not allowed!' });
+    }
+    const casinoDebits = new CasinoDebits(payload);
+    casinoDebits.save((err, savedPayload) => {
+      if (err) {
+        console.error(err);
         return res.send({ status: '500', msg: 'internal error' });
       }
+    })
 
-      if(sameTransId > 0){
-        return res.json({
-          status: 200,
-          balance: (user.availableBalance / 307),
-        });
+    user.availableBalance += creditAmount;
+    user.save((err) => {
+      if (err) {
+        console.error(err);
+        return res.send({ status: '500', msg: 'internal error' });
       }
-
-      const creditAmount = req.query.amount * 307;
-      
-      if (req.query.amount < 0) {
-        return res.json({ status: '500', msg: 'Negative amount not allowed!' });
-      }
-      const casinoDebits = new CasinoDebits(payload);
-      casinoDebits.save((err, savedPayload) => {
-        if (err) {
-          console.error(err);
-          return res.send({ status: '500', msg: 'internal error' });
-        }
-      })
-
-      user.availableBalance += creditAmount;
-      user.save((err) => {
-        if (err) {
-          console.error(err);
-          return res.send({ status: '500', msg: 'internal error' });
-        }
-        return res.send({
-          status: 200,
-          balance: (user.availableBalance / 307).toFixed(2),
-        });
+      return res.send({
+        status: 200,
+        balance: (user.availableBalance / 307).toFixed(2),
       });
     });
+  });
 }
 
 async function rollback(req, res) {
@@ -248,6 +247,12 @@ async function rollback(req, res) {
         balance: (user.availableBalance / 307)
       });
     }
+    if(sameTransId > 1){
+      return res.json({
+        status: 200,
+        balance: (user.availableBalance / 307)
+      });
+    }
 
     if (payload.action == 'rollback') {
       CasinoDebits.findOne({transaction_id: payload.transaction_id, remoteId: payload.remoteId}, (err, trans)=>{ 
@@ -260,12 +265,6 @@ async function rollback(req, res) {
         else {
           let amount = 0;
           const action = trans.action;
-          if(sameTransId > 1){
-            return res.json({
-              status: 200,
-              balance: (user.availableBalance / 307)
-            });
-          }
           if(action == "credit"){
             amount = -(trans.amount * 307);
           }
