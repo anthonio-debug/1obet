@@ -251,7 +251,7 @@ async function rollback(req, res) {
             amount = (trans.amount * 307);
           }else if(action == 'rollback'){
             return res.json({
-              status: 200,
+              status: 404,
               balance: (user.availableBalance / 307)
             });
           }
@@ -266,7 +266,7 @@ async function rollback(req, res) {
             }
             else {
               return res.json({
-                status: 200,
+                status: 404,
                 balance: (user.availableBalance / 307)
               });
             }  
