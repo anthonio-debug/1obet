@@ -688,8 +688,8 @@ async function racesMarketList(req, res) {
 
       // Add any other fields you want to exclude from raceOddsData
     };
-    const racesMarketsData = await RaceMarkets.findOne({'eventNodes.marketNodes.marketId': req.params.marketId },projectionRacesMarketsData);
-    const raceOddsData = await RaceOdds.findOne({ marketId: req.params.marketId },projectionRaceOddsData).sort({_id: -1})
+    const racesMarketsData = await RaceMarkets.findOne({'eventNodes.marketNodes.marketId': req.params.marketId });
+    const raceOddsData = await RaceOdds.findOne({ marketId: req.params.marketId }).sort({_id: -1})
 
 console.log('racesMarketsData ==>', racesMarketsData)
 console.log('raceOddsData ==>', raceOddsData)
