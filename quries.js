@@ -434,12 +434,39 @@ db.bets.insertMany([
   },
 ]);
 
+
+
+// DEVELOPENT MANUAL 
+
 // db.inplayevents.remove({}) 
 // db.fancygames.remove({}) 
 // db.racemarkets.remove({}) 
 // db.raceodds.remove({}) 
 // db.racings.remove({}) 
 // db.odds.remove({}) 
+
+
+
+// nodemon ./cronJob/themeChanging
+// nodemon ./cronJob/BetingCalculation
+// nodemon ./cronJob/listMarket
+// nodemon ./cronJob/cricketTenisSocerOdds
+// nodemon ./cronJob/fancy
+// nodemon ./cronJob/todayRace
+// nodemon ./cronJob/raceMarkets
+// nodemon ./cronJob/raceOdds
+// nodemon ./cronJob/deleteClosedOdds
+
+
+// pm2  ./cronJob/themeChanging
+// pm2  ./cronJob/BetingCalculation
+// pm2  ./cronJob/listMarket
+// pm2  ./cronJob/cricketTenisSocerOdds
+// pm2  ./cronJob/fancy
+// pm2  ./cronJob/todayRace
+// pm2  ./cronJob/raceMarkets
+// pm2  ./cronJob/raceOdds
+// pm2  ./cronJob/deleteClosedOdds
 
 
 
@@ -544,7 +571,6 @@ db.bets.insertMany([
     }
   }
 */
-
 
 /*
   {

@@ -22,28 +22,29 @@ var jsonContent = JSON.parse(content);
 
 var apisContent = fs.readFileSync(config.apisFileName);
 var jsonApis = JSON.parse(apisContent);
-const {
-  themeCronJob,
-  checkBetStatus,
-  oddsCronJob,
-  listMarketCronJob,
-  fancyDataCronJob,
-  todayRaceCronJob,
-  raceMarketsCronJob,
-  raceOddsCronJob,
-  deleteClosedOddsData
-} = require('./cronJob/cronJob'); // Import only cronJob2
+// const {
+//   themeCronJob,
+//   checkBetStatus,
+//   oddsCronJob,
+//   listMarketCronJob,
+//   fancyDataCronJob,
+//   todayRaceCronJob,
+//   raceMarketsCronJob,
+//   raceOddsCronJob,
+//   deleteClosedOddsData
+// } = require('./cronJob/cronJob'); 
+// Import only cronJob2
 
 // Run the cron job
-themeCronJob();
-checkBetStatus();
-listMarketCronJob()
-oddsCronJob()
-fancyDataCronJob()
-todayRaceCronJob()
-raceMarketsCronJob()
-raceOddsCronJob()
-deleteClosedOddsData()
+// themeCronJob();
+// checkBetStatus();
+// listMarketCronJob()
+// oddsCronJob()
+// fancyDataCronJob()
+// todayRaceCronJob()
+// raceMarketsCronJob()
+// raceOddsCronJob()
+// deleteClosedOddsData()
 
 
 
