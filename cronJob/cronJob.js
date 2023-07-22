@@ -580,57 +580,6 @@ const raceOddsCronJob = async () => {
   });
 };
 
-// const raceOddsCronJob = async () => {
-//   // Cron job to run every 1 minute
-//   cron.schedule('*/1 * * * *', async () => {
-//     try {
-//       const batchSize = 20;
-//       const marketIds = await raceMarkets.distinct('eventNodes.marketNodes.marketId', { islocked: false });
-//       console.log('marketIds', marketIds);
-
-//       for (let i = 0; i < marketIds.length; i += batchSize) {
-//         const batchArray = marketIds.slice(i, i + batchSize);
-//         console.log('batchArray', batchArray);
-
-//         await raceOddsJob(batchArray);
-
-//         await Events.updateMany({ marketId: { $in: batchArray } }, { islocked: true });
-//       }
-
-//       if (marketIds.length === 0) {
-//         await Events.updateMany({}, { islocked: false });
-//       }
-//     } catch (error) {
-//       console.error('Error running odds cron job:', error);
-//     }
-//   });
-// };
-
-// const deleteClosedOddsData = () => {
-//   //run after 5 minutes
-//   cron.schedule('*/1 * * * *', async () => {
-//     try {
-//       // Retrieve the IDs from the inplayEvents api
-//       await Odds.deleteMany({
-//         $or: [
-//           { status: "closed" },
-//           { status: "Closed" },
-//           { status: "CLOSED" }
-//         ]
-//       })
-//       await raceOdds.deleteMany.deleteMany({
-//         $or: [
-//           { status: "closed" },
-//           { status: "Closed" },
-//           { status: "CLOSED" }
-//         ]
-//       })
-//     } catch (error) {
-//       console.error('Error running listMarket cron job:', error);
-//     }
-//   });
-// }
-
 const deleteClosedOddsData = () => {
   //run after 5 minutes
 cron.schedule('*/5 * * * *', async () => {
