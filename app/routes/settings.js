@@ -621,8 +621,7 @@ async function otherLiveScore(id) {
 async function racesMarketList(req, res) {
   try {
     const racesMarketsData = await RaceMarkets.findOne({'eventNodes.marketNodes.marketId': req.params.marketId });
-    const raceOddsData = await RaceOdds.findOne({ marketId: req.params.marketId })
-    // .sort({ _id: -1 })
+    const raceOddsData = await RaceOdds.findOne({ marketId: req.params.marketId }).sort({_id: -1})
 
 console.log('racesMarketsData ==>', racesMarketsData)
 console.log('raceOddsData ==>', raceOddsData)
