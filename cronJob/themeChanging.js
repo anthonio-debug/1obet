@@ -1,13 +1,11 @@
 const cron = require("node-cron");
 const Settings = require("../app/models/settings");
-
-
-
+require('./db');
 
 const updateDefaultTheme = async () => {
   try {
     const settings = await Settings.findOne({
-      _id: "645e27d8ba117017eb29bad8",
+      _id: "645e239b023e705fdc7edad4",
     });
     const currentTheme = settings.defaultThemeName;
     console.log("current theme", currentTheme);
@@ -33,7 +31,7 @@ const updateDefaultTheme = async () => {
 const updateDefaultLoginPage = async () => {
   try {
     const settings = await Settings.findOne({
-      _id: "642bff9fc9bb7f4cb5b35d0a",
+      _id: "645e20c8023e705fdc7edad2",
     });
     const currentLoginPage = settings.defaultLoginPage;
     console.log("current LoginPage", currentLoginPage);
@@ -55,14 +53,11 @@ const updateDefaultLoginPage = async () => {
     console.error(err);
   }
 };
-
-
 const themeCronJob = () => {
-  cron.schedule('* * * * *',  () => {
+  cron.schedule("0 0 * * *",  () => {
+      console.log("theme Cron Job is running");
     updateDefaultTheme();
-    console.log("theme Cron Job is running");
     updateDefaultLoginPage();
   });
 };
-
-// module.export = themeCronJob
+themeCronJob();
