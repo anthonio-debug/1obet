@@ -7,7 +7,7 @@ db.sidebarmenus.insertMany([
     darkIcon: "https://1obet.com/assets/dark-icons/dashboard.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 0,
-    link: "/",
+    link: "/home",
   },
   {
     name: "Cricket",
@@ -124,7 +124,7 @@ db.sidebarmenus.insertMany([
     darkIcon: "https://1obet.com/assets/dark-icons/dashboard.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 1,
-    link: "/",
+    link: "/home",
   },
   {
     name: "Users",
@@ -288,6 +288,95 @@ db.bettingfigures.insertMany([
   }
 ])
 
+db.users.insertOne({ 
+  "userName" : "company", 
+  "password" : '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy', 
+  "reference" : "company", 
+  "phone" : "03056959889",  
+  "role" : "0",
+  "isActive" : true,
+  "status" : 1,
+  "notes" : "this is note",
+  "userId" : 1, 
+  "passwordChanged" : false, 
+  "balance" : 5000000000,
+  "isDeleted":false,
+  "clienPL":5000000000,
+  "credit":5000000000,
+  "creditLimit":5000000000, 
+  "createdAt" : 1678044562.685, 
+  "updatedAt" : 1678044562.685, 
+  "downLineShare":100 
+})
+
+db.settings.insertMany([
+  {
+  "_id" : ObjectId("645e20c8023e705fdc7edad2"),
+  "defaultLoginPage" : "login-page-one",
+  "createdAt" : 1683894409.774,
+  "updatedAt" : 1683894409.774
+  },
+  {
+  "_id" : ObjectId("645e239b023e705fdc7edad4"),
+  "defaultThemeName" : "grey-theme",
+  "createdAt" : 1683894409.774,
+  "updatedAt" : 1683894409.774
+  }
+])
+
+db.betlimits.insertMany([
+  {
+  "_id" : ObjectId("64623bc234ad06204d412beb"),
+  "name" : "soccer",
+  "maxAmount" : 280000
+  },
+  {
+  "_id" : ObjectId("64623bc234ad06204d412bec"),
+  "name" : "cricket",
+  "maxAmount" : 50000
+  },
+  {
+  "_id" : ObjectId("64623bc234ad06204d412bed"),
+  "name" : "fancy",
+  "maxAmount" : 200000
+  },
+  {
+  "_id" : ObjectId("64623bc234ad06204d412bee"),
+  "name" : "races",
+  "maxAmount" : 200000
+  },
+  {
+  "_id" : ObjectId("64623bc234ad06204d412bef"),
+  "name" : "casino",
+  "maxAmount" : 50000
+  },
+  {
+  "_id" : ObjectId("64623bc234ad06204d412bf0"),
+  "name" : "greyHound",
+  "maxAmount" : 50000
+  },
+  {
+  "_id" : ObjectId("64623bc234ad06204d412bf1"),
+  "name" : "bookMaker",
+  "maxAmount" : 2000000
+  },
+  {
+  "_id" : ObjectId("64623bc234ad06204d412bf2"),
+  "name" : "iceHockey",
+  "maxAmount" : 5000000
+  },
+  {
+  "_id" : ObjectId("64623bc234ad06204d412bf3"),
+  "name" : "snooker",
+  "maxAmount" : 5000000
+  },
+  {
+  "_id" : ObjectId("64623bc234ad06204d412bf4"),
+  "name" : "kabbadi",
+  "maxAmount" : 5000000
+  }
+])
+
 db.bets.insertMany([
   {
     marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
@@ -345,73 +434,84 @@ db.bets.insertMany([
   },
 ]);
 
+// db.inplayevents.remove({}) 
+// db.fancygames.remove({}) 
+// db.racemarkets.remove({}) 
+// db.raceodds.remove({}) 
+// db.racings.remove({}) 
+// db.odds.remove({}) 
 
-let currentPositionSchema = new Schema({
-  userId: { type: Number, index: true },
-  description: { type: String, required: false },
-  amount: { type: Number, default: 0 },
-  matchId: { type: String },
-  betId: { type: String },
-  updatedAt: { type: String },
-  createdAt: { type: String }
-});
 
-db.bets.insertMany([
-  {
-    marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
-    userId: 17,
-    betAmount: 1000,
-    betRate: 1.5,
-    returnAmount: 1500,
-    status: 1,
-    matchId: "64458338-704e-4d0f-b4fa-6af920ab467d",
-    winningAmount: 1200,
-    loosingAmount: 1000,
-    subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
-    event: "Pak vs AUS",
-    runner: "Pak",
-    position: 0,
-    matchStatus: "",
-    createdAt: 1684403142.32,
-    isFake: 1,
-  },
-  {
-    marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
-    userId: 17,
-    betAmount: 1000,
-    betRate: 1.2,
-    returnAmount: 1200,
-    status: 1,
-    matchId: "64458338-704e-4d0f-b4fa-6af920ab467d",
-    winningAmount: 1200,
-    loosingAmount: 1000,
-    subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
-    event: "Pak vs IND",
-    runner: "Pak",
-    position: 0,
-    matchStatus: "",
-    createdAt: 1684403142.32,
-    isFake: 1,
-  },
-  {
-    marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
-    userId: 17,
-    betAmount: 1000,
-    betRate: 2.5,
-    returnAmount: 2500,
-    status: 1,
-    matchId: "64458338-704e-4d0f-b4fa-6af920ab467d",
-    winningAmount: 1200,
-    loosingAmount: 1000,
-    subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
-    event: "IND vs AUS",
-    runner: "IND",
-    position: 0,
-    matchStatus: "",
-    createdAt: 1684403142.32,
-    isFake: 1,
-  },
-]);
+
+
+    
+
+// let currentPositionSchema = new Schema({
+//   userId: { type: Number, index: true },
+//   description: { type: String, required: false },
+//   amount: { type: Number, default: 0 },
+//   matchId: { type: String },
+//   betId: { type: String },
+//   updatedAt: { type: String },
+//   createdAt: { type: String }
+// });
+
+// db.bets.insertMany([
+//   {
+//     marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+//     userId: 17,
+//     betAmount: 1000,
+//     betRate: 1.5,
+//     returnAmount: 1500,
+//     status: 1,
+//     matchId: "64458338-704e-4d0f-b4fa-6af920ab467d",
+//     winningAmount: 1200,
+//     loosingAmount: 1000,
+//     subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+//     event: "Pak vs AUS",
+//     runner: "Pak",
+//     position: 0,
+//     matchStatus: "",
+//     createdAt: 1684403142.32,
+//     isFake: 1,
+//   },
+//   {
+//     marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+//     userId: 17,
+//     betAmount: 1000,
+//     betRate: 1.2,
+//     returnAmount: 1200,
+//     status: 1,
+//     matchId: "64458338-704e-4d0f-b4fa-6af920ab467d",
+//     winningAmount: 1200,
+//     loosingAmount: 1000,
+//     subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+//     event: "Pak vs IND",
+//     runner: "Pak",
+//     position: 0,
+//     matchStatus: "",
+//     createdAt: 1684403142.32,
+//     isFake: 1,
+//   },
+//   {
+//     marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+//     userId: 17,
+//     betAmount: 1000,
+//     betRate: 2.5,
+//     returnAmount: 2500,
+//     status: 1,
+//     matchId: "64458338-704e-4d0f-b4fa-6af920ab467d",
+//     winningAmount: 1200,
+//     loosingAmount: 1000,
+//     subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
+//     event: "IND vs AUS",
+//     runner: "IND",
+//     position: 0,
+//     matchStatus: "",
+//     createdAt: 1684403142.32,
+//     isFake: 1,
+//   },
+// ]);
 
 
 /*
@@ -476,6 +576,7 @@ db.bets.insertMany([
     }
   }
 */
+
 /*
   respone of live score API     
     "score": {
@@ -596,3 +697,5 @@ db.bets.insertMany([
 //   });
 //   await CurrentPosition.save();
 // }
+
+
