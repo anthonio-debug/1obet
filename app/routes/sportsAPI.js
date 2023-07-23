@@ -329,11 +329,10 @@ async function getnewOdds(ids) {
       const response = await axios.get(url);
       
       const oddsData = response.data;
-      // console.log('data',oddsData);
+      console.log('data',oddsData);
       let sportIds = {  "soccer" : "1", "cricket" : "4", "tennis" : "2" }
       let data = []
        await oddsData.forEach((element) => {
-            console.log("---->>>element.Runners.ExchangePrices", element.Runners.ExchangePrices.AvailableToBack);
             element.sportsId = sportIds[element.sport]
             element.runners = element.Runners
             element.marketId = element.MarketId
