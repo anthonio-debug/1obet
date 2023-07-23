@@ -35,20 +35,20 @@ const io = new Server(server,  {
 
 
 
+let interval; 
 // Socket.io event handlers
 io.on('connection', (socket) => {
   console.log('New client connected');
-
   // LISTEN FOR EVENT 1
   socket.on('listOdds', async (data) => {
     console.log('Received event1:', data);
     // Perform some function with data
     // Emit 'event1_response' with the result
-    setInterval(async () => {
+    interval = setInterval(async () => {
       const result = await listOdds(data);
-      console.log("Interval Running");
+      console.log(`Interval ${data} `);
       socket.emit('listOdds_response', result);
-    }, 1000);
+    }, 8000);
   });
 
 
@@ -67,6 +67,7 @@ io.on('connection', (socket) => {
 
   // Handle disconnection
   socket.on('disconnect', () => {
+    clearInterval(interval)
     console.log('Client disconnected');
   });
 });
