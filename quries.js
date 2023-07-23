@@ -395,6 +395,8 @@ db.bets.insertMany([
     matchStatus: "",
     createdAt: 1684403142.32,
     isFake: 1,
+    sportsId: "4",
+    eventId: "32466783"
   },
   {
     marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
@@ -413,6 +415,8 @@ db.bets.insertMany([
     matchStatus: "",
     createdAt: 1684403142.32,
     isFake: 1,
+    sportsId: "4",
+    eventId: "32466783"
   },
   {
     marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
@@ -429,8 +433,10 @@ db.bets.insertMany([
     runner: "IND",
     position: 0,
     matchStatus: "",
-    createdAt: 1684403142.32,
+    createdAt: 1689990044341,
     isFake: 1,
+    sportsId: "4",
+    eventId: "32466783"
   },
 ]);
 
