@@ -43,9 +43,10 @@ io.on('connection', (socket) => {
   socket.on('listOdds', async (data) => {
     console.log('Received event1:', data);
     // Perform some function with data
-    const result = await listOdds(data);
     // Emit 'event1_response' with the result
-    setInterval(() => {
+    setInterval(async () => {
+      const result = await listOdds(data);
+      console.log("Interval Running");
       socket.emit('listOdds_response', result);
     }, 1000);
   });
