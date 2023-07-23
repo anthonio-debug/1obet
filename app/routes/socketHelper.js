@@ -16,7 +16,7 @@ async function listOdds(eventId) {
     try {
       const odds = await Odds.findOne({ eventId: eventId }).sort({ createdAt: -1 });
       const fancyData = await FancyGames.findOne({ eventId: eventId }).sort({ createdAt: -1 });
-      console.log('odds',odds.runners);
+      // console.log('odds',odds.runners);
 
       let liveSportScoreData;
 
