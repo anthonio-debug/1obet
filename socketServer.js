@@ -19,6 +19,8 @@ const server = app.listen(4001, () => {
 });
 
 // Connect to MongoDB using Mongoose
+mongoose.set('strictQuery', false);
+mongoose.set({ debug: true });
 mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
