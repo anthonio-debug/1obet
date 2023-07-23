@@ -458,15 +458,15 @@ db.bets.insertMany([
 // nodemon ./cronJob/deleteClosedOdds
 
 
-// pm2  ./cronJob/themeChanging
-// pm2  ./cronJob/BetingCalculation
-// pm2  ./cronJob/listMarket
-// pm2  ./cronJob/cricketTenisSocerOdds
-// pm2  ./cronJob/fancy
-// pm2  ./cronJob/todayRace
-// pm2  ./cronJob/raceMarkets
-// pm2  ./cronJob/raceOdds
-// pm2  ./cronJob/deleteClosedOdds
+// pm2 start   ./cronJob/themeChanging.js --watch 
+// pm2 start  ./cronJob/BetingCalculation.js --watch
+// pm2 start  ./cronJob/listMarket.js --watch
+// pm2 start  ./cronJob/cricketTenisSocerOdds.js --watch
+// pm2 start  ./cronJob/fancy.js --watch
+// pm2 start  ./cronJob/todayRace.js --watch
+// pm2 start  ./cronJob/raceMarkets.js --watch
+// pm2 start  ./cronJob/raceOdds.js --watch
+// pm2 start  ./cronJob/deleteClosedOdds.js --watch
 
 
 

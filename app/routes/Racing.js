@@ -260,7 +260,7 @@ async function todayRaceJob(sportsId) {
     const horseRacesData = response.data;
   
     const bulkOperations = [];
-    for (const data of horseRacesData.meetings) {
+    for (let data of horseRacesData.meetings) {
       let marketIdsArray = []
       await data.races.forEach((element) => marketIdsArray.push(element.marketId));
       let obj = {}
