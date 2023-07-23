@@ -32,8 +32,9 @@ const listMarketCronJob = () => {
 
             const dummydata = listInplayEventsData.map(async(item)=>{
             let eventId = item.Id
+            let sportsId = item.sport
             // Call the listMarkets API with each eventId
-            const listMarketsResponse = await listMarketsByCronJob(eventId);
+            const listMarketsResponse = await listMarketsByCronJob(eventId,sportsId);
             })
         }
         } catch (error) {
