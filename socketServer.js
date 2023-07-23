@@ -23,7 +23,7 @@ const io = new Server(server,  {
   pingTimeout: 60000,
   cookie: false,
   cors: {
-    origin: "https://server.1obet.net:4000",
+    origin: "*/*",
     methods: ["GET", "POST"],
     allowedHeaders: '*/*',
     credentials: true
@@ -41,10 +41,8 @@ io.on('connection', (socket) => {
   // LISTEN FOR EVENT 1
   socket.on('listOdds', async (data) => {
     console.log('Received event1:', data);
-
     // Perform some function with data
     const result = await listOdds(data);
-    
     // Emit 'event1_response' with the result
     socket.emit('listOdds_response', result);
   });
