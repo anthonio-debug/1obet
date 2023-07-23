@@ -7,6 +7,13 @@ const { listOdds , racesMarketOdds } = require('./app/routes/socketHelper')
 
 // Create Express app
 const app = express();
+var corsOptions = {
+  origin: true,
+  credentials: true,
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+app.use(cors(corsOptions));
+
 const server = app.listen(4001, () => {
   console.log('Server listening on port 4001');
 });
