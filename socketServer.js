@@ -3,11 +3,10 @@ const express = require('express');
 const mongoose = require('mongoose');
 const { Server } = require('socket.io');
 const { listOdds , racesMarketOdds } = require('./app/routes/socketHelper')
-
 // Create Express app
 const app = express();
-const server = app.listen(3000, () => {
-  console.log('Server listening on port 3000');
+const server = app.listen(4001, () => {
+  console.log('Server listening on port 4001');
 });
 
 // Connect to MongoDB using Mongoose
@@ -19,16 +18,16 @@ mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
 
 // Create Socket.io instance
 const io = new Server(server,  {
-  pingInterval: 5000,
-  pingTimeout: 60000,
-  cookie: false,
+  // pingInterval: 5000,
+  // pingTimeout: 60000,
+  // cookie: false,
   cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
-    allowedHeaders: '*/*',
-    credentials: true
+    // allowedHeaders: '*/*',
+    // credentials: true
   },
-  transports: ['polling'] // Enable WebSocket transport
+  // transports: ['polling'] // Enable WebSocket transport
 
 });
 
@@ -41,12 +40,13 @@ io.on('connection', (socket) => {
   // LISTEN FOR EVENT 1
   socket.on('listOdds', async (data) => {
     console.log('Received event1:', data);
-
     // Perform some function with data
+
     const result = await listOdds(data);
-    
     // Emit 'event1_response' with the result
-    socket.emit('listOdds_response', result);
+    setInterval(() => {
+      socket.emit('listOdds_response', result);
+    }, 2000);
   });
 
 
