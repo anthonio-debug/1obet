@@ -1,18 +1,17 @@
 const express = require('express');
-const app = express();
 const http = require('http');
+const socketIO = require('socket.io');
+
+const app = express();
 const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
+const io = socketIO(server);
 
-app.get('/', (req, res) => {
-  res.sendFile(__dirname + '/index.html');
-});
-
+// Add event listeners for Socket.IO connections
 io.on('connection', (socket) => {
-  console.log('a user connected');
+  console.log('A client connected!');
 });
 
-server.listen(4000, () => {
-  console.log('listening on *:4000');
+const port = 3001;
+server.listen(port, () => {
+  console.log(`Server running on port ${port}`);
 });
