@@ -1,18 +1,11 @@
 const express = require('express');
 const app = express();
 const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
 let config = require('config');
-let fs = require('fs');
 let cors = require('cors');
-var morgan = require('morgan');
 const https = require('https');
 const option = require('./option');
-const apisMiddleware = require('./app/middlewares/apisMiddleware');
-const loginMiddleWare = require('./app/middlewares/loginMiddleware');
-const aclMiddleware = require('./app/middlewares/aclMiddleware');
-const accessMiddleware = require('./app/middlewares/accessMiddleware');
-const checkRoleMiddleware = require('./app/middlewares/checkRoleMiddleware');
+const PORT   = 4001;
 
 // CONNECT THE DATABASE
 let options = {
@@ -49,7 +42,7 @@ app.get('/', (req, res) => {
 });
 
 var server = https.createServer(option, app);
-server.listen(config.PORT, (err) => {
+server.listen(PORT, (err) => {
   if (err) throw new Error(err);
-  console.log(`Server is listening on port ${config.PORT}`);
+  console.log(`Server is listening on port ${PORT}`);
 });
