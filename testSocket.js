@@ -2,6 +2,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { Server } = require('socket.io');
+let cors = require('cors');
 const { listOdds , racesMarketOdds } = require('./app/routes/socketHelper')
 
 // Create Express app
