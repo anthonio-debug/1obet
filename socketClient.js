@@ -1,7 +1,7 @@
 const io = require('socket.io-client');
 
 // Connect to the socket server
-const socket = io('http://localhost:3000');
+const socket = io('http://localhost:4000');
 
 // Listen for 'connect' event
 socket.on('connect', () => {
@@ -11,11 +11,11 @@ socket.on('connect', () => {
 const interval = 2000;
 
 // Emit events at the specified time interval
-setInterval(() => {
+// setInterval(() => {
   // Emit 'event1' with timestamp as data
   socket.emit('listOdds', '1107161856');
   console.log('Emitted event1:', 1);
-}, interval);
+// }, interval);
 
   // // Emit 'event2' with data
   // socket.emit('event2', 'Data for event2');

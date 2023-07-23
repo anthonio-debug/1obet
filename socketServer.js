@@ -7,7 +7,7 @@ const { listOdds , racesMarketOdds } = require('./app/routes/socketHelper')
 // Create Express app
 const app = express();
 const server = app.listen(4000, () => {
-  console.log('Server listening on port 4000');
+  console.log('Server listening on port 3000');
 });
 
 // Connect to MongoDB using Mongoose
@@ -23,7 +23,7 @@ const io = new Server(server,  {
   pingTimeout: 60000,
   cookie: false,
   cors: {
-    origin: "http://localhost:4000",
+    origin: "https://server.1obet.net:4000",
     methods: ["GET", "POST"],
     allowedHeaders: '*/*',
     credentials: true
