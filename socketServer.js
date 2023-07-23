@@ -17,7 +17,8 @@ mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
 
 
 // Create Socket.io instance
-const io = new Server(server,  {
+const io = new Server(server,{
+  
   // pingInterval: 5000,
   // pingTimeout: 60000,
   // cookie: false,
