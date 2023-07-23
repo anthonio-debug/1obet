@@ -48,7 +48,7 @@ io.on('connection', (socket) => {
       const result = await listOdds(data);
       console.log(`Interval ${data} `);
       socket.emit('listOdds_response', result);
-    }, 8000);
+    }, 3000);
   });
 
 
