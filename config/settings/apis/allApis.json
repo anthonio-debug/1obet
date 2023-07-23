@@ -113,5 +113,7 @@
   "raceOdds",
   "placeFigureBets",
   "updateMatchType",
-  "racesMarketList"
+  "racesMarketList",
+  "approvedFakeBet",
+  "reviewFakeBet"
 ]

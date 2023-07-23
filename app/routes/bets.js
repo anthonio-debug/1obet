@@ -15,6 +15,7 @@ const maxAllowedBetSizes = require('../models/betLimits');
 const userBetSizes = require('../models/userBetSizes');
 const betRates = require('../models/betRate');
 const MarketType = require('../models/marketTypes');
+const Odds = require('../models/odds');
 
 async function getParents(userId) {
   const parentUserIds = [];
@@ -688,6 +689,83 @@ async function countFakeBet(req, res) {
   }
 }
 
+async function approvedFakeBet(req, res) {
+  if (req.decoded.role !== '0') {
+    return res.status(403).send({ message: 'Only company can perform this operation' });
+  }
+
+  try {
+    const betId = req.params.id;
+    const fakeBet = await Bets.findOne({ _id: betId, isFake: 1 });
+
+    if (!fakeBet) {
+      return res.status(404).json({ message: 'Bet not found' });
+    }
+    const updatedUser = await User.findOneAndUpdate(
+      { userId: fakeBet.userId },
+      { $set: { isActive: false } },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    return res.status(200).send({ message: 'user deactivated successfully', success: true });
+
+  } catch (error) {
+    console.error('Error updating bet:', error);
+    return res.status(500).send({
+      success: false,
+      message: 'Something went wrong',
+      error: error.message
+    });
+  }
+}
+
+async function reviewFakeBet(req, res) {
+  if (req.decoded.role !== '0') {
+    return res.status(403).send({ message: 'Only company can perform this operation' });
+  }
+
+  try {
+    const betId = req.params.id;
+    const sportsId = req.params.sportsId;
+
+    const fakeBet = await Bets.findOne({ _id: betId, isFake: 1, sportId: sportsId });
+
+    if (!fakeBet) {
+      return res.status(404).json({ message: 'Bet not found' });
+    }
+    // Find the odds before the bet's createdAt timestamp
+    const oddsBeforeBet = await Odds.find({
+      eventId: fakeBet.eventId,
+      createdAt: { $lt: fakeBet.createdAt },
+    }).sort({ createdAt: -1 }).limit(200).select('runners');
+
+    // Find the odds after the bet's createdAt timestamp
+    const oddsAfterBet = await Odds.find({
+      eventId: fakeBet.eventId,
+      createdAt: { $gt: fakeBet.createdAt },
+    }).sort({ createdAt: 1 }).limit(200).select('runners');
+  
+    return res.status(200).send({
+      message: 'Odds successfully retrieved',
+      success: true,
+      oddsBeforeBet,
+      oddsAfterBet,
+    });
+
+  } catch (error) {
+    console.error('Error retrieving odds:', error);
+    return res.status(500).send({
+      success: false,
+      message: 'Something went wrong',
+      error: error.message,
+    });
+  }
+}
+
 
 loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
 loginRouter.post('/getUserBets', getUserBets);
@@ -699,7 +777,8 @@ loginRouter.get('/FakeBetsList', FakeBetsList);
 loginRouter.delete('/deleteFakeBet/:id', deleteFakeBet);
 loginRouter.put('/updateFakeBet/:id', updateFakeBet);
 loginRouter.get('/countFakeBets', countFakeBet);
-
+loginRouter.post('/approvedFakeBet/:id', approvedFakeBet);
+loginRouter.get('/reviewFakeBet/:id/:sportsId', reviewFakeBet);
 
 
 
