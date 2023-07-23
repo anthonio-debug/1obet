@@ -5,6 +5,7 @@ let config = require('config');
 let cors = require('cors');
 const https = require('https');
 const option = require('./option');
+const PORT = 4001
 // CONNECT THE DATABASE
 let options = {
   useNewUrlParser: true,
