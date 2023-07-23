@@ -2,20 +2,30 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const { Server } = require('socket.io');
+const https = require('https');
 let cors = require('cors');
+const option = require('./option');
 const { listOdds , racesMarketOdds } = require('./app/routes/socketHelper')
+const PORT = 4001;
 
 // Create Express app
 const app = express();
-// var corsOptions = {
-//   origin: true,
-//   credentials: true,
-//   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
-// };
+var corsOptions = {
+  origin: true,
+  credentials: true,
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 app.use(cors());
 
-const server = app.listen(4001, () => {
-  console.log('Server listening on port 4001');
+// const server = app.listen(4001, () => {
+//   console.log('Server listening on port 4001');
+// });
+
+// Create HTTPs server.
+var server = https.createServer(option, app);
+server.listen(PORT, (err) => {
+  if (err) throw new Error(err);
+  console.log(`Server is listening on port ${PORT}`);
 });
 
 // Connect to MongoDB using Mongoose
@@ -24,6 +34,13 @@ mongoose.set({ debug: true });
 mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+});
+
+
+app.get('/', (req, res) => {
+  res.send(
+    '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.com </h2></body>'
+  );
 });
 
 
