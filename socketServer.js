@@ -1,6 +1,7 @@
 // Import required modules
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors'); // Import cors module
 const { Server } = require('socket.io');
 const { listOdds , racesMarketOdds } = require('./app/routes/socketHelper')
 // Create Express app
