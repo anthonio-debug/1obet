@@ -44,7 +44,7 @@ async function listOdds(eventId) {
         message: 'Error retrieving odds',
       };
     }
-  }
+}
 
 async function cricketLiveScore(id) {
     try {
@@ -52,7 +52,7 @@ async function cricketLiveScore(id) {
       const data = apiResponse.data;
       const response = {};
       if(typeof(data[0]) == "string"){
-        const event = await Event.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+        const event = await inPlayEvents.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
         const type = event ? event.matchType : null;
         const scoreInfo     = JSON.parse(data).score
         let score           = scoreInfo.score1;
@@ -126,7 +126,7 @@ async function otherLiveScore(id) {
     const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
     const data        = apiResponse.data;
     if(typeof(data[0]) == "string"){
-      const event = await Event.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+      const event = await inPlayEvents.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
       return JSON.parse(data)
     }else{
       return data[0]

@@ -466,7 +466,8 @@ db.odds.remove({})
 // nodemon ./cronJob/BetingCalculation.js
 // nodemon ./cronJob/themeChanging.js
 
-// pm2 start  ./cronJob/listSupportsAndMarkets.js ./cronJob/cricketOddsCronjob.js ./cronJob/tennisOddsCronJob.js ./cronJob/soccerOddsCronjob.js ./cronJob/fancyOdds.js ./cronJob/todayRace.js ./cronJob/raceMarkets.js ./cronJob/raceOdds.js ./cronJob/deleteClosedOdds.js ./cronJob/BetingCalculation.js ./cronJob/themeChanging.js  --watch
+// pm2 start  server.js socketServer.js  ./cronJob/listSupportsAndMarkets.js ./cronJob/cricketOddsCronjob.js ./cronJob/tennisOddsCronJob.js ./cronJob/soccerOddsCronjob.js ./cronJob/fancyOdds.js ./cronJob/todayRace.js ./cronJob/raceMarkets.js ./cronJob/raceOdds.js ./cronJob/deleteClosedOdds.js ./cronJob/BetingCalculation.js ./cronJob/themeChanging.js  --watch
+
 // pm2 start  ./cronJob/listSupportsAndMarkets.js  --watch
 // pm2 start  ./cronJob/cricketOddsCronjob.js --watch
 // pm2 start  ./cronJob/tennisOddsCronJob.js --watch
