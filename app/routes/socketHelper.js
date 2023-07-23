@@ -18,14 +18,14 @@ async function listOdds(eventId) {
       const fancyData = await FancyGames.findOne({ eventId: eventId }).sort({ createdAt: -1 });
       console.log('odds',odds.runners);
 
-      let livesportscoreData = []
+      let liveSportScoreData;
 
       const event = await inPlayEvents.findOne({ Id: eventId }, { _id: 0, matchType: 1, sportsId: 1 });
       const type = event ? event.sportsId : null;
       if(type == 4){
-        livesportscoreData = await cricketLiveScore(eventIds)
+        liveSportScoreData = await cricketLiveScore(eventId)
       }else{
-        livesportscoreData = await otherLiveScore(eventIds)
+        liveSportScoreData = await otherLiveScore(eventId)
       }
 
       return {
@@ -34,7 +34,7 @@ async function listOdds(eventId) {
         results: {
           odds: odds ? [odds]: [],
           fancyData: fancyData ?  [fancyData]: [],
-          livesportscoreData
+          livesportscoreData: liveSportScoreData
         },
       }
     } catch (error) {
