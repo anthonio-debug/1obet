@@ -10,7 +10,7 @@ const cricketOddsCronJob = () => {
         
         const marketIds = await ListMarkets.distinct("marketId", { islocked: false ,sportsId: "4" });
         console.log('MarketID', marketIds.length)
-        if(marketIds.length === 0) {
+        if(marketIds.length == 0) {
           await ListMarkets.updateMany(
             {  sportsId: "4" },
             {  islocked: false }
