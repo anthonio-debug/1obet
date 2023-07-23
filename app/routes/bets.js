@@ -732,28 +732,35 @@ async function reviewFakeBet(req, res) {
     const betId = req.params.id;
     const sportsId = req.params.sportsId;
 
-    const fakeBet = await Bets.findOne({ _id: betId, isFake: 1, sportId: sportsId });
+    const fakeBet = await Bets.findOne({ _id: betId, isFake: 1, sportsId: sportsId });
 
     if (!fakeBet) {
       return res.status(404).json({ message: 'Bet not found' });
     }
+
     // Find the odds before the bet's createdAt timestamp
     const oddsBeforeBet = await Odds.find({
       eventId: fakeBet.eventId,
       createdAt: { $lt: fakeBet.createdAt },
-    }).sort({ createdAt: -1 }).limit(200).select('runners');
+    }).sort({ createdAt: -1 }).limit(200).select('eventId updatetime runners');
 
     // Find the odds after the bet's createdAt timestamp
     const oddsAfterBet = await Odds.find({
       eventId: fakeBet.eventId,
       createdAt: { $gt: fakeBet.createdAt },
-    }).sort({ createdAt: 1 }).limit(200).select('runners');
-  
+    }).sort({ createdAt: 1 }).limit(200).select('eventId updatetime runners');
+
+    // Combine the runners into a single array for both oddsBeforeBet and oddsAfterBet
+    const BeforeBetOdds = oddsBeforeBet.map((odds) => odds.runners).flat();
+    const AfterBetOdds = oddsAfterBet.map((odds) => odds.runners).flat();
+
     return res.status(200).send({
       message: 'Odds successfully retrieved',
       success: true,
-      oddsBeforeBet,
-      oddsAfterBet,
+      eventId: fakeBet.eventId,
+      updatetime: fakeBet.createdAt,
+      BeforeBetOdds,
+      AfterBetOdds,
     });
 
   } catch (error) {
@@ -765,6 +772,8 @@ async function reviewFakeBet(req, res) {
     });
   }
 }
+
+
 
 
 loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
