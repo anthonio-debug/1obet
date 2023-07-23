@@ -1,10 +1,12 @@
 // Import required modules
 const express = require('express');
 const mongoose = require('mongoose');
+const cors = require('cors'); // Import cors module
 const { Server } = require('socket.io');
 const { listOdds , racesMarketOdds } = require('./app/routes/socketHelper')
 // Create Express app
 const app = express();
+app.use(cors());
 const server = app.listen(4001, () => {
   console.log('Server listening on port 4001');
 });
@@ -18,16 +20,9 @@ mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
 
 // Create Socket.io instance
 const io = new Server(server,  {
-  // pingInterval: 5000,
-  // pingTimeout: 60000,
-  // cookie: false,
   cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-    // allowedHeaders: '*/*',
-    // credentials: true
-  },
-  // transports: ['polling'] // Enable WebSocket transport
+    origin: "*",
+  }
 
 });
 
