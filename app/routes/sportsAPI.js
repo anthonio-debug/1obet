@@ -417,7 +417,8 @@ async function listInplayEventsJob(sportsId) {
   }
 }
 
-async function listMarketsByCronJob(eventId) {
+async function listMarketsByCronJob(eventId,sportsId) {
+  console.log('sportsId ========>>>',sportsId);
   const url = `${config.sportsAPIUrl}/listMarkets/${eventId}`;
 
   try {
@@ -425,6 +426,7 @@ async function listMarketsByCronJob(eventId) {
     const marketsData = response.data;
     console.log('MArkertData', marketsData)
 
+   let sportIds = { "soccer" : "1", "cricket" : "4", "tennis" : "2" }
 
     var listMarketData = await marketsData.map((element) => ({
       updateOne: {
@@ -434,7 +436,8 @@ async function listMarketsByCronJob(eventId) {
             status: element.status,
             eventId: eventId,
             marketName: element.marketName,
-            totalMatched: element.totalMatched
+            totalMatched: element.totalMatched,
+            sportsId: sportIds[sportsId],
           },
         },
         upsert: true,

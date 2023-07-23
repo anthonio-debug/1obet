@@ -36,15 +36,15 @@ const {
 // Import only cronJob2
 
 // Run the cron job
-themeCronJob();
-checkBetStatus();
-listMarketCronJob()
-oddsCronJob()
-fancyDataCronJob()
-todayRaceCronJob()
-raceMarketsCronJob()
-raceOddsCronJob()
-deleteClosedOddsData()
+// themeCronJob();
+// checkBetStatus();
+// listMarketCronJob()
+// oddsCronJob()
+// fancyDataCronJob()
+// todayRaceCronJob()
+// raceMarketsCronJob()
+// raceOddsCronJob()
+// deleteClosedOddsData()
 
 
 
