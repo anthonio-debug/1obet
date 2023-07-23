@@ -1,17 +1,65 @@
+// Import required modules
 const express = require('express');
-const http = require('http');
-const socketIO = require('socket.io');
-
+const mongoose = require('mongoose');
+const cors = require('cors'); // Import cors module
+const { Server } = require('socket.io');
+const { listOdds , racesMarketOdds } = require('./app/routes/socketHelper')
+// Create Express app
 const app = express();
-const server = http.createServer(app);
-const io = socketIO(server);
-
-// Add event listeners for Socket.IO connections
-io.on('connection', (socket) => {
-  console.log('A client connected!');
+app.use(cors());
+const server = app.listen(4001, () => {
+  console.log('Server listening on port 4001');
 });
 
-const port = 3001;
-server.listen(port, () => {
-  console.log(`Server running on port ${port}`);
+// Connect to MongoDB using Mongoose
+mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+
+
+// Create Socket.io instance
+const io = new Server(server,  {
+  cors: {
+    origin: "*",
+  }
+
+});
+
+
+
+// Socket.io event handlers
+io.on('connection', (socket) => {
+  console.log('New client connected');
+
+  // LISTEN FOR EVENT 1
+  socket.on('listOdds', async (data) => {
+    console.log('Received event1:', data);
+    // Perform some function with data
+
+    const result = await listOdds(data);
+    // Emit 'event1_response' with the result
+    setInterval(() => {
+      socket.emit('listOdds_response', result);
+    }, 2000);
+  });
+
+
+
+  // LISTEN FOR EVENT 2
+  socket.on('racesMarketOdds', async (data) => {
+    console.log('Received event2:', data);
+
+    // Perform some function with data
+    const result = await racesMarketOdds(data);
+
+    // Emit 'event2_response' with the result
+    socket.emit('racesMarketOdds_response', result);
+  });
+
+
+  // Handle disconnection
+  socket.on('disconnect', () => {
+    console.log('Client disconnected');
+  });
 });
