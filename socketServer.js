@@ -1,18 +1,45 @@
 const express = require('express');
 const app = express();
-const http = require('http');
-const server = http.createServer(app);
-const { Server } = require("socket.io");
-const io = new Server(server);
+const mongoose = require('mongoose');
+let config = require('config');
+let cors = require('cors');
+const https = require('https');
+const option = require('./option');
+// CONNECT THE DATABASE
+let options = {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  connectTimeoutMS: 30000, // 30 seconds
+};
+
+mongoose
+  .connect(config.DBHost, options)
+  .then(() => {
+    console.log('Database connected');
+  })
+  .catch((err) => {
+    console.log(` Database did not connect because ${err}`);
+  });
+
+
+// READ FORM DATA
+
+var corsOptions = {
+  origin: true,
+  credentials: true,
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
+
+app.use(cors(corsOptions));
 
 app.get('/', (req, res) => {
-  res.send('Hello Server Side');
+  res.send(
+    '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.com </h2></body>'
+  );
 });
 
-io.on('connection', (socket) => {
-  console.log('a user connected');
-});
-
-server.listen(4001, () => {
-  console.log('listening on *:4001');
+var server = https.createServer(option, app);
+server.listen(PORT, (err) => {
+  if (err) throw new Error(err);
+  console.log(`Server is listening on port ${PORT}`);
 });
