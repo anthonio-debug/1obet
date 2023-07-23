@@ -1,7 +1,7 @@
 const io = require('socket.io-client');
 
 // Connect to the socket server
-const socket = io('http://server.1obet.net:4001');
+const socket = io('https://server.1obet.net:4001');
 
 // Listen for 'connect' event
 socket.on('connect', () => {
