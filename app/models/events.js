@@ -26,6 +26,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   type: { type: Number, default: 0 },
   matchType: { type: String, default: '' },
   islocked: { type: Boolean , default: false },
+  iconStatus: { type: Boolean, default: false },
   //required fields for gray and horse raiding
   meetingId: { type: Number },
   venue: { type: String },

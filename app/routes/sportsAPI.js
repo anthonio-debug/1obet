@@ -332,7 +332,7 @@ async function getnewOdds(ids) {
       console.log('data',oddsData);
       let sportIds = {  "soccer" : "1", "cricket" : "4", "tennis" : "2" }
       let data = []
-       await oddsData.forEach((element) => {
+       await oddsData?.forEach((element) => {
             element.sportsId = sportIds[element.sport]
             element.runners = element.Runners
             element.marketId = element.MarketId
@@ -534,7 +534,6 @@ function getMatchType(competitionName, name, sportsId) {
   }
   return '';
 }
-
 
 loginRouter.get('/listCompetition/:sportId', listCompetitions);
 loginRouter.get('/listEventBySport/:sportId', listEventsBySport);
