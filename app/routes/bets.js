@@ -511,21 +511,27 @@ function getRandomSubset(arr, size) {
   return shuffled.slice(0, size);
 }
 
-async function getAllUserIDs(createdByIDs) {
+async function getAllUserIDs(createdByIDs, processedIDs = new Set()) {
   const userIDs = [];
 
   if (createdByIDs.length === 0) {
     return userIDs;
   }
+
   console.log('Created By:', createdByIDs);
 
-  const users = await User.find({ createdBy: { $in: createdByIDs } }, { userId: 1, userName: 1, createdBy: 1 }).lean();
+  const uniqueIDs = createdByIDs.filter(id => !processedIDs.has(id));
+  processedIDs = new Set([...processedIDs, ...uniqueIDs]);
+
+  const users = await User.find({ createdBy: { $in: uniqueIDs } }, { userId: 1, userName: 1, createdBy: 1 }).lean();
 
   for (const user of users) {
     userIDs.push(user.userId);
   }
 
-  const subUserIDs = await getAllUserIDs(userIDs);
+  console.log('Sub-users fetched for Created By:', createdByIDs);
+
+  const subUserIDs = await getAllUserIDs(userIDs, processedIDs);
   userIDs.push(...subUserIDs);
 
   return userIDs;
@@ -544,48 +550,73 @@ async function getMatchedBets(req, res) {
     }
 
     const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
+    console.log('bettorMaster', bettorMaster);
     const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
     const createdByIDs = userOfLoginUser.map(user => user.userId);
+
+    // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
 
-    if (loginUser.role == '5') {
+    if (loginUser.role === '5') {
       userIDs.push(loginUser.userId);
     }
-    const filteredBettors = await User.find({ userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] } }).select('userId userName createdBy');
-    const bettorCreators = {};
-    const masterNames = {};
 
-    const createdByUserIds = filteredBettors.map(user => user.userId);
-    const masterUsers = await User.find({ userId: { $in: createdByUserIds } }).select('userId userName');
-    for (const user of filteredBettors) {
-      bettorCreators[user.userId] = user.userName;
-      const filteredMaster = masterUsers.find(master => master.userId == user.createdBy);
-      const masterUserName = filteredMaster ? filteredMaster.userName : 'N/A';
-      masterNames[user.userId] = masterUserName;
-    }
+    // Use the $lookup aggregation pipeline to fetch matched bets along with user information and related events
+    const matchedBets = await Bets.aggregate([
+      { $match: { userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] }, status: 1 } },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'userId',
+          as: 'userDetails'
+        }
+      },
+      { $unwind: '$userDetails' },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userDetails.createdBy',
+          foreignField: 'userId',
+          as: 'masterDetails'
+        }
+      },
+      {
+        $lookup: {
+          from: 'inplayevents',
+          localField: 'sportsId',
+          foreignField: 'sportsId',
+          as: 'eventDetails'
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          prize: '$betRate',
+          size: '$betAmount',
+          runner: '$runner',
+          bettor: '$userDetails.userName',
+          master: {
+            $cond: [
+              { $eq: [loginUser.role, '5'] },
+              bettorMaster.userName,
+              { $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, ''] }
+            ]
+          },
+          event: {
+            $cond: [
+              { $eq: [loginUser.role, '5'] },
+              { name: { $arrayElemAt: ['$eventDetails.name', 0] }, openDate: { $arrayElemAt: ['$eventDetails.openDate', 0] } },
+              '$$REMOVE'
+            ]
+          }
+        }
+      }
+    ]).exec();
 
-    const result = await Bets.find({ userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] } }).exec();
-
-    if (!result || result.length === 0) {
+    if (!matchedBets || matchedBets.length === 0) {
       return res.status(404).send({ message: 'Matched bets not found' });
     }
-
-    const matchedBets = result.map(bet => {
-      let masterName = '';
-      if (loginUser.role === '5') {
-        masterName = bettorMaster.userName;
-      } else {
-        masterName = masterNames[bet.userId] || 'N/A';
-      }
-
-      return {
-        prize: bet.betRate,
-        size: bet.betAmount,
-        runner: bet.runner,
-        bettor: bettorCreators[bet.userId] || 'N/A',
-        master: masterName
-      };
-    });
 
     return res.send({
       success: true,
@@ -596,6 +627,7 @@ async function getMatchedBets(req, res) {
     return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
   }
 }
+
 
 async function FakeBetsList(req, res) {
   try {
