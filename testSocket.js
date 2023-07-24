@@ -77,7 +77,7 @@ io.on('connection', (socket) => {
       result = await listOdds(data);
       console.log(`Interval ${data} `);
       socket.emit('listOdds_response', result);
-    }, 1000);
+    }, 900);
   });
 
 
@@ -87,10 +87,16 @@ io.on('connection', (socket) => {
     console.log('Received event2:', data);
 
     // Perform some function with data
-    const result = await racesMarketOdds(data);
-
+    let result = await racesMarketOdds(data);
     // Emit 'event2_response' with the result
     socket.emit('racesMarketOdds_response', result);
+    
+    interval = setInterval(async () => {
+      // Perform some function with data
+      const result = await racesMarketOdds(data);
+      // Emit 'event2_response' with the result
+      socket.emit('racesMarketOdds_response', result);
+    }, 900);
   });
 
 

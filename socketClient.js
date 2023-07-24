@@ -9,8 +9,14 @@ socket.on('connect', () => {
 
 // setInterval(() => {
   // Emit 'event1' with timestamp as data
-  socket.emit('listOdds', '1107231737');
+  // socket.emit('listOdds', '1107231737');
+  // console.log('Emitted event1:', 1107231737);
+
+
+  socket.emit('racesMarketOdds', '1107231737');
   console.log('Emitted event1:', 1107231737);
+
+  
 // }, interval);
 
   // // Emit 'event2' with data

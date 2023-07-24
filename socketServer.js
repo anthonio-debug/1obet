@@ -83,15 +83,22 @@ io.on('connection', (socket) => {
 
 
   // LISTEN FOR EVENT 2
-  socket.on('racesMarketOdds', async (data) => {
-    console.log('Received event2:', data);
-
-    // Perform some function with data
-    const result = await racesMarketOdds(data);
-
-    // Emit 'event2_response' with the result
-    socket.emit('racesMarketOdds_response', result);
-  });
+    // LISTEN FOR EVENT 2
+    socket.on('racesMarketOdds', async (data) => {
+      console.log('Received event2:', data);
+  
+      // Perform some function with data
+      let result = await racesMarketOdds(data);
+      // Emit 'event2_response' with the result
+      socket.emit('racesMarketOdds_response', result);
+      
+      interval = setInterval(async () => {
+        // Perform some function with data
+        const result = await racesMarketOdds(data);
+        // Emit 'event2_response' with the result
+        socket.emit('racesMarketOdds_response', result);
+      }, 900);
+    });
 
 
   // Handle disconnection

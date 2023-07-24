@@ -466,10 +466,9 @@ db.odds.remove({})
 // nodemon ./cronJob/BetingCalculation.js
 // nodemon ./cronJob/themeChanging.js
 
-// pm2 restart  server.js socketServer.js  ./cronJob/listSupportsAndMarkets.js ./cronJob/cricketOddsCronjob.js ./cronJob/tennisOddsCronJob.js ./cronJob/soccerOddsCronjob.js ./cronJob/fancyOdds.js ./cronJob/todayRace.js ./cronJob/raceMarkets.js ./cronJob/raceOdds.js ./cronJob/deleteClosedOdds.js ./cronJob/BetingCalculation.js ./cronJob/themeChanging.js  --watch
+// pm2 restart  server.js socketServer.js testSocket.js  ./cronJob/listSupportsAndMarkets.js ./cronJob/cricketOddsCronjob.js ./cronJob/tennisOddsCronJob.js ./cronJob/soccerOddsCronjob.js ./cronJob/fancyOdds.js ./cronJob/todayRace.js ./cronJob/raceMarkets.js ./cronJob/horseRaceOdds.js ./cronJob/greyhoundOdds.js  ./cronJob/deleteClosedOdds.js ./cronJob/BetingCalculation.js ./cronJob/themeChanging.js  --watch
 
-
-// pm2 start  server.js socketServer.js  ./cronJob/listSupportsAndMarkets.js ./cronJob/cricketOddsCronjob.js ./cronJob/tennisOddsCronJob.js ./cronJob/soccerOddsCronjob.js ./cronJob/fancyOdds.js ./cronJob/todayRace.js ./cronJob/raceMarkets.js ./cronJob/raceOdds.js ./cronJob/deleteClosedOdds.js ./cronJob/BetingCalculation.js ./cronJob/themeChanging.js  --watch
+// pm2 start  server.js socketServer.js testSocket.js  ./cronJob/listSupportsAndMarkets.js ./cronJob/cricketOddsCronjob.js ./cronJob/tennisOddsCronJob.js ./cronJob/soccerOddsCronjob.js ./cronJob/fancyOdds.js ./cronJob/todayRace.js ./cronJob/raceMarkets.js ./cronJob/horseRaceOdds.js ./cronJob/greyhoundOdds.js  ./cronJob/deleteClosedOdds.js ./cronJob/BetingCalculation.js ./cronJob/themeChanging.js  --watch
 
 // pm2 start  ./cronJob/listSupportsAndMarkets.js  --watch
 // pm2 start  ./cronJob/cricketOddsCronjob.js --watch
@@ -478,8 +477,10 @@ db.odds.remove({})
 // pm2 start  ./cronJob/fancyOdds.js --watch
 // pm2 start  ./cronJob/todayRace.js --watch
 // pm2 start  ./cronJob/raceMarkets.js --watch
-// pm2 start  ./cronJob/raceOdds.js --watch
-// pm2 start  ./cronJob/raceOdds.js --watch
+
+// pm2 start  ./cronJob/horseRaceOdds.js --watch
+// pm2 start  ./cronJob/greyhoundOdds.js --watch
+
 // pm2 start  ./cronJob/deleteClosedOdds.js --watch
 
 // pm2 start  ./cronJob/BetingCalculation.js --watch
