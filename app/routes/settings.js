@@ -312,6 +312,40 @@ function getDefaultSettings(req, res) {
   });
 }
 
+async function updateMatchType(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+      return res.status(400).send({ errors: errors.errors });
+  }
+  try {
+    const {_id, matchType, iconStatus } = req.body;
+     inPlayEvents.findByIdAndUpdate(
+        _id,
+        { $set: { matchType: matchType, iconStatus: iconStatus } },
+          (err, updatedMatch) => {
+              if (err) {
+                  console.log("Error updating figure:", err);
+              } else {
+                  console.log("Updated match:", updatedMatch);
+              }
+          }
+      );
+      res.status(200).json({
+          success: true,
+          message: 'Updated Successfully'
+      });
+
+
+  }catch (error) {
+      console.error(error);
+      res.status(200).json({
+          success: false,
+          message: 'Failed to save fancy data',
+          error: error.message,
+      });
+  }
+}
+
 function getSideBarMenu(req, res) {
   let type = [];
   if (req.decoded.role == 5) {
@@ -794,6 +828,7 @@ loginRouter.get(
 loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);
+loginRouter.post('/updateMatchType', updateMatchType);
 loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 
 module.exports = { loginRouter, router, listOddsAPI };
