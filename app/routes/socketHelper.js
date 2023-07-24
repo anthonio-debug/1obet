@@ -20,7 +20,7 @@ async function listOdds(eventId) {
 
       let liveSportScoreData;
 
-      const event = await inPlayEvents.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
+      const event = await inPlayEvents.findOne({ Id: eventId }, { _id: 0, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
       const type = event ? event.sportsId : null;
       if(type == 4){
         liveSportScoreData = await cricketLiveScore(eventId)
