@@ -218,7 +218,7 @@ async function rollback(req, res) {
     });
   }
 
-  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, round_id: payload.round_id});
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id});
 
   User.findOne({ remoteId }, (err, user) => {
     if (err || !user) {
@@ -241,7 +241,7 @@ async function rollback(req, res) {
     }
 
     if (payload.action == 'rollback') {
-      CasinoDebits.findOne({transaction_id: payload.transaction_id, round_id: payload.round_id}, (err, trans)=>{ 
+      CasinoDebits.findOne({transaction_id: payload.transaction_id}, (err, trans)=>{ 
         if(err || !trans){
           return res.send({
             status:404,
