@@ -289,15 +289,15 @@ db.bettingfigures.insertMany([
 ])
 
 db.users.insertOne({ 
-  "userName" : "company", 
+  "userName" : "Company3", 
   "password" : '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy', 
-  "reference" : "company", 
+  "reference" : "Company3", 
   "phone" : "03056959889",  
   "role" : "0",
   "isActive" : true,
   "status" : 1,
   "notes" : "this is note",
-  "userId" : 1, 
+  "userId" : 2009, 
   "passwordChanged" : false, 
   "balance" : 5000000000,
   "isDeleted":false,
@@ -478,6 +478,7 @@ db.odds.remove({})
 // pm2 start  ./cronJob/fancyOdds.js --watch
 // pm2 start  ./cronJob/todayRace.js --watch
 // pm2 start  ./cronJob/raceMarkets.js --watch
+// pm2 start  ./cronJob/raceOdds.js --watch
 // pm2 start  ./cronJob/raceOdds.js --watch
 // pm2 start  ./cronJob/deleteClosedOdds.js --watch
 

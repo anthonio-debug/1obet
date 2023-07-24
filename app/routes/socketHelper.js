@@ -13,49 +13,35 @@ Get data for these sports
    3. Tennis
 */
 async function listOdds(eventId) {
-  try {
-    const eventIds = req.query.ids
-    // const odds = await Odds.find({ eventId: { $in: eventIds } });
-    const odds = await Odds.aggregate([
-      { $match: { eventId: eventIds } },
-      { $sort: { createdAt: -1 } },
-      { $group: { _id: "$marketName", odds: { $first: "$$ROOT" } } },
-      { $replaceRoot: { newRoot: "$odds" } }
-    ]).exec()
-    // const url = `${config.liveTvUrl}/get_live_tv_url/${eventIds}`;
-    // const liveTVResponse = await axios.get(url);
-    // const liveTVData = liveTVResponse.data;
-    const fancyData = await FancyGames.findOne({ eventId: { $in: eventIds } }).sort({ createdAt: -1 })
-
-    console.log('fancyData', fancyData);
-
-    let livesportscoreData = {}
-
-    const event = await inPlayEvents.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
+    try {
+      const odds = await Odds.findOne({ eventId: eventId }).sort({ createdAt: -1 });
+      console.log("odds runners ", odds);
+      const fancyData = await FancyGames.findOne({ eventId: eventId }).sort({ createdAt: -1 });
+      let liveSportScoreData;
+      const event = await inPlayEvents.findOne({ Id: eventId }, { _id: 0, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
       const type = event ? event.sportsId : null;
       if(type == 4){
-        livesportscoreData = await cricketLiveScore(eventIds)
+        liveSportScoreData = await cricketLiveScore(eventId)
       }else{
-        livesportscoreData = await otherLiveScore(eventIds)
+        liveSportScoreData = await otherLiveScore(eventId)
       }
-    // console.log('liveTVResponse', liveTVResponse);
-    return res.json({
-      success: true,
-      message: 'Records',
-      results: {
-        odds,
-        fancyData: fancyData ? [fancyData] : [],
-        livesportscoreData,
-       matchData: event
-      },
-    });
-  } catch (error) {
-    console.error('Error retrieving odds:', error);
-    return res.status(500).json({
-      success: false,
-      message: 'Error retrieving odds',
-    });
-  }
+      return {
+        success: true,
+        message: 'Records',
+        results: {
+          odds: odds ? [odds]: [],
+          fancyData: fancyData ?  [fancyData]: [],
+          livesportscoreData: liveSportScoreData,
+          matchData: event
+        },
+      }
+    } catch (error) {
+      console.error('Error retrieving odds:', error);
+      return {
+        success: false,
+        message: 'Error retrieving odds',
+      };
+    }
 }
 
 async function cricketLiveScore(id) {

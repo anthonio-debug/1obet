@@ -491,7 +491,7 @@ async function listOddsAPI(req, res) {
         odds,
         fancyData: fancyData ? [fancyData] : [],
         livesportscoreData,
-       matchData: event
+        matchData: event
       },
     });
   } catch (error) {
