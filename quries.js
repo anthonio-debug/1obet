@@ -449,7 +449,72 @@ db.fancygames.remove({})
 db.racemarkets.remove({}) 
 db.raceodds.remove({}) 
 db.racings.remove({}) 
-db.odds.remove({}) 
+db.odds.insertOne({
+  updatetime: null,
+  update: 'ok',
+  sport: 'cricket',
+  eventId: '1107241628',
+  marketId: '1.110724162815',
+  marketName: 'Match Odds',
+  source: 1,
+  isMarketDataDelayed: false,
+  status: 'OPEN',
+  isInplay: true,
+  inplay: true,
+  numberOfRunners: 2,
+  numberOfActiveRunners: 2,
+  totalMatched: 0,
+  sportsId: '4',
+  runners: [
+    {
+      SelectionId: 101,
+      runnerName: 'India T10',
+      Status: 'ACTIVE',
+      LastPriceTraded: null,
+      TotalMatched: 0,
+      ExchangePrices: {
+        AvailableToBack: [
+          { price: 0, size: 0 },
+          { price: 0, size: 0 },
+          { price: 0, size: 0 }
+        ],
+        AvailableToLay: [
+          { price: 0, size: 0 },
+          { price: 0, size: 0 },
+          { price: 0, size: 0 }
+        ]
+      }
+    },
+    {
+      SelectionId: 102,
+      runnerName: 'South Africa T10',
+      Status: 'ACTIVE',
+      LastPriceTraded: null,
+      TotalMatched: 0,
+      ExchangePrices: {
+        AvailableToBack: [
+          { price: 0, size: 0 },
+          { price: 0, size: 0 },
+          { price: 0, size: 0 }
+        ],
+        AvailableToLay: [
+          { price: 0, size: 0 },
+          { price: 0, size: 0 },
+          { price: 0, size: 0 }
+        ]
+      }
+    }
+  ],
+  createdAt: 1690192205612,
+}) 
+
+
+db.inplayevents.find({}) 
+db.fancygames.find({}) 
+db.racemarkets.find({}) 
+db.raceodds.find({}) 
+db.racings.find({}) 
+db.odds.find({}) 
 
 
 
@@ -745,26 +810,26 @@ db.odds.remove({})
 
 
 
-{
-  "callerId":"1obet_mc_s",
-  "callerPassword":"dad9020626b135833fac4bf9bc757475e8c5603a",
-  "callerPrefix":"zrf3",
-  "action":"debit",
-  "remote_id":"1082148",
-  "username":"user_2002",
-  "session_id":"",
-  "amount":"5",
-  "provider":"ez",
-  "game_id":"157645",
-  "game_id_hash":"ez_ez-three-card-poker",
-  "transaction_id":"ez-cba6e214bc56d792ea84061978cecf84count10",
-  "round_id":"cae75d1cf1f290d2ed5583bb45c2d9edcount10",
-  "gameplay_final":"0",
-  "currency":"EUR",
-  "is_freeround_bet":"0",
-  "jackpot_contribution_in_amount":"0",
-  "gamesession_id":"ez_",
-  "key":"7a037907f60e457a0636122150f7038d1e7525e7"
-}
+// {
+//   "callerId":"1obet_mc_s",
+//   "callerPassword":"dad9020626b135833fac4bf9bc757475e8c5603a",
+//   "callerPrefix":"zrf3",
+//   "action":"debit",
+//   "remote_id":"1082148",
+//   "username":"user_2002",
+//   "session_id":"",
+//   "amount":"5",
+//   "provider":"ez",
+//   "game_id":"157645",
+//   "game_id_hash":"ez_ez-three-card-poker",
+//   "transaction_id":"ez-cba6e214bc56d792ea84061978cecf84count10",
+//   "round_id":"cae75d1cf1f290d2ed5583bb45c2d9edcount10",
+//   "gameplay_final":"0",
+//   "currency":"EUR",
+//   "is_freeround_bet":"0",
+//   "jackpot_contribution_in_amount":"0",
+//   "gamesession_id":"ez_",
+//   "key":"7a037907f60e457a0636122150f7038d1e7525e7"
+// }
 
 
