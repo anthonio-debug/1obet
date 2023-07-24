@@ -218,7 +218,7 @@ async function rollback(req, res) {
     });
   }
 
-  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id});
+  const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, remote_id: payload.remote_id});
 
   User.findOne({ remoteId }, (err, user) => {
     if (err || !user) {
