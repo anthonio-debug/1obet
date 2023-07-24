@@ -483,37 +483,12 @@ async function listOddsAPI(req, res) {
       }else{
         livesportscoreData = await otherLiveScore(eventIds)
       }
-      
-      // const order = [
-      //   "Match Odds",
-      //   "Book Maker",
-      //   "BookMaker2",
-      //   "fancy",
-      //   "Tied Match",
-      //   "Toss",
-      // ];
-      // const matchOddsData = [...odds]?.filter(
-      //   (item) => item?.marketName?.toLowerCase() === "match odds"
-      // );
-      // const otherData = [...odds]?.filter(
-      //   (item) => item?.marketName?.toLowerCase() !== "match odds"
-      // );
-      // const orderSortArray = otherData?.sort((a, b) => {
-      //   const indexA = order?.indexOf(a?.marketName);
-      //   const indexB = order?.indexOf(b?.marketName);
-      //   return indexA - indexB;
-      // });
-      // const orderedArray = [...matchOddsData, ...orderSortArray];
     // console.log('liveTVResponse', liveTVResponse);
     return res.json({
       success: true,
       message: 'Records',
       results: {
         odds,
-        // liveTVData: {
-        //   scoreUrl: liveTVData.scoreUrl || '',
-        //   streamingUrl: liveTVData.streamingUrl || '',
-        // },
         fancyData: fancyData ? [fancyData] : [],
         livesportscoreData,
        matchData: event
