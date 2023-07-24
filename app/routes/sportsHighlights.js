@@ -5,38 +5,77 @@ const loginRouter = express.Router();
 const inPlayEvents = require('../models/events');
 const Odds = require('../models/odds');
 
-// Define the API endpoint
 async function getAllSportsHighlight(req, res) {
   try {
-    const sportsIdList = [1, 2, 4]; // List of sportsId to filter
-    const sportsHighlights = await inPlayEvents.find({ sportsId: { $in: sportsIdList } });
+    const sportsIdList = ["1", "2", "4"]; // List of sportsId to filter
 
-    const eventIds = sportsHighlights.map(highlight => highlight.Id);
-    const oddsData = await Odds.find({ eventId: { $in: eventIds } });
-
-    const totalMatchedMap = {};
-
-    oddsData.forEach(odds => {
-      totalMatchedMap[odds.eventId] = odds.totalMatched;
-    });
+    // Use MongoDB aggregation pipeline to filter and process data on the database server
+    const sportsHighlights = await inPlayEvents.aggregate([
+      { $match: { sportsId: { $in: sportsIdList } } },
+      {
+        $lookup: {
+          from: 'Odds',
+          localField: 'Id',
+          foreignField: 'eventId',
+          as: 'oddsData',
+        },
+      },
+      {
+        $project: {
+          sport: 1,
+          name: 1,
+          Id: 1,
+          _id: 1,
+          sportsId: 1,
+          matchType: 1,
+          inplay: 1,
+          iconStatus: 1,
+          oddsData: { $arrayElemAt: ['$oddsData', 0] },
+        },
+      },
+      {
+        $addFields: {
+          amount: { $ifNull: ['$oddsData.totalMatched', 0] },
+        },
+      },
+      {
+        $group: {
+          _id: '$sport',
+          data: {
+            $push: {
+              match: '$name',
+              sportsId: '$sportsId',
+              matchType: '$matchType',
+              amount: '$amount',
+              Id: '$Id',
+              _id: '$_id',
+              inplay: '$inplay',
+              iconStatus: '$iconStatus',
+            },
+          },
+        },
+      },
+      {
+        $project: {
+          sport: '$_id',
+          data: 1,
+          _id: 0,
+        },
+      },
+    ]);
 
     const formattedData = {};
-
-    sportsHighlights.forEach(highlight => {
-      const { sport, name, Id, _id,sportsId,matchType,inplay,iconStatus } = highlight;
-      const amount = totalMatchedMap[Id] || 0;
-
-      if (!formattedData[sport]) {
-        formattedData[sport] = [];
-      }
-
-      formattedData[sport].push({ match:name,sportsId,matchType ,amount,Id,_id,inplay,iconStatus });
+    console.log(
+      'formattedData',formattedData
+    );
+    sportsHighlights.forEach((highlight) => {
+      formattedData[highlight.sport] = highlight.data;
     });
 
     return res.send({
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
-      results: formattedData
+      results: formattedData,
     });
   } catch (err) {
     console.log(err);
@@ -46,6 +85,7 @@ async function getAllSportsHighlight(req, res) {
     });
   }
 }
+
 
 
 

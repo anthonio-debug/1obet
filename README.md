@@ -50,53 +50,62 @@ db.settings.insertMany([
 default betlimits for company
 db.betlimits.insertMany([
     {
-    "_id" : ObjectId("64623bc234ad06204d412beb"),
     "name" : "soccer",
     "maxAmount" : 280000
     },
     {
-    "_id" : ObjectId("64623bc234ad06204d412bec"),
     "name" : "cricket",
     "maxAmount" : 50000
     },
     {
-    "_id" : ObjectId("64623bc234ad06204d412bed"),
     "name" : "fancy",
     "maxAmount" : 200000
     },
     {
-    "_id" : ObjectId("64623bc234ad06204d412bee"),
     "name" : "races",
     "maxAmount" : 200000
     },
     {
-    "_id" : ObjectId("64623bc234ad06204d412bef"),
     "name" : "casino",
     "maxAmount" : 50000
     },
     {
-    "_id" : ObjectId("64623bc234ad06204d412bf0"),
     "name" : "greyHound",
     "maxAmount" : 50000
     },
     {
-    "_id" : ObjectId("64623bc234ad06204d412bf1"),
     "name" : "bookMaker",
     "maxAmount" : 2000000
     },
     {
-    "_id" : ObjectId("64623bc234ad06204d412bf2"),
     "name" : "iceHockey",
     "maxAmount" : 5000000
     },
     {
-    "_id" : ObjectId("64623bc234ad06204d412bf3"),
     "name" : "snooker",
     "maxAmount" : 5000000
     },
     {
-    "_id" : ObjectId("64623bc234ad06204d412bf4"),
     "name" : "kabbadi",
     "maxAmount" : 5000000
+    },
+    {
+    "name" : "fancy 2",
+    "maxAmount" : 2000000
+    },
+    {
+    "name" : "tied match",
+    "maxAmount" : 2000000
+    },{
+    "name" : "last figure",
+    "maxAmount" : 2000000
+    },
+    {
+    "name" : "even/odds",
+    "maxAmount" : 2000000
+    },
+    {
+    "name" : "chota/bara",
+    "maxAmount" : 2000000
     }
 ])
