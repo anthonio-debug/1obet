@@ -196,8 +196,8 @@ async function racesMarketOdds(marketId) {
       };
       const racesMarketsData = await RaceMarkets.findOne({'eventNodes.marketNodes.marketId': marketId },);
       const raceOddsData = await RaceOdds.findOne({ marketId: marketId },projectionRaceOddsData).sort({_id: -1})
-      console.log('racesMarketsData ==>', racesMarketsData)
-      console.log('raceOddsData ==>', raceOddsData)      
+      console.log('>> racesMarketsData ==>', racesMarketsData)
+      console.log('>> raceOddsData ==>', raceOddsData)      
       if ( raceOddsData?.runners && Array.isArray(raceOddsData?.runners) && racesMarketsData?.eventNodes && Array.isArray(racesMarketsData?.eventNodes)){
         const marketNode = racesMarketsData?.eventNodes?.find((eventNode) => eventNode?.marketNodes?.marketId === raceOddsData.marketId);
         if (marketNode && marketNode?.marketNodes?.runners && Array.isArray(marketNode?.marketNodes?.runners)) {
