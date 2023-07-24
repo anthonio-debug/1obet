@@ -80,18 +80,14 @@ async function debit(req, res) {
     if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
     }
-    CasinoDebits.findOne({transaction_id: payload.transaction_id, action: 'debit'}, (er, counts)=>{
-      return res.json({
-        status: 200,
-        balance: user.availableBalance,
-      });
+    CasinoDebits.findOne({transaction_id: payload.transaction_id, action: 'debit'}, (err, counts)=>{
+      if(counts.length > 0){
+        return res.json({
+          status: 200,
+          balance: user.availableBalance,
+        });
+      }
     });
-    if(sameTransId > 0){
-      return res.json({
-        status: 200,
-        balance: user.availableBalance,
-      });
-    }
 
     if(parseInt(payload.amount) > user.availableBalance){
       return res.json({
@@ -167,27 +163,18 @@ async function credit(req, res) {
     });
   }
 
-
-  // const sameTransId = await CasinoDebits.countDocuments({transaction_id: payload.transaction_id, remote_id: payload.remote_id, action: 'credit'});
-  // if(sameTransId == 0){
-    // const casinoDebits = new CasinoDebits(payload);
-    // casinoDebits.save((err) => {
-    //   if (err) {
-    //     console.error(err);
-    //     return res.send({ status: '500', msg: 'internal error' });
-    //   }
-    // });
-  // }
   const remoteId = payload.remote_id;
   User.findOne({ remoteId: remoteId }, (err, user) => {
     if (err || !user) {
       return res.send({ status: '500', msg: 'internal error' });
     }
-    CasinoDebits.findOne({transaction_id: payload.transaction_id, action: 'credit'}, (er, counts)=>{
-      return res.json({
-        status: 200,
-        balance: user.availableBalance,
-      });
+    CasinoDebits.findOne({transaction_id: payload.transaction_id, action: 'credit'}, (err, counts)=>{
+      if(counts.length > 0){
+        return res.json({
+          status: 200,
+          balance: user.availableBalance,
+        });
+      }
     });
 
     if(parseInt(payload.amount) < 0){
@@ -196,14 +183,6 @@ async function credit(req, res) {
         balance: user.availableBalance
       });
     }
-
-    // if(sameTransId > 0){
-    //   return res.json({
-    //     status: 200,
-    //     balance: user.availableBalance,
-    //   });
-    // }
-
     // const creditAmount = parseInt(req.query.amount);
     if ( parseInt(req.query.amount) < 0) {
       return res.json({ status: '500', msg: 'Negative amount not allowed!' });
@@ -252,15 +231,6 @@ async function rollback(req, res) {
     });
   }
 
-  if(sameTransId == 1){
-    const casinoDebits = new CasinoDebits(payload);
-    casinoDebits.save((err) => {
-      if (err) {
-        console.error(err);
-        return res.send({ status: '500', msg: 'internal error' });
-      }
-    });
-  }
   User.findOne({ remoteId }, (err, user) => {
     if (err || !user) {
       return res.json({
@@ -269,36 +239,46 @@ async function rollback(req, res) {
       });
     }
     if (payload.action == 'rollback') {
-      CasinoDebits.find({transaction_id: payload.transaction_id}, (err, users)=>{ 
+      CasinoDebits.find({transaction_id: payload.transaction_id}, (err, counts)=>{ 
         if(err){
           return res.json({
             status: 404,
             balance: user.availableBalance
           });
         }
-        else if(users.length > 1){
+        else if(counts.length > 1){
           return res.json({
             status: 200,
             balance: user.availableBalance
           });
         }
+      });
+      let amount = 0;
+      const action = users[0].action;
+      if(action == "credit"){
+        amount = - parseInt(trans.amount);
+      }
+      else if(action == "debit"){
+        amount = parseInt(trans.amount);
+      }
+      else if(action == 'rollback'){
+        return res.json({
+          status: 404,
+          balance: user.availableBalance
+        });
+      }
+      user.availableBalance += amount;
+      user.save((err) => {
+        if (err) {
+          console.error(err);
+          return res.json({
+            status: 500,
+            msg: 'Internal error'
+          });
+        }
         else {
-          let amount = 0;
-          const action = users[0].action;
-          if(action == "credit"){
-            amount = - parseInt(trans.amount);
-          }
-          else if(action == "debit"){
-            amount = parseInt(trans.amount);
-          }
-          else if(action == 'rollback'){
-            return res.json({
-              status: 404,
-              balance: user.availableBalance
-            });
-          }
-          user.availableBalance += amount;
-          user.save((err) => {
+          const casinoDebits = new CasinoDebits(payload);
+          casinoDebits.save((err, savedPayload) => {
             if (err) {
               console.error(err);
               return res.json({
@@ -306,25 +286,13 @@ async function rollback(req, res) {
                 msg: 'Internal error'
               });
             }
-            else {
-              const casinoDebits = new CasinoDebits(payload);
-              casinoDebits.save((err, savedPayload) => {
-                if (err) {
-                  console.error(err);
-                  return res.json({
-                    status: 500,
-                    msg: 'Internal error'
-                  });
-                }
-              });
-              return res.json({
-                status: 404,
-                balance: user.availableBalance
-              });
-            }  
-          })
-        }
-      });
+          });
+          return res.json({
+            status: 404,
+            balance: user.availableBalance
+          });
+        }  
+      })
     } 
     else{
       return res.json({
