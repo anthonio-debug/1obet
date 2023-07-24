@@ -71,11 +71,17 @@ async function getAllSportsHighlight(req, res) {
     sportsHighlights.forEach((highlight) => {
       formattedData[highlight.sport] = highlight.data;
     });
+     // Sort the sports in formattedData alphabetically and populate the sorted data into sortedFormattedData
+     const sortedFormattedData = Object.keys(formattedData).sort((a, b) => a.localeCompare(b))
+     .reduce((acc, sport) => {
+       acc[sport] = formattedData[sport];
+       return acc;
+     }, {});
 
     return res.send({
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
-      results: formattedData,
+      results: sortedFormattedData,
     });
   } catch (err) {
     console.log(err);
