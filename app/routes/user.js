@@ -664,6 +664,7 @@ function searchSingleUser(req, res) {
         _id: 1,
         userId:1,
         userName: 1,
+        baseCurrency:1,
         master: {
           $cond: [
             { $eq: [{ $size: '$masterDetails' }, 0] },
