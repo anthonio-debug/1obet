@@ -449,7 +449,72 @@ db.fancygames.remove({})
 db.racemarkets.remove({}) 
 db.raceodds.remove({}) 
 db.racings.remove({}) 
-db.odds.remove({}) 
+db.odds.insertOne({
+  updatetime: null,
+  update: 'ok',
+  sport: 'cricket',
+  eventId: '1107241628',
+  marketId: '1.110724162815',
+  marketName: 'Match Odds',
+  source: 1,
+  isMarketDataDelayed: false,
+  status: 'OPEN',
+  isInplay: true,
+  inplay: true,
+  numberOfRunners: 2,
+  numberOfActiveRunners: 2,
+  totalMatched: 0,
+  sportsId: '4',
+  runners: [
+    {
+      SelectionId: 101,
+      runnerName: 'India T10',
+      Status: 'ACTIVE',
+      LastPriceTraded: null,
+      TotalMatched: 0,
+      ExchangePrices: {
+        AvailableToBack: [
+          { price: 0, size: 0 },
+          { price: 0, size: 0 },
+          { price: 0, size: 0 }
+        ],
+        AvailableToLay: [
+          { price: 0, size: 0 },
+          { price: 0, size: 0 },
+          { price: 0, size: 0 }
+        ]
+      }
+    },
+    {
+      SelectionId: 102,
+      runnerName: 'South Africa T10',
+      Status: 'ACTIVE',
+      LastPriceTraded: null,
+      TotalMatched: 0,
+      ExchangePrices: {
+        AvailableToBack: [
+          { price: 0, size: 0 },
+          { price: 0, size: 0 },
+          { price: 0, size: 0 }
+        ],
+        AvailableToLay: [
+          { price: 0, size: 0 },
+          { price: 0, size: 0 },
+          { price: 0, size: 0 }
+        ]
+      }
+    }
+  ],
+  createdAt: 1690192205612,
+}) 
+
+
+db.inplayevents.find({}) 
+db.fancygames.find({}) 
+db.racemarkets.find({}) 
+db.raceodds.find({}) 
+db.racings.find({}) 
+db.odds.find({}) 
 
 
 
