@@ -389,12 +389,12 @@ db.bets.insertMany([
     winningAmount: 1200,
     loosingAmount: 1000,
     subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
-    event: "Pak vs AUS",
-    runner: "Pak",
+    event: "Ireland Women v Australia Women",
+    runner: "Ireland",
     position: 0,
     matchStatus: "",
     createdAt: 1684403142.32,
-    isFake: 1,
+    isFake: 0,
     sportsId: "4",
     eventId: "32466783"
   },
@@ -409,12 +409,12 @@ db.bets.insertMany([
     winningAmount: 1200,
     loosingAmount: 1000,
     subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
-    event: "Pak vs IND",
-    runner: "Pak",
+    event: "Ireland Women v Australia Women",
+    runner: "Ireland",
     position: 0,
     matchStatus: "",
     createdAt: 1684403142.32,
-    isFake: 1,
+    isFake: 0,
     sportsId: "4",
     eventId: "32466783"
   },
@@ -429,18 +429,54 @@ db.bets.insertMany([
     winningAmount: 1200,
     loosingAmount: 1000,
     subMarketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
-    event: "IND vs AUS",
-    runner: "IND",
+    event: "Ireland Women v Australia Women",
+    runner: "Ireland",
     position: 0,
     matchStatus: "",
     createdAt: 1689990044341,
-    isFake: 1,
+    isFake: 0,
     sportsId: "4",
     eventId: "32466783"
   },
 ]);
 
-
+db.cricketmatches.insertMany(
+[
+  {
+    id: '64458338-704e-4d0f-b4fa-6af920ab467d',
+    name: 'Ireland Women v Australia Women',
+    matchType: 'odi',
+    status: 'No result (due to rain)',
+    venue: 'Wanderers Cricket Ground, Windhoek',
+    date: '2022-12-02',
+    dateTimeGMT: '2022-12-02T07:30:00',
+    teams: [ 'Ireland', 'Australia' ],
+    teamInfo: [
+      {
+        name: 'Ireland',
+        shortname: 'NAM',
+        img: 'https://g.cricapi.com/iapi/53-637877082656229722.webp?w=48'
+      },
+      {
+        name: 'Australia',
+        shortname: 'NEP',
+        img: 'https://g.cricapi.com/iapi/54-637877084789981539.webp?w=48'
+      }
+    ],
+    score: [
+      { r: 197, w: 10, o: 49.5, inning: 'Australia Inning 1' },
+      { r: 4, w: 0, o: 0.4, inning: 'Ireland Inning 1' }
+    ],
+    series_id: '638e7c98-fe04-4c84-946e-699f0abdc00c',
+    fantasyEnabled: true,
+    bbbEnabled: true,
+    hasSquad: true,
+    matchStarted: true,
+    matchEnded: true,
+    sportsId: '8d3bc03-8a59-4551-85cf-a35298f75124',
+    winningTeam: 'Namibia'
+  }
+])
 
 // DEVELOPENT MANUAL 
 

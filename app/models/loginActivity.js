@@ -21,7 +21,7 @@ let LoginActivitySchema = new Schema({
 	ipAddress: { type: String },
     updatedAt: { type: Number },
 	createdAt: { type: Number },
-    createdBy: { type: String },
+    createdBy: { type: Number },
 })
 
 LoginActivitySchema.pre('update', function (next) {
