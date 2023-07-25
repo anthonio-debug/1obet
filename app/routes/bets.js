@@ -592,7 +592,7 @@ async function getMatchedBets(req, res) {
       {
         $project: {
           _id: 0,
-          prize: '$betRate',
+          price: '$betRate',
           size: '$betAmount',
           runner: '$runner',
           bettor: '$userDetails.userName',

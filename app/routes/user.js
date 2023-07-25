@@ -640,6 +640,52 @@ function checkValidation(req, res) {
   }
 }
 
+function searchSingleUser(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+
+  const query = {};
+  query.userName = req.body.userName;
+  query.isDeleted = false
+  User.aggregate([
+    { $match: query },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'createdBy',
+        foreignField: 'userId',
+        as: 'masterDetails'
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        userName: 1,
+        master: {
+          $cond: [
+            { $eq: [{ $size: '$masterDetails' }, 0] },
+            '', // If masterDetails array is empty, set the master name as ''
+            { $arrayElemAt: ['$masterDetails.userName', 0] }
+          ]
+        }
+      }
+    }
+  ]).exec((err, results) => {
+    if (err || !results || results.length === 0) {
+      return res.status(404).send({ message: 'No records found' });
+    }
+
+    return res.send({
+      success: true,
+      message: 'User record found',
+      user: results
+    });
+  });
+}
+
+
 router.post('/login', userValidation.validate('login'), login);
 loginRouter.post(
   '/register',
@@ -693,5 +739,7 @@ loginRouter.post(
   userValidation.validate('settlePLAccount'),
   settlePLAccount
 );
+
+loginRouter.get('/searchSingleUser', searchSingleUser);
 
 module.exports = { router, loginRouter };
