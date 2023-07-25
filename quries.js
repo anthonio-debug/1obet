@@ -951,26 +951,26 @@ db.cricketmatches.insertMany([
 }])
 
 
-{
-  "callerId":"1obet_mc_s",
-  "callerPassword":"dad9020626b135833fac4bf9bc757475e8c5603a",
-  "callerPrefix":"zrf3",
-  "action":"debit",
-  "remote_id":"1082148",
-  "username":"user_2002",
-  "session_id":"",
-  "amount":"5",
-  "provider":"ez",
-  "game_id":"157645",
-  "game_id_hash":"ez_ez-three-card-poker",
-  "transaction_id":"ez-cba6e214bc56d792ea84061978cecf84count10",
-  "round_id":"cae75d1cf1f290d2ed5583bb45c2d9edcount10",
-  "gameplay_final":"0",
-  "currency":"EUR",
-  "is_freeround_bet":"0",
-  "jackpot_contribution_in_amount":"0",
-  "gamesession_id":"ez_",
-  "key":"7a037907f60e457a0636122150f7038d1e7525e7"
-}
+// {
+//   "callerId":"1obet_mc_s",
+//   "callerPassword":"dad9020626b135833fac4bf9bc757475e8c5603a",
+//   "callerPrefix":"zrf3",
+//   "action":"debit",
+//   "remote_id":"1082148",
+//   "username":"user_2002",
+//   "session_id":"",
+//   "amount":"5",
+//   "provider":"ez",
+//   "game_id":"157645",
+//   "game_id_hash":"ez_ez-three-card-poker",
+//   "transaction_id":"ez-cba6e214bc56d792ea84061978cecf84count10",
+//   "round_id":"cae75d1cf1f290d2ed5583bb45c2d9edcount10",
+//   "gameplay_final":"0",
+//   "currency":"EUR",
+//   "is_freeround_bet":"0",
+//   "jackpot_contribution_in_amount":"0",
+//   "gamesession_id":"ez_",
+//   "key":"7a037907f60e457a0636122150f7038d1e7525e7"
+// }
 
 

@@ -179,7 +179,7 @@ function getFinalReport(req, res) {
   let query = {};
 
   if (req.decoded.login.role !== '5') {
-    query.createdBy = String(req.decoded.userId);
+    query.createdBy = (req.decoded.userId);
   }
 
   User.aggregate(

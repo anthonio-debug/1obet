@@ -47,7 +47,7 @@ async function getDailyReport(req, res) {
   let query = {};
   let depositsQuery = {};
   depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
-  let userId = String(req.decoded.userId);
+  let userId = (req.decoded.userId);
 
   if (req.decoded.role !== '5') {
     query.createdBy = userId;

@@ -438,41 +438,71 @@ function searchUsers(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  var page = 1;
-  var sort = -1;
-  var sortValue = 'createdAt';
-  var limit = config.pageSize;
+
+  let page = 1;
+  let sort = -1;
+  const sortValue = 'createdAt';
+  let limit = config.pageSize;
+
   if (req.body.numRecords) {
     if (isNaN(req.body.numRecords))
       return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
     if (req.body.numRecords < 0)
       return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
     if (req.body.numRecords > 100)
-      return res.status(404).send({
-        message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100',
-      });
+      return res.status(404).send({ message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100' });
     limit = Number(req.body.numRecords);
   }
+
   if (req.body.page) {
     page = req.body.page;
   }
-  let query = {};
+
+  const query = {};
   query.userName = { $regex: req.body.userName, $options: 'i' };
-  User.paginate(
-    query,
-    { page: page, sort: { [sortValue]: sort }, limit: limit },
-    (err, results) => {
-      if (err)
-        return res
-          .status(404)
-          .send({ message: 'search users pagination failed' });
-      return res.send({
-        success: true,
-        message: 'users record found',
-        results,
-      });
+
+  User.aggregate([
+    { $match: query },
+    { $sort: { [sortValue]: sort } },
+    { $skip: (page - 1) * limit },
+    { $limit: limit },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'createdBy',
+        foreignField: 'userId',
+        as: 'masterDetails'
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        userName: 1,
+        master: {
+          $cond: [
+            { $eq: [{ $size: '$masterDetails' }, 0] },
+            'Unknown', // If masterDetails array is empty, set the master name as 'Unknown'
+            { $arrayElemAt: ['$masterDetails.userName', 0] } // Get the first element from the masterDetails array
+          ]
+        }
+      }
     }
-  );
+  ]).exec((err, results) => {
+    if (err || !results || results.length === 0) {
+      return res.status(404).send({ message: 'No records found' });
+    }
+    return res.send({
+      success: true,
+      message: 'Users record found',
+      results: {
+        docs: results,
+        total: results.length,
+        limit,
+        page,
+        pages: Math.ceil(results.length / limit),
+      },
+    });
+  });
 }
 
 function getCurrentUser(req, res) {

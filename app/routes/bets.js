@@ -599,17 +599,26 @@ async function getMatchedBets(req, res) {
           master: {
             $cond: [
               { $eq: [loginUser.role, '5'] },
-              bettorMaster.userName,
+              loginUser.userName,
               { $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, ''] }
             ]
           },
           event: {
             $cond: [
               { $eq: [loginUser.role, '5'] },
-              { name: { $arrayElemAt: ['$eventDetails.name', 0] }, openDate: { $arrayElemAt: ['$eventDetails.openDate', 0] } },
+              {
+                $map: {
+                  input: { $slice: ['$eventDetails', 5] },
+                  as: 'event',
+                  in: {
+                    name: '$$event.name',
+                    openDate: '$$event.openDate'
+                  }
+                }
+              },
               '$$REMOVE'
             ]
-          }
+          },
         }
       }
     ]).exec();
@@ -624,6 +633,7 @@ async function getMatchedBets(req, res) {
       data: matchedBets
     });
   } catch (err) {
+    console.error('Aggregation error:', err);
     return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
   }
 }
