@@ -476,8 +476,10 @@ function searchUsers(req, res) {
     },
     {
       $project: {
-        _id: 0,
+        _id: 1,
         userName: 1,
+        userId:1,
+        baseCurrency:1,
         master: {
           $cond: [
             { $eq: [{ $size: '$masterDetails' }, 0] },

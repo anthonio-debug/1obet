@@ -12,10 +12,10 @@ function createHashKey(salt, queryString) {
   return hash;
 }
 
-function balance(req, res) {
+async function balance(req, res) {
   const payload = req.query;
-  const salt    = config.saltKey; // Replace with your default salt key
-  const key     = payload.key;
+  const salt = config.saltKey;
+  const key = payload.key;
   delete payload.key;
 
   const queryString = Object.keys(payload)
@@ -35,24 +35,28 @@ function balance(req, res) {
     });
   }
 
-  // const casinoDebits = new CasinoDebits(payload);
-  User.findOne({ remoteId: payload.remote_id }, (err, user) => {
-    console.log('user:', user);
-    if (err || !user) {
-      return res.send({ status: '500', msg: 'internal error' });
+  try {
+    const user = await User.findOne({ remoteId: payload.remote_id }).exec();
+
+    if (!user) {
+      return res.json({ status: 500, msg: 'Internal error' });
     }
 
     const balance = user.availableBalance;
     if (balance < 0) {
-      return res.json({ status: '500', msg: 'Negative amount not allowed!' });
+      return res.json({ status: 500, msg: 'Negative amount not allowed!' });
     }
 
-    return res.send({
+    return res.json({
       status: 200,
       balance: balance,
     });
-  });
+  } catch (err) {
+    console.error(err);
+    return res.json({ status: 500, msg: 'Internal error' });
+  }
 }
+
 
 async function debit(req, res) {
   const session = await startSession();
