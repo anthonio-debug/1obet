@@ -662,6 +662,7 @@ function searchSingleUser(req, res) {
     {
       $project: {
         _id: 1,
+        userId:1,
         userName: 1,
         master: {
           $cond: [
