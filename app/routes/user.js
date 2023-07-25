@@ -740,6 +740,6 @@ loginRouter.post(
   settlePLAccount
 );
 
-loginRouter.get('/searchSingleUser', searchSingleUser);
+loginRouter.post('/searchSingleUser', searchSingleUser);
 
 module.exports = { router, loginRouter };
