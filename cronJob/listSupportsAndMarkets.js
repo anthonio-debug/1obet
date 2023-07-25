@@ -31,10 +31,18 @@ const listMarketCronJob = () => {
             console.log('Data of InPlay Event', listInplayEventsData)
 
             const dummydata = listInplayEventsData.map(async(item)=>{
-            let eventId = item.Id
-            let sportsId = item.sport
-            // Call the listMarkets API with each eventId
-            const listMarketsResponse = await listMarketsByCronJob(eventId,sportsId);
+                let eventId = item.Id
+                let sportsId = item.sport
+                const event = Event.findOne({
+                    eventId: eventId,
+                    sportsId: 4
+                })
+                if(event.sportsId == 4 && event.iconStatus == true && event.marketIds.length == 0 ){
+                    listMarketsResponse = await listMarketsByCronJob(eventId,sportsId);
+                }
+                else if(event.sportsId != 4 && event.marketIds.length == 0){
+                    listMarketsResponse = await listMarketsByCronJob(eventId,sportsId);
+                }
             })
         }
         } catch (error) {

@@ -516,7 +516,7 @@ db.raceodds.find({})
 db.racings.find({}) 
 db.odds.find({}) 
 
-
+db.odds.count({}) 
 
 // nodemon ./cronJob/listSupportsAndMarkets
 // nodemon ./cronJob/cricketOddsCronjob.js

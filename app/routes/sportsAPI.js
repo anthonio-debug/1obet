@@ -419,6 +419,7 @@ async function listInplayEventsJob(sportsId) {
 
 async function listMarketsByCronJob(eventId,sportsId) {
   console.log('sportsId ========>>>',sportsId);
+  
   const url = `${config.sportsAPIUrl}/listMarkets/${eventId}`;
 
   try {
