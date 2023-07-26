@@ -116,5 +116,6 @@
   "racesMarketList",
   "approvedFakeBet",
   "reviewFakeBet",
-  "searchSingleUser"
+  "searchSingleUser",
+  "updateMatch"
 ]
