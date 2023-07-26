@@ -11,9 +11,7 @@ const deleteTennisOldEvent = () => {
   cron.schedule('*/5 * * * *', async () => {
     try {
       // Suppose 
-      const eventIds_1  = await Events.distinct('Id',{ sportsId: '2', openDate : {$lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss A Z")}})
-      const eventIds_2  = await Events.distinct('Id',{ sportsId: '2', openDate : {$lt: moment(new Date(Date.now() - ((110-180) * 60 * 1000))).format("ddd MMM DD YYYY HH:mm:ss ") + "GMT+0200 (Central European Summer Time)"}})
-      const eventIds    = eventIds_1.concat(eventIds_2)
+      const eventIds  = await Events.distinct('Id',{ sportsId: '2', openDate : {$lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00") }})
       await ListMarkets.remove({ eventId: { $in: eventIds } })
       await Events.remove({ Id: { $in: eventIds } })
       await Odds.remove({eventId: { $in: eventIds } } )

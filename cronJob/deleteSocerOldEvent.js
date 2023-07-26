@@ -9,9 +9,7 @@ require('./db');
 const deleteSoccerOldEvent = () => {
   cron.schedule('*/5 * * * *', async () => {
     try {
-
-      const eventIds  = await Events.distinct('Id',{ sportsId: '1', openDate : {$lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss A Z")}})
-
+      const eventIds  = await Events.distinct('Id',{ sportsId: '1', openDate : {$lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00")}})
       await ListMarkets.remove({ eventId: { $in: eventIds } })
       await Events.remove({ Id: { $in: eventIds } })
       await Odds.remove({eventId: { $in: eventIds } } )
