@@ -6,15 +6,12 @@ const FancyGames = require("../app/models/fancyGames");
 const moment = require('moment');
 require('./db');
 
+// There are 2 formats for  Date Month without 0 M & month with zero MM 
 
-// There are 2 formats for  Date Month without 0 M & month with zero MM
-
-const deleteTennisOldEventMM = () => {
-  //run after 5 minutes
+const deleteSoccerOldEventM = () => {
   cron.schedule('* * * * *', async () => {
     try {
-      // Suppose 
-      const eventIds  = await Events.distinct('Id',{ sportsId: '2', openDate : {$lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00") }})
+      const eventIds  = await Events.distinct('Id',{ sportsId: '1', openDate : {$lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00")}})
       await ListMarkets.remove({ eventId: { $in: eventIds } })
       await Events.remove({ Id: { $in: eventIds } })
       await Odds.remove({eventId: { $in: eventIds } } )
@@ -25,15 +22,13 @@ const deleteTennisOldEventMM = () => {
     }
   });
 }
-deleteTennisOldEventMM()
+deleteSoccerOldEventM()
 
 
-const deleteTennisOldEventM = () => {
-  //run after 5 minutes
+const deleteSoccerOldEventMM = () => {
   cron.schedule('* * * * *', async () => {
     try {
-      // Suppose 
-      const eventIds  = await Events.distinct('Id',{ sportsId: '2', openDate : {$lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00") }})
+      const eventIds  = await Events.distinct('Id',{ sportsId: '1', openDate : {$lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00")}})
       await ListMarkets.remove({ eventId: { $in: eventIds } })
       await Events.remove({ Id: { $in: eventIds } })
       await Odds.remove({eventId: { $in: eventIds } } )
@@ -44,4 +39,4 @@ const deleteTennisOldEventM = () => {
     }
   });
 }
-deleteTennisOldEventM()
+deleteSoccerOldEventMM()
