@@ -748,59 +748,125 @@ function updateMatch(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const { _id, updateType, matchStoppedReason,matchStopStatus, matchCanceledStatus,matchResumedStatus } = req.body;
+  const { _id, updateType, matchStoppedReason, matchCanceledStatus, matchResumedStatus } = req.body;
 
   let query = {};
   let updateField = {};
   let successMessage = '';
-  
+
   switch (updateType) {
     case 'stopped':
-      query = { _id, matchStopStatus: false };
-      updateField = { matchStoppedReason: matchStoppedReason, matchStopStatus: true };
-      successMessage = 'Match stopped successfully';
-      break;
-    case 'cancelled':
+      // Check if the match is already stopped
       query = { _id };
-      updateField = { matchCanceledStatus: matchCanceledStatus };
-      successMessage = 'Match cancelled successfully';
+      inPlayEvents.findOne(query, (err, foundMatch) => {
+        if (err || !foundMatch) {
+          return res.status(400).json({
+            success: false,
+            message: 'Failed to find match data',
+            error: err,
+          });
+        }
+
+        if (foundMatch.matchStopStatus === true) {
+          return res.status(400).json({
+            success: false,
+            message: 'This match is already stopped.',
+          });
+        }
+
+        // Proceed with stopping the match
+        updateField = {
+          matchStoppedReason: matchStoppedReason,
+          matchStopStatus: true,
+          matchResumedStatus: false, // Ensure it's not resumed when stopped
+        };
+
+        // Update matchCanceledStatus only if it is provided in the request body
+        if (matchCanceledStatus !== undefined) {
+          updateField.matchCanceledStatus = matchCanceledStatus;
+        }
+
+        successMessage = 'Match stopped successfully';
+
+        inPlayEvents.findOneAndUpdate(
+          { _id },
+          { $set: updateField },
+          (err, updatedMatch) => {
+            if (err || !updatedMatch) {
+              return res.status(400).json({
+                success: false,
+                message: 'Failed to update match data',
+                error: err,
+              });
+            } else {
+              res.status(200).json({
+                success: true,
+                message: successMessage,
+              });
+            }
+          }
+        );
+      });
       break;
+
     case 'resumed':
-      query = { _id, matchStopStatus: true };
-      if (matchResumedStatus === false) {
-        updateField.matchStopStatus = true;
-      } else if (matchResumedStatus === true) {
-        updateField.matchStopStatus = false;
-      }
-      updateField.matchResumedStatus = matchResumedStatus;
-      successMessage = 'Match resumed successfully';
+      // Check if the match is already resumed
+      query = { _id };
+      inPlayEvents.findOne(query, (err, foundMatch) => {
+        if (err || !foundMatch) {
+          return res.status(400).json({
+            success: false,
+            message: 'Failed to find match data',
+            error: err,
+          });
+        }
+
+        if (foundMatch.matchResumedStatus === true) {
+          return res.status(400).json({
+            success: false,
+            message: 'This match is already resumed.',
+          });
+        }
+
+        // Proceed with updating the match as resumed
+        if (matchResumedStatus === false) {
+          updateField.matchStopStatus = true;
+        } else if (matchResumedStatus === true) {
+          updateField.matchStopStatus = false;
+          updateField.matchStoppedReason = '';
+        }
+        updateField.matchResumedStatus = matchResumedStatus;
+        successMessage = 'Match resumed successfully';
+
+        inPlayEvents.findOneAndUpdate(
+          { _id, matchStopStatus: true },
+          { $set: updateField },
+          (err, updatedMatch) => {
+            if (err || !updatedMatch) {
+              return res.status(400).json({
+                success: false,
+                message: 'Failed to update match data',
+                error: err,
+              });
+            } else {
+              res.status(200).json({
+                success: true,
+                message: successMessage,
+              });
+            }
+          }
+        );
+      });
       break;
+
     default:
       return res.status(400).json({
         success: false,
         message: 'Invalid update type',
       });
   }
-
-  inPlayEvents.findOneAndUpdate(
-    query,
-    { $set: updateField },
-    (err, updatedMatch) => {
-      if (err || !updatedMatch) {
-        return res.status(400).json({
-          success: false,
-          message: 'Failed to update match data',
-          error: err,
-        });
-      } else {
-        res.status(200).json({
-          success: true,
-          message: successMessage,
-        });
-      }
-    }
-  );
 }
+
 
 loginRouter.post(
   '/updateDefaultTheme',
