@@ -742,6 +742,66 @@ async function racesMarketList(req, res) {
   }
 }
 
+function updateMatch(req, res) {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+
+  const { _id, updateType, matchStoppedReason,matchStopStatus, matchCanceledStatus,matchResumedStatus } = req.body;
+
+  let query = {};
+  let updateField = {};
+  let successMessage = '';
+  
+  switch (updateType) {
+    case 'stopped':
+      query = { _id, matchStopStatus: false };
+      updateField = { matchStoppedReason: matchStoppedReason, matchStopStatus: true };
+      successMessage = 'Match stopped successfully';
+      break;
+    case 'cancelled':
+      query = { _id };
+      updateField = { matchCanceledStatus: matchCanceledStatus };
+      successMessage = 'Match cancelled successfully';
+      break;
+    case 'resumed':
+      query = { _id, matchStopStatus: true };
+      if (matchResumedStatus === false) {
+        updateField.matchStopStatus = true;
+      } else if (matchResumedStatus === true) {
+        updateField.matchStopStatus = false;
+      }
+      updateField.matchResumedStatus = matchResumedStatus;
+      successMessage = 'Match resumed successfully';
+      break;
+    default:
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid update type',
+      });
+  }
+
+  inPlayEvents.findOneAndUpdate(
+    query,
+    { $set: updateField },
+    (err, updatedMatch) => {
+      if (err || !updatedMatch) {
+        return res.status(400).json({
+          success: false,
+          message: 'Failed to update match data',
+          error: err,
+        });
+      } else {
+        res.status(200).json({
+          success: true,
+          message: successMessage,
+        });
+      }
+    }
+  );
+}
+
 loginRouter.post(
   '/updateDefaultTheme',
   settingsValidation.validate('updateDefaultTheme'),
@@ -794,5 +854,6 @@ loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);
 loginRouter.post('/updateMatchType', updateMatchType);
 loginRouter.get('/racesMarketList/:marketId', racesMarketList);
+loginRouter.post('/updateMatch', updateMatch);
 
 module.exports = { loginRouter, router, listOddsAPI };

@@ -33,6 +33,10 @@ const inPlayEventsSchema = new mongoose.Schema({
   countryCodes: [String],
   meetingGoing: { type: String },
   races: { type: Array },
+  matchStoppedReason: { type: String },
+  matchStopStatus: { type: Boolean, default: false },
+  matchCanceledStatus: { type: Boolean },
+  matchResumedStatus:{ type: Boolean }
 });
 
 // Create the model
