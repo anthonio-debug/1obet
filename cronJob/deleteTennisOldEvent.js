@@ -8,7 +8,7 @@ require('./db');
 
 const deleteTennisOldEvent = () => {
   //run after 5 minutes
-  cron.schedule('*/5 * * * *', async () => {
+  cron.schedule('* * * * *', async () => {
     try {
       // Suppose 
       const eventIds  = await Events.distinct('Id',{ sportsId: '2', openDate : {$lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00") }})

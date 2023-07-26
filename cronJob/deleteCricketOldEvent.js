@@ -10,7 +10,7 @@ require('./db');
 
 const deleteCricketOldEvent = () => {
 
-  cron.schedule('*/5 * * * *', async () => {
+  cron.schedule('* * * * *', async () => {
     try {
 
       // Suppose if its cricket match and its type is 
