@@ -835,7 +835,7 @@ function updateMatch(req, res) {
         successMessage = 'Match resumed successfully';
 
         inPlayEvents.findOneAndUpdate(
-          { _id, matchStopStatus: true },
+          { _id},
           { $set: updateField },
           (err, updatedMatch) => {
             if (err || !updatedMatch) {
