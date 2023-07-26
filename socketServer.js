@@ -50,7 +50,7 @@ const io = new Server(server,  {
   pingTimeout: 60000,
   cookie: false,
   cors: {
-    origin: "https://1obet.com",
+    origin: "http://localhost:3000",
     methods: ["GET", "POST"],
     allowedHeaders: '*/*',
     credentials: true
@@ -65,40 +65,37 @@ let interval;
 // Socket.io event handlers
 io.on('connection', (socket) => {
   console.log('New client connected');
-  // LISTEN FOR EVENT 1
   socket.on('listOdds', async (data) => {
     console.log('Received event1:', data);
-    // Perform some function with data
-    // Emit 'event1_response' with the result
     let result = await listOdds(data);
     console.log(`Outer Console  ${data} `);
     socket.emit('listOdds_response', result);
     interval = setInterval(async () => {
       result = await listOdds(data);
+      console.log("result", result);
       console.log(`Interval ${data} `);
       socket.emit('listOdds_response', result);
-    }, 1000);
+    }, 900);
   });
 
 
 
   // LISTEN FOR EVENT 2
-    // LISTEN FOR EVENT 2
-    socket.on('racesMarketOdds', async (data) => {
-      console.log('Received event2:', data);
-  
+  socket.on('racesMarketOdds', async (data) => {
+    console.log('Received event2:', data);
+
+    // Perform some function with data
+    let result2 = await racesMarketOdds(data);
+    // Emit 'event2_response' with the result
+    socket.emit('racesMarketOdds_response', result);
+    
+    interval = setInterval(async () => {
+      console.log("result", result2);
       // Perform some function with data
-      let result = await racesMarketOdds(data);
-      // Emit 'event2_response' with the result
-      socket.emit('racesMarketOdds_response', result);
-      
-      interval = setInterval(async () => {
-        // Perform some function with data
-        const result = await racesMarketOdds(data);
-        // Emit 'event2_response' with the result
-        socket.emit('racesMarketOdds_response', result);
-      }, 900);
-    });
+      result2 = await racesMarketOdds(data);
+      socket.emit('racesMarketOdds_response', result2);
+    }, 900);
+  });
 
 
   // Handle disconnection
