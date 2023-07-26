@@ -748,22 +748,21 @@ function updateMatch(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const { _id, updateType, matchStoppedReason,matchStopStatus, matchCanceledStatus,matchResumedStatus } = req.body;
+  const { _id, updateType, matchStoppedReason, matchCanceledStatus, matchResumedStatus } = req.body;
 
   let query = {};
   let updateField = {};
   let successMessage = '';
-  
+
   switch (updateType) {
     case 'stopped':
       query = { _id, matchStopStatus: false };
-      updateField = { matchStoppedReason: matchStoppedReason, matchStopStatus: true };
+      updateField = {
+        matchStoppedReason: matchStoppedReason,
+        matchStopStatus: true,
+        matchCanceledStatus: matchCanceledStatus,
+      };
       successMessage = 'Match stopped successfully';
-      break;
-    case 'cancelled':
-      query = { _id };
-      updateField = { matchCanceledStatus: matchCanceledStatus };
-      successMessage = 'Match cancelled successfully';
       break;
     case 'resumed':
       query = { _id, matchStopStatus: true };
