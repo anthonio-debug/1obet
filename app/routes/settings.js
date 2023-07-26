@@ -767,24 +767,20 @@ function updateMatch(req, res) {
           });
         }
 
-        if (foundMatch.matchStopStatus === true) {
-          return res.status(400).json({
-            success: false,
-            message: 'This match is already stopped.',
-          });
-        }
+        // if (foundMatch.matchStopStatus === true) {
+        //   return res.status(400).json({
+        //     success: false,
+        //     message: 'This match is already stopped.',
+        //   });
+        // }
 
         // Proceed with stopping the match
         updateField = {
           matchStoppedReason: matchStoppedReason,
           matchStopStatus: true,
           matchResumedStatus: false, // Ensure it's not resumed when stopped
+          matchCanceledStatus:matchCanceledStatus
         };
-
-        // Update matchCanceledStatus only if it is provided in the request body
-        if (matchCanceledStatus !== undefined) {
-          updateField.matchCanceledStatus = matchCanceledStatus;
-        }
 
         successMessage = 'Match stopped successfully';
 
@@ -821,12 +817,12 @@ function updateMatch(req, res) {
           });
         }
 
-        if (foundMatch.matchResumedStatus === true) {
-          return res.status(400).json({
-            success: false,
-            message: 'This match is already resumed.',
-          });
-        }
+        // if (foundMatch.matchResumedStatus === true) {
+        //   return res.status(400).json({
+        //     success: false,
+        //     message: 'This match is already resumed.',
+        //   });
+        // }
 
         // Proceed with updating the match as resumed
         if (matchResumedStatus === false) {
@@ -839,7 +835,7 @@ function updateMatch(req, res) {
         successMessage = 'Match resumed successfully';
 
         inPlayEvents.findOneAndUpdate(
-          { _id, matchStopStatus: true },
+          { _id},
           { $set: updateField },
           (err, updatedMatch) => {
             if (err || !updatedMatch) {
@@ -859,6 +855,32 @@ function updateMatch(req, res) {
       });
       break;
 
+    case 'canceled':
+      query = { _id };
+      // Update only the matchCanceledStatus
+      updateField = { matchCanceledStatus };
+      successMessage = 'Match canceled status updated successfully';
+
+      inPlayEvents.findOneAndUpdate(
+        query,
+        { $set: updateField },
+        (err, updatedMatch) => {
+          if (err || !updatedMatch) {
+            return res.status(400).json({
+              success: false,
+              message: 'Failed to update match data',
+              error: err,
+            });
+          } else {
+            res.status(200).json({
+              success: true,
+              message: successMessage,
+            });
+          }
+        }
+      );
+      break;
+
     default:
       return res.status(400).json({
         success: false,
@@ -866,6 +888,7 @@ function updateMatch(req, res) {
       });
   }
 }
+
 
 
 loginRouter.post(
