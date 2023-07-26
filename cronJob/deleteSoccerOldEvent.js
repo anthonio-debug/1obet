@@ -6,7 +6,9 @@ const FancyGames = require("../app/models/fancyGames");
 const moment = require('moment');
 require('./db');
 
-const deleteSoccerOldEvent = () => {
+// There are 2 formats for  Date Month without 0 M & month with zero MM 
+
+const deleteSoccerOldEventM = () => {
   cron.schedule('* * * * *', async () => {
     try {
       const eventIds  = await Events.distinct('Id',{ sportsId: '1', openDate : {$lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00")}})
@@ -20,4 +22,21 @@ const deleteSoccerOldEvent = () => {
     }
   });
 }
-deleteSoccerOldEvent()
+deleteSoccerOldEventM()
+
+
+const deleteSoccerOldEventMM = () => {
+  cron.schedule('* * * * *', async () => {
+    try {
+      const eventIds  = await Events.distinct('Id',{ sportsId: '1', openDate : {$lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00")}})
+      await ListMarkets.remove({ eventId: { $in: eventIds } })
+      await Events.remove({ Id: { $in: eventIds } })
+      await Odds.remove({eventId: { $in: eventIds } } )
+      await FancyGames.remove({ eventId: { $in: eventIds }})
+        
+    } catch (error) {
+      console.error('Error running listMarket cron job:', error);
+    }
+  });
+}
+deleteSoccerOldEventMM()
