@@ -8,13 +8,7 @@ const moment = require('moment');
 // '7/24/2023 9:00:00 PM +00:00'
 const soccer = 
 moment(new Date(Date.now() - (120-110) * 60 * 1000))
-.format("M/DD/YYYY h:mm:ss A Z");
+.format("M/DD/YYYY h:mm:ss +00:00");
 console.log(soccer);
-// const x =10;
-// setInterval(() => {
-//     if(true == true){
-//         x =5;
-//         console.log(x + 1)
-//     }
-// }, 500);
+
     
