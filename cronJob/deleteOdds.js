@@ -34,6 +34,19 @@ cron.schedule('*/5 * * * *', async () => {
           console.log(data);
         }
       })
+
+      await raceOdds.remove({
+        createdAt: {
+          $lt: time
+        }
+      }, (err, data)=>{
+        if(err){
+          console.log(err);
+        }else{
+          console.log("Old odds removed successfully.");
+          console.log(data);
+        }
+      })
     } catch (error) {
       console.error('Error running listMarket cron job:', error);
     }

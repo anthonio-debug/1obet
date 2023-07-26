@@ -4,7 +4,6 @@ const { getnewOdds } = require('../app/routes/sportsAPI')
 require('./db')
 
 const cricketOddsCronJob = () => {
-    // Cron job to run every 1 sec
     cron.schedule('* * * * * *', async () => {
         try {
         
