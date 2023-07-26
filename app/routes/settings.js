@@ -767,12 +767,12 @@ function updateMatch(req, res) {
           });
         }
 
-        if (foundMatch.matchStopStatus === true) {
-          return res.status(400).json({
-            success: false,
-            message: 'This match is already stopped.',
-          });
-        }
+        // if (foundMatch.matchStopStatus === true) {
+        //   return res.status(400).json({
+        //     success: false,
+        //     message: 'This match is already stopped.',
+        //   });
+        // }
 
         // Proceed with stopping the match
         updateField = {
@@ -817,12 +817,12 @@ function updateMatch(req, res) {
           });
         }
 
-        if (foundMatch.matchResumedStatus === true) {
-          return res.status(400).json({
-            success: false,
-            message: 'This match is already resumed.',
-          });
-        }
+        // if (foundMatch.matchResumedStatus === true) {
+        //   return res.status(400).json({
+        //     success: false,
+        //     message: 'This match is already resumed.',
+        //   });
+        // }
 
         // Proceed with updating the match as resumed
         if (matchResumedStatus === false) {
