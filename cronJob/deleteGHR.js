@@ -21,7 +21,7 @@ const deleteGHR = () => {
 cron.schedule('*/5 * * * *', async () => {
     try {
 
-      const GHR           = moment(new Date(Date.now() - 10 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss A Z");
+      const GHR           = moment(new Date(Date.now() - 10 * 60 * 1000)).format("YYYY-MM-DDTH:mm:ss+00:00");
       const eventIds      = await Events.distinct('eventId',{ sportsId: { $in: ['7', '4339'] }, openDate : {$lt: GHR}})
       let marketIds       = await raceMarkets.distinct('marketId',{ eventIds : { $in: eventIds } })
       await Events.remove({ Id: {  $in: eventIds  } })
