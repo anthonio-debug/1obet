@@ -576,7 +576,7 @@ db.bets.insertMany([
     createdAt: 1684403142.32,
     isFake: 1,
     sportsId: "4",
-    eventId: "32503518"
+   a
   },
   {
     marketId: "38d3bc03-8a59-4551-85cf-a35298f75124",
