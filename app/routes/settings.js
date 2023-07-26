@@ -770,6 +770,7 @@ function updateMatch(req, res) {
         updateField.matchStopStatus = true;
       } else if (matchResumedStatus === true) {
         updateField.matchStopStatus = false;
+        updateField.matchStoppedReason = '' 
       }
       updateField.matchResumedStatus = matchResumedStatus;
       successMessage = 'Match resumed successfully';
