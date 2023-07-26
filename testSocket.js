@@ -65,16 +65,14 @@ let interval;
 // Socket.io event handlers
 io.on('connection', (socket) => {
   console.log('New client connected');
-  // LISTEN FOR EVENT 1
   socket.on('listOdds', async (data) => {
     console.log('Received event1:', data);
-    // Perform some function with data
-    // Emit 'event1_response' with the result
     let result = await listOdds(data);
     console.log(`Outer Console  ${data} `);
     socket.emit('listOdds_response', result);
     interval = setInterval(async () => {
       result = await listOdds(data);
+      console.log("result", result);
       console.log(`Interval ${data} `);
       socket.emit('listOdds_response', result);
     }, 900);
@@ -87,15 +85,15 @@ io.on('connection', (socket) => {
     console.log('Received event2:', data);
 
     // Perform some function with data
-    let result = await racesMarketOdds(data);
+    let result2 = await racesMarketOdds(data);
     // Emit 'event2_response' with the result
     socket.emit('racesMarketOdds_response', result);
     
     interval = setInterval(async () => {
+      console.log("result", result2);
       // Perform some function with data
-      const result = await racesMarketOdds(data);
-      // Emit 'event2_response' with the result
-      socket.emit('racesMarketOdds_response', result);
+      result2 = await racesMarketOdds(data);
+      socket.emit('racesMarketOdds_response', result2);
     }, 900);
   });
 

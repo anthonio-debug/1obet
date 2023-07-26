@@ -571,6 +571,15 @@ db.odds.count({})
 
 // pm2 start  server.js socketServer.js testSocket.js  ./cronJob/listSupportsAndMarkets.js ./cronJob/cricketOddsCronjob.js ./cronJob/tennisOddsCronJob.js ./cronJob/soccerOddsCronjob.js ./cronJob/fancyOdds.js ./cronJob/todayRace.js ./cronJob/raceMarkets.js ./cronJob/horseRaceOdds.js ./cronJob/greyhoundOdds.js  ./cronJob/deleteClosedOdds.js ./cronJob/BetingCalculation.js ./cronJob/themeChanging.js  --watch
 
+
+// pm2 start  ./cronJob/deleteGHR.js --watch
+// pm2 start  ./cronJob/deleteSocerOldEvent.js --watch
+// pm2 start  ./cronJob/deleteTennisOldEvent.js --watch
+// pm2 start  ./cronJob/deleteClosedOdds.js --watch
+// pm2 start  ./cronJob/deleteCricketOldEvent.js --watch
+
+
+
 // pm2 start  ./cronJob/listSupportsAndMarkets.js  --watch
 // pm2 start  ./cronJob/cricketOddsCronjob.js --watch
 // pm2 start  ./cronJob/tennisOddsCronJob.js --watch
