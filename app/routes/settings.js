@@ -747,7 +747,11 @@ function updateMatch(req, res) {
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.errors });
   }
-
+  if (req.decoded.role !== '0') {
+    return res
+      .status(404)
+      .send({ message: 'only company can add default theme' });
+  }
   const { _id, updateType, matchStoppedReason, matchCanceledStatus, matchResumedStatus } = req.body;
 
   let query = {};
