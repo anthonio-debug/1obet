@@ -11,7 +11,6 @@ moment(new Date(Date.now() - (120-110) * 60 * 1000))
 .format("M/DD/YYYY h:mm:ss +00:00");
 console.log(soccer);
 
-// pm2 start ./cronJob/BettingCalculation.js ./cronJob/cricketOddsCronjob.js ./cronJob/deleteClosedOdds.js ./cronJob/deleteCricketOldEvent.js ./cronJob/deleteGHR.js ./cronJob/deleteOdds.js ./cronJob/deleteSoccerOldEvent.js ./cronJob/deleteTennisOldEvent.js ./cronJob/fancyOdds.js ./cronJob/greyhoundOdds.js ./cronJob/horseRaceOdds.js ./cronJob/listSupportsAndMarkets.js ./cronJob/raceMarkets.js ./cronJob/server.js ./cronJob/soccerOddsCronjob.js ./cronJob/socketServer.js ./cronJob/tennisOddsCronJob.js ./cronJob/testSocket.js ./cronJob/themeChanging.js ./cronJob/todayRace.js  --watch
-   
+// pm2 start ./server.js ./socketServer.js ./cronJob/raceMarkets.js  ./cronJob/fancyOdds.js ./testSocket.js ./cronJob/cricketOddsCronjob.js ./cronJob/soccerOddsCronjob.js  ./cronJob/tennisOddsCronJob.js ./cronJob/todayRace.js ./cronJob/deleteClosedOdds.js ./cronJob/deleteCricketOldEvent.js ./cronJob/deleteGHR.js ./cronJob/deleteOdds.js ./cronJob/deleteSoccerOldEvent.js ./cronJob/deleteTennisOldEvent.js ./cronJob/greyhoundOdds.js ./cronJob/horseRaceOdds.js ./cronJob/listSupportsAndMarkets.js   ./cronJob/themeChanging.js   ./cronJob/BettingCalculation.js --watch 
 
-// pm2 delete  108 109 110 111 112 113 114 115 116 117 118 119 120 121 122 123 124 125 126 127
+// pm2 stop  160 161 162 163 164 165 166 167 168 169 170 171 172 173 174 175 176 177 178 179

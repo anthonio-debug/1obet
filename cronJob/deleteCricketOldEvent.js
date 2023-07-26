@@ -20,12 +20,14 @@ const deleteCricketOldEvent = () => {
       // Test Match after 107 hours.
 
       
-      const TEN         = moment(new Date(Date.now() - 3 *    60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00");
-      const TWENTY      = moment(new Date(Date.now() - 5 *    60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00");
-      const ODI         = moment(new Date(Date.now() - 9 *    60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00");
-      const TEST        = moment(new Date(Date.now() - 107 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00");
+      const TEN         = moment(new Date(Date.now() - 3 *    60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+      const TWENTY      = moment(new Date(Date.now() - 5 *    60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+      const ODI         = moment(new Date(Date.now() - 9 *    60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+      const TEST        = moment(new Date(Date.now() - 107 *  60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
 
-      const T_TEN_1     = await Events.distinct('Id',{ sportsId: '4', matchType: 'T10',  openDate : {$lt: TEN}})
+      const T_TEN_1     = await Events.distinct('Id',{ sportsId: '4', matchType: 'T10',  openDate : {
+        $lt: TEN
+      }})
       const T_TWENTY_1  = await Events.distinct('Id',{ sportsId: '4', matchType: 'T20',  openDate : {$lt: TWENTY}})
       const T_ODI_1     = await Events.distinct('Id',{ sportsId: '4', matchType: 'ODI',  openDate : {$lt: ODI}})
       const T_TEST_1    = await Events.distinct('Id',{ sportsId: '4', matchType: 'TEST', openDate : {$lt: TEST}})
