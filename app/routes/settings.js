@@ -21,6 +21,7 @@ const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
 const loginRouter = express.Router();
 const router = express.Router();
+const SelectedCasino = require('../models/selectedCasino');
 
 function updateDefaultTheme(req, res) {
   const errors = validationResult(req);
@@ -893,6 +894,61 @@ function updateMatch(req, res) {
   }
 }
 
+async function bettorDashboardGames(req, res) {
+  try {
+    const sportsIdArray = ['1', '2', '4', '7', '4339'];
+
+    let events,inplay;
+    if (inplay === true || inplay === 'true') {
+      events = await inPlayEvents.find({ inplay: true, sportsId: { $in: sportsIdArray, $nin: ['7', '4339'] } });
+    } else {
+      events = await inPlayEvents.find({ sportsId: { $in: sportsIdArray } }).sort({ inplay: -1 });
+    }
+
+    const selectedCasinoData = await SelectedCasino.find({});
+
+    const organizedEvents = {
+      soccer: [],
+      tennis: [],
+      cricket: [],
+      horseRace: [],
+      greyhound: [],
+      inplay: [],
+      casinoData: selectedCasinoData,
+    };
+
+    events.forEach((event) => {
+      if (event.sportsId === '1') {
+        organizedEvents.soccer.push(event);
+      } else if (event.sportsId === '2') {
+        organizedEvents.tennis.push(event);
+      } else if (event.sportsId === '4') {
+        organizedEvents.cricket.push(event);
+      } else if (event.sportsId === '7') {
+        organizedEvents.horseRace.push(event);
+      } else if (event.sportsId === '4339') {
+        organizedEvents.greyhound.push(event);
+      }
+
+      if (event.inplay === true) {
+        organizedEvents.inplay.push(event);
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'Event By Sports Records',
+      results: organizedEvents,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({
+      success: false,
+      message: 'Failed to get events',
+      error: error.message,
+    });
+  }
+}
 
 
 loginRouter.post(
@@ -948,5 +1004,6 @@ loginRouter.get('/racesAPI/:id', racesAPI);
 loginRouter.post('/updateMatchType', updateMatchType);
 loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 loginRouter.post('/updateMatch', updateMatch);
+loginRouter.get('/bettorDashboardGames', bettorDashboardGames);
 
 module.exports = { loginRouter, router, listOddsAPI };
