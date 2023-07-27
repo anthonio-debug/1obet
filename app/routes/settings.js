@@ -897,43 +897,58 @@ function updateMatch(req, res) {
 async function bettorDashboardGames(req, res) {
   try {
     const sportsIdArray = ['1', '2', '4', '7', '4339'];
-
+    const inplayIdArray = ['1', '2', '4'];
     let events,inplay;
-    if (inplay === true || inplay === 'true') {
-      events = await inPlayEvents.find({ inplay: true, sportsId: { $in: sportsIdArray, $nin: ['7', '4339'] } });
-    } else {
+    // if (inplay === true || inplay === 'true') {
+    //   events = await inPlayEvents.find({ inplay: true, sportsId: { $in: sportsIdArray, $nin: ['7', '4339'] } });
+    // } else {
       events = await inPlayEvents.find({ sportsId: { $in: sportsIdArray } }).sort({ inplay: -1 });
-    }
-
+    // }
+    console.log('events',events);
+    const inplayEvents = await inPlayEvents.find({ inplay: true, sportsId: { $in: inplayIdArray} });
     const selectedCasinoData = await SelectedCasino.find({});
 
-    const organizedEvents = {
-      soccer: [],
-      tennis: [],
-      cricket: [],
-      horseRace: [],
-      greyhound: [],
-      inplay: [],
-      casinoData: selectedCasinoData,
-    };
+    // const organizedEvents = {
+    //   soccer: [],
+    //   tennis: [],
+    //   cricket: [],
+    //   horseRace: [],
+    //   greyhound: [],
+    //   inplay: [],
+    //   casinoData: selectedCasinoData,
+    // };
+const filterCricketData =  events?.filter((item)=> item?.sportId==='4')?.filter((z)=>z?.iconStatus==true)
+const soccerData = events?.filter((item)=> item.sportId==='1')
+const tenissData =  events?.filter((item)=> item?.sportId==='2')
+const horseRAceData = events?.filter((item)=> item?.sportId==='7')
+const greyhoundData = events?.filter((item)=> item?.sportId==='4339')
+// const inplayData =  events?.filter((item)=> item?.inplay==true)
+const organizedEvents = {
+  soccer: soccerData,
+  tennis: tenissData,
+  cricket: filterCricketData,
+  horseRace: horseRAceData,
+  greyhound: greyhoundData,
+  inplay: inplayEvents,
+  casinoData: selectedCasinoData,
+};
+    // events.forEach((event) => {
+    //   if (event.sportsId === '1') {
+    //     organizedEvents.soccer.push(event);
+    //   } else if (event.sportsId === '2') {
+    //     organizedEvents.tennis.push(event);
+    //   } else if (event.sportsId === '4') {
+    //     organizedEvents.cricket.push(event);
+    //   } else if (event.sportsId === '7') {
+    //     organizedEvents.horseRace.push(event);
+    //   } else if (event.sportsId === '4339') {
+    //     organizedEvents.greyhound.push(event);
+    //   }
 
-    events.forEach((event) => {
-      if (event.sportsId === '1') {
-        organizedEvents.soccer.push(event);
-      } else if (event.sportsId === '2') {
-        organizedEvents.tennis.push(event);
-      } else if (event.sportsId === '4') {
-        organizedEvents.cricket.push(event);
-      } else if (event.sportsId === '7') {
-        organizedEvents.horseRace.push(event);
-      } else if (event.sportsId === '4339') {
-        organizedEvents.greyhound.push(event);
-      }
-
-      if (event.inplay === true) {
-        organizedEvents.inplay.push(event);
-      }
-    });
+    //   if (event.inplay === true) {
+    //     organizedEvents.inplay.push(event);
+    //   }
+    // });
 
     res.status(200).json({
       success: true,
