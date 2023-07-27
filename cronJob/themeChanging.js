@@ -1,6 +1,6 @@
 const cron = require("node-cron");
 const Settings = require("../app/models/settings");
-require('./db');
+require('../db');
 
 const updateDefaultTheme = async () => {
   try {

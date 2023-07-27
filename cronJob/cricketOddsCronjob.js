@@ -1,13 +1,13 @@
 const cron = require("node-cron");
 const ListMarkets = require('../app/models/listMarkets')
 const { getnewOdds } = require('../app/routes/sportsAPI')
-require('./db')
+require('../db');
 
 const cricketOddsCronJob = () => {
     cron.schedule('* * * * * *', async () => {
         try {
         
-        const marketIds = await ListMarkets.distinct("marketId", { islocked: false ,sportsId: "4" });
+        const marketIds = await ListMarkets.distinct("marketId", { islocked: false , sportsId: "4" });
         console.log('MarketID', marketIds.length)
         if(marketIds.length == 0) {
           await ListMarkets.updateMany(

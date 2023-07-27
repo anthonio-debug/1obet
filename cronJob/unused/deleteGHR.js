@@ -1,9 +1,9 @@
 const cron = require("node-cron");
-const Events = require('../app/models/events');
-const raceOdds = require('../app/models/raceOdds'); 
-const raceMarkets = require("../app/models/raceMarkets");
+const Events = require('../../app/models/events');
+const raceOdds = require('../../app/models/raceOdds'); 
+const raceMarkets = require("../../app/models/raceMarkets");
 const moment = require('moment');
-require('./db');
+require('../db');
 
 const deleteGHR = () => {
   //run after 5 minutes

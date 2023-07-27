@@ -660,11 +660,12 @@ db.cricketmatches.insertMany(
 
 // DEVELOPENT MANUAL 
 
-db.inplayevents.remove({}) 
-db.fancygames.remove({}) 
-db.racemarkets.remove({}) 
-db.raceodds.remove({}) 
-db.racings.remove({}) 
+db.inplayevents.deleteMany({}) 
+db.fancygames.deleteMany({}) 
+db.racemarkets.deleteMany({}) 
+db.raceodds.deleteMany({}) 
+db.racings.deleteMany({}) 
+db.odds.deleteMany({}) 
 db.odds.insertOne({
   updatetime: null,
   update: 'ok',

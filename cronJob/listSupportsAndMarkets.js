@@ -14,7 +14,7 @@ const Odds = require('../app/models/odds');
 const raceOdds = require('../app/models/raceOdds');
 const FancyGames = require("../app/models/fancyGames");
 const raceMarkets = require("../app/models/raceMarkets");
-require('./db');
+require('../db');
 
 const listMarketCronJob = () => {
    // Cron job to run every 1 minute
