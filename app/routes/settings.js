@@ -899,42 +899,47 @@ async function bettorDashboardGames(req, res) {
     const sportsIdArray = ['1', '2', '4', '7', '4339'];
     const inplayIdArray = ['1', '2', '4'];
 
-    const events = await inPlayEvents.find({
-      $or: [
-        { sportsId: { $in: sportsIdArray } },
-        { inplay: true, sportsId: { $in: inplayIdArray, $nin: ['7', '4339'] } },
-      ],
-    }).sort({ inplay: -1 });
+    const events = await inPlayEvents.aggregate([
+      {
+        $match: {
+          $or: [
+            { sportsId: { $in: sportsIdArray } },
+            { inplay: true, sportsId: { $in: inplayIdArray, $nin: ['7', '4339'] } },
+          ],
+        },
+      },
+      {
+        $facet: {
+          soccer: [
+            { $match: { sportsId: '1' } },
+            { $sort: { inplay: -1 } },
+          ],
+          tennis: [
+            { $match: { sportsId: '2' } },
+            { $sort: { inplay: -1 } },
+          ],
+          cricket: [
+            { $match: { sportsId: '4' } },
+            { $sort: { inplay: -1 } },
+          ],
+          inplay: [
+            { $match: { inplay: true, sportsId: { $in: inplayIdArray } } },
+          ],
+        },
+      },
+    ]).exec();
 
     const selectedCasinoData = await SelectedCasino.find({});
 
     const organizedEvents = {
-      soccer: [],
-      tennis: [],
-      cricket: [],
-      horseRace: [],
-      greyhound: [],
-      inplay: [],
+      soccer: events[0].soccer,
+      tennis: events[0].tennis,
+      cricket: events[0].cricket,
+      horseRace: events[0].horseRace,
+      greyhound: events[0].greyhound,
+      inplay: events[0].inplay,
       casinoData: selectedCasinoData,
     };
-
-    events.forEach((event) => {
-      if (event.sportsId === '1') {
-        organizedEvents.soccer.push(event);
-      } else if (event.sportsId === '2') {
-        organizedEvents.tennis.push(event);
-      } else if (event.sportsId === '4') {
-        organizedEvents.cricket.push(event);
-      } else if (event.sportsId === '7') {
-        organizedEvents.horseRace.push(event);
-      } else if (event.sportsId === '4339') {
-        organizedEvents.greyhound.push(event);
-      }
-
-      if (event.inplay === true) {
-        organizedEvents.inplay.push(event);
-      }
-    });
 
     res.status(200).json({
       success: true,
