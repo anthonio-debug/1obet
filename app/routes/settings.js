@@ -919,7 +919,7 @@ async function bettorDashboardGames(req, res) {
             { $sort: { inplay: -1 } },
           ],
           cricket: [
-            { $match: { sportsId: '4' } },
+            { $match: { sportsId: '4', iconStatus: true } },
             { $sort: { inplay: -1 } },
           ],
           horseRace: [
@@ -935,7 +935,7 @@ async function bettorDashboardGames(req, res) {
       },
     ]).exec();
 
-    const selectedCasinoData = await SelectedCasino.find({});
+    const selectedCasinoData = await SelectedCasino.find({"isDashboard":true});
 
     const organizedEvents = {
       soccer: events[0].soccer,
