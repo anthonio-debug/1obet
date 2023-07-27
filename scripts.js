@@ -14,12 +14,9 @@
 // console.log("soccer MM ", soccer2);
 // console.log(soccer3);
 
-
-
-const cron = require("node-cron");
-const Events = require('../app/models/events');
-const { raceOddsJob }  = require('../app/routes/Racing');
-require('../db');
+const Events = require('./app/models/events');
+const { raceOddsJob }  = require('./app/routes/Racing');
+require('./db');
 
 
 const greyhoundsOddsCronJob = async () => {
