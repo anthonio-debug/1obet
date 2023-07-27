@@ -922,6 +922,12 @@ async function bettorDashboardGames(req, res) {
             { $match: { sportsId: '4' } },
             { $sort: { inplay: -1 } },
           ],
+          horseRace: [
+            { $match: { sportsId: '7' } },
+          ],
+          greyhound: [
+            { $match: { sportsId: '4339' } }
+          ],
           inplay: [
             { $match: { inplay: true, sportsId: { $in: inplayIdArray } } },
           ],
@@ -955,6 +961,7 @@ async function bettorDashboardGames(req, res) {
     });
   }
 }
+
 
 
 // async function bettorDashboardGames(req, res) {
