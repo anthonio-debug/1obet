@@ -10,15 +10,7 @@ const https = require('https');
 const option = require('./option');
 const apisMiddleware = require('./app/middlewares/apisMiddleware');
 const loginMiddleWare = require('./app/middlewares/loginMiddleware');
-const aclMiddleware = require('./app/middlewares/aclMiddleware');
-const accessMiddleware = require('./app/middlewares/accessMiddleware');
 const checkRoleMiddleware = require('./app/middlewares/checkRoleMiddleware');
-
-var rolesContent = fs.readFileSync('config/settings/roles/roles.json');
-var roles = JSON.parse(rolesContent);
-
-var content = fs.readFileSync('config/settings/apis/general.json');
-var jsonContent = JSON.parse(content);
 
 var apisContent = fs.readFileSync(config.apisFileName);
 var jsonApis = JSON.parse(apisContent);

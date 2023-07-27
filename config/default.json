@@ -5,8 +5,6 @@
   "secret": "umarIsLove",
   "apisFileName": "config/settings/apis/allApis.json",
   "saltRounds": 10,
-  "EMAIL": "xoxsuperapp@gmail.com",
-  "PASSWORD": "jggqqhqarpuhbrft",
   "pageSize": 10,
   "apiUrl": "https://stage.game-program.com/api/seamless/provider",
   "api_password": "6w9GNrsxZsHBeC795N",
