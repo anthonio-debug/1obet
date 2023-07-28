@@ -49,7 +49,6 @@ async function racesTodayMeetings(req, res) {
   }
 }
 
-
 async function racesTomorrowMeetings(req, res) {
   const SportsId = req.params.SportsId;
   try {
@@ -222,8 +221,6 @@ async function marketDescription(req, res) {
     });
   }
 }
-
-
 
 async function raceOdds(req, res) {
   const ids = req.query.ids;
