@@ -23,3 +23,27 @@ require('./db');
 };
 
 cricketOddsCronJob()
+
+
+
+
+
+
+
+
+
+
+
+//  pm2 restart ./server.js ./socketServer.js ./testSocket.js ./cronJob/BettingCalculation.js ./cronJob/cricketOddsCronjob.js ./cronJob/deleteClosedOdds.js ./cronJob/fancyOdds.js  ./cronJob/GetEventsAndMarkets.js ./cronJob/GetRaceEventsAndMarkets.js ./cronJob/greyhoundOdds.js ./cronJob/horseRaceOdds.js ./cronJob/raceMarkets.js ./cronJob/soccerOddsCronjob.js ./cronJob/tennisOddsCronJob.js ./cronJob/themeChanging.js     
+//  pm2 restart 180 181 182 183 184 185 186 187 188 189 190 191 192 193 194
+
+
+
+
+
+
+
+
+
+
+

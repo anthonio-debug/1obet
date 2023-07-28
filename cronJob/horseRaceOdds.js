@@ -24,7 +24,6 @@ const horseRaceOddsCronJob = async () => {
     // //  const marketIds = await raceMarkets.distinct('eventNodes.marketNodes.marketId', { islocked: false});
     //  console.log('MarketID ====>', marketIds)
 
-
     // let batchArray = []
     //   batchArray.push(...marketIds.slice(0, 20));
     //  if(marketIds.length === 0) {
@@ -39,8 +38,6 @@ const horseRaceOddsCronJob = async () => {
     //     { islocked: true }
     //   );
 
-     
-  
     // } 
     catch (error) {
       console.error('Error running odds cron job:', error);
