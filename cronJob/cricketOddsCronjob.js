@@ -5,25 +5,15 @@ require('../db');
 
 const cricketOddsCronJob = () => {
     cron.schedule('* * * * * *', async () => {
-        try {
-        
-        const marketIds = await ListMarkets.distinct("marketId", { islocked: false , sportsId: "4" });
-        console.log('MarketID', marketIds.length)
-        if(marketIds.length == 0) {
-          await ListMarkets.updateMany(
-            {  sportsId: "4" },
-            {  islocked: false }
-          );
-        }else {
-          let batchArray = []
-            batchArray.push(...marketIds.slice(0, 20));
-          
-  
-          await getnewOdds(batchArray);
-          await ListMarkets.updateMany(
-            { marketId: { $in: batchArray  }, sportsId: "4" },
-            { islocked: true }
-          );
+      try {
+        const marketIds = await Events.distinct("marketIds", { sportsId: "4", inplay: true, iconStatus:true });
+        console.log('MarketID', marketIds);
+        let batchArray = [];
+        for (let i = 0; i < marketIds.length; i += 20) {
+          batchArray.push(marketIds.slice(i, i + 20));
+        }
+        for (let i = 0; i < batchArray.length; i++) {
+          await getnewOdds(batchArray[i]);
         }
       
       } catch (error) {

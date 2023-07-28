@@ -20,13 +20,13 @@ const fancyDataCronJob = async () => {
   // Cron job to run every 1 minute
   cron.schedule('*/2 * * * * *', async () => {
     try {
-      // Retrieve the inplayevents data dynamically from the database
-      const inplayEventsData = await Events.find({ sportsId: '4' }).exec();
+      // Retrieve the inPlayEvents data dynamically from the database
 
-      // Iterate over the inplayevents data
-      for (const event of inplayEventsData) {
+      const inPlayEventsData = await Events.find({ sportsId: '4', inplay: true, iconStatus:true }).exec();
+
+      for (const event of inPlayEventsData) {
         const eventId = event.Id;
-        const listInplayEventsResponse = await fancyDataByCronjob(eventId);
+        await fancyDataByCronjob(eventId);
       }
     } catch (error) {
       console.error('Error running listMarket cron job:', error);

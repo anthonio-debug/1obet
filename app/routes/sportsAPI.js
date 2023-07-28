@@ -364,16 +364,15 @@ async function getnewOdds(ids) {
   // });
 }
 
-async function listInplayEventsJob(sportsId) {
+async function eventsBySupportJobs(sportsId) {
   const url = `${config.sportsAPIUrl}/listEventsBySport/${sportsId}`;
-
   try {
     const response = await axios.get(url);
-    const inplayEvents = response.data;
-    console.log('inplayEvents',inplayEvents);
+    const events = response.data;
+    console.log('Events ---> ',events);
  
-    if(inplayEvents){
-      var sportsEventData = inplayEvents.map((element) => ({
+    if(events){
+      var sportsEventData = events.map((element) => ({
         updateOne: {
           filter: { Id: element.Id },
           update: {
@@ -404,30 +403,26 @@ async function listInplayEventsJob(sportsId) {
     console.log('SavedEvents', savedEvents)
     return({
       success: true,
-      message: 'Inplay events retrieved and saved successfully',
-      inplayEvents: inplayEvents,
+      message: 'Events retrieved and saved successfully',
+      events: events,
     });
   } catch (error) {
     console.error(error);
     return({
       success: false,
-      message: 'Failed to get or save inplay events',
+      message: 'Failed to get or save events',
       error: error.message,
     });
   }
 }
 
-async function listMarketsByCronJob(eventId,sportsId) {
-  console.log('sportsId ========>>>',sportsId);
-  
+async function listMarketsByCronJob(eventId,sport) {
   const url = `${config.sportsAPIUrl}/listMarkets/${eventId}`;
-
   try {
     const response = await axios.get(url);
     const marketsData = response.data;
-    console.log('MArkertData', marketsData)
-
-   let sportIds = { "soccer" : "1", "cricket" : "4", "tennis" : "2" }
+    console.log('marketData', marketsData)
+    let sportIds = { "soccer" : "1", "cricket" : "4", "tennis" : "2" }
 
     var listMarketData = await marketsData.map((element) => ({
       updateOne: {
@@ -438,7 +433,7 @@ async function listMarketsByCronJob(eventId,sportsId) {
             eventId: eventId,
             marketName: element.marketName,
             totalMatched: element.totalMatched,
-            sportsId: sportIds[sportsId],
+            sportsId: sportIds[sport],
           },
         },
         upsert: true,
@@ -454,7 +449,7 @@ async function listMarketsByCronJob(eventId,sportsId) {
 
     const savedMarketInEvents = await inPlayEvents.findOneAndUpdate(
       { Id : eventId },
-      {  marketIds: marketIds  },
+      { marketIds: marketIds  },
       { upsert: true , new: true }
     );
 
@@ -499,12 +494,6 @@ async function fancyDataByCronjob(eventId) {
   };
 
       await fancyGames.create(newData)
-    // Update or insert the document in the database
-    // const result = await fancyGames.findOneAndUpdate(
-    //   { gameId: eventId },
-    //   newData,
-    //   { upsert: true }
-    // );
       return({
         success: true,
         message: 'Fancy data saved successfully',
@@ -546,4 +535,4 @@ loginRouter.get('/listMarket/:eventId', listMarkets);
 loginRouter.get('/listInplayEvent/:sportsId', listInplayEvents);
 loginRouter.get('/getOdds', getOdds);
 
-module.exports = { loginRouter,getOdds, getnewOdds,listInplayEventsJob,fancyDataByCronjob, listEventsBySport,listInplayEvents,listEventsByCompetition,listMarketsByCronJob };
+module.exports = { loginRouter,getOdds, getnewOdds,eventsBySupportJobs,fancyDataByCronjob, listEventsBySport,listInplayEvents,listEventsByCompetition,listMarketsByCronJob };
