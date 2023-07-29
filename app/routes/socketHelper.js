@@ -5,7 +5,6 @@ const Odds = require('../models/odds');
 const inPlayEvents = require('../models/events'); 
 const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
-const SubMarketType = require('../models/subMarketTypes') 
 /* 
 Get data for these sports
    1. Cricket 
@@ -25,7 +24,6 @@ async function listOdds(eventId) {
       }else{
         liveSportScoreData = await otherLiveScore(eventId)
       }
-      const submarketData = await SubMarketType.find({ marketId: event.sportsId })
       return {
         success: true,
         message: 'Records',
@@ -34,7 +32,6 @@ async function listOdds(eventId) {
           fancyData: fancyData ?  [fancyData]: [],
           livesportscoreData: liveSportScoreData,
           matchData: event,
-          subMarkets:submarketData
         },
       }
     } catch (error) {

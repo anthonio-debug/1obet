@@ -65,13 +65,11 @@ async function placeBet(req, res) {
       return res.status(404).send({ message: 'You are not allowed to bet' });
     }
 
-    const { selectionId, betAmount, betRate, matchId, subMarketName, selectedTime,raceMarketId } = req.body;
-    const marketplace = await SubMarketType.findOne({ name: subMarketName }).exec();
+    const { selectionId, betAmount, betRate, matchId, subMarketName, selectedTime,raceMarketId, sportsId } = req.body;
+    const marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
       if (!marketplace) {
         return res.status(404).send({ message: 'marketplaces not found' });
      }
-    const sportsId = marketplace.marketId
-    console.log('sportsId',sportsId);
     const userId = req.decoded.userId;
     const user = await User.findOne({ userId }).exec();
     if (!user) {
