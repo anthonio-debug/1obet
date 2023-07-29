@@ -25,7 +25,7 @@ async function listOdds(eventId) {
       }else{
         liveSportScoreData = await otherLiveScore(eventId)
       }
-      const submarketData = await SubMarketType({ marketId: event.sportsId })
+      const submarketData = await SubMarketType.find({ marketId: event.sportsId })
       return {
         success: true,
         message: 'Records',
