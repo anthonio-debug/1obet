@@ -6,7 +6,7 @@ let Global = require('../global/settings');
  *  @type [ 0(back), 1 (lay) ]
  */
 const betSchema = new mongoose.Schema({
-  marketId: { type: String, required: true },
+  marketId: { type: String, required: false },
   userId: { type: Number, required: true },
   betAmount: { type: Number, required: true },
   betRate: { type: Number, required: true }, // bet rate chosen by user

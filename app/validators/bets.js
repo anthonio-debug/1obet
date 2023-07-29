@@ -5,14 +5,10 @@ module.exports.validate = (method) => {
   switch (method) {
     case 'placeBet': {
       return [
-        body('selectedTeam', 'selectedTeam is required')
+        body('selectionId', 'selectionId is required')
           .exists()
-          .isString()
-          .withMessage('selectedTeam must be string'),
-        body('selectedTeam', 'selectedTeam is required')
-          .exists()
-          .isString()
-          .withMessage('selectedTeam must be string'),
+          .isInt()
+          .withMessage('selectionId must be number'),
         body('betAmount', 'betAmount is required')
           .exists()
           .isInt()
@@ -25,10 +21,10 @@ module.exports.validate = (method) => {
           .exists()
           .isString()
           .withMessage('matchId must be string'),
-        body('subMarketId', 'subMarketId is required')
+        body('subMarketName', 'subMarketName is required')
           .exists()
           .isString()
-          .withMessage('subMarketId must be string'),
+          .withMessage('subMarketName must be string'),
       ];
     }
   }
