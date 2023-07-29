@@ -1,15 +1,14 @@
-const express     = require('express');
-const mongoose    = require('mongoose');
-const { Server }  = require('socket.io');
-const https       = require('https');
-let cors          = require('cors');
-const option      = require('./option');
-const PORT        = 4000;
-const { 
-  listOdds, 
-  racesMarketOdds 
-}                 = require('./app/routes/socketHelper')
+// Import required modules
+const express = require('express');
+const mongoose = require('mongoose');
+const { Server } = require('socket.io');
+const https = require('https');
+let cors = require('cors');
+const option = require('./option');
+const { listOdds , racesMarketOdds } = require('./app/routes/socketHelper')
+const PORT = 4001;
 
+// Create Express app
 const app = express();
 var corsOptions = {
   origin: true,
@@ -18,6 +17,18 @@ var corsOptions = {
 };
 app.use(cors(corsOptions));
 
+// const server = app.listen(4001, () => {
+//   console.log('Server listening on port 4001');
+// });
+
+// Create HTTPs server.
+var server = https.createServer(option, app);
+server.listen(PORT, (err) => {
+  if (err) throw new Error(err);
+  console.log(`Server is listening on port ${PORT}`);
+});
+
+// Connect to MongoDB using Mongoose
 mongoose.set('strictQuery', false);
 mongoose.set({ debug: true });
 mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
@@ -26,11 +37,12 @@ mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
 });
 
 
-var server = https.createServer(option, app);
-server.listen(PORT, (err) => {
-  if (err) throw new Error(err);
-  console.log(`Server is listening on port ${PORT}`);
+app.get('/', (req, res) => {
+  res.send(
+    '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.com </h2></body>'
+  );
 });
+
 
 // Create Socket.io instance
 const io = new Server(server,  {
@@ -38,7 +50,7 @@ const io = new Server(server,  {
   pingTimeout: 60000,
   cookie: false,
   cors: {
-    origin: "http://localhost:3000",
+    origin: "https://1obet.com",
     methods: ["GET", "POST"],
     allowedHeaders: '*/*',
     credentials: true
@@ -47,31 +59,32 @@ const io = new Server(server,  {
 
 });
 
+
+
 let interval; 
 // Socket.io event handlers
 io.on('connection', (socket) => {
-  console.log(`New client connected ${socket.id}`);
+  console.log('New client connected');
   socket.on('listOdds', async (data) => {
-    // let result = await listOdds(data);
-    io.to(socket.id).emit('listOdds_response', `result ${socket.id}`);
+    console.log('Received event1:', data);
+    let result = await listOdds(data);
+    io.to(socket.id).emit('listOdds_response', result);
     interval = setInterval(async () => {
-      // result = await listOdds(data);
-      // console.log("result-->>", result);
-      io.to(socket.id).emit('listOdds_response', `result ${socket.id}`);
+      result = await listOdds(data);
+      io.to(socket.id).emit('listOdds_response', result);
     }, 1000);
   });
 
 
-
-  // LISTEN FOR EVENT 2
   socket.on('racesMarketOdds', async (data) => {
+    console.log('Received event2:', data);
     let result2 = await racesMarketOdds(data);
-    socket.emit('racesMarketOdds_response', result2);
-    // interval = setInterval(async () => {
-    //   console.log("result", result2);
-    //   result2 = await racesMarketOdds(data);
-    //   socket.emit('racesMarketOdds_response', result2);
-    // }, 900);
+    io.to(socket.id).emit('racesMarketOdds_response', result2);
+    
+    interval = setInterval(async () => {
+      result2 = await racesMarketOdds(data);
+      io.to(socket.id).emit('racesMarketOdds_response', result2);
+    }, 900);
   });
 
 
@@ -80,4 +93,5 @@ io.on('connection', (socket) => {
     clearInterval(interval)
     console.log('Client disconnected');
   });
+
 });

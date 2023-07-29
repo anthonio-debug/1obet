@@ -15,7 +15,7 @@ var corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
-app.use(cors(corsOptions));
+app.use(cors());
 
 // const server = app.listen(4001, () => {
 //   console.log('Server listening on port 4001');
