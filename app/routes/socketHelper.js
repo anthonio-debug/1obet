@@ -14,7 +14,7 @@ Get data for these sports
 async function listOdds(eventId) {
     try {
       const odds = await Odds.findOne({ eventId: eventId }).sort({ createdAt: -1 });
-      console.log("odds runners ", odds);
+      // console.log("odds runners ", odds);
       const fancyData = await FancyGames.findOne({ eventId: eventId }).sort({ createdAt: -1 });
       let liveSportScoreData;
       const event = await inPlayEvents.findOne({ Id: eventId }, { _id: 1, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
