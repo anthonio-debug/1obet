@@ -1,25 +1,26 @@
 const io = require('socket.io-client');
 
-const socket = io('http://localhost:4000');
+// Connect to the socket server
+const socket = io('https://server.1obet.net:4000');
+
+// Listen for 'connect' event
 socket.on('connect', () => {
   console.log('Connected to socket server');
-  setInterval(() => {
-    socket.emit('listOdds', '32503518');
-    console.log('Emitted event1:', 32503518);
-  }, 1000);
+
+// setInterval(() => {
+  socket.emit('listOdds', '1107231737');
+  console.log('Emitted event1:', 1107231737);
+// }, interval);
 });
 
-// Listen for 'event1_response' event
 socket.on('listOdds_response', (response) => {
   console.log('Received event1 response:', response);
 });
 
-// Listen for 'event2_response' event
-socket.on('racesMarketOdds_response', (response) => {
-  console.log('Received event2 response:', response);
-});
+// socket.on('racesMarketOdds_response', (response) => {
+//   console.log('Received event2 response:', response);
+// });
 
-// Listen for 'disconnect' event
 socket.on('disconnect', () => {
   console.log('Disconnected from socket server');
 });

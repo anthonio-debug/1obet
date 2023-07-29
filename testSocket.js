@@ -53,12 +53,12 @@ io.on('connection', (socket) => {
   console.log(`New client connected ${socket.id}`);
   socket.on('listOdds', async (data) => {
     // let result = await listOdds(data);
-    // socket.emit('listOdds_response', result);
+    io.to(socket.id).emit('listOdds_response', `result ${socket.id}`);
     interval = setInterval(async () => {
       // result = await listOdds(data);
       // console.log("result-->>", result);
-      socket.emit('listOdds_response', result);
-    }, 900);
+      io.to(socket.id).emit('listOdds_response', `result ${socket.id}`);
+    }, 1000);
   });
 
 
