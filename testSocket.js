@@ -8,6 +8,7 @@ const option = require('./option');
 const { listOdds , racesMarketOdds } = require('./app/routes/socketHelper')
 const PORT = 4000;
 
+// Create Express app
 const app = express();
 var corsOptions = {
   origin: true,
@@ -15,12 +16,6 @@ var corsOptions = {
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 app.use(cors(corsOptions));
-
-// const server = app.listen(4001, () => {
-//   console.log('Server listening on port 4001');
-// });
-
-// Create HTTPs server.
 var server = https.createServer(option, app);
 server.listen(PORT, (err) => {
   if (err) throw new Error(err);
@@ -29,18 +24,18 @@ server.listen(PORT, (err) => {
 
 // Connect to MongoDB using Mongoose
 mongoose.set('strictQuery', false);
-mongoose.set({ debug: true });
+// mongoose.set({ debug: true });
 mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
 
 
-app.get('/', (req, res) => {
-  res.send(
-    '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.com </h2></body>'
-  );
-});
+// app.get('/', (req, res) => {
+//   res.send(
+//     '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.com </h2></body>'
+//   );
+// });
 
 
 // Create Socket.io instance
@@ -59,13 +54,11 @@ const io = new Server(server,  {
 });
 
 
-
 let interval; 
 // Socket.io event handlers
 io.on('connection', (socket) => {
-  console.log('New client connected');
+  console.log(`New client connected:  ${socket.id}`);
   socket.on('listOdds', async (data) => {
-    console.log('Received event1:', data);
     let result = await listOdds(data);
     io.to(socket.id).emit('listOdds_response', result);
     interval = setInterval(async () => {
@@ -74,9 +67,7 @@ io.on('connection', (socket) => {
     }, 1000);
   });
 
-
   socket.on('racesMarketOdds', async (data) => {
-    console.log('Received event2:', data);
     let result2 = await racesMarketOdds(data);
     io.to(socket.id).emit('racesMarketOdds_response', result2);
     
@@ -86,11 +77,10 @@ io.on('connection', (socket) => {
     }, 900);
   });
 
-
   // Handle disconnection
   socket.on('disconnect', () => {
     clearInterval(interval)
-    console.log('Client disconnected');
+    console.log(`Client disconnected ${socket.id}`);
   });
 
 });
