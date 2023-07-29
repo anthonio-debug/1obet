@@ -55,11 +55,11 @@ io.on('connection', (socket) => {
   socket.on('listOdds', async (data) => {
     let result = await listOdds(data);
     socket.emit('listOdds_response', result);
-    interval = setInterval(async () => {
-      result = await listOdds(data);
-      console.log("result-->>", result);
-      socket.emit('listOdds_response', result);
-    }, 900);
+    // interval = setInterval(async () => {
+    //   result = await listOdds(data);
+    //   console.log("result-->>", result);
+    //   socket.emit('listOdds_response', result);
+    // }, 900);
   });
 
 
@@ -68,11 +68,11 @@ io.on('connection', (socket) => {
   socket.on('racesMarketOdds', async (data) => {
     let result2 = await racesMarketOdds(data);
     socket.emit('racesMarketOdds_response', result2);
-    interval = setInterval(async () => {
-      console.log("result", result2);
-      result2 = await racesMarketOdds(data);
-      socket.emit('racesMarketOdds_response', result2);
-    }, 900);
+    // interval = setInterval(async () => {
+    //   console.log("result", result2);
+    //   result2 = await racesMarketOdds(data);
+    //   socket.emit('racesMarketOdds_response', result2);
+    // }, 900);
   });
 
 
