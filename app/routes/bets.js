@@ -110,6 +110,7 @@ conso
     // need review check  end
     //for cricket,teniss,soccer events
     if(sportsId !=='7' || sportsId !=='4339'){
+      console.log('in cricket,soccer,tennis event');
       match = await Events.findOne({
         sportsId: sportsId,
         _id: matchId,
@@ -125,6 +126,7 @@ conso
     
     //not fancy
     if (marketplace.subMarketId !== '104' && sportsId !== '7' && sportsId !== '4339') {
+      console.log('in cricket,soccer,tennis odds');
     const matchOdds = await Odds.findOne({
       sportsId: sportsId,
       eventId: match.Id,
@@ -132,7 +134,7 @@ conso
       inplay : true,
     });
     if (!matchOdds) {
-      console.log(`Match not found for sports ID ${sportsId}`);
+      console.log(`Match odds not found for sports ID ${sportsId}`);
       return res.status(404).send({ message: `Match odds not found for ${selectedTime}` });
     }
     // Extract the odds data for the selected team from the runners array
@@ -228,14 +230,15 @@ console.log('companyRate',companyRate)
     }
 
      if (sportsId == '7' || sportsId == '4339' ) {
+      console.log('in horse race greyhound event');
       const match = await Events.findOne({
         sportsId: sportsId,
         _id: matchId,
       });
 
       if (!match) {
-        console.log(`Match not found for sports ID ${sportsId}`);
-        return res.status(404).send({ message: `Match not found for sports ID ${sportsId}` });
+        console.log(` race Match not found for sports ID ${sportsId}`);
+        return res.status(404).send({ message: ` race match not found for sports ID ${sportsId}` });
       }
       console.log('match',match);
        const HRGMarkets = await RaceMarkets.find({
