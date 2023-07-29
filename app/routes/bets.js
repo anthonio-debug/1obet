@@ -186,7 +186,7 @@ async function placeBet(req, res) {
 console.log('companyRate',companyRate)
   }
     //for fancy
-    if (marketplace.subMarketId === '104' && (sportsId == '7' || sportsId == '4339')) {
+    if (marketplace.subMarketId == '104' && (sportsId == '7' || sportsId == '4339')) {
       const fancyOdds = await FancyGames.findOne({
         eventTypeId: sportsId,
         eventId: match.Id,
