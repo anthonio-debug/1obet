@@ -65,7 +65,8 @@ async function placeBet(req, res) {
       return res.status(404).send({ message: 'You are not allowed to bet' });
     }
     const selectedTime = new Date(req.body.selectedTime).getTime()
-
+console.log('selectedTime',selectedTime);
+conso
     const { selectionId, betAmount, betRate, matchId, subMarketName,raceMarketId, sportsId } = req.body;
     const marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
       if (!marketplace) {
@@ -132,7 +133,7 @@ async function placeBet(req, res) {
     });
     if (!matchOdds) {
       console.log(`Match not found for sports ID ${sportsId}`);
-      return res.status(404).send({ message: `Match not found for sports ID ${sportsId}` });
+      return res.status(404).send({ message: `Match odds not found for ${selectedTime}` });
     }
     // Extract the odds data for the selected team from the runners array
     const selectedTeamOdds = matchOdds.runners.find(runner => runner.SelectionId === req.body.selectionId);
