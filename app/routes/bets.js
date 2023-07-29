@@ -66,7 +66,7 @@ async function placeBet(req, res) {
     }
     const selectedTime = new Date(req.body.selectedTime).getTime()
 console.log('selectedTime',selectedTime);
-conso
+
     const { selectionId, betAmount, betRate, matchId, subMarketName,raceMarketId, sportsId } = req.body;
     const marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
       if (!marketplace) {
