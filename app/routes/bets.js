@@ -130,7 +130,7 @@ console.log('selectedTime',selectedTime);
     const matchOdds = await Odds.findOne({
       sportsId: sportsId,
       eventId: match.Id,
-      createdAt: selectedTime ,
+      // createdAt: selectedTime ,
       inplay : true,
     });
     if (!matchOdds) {
