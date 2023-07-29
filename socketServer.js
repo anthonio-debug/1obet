@@ -17,9 +17,6 @@ var corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// const server = app.listen(4001, () => {
-//   console.log('Server listening on port 4001');
-// });
 
 // Create HTTPs server.
 var server = https.createServer(option, app);

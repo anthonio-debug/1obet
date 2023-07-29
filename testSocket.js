@@ -6,9 +6,8 @@ const https = require('https');
 let cors = require('cors');
 const option = require('./option');
 const { listOdds , racesMarketOdds } = require('./app/routes/socketHelper')
-const PORT = 4001;
+const PORT = 4000;
 
-// Create Express app
 const app = express();
 var corsOptions = {
   origin: true,
