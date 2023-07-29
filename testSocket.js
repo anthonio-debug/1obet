@@ -18,7 +18,6 @@ var corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// Connect to MongoDB using Mongoose
 mongoose.set('strictQuery', false);
 mongoose.set({ debug: true });
 mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
@@ -51,15 +50,15 @@ const io = new Server(server,  {
 let interval; 
 // Socket.io event handlers
 io.on('connection', (socket) => {
-  console.log('New client connected');
+  console.log(`New client connected ${socket.id}`);
   socket.on('listOdds', async (data) => {
-    let result = await listOdds(data);
-    socket.emit('listOdds_response', result);
-    // interval = setInterval(async () => {
-    //   result = await listOdds(data);
-    //   console.log("result-->>", result);
-    //   socket.emit('listOdds_response', result);
-    // }, 900);
+    // let result = await listOdds(data);
+    // socket.emit('listOdds_response', result);
+    interval = setInterval(async () => {
+      // result = await listOdds(data);
+      // console.log("result-->>", result);
+      socket.emit('listOdds_response', result);
+    }, 900);
   });
 
 
