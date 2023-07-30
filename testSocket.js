@@ -44,7 +44,7 @@ const io = new Server(server,  {
   pingTimeout: 60000,
   cookie: false,
   cors: {
-    origin: "https://1obet.com",
+    origin: "*",
     methods: ["GET", "POST"],
     allowedHeaders: '*/*',
     credentials: true
