@@ -6,9 +6,9 @@ require('../db');
 
 const greyhoundsOddsCronJob = async () => {
 
-  cron.schedule('*/2 * * * * *', async () => {
+  cron.schedule('* * * * * *', async () => {
     try {
-      const marketIds = await Events.distinct("marketIds", { sportsId: "4339", inplay:true});
+      const marketIds = await Events.distinct("marketIds", { sportsId: "4339", inplay:true });
       console.log('MarketID', marketIds);
       let batchArray = [];
       for (let i = 0; i < marketIds.length; i += 20) {

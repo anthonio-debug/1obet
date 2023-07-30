@@ -361,17 +361,12 @@ async function marketDescriptionCronjob(marketId) {
 
 async function raceOddsJob(ids) {
   try {
-   console.log('Hello1 =========>', ids)
-    // ids = ["1.216197191"]
+   console.log('race Odds Job --->>>', ids)
     const url = `${config.horseRaceUrl}/odds/?ids=${ids}`;
     const response = await axios.get(url);
-
     const oddsData = response.data;
     console.log('oddsData', oddsData);
-
-    // Insert the oddsData into the RaceOdds model
     const raceOdds = await RaceOdds.insertMany(oddsData);
-
     return({
       success: true,
       message: 'Odds Records',

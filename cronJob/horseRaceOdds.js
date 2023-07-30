@@ -1,15 +1,12 @@
-const cron = require("node-cron");
-const Events = require('../app/models/events');
-const { raceOddsJob }  = require('../app/routes/Racing');
+const cron              = require("node-cron");
+const Events            = require('../app/models/events');
+const { raceOddsJob }   = require('../app/routes/Racing');
 require('../db');
 
-
 const horseRaceOddsCronJob = async () => {
-
-  cron.schedule('*/2 * * * * *', async () => {
+  cron.schedule('* * * * * *', async ()=>{
     try {
-      const marketIds = await Events.distinct("marketIds", { sportsId: "7",  inplay:true });
-      console.log('MarketID', marketIds);
+      const marketIds = await Events.distinct("marketIds", { sportsId: "7",  inplay: true });
       let batchArray = [];
       for (let i = 0; i < marketIds.length; i += 20) {
         batchArray.push(marketIds.slice(i, i + 20));
