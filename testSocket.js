@@ -54,14 +54,13 @@ const io = new Server(server,  {
 });
 
 
-let interval; 
-// Socket.io event handlers
+let intervals = {}; 
 io.on('connection', (socket) => {
   console.log(`New client connected:  ${socket.id}`);
   socket.on('listOdds', async (data) => {
     let result = await listOdds(data);
     io.to(socket.id).emit('listOdds_response', result);
-    interval = setInterval(async () => {
+    intervals[socket.id] = setInterval(async () => {
       result = await listOdds(data);
       io.to(socket.id).emit('listOdds_response', result);
     }, 1000);
@@ -70,16 +69,14 @@ io.on('connection', (socket) => {
   socket.on('racesMarketOdds', async (data) => {
     let result2 = await racesMarketOdds(data);
     io.to(socket.id).emit('racesMarketOdds_response', result2);
-    
-    interval = setInterval(async () => {
+    intervals[socket.id] = setInterval(async () => {
       result2 = await racesMarketOdds(data);
       io.to(socket.id).emit('racesMarketOdds_response', result2);
-    }, 900);
+    }, 1000);
   });
-
-  // Handle disconnection
+  
   socket.on('disconnect', () => {
-    clearInterval(interval)
+    clearInterval(intervals[socket.id])
     console.log(`Client disconnected ${socket.id}`);
   });
 
