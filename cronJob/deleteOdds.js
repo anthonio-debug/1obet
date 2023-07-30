@@ -19,7 +19,7 @@ require('../db');
 
 const deleteClosedOddsData = () => {
   //run after 5 minutes
-cron.schedule('*/5 * * * *', async () => {
+cron.schedule('*/3 * * * *', async () => {
     try {
       let time = Date.now() - 5 * 60 * 1000;
       await Odds.remove({
