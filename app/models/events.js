@@ -5,8 +5,6 @@ const mongoose = require('mongoose');
   1. InPlayEvent
   2. Events Competations
 */
-
-
 // Define the schema
 const inPlayEventsSchema = new mongoose.Schema({
   sportsId:{ type: String, index: true },
@@ -27,18 +25,22 @@ const inPlayEventsSchema = new mongoose.Schema({
   matchType: { type: String, default: '' },
   islocked: { type: Boolean , default: false, index: true },
   iconStatus: { type: Boolean, default: false },
-  
-  //required fields for gray and horse raiding
-  meetingId: { type: Number },
-  venue: { type: String },
-  countryCodes: [String],
-  meetingGoing: { type: String },
-  races: { type: Array },
   matchStoppedReason: { type: String },
   matchStopStatus: { type: Boolean, default: false },
   matchCanceledStatus: { type: Boolean },
-  matchResumedStatus:{ type: Boolean }
+  matchResumedStatus:{ type: Boolean },
+  //required fields for gray and horse raiding
+  meetingId: { type: Number },
+  venue: { type: String },
+  countryCodes:{ type: String },
+  meetingName: { type: String },
+  meetingGoing: { type: String },
+  meetingOpenDate: { type: String }
 });
+
+
+
+
 
 // Create the model
 inPlayEventsSchema.index({ inplay: 1, sportsId: 1 })

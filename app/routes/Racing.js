@@ -4,7 +4,7 @@ const axios = require('axios');
 const config = require('config');
 const loginRouter = express.Router();
 const Racing = require('../models/racing');
-const inPlayEvents = require('../models/events');
+const Event = require('../models/events');
 const raceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds')
 
@@ -253,39 +253,37 @@ async function todayRaceJob(sportsId) {
   try {
     const url = `${config.horseRaceUrl}/meetings/today/${sportsId}`;
     const response = await axios.get(url);
-
-    const horseRacesData = response.data;
-  
-    const bulkOperations = [];
-    for (let data of horseRacesData.meetings) {
-      let marketIdsArray = []
-      await data.races.forEach((element) => marketIdsArray.push(element.marketId));
-      let obj = {}
-      obj.races = data.races 
-      obj.meetingId = data.meetingId 
-      obj.venue = data.venue 
-      obj.sportsId = `${data.eventTypeId}` 
-      obj.countryCode = data.countryCode 
-      obj.countryCodes = horseRacesData.countryCodes 
-      obj.meetingGoing = data.meetingGoing
-      obj.openDate = data.openDate
-      obj.marketIds = marketIdsArray
-      bulkOperations.push({
-        updateOne: {
-          filter: { meetingId: data.meetingId },
-          update: { $setOnInsert: obj },
-          upsert: true,
-        },
+    const meetings = response.data.meetings;
+    let racesBulkOperation = [];
+    let races  = [];
+    meetings.map((meeting)=>{
+      meeting.races.map((race)=>{
+        race.Id               = race.raceId;
+        race.marketIds        = [race.marketId];
+        race.openDate         = race.startTime;
+        race.meetingId        = meeting.meetingId;
+        race.meetingName      = meeting.name;
+        race.countryCode      = meeting.countryCode;
+        race.meetingOpenDate  = meeting.openDate;
+        race.venue            = meeting.venue;
+        race.meetingGoing     = meeting.meetingGoing;
+        race.sportsId         = sportsId;
+        races.push(race);
+        racesBulkOperation.push({
+          updateOne: {
+            filter: { Id: race.Id },
+            update: { $set: race },
+            upsert: true,
+          },
+        });
       });
-    }
-      console.log('Data', bulkOperations)
-    // Perform bulk write operation
-    await inPlayEvents.bulkWrite(bulkOperations, { ordered: false });
-
+    });   
+    console.log(races);
+    await Event.bulkWrite(racesBulkOperation);
     return ({
       success: true,
-      message: 'Horse Race Records',
-      results: horseRacesData,
+      message: 'Race Records list',
+      results: races,
     });
   } catch (error) {
     console.error(error);
