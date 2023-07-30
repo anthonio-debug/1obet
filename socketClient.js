@@ -9,7 +9,6 @@ socket.on('connect', () => {
 
 // setInterval(() => {
   socket.emit('listOdds', '1107231737');
-  console.log('Emitted event1:', 1107231737);
 // }, interval);
 });
 

@@ -15,7 +15,7 @@ var corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
-app.use(cors(corsOptions));
+app.use(cors());
 var server = https.createServer(option, app);
 server.listen(PORT, (err) => {
   if (err) throw new Error(err);

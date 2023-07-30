@@ -15,14 +15,13 @@ var corsOptions = {
   credentials: true,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
-app.use(cors(corsOptions));
+app.use(cors());
 var server = https.createServer(option, app);
 server.listen(PORT, (err) => {
   if (err) throw new Error(err);
   console.log(`Server is listening on port ${PORT}`);
 });
 
-// Connect to MongoDB using Mongoose
 mongoose.set('strictQuery', false);
 // mongoose.set({ debug: true });
 mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
@@ -30,15 +29,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/Bet99', {
   useUnifiedTopology: true,
 });
 
-
-// app.get('/', (req, res) => {
-//   res.send(
-//     '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.com </h2></body>'
-//   );
-// });
-
-
-// Create Socket.io instance
 const io = new Server(server,  {
   pingInterval: 5000,
   pingTimeout: 60000,
@@ -49,14 +39,14 @@ const io = new Server(server,  {
     allowedHeaders: '*/*',
     credentials: true
   },
-  transports: ['polling'] // Enable WebSocket transport
+  transports: ['polling']  // Enable WebSocket transport
 
 });
 
 
 let intervals = {}; 
 io.on('connection', (socket) => {
-  console.log(`New client connected:  ${socket.id}`);
+  console.log(`New client connected :  ${socket.id}`);
   socket.on('listOdds', async (data) => {
     let result = await listOdds(data);
     io.to(socket.id).emit('listOdds_response', result);
@@ -74,7 +64,7 @@ io.on('connection', (socket) => {
       io.to(socket.id).emit('racesMarketOdds_response', result2);
     }, 1000);
   });
-  
+
   socket.on('disconnect', () => {
     clearInterval(intervals[socket.id])
     console.log(`Client disconnected ${socket.id}`);
