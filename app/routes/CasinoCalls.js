@@ -4,7 +4,7 @@ const router            = express.Router();
 const CasinoDebits      = require('../models/casinoCalls');
 const crypto            = require('crypto');
 const config            = require('config')
-const { startSession }  = require('mongoose');
+const { MongoClient } = require('mongodb');
 
 // const client = new MongoClient(config.DBHost);
 
@@ -61,10 +61,6 @@ async function balance(req, res) {
 
 
 async function debit(req, res) {
-  return res.json({
-    status: 403,
-    msg: 'INCORRECT_KEY_VALIDATION'
-  }); 
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   let session;
   try {
@@ -79,12 +75,12 @@ async function debit(req, res) {
     const key = payload.key;
     delete payload.key;
     
-    const queryString = Object.keys(payload)
-      .map(key => `${key}=${payload[key]}`)
-      .join('&');
-    const hash = createHashKey(salt, queryString);
-    console.log('queryString:', queryString);
-    console.log('hash:', hash);
+    // const queryString = Object.keys(payload)
+    //   .map(key => `${key}=${payload[key]}`)
+    //   .join('&');
+    // const hash = createHashKey(salt, queryString);
+    // console.log('queryString:', queryString);
+    // console.log('hash:', hash);
     // if (hash !== key) {
     //   return res.json({
     //     status: 403,
@@ -92,14 +88,25 @@ async function debit(req, res) {
     //   });
     // }
 
-    const sameTransId = await casinoCalls.countDocuments({ transaction_id: payload.transaction_id, remote_id: payload.remote_id, round_id: payload.round_id, action: 'debit' }, { session, readPreference: 'primary' });
-    const user = await users.findOne({ remoteId: payload.remote_id }, { session, readPreference: 'primary' });
+
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>")
+    const sameTransId = await casinoCalls.countDocuments(
+      {
+        transaction_id: payload.transaction_id,
+        remote_id: payload.remote_id,
+        round_id: payload.round_id,
+        action: "debit",
+      },
+      { session, readPreference: "primary" }
+    ); 
+    const user = await users.findOne({ remoteId: payload.remote_id }, { session, readPreference: 'primary' });    
+
     if (!user) {
-      session.abortTransaction();
-      return res.json({ status: '500', msg: 'Internal error' });
+      await session.abortTransaction();
+      return res.json({ status: '500', msg: `Internal error user not found` });
     }
     if (sameTransId > 0) {
-      session.abortTransaction();
+      await session.abortTransaction();
       return res.json({
         status: 200,
         balance: user.availableBalance,
@@ -107,7 +114,7 @@ async function debit(req, res) {
     }
 
     if (debitAmount > user.availableBalance) {
-      session.abortTransaction();
+      await session.abortTransaction();
       return res.json({
         status: 403,
         message: "Insufficient balance amount",
@@ -115,7 +122,7 @@ async function debit(req, res) {
     }
     const updatedBalance = user.availableBalance - debitAmount;
     if (updatedBalance < 0) {
-      session.abortTransaction();
+      await session.abortTransaction();
       return res.json({ status: '500', msg: 'Negative balance not allowed!' });
     }
     user.availableBalance -= debitAmount;
@@ -124,14 +131,14 @@ async function debit(req, res) {
     const casinoDebits = new CasinoDebits(payload);
     await casinoDebits.save();
 
-    session.commitTransaction();
+    await session.commitTransaction();
     return res.json({
       status: 200,
       balance: updatedBalance
     });
   } catch (err) {
     console.error('Error:', err);
-    return res.json({ status: 500, msg: 'Internal error' });
+    return res.json({ status: 500, msg: `Internal error ${err}` });
   } finally {
     session.endSession();
     client.close();
