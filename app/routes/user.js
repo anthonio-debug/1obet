@@ -10,6 +10,7 @@ const Settings = require('../models/settings');
 const BetLimits = require('../models/betLimits');
 const UserBetSizes = require('../models/userBetSizes');
 const axios = require('axios');
+const userBetSizes = require('../models/userBetSizes');
 
 var getIP = require('ipware')().get_ip;
 
@@ -81,12 +82,13 @@ async function registerUser(req, res) {
       );
       user.token = token;
       user.createdBy = req.decoded.userId;
+     if(parentUser.userId == '0'){
+    
+      let betLimits = await BetLimits.find({})
+    
+      if( parentUser.userId !=='0' ) {
+        betLimits = await userBetSizes.find({ userId: parentUser.userId })
 
-      BetLimits.find({}, (err, betLimits) => {
-        console.log('betLimits.amount', betLimits.maxAmount);
-        if (err || !betLimits) {
-          return res.status(404).send({ message: 'bet limits not found' });
-        }
         user.save((err, user) => {
           if (err || !user) {
             return res
@@ -162,7 +164,7 @@ async function registerUser(req, res) {
             }
           );
         });
-      });
+      }};
     });
 }
 
