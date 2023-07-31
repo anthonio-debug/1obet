@@ -61,6 +61,10 @@ async function balance(req, res) {
 
 
 async function debit(req, res) {
+  return res.json({
+    status: 403,
+    msg: 'INCORRECT_KEY_VALIDATION'
+  }); 
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   let session;
   try {
