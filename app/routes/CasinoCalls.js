@@ -41,7 +41,7 @@ async function balance(req, res) {
     const user = await User.findOne({ remoteId: payload.remote_id }).exec();
 
     if (!user) {
-      return res.json({ status: 500, msg: 'Internal error' });
+      return res.json({ status: 500, msg: 'Internal error no user' });
     }
 
     const balance = user.availableBalance;
@@ -55,7 +55,7 @@ async function balance(req, res) {
     });
   } catch (err) {
     console.error(err);
-    return res.json({ status: 500, msg: 'Internal error' });
+    return res.json({ status: 500, msg: `Internal error ${err}` });
   }
 }
 
@@ -112,7 +112,7 @@ async function debit(req, res) {
 
     if (!user) {
       await session.abortTransaction();
-      return res.json({ status: '500', msg: `Internal error` });
+      return res.json({ status: '500', msg: `Internal error no user` });
     }
     if (sameTransId > 0) {
       await session.abortTransaction();
@@ -162,7 +162,7 @@ async function debit(req, res) {
     });
   } catch (err) {
     console.error('Error:', err);
-    return res.json({ status: 500, msg: `Internal error` });
+    return res.json({ status: 500, msg: `Internal error ${err}` });
   } finally {
     session.endSession();
     client.close();
@@ -221,7 +221,7 @@ async function credit(req, res) {
     if (!user) {
       console.log();
       await session.abortTransaction();
-      return res.json({ status: '500', msg: `Internal Error` });
+      return res.json({ status: '500', msg: `Internal Error no User` });
     }
 
     if (sameTransId > 0) {
@@ -265,7 +265,7 @@ async function credit(req, res) {
 
   } catch (err) {
     console.error('Error:', err);
-    return res.json({ status: 500, msg: 'Internal error' });
+    return res.json({ status: 500, msg: `Internal error ${err}` });
   } finally {
     session.endSession();
     client.close();
@@ -398,7 +398,7 @@ async function rollback(req, res) {
     console.error(err);
     return res.json({
       status: 500,
-      msg: 'Internal error'
+      msg: `Internal error ${err}`
     });
   } finally {
     session.endSession();
