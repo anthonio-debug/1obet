@@ -61,10 +61,6 @@ async function balance(req, res) {
 
 
 async function debit(req, res) {
-  return res.json({
-    status: 403,
-    msg: 'INCORRECT_KEY_VALIDATION'
-  }); 
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   let session;
   try {
@@ -94,6 +90,12 @@ async function debit(req, res) {
 
     const sameTransId = await casinoCalls.countDocuments({ transaction_id: payload.transaction_id, remote_id: payload.remote_id, round_id: payload.round_id, action: 'debit' }, { session, readPreference: 'primary' });
     const user = await users.findOne({ remoteId: payload.remote_id }, { session, readPreference: 'primary' });
+
+    return res.json({
+      status: 403,
+      msg: 'INCORRECT_KEY_VALIDATION'
+    });
+
     if (!user) {
       session.abortTransaction();
       return res.json({ status: '500', msg: 'Internal error' });
