@@ -89,8 +89,8 @@ async function debit(req, res) {
     // }
 
 
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>")
-    const sameTransId = await casinoCalls.countDocuments(
+    console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> ${payload.remote_id}`)
+    const sameTransId = await casinoCalls.findOne(
       {
         transaction_id: payload.transaction_id,
         remote_id: payload.remote_id,
@@ -98,12 +98,12 @@ async function debit(req, res) {
         action: "debit",
       },
       { session, readPreference: "primary" }
-    ); 
-    const user = await users.findOne({ remoteId: payload.remote_id }, { session, readPreference: 'primary' });    
+    );   
+    const user = await User.findOne({ remoteId: payload.remote_id }, { session, readPreference: 'primary' }).exec();  
 
     if (!user) {
       await session.abortTransaction();
-      return res.json({ status: '500', msg: `Internal error user not found` });
+      return res.json({ status: '500', msg: `Internal error User Not Found` });
     }
     if (sameTransId > 0) {
       await session.abortTransaction();
