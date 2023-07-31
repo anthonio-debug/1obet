@@ -103,10 +103,11 @@ async function debit(req, res) {
 
     if (!user) {
       session.abortTransaction();
+      session.endSession();
       return res.json({ status: '500', msg: 'Internal error' });
     }
     if (sameTransId > 0) {
-      session.abortTransaction();
+      await session.abortTransaction();
       return res.json({
         status: 200,
         balance: user.availableBalance,
@@ -114,7 +115,7 @@ async function debit(req, res) {
     }
 
     if (debitAmount > user.availableBalance) {
-      session.abortTransaction();
+      await session.abortTransaction();
       return res.json({
         status: 403,
         message: "Insufficient balance amount",
@@ -122,7 +123,7 @@ async function debit(req, res) {
     }
     const updatedBalance = user.availableBalance - debitAmount;
     if (updatedBalance < 0) {
-      session.abortTransaction();
+      await session.abortTransaction();
       return res.json({ status: '500', msg: 'Negative balance not allowed!' });
     }
     user.availableBalance -= debitAmount;
@@ -131,7 +132,7 @@ async function debit(req, res) {
     const casinoDebits = new CasinoDebits(payload);
     await casinoDebits.save();
 
-    session.commitTransaction();
+    await session.commitTransaction();
     return res.json({
       status: 200,
       balance: updatedBalance
