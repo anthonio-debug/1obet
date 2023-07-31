@@ -109,14 +109,26 @@ console.log('selectedTime',selectedTime);
     // }
     // need review check  end
     //for cricket,teniss,soccer events
-    if(sportsId !=='7' || sportsId !=='4339'){
-      console.log('in cricket,soccer,tennis event');
+    if (sportsId !== '7' && sportsId !== '4339' && sportsId !== '4') {
+      console.log('soccer,tennis event');
       match = await Events.findOne({
         sportsId: sportsId,
         _id: matchId,
         inplay : true
       });
-      
+      if (!match) {
+        console.log(`Match not found for sports ID ${sportsId}`);
+        return res.status(404).send({ message: `Match not found for sports ID ${sportsId}` });
+      }
+    }
+
+    if(sportsId === '4'){
+        match = await Events.findOne({
+          sportsId: sportsId,
+          _id: matchId,
+          inplay : true,
+          iconStatus: true
+        });
       if (!match) {
         console.log(`Match not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Match not found for sports ID ${sportsId}` });
@@ -125,12 +137,13 @@ console.log('selectedTime',selectedTime);
     console.log('match',match.name);
     
     //not fancy
-    if (marketplace.subMarketId !== '104' && sportsId !== '7' && sportsId !== '4339') {
+    if (marketplace.subMarketId !== '104' && sportsId !== '7' && sportsId !== '4339' && marketplace.subMarketId !== '128') {
       console.log('in cricket,soccer,tennis odds');
     const matchOdds = await Odds.findOne({
       sportsId: sportsId,
       eventId: match.Id,
-      // createdAt: selectedTime ,
+      marketId: { $in: matchId.marketIds },
+      createdAt: selectedTime ,
       inplay : true,
     });
     if (!matchOdds) {
@@ -229,6 +242,48 @@ console.log('companyRate',companyRate)
       }
     }
 
+    // for bookmaker
+    if (marketplace.subMarketId === '128' && sportsId === '4') {
+      console.log('in bookmaker');
+      const bookMakerOdds = await FancyGames.find({
+        eventTypeId: sportsId,
+        eventId: match.Id,
+        createdAt: selectedTime,
+      });
+    console.log('bookMakerOdds', bookMakerOdds[0].t2[0].bm1);
+      if (bookMakerOdds) {
+        // Extract the odds data for the selected team from the "t3" array
+        const selectedTeamOdds = bookMakerOdds[0].t2[0].bm1.find(runner => runner.sid == selectionId);
+    
+        if (!selectedTeamOdds) {
+          console.log(`Odds not available for the selected team ${req.body.selectionId}`);
+          return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
+        }
+    console.log('selectedTeamOdds',selectedTeamOdds);
+        let selectedOddsRate = null;
+        if (req.body.type === 0) {
+          // If type is 0 (available to back), try to find a match between the user-provided betRate and any of the available back odds (b1, b2, or b3)
+          const backOdds = [selectedTeamOdds.b1, selectedTeamOdds.b2, selectedTeamOdds.b3];
+          console.log('backOdds',backOdds);
+          selectedOddsRate = backOdds.find(back => back == req.body.betRate);
+        } else if (req.body.type === 1) {
+          // If type is 1 (available to lay), use the "l1", "l2", or "l3" price for the lay odds
+          const layOdds = [selectedTeamOdds.l1, selectedTeamOdds.l2, selectedTeamOdds.l3];
+          selectedOddsRate = layOdds.find(lay => lay == req.body.betRate)}
+        else {
+          console.log('Invalid type value. Type should be 0 or 1.');
+          return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
+        }
+    
+        if (!selectedOddsRate || selectedOddsRate == '0.00') {
+          // If odds are not available or suspended.
+          console.log(`Selected odds for the bet are not available or suspended for the team ${req.body.selectionId}`);
+          return res.status(404).send({ message: `Selected odds for the bet are not available or suspended for the team ${req.body.selectionId}` });
+        }
+        // Now you have the selectedOddsRate based on the selected team and type
+        console.log('Selected Odds:', selectedOddsRate);
+      }
+    }
      if (sportsId == '7' || sportsId == '4339' ) {
       console.log('in horse race greyhound event');
       const match = await Events.findOne({
