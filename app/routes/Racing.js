@@ -258,6 +258,7 @@ async function todayRaceJob(sportsId) {
     let races  = [];
     meetings.map((meeting)=>{
       meeting.races.map((race)=>{
+        race.name             = race.marketName;
         race.Id               = race.raceId;
         race.marketIds        = [race.marketId];
         race.openDate         = race.startTime;
