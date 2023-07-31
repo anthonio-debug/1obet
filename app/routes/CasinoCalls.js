@@ -75,12 +75,12 @@ async function debit(req, res) {
     const key = payload.key;
     delete payload.key;
     
-    const queryString = Object.keys(payload)
-      .map(key => `${key}=${payload[key]}`)
-      .join('&');
-    const hash = createHashKey(salt, queryString);
-    console.log('queryString:', queryString);
-    console.log('hash:', hash);
+    // const queryString = Object.keys(payload)
+    //   .map(key => `${key}=${payload[key]}`)
+    //   .join('&');
+    // const hash = createHashKey(salt, queryString);
+    // console.log('queryString:', queryString);
+    // console.log('hash:', hash);
     // if (hash !== key) {
     //   return res.json({
     //     status: 403,
@@ -88,11 +88,8 @@ async function debit(req, res) {
     //   });
     // }
 
-    return res.json({
-      status: sameTransId,
-      msg: 'testing'
-    });
 
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>")
     const sameTransId = await casinoCalls.countDocuments(
       {
         transaction_id: payload.transaction_id,
@@ -102,6 +99,11 @@ async function debit(req, res) {
       },
       { session, readPreference: "primary" }
     );
+
+    return res.json({
+      status: sameTransId,
+      msg: 'testing'
+    });
 
 
     
