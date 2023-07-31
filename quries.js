@@ -289,15 +289,15 @@ db.bettingfigures.insertMany([
 ])
 
 db.users.insertOne({ 
-  "userName" : "Company3", 
+  "userName" : "shampydicompany2", 
   "password" : '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy', 
-  "reference" : "Company3", 
+  "reference" : "shampydicompany2", 
   "phone" : "03056959889",  
   "role" : "0",
   "isActive" : true,
   "status" : 1,
   "notes" : "this is note",
-  "userId" : 2009, 
+  "userId" : 2035, 
   "passwordChanged" : false, 
   "balance" : 5000000000,
   "isDeleted":false,
@@ -660,12 +660,12 @@ db.cricketmatches.insertMany(
 
 // DEVELOPENT MANUAL 
 
-db.inplayevents.deleteMany({}) 
-db.fancygames.deleteMany({}) 
-db.racemarkets.deleteMany({}) 
-db.raceodds.deleteMany({}) 
-db.racings.deleteMany({}) 
-db.odds.deleteMany({}) 
+db.inplayevents.deleteMany({})
+db.fancygames.deleteMany({})
+db.racemarkets.deleteMany({})
+db.raceodds.deleteMany({})
+db.racings.deleteMany({})
+db.odds.deleteMany({})
 db.odds.insertOne({
   updatetime: null,
   update: 'ok',
