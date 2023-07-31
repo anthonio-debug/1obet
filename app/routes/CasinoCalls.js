@@ -88,13 +88,25 @@ async function debit(req, res) {
     //   });
     // }
 
-    const sameTransId = await casinoCalls.countDocuments({ transaction_id: payload.transaction_id, remote_id: payload.remote_id, round_id: payload.round_id, action: 'debit' }, { session, readPreference: 'primary' });
-    const user = await users.findOne({ remoteId: payload.remote_id }, { session, readPreference: 'primary' });
+    const sameTransId = await casinoCalls.countDocuments(
+      {
+        transaction_id: payload.transaction_id,
+        remote_id: payload.remote_id,
+        round_id: payload.round_id,
+        action: 'debit'
+      },
+      { session, readPreference: 'primary' }
+    );
+
 
     return res.json({
-      status: 403,
-      msg: 'INCORRECT_KEY_VALIDATION'
+      status: sameTransId,
+      msg: 'testing'
     });
+
+    const user = await users.findOne({ remoteId: payload.remote_id }, { session, readPreference: 'primary' });
+
+    
 
     if (!user) {
       session.abortTransaction();
