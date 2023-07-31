@@ -11,7 +11,7 @@ const Odds = require('../models/odds');
 const Exchanges = require('../models/exchanges');
 const MaxBetSize = require('../models/betLimits');
 const SideBarMenu = require('../models/sidebarMenu');
-const inPlayEvents = require('../models/events');
+const Events = require('../models/events');
 const EventBySports = require('../models/eventsBySport');
 const config = require('config')
 const axios = require('axios');
@@ -320,7 +320,7 @@ async function updateMatchType(req, res) {
   }
   try {
     const {_id, matchType, iconStatus } = req.body;
-     inPlayEvents.findByIdAndUpdate(
+     Events.findByIdAndUpdate(
         _id,
         { $set: { matchType: matchType, iconStatus: iconStatus } },
           (err, updatedMatch) => {
@@ -395,9 +395,10 @@ async function listEventsBySport(req, res) {
   try {
     let events
     if(inplay === true || inplay === 'true'){
-       events = await inPlayEvents.find({ inplay: true, sportsId: { $nin: ['7', '4339'] } });
-    }else {
-      events = await inPlayEvents.find({ sportsId: sportId }).sort({ inplay: -1 });
+       events = await Events.find({ inplay: true, sportsId: { $nin: ['7', '4339'] } });
+    }
+    else{
+      events = await Events.find({ sportsId: sportId }).sort({ inplay: -1 });
     }
     res.status(200).json({
       success: true,
@@ -441,7 +442,7 @@ async function listEventsByCompetition(req, res) {
 async function listInplayEvents(req, res) {
   const sportsId = req.query.ids.split(',');;
   try {
-    const inplayEvents = await inPlayEvents.find({ sportsId: { $in: sportsId } });
+    const inplayEvents = await Events.find({ sportsId: { $in: sportsId } });
 
     res.status(200).json({
       success: true,
@@ -477,7 +478,7 @@ async function listOddsAPI(req, res) {
 
     let livesportscoreData = {}
 
-    const event = await inPlayEvents.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
+    const event = await Events.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
       const type = event ? event.sportsId : null;
       if(type == 4){
         livesportscoreData = await cricketLiveScore(eventIds)
@@ -563,7 +564,7 @@ async function cricketLiveScore(id) {
     const data = apiResponse.data;
     const response = {};
     if(typeof(data[0]) == "string"){
-      const event = await inPlayEvents.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+      const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
       const type = event ? event.matchType : null;
       const scoreInfo     = JSON.parse(data).score
       let score           = scoreInfo.score1;
@@ -632,7 +633,7 @@ async function otherLiveScore(id) {
     const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
     const data        = apiResponse.data;
     if(typeof(data[0]) == "string"){
-      // const event = await inPlayEvents.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+      // const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
       return JSON.parse(data)
     }else{
       return data[0]
@@ -763,7 +764,7 @@ function updateMatch(req, res) {
     case 'stopped':
       // Check if the match is already stopped
       query = { _id };
-      inPlayEvents.findOne(query, (err, foundMatch) => {
+      Events.findOne(query, (err, foundMatch) => {
         if (err || !foundMatch) {
           return res.status(400).json({
             success: false,
@@ -789,7 +790,7 @@ function updateMatch(req, res) {
 
         successMessage = 'Match stopped successfully';
 
-        inPlayEvents.findOneAndUpdate(
+        Events.findOneAndUpdate(
           { _id },
           { $set: updateField },
           (err, updatedMatch) => {
@@ -813,7 +814,7 @@ function updateMatch(req, res) {
     case 'resumed':
       // Check if the match is already resumed
       query = { _id };
-      inPlayEvents.findOne(query, (err, foundMatch) => {
+      Events.findOne(query, (err, foundMatch) => {
         if (err || !foundMatch) {
           return res.status(400).json({
             success: false,
@@ -839,7 +840,7 @@ function updateMatch(req, res) {
         updateField.matchResumedStatus = matchResumedStatus;
         successMessage = 'Match resumed successfully';
 
-        inPlayEvents.findOneAndUpdate(
+        Events.findOneAndUpdate(
           { _id},
           { $set: updateField },
           (err, updatedMatch) => {
@@ -866,7 +867,7 @@ function updateMatch(req, res) {
       updateField = { matchCanceledStatus };
       successMessage = 'Match canceled status updated successfully';
 
-      inPlayEvents.findOneAndUpdate(
+      Events.findOneAndUpdate(
         query,
         { $set: updateField },
         (err, updatedMatch) => {
@@ -899,7 +900,7 @@ async function bettorDashboardGames(req, res) {
     const sportsIdArray = ['1', '2', '4', '7', '4339'];
     const inplayIdArray = ['1', '2', '4'];
 
-    const events = await inPlayEvents.aggregate([
+    const events = await Events.aggregate([
       {
         $match: {
           $or: [
@@ -970,12 +971,12 @@ async function bettorDashboardGames(req, res) {
 //     const inplayIdArray = ['1', '2', '4'];
 //     let events,inplay;
 //     // if (inplay === true || inplay === 'true') {
-//     //   events = await inPlayEvents.find({ inplay: true, sportsId: { $in: sportsIdArray, $nin: ['7', '4339'] } });
+//     //   events = await Events.find({ inplay: true, sportsId: { $in: sportsIdArray, $nin: ['7', '4339'] } });
 //     // } else {
-//       events = await inPlayEvents.find({ sportsId: { $in: sportsIdArray } }).sort({ inplay: -1 });
+//       events = await Events.find({ sportsId: { $in: sportsIdArray } }).sort({ inplay: -1 });
 //     // }
 //     // console.log('events',events);
-//     const inplayEvents = await inPlayEvents.find({ inplay: true, sportsId: { $in: inplayIdArray} });
+//     const inplayEvents = await Events.find({ inplay: true, sportsId: { $in: inplayIdArray} });
 //     const selectedCasinoData = await SelectedCasino.find({});
 
 //     // const organizedEvents = {
@@ -999,7 +1000,7 @@ async function bettorDashboardGames(req, res) {
 //   cricket: filterCricketData,
 //   horseRace: horseRAceData,
 //   greyhound: greyhoundData,
-//   inplay: inplayEvents,
+//   inplay: Events,
 //   casinoData: selectedCasinoData,
 // };
 //     // events.forEach((event) => {
@@ -1040,9 +1041,9 @@ async function bettorDashboardGames(req, res) {
 //     const inplayIdArray = ['1', '2', '4'];
 //     let events,inplay;
 //     // if (inplay === true || inplay === 'true') {
-//     //   events = await inPlayEvents.find({ inplay: true, sportsId: { $in: sportsIdArray, $nin: ['7', '4339'] } });
+//     //   events = await Events.find({ inplay: true, sportsId: { $in: sportsIdArray, $nin: ['7', '4339'] } });
 //     // } else {
-//       events = await inPlayEvents.find({ sportsId: { $in: sportsIdArray } })
+//       events = await Events.find({ sportsId: { $in: sportsIdArray } })
 //     // }
 //     console.log('events',events);
 //     const selectedCasinoData = await SelectedCasino.find({});
@@ -1063,7 +1064,7 @@ async function bettorDashboardGames(req, res) {
 // const greyhoundData = events?.filter((item)=> item?.sportId==='4339')
 // const inplayEvents = events?.filter((item)=> item?.inplay===true)?.sort((a, b)=> Number(b?.inplay)- Number(a.inplay))
 
-// // const inplayEvents = await inPlayEvents.find({ inplay: true, sportsId: { $in: inplayIdArray} });
+// // const inplayEvents = await Events.find({ inplay: true, sportsId: { $in: inplayIdArray} });
 
 // // const inplayData =  events?.filter((item)=> item?.inplay==true)
 // const organizedEvents = {
@@ -1072,7 +1073,7 @@ async function bettorDashboardGames(req, res) {
 //   cricket: filterCricketData,
 //   horseRace: horseRAceData,
 //   greyhound: greyhoundData,
-//   inplay: inplayEvents,
+//   inplay: Events,
 //   casinoData: selectedCasinoData,
 // };
 //     // events.forEach((event) => {
