@@ -102,79 +102,183 @@ function betsNews(req, res) {
   }
 }
 
-function getAllBetSizes(req, res) {
+async function getAllBetSizes(req, res) {
   const userId = Number(req.query.userId);
 
-  // if (!userId) {
-  //   return res.status(400).send({ message: 'USER_ID_MISSING' });
-  // }
+  try {
+    const user = await User.findOne({ userId: userId });
 
-  User.findOne({ userId: userId }, (err, user) => {
-    if (err || !user) {
+    if (!user) {
       return res.status(404).send({ message: 'USER_NOT_FOUND' });
     }
 
-    const query = [
-      {
-        $lookup: {
-          from: 'userbetsizes',
-          let: { betLimitId: { $toString: '$_id' } },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ['$betLimitId', '$$betLimitId'] },
-                    { $eq: ['$userId', userId] },
-                  ],
-                },
+    const createdByZero = user.createdBy === 0;
+
+    let queryResult;
+
+    if (createdByZero) {
+      queryResult = await betLimits.aggregate([
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            maxAmount: '$maxAmount',
+            userBetSizes: {
+              $filter: {
+                input: '$userBetSizes',
+                as: 'userBetSize',
+                cond: { $eq: ['$$userBetSize.userId', 0] }, // Condition to match createdByZero user's userId
               },
             },
-            {
-              $project: {
-                _id: 1,
-                amount: 1,
-              },
-            },
-          ],
-          as: 'userBetSizes',
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          maxAmount: 1,
-          name: 1,
-          'userBetSizes._id': 1,
-          'userBetSizes.amount': 1,
-        },
-      },
-      {
-        $addFields: {
-          userBetSizes: {
-            $arrayElemAt: ['$userBetSizes', 0],
           },
         },
-      },
-    ];
+        {
+          $unwind: {
+            path: '$userBetSizes',
+            preserveNullAndEmptyArrays: true, // Preserve documents that don't have a match in the userbetsizes collection
+          },
+        },
+        {
+          $lookup: {
+            from: 'userbetsizes',
+            let: { betLimitId: { $toString: '$_id' } },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$userId', userId] }, // Match with logged-in user's userId
+                      { $eq: ['$betLimitId', '$$betLimitId'] },
+                    ],
+                  },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  amount: 1,
+                },
+              },
+            ],
+            as: 'userBetSizes',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userBetSizes',
+            preserveNullAndEmptyArrays: true, // Preserve documents that don't have a match in the userbetsizes collection
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            maxAmount: '$maxAmount', // Use amount from logged-in userbetsizes if available, else use maxAmount from betLimits
+            amount: { $ifNull: ['$userBetSizes.amount', 0] }, // Use amount from logged-in userbetsizes if available, else set to 0
+          },
+        },
+      ]);
+    } else {
+      console.log('in else case');
+      const createdBy = user.createdBy;
+      queryResult = await betLimits.aggregate([
+        {
+          $lookup: {
+            from: 'userbetsizes',
+            let: { betLimitId: { $toString: '$_id' } },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$userId', createdBy] }, // Match with createdBy user's userId
+                      { $eq: ['$betLimitId', '$$betLimitId'] },
+                    ],
+                  },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  amount: 1,
+                },
+              },
+            ],
+            as: 'createdByUserBetSizes',
+          },
+        },
+        {
+          $unwind: {
+            path: '$createdByUserBetSizes',
+            preserveNullAndEmptyArrays: true, // Preserve documents that don't have a match in the userbetsizes collection
+          },
+        },
+        {
+          $lookup: {
+            from: 'userbetsizes',
+            let: { betLimitId: { $toString: '$_id' } },
+            pipeline: [
+              {
+                $match: {
+                  $expr: {
+                    $and: [
+                      { $eq: ['$userId', userId] }, // Match with logged-in user's userId
+                      { $eq: ['$betLimitId', '$$betLimitId'] },
+                    ],
+                  },
+                },
+              },
+              {
+                $project: {
+                  _id: 0,
+                  amount: 1,
+                },
+              },
+            ],
+            as: 'userBetSizes',
+          },
+        },
+        {
+          $unwind: {
+            path: '$userBetSizes',
+            preserveNullAndEmptyArrays: true, // Preserve documents that don't have a match in the userbetsizes collection
+          },
+        },
+        {
+          $project: {
+            _id: 1,
+            name: 1,
+            maxAmount: { $ifNull: ['$createdByUserBetSizes.amount', '$maxAmount'] }, // Use amount from createdBy userbetsizes if available, else use maxAmount from betLimits
+            amount: { $ifNull: ['$userBetSizes.amount', 0] }, // Use amount from logged-in userbetsizes, if available, else set to 0
+          },
+        },
+      ]);
+    }
 
-    betLimits.aggregate(query, (err, results) => {
-      if (err) {
-        return res.status(404).send({ message: 'Bet Sizes Not Found' });
-      }
-      const modifiedResults = results.map((result) => ({
-        _id: result.userBetSizes._id,
-        name: result.name,
-        maxAmount: result.maxAmount,
-        amount: result.userBetSizes.amount,
-      }));
-      return res.send({
-        success: true,
-        message: 'BET_SIZES_FETCHED_SUCCESSFULLY',
-        results: modifiedResults,
-      });
+    // Log the query result
+    console.log('Query Result:', queryResult);
+
+    const modifiedResults = queryResult.map((result) => ({
+      _id: result._id,
+      name: result.name,
+      maxAmount: result.maxAmount,
+      amount: result.amount,
+    }));
+
+    // Log the modified results
+    console.log('Modified Results:', modifiedResults);
+
+    return res.send({
+      success: true,
+      message: 'BET_SIZES_FETCHED_SUCCESSFULLY',
+      results: modifiedResults,
     });
-  });
+  } catch (error) {
+    // Log the error
+    console.error('Error:', error);
+
+    return res.status(500).send({ message: 'Internal Server Error' });
+  }
 }
 
 // function getAllBetSizes(req, res) {
