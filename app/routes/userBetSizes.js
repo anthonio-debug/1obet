@@ -21,8 +21,8 @@ function updateBetSizes(req, res) {
 
   const updatedBetSizes = betSizes.map((betSize) => ({
     updateOne: {
-      filter: { _id: betSize._id, userId: req.body.userId },
-      update: { $set: { amount: betSize.amount, marketId: betSize.marketId, userId:req.body.userId } },
+      filter: { betLimitId: betSize._id, userId: req.body.userId },
+      update: { $set: { amount: betSize.amount, userId:req.body.userId } },
       upsert: false,
     },
   }));
