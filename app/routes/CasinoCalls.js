@@ -100,10 +100,14 @@ async function debit(req, res) {
         remote_id: parseInt(payload.remote_id),
         round_id: payload.round_id,
         // action: "debit"
-      }
+      },
+      { session, readPreference: 'primary'  }
     );   
     console.log('====== sameTransId', sameTransId)
-    const user = await users.findOne({ remoteId: parseInt(payload.remote_id) })
+    const user = await users.findOne(
+      { remoteId: parseInt(payload.remote_id) },
+      { session, readPreference: 'primary'  }
+    )
       // { remoteId: payload.remote_id });  
 
     if (!user) {
@@ -111,7 +115,7 @@ async function debit(req, res) {
       return res.json({ status: '500', msg: `Internal error` });
     }
     if (sameTransId > 0) {
-      session.abortTransaction();
+      await session.abortTransaction();
       return res.json({
         status: 200,
         balance: user.availableBalance,
@@ -143,7 +147,10 @@ async function debit(req, res) {
       await session.abortTransaction();
       return res.json({ status: '500', msg: 'Negative balance not allowed!' });
     }
-    let userResponse = await users.updateOne({_id: user?._id},{$set: { availableBalance: updatedBalance}});
+    let userResponse = await users.updateOne(
+      {_id: user?._id},{$set: { availableBalance: updatedBalance}},
+      { session, readPreference: 'primary'  }
+      );
     console.log('========== res', userResponse)
     const casinoDebits = new CasinoDebits(payload);
     await casinoDebits.save();
@@ -202,19 +209,24 @@ async function credit(req, res) {
         remote_id: parseInt(payload.remote_id),
         round_id: payload.round_id,
         action: "credit"
-      }
+      },
+      { session, readPreference: 'primary'  }
     ); 
 
     console.log('====== sameTransId', sameTransId)
-    const user = await users.findOne({ remoteId: parseInt(payload.remote_id) });  
+    const user = await users.findOne(
+      { remoteId: parseInt(payload.remote_id) },
+      { session, readPreference: 'primary'  }
+      );  
     if (!user) {
-      session.abortTransaction();
+      console.log();
+      await session.abortTransaction();
       return res.json({ status: '500', msg: `Internal Error` });
     }
 
     if (sameTransId > 0) {
       console.log('====== same Trans already Exists ', sameTransId)
-      session.abortTransaction();
+      await session.abortTransaction();
       return res.json({
         status: 200,
         balance: user.availableBalance,
@@ -222,7 +234,7 @@ async function credit(req, res) {
     }
 
     if (parseInt(payload.amount) < 0) {
-      session.abortTransaction();
+      await session.abortTransaction();
       return res.json({
         status: 500,
         balance: user.availableBalance
@@ -236,13 +248,16 @@ async function credit(req, res) {
 
     let updatedBalance = user.availableBalance + parseInt(payload.amount);
 
-    let userResponse   = await users.updateOne({_id: user?._id},{$set: { availableBalance: updatedBalance}});
+    let userResponse   = await users.updateOne(
+      {_id: user?._id},{$set: { availableBalance: updatedBalance}},
+      { session, readPreference: 'primary'  }
+      );
 
     console.log('========== res', userResponse)
     const casinoDebits = new CasinoDebits(payload);
     await casinoDebits.save();
 
-    session.commitTransaction();
+    await session.commitTransaction();
     return res.json({
       status: 200,
       balance: updatedBalance,
@@ -295,13 +310,17 @@ async function rollback(req, res) {
         transaction_id: payload.transaction_id,
         remote_id: parseInt(payload.remote_id),
         // round_id: payload.round_id,
-      }
+      },
+      { session, readPreference: 'primary'  }
     );  
 
     console.log("----->>> sameTransId ", sameTransId);
 
 
-    const user = await users.findOne({ remoteId: parseInt(payload.remote_id) });  
+    const user = await users.findOne(
+      { remoteId: parseInt(payload.remote_id) },
+      { session, readPreference: 'primary' }
+      );  
     if (!user) {
       await session.abortTransaction();
       return res.json({ status: '500', msg: `Internal error User Not Found` });
@@ -344,34 +363,37 @@ async function rollback(req, res) {
         amount = parseInt(rollbackTransaction.amount);
       } 
       else if (action == 'rollback') {
-        session.abortTransaction();
+        await session.abortTransaction();
         return res.json({
           status: 404,
           balance: user.availableBalance
         });
       }
       const updatedBalance = user.availableBalance +  amount;
-      let userResponse = await users.updateOne({_id: user?._id},{$set: { availableBalance: updatedBalance}});
+      let userResponse = await users.updateOne(
+        {_id: user?._id},{$set: { availableBalance: updatedBalance}},
+        { session, readPreference: 'primary'}
+        );
 
       console.log("=========== >> userResponse", userResponse);
 
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
-      session.commitTransaction();
+      await session.commitTransaction();
 
       return res.json({
         status: 200,
         balance: updatedBalance
       });
     }  else {
-      session.abortTransaction();
+      await session.abortTransaction();
       return res.json({
         status: 404,
         balance: user.availableBalance
       });
     }
   } catch (err) {
-    session.abortTransaction();
+    await session.abortTransaction();
     client.close();
     console.error(err);
     return res.json({
