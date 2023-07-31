@@ -103,7 +103,7 @@ async function debit(req, res) {
 
     if (!user) {
       await session.abortTransaction();
-      return res.json({ status: '500', msg: 'Internal error' });
+      return res.json({ status: '500', msg: `Internal error user not found` });
     }
     if (sameTransId > 0) {
       await session.abortTransaction();
@@ -138,7 +138,7 @@ async function debit(req, res) {
     });
   } catch (err) {
     console.error('Error:', err);
-    return res.json({ status: 500, msg: 'Internal error' });
+    return res.json({ status: 500, msg: `Internal error ${err}` });
   } finally {
     session.endSession();
     client.close();
