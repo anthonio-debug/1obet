@@ -131,7 +131,7 @@ async function registerUser(req, res) {
           const userbetSizesData = betLimits.map((betLimit) => ({
             userId: user.userId,
             betLimitId: betLimit._id,
-            amount: betLimit.maxAmount,
+            amount: betLimit.amount,
             name: betLimit.name,
             sportsId: betLimit.sportsId
             // marketId: betLimit.marketId
