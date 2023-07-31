@@ -65,7 +65,7 @@ async function placeBet(req, res) {
       return res.status(404).send({ message: 'You are not allowed to bet' });
     }
     const selectedTime = new Date(req.body.selectedTime).getTime()
-console.log('selectedTime',selectedTime);
+    console.log('selectedTime',selectedTime);
 
     const { selectionId, betAmount, betRate, matchId, subMarketName,raceMarketId, sportsId } = req.body;
     const marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
@@ -91,10 +91,10 @@ console.log('selectedTime',selectedTime);
     // and we cannot place a bet of the amount that is greater than this maxbetsize
 
     // need review check 
-    // const UserMaxBetSize = await userBetSizes.findOne({ marketId: marketId }).exec();
-    // console.log('UserMaxBetSize',UserMaxBetSize)
-    // const MaxBetSize = await maxAllowedBetSizes.findOne({ marketId: marketId }).exec();
-    // console.log('MaxBetSize',MaxBetSize)
+    const UserMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: sportsId }).exec();
+    console.log('UserMaxBetSize',UserMaxBetSize)
+    const MaxBetSize = await maxAllowedBetSizes.findOne({ sportsId: sportsId }).exec();
+    console.log('dealerMaxBetSize',MaxBetSize)
 
     // let errorMessage;
     // if (UserMaxBetSize && UserMaxBetSize.amount < MaxBetSize.maxAmount) {
