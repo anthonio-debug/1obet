@@ -23,9 +23,11 @@ async function registerUser(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
+
   if (req.decoded.role == '5') {
     return res.status(404).send({ message: 'you are not allowed to do this ' });
   }
+
   if (req.body.role !== '5') {
     if (!req.body.downLineShare) {
       return res.status(404).send({ message: 'downLineShare is required' });
@@ -82,13 +84,43 @@ async function registerUser(req, res) {
       );
       user.token = token;
       user.createdBy = req.decoded.userId;
-     if(parentUser.userId == '0'){
-    
-      let betLimits = await BetLimits.find({})
-    
-      if( parentUser.userId !=='0' ) {
-        betLimits = await userBetSizes.find({ userId: parentUser.userId })
 
+      // Add the if condition back here to save the betLimits if parentUser.userId is '0'
+      if (parentUser.userId == 0) {
+        let betLimits = await BetLimits.find({});
+        user.save((err, user) => {
+          if (err || !user) {
+            return res
+              .status(404)
+              .send({ message: 'user not registered', err });
+          }
+
+          const userbetSizesData = betLimits.map((betLimit) => ({
+            userId: user.userId,
+            betLimitId: betLimit._id,
+            amount: betLimit.maxAmount,
+            name: betLimit.name,
+            sportsId: betLimit.sportsId
+          }));
+
+          UserBetSizes.insertMany(
+            userbetSizesData,
+            async (err, insertedDocs) => {
+              if (err) return res.send({ message: err });
+
+              let user_username = 'user_' + user.userId;
+              console.log('user_username', user_username);
+              return res.send({
+                message: 'Register Success',
+                success: true,
+                results: user,
+              });
+            }
+          );
+        });
+      } else {
+        // For other users, run the userBetSizes query
+        let betLimits = await userBetSizes.find({ userId: parentUser.userId });
         user.save((err, user) => {
           if (err || !user) {
             return res
@@ -164,7 +196,7 @@ async function registerUser(req, res) {
             }
           );
         });
-      }};
+      }
     });
 }
 
