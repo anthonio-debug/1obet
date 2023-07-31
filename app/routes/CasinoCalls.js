@@ -99,7 +99,7 @@ async function debit(req, res) {
       },
       { session, readPreference: "primary" }
     );   
-    const user = await User.findOne({ remoteId: payload.remote_id }, { session, readPreference: 'primary' }).exec();  
+    const user = await users.findOne({ remoteId: payload.remote_id }, { session, readPreference: 'primary' }).exec();  
 
     if (!user) {
       await session.abortTransaction();
