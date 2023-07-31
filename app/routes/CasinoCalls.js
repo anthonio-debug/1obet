@@ -79,18 +79,18 @@ async function debit(req, res) {
     const key = payload.key;
     delete payload.key;
     
-    // const queryString = Object.keys(payload)
-    //   .map(key => `${key}=${payload[key]}`)
-    //   .join('&');
-    // const hash = createHashKey(salt, queryString);
-    // console.log('queryString:', queryString);
-    // console.log('hash:', hash);
-    // if (hash !== key) {
-    //   return res.json({
-    //     status: 403,
-    //     msg: 'INCORRECT_KEY_VALIDATION'
-    //   });
-    // }
+    const queryString = Object.keys(payload)
+      .map(key => `${key}=${payload[key]}`)
+      .join('&');
+    const hash = createHashKey(salt, queryString);
+    console.log('queryString:', queryString);
+    console.log('hash:', hash);
+    if (hash !== key) {
+      return res.json({
+        status: 403,
+        msg: 'INCORRECT_KEY_VALIDATION'
+      });
+    }
 
 
     console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
@@ -103,7 +103,7 @@ async function debit(req, res) {
       }
     );   
     console.log('====== sameTransId', sameTransId)
-    const user = await users.findOne({ parentId: '0' })
+    const user = await users.findOne({ remoteId: parseInt(payload.remote_id) })
       // { remoteId: payload.remote_id });  
 
     if (!user) {
@@ -150,7 +150,7 @@ async function debit(req, res) {
     });
   } catch (err) {
     console.error('Error:', err);
-    return res.json({ status: 500, msg: `Internal error ${err}` });
+    return res.json({ status: 500, msg: `Internal error` });
   } finally {
     session.endSession();
     client.close();
@@ -174,21 +174,21 @@ async function credit(req, res) {
     const key = payload.key;
     delete payload.key;
 
-    // const queryString = Object.keys(payload)
-    //   .map(key => `${key}=${payload[key]}`)
-    //   .join('&');
+    const queryString = Object.keys(payload)
+      .map(key => `${key}=${payload[key]}`)
+      .join('&');
 
-    // console.log('queryString', queryString);
+    console.log('queryString', queryString);
 
-    // const hash = createHashKey(salt, queryString);
-    // console.log('hash', hash);
+    const hash = createHashKey(salt, queryString);
+    console.log('hash', hash);
 
-    // if (hash !== key) {
-    //   return res.json({
-    //     status: 403,
-    //     msg: 'INCORRECT_KEY_VALIDATION'
-    //   });
-    // }
+    if (hash !== key) {
+      return res.json({
+        status: 403,
+        msg: 'INCORRECT_KEY_VALIDATION'
+      });
+    }
 
     console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> ${payload.remote_id}`);
     const sameTransId = await casinoCalls.countDocuments(
@@ -196,12 +196,12 @@ async function credit(req, res) {
         transaction_id: payload.transaction_id,
         remote_id: parseInt(payload.remote_id),
         round_id: payload.round_id,
-        // action: "credit"
+        action: "credit"
       }
     ); 
 
     console.log('====== sameTransId', sameTransId)
-    const user = await users.findOne({ parentId: '0' });  
+    const user = await users.findOne({ remoteId: parseInt(payload.remote_id) });  
     if (!user) {
       session.abortTransaction();
       return res.json({ status: '500', msg: `Internal Error` });
@@ -270,20 +270,20 @@ async function rollback(req, res) {
     const key = payload.key;
     delete payload.key;
 
-    // const queryString = Object.keys(payload)
-    //   .map(key => `${key}=${payload[key]}`)
-    //   .join('&');
-    // console.log('queryString', queryString);
+    const queryString = Object.keys(payload)
+      .map(key => `${key}=${payload[key]}`)
+      .join('&');
+    console.log('queryString', queryString);
 
-    // const hash = createHashKey(salt, queryString);
-    // console.log('hash', hash);
+    const hash = createHashKey(salt, queryString);
+    console.log('hash', hash);
 
-    // if (hash !== key) {
-    //   return res.json({
-    //     status: 403,
-    //     msg: 'INCORRECT_KEY_VALIDATION'
-    //   });
-    // }
+    if (hash !== key) {
+      return res.json({
+        status: 403,
+        msg: 'INCORRECT_KEY_VALIDATION'
+      });
+    }
 
     const sameTransId = await casinoCalls.countDocuments(
       {
@@ -296,7 +296,7 @@ async function rollback(req, res) {
     console.log("----->>> sameTransId ", sameTransId);
 
 
-    const user = await users.findOne({ parentId: '0' });  
+    const user = await users.findOne({ remoteId: parseInt(payload.remote_id) });  
     if (!user) {
       await session.abortTransaction();
       return res.json({ status: '500', msg: `Internal error User Not Found` });
