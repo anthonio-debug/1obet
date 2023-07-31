@@ -133,6 +133,11 @@ async function debit(req, res) {
         message: "Insufficient balance amount",
       });
     }
+    if (parseInt(payload.amount) < 0) {
+      await session.abortTransaction();
+      return res.json({ status: '500', msg: 'Negative bet not allowed!' });
+    }
+
     const updatedBalance = user.availableBalance - debitAmount;
     if (updatedBalance < 0) {
       await session.abortTransaction();
