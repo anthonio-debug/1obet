@@ -102,8 +102,7 @@ async function debit(req, res) {
     const user = await users.findOne({ remoteId: payload.remote_id }, { session, readPreference: 'primary' });    
 
     if (!user) {
-      session.abortTransaction();
-      session.endSession();
+      await session.abortTransaction();
       return res.json({ status: '500', msg: 'Internal error' });
     }
     if (sameTransId > 0) {
