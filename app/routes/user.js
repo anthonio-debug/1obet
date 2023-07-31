@@ -99,6 +99,7 @@ async function registerUser(req, res) {
             betLimitId: betLimit._id,
             amount: betLimit.maxAmount,
             name: betLimit.name,
+            sportsId: betLimit.sportsId
             // marketId: betLimit.marketId
           }));
 

@@ -10,6 +10,7 @@ let userBetSizesSchema = new Schema({
   betLimitId: { type: String },
   name: { type: String },
   createdAt: { type: Number },
+  sportsId:{type:String},
   updatedAt: { type: Number },
 });
 

@@ -9,6 +9,7 @@ let betLimitsSchema = new Schema({
   maxAmount: { type: Number, required: true },
   updatedAt: { type: Number },
   createdAt: { type: Number },
+  sportsId: { type: String }
 });
 
 betLimitsSchema.pre('save', function (next) {
