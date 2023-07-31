@@ -70,7 +70,7 @@ console.log('selectedTime',selectedTime);
     const { selectionId, betAmount, betRate, matchId, subMarketName,raceMarketId, sportsId } = req.body;
     const marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
       if (!marketplace) {
-        return res.status(404).send({ message: 'marketplaces not found' });
+        return res.status(404).send({ message: 'Marketplaces not found' });
      }
     const userId = req.decoded.userId;
     const user = await User.findOne({ userId }).exec();
@@ -142,7 +142,6 @@ console.log('selectedTime',selectedTime);
     const matchOdds = await Odds.findOne({
       sportsId: sportsId,
       eventId: match.Id,
-      marketId: { $in: matchId.marketIds },
       createdAt: selectedTime ,
       inplay : true,
     });
@@ -244,7 +243,7 @@ console.log('companyRate',companyRate)
 
     // for bookmaker
     if (marketplace.subMarketId === '128' && sportsId === '4') {
-      console.log('in bookmaker');
+      console.log('in bookmakrer');
       const bookMakerOdds = await FancyGames.find({
         eventTypeId: sportsId,
         eventId: match.Id,
