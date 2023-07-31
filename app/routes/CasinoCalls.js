@@ -30,12 +30,12 @@ async function balance(req, res) {
   console.log('hash:', hash);
   console.log('queryString:', queryString);
 
-  if (hash !== key) {
-    return res.json({
-      status: 403,
-      msg: 'INCORRECT_KEY_VALIDATION'
-    });
-  }
+  // if (hash !== key) {
+  //   return res.json({
+  //     status: 403,
+  //     msg: 'INCORRECT_KEY_VALIDATION'
+  //   });
+  // }
 
   try {
     const user = await User.findOne({ remoteId: payload.remote_id }).exec();
@@ -81,12 +81,12 @@ async function debit(req, res) {
     const hash = createHashKey(salt, queryString);
     console.log('queryString:', queryString);
     console.log('hash:', hash);
-    if (hash !== key) {
-      return res.json({
-        status: 403,
-        msg: 'INCORRECT_KEY_VALIDATION'
-      });
-    }
+    // if (hash !== key) {
+    //   return res.json({
+    //     status: 403,
+    //     msg: 'INCORRECT_KEY_VALIDATION'
+    //   });
+    // }
 
     const sameTransId = await casinoCalls.countDocuments({ transaction_id: payload.transaction_id, remote_id: payload.remote_id, round_id: payload.round_id, action: 'debit' }, { session, readPreference: 'primary' });
     const user = await users.findOne({ remoteId: payload.remote_id }, { session, readPreference: 'primary' });
@@ -158,12 +158,12 @@ async function credit(req, res) {
     const hash = createHashKey(salt, queryString);
     console.log('hash', hash);
 
-    if (hash !== key) {
-      return res.json({
-        status: 403,
-        msg: 'INCORRECT_KEY_VALIDATION'
-      });
-    }
+    // if (hash !== key) {
+    //   return res.json({
+    //     status: 403,
+    //     msg: 'INCORRECT_KEY_VALIDATION'
+    //   });
+    // }
 
     const sameTransId = await casinoCalls.countDocuments({transaction_id: payload.transaction_id, remote_id: payload.remote_id, round_id: payload.round_id,  action: 'credit'}, { session, readPreference: 'primary' });
     const remoteId = payload.remote_id;
