@@ -2,7 +2,7 @@ const config = require('config')
 const axios = require('axios')
 const FancyGames = require('../models/fancyGames');
 const Odds = require('../models/odds');
-const inPlayEvents = require('../models/events'); 
+const Events = require('../models/events'); 
 const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
 /* 
@@ -16,7 +16,7 @@ async function listOdds(eventId) {
       const odds = await Odds.findOne({ eventId: eventId }).sort({ createdAt: -1 });
       const fancyData = await FancyGames.findOne({ eventId: eventId }).sort({ createdAt: -1 });
       let liveSportScoreData;
-      const event = await inPlayEvents.findOne({ Id: eventId }, { _id: 1, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
+      const event = await Events.findOne({ Id: eventId }, { _id: 1, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
       const type = event ? event.sportsId : null;
       if(type == 4){
         liveSportScoreData = await cricketLiveScore(eventId)
@@ -48,7 +48,7 @@ async function cricketLiveScore(id) {
       const data = apiResponse.data;
       const response = {};
       if(typeof(data[0]) == "string"){
-        const event = await inPlayEvents.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+        const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
         const type = event ? event.matchType : null;
         const scoreInfo     = JSON.parse(data).score
         let score           = scoreInfo.score1;
@@ -122,7 +122,7 @@ async function otherLiveScore(id) {
     const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
     const data        = apiResponse.data;
     if(typeof(data[0]) == "string"){
-      const event = await inPlayEvents.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+      const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
       return JSON.parse(data)
     }else{
       return data[0]
@@ -217,15 +217,17 @@ async function racesMarketOdds(marketId) {
       } else {
         console.error('Invalid data structure. Please check the provided objects.');
       }
-  
-      // console.log('racesMarketsData', racesMarketsData);
+      const matchId = await Events.findOne({ marketIds: {$in: marketId }})
+
+      console.log('matchId', matchId);
       console.log('raceOddsData ===>', raceOddsData)
       return {
         success: true,
         message: 'Records',
         results: {
           racesMarketsData,
-          raceOddsData
+          raceOddsData,
+          matchData: matchId
         }
       };
     } catch (error) {

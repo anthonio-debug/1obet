@@ -17,5 +17,6 @@
   "liveTvUrl": "https://livesportscore.xyz:3440/api",
   "liveScoreUrl": "https://livesportscore.xyz:3443/api/getScoreId",
   "horseRaceUrl": "http://136.244.77.249:33333",
-  "saltKey":"Loa0192Jua"
+  "saltKey":"Loa0192Jua",
+  "betMinimumAmount": 100
 }
