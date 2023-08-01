@@ -2,7 +2,6 @@ const express = require('express');
 let config = require('config');
 const axios = require('axios');
 const loginRouter = express.Router();
-
 async function liveScore(req, res) {
   const matchId = req.params.matchId;
   const url = `${config.liveScoreUrl}/${matchId}`;
