@@ -62,9 +62,10 @@ async function balance(req, res) {
 
 async function debit(req, res) {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+  await client.connect();
+  const session = client.startSession();
   try {
-    await client.connect();
-    const session = client.startSession();
+    
     console.log('======', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
@@ -76,28 +77,28 @@ async function debit(req, res) {
     const key = payload.key;
     delete payload.key;
     
-    const queryString = Object.keys(payload)
-      .map(key => `${key}=${payload[key]}`)
-      .join('&');
-    const hash = createHashKey(salt, queryString);
-    console.log('queryString:', queryString);
-    console.log('hash:', hash);
-    if (hash !== key) {
-      return res.json({
-        status: 403,
-        msg: 'INCORRECT_KEY_VALIDATION'
-      });
-    }
+    // const queryString = Object.keys(payload)
+    //   .map(key => `${key}=${payload[key]}`)
+    //   .join('&');
+    // const hash = createHashKey(salt, queryString);
+    // console.log('queryString:', queryString);
+    // console.log('hash:', hash);
+    // if (hash !== key) {
+    //   return res.json({
+    //     status: 403,
+    //     msg: 'INCORRECT_KEY_VALIDATION'
+    //   });
+    // }
 
 
     console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
     const sameTransId = await casinoCalls.countDocuments(
-      { transaction_id: payload.transaction_id, remote_id: payload.remote_id, round_id: payload.round_id, action: 'debit' },
+      { transaction_id: payload.transaction_id, remote_id: parseInt(payload.remote_id), round_id: payload.round_id, action: 'debit' },
       { session, readPreference: 'primary'  }
     );   
     console.log('====== sameTransId', sameTransId)
     const user = await users.findOne(
-      { remoteId: payload.remote_id },
+      { remoteId: parseInt(payload.remote_id) },
       { session, readPreference: 'primary'  }
     )
       // { remoteId: payload.remote_id });  
@@ -164,10 +165,9 @@ async function debit(req, res) {
 
 async function credit(req, res) {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
-  // let session;
+  await client.connect();
+  const session = client.startSession();
   try {
-    await client.connect();
-    const session = client.startSession();
     console.log('======', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
@@ -266,10 +266,9 @@ async function credit(req, res) {
 
 async function rollback(req, res) {
   const client = new MongoClient(config.DBHost);
-  // let session;
+  await client.connect();
+  const session = client.startSession();
   try {
-    await client.connect();
-    const session = client.startSession();
     console.log('======', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
