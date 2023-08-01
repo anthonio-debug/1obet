@@ -62,10 +62,9 @@ async function balance(req, res) {
 
 async function debit(req, res) {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
-  let session;
   try {
     await client.connect();
-    session = client.startSession();
+    const session = client.startSession();
     console.log('======', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
@@ -172,10 +171,10 @@ async function debit(req, res) {
 
 async function credit(req, res) {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
-  let session;
+  // let session;
   try {
     await client.connect();
-    session = client.startSession();
+    const session = client.startSession();
     console.log('======', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
@@ -274,10 +273,10 @@ async function credit(req, res) {
 
 async function rollback(req, res) {
   const client = new MongoClient(config.DBHost);
-  let session;
+  // let session;
   try {
     await client.connect();
-    session = client.startSession();
+    const session = client.startSession();
     console.log('======', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
