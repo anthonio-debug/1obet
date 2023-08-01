@@ -68,14 +68,14 @@ async function balance(req, res) {
 async function debit(req, res) {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
-  // const session = client.startSession();
+  const session = client.startSession();
   try {
     
     console.log('======', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
     console.log(">>>>>>>>>>>, casinoCalls ", casinoCalls);
-    session.startTransaction();
+    // session.startTransaction();
 
     const payload = req.query;
     const salt = config.saltKey;
