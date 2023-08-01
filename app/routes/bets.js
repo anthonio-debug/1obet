@@ -80,8 +80,8 @@ async function placeBet(req, res) {
     if (user.availableBalance < betAmount) {
       return res.status(404).send({ message: 'Insufficient balance' });
     }
-    if (user.availableBalance < 500 ) {
-      return res.status(404).send({ message: 'Insufficient balance' });
+    if (user.availableBalance < config.betMinimumAmount ) {
+      return res.status(404).send({ message: 'minimun amount should be 100' });
     }
     if (user.bettingAllowed == false) {
       return res.status(404).send({ message: 'Betting is not allowed for your account' });
@@ -844,7 +844,7 @@ async function getMatchedBets(req, res) {
     ]).exec();
 
     if (!matchedBets || matchedBets.length === 0) {
-      return res.status(404).send({ message: 'Matched bets not found' });
+      return res.status(200).send({ message: 'Matched bets not found', data: [] });
     }
 
     return res.send({

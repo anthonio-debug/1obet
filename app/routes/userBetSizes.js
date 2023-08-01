@@ -281,61 +281,6 @@ async function getAllBetSizes(req, res) {
   }
 }
 
-// function getAllBetSizes(req, res) {
-//   const userId = Number(req.query.userId);
-
-//   if (!userId) {
-//     return res.status(400).send({ message: 'USER_ID_MISSING' });
-//   }
-
-//   User.findOne({ userId: userId }, (err, user) => {
-//     if (err || !user) {
-//       return res.status(404).send({ message: 'USER_NOT_FOUND' });
-//     }
-
-//     const query = [
-//       {
-//         $lookup: {
-//           from: 'userbetsizes',
-//           let: { userId: '$userId' },
-//           pipeline: [
-//             {
-//               $match: {
-//                 $expr: {
-//                   $eq: ['$userId', '$$userId'],
-//                 },
-//               },
-//             },
-//             {
-//               $project: {
-//                 _id: 1,
-//                 maxAmount: 1, // Exclude maxAmount field
-//                 name: 1, // Exclude name field
-//                 'userBetSizes._id': 1, // Exclude _id field in userBetSizes array
-//                 'userBetSizes.userId': 1, // Exclude maxAmount field in userBetSizes array
-//                 'userBetSizes.betLimitId': 1, // Exclude name field in userBetSizes array
-//                 'userBetSizes.amount': 1, // Exclude amount field in userBetSizes array
-//               },
-//             },
-//           ],
-//           as: 'userBetSizes',
-//         },
-//       },
-//     ];
-
-//     betLimits.aggregate(query, (err, results) => {
-//       if (err) {
-//         return res.status(404).send({ message: 'Bet Sizes Not Found' });
-//       }
-//       return res.send({
-//         success: true,
-//         message: 'BET_SIZES_FETCHED_SUCCESSFULLY',
-//         results: results,
-//       });
-//     });
-//   });
-// }
-
 loginRouter.post(
   '/updateBetSizes',
   betSizeValidator.validate('updateBetSizes'),
