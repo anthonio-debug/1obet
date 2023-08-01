@@ -97,7 +97,7 @@ async function debit(req, res) {
 
 
     // 
-    await session.withTransaction(async () => {
+    // await session.withTransaction(async () => {
 
       console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
       const sameTransId = await casinoCalls.countDocuments(
@@ -157,7 +157,7 @@ async function debit(req, res) {
       await casinoDebits.save();
 
       // 
-    }, transactionOptions);
+    // }, transactionOptions);
 
     await session.commitTransaction();
     return res.json({
