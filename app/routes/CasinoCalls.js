@@ -279,10 +279,11 @@ async function rollback(req, res) {
   await client.connect();
   const session = client.startSession();
   try {
-    console.log('======', session.emit())
+    console.log('======', session.emit());
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
-    if (payload.action == 'rollback') {
+    let updatedBalance = 0;
+    if (payload.action == 'rollback'){
 
       const payload = req.query;
       const salt = config.saltKey;
@@ -293,10 +294,8 @@ async function rollback(req, res) {
         .map(key => `${key}=${payload[key]}`)
         .join('&');
       console.log('queryString', queryString);
-
       const hash = createHashKey(salt, queryString);
       console.log('hash', hash);
-
       if (hash !== key) {
         return res.json({
           status: 403,
@@ -386,7 +385,6 @@ async function rollback(req, res) {
       
 
     } else {
-
       const user2 = await users.findOne(
         { remoteId: parseInt(payload.remote_id) },
         { session }
