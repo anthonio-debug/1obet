@@ -68,8 +68,6 @@ async function debit(req, res) {
     console.log('======', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
-
-
     console.log(">>>>>>>>>>>, casinoCalls ", casinoCalls);
     session.startTransaction();
 
@@ -94,17 +92,12 @@ async function debit(req, res) {
 
     console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
     const sameTransId = await casinoCalls.countDocuments(
-      {
-        transaction_id: payload.transaction_id,
-        remote_id: parseInt(payload.remote_id),
-        round_id: payload.round_id,
-        // action: "debit"
-      },
+      { transaction_id: payload.transaction_id, remote_id: payload.remote_id, round_id: payload.round_id, action: 'debit' },
       { session, readPreference: 'primary'  }
     );   
     console.log('====== sameTransId', sameTransId)
     const user = await users.findOne(
-      { remoteId: parseInt(payload.remote_id) },
+      { remoteId: payload.remote_id },
       { session, readPreference: 'primary'  }
     )
       // { remoteId: payload.remote_id });  
