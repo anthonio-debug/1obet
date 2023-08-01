@@ -82,21 +82,21 @@ async function debit(req, res) {
     const key = payload.key;
     delete payload.key;
     
-    // const queryString = Object.keys(payload)
-    //   .map(key => `${key}=${payload[key]}`)
-    //   .join('&');
-    // const hash = createHashKey(salt, queryString);
-    // console.log('queryString:', queryString);
-    // console.log('hash:', hash);
-    // if (hash !== key) {
-    //   return res.json({
-    //     status: 403,
-    //     msg: 'INCORRECT_KEY_VALIDATION'
-    //   });
-    // }
+    const queryString = Object.keys(payload)
+      .map(key => `${key}=${payload[key]}`)
+      .join('&');
+    const hash = createHashKey(salt, queryString);
+    console.log('queryString:', queryString);
+    console.log('hash:', hash);
+    if (hash !== key) {
+      return res.json({
+        status: 403,
+        msg: 'INCORRECT_KEY_VALIDATION'
+      });
+    }
 
+    let updatedBalance = 0
 
-    // 
     await session.withTransaction(async () => {
 
       console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
@@ -143,7 +143,7 @@ async function debit(req, res) {
         return res.json({ status: '500', msg: 'Negative bet not allowed!' });
       }
 
-      const updatedBalance = user.availableBalance - debitAmount;
+      updatedBalance = user.availableBalance - debitAmount;
       if (updatedBalance < 0) {
         await session.abortTransaction();
         return res.json({ status: '500', msg: 'Negative balance not allowed!' });
