@@ -20,11 +20,13 @@ const Events = require('../models/events');
 const FancyGames = require('../models/fancyGames');
 const RaceOdds = require('../models/raceOdds');
 const RaceMarkets = require('../models/raceMarkets');
+const axios = require('axios')
+const ListMarkets = require('../models/listMarkets')
 
 async function getParents(userId) {
   const parentUserIds = [];
   let currentUserId = userId;
-  console.log('parentUser',parentUserIds);
+  console.log('parentUser', parentUserIds);
   while (currentUserId) {
     const parentUser = await User.findOne({ userId: currentUserId }).exec();
     if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
@@ -48,7 +50,7 @@ const updateParentUserBalance = async (parentUsers, remainingAmount) => {
   for (const user of parentUsers) {
     user.exposure -= (user.commission / 100) * remainingAmount;
     user.availableBalance -= (user.commission / 100) * remainingAmount;
-    console.log('user.availableBalance',typeof user.availableBalance);
+    console.log('user.availableBalance', typeof user.availableBalance);
     await user.save();
   }
 };
@@ -64,14 +66,14 @@ async function placeBet(req, res) {
     if (req.decoded.login.role !== '5') {
       return res.status(404).send({ message: 'You are not allowed to bet' });
     }
-    const selectedTime = new Date(req.body.selectedTime).getTime()
-    console.log('selectedTime',selectedTime);
+    // const selectedTime = new Date(req.body.selectedTime).getTime()
+    // console.log('selectedTime',selectedTime);
 
-    const { selectionId, betAmount, betRate, matchId, subMarketName,raceMarketId, sportsId } = req.body;
+    const { selectionId, betAmount, betRate, matchId, subMarketName, raceMarketId, sportsId } = req.body;
     const marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
-      if (!marketplace) {
-        return res.status(404).send({ message: 'Marketplaces not found' });
-     }
+    if (!marketplace) {
+      return res.status(404).send({ message: 'Marketplaces not found' });
+    }
     const userId = req.decoded.userId;
     const user = await User.findOne({ userId }).exec();
     if (!user) {
@@ -80,21 +82,54 @@ async function placeBet(req, res) {
     if (user.availableBalance < betAmount) {
       return res.status(404).send({ message: 'Insufficient balance' });
     }
-    if (user.availableBalance < config.betMinimumAmount ) {
+    if (user.availableBalance < config.betMinimumAmount) {
       return res.status(404).send({ message: 'minimun amount should be 100' });
     }
     if (user.bettingAllowed == false) {
       return res.status(404).send({ message: 'Betting is not allowed for your account' });
     }
-    
+
+    const parentUserIds = await getParents(user.userId);
+    console.log('parentUserIds', parentUserIds);
+
+    const parentUser = await User.find({
+      userId: { $in: [...parentUserIds] },
+      isDeleted: false
+    }).sort({ role: -1 });
+
+    const blockedMarketPlaces = [];
+    const blockedSubMarkets = [];
+    const blockedSubMarketsByParent = [];
+
+    parentUser.forEach(obj => {
+      blockedMarketPlaces.push(...obj.blockedMarketPlaces);
+      blockedSubMarkets.push(...obj.blockedSubMarkets);
+      blockedSubMarketsByParent.push(...obj.blockedSubMarketsByParent);
+    });
+
+    const uniqueBlockedMarketPlaces = [...new Set(blockedMarketPlaces)];
+    const uniqueBlockedSubMarkets = [...new Set(blockedSubMarkets)];
+    const uniqueBlockedSubMarketsByParent = [...new Set(blockedSubMarketsByParent)];
+
+    console.log('uniqueBlockedMarketPlaces', uniqueBlockedMarketPlaces);
+    console.log('uniqueBlockedSubMarkets', uniqueBlockedSubMarkets);
+
+    if (uniqueBlockedMarketPlaces.includes(sportsId) || uniqueBlockedSubMarkets.includes(marketplace.subMarketId)
+      || uniqueBlockedSubMarketsByParent.includes(marketplace.subMarketId)) {
+      return res.status(404).send({ message: 'Betting disabled by your dealer' });
+    }
+    // Check if the user is allowed to place a bet in the specified market and submarket
+    if (user.betLockStatus == true || user.blockedSubMarketsByParent.includes(marketplace.subMarketId)) {
+      return res.status(400).send({ message: 'Bet not allowed for your account' });
+    }
     // default maxbetsize should be of that set by company but if the user set his own betsize then his
     // and we cannot place a bet of the amount that is greater than this maxbetsize
 
     // need review check 
     const UserMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: sportsId }).exec();
-    console.log('UserMaxBetSize',UserMaxBetSize)
+    console.log('UserMaxBetSize', UserMaxBetSize)
     const MaxBetSize = await maxAllowedBetSizes.findOne({ sportsId: sportsId }).exec();
-    console.log('dealerMaxBetSize',MaxBetSize)
+    console.log('dealerMaxBetSize', MaxBetSize)
 
     // let errorMessage;
     // if (UserMaxBetSize && UserMaxBetSize.amount < MaxBetSize.maxAmount) {
@@ -114,7 +149,7 @@ async function placeBet(req, res) {
       match = await Events.findOne({
         sportsId: sportsId,
         _id: matchId,
-        inplay : true
+        inplay: true
       });
       if (!match) {
         console.log(`Match not found for sports ID ${sportsId}`);
@@ -122,115 +157,137 @@ async function placeBet(req, res) {
       }
     }
 
-    if(sportsId === '4'){
-        match = await Events.findOne({
-          sportsId: sportsId,
-          _id: matchId,
-          inplay : true,
-          iconStatus: true
-        });
+    if (sportsId === '4') {
+      match = await Events.findOne({
+        sportsId: sportsId,
+        _id: matchId,
+        inplay: true,
+        iconStatus: true
+      });
       if (!match) {
         console.log(`Match not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Match not found for sports ID ${sportsId}` });
       }
     }
-    console.log('match',match.name);
-    
+
     //not fancy
     if (marketplace.subMarketId !== '104' && sportsId !== '7' && sportsId !== '4339' && marketplace.subMarketId !== '128') {
       console.log('in cricket,soccer,tennis odds');
-    const matchOdds = await Odds.findOne({
-      sportsId: sportsId,
-      eventId: match.Id,
-      createdAt: selectedTime ,
-      inplay : true,
-    });
-    if (!matchOdds) {
-      console.log(`Match odds not found for sports ID ${sportsId}`);
-      return res.status(404).send({ message: `Match odds not found for ${selectedTime}` });
-    }
-    // Extract the odds data for the selected team from the runners array
-    const selectedTeamOdds = matchOdds.runners.find(runner => runner.SelectionId === req.body.selectionId);
-    console.log('matchOdds.runners', matchOdds.runners);
-    console.log('selectionId', req.body.selectionId);
-    if (!selectedTeamOdds) {
-      console.log(`Odds not available for the selected team ${req.body.selectionId}`);
-      return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
-    }
+      const marketIds = await ListMarkets.findOne({ sportsId: sportsId, eventId: match.Id, marketName: subMarketName });
+      console.log('marketIds', marketIds);
+      const marketId = marketIds.marketId
+      console.log('market', marketId);
 
-    let selectedOddsRate;
+      const url = `${config.sportsAPIUrl}/odds/?ids=${marketId}`;
+      const response = await axios.get(url);
 
-    if (req.body.type === 0) {
-      // If type is 0 (available to back), find the first availableToBack price and match the amount
-      const availableToBack = selectedTeamOdds.ExchangePrices.AvailableToBack;
-      const matchedBack = availableToBack.find(back => back.price == req.body.betRate);
-      console.log('matchedBack',matchedBack);
-      if (!matchedBack) {
-        console.log(`No availableToBack odds matched with the bet rate ${req.body.betRate}`);
-        return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
+      const oddsData = response.data;
+      console.log('data', oddsData[0].Runners);
+      // return
+      // const matchOdds = await Odds.findOne({
+      //   sportsId: sportsId,
+      //   eventId: match.Id,
+      //   createdAt: selectedTime ,
+      //   inplay : true,
+      // });
+      if (!oddsData) {
+        console.log(`Match odds not found for sports ID ${sportsId}`);
+        return res.status(404).send({ message: `Match odds not found for ${selectedTime}` });
       }
-     selectedOddsRate = matchedBack.price;
-      console.log('selectedOddsRate',selectedOddsRate);
-    } else if (req.body.type === 1) {
-      // If type is 1 (available to lay), find the first availableToLay price and match the amount
-      const availableToLay = selectedTeamOdds.ExchangePrices.AvailableToLay;
-      const matchedLay = availableToLay.find(lay => lay.price == req.body.betRate);
-
-      if (!matchedLay) {
-        console.log(`No availableToLay odds matched with the bet rate ${req.body.betRate}`);
-        return res.status(404).send({ message: `No availableToLay odds matched with the bet rate ${req.body.betRate}` });
+      // Extract the odds data for the selected team from the runners array
+      const selectedTeamOdds = oddsData[0].Runners.find(runner => runner.SelectionId === req.body.selectionId);
+      console.log('matchOdds.runners', selectedTeamOdds);
+      console.log('selectionId', req.body.selectionId);
+      if (!selectedTeamOdds) {
+        console.log(`Odds not available for the selected team ${req.body.selectionId}`);
+        return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
-      selectedOddsRate = matchedLay.price;
-    } else {
-      console.log('Invalid type value. Type should be 0 or 1.');
-      return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
-    }
-     console.log('in here')
-    if (!selectedOddsRate) {
-      //put the bet in fake bet 
-      console.log('Selected odds not found for the bet');
-      return res.status(404).send({ message: 'Selected odds not found for the bet',selectedOddsRate });
-    }
-    // Now you have the selectedOdds and selectedAmount based on the selected team and type
-    console.log('Selected Odds:', selectedOddsRate);
-    const userRate = betRate * betAmount - betAmount
-    console.log('userRate Odds:', userRate);
 
-    const companyRate = selectedOddsRate * betAmount - betAmount
-console.log('companyRate',companyRate)
-  }
+      let selectedOddsRate;
+
+      if (req.body.type === 0) {
+        // If type is 0 (available to back), find the first availableToBack price and match the amount
+        const availableToBack = selectedTeamOdds.ExchangePrices.AvailableToBack;
+        console.log('availableToBack', availableToBack);
+        const matchedBack = availableToBack.find(back => back.price == req.body.betRate);
+        console.log('matchedBack', matchedBack);
+        if (!matchedBack) {
+          console.log(`No availableToBack odds matched with the bet rate ${req.body.betRate}`);
+          return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
+        }
+        selectedOddsRate = matchedBack.price;
+        console.log('selectedOddsRate', selectedOddsRate);
+      } else if (req.body.type === 1) {
+        // If type is 1 (available to lay), find the first availableToLay price and match the amount
+        const availableToLay = selectedTeamOdds.ExchangePrices.AvailableToLay;
+        console.log('availableToLay', availableToLay);
+        const matchedLay = availableToLay.find(lay => lay.price == req.body.betRate);
+        log
+        if (!matchedLay) {
+          console.log(`No availableToLay odds matched with the bet rate ${req.body.betRate}`);
+          return res.status(404).send({ message: `No availableToLay odds matched with the bet rate ${req.body.betRate}` });
+        }
+        selectedOddsRate = matchedLay.price;
+      } else {
+        console.log('Invalid type value. Type should be 0 or 1.');
+        return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
+      }
+      console.log('in here')
+      if (!selectedOddsRate) {
+        //put the bet in fake bet 
+        console.log('Selected odds not found for the bet');
+        return res.status(404).send({ message: 'Selected odds not found for the bet', selectedOddsRate });
+      }
+      // Now you have the selectedOdds and selectedAmount based on the selected team and type
+      console.log('Selected Odds:', selectedOddsRate);
+      const userRate = betRate * betAmount - betAmount
+      console.log('userRate Odds:', userRate);
+
+      const companyRate = selectedOddsRate * betAmount - betAmount
+      console.log('companyRate', companyRate)
+    }
     //for fancy
-    if (marketplace.subMarketId == '104' && (sportsId == '7' || sportsId == '4339')) {
-      const fancyOdds = await FancyGames.findOne({
-        eventTypeId: sportsId,
-        eventId: match.Id,
-        createdAt: selectedTime,
-      });
-    console.log('fancyOdds',fancyOdds);
+    if (marketplace.subMarketId == '104' && (sportsId == '4')) {
+      // const fancyOdds = await FancyGames.findOne({
+      //   eventTypeId: sportsId,
+      //   eventId: match.Id,
+      //   createdAt: selectedTime,
+      // });
+      const eventId = match.Id
+      const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
+      const response = await axios.get(url);
+      const fancyOdds = response?.data.data;
+      // console.log('fancyOdds',fancyOdds);
+
+      console.log('fancyOddst3', fancyOdds?.t3);
+
       if (fancyOdds) {
         // Extract the odds data for the selected team from the "t3" array
         const selectedTeamOdds = fancyOdds.t3.find(runner => runner.sid == req.body.selectionId);
-    
+        console.log('selectedTeamOdds', selectedTeamOdds);
         if (!selectedTeamOdds) {
           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
-    
+
         let selectedOddsRate = null;
-    
+
         if (req.body.type === 0) {
           // If type is 0 (available to back), try to find a match between the user-provided betRate and any of the available back odds (b1, b2, or b3)
           const backOdds = [selectedTeamOdds.b1, selectedTeamOdds.b2, selectedTeamOdds.b3];
+          console.log('backOdds', backOdds)
           selectedOddsRate = backOdds.find(back => back == req.body.betRate);
         } else if (req.body.type === 1) {
           // If type is 1 (available to lay), use the "l1", "l2", or "l3" price for the lay odds
           const layOdds = [selectedTeamOdds.l1, selectedTeamOdds.l2, selectedTeamOdds.l3];
-          selectedOddsRate = layOdds.find(lay => lay == req.body.betRate)}
+          console.log('layOdds', layOdds);
+          selectedOddsRate = layOdds.find(lay => lay == req.body.betRate)
+        }
         else {
           console.log('Invalid type value. Type should be 0 or 1.');
           return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
         }
-    
+
         if (!selectedOddsRate || selectedOddsRate == '0.00') {
           // If odds are not available or suspended.
           console.log(`Selected odds for the bet are not available or suspended for the team ${req.body.selectionId}`);
@@ -244,36 +301,42 @@ console.log('companyRate',companyRate)
     // for bookmaker
     if (marketplace.subMarketId === '128' && sportsId === '4') {
       console.log('in bookmakrer');
-      const bookMakerOdds = await FancyGames.find({
-        eventTypeId: sportsId,
-        eventId: match.Id,
-        createdAt: selectedTime,
-      });
-    console.log('bookMakerOdds', bookMakerOdds[0].t2[0].bm1);
+      const eventId = match.Id
+      const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
+      const response = await axios.get(url);
+      const bookMakerOdds = response?.data.data;
+      console.log('bookMakerOdds', bookMakerOdds.t2[0]);
+      // const bookMakerOdds = await FancyGames.find({
+      //   eventTypeId: sportsId,
+      //   eventId: match.Id,
+      //   createdAt: selectedTime,
+      // });
+      console.log('bookMakerOdds====>', bookMakerOdds.t2[0].bm1);
       if (bookMakerOdds) {
         // Extract the odds data for the selected team from the "t3" array
-        const selectedTeamOdds = bookMakerOdds[0].t2[0].bm1.find(runner => runner.sid == selectionId);
-    
+        const selectedTeamOdds = bookMakerOdds.t2[0].bm1.find(runner => runner.sid == selectionId);
+
         if (!selectedTeamOdds) {
           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
-    console.log('selectedTeamOdds',selectedTeamOdds);
+        console.log('selectedTeamOdds', selectedTeamOdds);
         let selectedOddsRate = null;
         if (req.body.type === 0) {
           // If type is 0 (available to back), try to find a match between the user-provided betRate and any of the available back odds (b1, b2, or b3)
           const backOdds = [selectedTeamOdds.b1, selectedTeamOdds.b2, selectedTeamOdds.b3];
-          console.log('backOdds',backOdds);
+          console.log('backOdds', backOdds);
           selectedOddsRate = backOdds.find(back => back == req.body.betRate);
         } else if (req.body.type === 1) {
           // If type is 1 (available to lay), use the "l1", "l2", or "l3" price for the lay odds
           const layOdds = [selectedTeamOdds.l1, selectedTeamOdds.l2, selectedTeamOdds.l3];
-          selectedOddsRate = layOdds.find(lay => lay == req.body.betRate)}
+          selectedOddsRate = layOdds.find(lay => lay == req.body.betRate)
+        }
         else {
           console.log('Invalid type value. Type should be 0 or 1.');
           return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
         }
-    
+
         if (!selectedOddsRate || selectedOddsRate == '0.00') {
           // If odds are not available or suspended.
           console.log(`Selected odds for the bet are not available or suspended for the team ${req.body.selectionId}`);
@@ -283,112 +346,90 @@ console.log('companyRate',companyRate)
         console.log('Selected Odds:', selectedOddsRate);
       }
     }
-     if (sportsId == '7' || sportsId == '4339' ) {
+    if (sportsId == '7' || sportsId == '4339') {
       console.log('in horse race greyhound event');
-      const match = await Events.findOne({
+      const marketId = await Events.distinct('marketIds', {
         sportsId: sportsId,
         _id: matchId,
+        inplay: true
       });
-
-      if (!match) {
+      if (!marketId) {
         console.log(` race Match not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: ` race match not found for sports ID ${sportsId}` });
       }
-      console.log('match',match);
-       const HRGMarkets = await RaceMarkets.find({
-       eventTypeId: sportsId,
-       eventId: match.meetingId,
-     });
-    console.log('HRGMarkets',HRGMarkets);
-     const HRGOdds = await RaceOdds.findOne({
-       createdAt: selectedTime,
-       marketId: raceMarketId,
-    });
-    console.log('HRGOdds',HRGOdds);
+      //   console.log('match',match);
+      //    const HRGMarkets = await RaceMarkets.find({
+      //    eventTypeId: sportsId,
+      //    eventId: match.meetingId,
+      //  });
+      // console.log('HRGMarkets',HRGMarkets);
+      console.log('marketId', marketId);
+      const url = `${config.horseRaceUrl}/odds/?ids=${marketId}`;
+      const response = await axios.get(url);
+      const HRGOdds = response.data;
+      console.log('HRGOdds', HRGOdds);
+      console.log('HRGRunners', HRGOdds[0].runners);
 
-    // Find the runner in the HRGOdds object that matches the selectionId from the payload
-    const selectedRunner = HRGOdds.runners.find(runner => runner.selectionId === req.body.selectionId);
-    console.log('selectedRunner',selectedRunner);
 
-    if (!selectedRunner) {
-      console.log(`Runner not found for selectionId ${req.body.selectionId}`);
-      return res.status(404).send({ message: 'Runner not found' });
-    }
-    
-    // Get the corresponding available prices based on the type (0 for availableToBack, 1 for availableToLay)
-    let availablePrices;
-    if (req.body.type === 0) {
-      availablePrices = selectedRunner.exchange.availableToBack;
-    } else if (req.body.type === 1) {
-      availablePrices = selectedRunner.exchange.availableToLay;
-    } else {
-      console.log('Invalid type value. Type should be 0 or 1.');
-      return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
-    }
+      //  const HRGOdds = await RaceOdds.findOne({
+      //    createdAt: selectedTime,
+      //    marketId: raceMarketId,
+      // });
+      // console.log('HRGOdds',HRGOdds);
 
-    // Find the matched price in the available prices
-    const matchedPrice = availablePrices.find(price => price.price === req.body.betRate);
+      // Find the runner in the HRGOdds object that matches the selectionId from the payload
+      const selectedRunner = HRGOdds[0].runners.find(runner => runner.selectionId == req.body.selectionId);
+      console.log('selectedRunner', selectedRunner);
 
-    if (!matchedPrice) {
-      console.log(`No odds matched with the bet rate ${req.body.betRate}`);
-      return res.status(404).send({ message: `No odds matched with the bet rate ${req.body.betRate}` });
-    }
+      if (!selectedRunner) {
+        console.log(`Runner not found for selectionId ${req.body.selectionId}`);
+        return res.status(404).send({ message: 'Runner not found' });
+      }
 
-    // Now you have the selectedOddsRate based on the selected team and type
-    const selectedOddsRate = matchedPrice.price;
-    // Now you have the selectedOddsRate based on the selected team and type
-    console.log('Selected Odds:', selectedOddsRate);
-    }
-    const parentUserIds = await getParents(user.userId);
-    console.log('parentUserIds', parentUserIds);
+      // Get the corresponding available prices based on the type (0 for availableToBack, 1 for availableToLay)
+      let availablePrices;
+      if (req.body.type === 0) {
+        availablePrices = selectedRunner.exchange.availableToBack;
+        console.log('availablePrices', availablePrices);
+      } else if (req.body.type === 1) {
+        availablePrices = selectedRunner.exchange.availableToLay;
+      } else {
+        console.log('Invalid type value. Type should be 0 or 1.');
+        return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
+      }
+      if (availablePrices === null) {
+        return res.status(404).send({ message: 'price cannot be null' })
+      }
+      // Find the matched price in the available prices
+      const matchedPrice = availablePrices.find(price => price.price === req.body.betRate);
 
-    const parentUser = await User.find({
-      userId: { $in: [...parentUserIds] },
-      isDeleted: false
-    }).sort({role: -1});
+      if (!matchedPrice) {
+        console.log(`No odds matched with the bet rate ${req.body.betRate}`);
+        return res.status(404).send({ message: `No odds matched with the bet rate ${req.body.betRate}` });
+      }
 
-    const blockedMarketPlaces = [];
-    const blockedSubMarkets = [];
-    const blockedSubMarketsByParent = [];
-
-    parentUser.forEach(obj => {
-      blockedMarketPlaces.push(...obj.blockedMarketPlaces);
-      blockedSubMarkets.push(...obj.blockedSubMarkets);
-      blockedSubMarketsByParent.push(...obj.blockedSubMarketsByParent);      
-    });
-
-    const uniqueBlockedMarketPlaces       = [...new Set(blockedMarketPlaces)];
-    const uniqueBlockedSubMarkets         = [...new Set(blockedSubMarkets)];
-    const uniqueBlockedSubMarketsByParent = [...new Set(blockedSubMarketsByParent)];
-
-    console.log('uniqueBlockedMarketPlaces', uniqueBlockedMarketPlaces);
-    console.log('uniqueBlockedSubMarkets', uniqueBlockedSubMarkets);
-
-    if (uniqueBlockedMarketPlaces.includes(sportsId) || uniqueBlockedSubMarkets.includes(marketplace.subMarketId) 
-          || uniqueBlockedSubMarketsByParent.includes(marketplace.subMarketId) ){
-      return res.status(404).send({ message: 'Betting disabled by your dealer' });
-    }
-    // Check if the user is allowed to place a bet in the specified market and submarket
-    if (user.betLockStatus == true || user.blockedSubMarketsByParent.includes(marketplace.subMarketId)) {
-      return res.status(400).send({ message: 'Bet not allowed for your account' });
+      // Now you have the selectedOddsRate based on the selected team and type
+      const selectedOddsRate = matchedPrice.price;
+      // Now you have the selectedOddsRate based on the selected team and type
+      console.log('Selected Odds:', selectedOddsRate);
     }
 
-    let  returnAmount = 0;
-    let  winningAmount = 0;
-    let  loosingAmount = 0;
-    let  remainingAmount = 0;
-    if (req.body.type == 0){
+    let returnAmount = 0;
+    let winningAmount = 0;
+    let loosingAmount = 0;
+    let remainingAmount = 0;
+    if (req.body.type == 0) {
       // for Back Will change these Ammounts
       returnAmount = betAmount * betRate - betAmount;
       winningAmount = betAmount * betRate - betAmount;
-      console.log('returnAmount',returnAmount);
+      console.log('returnAmount', returnAmount);
       loosingAmount = req.body.betAmount;
       remainingAmount = (req.body.betAmount * req.body.betRate) - req.body.betAmount;
-      console.log('remainingAmount',remainingAmount);
+      console.log('remainingAmount', remainingAmount);
 
     } else {
       // for lay Will change these Ammounts
-      returnAmount  = betAmount;
+      returnAmount = betAmount;
       winningAmount = betAmount;
       loosingAmount = (req.body.betAmount * betRate) - req.body.betAmount;
       remainingAmount = betAmount;
@@ -409,11 +450,11 @@ console.log('companyRate',companyRate)
       subMarketId: marketplace.subMarketId,
       runner: selectionId,
       event: [1, 2, 4].includes(sportsId) ? match.name : '',
-      type:  req.body.type
+      type: req.body.type
     });
 
     // Save the bet object to the database
-    console.log( `Bet placed for user ID ${userId}, sports ID ${sportsId}, and team ${selectionId}`);
+    console.log(`Bet placed for user ID ${userId}, sports ID ${sportsId}, and team ${selectionId}`);
     bet.save(async (err, result) => {
       if (err) {
         console.log('err', err);
@@ -431,7 +472,7 @@ console.log('companyRate',companyRate)
           { new: true }
         );
         await updateParentUserBalance(parentUser, remainingAmount);
-    
+
         return res.send({
           success: true,
           message: 'Bet placed successfully',
@@ -448,6 +489,402 @@ console.log('companyRate',companyRate)
     return res.status(404).send({ message: 'Error placing bet' });
   }
 }
+
+// async function placeBet(req, res) {
+//   const errors = validationResult(req);
+//   if (errors.errors.length !== 0) {
+//     return res.status(400).send({ errors: errors.errors });
+//   }
+
+//   try {
+//     let match;
+//     if (req.decoded.login.role !== '5') {
+//       return res.status(404).send({ message: 'You are not allowed to bet' });
+//     }
+//     const selectedTime = new Date(req.body.selectedTime).getTime()
+//     console.log('selectedTime',selectedTime);
+
+//     const { selectionId, betAmount, betRate, matchId, subMarketName,raceMarketId, sportsId } = req.body;
+//     const marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
+//       if (!marketplace) {
+//         return res.status(404).send({ message: 'Marketplaces not found' });
+//      }
+//     const userId = req.decoded.userId;
+//     const user = await User.findOne({ userId }).exec();
+//     if (!user) {
+//       return res.status(404).send({ message: 'User not found' });
+//     }
+//     if (user.availableBalance < betAmount) {
+//       return res.status(404).send({ message: 'Insufficient balance' });
+//     }
+//     if (user.availableBalance < config.betMinimumAmount ) {
+//       return res.status(404).send({ message: 'minimun amount should be 100' });
+//     }
+//     if (user.bettingAllowed == false) {
+//       return res.status(404).send({ message: 'Betting is not allowed for your account' });
+//     }
+
+//     // default maxbetsize should be of that set by company but if the user set his own betsize then his
+//     // and we cannot place a bet of the amount that is greater than this maxbetsize
+
+//     // need review check 
+//     const UserMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: sportsId }).exec();
+//     console.log('UserMaxBetSize',UserMaxBetSize)
+//     const MaxBetSize = await maxAllowedBetSizes.findOne({ sportsId: sportsId }).exec();
+//     console.log('dealerMaxBetSize',MaxBetSize)
+
+//     // let errorMessage;
+//     // if (UserMaxBetSize && UserMaxBetSize.amount < MaxBetSize.maxAmount) {
+//     //   errorMessage = `Max Size is: ${UserMaxBetSize.amount}`;
+//     // } else {
+//     //   errorMessage = `Max Size is: ${MaxBetSize.maxAmount}`;
+//     // }
+
+
+//     // if (betAmount > (UserMaxBetSize?.amount || MaxBetSize?.maxAmount)) {
+//     //   return res.status(404).send({ message: errorMessage });
+//     // }
+//     // need review check  end
+//     //for cricket,teniss,soccer events
+//     if (sportsId !== '7' && sportsId !== '4339' && sportsId !== '4') {
+//       console.log('soccer,tennis event');
+//       match = await Events.findOne({
+//         sportsId: sportsId,
+//         _id: matchId,
+//         inplay : true
+//       });
+//       if (!match) {
+//         console.log(`Match not found for sports ID ${sportsId}`);
+//         return res.status(404).send({ message: `Match not found for sports ID ${sportsId}` });
+//       }
+//     }
+
+//     if(sportsId === '4'){
+//         match = await Events.findOne({
+//           sportsId: sportsId,
+//           _id: matchId,
+//           inplay : true,
+//           iconStatus: true
+//         });
+//       if (!match) {
+//         console.log(`Match not found for sports ID ${sportsId}`);
+//         return res.status(404).send({ message: `Match not found for sports ID ${sportsId}` });
+//       }
+//     }
+//     console.log('match',match.name);
+
+//     //not fancy
+//     if (marketplace.subMarketId !== '104' && sportsId !== '7' && sportsId !== '4339' && marketplace.subMarketId !== '128') {
+//       console.log('in cricket,soccer,tennis odds');
+//     const matchOdds = await Odds.findOne({
+//       sportsId: sportsId,
+//       eventId: match.Id,
+//       createdAt: selectedTime ,
+//       inplay : true,
+//     });
+//     if (!matchOdds) {
+//       console.log(`Match odds not found for sports ID ${sportsId}`);
+//       return res.status(404).send({ message: `Match odds not found for ${selectedTime}` });
+//     }
+//     // Extract the odds data for the selected team from the runners array
+//     const selectedTeamOdds = matchOdds.runners.find(runner => runner.SelectionId === req.body.selectionId);
+//     console.log('matchOdds.runners', matchOdds.runners);
+//     console.log('selectionId', req.body.selectionId);
+//     if (!selectedTeamOdds) {
+//       console.log(`Odds not available for the selected team ${req.body.selectionId}`);
+//       return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
+//     }
+
+//     let selectedOddsRate;
+
+//     if (req.body.type === 0) {
+//       // If type is 0 (available to back), find the first availableToBack price and match the amount
+//       const availableToBack = selectedTeamOdds.ExchangePrices.AvailableToBack;
+//       const matchedBack = availableToBack.find(back => back.price == req.body.betRate);
+//       console.log('matchedBack',matchedBack);
+//       if (!matchedBack) {
+//         console.log(`No availableToBack odds matched with the bet rate ${req.body.betRate}`);
+//         return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
+//       }
+//      selectedOddsRate = matchedBack.price;
+//       console.log('selectedOddsRate',selectedOddsRate);
+//     } else if (req.body.type === 1) {
+//       // If type is 1 (available to lay), find the first availableToLay price and match the amount
+//       const availableToLay = selectedTeamOdds.ExchangePrices.AvailableToLay;
+//       const matchedLay = availableToLay.find(lay => lay.price == req.body.betRate);
+
+//       if (!matchedLay) {
+//         console.log(`No availableToLay odds matched with the bet rate ${req.body.betRate}`);
+//         return res.status(404).send({ message: `No availableToLay odds matched with the bet rate ${req.body.betRate}` });
+//       }
+//       selectedOddsRate = matchedLay.price;
+//     } else {
+//       console.log('Invalid type value. Type should be 0 or 1.');
+//       return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
+//     }
+//      console.log('in here')
+//     if (!selectedOddsRate) {
+//       //put the bet in fake bet 
+//       console.log('Selected odds not found for the bet');
+//       return res.status(404).send({ message: 'Selected odds not found for the bet',selectedOddsRate });
+//     }
+//     // Now you have the selectedOdds and selectedAmount based on the selected team and type
+//     console.log('Selected Odds:', selectedOddsRate);
+//     const userRate = betRate * betAmount - betAmount
+//     console.log('userRate Odds:', userRate);
+
+//     const companyRate = selectedOddsRate * betAmount - betAmount
+// console.log('companyRate',companyRate)
+//   }
+//     //for fancy
+//     if (marketplace.subMarketId == '104' && (sportsId == '7' || sportsId == '4339')) {
+//       const fancyOdds = await FancyGames.findOne({
+//         eventTypeId: sportsId,
+//         eventId: match.Id,
+//         createdAt: selectedTime,
+//       });
+//     console.log('fancyOdds',fancyOdds);
+//       if (fancyOdds) {
+//         // Extract the odds data for the selected team from the "t3" array
+//         const selectedTeamOdds = fancyOdds.t3.find(runner => runner.sid == req.body.selectionId);
+
+//         if (!selectedTeamOdds) {
+//           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
+//           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
+//         }
+
+//         let selectedOddsRate = null;
+
+//         if (req.body.type === 0) {
+//           // If type is 0 (available to back), try to find a match between the user-provided betRate and any of the available back odds (b1, b2, or b3)
+//           const backOdds = [selectedTeamOdds.b1, selectedTeamOdds.b2, selectedTeamOdds.b3];
+//           selectedOddsRate = backOdds.find(back => back == req.body.betRate);
+//         } else if (req.body.type === 1) {
+//           // If type is 1 (available to lay), use the "l1", "l2", or "l3" price for the lay odds
+//           const layOdds = [selectedTeamOdds.l1, selectedTeamOdds.l2, selectedTeamOdds.l3];
+//           selectedOddsRate = layOdds.find(lay => lay == req.body.betRate)}
+//         else {
+//           console.log('Invalid type value. Type should be 0 or 1.');
+//           return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
+//         }
+
+//         if (!selectedOddsRate || selectedOddsRate == '0.00') {
+//           // If odds are not available or suspended.
+//           console.log(`Selected odds for the bet are not available or suspended for the team ${req.body.selectionId}`);
+//           return res.status(404).send({ message: `Selected odds for the bet are not available or suspended for the team ${req.body.selectionId}` });
+//         }
+//         // Now you have the selectedOddsRate based on the selected team and type
+//         console.log('Selected Odds:', selectedOddsRate);
+//       }
+//     }
+
+//     // for bookmaker
+//     if (marketplace.subMarketId === '128' && sportsId === '4') {
+//       console.log('in bookmakrer');
+//       const bookMakerOdds = await FancyGames.find({
+//         eventTypeId: sportsId,
+//         eventId: match.Id,
+//         createdAt: selectedTime,
+//       });
+//     console.log('bookMakerOdds', bookMakerOdds[0].t2[0].bm1);
+//       if (bookMakerOdds) {
+//         // Extract the odds data for the selected team from the "t3" array
+//         const selectedTeamOdds = bookMakerOdds[0].t2[0].bm1.find(runner => runner.sid == selectionId);
+
+//         if (!selectedTeamOdds) {
+//           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
+//           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
+//         }
+//     console.log('selectedTeamOdds',selectedTeamOdds);
+//         let selectedOddsRate = null;
+//         if (req.body.type === 0) {
+//           // If type is 0 (available to back), try to find a match between the user-provided betRate and any of the available back odds (b1, b2, or b3)
+//           const backOdds = [selectedTeamOdds.b1, selectedTeamOdds.b2, selectedTeamOdds.b3];
+//           console.log('backOdds',backOdds);
+//           selectedOddsRate = backOdds.find(back => back == req.body.betRate);
+//         } else if (req.body.type === 1) {
+//           // If type is 1 (available to lay), use the "l1", "l2", or "l3" price for the lay odds
+//           const layOdds = [selectedTeamOdds.l1, selectedTeamOdds.l2, selectedTeamOdds.l3];
+//           selectedOddsRate = layOdds.find(lay => lay == req.body.betRate)}
+//         else {
+//           console.log('Invalid type value. Type should be 0 or 1.');
+//           return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
+//         }
+
+//         if (!selectedOddsRate || selectedOddsRate == '0.00') {
+//           // If odds are not available or suspended.
+//           console.log(`Selected odds for the bet are not available or suspended for the team ${req.body.selectionId}`);
+//           return res.status(404).send({ message: `Selected odds for the bet are not available or suspended for the team ${req.body.selectionId}` });
+//         }
+//         // Now you have the selectedOddsRate based on the selected team and type
+//         console.log('Selected Odds:', selectedOddsRate);
+//       }
+//     }
+//      if (sportsId == '7' || sportsId == '4339' ) {
+//       console.log('in horse race greyhound event');
+//       const match = await Events.findOne({
+//         sportsId: sportsId,
+//         _id: matchId,
+//       });
+
+//       if (!match) {
+//         console.log(` race Match not found for sports ID ${sportsId}`);
+//         return res.status(404).send({ message: ` race match not found for sports ID ${sportsId}` });
+//       }
+//       console.log('match',match);
+//        const HRGMarkets = await RaceMarkets.find({
+//        eventTypeId: sportsId,
+//        eventId: match.meetingId,
+//      });
+//     console.log('HRGMarkets',HRGMarkets);
+//      const HRGOdds = await RaceOdds.findOne({
+//        createdAt: selectedTime,
+//        marketId: raceMarketId,
+//     });
+//     console.log('HRGOdds',HRGOdds);
+
+//     // Find the runner in the HRGOdds object that matches the selectionId from the payload
+//     const selectedRunner = HRGOdds.runners.find(runner => runner.selectionId === req.body.selectionId);
+//     console.log('selectedRunner',selectedRunner);
+
+//     if (!selectedRunner) {
+//       console.log(`Runner not found for selectionId ${req.body.selectionId}`);
+//       return res.status(404).send({ message: 'Runner not found' });
+//     }
+
+//     // Get the corresponding available prices based on the type (0 for availableToBack, 1 for availableToLay)
+//     let availablePrices;
+//     if (req.body.type === 0) {
+//       availablePrices = selectedRunner.exchange.availableToBack;
+//     } else if (req.body.type === 1) {
+//       availablePrices = selectedRunner.exchange.availableToLay;
+//     } else {
+//       console.log('Invalid type value. Type should be 0 or 1.');
+//       return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
+//     }
+
+//     // Find the matched price in the available prices
+//     const matchedPrice = availablePrices.find(price => price.price === req.body.betRate);
+
+//     if (!matchedPrice) {
+//       console.log(`No odds matched with the bet rate ${req.body.betRate}`);
+//       return res.status(404).send({ message: `No odds matched with the bet rate ${req.body.betRate}` });
+//     }
+
+//     // Now you have the selectedOddsRate based on the selected team and type
+//     const selectedOddsRate = matchedPrice.price;
+//     // Now you have the selectedOddsRate based on the selected team and type
+//     console.log('Selected Odds:', selectedOddsRate);
+//     }
+//     const parentUserIds = await getParents(user.userId);
+//     console.log('parentUserIds', parentUserIds);
+
+//     const parentUser = await User.find({
+//       userId: { $in: [...parentUserIds] },
+//       isDeleted: false
+//     }).sort({role: -1});
+
+//     const blockedMarketPlaces = [];
+//     const blockedSubMarkets = [];
+//     const blockedSubMarketsByParent = [];
+
+//     parentUser.forEach(obj => {
+//       blockedMarketPlaces.push(...obj.blockedMarketPlaces);
+//       blockedSubMarkets.push(...obj.blockedSubMarkets);
+//       blockedSubMarketsByParent.push(...obj.blockedSubMarketsByParent);      
+//     });
+
+//     const uniqueBlockedMarketPlaces       = [...new Set(blockedMarketPlaces)];
+//     const uniqueBlockedSubMarkets         = [...new Set(blockedSubMarkets)];
+//     const uniqueBlockedSubMarketsByParent = [...new Set(blockedSubMarketsByParent)];
+
+//     console.log('uniqueBlockedMarketPlaces', uniqueBlockedMarketPlaces);
+//     console.log('uniqueBlockedSubMarkets', uniqueBlockedSubMarkets);
+
+//     if (uniqueBlockedMarketPlaces.includes(sportsId) || uniqueBlockedSubMarkets.includes(marketplace.subMarketId) 
+//           || uniqueBlockedSubMarketsByParent.includes(marketplace.subMarketId) ){
+//       return res.status(404).send({ message: 'Betting disabled by your dealer' });
+//     }
+//     // Check if the user is allowed to place a bet in the specified market and submarket
+//     if (user.betLockStatus == true || user.blockedSubMarketsByParent.includes(marketplace.subMarketId)) {
+//       return res.status(400).send({ message: 'Bet not allowed for your account' });
+//     }
+
+//     let  returnAmount = 0;
+//     let  winningAmount = 0;
+//     let  loosingAmount = 0;
+//     let  remainingAmount = 0;
+//     if (req.body.type == 0){
+//       // for Back Will change these Ammounts
+//       returnAmount = betAmount * betRate - betAmount;
+//       winningAmount = betAmount * betRate - betAmount;
+//       console.log('returnAmount',returnAmount);
+//       loosingAmount = req.body.betAmount;
+//       remainingAmount = (req.body.betAmount * req.body.betRate) - req.body.betAmount;
+//       console.log('remainingAmount',remainingAmount);
+
+//     } else {
+//       // for lay Will change these Ammounts
+//       returnAmount  = betAmount;
+//       winningAmount = betAmount;
+//       loosingAmount = (req.body.betAmount * betRate) - req.body.betAmount;
+//       remainingAmount = betAmount;
+//     }
+
+//     // Create the bet object
+//     const bet = new Bets({
+//       sportsId,
+//       userId,
+//       team: selectionId,
+//       betAmount,
+//       betRate,
+//       returnAmount,
+//       matchId: matchId,
+//       // matchStatus: match.status,
+//       loosingAmount: loosingAmount,
+//       winningAmount: winningAmount,
+//       subMarketId: marketplace.subMarketId,
+//       runner: selectionId,
+//       event: [1, 2, 4].includes(sportsId) ? match.name : '',
+//       type:  req.body.type
+//     });
+
+//     // Save the bet object to the database
+//     console.log( `Bet placed for user ID ${userId}, sports ID ${sportsId}, and team ${selectionId}`);
+//     bet.save(async (err, result) => {
+//       if (err) {
+//         console.log('err', err);
+//         return res.status(404).send({ message: 'Error placing bet' });
+//       }
+//       try {
+//         const updatedUser = await User.findOneAndUpdate(
+//           { userId: userId },
+//           {
+//             $inc: {
+//               availableBalance: -loosingAmount,
+//               exposure: -loosingAmount
+//             },
+//           },
+//           { new: true }
+//         );
+//         await updateParentUserBalance(parentUser, remainingAmount);
+
+//         return res.send({
+//           success: true,
+//           message: 'Bet placed successfully',
+//           results: result,
+//         });
+//       }
+//       catch (error) {
+//         console.error('error', error);
+//         return res.status(404).send({ message: 'Error updating user balance' });
+//       }
+//     });
+//   } catch (error) {
+//     console.error('error', error);
+//     return res.status(404).send({ message: 'Error placing bet' });
+//   }
+// }
 
 function getUserBets(req, res) {
   const errors = validationResult(req);
@@ -486,7 +923,7 @@ function getUserBets(req, res) {
       $lte: endTimestamp,
     };
   }
-   
+
   if (req.decoded.role !== '5') {
     query.userId = req.body.userId;
   } else if (req.decoded.role == '5') {
@@ -523,20 +960,20 @@ function getUserBets(req, res) {
     if (err || !user) {
       return res.status(404).send({ message: 'User not found' });
     }
-  Bets.paginate(
-    query,
-    { page: page, sort: { [sortValue]: sort }, limit: limit },
-    (err, result) => {
-      if (err || !result)
-        return res.status(404).send({ message: 'bets not found' });
-      return res.send({
-        success: true,
-        message: 'bets record found',
-        results: result,
-      });
-    }
-  );
-});
+    Bets.paginate(
+      query,
+      { page: page, sort: { [sortValue]: sort }, limit: limit },
+      (err, result) => {
+        if (err || !result)
+          return res.status(404).send({ message: 'bets not found' });
+        return res.send({
+          success: true,
+          message: 'bets record found',
+          results: result,
+        });
+      }
+    );
+  });
 }
 
 function betFunds(req, res) {
@@ -547,24 +984,24 @@ function betFunds(req, res) {
 
   if (req.decoded.role !== '5') {
     User.find({ createdBy: req.decoded.userId, role: '5' }, (err, users) => {
-      if (err ||!users) {
+      if (err || !users) {
         return res.status(404).send({ message: 'Error occurred while querying users.' });
       }
-      
+
       const userIds = users.map(user => user.userId);
-      
+
       Bets.find({ userId: { $in: userIds } }, (err, bets) => {
-        if (err ||!bets) {
+        if (err || !bets) {
           return res.status(404).send({ message: 'Error occurred in bets.' });
         }
-        
+
         const activeBets = bets.filter(bet => bet.status === 1).length;
-        
+
         User.findOne({ userId: req.decoded.userId }, (err, user) => {
           if (err || !user) {
             return res.status(404).send({ message: 'User Not Found' });
           }
-          
+
           const results = {
             balance: user.balance,
             liable: user.exposure,
@@ -572,7 +1009,7 @@ function betFunds(req, res) {
             available: user.availableBalance,
             activeBets: activeBets,
           };
-          
+
           return res.send({ message: 'Funds Record Found', results: results });
         });
       });
@@ -582,14 +1019,14 @@ function betFunds(req, res) {
       if (err) {
         return res.status(404).send({ message: 'Error occurred in bets.' });
       }
-      
+
       User.findOne({ userId: req.decoded.userId }, (err, user) => {
         if (err || !user) {
           return res.send({ message: 'User Not Found' });
         }
-        
+
         const activeBets = bets.filter(bet => bet.status === 1).length;
-        
+
         const results = {
           balance: user.balance,
           liable: user.exposure,
@@ -597,7 +1034,7 @@ function betFunds(req, res) {
           available: user.availableBalance,
           activeBets: activeBets,
         };
-        
+
         return res.send({ message: 'Funds Record Found', results: results });
       });
     });
@@ -618,17 +1055,17 @@ function createBetRates(req, res) {
       match: "PAK vs AUS",
       teams: [
         {
-          name:"Pakistan",
+          name: "Pakistan",
           back: AllbetRates,
           lay: AllbetRates
         },
         {
-          name:"AUS",
+          name: "AUS",
           back: AllbetRates,
           lay: AllbetRates
         },
         {
-          name:"draw",
+          name: "draw",
           back: AllbetRates,
           lay: AllbetRates
         },
@@ -638,17 +1075,17 @@ function createBetRates(req, res) {
       match: "PAK vs IND",
       teams: [
         {
-          name:"Pakistan",
+          name: "Pakistan",
           back: AllbetRates,
           lay: AllbetRates
         },
         {
-          name:"IND",
+          name: "IND",
           back: AllbetRates,
           lay: AllbetRates
         },
         {
-          name:"draw",
+          name: "draw",
           back: AllbetRates,
           lay: AllbetRates
         },
@@ -658,17 +1095,17 @@ function createBetRates(req, res) {
       match: "IND vs AUS",
       teams: [
         {
-          name:"IND",
+          name: "IND",
           back: AllbetRates,
           lay: AllbetRates
         },
         {
-          name:"AUS",
+          name: "AUS",
           back: AllbetRates,
           lay: AllbetRates
         },
         {
-          name:"draw",
+          name: "draw",
           back: AllbetRates,
           lay: AllbetRates
         },
@@ -697,7 +1134,7 @@ async function getBetRates(req, res) {
   }
 
   const randomRates = getRandomRates(match);
-  
+
   return res.send({
     success: true,
     message: 'bets rate records',
@@ -721,7 +1158,7 @@ function getRandomRates(match) {
 
 
   return {
-    match : match.match,
+    match: match.match,
     teams: randomRates
   }
 }
@@ -862,9 +1299,9 @@ async function getMatchedBets(req, res) {
 async function FakeBetsList(req, res) {
   try {
     Bets.find(
-      {isFake: 1},
+      { isFake: 1 },
       (err, result) => {
-        if (err || !result){
+        if (err || !result) {
           return res.status(404).send({ message: 'bets rate not found' });
         }
         return res.send({
@@ -874,7 +1311,7 @@ async function FakeBetsList(req, res) {
         });
       }
     );
-  }catch (error) {
+  } catch (error) {
     return res.send({
       success: false,
       message: 'Some thing went wrong',
@@ -932,17 +1369,17 @@ async function deleteFakeBet(req, res) {
 async function countFakeBet(req, res) {
   try {
     const fakeCount = await Bets.countDocuments(
-      {isFake: 1}
+      { isFake: 1 }
     );
 
     return res.send({
       success: false,
       message: 'Some thing went wrong',
       results: {
-        totalFakeBets : fakeCount
+        totalFakeBets: fakeCount
       },
     });
-  }catch (error) {
+  } catch (error) {
     return res.send({
       success: false,
       message: 'Some thing went wrong',
