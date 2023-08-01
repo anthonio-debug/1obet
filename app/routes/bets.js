@@ -222,7 +222,7 @@ async function placeBet(req, res) {
         const availableToLay = selectedTeamOdds.ExchangePrices.AvailableToLay;
         console.log('availableToLay', availableToLay);
         const matchedLay = availableToLay.find(lay => lay.price == req.body.betRate);
-        log
+
         if (!matchedLay) {
           console.log(`No availableToLay odds matched with the bet rate ${req.body.betRate}`);
           return res.status(404).send({ message: `No availableToLay odds matched with the bet rate ${req.body.betRate}` });
