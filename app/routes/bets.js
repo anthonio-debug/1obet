@@ -26,10 +26,14 @@ const ListMarkets = require('../models/listMarkets')
 async function getParents(userId) {
   const parentUserIds = [];
   let currentUserId = userId;
+  console.log('currentUserId', currentUserId);
   console.log('parentUser', parentUserIds);
+
   while (currentUserId) {
     const parentUser = await User.findOne({ userId: currentUserId }).exec();
+    console.log('parentUser',parentUser);
     if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
+      console.log('if createdBy not found')
       break;
     }
     parentUserIds.push(parentUser.createdBy);
@@ -102,7 +106,7 @@ async function placeBet(req, res) {
     }
 
     const parentUserIds = await getParents(user.userId);
-    console.log('parentUserIds', parentUserIds);
+    console.log('parentUserIds in betplace', parentUserIds);
 
     const parentUser = await User.find({
       userId: { $in: [...parentUserIds] },
