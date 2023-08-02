@@ -404,6 +404,13 @@ async function listEventsBySport(req, res) {
       start = moment(new Date(Date.now())).format("YYYY-MM-DDThh:mm:ss+00:00");
       end   = moment(new Date(Date.now() + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
     }
+
+    console.log("start== ", start);
+    console.log("end == ", end);
+    console.log("sportId == ", sportId);
+
+    
+
     if(sportId == "4"){
       events = await Events.find({
         sportsId: sportId,
