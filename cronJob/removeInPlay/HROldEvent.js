@@ -31,20 +31,12 @@ const cricketOldEvent = () => {
   cron.schedule('*/5 * * * *', async () => {
 
     try {
-      // There are 2 formats for  Date Month without 0 M is (7) & month with zero MM (07)
-      const date  = moment(new Date(Date.now() - 20 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00");
-      const date2 = moment(new Date(Date.now() - 20 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
-      const eventIds1     = await Events.distinct('Id',{ 
-        sportsId: '7',
-        openDate : {$lt: date2},
-        inplay: true
-      });
-      const eventIds2     = await Events.distinct('Id',{ 
+      const date  = moment(new Date(Date.now() - 20 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
+      const eventIds     = await Events.distinct('Id',{ 
         sportsId: '7',
         openDate : {$lt: date},
         inplay: true
       });
-      const eventIds      = eventIds1.concat(eventIds2)
       console.log("Total event Ids = ", eventIds.length);
       await addInPlayFalse(eventIds)
     } catch(error){
