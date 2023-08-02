@@ -394,8 +394,14 @@ async function listCompetitions(req, res) {
 async function listEventsBySport(req, res) {
   const sportId = req.query.id;
   try {
-    const start = moment(new Date(Date.now())).format("MM/DD/YYYY h:mm:ss +00:00");
-    const end = moment(new Date(Date.now() + 24 *  60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+    let start, end;
+    if(sportId == 4 || sportId == 2 || sportId == 1 ){
+      start = moment(new Date(Date.now())).format("MM/DD/YYYY h:mm:ss +00:00");
+      end   = moment(new Date(Date.now() + 24 *  60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+    }else{
+      start = moment(new Date(Date.now())).format("MM/DD/YYYY h:mm:ss +00:00");
+      end   = moment(new Date(Date.now() + 6 *  60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+    }
 
     let events; 
     if(sportId == "4"){
@@ -408,7 +414,7 @@ async function listEventsBySport(req, res) {
             { inplay: true }
           ]
         }
-      ).sort({ openDate: -1 });
+      ).sort({ openDate: 1 });
     
       
     }else{
@@ -420,7 +426,7 @@ async function listEventsBySport(req, res) {
             { inplay: true }
           ]
         }
-      ).sort({ openDate: -1 }); 
+      ).sort({ openDate: 1 }); 
     }
     res.status(200).json({
       success: true,
