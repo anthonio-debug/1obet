@@ -399,8 +399,8 @@ async function listEventsBySport(req, res) {
       start = moment(new Date(Date.now())).format("MM/DD/YYYY h:mm:ss +00:00");
       end   = moment(new Date(Date.now() + 24 *  60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
     }else{
-      start = moment(new Date(Date.now())).format("MM/DD/YYYY h:mm:ss +00:00");
-      end   = moment(new Date(Date.now() + 6 *  60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+      start = moment(new Date(Date.now())).format("YYYY-MM-DDThh:mm:ss+00:00");
+      end   = moment(new Date(Date.now() + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
     }
 
     let events; 
