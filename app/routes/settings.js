@@ -405,26 +405,22 @@ async function listEventsBySport(req, res) {
       end   = moment(new Date(Date.now() + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
     }
     if(sportId == "4"){
-      events = await Events.find( 
-        { 
-          sportsId: sportId,
-          iconStatus: true,
-          $or: [
-            { openDate: { $gt: start }, openDate: { $lt: end } }, 
-            { inplay: true }
-          ]
-        }
-      ).sort({ openDate: 1 });  
+      events = await Events.find({
+        sportsId: sportId,
+        iconStatus: true,
+        $or: [
+          { inplay: true },
+          { openDate: { $gt: start, $lt: end } }
+        ]
+      }).sort({ openDate: 1 });
     }else{
-      events = await Events.find( 
-        { 
-          sportsId: sportId,
-          $or: [
-            { openDate: { $gt: start }, openDate: { $lt: end } }, 
-            { inplay: true }
-          ]
-        }
-      ).sort({ openDate: 1 }); 
+      events = await Events.find({
+        sportsId: sportId,
+        $or: [
+          { inplay: true },
+          { openDate: { $gt: start, $lt: end } }
+        ]
+      }).sort({ openDate: 1 });
     }
     res.status(200).json({
       success: true,
