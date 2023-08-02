@@ -391,15 +391,17 @@ async function listCompetitions(req, res) {
 
 async function listEventsBySport(req, res) {
   const sportId = req.query.id;
-  const inplay = req.query.inplay
   try {
-    let events
-    if(inplay === true || inplay === 'true'){
-       events = await Events.find({ inplay: true, sportsId: { $nin: ['7', '4339'] } });
+    const date = moment(new Date(Date.now() + 24 *    60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+
+    let status = ""; 
+    if(sportId == "4"){
+      status = iconStatus: true
     }
-    else{
-      events = await Events.find({ sportsId: sportId }).sort({ inplay: -1 });
-    }
+
+    const events = await Events.find(
+      { sportsId: sportId, openDate: { $lt: date }, status }
+      ).sort({ openDate: -1 });
     res.status(200).json({
       success: true,
       message: 'Event By Sports Records',

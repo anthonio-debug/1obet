@@ -95,22 +95,6 @@ db.sidebarmenus.insertMany([
     link: "/all-world-casino",
   },
   {
-    name: "Current Position",
-    lightIcon: "https://1obet.com/assets/light-icons/current-position.png",
-    darkIcon: "https://1obet.com/assets/dark-icons/current-position.png",
-    marketId: "tyv234543-432453343423-53423d332",
-    type: 0,
-    link: "/market/liables",
-  },
-  {
-    name: "All Sports",
-    lightIcon: "https://1obet.com/assets/light-icons/all-sports.png",
-    darkIcon: "https://1obet.com/assets/dark-icons/all-sports.png",
-    marketId: "tyv234543-432453343423-53423d332",
-    type: 0,
-    link: "/all-sports",
-  },
-  {
     name: "Result",
     lightIcon: "https://1obet.com/assets/light-icons/results.png",
     darkIcon: "https://1obet.com/assets/dark-icons/results.png",
