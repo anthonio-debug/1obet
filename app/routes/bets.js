@@ -71,12 +71,16 @@ async function placeBet(req, res) {
     // console.log('selectedTime',selectedTime);
 
     const { selectionId, betAmount, betRate, matchId, subMarketName, raceMarketId, sportsId } = req.body;
-    if (sportsId == '7' || sportsId == '4339') {
+    if (sportsId === '7' || sportsId === '4339') {
+      console.log('in horse race submarkets sportsId',sportsId);
+
        marketplace = await SubMarketType.findOne({ countryCode: subMarketName, marketId: sportsId }).exec();
       if (!marketplace) {
         return res.status(404).send({ message: 'Marketplaces not found' });
       }
     } else {
+      console.log('other race submarkets');
+
       marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
       if (!marketplace) {
         return res.status(404).send({ message: 'Marketplaces not found' });
