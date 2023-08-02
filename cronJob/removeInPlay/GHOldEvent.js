@@ -14,12 +14,12 @@ const addInPlayFalse = async (eventIds)=>{
     const response = await axios.get(url);
     if(response?.data.length > 0 ){
       await Events.findOneAndUpdate(
-        {Id:eventId},
+        {Id: String(eventId)},
         {$set : {
           inplay: false,
           status: "CLOSED"
         }}
-        );
+      );
     }
     console.log("response>>>>>>>>>>>>>", response.data);
   });

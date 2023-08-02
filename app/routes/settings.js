@@ -394,7 +394,9 @@ async function listCompetitions(req, res) {
 async function listEventsBySport(req, res) {
   const sportId = req.query.id;
   try {
-    let start, end;
+    let start;
+    let end;
+    let events; 
     if(sportId == 4 || sportId == 2 || sportId == 1 ){
       start = moment(new Date(Date.now())).format("MM/DD/YYYY h:mm:ss +00:00");
       end   = moment(new Date(Date.now() + 24 *  60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
@@ -402,8 +404,6 @@ async function listEventsBySport(req, res) {
       start = moment(new Date(Date.now())).format("YYYY-MM-DDThh:mm:ss+00:00");
       end   = moment(new Date(Date.now() + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
     }
-
-    let events; 
     if(sportId == "4"){
       events = await Events.find( 
         { 
@@ -414,9 +414,7 @@ async function listEventsBySport(req, res) {
             { inplay: true }
           ]
         }
-      ).sort({ openDate: 1 });
-    
-      
+      ).sort({ openDate: 1 });  
     }else{
       events = await Events.find( 
         { 
