@@ -36,6 +36,10 @@ async function getParents(userId) {
       console.log('if createdBy not found')
       break;
     }
+    if (!parentUser || parentUser.createdBy == currentUserId) {
+      console.log('No more parent users.');
+      break;
+    }
     parentUserIds.push(parentUser.createdBy);
     currentUserId = parentUser.createdBy;
   }
@@ -68,6 +72,9 @@ async function placeBet(req, res) {
   try {
     let match;
     let marketplace;
+    let runnerName;
+    let matchName;
+
     if (req.decoded.login.role !== '5') {
       return res.status(404).send({ message: 'You are not allowed to bet' });
     }
@@ -95,11 +102,12 @@ async function placeBet(req, res) {
     if (!user) {
       return res.status(404).send({ message: 'User not found' });
     }
+    if ( betAmount < config.betMinimumAmount) {
+      return res.status(404).send({ message: 'minimun amount should be 100' });
+    }
+    console.log('userAvailableBalance',user.availableBalance)
     if (user.availableBalance < betAmount) {
       return res.status(404).send({ message: 'Insufficient balance' });
-    }
-    if (user.availableBalance < config.betMinimumAmount) {
-      return res.status(404).send({ message: 'minimun amount should be 100' });
     }
     if (user.bettingAllowed == false) {
       return res.status(404).send({ message: 'Betting is not allowed for your account' });
@@ -129,6 +137,7 @@ async function placeBet(req, res) {
 
     console.log('uniqueBlockedMarketPlaces', uniqueBlockedMarketPlaces);
     console.log('uniqueBlockedSubMarkets', uniqueBlockedSubMarkets);
+    console.log('uniqueBlockedSubMarketsByParent', uniqueBlockedSubMarketsByParent);
 
     if (uniqueBlockedMarketPlaces.includes(sportsId) || uniqueBlockedSubMarkets.includes(marketplace.subMarketId)
       || uniqueBlockedSubMarketsByParent.includes(marketplace.subMarketId)) {
@@ -142,6 +151,7 @@ async function placeBet(req, res) {
     // and we cannot place a bet of the amount that is greater than this maxbetsize
 
     // need review check 
+    // to do need the check of name also in userBetSizes for specific submarkets maxbetamount
     const UserMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: sportsId }).exec();
     console.log('UserMaxBetSize', UserMaxBetSize)
     const MaxBetSize = await maxAllowedBetSizes.findOne({ sportsId: sportsId }).exec();
@@ -171,6 +181,7 @@ async function placeBet(req, res) {
         console.log(`Match not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Match not found for sports ID ${sportsId}` });
       }
+      matchName = match.name
     }
 
     if (sportsId === '4') {
@@ -184,9 +195,10 @@ async function placeBet(req, res) {
         console.log(`Match not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Match not found for sports ID ${sportsId}` });
       }
+      matchName = match.name; // Get the event name from the match object
     }
 
-    //not fancy
+    //not fancy not book maker, not horse race,greyhound
     if (marketplace.subMarketId !== '104' && sportsId !== '7' && sportsId !== '4339' && marketplace.subMarketId !== '128') {
       console.log('in cricket,soccer,tennis odds');
       const marketIds = await ListMarkets.findOne({ sportsId: sportsId, eventId: match.Id, marketName: subMarketName });
@@ -218,7 +230,7 @@ async function placeBet(req, res) {
         console.log(`Odds not available for the selected team ${req.body.selectionId}`);
         return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
-
+      runnerName = selectedTeamOdds.runnerName
       let selectedOddsRate;
 
       if (req.body.type === 0) {
@@ -285,6 +297,7 @@ async function placeBet(req, res) {
           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
+        runnerName = selectedTeamOdds.nat; // Get the runner name from the 'nat' field
 
         let selectedOddsRate = null;
 
@@ -337,6 +350,8 @@ async function placeBet(req, res) {
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
         console.log('selectedTeamOdds', selectedTeamOdds);
+        runnerName = selectedTeamOdds.nat //runnername
+
         let selectedOddsRate = null;
         if (req.body.type === 0) {
           // If type is 0 (available to back), try to find a match between the user-provided betRate and any of the available back odds (b1, b2, or b3)
@@ -455,17 +470,15 @@ async function placeBet(req, res) {
     const bet = new Bets({
       sportsId,
       userId,
-      team: selectionId,
       betAmount,
       betRate,
       returnAmount,
       matchId: matchId,
-      // matchStatus: match.status,
       loosingAmount: loosingAmount,
       winningAmount: winningAmount,
       subMarketId: marketplace.subMarketId,
-      runner: selectionId,
-      event: [1, 2, 4].includes(sportsId) ? match.name : '',
+      runner: runnerName,
+      event: matchName,
       type: req.body.type
     });
 
