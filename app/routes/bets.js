@@ -63,6 +63,7 @@ async function placeBet(req, res) {
 
   try {
     let match;
+    let marketplace;
     if (req.decoded.login.role !== '5') {
       return res.status(404).send({ message: 'You are not allowed to bet' });
     }
@@ -70,9 +71,16 @@ async function placeBet(req, res) {
     // console.log('selectedTime',selectedTime);
 
     const { selectionId, betAmount, betRate, matchId, subMarketName, raceMarketId, sportsId } = req.body;
-    const marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
-    if (!marketplace) {
-      return res.status(404).send({ message: 'Marketplaces not found' });
+    if (sportsId == '7' || sportsId == '4339') {
+       marketplace = await SubMarketType.findOne({ countryCode: subMarketName, marketId: sportsId }).exec();
+      if (!marketplace) {
+        return res.status(404).send({ message: 'Marketplaces not found' });
+      }
+    } else {
+      marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
+      if (!marketplace) {
+        return res.status(404).send({ message: 'Marketplaces not found' });
+      }
     }
     const userId = req.decoded.userId;
     const user = await User.findOne({ userId }).exec();
