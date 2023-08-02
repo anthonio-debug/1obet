@@ -2,6 +2,7 @@ const express = require('express');
 var jwt = require('jsonwebtoken');
 const { validationResult } = require('express-validator');
 const Settings = require('../models/settings');
+const moment = require('moment');
 const User = require('../models/user');
 const settingsValidation = require('../validators/settings');
 const termsAndConditions = require('../models/termsAndConditions');
@@ -21,6 +22,7 @@ const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
 const loginRouter = express.Router();
 const router = express.Router();
+
 const SelectedCasino = require('../models/selectedCasino');
 
 function updateDefaultTheme(req, res) {
@@ -392,13 +394,39 @@ async function listCompetitions(req, res) {
 async function listEventsBySport(req, res) {
   const sportId = req.query.id;
   try {
-    const date = moment(new Date(Date.now() + 24 *    60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+    let start, end;
+    if(sportId == 4 || sportId == 2 || sportId == 1 ){
+      start = moment(new Date(Date.now())).format("MM/DD/YYYY h:mm:ss +00:00");
+      end   = moment(new Date(Date.now() + 24 *  60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+    }else{
+      start = moment(new Date(Date.now())).format("MM/DD/YYYY h:mm:ss +00:00");
+      end   = moment(new Date(Date.now() + 6 *  60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+    }
 
     let events; 
     if(sportId == "4"){
-      events = await Events.find( { sportsId: sportId, openDate: { $lt: date }, iconStatus: true }).sort({ openDate: -1 });
+      events = await Events.find( 
+        { 
+          sportsId: sportId,
+          iconStatus: true,
+          $or: [
+            { openDate: { $gt: start }, openDate: { $lt: end } }, 
+            { inplay: true }
+          ]
+        }
+      ).sort({ openDate: 1 });
+    
+      
     }else{
-      events = await Events.find( { sportsId: sportId, openDate: { $lt: date },  }).sort({ openDate: -1 });
+      events = await Events.find( 
+        { 
+          sportsId: sportId,
+          $or: [
+            { openDate: { $gt: start }, openDate: { $lt: end } }, 
+            { inplay: true }
+          ]
+        }
+      ).sort({ openDate: 1 }); 
     }
     res.status(200).json({
       success: true,

@@ -4,9 +4,9 @@ require('../db');
 const GetRaceEventsAndMarkets = async () => {
   cron.schedule('*/1 * * * *', async () => {
     try {
-      await todayRaceJob("7");
-   }
-    catch (error) {
+      await todayRaceJob("4339");
+      
+    } catch (error) {
       console.error('Error running Race list Market cron job:', error);
     }
   });
