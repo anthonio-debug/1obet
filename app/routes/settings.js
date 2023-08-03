@@ -940,34 +940,91 @@ async function bettorDashboardGames(req, res) {
     const events = await Events.aggregate([
       {
         $match: {
-          $or: [
-            { sportsId: { $in: sportsIdArray } },
-            { inplay: true, sportsId: { $in: inplayIdArray, $nin: ['7', '4339'] } },
-          ],
+          sportsId: { $in: sportsIdArray } 
         },
       },
       {
         $facet: {
           soccer: [
-            { $match: { sportsId: '1' } },
-            { $sort: { inplay: -1 } },
+            { $match: { 
+              sportsId: '1',
+              $or: [
+                { inplay: true },
+                { 
+                  $and: [
+                    { openDate: { $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00") } },
+                    { openDate: { $lt: moment(new Date(Date.now() +  24 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
+                  ]
+                }
+              ] 
+            }},
+            { $sort: { inplay: -1 } 
+          },
           ],
           tennis: [
-            { $match: { sportsId: '2' } },
+            { $match: { 
+              sportsId: '2',
+              $or: [
+                { inplay: true },
+                { 
+                  $and: [
+                    { openDate: { $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00") } },
+                    { openDate: { $lt: moment(new Date(Date.now() +  24 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
+                  ]
+                }
+              ]  
+            }},
             { $sort: { inplay: -1 } },
           ],
           cricket: [
-            { $match: { sportsId: '4', iconStatus: true } },
+            { $match: { 
+              sportsId: '4', 
+              iconStatus: true,
+              $or: [
+                { inplay: true },
+                { 
+                  $and: [
+                    { openDate: { $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00") } },
+                    { openDate: { $lt: moment(new Date(Date.now() +  24 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
+                  ]
+                }
+              ] 
+            }},
             { $sort: { inplay: -1 } },
           ],
           horseRace: [
-            { $match: { sportsId: '7' } },
+            { $match: { 
+              sportsId: '7' ,
+              $or: [
+                { inplay: true },
+                { 
+                  $and: [
+                    { openDate: { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } },
+                    { openDate: { $lt: moment(new Date(Date.now()  + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } }
+                  ]
+                }
+              ] 
+            }},
           ],
           greyhound: [
-            { $match: { sportsId: '4339' } }
+            { $match: { 
+              sportsId: '4339', 
+              $or: [
+                { inplay: true },
+                { 
+                  $and: [
+                    { openDate: { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } },
+                    { openDate: { $lt: moment(new Date(Date.now()  + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } }
+                  ]
+                }
+              ] 
+            }}
           ],
           inplay: [
-            { $match: { inplay: true, sportsId: { $in: inplayIdArray } } },
+            { $match: { 
+              inplay: true, 
+              sportsId: { $in: inplayIdArray } 
+            }},
           ],
         },
       },
