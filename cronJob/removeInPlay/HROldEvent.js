@@ -32,7 +32,7 @@ const cricketOldEvent = () => {
   cron.schedule('*/1 * * * *', async () => {
 
     try {
-      // const date  = moment(new Date(Date.now() - 10 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
+      // const date  = moment(new Date(Date.now() - 10 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00");
       const eventIds     = await Events.distinct('Id',{ 
         sportsId: '7',
         inplay: true
