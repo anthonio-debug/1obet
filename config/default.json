@@ -23,5 +23,6 @@
   "api_password": "b16gWs7e0QAASLTne0",
   "saltKey":"qrb4VepLav",
   "apiUrl":"https://em-api.thegameprovider.com/api/seamless/provider",
-  "createCasinoUser": true
+  "createCasinoUser": true,
+  "casinoMultiples": 10
 }
