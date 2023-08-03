@@ -164,7 +164,7 @@ async function registerUser(req, res) {
               //   });
               // }
            
-              if (req.body.role == '5' && config.createCasinoUser == true) {
+              if (req.body.role == '5') {
               console.log('in casino bettor user')
                 try {
                   const response = await axios.post(config.apiUrl, {
