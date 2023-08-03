@@ -404,12 +404,12 @@ async function listEventsBySport(req, res) {
 
     }else if (sportId == '7' || sportId == '4339'){
 
-      start = moment(new Date(Date.now())).format("YYYY-MM-DDTH:mm:ss+00:00");
-      end   = moment(new Date(Date.now() + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDTH:mm:ss+00:00");
+      start = moment(new Date(Date.now())).format("YYYY-MM-DDTHH:mm:ss+00:00");
+      end   = moment(new Date(Date.now() + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00");
 
     }
-    console.log("start== ", start);
-    console.log("end== ", end);
+    console.log("start == ", start);
+    console.log("end == ", end);
     console.log("sportId == ", sportId);
 
     if(sportId == "4"){
