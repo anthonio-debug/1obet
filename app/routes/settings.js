@@ -1022,8 +1022,22 @@ async function bettorDashboardGames(req, res) {
           ],
           inplay: [
             { $match: { 
-              inplay: true, 
-              sportsId: { $in: inplayIdArray } 
+              sportsId: { $in: inplayIdArray },
+              $or: [
+                  {
+                    $and: [
+                      {inplay: true},
+                      {sportsId: { $in: ['1','2'] }}
+                    ]
+                  },
+                  {
+                    $and: [
+                      {inplay: true},
+                      {iconStatus: true},
+                      {sportsId: '4'}
+                    ]
+                  },
+              ] 
             }},
           ],
         },
