@@ -168,7 +168,7 @@ async function registerUser(req, res) {
               //   try {
               //     const response = await axios.post(config.apiUrl, {
               //       api_password: config.api_password,
-              //       api_login: config.api_login,
+              //       api_login: config.api_username,
               //       method: 'createPlayer',
               //       user_username,
               //       user_password: user_username,
