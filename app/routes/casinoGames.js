@@ -286,10 +286,16 @@ async function addSelectedDashboardGames(req, res) {
     return res.status(400).send({ errors: errors.array() });
   }
   try{
-    const { gameIds } = req.body;
+    const  {gameIds}  = req.body;
+    console.log("gameIds", gameIds)
     await SelectedCasino.updateMany(
-      { 'game.id': { $nin: gameIds } },
-      { $set: { 'games.$[game].isDashboard': false } },
+      { 'game.id': { 
+        $nin: gameIds 
+      }},
+      { $set: 
+        { 
+          'games.$[game].isDashboard': false 
+      }},
     )
     await SelectedCasino.updateMany(
       { 'game.id': { $in: gameIds } },
