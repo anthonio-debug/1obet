@@ -2,16 +2,18 @@ const cron = require("node-cron");
 const Odds = require('../app/models/odds');
 const raceOdds = require('../app/models/raceOdds');
 require('../db');
-
-
 const deleteClosedOddsData = () => {
-  //run after 5 minutes
 cron.schedule('*/3 * * * *', async () => {
     try {
       let time = Date.now() - 5 * 60 * 1000;
-      await Odds.remove({
-        createdAt: {
+      const ids = Odds.distinct('eventId', {createdAt: {
           $lt: time
+        }}
+      )
+      ids.pop()
+      await Odds.remove({
+        eventId: {
+          $in: ids
         }
       }, (err, data)=>{
         if(err){
