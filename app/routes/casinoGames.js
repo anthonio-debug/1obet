@@ -16,7 +16,7 @@ async function addCasinoGameDetails(req, res) {
       method: 'getGameList',
       show_additional: true,
       show_systems: 1,
-      currency: 'EUR',
+      currency: 'PKR',
     });
 
     console.log('Response:', response.data);
