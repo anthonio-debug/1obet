@@ -273,15 +273,15 @@ db.bettingfigures.insertMany([
 ])
 
 db.users.insertOne({ 
-  "userName" : "shampydicompany2", 
+  "userName" : "shampydicompany3", 
   "password" : '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy', 
-  "reference" : "shampydicompany2", 
+  "reference" : "shampydicompany3", 
   "phone" : "03056959889",  
   "role" : "0",
   "isActive" : true,
   "status" : 1,
   "notes" : "this is note",
-  "userId" : 2035, 
+  "userId" : 2145, 
   "passwordChanged" : false, 
   "balance" : 5000000000,
   "isDeleted":false,
