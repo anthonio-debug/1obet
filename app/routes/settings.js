@@ -1044,7 +1044,7 @@ async function bettorDashboardGames(req, res) {
       },
     ]).exec();
 
-    const selectedCasinoData = await SelectedCasino.find({"isDashboard":true});
+    const selectedCasinoData = await SelectedCasino.find({ isDashboard: true });
 
     const organizedEvents = {
       soccer: events[0].soccer,
