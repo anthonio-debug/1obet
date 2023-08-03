@@ -22,6 +22,7 @@ const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
 const loginRouter = express.Router();
 const router = express.Router();
+process.env.TZ = 'UTC';
 
 const SelectedCasino = require('../models/selectedCasino');
 
@@ -397,16 +398,18 @@ async function listEventsBySport(req, res) {
     let start;
     let end;
     let events; 
-    if(sportId == 4 || sportId == 2 || sportId == 1 ){
-      start = moment(new Date(Date.now())).format("MM/DD/YYYY h:mm:ss +00:00");
-      end   = moment(new Date(Date.now() + 24 *  60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
-    }else{
+    if(sportId == '4' || sportId == '2' || sportId == '1' ){
+      start  = moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00");
+      end    = moment(new Date(Date.now() +  24 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00");
+
+    }else if (sportId == '7' || sportId == '4339'){
+
       start = moment(new Date(Date.now())).format("YYYY-MM-DDThh:mm:ss+00:00");
       end   = moment(new Date(Date.now() + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
-    }
 
-    console.log("start == ", start);
-    console.log("end == ", end);
+    }
+    console.log("start== ", start);
+    console.log("end== ", end);
     console.log("sportId == ", sportId);
 
     if(sportId == "4"){
@@ -415,13 +418,26 @@ async function listEventsBySport(req, res) {
         iconStatus: true,
         $or: [
           { inplay: true },
-          { openDate: { $gt: start, $lt: end } }
+          { 
+            $and: [
+              { openDate: { $gt: start } },
+              { openDate: { $lt: end } }
+            ]
+          }
         ]
       }).sort({ openDate: 1 });
     }else{
       events = await Events.find({
         sportsId: sportId,
-        openDate: { $gt: start, $lt: end },
+        $or: [
+          { inplay: true },
+          { 
+            $and: [
+              { openDate: { $gt: start } },
+              { openDate: { $lt: end } }
+            ]
+          }
+        ]
       }).sort({ openDate: 1 });
     }
     res.status(200).json({
