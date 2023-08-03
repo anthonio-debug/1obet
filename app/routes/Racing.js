@@ -359,7 +359,6 @@ async function marketDescriptionCronjob(marketId) {
   }
 }
 
-
 async function raceOddsJob(ids) {
   try {
    console.log('race Odds Job --->>>', ids)
@@ -386,5 +385,4 @@ loginRouter.get('/racesTodayMeetings/:SportsId', racesTodayMeetings);
 loginRouter.get('/racesTomorrowMeetings/:SportsId', racesTomorrowMeetings);
 loginRouter.get('/marketDescription/:marketId', marketDescription);
 loginRouter.get('/raceOdds', raceOdds);
-
 module.exports = { loginRouter,todayRaceJob,marketDescriptionCronjob,raceOddsJob };

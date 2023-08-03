@@ -14,27 +14,28 @@ const addInPlayFalse = async (eventIds)=>{
     const response = await axios.get(url);
     if(response?.data.length > 0 ){
       await Events.findOneAndUpdate(
-        {Id:eventId},
-        {$set : {
-          inplay: false,
-          status: "CLOSED"
-        }}
-        );
+        { Id: eventId },
+        {
+          $set: {
+            inplay: false,
+            status: "CLOSED",
+          },
+        }
+      );
     }
-    console.log("response>>>>>>>>>>>>>", response.data);
   });
 
 
 }
 
 const cricketOldEvent = () => {
-  cron.schedule('*/5 * * * *', async () => {
+  cron.schedule('*/1 * * * *', async () => {
 
     try {
-      const date  = moment(new Date(Date.now() - 20 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
+      // const date  = moment(new Date(Date.now() - 10 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
       const eventIds    = await Events.distinct('Id',{ 
         sportsId: '4339',
-        openDate : {$lt: date},
+        // openDate : {$lt: date},
         inplay: true
       });
       console.log("Total event Ids = ", eventIds.length);

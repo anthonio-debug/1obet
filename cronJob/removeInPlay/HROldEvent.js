@@ -5,36 +5,36 @@ const Events  = require('../../app/models/events');
 const moment  = require('moment');
 require('../../db');
 
-const addInPlayFalse = async (eventIds)=>{
-  eventIds.map(async (eventId)=>{
-    const event     = await Events.findOne({
-      Id:eventId
-    });
-    const url = `${config.horseRaceUrl}/results/?ids=${event.marketIds[0]}`;
-    const response = await axios.get(url);
-    if(response?.data.length > 0 ){
-      await Events.findOneAndUpdate(
-        {Id:eventId},
-        {$set : {
-          inplay: false,
-          status: "CLOSED"
-        }}
+const addInPlayFalse = async (eventIds) => {
+  await Promise.all(
+    eventIds.map(async (eventId) => {
+      const event = await Events.findOne({ Id: eventId });
+      const url = `${config.horseRaceUrl}/results/?ids=${event.marketIds[0]}`;
+      const response = await axios.get(url);
+      console.log("Results =", response?.data.length);
+      if (response?.data.length > 0) {
+        await Events.findOneAndUpdate(
+          { Id: eventId },
+          {
+            $set: {
+              inplay: false,
+              status: "CLOSED",
+            },
+          }
         );
-    }
-    console.log("response>>>>>>>>>>>>>", response.data);
-  });
+      }
+    })
+  );
+};
 
-
-}
 
 const cricketOldEvent = () => {
-  cron.schedule('*/5 * * * *', async () => {
+  cron.schedule('*/1 * * * *', async () => {
 
     try {
-      const date  = moment(new Date(Date.now() - 20 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
+      // const date  = moment(new Date(Date.now() - 10 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
       const eventIds     = await Events.distinct('Id',{ 
         sportsId: '7',
-        openDate : {$lt: date},
         inplay: true
       });
       console.log("Total event Ids = ", eventIds.length);

@@ -28,7 +28,7 @@ const addInPlayFalse = async (eventIds)=>{
 }
 
 const cricketOldEvent = () => {
-  cron.schedule('*/5 * * * *', async () => {
+  cron.schedule('*/1 * * * *', async () => {
 
     try {
       // There are 2 formats for  Date Month without 0 M is (7) & month with zero MM (07)
