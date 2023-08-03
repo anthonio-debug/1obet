@@ -63,6 +63,59 @@ const updateParentUserBalance = async (parentUsers, remainingAmount) => {
   }
 };
 
+async function checkAndPlaceBet(selectedTime, sportsId, matchId, subMarketName, selectionId, betRate, betAmount, type, ratesArray) {
+  const url = `${config.sportsAPIUrl}/odds/?ids=${marketId}`;
+  const response = await axios.get(url);
+  const oddsData = response.data;
+
+  // Extract the odds data for the selected team from the runners array
+  const selectedTeamOdds = oddsData[0].Runners.find(runner => runner.SelectionId === selectionId);
+
+  if (!selectedTeamOdds) {
+    // If odds are not found, check if we have reached the maximum number of retries (5 seconds)
+    if (selectedTime <= 5) {
+      // If not, wait for 1 second and then make the API call again
+      await new Promise(resolve => setTimeout(resolve, 1000));
+
+      // Call the function recursively with updated selectedTime and ratesArray
+      return checkAndPlaceBet(selectedTime + 1, sportsId, matchId, subMarketName, selectionId, betRate, betAmount, type, ratesArray);
+    } else {
+      // If the maximum retries are reached, return an error
+      throw new Error(`Selected odds not found for the bet after 5 seconds.`);
+    }
+  }
+
+  // Now you have the selectedTeamOdds
+  // Continue with the rest of the bet placement logic
+
+  // Example: Get the selected odds rate
+  const selectedOddsRate = selectedTeamOdds.ExchangePrices.AvailableToBack[0].price;
+
+  // Store the selectedOddsRate in the ratesArray for the current second
+  ratesArray.push(selectedOddsRate);
+
+  // Now, check if we have made all the 5 API calls
+  if (selectedTime === 5) {
+    // If all 5 API calls are made, ratesArray will contain all the rates for each second
+    // Continue with the rest of the bet placement logic and proceed with placing the bet
+    // ...
+
+    // Example: Log all the rates
+    console.log('Rates for each second:', ratesArray);
+
+    // Place the bet and continue with the rest of the code
+    // ...
+
+    // Example:
+    console.log('Selected Odds:', selectedOddsRate);
+  } else {
+    // If not all API calls are made yet, call the function recursively with updated selectedTime and ratesArray
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    return checkAndPlaceBet(selectedTime + 1, sportsId, matchId, subMarketName, selectionId, betRate, betAmount, type, ratesArray);
+  }
+}
+
+
 async function placeBet(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -74,6 +127,11 @@ async function placeBet(req, res) {
     let marketplace;
     let runnerName;
     let matchName;
+
+    // Create arrays to store the rates for each second
+    const ratesArray = [];
+
+    await checkAndPlaceBet(1, sportsId, matchId, subMarketName, selectionId, betRate, betAmount, req.body.type, ratesArray);
 
     if (req.decoded.login.role !== '5') {
       return res.status(404).send({ message: 'You are not allowed to bet' });
@@ -205,6 +263,7 @@ async function placeBet(req, res) {
       console.log('marketIds', marketIds);
       const marketId = marketIds.marketId
       console.log('market', marketId);
+      const ratesArray = [];
 
       const url = `${config.sportsAPIUrl}/odds/?ids=${marketId}`;
       const response = await axios.get(url);
@@ -227,9 +286,12 @@ async function placeBet(req, res) {
       console.log('matchOdds.runners', selectedTeamOdds);
       console.log('selectionId', req.body.selectionId);
       if (!selectedTeamOdds) {
-        console.log(`Odds not available for the selected team ${req.body.selectionId}`);
-        return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
+        // Call the recursive function to check and place the bet
+      await checkAndPlaceBet(1, sportsId, matchId, subMarketName, selectionId, betRate, betAmount, req.body.type, ratesArray, marketId);
+        // console.log(`Odds not available for the selected team ${req.body.selectionId}`);
+        // return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
+      return
       runnerName = selectedTeamOdds.runnerName
       let selectedOddsRate;
 

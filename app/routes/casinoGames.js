@@ -11,12 +11,12 @@ const User = require('../models/user');
 async function addCasinoGameDetails(req, res) {
   try {
     const response = await axios.post(config.apiUrl, {
-      api_password: '6w9GNrsxZsHBeC795N',
-      api_login: '1obet_mc_s',
+      api_password: config.api_password,
+      api_login: config.api_username,
       method: 'getGameList',
       show_additional: true,
       show_systems: 1,
-      currency: 'EUR',
+      currency: 'PKR',
     });
 
     console.log('Response:', response.data);
@@ -232,7 +232,7 @@ async function getGame(req, res) {
 
     const payload = {
       api_password: config.api_password,
-      api_login: config.api_login,
+      api_login: config.api_username,
       method: 'getGame',
       lang: config.language,
       user_username: 'user_' + user.userId,
