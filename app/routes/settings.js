@@ -22,7 +22,7 @@ const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
 const loginRouter = express.Router();
 const router = express.Router();
-process.env.TZ = 'UTC';
+// process.env.TZ = 'UTC';
 
 const SelectedCasino = require('../models/selectedCasino');
 
