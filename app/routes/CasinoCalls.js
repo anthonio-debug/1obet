@@ -5,6 +5,7 @@ const CasinoDebits      = require('../models/casinoCalls');
 const crypto            = require('crypto');
 const config            = require('config')
 const { MongoClient }   = require('mongodb');
+const casinoMultiples   = config.casinoMultiples
 const transactionOptions = {
   readPreference: 'primary',
   readConcern: { level: 'local' },
@@ -35,12 +36,12 @@ async function balance(req, res) {
   console.log('hash:', hash);
   console.log('queryString:', queryString);
 
-  // if (hash !== key) {
-  //   return res.json({
-  //     status: 403,
-  //     msg: 'INCORRECT_KEY_VALIDATION'
-  //   });
-  // }
+  if (hash !== key) {
+    return res.json({
+      status: 403,
+      msg: 'INCORRECT_KEY_VALIDATION'
+    });
+  }
 
   try {
     const user = await User.findOne({ remoteId: payload.remote_id }).exec();
@@ -56,7 +57,7 @@ async function balance(req, res) {
 
     return res.json({
       status: 200,
-      balance: balance,
+      balance: balance/casinoMultiples,
     });
   } catch (err) {
     console.error(err);
@@ -109,8 +110,6 @@ async function debit(req, res) {
         { remoteId: parseInt(payload.remote_id) },
         { session }
       )
-        // { remoteId: payload.remote_id });  
-
       if (!user) {
         await session.abortTransaction();
         return res.json({ status: '500', msg: `Internal error no user` });
@@ -119,7 +118,7 @@ async function debit(req, res) {
         await session.abortTransaction();
         return res.json({
           status: 200,
-          balance: user.availableBalance,
+          balance: user.availableBalance / casinoMultiples,
         });
       }
       console.log('==========user', user)
@@ -127,11 +126,12 @@ async function debit(req, res) {
         await session.abortTransaction();
         return res.json({
           status: 200,
-          balance: user.availableBalance,
+          balance: user.availableBalance / casinoMultiples,
         });
       }
       let debitAmount =  parseInt(payload.amount);
-      if (debitAmount > user.availableBalance) {
+
+      if (debitAmount > user.availableBalance * casinoMultiples) {
         await session.abortTransaction();
         return res.json({
           status: 403,
@@ -143,7 +143,7 @@ async function debit(req, res) {
         return res.json({ status: '500', msg: 'Negative bet not allowed!' });
       }
 
-      updatedBalance = user.availableBalance - debitAmount;
+      updatedBalance = user.availableBalance - (debitAmount * casinoMultiples);
       if (updatedBalance < 0) {
         await session.abortTransaction();
         return res.json({ status: '500', msg: 'Negative balance not allowed!' });
@@ -162,7 +162,7 @@ async function debit(req, res) {
     await session.commitTransaction();
     return res.json({
       status: 200,
-      balance: updatedBalance
+      balance: updatedBalance / casinoMultiples
     });
   } catch (err) {
     console.error('Error:', err);
@@ -233,7 +233,7 @@ async function credit(req, res) {
         await session.abortTransaction();
         return res.json({
           status: 200,
-          balance: user.availableBalance,
+          balance: user.availableBalance / casinoMultiples,
         });
       }
 
@@ -241,11 +241,11 @@ async function credit(req, res) {
         await session.abortTransaction();
         return res.json({
           status: 500,
-          balance: user.availableBalance
+          balance: user.availableBalance / casinoMultiples
         });
       }
 
-      updatedBalance = user.availableBalance + parseInt(payload.amount);
+      updatedBalance = user.availableBalance + (parseInt(payload.amount) * casinoMultiples);
 
       let userResponse   = await users.updateOne(
         {_id: user?._id},{$set: { availableBalance: updatedBalance}},
@@ -261,7 +261,7 @@ async function credit(req, res) {
     await session.commitTransaction();
     return res.json({
       status: 200,
-      balance: updatedBalance,
+      balance: updatedBalance / casinoMultiples,
     });
 
   } catch (err) {
@@ -286,25 +286,22 @@ async function rollback(req, res) {
     const salt = config.saltKey;
     const key = payload.key;
     delete payload.key;
-    // const queryString = Object.keys(payload)
-    //   .map(key => `${key}=${payload[key]}`)
-    //   .join('&');
-    // console.log('queryString', queryString);
-    // const hash = createHashKey(salt, queryString);
-    // console.log('hash', hash);
-    // if (hash !== key) {
-    //   return res.json({
-    //     status: 403,
-    //     msg: 'INCORRECT_KEY_VALIDATION'
-    //   });
-    // }
-
+    const queryString = Object.keys(payload)
+      .map(key => `${key}=${payload[key]}`)
+      .join('&');
+    console.log('queryString', queryString);
+    const hash = createHashKey(salt, queryString);
+    console.log('hash', hash);
+    if (hash !== key) {
+      return res.json({
+        status: 403,
+        msg: 'INCORRECT_KEY_VALIDATION'
+      });
+    }
 
     let updatedBalance = 0;
     if (payload.action == 'rollback'){
       await session.withTransaction(async () => {
-
-
         const sameTransId = await casinoCalls.countDocuments(
           {
             transaction_id: payload.transaction_id,
@@ -326,14 +323,14 @@ async function rollback(req, res) {
           await session.abortTransaction();
           return res.json({
             status: 404,
-            balance: user.availableBalance,
+            balance: user.availableBalance / casinoMultiples,
           });
         }
         if (sameTransId > 1) {
           await session.abortTransaction();
           return res.json({
             status: 200,
-            balance: user.availableBalance,
+            balance: user.availableBalance / casinoMultiples,
           });
         }
 
@@ -357,10 +354,10 @@ async function rollback(req, res) {
           await session.abortTransaction();
           return res.json({
             status: 404,
-            balance: user.availableBalance
+            balance: user.availableBalance / casinoMultiples
           });
         }
-        updatedBalance = user.availableBalance +  amount;
+        updatedBalance = user.availableBalance +  (amount * casinoMultiples) ;
         let userResponse = await users.updateOne(
           {_id: user?._id},{$set: { availableBalance: updatedBalance}},
           { session }
@@ -374,7 +371,7 @@ async function rollback(req, res) {
 
         return res.json({
           status: 200,
-          balance: updatedBalance
+          balance: updatedBalance / casinoMultiples
         });
 
 
@@ -388,7 +385,7 @@ async function rollback(req, res) {
       }else{
         return res.json({
           status: 404,
-          balance: user2.availableBalance
+          balance: user2.availableBalance / casinoMultiples
         });
       }
     }
