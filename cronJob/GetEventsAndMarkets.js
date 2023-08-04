@@ -17,14 +17,13 @@ const raceMarkets = require("../app/models/raceMarkets");
 require('../db');
 
 const GetEventsAndMarkets = () => {
-   // Cron job to run every 1 minute
    cron.schedule('*/1 * * * *', async () => {
         try {
         const sportsIds = [4,2,1]; 
         for (const sportsId of sportsIds){
             const listEventsResponse = await eventsBySupportJobs(sportsId);
             const listEventsData = listEventsResponse.events;
-            console.log('Data of Events', listEventsData)
+            // console.log('Data of Events', listEventsData)
             const dummydata = listEventsData.map(async(item)=>{
                 let eventId = item.Id
                 let sport = item.sport
