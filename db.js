@@ -8,7 +8,7 @@ let options = {
   };
 
 mongoose.set('strictQuery', false);
-mongoose.set({ debug: true });
+mongoose.set({ debug: false });
 mongoose
   .connect(config.DBHost, options)
   .then(() => {

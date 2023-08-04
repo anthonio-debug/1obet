@@ -14,26 +14,53 @@ const Odds = require('../app/models/odds');
 const raceOdds = require('../app/models/raceOdds');
 const FancyGames = require("../app/models/fancyGames");
 const raceMarkets = require("../app/models/raceMarkets");
+const  ObjectId = require('mongoose').Types.ObjectId;
 require('../db');
 
-const GetEventsAndMarkets = () => {
-   cron.schedule('*/1 * * * *', async () => {
+const findOddsForOneTime = async (ids) => {
+    try{   
+        console.log("=============== ids ", ids);
+        const marketIds = await Events.distinct("marketIds", { '_id': { $in: ids} });
+        console.log('========= MarketID ', marketIds);
+        let batchArray = [];
+        for (let i = 0; i < marketIds.length; i += 20) {
+        batchArray.push(marketIds.slice(i, i + 20));
+        }
+
+        console.log('========= batchArray', batchArray);
+
+        for (let i = 0; i < batchArray.length; i++) {
+        await getnewOdds(batchArray[i]);
+        }
+    } catch (error) {
+        console.error('Error running odds cron job:', error);
+    }
+}
+
+
+
+const GetEventsAndMarkets = async () => {
+//    cron.schedule('* * * * * *', async () => {
         try {
         const sportsIds = [4,2,1]; 
         for (const sportsId of sportsIds){
             const listEventsResponse = await eventsBySupportJobs(sportsId);
             const listEventsData = listEventsResponse.events;
-            // console.log('Data of Events', listEventsData)
-            const dummydata = listEventsData.map(async(item)=>{
+            const  newInsertedIds = listEventsResponse?.newInsertedIds.map((id)=> id._id)
+            const dummydata = listEventsData.map( async(item)=>{
                 let eventId = item.Id
                 let sport = item.sport
-                console.log("Sports Name", sport)
+                // console.log("Sports Name", sport)
                 let listMarketsResponse = await listMarketsByCronJob(eventId,sport);
             })
+
+            if(newInsertedIds.length > 0){
+                await findOddsForOneTime(newInsertedIds)
+            }
         }
         } catch (error) {
         console.error('Error running listMarket cron job:', error);
         }
-    });
+    // });
 }
 GetEventsAndMarkets()

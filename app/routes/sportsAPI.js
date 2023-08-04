@@ -369,7 +369,6 @@ async function eventsBySupportJobs(sportsId) {
   try {
     const response = await axios.get(url);
     const events = response.data;
-    // console.log('Events ---> ',events);
 
  
     if(events){
@@ -400,12 +399,14 @@ async function eventsBySupportJobs(sportsId) {
       }));
     }
 
+    // 1"obet.com/*"
     const savedEvents = await inPlayEvents.bulkWrite(sportsEventData);
-    console.log('===== Saved Events bulkWrite logs ', savedEvents)
+    // console.log('===== Saved Events bulkWrite logs ', savedEvents?.result?.upserted)
     return({
       success: true,
       message: 'Events retrieved and saved successfully',
       events: events,
+      newInsertedIds: savedEvents?.result?.upserted
     });
   } catch (error) {
     console.error(error);
