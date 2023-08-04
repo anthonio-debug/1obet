@@ -211,14 +211,51 @@ function getCategoryCasinoGames(req, res) {
   });
 }
 
-async function getAllSelectedCasinos(req, res) {
-  const data = await SelectedCasino.find({});
-  return res.send({
-    message: 'Selected Casino Games List',
-    success: true,
-    results: data,
-  });
-}
+function getAllSelectedCasinos(req, res) {
+
+  let query = {}
+  let page = 1;
+  let sort = -1;
+  let sortValue = '_id';
+  let limit = 20;
+  if (req.query.numRecords) {
+    if (isNaN(req.query.numRecords))
+      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+    if (req.query.numRecords < 0)
+      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+    limit = Number(req.query.numRecords);
+  }
+  if (req.query.sortValue) sortValue = req.query.sortValue;
+  if (req.query.sort) {
+    sort = Number(req.query.sort);
+  }
+  if (req.query.page) {
+    page = Number(req.query.page);
+  }
+  SelectedCasino.paginate(
+    query,
+    { page: page, sort: { [sortValue]: sort }, limit: limit },
+      (err, data) => {
+      
+        if (data.total == 0) {
+          return res.status(404).send({ message: 'No records found'});
+        }
+        if (data.total == 0) {
+          return res.status(404).send({ message: 'No records found', isLoading: false });
+        }
+        if (err)
+          return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
+          return res.send({
+            message: 'Selected Casino Games List',
+            success: true,
+            results: data.docs,
+            page: data.page,
+            limit: data.limit,
+            total: data.total,
+            pages: data.pages
+          });
+      })
+  }
 
 async function getGame(req, res) {
   try {
