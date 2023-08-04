@@ -369,7 +369,8 @@ async function eventsBySupportJobs(sportsId) {
   try {
     const response = await axios.get(url);
     const events = response.data;
-    console.log('Events ---> ',events);
+    // console.log('Events ---> ',events);
+
  
     if(events){
       var sportsEventData = events.map((element) => ({
@@ -400,7 +401,7 @@ async function eventsBySupportJobs(sportsId) {
     }
 
     const savedEvents = await inPlayEvents.bulkWrite(sportsEventData);
-    console.log('SavedEvents', savedEvents)
+    console.log('===== SavedEvents', savedEvents)
     return({
       success: true,
       message: 'Events retrieved and saved successfully',
