@@ -23,7 +23,7 @@ const GetEventsAndMarkets = () => {
         for (const sportsId of sportsIds){
             const listEventsResponse = await eventsBySupportJobs(sportsId);
             const listEventsData = listEventsResponse.events;
-            console.log('Data of Events', listEventsData)
+            // console.log('Data of Events', listEventsData)
             const dummydata = listEventsData.map(async(item)=>{
                 let eventId = item.Id
                 let sport = item.sport

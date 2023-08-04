@@ -401,7 +401,7 @@ async function eventsBySupportJobs(sportsId) {
     }
 
     const savedEvents = await inPlayEvents.bulkWrite(sportsEventData);
-    console.log('===== Saved Events ', savedEvents)
+    console.log('===== Saved Events bulkWrite logs ', savedEvents)
     return({
       success: true,
       message: 'Events retrieved and saved successfully',
