@@ -240,11 +240,13 @@ function getAllSelectedCasinos(req, res) {
         if (data.total == 0) {
           return res.status(404).send({ message: 'No records found'});
         }
-        if (data.total == 0) {
-          return res.status(404).send({ message: 'No records found', isLoading: false });
-        }
+   
         if (err)
           return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
+          console.log('page', data.page),
+          console.log('total', data.total),
+          console.log('page', data.page),
+          console.log('pages', data.pages)
           return res.send({
             message: 'Selected Casino Games List',
             success: true,
