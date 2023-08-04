@@ -6,14 +6,16 @@ const deleteClosedOddsData = () => {
   cron.schedule('* * * * *', async () => {
     try {
       let time = Date.now() - 5 * 60 * 1000;
-      const ids = Odds.distinct('eventId', {createdAt: {
-          $lt: time
-        }}
-      )
-      ids.pop()
+      // const ids = Odds.distinct('eventId', {createdAt: {
+      //     $lt: time
+      //   }}
+      // )
+      // ids.pop()
+      const ids = Odds.distinct('eventId', {createdAt: { $lt: time }});
+      const newIds = ids.slice(0, -1);
       await Odds.remove({
         eventId: {
-          $in: ids
+          $in: newIds
         }
       }, (err, data)=>{
         if(err){
