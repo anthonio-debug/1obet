@@ -197,12 +197,12 @@ async function placeBet(req, res) {
     console.log('uniqueBlockedSubMarkets', uniqueBlockedSubMarkets);
     console.log('uniqueBlockedSubMarketsByParent', uniqueBlockedSubMarketsByParent);
 
-    if (uniqueBlockedMarketPlaces.includes(sportsId) || uniqueBlockedSubMarkets.includes(marketplace.subMarketId)
-      || uniqueBlockedSubMarketsByParent.includes(marketplace.subMarketId)) {
+    if (uniqueBlockedMarketPlaces.some((id)=> id==sportsId) || uniqueBlockedSubMarkets.some((id)=>id==marketplace.subMarketId)
+      || uniqueBlockedSubMarketsByParent.some((id)=> id==marketplace.subMarketId)) {
       return res.status(404).send({ message: 'Betting disabled by your dealer' });
     }
     // Check if the user is allowed to place a bet in the specified market and submarket
-    if (user.betLockStatus == true || user.blockedSubMarketsByParent.includes(marketplace.subMarketId)) {
+    if (user.betLockStatus == true || user.blockedSubMarketsByParent.some((id)=> id==marketplace.subMarketId)) {
       return res.status(400).send({ message: 'Bet not allowed for your account' });
     }
     // default maxbetsize should be of that set by company but if the user set his own betsize then his
@@ -210,22 +210,22 @@ async function placeBet(req, res) {
 
     // need review check 
     // to do need the check of name also in userBetSizes for specific submarkets maxbetamount
-    const UserMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: sportsId }).exec();
+    const UserMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: sportsId !='4' && sportsId }).exec();
     console.log('UserMaxBetSize', UserMaxBetSize)
-    const MaxBetSize = await maxAllowedBetSizes.findOne({ sportsId: sportsId }).exec();
+    const MaxBetSize = await maxAllowedBetSizes.findOne({ sportsId: sportsId !='4' && sportsId }).exec();
     console.log('dealerMaxBetSize', MaxBetSize)
 
-    // let errorMessage;
-    // if (UserMaxBetSize && UserMaxBetSize.amount < MaxBetSize.maxAmount) {
-    //   errorMessage = `Max Size is: ${UserMaxBetSize.amount}`;
-    // } else {
-    //   errorMessage = `Max Size is: ${MaxBetSize.maxAmount}`;
-    // }
+    let errorMessage;
+    if (UserMaxBetSize && MaxBetSize && UserMaxBetSize.amount < MaxBetSize.maxAmount) {
+      errorMessage = `Max Size is: ${UserMaxBetSize.amount}`;
+    } else if( MaxBetSize) {
+      errorMessage = `Max Size is: ${MaxBetSize.maxAmount}`;
+    }
 
 
-    // if (betAmount > (UserMaxBetSize?.amount || MaxBetSize?.maxAmount)) {
-    //   return res.status(404).send({ message: errorMessage });
-    // }
+    if (betAmount > (UserMaxBetSize?.amount || MaxBetSize?.maxAmount)) {
+      return res.status(404).send({ message: errorMessage });
+    }
     // need review check  end
     //for cricket,teniss,soccer events
     if (sportsId !== '7' && sportsId !== '4339' && sportsId !== '4') {
@@ -291,7 +291,7 @@ async function placeBet(req, res) {
         // console.log(`Odds not available for the selected team ${req.body.selectionId}`);
         // return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
-      return
+      // return
       runnerName = selectedTeamOdds.runnerName
       let selectedOddsRate;
 
