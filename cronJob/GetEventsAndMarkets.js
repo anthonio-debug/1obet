@@ -36,7 +36,7 @@ const findOddsForOneTime = async (ids) => {
 
 
 
-const GetEventsAndMarkets = async () => {
+const GetEventsAndMarkets = () => {
    cron.schedule('* * * * * *', async () => {
         try {
         const sportsIds = [4,2,1]; 
@@ -50,7 +50,7 @@ const GetEventsAndMarkets = async () => {
                 await listMarketsByCronJob(eventId,sport);
             }
             if(newInsertedIds.length > 0){
-                setTimeout(() => {
+                setTimeout( async () => {
                     await findOddsForOneTime(newInsertedIds)
                 }, 2000);
             }
