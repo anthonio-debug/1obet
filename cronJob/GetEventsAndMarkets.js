@@ -17,7 +17,6 @@ const raceMarkets = require("../app/models/raceMarkets");
 require('../db');
 
 const GetEventsAndMarkets = () => {
-   // Cron job to run every 1 minute
    cron.schedule('*/1 * * * *', async () => {
         try {
         const sportsIds = [4,2,1]; 
