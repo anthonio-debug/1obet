@@ -369,7 +369,7 @@ async function eventsBySupportJobs(sportsId) {
   try {
     const response = await axios.get(url);
     const events = response.data;
-    console.log('Events ---> ',events);
+
  
     if(events){
       var sportsEventData = events.map((element) => ({
@@ -399,12 +399,14 @@ async function eventsBySupportJobs(sportsId) {
       }));
     }
 
+    // 1"obet.com/*"
     const savedEvents = await inPlayEvents.bulkWrite(sportsEventData);
-    console.log('SavedEvents', savedEvents)
+    // console.log('===== Saved Events bulkWrite logs ', savedEvents?.result?.upserted)
     return({
       success: true,
       message: 'Events retrieved and saved successfully',
       events: events,
+      newInsertedIds: savedEvents?.result?.upserted
     });
   } catch (error) {
     console.error(error);
@@ -421,26 +423,6 @@ async function listMarketsByCronJob(eventId,sport) {
   try {
     const response = await axios.get(url);
     const marketsData = response.data;
-    console.log('marketData', marketsData)
-    let sportIds = { "soccer" : "1", "cricket" : "4", "tennis" : "2" }
-
-    var listMarketData = await marketsData.map((element) => ({
-      updateOne: {
-        filter: { marketId: element.marketId },
-        update: {
-          $set: {
-            status: element.status,
-            eventId: eventId,
-            marketName: element.marketName,
-            totalMatched: element.totalMatched,
-            sportsId: sportIds[sport],
-          },
-        },
-        upsert: true,
-      },
-    }));
-
-    const savedEvents = await ListMarket.bulkWrite(listMarketData);
      
     let marketIds = []
     marketsData.forEach(element => {

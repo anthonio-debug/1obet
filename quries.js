@@ -84,7 +84,7 @@ db.sidebarmenus.insertMany([
     darkIcon: "https://1obet.com/assets/dark-icons/bet-fair-games.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 0,
-    link: "/bet-fair-games",
+    link: "/betfair-games?name=betfair",
   },
   {
     name: "120 British Casino",
@@ -217,7 +217,7 @@ db.sidebarmenus.insertMany([
     darkIcon: "https://1obet.com/assets/dark-icons/bet-fair-games.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 1,
-    link: "/bet-fair-games",
+    link:"/betfair-games?name=betfair"
   },
   {
     name: "120 British Casino",

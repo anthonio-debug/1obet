@@ -211,14 +211,52 @@ function getCategoryCasinoGames(req, res) {
   });
 }
 
-async function getAllSelectedCasinos(req, res) {
-  const data = await SelectedCasino.find({});
-  return res.send({
-    message: 'Selected Casino Games List',
-    success: true,
-    results: data,
-  });
-}
+function getAllSelectedCasinos(req, res) {
+
+  let query = {}
+  let page = 1;
+  let sort = -1;
+  let sortValue = '_id';
+  let limit = 20;
+  if (req.query.numRecords) {
+    if (isNaN(req.query.numRecords))
+      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+    if (req.query.numRecords < 0)
+      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+    limit = Number(req.query.numRecords);
+  }
+  if (req.query.sortValue) sortValue = req.query.sortValue;
+  if (req.query.sort) {
+    sort = Number(req.query.sort);
+  }
+  if (req.query.page) {
+    page = Number(req.query.page);
+  }
+  SelectedCasino.paginate(
+    query,
+    { page: page, limit: limit },
+      (err, data) => {
+      
+        if (data.total == 0) {
+          return res.status(404).send({ message: 'No records found'});
+        }
+   
+        if (err) return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
+          console.log('page', data.page),
+          console.log('total', data.total),
+          console.log('page', data.page),
+          console.log('pages', data.pages)
+          return res.send({
+            message: 'Selected Casino Games List',
+            success: true,
+            results: data.docs,
+            page: data.page,
+            limit: data.limit,
+            total: data.total,
+            pages: data.pages
+          });
+      })
+  }
 
 async function getGame(req, res) {
   try {
@@ -280,33 +318,37 @@ function getGamesByName(req, res) {
   });
 }
 
-async function addSelectedDashboardGames(req, res) {
+function addSelectedDashboardGames(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.array() });
   }
-  try{
-    const  {gameIds}  = req.body;
-    console.log("gameIds", gameIds)
-    await SelectedCasino.updateMany(
-      { 'game.id': { 
-        $nin: gameIds 
-      }},
-      { $set: 
-        { 
-          'games.$[game].isDashboard': false 
-      }},
-    )
-    await SelectedCasino.updateMany(
-      { 'game.id': { $in: gameIds } },
-      { $set: { 'games.$[game].isDashboard': true } },
-    )
-    return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
-  }
-  catch (err){
+
+  const { gameIds } = req.body;
+
+  SelectedCasino.updateMany(
+    {},
+    { $set: { 'games.$[game].isDashboard': true } },
+    { arrayFilters: [{ 'game.id': { $in: gameIds } }], new: true }
+  ).then((result) => {
+    if (result.nModified === 0) {
+      // No documents were modified, handle accordingly
+      return res.status(404).send({ success: false, message: 'No matching games found' });
+    }
+
+    // Update all other games to isDashboard: false
+    SelectedCasino.updateMany(
+      {},
+      { $set: { 'games.$[game].isDashboard': false } },
+      { arrayFilters: [{ 'game.id': { $nin: gameIds } }], new: true }
+    ).then(() => {
+      return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
+    }).catch((err) => {
+      return res.status(500).send({ success: false, message: 'Error updating non-matching games', err });
+    });
+  }).catch((err) => {
     return res.status(500).send({ success: false, message: 'Error updating selected games', err });
-  }
-  
+  });
 }
 
 
