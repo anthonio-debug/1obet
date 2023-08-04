@@ -19,19 +19,19 @@ require('../db');
 
 const findOddsForOneTime = async (ids) => {
     try{   
-        console.log("=============== ids ", ids);
-        const marketIds = await Events.distinct("marketIds", { '_id': { $in: ids} });
-        console.log('========= MarketID ', marketIds);
-        let batchArray = [];
-        for (let i = 0; i < marketIds.length; i += 20) {
-        batchArray.push(marketIds.slice(i, i + 20));
-        }
+        // console.log("=============== ids ", ids);
+        const marketId = await Events.distinct("marketIds", { '_id': { $in: ids}});
+        console.log('========= MarketID ', marketId);
+        // let batchArray = [];
+        // for (let i = 0; i < marketIds.length; i += 20) {
+        // batchArray.push(marketIds.slice(i, i + 20));
+        // }
 
-        console.log('========= batchArray', batchArray);
+        // console.log('========= batchArray', batchArray);
 
-        for (let i = 0; i < batchArray.length; i++) {
-        await getnewOdds(batchArray[i]);
-        }
+        // for (let i = 0; i < batchArray.length; i++) {
+        //     await getnewOdds(batchArray[i]);
+        // }
     } catch (error) {
         console.error('Error running odds cron job:', error);
     }
@@ -47,15 +47,15 @@ const GetEventsAndMarkets = async () => {
             const listEventsResponse = await eventsBySupportJobs(sportsId);
             const listEventsData = listEventsResponse.events;
             const  newInsertedIds = listEventsResponse?.newInsertedIds.map((id)=> id._id)
-            const dummydata = listEventsData.map( async(item)=>{
-                let eventId = item.Id
-                let sport = item.sport
-                // console.log("Sports Name", sport)
-                let listMarketsResponse = await listMarketsByCronJob(eventId,sport);
-            })
-
+            for (let i = 0; i < listEventsData.length; i++) {
+                let eventId = listEventsData[i].Id
+                let sport = listEventsData[i].sport
+                await listMarketsByCronJob(eventId,sport);
+            }
             if(newInsertedIds.length > 0){
-                await findOddsForOneTime(newInsertedIds)
+                // setTimeout( async () => {
+                    await findOddsForOneTime(newInsertedIds)
+                // }, 1500);
             }
         }
         } catch (error) {
