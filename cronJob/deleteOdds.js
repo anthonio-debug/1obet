@@ -3,7 +3,7 @@ const Odds = require('../app/models/odds');
 const raceOdds = require('../app/models/raceOdds');
 require('../db');
 const deleteClosedOddsData = () => {
-  cron.schedule('*/3 * * * *', async () => {
+  cron.schedule('* * * * *', async () => {
     try {
       let time = Date.now() - 5 * 60 * 1000;
       const ids = Odds.distinct('eventId', {createdAt: {
@@ -23,7 +23,7 @@ const deleteClosedOddsData = () => {
           console.log(data);
         }
       })
-      await raceOdds.remove({
+      const count = await raceOdds.remove({
         createdAt: {
           $lt: time
         }
@@ -31,7 +31,7 @@ const deleteClosedOddsData = () => {
         if(err){
           console.log(err);
         }else{
-          console.log("Old odds removed successfully.");
+          console.log(`Old odds removed successfully. ${count}`);
           console.log(data);
         }
       })
