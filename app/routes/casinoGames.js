@@ -234,7 +234,7 @@ function getAllSelectedCasinos(req, res) {
   }
   SelectedCasino.paginate(
     query,
-    { page: page, sort: { [sortValue]: sort }, limit: limit },
+    { page: page, limit: limit },
       (err, data) => {
       
         if (data.total == 0) {
