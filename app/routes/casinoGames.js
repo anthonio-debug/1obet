@@ -241,8 +241,7 @@ function getAllSelectedCasinos(req, res) {
           return res.status(404).send({ message: 'No records found'});
         }
    
-        if (err)
-          return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
+        if (err) return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
           console.log('page', data.page),
           console.log('total', data.total),
           console.log('page', data.page),
