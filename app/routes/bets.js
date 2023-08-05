@@ -162,10 +162,20 @@ async function placeBet(req, res) {
       },
       isDeleted:false
     });
-    return res.status(200).send({ data : marketId}); 
+
+    const submarketId = await User.distinct("blockedSubMarkets blockedSubMarketsByParent", {
+      userId :{
+        $in: parentUserIds
+      },
+      isDeleted:false
+    });
+
+    
+
+    return res.status(200).send({ data : submarketId}); 
 
 
-    await checkAndPlaceBet(1, sportsId, matchId, subMarketName, selectionId, betRate, betAmount, req.body.type, ratesArray);
+    // await checkAndPlaceBet(1, sportsId, matchId, subMarketName, selectionId, betRate, betAmount, req.body.type, ratesArray);
     // const selectedTime = new Date(req.body.selectedTime).getTime()
     // console.log('selectedTime',selectedTime);
 
