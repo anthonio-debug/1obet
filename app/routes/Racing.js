@@ -280,11 +280,12 @@ async function todayRaceJob(sportsId) {
       });
     });   
     console.log(races);
-    await Event.bulkWrite(racesBulkOperation);
+    const res = await Event.bulkWrite(racesBulkOperation);
     return ({
       success: true,
       message: 'Race Records list',
       results: races,
+      eventIds:res?.result?.upserted
     });
   } catch (error) {
     console.error(error);

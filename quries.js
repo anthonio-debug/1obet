@@ -84,7 +84,7 @@ db.sidebarmenus.insertMany([
     darkIcon: "https://1obet.com/assets/dark-icons/bet-fair-games.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 0,
-    link: "/bet-fair-games",
+    link: "/betfair-games?name=betfair",
   },
   {
     name: "120 British Casino",
@@ -217,7 +217,7 @@ db.sidebarmenus.insertMany([
     darkIcon: "https://1obet.com/assets/dark-icons/bet-fair-games.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 1,
-    link: "/bet-fair-games",
+    link:"/betfair-games?name=betfair"
   },
   {
     name: "120 British Casino",
@@ -273,19 +273,20 @@ db.bettingfigures.insertMany([
 ])
 
 db.users.insertOne({ 
-  "userName" : "shampydicompany3", 
+  "userName" : "bettor1", 
   "password" : '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy', 
-  "reference" : "shampydicompany3", 
+  "reference" : "bettor1", 
   "phone" : "03056959889",  
-  "role" : "0",
+  "role" : "5",
   "isActive" : true,
   "status" : 1,
   "notes" : "this is note",
-  "userId" : 2145, 
+  "userId" : 1112, 
   "passwordChanged" : false, 
   "balance" : 5000000000,
   "isDeleted":false,
   "clienPL":5000000000,
+  "availableBalance":25000,
   "credit":5000000000,
   "creditLimit":5000000000, 
   "createdAt" : 1678044562.685, 

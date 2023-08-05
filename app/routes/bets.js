@@ -123,56 +123,70 @@ async function placeBet(req, res) {
   }
 
   try {
+    if (req.decoded.login.role !== '5') {
+      return res.status(401).send({ message: 'You are not allowed to bet' });
+    }
     let match;
     let marketplace;
     let runnerName;
     let matchName;
-
+    const { selectionId, betAmount, betRate, matchId, subMarketName, raceMarketId, sportsId } = req.body;
     // Create arrays to store the rates for each second
     const ratesArray = [];
-
-    await checkAndPlaceBet(1, sportsId, matchId, subMarketName, selectionId, betRate, betAmount, req.body.type, ratesArray);
-
-    if (req.decoded.login.role !== '5') {
-      return res.status(404).send({ message: 'You are not allowed to bet' });
-    }
-    // const selectedTime = new Date(req.body.selectedTime).getTime()
-    // console.log('selectedTime',selectedTime);
-
-    const { selectionId, betAmount, betRate, matchId, subMarketName, raceMarketId, sportsId } = req.body;
-    if (sportsId === '7' || sportsId === '4339') {
-      console.log('in horse race submarkets sportsId',sportsId);
-
-       marketplace = await SubMarketType.findOne({ countryCode: subMarketName, marketId: sportsId }).exec();
-      if (!marketplace) {
-        return res.status(404).send({ message: 'Marketplaces not found' });
-      }
-    } else {
-      console.log('other race submarkets');
-
-      marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
-      if (!marketplace) {
-        return res.status(404).send({ message: 'Marketplaces not found' });
-      }
-    }
     const userId = req.decoded.userId;
+
+    if ( betAmount < config.betMinimumAmount) {
+      return res.status(404).send({ message: `minimun amount should be ${config.betMinimumAmount} ` });
+    }
     const user = await User.findOne({ userId }).exec();
     if (!user) {
       return res.status(404).send({ message: 'User not found' });
     }
-    if ( betAmount < config.betMinimumAmount) {
-      return res.status(404).send({ message: 'minimun amount should be 100' });
-    }
+
     console.log('userAvailableBalance',user.availableBalance)
+
     if (user.availableBalance < betAmount) {
       return res.status(404).send({ message: 'Insufficient balance' });
     }
+
     if (user.bettingAllowed == false) {
       return res.status(404).send({ message: 'Betting is not allowed for your account' });
     }
 
     const parentUserIds = await getParents(user.userId);
     console.log('parentUserIds in betplace', parentUserIds);
+
+    const marketId = await User.distinct("blockedMarketPlaces", {
+      userId :{
+        $in: parentUserIds
+      },
+      isDeleted:false
+    });
+    return res.status(200).send({ data : marketId}); 
+
+
+    await checkAndPlaceBet(1, sportsId, matchId, subMarketName, selectionId, betRate, betAmount, req.body.type, ratesArray);
+    // const selectedTime = new Date(req.body.selectedTime).getTime()
+    // console.log('selectedTime',selectedTime);
+
+    
+    if (sportsId === '7' || sportsId === '4339') {
+      console.log('in horse race submarkets sportsId',sportsId);
+
+      marketplace = await SubMarketType.findOne({ countryCode: subMarketName, marketId: sportsId }).exec();
+      // review 
+      if (!marketplace) {
+        return res.status(404).send({ message: 'Marketplaces not found' });
+      }
+      // end 
+    } else {
+      console.log('other  sub markets');
+
+      marketplace = await SubMarketType.findOne({ name: subMarketName, marketId: sportsId }).exec();
+      if (!marketplace) {
+        return res.status(404).send({ message: 'Market places not found' });
+      }
+    }
 
     const parentUser = await User.find({
       userId: { $in: [...parentUserIds] },
@@ -197,12 +211,12 @@ async function placeBet(req, res) {
     console.log('uniqueBlockedSubMarkets', uniqueBlockedSubMarkets);
     console.log('uniqueBlockedSubMarketsByParent', uniqueBlockedSubMarketsByParent);
 
-    if (uniqueBlockedMarketPlaces.includes(sportsId) || uniqueBlockedSubMarkets.includes(marketplace.subMarketId)
-      || uniqueBlockedSubMarketsByParent.includes(marketplace.subMarketId)) {
+    if (uniqueBlockedMarketPlaces.some((id)=> id==sportsId) || uniqueBlockedSubMarkets.some((id)=>id==marketplace.subMarketId)
+      || uniqueBlockedSubMarketsByParent.some((id)=> id==marketplace.subMarketId)) {
       return res.status(404).send({ message: 'Betting disabled by your dealer' });
     }
     // Check if the user is allowed to place a bet in the specified market and submarket
-    if (user.betLockStatus == true || user.blockedSubMarketsByParent.includes(marketplace.subMarketId)) {
+    if (user.betLockStatus == true || user.blockedSubMarketsByParent.some((id)=> id==marketplace.subMarketId)) {
       return res.status(400).send({ message: 'Bet not allowed for your account' });
     }
     // default maxbetsize should be of that set by company but if the user set his own betsize then his
@@ -210,22 +224,23 @@ async function placeBet(req, res) {
 
     // need review check 
     // to do need the check of name also in userBetSizes for specific submarkets maxbetamount
-    const UserMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: sportsId }).exec();
+    const UserMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: sportsId !='4' && sportsId }).exec();
     console.log('UserMaxBetSize', UserMaxBetSize)
-    const MaxBetSize = await maxAllowedBetSizes.findOne({ sportsId: sportsId }).exec();
+    const MaxBetSize = await maxAllowedBetSizes.findOne({ sportsId: sportsId !='4' && sportsId }).exec();
     console.log('dealerMaxBetSize', MaxBetSize)
 
-    // let errorMessage;
-    // if (UserMaxBetSize && UserMaxBetSize.amount < MaxBetSize.maxAmount) {
-    //   errorMessage = `Max Size is: ${UserMaxBetSize.amount}`;
-    // } else {
-    //   errorMessage = `Max Size is: ${MaxBetSize.maxAmount}`;
-    // }
+    let errorMessage;
+    if (UserMaxBetSize && MaxBetSize && UserMaxBetSize.amount < MaxBetSize.maxAmount) {
+      errorMessage = `Max Size is: ${UserMaxBetSize.amount}`;
+    } else if( MaxBetSize) {
+      errorMessage = `Max Size is: ${MaxBetSize.maxAmount}`;
+    }
 
 
-    // if (betAmount > (UserMaxBetSize?.amount || MaxBetSize?.maxAmount)) {
-    //   return res.status(404).send({ message: errorMessage });
-    // }
+    if (betAmount > (UserMaxBetSize?.amount || MaxBetSize?.maxAmount)) {
+      return res.status(404).send({ message: errorMessage });
+    }
+
     // need review check  end
     //for cricket,teniss,soccer events
     if (sportsId !== '7' && sportsId !== '4339' && sportsId !== '4') {
@@ -291,7 +306,7 @@ async function placeBet(req, res) {
         // console.log(`Odds not available for the selected team ${req.body.selectionId}`);
         // return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
-      return
+      // return
       runnerName = selectedTeamOdds.runnerName
       let selectedOddsRate;
 
@@ -439,6 +454,7 @@ async function placeBet(req, res) {
         console.log('Selected Odds:', selectedOddsRate);
       }
     }
+    
     if (sportsId == '7' || sportsId == '4339') {
       console.log('in horse race greyhound event');
       const marketId = await Events.distinct('marketIds', {
