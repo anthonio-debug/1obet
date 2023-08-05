@@ -35,7 +35,8 @@ const inPlayEventsSchema = new mongoose.Schema({
   countryCodes:{ type: String },
   meetingName: { type: String },
   meetingGoing: { type: String },
-  meetingOpenDate: { type: String }
+  meetingOpenDate: { type: String },
+  winner: { type: Number, default: 0 }
 });
 
 
