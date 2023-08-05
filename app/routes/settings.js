@@ -1043,8 +1043,40 @@ async function bettorDashboardGames(req, res) {
         },
       },
     ]).exec();
-
-    const selectedCasinoData = await SelectedCasino.find({ 'games.isDashboard': true }, { 'games.$': 1 });
+   
+    const selectedCasinoData = await SelectedCasino.aggregate([
+      {
+        $project: {
+          category: 1,
+          status: 1,
+          games: {
+            $filter: {
+              input: '$games',
+              as: 'game',
+              cond: { $eq: ['$$game.isDashboard', true] }
+            }
+          }
+        }
+      },
+      
+      {
+        $project: {
+          category: 1,
+          status: 1,
+          games: {
+            name: 1,
+            id: 1,
+            id_hash: 1,
+            image_filled: 1,
+            isDashboard: 1
+          }
+        }
+      }
+    ]).exec();
+    
+//     const selectedCasinoData = await SelectedCasino.find({});
+//     selectedCasinoData.find((item) => item.games.some((game) => game.isDashboard === true));
+// console.log('selectedCasinoData', selectedCasinoData);
 
     const organizedEvents = {
       soccer: events[0].soccer,
