@@ -118,5 +118,6 @@
   "reviewFakeBet",
   "searchSingleUser",
   "updateMatch",
-  "bettorDashboardGames"
+  "bettorDashboardGames",
+  "getAllGamesResult"
 ]

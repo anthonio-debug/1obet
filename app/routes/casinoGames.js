@@ -9,6 +9,9 @@ let config = require('config');
 const User = require('../models/user');
 
 async function addCasinoGameDetails(req, res) {
+  if( req.decoded.role !== '0' ){
+    return res.status(200).send({ message: 'you are not allowed to add games',success:false})
+  }
   try {
     const response = await axios.post(config.apiUrl, {
       api_password: config.api_password,
@@ -265,6 +268,9 @@ async function getGame(req, res) {
       return res.status(400).send({ errors: errors.errors });
     }
 
+    if( req.decoded.role !== '5' ){
+      return res.status(200).send({ message: 'you are not allowed to play casino games',success:false})
+    }
     const { homeurl, cashierurl, gameid } = req.body;
     const user = await User.findOne({ userId: req.decoded.userId });
 
@@ -324,6 +330,9 @@ function addSelectedDashboardGames(req, res) {
     return res.status(400).send({ errors: errors.array() });
   }
 
+  if ( req.decoded.role !== '0' ) {
+    return res.status(200).send({ message: 'you are not allowed to add dashboard games', success: false })
+  }
   const { gameIds } = req.body;
 
   SelectedCasino.updateMany(

@@ -1103,152 +1103,82 @@ async function bettorDashboardGames(req, res) {
   }
 }
 
+async function getAllGamesResult(req, res) {
+  try {
+    const sportsIdArray = ['1', '2', '4', '7', '4339'];
+    const events = await Events.aggregate([
+      {
+        $match: {
+          sportsId: { $in: sportsIdArray } 
+        },
+      },
+      {
+        $facet: {
+          soccer: [
+            { $match: { 
+              sportsId: '1',
+              winner: 0,
+              openDate: { $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00")},
+             }},
+            { $sort: { openDate: 1 } 
+          },
+          ],
+          tennis: [
+            { $match: { 
+              sportsId: '2',
+              winner: 0,
+              openDate: { $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00")},
+            }},
+            { $sort: { openDate: 1 } },
+          ],
+          cricket: [
+            { $match: { 
+              sportsId: '4', 
+              winner: 0,
+              openDate: { $lt: moment(new Date(Date.now() - 180 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00")},
+            }},
+            { $sort: { openDate: 1 } },
+          ],
+          horseRace: [
+            { $match: { 
+              sportsId: '7',
+              winner: 0,
+              openDate: { $lt: moment(new Date(Date.now() - 10 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00")},
+            }},
+          ],
+          greyhound: [
+            { $match: { 
+              sportsId: '4339', 
+              winner: 0,
+              openDate: { $lt: moment(new Date(Date.now() - 5 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00")},
+            }}
+          ],
+        },
+      },
+    ]).exec();
+  
+    const organizedEvents = {
+      soccer: events[0].soccer,
+      tennis: events[0].tennis,
+      cricket: events[0].cricket,
+      horseRace: events[0].horseRace,
+      greyhound: events[0].greyhound,
+    };
 
-
-// async function bettorDashboardGames(req, res) {
-//   try {
-//     const sportsIdArray = ['1', '2', '4', '7', '4339'];
-//     const inplayIdArray = ['1', '2', '4'];
-//     let events,inplay;
-//     // if (inplay === true || inplay === 'true') {
-//     //   events = await Events.find({ inplay: true, sportsId: { $in: sportsIdArray, $nin: ['7', '4339'] } });
-//     // } else {
-//       events = await Events.find({ sportsId: { $in: sportsIdArray } }).sort({ inplay: -1 });
-//     // }
-//     // console.log('events',events);
-//     const inplayEvents = await Events.find({ inplay: true, sportsId: { $in: inplayIdArray} });
-//     const selectedCasinoData = await SelectedCasino.find({});
-
-//     // const organizedEvents = {
-//     //   soccer: [],
-//     //   tennis: [],
-//     //   cricket: [],
-//     //   horseRace: [],
-//     //   greyhound: [],
-//     //   inplay: [],
-//     //   casinoData: selectedCasinoData,
-//     // };
-// const filterCricketData =  events?.filter((item)=> item?.sportsId==='4')?.filter((z)=>z?.iconStatus==true)
-// const soccerData = events?.filter((item)=> item.sportsId==='1')
-// const tenissData =  events?.filter((item)=> item?.sportsId==='2')
-// const horseRAceData = events?.filter((item)=> item?.sportsId==='7')
-// const greyhoundData = events?.filter((item)=> item?.sportsId==='4339')
-// // const inplayData =  events?.filter((item)=> item?.inplay==true)
-// const organizedEvents = {
-//   soccer: soccerData,
-//   tennis: tenissData,
-//   cricket: filterCricketData,
-//   horseRace: horseRAceData,
-//   greyhound: greyhoundData,
-//   inplay: Events,
-//   casinoData: selectedCasinoData,
-// };
-//     // events.forEach((event) => {
-//     //   if (event.sportsId === '1') {
-//     //     organizedEvents.soccer.push(event);
-//     //   } else if (event.sportsId === '2') {
-//     //     organizedEvents.tennis.push(event);
-//     //   } else if (event.sportsId === '4') {
-//     //     organizedEvents.cricket.push(event);
-//     //   } else if (event.sportsId === '7') {
-//     //     organizedEvents.horseRace.push(event);
-//     //   } else if (event.sportsId === '4339') {
-//     //     organizedEvents.greyhound.push(event);
-//     //   }
-
-//     //   if (event.inplay === true) {
-//     //     organizedEvents.inplay.push(event);
-//     //   }
-//     // });
-
-//     res.status(200).json({
-//       success: true,
-//       message: 'Event By Sports Records',
-//       results: organizedEvents,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(200).json({
-//       success: false,
-//       message: 'Failed to get events',
-//       error: error.message,
-//     });
-//   }
-// }
-// async function bettorDashboardGames(req, res) {
-//   try {
-//     const sportsIdArray = ['1', '2', '4', '7', '4339'];
-//     const inplayIdArray = ['1', '2', '4'];
-//     let events,inplay;
-//     // if (inplay === true || inplay === 'true') {
-//     //   events = await Events.find({ inplay: true, sportsId: { $in: sportsIdArray, $nin: ['7', '4339'] } });
-//     // } else {
-//       events = await Events.find({ sportsId: { $in: sportsIdArray } })
-//     // }
-//     console.log('events',events);
-//     const selectedCasinoData = await SelectedCasino.find({});
-
-//     // const organizedEvents = {
-//     //   soccer: [],
-//     //   tennis: [],
-//     //   cricket: [],
-//     //   horseRace: [],
-//     //   greyhound: [],
-//     //   inplay: [],
-//     //   casinoData: selectedCasinoData,
-//     // };
-// const filterCricketData =  events?.filter((item)=> item?.sportId==='4')?.filter((z)=>z?.iconStatus==true)?.sort((a, b)=> Number(b?.inplay)- Number(a.inplay))
-// const soccerData = events?.filter((item)=> item.sportId==='1')?.sort((a, b)=> Number(b?.inplay)- Number(a.inplay))
-// const tenissData =  events?.filter((item)=> item?.sportId==='2')?.sort((a, b)=> Number(b?.inplay)- Number(a.inplay))
-// const horseRAceData = events?.filter((item)=> item?.sportId==='7')
-// const greyhoundData = events?.filter((item)=> item?.sportId==='4339')
-// const inplayEvents = events?.filter((item)=> item?.inplay===true)?.sort((a, b)=> Number(b?.inplay)- Number(a.inplay))
-
-// // const inplayEvents = await Events.find({ inplay: true, sportsId: { $in: inplayIdArray} });
-
-// // const inplayData =  events?.filter((item)=> item?.inplay==true)
-// const organizedEvents = {
-//   soccer: soccerData,
-//   tennis: tenissData,
-//   cricket: filterCricketData,
-//   horseRace: horseRAceData,
-//   greyhound: greyhoundData,
-//   inplay: Events,
-//   casinoData: selectedCasinoData,
-// };
-//     // events.forEach((event) => {
-//     //   if (event.sportsId === '1') {
-//     //     organizedEvents.soccer.push(event);
-//     //   } else if (event.sportsId === '2') {
-//     //     organizedEvents.tennis.push(event);
-//     //   } else if (event.sportsId === '4') {
-//     //     organizedEvents.cricket.push(event);
-//     //   } else if (event.sportsId === '7') {
-//     //     organizedEvents.horseRace.push(event);
-//     //   } else if (event.sportsId === '4339') {
-//     //     organizedEvents.greyhound.push(event);
-//     //   }
-
-//     //   if (event.inplay === true) {
-//     //     organizedEvents.inplay.push(event);
-//     //   }
-//     // });
-
-//     res.status(200).json({
-//       success: true,
-//       message: 'Event By Sports Records',
-//       results: organizedEvents,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(200).json({
-//       success: false,
-//       message: 'Failed to get events',
-//       error: error.message,
-//     });
-//   }
-// }
-
+    res.status(200).json({
+      success: true,
+      message: 'Event By Sports Records',
+      results: organizedEvents,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({
+      success: false,
+      message: 'Failed to get events',
+      error: error.message,
+    });
+  }
+}
 
 loginRouter.post(
   '/updateDefaultTheme',
@@ -1304,5 +1234,6 @@ loginRouter.post('/updateMatchType', updateMatchType);
 loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 loginRouter.post('/updateMatch', updateMatch);
 loginRouter.get('/bettorDashboardGames', bettorDashboardGames);
+loginRouter.get('/getAllGamesResult', getAllGamesResult);
 
 module.exports = { loginRouter, router, listOddsAPI };
