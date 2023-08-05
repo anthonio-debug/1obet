@@ -1058,6 +1058,7 @@ async function bettorDashboardGames(req, res) {
           }
         }
       },
+      
       {
         $project: {
           category: 1,
