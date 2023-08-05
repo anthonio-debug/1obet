@@ -326,20 +326,21 @@ function addSelectedDashboardGames(req, res) {
 
   const { gameIds } = req.body;
 
-  // Update all games to have isDashboard: true if their id is in gameIds
   SelectedCasino.updateMany(
     { 'games.id': { $in: gameIds }},
-    { $set: { 'games.$[game].isDashboard': true } }
+    { $set: { 'games.$[game].isDashboard': true } },
+    { arrayFilters: [{ 'game.id': { $in: gameIds } }] }
   ).then((result) => {
     if (result.nModified === 0) {
       // No documents were modified, handle accordingly
       return res.status(404).send({ success: false, message: 'No matching games found' });
     }
 
-    // Update all games to have isDashboard: false if their id is not in gameIds
+    // Update all other games to isDashboard: false
     SelectedCasino.updateMany(
       { 'games.id': { $nin: gameIds } },
-      { $set: { 'games.$[game].isDashboard': false } }
+      { $set: { 'games.$[game].isDashboard': false } },
+      { arrayFilters: [{ 'game.id': { $nin: gameIds } }] }
     ).then(() => {
       return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
     }).catch((err) => {
