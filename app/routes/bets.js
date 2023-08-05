@@ -603,7 +603,7 @@ async function placeBet(req, res) {
     });
   } catch (error) {
     console.error('error', error);
-    return res.status(404).send({ message: 'Error placing bet' });
+    return res.status(404).send({ message: `Error placing bet ${error}` });
   }
 }
 
