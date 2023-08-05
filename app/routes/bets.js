@@ -155,24 +155,11 @@ async function placeBet(req, res) {
 
     const parentUserIds = await getParents(user.userId);
     console.log('parentUserIds in betplace', parentUserIds);
-
-    const marketId = await User.distinct("blockedMarketPlaces", {
-      userId :{
-        $in: parentUserIds
-      },
-      isDeleted:false
-    });
-
-    const submarketId = await User.distinct(["blockedSubMarkets", "blockedSubMarketsByParent"], {
-      userId :{
-        $in: parentUserIds
-      },
-      isDeleted:false
-    });
-
-    
-
-    return res.status(200).send({ data : submarketId}); 
+    const marketId = await User.distinct("blockedMarketPlaces", {userId :{ $in: parentUserIds}, isDeleted:false });
+    const subMarketId1 = await User.distinct("blockedSubMarkets", { userId :{ $in: parentUserIds },isDeleted:false });
+    const subMarketId2 = await User.distinct("blockedSubMarketsByParent", { userId :{ $in: parentUserIds }, isDeleted:false });
+    const subMarketId = subMarketId1.concat(subMarketId2)
+    return res.status(200).send({ data : subMarketId}); 
 
 
     // await checkAndPlaceBet(1, sportsId, matchId, subMarketName, selectionId, betRate, betAmount, req.body.type, ratesArray);
