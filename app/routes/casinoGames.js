@@ -326,35 +326,25 @@ function addSelectedDashboardGames(req, res) {
 
   const { gameIds } = req.body;
 
-  // Update all games in the collection to have isDashboard: false
   SelectedCasino.updateMany(
     {},
-    { $set: { 'games.$[].isDashboard': false } }
-  )
-    .then(() => {
-      // Update selected games with isDashboard: true
-      SelectedCasino.updateMany(
-        { 'games.id': { $in: gameIds } },
-        { $set: { 'games.$[game].isDashboard': true } },
-        { arrayFilters: [{ 'game.id': { $in: gameIds } }] }
-      )
-        .then((result) => {
-          const modifiedCount = result.modifiedCount || 0;
-          if (modifiedCount === 0) {
-            // No documents were modified, handle accordingly
-            return res.status(404).send({ success: false, message: 'No matching games found' });
-          }
-          return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
-        })
-        .catch((err) => {
-          return res.status(500).send({ success: false, message: 'Error updating selected games', err });
-        });
-    })
-    .catch((err) => {
-      return res.status(500).send({ success: false, message: 'Error updating games', err });
+    { $set: { 'games.$[game].isDashboard': true } },
+    { arrayFilters: [{ 'game.id': { $in: gameIds } }], new: true }
+  ).then((result) => {
+    // Update all other games to isDashboard: false
+    SelectedCasino.updateMany(
+      {},
+      { $set: { 'games.$[game].isDashboard': false } },
+      { arrayFilters: [{ 'game.id': { $nin: gameIds } }]}
+    ).then(() => {
+      return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
+    }).catch((err) => {
+      return res.status(500).send({ success: false, message: 'Error updating non-matching games', err });
     });
+  }).catch((err) => {
+    return res.status(500).send({ success: false, message: 'Error updating selected games', err });
+  });
 }
-
 
 
 
