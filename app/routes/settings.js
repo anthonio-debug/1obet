@@ -1065,10 +1065,10 @@ async function bettorDashboardGames(req, res) {
           status: 1,
           games: {
             name: 1,
-            image_filled: 1,
-            isDashboard: 1,
             id: 1,
-            id_hash:1
+            id_hash: 1,
+            image_filled: 1,
+            isDashboard: 1
           }
         }
       }
