@@ -1,5 +1,4 @@
 const { body } = require("express-validator");
-const messages = require("../messages/messages");
 
 module.exports.validate = (method) => {
   switch (method) {

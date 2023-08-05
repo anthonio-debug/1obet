@@ -4,7 +4,7 @@ let config = require('config');
 const betLockValidator = require('../validators/betLocks');
 const User = require('../models/user');
 const MarketType = require('../models/marketTypes');
-const CricketMatch = require('../models/cricketMatches');
+const Events = require('../models/events');
 const SubMarketType = require('../models/subMarketTypes');
 
 const loginRouter = express.Router();
@@ -15,10 +15,8 @@ async function addBetLock(req, res) {
     if (!errors.isEmpty()) {
       return res.status(400).send({ errors: errors.errors });
     }
-    const { selectedUsers, allUsers, subMarketId, betLockStatus } =
-      req.body;
-    // const query = { isDeleted: false };
-    const query = { isDeleted: false, userId : { $ne: req.decoded.userId  } };
+    const { selectedUsers, allUsers, subMarketNames, betLockStatus, matchId } = req.body;
+    const query = { isDeleted: false, userId: { $ne: req.decoded.userId } };
     query.createdBy = Number(req.decoded.userId);
 
     let loginUser = await User.findOne({ userId: req.decoded.userId });
@@ -26,6 +24,11 @@ async function addBetLock(req, res) {
     if (loginUser.betLockStatus == true) {
       return res.status(404).send({ message: 'Market Locked by the dealer' });
     }
+    let event = await Events.findOne({ _id: matchId })
+   let marketId = event.sportsId
+   console.log('event',event);
+    let foundSubMarkets = await SubMarketType.find({ name: { $in: subMarketNames },marketId: marketId }).select('subMarketId');
+    const subMarketIds = foundSubMarkets.map((subMarket) => subMarket.subMarketId);
 
     let foundUsers = [];
     if (allUsers) {
@@ -35,26 +38,19 @@ async function addBetLock(req, res) {
       const updateQuery = {};
       for (const user of foundUsers) {
         if (betLockStatus == true) {
-          const matchOddsSubMarket = subMarketId.find(
-            (subMarket) => subMarket.name == 'Match Odds'
-          );
+          const matchOddsSubMarket = subMarketNames.includes('Match Odds');
           if (matchOddsSubMarket) {
             updateQuery.$set = { matchOddsStatus: true };
           } else {
             updateQuery.$set = { betLockStatus: true };
           }
-          // if (matchOddsSubMarket && betLockStatus == true) {
-          //   updateQuery.$set = { betLockStatus: true, matchOddsStatus: true };
-          // }
           updateQuery.$addToSet = {
             blockedSubMarketsByParent: {
-              $each: subMarketId?.map(({ subMarketId }) => subMarketId) || [],
+              $each: subMarketIds || [],
             },
           };
         } else if (betLockStatus == false) {
-          const matchOddsSubMarket = subMarketId.find(
-            (subMarket) => subMarket.name == 'Match Odds'
-          );
+          const matchOddsSubMarket = subMarketNames.includes('Match Odds');
           if (matchOddsSubMarket) {
             updateQuery.$set = { matchOddsStatus: false };
           } else {
@@ -62,12 +58,15 @@ async function addBetLock(req, res) {
           }
           updateQuery.$pull = {
             blockedSubMarketsByParent: {
-              $in: subMarketId?.map(({ subMarketId }) => subMarketId) || [],
+              $in: subMarketIds || [],
             },
           };
         }
 
-        await User.updateMany({ createdBy: req.decoded.userId, userId: { $ne: req.decoded.userId} }, updateQuery);
+        await User.updateMany(
+          { createdBy: req.decoded.userId, userId: { $ne: req.decoded.userId } },
+          updateQuery
+        );
       }
     } else if (selectedUsers && selectedUsers.length > 0) {
       foundUsers = await User.find({
@@ -76,43 +75,38 @@ async function addBetLock(req, res) {
       }).select(
         '_id userId userName bettingAllowed blockedSubMarkets blockedMarketPlaces'
       );
-      if (foundUsers.length !== selectedUsers.length) {
-        return res.status(404).send({ message: 'One or more users not found' });
-      }
+      // if (foundUsers.length !== selectedUsers.length) {
+      //   return res.status(404).send({ message: 'One or more users not found' });
+      // }
 
       const bulkUpdateOperations = selectedUsers.map(
         ({ userId, betLockStatus }) => {
           const updateQuery = {};
           if (betLockStatus == true) {
-            const matchOddsSubMarket = subMarketId.find(
-              (subMarket) => subMarket.name == 'Match Odds'
-            );
+            console.log('hereeeeee')
+            const matchOddsSubMarket = subMarketNames.includes('Match Odds');
             if (matchOddsSubMarket) {
               updateQuery.$set = { matchOddsStatus: true };
             } else {
               updateQuery.$set = { betLockStatus: true };
             }
 
-            // (updateQuery.$set = { betLockStatus: true }),
             updateQuery.$addToSet = {
               blockedSubMarketsByParent: {
-                $each: subMarketId?.map(({ subMarketId }) => subMarketId) || [],
+               $each: subMarketIds,
               },
             };
           } else if (betLockStatus == false) {
-            const matchOddsSubMarket = subMarketId.find(
-              (subMarket) => subMarket.name == 'Match Odds'
-            );
+            const matchOddsSubMarket = subMarketNames.includes('Match Odds');
             if (matchOddsSubMarket) {
               updateQuery.$set = { matchOddsStatus: false };
             } else {
               updateQuery.$set = { betLockStatus: false };
             }
 
-            // (updateQuery.$set = { betLockStatus: false }),
             updateQuery.$pull = {
               blockedSubMarketsByParent: {
-                $in: subMarketId?.map(({ subMarketId }) => subMarketId) || [],
+                $in: subMarketIds,
               },
             };
           }

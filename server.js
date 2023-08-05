@@ -85,7 +85,6 @@ app.use('/api', require('./app/routes/deposits').loginRouter);
 app.use('/api', require('./app/routes/credits').loginRouter);
 app.use('/api', require('./app/routes/reports').loginRouter);
 app.use('/api', require('./app/routes/settings').loginRouter);
-app.use('/api', require('./app/routes/betFairGames').loginRouter);
 app.use('/api', require('./app/routes/sportsHighlights').loginRouter);
 app.use('/api', require('./app/routes/bets').loginRouter);
 app.use('/api', require('./app/routes/casinoGames').loginRouter);
