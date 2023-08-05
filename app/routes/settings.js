@@ -1044,7 +1044,7 @@ async function bettorDashboardGames(req, res) {
       },
     ]).exec();
    
-    const selectedCasinoData = await db.selectedcasino.aggregate([
+    const selectedCasinoData = await SelectedCasino.aggregate([
       {
         $project: {
           category: 1,
