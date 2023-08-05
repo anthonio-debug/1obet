@@ -326,36 +326,29 @@ function addSelectedDashboardGames(req, res) {
 
   const { gameIds } = req.body;
 
-  // Prepare the bulk operations array
-  const bulkOps = [];
-
-  // Add update operations for gameIds that need to be set to isDashboard: true
-  gameIds.forEach((id) => {
-    bulkOps.push({
-      updateOne: {
-        filter: { 'games.id': id },
-        update: { $set: { 'games.$.isDashboard': true } }
-      }
-    });
-  });
-
-  // Add update operations for gameIds that need to be set to isDashboard: false
-  bulkOps.push({
-    updateMany: {
-      filter: { 'games.id': { $nin: gameIds } },
-      update: { $set: { 'games.$.isDashboard': false } }
-    }
-  });
-
-  // Execute the bulkWrite operation
-  SelectedCasino.bulkWrite(bulkOps)
-    .then((result) => {
-      const modifiedCount = result.modifiedCount || 0;
-      if (modifiedCount === 0) {
-        // No documents were modified, handle accordingly
-        return res.status(404).send({ success: false, message: 'No matching games found' });
-      }
-      return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
+  // Update all games in the collection to have isDashboard: false
+  SelectedCasino.updateMany(
+    {},
+    { $set: { 'games.$[].isDashboard': false } }
+  )
+    .then(() => {
+      // Update selected games with isDashboard: true
+      SelectedCasino.updateMany(
+        { 'games.id': { $in: gameIds } },
+        { $set: { 'games.$[game].isDashboard': true } },
+        { arrayFilters: [{ 'game.id': { $in: gameIds } }] }
+      )
+        .then((result) => {
+          const modifiedCount = result.modifiedCount || 0;
+          if (modifiedCount === 0) {
+            // No documents were modified, handle accordingly
+            return res.status(404).send({ success: false, message: 'No matching games found' });
+          }
+          return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
+        })
+        .catch((err) => {
+          return res.status(500).send({ success: false, message: 'Error updating selected games', err });
+        });
     })
     .catch((err) => {
       return res.status(500).send({ success: false, message: 'Error updating games', err });
