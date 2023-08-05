@@ -163,7 +163,7 @@ async function placeBet(req, res) {
       isDeleted:false
     });
 
-    const submarketId = await User.distinct("blockedSubMarkets blockedSubMarketsByParent", {
+    const submarketId = await User.distinct(["blockedSubMarkets", "blockedSubMarketsByParent"], {
       userId :{
         $in: parentUserIds
       },
