@@ -68,62 +68,53 @@ async function addBetLock(req, res) {
           updateQuery
         );
       }
-    } else if (selectedUsers && selectedUsers.length > 0) {
-      foundUsers = await User.find({
-        userId: { $in: selectedUsers.map(({ userId }) => userId) },
-        ...query,
-      }).select(
-        '_id userId userName bettingAllowed blockedSubMarkets blockedMarketPlaces'
-      );
-      // if (foundUsers.length !== selectedUsers.length) {
-      //   return res.status(404).send({ message: 'One or more users not found' });
-      // }
-
-      const bulkUpdateOperations = selectedUsers.map(
-        ({ userId, betLockStatus }) => {
-          const updateQuery = {};
-          if (betLockStatus == true) {
-            console.log('hereeeeee')
-            const matchOddsSubMarket = subMarketNames.includes('Match Odds');
-            if (matchOddsSubMarket) {
-              updateQuery.$set = { matchOddsStatus: true };
-            } else {
-              updateQuery.$set = { betLockStatus: true };
-            }
-
-            updateQuery.$addToSet = {
-              blockedSubMarketsByParent: {
-               $each: subMarketIds,
-              },
-            };
-          } else if (betLockStatus == false) {
-            const matchOddsSubMarket = subMarketNames.includes('Match Odds');
-            if (matchOddsSubMarket) {
-              updateQuery.$set = { matchOddsStatus: false };
-            } else {
-              updateQuery.$set = { betLockStatus: false };
-            }
-
-            updateQuery.$pull = {
-              blockedSubMarketsByParent: {
-                $in: subMarketIds,
-              },
-            };
-          }
-
-          return {
-            updateOne: {
-              filter: {
-                userId,
-                ...query,
-              },
-              update: updateQuery,
+    }
+    if (selectedUsers && selectedUsers.length > 0) {
+      const userIds = selectedUsers.map(({ userId }) => userId);
+    
+      const updateOperations = selectedUsers.map(({ userId, betLockStatus }) => {
+        const updateQuery = {};
+        const matchOddsSubMarket = subMarketNames.includes('Match Odds');
+        
+        if (betLockStatus === true) {
+          updateQuery.$set = matchOddsSubMarket
+            ? { matchOddsStatus: true }
+            : { betLockStatus: true };
+    
+          updateQuery.$addToSet = {
+            blockedSubMarketsByParent: {
+              $each: subMarketIds,
+            },
+          };
+        } else if (betLockStatus == false) {
+          updateQuery.$set = matchOddsSubMarket
+            ? { matchOddsStatus: false }
+            : { betLockStatus: false };
+    
+          updateQuery.$pull = {
+            blockedSubMarketsByParent: {
+              $in: subMarketIds,
             },
           };
         }
-      );
-
-      await User.bulkWrite(bulkUpdateOperations, { ordered: false });
+        
+        return {
+          updateMany: {
+            filter: {
+              createdBy: req.decoded.userId,
+              userId: { $in: [userId] },
+            },
+            update: updateQuery,
+          },
+        };
+      });
+        
+      try {
+        const updateResults = await User.bulkWrite(updateOperations, { ordered: false });
+      } catch (error) {
+        console.error('Error updating users:', error);
+        res.status(404).send({ message: 'betlock not saved' });
+      }
     }
 
     return res.send({
