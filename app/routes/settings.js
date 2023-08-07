@@ -1047,8 +1047,6 @@ async function bettorDashboardGames(req, res) {
     const selectedCasinoData = await SelectedCasino.aggregate([
       {
         $project: {
-          category: 1,
-          status: 1,
           games: {
             $filter: {
               input: '$games',
@@ -1064,16 +1062,15 @@ async function bettorDashboardGames(req, res) {
         }
       },
       {
+        $group: {
+          _id: null,
+          games: { $push: '$games' }
+        }
+      },
+      {
         $project: {
-          category: 1,
-          status: 1,
-          games: {
-            name: 1,
-            id: 1,
-            id_hash: 1,
-            image_filled: 1,
-            isDashboard: 1
-          }
+          _id: 0,
+          games: 1
         }
       }
     ]).exec();
