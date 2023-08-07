@@ -1058,7 +1058,11 @@ async function bettorDashboardGames(req, res) {
           }
         }
       },
-      
+      {
+        $match: {
+          games: { $ne: [] } // Exclude documents with empty 'games' arrays
+        }
+      },
       {
         $project: {
           category: 1,

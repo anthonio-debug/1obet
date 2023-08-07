@@ -15,7 +15,7 @@ async function addBetLock(req, res) {
     if (!errors.isEmpty()) {
       return res.status(400).send({ errors: errors.errors });
     }
-    const { selectedUsers, allUsers, subMarketName, betLockStatus, matchId, otherMarkets } = req.body;
+    const { selectedUsers, allUsers, subMarketNames, betLockStatus, matchId, otherMarkets } = req.body;
     const query = { isDeleted: false, userId: { $ne: req.decoded.userId } };
     query.createdBy = Number(req.decoded.userId);
 
@@ -31,7 +31,7 @@ async function addBetLock(req, res) {
    if( subMarketName == 'Match Odds' && otherMarkets === false ){
     console.log('in Match Odds submarkets');
 
-    let foundSubMarkets = await SubMarketType.find({ name: subMarketName,marketId: marketId }).select('subMarketId');
+    let foundSubMarkets = await SubMarketType.find({ name: subMarketNames,marketId: marketId }).select('subMarketId');
     subMarketIds = foundSubMarkets.map((subMarket) => subMarket.subMarketId);
    }
    else if( otherMarkets === true) {
@@ -49,9 +49,9 @@ async function addBetLock(req, res) {
       for (const user of foundUsers) {
         if (betLockStatus == true) {
           // const matchOddsSubMarket = 'Match Odds'
-          if (subMarketName == 'Match Odds') {
+          if (subMarketNames == 'Match Odds') {
             updateQuery.$set = { matchOddsStatus: true };
-          } else if (subMarketName == ''){
+          } else if (subMarketNames == ''){
             updateQuery.$set = { betLockStatus: true };
           }
           updateQuery.$addToSet = {
@@ -61,9 +61,9 @@ async function addBetLock(req, res) {
           };
         } else if (betLockStatus == false) {
           // const matchOddsSubMarket = 'Match Odds'
-          if (subMarketName == 'Match Odds') {
+          if (subMarketNames == 'Match Odds') {
             updateQuery.$set = { matchOddsStatus: false };
-          } else if( subMarketName == '') {
+          } else if( subMarketNames == '') {
             updateQuery.$set = { betLockStatus: false };
           }
           updateQuery.$pull = {
@@ -87,9 +87,9 @@ async function addBetLock(req, res) {
         const matchOddsSubMarket = 'Match Odds'
         
         if (betLockStatus === true) {
-          if (subMarketName == 'Match Odds') {
+          if (subMarketNames == 'Match Odds') {
             updateQuery.$set = { matchOddsStatus: true };
-          } else if( subMarketName == '') {
+          } else if( subMarketNames == '') {
             updateQuery.$set = { betLockStatus: true };
           }
           // updateQuery.$set = matchOddsSubMarket
@@ -102,9 +102,9 @@ async function addBetLock(req, res) {
             },
           };
         } else if (betLockStatus == false) {
-          if (subMarketName == 'Match Odds') {
+          if (subMarketNames == 'Match Odds') {
             updateQuery.$set = { matchOddsStatus: false };
-          } else if( subMarketName == '') {
+          } else if( subMarketNames == '') {
             updateQuery.$set = { betLockStatus: false };
           }
           // updateQuery.$set = matchOddsSubMarket
