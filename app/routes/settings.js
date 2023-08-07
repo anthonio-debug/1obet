@@ -958,6 +958,15 @@ async function bettorDashboardGames(req, res) {
                 }
               ] 
             }},
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+              }
+            },
             { $sort: { inplay: -1 } 
           },
           ],
@@ -974,6 +983,15 @@ async function bettorDashboardGames(req, res) {
                 }
               ]  
             }},
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+              }
+            },
             { $sort: { inplay: -1 } },
           ],
           cricket: [
@@ -990,6 +1008,15 @@ async function bettorDashboardGames(req, res) {
                 }
               ] 
             }},
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+              }
+            },
             { $sort: { inplay: -1 } },
           ],
           horseRace: [
@@ -1007,12 +1034,12 @@ async function bettorDashboardGames(req, res) {
             }},
             {
               $project: {
-                _id: 0,
-                openDate: '$openDate',
-                name: '$name',
-                meetingId: '$meetingId',
-                countryCode: '$countryCode',
-                marketIds: '$marketIds'
+                _id: 1,
+                openDate: 1,
+                name: 1,
+                meetingId: 1,
+                countryCode: 1,
+                marketIds: 1
               }
             }
           ],
@@ -1031,13 +1058,12 @@ async function bettorDashboardGames(req, res) {
             }},
             {
               $project: {
-                _id: 0,
-                openDate: '$openDate',
-                name: '$name',
-                meetingId: '$meetingId',
-                countryCode: '$countryCode',
-                marketIds: '$marketIds'
-              }
+                _id: 1,
+                openDate: 1,
+                name: 1,
+                meetingId: 1,
+                countryCode: 1,
+                marketIds: 1              }
             }
           ],
           cricketInplay: [
@@ -1045,19 +1071,46 @@ async function bettorDashboardGames(req, res) {
               sportsId: '4',
               inplay: true,
               iconStatus: true,
-            }}
+            }},
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName:1,
+              }
+            }
           ],
           tennisInplay: [
             { $match: { 
               sportsId: '2',
               inplay: true,
-            }}
+            }},
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+              }
+            }
           ],
           soccerInplay: [
             { $match: { 
               sportsId: '1',
               inplay: true,
-            }}
+            }},
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+              }
+            }
           ],
         },
       },
