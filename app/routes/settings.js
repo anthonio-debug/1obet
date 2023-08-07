@@ -1062,18 +1062,20 @@ async function bettorDashboardGames(req, res) {
         }
       },
       {
-        $group: {
-          _id: null,
-          games: { $push: '$games' }
-        }
+        $unwind: '$games' // Unwind the 'games' array
       },
       {
         $project: {
           _id: 0,
-          games: 1
+          id: '$games.id',
+          name: '$games.name',
+          id_hash: '$games.id_hash',
+          image_filled: '$games.image_filled',
+          isDashboard: '$games.isDashboard'
         }
       }
     ]).exec();
+    
     
 //     const selectedCasinoData = await SelectedCasino.find({});
 //     selectedCasinoData.find((item) => item.games.some((game) => game.isDashboard === true));
