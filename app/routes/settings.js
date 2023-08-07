@@ -1005,6 +1005,16 @@ async function bettorDashboardGames(req, res) {
                 }
               ] 
             }},
+            {
+              $project: {
+                _id: 0,
+                openDate: '$openDate',
+                name: '$name',
+                meetingId: '$meetingId',
+                countryCode: '$countryCode',
+                marketIds: '$marketIds'
+              }
+            }
           ],
           greyhound: [
             { $match: { 
@@ -1018,7 +1028,17 @@ async function bettorDashboardGames(req, res) {
                   ]
                 }
               ] 
-            }}
+            }},
+            {
+              $project: {
+                _id: 0,
+                openDate: '$openDate',
+                name: '$name',
+                meetingId: '$meetingId',
+                countryCode: '$countryCode',
+                marketIds: '$marketIds'
+              }
+            }
           ],
           inplay: [
             { $match: { 
