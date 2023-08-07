@@ -119,5 +119,6 @@
   "searchSingleUser",
   "updateMatch",
   "bettorDashboardGames",
-  "getAllGamesResult"
+  "getAllGamesResult",
+  "getbettorDashboardOdds"
 ]

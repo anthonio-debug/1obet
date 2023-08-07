@@ -1301,6 +1301,99 @@ async function getAllGamesResult(req, res) {
   }
 }
 
+async function getbettorDashboardOdds(req, res) {
+  try {
+    const sportsIdArray = ['4'];
+
+    const cricketOddsData = await Events.aggregate([
+      {
+        $match: {
+          sportsId: { $in: sportsIdArray },
+          iconStatus: true,
+          $or: [
+            { inplay: true },
+            {
+              $and: [
+                {
+                  openDate: {
+                    $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00"),
+                  },
+                },
+                {
+                  openDate: {
+                    $lt: moment(new Date(Date.now() + 24 * 60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00"),
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: 'odds',
+          localField: 'Id',
+          foreignField: 'eventId',
+          as: 'oddsData',
+        },
+      },
+      {
+        $unwind: '$oddsData',
+      },
+      {
+        $sort: { 'oddsData.createdAt': -1 },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          event: { $first: '$$ROOT' },
+          oddsData: { $first: '$oddsData' },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$event', { oddsData: '$oddsData' }],
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          Id: '$Id',
+          name: '$name',
+          competitionName: '$competitionName',
+          inplay: '$inplay',
+          oddsData: {
+            $map: {
+              input: '$oddsData.runners',
+              as: 'runner',
+              in: {
+                runnerName: '$$runner.runnerName',
+                latestOdds: { $slice: ['$$runner.ExchangePrices.AvailableToBack.price', 2] },
+              },
+            },
+          },
+        },
+      },
+      { $sort: { inplay: -1 } },
+    ]).exec();
+
+    res.status(200).json({
+      success: true,
+      message: 'Cricket Odds Data',
+      results: cricketOddsData,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get cricket odds data',
+      error: error.message,
+    });
+  }
+}
+
 loginRouter.post(
   '/updateDefaultTheme',
   settingsValidation.validate('updateDefaultTheme'),
@@ -1356,5 +1449,6 @@ loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 loginRouter.post('/updateMatch', updateMatch);
 loginRouter.get('/bettorDashboardGames', bettorDashboardGames);
 loginRouter.get('/getAllGamesResult', getAllGamesResult);
+loginRouter.get('/getbettorDashboardOdds', getbettorDashboardOdds);
 
 module.exports = { loginRouter, router, listOddsAPI };
