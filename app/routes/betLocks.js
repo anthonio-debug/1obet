@@ -48,10 +48,10 @@ async function addBetLock(req, res) {
       const updateQuery = {};
       for (const user of foundUsers) {
         if (betLockStatus == true) {
-          const matchOddsSubMarket = 'Match Odds'
-          if (matchOddsSubMarket) {
+          // const matchOddsSubMarket = 'Match Odds'
+          if (subMarketName == 'Match Odds') {
             updateQuery.$set = { matchOddsStatus: true };
-          } else {
+          } else if (subMarketName == ''){
             updateQuery.$set = { betLockStatus: true };
           }
           updateQuery.$addToSet = {
@@ -60,10 +60,10 @@ async function addBetLock(req, res) {
             },
           };
         } else if (betLockStatus == false) {
-          const matchOddsSubMarket = 'Match Odds'
-          if (matchOddsSubMarket) {
+          // const matchOddsSubMarket = 'Match Odds'
+          if (subMarketName == 'Match Odds') {
             updateQuery.$set = { matchOddsStatus: false };
-          } else {
+          } else if( subMarketName == '') {
             updateQuery.$set = { betLockStatus: false };
           }
           updateQuery.$pull = {
@@ -87,9 +87,14 @@ async function addBetLock(req, res) {
         const matchOddsSubMarket = 'Match Odds'
         
         if (betLockStatus === true) {
-          updateQuery.$set = matchOddsSubMarket
-            ? { matchOddsStatus: true }
-            : { betLockStatus: true };
+          if (subMarketName == 'Match Odds') {
+            updateQuery.$set = { matchOddsStatus: true };
+          } else if( subMarketName == '') {
+            updateQuery.$set = { betLockStatus: true };
+          }
+          // updateQuery.$set = matchOddsSubMarket
+          //   ? { matchOddsStatus: true }
+          //   : { betLockStatus: true };
     
           updateQuery.$addToSet = {
             blockedSubMarketsByParent: {
@@ -97,9 +102,14 @@ async function addBetLock(req, res) {
             },
           };
         } else if (betLockStatus == false) {
-          updateQuery.$set = matchOddsSubMarket
-            ? { matchOddsStatus: false }
-            : { betLockStatus: false };
+          if (subMarketName == 'Match Odds') {
+            updateQuery.$set = { matchOddsStatus: false };
+          } else if( subMarketName == '') {
+            updateQuery.$set = { betLockStatus: false };
+          }
+          // updateQuery.$set = matchOddsSubMarket
+          //   ? { matchOddsStatus: false }
+          //   : { betLockStatus: false };
     
           updateQuery.$pull = {
             blockedSubMarketsByParent: {
