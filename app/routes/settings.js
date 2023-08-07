@@ -1011,13 +1011,50 @@ async function bettorDashboardGames(req, res) {
               ] 
             }},
             {
+              $lookup: {
+                from: 'odds', 
+                localField: 'Id', 
+                foreignField: 'eventId',
+                as: 'oddsData'
+              }
+            },
+            {
+              $unwind: '$oddsData'
+            },
+            {
+              $sort: { 'oddsData.createdAt': -1 } // Sort by timestamp in descending order to get the latest odds first
+            },
+            {
+              $group: {
+                _id: '$_id',
+                event: { $first: '$$ROOT' }, // Get the first document (latest odds data) for each eventId
+                oddsData: { $first: '$oddsData' } // Get the first odds data for each eventId
+              }
+            },
+            {
+              $replaceRoot: {
+                newRoot: {
+                  $mergeObjects: ['$event', { oddsData: '$oddsData' }] // Merge the event document and oddsData document
+                }
+              }
+            },
+            {
               $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1
+                _id: '$_id',
+                Id: '$Id',
+                name: '$name',
+                competitionName: '$competitionName',
+                inplay: '$inplay',
+                oddsData: {
+                  $map: {
+                    input: '$oddsData.runners',
+                    as: 'runner',
+                    in: {
+                      runnerName: '$$runner.runnerName',
+                      latestOdds: { $slice: ['$$runner.ExchangePrices.AvailableToBack.price', 2] }
+                    }
+                  }
+                }
               }
             },
             { $sort: { inplay: -1 } },
@@ -1066,7 +1103,8 @@ async function bettorDashboardGames(req, res) {
                 name: 1,
                 meetingId: 1,
                 countryCode: 1,
-                marketIds: 1              }
+                marketIds: 1              
+              }
             }
           ],
           cricketInplay: [
