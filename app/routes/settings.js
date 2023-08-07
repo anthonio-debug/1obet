@@ -965,6 +965,7 @@ async function bettorDashboardGames(req, res) {
                 openDate: 1,
                 name: 1,
                 competitionName: 1,
+                inplay:1
               }
             },
             { $sort: { inplay: -1 } 
@@ -990,6 +991,7 @@ async function bettorDashboardGames(req, res) {
                 openDate: 1,
                 name: 1,
                 competitionName: 1,
+                inplay: 1
               }
             },
             { $sort: { inplay: -1 } },
@@ -1015,6 +1017,7 @@ async function bettorDashboardGames(req, res) {
                 openDate: 1,
                 name: 1,
                 competitionName: 1,
+                inplay: 1
               }
             },
             { $sort: { inplay: -1 } },
@@ -1079,6 +1082,7 @@ async function bettorDashboardGames(req, res) {
                 openDate: 1,
                 name: 1,
                 competitionName:1,
+                inplay: 1 
               }
             }
           ],
@@ -1094,6 +1098,7 @@ async function bettorDashboardGames(req, res) {
                 openDate: 1,
                 name: 1,
                 competitionName: 1,
+                inplay: 1
               }
             }
           ],
@@ -1109,6 +1114,7 @@ async function bettorDashboardGames(req, res) {
                 openDate: 1,
                 name: 1,
                 competitionName: 1,
+                inplay: 1
               }
             }
           ],

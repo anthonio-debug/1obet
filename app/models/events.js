@@ -45,7 +45,8 @@ const inPlayEventsSchema = new mongoose.Schema({
 
 // Create the model
 inPlayEventsSchema.index({ inplay: 1, sportsId: 1 })
-
+inPlayEventsSchema.index({ sportsId: 1, openDate: 1 });
+inPlayEventsSchema.index({ sportsId: 1, openDate: 1, inplay: 1, iconStatus: 1 });
 const inPlayEvents = mongoose.model('inplayevents', inPlayEventsSchema);
 
 inPlayEvents.createIndexes();
