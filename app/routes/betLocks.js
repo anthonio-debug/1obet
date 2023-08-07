@@ -15,7 +15,7 @@ async function addBetLock(req, res) {
     if (!errors.isEmpty()) {
       return res.status(400).send({ errors: errors.errors });
     }
-    const { selectedUsers, allUsers, subMarketNames, betLockStatus, matchId } = req.body;
+    const { selectedUsers, allUsers, subMarketName, betLockStatus, matchId, otherMarkets } = req.body;
     const query = { isDeleted: false, userId: { $ne: req.decoded.userId } };
     query.createdBy = Number(req.decoded.userId);
 
@@ -27,9 +27,19 @@ async function addBetLock(req, res) {
     let event = await Events.findOne({ _id: matchId })
    let marketId = event.sportsId
    console.log('event',event);
-    let foundSubMarkets = await SubMarketType.find({ name: { $in: subMarketNames },marketId: marketId }).select('subMarketId');
-    const subMarketIds = foundSubMarkets.map((subMarket) => subMarket.subMarketId);
+   let subMarketIds
+   if( subMarketName == 'Match Odds' && otherMarkets === false ){
+    console.log('in Match Odds submarkets');
 
+    let foundSubMarkets = await SubMarketType.find({ name: subMarketName,marketId: marketId }).select('subMarketId');
+    subMarketIds = foundSubMarkets.map((subMarket) => subMarket.subMarketId);
+   }
+   else if( otherMarkets === true) {
+    console.log('in other markets');
+    let foundSubMarkets = await SubMarketType.find({ name: {$nin: "Match Odds" }, marketId: marketId }).select('subMarketId');
+     console.log('foundSubMarkets',foundSubMarkets)
+    subMarketIds = foundSubMarkets?.filter((item)=>item?.name!=='Match Odds').map((subMarket) => subMarket.subMarketId);
+}
     let foundUsers = [];
     if (allUsers) {
       foundUsers = await User.find(query).select(
@@ -38,7 +48,7 @@ async function addBetLock(req, res) {
       const updateQuery = {};
       for (const user of foundUsers) {
         if (betLockStatus == true) {
-          const matchOddsSubMarket = subMarketNames.includes('Match Odds');
+          const matchOddsSubMarket = 'Match Odds'
           if (matchOddsSubMarket) {
             updateQuery.$set = { matchOddsStatus: true };
           } else {
@@ -50,7 +60,7 @@ async function addBetLock(req, res) {
             },
           };
         } else if (betLockStatus == false) {
-          const matchOddsSubMarket = subMarketNames.includes('Match Odds');
+          const matchOddsSubMarket = 'Match Odds'
           if (matchOddsSubMarket) {
             updateQuery.$set = { matchOddsStatus: false };
           } else {
@@ -74,7 +84,7 @@ async function addBetLock(req, res) {
     
       const updateOperations = selectedUsers.map(({ userId, betLockStatus }) => {
         const updateQuery = {};
-        const matchOddsSubMarket = subMarketNames.includes('Match Odds');
+        const matchOddsSubMarket = 'Match Odds'
         
         if (betLockStatus === true) {
           updateQuery.$set = matchOddsSubMarket

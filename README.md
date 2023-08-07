@@ -109,3 +109,7 @@ db.betlimits.insertMany([
     "maxAmount" : 2000000
     }
 ])
+
+db.exchanges.insertMany([{ "exchangeAmount" : 70, "currency" : "AED", "createdAt" : 1683894409.774, "updatedAt" : 1683894409.774 }
+{ "exchangeAmount" : 250, "currency" : "USD", "createdAt" : 1683894409.774, "updatedAt" : 1683894409.774 }
+{ "exchangeAmount" : 2, "currency" : "INR", "createdAt" : 1683894409.774, "updatedAt" : 1683894409.774 }])
