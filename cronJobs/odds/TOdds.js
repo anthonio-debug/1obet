@@ -1,7 +1,7 @@
 const cron = require("node-cron");
-const ListMarkets = require('../app/models/listMarkets')
-const Events = require('../app/models/events');
-const { getnewOdds } = require('../app/routes/sportsAPI')
+const ListMarkets = require('../../app/models/listMarkets')
+const Events = require('../../app/models/events');
+const { getnewOdds } = require('../../app/routes/sportsAPI')
 require('../db');
 
 const tennisOddsCronJob = () => {

@@ -1,6 +1,6 @@
 const cron              = require("node-cron");
-const Events            = require('../app/models/events');
-const { raceOddsJob }   = require('../app/routes/Racing');
+const Events            = require('../../app/models/events');
+const { raceOddsJob }   = require('../../app/routes/Racing');
 require('../db');
 
 const horseRaceOddsCronJob = async () => {

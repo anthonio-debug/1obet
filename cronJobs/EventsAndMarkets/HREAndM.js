@@ -1,5 +1,5 @@
-const cron = require("node-cron");const Events = require('../app/models/events');
-const { todayRaceJob, raceOddsJob }  = require('../app/routes/Racing');
+const cron = require("node-cron");const Events = require('../../app/models/events');
+const { todayRaceJob, raceOddsJob }  = require('../../app/routes/Racing');
 require('../db');
 
 

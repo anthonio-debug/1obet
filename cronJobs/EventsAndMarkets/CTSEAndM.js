@@ -1,6 +1,6 @@
 const cron = require("node-cron");
-const { listMarketsByCronJob ,getnewOdds,fancyDataByCronjob,eventsBySupportJobs} = require('../app/routes/sportsAPI')
-const Events = require('../app/models/events');
+const { listMarketsByCronJob ,getnewOdds,fancyDataByCronjob,eventsBySupportJobs} = require('../../app/routes/sportsAPI')
+const Events = require('../../app/models/events');
 require('../db');
 
 const findOddsForOneTime = async (ids) => {
