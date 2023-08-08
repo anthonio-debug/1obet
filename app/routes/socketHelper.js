@@ -209,33 +209,31 @@ async function racesMarketOdds(marketId) {
   
         // Add any other fields you want to exclude from raceOddsData
       };
-      // const racesMarketsData = await RaceMarkets.findOne({'eventNodes.marketNodes.marketId': marketId },);
+      const racesMarketsData = await RaceMarkets.findOne({'eventNodes.marketNodes.marketId': marketId },);
       const raceOddsData = await RaceOdds.findOne({ marketId: marketId },projectionRaceOddsData).sort({_id: -1})
-      // console.log('>> racesMarketsData ==>', racesMarketsData)
+      console.log('>> racesMarketsData ==>', racesMarketsData)
       console.log('>> raceOddsData ==>', raceOddsData)      
-      // if ( raceOddsData?.runners && Array.isArray(raceOddsData?.runners) && racesMarketsData?.eventNodes && Array.isArray(racesMarketsData?.eventNodes)){
-        // const marketNode = racesMarketsData?.eventNodes?.find((eventNode) => eventNode?.marketNodes?.marketId === raceOddsData.marketId);
-        // if (marketNode && marketNode?.marketNodes?.runners && Array.isArray(marketNode?.marketNodes?.runners)) {
-          // const mergedRunners = {};
-          // raceOddsData?.runners.forEach((runner) => {
-            // const matchingRunner = marketNode?.marketNodes?.runners.find((r) => r.selectionId === runner?.selectionId);
-            // if (matchingRunner) {
-              // mergedRunners[runner?.selectionId] = {
-                // ...runner,
-                // ...matchingRunner,
-              // };
-            // }
-          // });
+      if ( raceOddsData?.runners && Array.isArray(raceOddsData?.runners) && racesMarketsData?.eventNodes && Array.isArray(racesMarketsData?.eventNodes)){
+        const marketNode = racesMarketsData?.eventNodes?.find((eventNode) => eventNode?.marketNodes?.marketId === raceOddsData.marketId);
+        if (marketNode && marketNode?.marketNodes?.runners && Array.isArray(marketNode?.marketNodes?.runners)) {
+          const mergedRunners = {};
+          raceOddsData?.runners.forEach((runner) => {
+            const matchingRunner = marketNode?.marketNodes?.runners.find((r) => r.selectionId === runner?.selectionId);
+            if (matchingRunner) {
+              mergedRunners[runner?.selectionId] = {
+                ...runner,
+                ...matchingRunner,
+              };
+            }
+          });
           // Update the merged runners data into the raceOddsData object
-          // raceOddsData.runners = Object.values(mergedRunners);
-        // } 
-        // else {
-        //   console.error('Invalid data structure. Market runners data not found.');
-        // }
-      // } 
-      // else {
-      //   console.error('Invalid data structure. Please check the provided objects.');
-      // }
+          raceOddsData.runners = Object.values(mergedRunners);
+        } else {
+          console.error('Invalid data structure. Market runners data not found.');
+        }
+      } else {
+        console.error('Invalid data structure. Please check the provided objects.');
+      }
       const matchId = await Events.findOne({ marketIds: {$in: marketId }})
 
       console.log('matchId', matchId);

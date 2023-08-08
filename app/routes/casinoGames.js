@@ -215,8 +215,7 @@ function getCategoryCasinoGames(req, res) {
 }
 
 function getAllSelectedCasinos(req, res) {
-
-  let query = {}
+  let query = {};
   let page = 1;
   let sort = -1;
   let sortValue = '_id';
@@ -235,31 +234,50 @@ function getAllSelectedCasinos(req, res) {
   if (req.query.page) {
     page = Number(req.query.page);
   }
+
+  // // Retrieve isMobile parameter from query and convert to boolean
+  // let isMobile = req.query.isMobile;
+
   SelectedCasino.paginate(
     query,
     { page: page, limit: limit },
       (err, data) => {
       
         if (data.total == 0) {
-          return res.status(404).send({ message: 'No records found'});
+          return res.status(404).send({ message: 'No records found' });
         }
    
         if (err) return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
-          console.log('page', data.page),
-          console.log('total', data.total),
-          console.log('page', data.page),
-          console.log('pages', data.pages)
-          return res.send({
-            message: 'Selected Casino Games List',
-            success: true,
-            results: data.docs,
-            page: data.page,
-            limit: data.limit,
-            total: data.total,
-            pages: data.pages
-          });
-      })
-  }
+    
+      // // Filter games based on isMobile parameter
+      // const filteredGames = data.docs.flatMap(item => {
+      //   return item.games.filter(game => {
+      //     if (isMobile === undefined) {
+      //       // If isMobile is not provided in query, include all games
+      //       return true;
+      //     } else {
+      //       // Filter games based on isMobile parameter
+      //       return game.mobile === (isMobile === 'true');
+      //     }
+      //   });
+      // });
+
+      console.log('total', data.total);
+      console.log('page', data.page);
+      console.log('pages', data.pages);
+
+      return res.send({
+        message: 'Selected Casino Games List',
+        success: true,
+        results: data.docs,
+        page: data.page,
+        limit: data.limit,
+        total: data.total,
+        pages: data.pages
+      });
+    }
+  );
+}
 
 async function getGame(req, res) {
   try {
