@@ -17,7 +17,7 @@ const addInPlayFalse = async (eventIds)=>{
         {Id:eventId},
         {$set : {
           inplay: false,
-          status: "CLOSED"
+          winner: response?.data?.winnerSelectionId
         }}
         );
     }
@@ -31,10 +31,11 @@ const cricketOldEvent = () => {
   cron.schedule('*/1 * * * *', async () => {
     try {
       // const date2 = moment(new Date(Date.now() - 2 *    60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
-      const eventId  = await Events.distinct('Id',{ 
+      const eventIds  = await Events.distinct('Id',{ 
         sportsId: '4',
         inplay: true
       });
+      
       console.log("Total event Id = ", eventIds.length);
       await addInPlayFalse(eventIds)
     } catch(error){

@@ -17,17 +17,17 @@ const addInPlayFalse = async (eventIds)=>{
         {Id:eventId},
         {$set : {
           inplay: false,
-          status: "CLOSED"
+          winner: response?.data?.winnerSelectionId
         }}
         );
     }
-    // console.log("response>>>>>>>>>>>>>", response.data);
+    console.log("response>>>>>>>>>>>>>", response.data);
   });
 
 
 }
 
-const cricketOldEvent = () => {
+const soccer = () => {
   cron.schedule('*/1 * * * *', async () => {
 
     try {
@@ -35,8 +35,7 @@ const cricketOldEvent = () => {
       // const date  = moment(new Date(Date.now() - 2 *    60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00");
       // const date2 = moment(new Date(Date.now() - 2 *    60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
       const eventIds     = await Events.distinct('Id',{ 
-        sportsId: '2',
-        // openDate : {$lt: date2},
+        sportsId: '1',
         inplay: true
       });
       console.log("Total event Id = ", eventIds.length);
@@ -46,5 +45,5 @@ const cricketOldEvent = () => {
     }
   });
 }
-cricketOldEvent()
+soccer()
 

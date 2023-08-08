@@ -18,7 +18,7 @@ const addInPlayFalse = async (eventIds)=>{
         {
           $set: {
             inplay: false,
-            status: "CLOSED",
+            winner: response?.data?.winnerSelectionId
           },
         }
       );
@@ -28,7 +28,7 @@ const addInPlayFalse = async (eventIds)=>{
 
 }
 
-const cricketOldEvent = () => {
+const GH = () => {
   cron.schedule('*/1 * * * *', async () => {
 
     try {
@@ -45,5 +45,5 @@ const cricketOldEvent = () => {
     }
   });
 }
-cricketOldEvent()
+GH()
 

@@ -10,7 +10,6 @@ const deleteClosedOddsData = async  () => {
       let ids = await Odds.distinct('eventId');
       ids.forEach( async (id) => {
         let odd = await Odds.distinct('_id', {eventId: id , createdAt: { $lt: time }});
-
         console.log("  ids ===== ", odd.length);
         const counts = odd.pop();
         console.log(" ids ===== ", odd.length);
@@ -30,7 +29,7 @@ const deleteClosedOddsData = async  () => {
         
       });
     } catch (error) {
-      console.error('Error running listMarket cron job:', error);
+      console.error('Error :', error);
     }
   });
 }
