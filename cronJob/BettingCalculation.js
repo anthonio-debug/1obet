@@ -1,72 +1,11 @@
 const cron = require("node-cron");
-const axios = require("axios");
 const Bets = require("../app/models/bets");
 const CricketMatch = require("../app/models/cricketMatches");
 const User = require("../app/models/user");
-const Settings = require("../app/models/settings");
 const Cash = require("../app/models/deposits");
 const { getParents } = require("../app/routes/bets");
-const { listMarketsByCronJob ,getnewOdds,fancyDataByCronjob,listInplayEventsJob} = require('../app/routes/sportsAPI')
-const ListMarkets = require('../app/models/listMarkets')
 const Events = require('../app/models/events');
-const { todayRaceJob, marketDescriptionCronjob,raceOddsJob }  = require('../app/routes/Racing');
-const Odds = require('../app/models/odds');
-const raceOdds = require('../app/models/raceOdds');
-const FancyGames = require("../app/models/fancyGames");
-const raceMarkets = require("../app/models/raceMarkets");
 require('../db');
-
-const checkBetStatus = (req) => {
-   // Start the cron job after a 2-minute delay
-  runningJob = cron.schedule("*/2 * * * *", async () => {
-    try {
-      const endedMatches = await getEndedMatches();
-      console.log("endedMatches", endedMatches);
-      for (const match of endedMatches) {
-        const matchId = match.id;
-        const sportsId = match.sportsId;
-        const bets = await getAllBets(sportsId, matchId); // Pass the arguments separately
-
-        for (const bet of bets) {
-          console.log("bet", bets);
-          console.log("bet.team", bet.runner);
-
-          if (bet.type == 0 && bet.runner == match.winningTeam) {
-            console.log("in winning cas of back");
-            console.log(`Bet ${bet._id} won!`);
-            handleWinningBet(req, bet);
-          } else if (bet.type == 0 && bet.runner != match.winningTeam) {
-            console.log("in loosing cas of back");
-
-            console.log(`Bet ${bet._id} lost.`);
-            handleLosingBet(req, bet);
-          } else if (bet.type == 1 && bet.runner != match.winningTeam) {
-            console.log(`Bet ${bet._id} won!`);
-            console.log("in wiining cas of lay");
-            handleWinningBet(req, bet);
-          } else if (bet.type == 1 && bet.runner == match.winningTeam) {
-            console.log(`Bet ${bet._id} lost.`);
-            console.log("in loosing cas of lay");
-
-            handleLosingBet(req, bet);
-          } else {
-            console.log(`Bet ${bet._id} Draw.`);
-            console.log("in draw ");
-
-            handleDrawBet(req, bet);
-          }
-        }
-      }
-
-      // if (endedMatches.length >= 1) {
-      //   console.log('Stopping cron job');
-      //   runningJob.stop();
-      // }
-    } catch (err) {
-      console.error(err);
-    }
-  });
-};
 
 async function getAllBets(marketId, matchId) {
   try {
@@ -81,8 +20,6 @@ async function getAllBets(marketId, matchId) {
 
 async function getEndedMatches() {
   try {
-    sportsId = "38d3bc03-8a59-4551-85cf-a35298f75124";
-    id = "648b28c825e2fe7ca23e55a4";
     const endedMatches = await CricketMatch.find({
       sportsId,
       id,
@@ -377,5 +314,56 @@ async function handleDrawBet(req, bet) {
 
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
 }
+
+const checkBetStatus = (req) => {
+ runningJob = cron.schedule("*/2 * * * *", async () => {
+   try {
+     const endedMatches = await getEndedMatches();
+     console.log("endedMatches", endedMatches);
+     for (const match of endedMatches) {
+       const matchId = match.id;
+       const sportsId = match.sportsId;
+       const bets = await getAllBets(sportsId, matchId); // Pass the arguments separately
+
+       for (const bet of bets) {
+         console.log("bet", bets);
+         console.log("bet.team", bet.runner);
+         if (bet.type == 0 && bet.runner == match.winningTeam) {
+           console.log("in winning cas of back");
+           console.log(`Bet ${bet._id} won!`);
+           handleWinningBet(req, bet);
+         } 
+         else if (bet.type == 0 && bet.runner != match.winningTeam) {
+           console.log("in loosing cas of back");
+
+           console.log(`Bet ${bet._id} lost.`);
+           handleLosingBet(req, bet);
+         } else if (bet.type == 1 && bet.runner != match.winningTeam) {
+           console.log(`Bet ${bet._id} won!`);
+           console.log("in wiining cas of lay");
+           handleWinningBet(req, bet);
+         } else if (bet.type == 1 && bet.runner == match.winningTeam) {
+           console.log(`Bet ${bet._id} lost.`);
+           console.log("in loosing cas of lay");
+
+           handleLosingBet(req, bet);
+         } else {
+           console.log(`Bet ${bet._id} Draw.`);
+           console.log("in draw ");
+
+           handleDrawBet(req, bet);
+         }
+       }
+     }
+
+     // if (endedMatches.length >= 1) {
+     //   console.log('Stopping cron job');
+     //   runningJob.stop();
+     // }
+   } catch (err) {
+     console.error(err);
+   }
+ });
+};
 
 checkBetStatus();
