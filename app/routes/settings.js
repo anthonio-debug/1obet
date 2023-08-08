@@ -958,6 +958,16 @@ async function bettorDashboardGames(req, res) {
                 }
               ] 
             }},
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+                inplay:1
+              }
+            },
             { $sort: { inplay: -1 } 
           },
           ],
@@ -974,6 +984,16 @@ async function bettorDashboardGames(req, res) {
                 }
               ]  
             }},
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+                inplay: 1
+              }
+            },
             { $sort: { inplay: -1 } },
           ],
           cricket: [
@@ -990,6 +1010,44 @@ async function bettorDashboardGames(req, res) {
                 }
               ] 
             }},
+            // {
+            //   $lookup: {
+            //     from: 'odds', 
+            //     localField: 'Id', 
+            //     foreignField: 'eventId',
+            //     as: 'oddsData'
+            //   }
+            // },
+            // {
+            //   $unwind: '$oddsData'
+            // },
+            // {
+            //   $sort: { 'oddsData.createdAt': -1 } // Sort by timestamp in descending order to get the latest odds first
+            // },
+            // {
+            //   $group: {
+            //     _id: '$_id',
+            //     event: { $first: '$$ROOT' }, // Get the first document (latest odds data) for each eventId
+            //     oddsData: { $first: '$oddsData' } // Get the first odds data for each eventId
+            //   }
+            // },
+            // {
+            //   $replaceRoot: {
+            //     newRoot: {
+            //       $mergeObjects: ['$event', { oddsData: '$oddsData' }] // Merge the event document and oddsData document
+            //     }
+            //   }
+            // },
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+                inplay: 1
+              }
+            },
             { $sort: { inplay: -1 } },
           ],
           horseRace: [
@@ -1005,6 +1063,16 @@ async function bettorDashboardGames(req, res) {
                 }
               ] 
             }},
+            {
+              $project: {
+                _id: 1,
+                openDate: 1,
+                name: 1,
+                meetingId: 1,
+                countryCode: 1,
+                marketIds: 1
+              }
+            }
           ],
           greyhound: [
             { $match: { 
@@ -1018,27 +1086,66 @@ async function bettorDashboardGames(req, res) {
                   ]
                 }
               ] 
-            }}
-          ],
-          inplay: [
-            { $match: { 
-              sportsId: { $in: inplayIdArray },
-              $or: [
-                  {
-                    $and: [
-                      {inplay: true},
-                      {sportsId: { $in: ['1','2'] }}
-                    ]
-                  },
-                  {
-                    $and: [
-                      {inplay: true},
-                      {iconStatus: true},
-                      {sportsId: '4'}
-                    ]
-                  },
-              ] 
             }},
+            {
+              $project: {
+                _id: 1,
+                openDate: 1,
+                name: 1,
+                meetingId: 1,
+                countryCode: 1,
+                marketIds: 1              
+              }
+            }
+          ],
+          cricketInplay: [
+            { $match: { 
+              sportsId: '4',
+              inplay: true,
+              iconStatus: true,
+            }},
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName:1,
+                inplay: 1 
+              }
+            }
+          ],
+          tennisInplay: [
+            { $match: { 
+              sportsId: '2',
+              inplay: true,
+            }},
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+                inplay: 1
+              }
+            }
+          ],
+          soccerInplay: [
+            { $match: { 
+              sportsId: '1',
+              inplay: true,
+            }},
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+                inplay: 1
+              }
+            }
           ],
         },
       },
@@ -1047,8 +1154,6 @@ async function bettorDashboardGames(req, res) {
     const selectedCasinoData = await SelectedCasino.aggregate([
       {
         $project: {
-          category: 1,
-          status: 1,
           games: {
             $filter: {
               input: '$games',
@@ -1058,21 +1163,26 @@ async function bettorDashboardGames(req, res) {
           }
         }
       },
-      
+      {
+        $match: {
+          games: { $ne: [] } // Exclude documents with empty 'games' arrays
+        }
+      },
+      {
+        $unwind: '$games' // Unwind the 'games' array
+      },
       {
         $project: {
-          category: 1,
-          status: 1,
-          games: {
-            name: 1,
-            id: 1,
-            id_hash: 1,
-            image_filled: 1,
-            isDashboard: 1
-          }
+          _id: 0,
+          id: '$games.id',
+          name: '$games.name',
+          id_hash: '$games.id_hash',
+          image_filled: '$games.image_filled',
+          isDashboard: '$games.isDashboard'
         }
       }
     ]).exec();
+    
     
 //     const selectedCasinoData = await SelectedCasino.find({});
 //     selectedCasinoData.find((item) => item.games.some((game) => game.isDashboard === true));
@@ -1084,7 +1194,9 @@ async function bettorDashboardGames(req, res) {
       cricket: events[0].cricket,
       horseRace: events[0].horseRace,
       greyhound: events[0].greyhound,
-      inplay: events[0].inplay,
+      cricketInplay: events[0].cricketInplay,
+      tennisInplay: events[0].tennisInplay,
+      soccerInplay:events[0].soccerInplay,
       casinoData: selectedCasinoData,
     };
 
@@ -1103,152 +1215,175 @@ async function bettorDashboardGames(req, res) {
   }
 }
 
+async function getAllGamesResult(req, res) {
+  try {
+    const sportsIdArray = ['1', '2', '4', '7', '4339'];
+    const events = await Events.aggregate([
+      {
+        $match: {
+          sportsId: { $in: sportsIdArray } 
+        },
+      },
+      {
+        $facet: {
+          soccer: [
+            { $match: { 
+              sportsId: '1',
+              winner: 0,
+              openDate: { $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00")},
+             }},
+            { $sort: { openDate: 1 } 
+          },
+          ],
+          tennis: [
+            { $match: { 
+              sportsId: '2',
+              winner: 0,
+              openDate: { $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00")},
+            }},
+            { $sort: { openDate: 1 } },
+          ],
+          cricket: [
+            { $match: { 
+              sportsId: '4', 
+              winner: 0,
+              openDate: { $lt: moment(new Date(Date.now() - 180 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00")},
+            }},
+            { $sort: { openDate: 1 } },
+          ],
+          horseRace: [
+            { $match: { 
+              sportsId: '7',
+              winner: 0,
+              openDate: { $lt: moment(new Date(Date.now() - 10 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00")},
+            }},
+          ],
+          greyhound: [
+            { $match: { 
+              sportsId: '4339', 
+              winner: 0,
+              openDate: { $lt: moment(new Date(Date.now() - 5 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00")},
+            }}
+          ],
+        },
+      },
+    ]).exec();
+  
+    const organizedEvents = {
+      soccer: events[0].soccer,
+      tennis: events[0].tennis,
+      cricket: events[0].cricket,
+      horseRace: events[0].horseRace,
+      greyhound: events[0].greyhound,
+    };
 
+    res.status(200).json({
+      success: true,
+      message: 'Event By Sports Records',
+      results: organizedEvents,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({
+      success: false,
+      message: 'Failed to get events',
+      error: error.message,
+    });
+  }
+}
 
-// async function bettorDashboardGames(req, res) {
-//   try {
-//     const sportsIdArray = ['1', '2', '4', '7', '4339'];
-//     const inplayIdArray = ['1', '2', '4'];
-//     let events,inplay;
-//     // if (inplay === true || inplay === 'true') {
-//     //   events = await Events.find({ inplay: true, sportsId: { $in: sportsIdArray, $nin: ['7', '4339'] } });
-//     // } else {
-//       events = await Events.find({ sportsId: { $in: sportsIdArray } }).sort({ inplay: -1 });
-//     // }
-//     // console.log('events',events);
-//     const inplayEvents = await Events.find({ inplay: true, sportsId: { $in: inplayIdArray} });
-//     const selectedCasinoData = await SelectedCasino.find({});
+async function getbettorDashboardOdds(req, res) {
+  try {
+    const sportsIdArray = ['4'];
 
-//     // const organizedEvents = {
-//     //   soccer: [],
-//     //   tennis: [],
-//     //   cricket: [],
-//     //   horseRace: [],
-//     //   greyhound: [],
-//     //   inplay: [],
-//     //   casinoData: selectedCasinoData,
-//     // };
-// const filterCricketData =  events?.filter((item)=> item?.sportsId==='4')?.filter((z)=>z?.iconStatus==true)
-// const soccerData = events?.filter((item)=> item.sportsId==='1')
-// const tenissData =  events?.filter((item)=> item?.sportsId==='2')
-// const horseRAceData = events?.filter((item)=> item?.sportsId==='7')
-// const greyhoundData = events?.filter((item)=> item?.sportsId==='4339')
-// // const inplayData =  events?.filter((item)=> item?.inplay==true)
-// const organizedEvents = {
-//   soccer: soccerData,
-//   tennis: tenissData,
-//   cricket: filterCricketData,
-//   horseRace: horseRAceData,
-//   greyhound: greyhoundData,
-//   inplay: Events,
-//   casinoData: selectedCasinoData,
-// };
-//     // events.forEach((event) => {
-//     //   if (event.sportsId === '1') {
-//     //     organizedEvents.soccer.push(event);
-//     //   } else if (event.sportsId === '2') {
-//     //     organizedEvents.tennis.push(event);
-//     //   } else if (event.sportsId === '4') {
-//     //     organizedEvents.cricket.push(event);
-//     //   } else if (event.sportsId === '7') {
-//     //     organizedEvents.horseRace.push(event);
-//     //   } else if (event.sportsId === '4339') {
-//     //     organizedEvents.greyhound.push(event);
-//     //   }
+    const cricketOddsData = await Events.aggregate([
+      {
+        $match: {
+          sportsId: { $in: sportsIdArray },
+          iconStatus: true,
+          $or: [
+            { inplay: true },
+            {
+              $and: [
+                {
+                  openDate: {
+                    $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00"),
+                  },
+                },
+                {
+                  openDate: {
+                    $lt: moment(new Date(Date.now() + 24 * 60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00"),
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: 'odds',
+          localField: 'Id',
+          foreignField: 'eventId',
+          as: 'oddsData',
+        },
+      },
+      {
+        $unwind: '$oddsData',
+      },
+      {
+        $sort: { 'oddsData.createdAt': -1 },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          event: { $first: '$$ROOT' },
+          oddsData: { $first: '$oddsData' },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$event', { oddsData: '$oddsData' }],
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          Id: '$Id',
+          name: '$name',
+          competitionName: '$competitionName',
+          inplay: '$inplay',
+          oddsData: {
+            $map: {
+              input: '$oddsData.runners',
+              as: 'runner',
+              in: {
+                runnerName: '$$runner.runnerName',
+                latestOdds: { $slice: ['$$runner.ExchangePrices.AvailableToBack.price', 2] },
+              },
+            },
+          },
+        },
+      },
+      { $sort: { inplay: -1 } },
+    ]).exec();
 
-//     //   if (event.inplay === true) {
-//     //     organizedEvents.inplay.push(event);
-//     //   }
-//     // });
-
-//     res.status(200).json({
-//       success: true,
-//       message: 'Event By Sports Records',
-//       results: organizedEvents,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(200).json({
-//       success: false,
-//       message: 'Failed to get events',
-//       error: error.message,
-//     });
-//   }
-// }
-// async function bettorDashboardGames(req, res) {
-//   try {
-//     const sportsIdArray = ['1', '2', '4', '7', '4339'];
-//     const inplayIdArray = ['1', '2', '4'];
-//     let events,inplay;
-//     // if (inplay === true || inplay === 'true') {
-//     //   events = await Events.find({ inplay: true, sportsId: { $in: sportsIdArray, $nin: ['7', '4339'] } });
-//     // } else {
-//       events = await Events.find({ sportsId: { $in: sportsIdArray } })
-//     // }
-//     console.log('events',events);
-//     const selectedCasinoData = await SelectedCasino.find({});
-
-//     // const organizedEvents = {
-//     //   soccer: [],
-//     //   tennis: [],
-//     //   cricket: [],
-//     //   horseRace: [],
-//     //   greyhound: [],
-//     //   inplay: [],
-//     //   casinoData: selectedCasinoData,
-//     // };
-// const filterCricketData =  events?.filter((item)=> item?.sportId==='4')?.filter((z)=>z?.iconStatus==true)?.sort((a, b)=> Number(b?.inplay)- Number(a.inplay))
-// const soccerData = events?.filter((item)=> item.sportId==='1')?.sort((a, b)=> Number(b?.inplay)- Number(a.inplay))
-// const tenissData =  events?.filter((item)=> item?.sportId==='2')?.sort((a, b)=> Number(b?.inplay)- Number(a.inplay))
-// const horseRAceData = events?.filter((item)=> item?.sportId==='7')
-// const greyhoundData = events?.filter((item)=> item?.sportId==='4339')
-// const inplayEvents = events?.filter((item)=> item?.inplay===true)?.sort((a, b)=> Number(b?.inplay)- Number(a.inplay))
-
-// // const inplayEvents = await Events.find({ inplay: true, sportsId: { $in: inplayIdArray} });
-
-// // const inplayData =  events?.filter((item)=> item?.inplay==true)
-// const organizedEvents = {
-//   soccer: soccerData,
-//   tennis: tenissData,
-//   cricket: filterCricketData,
-//   horseRace: horseRAceData,
-//   greyhound: greyhoundData,
-//   inplay: Events,
-//   casinoData: selectedCasinoData,
-// };
-//     // events.forEach((event) => {
-//     //   if (event.sportsId === '1') {
-//     //     organizedEvents.soccer.push(event);
-//     //   } else if (event.sportsId === '2') {
-//     //     organizedEvents.tennis.push(event);
-//     //   } else if (event.sportsId === '4') {
-//     //     organizedEvents.cricket.push(event);
-//     //   } else if (event.sportsId === '7') {
-//     //     organizedEvents.horseRace.push(event);
-//     //   } else if (event.sportsId === '4339') {
-//     //     organizedEvents.greyhound.push(event);
-//     //   }
-
-//     //   if (event.inplay === true) {
-//     //     organizedEvents.inplay.push(event);
-//     //   }
-//     // });
-
-//     res.status(200).json({
-//       success: true,
-//       message: 'Event By Sports Records',
-//       results: organizedEvents,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(200).json({
-//       success: false,
-//       message: 'Failed to get events',
-//       error: error.message,
-//     });
-//   }
-// }
-
+    res.status(200).json({
+      success: true,
+      message: 'Cricket Odds Data',
+      results: cricketOddsData,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get cricket odds data',
+      error: error.message,
+    });
+  }
+}
 
 loginRouter.post(
   '/updateDefaultTheme',
@@ -1304,5 +1439,7 @@ loginRouter.post('/updateMatchType', updateMatchType);
 loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 loginRouter.post('/updateMatch', updateMatch);
 loginRouter.get('/bettorDashboardGames', bettorDashboardGames);
+loginRouter.get('/getAllGamesResult', getAllGamesResult);
+loginRouter.get('/getbettorDashboardOdds', getbettorDashboardOdds);
 
 module.exports = { loginRouter, router, listOddsAPI };

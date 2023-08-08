@@ -9,6 +9,9 @@ let config = require('config');
 const User = require('../models/user');
 
 async function addCasinoGameDetails(req, res) {
+  if( req.decoded.role !== '0' ){
+    return res.status(200).send({ message: 'you are not allowed to add games',success:false})
+  }
   try {
     const response = await axios.post(config.apiUrl, {
       api_password: config.api_password,
@@ -265,6 +268,9 @@ async function getGame(req, res) {
       return res.status(400).send({ errors: errors.errors });
     }
 
+    if( req.decoded.role !== '5' ){
+      return res.status(200).send({ message: 'you are not allowed to play casino games',success:false})
+    }
     const { homeurl, cashierurl, gameid } = req.body;
     const user = await User.findOne({ userId: req.decoded.userId });
 
@@ -324,6 +330,9 @@ function addSelectedDashboardGames(req, res) {
     return res.status(400).send({ errors: errors.array() });
   }
 
+  if ( req.decoded.role !== '0' ) {
+    return res.status(200).send({ message: 'you are not allowed to add dashboard games', success: false })
+  }
   const { gameIds } = req.body;
 
   SelectedCasino.updateMany(
@@ -346,7 +355,52 @@ function addSelectedDashboardGames(req, res) {
   });
 }
 
+function getAllSelectedCasinosGamesCategory(req, res) {
 
+  let query = {}
+  let page = 1;
+  let sort = -1;
+  let sortValue = '_id';
+  let limit = 20;
+  if (req.query.numRecords) {
+    if (isNaN(req.query.numRecords))
+      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+    if (req.query.numRecords < 0)
+      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+    limit = Number(req.query.numRecords);
+  }
+  if (req.query.sortValue) sortValue = req.query.sortValue;
+  if (req.query.sort) {
+    sort = Number(req.query.sort);
+  }
+  if (req.query.page) {
+    page = Number(req.query.page);
+  }
+  SelectedCasino.paginate(
+    query,
+    { page: page, limit: limit },
+      (err, data) => {
+      
+        if (data.total == 0) {
+          return res.status(404).send({ message: 'No records found'});
+        }
+   
+        if (err) return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
+          console.log('page', data.page),
+          console.log('total', data.total),
+          console.log('page', data.page),
+          console.log('pages', data.pages)
+          return res.send({
+            message: 'Selected Casino Games List',
+            success: true,
+            results: data.docs,
+            page: data.page,
+            limit: data.limit,
+            total: data.total,
+            pages: data.pages
+          });
+      })
+}
 
 loginRouter.post('/addCasinoGameDetails', addCasinoGameDetails);
 

@@ -61,6 +61,7 @@ const selectedCasinoSchema = new mongoose.Schema({
 selectedCasinoSchema.plugin(Global.aggregatePaginate);
 selectedCasinoSchema.plugin(Global.paginate);
 
+selectedCasinoSchema.index({ 'games.isDashboard': 1 });
 const selectedCasino = mongoose.model('selectedCasino', selectedCasinoSchema);
 
 module.exports = selectedCasino;
