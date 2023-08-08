@@ -13,8 +13,25 @@ Get data for these sports
 */
 async function listOdds(eventId) {
     try {
-      const odds = await Odds.findOne({ eventId: eventId }).sort({ createdAt: -1 });
-      const fancyData = await FancyGames.findOne({ eventId: eventId }).sort({ createdAt: -1 });
+
+      let oddsProjection = {
+        _id: 1,
+        eventId: 1,
+        marketId: 1,
+        status: 1,
+        isInplay: 1,
+        inplay: 1,
+        runners: 1
+      }
+
+      let fancyDataProjection = {
+        _id: 1,
+        t3: 1,
+        't2.bm1': 1 // Include only the bm1 field within t2 array
+      }
+    
+      const odds = await Odds.findOne({ eventId: eventId },oddsProjection).sort({ createdAt: -1 });
+      const fancyData = await FancyGames.findOne({ eventId: eventId },fancyDataProjection).sort({ createdAt: -1 });
       let liveSportScoreData;
       const event = await Events.findOne({ Id: eventId }, { _id: 1, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
       const type = event ? event.sportsId : null;
