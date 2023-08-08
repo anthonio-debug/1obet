@@ -120,5 +120,6 @@
   "updateMatch",
   "bettorDashboardGames",
   "getAllGamesResult",
-  "getbettorDashboardOdds"
+  "getbettorDashboardOdds",
+  "getSelectedGamesBySearch"
 ]

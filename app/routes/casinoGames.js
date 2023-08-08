@@ -216,67 +216,65 @@ function getCategoryCasinoGames(req, res) {
 
 function getAllSelectedCasinos(req, res) {
   let query = {};
+
   let page = 1;
-  let sort = -1;
-  let sortValue = '_id';
   let limit = 20;
+
+  // Retrieve isMobile parameter from query and convert to boolean
+  let isMobile = req.query.isMobile;
+
   if (req.query.numRecords) {
     if (isNaN(req.query.numRecords))
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+      return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
     if (req.query.numRecords < 0)
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+      return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
     limit = Number(req.query.numRecords);
-  }
-  if (req.query.sortValue) sortValue = req.query.sortValue;
-  if (req.query.sort) {
-    sort = Number(req.query.sort);
   }
   if (req.query.page) {
     page = Number(req.query.page);
   }
 
-  // // Retrieve isMobile parameter from query and convert to boolean
-  // let isMobile = req.query.isMobile;
+  SelectedCasino.find(query)
+    .select({ _id: 0, __v: 0, status: 0 })
+    .lean()
+    .exec((err, data) => {
+      if (err) return res.status(500).send({ message: 'USERS_PAGINATION_FAILED' });
 
-  SelectedCasino.paginate(
-    query,
-    { page: page, limit: limit },
-      (err, data) => {
-      
-        if (data.total == 0) {
-          return res.status(404).send({ message: 'No records found' });
-        }
-   
-        if (err) return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
-    
-      // // Filter games based on isMobile parameter
-      // const filteredGames = data.docs.flatMap(item => {
-      //   return item.games.filter(game => {
-      //     if (isMobile === undefined) {
-      //       // If isMobile is not provided in query, include all games
-      //       return true;
-      //     } else {
-      //       // Filter games based on isMobile parameter
-      //       return game.mobile === (isMobile === 'true');
-      //     }
-      //   });
-      // });
+      const paginatedGames = [];
+      data.forEach(item => {
+        const filteredGames = item.games.filter(game => {
+          return isMobile === undefined || game.mobile === (isMobile === 'true');
+        });
 
-      console.log('total', data.total);
-      console.log('page', data.page);
-      console.log('pages', data.pages);
+        // Perform manual pagination within filtered games
+        const startIndex = (page - 1) * limit;
+        const endIndex = Math.min(startIndex + limit, filteredGames.length);
+        const paginatedSubset = filteredGames.slice(startIndex, endIndex);
+
+        // Select specific fields for each game and push to the result
+        const selectedGames = paginatedSubset.map(game => ({
+          name: game.name,
+          image_filled: game.image_filled,
+          isDashboard: game.isDashboard,
+          isMobile: game.mobile,
+          category: item.category
+        }));
+        paginatedGames.push(...selectedGames);
+      });
+
+      const totalRecords = paginatedGames.length;
+      const totalPages = Math.ceil(totalRecords / limit);
 
       return res.send({
         message: 'Selected Casino Games List',
         success: true,
-        results: data.docs,
-        page: data.page,
-        limit: data.limit,
-        total: data.total,
-        pages: data.pages
+        results: paginatedGames,
+        page: page,
+        limit: limit,
+        total: totalRecords,
+        totalPages: totalPages
       });
-    }
-  );
+    });
 }
 
 async function getGame(req, res) {
@@ -373,53 +371,93 @@ function addSelectedDashboardGames(req, res) {
   });
 }
 
-function getAllSelectedCasinosGamesCategory(req, res) {
+function getSelectedGamesBySearch(req, res) {
+  let query = {};
 
-  let query = {}
   let page = 1;
-  let sort = -1;
-  let sortValue = '_id';
   let limit = 20;
-  if (req.query.numRecords) {
-    if (isNaN(req.query.numRecords))
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-    if (req.query.numRecords < 0)
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-    limit = Number(req.query.numRecords);
+  if (req.body.numRecords) {
+    if (isNaN(req.body.numRecords))
+      return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+    if (req.body.numRecords < 0)
+      return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+    limit = Number(req.body.numRecords);
   }
-  if (req.query.sortValue) sortValue = req.query.sortValue;
-  if (req.query.sort) {
-    sort = Number(req.query.sort);
+  if (req.body.page) {
+    page = Number(req.body.page);
   }
-  if (req.query.page) {
-    page = Number(req.query.page);
+
+  // Check for isDashboard parameter in the request body
+  if (req.body.isDashboard !== undefined) {
+    if (req.body.isDashboard === true) {
+      query['games.isDashboard'] = true;
+    } else if (req.body.isDashboard === false) {
+      query['games.isDashboard'] = false;
+    }
   }
-  SelectedCasino.paginate(
-    query,
-    { page: page, limit: limit },
-      (err, data) => {
-      
-        if (data.total == 0) {
-          return res.status(404).send({ message: 'No records found'});
-        }
-   
-        if (err) return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
-          console.log('page', data.page),
-          console.log('total', data.total),
-          console.log('page', data.page),
-          console.log('pages', data.pages)
-          return res.send({
-            message: 'Selected Casino Games List',
-            success: true,
-            results: data.docs,
-            page: data.page,
-            limit: data.limit,
-            total: data.total,
-            pages: data.pages
-          });
-      })
+
+  // Check for isMobile parameter in the request body
+  if (req.body.isMobile !== undefined) {
+    query['games.mobile'] = true;
+  } else if (req.body.isMobile === false) {
+    query['games.isMobile'] = false;
+  }
+
+  // Retrieve all games matching the query
+  SelectedCasino.find(query)
+    .select({ _id: 0, __v: 0, status: 0 })
+    .lean()
+    .exec((err, data) => {
+      if (err) return res.status(500).send({ message: 'USERS_PAGINATION_FAILED' });
+
+      const allGames = [];
+      data.forEach(item => {
+        item.games.forEach(game => {
+          if (
+            (req.body.isDashboard === undefined || game.isDashboard === req.body.isDashboard) &&
+            (req.body.isMobile === undefined || game.mobile === req.body.isMobile)
+          ) {
+            allGames.push({
+              id: game.id,
+              name: game.name,
+              image_filled: game.image_filled,
+              isDashboard: game.isDashboard,
+              isMobile: game.mobile,
+              category: item.category
+            });
+          }
+        });
+      });
+
+      // Apply pagination based on the requested number of records
+      const totalRecords = allGames.length;
+      const totalPages = Math.ceil(totalRecords / limit);
+      const startIndex = (page - 1) * limit;
+      const endIndex = Math.min(startIndex + limit, totalRecords);
+      const paginatedGames = allGames.slice(startIndex, endIndex);
+
+      // Retrieve unique categories using distinct method
+      SelectedCasino.distinct('category', (err, categories) => {
+        if (err || !categories)
+          return res.status(500).send({ message: 'categories not found' });
+
+        return res.send({
+          message: 'Selected Casino Games List',
+          success: true,
+          results: paginatedGames,
+          categories: categories,
+          pagination: {
+            total: totalRecords,
+            totalPages: totalPages,
+            currentPage: page,
+            recordsPerPage: limit
+          }
+        });
+      });
+    });
 }
 
+loginRouter.post('/getSelectedGamesBySearch', getSelectedGamesBySearch);
 loginRouter.post('/addCasinoGameDetails', addCasinoGameDetails);
 
 loginRouter.get('/getAllCasinoCategories', getAllCasinoCategories);
