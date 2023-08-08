@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const ListMarkets = require('../../app/models/listMarkets')
 const { getnewOdds } = require('../../app/routes/sportsAPI')
 const Events = require('../../app/models/events');
-require('../db');
+require('../../db');
 
 const soccerOddsCronJob = () => {
     // Cron job to run every 1 sec

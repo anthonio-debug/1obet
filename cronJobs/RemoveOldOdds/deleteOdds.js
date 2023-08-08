@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const Odds = require('../../app/models/odds');
 const raceOdds = require('../../app/models/raceOdds');
 const { log } = require("async");
-require('../db');
+require('../../db');
 const deleteClosedOddsData = async  () => {
   cron.schedule('*/2 * * * *', async () => {
     try {

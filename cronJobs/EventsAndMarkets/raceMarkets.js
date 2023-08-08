@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const ListMarkets = require('../../app/models/listMarkets')
 const Events = require('../../app/models/events');
 const { marketDescriptionCronjob}  = require('../../app/routes/Racing');
-require('../db');
+require('../../db');
 
 const raceMarketsCronJob = async () => {
   // Cron job to run every 1 minute

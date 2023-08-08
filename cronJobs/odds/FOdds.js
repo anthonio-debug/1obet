@@ -1,8 +1,7 @@
 const cron = require("node-cron");
 const { listMarketsByCronJob ,getnewOdds,fancyDataByCronjob,listInplayEventsJob} = require('../../app/routes/sportsAPI')
 const Events = require('../../app/models/events');
-
-require('../db');
+require('../../db');
 
 const fancyDataCronJob = async () => {
   // Cron job to run every 1 minute
