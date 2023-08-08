@@ -13,8 +13,25 @@ Get data for these sports
 */
 async function listOdds(eventId) {
     try {
-      const odds = await Odds.findOne({ eventId: eventId }).sort({ createdAt: -1 });
-      const fancyData = await FancyGames.findOne({ eventId: eventId }).sort({ createdAt: -1 });
+
+      let oddsProjection = {
+        _id: 1,
+        eventId: 1,
+        marketId: 1,
+        status: 1,
+        isInplay: 1,
+        inplay: 1,
+        runners: 1
+      }
+
+      let fancyDataProjection = {
+        _id: 1,
+        t3: 1,
+        't2.bm1': 1 // Include only the bm1 field within t2 array
+      }
+    
+      const odds = await Odds.findOne({ eventId: eventId },oddsProjection).sort({ createdAt: -1 });
+      const fancyData = await FancyGames.findOne({ eventId: eventId },fancyDataProjection).sort({ createdAt: -1 });
       let liveSportScoreData;
       const event = await Events.findOne({ Id: eventId }, { _id: 1, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
       const type = event ? event.sportsId : null;
@@ -144,28 +161,28 @@ Get data for these sports
 */
 async function racesMarketOdds(marketId) {
     try {
-      const projectionRacesMarketsData = {
-        'eventNodes.marketNodes.state': 1,
-        'eventNodes.marketNodes.description.marketName': 1,
-        'eventNodes.marketNodes.description.marketTime': 1,
-        'eventNodes.marketNodes.description.suspendTime': 1,
-        'eventNodes.marketNodes.description.turnInPlayEnabled': 1,
-        'eventNodes.marketNodes.description.marketType': 1,
-        'eventNodes.marketNodes.description.raceNumber': 1,
-        'eventNodes.marketNodes.description.raceType': 1,
-        'eventNodes.marketNodes.description.bettingType': 1,
-        'eventNodes.marketNodes.runners.selectionId': 1,
-        'eventNodes.marketNodes.runners.description.runnerName': 1,
-        'eventNodes.marketNodes.runners.description.metadata.SIRE_NAME': 1,
-        'eventNodes.marketNodes.runners.description.metadata.CLOTH_NUMBER_ALPHA': 1,
-        'eventNodes.marketNodes.runners.description.metadata.COLOURS_DESCRIPTION': 1,
-        'eventNodes.marketNodes.runners.description.metadata."COLOURS_FILENAME': 1,
-        'eventNodes.marketNodes.runners.description.metadata.OWNER_NAME': 1,
-        'eventNodes.marketNodes.runners.description.metadata.JOCKEY_NAME': 1,
-        'eventNodes.marketNodes.runners.description.metadata.CLOTH_NUMBER': 1,
-        'eventNodes.marketNodes.runners.description.metadata.TRAINER_NAME': 1,
-        'eventNodes.event.eventName': 1
-      };
+      // const projectionRacesMarketsData = {
+      //   'eventNodes.marketNodes.state': 1,
+      //   'eventNodes.marketNodes.description.marketName': 1,
+      //   'eventNodes.marketNodes.description.marketTime': 1,
+      //   'eventNodes.marketNodes.description.suspendTime': 1,
+      //   'eventNodes.marketNodes.description.turnInPlayEnabled': 1,
+      //   'eventNodes.marketNodes.description.marketType': 1,
+      //   'eventNodes.marketNodes.description.raceNumber': 1,
+      //   'eventNodes.marketNodes.description.raceType': 1,
+      //   'eventNodes.marketNodes.description.bettingType': 1,
+      //   'eventNodes.marketNodes.runners.selectionId': 1,
+      //   'eventNodes.marketNodes.runners.description.runnerName': 1,
+      //   'eventNodes.marketNodes.runners.description.metadata.SIRE_NAME': 1,
+      //   'eventNodes.marketNodes.runners.description.metadata.CLOTH_NUMBER_ALPHA': 1,
+      //   'eventNodes.marketNodes.runners.description.metadata.COLOURS_DESCRIPTION': 1,
+      //   'eventNodes.marketNodes.runners.description.metadata."COLOURS_FILENAME': 1,
+      //   'eventNodes.marketNodes.runners.description.metadata.OWNER_NAME': 1,
+      //   'eventNodes.marketNodes.runners.description.metadata.JOCKEY_NAME': 1,
+      //   'eventNodes.marketNodes.runners.description.metadata.CLOTH_NUMBER': 1,
+      //   'eventNodes.marketNodes.runners.description.metadata.TRAINER_NAME': 1,
+      //   'eventNodes.event.eventName': 1
+      // };
   
       const projectionRaceOddsData = {
         'marketId': 1,
@@ -192,31 +209,33 @@ async function racesMarketOdds(marketId) {
   
         // Add any other fields you want to exclude from raceOddsData
       };
-      const racesMarketsData = await RaceMarkets.findOne({'eventNodes.marketNodes.marketId': marketId },);
+      // const racesMarketsData = await RaceMarkets.findOne({'eventNodes.marketNodes.marketId': marketId },);
       const raceOddsData = await RaceOdds.findOne({ marketId: marketId },projectionRaceOddsData).sort({_id: -1})
-      console.log('>> racesMarketsData ==>', racesMarketsData)
+      // console.log('>> racesMarketsData ==>', racesMarketsData)
       console.log('>> raceOddsData ==>', raceOddsData)      
-      if ( raceOddsData?.runners && Array.isArray(raceOddsData?.runners) && racesMarketsData?.eventNodes && Array.isArray(racesMarketsData?.eventNodes)){
-        const marketNode = racesMarketsData?.eventNodes?.find((eventNode) => eventNode?.marketNodes?.marketId === raceOddsData.marketId);
-        if (marketNode && marketNode?.marketNodes?.runners && Array.isArray(marketNode?.marketNodes?.runners)) {
-          const mergedRunners = {};
-          raceOddsData?.runners.forEach((runner) => {
-            const matchingRunner = marketNode?.marketNodes?.runners.find((r) => r.selectionId === runner?.selectionId);
-            if (matchingRunner) {
-              mergedRunners[runner?.selectionId] = {
-                ...runner,
-                ...matchingRunner,
-              };
-            }
-          });
+      // if ( raceOddsData?.runners && Array.isArray(raceOddsData?.runners) && racesMarketsData?.eventNodes && Array.isArray(racesMarketsData?.eventNodes)){
+        // const marketNode = racesMarketsData?.eventNodes?.find((eventNode) => eventNode?.marketNodes?.marketId === raceOddsData.marketId);
+        // if (marketNode && marketNode?.marketNodes?.runners && Array.isArray(marketNode?.marketNodes?.runners)) {
+          // const mergedRunners = {};
+          // raceOddsData?.runners.forEach((runner) => {
+            // const matchingRunner = marketNode?.marketNodes?.runners.find((r) => r.selectionId === runner?.selectionId);
+            // if (matchingRunner) {
+              // mergedRunners[runner?.selectionId] = {
+                // ...runner,
+                // ...matchingRunner,
+              // };
+            // }
+          // });
           // Update the merged runners data into the raceOddsData object
-          raceOddsData.runners = Object.values(mergedRunners);
-        } else {
-          console.error('Invalid data structure. Market runners data not found.');
-        }
-      } else {
-        console.error('Invalid data structure. Please check the provided objects.');
-      }
+          // raceOddsData.runners = Object.values(mergedRunners);
+        // } 
+        // else {
+        //   console.error('Invalid data structure. Market runners data not found.');
+        // }
+      // } 
+      // else {
+      //   console.error('Invalid data structure. Please check the provided objects.');
+      // }
       const matchId = await Events.findOne({ marketIds: {$in: marketId }})
 
       console.log('matchId', matchId);
@@ -225,7 +244,7 @@ async function racesMarketOdds(marketId) {
         success: true,
         message: 'Records',
         results: {
-          racesMarketsData,
+          // racesMarketsData,
           raceOddsData,
           matchData: matchId
         }
