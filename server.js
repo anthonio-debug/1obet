@@ -12,6 +12,12 @@ const apisMiddleware      = require('./app/middlewares/apisMiddleware');
 const loginMiddleWare     = require('./app/middlewares/loginMiddleware');
 const checkRoleMiddleware = require('./app/middlewares/checkRoleMiddleware');
 
+
+setInterval(() => {
+  console.log('====== log info for testing Server ');
+}, 2000);
+
+
 var apisContent = fs.readFileSync(config.apisFileName);
 var jsonApis = JSON.parse(apisContent);
 let options = {
