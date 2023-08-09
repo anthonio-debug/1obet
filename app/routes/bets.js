@@ -205,10 +205,14 @@ async function placeBet(req, res) {
 
       if(ApiResponseOdds[matchedIndex] >= betRate ){
         return res.send({
+          betrate: betRate,
+          ApiResponseOdds: ApiResponseOdds[matchedIndex],
           message: "Bet Allow to  Place"
         })
       }else{
         return res.send({
+          betrate: betRate,
+          ApiResponseOdds: ApiResponseOdds[matchedIndex],
           message: "Bet Miss match"
         })
       }
