@@ -21,6 +21,7 @@ async function listOdds(eventId) {
         status: 1,
         isInplay: 1,
         inplay: 1,
+        marketName: 1,
         runners: 1
       }
 
