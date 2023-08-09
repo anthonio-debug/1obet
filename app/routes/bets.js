@@ -154,11 +154,12 @@ async function placeBet(req, res) {
       console.log('data', oddsData[0].Runners);
 
       const runnerFromAPI = oddsData[0].Runners.find(runner => runner.SelectionId == selectionId);
-      console.log('matchOdds.runners', selectedTeam);
+      console.log('matchOdds.runners', runnerFromAPI);
       console.log('selection Id', selectionId);
       // if (!selectedTeam) {}
       // runnerName = selectedTeam.runnerName
 
+      
       if (type == 0){
         const DBOddDetails      = await Odds.findById(oddsId);
         console.log("DBOddDetails === ", DBOddDetails);
