@@ -254,6 +254,7 @@ async function getAllSelectedCasinos(req, res) {
       'games.image_filled' : 1,
       'games.isDashboard' : 1,
       'games.mobile' : 1,
+      'games.id_hash': 1
     });
     // console.log('casino',casino);
   const games = casino.flatMap(casino => casino.games)
@@ -416,6 +417,10 @@ if (req.body.gameCategory != '') {
   query['games.category'] = req.body.gameCategory;
 }
 
+if (req.body.name != '') {
+  query['games.name'] = req.body.name;
+}
+
  const casino = await  SelectedCasino.find(query, {
      _id: 0,
     'games.id' : 1,
@@ -423,11 +428,15 @@ if (req.body.gameCategory != '') {
     'games.image_filled' : 1,
     'games.isDashboard' : 1,
     'games.mobile' : 1,
-    'games.category' : 1
+    'games.category' : 1,
+    'games.id_hash': 1
   });
   
-  const games = casino.flatMap(game => game.games);
-  
+  const games = casino.flatMap(game => game.games)
+  .filter(game => (game.mobile == req.body.isMobile)
+  || (game.isDashboard == req.body.isDashboard) 
+  || (game.name == req.body.name) 
+  );
   // Apply pagination based on the requested number of records
 const totalRecords = games.length;
 const totalPages = Math.ceil(totalRecords / limit);
@@ -439,7 +448,7 @@ return res.send({
   message: 'Selected Casino Games List',
   success: true,
   results: paginatedGames,
-  categories:casinoCategories,
+  // categories:casinoCategories,
   pagination: {
     total: totalRecords,
     totalPages: totalPages,
