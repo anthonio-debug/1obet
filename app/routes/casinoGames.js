@@ -233,13 +233,16 @@ async function getAllSelectedCasinos(req, res) {
   
   // Check for isMobile parameter in the request body
   if (req.body.isMobile == true) {
+    console.log('in here isMobile true');
     query['games.mobile'] = true;
   } else if (req.body.isMobile == false){
+    console.log('in here isMobile false');
     query['games.mobile'] = false;
   }
 
  // Check for gameCategory parameter in the request body
   if (req.body.gameCategory != '') {
+    console.log('in gameCategoryCheck');
     query['games.category'] = req.body.gameCategory;
   }
 
