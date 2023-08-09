@@ -206,6 +206,8 @@ async function placeBet(req, res) {
         return res.status(404).send({ message: 'Selected odds not found for the bet', selectedOddsRate });
       }
 
+      console.log(`ApiResponseOdds at ${matchedIndex}`, ApiResponseOdds[matchedIndex]);
+
 
       if(ApiResponseOdds[matchedIndex].price >= betRate ){
         return res.send({
