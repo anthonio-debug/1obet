@@ -156,18 +156,23 @@ async function placeBet(req, res) {
       const runnerFromAPI = oddsData[0].Runners.find(runner => runner.SelectionId == selectionId);
       console.log('matchOdds.runners', runnerFromAPI);
       console.log('selection Id', selectionId);
-      // if (!selectedTeam) {}
-      // runnerName = selectedTeam.runnerName
-
       
       if (type == 0){
+
         const DBOddDetails      = await Odds.findById(oddsId);
+
         console.log("DBOddDetails === ", DBOddDetails);
+
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+
         const availableToBack   = OddDetailsTeam.ExchangePrices.AvailableToBack;
         console.log('availableToBack', availableToBack);
-        const matchedBack = availableToBack.find(back => back.price == betRate);
+        const matchedBack = availableToBack.find(back => {
+          back.price == betRate ? availableToBack.indexof(back): ''
+        });
+
         console.log('matchedBack', matchedBack);
+
         if (!matchedBack) {
           console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
           return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
@@ -193,8 +198,6 @@ async function placeBet(req, res) {
         console.log('Invalid type value. Type should be 0 or 1.');
         return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
       }
-      console.log('in here')
-
       if (!selectedOddsRate) {
         //put the bet in fake bet 
         console.log('Selected odds not found for the bet');
@@ -202,6 +205,10 @@ async function placeBet(req, res) {
       }
     }
 
+    return res.send({
+      status: 200,
+      message: "Working Fine !"
+    })
     //for fancy
     if (subMarketDetail.subMarketId == '104' && marketId == '4' ) {
       const eventId = match.Id
@@ -227,7 +234,6 @@ async function placeBet(req, res) {
           console.log('backOdds', backOdds)
           selectedOddsRate = backOdds.find(back => back == req.body.betRate);
         } else if (req.body.type === 1) {
-          // If type is 1 (available to lay), use the "l1", "l2", or "l3" price for the lay odds
           const layOdds = [selectedTeamOdds.l1, selectedTeamOdds.l2, selectedTeamOdds.l3];
           console.log('layOdds', layOdds);
           selectedOddsRate = layOdds.find(lay => lay == req.body.betRate)
@@ -247,6 +253,7 @@ async function placeBet(req, res) {
       }
 
     }
+   
     // for bookmaker
     if (subMarketDetail.subMarketId === '128' && sportsId === '4') {
       console.log('in bookmakrer');
