@@ -32,9 +32,7 @@ async function getAllBets(Id) {
   }
 }
 
-
-
-async function handleLosingBet(req, bet) {
+async function handleLosingBet(bet) {
   console.log(`Bet ${bet._id} lost.`);
 
   const userId = bet.userId;
@@ -131,7 +129,7 @@ async function handleLosingBet(req, bet) {
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
 }
 
-async function handleWinningBet(req, bet) {
+async function handleWinningBet(bet) {
   console.log(`Bet ${bet._id} lost.`);
   const userId = bet.userId;
   const loosingAmount = bet.loosingAmount;
@@ -148,10 +146,10 @@ async function handleWinningBet(req, bet) {
   const commissionAmount = (bet.winningAmount / 100) * 2;
   const totalRemainingAmount = bet.winningAmount;
   const TotalLoosingAmount = bet.loosingAmount;
-  // review starts
+
   userToUpdate.balance  += remainingAmount;
   userToUpdate.clientPL += remainingAmount;
-  // review ends
+
   userToUpdate.availableBalance += TotalLoosingAmount + remainingAmount;
   userToUpdate.exposure += TotalLoosingAmount;
   await userToUpdate.save();
@@ -168,28 +166,18 @@ async function handleWinningBet(req, bet) {
     betId: bet._id,
     createdBy: 0,
     amount: TotalLoosingAmount + remainingAmount,
-    balance: lastMaxWithdraw
-      ? lastMaxWithdraw.balance + remainingAmount
-      : remainingAmount,
-
-    availableBalance: lastMaxWithdraw
-      ? lastMaxWithdraw.availableBalance + remainingAmount
-      : remainingAmount,
-
-    maxWithdraw: lastMaxWithdraw
-      ? lastMaxWithdraw.maxWithdraw + remainingAmount
-      : remainingAmount,
+    balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
+    availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount  : remainingAmount,
+    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
     cashOrCredit: "Bet",
-    cash: lastMaxWithdraw
-      ? lastMaxWithdraw.cash + remainingAmount
-      : remainingAmount,
+    cash: lastMaxWithdraw ? lastMaxWithdraw.cash + remainingAmount : remainingAmount,
     marketId: bet.marketId,
   });
   console.log('usercash',typeof cash);
   await cash.save();
 
   const parentUserIds = await getParents(userId);
-  const parentUser = await User.find({
+  const parentUser    = await User.find({
     userId: {
       $in: [...parentUserIds],
     },
@@ -205,7 +193,6 @@ async function handleWinningBet(req, bet) {
     user["commission"] = current - prev;
     prev = current;
   }
-
   let commissionFrom = userToUpdate.userId;
 
   for (const user of parentUser) {
@@ -243,9 +230,8 @@ async function handleWinningBet(req, bet) {
     console.log('Type of (user.commission / 100):', typeof (user.commission / 100));
     console.log('(user.commission / 100) * totalRemainingAmount',(user.commission / 100) * totalRemainingAmount)
     console.log('(typpe user.commission / 100) * totalRemainingAmount',typeof (user.commission / 100) * totalRemainingAmount)
-
     
-   await betTransaction.save();
+    await betTransaction.save();
    
     let commissionTransaction = await new Cash({
       userId: user.userId,
@@ -268,7 +254,7 @@ async function handleWinningBet(req, bet) {
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
 }
 
-async function handleDrawBet(req, bet) {
+async function handleDrawBet(bet) {
   console.log(`Bet ${bet._id} lost.`);
 
   const userId = bet.userId;
@@ -282,7 +268,6 @@ async function handleDrawBet(req, bet) {
   if (!userToUpdate) {
     return res.status(404).send({ message: "user not found" });
   }
-  const remainingAmount = (bet.winningAmount / 100) * 98;
   const totalRemainingAmount = bet.winningAmount;
   const TotalLoosingAmount = bet.loosingAmount;
 
