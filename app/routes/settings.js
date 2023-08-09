@@ -1404,7 +1404,6 @@ async function SettleMatch(req, res) {
     return res.send({
       success: true,
       message: 'Match Successfully  Updated ',
-      results: loginPage,
     });
   }else {
     Events.findOneAndUpdate(
@@ -1413,8 +1412,7 @@ async function SettleMatch(req, res) {
     )
     return res.send({
       success: true,
-      message: 'Default Login Page added successfully',
-      results: loginPage,
+      message: 'Match Successfully  Updated ',
     });
   }
 }
