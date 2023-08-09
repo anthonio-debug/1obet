@@ -163,7 +163,7 @@ async function placeBet(req, res) {
       if (type == 0){
         const DBOddDetails      = await Odds.findById(oddsId);
         console.log("DBOddDetails === ", DBOddDetails);
-        const OddDetailsTeam    = DBOddDetails[0].runners.find(runner => runner.SelectionId == selectionId);
+        const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const availableToBack   = OddDetailsTeam.ExchangePrices.AvailableToBack;
         console.log('availableToBack', availableToBack);
         const matchedBack = availableToBack.find(back => back.price == betRate);
