@@ -160,7 +160,9 @@ async function placeBet(req, res) {
       console.log('selection Id', selectionId);
       
       if (type == 0){
+
         ApiResponseOdds         = runnerFromAPI.ExchangePrices.AvailableToBack
+        console.log("ApiResponseOdds AvailableToBack === ", ApiResponseOdds);
         const DBOddDetails      = await Odds.findById(oddsId);
         console.log("DBOddDetails === ", DBOddDetails);
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
@@ -179,6 +181,7 @@ async function placeBet(req, res) {
       } 
       else if (type == 1){
         ApiResponseOdds         = runnerFromAPI.ExchangePrices.AvailableToLay
+        console.log("ApiResponseOdds AvailableToLay === ", ApiResponseOdds);
         const DBOddDetails      = await Odds.findById(oddsId);
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const AvailableToLay    = OddDetailsTeam.ExchangePrices.AvailableToLay;
@@ -203,6 +206,7 @@ async function placeBet(req, res) {
         return res.status(404).send({ message: 'Selected odds not found for the bet', selectedOddsRate });
       }
 
+      
       if(ApiResponseOdds[matchedIndex] >= betRate ){
         return res.send({
           betrate: betRate,
