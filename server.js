@@ -13,11 +13,6 @@ const loginMiddleWare     = require('./app/middlewares/loginMiddleware');
 const checkRoleMiddleware = require('./app/middlewares/checkRoleMiddleware');
 
 
-setInterval(() => {
-  console.log('====== log info for testing Server ');
-}, 2000);
-
-
 var apisContent = fs.readFileSync(config.apisFileName);
 var jsonApis = JSON.parse(apisContent);
 let options = {
@@ -27,7 +22,7 @@ let options = {
 };
 
 mongoose.set('strictQuery', false);
-mongoose.set({ debug: true });
+mongoose.set({ debug: false });
 mongoose
   .connect(config.DBHost, options)
   .then(() => {
