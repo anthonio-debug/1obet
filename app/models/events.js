@@ -37,7 +37,8 @@ const inPlayEventsSchema = new mongoose.Schema({
   meetingGoing: { type: String },
   meetingOpenDate: { type: String },
   betSettled : { type: Boolean, default: false },
-  winner: { type: Number, default: 0 }
+  winner: { type: Number, default: 0 },
+  draw: {type: Boolean, default: false}
 });
 
 

@@ -1385,6 +1385,41 @@ async function getbettorDashboardOdds(req, res) {
   }
 }
 
+async function SettleMatch(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length != 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  if (req.decoded.role !== '0') {
+    return res
+      .status(404)
+      .send({ message: 'only company can add default login page' });
+  }
+
+  if (req.body.draw){
+    await Event.findOneAndUpdate(
+      { _id: req.body._id },
+      { $set: { draw: req.body.draw }}
+    )
+    return res.send({
+      success: true,
+      message: 'Match Successfully  Updated ',
+      results: loginPage,
+    });
+  }else {
+    Event.findOneAndUpdate(
+      { _id: req.body._id },
+      { $set: { winner: req.body.winner }}
+    )
+    return res.send({
+      success: true,
+      message: 'Default Login Page added successfully',
+      results: loginPage,
+    });
+  }
+}
+
+
 loginRouter.post(
   '/updateDefaultTheme',
   settingsValidation.validate('updateDefaultTheme'),
@@ -1432,6 +1467,13 @@ loginRouter.get(
   '/listEventsByCompetition/:sportsId/:competitionId',
   listEventsByCompetition
 );
+
+
+loginRouter.post(
+  '/SettleMatch',
+  SettleMatch
+);
+
 loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);
