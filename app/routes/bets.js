@@ -172,7 +172,7 @@ async function placeBet(req, res) {
         //     return index 
         //   }
         // });
-        const matchedBack = availableToBack.filter((back) => {
+        const matchedBack = availableToBack.findIndex((back, index) => {
           return back.price === betRate;
         });
 
