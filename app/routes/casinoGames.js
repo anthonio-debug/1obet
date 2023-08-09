@@ -434,7 +434,7 @@ if (req.body.gameCategory != '') {
   
   const games = casino.flatMap(game => game.games)
   .filter(game => (game.mobile == req.body.isMobile)
-  || (game.isDashboard == req.body.isDashboard) 
+  && (game.isDashboard == req.body.isDashboard) 
   // || (game.name == req.body.name) 
   );
   // Apply pagination based on the requested number of records
