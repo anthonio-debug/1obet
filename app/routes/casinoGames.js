@@ -214,6 +214,7 @@ function getCategoryCasinoGames(req, res) {
   });
 }
 
+'use strict';
 async function getAllSelectedCasinos(req, res) {
     let query = {};
   
@@ -231,15 +232,15 @@ async function getAllSelectedCasinos(req, res) {
     }
   
   // Check for isMobile parameter in the request body
-  if (req.body.isMobile === true) {
+  if (req.body.isMobile == true) {
     query['games.mobile'] = true;
-  } else if (req.body.isMobile === false){
+  } else if (req.body.isMobile == false){
     query['games.mobile'] = false;
   }
 
  // Check for gameCategory parameter in the request body
   if (req.body.gameCategory != '') {
-    query['category'] = req.body.gameCategory;
+    query['games.category'] = req.body.gameCategory;
   }
 
   // return res.send(query);
@@ -253,9 +254,9 @@ async function getAllSelectedCasinos(req, res) {
       'games.mobile' : 1,
       'games.category' : 1
     });
-    
+    console.log('casino',casino);
     const games = casino.flatMap(game => game.games);
-    
+    console.log('games',games);
     // Apply pagination based on the requested number of records
   const totalRecords = games.length;
   const totalPages = Math.ceil(totalRecords / limit);
