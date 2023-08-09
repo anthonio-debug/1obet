@@ -417,9 +417,9 @@ if (req.body.gameCategory != '') {
   query['games.category'] = req.body.gameCategory;
 }
 
-if (req.body.name != '') {
-  query['games.name'] = req.body.name;
-}
+// if (req.body.name != '') {
+//   query['games.name'] = req.body.name;
+// }
 
  const casino = await  SelectedCasino.find(query, {
      _id: 0,
@@ -435,7 +435,7 @@ if (req.body.name != '') {
   const games = casino.flatMap(game => game.games)
   .filter(game => (game.mobile == req.body.isMobile)
   || (game.isDashboard == req.body.isDashboard) 
-  || (game.name == req.body.name) 
+  // || (game.name == req.body.name) 
   );
   // Apply pagination based on the requested number of records
 const totalRecords = games.length;
