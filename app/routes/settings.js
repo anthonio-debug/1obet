@@ -1396,23 +1396,23 @@ async function SettleMatch(req, res) {
       .send({ message: 'only company can add default login page' });
   }
 
-  if (req.body.draw){
+  if (req.body.draw == true){
     await Events.findOneAndUpdate(
       { _id: req.body._id },
       { $set: { draw: req.body.draw }}
     )
     return res.send({
       success: true,
-      message: 'Match Successfully  Updated ',
+      message: 'Status Updated Successfully',
     });
   }else {
-    Events.findOneAndUpdate(
+    await Events.findOneAndUpdate(
       { _id: req.body._id },
       { $set: { winner: req.body.winner }}
     )
     return res.send({
       success: true,
-      message: 'Match Successfully  Updated ',
+      message: 'Winner Successfully Announced !',
     });
   }
 }
