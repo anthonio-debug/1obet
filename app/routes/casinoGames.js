@@ -231,15 +231,15 @@ async function getAllSelectedCasinos(req, res) {
     }
   
   // Check for isMobile parameter in the request body
-  if (req.body.isMobile == true) {
+  if (req.body.isMobile === true) {
     query['games.mobile'] = true;
-  } else if (req.body.isMobile == false){
+  } else if (req.body.isMobile === false){
     query['games.mobile'] = false;
   }
 
  // Check for gameCategory parameter in the request body
   if (req.body.gameCategory != '') {
-    query['games.category'] = req.body.gameCategory;
+    query['category'] = req.body.gameCategory;
   }
 
   // return res.send(query);
@@ -376,7 +376,7 @@ function addSelectedDashboardGames(req, res) {
   });
 }
 
-function getSelectedGamesBySearch(req, res) {
+async function getSelectedGamesBySearch(req, res) {
   let query = {};
 
   let page = 1;
@@ -392,8 +392,8 @@ function getSelectedGamesBySearch(req, res) {
     page = Number(req.body.page);
   }
 
-  // Check for isDashboard parameter in the request body
-  if (req.body.isDashboard !== undefined) {
+// Check for isDashboard parameter in the request body
+   if (req.body.isDashboard !== undefined) {
     if (req.body.isDashboard === true) {
       query['games.isDashboard'] = true;
     } else if (req.body.isDashboard === false) {
@@ -401,66 +401,52 @@ function getSelectedGamesBySearch(req, res) {
     }
   }
 
-  // Check for isMobile parameter in the request body
-  if (req.body.isMobile !== undefined) {
-    query['games.mobile'] = true;
-  } else if (req.body.isMobile === false) {
-    query['games.isMobile'] = false;
-  }
-
-  // Retrieve all games matching the query
-
-  // Check for gameCategory parameter in the request body
-  if (req.body.gameCategory !== undefined) {
-    query['games.category'] = req.body.gameCategory;
-  }
-
-  SelectedCasino.find(query)
-    .select({ _id: 0, __v: 0, status: 0 })
-    .lean()
-    .exec((err, data) => {
-      if (err) return res.status(500).send({ message: 'USERS_PAGINATION_FAILED' });
-
-      const allGames = [];
-      data.forEach(item => {
-        item.games.forEach(game => {
-          if (
-            (req.body.isDashboard === undefined || game.isDashboard === req.body.isDashboard) &&
-            (req.body.isMobile === undefined || game.mobile === req.body.isMobile) &&
-            (req.body.gameCategory === undefined || game.category === req.body.gameCategory)
-          ) {
-            allGames.push({
-              id: game.id,
-              name: game.name,
-              image_filled: game.image_filled,
-              isDashboard: game.isDashboard,
-              isMobile: game.mobile,
-              category: item.category
-            });
-          }
-        });
-      });
-
-      // Apply pagination based on the requested number of records
-      const totalRecords = allGames.length;
-      const totalPages = Math.ceil(totalRecords / limit);
-      const startIndex = (page - 1) * limit;
-      const endIndex = Math.min(startIndex + limit, totalRecords);
-      const paginatedGames = allGames.slice(startIndex, endIndex);
-
-      return res.send({
-        message: 'Selected Casino Games List',
-        success: true,
-        results: paginatedGames,
-        pagination: {
-          total: totalRecords,
-          totalPages: totalPages,
-          currentPage: page,
-          recordsPerPage: limit
-        }
-      });
-    });
+// Check for isMobile parameter in the request body
+if (req.body.isMobile == true) {
+  query['games.mobile'] = true;
+} else if (req.body.isMobile == false){
+  query['games.mobile'] = false;
 }
+
+// Check for gameCategory parameter in the request body
+if (req.body.gameCategory != '') {
+  query['games.category'] = req.body.gameCategory;
+}
+
+ const casino = await  SelectedCasino.find(query, {
+     _id: 0,
+    'games.id' : 1,
+    'games.name' : 1,
+    'games.image_filled' : 1,
+    'games.isDashboard' : 1,
+    'games.mobile' : 1,
+    'games.category' : 1
+  });
+  
+  const games = casino.flatMap(game => game.games);
+  
+  // Apply pagination based on the requested number of records
+const totalRecords = games.length;
+const totalPages = Math.ceil(totalRecords / limit);
+const startIndex = (page - 1) * limit;
+const endIndex = Math.min(startIndex + limit, totalRecords);
+const paginatedGames = games.slice(startIndex, endIndex);
+
+return res.send({
+  message: 'Selected Casino Games List',
+  success: true,
+  results: paginatedGames,
+  categories:casinoCategories,
+  pagination: {
+    total: totalRecords,
+    totalPages: totalPages,
+    currentPage: page,
+    recordsPerPage: limit
+  }
+});    
+}
+
+
 function getSelectedGamesCategories(req, res) {
       SelectedCasino.find({},{category:1,_id:0}, (err, categories) => {
         if (err || !categories)
