@@ -1395,6 +1395,7 @@ async function SettleMatch(req, res) {
       .status(401)
       .send({ message: 'Unauthrized to Complete Operation' });
   }
+  console.log("===========", req.body)
 
   if (req.body.draw == true){
     let response =  await Events.findByIdAndUpdate(
