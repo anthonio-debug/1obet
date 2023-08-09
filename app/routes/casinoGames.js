@@ -534,7 +534,7 @@ loginRouter.get('/getAllCasinoCategories', getAllCasinoCategories);
 
 loginRouter.get('/getCategoryCasinoGames', getCategoryCasinoGames);
 
-loginRouter.get('/getAllSelectedCasinos', getAllSelectedCasinos);
+loginRouter.post('/getAllSelectedCasinos', getAllSelectedCasinos);
 
 loginRouter.post(
   '/addSelectedCasinoCategories',
