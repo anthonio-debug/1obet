@@ -81,6 +81,7 @@ async function placeBet(req, res) {
     let runnerName;
     let matchName;
     let marketId;
+    let market;
     let selectedOddsRate;
     const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId  } = req.body;
     const ratesArray = [];
@@ -116,7 +117,7 @@ async function placeBet(req, res) {
     const subMarketId = subMarketId1.concat(subMarketId2)
     const eventDetail   = await Events.findById(matchId);
     marketId = eventDetail.sportsId;
-    market = eventDetail.marketId[0];
+    market = eventDetail.marketIds[0];
 
     if (marketId == '7' || marketId == '4339'){
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
