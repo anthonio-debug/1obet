@@ -191,7 +191,7 @@ async function placeBet(req, res) {
           console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
           return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
         }
-        selectedOddsRate = availableToBack[matchedIndex].price;
+        selectedOddsRate = AvailableToLay[matchedIndex].price;
 
       } else {
         console.log('Invalid type value. Type should be 0 or 1.');
