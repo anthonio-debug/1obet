@@ -167,8 +167,8 @@ async function placeBet(req, res) {
 
         const availableToBack   = OddDetailsTeam.ExchangePrices.AvailableToBack;
         console.log('availableToBack', availableToBack);
-        const matchedBack = availableToBack.find(back => {
-          back.price == betRate ? availableToBack.indexof(back): ''
+        const matchedBack = availableToBack.find(back, index => {
+          back.price == betRate ? index: ''
         });
 
         console.log('matchedBack', matchedBack);
