@@ -437,7 +437,7 @@ if (req.body.gameCategory != '') {
   && (game.isDashboard == req.body.isDashboard) 
   || (game.isDashboard == req.body.isDashboard) 
   || (game.mobile == req.body.isMobile)
-  || (game.name.toLowerCase().includes(req.body.name)) 
+  || (game.name.toLowerCase().includes(req.body.name.toLowerCase())) 
   );
   // Apply pagination based on the requested number of records
 const totalRecords = games.length;
