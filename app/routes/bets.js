@@ -167,9 +167,13 @@ async function placeBet(req, res) {
 
         const availableToBack   = OddDetailsTeam.ExchangePrices.AvailableToBack;
         console.log('availableToBack', availableToBack);
-        const matchedBack = availableToBack.filter((back, index) => {
-          if(back.price == betRate)
-            return index 
+        // const matchedBack = availableToBack.filter((back, index) => {
+        //   if(back.price == betRate){
+        //     return index 
+        //   }
+        // });
+        const matchedBack = availableToBack.findIndex((back, index) => {
+          return back.price === betRate;
         });
 
         console.log('matchedBack', matchedBack);
