@@ -317,7 +317,7 @@ async function placeBet(req, res) {
     }
    
     // for bookmaker
-    if (subMarketDetail.subMarketId === '128' && sportsId === '4') {
+    if (subMarketDetail.subMarketId === '128' && marketId === '4') {
       console.log('in bookmakrer');
       const eventId = match.Id
       const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
@@ -376,7 +376,7 @@ async function placeBet(req, res) {
     }
     
     const bet = new Bets({
-      sportsId,
+      marketId,
       userId,
       betAmount,
       betRate,
