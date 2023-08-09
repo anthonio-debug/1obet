@@ -129,7 +129,7 @@ async function placeBet(req, res) {
       }
     }
 
-    if (marketIds.some((id)=> id == marketId) || subMarketId.some((id)=>id == subMarketDetail.subMarketId) || uniqueBlockedSubMarketsByParent.some((id)=> id==subMarketDetail.subMarketId)){
+    if (marketIds.some((id)=> id == marketId) || subMarketId.some((id)=>id == subMarketDetail.subMarketId) ){
       return res.status(404).send({ message: 'Betting disabled by your dealer' });
     }  
 
