@@ -81,6 +81,7 @@ async function placeBet(req, res) {
     let runnerName;
     let matchName;
     let marketId;
+    let market;
     let selectedOddsRate;
     const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId  } = req.body;
     const ratesArray = [];
@@ -116,6 +117,7 @@ async function placeBet(req, res) {
     const subMarketId = subMarketId1.concat(subMarketId2)
     const eventDetail   = await Events.findById(matchId);
     marketId = eventDetail.sportsId;
+    market = eventDetail.marketIds[0];
 
     if (marketId == '7' || marketId == '4339'){
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
@@ -142,7 +144,7 @@ async function placeBet(req, res) {
     }
 
     if (marketId != '7' && marketId != '4339' && subMarketDetail.subMarketId != '104' && subMarketDetail.subMarketId != '128'){
-      const url = `${config.sportsAPIUrl}/odds/?ids=${marketId}`;
+      const url = `${config.sportsAPIUrl}/odds/?ids=${market}`;
       const response = await axios.get(url);
       const oddsData = response.data;
       if (!oddsData) {
