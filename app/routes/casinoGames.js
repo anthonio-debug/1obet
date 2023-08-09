@@ -397,18 +397,18 @@ async function getSelectedGamesBySearch(req, res) {
   }
 
 // Check for isDashboard parameter in the request body
-   if (req.body.isDashboard !== undefined) {
-    if (req.body.isDashboard === true) {
+    if (req.body.isDashboard == true) {
       query['games.isDashboard'] = true;
-    } else if (req.body.isDashboard === false) {
+    } else if (req.body.isDashboard == false) {
       query['games.isDashboard'] = false;
-    }
   }
 
 // Check for isMobile parameter in the request body
 if (req.body.isMobile == true) {
+  // console.log('in here isMobile true');
   query['games.mobile'] = true;
 } else if (req.body.isMobile == false){
+  // console.log('in here isMobile false');
   query['games.mobile'] = false;
 }
 
