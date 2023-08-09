@@ -149,7 +149,7 @@ async function placeBet(req, res) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
       }
-      console.log('data', oddsData[0].Runners);
+      console.log('data', oddsData);
 
       // Extract the odds data for the selected team from the runners array
       const selectedTeam = oddsData[0].Runners.find(runner => runner.SelectionId == selectionId);
