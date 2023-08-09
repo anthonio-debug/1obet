@@ -123,5 +123,6 @@
   "getbettorDashboardOdds",
   "getSelectedGamesBySearch",
   "getSelectedGamesCategories",
-  "getGameDirect"
+  "getGameDirect",
+  "SettleMatch"
 ]
