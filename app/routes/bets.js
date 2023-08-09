@@ -86,7 +86,8 @@ async function placeBet(req, res) {
     const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId  } = req.body;
     const ratesArray = [];
     const userId = req.decoded.userId;
-
+    let ApiResponseOdds;
+    let matchedIndex;
 
     let winningAmount = 0;
     let loosingAmount = 0;
@@ -151,6 +152,7 @@ async function placeBet(req, res) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
       }
+
       console.log('data', oddsData[0].Runners);
 
       const runnerFromAPI = oddsData[0].Runners.find(runner => runner.SelectionId == selectionId);
@@ -158,46 +160,38 @@ async function placeBet(req, res) {
       console.log('selection Id', selectionId);
       
       if (type == 0){
-
+        ApiResponseOdds         = runnerFromAPI.ExchangePrices.AvailableToBack
         const DBOddDetails      = await Odds.findById(oddsId);
-
         console.log("DBOddDetails === ", DBOddDetails);
-
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
-
         const availableToBack   = OddDetailsTeam.ExchangePrices.AvailableToBack;
         console.log('availableToBack', availableToBack);
-        // const matchedBack = availableToBack.filter((back, index) => {
-        //   if(back.price == betRate){
-        //     return index 
-        //   }
-        // });
-        const matchedBack = availableToBack.findIndex((back, index) => {
+        const matchedIndex = availableToBack.findIndex((back) => {
           return back.price === betRate;
         });
-
-        console.log('matchedBack', matchedBack);
-
-        if (!matchedBack) {
+        console.log('matchedIndex', matchedIndex);
+        if (matchedIndex == -1) {
           console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
           return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
         }
-        selectedOddsRate = matchedBack.price;
-        console.log('selectedOddsRate', selectedOddsRate);
+        selectedOddsRate = matchedIndex.price;
 
-      } else if (type == 1){
-        const OddDetails      = await Odds.findById(oddsId);
-        const OddDetailsTeam  = OddDetails[0].runners.find(runner => runner.SelectionId == selectionId);
-        const AvailableToLay = OddDetailsTeam.ExchangePrices.AvailableToLay;
+      } 
+      else if (type == 1){
+        ApiResponseOdds         = runnerFromAPI.ExchangePrices.AvailableToLay
+        const DBOddDetails      = await Odds.findById(oddsId);
+        const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+        const AvailableToLay    = OddDetailsTeam.ExchangePrices.AvailableToLay;
         console.log('AvailableToLay', AvailableToLay);
-        const matchedLay = AvailableToLay.find(back => back.price == betRate);
-        console.log('matchedLay', matchedLay);
-        if (!matchedLay) {
-          console.log(`No AvailableToLay odds matched with the bet rate ${betRate}`);
-          return res.status(404).send({ message: `No AvailableToLay odds matched with the bet rate ${req.body.betRate}` });
+        const matchedIndex = AvailableToLay.findIndex((back) => {
+          return back.price === betRate;
+        });
+        console.log('matchedIndex', matchedIndex);
+        if (!matchedIndex) {
+          console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+          return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
         }
-        selectedOddsRate = matchedLay.price;
-        console.log('selectedOddsRate', selectedOddsRate);
+        selectedOddsRate = matchedIndex.price;
 
       } else {
         console.log('Invalid type value. Type should be 0 or 1.');
@@ -208,12 +202,23 @@ async function placeBet(req, res) {
         console.log('Selected odds not found for the bet');
         return res.status(404).send({ message: 'Selected odds not found for the bet', selectedOddsRate });
       }
+
+      if(ApiResponseOdds[matchedIndex] >= betRate ){
+        return res.send({
+          message: "Bet Allow to  Place";
+        })
+      }else{
+        return res.send({
+          message: "Bet Miss match";
+        })
+      }
+
     }
 
     return res.send({
-      status: 200,
-      message: "Working Fine !"
+      message: "outside of Order";
     })
+
     //for fancy
     if (subMarketDetail.subMarketId == '104' && marketId == '4' ) {
       const eventId = match.Id
