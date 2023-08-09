@@ -168,7 +168,7 @@ async function placeBet(req, res) {
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const availableToBack   = OddDetailsTeam.ExchangePrices.AvailableToBack;
         console.log('availableToBack', availableToBack);
-        const matchedIndex = availableToBack.findIndex((back) => {
+        matchedIndex = availableToBack.findIndex((back) => {
           return back.price === betRate;
         });
         console.log('matchedIndex', matchedIndex);
@@ -186,7 +186,7 @@ async function placeBet(req, res) {
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const AvailableToLay    = OddDetailsTeam.ExchangePrices.AvailableToLay;
         console.log('AvailableToLay', AvailableToLay);
-        const matchedIndex = AvailableToLay.findIndex((back) => {
+        matchedIndex = AvailableToLay.findIndex((back) => {
           return back.price === betRate;
         });
         console.log('matchedIndex', matchedIndex);
