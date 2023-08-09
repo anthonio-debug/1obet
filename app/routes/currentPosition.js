@@ -24,7 +24,7 @@ function getCurrentPosition(req, res) {
       },
       {
         $match: {
-          userId: 1
+          userId: userId
         }
       },
       {
