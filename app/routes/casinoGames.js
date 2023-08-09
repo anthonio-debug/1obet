@@ -255,11 +255,11 @@ async function getAllSelectedCasinos(req, res) {
       'games.image_filled' : 1,
       'games.isDashboard' : 1,
       'games.mobile' : 1,
-      'games.category' : 1
     });
     console.log('casino',casino);
-    const games = casino.flatMap(game => game.games);
-    console.log('games',games);
+  const games = casino.flatMap(casino => casino.games)
+    .filter(game => (game.mobile === req.body.isMobile));
+console.log('games',games);
     // Apply pagination based on the requested number of records
   const totalRecords = games.length;
   const totalPages = Math.ceil(totalRecords / limit);
