@@ -1390,29 +1390,31 @@ async function SettleMatch(req, res) {
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  if (req.decoded.role !== '0') {
+  if (req.decoded.role != '0') {
     return res
-      .status(404)
-      .send({ message: 'only company can add default login page' });
+      .status(401)
+      .send({ message: 'Unauthrized to Complete Operation' });
   }
 
   if (req.body.draw == true){
-    await Events.findOneAndUpdate(
+    let response =  await Events.findOneAndUpdate(
       { _id: req.body._id },
       { $set: { draw: req.body.draw }}
     )
     return res.send({
       success: true,
       message: 'Status Updated Successfully',
+      response: response
     });
   }else {
-    await Events.findOneAndUpdate(
+    let response = await Events.findOneAndUpdate(
       { _id: req.body._id },
       { $set: { winner: req.body.winner }}
     )
     return res.send({
       success: true,
       message: 'Winner Successfully Announced !',
+      response: response
     });
   }
 }
