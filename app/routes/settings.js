@@ -1400,7 +1400,7 @@ async function SettleMatch(req, res) {
   if (req.body.draw == true){
     let response =  await Events.findByIdAndUpdate(
       { _id: req.body._id },
-      { $set: { draw: req.body.draw }}
+      { $set: { draw: req.body.draw, winner: 0 }}
     )
     return res.send({
       success: true,
@@ -1410,7 +1410,7 @@ async function SettleMatch(req, res) {
   }else {
     let response = await Events.findByIdAndUpdate(
       { _id: req.body._id },
-      { $set: { winner: req.body.winner }}
+      { $set: { draw: false, winner: req.body.winner }}
     )
     return res.send({
       success: true,
