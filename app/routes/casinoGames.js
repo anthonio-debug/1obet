@@ -432,13 +432,23 @@ if (req.body.gameCategory != '') {
     'games.id_hash': 1
   });
   
-  const games = casino.flatMap(game => game.games)
+  let games = [];
+  if(req.body.name){
+    games= casino.flatMap(game => game.games)
+    .filter(game => (game.mobile == req.body.isMobile)
+    && (game.isDashboard == req.body.isDashboard) 
+    // || (game.isDashboard == req.body.isDashboard) 
+    // || (game.mobile == req.body.isMobile)
+    && (game.name.toLowerCase().includes(req.body.name.toLowerCase())) 
+    );
+  }
+  else {
+   games = casino.flatMap(game => game.games)
+
   .filter(game => (game.mobile == req.body.isMobile)
-  && (game.isDashboard == req.body.isDashboard) 
-  || (game.isDashboard == req.body.isDashboard) 
-  || (game.mobile == req.body.isMobile)
-  || (game.name.toLowerCase().includes(req.body.name.toLowerCase())) 
+  && (game.isDashboard == req.body.isDashboard)
   );
+}
   // Apply pagination based on the requested number of records
 const totalRecords = games.length;
 const totalPages = Math.ceil(totalRecords / limit);
