@@ -215,71 +215,86 @@ function getCategoryCasinoGames(req, res) {
 }
 
 function getAllSelectedCasinos(req, res) {
-  let query = {};
-
-  let page = 1;
-  let sort = -1;
-  let sortValue = '_id';
-  let limit = 20;
-  if (req.query.numRecords) {
-    if (isNaN(req.query.numRecords))
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-    if (req.query.numRecords < 0)
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-    limit = Number(req.query.numRecords);
-  }
-  if (req.query.sortValue) sortValue = req.query.sortValue;
-  if (req.query.sort) {
-    sort = Number(req.query.sort);
-  }
-  if (req.query.page) {
-    page = Number(req.query.page);
-  }
-
-  // // Retrieve isMobile parameter from query and convert to boolean
-  // let isMobile = req.query.isMobile;
-
-  SelectedCasino.paginate(
-    query,
-    { page: page, limit: limit },
-      (err, data) => {
-      
-        if (data.total == 0) {
-          return res.status(404).send({ message: 'No records found' });
-        }
-   
-        if (err) return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
-    
-      // // Filter games based on isMobile parameter
-      // const filteredGames = data.docs.flatMap(item => {
-      //   return item.games.filter(game => {
-      //     if (isMobile === undefined) {
-      //       // If isMobile is not provided in query, include all games
-      //       return true;
-      //     } else {
-      //       // Filter games based on isMobile parameter
-      //       return game.mobile === (isMobile === 'true');
-      //     }
-      //   });
-      // });
-
-      console.log('total', data.total);
-      console.log('page', data.page);
-      console.log('pages', data.pages);
-
-      return res.send({
-        message: 'Selected Casino Games List',
-        success: true,
-        results: data.docs,
-        page: data.page,
-        limit: data.limit,
-        total: data.total,
-        pages: data.pages
-      });
+    let query = {};
+  
+    let page = 1;
+    let limit = 20;
+    if (req.body.numRecords) {
+      if (isNaN(req.body.numRecords))
+        return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+      if (req.body.numRecords < 0)
+        return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+      limit = Number(req.body.numRecords);
     }
-  );
+    if (req.body.page) {
+      page = Number(req.body.page);
+    }
+  
+  // Check for isMobile parameter in the request body
+  if (req.body.isMobile !== undefined) {
+    query['games.mobile'] = true;
+  } else if (req.body.isMobile === false) {
+    query['games.isMobile'] = false;
+  }
+
+ // Check for gameCategory parameter in the request body
+ if (req.body.gameCategory !== undefined) {
+  if (req.body.gameCategory === "All") {
+    // query = { "games": { "$elemMatch": {} } }
+   } else {
+    query['games.category'] = req.body.gameCategory;
+  }
 }
 
+    SelectedCasino.find(query)
+      .select({ _id: 0, __v: 0 })
+      .lean()
+      .exec((err, data) => {
+        if (err) return res.status(500).send({ message: 'USERS_PAGINATION_FAILED' });
+  
+        const filteredGames = [];
+        data.forEach(item => {
+          console.log('item',item);
+          item.games.forEach(game => {
+            if (
+              (req.body.isMobile === undefined || game.mobile === req.body.isMobile) &&
+              (req.body.gameCategory === undefined || game.category === req.body.gameCategory)
+            ) {
+              filteredGames.push({
+                id: game.id,
+                name: game.name,
+                image_filled: game.image_filled,
+                isDashboard: game.isDashboard,
+                isMobile: game.mobile,
+                
+              });
+            }
+          });
+        });
+
+        // Apply pagination based on the requested number of records
+        const totalRecords = filteredGames.length;
+        const totalPages = Math.ceil(totalRecords / limit);
+        const startIndex = (page - 1) * limit;
+        const endIndex = Math.min(startIndex + limit, totalRecords);
+        const paginatedGames = filteredGames.slice(startIndex, endIndex);
+      SelectedCasino.find({},{category:1,_id:0}, (err, categories) => {
+       if(err) return res.send ({message:'category not found'})
+        return res.send({
+          message: 'Selected Casino Games List',
+          success: true,
+          results: paginatedGames,
+          categories: categories,
+          pagination: {
+            total: totalRecords,
+            totalPages: totalPages,
+            currentPage: page,
+            recordsPerPage: limit
+          }
+        });
+      });
+    })
+  }
 async function getGame(req, res) {
   try {
     const errors = validationResult(req);
@@ -407,6 +422,12 @@ function getSelectedGamesBySearch(req, res) {
   }
 
   // Retrieve all games matching the query
+
+  // Check for gameCategory parameter in the request body
+  if (req.body.gameCategory !== undefined) {
+    query['games.category'] = req.body.gameCategory;
+  }
+
   SelectedCasino.find(query)
     .select({ _id: 0, __v: 0, status: 0 })
     .lean()
@@ -418,7 +439,8 @@ function getSelectedGamesBySearch(req, res) {
         item.games.forEach(game => {
           if (
             (req.body.isDashboard === undefined || game.isDashboard === req.body.isDashboard) &&
-            (req.body.isMobile === undefined || game.mobile === req.body.isMobile)
+            (req.body.isMobile === undefined || game.mobile === req.body.isMobile) &&
+            (req.body.gameCategory === undefined || game.category === req.body.gameCategory)
           ) {
             allGames.push({
               id: game.id,
@@ -439,23 +461,16 @@ function getSelectedGamesBySearch(req, res) {
       const endIndex = Math.min(startIndex + limit, totalRecords);
       const paginatedGames = allGames.slice(startIndex, endIndex);
 
-      // Retrieve unique categories using distinct method
-      SelectedCasino.distinct('category', (err, categories) => {
-        if (err || !categories)
-          return res.status(500).send({ message: 'categories not found' });
-
-        return res.send({
-          message: 'Selected Casino Games List',
-          success: true,
-          results: paginatedGames,
-          categories: categories,
-          pagination: {
-            total: totalRecords,
-            totalPages: totalPages,
-            currentPage: page,
-            recordsPerPage: limit
-          }
-        });
+      return res.send({
+        message: 'Selected Casino Games List',
+        success: true,
+        results: paginatedGames,
+        pagination: {
+          total: totalRecords,
+          totalPages: totalPages,
+          currentPage: page,
+          recordsPerPage: limit
+        }
       });
     });
 }
