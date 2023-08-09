@@ -1388,6 +1388,42 @@ async function getAllGamesResult(req, res) {
 //   }
 // }
 
+async function SettleMatch(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length != 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  if (req.decoded.role != '0') {
+    return res
+      .status(401)
+      .send({ message: 'Unauthrized to Complete Operation' });
+  }
+  console.log("===========", req.body)
+
+  if (req.body.draw == true){
+    let response =  await Events.findByIdAndUpdate(
+      { _id: req.body._id },
+      { $set: { draw: req.body.draw, winner: 0 }}
+    )
+    return res.send({
+      success: true,
+      message: 'Status Updated Successfully',
+      response: response
+    });
+  }else {
+    let response = await Events.findByIdAndUpdate(
+      { _id: req.body._id },
+      { $set: { draw: false, winner: req.body.winner }}
+    )
+    return res.send({
+      success: true,
+      message: 'Winner Successfully Announced !',
+      response: response
+    });
+  }
+}
+
+
 loginRouter.post(
   '/updateDefaultTheme',
   settingsValidation.validate('updateDefaultTheme'),
@@ -1435,6 +1471,13 @@ loginRouter.get(
   '/listEventsByCompetition/:sportsId/:competitionId',
   listEventsByCompetition
 );
+
+
+loginRouter.post(
+  '/SettleMatch',
+  SettleMatch
+);
+
 loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);

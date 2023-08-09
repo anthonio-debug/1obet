@@ -151,19 +151,20 @@ async function placeBet(req, res) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
       }
-      console.log('data', oddsData);
+      console.log('data', oddsData[0].Runners);
 
-      // Extract the odds data for the selected team from the runners array
-      const selectedTeam = oddsData[0].Runners.find(runner => runner.SelectionId == selectionId);
-      console.log('matchOdds.runners', selectedTeam);
-      console.log('selection Id', req.body.selectionId);
-      if (!selectedTeam) {}
-      runnerName = selectedTeam.runnerName
+      const runnerFromAPI = oddsData[0].Runners.find(runner => runner.SelectionId == selectionId);
+      console.log('matchOdds.runners', runnerFromAPI);
+      console.log('selection Id', selectionId);
+      // if (!selectedTeam) {}
+      // runnerName = selectedTeam.runnerName
 
+      
       if (type == 0){
-        const OddDetails      = await Odds.findById(oddsId);
-        const OddDetailsTeam  = OddDetails[0].runners.find(runner => runner.SelectionId == selectionId);
-        const availableToBack = OddDetailsTeam.ExchangePrices.AvailableToBack;
+        const DBOddDetails      = await Odds.findById(oddsId);
+        console.log("DBOddDetails === ", DBOddDetails);
+        const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+        const availableToBack   = OddDetailsTeam.ExchangePrices.AvailableToBack;
         console.log('availableToBack', availableToBack);
         const matchedBack = availableToBack.find(back => back.price == betRate);
         console.log('matchedBack', matchedBack);
