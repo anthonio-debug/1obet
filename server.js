@@ -11,13 +11,6 @@ const option              = require('./option');
 const apisMiddleware      = require('./app/middlewares/apisMiddleware');
 const loginMiddleWare     = require('./app/middlewares/loginMiddleware');
 const checkRoleMiddleware = require('./app/middlewares/checkRoleMiddleware');
-// require('./cronJobs/EventsAndMarkets/CTSEAndM')
-// // require('./cronJobs/EventsAndMarkets/raceMarkets')
-// require('./cronJobs/odds/COdds')
-// require('./cronJobs/odds/TOdds')
-// // require('./cronJobs/odds/FOdds')
-// require('./cronJobs/odds/SOdds')
-
 
 var apisContent = fs.readFileSync(config.apisFileName);
 var jsonApis = JSON.parse(apisContent);
@@ -118,7 +111,7 @@ app.use('/api', require('./app/routes/BettingFigures').loginRouter);
 // LISTEN HERE
 // Create HTTPs server.
 var server = https.createServer(option, app);
-app.listen(config.PORT, (err) => {
+server.listen(config.PORT, (err) => {
   if (err) throw new Error(err);
   console.log(`Server is listening on port ${config.PORT}`);
 });
