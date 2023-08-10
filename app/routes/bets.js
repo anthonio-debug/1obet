@@ -62,7 +62,9 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     user.availableBalance -= (user.commission / 100) * winningAmount;
     console.log('user.availableBalance', typeof user.availableBalance);
     await user.save();
+    console.log("Saving parent users" );
     if(matchId != 0){
+      console.log("inside of current position" );
       const position = new currentPosition({
         userId: user.userId,
         amount: - (user.commission / 100) * winningAmount,
