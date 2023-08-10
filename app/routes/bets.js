@@ -52,17 +52,20 @@ async function getUsers(userIds) {
 }
 
 const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0 ) => {
-  let parentUsers = await User.find({
+  const parentUsers = await User.find({
     userId: {
       $in: parentUsersIds
     }
   })
   let prev = 0;
-  parentUsers.forEach((user) => {
+  const dummyData = [];
+  parentUsers.forEach(user => {
+    const userObj = {...user};
     let current = user.downLineShare;
-    user["commission"] = current - prev;
+    userObj["commission"] = current - prev;
     prev = current;
-    console.log("user ================", user);
+    console.log("usser======", userObj);
+    dummyData.push(userObj)
   });
 
   for (const user of parentUsers){
