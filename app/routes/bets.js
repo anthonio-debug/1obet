@@ -28,7 +28,6 @@ async function getParents(userId) {
   const parentUserIds = [];
   let currentUserId = userId;
   console.log('currentUserId', currentUserId);
-  console.log('parentUser', parentUserIds);
 
   while (currentUserId) {
     const parentUser = await User.findOne({ userId: currentUserId }).exec();
@@ -48,8 +47,16 @@ async function getParents(userId) {
   return parentUserIds;
 }
 
+async function getUsers(userIds) {
+
+}
+
 const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0 ) => {
-  const parentUsers = await getParents(parentUsersIds)
+  const parentUsers = await User.find({
+    userId: {
+      $in: parentUsersIds
+    }
+  })
   let prev = 0;
   parentUsers.forEach(user => {
     let current = user.downLineShare;
@@ -412,7 +419,6 @@ async function placeBet(req, res) {
           matchId: matchId,
         })
         position.save();
-
 
         const updatedUser = await User.findOneAndUpdate(
           { userId: userId },
