@@ -1230,48 +1230,198 @@ async function getAllGamesResult(req, res) {
       {
         $facet: {
           soccer: [
-            { $match: { 
-              sportsId: '1',
-              winner: 0,
-              openDate: { $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00")},
-             }},
-            { $sort: { openDate: 1 } 
-          },
-          ],
+            {
+              $match: {
+                sportsId: '1',
+                winner: 0,
+                openDate: { $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") },
+              }
+            },
+            {
+              $sort: { openDate: 1 }
+            },
+            {
+              $lookup: {
+                from: "odds",
+                localField: "Id",
+                foreignField: "eventId",
+                as: "odds"
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                Id: 1,
+                competitionName: 1,
+                inplay: 1,
+                name: 1,
+                openDate: 1,
+                oddsData: {
+                  $arrayElemAt: ["$odds.runners", 0]
+                }
+              }
+            },
+            {
+              $project: {
+                Id: 1,
+                competitionName: 1,
+                inplay: 1,
+                name: 1,
+                openDate: 1,
+                "oddsData.SelectionId": 1,
+                "oddsData.runnerName": 1
+              }
+            },
+            {
+              $sort: {
+                createdAt: -1
+              }
+            }
+          ]
+          ,
           tennis: [
-            { $match: { 
-              sportsId: '2',
-              winner: 0,
-              openDate: { $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00")},
-            }},
+            {
+              $match: {
+                sportsId: '2',
+                winner: 0,
+                openDate: { $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") },
+              }
+            },
             { $sort: { openDate: 1 } },
+
+            {
+              $lookup: {
+                from: "odds",
+                localField: "Id",
+                foreignField: "eventId",
+                as: "odds"
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                Id: 1,
+                competitionName: 1,
+                inplay: 1,
+                name: 1,
+                openDate: 1,
+                oddsData: {
+                  $arrayElemAt: ["$odds.runners", 0]
+                }
+              }
+            },
+            {
+              $project: {
+                Id: 1,
+                competitionName: 1,
+                inplay: 1,
+                name: 1,
+                openDate: 1,
+                "oddsData.SelectionId": 1,
+                "oddsData.runnerName": 1
+              }
+            },
+            {
+              $sort: {
+                createdAt: -1
+              }
+            }
           ],
           cricket: [
-            { $match: { 
-              sportsId: '4', 
-              winner: 0,
-              openDate: { $lt: moment(new Date(Date.now() - 180 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00")},
-            }},
+            {
+              $match: {
+                sportsId: '4',
+                winner: 0,
+                openDate: { $lt: moment(new Date(Date.now() - 180 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") },
+              }
+            },
             { $sort: { openDate: 1 } },
+            {
+              $lookup: {
+                from: "odds",
+                localField: "Id",
+                foreignField: "eventId",
+                as: "odds"
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                Id: 1,
+                competitionName: 1,
+                inplay: 1,
+                name: 1,
+                openDate: 1,
+                oddsData: {
+                  $cond: {
+                    if: { $isArray: "$odds.runners" },
+                    then: { $arrayElemAt: ["$odds.runners", 0] },
+                    else: []
+                  }
+                }
+              }
+            },
+            {
+              $project: {
+                Id: 1,
+                competitionName: 1,
+                inplay: 1,
+                name: 1,
+                openDate: 1,
+                "oddsData.SelectionId": 1,
+                "oddsData.runnerName": 1
+              }
+            },
+            {
+              $sort: {
+                createdAt: -1
+              }
+            }
           ],
+          
+
           horseRace: [
-            { $match: { 
-              sportsId: '7',
-              winner: 0,
-              openDate: { $lt: moment(new Date(Date.now() - 10 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00")},
-            }},
+            {
+              $match: {
+                sportsId: '7',
+                winner: 0,
+                openDate: { $lt: moment(new Date(Date.now() - 10 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") },
+              }
+            },
+            {
+              $project: {
+                _id: 1,
+                meetingId: 1,
+                openDate: 1,
+                name: 1,
+                meetingName: 1,
+                inplay: 1
+              }
+            },
           ],
           greyhound: [
-            { $match: { 
-              sportsId: '4339', 
-              winner: 0,
-              openDate: { $lt: moment(new Date(Date.now() - 5 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00")},
-            }}
+            {
+              $match: {
+                sportsId: '4339',
+                winner: 0,
+                openDate: { $lt: moment(new Date(Date.now() - 5 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") },
+              }
+            },
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+                inplay: 1
+              }
+            },
           ],
         },
       },
     ]).exec();
-  
+
     const organizedEvents = {
       soccer: events[0].soccer,
       tennis: events[0].tennis,
@@ -1295,130 +1445,95 @@ async function getAllGamesResult(req, res) {
   }
 }
 
-// async function getbettorDashboardOdds(req, res) {
-//   try {
-//     const sportsIdArray = ['4'];
+async function getbettorDashboardOdds(req, res) {
+  try {
+    const sportsIdArray = ['4'];
 
-//     const cricketOddsData = await Events.aggregate([
-//       {
-//         $match: {
-//           sportsId: { $in: sportsIdArray },
-//           iconStatus: true,
-//           $or: [
-//             { inplay: true },
-//             {
-//               $and: [
-//                 {
-//                   openDate: {
-//                     $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00"),
-//                   },
-//                 },
-//                 {
-//                   openDate: {
-//                     $lt: moment(new Date(Date.now() + 24 * 60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00"),
-//                   },
-//                 },
-//               ],
-//             },
-//           ],
-//         },
-//       },
-//       {
-//         $lookup: {
-//           from: 'odds',
-//           localField: 'Id',
-//           foreignField: 'eventId',
-//           as: 'oddsData',
-//         },
-//       },
-//       {
-//         $unwind: '$oddsData',
-//       },
-//       {
-//         $sort: { 'oddsData.createdAt': -1 },
-//       },
-//       {
-//         $group: {
-//           _id: '$_id',
-//           event: { $first: '$$ROOT' },
-//           oddsData: { $first: '$oddsData' },
-//         },
-//       },
-//       {
-//         $replaceRoot: {
-//           newRoot: {
-//             $mergeObjects: ['$event', { oddsData: '$oddsData' }],
-//           },
-//         },
-//       },
-//       {
-//         $project: {
-//           _id: 0,
-//           Id: '$Id',
-//           name: '$name',
-//           competitionName: '$competitionName',
-//           inplay: '$inplay',
-//           oddsData: {
-//             $map: {
-//               input: '$oddsData.runners',
-//               as: 'runner',
-//               in: {
-//                 runnerName: '$$runner.runnerName',
-//                 latestOdds: { $slice: ['$$runner.ExchangePrices.AvailableToBack.price', 2] },
-//               },
-//             },
-//           },
-//         },
-//       },
-//       { $sort: { inplay: -1 } },
-//     ]).exec();
+    const cricketOddsData = await Odds.aggregate([
+      {
+        $match: {
+          sportsId: { $in: sportsIdArray },
+          iconStatus: true,
+          $or: [
+            { inplay: true },
+            {
+              $and: [
+                {
+                  openDate: {
+                    $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00"),
+                  },
+                },
+                {
+                  openDate: {
+                    $lt: moment(new Date(Date.now() + 24 * 60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00"),
+                  },
+                },
+              ],
+            },
+          ],
+        },
+      },
+      {
+        $lookup: {
+          from: 'odds',
+          localField: 'Id',
+          foreignField: 'eventId',
+          as: 'oddsData',
+        },
+      },
+      {
+        $unwind: '$oddsData',
+      },
+      {
+        $sort: { 'oddsData.createdAt': -1 },
+      },
+      {
+        $group: {
+          _id: '$_id',
+          event: { $first: '$$ROOT' },
+          oddsData: { $first: '$oddsData' },
+        },
+      },
+      {
+        $replaceRoot: {
+          newRoot: {
+            $mergeObjects: ['$event', { oddsData: '$oddsData' }],
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          Id: '$Id',
+          name: '$name',
+          competitionName: '$competitionName',
+          inplay: '$inplay',
+          oddsData: {
+            $map: {
+              input: '$oddsData.runners',
+              as: 'runner',
+              in: {
+                runnerName: '$$runner.runnerName',
+                latestOdds: { $slice: ['$$runner.ExchangePrices.AvailableToBack.price', 2] },
+              },
+            },
+          },
+        },
+      },
+      { $sort: { inplay: -1 } },
+    ]).exec();
 
-//     res.status(200).json({
-//       success: true,
-//       message: 'Cricket Odds Data',
-//       results: cricketOddsData,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: 'Failed to get cricket odds data',
-//       error: error.message,
-//     });
-//   }
-// }
-
-async function SettleMatch(req, res) {
-  const errors = validationResult(req);
-  if (errors.errors.length != 0) {
-    return res.status(400).send({ errors: errors.errors });
-  }
-  if (req.decoded.role != '0') {
-    return res
-      .status(401)
-      .send({ message: 'Unauthrized to Complete Operation' });
-  }
-  console.log("===========", req.body)
-
-  if (req.body.draw == true){
-    let response =  await Events.findByIdAndUpdate(
-      { _id: req.body._id },
-      { $set: { draw: req.body.draw, winner: 0 }}
-    )
-    return res.send({
+    res.status(200).json({
       success: true,
-      message: 'Status Updated Successfully',
-      response: response
+      message: 'Cricket Odds Data',
+      results: cricketOddsData,
     });
-  }else {
-    let response = await Events.findByIdAndUpdate(
-      { _id: req.body._id },
-      { $set: { draw: false, winner: req.body.winner }}
-    )
-    return res.send({
-      success: true,
-      message: 'Winner Successfully Announced !',
-      response: response
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      success: false,
+      message: 'Failed to get cricket odds data',
+      error: error.message,
     });
   }
 }
@@ -1471,13 +1586,6 @@ loginRouter.get(
   '/listEventsByCompetition/:sportsId/:competitionId',
   listEventsByCompetition
 );
-
-
-loginRouter.post(
-  '/SettleMatch',
-  SettleMatch
-);
-
 loginRouter.get('/listInplayEvents', listInplayEvents);
 loginRouter.get('/listOddsAPI', listOddsAPI);
 loginRouter.get('/racesAPI/:id', racesAPI);
