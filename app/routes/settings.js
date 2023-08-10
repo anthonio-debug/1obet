@@ -1250,7 +1250,8 @@ async function getAllGamesResult(req, res) {
             },
             {
               $project: {
-                _id: 0,
+                _id: 1,
+                status: 1,
                 Id: 1,
                 competitionName: 1,
                 inplay: 1,
@@ -1273,6 +1274,8 @@ async function getAllGamesResult(req, res) {
             },
             {
               $project: {
+                _id: 1,
+                status: 1,
                 Id: 1,
                 competitionName: 1,
                 inplay: 1,
@@ -1309,7 +1312,8 @@ async function getAllGamesResult(req, res) {
             },
             {
               $project: {
-                _id: 0,
+                _id: 1,
+                status: 1,
                 Id: 1,
                 competitionName: 1,
                 inplay: 1,
@@ -1332,6 +1336,8 @@ async function getAllGamesResult(req, res) {
             },
             {
               $project: {
+                _id: 1,
+                status: 1,
                 Id: 1,
                 competitionName: 1,
                 inplay: 1,
@@ -1366,7 +1372,8 @@ async function getAllGamesResult(req, res) {
             },
             {
               $project: {
-                _id: 0,
+                _id: 1,
+                status: 1,
                 Id: 1,
                 competitionName: 1,
                 inplay: 1,
@@ -1389,6 +1396,8 @@ async function getAllGamesResult(req, res) {
             },
             {
               $project: {
+                _id: 1,
+                status: 1,
                 Id: 1,
                 competitionName: 1,
                 inplay: 1,
@@ -1421,7 +1430,8 @@ async function getAllGamesResult(req, res) {
                 openDate: 1,
                 name: 1,
                 meetingName: 1,
-                inplay: 1
+                inplay: 1,
+                status: 1
               }
             },
           ],
@@ -1440,7 +1450,8 @@ async function getAllGamesResult(req, res) {
                 openDate: 1,
                 name: 1,
                 competitionName: 1,
-                inplay: 1
+                inplay: 1,
+                status: 1
               }
             },
           ],
