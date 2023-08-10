@@ -1257,7 +1257,17 @@ async function getAllGamesResult(req, res) {
                 name: 1,
                 openDate: 1,
                 oddsData: {
-                  $arrayElemAt: ["$odds.runners", 0]
+                  $cond: {
+                    if: {
+                      $and: [
+                        { $isArray: "$odds" },
+                        { $gt: [{ $size: "$odds" }, 0] },
+                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
+                      ]
+                    },
+                    then: { $arrayElemAt: ["$odds.runners", 0] },
+                    else: [] // Empty array if any condition is not met
+                  }
                 }
               }
             },
@@ -1274,7 +1284,7 @@ async function getAllGamesResult(req, res) {
             },
             {
               $sort: {
-                createdAt: -1
+                createdAt: 1
               }
             }
           ]
@@ -1306,7 +1316,17 @@ async function getAllGamesResult(req, res) {
                 name: 1,
                 openDate: 1,
                 oddsData: {
-                  $arrayElemAt: ["$odds.runners", 0]
+                  $cond: {
+                    if: {
+                      $and: [
+                        { $isArray: "$odds" },
+                        { $gt: [{ $size: "$odds" }, 0] },
+                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
+                      ]
+                    },
+                    then: { $arrayElemAt: ["$odds.runners", 0] },
+                    else: [] // Empty array if any condition is not met
+                  }
                 }
               }
             },
@@ -1323,7 +1343,7 @@ async function getAllGamesResult(req, res) {
             },
             {
               $sort: {
-                createdAt: -1
+                createdAt: 1
               }
             }
           ],
@@ -1354,9 +1374,15 @@ async function getAllGamesResult(req, res) {
                 openDate: 1,
                 oddsData: {
                   $cond: {
-                    if: { $isArray: "$odds.runners" },
+                    if: {
+                      $and: [
+                        { $isArray: "$odds" },
+                        { $gt: [{ $size: "$odds" }, 0] },
+                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
+                      ]
+                    },
                     then: { $arrayElemAt: ["$odds.runners", 0] },
-                    else: []
+                    else: [] // Empty array if any condition is not met
                   }
                 }
               }
@@ -1374,7 +1400,7 @@ async function getAllGamesResult(req, res) {
             },
             {
               $sort: {
-                createdAt: -1
+                createdAt: 1
               }
             }
           ],
