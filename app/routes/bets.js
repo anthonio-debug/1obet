@@ -434,9 +434,9 @@ async function placeBet(req, res) {
             },
           },
         );
-        console.log("parentUserIds ===========", parentUserIds);
-        console.log("winningAmount ===========", winningAmount);
-        console.log("matchId =================", matchId);
+        console.log("parentUserIds =========== ", parentUserIds);
+        console.log("winningAmount =========== ", winningAmount);
+        console.log("matchId ================= ", matchId);
 
 
         await updateParentUserBalance(parentUserIds, winningAmount, matchId);
@@ -449,7 +449,7 @@ async function placeBet(req, res) {
       }
       catch (error) {
         console.error('error', error);
-        return res.status(404).send({ message: 'Error updating user balance' });
+        return res.status(404).send({ message: `Error updating user balance ${error}` });
       }
     });
 
