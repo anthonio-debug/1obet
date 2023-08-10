@@ -48,7 +48,7 @@ async function getParents(userId) {
   return parentUserIds;
 }
 
-const updateParentUserBalance = async (parentUsersIds, winningAmount) => {
+const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0 ) => {
   const parentUsers = await getParents(parentUsersIds)
   let prev = 0;
   parentUsers.forEach(user => {
@@ -62,6 +62,14 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount) => {
     user.availableBalance -= (user.commission / 100) * winningAmount;
     console.log('user.availableBalance', typeof user.availableBalance);
     await user.save();
+    if(matchId != 0){
+      const position = new currentPosition({
+        userId: user.userId,
+        amount: - (user.commission / 100) * winningAmount,
+        matchId: matchId,
+      })
+      position.save();
+    }
   }
   
 };
@@ -132,6 +140,7 @@ async function placeBet(req, res) {
         return res.status(404).send({ message: 'Market places not found' });
       }
     }
+
     if (marketIds.some((id)=> id == marketId) || subMarketId.some((id)=>id == subMarketDetail.subMarketId) ){
       return res.status(404).send({ message: 'Betting disabled by your dealer' });
     }  
@@ -414,7 +423,7 @@ async function placeBet(req, res) {
             },
           },
         );
-        await updateParentUserBalance(parentUserIds, winningAmount);
+        await updateParentUserBalance(parentUserIds, winningAmount, matchId);
 
         return res.send({
           success: true,
