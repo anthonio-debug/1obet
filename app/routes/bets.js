@@ -52,24 +52,23 @@ async function getUsers(userIds) {
 }
 
 const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0 ) => {
-  const parentUsers = await User.find({
+  const parentUsersdata = await User.find({
     userId: {
       $in: parentUsersIds
     }
   })
   let prev = 0;
-  const dummyData = [];
-  parentUsers.forEach(user => {
-    const userObj = {...user};
+  const parentUsers = [];
+  parentUsersdata.forEach(user => {
     let current = user.downLineShare;
-    userObj["commission"] = current - prev;
+    user["commission"] = current - prev;
     prev = current;
-    console.log("usser======", userObj);
-    dummyData.push(userObj)
+    parentUsers.push(user)
+    console.log("user ====== ", user);
   });
 
+  console.log("parent Users  ====================== >>>>>>>", parentUsers);
   for (const user of parentUsers){
-    console.log("user  ====================== >>>>>>>", user);
     user.exposure -= (user.commission / 100) * winningAmount;
     user.availableBalance -= (user.commission / 100) * winningAmount;
     // console.log('user.availableBalance', typeof user.availableBalance);
@@ -434,9 +433,9 @@ async function placeBet(req, res) {
             },
           },
         );
-        console.log("parentUserIds =========== ", parentUserIds);
-        console.log("winningAmount =========== ", winningAmount);
-        console.log("matchId ================= ", matchId);
+        console.log("parentUserIds ===========", parentUserIds);
+        console.log("winningAmount ===========", winningAmount);
+        console.log("matchId =================", matchId);
 
 
         await updateParentUserBalance(parentUserIds, winningAmount, matchId);
@@ -449,7 +448,7 @@ async function placeBet(req, res) {
       }
       catch (error) {
         console.error('error', error);
-        return res.status(404).send({ message: `Error updating user balance ${error}` });
+        return res.status(404).send({ message: 'Error updating user balance' });
       }
     });
 
