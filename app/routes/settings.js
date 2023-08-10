@@ -998,8 +998,6 @@ async function bettorDashboardGames(req, res) {
                 name: 1,
                 competitionName: 1,
                 inplay: 1,
-                "oddsData.SelectionId": 1,
-                "oddsData.runnerName": 1,
                 "oddsData.ExchangePrices": 1
               }
             },
@@ -1062,8 +1060,6 @@ async function bettorDashboardGames(req, res) {
                 name: 1,
                 competitionName: 1,
                 inplay: 1,
-                "oddsData.SelectionId": 1,
-                "oddsData.runnerName": 1,
                 "oddsData.ExchangePrices": 1
               }
             },
@@ -1127,8 +1123,6 @@ async function bettorDashboardGames(req, res) {
                 name: 1,
                 competitionName: 1,
                 inplay: 1,
-                "oddsData.SelectionId": 1,
-                "oddsData.runnerName": 1,
                 "oddsData.ExchangePrices": 1
               }
             },
