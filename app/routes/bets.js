@@ -32,13 +32,13 @@ async function getParents(userId) {
 
   while (currentUserId) {
     const parentUser = await User.findOne({ userId: currentUserId }).exec();
-    console.log('parentUser',parentUser);
+    // console.log('parentUser',parentUser);
     if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
-      console.log('if createdBy not found')
+      // console.log('if createdBy not found')
       break;
     }
     if (!parentUser || parentUser.createdBy == currentUserId) {
-      console.log('No more parent users.');
+      // console.log('No more parent users.');
       break;
     }
     parentUserIds.push(parentUser.createdBy);
@@ -60,7 +60,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
   for (const user of parentUsers){
     user.exposure -= (user.commission / 100) * winningAmount;
     user.availableBalance -= (user.commission / 100) * winningAmount;
-    console.log('user.availableBalance', typeof user.availableBalance);
+    // console.log('user.availableBalance', typeof user.availableBalance);
     await user.save();
     console.log("Saving parent users" );
     if(matchId != 0){
@@ -163,25 +163,25 @@ async function placeBet(req, res) {
         return res.status(404).send({ message: `Bet mis match` });
       }
 
-      console.log('data', oddsData[0].Runners);
+      // console.log('data', oddsData[0].Runners);
 
       const runnerFromAPI = oddsData[0].Runners.find(runner => runner.SelectionId == selectionId);
-      console.log('matchOdds.runners', runnerFromAPI);
-      console.log('selection Id', selectionId);
+      // console.log('matchOdds.runners', runnerFromAPI);
+      // console.log('selection Id', selectionId);
       
       if (type == 0){
 
         ApiResponseOdds         = runnerFromAPI.ExchangePrices.AvailableToBack
-        console.log("ApiResponseOdds AvailableToBack === ", ApiResponseOdds);
+        // console.log("ApiResponseOdds AvailableToBack === ", ApiResponseOdds);
         const DBOddDetails      = await Odds.findById(oddsId);
-        console.log("DBOddDetails === ", DBOddDetails);
+        // console.log("DBOddDetails === ", DBOddDetails);
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const availableToBack   = OddDetailsTeam.ExchangePrices.AvailableToBack;
-        console.log('availableToBack', availableToBack);
+        // console.log('availableToBack', availableToBack);
         matchedIndex = availableToBack.findIndex((back) => {
           return back.price === betRate;
         });
-        console.log('matchedIndex', matchedIndex);
+        // console.log('matchedIndex', matchedIndex);
         if (matchedIndex == -1) {
           console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
           return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
@@ -191,15 +191,15 @@ async function placeBet(req, res) {
       } 
       else if (type == 1){
         ApiResponseOdds         = runnerFromAPI.ExchangePrices.AvailableToLay
-        console.log("ApiResponseOdds AvailableToLay === ", ApiResponseOdds);
+        // console.log("ApiResponseOdds AvailableToLay === ", ApiResponseOdds);
         const DBOddDetails      = await Odds.findById(oddsId);
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const AvailableToLay    = OddDetailsTeam.ExchangePrices.AvailableToLay;
-        console.log('AvailableToLay', AvailableToLay);
+        // console.log('AvailableToLay', AvailableToLay);
         matchedIndex = AvailableToLay.findIndex((back) => {
           return back.price === betRate;
         });
-        console.log('matchedIndex', matchedIndex);
+        // console.log('matchedIndex', matchedIndex);
         if (!matchedIndex) {
           console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
           return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
@@ -216,13 +216,12 @@ async function placeBet(req, res) {
         return res.status(404).send({ message: 'Selected odds not found for the bet', selectedOddsRate });
       }
 
-      console.log(`ApiResponseOdds at ${matchedIndex}`, ApiResponseOdds[matchedIndex]);
+      // console.log(`ApiResponseOdds at ${matchedIndex}`, ApiResponseOdds[matchedIndex]);
 
       if(ApiResponseOdds[matchedIndex].price < betRate ){
         return res.send({
-          betrate: betRate,
-          ApiResponseOdds: ApiResponseOdds[matchedIndex],
-          message: "Bet mis match"
+          success: false,
+          message: "Bet mis matched"
         })
       }
     }
@@ -409,7 +408,6 @@ async function placeBet(req, res) {
         
         const position = new currentPosition({
           userId: userId,
-          description: matchName,
           amount: - loosingAmount,
           matchId: matchId,
         })
@@ -425,6 +423,11 @@ async function placeBet(req, res) {
             },
           },
         );
+        console.log("parentUserIds ===========", parentUserIds);
+        console.log("winningAmount ===========", winningAmount);
+        console.log("matchId =================", matchId);
+
+
         await updateParentUserBalance(parentUserIds, winningAmount, matchId);
 
         return res.send({
