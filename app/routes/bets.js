@@ -74,15 +74,15 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     await user.save();
     console.log("Saving parent users" );
     if(matchId != 0){
-      console.log("inside of current position" );
-      const position = new currentPosition({
-        userId: user.userId,
-        amount: - (user.commission / 100) * winningAmount,
-        matchId: matchId,
-      })
-      position.save();
+      // console.log("inside of current position" );
+      // const position = new currentPosition({
+      //   userId: user.userId,
+      //   amount: - (user.commission / 100) * winningAmount,
+      //   matchId: matchId,
+      // })
+      // position.save();
 
-      let CurrentPosition = await new CurrentPosition({
+      let position = await new CurrentPosition({
         userId: user.userId,
         description: "some transection name",
         amount: -(user.commission / 100) * winningAmount,
@@ -273,7 +273,7 @@ async function placeBet(req, res) {
         const availableToBack   = OddDetailsTeam.exchange.availableToBack;
         // console.log('availableToBack', availableToBack);
         matchedIndex = availableToBack.findIndex((back) => {
-          return back.price === betRate;
+          return back.price == betRate;
         });
         console.log('matchedIndex', matchedIndex);
         if (matchedIndex == -1) {
