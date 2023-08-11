@@ -15,7 +15,7 @@ require('../../db');
 
 
 const checkBetStatus = (req) => {
- runningJob = cron.schedule("*/3 * * * *", async () => {
+ runningJob = cron.schedule("*/1 * * * *", async () => {
    try {
      const endedMatches = await getEndedMatches('4');
      console.log("endedMatches", endedMatches);
@@ -38,7 +38,7 @@ const checkBetStatus = (req) => {
            handleDrawBet(bet);
          }
        }
-       Event.updateOne({ _id: match._id }, { betSettled: true });
+       await Events.updateOne({ _id: match._id }, { betSettled: true });
      }
    } catch (err) {
      console.error(err);

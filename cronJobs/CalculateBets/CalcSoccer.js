@@ -10,9 +10,9 @@ const {
 require('../../db');
 
 const checkBetStatus = (req) => {
- runningJob = cron.schedule("*/3 * * * *", async () => {
+ runningJob = cron.schedule("*/1 * * * *", async () => {
    try {
-     const endedMatches = await getEndedMatches('2');
+     const endedMatches = await getEndedMatches('1');
      console.log("endedMatches", endedMatches);
      for (const match of endedMatches){
        const bets = await getAllBets(match.Id); 
@@ -33,7 +33,7 @@ const checkBetStatus = (req) => {
            handleDrawBet(bet);
          }
        }
-       await Event.findOneAndUpdate({ _id: match._id }, { $set: { betSettled: true }});
+       await Events.findOneAndUpdate({ _id: match._id }, { $set: { betSettled: true }});
      }
    } catch (err) {
      console.error(err);
