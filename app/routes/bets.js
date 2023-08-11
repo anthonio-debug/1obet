@@ -69,8 +69,8 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     let commission = current - prev;
     dummyUser = {
       ...dummyUser,
-      commission
-    }
+      commission: commission, 
+    };
     parentUsers.push(dummyUser)
 
     prev = current;
