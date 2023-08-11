@@ -69,12 +69,11 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     let current = user.downLineShare;
     user["commission"] = current - prev;
     prev = current;
-    console.log(" user[commission] ", user["commission"]);
+    console.log(" user[commission] ", user);
   });
-
   console.log("parent Users  ====================== >>>>>>>", parentUser);
+  
   for (const user of parentUser){
-
     user.exposure -= (user.commission / 100) * winningAmount;
     user.availableBalance -= (user.commission / 100) * winningAmount;
     // console.log('user.availableBalance', typeof user.availableBalance);
