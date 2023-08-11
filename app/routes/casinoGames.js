@@ -545,6 +545,6 @@ loginRouter.get('/getGamesByName', getGamesByName);
 loginRouter.post('/addSelectedDashboardGames', addSelectedDashboardGames);
 
 loginRouter.get('/getSelectedGamesCategories', getSelectedGamesCategories);
-loginRouter.get('/getGameDirect', getGameDirect);
+loginRouter.post('/getGameDirect', getGameDirect);
 
 module.exports = { loginRouter };

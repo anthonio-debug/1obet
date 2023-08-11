@@ -1653,11 +1653,11 @@ async function getAllMatchSettlements(req, res) {
     ]).exec();
 
     const organizedEvents = {
-      soccer: events[0].soccer,
-      tennis: events[0].tennis,
-      cricket: events[0].cricket,
-      horseRace: events[0].horseRace,
-      greyhound: events[0].greyhound,
+      soccer: result.docs[0].soccer.docs, // Access the 'docs' array for the specific event type
+  tennis: result.docs[0].tennis.docs,
+  cricket: result.docs[0].cricket.docs,
+  horseRace: result.docs[0].horseRace.docs,
+  greyhound: result.docs[0].greyhound.docs,
     };
 
     res.status(200).json({
@@ -1677,146 +1677,106 @@ async function getAllMatchSettlements(req, res) {
 
 async function getAllGamesResults(req, res) {
   try {
-    const sportsIdArray = ['1', '2', '4', '7', '4339'];
-    const events = await Events.aggregate([
-      {
-        $match: {
-          sportsId: { $in: sportsIdArray },
-          winner: { $ne: 0 }
-        },
-      },
-      {
-        $facet: {
-          soccer: [
-            {
-              $match: {
-                sportsId: '1',
-                winner: { $ne: 0 }
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                name:1,
-                competitionName: 1,
-                inplay: 1,
-                openDate: 1,
-                winner: 1
-              }
-            },
-            {
-              $sort: { openDate: 1 }
-            },
-          ]
-          ,
-          tennis: [
-            {
-              $match: {
-                sportsId: '2',
-                winner: { $ne: 0 }
-              }
-            },
-            { $sort: { openDate: 1 } },
-            {
-              $project: {
-                _id: 1,
-                status: 1,
-                Id: 1,
-                competitionName: 1,
-                inplay: 1,
-                name: 1,
-                openDate: 1,
-                winner: 1
-              }
-            }
-          ],
-          cricket: [
-            {
-              $match: {
-                sportsId: '4',
-                winner: { $ne: 0 }
-              }
-            },
-            { $sort: { openDate: 1 } },
-            {
-              $project: {
-                _id: 1,
-                status: 1,
-                Id: 1,
-                competitionName: 1,
-                inplay: 1,
-                name: 1,
-                openDate: 1,
-                winner: 1
-              }
-            },
-          ],
+    if (req.decoded.role !== '5') {
+      return res.status(403).json({ message: 'You are not allowed to do this' });
+    }
 
-          horseRace: [
-            {
-              $match: {
-                sportsId: '7',
-                winner: { $ne: 0 }
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                meetingId: 1,
-                openDate: 1,
-                name: 1,
-                meetingName: 1,
-                inplay: 1,
-                status: 1,
-                winner: 1
-              }
-            },
-          ],
-          greyhound: [
-            {
-              $match: {
-                sportsId: '4339',
-                winner: { $ne: 0 }
-              },
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                status: 1,
-                winner: 1
-              }
-            },
-          ],
-        },
-      },
-    ]).exec();
-    const organizedEvents = {
-      soccer: events[0].soccer,
-      tennis: events[0].tennis,
-      cricket: events[0].cricket,
-      horseRace: events[0].horseRace,
-      greyhound: events[0].greyhound,
+    let query = { winner: { $ne: 0 } };
+    let page = 1;
+    let sort = 1;
+    let sortValue = 'openDate';
+    let limit = 50;
+    let projection 
+     if(req.body.sportsId == 7 || req.body.sportsId == 4339 ) {
+      projection = {
+        _id: 1,
+        name: 1,
+        meetingName: 1,
+        openDate: 1, 
+        winner: 1
+      };
+     }
+     else {
+      projection = {
+        _id: 1,
+        name: 1,
+        competitionName: 1,
+        openDate: 1, 
+        winner: 1
+      };
+     }
+
+    if (req.body.numRecords) {
+      const numRecords = parseInt(req.body.numRecords);
+      if (isNaN(numRecords) || numRecords < 0) {
+        return res.status(400).json({ message: 'Invalid numRecords value' });
+      }
+      limit = numRecords;
+    }
+
+    if (req.body.sortValue) {
+      sortValue = req.body.sortValue;
+    }
+
+    if (req.body.sort) {
+      sort = parseInt(req.body.sort);
+    }
+    if (req.body.page) {
+      page = parseInt(req.body.page);
+    }
+
+    if (req.body.sportsId) {
+      query.sportsId = req.body.sportsId;
+    }
+    console.log('startDate',req.body.startDate);
+    console.log('endDate',req.body.endDate);
+
+    if (req.body.startDate && req.body.endDate) {
+      query.openDate = {
+        $gte: req.body.startDate,
+        $lte: req.body.endDate
+      };
+    }
+    else if (req.body.startDate) {
+      query.openDate = { $gte: req.body.startDate };
+    }
+    else if (req.body.endDate) {
+      query.openDate = { $lte: req.body.endDate };
+    }
+
+    const options = {
+      page: page,
+      limit: limit,
+      sort: { [sortValue]: sort },
+      select: projection,
     };
 
-    res.status(200).json({
-      success: true,
-      message: 'Games Result Records',
-      results: organizedEvents,
+    Events.paginate(query, options, (err, results) => {
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ message: 'Pagination failed', error: err.message });
+      }
+
+      if (results.totalDocs === 0) {
+        return res.status(404).json({ message: 'No records found' });
+      }
+
+      res.status(200).json({
+        success: true,
+        message: 'Games Record Found',
+        results: results.docs,
+        total: results.total,
+        limit: results.limit,
+        page:  results.page,
+        pages: results.pages
+      });
     });
   } catch (error) {
     console.error(error);
-    res.status(200).json({
-      success: false,
-      message: 'Failed to get events',
-      error: error.message,
-    });
+    res.status(500).json({ message: 'Failed to get events', error: error.message });
   }
 }
+
 
 
 loginRouter.post(
@@ -1874,6 +1834,6 @@ loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 loginRouter.post('/updateMatch', updateMatch);
 loginRouter.get('/bettorDashboardGames', bettorDashboardGames);
 loginRouter.get('/getAllMatchSettlements', getAllMatchSettlements);
-loginRouter.get('/getAllGamesResults', getAllGamesResults);
+loginRouter.post('/getAllGamesResults', getAllGamesResults);
 
 module.exports = { loginRouter, router, listOddsAPI };

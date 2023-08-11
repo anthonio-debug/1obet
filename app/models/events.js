@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+let Global = require('../global/settings');
 /*
  [Type]
   1. InPlayEvent
@@ -41,9 +41,8 @@ const inPlayEventsSchema = new mongoose.Schema({
   draw: {type: Boolean, default: false}
 });
 
-
-
-
+inPlayEventsSchema.plugin(Global.paginate);
+inPlayEventsSchema.plugin(Global.aggregatePaginate);
 
 // Create the model
 inPlayEventsSchema.index({ inplay: 1, sportsId: 1 })
