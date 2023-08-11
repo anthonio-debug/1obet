@@ -57,15 +57,17 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
       $in: parentUsersIds
     }
   }).sort({userId: -1})
+
+
   let prev = 0;
   const parentUsers = [];
   parentUsersData.forEach(user => {
-    const currentUser = user
     let current = user.downLineShare;
-    currentUser.commission = current - prev;
+    user.commission = current - prev;
     prev = current;
-    parentUsers.push(currentUser)
-    console.log("user ====== ", currentUser);
+    parentUsers.push(user);
+    console.log("user ====== ", user);
+    console.log("commission ====== ", user.commission);
   });
 
   console.log("parent Users  ====================== >>>>>>>", parentUsers);
