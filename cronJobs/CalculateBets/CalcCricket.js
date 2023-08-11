@@ -7,34 +7,35 @@ const {
   handleWinningBet, 
   handleDrawBet
 } = require('./calculations')
-
 require('../../db');
-
-
 // betSettled  winner
-
-
 const checkBetStatus = (req) => {
  runningJob = cron.schedule("*/1 * * * *", async () => {
    try {
      const endedMatches = await getEndedMatches('4');
      console.log("endedMatches", endedMatches);
      for (const match of endedMatches){
-       const bets = await getAllBets(match.Id); 
+       const bets = await getAllBets(match._id); 
+       console.log(" ========", bets);
        for (const bet of bets) {
          if (bet.type == 0 && bet.runner == match.winner) {
+          console.log("0 ----- winner ");
           await handleWinningBet(bet);
 
          } else if (bet.type == 0 && bet.runner != match.winner) {
+          console.log("0 ----- looser ");
           await handleLosingBet(bet);
 
          } else if (bet.type == 1 && bet.runner != match.winner) {
+          console.log("1 ----- winner ");
           await handleWinningBet(bet);
 
          } else if (bet.type == 1 && bet.runner == match.winner) {
+          console.log("1 ----- looser ");
           await handleLosingBet(bet);
 
          } else {
+          console.log("-----  Draw ");
           await handleDrawBet(bet);
          }
        }

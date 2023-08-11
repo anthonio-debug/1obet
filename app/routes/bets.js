@@ -604,7 +604,7 @@ function getUserBets(req, res) {
     ];
   }
 
-  User.findOne({ userId: query.userId }, (err, user) => {
+  User.findOne({ userId: query.decoded.userId }, (err, user) => {
     if (err || !user) {
       return res.status(404).send({ message: 'User not found' });
     }
