@@ -4,7 +4,7 @@ var bcrypt = require('bcrypt');
 let config = require('config'); // we load the db location from the JSON files
 let Global = require('../global/settings');
 
-mongoose.set('debug', true);
+mongoose.set('debug', false);
 const saltrounds = config.saltRounds;
 /**
  * [UserSchema description]

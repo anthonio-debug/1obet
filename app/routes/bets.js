@@ -52,23 +52,25 @@ async function getUsers(userIds) {
 }
 
 const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0 ) => {
-  const parentUsers = await User.find({
+  const parentUser = await User.find({
     userId: {
-      $in: parentUsersIds
-    }
-  })
+      $in: [...parentUsersIds],
+    },
+    isDeleted: false,
+  }).sort({ role: -1 });
+
+
   let prev = 0;
-  parentUsers.forEach(user => {
+  parentUser.forEach((user) => {
     let current = user.downLineShare;
-    user["commission"] = current - prev;
+    let  commission = current - prev;
+    user["commission"] = commission;
     prev = current;
   });
-
-  for (const user of parentUsers){
-    console.log("user  ====================== >>>>>>>", user);
+  for (const user of parentUser){
+    console.log(`user id ${ user.userId } =====`, user.commission);
     user.exposure -= (user.commission / 100) * winningAmount;
     user.availableBalance -= (user.commission / 100) * winningAmount;
-    // console.log('user.availableBalance', typeof user.availableBalance);
     await user.save();
     console.log("Saving parent users" );
     if(matchId != 0){
