@@ -253,7 +253,10 @@ async function placeBet(req, res) {
         return res.status(404).send({ message: `Bet mis match` });
       }
 
-      console.log('data', oddsData[0]?.runners);
+      console.log('data =========== ', oddsData[0]?.runners);
+      console.log('selectionId ========= ', selectionId);
+      
+
 
 
       const runnerFromAPI = oddsData[0]?.runners?.find(runner => runner.SelectionId == selectionId);
