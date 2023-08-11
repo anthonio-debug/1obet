@@ -256,10 +256,7 @@ async function placeBet(req, res) {
       console.log('data =========== ', oddsData[0]?.runners);
       console.log('selectionId ========= ', selectionId);
       
-
-
-
-      const runnerFromAPI = oddsData[0]?.runners?.find(runner => runner.SelectionId == selectionId);
+      const runnerFromAPI = oddsData[0]?.runners?.filter((runner) => runner.SelectionId == selectionId);
       console.log('matchOdds.runners', runnerFromAPI);
       
       if (type == 0){
