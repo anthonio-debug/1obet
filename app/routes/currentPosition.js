@@ -118,16 +118,16 @@ function getCurrentPosition_old(req, res) {
 //   prev = current;
 // });
 
-for (const user of parentUser) {
-  let CurrentPosition = await new CurrentPosition({
-    userId: user.userId,
-    description: "some transection name",
-    amount: -(user.commission / 100) * remainingAmount,
-    betId: bet._id,
-    matchId: matchId,
-  });
-  await CurrentPosition.save();
-}
+// for (const user of parentUser) {
+//   let CurrentPosition = await new CurrentPosition({
+//     userId: user.userId,
+//     description: "some transection name",
+//     amount: -(user.commission / 100) * remainingAmount,
+//     betId: bet._id,
+//     matchId: matchId,
+//   });
+//   await CurrentPosition.save();
+// }
 
   
 
