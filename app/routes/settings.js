@@ -1689,6 +1689,12 @@ async function getAllGamesResults(req, res) {
         $facet: {
           soccer: [
             {
+              $match: {
+                sportsId: '1',
+                winner: { $ne: 0 }
+              }
+            },
+            {
               $project: {
                 _id: 1,
                 name:1,
@@ -1704,6 +1710,12 @@ async function getAllGamesResults(req, res) {
           ]
           ,
           tennis: [
+            {
+              $match: {
+                sportsId: '2',
+                winner: { $ne: 0 }
+              }
+            },
             { $sort: { openDate: 1 } },
             {
               $project: {
@@ -1719,6 +1731,12 @@ async function getAllGamesResults(req, res) {
             }
           ],
           cricket: [
+            {
+              $match: {
+                sportsId: '4',
+                winner: { $ne: 0 }
+              }
+            },
             { $sort: { openDate: 1 } },
             {
               $project: {
@@ -1735,6 +1753,12 @@ async function getAllGamesResults(req, res) {
           ],
 
           horseRace: [
+            {
+              $match: {
+                sportsId: '7',
+                winner: { $ne: 0 }
+              }
+            },
             {
               $project: {
                 _id: 1,
