@@ -1,55 +1,26 @@
-const cron    = require("node-cron");
 const axios   = require('axios');
 const config  = require('config');
-const Events  = require('./app/models/events');
-const moment  = require('moment');
-require('./db');
-
-const addInPlayFalse = async (eventIds)=>{
-  eventIds.map(async (eventId)=>{
-    const event     = await Events.findOne({
-      Id:eventId
-    });
-    const url = `http://209.250.242.175:33332/results/?ids=${event.marketIds[0]}`;
-    const response = await axios.get(url);
-    if(response?.data.length > 0 ){
-      await Events.findOneAndUpdate(
-        {Id:eventId},
-        {$set : {
-          inplay: false
-        }}
-        );
-    }
-    console.log("response>>>>>>>>>>>>>", response.data);
+// require('./db');
+async function name() {
+  const selectionId = 46636793;
+  const market = 1.216943899
+  const url = `http://136.244.77.249:33333/odds/?ids=${market}`;
+  const response = await axios.get(url);
+  const oddsData = response.data;
+  
+  
+  // console.log("oddsData Runners ====== ", oddsData);
+  if (oddsData.length == 0) {
+    console.log(`Match odds not found for sports ID`);
+    // return res.status(404).send({ message: `Bet mis match` });
+  }
+  
+  console.log('oddsData runners =========== ', oddsData[0]?.runners);
+  // console.log('selectionId ========= ', selectionId);
+  
+  const runnerFromAPI = oddsData[0].runners.find((runner) => {
+    return runner.selectionId == selectionId
   });
-
-
+  console.log('matchOdds runners ====== ', runnerFromAPI);
 }
-
-const cricketOldEvent = () => {
-  cron.schedule('*/15 * * * * *', async () => {
-
-    try {
-      // There are 2 formats for  Date Month without 0 M is (7) & month with zero MM (07)
-      const date  = moment(new Date(Date.now() - 60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss +00:00");
-      const date2 = moment(new Date(Date.now() - 60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
-      const eventIds1     = await Events.distinct('Id',{ 
-        sportsId: '2',
-        openDate : {$lt: date2},
-        inplay: true
-      });
-      const eventIds2     = await Events.distinct('Id',{ 
-        sportsId: '2',
-        openDate : {$lt: date},
-        inplay: true
-      });
-      const eventIds      = eventIds1.concat(eventIds2)
-      console.log("================ > event Ids > ", eventIds.length);
-      await addInPlayFalse(eventIds)
-    } catch(error){
-      console.error('Error running listMarket cron job:', error);
-    }
-  });
-}
-cricketOldEvent()
-
+name()
