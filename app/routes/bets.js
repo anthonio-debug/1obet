@@ -262,12 +262,12 @@ async function placeBet(req, res) {
       console.log('match odds runners ====== ', runnerFromAPI);
       
       if (type == 0){
-        ApiResponseOdds         = runnerFromAPI.exchange.AvailableToBack
+        ApiResponseOdds         = runnerFromAPI?.exchange?.availableToBack
         console.log("ApiResponseOdds AvailableToBack === ", ApiResponseOdds);
         const DBOddDetails      = await RaceOdds.findById(oddsId);
         console.log("DBOddDetails === ", DBOddDetails);
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
-        const availableToBack   = OddDetailsTeam.exchange.AvailableToBack;
+        const availableToBack   = OddDetailsTeam.exchange.availableToBack;
         // console.log('availableToBack', availableToBack);
         matchedIndex = availableToBack.findIndex((back) => {
           return back.price === betRate;
@@ -280,12 +280,12 @@ async function placeBet(req, res) {
         selectedOddsRate = availableToBack[matchedIndex].price;
 
       } else if (type == 1){
-        ApiResponseOdds         = runnerFromAPI.exchange.AvailableToLay
+        ApiResponseOdds         = runnerFromAPI.exchange.availableToLay
         console.log("ApiResponseOdds AvailableToLay ====== ", ApiResponseOdds);
         const DBOddDetails      = await RaceOdds.findById(oddsId);
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
-        const AvailableToLay    = OddDetailsTeam.exchange.AvailableToLay;
-        console.log('AvailableToLay', AvailableToLay);
+        const AvailableToLay    = OddDetailsTeam.exchange.availableToLay;
+        console.log('availableToBack', AvailableToLay);
         matchedIndex = AvailableToLay.findIndex((back) => {
           return back.price === betRate;
         });
