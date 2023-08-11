@@ -539,6 +539,14 @@ function getUserBets(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
+
+  const bets = Bets.find({ userId: req.decoded.userId });
+  return res.send({
+    success: true,
+    message: 'bets record found',
+    results: bets,
+  });
+
   // Initialize variables with default values
   let query = {};
   let page = 1;
