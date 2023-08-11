@@ -278,7 +278,7 @@ async function placeBet(req, res) {
         console.log('matchedIndex', matchedIndex);
         if (matchedIndex == -1) {
           console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-          return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
+          return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${betRate}` });
         }
         selectedOddsRate = availableToBack[matchedIndex].price;
 
@@ -307,8 +307,6 @@ async function placeBet(req, res) {
         console.log('Selected odds not found for the bet');
         return res.status(404).send({ message: 'Bet miss Matched' });
       }
-
-      // console.log(`ApiResponseOdds at ${matchedIndex}`, ApiResponseOdds[matchedIndex]);
 
       if(ApiResponseOdds[matchedIndex].price < betRate ){
         return res.status(404).send({ message: `Bet miss matched` });
