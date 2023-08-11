@@ -52,30 +52,38 @@ async function getUsers(userIds) {
 }
 
 const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0 ) => {
-  const parentUsersData = await User.find({
+  const parentUser = await User.find({
     userId: {
-      $in: parentUsersIds
-    }
-  }).sort({userId: -1})
-  
-  console.log("parentUsersData ===========", parentUsersData);
+      $in: [...parentUsersIds],
+    },
+    isDeleted: false,
+  }).sort({ role: -1 });
 
   let prev = 0;
-  const parentUsers = [];
-  
-  for (const user of parentUsersData) {
-    let dummyUser = user;
-    let current = parseInt(user.downLineShare);
-    dummyUser['commission'] = current - prev;
+  parentUser.forEach(user => {
+    let current = user.downLineShare;
+    user["commission"] = current - prev;
     prev = current;
-    parentUsers.push(dummyUser);
-    console.log("user ====== ", dummyUser);
-    console.log("commission ====== ", dummyUser.commission);
-  }
+  });
+
+  console.log("parentUsersData =========== ", parentUser);
+
+  // let prev = 0;
+  // const parentUsers = [];
+  
+  // for (const user of parentUsersData) {
+  //   let dummyUser = user;
+  //   let current = parseInt(user.downLineShare);
+  //   dummyUser['commission'] = current - prev;
+  //   prev = current;
+  //   parentUsers.push(dummyUser);
+  //   console.log("user ====== ", dummyUser);
+  //   console.log("commission ====== ", dummyUser.commission);
+  // }
   
 
-  console.log("parent Users  ====================== >>>>>>>", parentUsers);
-  for (const user of parentUsers){
+  console.log("parent Users  ====================== >>>>>>>", parentUser);
+  for (const user of parentUser){
     user.exposure -= (user.commission / 100) * winningAmount;
     user.availableBalance -= (user.commission / 100) * winningAmount;
     // console.log('user.availableBalance', typeof user.availableBalance);
