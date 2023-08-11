@@ -18,19 +18,19 @@ const checkBetStatus = (req) => {
        const bets = await getAllBets(match.Id); 
        for (const bet of bets) {
          if (bet.type == 0 && bet.runner == match.winner) {
-           handleWinningBet(bet);
+          await handleWinningBet(bet);
 
          } else if (bet.type == 0 && bet.runner != match.winner) {
-           handleLosingBet(bet);
+          await handleLosingBet(bet);
 
          } else if (bet.type == 1 && bet.runner != match.winner) {
-           handleWinningBet(bet);
+          await handleWinningBet(bet);
 
          } else if (bet.type == 1 && bet.runner == match.winner) {
-           handleLosingBet(bet);
+          await handleLosingBet(bet);
 
          } else {
-           handleDrawBet(bet);
+          await handleDrawBet(bet);
          }
        }
        await Events.findOneAndUpdate({ _id: match._id }, { $set: { betSettled: true }});
