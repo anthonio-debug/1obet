@@ -534,7 +534,7 @@ async function placeBet(req, res) {
   }
 }
 
-function getUserBets(req, res) {
+async function getUserBets(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
