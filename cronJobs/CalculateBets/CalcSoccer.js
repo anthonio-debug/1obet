@@ -33,7 +33,7 @@ const checkBetStatus = (req) => {
            handleDrawBet(bet);
          }
        }
-       Event.updateOne({ _id: match._id }, { betSettled: true });
+       await Event.findOneAndUpdate({ _id: match._id }, { $set: { betSettled: true }});
      }
    } catch (err) {
      console.error(err);
