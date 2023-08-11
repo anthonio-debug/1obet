@@ -13,6 +13,8 @@ const loginRouter     = express.Router();
 function getCurrentPosition(req, res) {
   try{
     const userId = req.decoded.userId;
+    
+    
     currentPosition.aggregate([
       {
         "$lookup": {
@@ -56,7 +58,7 @@ function getCurrentPosition(req, res) {
       };
       res.send(response)
 
-    })
+    });
   }
   catch (error) {
     console.error(error);
@@ -116,16 +118,16 @@ function getCurrentPosition_old(req, res) {
 //   prev = current;
 // });
 
-// for (const user of parentUser) {
-//   let CurrentPosition = await new CurrentPosition({
-//     userId: user.userId,
-//     description: "some transection name",
-//     amount: -(user.commission / 100) * remainingAmount,
-//     betId: bet._id,
-//     matchId: matchId,
-//   });
-//   await CurrentPosition.save();
-// }
+for (const user of parentUser) {
+  let CurrentPosition = await new CurrentPosition({
+    userId: user.userId,
+    description: "some transection name",
+    amount: -(user.commission / 100) * remainingAmount,
+    betId: bet._id,
+    matchId: matchId,
+  });
+  await CurrentPosition.save();
+}
 
   
 

@@ -7,26 +7,28 @@ const deleteClosedOddsData = async  () => {
   cron.schedule('*/2 * * * *', async () => {
     try {
       let time = Date.now() - 5 * 60 * 1000;
-      let ids = await Odds.distinct('eventId');
+      let ids = await Odds.distinct('eventId', {createdAt: { $lt: time }});
       ids.forEach( async (id) => {
         let odd = await Odds.distinct('_id', {eventId: id , createdAt: { $lt: time }});
         console.log("  ids ===== ", odd.length);
-        const counts = odd.pop();
-        console.log(" ids ===== ", odd.length);
-        if(odd.length){
-          await Odds.deleteMany({
-            '_id': {
-              $in: odd
-            }
-          }, (err)=>{
-            if(err){
-              console.log(err);
-            }else{
-              console.log("Old odds removed successfully.");
-            }
-          })
+        if(odd.length > 0){
+          odd.pop();
+          console.log(" ids ===== ", odd.length);
+          if(odd.length > 0){
+
+            const deleteQuery = Odds.deleteMany({
+              _id: { '$in': odd }
+            });
+
+            deleteQuery.exec((err, success)=>{
+              if(err){
+                console.log(err);
+              }else{
+                console.log("Old odds removed successfully.");
+              }
+            })
+          }
         }
-        
       });
     } catch (error) {
       console.error('Error :', error);
