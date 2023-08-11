@@ -249,7 +249,7 @@ async function placeBet(req, res) {
       
       console.log("oddsData Runners ====== ", oddsData);
       if (oddsData.length == 0) {
-        console.log(`Match odds not found for sports ID ${sportsId}`);
+        console.log(`Match odds not found for sports ID`);
         return res.status(404).send({ message: `Bet mis match` });
       }
 
