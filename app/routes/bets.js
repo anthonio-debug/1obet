@@ -252,7 +252,7 @@ async function placeBet(req, res) {
 
       // console.log('data', oddsData[0].Runners);
 
-      const runnerFromAPI = oddsData[0].Runners.find(runner => runner.SelectionId == selectionId);
+      const runnerFromAPI = oddsData[0].runners.find(runner => runner.SelectionId == selectionId);
       console.log('matchOdds.runners', runnerFromAPI);
       
       if (type == 0){
