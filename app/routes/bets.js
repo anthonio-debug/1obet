@@ -47,9 +47,7 @@ async function getParents(userId) {
   return parentUserIds;
 }
 
-async function getUsers(userIds) {
-
-}
+// http://136.244.77.249:33333/odds/?ids=1.216943669
 
 const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id=0 ) => {
   const parentUser = await User.find({
