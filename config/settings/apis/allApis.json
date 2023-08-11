@@ -119,10 +119,10 @@
   "searchSingleUser",
   "updateMatch",
   "bettorDashboardGames",
-  "getAllGamesResult",
-  "getbettorDashboardOdds",
+  "getAllMatchSettlements",
   "getSelectedGamesBySearch",
   "getSelectedGamesCategories",
   "getGameDirect",
-  "SettleMatch"
+  "SettleMatch",
+  "getAllGamesResults"
 ]
