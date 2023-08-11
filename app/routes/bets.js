@@ -540,7 +540,8 @@ function getUserBets(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const bets = Bets.find({ userId: req.decoded.userId });
+  console.log("==========", req.decoded.userId);
+  const bets = await Bets.find({ userId: req.decoded.userId });
   return res.send({
     success: true,
     message: 'bets record found',
