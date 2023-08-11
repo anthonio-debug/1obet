@@ -1690,8 +1690,8 @@ async function getAllGamesResults(req, res) {
      if(req.body.sportsId == 7 || req.body.sportsId == 4339 ) {
       projection = {
         _id: 1,
-        name: 1,
-        competitionName: "$meetingName",
+        marketName: "$name",
+        name: "$meetingName",
         openDate: 1, 
         winner: 1
       };
@@ -1699,8 +1699,8 @@ async function getAllGamesResults(req, res) {
      else {
       projection = {
         _id: 1,
-        name: 1,
-        competitionName: 1,
+        name: 1, //should be name of event 
+        competitionName: 1, //change field to marketName
         openDate: 1, 
         winner: 1
       };
@@ -1749,7 +1749,8 @@ async function getAllGamesResults(req, res) {
       query.$or = [
         { competitionName: { $regex: searchRegex } },
         { name: { $regex: searchRegex } },
-        { openDate: { $regex: searchRegex } }
+        { openDate: { $regex: searchRegex } },
+        { winner: { $regex: searchRegex } }
       ];
     }
 
