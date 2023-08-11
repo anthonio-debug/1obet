@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-mongoose.set('debug', true);
+mongoose.set('debug', false);
 
 let Global = require('../global/settings');
 const privacyPolicySchema = new mongoose.Schema({

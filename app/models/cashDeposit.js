@@ -1,7 +1,7 @@
 /* eslint no-unused-vars: "off" */
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
-mongoose.set('debug', true);
+mongoose.set('debug', false);
 let Global = require('../global/settings');
 
 let depositsSchema = new Schema({

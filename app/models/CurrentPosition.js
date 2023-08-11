@@ -1,6 +1,6 @@
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
-mongoose.set('debug', true);
+mongoose.set('debug', false);
 // let Global = require('../global/settings');
 
 let currentPositionSchema = new Schema({
