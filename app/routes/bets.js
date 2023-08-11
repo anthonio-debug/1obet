@@ -247,15 +247,16 @@ async function placeBet(req, res) {
       const response = await axios.get(url);
       const oddsData = response.data;
       
-      console.log("oddsData Runners ====== ", oddsData[0].runners);
-      if (!oddsData) {
+      console.log("oddsData Runners ====== ", oddsData);
+      if (oddsData.length == 0) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
       }
 
-      // console.log('data', oddsData[0].Runners);
+      console.log('data', oddsData[0]?.runners);
 
-      const runnerFromAPI = oddsData[0].runners.find(runner => runner.SelectionId == selectionId);
+
+      const runnerFromAPI = oddsData[0]?.runners?.find(runner => runner.SelectionId == selectionId);
       console.log('matchOdds.runners', runnerFromAPI);
       
       if (type == 0){
