@@ -13,6 +13,8 @@ const loginRouter     = express.Router();
 function getCurrentPosition(req, res) {
   try{
     const userId = req.decoded.userId;
+    
+    
     currentPosition.aggregate([
       {
         "$lookup": {
@@ -56,7 +58,7 @@ function getCurrentPosition(req, res) {
       };
       res.send(response)
 
-    })
+    });
   }
   catch (error) {
     console.error(error);
