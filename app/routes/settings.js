@@ -1687,7 +1687,7 @@ async function getAllGamesResults(req, res) {
     let sortValue = 'openDate';
     let limit = 50;
     let projection 
-     if(req.query.sportsId == 7 || req.query.sportsId == 4339 ) {
+     if(req.body.sportsId == 7 || req.body.sportsId == 4339 ) {
       projection = {
         _id: 1,
         name: 1,
@@ -1706,27 +1706,42 @@ async function getAllGamesResults(req, res) {
       };
      }
 
-    if (req.query.numRecords) {
-      const numRecords = parseInt(req.query.numRecords);
+    if (req.body.numRecords) {
+      const numRecords = parseInt(req.body.numRecords);
       if (isNaN(numRecords) || numRecords < 0) {
         return res.status(400).json({ message: 'Invalid numRecords value' });
       }
       limit = numRecords;
     }
 
-    if (req.query.sortValue) {
-      sortValue = req.query.sortValue;
+    if (req.body.sortValue) {
+      sortValue = req.body.sortValue;
     }
 
-    if (req.query.sort) {
-      sort = parseInt(req.query.sort);
+    if (req.body.sort) {
+      sort = parseInt(req.body.sort);
     }
-    if (req.query.page) {
-      page = parseInt(req.query.page);
+    if (req.body.page) {
+      page = parseInt(req.body.page);
     }
 
-    if (req.query.sportsId) {
-      query.sportsId = req.query.sportsId;
+    if (req.body.sportsId) {
+      query.sportsId = req.body.sportsId;
+    }
+    console.log('startDate',req.body.startDate);
+    console.log('endDate',req.body.endDate);
+
+    if (req.body.startDate && req.body.endDate) {
+      query.openDate = {
+        $gte: req.body.startDate,
+        $lte: req.body.endDate
+      };
+    }
+    else if (req.body.startDate) {
+      query.openDate = { $gte: req.body.startDate };
+    }
+    else if (req.body.endDate) {
+      query.openDate = { $lte: req.body.endDate };
     }
 
     const options = {
@@ -1819,6 +1834,6 @@ loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 loginRouter.post('/updateMatch', updateMatch);
 loginRouter.get('/bettorDashboardGames', bettorDashboardGames);
 loginRouter.get('/getAllMatchSettlements', getAllMatchSettlements);
-loginRouter.get('/getAllGamesResults', getAllGamesResults);
+loginRouter.post('/getAllGamesResults', getAllGamesResults);
 
 module.exports = { loginRouter, router, listOddsAPI };
