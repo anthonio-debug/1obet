@@ -59,28 +59,15 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     isDeleted: false,
   }).sort({ role: -1 });
 
+
   let prev = 0;
-  parentUser.forEach(user => {
+  for(let user of parentUser) {
     let current = user.downLineShare;
     user["commission"] = current - prev;
     prev = current;
-  });
+  }
 
   console.log("parentUsersData =========== ", parentUser);
-
-  // let prev = 0;
-  // const parentUsers = [];
-  
-  // for (const user of parentUsersData) {
-  //   let dummyUser = user;
-  //   let current = parseInt(user.downLineShare);
-  //   dummyUser['commission'] = current - prev;
-  //   prev = current;
-  //   parentUsers.push(dummyUser);
-  //   console.log("user ====== ", dummyUser);
-  //   console.log("commission ====== ", dummyUser.commission);
-  // }
-  
 
   console.log("parent Users  ====================== >>>>>>>", parentUser);
   for (const user of parentUser){
