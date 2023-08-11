@@ -245,7 +245,7 @@ async function placeBet(req, res) {
       const url = `${config.horseRaceUrl}/odds/?ids=${market}`;
       const response = await axios.get(url);
       const oddsData = response.data;
-      console.log("oddsData ====== ", oddsData);
+      console.log("oddsData Runners ====== ", oddsData.runners);
       if (!oddsData) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
