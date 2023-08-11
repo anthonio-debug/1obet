@@ -24,7 +24,8 @@ async function getEndedMatches(sportsId) {
 async function getAllBets(Id) {
   try {
     // let userId = req.decoded.userId
-    const allBets = await Bets.find({ matchId: Id, status: 1 });
+    const allBets = await Bets.find({ _id: Id, status: 1 });
+    console.log("allBets =======", allBets);
     return allBets;
   } catch (err) {
     console.error(err);
