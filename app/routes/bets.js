@@ -82,7 +82,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
       // })
       // position.save();
 
-      let position = await new CurrentPosition({
+      let position = await new currentPosition({
         userId: user.userId,
         description: "some transection name",
         amount: -(user.commission / 100) * winningAmount,
