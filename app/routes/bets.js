@@ -64,12 +64,13 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
   const parentUsers = [];
   
   for (const user of parentUsersData) {
+    let dummyUser = user;
     let current = parseInt(user.downLineShare);
-    user['commission'] = current - prev;
+    dummyUser['commission'] = current - prev;
     prev = current;
-    parentUsers.push(user);
-    console.log("user ====== ", user);
-    console.log("commission ====== ", user.commission);
+    parentUsers.push(dummyUser);
+    console.log("user ====== ", dummyUser);
+    console.log("commission ====== ", dummyUser.commission);
   }
   
 
