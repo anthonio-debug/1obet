@@ -63,7 +63,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
   let prev = 0;
   const parentUsers = [];
   for(let user of parentUser) {
-    let dummyUser = user
+    let dummyUser = {user}
     let current = user.downLineShare;
     dummyUser["commission"] = current - prev;
     parentUsers.push(dummyUser);
