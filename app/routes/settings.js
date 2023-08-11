@@ -1691,7 +1691,7 @@ async function getAllGamesResults(req, res) {
       projection = {
         _id: 1,
         name: 1,
-        meetingName: 1,
+        competitionName: "$meetingName",
         openDate: 1, 
         winner: 1
       };
@@ -1742,6 +1742,15 @@ async function getAllGamesResults(req, res) {
     }
     else if (req.body.endDate) {
       query.openDate = { $lte: req.body.endDate };
+    }
+
+    if (req.body.searchValue) {
+      const searchRegex = new RegExp(req.body.searchValue, 'i');
+      query.$or = [
+        { competitionName: { $regex: searchRegex } },
+        { name: { $regex: searchRegex } },
+        { openDate: { $regex: searchRegex } }
+      ];
     }
 
     const options = {
