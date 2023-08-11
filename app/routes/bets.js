@@ -241,6 +241,7 @@ async function placeBet(req, res) {
     }
 
     if (marketId == '7' || marketId == '4339'){
+
       const url = `${config.horseRaceUrl}/odds/?ids=${market}`;
       const response = await axios.get(url);
       const oddsData = response.data;
@@ -258,7 +259,7 @@ async function placeBet(req, res) {
       if (type == 0){
         ApiResponseOdds         = runnerFromAPI.exchange.AvailableToBack
         console.log("ApiResponseOdds AvailableToBack === ", ApiResponseOdds);
-        const DBOddDetails      = await Odds.findById(oddsId);
+        const DBOddDetails      = await RaceOdds.findById(oddsId);
         console.log("DBOddDetails === ", DBOddDetails);
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const availableToBack   = OddDetailsTeam.exchange.AvailableToBack;
@@ -276,7 +277,7 @@ async function placeBet(req, res) {
       } else if (type == 1){
         ApiResponseOdds         = runnerFromAPI.exchange.AvailableToLay
         console.log("ApiResponseOdds AvailableToLay ====== ", ApiResponseOdds);
-        const DBOddDetails      = await Odds.findById(oddsId);
+        const DBOddDetails      = await RaceOdds.findById(oddsId);
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const AvailableToLay    = OddDetailsTeam.exchange.AvailableToLay;
         console.log('AvailableToLay', AvailableToLay);
