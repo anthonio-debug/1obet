@@ -6,13 +6,13 @@ const {
   handleLosingBet,
   handleWinningBet, 
   handleDrawBet
-} = require('./calculations')
+} = require('./calculations');
 require('../../db');
 // betSettled  winner
 const checkBetStatus = (req) => {
  runningJob = cron.schedule("*/1 * * * *", async () => {
    try {
-     const endedMatches = await getEndedMatches('2');
+     const endedMatches = await getEndedMatches('4339');
      console.log("endedMatches ===== ", endedMatches);
      for (const match of endedMatches){
        const bets = await getAllBets(match._id); 

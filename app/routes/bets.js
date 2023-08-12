@@ -540,6 +540,8 @@ async function getUserBets(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
 
+  // to be remove for initial state 
+  // ================================
   console.log("==========", req.decoded.userId);
   const bets = await Bets.find({ userId: req.decoded.userId });
   return res.send({
@@ -547,6 +549,8 @@ async function getUserBets(req, res) {
     message: 'bets record found',
     results: bets,
   });
+  
+  // =============================
 
   // Initialize variables with default values
   let query = {};
