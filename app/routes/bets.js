@@ -536,7 +536,7 @@ async function placeBet(req, res) {
 
 async function getUserBets(req, res) {
   const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
+  if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
 
@@ -553,11 +553,11 @@ async function getUserBets(req, res) {
   // =============================
 
   // Initialize variables with default values
-  let query = {};
-  let page = 1;
-  let sort = -1;
-  let sortValue = 'createdAt';
-  var limit = config.pageSize;
+  let query       = {};
+  let page        = 1;
+  let sort        = -1;
+  let sortValue   = 'createdAt';
+  var limit       = config.pageSize;
   if (req.body.numRecords) {
     if (isNaN(req.body.numRecords))
       return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
@@ -570,12 +570,8 @@ async function getUserBets(req, res) {
     limit = Number(req.body.numRecords);
   }
   if (req.body.sortValue) sortValue = req.body.sortValue;
-  if (req.body.sort) {
-    sort = Number(req.body.sort);
-  }
-  if (req.body.page) {
-    page = Number(req.body.page);
-  }
+  if (req.body.sort) sort = Number(req.body.sort);
+  if (req.body.page) page = Number(req.body.page);
   if (req.body.startDate && req.body.endDate) {
     const startTimestamp = new Date(req.body.startDate).getTime() / 1000;
     const endTimestamp = new Date(req.body.endDate).getTime() / 1000;
@@ -585,37 +581,30 @@ async function getUserBets(req, res) {
     };
   }
 
-  if (req.decoded.role !== '5') {
-    query.userId = req.body.userId;
-  } else if (req.decoded.role == '5') {
-    query.userId = req.decoded.userId;
-  }
+  if (req.decoded.role != '5') query.userId = req.body.userId;
+  else if (req.decoded.role == '5') query.userId = req.decoded.userId;
 
-  if (req.body.status) {
-    query.status = req.body.status;
-  }
-  if (req.body.marketId) {
-    query.marketId = req.body.marketId;
-  }
-  if (req.body.searchValue) {
-    const searchRegex = new RegExp(req.body.searchValue, 'i');
-    query.$or = [
-      { name: { $regex: searchRegex } },
-      {
-        $expr: {
-          $regexMatch: { input: { $toString: '$betRate' }, regex: searchRegex },
-        },
-      },
-      {
-        $expr: {
-          $regexMatch: {
-            input: { $toString: '$betAmount' },
-            regex: searchRegex,
-          },
-        },
-      },
-    ];
-  }
+  if (req.body.status) query.status = req.body.status;
+  if (req.body.marketId) query.marketId = req.body.marketId;
+  // if (req.body.searchValue) {
+  //   const searchRegex = new RegExp(req.body.searchValue, 'i');
+  //   query.$or = [
+  //     { name: { $regex: searchRegex } },
+  //     {
+  //       $expr: {
+  //         $regexMatch: { input: { $toString: '$betRate' }, regex: searchRegex },
+  //       },
+  //     },
+  //     {
+  //       $expr: {
+  //         $regexMatch: {
+  //           input: { $toString: '$betAmount' },
+  //           regex: searchRegex,
+  //         },
+  //       },
+  //     },
+  //   ];
+  // }
 
   User.findOne({ userId: req.decoded.userId }, (err, user) => {
     if (err || !user) {
