@@ -7,6 +7,7 @@ require('../../db');
 
 const addInPlayFalse = async (eventIds)=>{
   eventIds.forEach(async (eventId)=>{
+    console.log("eventId ======== ", eventId);
     const event     = await Events.findOne({
       Id:eventId
     });
