@@ -6,7 +6,8 @@ const moment  = require('moment');
 require('../../db');
 
 const addInPlayFalse = async (eventIds)=>{
-  eventIds.forEach(async (eventId)=>{
+  // eventIds.forEach(async (eventId)=>{
+  for(const eventId of eventIds) {
     console.log("eventId ======== ", eventId);
     const event     = await Events.findOne({
       Id:eventId
@@ -25,10 +26,10 @@ const addInPlayFalse = async (eventIds)=>{
       );
       console.log("response =========== ", response.data);
     }
+  }
     
-  });
-
-
+    
+  // });
 }
 
 const GH = () => {
