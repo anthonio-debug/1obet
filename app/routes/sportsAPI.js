@@ -371,7 +371,7 @@ async function eventsBySupportJobs(sportsId) {
     const events = response.data;
 
  
-    if(events){
+    if(events.length > 0){
       var sportsEventData = events.map((element) => ({
         updateOne: {
           filter: { Id: element.Id },
