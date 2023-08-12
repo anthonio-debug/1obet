@@ -38,7 +38,7 @@ const tennis = () => {
       const date = moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss +00:00");
       const eventIds     = await Events.distinct('Id',{ 
         sportsId: '2',
-        winner: 0,
+        winner: '0',
         openDate : {$lt: date}
         // inplay: true
       });

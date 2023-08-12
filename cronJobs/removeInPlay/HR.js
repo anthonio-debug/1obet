@@ -34,7 +34,7 @@ const HR = () => {
       const date  = moment(new Date(Date.now())).format("YYYY-MM-DDTHH:mm:ss+00:00");
       const eventIds     = await Events.distinct('Id',{ 
         sportsId: '7',
-        winner: 0,
+        winner: '0',
         openDate : {$lt: date}
         // inplay: true
       });

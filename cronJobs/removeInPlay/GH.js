@@ -40,7 +40,7 @@ const GH = () => {
       const date  = moment(new Date(Date.now())).format("YYYY-MM-DDTHH:mm:ss+00:00");
       const eventIds    = await Events.distinct('Id',{ 
         sportsId: '4339',
-        winner: 0,
+        winner: '0',
         openDate : {$lt: date}
       });
       console.log("Total event Ids = ", eventIds.length);
