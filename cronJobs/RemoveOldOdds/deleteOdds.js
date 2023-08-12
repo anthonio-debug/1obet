@@ -36,3 +36,38 @@ const deleteClosedOddsData = async  () => {
   });
 }
 deleteClosedOddsData()
+
+
+const deleteClosedGHROddsData = async  () => {
+  cron.schedule('*/2 * * * *', async () => {
+    try {
+      let time = Date.now() - 5 * 60 * 1000;
+      let ids = await raceOdds.distinct('marketId', { createdAt: { $lt: time } });
+      ids.forEach( async (id) => {
+        let odd = await raceOdds.distinct('_id', { marketId: id , createdAt: { $lt: time }});
+        console.log("  ids ===== ", odd.length);
+        if(odd.length > 0){
+          odd.pop();
+          console.log(" ids ===== ", odd.length);
+          if(odd.length > 0){
+
+            const deleteQuery = Odds.deleteMany({
+              _id: { '$in': odd }
+            });
+
+            deleteQuery.exec((err, success)=>{
+              if(err){
+                console.log(err);
+              }else{
+                console.log("Old odds removed successfully.");
+              }
+            })
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error :', error);
+    }
+  });
+}
+deleteClosedGHROddsData()
