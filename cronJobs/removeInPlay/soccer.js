@@ -6,7 +6,7 @@ const moment = require('moment');
 require('../../db');
 
 const addInPlayFalse = async (eventIds)=>{
-  eventIds.map(async (eventId)=>{
+  eventIds.forEach(async (eventId)=>{
     const event     = await Events.findOne({
       Id:eventId
     });
