@@ -32,14 +32,16 @@ const GH = () => {
   cron.schedule('*/1 * * * *', async () => {
 
     try {
-      // const date  = moment(new Date(Date.now() - 10 * 60 * 1000)).format("YYYY-MM-DDThh:mm:ss+00:00");
+      const date  = moment(new Date(Date.now())).format("YYYY-MM-DDTHH:mm:ss+00:00");
       const eventIds    = await Events.distinct('Id',{ 
         sportsId: '4339',
-        // openDate : {$lt: date},
-        inplay: true
+        winner: 0,
+        openDate : {$lt: date}
       });
       console.log("Total event Ids = ", eventIds.length);
-      await addInPlayFalse(eventIds)
+      if(eventIds.length > 0){
+        await addInPlayFalse(eventIds)
+      }
     } catch(error){
       console.error('Error running listMarket cron job:', error);
     }

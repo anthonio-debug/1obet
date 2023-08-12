@@ -7,9 +7,9 @@ const deleteClosedOddsData = async  () => {
   cron.schedule('*/2 * * * *', async () => {
     try {
       let time = Date.now() - 5 * 60 * 1000;
-      let ids = await Odds.distinct('eventId', {createdAt: { $lt: time }});
+      let ids = await Odds.distinct('marketId', { createdAt: { $lt: time } });
       ids.forEach( async (id) => {
-        let odd = await Odds.distinct('_id', {eventId: id , createdAt: { $lt: time }});
+        let odd = await Odds.distinct('_id', { marketId: id , createdAt: { $lt: time }});
         console.log("  ids ===== ", odd.length);
         if(odd.length > 0){
           odd.pop();

@@ -30,14 +30,17 @@ const addInPlayFalse = async (eventIds)=>{
 const cricketOldEvent = () => {
   cron.schedule('*/1 * * * *', async () => {
     try {
-      // const date2 = moment(new Date(Date.now() - 2 *    60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+      const date = moment(new Date(Date.now())).format("MM/DD/YYYY h:mm:ss +00:00");
       const eventIds  = await Events.distinct('Id',{ 
         sportsId: '4',
-        inplay: true
+        iconStatus: true,
+        winner: 0,
+        openDate : {$lt: date}
       });
-      
       console.log("Total event Id = ", eventIds.length);
-      await addInPlayFalse(eventIds)
+      if(eventIds.length > 0){
+        await addInPlayFalse(eventIds)
+      }
     } catch(error){
       console.error('Error running listMarket cron job:', error);
     }
