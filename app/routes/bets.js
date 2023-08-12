@@ -488,7 +488,7 @@ async function placeBet(req, res) {
       event: matchName,
       runner: selectionId,
       type: type,
-      runnerName: testRuner.runnerName
+      runnerName: testRuner.runnerName,
       event:  eventDetail.name
     });
 
