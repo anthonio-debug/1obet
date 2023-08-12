@@ -11,15 +11,13 @@ const deleteClosedOddsData = async  () => {
       ids.forEach( async (id) => {
         let odd = await Odds.distinct('_id', { marketId: id , createdAt: { $lt: time }});
         console.log("  ids ===== ", odd.length);
-        if(odd.length > 0){
+        if(odd.length > 1){
           odd.pop();
           console.log(" ids ===== ", odd.length);
           if(odd.length > 0){
-
             const deleteQuery = Odds.deleteMany({
               _id: { '$in': odd }
             });
-
             deleteQuery.exec((err, success)=>{
               if(err){
                 console.log(err);
@@ -46,12 +44,12 @@ const deleteClosedGHROddsData = async  () => {
       ids.forEach( async (id) => {
         let odd = await raceOdds.distinct('_id', { marketId: id , createdAt: { $lt: time }});
         console.log("  ids ===== ", odd.length);
-        if(odd.length > 0){
+        if(odd.length > 1){
           odd.pop();
           console.log(" ids ===== ", odd.length);
           if(odd.length > 0){
 
-            const deleteQuery = Odds.deleteMany({
+            const deleteQuery = raceOdds.deleteMany({
               _id: { '$in': odd }
             });
 
