@@ -107,6 +107,7 @@ async function placeBet(req, res) {
     }
     // Variable declarations 
     let match;
+    let testRuner;
     let subMarketDetail;
     let runnerName;
     let matchName;
@@ -185,6 +186,7 @@ async function placeBet(req, res) {
       const runnerFromAPI = oddsData[0].Runners.find(runner => runner.SelectionId == selectionId);
       // console.log('matchOdds.runners', runnerFromAPI);
       // console.log('selection Id', selectionId);
+      testRuner = runnerFromAPI
       
       if (type == 0){
 
@@ -257,6 +259,8 @@ async function placeBet(req, res) {
       const runnerFromAPI = oddsData[0].runners.find((runner) => {
         return runner.selectionId == selectionId
       });
+      // 
+      testRuner = runnerFromAPI
       console.log('match odds runners ====== ', runnerFromAPI);
       
       if (type == 0){
@@ -483,7 +487,9 @@ async function placeBet(req, res) {
       subMarketId: subMarketDetail.subMarketId,
       event: matchName,
       runner: selectionId,
-      type: type
+      type: type,
+      runnerName: testRuner.runnerName
+      event:  eventDetail.name
     });
 
     bet.save(async (err, result) => {
