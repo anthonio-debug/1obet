@@ -12,6 +12,7 @@ const addInPlayFalse = async (eventIds)=>{
     const event     = await Events.findOne({
       Id:eventId
     });
+    console.log("event =========== ", event);
     const url = `${config.horseRaceUrl}/results/?ids=${event.marketIds[0]}`;
     const response = await axios.get(url);
     if(response?.data.length > 0 ){
