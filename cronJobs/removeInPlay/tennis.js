@@ -21,7 +21,7 @@ const addInPlayFalse = async (eventIds)=>{
         }}
         );
     }
-    console.log("response>>>>>>>>>>>>>", response.data);
+    console.log("response ========= ", response.data);
   });
 }
 
