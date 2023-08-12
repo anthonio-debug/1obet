@@ -424,22 +424,24 @@ async function listMarketsByCronJob(eventId,sport) {
     const response = await axios.get(url);
     const marketsData = response.data;
      
-    let marketIds = []
-    marketsData.forEach(element => {
-        marketIds.push(element.marketId)
-    });
-
-    const savedMarketInEvents = await inPlayEvents.findOneAndUpdate(
-      { Id : eventId },
-      { marketIds: marketIds  },
-      { upsert: true , new: true }
-    );
-
-    return({
-      success: true,
-      message: 'Markets retrieved and saved successfully',
-      savedMarketInEvents,
-    });
+    if(marketsData.length > 0){
+      let marketIds = []
+      marketsData.forEach(element => {
+          marketIds.push(element.marketId)
+      });
+  
+      const savedMarketInEvents = await inPlayEvents.findOneAndUpdate(
+        { Id : eventId },
+        { marketIds: marketIds  },
+        { upsert: true , new: true }
+      );
+  
+      return({
+        success: true,
+        message: 'Markets retrieved and saved successfully',
+        savedMarketInEvents,
+      });
+    }
   } catch (error) {
     console.error(error);
     return({
