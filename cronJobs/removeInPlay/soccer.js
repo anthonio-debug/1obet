@@ -23,15 +23,12 @@ const addInPlayFalse = async (eventIds)=>{
     }
     console.log("response>>>>>>>>>>>>>", response.data);
   });
-
-
 }
 
 const soccer = () => {
   cron.schedule('*/1 * * * *', async () => {
-
     try {
-      const date = moment(new Date(Date.now() - 2 *    60 * 60 * 1000)).format("MM/DD/YYYY h:mm:ss +00:00");
+      const date = moment(new Date(Date.now() - 2 *    60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss +00:00");
       const eventIds     = await Events.distinct('Id',{ 
         sportsId: '1',
         winner: 0,

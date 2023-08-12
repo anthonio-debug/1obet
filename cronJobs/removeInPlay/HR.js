@@ -6,25 +6,24 @@ const moment  = require('moment');
 require('../../db');
 
 const addInPlayFalse = async (eventIds) => {
-  await Promise.all(
-    eventIds.map(async (eventId) => {
-      const event = await Events.findOne({ Id: eventId });
-      const url = `${config.horseRaceUrl}/results/?ids=${event.marketIds[0]}`;
-      const response = await axios.get(url);
-      console.log("Results =", response?.data.length);
-      if (response?.data.length > 0) {
-        await Events.findOneAndUpdate(
-          { Id: eventId },
-          {
-            $set: {
-              inplay: false,
-              winner: response?.data?.winnerSelectionId
-            },
-          }
-        );
-      }
-    })
-  );
+  eventIds.map(async (eventId) => {
+    const event = await Events.findOne({ Id: eventId });
+    const url = `${config.horseRaceUrl}/results/?ids=${event.marketIds[0]}`;
+    const response = await axios.get(url);
+    console.log("Results =", response?.data.length);
+    if (response?.data.length > 0){
+      await Events.findOneAndUpdate(
+        { Id: eventId },
+        {
+          $set: {
+            inplay: false,
+            winner: response?.data?.winnerSelectionId
+          },
+        }
+      );
+    }
+    console.log("response>>>>>>>>>>>>>", response.data);
+  })
 };
 
 

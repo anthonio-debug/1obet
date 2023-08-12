@@ -1,20 +1,5 @@
-const axios = require('axios');
+const moment = require('moment');
 
+const date = moment(new Date(Date.now() - 6*24*60*60*1000)).format("MM/D/YYYY h:mm:ss +00:00");
 
-async function eventsBySupportJobs() {
-  const url = `https://streamingtv.fun:3440/api/listEventsBySport/4`;
-  try {
-    const response = await axios.get(url);
-    console.log("=========", response);
-
-  } catch (error) {
-    console.error(error);
-    return({
-      success: false,
-      message: 'Failed to get or save events',
-      error: error.message,
-    });
-  }
-}
-
-eventsBySupportJobs()
+console.log(date);
