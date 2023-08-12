@@ -17,7 +17,7 @@ const addInPlayFalse = async (eventIds)=>{
         {Id:eventId},
         {$set : {
           inplay: false,
-          winner: response?.data?.winnerSelectionId
+          winner: response?.data[0]?.winnerSelectionId
         }}
         );
     }
