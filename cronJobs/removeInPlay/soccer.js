@@ -5,30 +5,37 @@ const Events = require('../../app/models/events');
 const moment = require('moment');
 require('../../db');
 
+
+
 const addInPlayFalse = async (eventIds)=>{
-  eventIds.forEach(async (eventId)=>{
+  for(const eventId of eventIds) {
+    console.log("eventId ======== ", eventId);
     const event     = await Events.findOne({
       Id:eventId
     });
+    console.log("event =========== ", event);
     const url = `${config.sportsAPIUrl}/results/?ids=${event.marketIds[0]}`;
     const response = await axios.get(url);
     if(response?.data.length > 0 ){
       await Events.findOneAndUpdate(
-        {Id:eventId},
-        {$set : {
-          inplay: false,
-          winner: response?.data[0]?.winnerSelectionId
-        }}
-        );
+        { Id: eventId },
+        {
+          $set: {
+            inplay: false,
+            winner: response?.data[0]?.winnerSelectionId
+          },
+        }
+      );
+      console.log("response =========== ", response.data[0]);
     }
-    console.log("response>>>>>>>>>>>>>", response.data);
-  });
+  }
 }
 
-const soccer = () => {
+const tennis = () => {
   cron.schedule('*/1 * * * *', async () => {
+
     try {
-      const date = moment(new Date(Date.now() - 2 *    60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss +00:00");
+      const date = moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss +00:00");
       const eventIds     = await Events.distinct('Id',{ 
         sportsId: '1',
         winner: 0,
@@ -44,5 +51,5 @@ const soccer = () => {
     }
   });
 }
-soccer()
+tennis()
 
