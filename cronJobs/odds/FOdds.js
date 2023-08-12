@@ -5,7 +5,7 @@ require('../../db');
 
 const fancyDataCronJob = async () => {
   // Cron job to run every 1 minute
-  cron.schedule('*/2 * * * * *', async () => {
+  cron.schedule('* * * * * *', async () => {
     try {
       // Retrieve the inPlayEvents data dynamically from the database
 

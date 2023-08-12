@@ -23,7 +23,7 @@ const findOddsForOneTime = async (ids) => {
 
 
 const GetEventsAndMarkets = () => {
-   cron.schedule('*/2 * * * * *', async () => {
+   cron.schedule('*/2 * * * *', async () => {
         try {
         console.log("Cron Job started ==== ", new Date());
         const sportsIds = [4,2,1]; 

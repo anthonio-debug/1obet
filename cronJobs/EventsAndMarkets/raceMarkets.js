@@ -6,7 +6,7 @@ require('../../db');
 
 const raceMarketsCronJob = async () => {
   // Cron job to run every 1 minute
-  cron.schedule('*/1 * * * *', async () => {
+  cron.schedule('*/2 * * * *', async () => {
     try {
       const marketIds = await Events.distinct("marketIds", { sportsId: { $in: ["7", "4339"] } });
       for (const marketId of marketIds) {
