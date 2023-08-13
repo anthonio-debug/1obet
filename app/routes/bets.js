@@ -46,9 +46,6 @@ async function getParents(userId) {
 
   return parentUserIds;
 }
-
-// http://136.244.77.249:33333/odds/?ids=1.216943669
-
 const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id=0 ) => {
   const parentUser = await User.find({
     userId: {
@@ -93,7 +90,6 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
   }
   
 };
-
 
 async function placeBet(req, res) {
   const errors = validationResult(req);
@@ -869,6 +865,7 @@ async function getMatchedBets(req, res) {
 
     // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
+    const matchId = req.query.id
 
     if (loginUser.role === '5') {
       userIDs.push(loginUser.userId);
@@ -876,7 +873,7 @@ async function getMatchedBets(req, res) {
 
     // Use the $lookup aggregation pipeline to fetch matched bets along with user information and related events
     const matchedBets = await Bets.aggregate([
-      { $match: { userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] }, status: 1 } },
+      { $match: { userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] }, status: 1, matchId: matchId } },
       {
         $lookup: {
           from: 'users',
@@ -950,7 +947,6 @@ async function getMatchedBets(req, res) {
     return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
   }
 }
-
 
 async function FakeBetsList(req, res) {
   try {
@@ -1128,9 +1124,6 @@ async function reviewFakeBet(req, res) {
   }
 }
 
-
-
-
 loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
 loginRouter.post('/getUserBets', getUserBets);
 loginRouter.get('/betFunds', betFunds);
@@ -1143,7 +1136,5 @@ loginRouter.put('/updateFakeBet/:id', updateFakeBet);
 loginRouter.get('/countFakeBets', countFakeBet);
 loginRouter.post('/approvedFakeBet/:id', approvedFakeBet);
 loginRouter.get('/reviewFakeBet/:id/:sportsId', reviewFakeBet);
-
-
 
 module.exports = { loginRouter, getParents };

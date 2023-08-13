@@ -953,7 +953,7 @@ async function bettorDashboardGames(req, res) {
                 { 
                   $and: [
                     { openDate: { $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now() +  24 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
+                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
                   ]
                 }
               ] 
@@ -1015,7 +1015,7 @@ async function bettorDashboardGames(req, res) {
                 { 
                   $and: [
                     { openDate: { $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now() +  24 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
+                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
                   ]
                 }
               ]  
@@ -1078,7 +1078,7 @@ async function bettorDashboardGames(req, res) {
                 { 
                   $and: [
                     { openDate: { $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now() +  24 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
+                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
                   ]
                 }
               ] 
@@ -1140,7 +1140,7 @@ async function bettorDashboardGames(req, res) {
                 { 
                   $and: [
                     { openDate: { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now()  + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } }
+                    { openDate: { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } }
                   ]
                 }
               ] 
@@ -1164,7 +1164,7 @@ async function bettorDashboardGames(req, res) {
                 { 
                   $and: [
                     { openDate: { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now()  + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } }
+                    { openDate: { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } }
                   ]
                 }
               ] 
@@ -1345,7 +1345,6 @@ async function bettorDashboardGames(req, res) {
     ]).exec();
    
     const selectedCasinoData = await SelectedCasino.aggregate([
-    
       {
         $project: {
           games: {
