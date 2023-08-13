@@ -214,7 +214,7 @@ async function placeBet(req, res) {
           return back.price === betRate;
         });
         console.log('matchedIndex', matchedIndex);
-        if (!matchedIndex) {
+        if (matchedIndex == -1) {
           console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
           return res.status(404).send({ message: `Bet miss matched` });
         }
