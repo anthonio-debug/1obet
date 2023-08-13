@@ -8,7 +8,7 @@ const raceOddsSchema = new mongoose.Schema({
   state: Object,
   runners: Array,
   isMarketDataVirtual: Boolean,
-  createdAt: { type: Date, default: Date.now }
+  createdAt: { type: Date, default: new Date().getTime() }
 });
 
 const RaceOdds = mongoose.model('RaceOdds', raceOddsSchema);

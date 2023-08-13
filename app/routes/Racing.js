@@ -367,7 +367,10 @@ async function raceOddsJob(ids) {
     const response = await axios.get(url);
     const oddsData = response.data;
     console.log('oddsData', oddsData);
-    const raceOdds = await RaceOdds.insertMany(oddsData);
+    let raceOdds
+    if(oddsData.length > 0){
+      raceOdds = await RaceOdds.insertMany(oddsData);
+    }
     return({
       success: true,
       message: 'Odds Records',
