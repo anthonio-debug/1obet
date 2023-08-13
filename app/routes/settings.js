@@ -399,8 +399,8 @@ async function listEventsBySport(req, res) {
     let end;
     let events; 
     if(sportId == '4' || sportId == '2' || sportId == '1' ){
-      start  = moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00");
-      end    = moment(new Date(Date.now() +  24 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00");
+      start  = moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00");
+      end    = moment(new Date(Date.now() +  16 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00");
     }else if (sportId == '7' || sportId == '4339'){
       start = moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00");
       end   = moment(new Date(Date.now()  + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00");
@@ -414,8 +414,12 @@ async function listEventsBySport(req, res) {
         sportsId: sportId,
         iconStatus: true,
         $or: [
-          { inplay: true },
           { 
+            inplay: true,
+            status: 'OPEN'
+           },
+          { 
+            status: 'OPEN',
             $and: [
               { openDate: { $gt: start } },
               { openDate: { $lt: end } }
@@ -427,8 +431,12 @@ async function listEventsBySport(req, res) {
       events = await Events.find({
         sportsId: sportId,
         $or: [
-          { inplay: true },
           { 
+            inplay: true,
+            status: 'OPEN'
+          },
+          { 
+            status: 'OPEN',
             $and: [
               { openDate: { $gt: start } },
               { openDate: { $lt: end } }
@@ -940,7 +948,8 @@ async function bettorDashboardGames(req, res) {
     const events = await Events.aggregate([
       {
         $match: {
-          sportsId: { $in: sportsIdArray } 
+          sportsId: { $in: sportsIdArray },
+          status: 'OPEN' 
         },
       },
       {
@@ -952,8 +961,8 @@ async function bettorDashboardGames(req, res) {
                 { inplay: true },
                 { 
                   $and: [
-                    { openDate: { $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
+                    { openDate: { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } },
+                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } }
                   ]
                 }
               ] 
@@ -1014,8 +1023,8 @@ async function bettorDashboardGames(req, res) {
                 { inplay: true },
                 { 
                   $and: [
-                    { openDate: { $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
+                    { openDate: { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } },
+                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } }
                   ]
                 }
               ]  
@@ -1077,13 +1086,13 @@ async function bettorDashboardGames(req, res) {
                 { inplay: true },
                 { 
                   $and: [
-                    { openDate: { $gt: moment(new Date(Date.now())).format("M/DD/YYYY h:mm:ss A +00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") } }
+                    { openDate: { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } },
+                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } }
                   ]
                 }
               ] 
             }},
-            { $sort: { inplay: -1 } },
+            { $sort: { inplay: -1, openDate: 1 } },
             {
               $lookup: {
                 from: 'odds', 
