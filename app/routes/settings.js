@@ -1119,8 +1119,8 @@ async function bettorDashboardGames(req, res) {
           {
             $and: [
               { sportId: "4"},
-              {inplay: true},
-              {iconStatus: true}
+              { inplay: true},
+              { iconStatus: true}
             ]
           },
           {
@@ -1151,11 +1151,11 @@ async function bettorDashboardGames(req, res) {
           competitionName: 1,
           inplay: 1,
           oddsData: {
-            $slice: ["$odds.runners", 1]
+            $slice: ["$odds", 1]
           }
         }
       },
-    ]);
+    ]).exec();
 
 
     const organizedEvents = {
