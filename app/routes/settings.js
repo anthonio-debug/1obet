@@ -1188,10 +1188,21 @@ async function bettorDashboardGames(req, res) {
               }
             }
           ],
-          cricketInplay: [
+          inPlay: [
             { $match: { 
-              inplay: true,
-              iconStatus: true,
+              $or: [
+                {
+                  sportId: "4",
+                  inplay: true,
+                  iconStatus: true,
+                },
+                {
+                  sportId: {
+                    $in: ["1", "2"]
+                  },
+                  inplay: true
+                }
+              ]
             }},
             {
               $lookup: {
@@ -1211,17 +1222,6 @@ async function bettorDashboardGames(req, res) {
                 inplay: 1,
                 oddsData: {
                   $arrayElemAt: ["$odds.runners", 0]
-                  // $cond: {
-                  //   if: {
-                  //     $and: [
-                  //       { $isArray: "$odds" },
-                  //       { $gt: [{ $size: "$odds" }, 0] },
-                  //       { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
-                  //     ]
-                  //   },
-                  //   then: { $arrayElemAt: ["$odds.runners", 0] },
-                  //   else: [] // Empty array if any condition is not met
-                  // }
                 }
               }
             },
