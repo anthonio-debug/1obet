@@ -984,17 +984,7 @@ async function bettorDashboardGames(req, res) {
                 competitionName: 1,
                 inplay: 1,
                 oddsData: {
-                  $cond: {
-                    if: {
-                      $and: [
-                        { $isArray: "$odds" },
-                        { $gt: [{ $size: "$odds" }, 0] },
-                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
-                      ]
-                    },
-                    then: { $arrayElemAt: ["$odds.runners", 0] },
-                    else: [] // Empty array if any condition is not met
-                  }
+                  $arrayElemAt: ["$odds.runners", 0] 
                 }
               }
             },
@@ -1190,9 +1180,9 @@ async function bettorDashboardGames(req, res) {
           ],
           inPlay: [
             { $match: { 
-              // sportId: {
-              //   $in: ["1", "2", "4"]
-              // },
+              sportId: {
+                $in: ["1", "2", "4"]
+              },
               inplay: true,
               // $or: [
               //   {
