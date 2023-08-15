@@ -1189,25 +1189,20 @@ async function bettorDashboardGames(req, res) {
             }
           ],
           inPlay: [
-
             { $match: { 
-              sportId: {
-                $in: ["1", "2", "4"],
-              },
-              inplay: true,
-              // $or: [
-              //   {
-              //     sportId: "4",
-              //     inplay: true,
-              //     iconStatus: true,
-              //   },
-              //   {
-              //     inplay: true,
-              //     sportId: {
-              //       $in: ["1", "2"]
-              //     }
-              //   }
-              // ]
+              $or: [
+                {
+                  sportId: "4",
+                  inplay: true,
+                  iconStatus: true,
+                },
+                {
+                  inplay: true,
+                  sportId: {
+                    $in: ["1", "2"]
+                  }
+                }
+              ]
             }},
             {
               $lookup: {
@@ -1268,15 +1263,14 @@ async function bettorDashboardGames(req, res) {
         }
       }
     ]).exec();
+
     const organizedEvents = {
       soccer: events[0].soccer,
       tennis: events[0].tennis,
       cricket: events[0].cricket,
       horseRace: events[0].horseRace,
       greyhound: events[0].greyhound,
-      cricketInplay: events[0].cricketInplay,
-      tennisInplay: events[0].tennisInplay,
-      soccerInplay:events[0].soccerInplay,
+      inPlay: events[0].inPlay,
       casinoData: selectedCasinoData,
     };
 
