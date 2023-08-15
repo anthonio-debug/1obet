@@ -261,7 +261,7 @@ async function todayRaceJob(sportsId) {
         race.name             = race.marketName;
         race.Id               = race.raceId;
         race.marketIds        = [race.marketId];
-        race.openDate         = race.startTime;
+        race.openDate         = Date.parse(race.startTime);
         race.meetingId        = meeting.meetingId;
         race.meetingName      = meeting.name;
         race.countryCode      = meeting.countryCode;

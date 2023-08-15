@@ -394,7 +394,7 @@ async function eventsBySupportJobs(sportsId) {
               name: element.name,
               countryCode: element.countryCode,
               timezone: element.timezone,
-              openDate: element.openDate,
+              openDate: Date.parse(element.openDate),
               inplay: element.inplay,
               hasFancy: element.hasFancy,
               status: element.status,

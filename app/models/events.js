@@ -15,7 +15,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   name: { type: String },
   countryCode: { type: String },
   timezone: { type: String },
-  openDate: { type: String },
+  openDate: { type: Number },
   inplay: { type: Boolean, index: true },
   hasFancy: { type: Boolean },
   status: { type: String },

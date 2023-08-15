@@ -974,34 +974,34 @@ async function bettorDashboardGames(req, res) {
               iconStatus: true,
             }},
           ],
-          // horseRace: [
-          //   { $match: { 
-          //     sportsId: '7' ,
-          //     $or: [
-          //       { inplay: true },
-          //       { 
-          //         $and: [
-          //           { openDate: 
-          //             { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
-          //           },
-          //           { openDate: 
-          //             { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
-          //           }
-          //         ]
-          //       }
-          //     ] 
-          //   }},
-          //   {
-          //     $project: {
-          //       _id: 1,
-          //       openDate: 1,
-          //       name: 1,
-          //       meetingId: 1,
-          //       countryCode: 1,
-          //       marketIds: 1
-          //     }
-          //   }
-          // ],
+          horseRace: [
+            { $match: { 
+              sportsId: '7' ,
+              $or: [
+                { inplay: true },
+                { 
+                  $and: [
+                    { openDate: 
+                      { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
+                    },
+                    { openDate: 
+                      { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
+                    }
+                  ]
+                }
+              ] 
+            }},
+            {
+              $project: {
+                _id: 1,
+                openDate: 1,
+                name: 1,
+                meetingId: 1,
+                countryCode: 1,
+                marketIds: 1
+              }
+            }
+          ],
           // greyhound: [
           //   { $match: { 
           //     sportsId: '4339', 

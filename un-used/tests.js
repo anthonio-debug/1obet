@@ -7,11 +7,9 @@
 
 // console.log(strToDate(dtStr));
 
-console.log(" ========= ", new Date().toTimeString());
+console.log(" ========= ", new Date().getTime());
 
-
-const date = Date.parse("08/15/2023 03:58:00")
-console.log("date", date);
+console.log("date", Date.parse("2023-08-15T19:38:00+00:00"));
 
 
 
