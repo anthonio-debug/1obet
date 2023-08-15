@@ -1189,20 +1189,25 @@ async function bettorDashboardGames(req, res) {
             }
           ],
           inPlay: [
+
             { $match: { 
-              $or: [
-                {
-                  sportId: "4",
-                  inplay: true,
-                  iconStatus: true,
-                },
-                {
-                  sportId: {
-                    $in: ["1", "2"]
-                  },
-                  inplay: true
-                }
-              ]
+              sportId: {
+                $in: ["1", "2", "4"],
+              },
+              inplay: true,
+              // $or: [
+              //   {
+              //     sportId: "4",
+              //     inplay: true,
+              //     iconStatus: true,
+              //   },
+              //   {
+              //     inplay: true,
+              //     sportId: {
+              //       $in: ["1", "2"]
+              //     }
+              //   }
+              // ]
             }},
             {
               $lookup: {
@@ -1263,12 +1268,6 @@ async function bettorDashboardGames(req, res) {
         }
       }
     ]).exec();
-    
-    
-//     const selectedCasinoData = await SelectedCasino.find({});
-//     selectedCasinoData.find((item) => item.games.some((game) => game.isDashboard === true));
-// console.log('selectedCasinoData', selectedCasinoData);
-
     const organizedEvents = {
       soccer: events[0].soccer,
       tennis: events[0].tennis,
