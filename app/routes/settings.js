@@ -1042,10 +1042,10 @@ async function bettorDashboardGames(req, res) {
       ] 
     });
 
-    const inPlay = await Events.aggregate([
+    const inPlays = await Events.aggregate([
       { $match: { 
         inplay: true,
-        $or: [
+        $or:[
           {
             $and: [
               { sportId: "4"},
@@ -1059,14 +1059,13 @@ async function bettorDashboardGames(req, res) {
           }
         ]
       }},
-      {
-        $lookup: {
-          from: 'odds', 
-          localField: 'Id', 
-          foreignField: 'eventId',
-          as: 'odds'
-        }
-      },
+      // {
+      //   $lookup: {
+      //     from: 'odds', 
+      //     localField: 'Id', 
+      //     foreignField: 'eventId',
+      //     as: 'odds'
+      // }},
       {
         $project: {
           _id: 1,
@@ -1075,9 +1074,9 @@ async function bettorDashboardGames(req, res) {
           name: 1,
           competitionName: 1,
           inplay: 1,
-          oddsData: {
-            $slice: ["$odds", 1]
-          }
+          // oddsData: {
+          //   $slice: ["$odds", 1]
+          // }
         }
       },
     ])
@@ -1086,7 +1085,7 @@ async function bettorDashboardGames(req, res) {
     const organizedEvents = {
       horseRace: horseRace,
       greyhound: greyHound,
-      inPlay: inPlay,
+      inPlay: inPlays,
       casinoData: selectedCasinoData,
     };
     res.status(200).json({
