@@ -944,6 +944,14 @@ async function bettorDashboardGames(req, res) {
   try {
     const sportsIdArray = ['1', '2', '4', '7', '4339'];
 
+    // const events1 = await Events.aggregate([
+
+    // ]).exec();
+
+
+
+
+
     const events = await Events.aggregate([
       {
         $match: {
@@ -1137,90 +1145,90 @@ async function bettorDashboardGames(req, res) {
               }
             }
           ],
-          // inPlay: [
-          //   { 
-          //     $match: { 
-          //       $or: [
-          //         {
-          //           $and: [
-          //             {sportId: "4"},
-          //             {inplay: true},
-          //             {iconStatus: true},
-          //             { status: 'OPEN' }
-          //           ]
-          //         },
-          //         {
-          //           $and: [
-          //             {inplay: true},
-          //             {
-          //               sportId: {
-          //               $in: ["1", "2"]
-          //             }},
-          //             { status: 'OPEN' }
-          //           ]
-          //         }
-          //       ]
-          //     }
-          //   },
-          //   {
-          //     $lookup: {
-          //       from: 'odds', 
-          //       localField: 'Id', 
-          //       foreignField: 'eventId',
-          //       as: 'odds'
-          //     }
-          //   },
-          //   {
-          //     $project: {
-          //       _id: 1,
-          //       Id: 1,
-          //       openDate: 1,
-          //       name: 1,
-          //       competitionName: 1,
-          //       inplay: 1,
-          //       oddsData: {
-          //         $slice: ["$odds", 1]
-          //       }
-          //     }
-          //   },
-          // ]
+          inPlay: [
+            { 
+              $match: { 
+                $or: [
+                  {
+                    $and: [
+                      {sportId: "4"},
+                      {inplay: true},
+                      {iconStatus: true},
+                      { status: 'OPEN' }
+                    ]
+                  },
+                  {
+                    $and: [
+                      {inplay: true},
+                      {
+                        sportId: {
+                        $in: ["1", "2"]
+                      }},
+                      { status: 'OPEN' }
+                    ]
+                  }
+                ]
+              }
+            },
+            {
+              $lookup: {
+                from: 'odds', 
+                localField: 'Id', 
+                foreignField: 'eventId',
+                as: 'odds'
+              }
+            },
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+                inplay: 1,
+                oddsData: {
+                  $slice: ["$odds", 1]
+                }
+              }
+            },
+          ]
         },
       },
     ]).exec();
    
-    const selectedCasinoData = await SelectedCasino.aggregate([
-      {
-        $project: {
-          games: {
-            $filter: {
-              input: '$games',
-              as: 'game',
-              cond: { $eq: ['$$game.isDashboard', true] }
-            }
-          }
-        }
-      },
-      {
-        $unwind: '$games' // Unwind the 'games' array
-      },
-      {
-        $match: {
-          'games.mobile': JSON.parse(req.query.isMobile)
-          // Only match documents where the 'isMobile' key in the 'games' subdocument matches the query parameter value
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          id: '$games.id',
-          name: '$games.name',
-          id_hash: '$games.id_hash',
-          image_filled: '$games.image_filled',
-          isDashboard: '$games.isDashboard',
-          mobile: '$games.mobile'
-        }
-      }
-    ]).exec();
+    // const selectedCasinoData = await SelectedCasino.aggregate([
+    //   {
+    //     $project: {
+    //       games: {
+    //         $filter: {
+    //           input: '$games',
+    //           as: 'game',
+    //           cond: { $eq: ['$$game.isDashboard', true] }
+    //         }
+    //       }
+    //     }
+    //   },
+    //   {
+    //     $unwind: '$games' // Unwind the 'games' array
+    //   },
+    //   {
+    //     $match: {
+    //       'games.mobile': JSON.parse(req.query.isMobile)
+    //       // Only match documents where the 'isMobile' key in the 'games' subdocument matches the query parameter value
+    //     }
+    //   },
+    //   {
+    //     $project: {
+    //       _id: 0,
+    //       id: '$games.id',
+    //       name: '$games.name',
+    //       id_hash: '$games.id_hash',
+    //       image_filled: '$games.image_filled',
+    //       isDashboard: '$games.isDashboard',
+    //       mobile: '$games.mobile'
+    //     }
+    //   }
+    // ]).exec();
 
     const organizedEvents = {
       soccer: events[0].soccer,
@@ -1229,7 +1237,7 @@ async function bettorDashboardGames(req, res) {
       horseRace: events[0].horseRace,
       greyhound: events[0].greyhound,
       // inPlay: events[0].inPlay,
-      casinoData: selectedCasinoData,
+      // casinoData: selectedCasinoData,
     };
 
     res.status(200).json({
