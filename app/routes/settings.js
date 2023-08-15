@@ -1042,7 +1042,7 @@ async function bettorDashboardGames(req, res) {
       ] 
     });
 
-    const inPlays = await Events.aggregate([
+    const inPlays = Events.aggregate([
       { $match: { 
         inplay: true,
         status: "OPEN",
@@ -1075,9 +1075,9 @@ async function bettorDashboardGames(req, res) {
           name: 1,
           competitionName: 1,
           inplay: 1,
-          // oddsData: {
-          //   $slice: ["$odds", 1]
-          // }
+          oddsData: {
+            $slice: ["$odds", 1]
+          }
         }
       },
     ]).exec();
