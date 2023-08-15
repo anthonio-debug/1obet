@@ -944,6 +944,17 @@ async function bettorDashboardGames(req, res) {
   try {
     const sportsIdArray = ['1', '2', '4', '7', '4339'];
 
+    // {
+    //   $project: {
+    //     _id: 1,
+    //     openDate: 1,
+    //     name: 1,
+    //     meetingId: 1,
+    //     countryCode: 1,
+    //     marketIds: 1              
+    //   }
+    // }
+
     const events = await Events.aggregate([
       {
         $match: {
@@ -953,126 +964,53 @@ async function bettorDashboardGames(req, res) {
             { inplay: true },
             { 
               $and: [
-                { openDate: { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } },
-                { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } }
+                { openDate: { $gt: new Date().getTime() }},
+                { openDate: { $lt: Date.now() +  12*60*60*1000 }}
               ]
             }
           ] 
         },
       },
+      // {
+      //   $lookup: {
+      //     from: 'odds', 
+      //     localField: 'Id', 
+      //     foreignField: 'eventId',
+      //     as: 'odds'
+      //   }
+      // },
       {
         $facet: {
-          soccer: [
-            { $match: { sportsId: '1', }},
-          ],
-          tennis: [
-            { $match: {  sportsId: '2', }},
-          ],
-          cricket: [
+          soccer: [ { $match: { sportsId: '1', }}],
+          tennis: [ { $match: {  sportsId: '2', }}],
+          cricket: [ { $match: { sportsId: '4', iconStatus: true }}],
+          horseRace: [{ $match: { sportsId: '7'}}],
+          greyhound: [{ $match: { sportsId: '4339'}}],
+          inPlay: [
             { $match: { 
-              sportsId: '4', 
-              iconStatus: true,
-            }},
-          ],
-          horseRace: [
-            { $match: { 
-              sportsId: '7' ,
-              $or: [
-                { inplay: true },
-                { 
-                  $and: [
-                    { openDate: 
-                      { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
-                    },
-                    { openDate: 
-                      { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
-                    }
-                  ]
-                }
-              ] 
-            }},
-            {
-              $project: {
-                _id: 1,
-                openDate: 1,
-                name: 1,
-                meetingId: 1,
-                countryCode: 1,
-                marketIds: 1
+                $or: [
+                  {
+                    $and: [
+                      {sportId: "4"},
+                      {inplay: true},
+                      {iconStatus: true},
+                      { status: 'OPEN' }
+                    ]
+                  },
+                  {
+                    $and: [
+                      {inplay: true},
+                      {
+                        sportId: {
+                        $in: ["1", "2"]
+                      }},
+                      { status: 'OPEN' }
+                    ]
+                  }
+                ]
               }
-            }
-          ],
-          // greyhound: [
-          //   { $match: { 
-          //     sportsId: '4339', 
-          //     $or: [
-          //       { inplay: true },
-          //       { 
-          //         $and: [
-          //           { openDate: { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } },
-          //           { openDate: { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } }
-          //         ]
-          //       }
-          //     ] 
-          //   }},
-          //   {
-          //     $project: {
-          //       _id: 1,
-          //       openDate: 1,
-          //       name: 1,
-          //       meetingId: 1,
-          //       countryCode: 1,
-          //       marketIds: 1              
-          //     }
-          //   }
-          // ],
-          // inPlay: [
-          //   { 
-          //     $match: { 
-          //       $or: [
-          //         {
-          //           $and: [
-          //             {sportId: "4"},
-          //             {inplay: true},
-          //             {iconStatus: true},
-          //             { status: 'OPEN' }
-          //           ]
-          //         },
-          //         {
-          //           $and: [
-          //             {inplay: true},
-          //             {
-          //               sportId: {
-          //               $in: ["1", "2"]
-          //             }},
-          //             { status: 'OPEN' }
-          //           ]
-          //         }
-          //       ]
-          //     }
-          //   },
-          //   {
-          //     $lookup: {
-          //       from: 'odds', 
-          //       localField: 'Id', 
-          //       foreignField: 'eventId',
-          //       as: 'odds'
-          //     }
-          //   },
-          //   {
-          //     $project: {
-          //       _id: 1,
-          //       Id: 1,
-          //       openDate: 1,
-          //       name: 1,
-          //       competitionName: 1,
-          //       inplay: 1,
-          //       oddsData: {
-          //         $slice: ["$odds", 1]
-          //       }
-          //     }
-          //   },
-          // ]
+            },
+          ]
         },
       },
     ]).exec();
@@ -1115,10 +1053,10 @@ async function bettorDashboardGames(req, res) {
       soccer: events[0].soccer,
       tennis: events[0].tennis,
       cricket: events[0].cricket,
-      // horseRace: events[0].horseRace,
-      // greyhound: events[0].greyhound,
-      // inPlay: events[0].inPlay,
-      // casinoData: selectedCasinoData,
+      horseRace: events[0].horseRace,
+      greyhound: events[0].greyhound,
+      inPlay: events[0].inPlay,
+      casinoData: selectedCasinoData,
     };
 
     res.status(200).json({
