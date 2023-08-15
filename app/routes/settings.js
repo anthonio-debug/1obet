@@ -990,7 +990,7 @@ async function bettorDashboardGames(req, res) {
             },
             {
               $sort: {
-                createdAt: 1
+                inplay: -1, openDate: 1
               }
             },
           ],
@@ -1001,8 +1001,12 @@ async function bettorDashboardGames(req, res) {
                 { inplay: true },
                 { 
                   $and: [
-                    { openDate: { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } }
+                    { openDate: 
+                      { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } 
+                    },
+                    { openDate: 
+                      { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } 
+                    }
                   ]
                 }
               ]  
@@ -1031,7 +1035,7 @@ async function bettorDashboardGames(req, res) {
             },
             {
               $sort: {
-                createdAt: 1
+                inplay: -1, openDate: 1
               }
             }
           ],
@@ -1043,8 +1047,12 @@ async function bettorDashboardGames(req, res) {
                 { inplay: true },
                 { 
                   $and: [
-                    { openDate: { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } }
+                    { openDate: 
+                      { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } 
+                    },
+                    { openDate: 
+                      { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } 
+                    }
                   ]
                 }
               ] 
@@ -1084,8 +1092,12 @@ async function bettorDashboardGames(req, res) {
                 { inplay: true },
                 { 
                   $and: [
-                    { openDate: { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } }
+                    { openDate: 
+                      { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
+                    },
+                    { openDate: 
+                      { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
+                    }
                   ]
                 }
               ] 
@@ -1127,9 +1139,9 @@ async function bettorDashboardGames(req, res) {
           ],
           inPlay: [
             { $match: { 
-              sportId: {
-                $in: ["1", "2", "4"]
-              },
+              // sportId: {
+              //   $in: ["1", "2", "4"]
+              // },
               inplay: true,
               // $or: [
               //   {
