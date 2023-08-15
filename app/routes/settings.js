@@ -1057,7 +1057,7 @@ async function bettorDashboardGames(req, res) {
       const organizedEvents = {
         horseRace: horseRace,
         greyhound: greyHound,
-        inPlay: inPlay,
+        inPlay: events,
         casinoData: selectedCasinoData,
       };
       res.status(200).json({
