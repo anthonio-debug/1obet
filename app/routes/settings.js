@@ -944,45 +944,45 @@ async function bettorDashboardGames(req, res) {
   try {
     const sportsIdArray = ['1', '2', '4'];
 
-    const soccer = await  Events.find({
-      sportsId: 1,
-      status: 'OPEN',
-      $or: [
-        { inplay: true },
-        { 
-          $and: [
-            { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now()+10*60*60*1000}}
-          ]
-        }
-      ] 
-    })
-    const tennis = await  Events.find({
-      sportsId: 2,
-      status: 'OPEN',
-      $or: [
-        { inplay: true },
-        { 
-          $and: [
-            { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now()+10*60*60*1000}}
-          ]
-        }
-      ] 
-    })
-    const cricket = await  Events.find({
-      sportsId: "4",
-      status: 'OPEN',
-      $or: [
-        { inplay: true },
-        { 
-          $and: [
-            { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now()+10*60*60*1000}}
-          ]
-        }
-      ] 
-    })
+    // const soccer = await  Events.find({
+    //   sportsId: 1,
+    //   status: 'OPEN',
+    //   $or: [
+    //     { inplay: true },
+    //     { 
+    //       $and: [
+    //         { openDate: { $gt: new Date().getTime()}},
+    //         { openDate: { $lt: Date.now()+10*60*60*1000}}
+    //       ]
+    //     }
+    //   ] 
+    // })
+    // const tennis = await  Events.find({
+    //   sportsId: 2,
+    //   status: 'OPEN',
+    //   $or: [
+    //     { inplay: true },
+    //     { 
+    //       $and: [
+    //         { openDate: { $gt: new Date().getTime()}},
+    //         { openDate: { $lt: Date.now()+10*60*60*1000}}
+    //       ]
+    //     }
+    //   ] 
+    // })
+    // const cricket = await  Events.find({
+    //   sportsId: "4",
+    //   status: 'OPEN',
+    //   $or: [
+    //     { inplay: true },
+    //     { 
+    //       $and: [
+    //         { openDate: { $gt: new Date().getTime()}},
+    //         { openDate: { $lt: Date.now()+10*60*60*1000}}
+    //       ]
+    //     }
+    //   ] 
+    // })
 
     const greyHound = await  Events.find({
       sportsId: '4339',
@@ -996,7 +996,8 @@ async function bettorDashboardGames(req, res) {
           ]
         }
       ] 
-    })
+    }).exec();
+    
     const horseRace = await  Events.find({
       sportsId: "7",
       status: 'OPEN',
@@ -1009,7 +1010,7 @@ async function bettorDashboardGames(req, res) {
           ]
         }
       ] 
-    })
+    }).exec();
 
     const inPlay = await  Events.find({
       sportsId: "7",
@@ -1021,78 +1022,8 @@ async function bettorDashboardGames(req, res) {
           eventId: event.Id
         }).sort({createdAt: -1})
       })
-    })
+    }).exec();
 
-    // const inPlay2 = await Events.aggregate([
-    //   {
-    //     $match: {
-    //       sportsId: { $in: sportsIdArray },
-    //       status: 'OPEN',
-    //       $or: [
-    //         { inplay: true },
-    //         { 
-    //           openDate: { $lt: Date.now()+12*60*60*1000}
-    //         }
-    //       ] 
-    //     },
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: 'odds', 
-    //       localField: 'Id', 
-    //       foreignField: 'eventId',
-    //       as: 'odds'
-    //     }
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 1,
-    //       openDate: 1,
-    //       name: 1,
-    //       meetingId: 1,
-    //       countryCode: 1,
-    //       marketIds: 1,   
-    //       sportsId: 1,
-    //       iconStatus: 1,
-    //       oddsData: { $slice: ["$odds", 1]} 
-    //     }
-    //   },
-    //   {
-    //     $facet: {
-    //       soccer: [ {   $match: { sportsId: '1', }}],
-    //       tennis: [ {   $match: { sportsId: '2', }}],
-    //       cricket: [ {  $match: { sportsId: '4', iconStatus: true }}],
-    //       horseRace: [{ $match: { sportsId: '7'}}],
-    //       greyhound: [{ $match: { sportsId: '4339'}}],
-    //       inPlay: [
-    //         { $match: { 
-    //             $or: [
-    //               {
-    //                 $and: [
-    //                   {sportId: "4"},
-    //                   {inplay: true},
-    //                   {iconStatus: true},
-    //                   { status: 'OPEN' }
-    //                 ]
-    //               },
-    //               {
-    //                 $and: [
-    //                   {inplay: true},
-    //                   {
-    //                     sportId: {
-    //                     $in: ["1", "2"]
-    //                   }},
-    //                   { status: 'OPEN' }
-    //                 ]
-    //               }
-    //             ]
-    //           }
-    //         },
-    //       ]
-    //     },
-    //   },
-    // ]).exec();
-   
     const selectedCasinoData = await SelectedCasino.aggregate([
       { $match: {'games.mobile': JSON.parse(req.query.isMobile)}},
       {
