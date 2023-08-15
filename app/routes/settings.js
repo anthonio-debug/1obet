@@ -984,7 +984,7 @@ async function bettorDashboardGames(req, res) {
     //   ] 
     // })
 
-    const greyHound = await  Events.find({
+    const greyHound = await Events.find({
       sportsId: '4339',
       status: 'OPEN',
       $or: [
@@ -992,28 +992,30 @@ async function bettorDashboardGames(req, res) {
         { 
           $and: [
             { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now()+6*60*60*1000}}
+            { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
           ]
         }
       ] 
     })
 
-    const horseRace = await  Events.find({
-      sportsId: "7",
+    const horseRace = await Events.find({
+      sportsId: '7',
       status: 'OPEN',
       $or: [
         { inplay: true },
         { 
           $and: [
             { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now()+6*60*60*1000}}
+            { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
           ]
         }
       ] 
     })
 
-    const inPlay = await  Events.find({
-      sportsId: "7",
+    const inPlay = await Events.find({
+      sportsId: {
+        $in: sportsIdArray
+      },
       status: 'OPEN',
       inplay: true,
     }, (err, events)=>{
