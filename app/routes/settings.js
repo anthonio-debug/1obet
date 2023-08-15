@@ -943,7 +943,6 @@ function updateMatch(req, res) {
 async function bettorDashboardGames(req, res) {
   try {
     const sportsIdArray = ['1', '2', '4', '7', '4339'];
-    const inplayIdArray = ['1', '2', '4'];
 
     const events = await Events.aggregate([
       {
@@ -1191,7 +1190,6 @@ async function bettorDashboardGames(req, res) {
           ],
           cricketInplay: [
             { $match: { 
-              sportsId: '4',
               inplay: true,
               iconStatus: true,
             }},
@@ -1212,143 +1210,22 @@ async function bettorDashboardGames(req, res) {
                 competitionName: 1,
                 inplay: 1,
                 oddsData: {
-                  $cond: {
-                    if: {
-                      $and: [
-                        { $isArray: "$odds" },
-                        { $gt: [{ $size: "$odds" }, 0] },
-                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
-                      ]
-                    },
-                    then: { $arrayElemAt: ["$odds.runners", 0] },
-                    else: [] // Empty array if any condition is not met
-                  }
+                  $arrayElemAt: ["$odds.runners", 0]
+                  // $cond: {
+                  //   if: {
+                  //     $and: [
+                  //       { $isArray: "$odds" },
+                  //       { $gt: [{ $size: "$odds" }, 0] },
+                  //       { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
+                  //     ]
+                  //   },
+                  //   then: { $arrayElemAt: ["$odds.runners", 0] },
+                  //   else: [] // Empty array if any condition is not met
+                  // }
                 }
               }
             },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                "oddsData.ExchangePrices": 1
-              }
-            },
-            {
-              $sort: {
-                createdAt: 1
-              }
-            },
-          ],
-          tennisInplay: [
-            { $match: { 
-              sportsId: '2',
-              inplay: true,
-            }},
-            {
-              $lookup: {
-                from: 'odds', 
-                localField: 'Id', 
-                foreignField: 'eventId',
-                as: 'odds'
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                oddsData: {
-                  $cond: {
-                    if: {
-                      $and: [
-                        { $isArray: "$odds" },
-                        { $gt: [{ $size: "$odds" }, 0] },
-                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
-                      ]
-                    },
-                    then: { $arrayElemAt: ["$odds.runners", 0] },
-                    else: [] // Empty array if any condition is not met
-                  }
-                }
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                "oddsData.ExchangePrices": 1
-              }
-            },
-            {
-              $sort: {
-                createdAt: 1
-              }
-            },
-          ],
-          soccerInplay: [
-            { $match: { 
-              sportsId: '1',
-              inplay: true,
-            }},
-            {
-              $lookup: {
-                from: 'odds', 
-                localField: 'Id', 
-                foreignField: 'eventId',
-                as: 'odds'
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                oddsData: {
-                  $cond: {
-                    if: {
-                      $and: [
-                        { $isArray: "$odds" },
-                        { $gt: [{ $size: "$odds" }, 0] },
-                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
-                      ]
-                    },
-                    then: { $arrayElemAt: ["$odds.runners", 0] },
-                    else: [] // Empty array if any condition is not met
-                  }
-                }
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                "oddsData.ExchangePrices": 1
-              }
-            },
-            {
-              $sort: {
-                createdAt: 1
-              }
-            },
-          ],
+          ]
         },
       },
     ]).exec();
