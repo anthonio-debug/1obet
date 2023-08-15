@@ -1042,61 +1042,62 @@ async function bettorDashboardGames(req, res) {
       ] 
     });
 
-    const inPlays = await Events.find({
-      sportsId: {
-        $in: sportsIdArray
-      },
-      status: 'OPEN',
-      inplay: true
-    });
-
-    const inPlay = inPlays.map(async (event)=>{
-      event.odds = await  Odds.findOne({
-        eventId: event.Id
-      });
-      return event;
-    })
-
-
-    // const inPlays =  Events.aggregate([
-    //   { $match: { 
-    //     inplay: true,
-    //     status: "OPEN",
-    //     $or:[
-    //       {
-    //         $and: [
-    //           { sportsId: "4"},
-    //           { iconStatus: true}
-    //         ]
-    //       },
-    //       {
-    //         sportsId: {
-    //           $in: ["1", "2"]
-    //         }
-    //       }
-    //     ]
-    //   }},
-    //   {
-    //     $lookup: {
-    //       from: 'odds', 
-    //       localField: 'Id', 
-    //       foreignField: 'eventId',
-    //       as: 'odds'
-    //   }},
-    //   {
-    //     $project: {
-    //       _id: 1,
-    //       Id: 1,
-    //       openDate: 1,
-    //       name: 1,
-    //       competitionName: 1,
-    //       inplay: 1,
-    //       oddsData: {
-    //         $slice: ["$odds", 1]
-    //       }
-    //     }
+    // const inPlays = await Events.find({
+    //   sportsId: {
+    //     $in: sportsIdArray
     //   },
-    // ]).exec();
+    //   status: 'OPEN',
+    //   inplay: true
+    // });
+
+    // const inPlay = inPlays.map(async (event)=>{
+    //   log("event", event)
+    //   event.odds = await  Odds.findOne({
+    //     eventId: event.Id
+    //   });
+    //   return event;
+    // })
+
+
+    const inPlay =  Events.aggregate([
+      { $match: { 
+        inplay: true,
+        status: "OPEN",
+        $or:[
+          {
+            $and: [
+              { sportsId: "4"},
+              { iconStatus: true}
+            ]
+          },
+          {
+            sportsId: {
+              $in: ["1", "2"]
+            }
+          }
+        ]
+      }},
+      {
+        $lookup: {
+          from: 'odds', 
+          localField: 'Id', 
+          foreignField: 'eventId',
+          as: 'odds'
+      }},
+      {
+        $project: {
+          _id: 1,
+          Id: 1,
+          openDate: 1,
+          name: 1,
+          competitionName: 1,
+          inplay: 1,
+          oddsData: {
+            $slice: ["$odds", 1]
+          }
+        }
+      },
+    ]).exec();
 
 
     const organizedEvents = {
