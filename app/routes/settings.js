@@ -1041,6 +1041,7 @@ async function bettorDashboardGames(req, res) {
         }
       ] 
     });
+    const inPlay = [];
 
     Events.find({
       sportsId: {
@@ -1050,7 +1051,7 @@ async function bettorDashboardGames(req, res) {
       inplay: true,
     }, (err, events)=>{
       events.map( async(event)=>{
-        event.odds = await Odds.findOne({
+        event.meetingGoing = await Odds.findOne({
           eventId: event.Id
         }).sort({createdAt: -1})
       });
