@@ -7,7 +7,7 @@ require('../../db');
 const cricketOddsCronJob = () => {
     cron.schedule('* * * * * *', async () => {
       try {
-        const marketIds = await Events.distinct("marketIds", { sportsId: "4", inplay: true, iconStatus:true });
+        const marketIds = await Events.distinct("marketIds", { sportsId: "4", inplay: true, status: { $in:['OPEN', 'open'  ] }, iconStatus:true });
         console.log('MarketID', marketIds);
         let batchArray = [];
         for (let i = 0; i < marketIds.length; i += 20) {

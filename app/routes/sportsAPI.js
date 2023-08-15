@@ -332,22 +332,31 @@ async function getnewOdds(ids) {
       console.log('data',oddsData);
       let sportIds = {  "soccer" : "1", "cricket" : "4", "tennis" : "2" }
       let data = []
-       await oddsData?.forEach((element) => {
-            element.sportsId = sportIds[element.sport]
-            element.runners = element.Runners
-            element.marketId = element.MarketId
+      if(oddsData.length > 0){
+        await oddsData?.forEach((element) => {
+          if(
+            element.Runners[0]?.ExchangePrices.AvailableToLay.length > 0  ||
+            element.Runners[0]?.ExchangePrices.AvailableToBack.length > 0  ||
+            element.Runners[1]?.ExchangePrices.AvailableToLay.length >0  ||
+            element.Runners[1]?.ExchangePrices.AvailableToBack.length >0 ||
+            element.Runners[2]?.ExchangePrices.AvailableToLay.length >0  ||
+            element.Runners[2]?.ExchangePrices.AvailableToBack.length >0
+          ){
+            element.sportsId        = sportIds[element.sport]
+            element.runners         = element.Runners
+            element.marketId        = element.MarketId
             element.isMarketDataDelayed = element.IsMarketDataDelayed
-            element.status = element.Status
-            element.isInplay = element.IsInplay
+            element.status          = element.Status
+            element.isInplay        = element.IsInplay
             element.numberOfRunners = element.NumberOfRunners
             element.numberOfActiveRunners = element.NumberOfActiveRunners
-            element.totalMatched = element.TotalMatched
-            element.createdAt = new Date().getTime()
+            element.totalMatched    = element.TotalMatched
+            element.createdAt       = new Date().getTime()
             data.push(element)
+          }
         })
-
-      await Odds.insertMany(data);
-       
+        await Odds.insertMany(data);
+      }
       return({
         success: true,
         message: 'Odds retrieved and saved successfully',
