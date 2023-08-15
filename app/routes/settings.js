@@ -944,16 +944,7 @@ async function bettorDashboardGames(req, res) {
   try {
     const sportsIdArray = ['1', '2', '4', '7', '4339'];
 
-    // {
-    //   $project: {
-    //     _id: 1,
-    //     openDate: 1,
-    //     name: 1,
-    //     meetingId: 1,
-    //     countryCode: 1,
-    //     marketIds: 1              
-    //   }
-    // }
+
 
     const events = await Events.aggregate([
       {
@@ -964,8 +955,8 @@ async function bettorDashboardGames(req, res) {
             { inplay: true },
             { 
               $and: [
-                { openDate: { $gt: new Date().getTime() }},
-                { openDate: { $lt: Date.now() +  12*60*60*1000 }}
+                { openDate: { $gt: new Date().getTime()}},
+                { openDate: { $lt: Date.now()+12*60*60*1000}}
               ]
             }
           ] 
@@ -980,10 +971,22 @@ async function bettorDashboardGames(req, res) {
         }
       },
       {
+        $project: {
+          _id: 1,
+          openDate: 1,
+          name: 1,
+          meetingId: 1,
+          countryCode: 1,
+          marketIds: 1,   
+          sportsId: 1,
+          iconStatus: 1           
+        }
+      },
+      {
         $facet: {
-          soccer: [ { $match: { sportsId: '1', }}],
-          tennis: [ { $match: {  sportsId: '2', }}],
-          cricket: [ { $match: { sportsId: '4', iconStatus: true }}],
+          soccer: [ {   $match: { sportsId: '1', }}],
+          tennis: [ {   $match: { sportsId: '2', }}],
+          cricket: [ {  $match: { sportsId: '4', iconStatus: true }}],
           horseRace: [{ $match: { sportsId: '7'}}],
           greyhound: [{ $match: { sportsId: '4339'}}],
           inPlay: [
