@@ -956,7 +956,7 @@ async function bettorDashboardGames(req, res) {
             { 
               $and: [
                 { openDate: { $gt: new Date().getTime()}},
-                { openDate: { $lt: Date.now()+12*60*60*1000}}
+                { openDate: { $lt: Date.now()+10*60*60*1000}}
               ]
             }
           ] 
