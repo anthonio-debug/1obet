@@ -1071,20 +1071,20 @@ async function bettorDashboardGames(req, res) {
           as: 'odds'
         }
       },
-      {
-        $project: {
-          _id: 1,
-          Id: 1,
-          openDate: 1,
-          name: 1,
-          competitionName: 1,
-          inplay: 1,
-          oddsData: {
-            $slice: ["$odds", 1]
-          }
-        }
-      },
-    ]).exec();
+      // {
+      //   $project: {
+      //     _id: 1,
+      //     Id: 1,
+      //     openDate: 1,
+      //     name: 1,
+      //     competitionName: 1,
+      //     inplay: 1,
+      //     oddsData: {
+      //       $slice: ["$odds", 1]
+      //     }
+      //   }
+      // },
+    ])
 
 
     const organizedEvents = {
