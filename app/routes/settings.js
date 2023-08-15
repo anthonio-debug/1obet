@@ -1015,39 +1015,39 @@ async function bettorDashboardGames(req, res) {
       },
     ]).exec();
    
-    // const selectedCasinoData = await SelectedCasino.aggregate([
-    //   {
-    //     $project: {
-    //       games: {
-    //         $filter: {
-    //           input: '$games',
-    //           as: 'game',
-    //           cond: { $eq: ['$$game.isDashboard', true] }
-    //         }
-    //       }
-    //     }
-    //   },
-    //   {
-    //     $unwind: '$games' // Unwind the 'games' array
-    //   },
-    //   {
-    //     $match: {
-    //       'games.mobile': JSON.parse(req.query.isMobile)
-    //       // Only match documents where the 'isMobile' key in the 'games' subdocument matches the query parameter value
-    //     }
-    //   },
-    //   {
-    //     $project: {
-    //       _id: 0,
-    //       id: '$games.id',
-    //       name: '$games.name',
-    //       id_hash: '$games.id_hash',
-    //       image_filled: '$games.image_filled',
-    //       isDashboard: '$games.isDashboard',
-    //       mobile: '$games.mobile'
-    //     }
-    //   }
-    // ]).exec();
+    const selectedCasinoData = await SelectedCasino.aggregate([
+      {
+        $project: {
+          games: {
+            $filter: {
+              input: '$games',
+              as: 'game',
+              cond: { $eq: ['$$game.isDashboard', true] }
+            }
+          }
+        }
+      },
+      {
+        $unwind: '$games' // Unwind the 'games' array
+      },
+      {
+        $match: {
+          'games.mobile': JSON.parse(req.query.isMobile)
+          // Only match documents where the 'isMobile' key in the 'games' subdocument matches the query parameter value
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          id: '$games.id',
+          name: '$games.name',
+          id_hash: '$games.id_hash',
+          image_filled: '$games.image_filled',
+          isDashboard: '$games.isDashboard',
+          mobile: '$games.mobile'
+        }
+      }
+    ]).exec();
 
     const organizedEvents = {
       soccer: events[0].soccer,
