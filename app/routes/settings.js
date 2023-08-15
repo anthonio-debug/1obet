@@ -996,7 +996,7 @@ async function bettorDashboardGames(req, res) {
           ]
         }
       ] 
-    }).exec();
+    })
 
     const horseRace = await  Events.find({
       sportsId: "7",
