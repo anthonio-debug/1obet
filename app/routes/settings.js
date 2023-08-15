@@ -979,7 +979,8 @@ async function bettorDashboardGames(req, res) {
           countryCode: 1,
           marketIds: 1,   
           sportsId: 1,
-          iconStatus: 1           
+          iconStatus: 1,
+          $slice: ["$odds.runners", 1]      
         }
       },
       {
