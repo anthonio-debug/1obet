@@ -949,7 +949,6 @@ async function bettorDashboardGames(req, res) {
         $match: {
           sportsId: { $in: sportsIdArray },
           status: 'OPEN',
-          openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") }
         },
       },
       {
@@ -1139,7 +1138,8 @@ async function bettorDashboardGames(req, res) {
             }
           ],
           inPlay: [
-            { $match: { 
+            { 
+              $match: { 
               $or: [
                 {
                   $and: [
@@ -1158,7 +1158,8 @@ async function bettorDashboardGames(req, res) {
                   ]
                 }
               ]
-            }},
+              }
+            },
             {
               $lookup: {
                 from: 'odds', 
@@ -1176,7 +1177,7 @@ async function bettorDashboardGames(req, res) {
                 competitionName: 1,
                 inplay: 1,
                 oddsData: {
-                  $slice: ["$odds.runners", 1]
+                  $slice: ["$odds", 1]
                 }
               }
             },
