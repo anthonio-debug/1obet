@@ -1036,29 +1036,8 @@ async function bettorDashboardGames(req, res) {
                 competitionName: 1,
                 inplay: 1,
                 oddsData: {
-                  $cond: {
-                    if: {
-                      $and: [
-                        { $isArray: "$odds" },
-                        { $gt: [{ $size: "$odds" }, 0] },
-                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
-                      ]
-                    },
-                    then: { $arrayElemAt: ["$odds.runners", 0] },
-                    else: [] // Empty array if any condition is not met
-                  }
+                  $arrayElemAt: ["$odds.runners", 0]
                 }
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                "oddsData.ExchangePrices": 1
               }
             },
             {
@@ -1099,31 +1078,10 @@ async function bettorDashboardGames(req, res) {
                 competitionName: 1,
                 inplay: 1,
                 oddsData: {
-                  $cond: {
-                    if: {
-                      $and: [
-                        { $isArray: "$odds" },
-                        { $gt: [{ $size: "$odds" }, 0] },
-                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
-                      ]
-                    },
-                    then: { $arrayElemAt: ["$odds.runners", 0] },
-                    else: [] // Empty array if any condition is not met
-                  }
+                  $arrayElemAt: ["$odds.runners", 0]
                 }
               }
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                "oddsData.ExchangePrices": 1
-              }
-            },
+            }
             {
               $sort: {
                 createdAt: 1
@@ -1206,19 +1164,19 @@ async function bettorDashboardGames(req, res) {
                 as: 'odds'
               }
             },
-            // {
-            //   $project: {
-            //     _id: 1,
-            //     Id: 1,
-            //     openDate: 1,
-            //     name: 1,
-            //     competitionName: 1,
-            //     inplay: 1,
-            //     oddsData: {
-            //       $arrayElemAt: ["$odds.runners", 0]
-            //     }
-            //   }
-            // },
+            {
+              $project: {
+                _id: 1,
+                Id: 1,
+                openDate: 1,
+                name: 1,
+                competitionName: 1,
+                inplay: 1,
+                oddsData: {
+                  $arrayElemAt: ["$odds.runners", 0]
+                }
+              }
+            },
           ]
         },
       },
