@@ -1016,6 +1016,7 @@ async function bettorDashboardGames(req, res) {
     ]).exec();
    
     const selectedCasinoData = await SelectedCasino.aggregate([
+      { $match: {'games.mobile': JSON.parse(req.query.isMobile)}},
       {
         $project: {
           games: {
@@ -1028,13 +1029,7 @@ async function bettorDashboardGames(req, res) {
         }
       },
       {
-        $unwind: '$games' // Unwind the 'games' array
-      },
-      {
-        $match: {
-          'games.mobile': JSON.parse(req.query.isMobile)
-          // Only match documents where the 'isMobile' key in the 'games' subdocument matches the query parameter value
-        }
+        $unwind: '$games' 
       },
       {
         $project: {
