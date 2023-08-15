@@ -984,47 +984,6 @@ async function bettorDashboardGames(req, res) {
     //   ] 
     // })
 
-    const greyHound = await Events.find({
-      sportsId: '4339',
-      status: 'OPEN',
-      $or: [
-        { inplay: true },
-        { 
-          $and: [
-            { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
-          ]
-        }
-      ] 
-    })
-
-    const horseRace = await Events.find({
-      sportsId: '7',
-      status: 'OPEN',
-      $or: [
-        { inplay: true },
-        { 
-          $and: [
-            { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
-          ]
-        }
-      ] 
-    })
-
-    const inPlay = await Events.find({
-      sportsId: {
-        $in: sportsIdArray
-      },
-      status: 'OPEN',
-      inplay: true,
-    }, (err, events)=>{
-      events.map( async(event)=>{
-        event.odds = await Odds.findOne({
-          eventId: event.Id
-        }).sort({createdAt: -1})
-      })
-    })
 
     const selectedCasinoData = await SelectedCasino.aggregate([
       { $match: {'games.mobile': JSON.parse(req.query.isMobile)}},
@@ -1053,23 +1012,60 @@ async function bettorDashboardGames(req, res) {
           mobile: '$games.mobile'
         }
       }
-    ])
+    ]);
 
-    const organizedEvents = {
-      // soccer: events[0].soccer,
-      // tennis: events[0].tennis,
-      // cricket: events[0].cricket,
-      horseRace: horseRace,
-      greyhound: greyHound,
-      inPlay: inPlay,
-      casinoData: selectedCasinoData,
-    };
-
-    res.status(200).json({
-      success: true,
-      message: 'Event By Sports Records',
-      results: organizedEvents,
+    const greyHound = await Events.find({
+      sportsId: '4339',
+      status: 'OPEN',
+      $or: [
+        { inplay: true },
+        { 
+          $and: [
+            { openDate: { $gt: new Date().getTime()}},
+            { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
+          ]
+        }
+      ] 
     });
+
+    const horseRace = await Events.find({
+      sportsId: '7',
+      status: 'OPEN',
+      $or: [
+        { inplay: true },
+        { 
+          $and: [
+            { openDate: { $gt: new Date().getTime()}},
+            { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
+          ]
+        }
+      ] 
+    });
+
+    Events.find({
+      sportsId: {
+        $in: sportsIdArray
+      },
+      status: 'OPEN',
+      inplay: true,
+    }, (err, events)=>{
+      events.map( async(event)=>{
+        event.odds = await Odds.findOne({
+          eventId: event.Id
+        }).sort({createdAt: -1})
+      });
+      const organizedEvents = {
+        horseRace: horseRace,
+        greyhound: greyHound,
+        inPlay: inPlay,
+        casinoData: selectedCasinoData,
+      };
+      res.status(200).json({
+        success: true,
+        message: 'Event By Sports Records',
+        results: organizedEvents,
+      });
+    })
   } catch (error) {
     console.error(error);
     res.status(200).json({
