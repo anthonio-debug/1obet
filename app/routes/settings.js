@@ -399,11 +399,11 @@ async function listEventsBySport(req, res) {
     let end;
     let events; 
     if(sportId == '4' || sportId == '2' || sportId == '1' ){
-      start  = moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00");
-      end    = moment(new Date(Date.now() +  16 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00");
+      start  = new Date().getTime();
+      end    = new Date().getTime() + 24*60*60*1000;
     }else if (sportId == '7' || sportId == '4339'){
-      start = moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00");
-      end   = moment(new Date(Date.now()  + 6 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00");
+      start  = new Date().getTime();
+      end    = new Date().getTime() + 6*60*60*1000;
     }
     console.log("start == ", start);
     console.log("end == ", end);

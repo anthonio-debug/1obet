@@ -7,7 +7,7 @@
 
 // console.log(strToDate(dtStr));
 
-console.log(" ========= ", new Date().getTime());
+console.log(" ========= ", new Date().getTime() - 24*60*60*1000);
 
 console.log("date", Date.parse("2023-08-15T19:38:00+00:00"));
 
