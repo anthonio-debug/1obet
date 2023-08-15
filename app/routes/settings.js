@@ -1042,13 +1042,21 @@ async function bettorDashboardGames(req, res) {
       ] 
     });
 
-    const inPlay = await Events.find({
+    const inPlays = await Events.find({
       sportsId: {
         $in: sportsIdArray
       },
       status: 'OPEN',
       inplay: true
     });
+
+    const inPlay = inPlays.map(async (event)=>{
+      event.odds = await  Odds.findOne({
+        eventId: event.Id
+      });
+      return event;
+    })
+
 
     // const inPlays =  Events.aggregate([
     //   { $match: { 
