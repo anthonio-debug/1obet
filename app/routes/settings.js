@@ -1049,12 +1049,13 @@ async function bettorDashboardGames(req, res) {
       },
       status: 'OPEN',
       inplay: true,
-    }, (err, events)=>{
-      events.map( async(event)=>{
+    }, async(err, events)=>{
+      for (const event of event) {
         event.meetingGoing = await Odds.findOne({
           eventId: event.Id
-        }).sort({createdAt: -1})
-      });
+        })
+      }
+      // });
       const organizedEvents = {
         horseRace: horseRace,
         greyhound: greyHound,
