@@ -965,97 +965,15 @@ async function bettorDashboardGames(req, res) {
           soccer: [
             { $match: { sportsId: '1', }},
           ],
-          // tennis: [
-          //   { $match: { 
-          //     sportsId: '2',
-          //     $or: [
-          //       { inplay: true },
-          //       { 
-          //         $and: [
-          //           { openDate: 
-          //             { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } 
-          //           },
-          //           { openDate: 
-          //             { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } 
-          //           }
-          //         ]
-          //       }
-          //     ]  
-          //   }},
-          //   { $sort: { inplay: -1 } },
-          //   {
-          //     $lookup: {
-          //       from: 'odds', 
-          //       localField: 'Id', 
-          //       foreignField: 'eventId',
-          //       as: 'odds'
-          //     }
-          //   },
-          //   {
-          //     $project: {
-          //       _id: 1,
-          //       Id: 1,
-          //       openDate: 1,
-          //       name: 1,
-          //       competitionName: 1,
-          //       inplay: 1,
-          //       oddsData: {
-          //         $slice: ["$odds", 1]
-          //       }
-          //     }
-          //   },
-          //   {
-          //     $sort: {
-          //       inplay: -1, openDate: 1
-          //     }
-          //   }
-          // ],
-          // cricket: [
-          //   { $match: { 
-          //     sportsId: '4', 
-          //     iconStatus: true,
-          //     $or: [
-          //       { inplay: true },
-          //       { 
-          //         $and: [
-          //           { openDate: 
-          //             { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } 
-          //           },
-          //           { openDate: 
-          //             { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } 
-          //           }
-          //         ]
-          //       }
-          //     ] 
-          //   }},
-          //   { $sort: { inplay: -1, openDate: 1 } },
-          //   {
-          //     $lookup: {
-          //       from: 'odds', 
-          //       localField: 'Id', 
-          //       foreignField: 'eventId',
-          //       as: 'odds'
-          //     }
-          //   },
-          //   {
-          //     $project: {
-          //       _id: 1,
-          //       Id: 1,
-          //       openDate: 1,
-          //       name: 1,
-          //       competitionName: 1,
-          //       inplay: 1,
-          //       oddsData: {
-          //         $slice: ["$odds", 1]
-          //       }
-          //     }
-          //   },
-          //   {
-          //     $sort: {
-          //       createdAt: 1
-          //     }
-          //   }
-          // ],
+          tennis: [
+            { $match: {  sportsId: '2', }},
+          ],
+          cricket: [
+            { $match: { 
+              sportsId: '4', 
+              iconStatus: true,
+            }},
+          ],
           // horseRace: [
           //   { $match: { 
           //     sportsId: '7' ,
@@ -1195,8 +1113,8 @@ async function bettorDashboardGames(req, res) {
 
     const organizedEvents = {
       soccer: events[0].soccer,
-      // tennis: events[0].tennis,
-      // cricket: events[0].cricket,
+      tennis: events[0].tennis,
+      cricket: events[0].cricket,
       // horseRace: events[0].horseRace,
       // greyhound: events[0].greyhound,
       // inPlay: events[0].inPlay,
