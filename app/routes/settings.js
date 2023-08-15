@@ -1050,7 +1050,7 @@ async function bettorDashboardGames(req, res) {
       status: 'OPEN',
       inplay: true,
     }, async(err, events)=>{
-      for (const event of event) {
+      for (const event of events) {
         event.meetingGoing = await Odds.findOne({
           eventId: event.Id
         })
