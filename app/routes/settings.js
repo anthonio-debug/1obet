@@ -980,7 +980,7 @@ async function bettorDashboardGames(req, res) {
           marketIds: 1,   
           sportsId: 1,
           iconStatus: 1,
-          $slice: ["$odds.runners", 1]      
+          oddData: { $slice: ["$odds.runners", 1] }   
         }
       },
       {
