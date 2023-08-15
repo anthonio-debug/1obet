@@ -1042,51 +1042,59 @@ async function bettorDashboardGames(req, res) {
       ] 
     });
 
-    const inPlays = Events.aggregate([
-      { $match: { 
-        inplay: true,
-        status: "OPEN",
-        $or:[
-          {
-            $and: [
-              { sportsId: "4"},
-              { iconStatus: true}
-            ]
-          },
-          {
-            sportsId: {
-              $in: ["1", "2"]
-            }
-          }
-        ]
-      }},
-      {
-        $lookup: {
-          from: 'odds', 
-          localField: 'Id', 
-          foreignField: 'eventId',
-          as: 'odds'
-      }},
-      {
-        $project: {
-          _id: 1,
-          Id: 1,
-          openDate: 1,
-          name: 1,
-          competitionName: 1,
-          inplay: 1,
-          oddsData: {
-            $slice: ["$odds", 1]
-          }
-        }
+    const inPlay = await Events.find({
+      sportsId: {
+        $in: sportsIdArray
       },
-    ]).exec();
+      status: 'OPEN',
+      inplay: true
+    });
+
+    // const inPlays =  Events.aggregate([
+    //   { $match: { 
+    //     inplay: true,
+    //     status: "OPEN",
+    //     $or:[
+    //       {
+    //         $and: [
+    //           { sportsId: "4"},
+    //           { iconStatus: true}
+    //         ]
+    //       },
+    //       {
+    //         sportsId: {
+    //           $in: ["1", "2"]
+    //         }
+    //       }
+    //     ]
+    //   }},
+    //   {
+    //     $lookup: {
+    //       from: 'odds', 
+    //       localField: 'Id', 
+    //       foreignField: 'eventId',
+    //       as: 'odds'
+    //   }},
+    //   {
+    //     $project: {
+    //       _id: 1,
+    //       Id: 1,
+    //       openDate: 1,
+    //       name: 1,
+    //       competitionName: 1,
+    //       inplay: 1,
+    //       oddsData: {
+    //         $slice: ["$odds", 1]
+    //       }
+    //     }
+    //   },
+    // ]).exec();
 
 
     const organizedEvents = {
       horseRace: horseRace,
       greyhound: greyHound,
-      inPlay: inPlays,
+      inPlay: inPlay,
       casinoData: selectedCasinoData,
     };
     res.status(200).json({
