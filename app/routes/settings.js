@@ -1060,26 +1060,26 @@ async function bettorDashboardGames(req, res) {
           }
         ]
       }},
-      // {
-      //   $lookup: {
-      //     from: 'odds', 
-      //     localField: 'Id', 
-      //     foreignField: 'eventId',
-      //     as: 'odds'
-      // }},
-      // {
-      //   $project: {
-      //     _id: 1,
-      //     Id: 1,
-      //     openDate: 1,
-      //     name: 1,
-      //     competitionName: 1,
-      //     inplay: 1,
-      //     // oddsData: {
-      //     //   $slice: ["$odds", 1]
-      //     // }
-      //   }
-      // },
+      {
+        $lookup: {
+          from: 'odds', 
+          localField: 'Id', 
+          foreignField: 'eventId',
+          as: 'odds'
+      }},
+      {
+        $project: {
+          _id: 1,
+          Id: 1,
+          openDate: 1,
+          name: 1,
+          competitionName: 1,
+          inplay: 1,
+          // oddsData: {
+          //   $slice: ["$odds", 1]
+          // }
+        }
+      },
     ]).exec();
 
 
