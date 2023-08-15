@@ -989,17 +989,6 @@ async function bettorDashboardGames(req, res) {
               }
             },
             {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                "oddsData.ExchangePrices": 1
-              }
-            },
-            {
               $sort: {
                 createdAt: 1
               }
@@ -1081,7 +1070,7 @@ async function bettorDashboardGames(req, res) {
                   $arrayElemAt: ["$odds.runners", 0]
                 }
               }
-            }
+            },
             {
               $sort: {
                 createdAt: 1
