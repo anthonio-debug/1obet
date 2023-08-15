@@ -997,7 +997,7 @@ async function bettorDashboardGames(req, res) {
         }
       ] 
     }).exec();
-    
+
     const horseRace = await  Events.find({
       sportsId: "7",
       status: 'OPEN',
@@ -1006,11 +1006,11 @@ async function bettorDashboardGames(req, res) {
         { 
           $and: [
             { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now()+10*60*60*1000}}
+            { openDate: { $lt: Date.now()+6*60*60*1000}}
           ]
         }
       ] 
-    }).exec();
+    })
 
     const inPlay = await  Events.find({
       sportsId: "7",
@@ -1022,7 +1022,7 @@ async function bettorDashboardGames(req, res) {
           eventId: event.Id
         }).sort({createdAt: -1})
       })
-    }).exec();
+    })
 
     const selectedCasinoData = await SelectedCasino.aggregate([
       { $match: {'games.mobile': JSON.parse(req.query.isMobile)}},
@@ -1051,7 +1051,7 @@ async function bettorDashboardGames(req, res) {
           mobile: '$games.mobile'
         }
       }
-    ]).exec();
+    ])
 
     const organizedEvents = {
       // soccer: events[0].soccer,
