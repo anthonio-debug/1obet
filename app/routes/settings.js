@@ -1216,19 +1216,19 @@ async function bettorDashboardGames(req, res) {
                 as: 'odds'
               }
             },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                oddsData: {
-                  $arrayElemAt: ["$odds.runners", 0]
-                }
-              }
-            },
+            // {
+            //   $project: {
+            //     _id: 1,
+            //     Id: 1,
+            //     openDate: 1,
+            //     name: 1,
+            //     competitionName: 1,
+            //     inplay: 1,
+            //     oddsData: {
+            //       $arrayElemAt: ["$odds.runners", 0]
+            //     }
+            //   }
+            // },
           ]
         },
       },
