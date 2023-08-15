@@ -1042,42 +1042,133 @@ async function bettorDashboardGames(req, res) {
       ] 
     });
     // const inPlay = [];
-    Events.find({
-      sportsId: {
-        $in: sportsIdArray
-      },
-      status: 'OPEN',
-      inplay: true,
-    }, async(err, events)=>{
-      // for (const event of events) {
-        events.forEach( async (event)=> {
-          event.meetingGoing = await Odds.findOne({
-            eventId: event.Id
-          });
-        })
-      // }
-      const organizedEvents = {
-        horseRace: horseRace,
-        greyhound: greyHound,
-        inPlay: events,
-        casinoData: selectedCasinoData,
-      };
-      res.status(200).json({
-        success: true,
-        message: 'Event By Sports Records',
-        results: organizedEvents,
-      });
-    })
+    // Events.find({
+    //   sportsId: {
+    //     $in: sportsIdArray
+    //   },
+    //   status: 'OPEN',
+    //   inplay: true,
+    // }, async(err, events)=>{
+    //   // for (const event of events) {
+    //     events.forEach( async (event)=> {
+    //       event.meetingGoing = await Odds.findOne({
+    //         eventId: event.Id
+    //       });
+    //     })
+    //   // }
+    //   const organizedEvents = {
+    //     horseRace: horseRace,
+    //     greyhound: greyHound,
+    //     inPlay: events,
+    //     casinoData: selectedCasinoData,
+    //   };
+    //   res.status(200).json({
+    //     success: true,
+    //     message: 'Event By Sports Records',
+    //     results: organizedEvents,
+    //   });
+    // })
 
-    const inPlay = await SelectedCasino.aggregate([
-      { $match: {
-        sportsId: {
-          $in: sportsIdArray
-        },
-        status: 'OPEN',
-        inplay: true,
+    // inPlay: [
+    //   { $match: { 
+    //     $or: [
+    //       {
+    //         $and: [
+    //           { sportId: "4"},
+    //           {inplay: true},
+    //           {iconStatus: true}
+    //         ]
+    //       },
+    //       {
+    //         $and: [
+    //           {inplay: true},
+    //           {
+    //             sportId: {
+    //             $in: ["1", "2"]
+    //           }}
+    //         ]
+    //       }
+    //     ]
+    //   }},
+    //   {
+    //     $lookup: {
+    //       from: 'odds', 
+    //       localField: 'Id', 
+    //       foreignField: 'eventId',
+    //       as: 'odds'
+    //     }
+    //   },
+    //   {
+    //     $project: {
+    //       _id: 1,
+    //       Id: 1,
+    //       openDate: 1,
+    //       name: 1,
+    //       competitionName: 1,
+    //       inplay: 1,
+    //       oddsData: {
+    //         $slice: ["$odds.runners", 1]
+    //       }
+    //     }
+    //   },
+    // ]
+
+    const inPlay = await Events.aggregate([
+      { $match: { 
+        $or: [
+          {
+            $and: [
+              { sportId: "4"},
+              {inplay: true},
+              {iconStatus: true}
+            ]
+          },
+          {
+            $and: [
+              {inplay: true},
+              {
+                sportId: {
+                $in: ["1", "2"]
+              }}
+            ]
+          }
+        ]
       }},
+      {
+        $lookup: {
+          from: 'odds', 
+          localField: 'Id', 
+          foreignField: 'eventId',
+          as: 'odds'
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          Id: 1,
+          openDate: 1,
+          name: 1,
+          competitionName: 1,
+          inplay: 1,
+          oddsData: {
+            $slice: ["$odds.runners", 1]
+          }
+        }
+      },
     ]);
+
+
+    const organizedEvents = {
+      horseRace: horseRace,
+      greyhound: greyHound,
+      inPlay: inPlay,
+      casinoData: selectedCasinoData,
+    };
+    res.status(200).json({
+      success: true,
+      message: 'Event By Sports Records',
+      results: organizedEvents,
+    });
 
 
 
