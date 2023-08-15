@@ -1044,24 +1044,25 @@ async function bettorDashboardGames(req, res) {
 
     const inPlay = await Events.aggregate([
       { $match: { 
-        $or: [
-          {
-            $and: [
-              { sportId: "4"},
-              { inplay: true},
-              { iconStatus: true}
-            ]
-          },
-          {
-            $and: [
-              {inplay: true},
-              {
-                sportId: {
-                $in: ["1", "2"]
-              }}
-            ]
-          }
-        ]
+        inplay: true
+        // $or: [
+        //   {
+        //     $and: [
+        //       { sportId: "4"},
+        //       { inplay: true},
+        //       { iconStatus: true}
+        //     ]
+        //   },
+        //   {
+        //     $and: [
+        //       {inplay: true},
+        //       {
+        //         sportId: {
+        //         $in: ["1", "2"]
+        //       }}
+        //     ]
+        //   }
+        // ]
       }},
       {
         $lookup: {
