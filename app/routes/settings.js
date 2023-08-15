@@ -1041,8 +1041,7 @@ async function bettorDashboardGames(req, res) {
         }
       ] 
     });
-    const inPlay = [];
-
+    // const inPlay = [];
     Events.find({
       sportsId: {
         $in: sportsIdArray
@@ -1050,12 +1049,13 @@ async function bettorDashboardGames(req, res) {
       status: 'OPEN',
       inplay: true,
     }, async(err, events)=>{
-      for (const event of events) {
-        event.meetingGoing = await Odds.findOne({
-          eventId: event.Id
+      // for (const event of events) {
+        events.forEach( async (event)=> {
+          event.meetingGoing = await Odds.findOne({
+            eventId: event.Id
+          });
         })
-      }
-      // });
+      // }
       const organizedEvents = {
         horseRace: horseRace,
         greyhound: greyHound,
@@ -1068,6 +1068,19 @@ async function bettorDashboardGames(req, res) {
         results: organizedEvents,
       });
     })
+
+    const inPlay = await SelectedCasino.aggregate([
+      { $match: {
+        sportsId: {
+          $in: sportsIdArray
+        },
+        status: 'OPEN',
+        inplay: true,
+      }},
+    ]);
+
+
+
   } catch (error) {
     console.error(error);
     res.status(200).json({
