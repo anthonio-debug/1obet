@@ -944,254 +944,217 @@ async function bettorDashboardGames(req, res) {
   try {
     const sportsIdArray = ['1', '2', '4', '7', '4339'];
 
-    // const events1 = await Events.aggregate([
-
-    // ]).exec();
-
-
-
-
-
     const events = await Events.aggregate([
       {
         $match: {
           sportsId: { $in: sportsIdArray },
           status: 'OPEN',
+          $or: [
+            { inplay: true },
+            { 
+              $and: [
+                { openDate: { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } },
+                { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } }
+              ]
+            }
+          ] 
         },
       },
       {
         $facet: {
           soccer: [
-            { $match: { 
-              sportsId: '1',
-              $or: [
-                { inplay: true },
-                { 
-                  $and: [
-                    { openDate: { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } }
-                  ]
-                }
-              ] 
-            }},
-            { $sort: { inplay: -1 }},
-            {
-              $lookup: {
-                from: 'odds', 
-                localField: 'Id', 
-                foreignField: 'eventId',
-                as: 'odds'
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                oddsData: {
-                  $slice: ["$odds", 1]
-                }
-              }
-            },
-            {
-              $sort: {
-                inplay: -1, openDate: 1
-              }
-            },
+            { $match: { sportsId: '1', }},
           ],
-          tennis: [
-            { $match: { 
-              sportsId: '2',
-              $or: [
-                { inplay: true },
-                { 
-                  $and: [
-                    { openDate: 
-                      { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } 
-                    },
-                    { openDate: 
-                      { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } 
-                    }
-                  ]
-                }
-              ]  
-            }},
-            { $sort: { inplay: -1 } },
-            {
-              $lookup: {
-                from: 'odds', 
-                localField: 'Id', 
-                foreignField: 'eventId',
-                as: 'odds'
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                oddsData: {
-                  $slice: ["$odds", 1]
-                }
-              }
-            },
-            {
-              $sort: {
-                inplay: -1, openDate: 1
-              }
-            }
-          ],
-          cricket: [
-            { $match: { 
-              sportsId: '4', 
-              iconStatus: true,
-              $or: [
-                { inplay: true },
-                { 
-                  $and: [
-                    { openDate: 
-                      { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } 
-                    },
-                    { openDate: 
-                      { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } 
-                    }
-                  ]
-                }
-              ] 
-            }},
-            { $sort: { inplay: -1, openDate: 1 } },
-            {
-              $lookup: {
-                from: 'odds', 
-                localField: 'Id', 
-                foreignField: 'eventId',
-                as: 'odds'
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                oddsData: {
-                  $slice: ["$odds", 1]
-                }
-              }
-            },
-            {
-              $sort: {
-                createdAt: 1
-              }
-            }
-          ],
-          horseRace: [
-            { $match: { 
-              sportsId: '7' ,
-              $or: [
-                { inplay: true },
-                { 
-                  $and: [
-                    { openDate: 
-                      { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
-                    },
-                    { openDate: 
-                      { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
-                    }
-                  ]
-                }
-              ] 
-            }},
-            {
-              $project: {
-                _id: 1,
-                openDate: 1,
-                name: 1,
-                meetingId: 1,
-                countryCode: 1,
-                marketIds: 1
-              }
-            }
-          ],
-          greyhound: [
-            { $match: { 
-              sportsId: '4339', 
-              $or: [
-                { inplay: true },
-                { 
-                  $and: [
-                    { openDate: { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } },
-                    { openDate: { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } }
-                  ]
-                }
-              ] 
-            }},
-            {
-              $project: {
-                _id: 1,
-                openDate: 1,
-                name: 1,
-                meetingId: 1,
-                countryCode: 1,
-                marketIds: 1              
-              }
-            }
-          ],
-          inPlay: [
-            { 
-              $match: { 
-                $or: [
-                  {
-                    $and: [
-                      {sportId: "4"},
-                      {inplay: true},
-                      {iconStatus: true},
-                      { status: 'OPEN' }
-                    ]
-                  },
-                  {
-                    $and: [
-                      {inplay: true},
-                      {
-                        sportId: {
-                        $in: ["1", "2"]
-                      }},
-                      { status: 'OPEN' }
-                    ]
-                  }
-                ]
-              }
-            },
-            {
-              $lookup: {
-                from: 'odds', 
-                localField: 'Id', 
-                foreignField: 'eventId',
-                as: 'odds'
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                oddsData: {
-                  $slice: ["$odds", 1]
-                }
-              }
-            },
-          ]
+          // tennis: [
+          //   { $match: { 
+          //     sportsId: '2',
+          //     $or: [
+          //       { inplay: true },
+          //       { 
+          //         $and: [
+          //           { openDate: 
+          //             { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } 
+          //           },
+          //           { openDate: 
+          //             { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } 
+          //           }
+          //         ]
+          //       }
+          //     ]  
+          //   }},
+          //   { $sort: { inplay: -1 } },
+          //   {
+          //     $lookup: {
+          //       from: 'odds', 
+          //       localField: 'Id', 
+          //       foreignField: 'eventId',
+          //       as: 'odds'
+          //     }
+          //   },
+          //   {
+          //     $project: {
+          //       _id: 1,
+          //       Id: 1,
+          //       openDate: 1,
+          //       name: 1,
+          //       competitionName: 1,
+          //       inplay: 1,
+          //       oddsData: {
+          //         $slice: ["$odds", 1]
+          //       }
+          //     }
+          //   },
+          //   {
+          //     $sort: {
+          //       inplay: -1, openDate: 1
+          //     }
+          //   }
+          // ],
+          // cricket: [
+          //   { $match: { 
+          //     sportsId: '4', 
+          //     iconStatus: true,
+          //     $or: [
+          //       { inplay: true },
+          //       { 
+          //         $and: [
+          //           { openDate: 
+          //             { $gt: moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss A +00:00") } 
+          //           },
+          //           { openDate: 
+          //             { $lt: moment(new Date(Date.now() +  12 *  60 * 60 * 1000)).format("MM/D/YYYY h:mm:ss A +00:00") } 
+          //           }
+          //         ]
+          //       }
+          //     ] 
+          //   }},
+          //   { $sort: { inplay: -1, openDate: 1 } },
+          //   {
+          //     $lookup: {
+          //       from: 'odds', 
+          //       localField: 'Id', 
+          //       foreignField: 'eventId',
+          //       as: 'odds'
+          //     }
+          //   },
+          //   {
+          //     $project: {
+          //       _id: 1,
+          //       Id: 1,
+          //       openDate: 1,
+          //       name: 1,
+          //       competitionName: 1,
+          //       inplay: 1,
+          //       oddsData: {
+          //         $slice: ["$odds", 1]
+          //       }
+          //     }
+          //   },
+          //   {
+          //     $sort: {
+          //       createdAt: 1
+          //     }
+          //   }
+          // ],
+          // horseRace: [
+          //   { $match: { 
+          //     sportsId: '7' ,
+          //     $or: [
+          //       { inplay: true },
+          //       { 
+          //         $and: [
+          //           { openDate: 
+          //             { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
+          //           },
+          //           { openDate: 
+          //             { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } 
+          //           }
+          //         ]
+          //       }
+          //     ] 
+          //   }},
+          //   {
+          //     $project: {
+          //       _id: 1,
+          //       openDate: 1,
+          //       name: 1,
+          //       meetingId: 1,
+          //       countryCode: 1,
+          //       marketIds: 1
+          //     }
+          //   }
+          // ],
+          // greyhound: [
+          //   { $match: { 
+          //     sportsId: '4339', 
+          //     $or: [
+          //       { inplay: true },
+          //       { 
+          //         $and: [
+          //           { openDate: { $gt: moment(new Date(Date.now()) - 30 * 60 * 1000).format("YYYY-MM-DDTHH:mm:ss+00:00") } },
+          //           { openDate: { $lt: moment(new Date(Date.now()  + 5.5 *  60 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") } }
+          //         ]
+          //       }
+          //     ] 
+          //   }},
+          //   {
+          //     $project: {
+          //       _id: 1,
+          //       openDate: 1,
+          //       name: 1,
+          //       meetingId: 1,
+          //       countryCode: 1,
+          //       marketIds: 1              
+          //     }
+          //   }
+          // ],
+          // inPlay: [
+          //   { 
+          //     $match: { 
+          //       $or: [
+          //         {
+          //           $and: [
+          //             {sportId: "4"},
+          //             {inplay: true},
+          //             {iconStatus: true},
+          //             { status: 'OPEN' }
+          //           ]
+          //         },
+          //         {
+          //           $and: [
+          //             {inplay: true},
+          //             {
+          //               sportId: {
+          //               $in: ["1", "2"]
+          //             }},
+          //             { status: 'OPEN' }
+          //           ]
+          //         }
+          //       ]
+          //     }
+          //   },
+          //   {
+          //     $lookup: {
+          //       from: 'odds', 
+          //       localField: 'Id', 
+          //       foreignField: 'eventId',
+          //       as: 'odds'
+          //     }
+          //   },
+          //   {
+          //     $project: {
+          //       _id: 1,
+          //       Id: 1,
+          //       openDate: 1,
+          //       name: 1,
+          //       competitionName: 1,
+          //       inplay: 1,
+          //       oddsData: {
+          //         $slice: ["$odds", 1]
+          //       }
+          //     }
+          //   },
+          // ]
         },
       },
     ]).exec();
@@ -1232,10 +1195,10 @@ async function bettorDashboardGames(req, res) {
 
     const organizedEvents = {
       soccer: events[0].soccer,
-      tennis: events[0].tennis,
-      cricket: events[0].cricket,
-      horseRace: events[0].horseRace,
-      greyhound: events[0].greyhound,
+      // tennis: events[0].tennis,
+      // cricket: events[0].cricket,
+      // horseRace: events[0].horseRace,
+      // greyhound: events[0].greyhound,
       // inPlay: events[0].inPlay,
       // casinoData: selectedCasinoData,
     };
