@@ -985,7 +985,7 @@ async function bettorDashboardGames(req, res) {
                 competitionName: 1,
                 inplay: 1,
                 oddsData: {
-                  $arrayElemAt: ["$odds", 0] 
+                  $arrayElemAt: ["$odds.runners", 0] 
                 }
               }
             },
