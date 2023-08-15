@@ -1137,51 +1137,53 @@ async function bettorDashboardGames(req, res) {
               }
             }
           ],
-          inPlay: [
-            { 
-              $match: { 
-              $or: [
-                {
-                  $and: [
-                    { sportId: "4"},
-                    {inplay: true},
-                    {iconStatus: true}
-                  ]
-                },
-                {
-                  $and: [
-                    {inplay: true},
-                    {
-                      sportId: {
-                      $in: ["1", "2"]
-                    }}
-                  ]
-                }
-              ]
-              }
-            },
-            {
-              $lookup: {
-                from: 'odds', 
-                localField: 'Id', 
-                foreignField: 'eventId',
-                as: 'odds'
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                Id: 1,
-                openDate: 1,
-                name: 1,
-                competitionName: 1,
-                inplay: 1,
-                oddsData: {
-                  $slice: ["$odds", 1]
-                }
-              }
-            },
-          ]
+          // inPlay: [
+          //   { 
+          //     $match: { 
+          //       $or: [
+          //         {
+          //           $and: [
+          //             {sportId: "4"},
+          //             {inplay: true},
+          //             {iconStatus: true},
+          //             { status: 'OPEN' }
+          //           ]
+          //         },
+          //         {
+          //           $and: [
+          //             {inplay: true},
+          //             {
+          //               sportId: {
+          //               $in: ["1", "2"]
+          //             }},
+          //             { status: 'OPEN' }
+          //           ]
+          //         }
+          //       ]
+          //     }
+          //   },
+          //   {
+          //     $lookup: {
+          //       from: 'odds', 
+          //       localField: 'Id', 
+          //       foreignField: 'eventId',
+          //       as: 'odds'
+          //     }
+          //   },
+          //   {
+          //     $project: {
+          //       _id: 1,
+          //       Id: 1,
+          //       openDate: 1,
+          //       name: 1,
+          //       competitionName: 1,
+          //       inplay: 1,
+          //       oddsData: {
+          //         $slice: ["$odds", 1]
+          //       }
+          //     }
+          //   },
+          // ]
         },
       },
     ]).exec();
@@ -1226,7 +1228,7 @@ async function bettorDashboardGames(req, res) {
       cricket: events[0].cricket,
       horseRace: events[0].horseRace,
       greyhound: events[0].greyhound,
-      inPlay: events[0].inPlay,
+      // inPlay: events[0].inPlay,
       casinoData: selectedCasinoData,
     };
 
