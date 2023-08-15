@@ -971,14 +971,14 @@ async function bettorDashboardGames(req, res) {
           ] 
         },
       },
-      // {
-      //   $lookup: {
-      //     from: 'odds', 
-      //     localField: 'Id', 
-      //     foreignField: 'eventId',
-      //     as: 'odds'
-      //   }
-      // },
+      {
+        $lookup: {
+          from: 'odds', 
+          localField: 'Id', 
+          foreignField: 'eventId',
+          as: 'odds'
+        }
+      },
       {
         $facet: {
           soccer: [ { $match: { sportsId: '1', }}],
