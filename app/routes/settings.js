@@ -1045,6 +1045,7 @@ async function bettorDashboardGames(req, res) {
     const inPlays = await Events.aggregate([
       { $match: { 
         inplay: true,
+        status: "OPEN"
         // $or:[
         //   {
         //     $and: [
