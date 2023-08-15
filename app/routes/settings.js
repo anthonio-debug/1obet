@@ -985,7 +985,7 @@ async function bettorDashboardGames(req, res) {
                 competitionName: 1,
                 inplay: 1,
                 oddsData: {
-                  $arrayElemAt: ["$odds.runners", 0] 
+                  $slice: ["$odds", 1]
                 }
               }
             },
@@ -1030,7 +1030,7 @@ async function bettorDashboardGames(req, res) {
                 competitionName: 1,
                 inplay: 1,
                 oddsData: {
-                  $arrayElemAt: ["$odds.runners", 0]
+                  $slice: ["$odds", 1]
                 }
               }
             },
@@ -1076,7 +1076,7 @@ async function bettorDashboardGames(req, res) {
                 competitionName: 1,
                 inplay: 1,
                 oddsData: {
-                  $arrayElemAt: ["$odds.runners", 0]
+                  $slice: ["$odds", 1]
                 }
               }
             },
@@ -1176,7 +1176,7 @@ async function bettorDashboardGames(req, res) {
                 competitionName: 1,
                 inplay: 1,
                 oddsData: {
-                  $arrayElemAt: ["$odds.runners", 0]
+                  $slice: ["$odds.runners", 1]
                 }
               }
             },
