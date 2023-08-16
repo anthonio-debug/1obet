@@ -12,33 +12,33 @@ function getCurrentPosition(req, res) {
     
     
     currentPosition.aggregate([
-      // {
-      //   $match: {
-      //     userId: userId
-      //   }
-      // },
+      {
+        $match: {
+          userId: userId
+        }
+      },
       {
         "$lookup": {
           "from": "inplayevents",
           "localField": "matchId",
           "foreignField": "Id",
-          "as": "match"
+          "as": "matchs"
         }
       },
-      {
-        "$unwind": "$match"
-      },
-      {
-        $group: {
-          _id: "$match.Id",
-          "name": {
-            "$first": "$match.name"
-          },
-          amount: {
-            $sum: "$amount"
-          }
-        }
-      }
+      // {
+      //   "$unwind": "$matchs"
+      // },
+      // {
+      //   $group: {
+      //     _id: "$matchs.Id",
+      //     "name": {
+      //       "$first": "$match.name"
+      //     },
+      //     amount: {
+      //       $sum: "$amount"
+      //     }
+      //   }
+      // }
     ], (err, currentPositionData)=>{
       if(err){
         return {
