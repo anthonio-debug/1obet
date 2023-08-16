@@ -28,17 +28,17 @@ function getCurrentPosition(req, res) {
       {
         "$unwind": "$matches"
       },
-      {
-        $group: {
-          _id: "$matches.Id",
-          "name": {
-            "$first": "$matches.name"
-          },
-          amount: {
-            $sum: "$amount"
-          }
-        }
-      }
+      // {
+      //   $group: {
+      //     _id: "$matches.Id",
+      //     "name": {
+      //       "$first": "$matches.name"
+      //     },
+      //     amount: {
+      //       $sum: "$amount"
+      //     }
+      //   }
+      // }
     ], (err, currentPositionData)=>{
       if(err){
         return {
