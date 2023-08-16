@@ -1038,9 +1038,6 @@ async function bettorDashboardGames(req, res) {
     );
 
     const organizedEvents = {
-      soccer: soccer,
-      tennis: tennis,
-      cricket: cricket,
       horseRace: horseRace,
       greyhound: greyHound,
       inPlay: inPlay,
