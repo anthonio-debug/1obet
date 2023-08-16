@@ -485,7 +485,8 @@ async function placeBet(req, res) {
       runner: selectionId,
       type: type,
       runnerName: testRuner.runnerName,
-      event:  eventDetail.name
+      event:  eventDetail.name,
+      createdAt: new Date.getTime()
     });
 
     bet.save(async (err, result) => {
