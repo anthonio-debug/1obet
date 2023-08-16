@@ -1107,6 +1107,7 @@ async function bettorDashboardGames(req, res) {
         name: 1,
         competitionName: 1,
         inplay: 1,
+        sportsId: 1
         // oddsData: {
         //   $slice: ["$odds", 1]
         // }
