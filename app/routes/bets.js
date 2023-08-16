@@ -905,6 +905,7 @@ async function getMatchedBets(req, res) {
           _id: 0,
           price: '$betRate',
           runnerId: '$runnerName',
+          createdAt: '$createdAt',
           size: '$betAmount',
           runner: '$runner',
           bettor: '$userDetails.userName',
