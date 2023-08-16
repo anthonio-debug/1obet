@@ -11,6 +11,56 @@ function getCurrentPosition(req, res) {
     const userId = req.decoded.userId;
     console.log("userId ======= ", userId);
     
+    // currentPosition.aggregate([
+    //   {
+    //     $match: {
+    //       userId: userId
+    //     }
+    //   },
+    //   {
+    //     $addFields: {
+    //       '$inPlayEventId': {$toObjectId: $matchId}  
+    //     }
+    //   },
+    //   {
+    //     "$lookup": {
+    //       "from": "inplayevents",
+    //       "localField": "$inPlayEventId",
+    //       "foreignField": "_id",
+    //       "as": "matches"
+    //     }
+    //   },
+    //   {
+    //     "$unwind": "$matches"
+    //   },
+    //   {
+    //     $group: {
+    //       _id: "$matches.Id",
+    //       "name": {
+    //         "$first": "$matches.name"
+    //       },
+    //       amount: {
+    //         $sum: "$amount"
+    //       }
+    //     }
+    //   }
+    // ], (err, currentPositionData)=>{
+    //   if(err){
+    //     return {
+    //       success: false,
+    //       message: 'Failed to get data',
+    //       error: err,
+    //   }; 
+    //   }
+    //   const response = {
+    //     success: true,
+    //     message: 'current position records',
+    //     results: [currentPositionData]
+    //   };
+    //   res.send(response)
+
+    // });
+
     currentPosition.aggregate([
       {
         $match: {
@@ -19,13 +69,13 @@ function getCurrentPosition(req, res) {
       },
       {
         $addFields: {
-          '$inPlayEventId': {$toObjectId: $matchId}  
+          'inPlayEventId': { $toObjectId: "$matchId" }
         }
       },
       {
         "$lookup": {
           "from": "inplayevents",
-          "localField": "$inPlayEventId",
+          "localField": "inPlayEventId",
           "foreignField": "_id",
           "as": "matches"
         }
@@ -35,7 +85,7 @@ function getCurrentPosition(req, res) {
       },
       {
         $group: {
-          _id: "$matches.Id",
+          _id: "$matches._id",
           "name": {
             "$first": "$matches.name"
           },
@@ -44,22 +94,24 @@ function getCurrentPosition(req, res) {
           }
         }
       }
-    ], (err, currentPositionData)=>{
-      if(err){
-        return {
+    ], (err, currentPositionData) => {
+      if (err) {
+        const response = {
           success: false,
           message: 'Failed to get data',
           error: err,
-      }; 
+        };
+        res.send(response);
+      } else {
+        const response = {
+          success: true,
+          message: 'current position records',
+          results: currentPositionData
+        };
+        res.send(response);
       }
-      const response = {
-        success: true,
-        message: 'current position records',
-        results: [currentPositionData]
-      };
-      res.send(response)
-
     });
+    
   }
   catch (error) {
     console.error(error);
