@@ -3,12 +3,8 @@ const User            = require('../models/user');
 const Deposits        = require('../models/deposits');
 const MarketType      = require('../models/marketTypes');
 const Bets            = require('../models/bets');
-
 const currentPosition = require('../models/CurrentPosition');
 const loginRouter     = express.Router();
-
-
-
 
 function getCurrentPosition(req, res) {
   try{
@@ -16,17 +12,17 @@ function getCurrentPosition(req, res) {
     
     
     currentPosition.aggregate([
+      // {
+      //   $match: {
+      //     userId: userId
+      //   }
+      // },
       {
         "$lookup": {
           "from": "inplayevents",
           "localField": "matchId",
           "foreignField": "Id",
           "as": "match"
-        }
-      },
-      {
-        $match: {
-          userId: userId
         }
       },
       {
