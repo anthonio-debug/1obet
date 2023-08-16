@@ -37,7 +37,8 @@ const GH = () => {
   cron.schedule('*/10 * * * * *', async () => {
 
     try {
-      const date  = moment(new Date(Date.now())).format("YYYY-MM-DDTHH:mm:ss+00:00");
+      const date  =  new Date().getTime();
+      // moment(new Date(Date.now())).format("YYYY-MM-DDTHH:mm:ss+00:00");
       const eventIds    = await Events.distinct('Id',{ 
         sportsId: '4339',
         winner: '0',

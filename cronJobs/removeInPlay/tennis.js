@@ -35,7 +35,8 @@ const tennis = () => {
   cron.schedule('*/1 * * * *', async () => {
 
     try {
-      const date = moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss +00:00");
+      const date = new Date().getTime();
+      moment(new Date(Date.now())).format("MM/D/YYYY h:mm:ss +00:00");
       const eventIds     = await Events.distinct('Id',{ 
         sportsId: '2',
         winner: '0',

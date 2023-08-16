@@ -1175,6 +1175,7 @@ async function bettorDashboardGames(req, res) {
       inPlay: inPlay,
       casinoData: selectedCasinoData,
     };
+    
     res.status(200).json({
       success: true,
       message: 'Event By Sports Records',
