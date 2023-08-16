@@ -17,14 +17,14 @@ function getCurrentPosition(req, res) {
           userId: userId
         }
       },
-      {
-        "$lookup": {
-          "from": "inplayevents",
-          "localField": "matchId",
-          "foreignField": "Id",
-          "as": "matchs"
-        }
-      },
+      // {
+      //   "$lookup": {
+      //     "from": "inplayevents",
+      //     "localField": "matchId",
+      //     "foreignField": "Id",
+      //     "as": "matchs"
+      //   }
+      // },
       // {
       //   "$unwind": "$matchs"
       // },
