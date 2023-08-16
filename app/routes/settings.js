@@ -1089,7 +1089,10 @@ async function bettorDashboardGames2(req, res) {
         //   $slice: ["$odds", 1]
         // }
       }
-    )
+    ).sort({
+      inplay: -1,
+      openDate: -1
+    })
     const tennis = await  Events.find(
       {
         sportsId: 2,
@@ -1115,7 +1118,10 @@ async function bettorDashboardGames2(req, res) {
           $slice: ["$odds", 1]
         }
       }
-    )
+    ).sort({
+      inplay: -1,
+      openDate: -1
+    })
     const cricket = await  Events.find(
       {
         sportsId: "4",
@@ -1142,7 +1148,10 @@ async function bettorDashboardGames2(req, res) {
           $slice: ["$odds", 1]
         }
       }
-    )
+    ).sort({
+      inplay: -1,
+      openDate: -1
+    })
     const organizedEvents = {
       soccer: soccer,
       tennis: tennis,
