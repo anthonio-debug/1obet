@@ -9,14 +9,14 @@ const loginRouter     = express.Router();
 function getCurrentPosition(req, res) {
   try{
     const userId = req.decoded.userId;
-    
+    console.log("userId ======= ", userId);
     
     currentPosition.aggregate([
-      // {
-      //   $match: {
-      //     userId: userId
-      //   }
-      // },
+      {
+        $match: {
+          userId: userId
+        }
+      },
       // {
       //   "$lookup": {
       //     "from": "inplayevents",
