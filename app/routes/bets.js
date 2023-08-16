@@ -867,7 +867,7 @@ async function getMatchedBets(req, res) {
     const userIDs = await getAllUserIDs(createdByIDs);
     const matchId = req.query.id
 
-    if (loginUser.role === '5') {
+    if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
     }
 
