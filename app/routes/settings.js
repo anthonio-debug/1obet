@@ -923,45 +923,86 @@ async function bettorDashboardGames(req, res) {
   try {
     const sportsIdArray = ['1', '2', '4'];
 
-    const soccer = await  Events.find({
-      sportsId: 1,
-      status: 'OPEN',
-      $or: [
-        { inplay: true },
-        { 
-          $and: [
-            { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now()+10*60*60*1000}}
-          ]
+    const soccer = await  Events.find(
+      {
+        sportsId: 1,
+        status: 'OPEN',
+        $or: [
+          { inplay: true },
+          { 
+            $and: [
+              { openDate: { $gt: new Date().getTime()}},
+              { openDate: { $lt: Date.now()+10*60*60*1000}}
+            ]
+          }
+        ] 
+      },
+      {
+        _id: 1,
+        Id: 1,
+        openDate: 1,
+        name: 1,
+        competitionName: 1,
+        inplay: 1,
+        // oddsData: {
+        //   $slice: ["$odds", 1]
+        // }
+      }
+    )
+
+    const tennis = await  Events.find(
+      {
+        sportsId: 2,
+        status: 'OPEN',
+        $or: [
+          { inplay: true },
+          { 
+            $and: [
+              { openDate: { $gt: new Date().getTime()}},
+              { openDate: { $lt: Date.now()+10*60*60*1000}}
+            ]
+          }
+        ] 
+      },
+      {
+        _id: 1,
+        Id: 1,
+        openDate: 1,
+        name: 1,
+        competitionName: 1,
+        inplay: 1,
+        oddsData: {
+          $slice: ["$odds", 1]
         }
-      ] 
-    })
-    const tennis = await  Events.find({
-      sportsId: 2,
-      status: 'OPEN',
-      $or: [
-        { inplay: true },
-        { 
-          $and: [
-            { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now()+10*60*60*1000}}
-          ]
+      }
+    )
+
+    const cricket = await  Events.find(
+      {
+        sportsId: "4",
+        status: 'OPEN',
+        $or: [
+          { inplay: true },
+          { 
+            $and: [
+              { openDate: { $gt: new Date().getTime()}},
+              { openDate: { $lt: Date.now()+10*60*60*1000}}
+            ]
+          }
+        ] 
+      },
+      {
+        _id: 1,
+        Id: 1,
+        openDate: 1,
+        name: 1,
+        competitionName: 1,
+        inplay: 1,
+        oddsData: {
+          $slice: ["$odds", 1]
         }
-      ] 
-    })
-    const cricket = await  Events.find({
-      sportsId: "4",
-      status: 'OPEN',
-      $or: [
-        { inplay: true },
-        { 
-          $and: [
-            { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now()+10*60*60*1000}}
-          ]
-        }
-      ] 
-    })
+      }
+    )
 
 
     const selectedCasinoData = await SelectedCasino.aggregate([
@@ -993,41 +1034,84 @@ async function bettorDashboardGames(req, res) {
       }
     ]);
 
-    const greyHound = await Events.find({
-      sportsId: '4339',
-      status: 'OPEN',
-      $or: [
-        { inplay: true },
-        { 
-          $and: [
-            { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
-          ]
-        }
-      ] 
-    });
-
-    const horseRace = await Events.find({
-      sportsId: '7',
-      status: 'OPEN',
-      $or: [
-        { inplay: true },
-        { 
-          $and: [
-            { openDate: { $gt: new Date().getTime()}},
-            { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
-          ]
-        }
-      ] 
-    });
-
-    const inPlay = await Events.find({
-      sportsId: {
-        $in: sportsIdArray
+    const greyHound = await Events.find(
+      {
+        sportsId: '4339',
+        status: 'OPEN',
+        $or: [
+          { inplay: true },
+          { 
+            $and: [
+              { openDate: { $gt: new Date().getTime()}},
+              { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
+            ]
+          }
+        ] 
       },
-      status: 'OPEN',
-      inplay: true
-    });
+      {
+        _id: 1,
+        Id: 1,
+        openDate: 1,
+        name: 1,
+        competitionName: 1,
+        inplay: 1,
+      }
+    );
+
+    const horseRace = await Events.find(
+      {
+        sportsId: '7',
+        status: 'OPEN',
+        $or: [
+          { inplay: true },
+          { 
+            $and: [
+              { openDate: { $gt: new Date().getTime()}},
+              { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
+            ]
+          }
+        ] 
+      },
+      {
+        _id: 1,
+        Id: 1,
+        openDate: 1,
+        name: 1,
+        competitionName: 1,
+        inplay: 1,
+      }
+    );
+
+    const inPlay = await Events.find(
+      {
+        status: 'OPEN',
+        inplay: true,
+        $or:[
+          {
+            $and: [
+              { sportsId: "4"},
+              { iconStatus: true}
+            ]
+          },
+          {
+            sportsId: {
+              $in: ["1", "2"]
+            }
+          }
+        ]
+      }, 
+      {
+        _id: 1,
+        Id: 1,
+        openDate: 1,
+        name: 1,
+        competitionName: 1,
+        inplay: 1,
+        // oddsData: {
+        //   $slice: ["$odds", 1]
+        // }
+      }
+    );
 
     // const inPlay = inPlays.map(async (event)=>{
     //   log("event", event)
@@ -1064,18 +1148,18 @@ async function bettorDashboardGames(req, res) {
     //       as: 'odds'
     //   }},
     //   {
-    //     $project: {
-    //       _id: 1,
-    //       Id: 1,
-    //       openDate: 1,
-    //       name: 1,
-    //       competitionName: 1,
-    //       inplay: 1,
-    //       oddsData: {
-    //         $slice: ["$odds", 1]
-    //       }
-    //     }
-    //   },
+      //   $project: {
+      //     _id: 1,
+      //     Id: 1,
+      //     openDate: 1,
+      //     name: 1,
+      //     competitionName: 1,
+      //     inplay: 1,
+      //     oddsData: {
+      //       $slice: ["$odds", 1]
+      //     }
+      //   }
+      // },
     // ]).exec();
 
 
