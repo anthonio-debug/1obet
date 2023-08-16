@@ -1097,7 +1097,7 @@ async function bettorDashboardGames(req, res) {
               $in: ["1", "2"]
             },
             openDate: {
-              $lt: new Date().getTime() - 2*60*60*1000
+              $gt: new Date().getTime() - 2*60*60*1000
             }
           }
         ]
@@ -1175,7 +1175,7 @@ async function bettorDashboardGames(req, res) {
       inPlay: inPlay,
       casinoData: selectedCasinoData,
     };
-    
+
     res.status(200).json({
       success: true,
       message: 'Event By Sports Records',
