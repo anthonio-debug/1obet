@@ -119,6 +119,7 @@
   "searchSingleUser",
   "updateMatch",
   "bettorDashboardGames",
+  "bettorDashboardGames2",
   "getAllMatchSettlements",
   "getSelectedGamesBySearch",
   "getSelectedGamesCategories",

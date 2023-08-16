@@ -921,85 +921,6 @@ function updateMatch(req, res) {
 
 async function bettorDashboardGames(req, res) {
   try {
-    const soccer = await  Events.find(
-      {
-        sportsId: 1,
-        status: 'OPEN',
-        $or: [
-          { inplay: true },
-          { 
-            $and: [
-              { openDate: { $gt: new Date().getTime()}},
-              { openDate: { $lt: Date.now()+10*60*60*1000}}
-            ]
-          }
-        ] 
-      },
-      {
-        _id: 1,
-        Id: 1,
-        openDate: 1,
-        name: 1,
-        competitionName: 1,
-        inplay: 1,
-        // oddsData: {
-        //   $slice: ["$odds", 1]
-        // }
-      }
-    )
-    const tennis = await  Events.find(
-      {
-        sportsId: 2,
-        status: 'OPEN',
-        $or: [
-          { inplay: true },
-          { 
-            $and: [
-              { openDate: { $gt: new Date().getTime()}},
-              { openDate: { $lt: Date.now()+10*60*60*1000}}
-            ]
-          }
-        ] 
-      },
-      {
-        _id: 1,
-        Id: 1,
-        openDate: 1,
-        name: 1,
-        competitionName: 1,
-        inplay: 1,
-        oddsData: {
-          $slice: ["$odds", 1]
-        }
-      }
-    )
-    const cricket = await  Events.find(
-      {
-        sportsId: "4",
-        status: 'OPEN',
-        iconStatus: true,
-        $or: [
-          { inplay: true },
-          { 
-            $and: [
-              { openDate: { $gt: new Date().getTime()}},
-              { openDate: { $lt: Date.now()+10*60*60*1000}}
-            ]
-          }
-        ] 
-      },
-      {
-        _id: 1,
-        Id: 1,
-        openDate: 1,
-        name: 1,
-        competitionName: 1,
-        inplay: 1,
-        oddsData: {
-          $slice: ["$odds", 1]
-        }
-      }
-    )
     const selectedCasinoData = await SelectedCasino.aggregate([
       { $match: {'games.mobile': JSON.parse(req.query.isMobile)}},
       {
@@ -1116,56 +1037,6 @@ async function bettorDashboardGames(req, res) {
       }
     );
 
-    // const inPlay = inPlays.map(async (event)=>{
-    //   log("event", event)
-    //   event.odds = await  Odds.findOne({
-    //     eventId: event.Id
-    //   });
-    //   return event;
-    // })
-
-
-    // const inPlay =  Events.aggregate([
-    //   { $match: { 
-    //     inplay: true,
-    //     status: "OPEN",
-    //     $or:[
-    //       {
-    //         $and: [
-    //           { sportsId: "4"},
-    //           { iconStatus: true}
-    //         ]
-    //       },
-    //       {
-    //         sportsId: {
-    //           $in: ["1", "2"]
-    //         }
-    //       }
-    //     ]
-    //   }},
-    //   {
-    //     $lookup: {
-    //       from: 'odds', 
-    //       localField: 'Id', 
-    //       foreignField: 'eventId',
-    //       as: 'odds'
-    //   }},
-    //   {
-      //   $project: {
-      //     _id: 1,
-      //     Id: 1,
-      //     openDate: 1,
-      //     name: 1,
-      //     competitionName: 1,
-      //     inplay: 1,
-      //     oddsData: {
-      //       $slice: ["$odds", 1]
-      //     }
-      //   }
-      // },
-    // ]).exec();
-
-
     const organizedEvents = {
       soccer: soccer,
       tennis: tennis,
@@ -1174,6 +1045,111 @@ async function bettorDashboardGames(req, res) {
       greyhound: greyHound,
       inPlay: inPlay,
       casinoData: selectedCasinoData,
+    };
+
+    res.status(200).json({
+      success: true,
+      message: 'Event By Sports Records',
+      results: organizedEvents,
+    });
+
+
+
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({
+      success: false,
+      message: 'Failed to get events',
+      error: error.message,
+    });
+  }
+}
+
+async function bettorDashboardGames2(req, res) {
+  try {
+    const soccer = await  Events.find(
+      {
+        sportsId: 1,
+        status: 'OPEN',
+        $or: [
+          { inplay: true },
+          { 
+            $and: [
+              { openDate: { $gt: new Date().getTime()}},
+              { openDate: { $lt: Date.now()+10*60*60*1000}}
+            ]
+          }
+        ] 
+      },
+      {
+        _id: 1,
+        Id: 1,
+        openDate: 1,
+        name: 1,
+        competitionName: 1,
+        inplay: 1,
+        // oddsData: {
+        //   $slice: ["$odds", 1]
+        // }
+      }
+    )
+    const tennis = await  Events.find(
+      {
+        sportsId: 2,
+        status: 'OPEN',
+        $or: [
+          { inplay: true },
+          { 
+            $and: [
+              { openDate: { $gt: new Date().getTime()}},
+              { openDate: { $lt: Date.now()+10*60*60*1000}}
+            ]
+          }
+        ] 
+      },
+      {
+        _id: 1,
+        Id: 1,
+        openDate: 1,
+        name: 1,
+        competitionName: 1,
+        inplay: 1,
+        oddsData: {
+          $slice: ["$odds", 1]
+        }
+      }
+    )
+    const cricket = await  Events.find(
+      {
+        sportsId: "4",
+        status: 'OPEN',
+        iconStatus: true,
+        $or: [
+          { inplay: true },
+          { 
+            $and: [
+              { openDate: { $gt: new Date().getTime()}},
+              { openDate: { $lt: Date.now()+10*60*60*1000}}
+            ]
+          }
+        ] 
+      },
+      {
+        _id: 1,
+        Id: 1,
+        openDate: 1,
+        name: 1,
+        competitionName: 1,
+        inplay: 1,
+        oddsData: {
+          $slice: ["$odds", 1]
+        }
+      }
+    )
+    const organizedEvents = {
+      soccer: soccer,
+      tennis: tennis,
+      cricket: cricket,
     };
 
     res.status(200).json({
@@ -1626,6 +1602,7 @@ loginRouter.post('/updateMatchType', updateMatchType);
 loginRouter.get('/racesMarketList/:marketId', racesMarketList);
 loginRouter.post('/updateMatch', updateMatch);
 loginRouter.get('/bettorDashboardGames', bettorDashboardGames);
+loginRouter.get('/bettorDashboardGames2', bettorDashboardGames2);
 loginRouter.get('/getAllMatchSettlements', getAllMatchSettlements);
 loginRouter.post('/getAllGamesResults', getAllGamesResults);
 
