@@ -981,6 +981,7 @@ async function bettorDashboardGames(req, res) {
       {
         sportsId: "4",
         status: 'OPEN',
+        iconStatus: true,
         $or: [
           { inplay: true },
           { 
