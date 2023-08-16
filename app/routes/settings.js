@@ -974,7 +974,10 @@ async function bettorDashboardGames(req, res) {
         countryCode: 1,
         marketIds: 1
       }
-    );
+    ).sort({
+      inplay: -1,
+      openDate: -1
+    });
 
     const horseRace = await Events.find(
       {
@@ -1000,7 +1003,10 @@ async function bettorDashboardGames(req, res) {
         countryCode: 1,
         marketIds: 1
       }
-    );
+    ).sort({
+      inplay: -1,
+      openDate: -1
+    });
 
     const inPlay = await Events.find(
       {
@@ -1035,7 +1041,9 @@ async function bettorDashboardGames(req, res) {
         //   $slice: ["$odds", 1]
         // }
       }
-    );
+    ).sort({
+      openDate: -1
+    });
 
     const organizedEvents = {
       horseRace: horseRace,
