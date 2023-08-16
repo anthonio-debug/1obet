@@ -25,9 +25,9 @@ function getCurrentPosition(req, res) {
           "as": "matches"
         }
       },
-      {
-        "$unwind": "$matches"
-      },
+      // {
+      //   "$unwind": "$matches"
+      // },
       // {
       //   $group: {
       //     _id: "$matches.Id",
