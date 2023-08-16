@@ -21,7 +21,7 @@ function getCurrentPosition(req, res) {
         "$lookup": {
           "from": "inplayevents",
           "localField": "matchId",
-          "foreignField": "Id",
+          "foreignField": "_id",
           "as": "matches"
         }
       },
