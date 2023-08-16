@@ -921,8 +921,6 @@ function updateMatch(req, res) {
 
 async function bettorDashboardGames(req, res) {
   try {
-    const sportsIdArray = ['1', '2', '4'];
-
     const soccer = await  Events.find(
       {
         sportsId: 1,
@@ -949,7 +947,6 @@ async function bettorDashboardGames(req, res) {
         // }
       }
     )
-
     const tennis = await  Events.find(
       {
         sportsId: 2,
@@ -976,7 +973,6 @@ async function bettorDashboardGames(req, res) {
         }
       }
     )
-
     const cricket = await  Events.find(
       {
         sportsId: "4",
@@ -1004,8 +1000,6 @@ async function bettorDashboardGames(req, res) {
         }
       }
     )
-
-
     const selectedCasinoData = await SelectedCasino.aggregate([
       { $match: {'games.mobile': JSON.parse(req.query.isMobile)}},
       {
@@ -1044,7 +1038,7 @@ async function bettorDashboardGames(req, res) {
           { 
             $and: [
               { openDate: { $gt: new Date().getTime()}},
-              { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
+              { openDate: { $lt: Date.now() + 4 * 60 * 60 * 1000}}
             ]
           }
         ] 
@@ -1070,7 +1064,7 @@ async function bettorDashboardGames(req, res) {
           { 
             $and: [
               { openDate: { $gt: new Date().getTime()}},
-              { openDate: { $lt: Date.now() + 6 * 60 * 60 * 1000}}
+              { openDate: { $lt: Date.now() + 4 * 60 * 60 * 1000}}
             ]
           }
         ] 
@@ -1100,6 +1094,9 @@ async function bettorDashboardGames(req, res) {
           },
           {
             sportsId: {
+              openDate: {
+                $lt: new Date().getTime() - 2*60*60*1000
+              }
               $in: ["1", "2"]
             }
           }
