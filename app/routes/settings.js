@@ -1064,7 +1064,7 @@ async function bettorDashboardGames(req, res) {
           { 
             $and: [
               { openDate: { $gt: new Date().getTime()}},
-              { openDate: { $lt: Date.now() + 4 * 60 * 60 * 1000}}
+              { openDate: { $lt: Date.now() + 4*60*60*1000}}
             ]
           }
         ] 
@@ -1094,10 +1094,10 @@ async function bettorDashboardGames(req, res) {
           },
           {
             sportsId: {
-              openDate: {
-                $lt: new Date().getTime() - 2*60*60*1000
-              }
               $in: ["1", "2"]
+            },
+            openDate: {
+              $lt: new Date().getTime() - 2*60*60*1000
             }
           }
         ]
