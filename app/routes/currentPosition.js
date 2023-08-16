@@ -26,13 +26,13 @@ function getCurrentPosition(req, res) {
         }
       },
       {
-        "$unwind": "$matchs"
+        "$unwind": "$matches"
       },
       {
         $group: {
-          _id: "$matchs.Id",
+          _id: "$matches.Id",
           "name": {
-            "$first": "$match.name"
+            "$first": "$matches.name"
           },
           amount: {
             $sum: "$amount"
