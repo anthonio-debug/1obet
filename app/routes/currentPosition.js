@@ -18,27 +18,32 @@ function getCurrentPosition(req, res) {
         }
       },
       {
+        $addFields: {
+          '$inPlayEventId': {$toObjectId: $matchId}  
+        }
+      },
+      {
         "$lookup": {
           "from": "inplayevents",
-          "localField": "matchId",
+          "localField": "$inPlayEventId",
           "foreignField": "_id",
           "as": "matches"
         }
       },
-      // {
-      //   "$unwind": "$matches"
-      // },
-      // {
-      //   $group: {
-      //     _id: "$matches.Id",
-      //     "name": {
-      //       "$first": "$matches.name"
-      //     },
-      //     amount: {
-      //       $sum: "$amount"
-      //     }
-      //   }
-      // }
+      {
+        "$unwind": "$matches"
+      },
+      {
+        $group: {
+          _id: "$matches.Id",
+          "name": {
+            "$first": "$matches.name"
+          },
+          amount: {
+            $sum: "$amount"
+          }
+        }
+      }
     ], (err, currentPositionData)=>{
       if(err){
         return {
