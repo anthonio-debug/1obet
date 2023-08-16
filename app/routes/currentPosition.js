@@ -89,6 +89,9 @@ function getCurrentPosition(req, res) {
           "name": {
             "$first": "$matches.name"
           },
+          "sportsId": {
+            "$first": "$matches.sportsId"
+          },
           amount: {
             $sum: "$amount"
           }
