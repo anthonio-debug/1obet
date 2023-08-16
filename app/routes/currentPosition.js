@@ -12,11 +12,11 @@ function getCurrentPosition(req, res) {
     
     
     currentPosition.aggregate([
-      {
-        $match: {
-          userId: userId
-        }
-      },
+      // {
+      //   $match: {
+      //     userId: userId
+      //   }
+      // },
       // {
       //   "$lookup": {
       //     "from": "inplayevents",
