@@ -1055,6 +1055,8 @@ async function bettorDashboardGames(req, res) {
         name: 1,
         competitionName: 1,
         inplay: 1,
+        countryCode: 1,
+        marketIds: 1
       }
     );
 
@@ -1079,6 +1081,8 @@ async function bettorDashboardGames(req, res) {
         name: 1,
         competitionName: 1,
         inplay: 1,
+        countryCode: 1,
+        marketIds: 1
       }
     );
 
