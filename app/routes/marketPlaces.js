@@ -76,8 +76,6 @@ async function getAllMarketTypes(req, res) {
     const blockedMarkets = user.blockedMarketPlaces;
     const blockedSubMarkets = user.blockedSubMarkets;
 
-
-
     const data = await MarketType.aggregate([
       { 
         $lookup: {
@@ -111,79 +109,13 @@ async function getAllMarketTypes(req, res) {
           }
         }
       }
-    ])
+    ]);
 
     return res.send({
       success: true,
       message: 'MARKET_TYPES_FETCHED_SUCCESSFULLY',
       results: data,
     });
-      
-      
-      
-    //   query, (err, results) => {
-    //   if (err) {
-    //     return res
-    //       .status(404)
-    //       .send({ message: 'MARKET_TYPES_PAGINATION_FAILED' });
-    //   }
-    //   const marketTypes = results.map((result) => {
-    //     const {
-    //       _id,
-    //       marketId,
-    //       marketName,
-    //       name,
-    //       lightIcon,
-    //       darkIcon,
-    //       createdAt,
-    //       __v,
-    //       updatedAt,
-    //       link,
-    //       subMarketTypes,
-    //     } = result;
-    //     let status = 1; // default status is 1
-
-    //     // Check if the market type is blocked
-    //     if (blockedMarkets.includes(marketId)) {
-    //       status = 0;
-    //     }
-
-    //     const subMarketStatuses = subMarketTypes.map((subMarketType) => {
-    //       const isBlockedSubMarket = blockedSubMarkets.includes(
-    //         subMarketType.subMarketId
-    //       );
-    //       return {
-    //         _id: subMarketType._id,
-    //         subMarketId: subMarketType.subMarketId,
-    //         name: subMarketType.name,
-    //         marketId: subMarketType.marketId,
-    //         status: isBlockedSubMarket ? 0 : 1,
-    //         createdAt: subMarketType.createdAt,
-    //       };
-    //     });
-
-    //     return {
-    //       _id,
-    //       marketId,
-    //       status,
-    //       marketName,
-    //       name,
-    //       lightIcon,
-    //       darkIcon,
-    //       createdAt,
-    //       __v,
-    //       updatedAt,
-    //       link,
-    //       subMarketTypes: subMarketStatuses,
-    //     };
-    //   });
-
-    //   return res.send({
-    //     success: true,
-    //     message: 'MARKET_TYPES_FETCHED_SUCCESSFULLY',
-    //     results: marketTypes,
-    //   });
-    // });
   });
 }
 
