@@ -49,6 +49,7 @@ async function getAllSportsHighlight(req, res) {
           data: {
             $push: {
               match: '$name',
+              openDate: '$openDate',
               sportsId: '$sportsId',
               matchType: '$matchType',
               amount: '$amount',
