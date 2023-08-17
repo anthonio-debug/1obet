@@ -80,7 +80,7 @@ async function getAllMarketTypes(req, res) {
       { 
         $lookup: {
           from: 'submarkettypes',
-          localField: 'marketId',
+          localField: 'Id',
           foreignField: 'marketId',
           as: 'subMarkets',
         }
