@@ -143,7 +143,6 @@ async function placeBet(req, res) {
     marketId = eventDetail.sportsId;
     market = eventDetail.marketIds[0];
 
-
     // Checks for Market Places & Sub Markets  
     if (marketId == '7' || marketId == '4339'){
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();

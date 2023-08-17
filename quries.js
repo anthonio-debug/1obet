@@ -230,6 +230,229 @@ db.sidebarmenus.insertMany([
   },
 ]);
 
+
+db.markettypes.insertMany([
+  {
+    Id: '6',
+    name: 'All Casino',
+  },
+  {
+    Id: '4',
+    name: 'cricket',
+  },
+  {
+    Id: '2',
+    name: 'Tennis',
+  },
+  {
+    Id: '1',
+    name: 'Soccer',
+  },
+  {
+    Id: '7',
+    name: 'Horse Race',
+  },
+  {
+    Id: '4339',
+    name: 'Grey Hound',
+  }
+]);
+
+db.submarkettypes.insertMany([
+  {
+    Id: '1',
+    name: 'Ezugi Casino',
+    marketId: '6',
+  },
+  {
+    Id: '2',
+    name: 'evolution Casino',
+    marketId: '6',
+  },
+  {
+    Id: '3',
+    name: 'Betfair Games',
+    marketId: '6',
+  },
+  {
+    Id: '4',
+    name: 'Star Casino',
+    marketId: '6',
+  },
+  {
+    Id: '5',
+    name: 'Super Nowa',
+    marketId: '6',
+  },
+
+  {
+    Id: '6',
+    marketId: '4',
+    name: 'Match Odds',
+  },
+  {
+    Id: '7',
+    name: 'Fancy',
+    marketId: '4',
+  },
+  {
+    Id: '8',
+    marketId: '4',
+    name: 'Book Maker',
+  },
+  {
+    Id: '9',
+    name: 'Figure',
+    marketId: '4',
+  },
+  {
+    Id: '10',
+    name: 'Even / Odd',
+    marketId: '4',
+  },
+  {
+    Id: '11',
+    marketId: '4',
+    name: 'Toss',
+  },
+  {
+    Id: '12',
+    marketId: '4',
+    name: 'Cup Winner',
+  },
+
+  {
+    Id: '13',
+    marketId: '1',
+    name: 'Match Odds',
+  },
+  {
+    Id: '14',
+    name: 'Over/Under Goals',
+    marketId: '1',
+  },
+
+  {
+    Id: '15',
+    marketId: '2',
+    name: 'Match Odds',
+  },
+
+
+  {
+    Id: '16',
+    marketId: '7',
+    name: 'Dubai',
+    countryCode: 'AE',
+  },
+  {
+    Id: '17',
+    marketId: '7',
+    name: 'Australia',
+    countryCode: 'AU',
+  },
+  {
+    Id: '18',
+    marketId: '7',
+    name: 'Bahrain',
+    countryCode: 'BH',
+  },
+  {
+    Id: '19',
+    marketId: '7',
+    name: 'France',
+    countryCode: 'FR',
+  },
+  {
+    Id: '20',
+    marketId: '7',
+    name: 'England',
+    countryCode: 'GB',
+  },
+  {
+    Id: '21',
+    marketId: '7',
+    name: 'England (PLACE)',
+    countryCode: 'GB',
+  },
+  {
+    Id: '22',
+    marketId: '7',
+    name: 'Ireland',
+    countryCode: 'IE',
+  },
+  {
+    subMarketId: '23',
+    marketId: '7',
+    name: 'Ireland (PLACE)',
+    countryCode: 'IE',
+  },
+  {
+    Id: '24',
+    marketId: '7',
+    name: 'New Zealand',
+    countryCode: 'NZ',
+  },
+  {
+    Id: '25',
+    marketId: '7',
+    name: 'Sweden',
+    countryCode: 'SE',
+  },
+  {
+    Id: '26',
+    marketId: '7',
+    name: 'Singapore',
+    countryCode: 'SG',
+  },
+  {
+    Id: '27',
+    marketId: '7',
+    name: 'America',
+    countryCode: 'US',
+  },
+  {
+    Id: '28',
+    marketId: '7',
+    name: 'Africa',
+    countryCode: 'ZA',
+  },
+
+  {
+    Id: '29',
+    marketId: '4339',
+    name: 'Australia',
+    countryCode: 'AU',
+  },
+  {
+    Id: '30',
+    marketId: '4339',
+    name: 'Britian',
+    countryCode: 'GB',
+  },
+  {
+    Id: '31',
+    marketId: '4339',
+    name: 'Ireland',
+    countryCode: 'IE',
+  },
+  {
+    Id: '32',
+    marketId: '4339',
+    name: 'New Zealand',
+    countryCode: 'NZ',
+  },
+  {
+    Id: '33',
+    marketId: '4339',
+    name: 'Africa',
+    countryCode: 'ZA',
+  }
+]);
+
+
+
+
 db.bettingfigures.insertMany([
   {
     name: "Digit rate" ,

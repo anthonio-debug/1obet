@@ -68,94 +68,121 @@ function addSubMarketTypes(req, res) {
   });
 }
 
-function getAllMarketTypes(req, res) {
-  console.log('in here');
-  User.findOne({ userId: req.decoded.userId }, (err, user) => {
+async function getAllMarketTypes(req, res) {
+  User.findOne({ userId: req.decoded.userId }, async (err, user) => {
     if (err || !user) {
-      return res.status(404).send({ message: 'USER_NOT_FOUND' });
+      return res.status(404).send({ message: 'Something went wrong' });
     }
     const blockedMarkets = user.blockedMarketPlaces;
     const blockedSubMarkets = user.blockedSubMarkets;
-    console.log('blockedMarkets', blockedMarkets);
-    console.log('blockedSubMarkets', blockedSubMarkets);
 
-    // Build the dynamic query based on the blocked markets and submarkets
-    const query = [
-      {
+
+
+    const data = await MarketType.aggregate([
+      { 
         $lookup: {
           from: 'submarkettypes',
           localField: 'marketId',
           foreignField: 'marketId',
           as: 'subMarketTypes',
-        },
-      },
-    ];
-
-    MarketType.aggregate(query, (err, results) => {
-      if (err) {
-        return res
-          .status(404)
-          .send({ message: 'MARKET_TYPES_PAGINATION_FAILED' });
-      }
-
-      // set the status to 0 for blocked markets and submarkets, 1 otherwise
-      const marketTypes = results.map((result) => {
-        const {
-          _id,
-          marketId,
-          marketName,
-          name,
-          lightIcon,
-          darkIcon,
-          createdAt,
-          __v,
-          updatedAt,
-          link,
-          subMarketTypes,
-        } = result;
-        let status = 1; // default status is 1
-
-        // Check if the market type is blocked
-        if (blockedMarkets.includes(marketId)) {
-          status = 0;
         }
+      },
+      {
+        $project: {
+          _id: 0,
+          marketId: '$Id',
+          marketName: '$name',
+          status: {
+            $cond: {
+              if: { $in: ["$Id", blockedMarkets] },
+              then: true,
+              else: false
+            }
+          }
+          
 
-        const subMarketStatuses = subMarketTypes.map((subMarketType) => {
-          const isBlockedSubMarket = blockedSubMarkets.includes(
-            subMarketType.subMarketId
-          );
-          return {
-            _id: subMarketType._id,
-            subMarketId: subMarketType.subMarketId,
-            name: subMarketType.name,
-            marketId: subMarketType.marketId,
-            status: isBlockedSubMarket ? 0 : 1,
-            createdAt: subMarketType.createdAt,
-          };
-        });
+          // subMarkets: {
+          //   $cond: {
+          //     if: { $lte: ["$distance", 500] },
+          //     then: "$$REMOVE",
+          //     else: "$distance"
+          //   }
+          // },
+        }
+      }
+    ])
 
-        return {
-          _id,
-          marketId,
-          status,
-          marketName,
-          name,
-          lightIcon,
-          darkIcon,
-          createdAt,
-          __v,
-          updatedAt,
-          link,
-          subMarketTypes: subMarketStatuses,
-        };
-      });
-
-      return res.send({
-        success: true,
-        message: 'MARKET_TYPES_FETCHED_SUCCESSFULLY',
-        results: marketTypes,
-      });
+    return res.send({
+      success: true,
+      message: 'MARKET_TYPES_FETCHED_SUCCESSFULLY',
+      results: data,
     });
+      
+      
+      
+    //   query, (err, results) => {
+    //   if (err) {
+    //     return res
+    //       .status(404)
+    //       .send({ message: 'MARKET_TYPES_PAGINATION_FAILED' });
+    //   }
+    //   const marketTypes = results.map((result) => {
+    //     const {
+    //       _id,
+    //       marketId,
+    //       marketName,
+    //       name,
+    //       lightIcon,
+    //       darkIcon,
+    //       createdAt,
+    //       __v,
+    //       updatedAt,
+    //       link,
+    //       subMarketTypes,
+    //     } = result;
+    //     let status = 1; // default status is 1
+
+    //     // Check if the market type is blocked
+    //     if (blockedMarkets.includes(marketId)) {
+    //       status = 0;
+    //     }
+
+    //     const subMarketStatuses = subMarketTypes.map((subMarketType) => {
+    //       const isBlockedSubMarket = blockedSubMarkets.includes(
+    //         subMarketType.subMarketId
+    //       );
+    //       return {
+    //         _id: subMarketType._id,
+    //         subMarketId: subMarketType.subMarketId,
+    //         name: subMarketType.name,
+    //         marketId: subMarketType.marketId,
+    //         status: isBlockedSubMarket ? 0 : 1,
+    //         createdAt: subMarketType.createdAt,
+    //       };
+    //     });
+
+    //     return {
+    //       _id,
+    //       marketId,
+    //       status,
+    //       marketName,
+    //       name,
+    //       lightIcon,
+    //       darkIcon,
+    //       createdAt,
+    //       __v,
+    //       updatedAt,
+    //       link,
+    //       subMarketTypes: subMarketStatuses,
+    //     };
+    //   });
+
+    //   return res.send({
+    //     success: true,
+    //     message: 'MARKET_TYPES_FETCHED_SUCCESSFULLY',
+    //     results: marketTypes,
+    //   });
+    // });
   });
 }
 
