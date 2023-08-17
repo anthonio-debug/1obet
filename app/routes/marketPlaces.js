@@ -87,18 +87,20 @@ async function getAllMarketTypes(req, res) {
           as: 'subMarketTypes',
         }
       },
-      {
-        $project: {
-          _id: 0,
-          marketId: '$Id',
-          marketName: '$name',
-          status: {
-            $cond: {
-              if: { $in: ["$Id", blockedMarkets] },
-              then: true,
-              else: false
-            }
-          }
+      // {
+        // $project: {
+          // marketId: '$Id',
+          // marketName: '$name',
+          // status: {
+          //   $cond: {
+          //     if: { $in: ["$Id", blockedMarkets] },
+          //     then: 1,
+          //     else: 0
+          //   }
+          // },
+          // subMarkets: {
+
+          // }
           
 
           // subMarkets: {
@@ -108,8 +110,8 @@ async function getAllMarketTypes(req, res) {
           //     else: "$distance"
           //   }
           // },
-        }
-      }
+        // }
+      // }
     ])
 
     return res.send({
