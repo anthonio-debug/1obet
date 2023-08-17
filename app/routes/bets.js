@@ -941,18 +941,19 @@ async function getMatchedBets(req, res) {
       return res.status(200).send({ message: 'Matched bets not found', data: [] });
     }
 
-    // const eventId = await Events.findById(matchId);
-    // const relatedEvents  = await Events.find({
-    //   sportId: eventId.sportId
-    // }).sort({  })
-
-
-
+    const eventId = await Events.findById(matchId);
+    const relatedEvents  = await Events.find({
+      sportId: eventId.sportId,
+      openDate: {
+        $gt: eventId.openDate
+      }
+    }).limit(5)
 
     return res.send({
       success: true,
       message: 'Matched bets record found',
-      data: matchedBets
+      data: matchedBets,
+      events: relatedEvents
     });
   } catch (err) {
     console.error('Aggregation error:', err);
