@@ -34,6 +34,7 @@ async function getAllSportsHighlight(req, res) {
           matchStopStatus:1,
           matchCanceledStatus:1,
           matchResumedStatus:1,
+          openDate: 1,
           oddsData: { $arrayElemAt: ['$oddsData', 0] },
         },
       },

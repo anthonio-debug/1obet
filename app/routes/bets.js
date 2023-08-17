@@ -936,9 +936,18 @@ async function getMatchedBets(req, res) {
       }
     ]).exec();
 
+
     if (!matchedBets || matchedBets.length === 0) {
       return res.status(200).send({ message: 'Matched bets not found', data: [] });
     }
+
+    // const eventId = await Events.findById(matchId);
+    // const relatedEvents  = await Events.find({
+    //   sportId: eventId.sportId
+    // }).sort({  })
+
+
+
 
     return res.send({
       success: true,
