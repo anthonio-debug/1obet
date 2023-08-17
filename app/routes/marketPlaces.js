@@ -105,8 +105,8 @@ async function getAllMarketTypes(req, res) {
           "subMarkets.status": {
             $cond: {
               if: { $in: ["$subMarkets.Id", blockedSubMarkets] },
-              then: 1,
-              else: 0
+              then: 0,
+              else: 1
             }
           }
         }
