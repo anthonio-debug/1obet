@@ -16,7 +16,7 @@ let SportsBookSchema = new Schema({
     createdAt: { type: Number },
 });
 
-betLimitsSchema.pre('save', function (next) {
+SportsBookSchema.pre('save', function (next) {
   var now = new Date().getTime();
   if (!this.createdAt) {
     this.createdAt = now;
