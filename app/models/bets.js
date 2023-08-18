@@ -32,7 +32,7 @@ const betSchema = new mongoose.Schema({
 });
 
 betSchema.pre('save', function (next) {
-  var now = new Date().getTime() / 1000;
+  var now = new Date().getTime();
   if (!this.createdAt) {
     this.createdAt = now;
   } else {

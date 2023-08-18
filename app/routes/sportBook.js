@@ -44,7 +44,7 @@ async function getAllSportsBookGames(req, res) {
         return res.send({
         success: true,
         message: 'Markets updated successfully',
-        data: "response.data"
+        data: response.data
         });
   
     } catch (err) {

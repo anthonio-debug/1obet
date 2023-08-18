@@ -1,10 +1,7 @@
-/* eslint no-unused-vars: "off" */
 let mongoose = require('mongoose');
 let Schema = mongoose.Schema;
 mongoose.set('debug', false);
-// let Global = require('../global/settings')
-
-let betLimitsSchema = new Schema({
+let SportsBookSchema = new Schema({
   name: { type: String, required: true },
   maxAmount: { type: Number, required: true },
   updatedAt: { type: Number },
@@ -22,6 +19,6 @@ betLimitsSchema.pre('save', function (next) {
   next();
 });
 
-const betLimits = mongoose.model('betLimits', betLimitsSchema);
+const SportsBook = mongoose.model('SportsBook', SportsBookSchema);
 
-module.exports = betLimits;
+module.exports = SportsBook;

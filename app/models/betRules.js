@@ -11,7 +11,7 @@ const betRulesSchema = new mongoose.Schema({
 });
 
 betRulesSchema.pre('save', function (next) {
-  var now = new Date().getTime() / 1000;
+  var now = new Date().getTime();
   if (!this.createdAt) {
     this.createdAt = now;
   } else {
