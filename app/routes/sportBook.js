@@ -44,7 +44,7 @@ async function getAllSportsBookGames(req, res) {
         return res.send({
         success: true,
         message: 'Markets updated successfully',
-        data: response.data
+        data: "response.data"
         });
   
     } catch (err) {
@@ -53,18 +53,6 @@ async function getAllSportsBookGames(req, res) {
     }
 }
 
-
-
-
-loginRouter.get(
-  '/sportsBook',
-  sportsBook
-);
-loginRouter.get(
-    '/getAllSportsBookGames',
-    getAllSportsBookGames
-  );
-
-
-
+loginRouter.get( '/sportsBook', sportsBook );
+loginRouter.get( '/getAllSportsBookGames', getAllSportsBookGames );
 module.exports = { loginRouter };
