@@ -61,7 +61,7 @@ async function getAllSportsBookGames(req, res) {
           },
         }));
 
-        const SportsBooks = await SportsBook.bulkWrite(games);
+        // const SportsBooks = await SportsBook.bulkWrite(games);
         return res.send({
           success: true,
           message: 'Markets updated successfully',
