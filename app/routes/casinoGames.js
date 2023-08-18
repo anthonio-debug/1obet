@@ -9,18 +9,27 @@ let config = require('config');
 const User = require('../models/user');
 
 async function addCasinoGameDetails(req, res) {
-  if( req.decoded.role !== '0' ){
-    return res.status(200).send({ message: 'you are not allowed to add games',success:false})
+  if( req.decoded.role != '5' ){
+    return res.status(200).send({ 
+      success:false,
+      message: 'you are not allowed to add games',
+  })
   }
   try {
     const response = await axios.post(config.apiUrl, {
-      api_password: config.api_password,
-      api_login: config.api_username,
-      method: 'getGameList',
-      show_additional: true,
-      show_systems: 1,
-      currency: 'PKR',
-    });
+
+      "api_password": "b16gWs7e0QAASLTne0",
+      "api_login": "1obet_mc_s",
+      "method": "getGame",
+      "lang": "en",
+      "user_username": "user_2151",
+      "user_password": "user_2151",
+      "homeurl": "https://1obet.com",
+      "gameid": "di#di-sportsbook",
+      "play_for_fun": false,
+      "currency": "PKR"
+  
+  });
 
     console.log('Response:', response.data);
     const gameList = response.data.response;
