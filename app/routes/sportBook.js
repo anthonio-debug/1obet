@@ -1,8 +1,9 @@
-const express = require('express');
-const loginRouter = express.Router();
-const axios = require('axios');
-const User = require('../models/user');
-const SportsBooks = require('../models/sportsBook');
+const express       = require('express');
+const loginRouter   = express.Router();
+const axios         = require('axios');
+const User          = require('../models/user');
+// const SportsBooks   = require('../models/sportsBook');
+
 async function sportsBook(req, res) {
   try {
     const user_username = `user_${req.decoded.userId}`
