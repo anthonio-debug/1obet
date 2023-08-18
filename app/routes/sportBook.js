@@ -5,7 +5,7 @@ const User          = require('../models/user');
 const SportsBooks   = require('../models/sportsBook');
 
 
-async function getAllSportsBookGamesFromThirdParty(req, res) {
+async function sportGamesList(req, res) {
   try {
     const games  = await SportsBooks.find({}).limit(10);
     return res.send({
