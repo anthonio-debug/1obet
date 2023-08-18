@@ -12,7 +12,7 @@ let subMarketTypesSchema = new Schema({
   status: { type: Number, required: true },
   updatedAt: { type: Number },
   createdAt: { type: Number },
-  subMarketId: { type: String },
+  Id: { type: Number },
 });
 
 subMarketTypesSchema.pre('save', function (next) {

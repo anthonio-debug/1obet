@@ -7,6 +7,7 @@ const MarketType = require('../models/marketTypes');
 const Events = require('../models/events');
 const SubMarketType = require('../models/subMarketTypes');
 
+
 const loginRouter = express.Router();
 
 async function addBetLock(req, res) {
@@ -15,7 +16,26 @@ async function addBetLock(req, res) {
     if (!errors.isEmpty()) {
       return res.status(400).send({ errors: errors.errors });
     }
-    const { selectedUsers, allUsers, subMarketNames, betLockStatus, matchId, otherMarkets } = req.body;
+    const { matchId, allUsers, lock, matchOdds, users } = req.body;
+
+    if(matchOdds){
+
+    }else {
+      
+    }
+
+    if(allUsers && lock){
+
+    } else if(allUsers && !lock){
+
+    } else if(!allUsers && lock){
+
+    } else if(!allUsers && lock){
+
+    }
+
+
+
     const query = { isDeleted: false, userId: { $ne: req.decoded.userId } };
     query.createdBy = Number(req.decoded.userId);
 
