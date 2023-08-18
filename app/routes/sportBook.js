@@ -2,7 +2,7 @@ const express = require('express');
 const loginRouter = express.Router();
 const axios = require('axios');
 const User = require('../models/user');
-const SportsBook = require('../models/sportsBook')
+const SportsBook = require('../models/sportsBook');
 async function sportsBook(req, res) {
   try {
     const user_username = `user_${req.decoded.userId}`
@@ -61,11 +61,10 @@ async function getAllSportsBookGames(req, res) {
           },
         }));
 
-        const SportsBook = await SportsBook.bulkWrite(games);
+        const SportsBooks = await SportsBook.bulkWrite(games);
         return res.send({
-        success: true,
-        message: 'Markets updated successfully',
-        data: response.data.response  
+          success: true,
+          message: 'Markets updated successfully',
         });
   
     } catch (err) {
