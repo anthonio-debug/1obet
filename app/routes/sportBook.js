@@ -4,6 +4,21 @@ const axios         = require('axios');
 const User          = require('../models/user');
 const SportsBooks   = require('../models/sportsBook');
 
+
+async function getAllSportsBookGamesFromThirdParty(req, res) {
+  try {
+    const games  = await SportsBooks.find({}).limit(10);
+    return res.send({
+      success: true,
+      message: 'Markets updated successfully',
+      results: games
+    });
+  } catch (err) {
+      console.error(err);
+      res.status(404).send({ message: 'Something went wrong ' });
+  }
+}
+
 async function sportsBook(req, res) {
   try {
     const user_username = `user_${req.decoded.userId}`
@@ -31,7 +46,6 @@ async function sportsBook(req, res) {
     res.status(404).send({ message: 'Something went wrong' });
   }
 }
-
 
 async function getAllSportsBookGamesFromThirdParty(req, res) {
   try {
@@ -73,7 +87,7 @@ async function getAllSportsBookGamesFromThirdParty(req, res) {
       res.status(404).send({ message: 'Something went wrong ' });
   }
 }
-
-loginRouter.get( '/sportsBook', sportsBook );
+loginRouter.get( '/sportGamesList', sportGamesList );
 loginRouter.get( '/getAllSportsBookGamesFromThirdParty', getAllSportsBookGamesFromThirdParty );
+loginRouter.get( '/sportsBook', sportsBook );
 module.exports = { loginRouter };

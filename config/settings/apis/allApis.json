@@ -127,5 +127,6 @@
   "SettleMatch",
   "getAllGamesResults",
   "sportsBook",
-  "getAllSportsBookGamesFromThirdParty"
+  "getAllSportsBookGamesFromThirdParty",
+  "sportGamesList"
 ]
