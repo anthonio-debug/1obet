@@ -8,7 +8,7 @@ async function sportsBook(req, res) {
     const response = await axios.post("https://em-api.thegameprovider.com/api/seamless/provider",{
         "api_password": "b16gWs7e0QAASLTne0",
         "api_login": "1obet_mc_s",
-        "method": "getGameDirect",
+        "method": "getGame",
         "lang": "en",
         "user_username": user_username,
         "user_password": user_username,
