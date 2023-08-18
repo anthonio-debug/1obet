@@ -6,13 +6,15 @@ async function sportsBook(req, res) {
   try {
     // 
     const response = await axios.post("https://em-api.thegameprovider.com/api/seamless/provider", {
-        api_password: config.api_password,
-        api_login: config.api_username,
-        method: 'getGameList',
-        show_additional: true,
-        show_systems: 1,
-        currency: 'PKR',
-      });
+        {
+            "api_login": "1obet_mc_s",
+            "api_password": "b16gWs7e0QAASLTne0",
+            "method": "getGameDirect",
+            "show_systems": 1,
+            "show_additional": true,
+            "currency": "PKR"
+        }
+      );
 
       return res.send({
         success: true,
