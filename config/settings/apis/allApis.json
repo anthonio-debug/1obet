@@ -126,5 +126,6 @@
   "getGameDirect",
   "SettleMatch",
   "getAllGamesResults",
-  "sportsBook"
+  "sportsBook",
+  "getAllSportsBookGames"
 ]
