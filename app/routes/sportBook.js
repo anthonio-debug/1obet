@@ -21,7 +21,7 @@ async function sportsBook(req, res) {
     return res.send({
     success: true,
     message: 'Markets updated successfully',
-    data: response
+    data: response.data
     });
 
   } catch (err) {
