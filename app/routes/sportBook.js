@@ -1,9 +1,9 @@
 const express = require('express');
 const loginRouter = express.Router();
-const axios = require('axios')const User = require('../models/user');
+const axios = require('axios');
+const User = require('../models/user');
 async function sportsBook(req, res) {
   try {
-    // const user = await  User.findOne({ userId: req.decoded.userId })
     const user_username = `user_${req.decoded.userId}`
     const response = await axios.post("https://em-api.thegameprovider.com/api/seamless/provider",{
         "api_password": "b16gWs7e0QAASLTne0",
