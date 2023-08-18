@@ -1,12 +1,19 @@
-let mongoose = require('mongoose');
-let Schema = mongoose.Schema;
+let mongoose    = require('mongoose');
+let Schema      = mongoose.Schema;
 mongoose.set('debug', false);
+
 let SportsBookSchema = new Schema({
-  name: { type: String, required: true },
-  maxAmount: { type: Number, required: true },
-  updatedAt: { type: Number },
-  createdAt: { type: Number },
-  sportsId: { type: String }
+    id: { type: Number },
+    id_hash: { type: String },
+    name: { type: String },
+    type: { type: String },
+    subcategory: { type: String },
+    category: { type: String },
+    gameName: { type: String },
+    image_preview: { type: String },
+    provider_name: { type: String },
+    createdAt: { type: Number },
+    createdAt: { type: Number },
 });
 
 betLimitsSchema.pre('save', function (next) {
