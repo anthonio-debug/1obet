@@ -33,14 +33,14 @@ async function sportsBook(req, res) {
 
 async function getAllSportsBookGames(req, res) {
     try {
-        const response = await axios.post("https://em-api.thegameprovider.com/api/seamless/provider",{
-            "api_login": "1obet_mc_s",
-            "api_password": "b16gWs7e0QAASLTne0",
-            "method": "getGameList",
-            "show_systems": 1,
-            "show_additional": true,
-            "currency": "PKR"
-        });
+        // const response = await axios.post("https://em-api.thegameprovider.com/api/seamless/provider",{
+        //     "api_login": "1obet_mc_s",
+        //     "api_password": "b16gWs7e0QAASLTne0",
+        //     "method": "getGameList",
+        //     "show_systems": 1,
+        //     "show_additional": true,
+        //     "currency": "PKR"
+        // });
 
         // const games = response.data.response.map((element) => ({
         //   updateOne: {
