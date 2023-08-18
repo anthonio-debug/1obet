@@ -42,24 +42,24 @@ async function getAllSportsBookGames(req, res) {
             "currency": "PKR"
         });
 
-        const games = response.data.response.map((element) => ({
-          updateOne: {
-            filter: { id: element.id },
-            update: {
-              $set: {
-                id_hash: element.id_hash,
-                name: element.name,
-                type: element.type,
-                subcategory: element.subcategory,
-                category: element.category,
-                gameName: element.gamename,
-                image_preview: element.image_preview,
-                provider_name: element.provider_name
-              },
-            },
-            upsert: true,
-          },
-        }));
+        // const games = response.data.response.map((element) => ({
+        //   updateOne: {
+        //     filter: { id: element.id },
+        //     update: {
+        //       $set: {
+        //         id_hash: element.id_hash,
+        //         name: element.name,
+        //         type: element.type,
+        //         subcategory: element.subcategory,
+        //         category: element.category,
+        //         gameName: element.gamename,
+        //         image_preview: element.image_preview,
+        //         provider_name: element.provider_name
+        //       },
+        //     },
+        //     upsert: true,
+        //   },
+        // }));
 
         // const SportsBooks = await SportsBook.bulkWrite(games);
         return res.send({
