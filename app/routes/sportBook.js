@@ -35,44 +35,39 @@ async function sportsBook(req, res) {
 
 async function getAllSportsBookGamesFromThirdParty(req, res) {
   try {
+    const response = await axios.post("https://em-api.thegameprovider.com/api/seamless/provider",{
+        "api_login": "1obet_mc_s",
+        "api_password": "b16gWs7e0QAASLTne0",
+        "method": "getGameList",
+        "show_systems": 1,
+        "show_additional": true,
+        "currency": "PKR"
+    });
+
+    const games = response.data.response.map((element) => ({
+      updateOne: {
+        filter: { id: element.id },
+        update: {
+          $set: {
+            id_hash: element.id_hash,
+            name: element.name,
+            type: element.type,
+            subcategory: element.subcategory,
+            category: element.category,
+            gameName: element.gamename,
+            image_preview: element.image_preview,
+            provider_name: element.provider_name
+          },
+        },
+        upsert: true,
+      },
+    }));
+
+    const SportsBooks = await SportsBook.bulkWrite(games);
     return res.send({
       success: true,
       message: 'Markets updated successfully',
     });
-      // const response = await axios.post("https://em-api.thegameprovider.com/api/seamless/provider",{
-      //     "api_login": "1obet_mc_s",
-      //     "api_password": "b16gWs7e0QAASLTne0",
-      //     "method": "getGameList",
-      //     "show_systems": 1,
-      //     "show_additional": true,
-      //     "currency": "PKR"
-      // });
-
-      // const games = response.data.response.map((element) => ({
-      //   updateOne: {
-      //     filter: { id: element.id },
-      //     update: {
-      //       $set: {
-      //         id_hash: element.id_hash,
-      //         name: element.name,
-      //         type: element.type,
-      //         subcategory: element.subcategory,
-      //         category: element.category,
-      //         gameName: element.gamename,
-      //         image_preview: element.image_preview,
-      //         provider_name: element.provider_name
-      //       },
-      //     },
-      //     upsert: true,
-      //   },
-      // }));
-
-      // const SportsBooks = await SportsBook.bulkWrite(games);
-      return res.send({
-        success: true,
-        message: 'Markets updated successfully',
-      });
-
   } catch (err) {
       console.error(err);
       res.status(404).send({ message: 'Something went wrong ' });
