@@ -2,7 +2,7 @@ const express       = require('express');
 const loginRouter   = express.Router();
 const axios         = require('axios');
 const User          = require('../models/user');
-// const SportsBooks   = require('../models/sportsBook');
+const SportsBooks   = require('../models/sportsBook');
 
 async function sportsBook(req, res) {
   try {
@@ -63,7 +63,7 @@ async function getAllSportsBookGamesFromThirdParty(req, res) {
       },
     }));
 
-    const SportsBooks = await SportsBook.bulkWrite(games);
+    const SportsBookRes = await SportsBooks.bulkWrite(games);
     return res.send({
       success: true,
       message: 'Markets updated successfully',
