@@ -37,7 +37,7 @@ async function getAllSportsBookGamesFromThirdParty(req, res) {
     const SportsBookRes = await SportsBooks.bulkWrite(games);
     return res.send({
       success: true,
-      message: 'Markets updated successfully',
+      message: 'updated successfully',
     });
   } catch (err) {
       console.error(err);
@@ -50,7 +50,7 @@ async function sportGamesList(req, res) {
     const games  = await SportsBooks.find({}).limit(10);
     return res.send({
       success: true,
-      message: 'Markets updated successfully',
+      message: 'Sports Book Games List',
       results: games
     });
   } catch (err) {
@@ -77,7 +77,7 @@ async function sportsBook(req, res) {
 
     return res.send({
     success: true,
-    message: 'Markets updated successfully',
+    message: 'sport book detail',
     data: response.data
     });
 
