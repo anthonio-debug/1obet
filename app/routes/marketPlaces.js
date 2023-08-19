@@ -96,15 +96,22 @@ async function getAllMarketTypes(req, res) {
               else: 1
             }
           },
-          "subMarkets.Id": 1,
-          "subMarkets.name": 1,
-          "subMarkets.marketId": 1,
-          "subMarkets.marketId": 1,
-          "subMarkets.status": {
-            $cond: {
-              if: { $in: ["$subMarkets.$Id", blockedSubMarkets] },
-              then: 0,
-              else: 1
+          subMarkets: {
+            $map: {
+              input: '$subMarkets',
+              as: 'subMarket',
+              in: {
+                Id: '$$subMarket.Id',
+                name: '$$subMarket.name',
+                marketId: '$$subMarket.marketId',
+                status: {
+                  $cond: {
+                    if: { $in: ["$$subMarket.Id", blockedSubMarkets] },
+                    then: 0,
+                    else: 1
+                  }
+                }
+              }
             }
           }
         }

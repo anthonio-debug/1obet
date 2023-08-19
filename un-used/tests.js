@@ -7,9 +7,10 @@
 
 // console.log(strToDate(dtStr));
 
-console.log(" ========= ", new Date().getTime() - 24*60*60*1000);
+const originalArray = [5, 5, 6, 6, 2, 1, 1, 2, 2, 3, 4, 4, 5];
+const uniqueArray = [...new Set(originalArray)];
 
-console.log("date", Date.parse("2023-08-15T19:38:00+00:00"));
+console.log("uniqueArray ========= ", uniqueArray);
 
 
 

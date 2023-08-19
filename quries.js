@@ -1,4 +1,5 @@
 
+
 db.sidebarmenus.deleteMany({});
 
 db.sidebarmenus.insertMany([
@@ -497,15 +498,15 @@ db.bettingfigures.insertMany([
 ])
 
 db.users.insertOne({ 
-  "userName" : "bettor3", 
+  "userName" : "bbb", 
   "password" : '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy', 
-  "reference" : "bettor3", 
+  "reference" : "bbb", 
   "phone" : "03056959889",  
   "role" : "5",
   "isActive" : true,
   "status" : 1,
   "notes" : "this is note",
-  "userId" : 1214, 
+  "userId" : 1222, 
   "passwordChanged" : false, 
   "balance" : 5000000000,
   "isDeleted":false,
