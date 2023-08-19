@@ -9,7 +9,7 @@ let config = require('config');
 const User = require('../models/user');
 
 async function addCasinoGameDetails(req, res) {
-  if( req.decoded.role !== '0' ){
+  if( req.decoded.role != '0' ){
     return res.status(200).send({ message: 'you are not allowed to add games',success:false})
   }
   try {
