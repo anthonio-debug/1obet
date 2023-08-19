@@ -1,5 +1,5 @@
 
-db.sidebarmenus.deleteMany();
+db.sidebarmenus.deleteMany({});
 
 db.sidebarmenus.insertMany([
   {
@@ -452,7 +452,7 @@ db.submarkettypes.insertMany([
 
 
 
-
+db.bettingfigures.deleteMany({})
 db.bettingfigures.insertMany([
   {
     name: "Digit rate" ,
@@ -497,15 +497,15 @@ db.bettingfigures.insertMany([
 ])
 
 db.users.insertOne({ 
-  "userName" : "bettor1", 
+  "userName" : "bettor3", 
   "password" : '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy', 
-  "reference" : "bettor1", 
+  "reference" : "bettor3", 
   "phone" : "03056959889",  
   "role" : "5",
   "isActive" : true,
   "status" : 1,
   "notes" : "this is note",
-  "userId" : 1112, 
+  "userId" : 1214, 
   "passwordChanged" : false, 
   "balance" : 5000000000,
   "isDeleted":false,
@@ -915,6 +915,7 @@ db.racemarkets.deleteMany({})
 db.raceodds.deleteMany({})
 db.racings.deleteMany({})
 db.odds.deleteMany({})
+
 db.odds.insertOne({
   updatetime: null,
   update: 'ok',
@@ -985,166 +986,7 @@ db.odds.find({})
 db.odds.count({}) 
 
 
-
-db.markettypes.insertMany([
-{
-        "_id" : ObjectId("6450e569566cb82f97e5927f"),
-        "name" : "All Casino",
-        "status" : 1,
-        "lightIcon" : "https://1obet.com/assets/light-icons/royal-casino.png",
-        "darkIcon" : "https://1obet.com/assets/dark-icons/royal-casino.png",
-        "marketId" : "65007a89-8347-44d7-9603-c43694f62955",
-        "createdAt" : 1683023209.906,
-        "__v" : 0,
-        "updatedAt" : 1683450848.401,
-        "link" : "/all-casino"
-},
-{
-        "_id" : ObjectId("6450fa3a40a6f05532c7211f"),
-        "name" : "Cricket",
-        "status" : 1,
-        "lightIcon" : "https://1obet.com/assets/light-icons/cricket.png",
-        "darkIcon" : "https://1obet.com/assets/dark-icons/cricket.png",
-        "marketId" : "38d3bc03-8a59-4551-85cf-a35298f75124",
-        "createdAt" : 1683028538.395,
-        "__v" : 0,
-        "updatedAt" : 1683551944.438,
-        "link" : "/cricket"
-},
-{
-        "_id" : ObjectId("6450ff4c1a43260ca112cc88"),
-        "name" : "Greyhound",
-        "status" : 1,
-        "lightIcon" : "https://1obet.com/assets/light-icons/greyhound.png",
-        "darkIcon" : "https://1obet.com/assets/dark-icons/grey-hound.png",
-        "marketId" : "9a34657c-60e3-465a-bb0e-57d3736a77ae",
-        "createdAt" : 1683029836.665,
-        "__v" : 0,
-        "link" : "/greyhound",
-        "updatedAt" : 1683450848.417
-},
-{
-        "_id" : ObjectId("645100581a43260ca112cc99"),
-        "name" : "Horse Race",
-        "status" : 1,
-        "lightIcon" : "https://1obet.com/assets/light-icons/horse-race.png",
-        "darkIcon" : "https://1obet.com/assets/dark-icons/horse-race.png",
-        "marketId" : "1e2e2f32-dca3-4e09-8e0d-e850ade9eb56",
-        "createdAt" : 1683030104.71,
-        "__v" : 0,
-        "updatedAt" : 1683534469.537,
-        "link" : "/horse-race"
-},
-{
-        "_id" : ObjectId("645101d31a43260ca112ccea"),
-        "name" : "Soccer",
-        "status" : 1,
-        "lightIcon" : "https://1obet.com/assets/light-icons/soccer.png",
-        "darkIcon" : "https://1obet.com/assets/dark-icons/soccer.png",
-        "marketId" : "8e65b622-4061-4376-ba59-0007fdf6b01f",
-        "createdAt" : 1683030483.288,
-        "__v" : 0,
-        "updatedAt" : 1683116826.636,
-        "link" : "/soccer"
-},
-{
-        "_id" : ObjectId("645102751a43260ca112cd19"),
-        "name" : "Tennis",
-        "status" : 1,
-        "lightIcon" : "https://1obet.com/assets/light-icons/tennis.png",
-        "darkIcon" : "https://1obet.com/assets/dark-icons/tennis.png",
-        "marketId" : "92f39076-ad76-4db4-9f47-9ed91e4e0df9",
-        "createdAt" : 1683030645.482,
-        "__v" : 0,
-        "updatedAt" : 1683450848.41,
-        "link" : "/tennis"
-},
-{
-        "_id" : ObjectId("645102e61a43260ca112cd2c"),
-        "name" : "Kabaddi",
-        "status" : 1,
-        "lightIcon" : "https://1obet.com/assets/light-icons/kabbadi.png",
-        "darkIcon" : "https://1obet.com/assets/dark-icons/kabbadi.png",
-        "marketId" : "e3706dc7-b632-44b0-9ae5-3789a01e827b",
-        "createdAt" : 1683030758.563,
-        "__v" : 0,
-        "link" : "/kabaddi",
-        "updatedAt" : 1683450860.404
-},
-{
-        "_id" : ObjectId("645103381a43260ca112cd37"),
-        "name" : "Ice Hockey",
-        "status" : 1,
-        "lightIcon" : "https://1obet.com/assets/light-icons/hockey.png",
-        "darkIcon" : "https://1obet.com/assets/dark-icons/hockey.png",
-        "marketId" : "9a79a6af-7144-4e92-a70f-bdef3935963b",
-        "createdAt" : 1683030840.116,
-        "__v" : 0,
-        "link" : "/ice-hockey",
-        "updatedAt" : 1683450848.424
-},
-{
-        "_id" : ObjectId("645103701a43260ca112cd3e"),
-        "name" : "Snooker",
-        "status" : 1,
-        "lightIcon" : "https://1obet.com/assets/light-icons/snooker.png",
-        "darkIcon" : "https://1obet.com/assets/dark-icons/snooker.png",
-        "marketId" : "6f8da6d2-6030-4bfa-bbc9-ffb22972e7f8",
-        "createdAt" : 1683030896.783,
-        "__v" : 0,
-        "link" : "/snooker",
-        "updatedAt" : 1683189362.342
-}])
-
-db.submarkettypes.insertMany([
-  {
-    "_id": ObjectId("645100f61a43260ca112ccc1"),
-    "marketId": "1e2e2f32-dca3-4e09-8e0d-e850ade9eb56",
-    "name": "New Zealand",
-    "status": 1,
-    "subMarketId": "51de9e18-3b4f-4a3d-ae4c-fe4333d502d5",
-    "createdAt": 1683030262.479,
-    "__v": 0
-  },
-  {
-    "_id": ObjectId("645100fe1a43260ca112ccc5"),
-    "marketId": "1e2e2f32-dca3-4e09-8e0d-e850ade9eb56",
-    "name": "Sweden",
-    "status": 1,
-    "subMarketId": "fbb11332-6318-454b-8267-03df9a8b11c5",
-    "createdAt": 1683030270.914,
-    "__v": 0
-  },
-  {
-    "_id": ObjectId("645101051a43260ca112ccc9"),
-    "marketId": "1e2e2f32-dca3-4e09-8e0d-e850ade9eb56",
-    "name": "Singapore",
-    "status": 1,
-    "subMarketId": "11d58b5a-6f74-46f6-a734-1d000870c859",
-    "createdAt": 1683030277.764,
-    "__v": 0
-  },
-  {
-    "_id": ObjectId("6451010d1a43260ca112cccd"),
-    "marketId": "1e2e2f32-dca3-4e09-8e0d-e850ade9eb56",
-    "name": "America",
-    "status": 1,
-    "subMarketId": "a778c943-3d30-4ca2-af3d-1e4b1bbf65d5",
-    "createdAt": 1683030285.542,
-    "__v": 0
-  },
-  {
-    "_id": ObjectId("645101151a43260ca112ccd1"),
-    "marketId": "1e2e2f32-dca3-4e09-8e0d-e850ade9eb56",
-    "name": "Africa",
-    "status": 1,
-    "subMarketId": "be5457ec-d243-4525-abf5-e970c26e5e2c",
-    "createdAt": 1683030293.234,
-    "__v": 0
-  },
-]);
-db.cricketmatches.insertMany([
-{
+db.cricketmatches.insertMany([{
   "_id" : ObjectId("644a2a21f711b95f8f1c3667"),
   "id" : "64458338-704e-4d0f-b4fa-6af920ab467d",
   "name" : "Namibia vs Nepal, 2nd Match",
