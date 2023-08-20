@@ -14,4 +14,28 @@ console.log("uniqueArray ========= ", uniqueArray);
 
 
 
+Deposit.aggregate([
+    {
+      $match: {
+        userId: req.body.userId,
+        $and: [
+          {
+            createdAt: {$gte: req.query.startDate}
+          },
+          {
+            createdAt: {$lte: req.query.endDate}
+          }
+        ]
+      }
+    }
+    {
+      $lookup: {
+        
+      }
+    }
+  ])
+
+
+
+
 // console.log(date);
