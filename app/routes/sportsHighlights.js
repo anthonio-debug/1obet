@@ -56,6 +56,7 @@ async function getAllSportsHighlight(req, res) {
               amount: '$amount',
               Id: '$Id',
               _id: '$_id',
+              isShowed: "$isShowed",
               inplay: '$inplay',
               iconStatus: '$iconStatus',
             },
