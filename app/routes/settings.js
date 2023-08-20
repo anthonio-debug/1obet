@@ -1562,8 +1562,8 @@ async function setMatchShow(req, res) {
   }
   const { matchId, status } = req.query;
   await Events.findOneAndUpdate(
-    { matchId: matchId },
-    {$set: {
+    { Id: matchId },
+    { $set: {
       isShowed: status
     }}
   )
