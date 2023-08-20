@@ -1554,6 +1554,25 @@ async function getAllGamesResults(req, res) {
   }
 }
 
+async function setMatchShow(req, res) {
+  if (req.decoded.role !== '0') {
+    return res
+      .status(404)
+      .send({ message: 'only company can ... ' });
+  }
+  const { matchId, status } = req.query;
+  await Events.findOneAndUpdate(
+    { matchId: matchId },
+    {$set: {
+      isShowed: status
+    }}
+  )
+  return res.status(200).json({
+    success: true,
+    message: 'match updated successful',
+  });
+} 
+
 
 
 loginRouter.post(
@@ -1591,6 +1610,9 @@ loginRouter.post(
 );
 
 loginRouter.get('/GetExchangeRates', GetExchangeRates);
+
+loginRouter.get('/setMatchShow', setMatchShow);
+
 loginRouter.get('/getDefaultBetSizes', getDefaultBetSizes);
 router.get('/getDefaultSettings', getDefaultSettings);
 

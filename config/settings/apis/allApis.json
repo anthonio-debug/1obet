@@ -128,5 +128,6 @@
   "getAllGamesResults",
   "sportsBook",
   "getAllSportsBookGamesFromThirdParty",
-  "sportGamesList"
+  "sportGamesList",
+  "setMatchShow"
 ]
