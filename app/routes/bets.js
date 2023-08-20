@@ -98,7 +98,7 @@ async function placeBet(req, res) {
   }
 
   try {
-    if (req.decoded.login.role !== '5') {
+    if (req.decoded.login.role != '5') {
       return res.status(401).send({ message: 'You are not allowed to bet' });
     }
     // Variable declarations 
@@ -121,7 +121,7 @@ async function placeBet(req, res) {
 
     // Innitial Checks 
     if( betAmount < config.betMinimumAmount) {
-      return res.status(404).send({ message: `minimum bet should be ${config.betMinimumAmount} ` });
+      return res.status(404).send({ message: `minimum bet should be ${config.betMinimumAmount}` });
     }
     const user = await User.findOne({ userId }).exec();
     if (!user) {
@@ -135,13 +135,13 @@ async function placeBet(req, res) {
       return res.status(404).send({message: 'Bet not allowed'});
     }
     const parentUserIds = await getParents(user.userId);
-    const marketIds = await User.distinct("blockedMarketPlaces",          { userId :{ $in: parentUserIds}, isDeleted:false });
-    const subMarketId1 = await User.distinct("blockedSubMarkets",         { userId :{ $in: parentUserIds },isDeleted:false });
-    const subMarketId2 = await User.distinct("blockedSubMarketsByParent", { userId :{ $in: parentUserIds }, isDeleted:false });
-    const subMarketId = subMarketId1.concat(subMarketId2)
+    const marketIds     = await User.distinct("blockedMarketPlaces",          { userId :{ $in: parentUserIds}, isDeleted:false  });
+    const subMarketId1  = await User.distinct("blockedSubMarkets",            { userId :{ $in: parentUserIds },isDeleted:false  });
+    const subMarketId2  = await User.distinct("blockedSubMarketsByParent",    { userId :{ $in: parentUserIds }, isDeleted:false });
+    const subMarketId   = subMarketId1.concat(subMarketId2);
     const eventDetail   = await Events.findById(matchId);
-    marketId = eventDetail.sportsId;
-    market = eventDetail.marketIds[0];
+    marketId            = eventDetail.sportsId;
+    market              = eventDetail.marketIds[0];
 
     // Checks for Market Places & Sub Markets  
     if (marketId == '7' || marketId == '4339'){
@@ -462,6 +462,19 @@ async function placeBet(req, res) {
     //     console.log('Selected Odds:', selectedOddsRate);
     //   }
     // }
+
+
+
+
+    // type  --- even odds  chota bada  figure brt
+      // match id 
+      //  session 2 
+      // 10  100
+      // 10.1 106 
+
+
+
+
     
     if (type == 0){
       winningAmount = ( betAmount * betRate ) - betAmount;
