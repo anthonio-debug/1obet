@@ -1560,15 +1560,17 @@ async function setMatchShow(req, res) {
       .status(404)
       .send({ message: 'only company can ... ' });
   }
-  await Events.findOneAndUpdate(
+  const event = await Events.findOneAndUpdate(
     { Id: req.query.matchId },
     { $set: {
       isShowed: req.query.status
-    }}
+    }},
+    {upsert: false}
   )
   return res.status(200).json({
     success: true,
     message: 'match updated successful',
+    data: event
   });
 } 
 
