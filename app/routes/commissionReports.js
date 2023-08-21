@@ -41,6 +41,13 @@ const getCommissionReport = async (req, res) => {
         foreignField: 'userId',
         as: 'userInfo'
       }
+    }, 
+    {
+      $group:{
+        _id: "userId",
+        // name: "userInfo.name",
+        Amount: { $sum: "$amount"}
+      }
     }
   ]);
 
