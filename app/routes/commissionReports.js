@@ -11,11 +11,46 @@ const Bets = require('../models/bets');
 const cricketMatch = require('../models/cricketMatches');
 const loginRouter = express.Router();
 
-function getCommissionReport(req, res) {
+const getCommissionReport = async (req, res) => {
   const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
+  if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
+
+  // const usersId = req.body.userId
+  const usersId = 2248
+  const response = await CashDeposit.aggregate([
+    {  
+      $match: {
+        userId: usersId,
+        cashOrCredit: "Commission",
+        $and: [
+          {
+            createdAt: {$gte: req.query.startDate}
+          },
+          {
+            createdAt: {$lte: req.query.endDate}
+          }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'commissionFrom',
+        foreignField: 'userId',
+        as: 'userInfo'
+      }
+    }
+  ]);
+
+  return res.send({
+    success: true,
+    message: 'commition records',
+    results: response,
+  });
+
+
 
   let query = {};
   let depositsQuery = {};

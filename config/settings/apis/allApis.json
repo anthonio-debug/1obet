@@ -127,6 +127,7 @@
   "SettleMatch",
   "getAllGamesResults",
   "sportsBook",
+  "sportsBookDirect",
   "getAllSportsBookGamesFromThirdParty",
   "sportGamesList",
   "setMatchShow"

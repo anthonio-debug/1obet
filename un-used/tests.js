@@ -7,33 +7,21 @@
 
 // console.log(strToDate(dtStr));
 
-const originalArray = [5, 5, 6, 6, 2, 1, 1, 2, 2, 3, 4, 4, 5];
-const uniqueArray = [...new Set(originalArray)];
+// const originalArray = [5, 5, 6, 6, 2, 1, 1, 2, 2, 3, 4, 4, 5];
+// const uniqueArray = [...new Set(originalArray)];
 
-console.log("uniqueArray ========= ", uniqueArray);
+// console.log("uniqueArray ========= ", uniqueArray);
+
+let x = BigInt(999999999999999);
+let type = typeof x;
+
+let car; 
+// console.log("car ========= ", car);
+console.log("typeof ========= ", typeof(x));
 
 
 
-Deposit.aggregate([
-    {
-      $match: {
-        userId: req.body.userId,
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
-      }
-    }
-    {
-      $lookup: {
-        
-      }
-    }
-  ])
+
 
 
 
