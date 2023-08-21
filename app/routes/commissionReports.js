@@ -44,7 +44,7 @@ const getCommissionReport = async (req, res) => {
     }, 
     {
       $group:{
-        _id: "$userId",
+        _id: "$commissionFrom",
         // name: "userInfo.name",
         Amount: { $sum: "$amount"}
       }
