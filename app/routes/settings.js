@@ -1072,15 +1072,15 @@ async function bettorDashboardGames(req, res) {
 
 async function bettorDashboardGames2(req, res) {
   try {
-    const soccer = await  Events.find(
+    const soccerSalt = await  Events.find(
       {
         sportsId: 1,
         status: 'OPEN',
         $or: [
-          { inplay: true },
+          { isShowed: true },
           { 
             $and: [
-              { openDate: { $gt: new Date().getTime()}},
+              { openDate: { $gt: new Date().getTime() - 60*60*1000}},
               { openDate: { $lt: Date.now()+10*60*60*1000}}
             ]
           }
@@ -1100,16 +1100,36 @@ async function bettorDashboardGames2(req, res) {
     ).sort({
       inplay: -1,
       openDate: -1
-    })
-    const tennis = await  Events.find(
+    });
+
+    const soccer = await Promise.all(
+      soccerSalt.map(async (event) => {
+        if (event.marketIds && event.marketIds.length > 0) {
+          const marketId = event.marketIds[0];
+          const oddsData = await Odds.findOne({ marketId: marketId }).sort({ createdAt: -1 });
+          return {
+            ...event.toObject(),
+            odds: oddsData,
+          };
+        } else {
+          //  if marketIds[0] is undefined
+          return {
+            ...event.toObject(),
+            odds: null,
+          };
+        }
+      })
+    );
+
+    const tennisSalt = await  Events.find(
       {
         sportsId: 2,
         status: 'OPEN',
         $or: [
-          { inplay: true },
+          { isShowed: true },
           { 
             $and: [
-              { openDate: { $gt: new Date().getTime()}},
+              { openDate: { $gt: new Date().getTime() - 60*60*1000}},
               { openDate: { $lt: Date.now()+10*60*60*1000}}
             ]
           }
@@ -1127,16 +1147,36 @@ async function bettorDashboardGames2(req, res) {
       inplay: -1,
       openDate: -1
     })
-    const cricket = await  Events.find(
+
+    const tennis = await Promise.all(
+      tennisSalt.map(async (event) => {
+        if (event.marketIds && event.marketIds.length > 0) {
+          const marketId = event.marketIds[0];
+          const oddsData = await Odds.findOne({ marketId: marketId }).sort({ createdAt: -1 });
+          return {
+            ...event.toObject(),
+            odds: oddsData,
+          };
+        } else {
+          //  if marketIds[0] is undefined
+          return {
+            ...event.toObject(),
+            odds: null,
+          };
+        }
+      })
+    );
+
+    const cricketSalt = await  Events.find(
       {
         sportsId: "4",
         status: 'OPEN',
         iconStatus: true,
         $or: [
-          { inplay: true },
+          { isShowed: true },
           { 
             $and: [
-              { openDate: { $gt: new Date().getTime()}},
+              { openDate: { $gt: new Date().getTime() - 60*60*1000}},
               { openDate: { $lt: Date.now()+10*60*60*1000}}
             ]
           }
@@ -1154,6 +1194,27 @@ async function bettorDashboardGames2(req, res) {
       inplay: -1,
       openDate: -1
     })
+
+    const cricket = await Promise.all(
+      cricketSalt.map(async (event) => {
+        if (event.marketIds && event.marketIds.length > 0) {
+          const marketId = event.marketIds[0];
+          const oddsData = await Odds.findOne({ marketId: marketId }).sort({ createdAt: -1 });
+          return {
+            ...event.toObject(),
+            odds: oddsData,
+          };
+        } else {
+          //  if marketIds[0] is undefined
+          return {
+            ...event.toObject(),
+            odds: null,
+          };
+        }
+      })
+    );
+
+
     const organizedEvents = {
       soccer: soccer,
       tennis: tennis,
