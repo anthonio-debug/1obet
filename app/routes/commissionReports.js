@@ -16,7 +16,7 @@ const getCommissionReport = async (req, res) => {
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const usersId = req.body.userId
+  const usersId = req.decoded.userId
   const response = await CashDeposit.aggregate([
     {  
       $match: {
@@ -53,93 +53,130 @@ const getCommissionReport = async (req, res) => {
     message: 'commition records',
     results: response,
   });
+  // {
+  //   // let query = {};
+  //   // let depositsQuery = {};
+  //   // depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
+  //   // let userId = (req.decoded.userId);
 
+  //   // if (req.decoded.role !== '5') {
+  //   //   query.createdBy = userId;
+  //   // }
 
+  //   // if (req.query.endDate && req.query.startDate) {
+  //   //   depositsQuery.createdAt = {
+  //   //     $gte: req.query.startDate,
+  //   //     $lte: req.query.endDate,
+  //   //   };
+  //   // }
 
-  // let query = {};
-  // let depositsQuery = {};
-  // depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
-  // let userId = (req.decoded.userId);
+  //   // User.find(query, (err, users) => {
+  //   //   if (err || !users) {
+  //   //     return res.status(404).send({ message: 'RETRIEVAL FAILED' });
+  //   //   }
+  //   //   if (!users || users.length === 0) {
+  //   //     return res.status(404).send({ message: 'No users found' });
+  //   //   }
 
-  // if (req.decoded.role !== '5') {
-  //   query.createdBy = userId;
+  //   //   let createdByIDs = users.map((user) => user.userId);
+  //   //   Deposits.find({
+  //   //     commissionFrom: { $in: createdByIDs },
+  //   //     ...depositsQuery,
+  //   //   }).exec((err, deposits) => {
+  //   //     if (err) {
+  //   //       return res.status(404).send({ message: 'RETRIEVAL FAILED' });
+  //   //     }
+  //   //     if (!deposits || deposits.length === 0) {
+  //   //       return res.status(404).send({ message: 'No records found' });
+  //   //     }
+
+  //   //     // Retrieve user data for mapping
+  //   //     const userIds = deposits.map((deposit) => deposit.commissionFrom);
+  //   //     User.find(
+  //   //       { userId: { $in: userIds } },
+  //   //       'userId userName',
+  //   //       (err, users) => {
+  //   //         if (err) {
+  //   //           return res.status(404).send({ message: 'RETRIEVAL FAILED' });
+  //   //         }
+
+  //   //         // Map user data to deposits
+  //   //         const depositMap = {};
+  //   //         users.forEach((user) => {
+  //   //           depositMap[user.userId] = user.userName;
+  //   //         });
+
+  //   //         const results = deposits.reduce((acc, deposit) => {
+  //   //           const existingUser = acc.find(
+  //   //             (user) => user.userId == deposit.commissionFrom
+  //   //           );
+  //   //           if (existingUser) {
+  //   //             existingUser.amount += deposit.amount;
+  //   //           } else {
+  //   //             acc.push({
+  //   //               userId: deposit.commissionFrom,
+  //   //               userName: depositMap[deposit.commissionFrom],
+  //   //               amount: deposit.amount,
+  //   //             });
+  //   //           }
+  //   //           return acc;
+  //   //         }, []);
+
+  //   //         return res.send({
+  //   //           success: true,
+  //   //           message: 'daily pl records found',
+  //   //           results: results,
+  //   //         });
+  //   //       }
+  //   //     );
+  //   //   });
+  //   // });
   // }
-
-  // if (req.query.endDate && req.query.startDate) {
-  //   depositsQuery.createdAt = {
-  //     $gte: req.query.startDate,
-  //     $lte: req.query.endDate,
-  //   };
-  // }
-
-  // User.find(query, (err, users) => {
-  //   if (err || !users) {
-  //     return res.status(404).send({ message: 'RETRIEVAL FAILED' });
-  //   }
-  //   if (!users || users.length === 0) {
-  //     return res.status(404).send({ message: 'No users found' });
-  //   }
-
-  //   let createdByIDs = users.map((user) => user.userId);
-  //   Deposits.find({
-  //     commissionFrom: { $in: createdByIDs },
-  //     ...depositsQuery,
-  //   }).exec((err, deposits) => {
-  //     if (err) {
-  //       return res.status(404).send({ message: 'RETRIEVAL FAILED' });
-  //     }
-  //     if (!deposits || deposits.length === 0) {
-  //       return res.status(404).send({ message: 'No records found' });
-  //     }
-
-  //     // Retrieve user data for mapping
-  //     const userIds = deposits.map((deposit) => deposit.commissionFrom);
-  //     User.find(
-  //       { userId: { $in: userIds } },
-  //       'userId userName',
-  //       (err, users) => {
-  //         if (err) {
-  //           return res.status(404).send({ message: 'RETRIEVAL FAILED' });
-  //         }
-
-  //         // Map user data to deposits
-  //         const depositMap = {};
-  //         users.forEach((user) => {
-  //           depositMap[user.userId] = user.userName;
-  //         });
-
-  //         const results = deposits.reduce((acc, deposit) => {
-  //           const existingUser = acc.find(
-  //             (user) => user.userId == deposit.commissionFrom
-  //           );
-  //           if (existingUser) {
-  //             existingUser.amount += deposit.amount;
-  //           } else {
-  //             acc.push({
-  //               userId: deposit.commissionFrom,
-  //               userName: depositMap[deposit.commissionFrom],
-  //               amount: deposit.amount,
-  //             });
-  //           }
-  //           return acc;
-  //         }, []);
-
-  //         return res.send({
-  //           success: true,
-  //           message: 'daily pl records found',
-  //           results: results,
-  //         });
-  //       }
-  //     );
-  //   });
-  // });
 }
 
-function sportsWiseCommissionReport(req, res) {
+const sportsWiseCommissionReport = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
+
+
+  // const response = await CashDeposit.aggregate([
+  //   {  
+  //     $match: {
+  //       userId: usersId,
+  //       req.query.userId,
+  //       cashOrCredit: "Commission",
+  //       $and: [
+  //         {
+  //           createdAt: {$gte: req.query.startDate}
+  //         },
+  //         {
+  //           createdAt: {$lte: req.query.endDate}
+  //         }
+  //       ]
+  //     }
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'users',
+  //       localField: 'commissionFrom',
+  //       foreignField: 'userId',
+  //       as: 'userInfo'
+  //     }
+  //   }, 
+  //   {
+  //     $group:{
+  //       _id: "$commissionFrom",
+  //       amount: { $sum: "$amount"},
+  //       name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+  //     }
+  //   }
+  // ]);
+
+
+
+
   let depositsQuery = {};
   depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
   if (req.query.endDate && req.query.startDate) {
