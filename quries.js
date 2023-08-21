@@ -907,10 +907,68 @@ db.cricketmatches.insertMany(
     winningTeam: 'Namibia'
   }
 ]);
+db.deposits.insertMany([
+  {
+    userId: 2248,
+    amount: 15,
+    balance: 15,
+    availableBalance: 15,
+    maxWithdraw: 15,
+    createdBy: '0',
+    cashOrCredit: 'Commission',
+    cash: 15,
+    marketId: '2',
+    commissionFrom: 2249,
+    betId: '64d69c5ac671aa4e3bfb2016',
+    createdAt: '2023-08-11',
+  },
+  {
+    userId: 2248,
+    amount: 15,
+    balance: 15,
+    availableBalance: 15,
+    maxWithdraw: 15,
+    createdBy: '0',
+    cashOrCredit: 'Commission',
+    cash: 15,
+    marketId: '2',
+    commissionFrom: 2249,
+    betId: '64d69c5ac671aa4e3bfb2016',
+    createdAt: '2023-08-11',
+  },
+  {
+    userId: 2248,
+    amount: 15,
+    balance: 15,
+    availableBalance: 15,
+    maxWithdraw: 15,
+    createdBy: '0',
+    cashOrCredit: 'Commission',
+    cash: 15,
+    marketId: '2',
+    commissionFrom: 2252,
+    betId: '64d69c5ac671aa4e3bfb2016',
+    createdAt: '2023-08-11',
+  },
+  {
+    userId: 2248,
+    amount: 25,
+    balance: 15,
+    availableBalance: 15,
+    maxWithdraw: 15,
+    createdBy: '0',
+    cashOrCredit: 'Commission',
+    cash: 15,
+    marketId: '2',
+    commissionFrom: 2252,
+    betId: '64d69c5ac671aa4e3bfb2016',
+    createdAt: '2023-08-11',
+  },
+]);
 
 db.deposits.insertMany([
   {
-    userId: 12222,
+    userId: 2248,
     amount: 100,
     balance: -100,
     availableBalance: -100,
@@ -923,7 +981,7 @@ db.deposits.insertMany([
     createdAt: '2023-08-11',
   },
   {
-    userId: 2247,
+    userId: 2248,
     amount: 15,
     balance: 15,
     availableBalance: 15,
@@ -1200,6 +1258,43 @@ db.deposits.insertMany([
     __v: 0
   }
 ]);
+
+db.users.insertOne({
+  userName: 'yousufPk12312321',
+  password: '$2b$10$MoLJrBxNmZQuupOWuUyf..Q4E.ZEVHa/ZphevwCSkEZjbvC0ZieAO',
+  reference: '',
+  token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjEyMjI2LCJjcmVhdGVkQnkiOjAsInJvbGUiOiIxIiwiaXNBY3RpdmUiOnRydWUsImlhdCI6MTY5MjQ4MjI5M30.L7FHdZbWwqxd4zcQwFUJv4A5vkcz5Xs0KQk5hEFEMFg',
+  role: '1',
+  isActive: true,
+  status: 1,
+  notes: '',
+  userId: 2249,
+  passwordChanged: false,
+  balance: 0,
+  createdBy: 0,
+  downLineShare: 95,
+  bettingAllowed: true,
+  canSettlePL: true,
+  isDeleted: false,
+  clientPL: 0,
+  credit: 0,
+  creditLimit: 0,
+  availableBalance: 0,
+  exposure: 0,
+  blockedMarketPlaces: [],
+  blockedSubMarkets: [],
+  blockedSubMarketsByParent: [
+    15, 16, 17, 18, 19, 20,
+    21, 22, 24, 25, 26, 27,
+    28
+  ],
+  baseCurrency: 'PKR',
+  creditRemaining: 0,
+  cash: 0,
+  createdAt: 1692482293.49,
+  updatedAt: 1692482293.49,
+  __v: 2
+})
 
 db.users.insertMany([
   {
