@@ -35,6 +35,7 @@ async function getAllSportsHighlight(req, res) {
           matchCanceledStatus:1,
           matchResumedStatus:1,
           openDate: 1,
+          status: 1,
           inplayFromServer: 1,
           isShowed: 1,
           oddsData: { $arrayElemAt: ['$oddsData', 0] },
@@ -60,6 +61,7 @@ async function getAllSportsHighlight(req, res) {
               inplayFromServer: "$inplayFromServer",
               isShowed: "$isShowed",
               inplay: '$inplay',
+              status: "$status",
               iconStatus: '$iconStatus',
             },
           },
@@ -101,11 +103,6 @@ async function getAllSportsHighlight(req, res) {
     });
   }
 }
-
-
-
-
-
 
 loginRouter.get('/getAllSportsHighlight', getAllSportsHighlight);
 
