@@ -1076,15 +1076,7 @@ async function bettorDashboardGames2(req, res) {
       {
         sportsId: 1,
         status: 'OPEN',
-        $or: [
-          { isShowed: true },
-          { 
-            $and: [
-              { openDate: { $gt: new Date().getTime() - 60*60*1000}},
-              { openDate: { $lt: Date.now()+10*60*60*1000}}
-            ]
-          }
-        ] 
+        isShowed: true,
       },
       {
         _id: 1,
@@ -1126,15 +1118,7 @@ async function bettorDashboardGames2(req, res) {
       {
         sportsId: 2,
         status: 'OPEN',
-        $or: [
-          { isShowed: true },
-          { 
-            $and: [
-              { openDate: { $gt: new Date().getTime() - 60*60*1000}},
-              { openDate: { $lt: Date.now()+10*60*60*1000}}
-            ]
-          }
-        ] 
+        isShowed: true,
       },
       {
         _id: 1,
@@ -1174,15 +1158,7 @@ async function bettorDashboardGames2(req, res) {
         sportsId: "4",
         status: 'OPEN',
         iconStatus: true,
-        $or: [
-          { isShowed: true },
-          { 
-            $and: [
-              { openDate: { $gt: new Date().getTime() - 60*60*1000}},
-              { openDate: { $lt: Date.now()+10*60*60*1000}}
-            ]
-          }
-        ] 
+        isShowed: true,
       },
       {
         _id: 1,
