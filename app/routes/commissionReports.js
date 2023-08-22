@@ -146,13 +146,13 @@ const sportsWiseCommissionReport = async (req, res) => {
         as: 'bets'
       }
     }, 
-    // {
-    //   $group:{
-    //     _id: "$betId",
-    //     amount: { $sum: "$amount"},
-    //     name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
-    //   }
-    // }
+    {
+      $group:{
+        _id: {$arrayElemAt: ["$bets.matchId", 0]},
+        amount: { $sum: "$amount"},
+        name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
+      }
+    }
   ]);
 
 

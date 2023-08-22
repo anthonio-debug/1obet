@@ -304,27 +304,26 @@ const dailyPLSportsWiseReport = async (req, res) => {
         ]
       }
     },
-    // {
-    //   $addFields: {
-    //     'betIdEvent': { $toObjectId: "$betId" }
-    //   }
-    // },
-    // {
-    //   $lookup: {
-    //     from: 'bets',
-    //     localField: 'betIdEvent',
-    //     foreignField: '_id',
-    //     as: 'bets'
-    //   }
-    // }, 
-    // {
-    //   $group:{
-    //     // _id: {$arrayElemAt: ["$bets.matchId", 0]},
-    //     _id: "$_id",
-    //     amount: { $sum: "$amount"},
-    //     name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
-    //   }
-    // }
+    {
+      $addFields: {
+        'betIdEvent': { $toObjectId: "$betId" }
+      }
+    },
+    {
+      $lookup: {
+        from: 'bets',
+        localField: 'betIdEvent',
+        foreignField: '_id',
+        as: 'bets'
+      }
+    }, 
+    {
+      $group:{
+        _id: {$arrayElemAt: ["$bets.matchId", 0]},
+        amount: { $sum: "$amount"},
+        name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
+      }
+    }
   ]);
   return res.send({
     success: true,

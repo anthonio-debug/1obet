@@ -968,6 +968,24 @@ db.deposits.insertMany([
 
 db.deposits.insertMany([
   {
+    "userId": 2248,
+    "amount": 300,
+    "balance": 15,
+    "availableBalance": 15,
+    "maxWithdraw": 15,
+    "createdBy": "0",
+    "cashOrCredit": "Commission",
+    "cash": 15,
+    "marketId": "2",
+    "commissionFrom": 2249,
+    "betId": "64dde631db4489b8f97c2405",
+    "createdAt": "2023-08-11",
+    "betIdEvent": "64dde631db4489b8f97c2405"
+  }
+])
+
+db.deposits.insertMany([
+  {
     _id: ObjectId("64e36a18dd6785d07b13d3ac"),
     userId: 2248,
     amount: 15,
