@@ -956,15 +956,7 @@ async function bettorDashboardGames(req, res) {
       {
         sportsId: '4339',
         status: 'OPEN',
-        $or: [
-          { inplay: true },
-          { 
-            $and: [
-              { openDate: { $gt: new Date().getTime()}},
-              { openDate: { $lt: Date.now() + 4 * 60 * 60 * 1000}}
-            ]
-          }
-        ] 
+        inplay: true
       },
       {
         _id: 1,
@@ -985,15 +977,7 @@ async function bettorDashboardGames(req, res) {
       {
         sportsId: '7',
         status: 'OPEN',
-        $or: [
-          { inplay: true },
-          { 
-            $and: [
-              { openDate: { $gt: new Date().getTime()}},
-              { openDate: { $lt: Date.now() + 4*60*60*1000}}
-            ]
-          }
-        ] 
+        inplay: true
       },
       {
         _id: 1,
@@ -1013,23 +997,7 @@ async function bettorDashboardGames(req, res) {
     const inPlay = await Events.find(
       {
         status: 'OPEN',
-        inplay: true,
-        $or:[
-          {
-            $and: [
-              { sportsId: "4"},
-              { iconStatus: true}
-            ]
-          },
-          {
-            sportsId: {
-              $in: ["1", "2"]
-            },
-            openDate: {
-              $gt: new Date().getTime() - 2*60*60*1000
-            }
-          }
-        ]
+        inplay: true
       }, 
       {
         _id: 1,
