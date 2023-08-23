@@ -1098,7 +1098,7 @@ async function bettorDashboardGames2(req, res) {
     const soccer = await Promise.all(
       soccerSalt.map(async (event) => {
         if (event.marketIds && event.marketIds.length > 0) {
-          const marketId = event.marketIds[0];
+          const marketId = event.marketIds[0].id;
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({ createdAt: -1 });
           return {
             ...event.toObject(),
@@ -1137,7 +1137,7 @@ async function bettorDashboardGames2(req, res) {
     const tennis = await Promise.all(
       tennisSalt.map(async (event) => {
         if (event.marketIds && event.marketIds.length > 0) {
-          const marketId = event.marketIds[0];
+          const marketId = event.marketIds[0].id;
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({ createdAt: -1 });
           return {
             ...event.toObject(),
@@ -1177,7 +1177,7 @@ async function bettorDashboardGames2(req, res) {
     const cricket = await Promise.all(
       cricketSalt.map(async (event) => {
         if (event.marketIds && event.marketIds.length > 0) {
-          const marketId = event.marketIds[0];
+          const marketId = event.marketIds[0].id;
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({ createdAt: -1 });
           return {
             ...event.toObject(),
