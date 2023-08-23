@@ -955,8 +955,7 @@ async function bettorDashboardGames(req, res) {
     const greyHound = await Events.find(
       {
         sportsId: '4339',
-        status: 'OPEN',
-        inplay: true
+        status: 'OPEN'
       },
       {
         _id: 1,
@@ -976,8 +975,7 @@ async function bettorDashboardGames(req, res) {
     const horseRace = await Events.find(
       {
         sportsId: '7',
-        status: 'OPEN',
-        inplay: true
+        status: 'OPEN'
       },
       {
         _id: 1,
