@@ -32,9 +32,9 @@ async function balance(req, res) {
 
   const hash = createHashKey(salt, queryString);
 
-  console.log('key:', key);
-  console.log('hash:', hash);
-  console.log('queryString:', queryString);
+  // console.log('key:', key);
+  // console.log('hash:', hash);
+  // console.log('queryString:', queryString);
 
   if (hash !== key) {
     return res.json({
@@ -71,11 +71,12 @@ async function debit(req, res) {
   await client.connect();
   const session = client.startSession();
   try {
+    console.log(" debt req.query ======= ", req.query);
     
-    console.log('======', session.emit())
+    // console.log(' ====== ', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
-    console.log(">>>>>>>>>>>, casinoCalls ", casinoCalls);
+    // console.log(">>>>>>>>>>>, casinoCalls ", casinoCalls);
     // session.startTransaction();
 
     const payload = req.query;
@@ -87,8 +88,8 @@ async function debit(req, res) {
       .map(key => `${key}=${payload[key]}`)
       .join('&');
     const hash = createHashKey(salt, queryString);
-    console.log('queryString:', queryString);
-    console.log('hash:', hash);
+    // console.log('queryString:', queryString);
+    // console.log('hash:', hash);
     if (hash !== key) {
       return res.json({
         status: 403,
@@ -100,12 +101,12 @@ async function debit(req, res) {
 
     await session.withTransaction(async () => {
 
-      console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
+      // console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
       const sameTransId = await casinoCalls.countDocuments(
         { transaction_id: payload.transaction_id, remote_id: parseInt(payload.remote_id), round_id: payload.round_id, action: 'debit' },
         { session }
       );   
-      console.log('====== sameTransId', sameTransId)
+      // console.log('====== sameTransId', sameTransId)
       const user = await users.findOne(
         { remoteId: parseInt(payload.remote_id) },
         { session }
@@ -121,7 +122,7 @@ async function debit(req, res) {
           balance: user.availableBalance / casinoMultiples,
         });
       }
-      console.log('==========user', user)
+      // console.log('==========user', user)
       if (sameTransId > 0) {
         await session.abortTransaction();
         return res.json({
@@ -152,7 +153,7 @@ async function debit(req, res) {
         {_id: user?._id},{$set: { availableBalance: updatedBalance}},
         { session }
         );
-      console.log('========== res', userResponse)
+      // console.log('========== res', userResponse)
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
 
@@ -178,7 +179,8 @@ async function credit(req, res) {
   await client.connect();
   const session = client.startSession();
   try {
-    console.log('======', session.emit())
+    console.log(" credit req.query ======= ", req.query);
+    // console.log('======', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
 
@@ -194,7 +196,7 @@ async function credit(req, res) {
     console.log('queryString', queryString);
 
     const hash = createHashKey(salt, queryString);
-    console.log('hash', hash);
+    // console.log('hash', hash);
 
     if (hash !== key) {
       return res.json({
@@ -203,7 +205,7 @@ async function credit(req, res) {
       });
     }
 
-    console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> ${payload.remote_id}`);
+    // console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> ${payload.remote_id}`);
 
     let updatedBalance = 0;
     await session.withTransaction(async () => {
@@ -217,19 +219,19 @@ async function credit(req, res) {
         { session, readPreference: 'primary'  }
       ); 
 
-      console.log('====== sameTransId', sameTransId)
+      // console.log('====== sameTransId', sameTransId)
       const user = await users.findOne(
         { remoteId: parseInt(payload.remote_id) },
         { session, readPreference: 'primary'  }
       );  
       if (!user) {
-        console.log();
+        // console.log();
         await session.abortTransaction();
         return res.json({ status: '500', msg: `Internal Error no User` });
       }
 
       if (sameTransId > 0) {
-        console.log('====== same Trans already Exists ', sameTransId)
+        // console.log('====== same Trans already Exists ', sameTransId)
         await session.abortTransaction();
         return res.json({
           status: 200,
@@ -252,7 +254,7 @@ async function credit(req, res) {
         { session, readPreference: 'primary'  }
         );
 
-      console.log('========== res', userResponse)
+      // console.log('========== res', userResponse)
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
 
@@ -278,7 +280,8 @@ async function rollback(req, res) {
   await client.connect();
   const session = client.startSession();
   try {
-    console.log('======', session.emit())
+    console.log(" rollback req.query ======= ", req.query);
+    // console.log('======', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
     // session.startTransaction();
@@ -289,9 +292,9 @@ async function rollback(req, res) {
     const queryString = Object.keys(payload)
       .map(key => `${key}=${payload[key]}`)
       .join('&');
-    console.log('queryString', queryString);
+    // console.log('queryString', queryString);
     const hash = createHashKey(salt, queryString);
-    console.log('hash', hash);
+    // console.log('hash', hash);
     if (hash !== key) {
       return res.json({
         status: 403,
@@ -315,7 +318,7 @@ async function rollback(req, res) {
           { session }
         ); 
         if (!user) {
-          console.log("user not found ");
+          // console.log("user not found ");
           await session.abortTransaction();
           return res.json({ status: '500', msg: `Internal error User Not Found` });
         }
@@ -363,7 +366,7 @@ async function rollback(req, res) {
           { session }
         );
     
-        console.log("=========== >> userResponse", userResponse);
+        // console.log("=========== >> userResponse", userResponse);
 
         const casinoDebits = new CasinoDebits(payload);
         await casinoDebits.save();
