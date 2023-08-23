@@ -985,96 +985,48 @@ db.deposits.insertMany([
 ])
 
 db.deposits.insertMany([
-  {
-    _id: ObjectId("64e36a18dd6785d07b13d3ac"),
-    userId: 2248,
-    amount: 15,
-    balance: 15,
-    availableBalance: 15,
-    maxWithdraw: 15,
-    createdBy: '0',
-    cashOrCredit: 'Commission',
-    cash: 15,
-    marketId: '2',
-    commissionFrom: 2249,
-    betId: '64dde631db4489b8f97c2405',
-    createdAt: '2023-08-11'
-  },
-  {
-    _id: ObjectId("64e36a18dd6785d07b13d3ad"),
-    userId: 2248,
-    amount: 15,
-    balance: 15,
-    availableBalance: 15,
-    maxWithdraw: 15,
-    createdBy: '0',
-    cashOrCredit: 'Commission',
-    cash: 15,
-    marketId: '2',
-    commissionFrom: 2249,
-    betId: '64de195fdb4489b8f97c448b',
-    createdAt: '2023-08-11'
-  },
-  {
-    _id: ObjectId("64e36a18dd6785d07b13d3ae"),
-    userId: 2248,
-    amount: 15,
-    balance: 15,
-    availableBalance: 15,
-    maxWithdraw: 15,
-    createdBy: '0',
-    cashOrCredit: 'Commission',
-    cash: 15,
-    marketId: '4',
-    commissionFrom: 2252,
-    betId: '64de195fdb4489b8f97c448b',
-    createdAt: '2023-08-11'
-  },
-  {
-    _id: ObjectId("64e36a18dd6785d07b13d3af"),
-    userId: 2248,
-    amount: 25,
-    balance: 15,
-    availableBalance: 15,
-    maxWithdraw: 15,
-    createdBy: '0',
-    cashOrCredit: 'Commission',
-    cash: 15,
-    marketId: '2',
-    commissionFrom: 2252,
-    betId: '64df6e2f7ad42ef44e24fa02',
-    createdAt: '2023-08-11'
-  },
-  {
-    _id: ObjectId("64e3b73e249cb3b9b601d12e"),
-    userId: 2248,
-    amount: 25,
-    balance: 15,
-    availableBalance: 15,
-    maxWithdraw: 15,
-    createdBy: '0',
-    cashOrCredit: 'Bet',
-    cash: 15,
-    marketId: '2',
-    commissionFrom: 2252,
-    betId: '64df6e3a7ad42ef44e24fa31',
-    createdAt: '2023-08-11'
-  },
-  {
-    _id: ObjectId("64e3b73e249cb3b9b601d12f"),
-    userId: 2248,
-    amount: 25,
-    balance: 200,
-    availableBalance: 15,
-    maxWithdraw: 15,
-    createdBy: '0',
-    cashOrCredit: 'Loosing',
-    cash: 15,
-    marketId: '2',
-    commissionFrom: 2252,
-    betId: '64dfa44a4912aca629dd0932',
-    createdAt: '2023-08-11'
-  }
+    {
+      userId: 2252,
+      amount: -15,
+      balance: 15,
+      availableBalance: 15,
+      maxWithdraw: 15,
+      createdBy: '0',
+      cashOrCredit: 'Commission',
+      cash: 15,
+      marketId: '2',
+      commissionFrom: 2250,
+      betId: '64dde631db4489b8f97c2405',
+      createdAt: '2023-08-11'
+    },
+    {
+      userId: 2252,
+      amount: 15,
+      balance: 15,
+      availableBalance: 15,
+      maxWithdraw: 15,
+      createdBy: '0',
+      cashOrCredit: 'Commission',
+      cash: 15,
+      marketId: '2',
+      commissionFrom: 2252,
+      betId: '64de195fdb4489b8f97c448b',
+      createdAt: '2023-08-11'
+    },
+    {
+      userId: 2252,
+      amount: -600,
+      balance: 15,
+      availableBalance: 15,
+      maxWithdraw: 15,
+      createdBy: '0',
+      cashOrCredit: 'loosing',
+      cash: 15,
+      marketId: '4',
+      commissionFrom: 2240,
+      betId: '64de195fdb4489b8f97c448b',
+      createdAt: '2023-08-11'
+    }
 ]);
 
 db.users.insertOne({

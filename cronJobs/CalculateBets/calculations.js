@@ -48,7 +48,7 @@ async function handleLosingBet(bet) {
   if (!userToUpdate) {
     return res.status(404).send({ message: "user not found" });
   }
-  userToUpdate.balance -= loosingAmount;
+  userToUpdate.balance  -= loosingAmount;
   userToUpdate.clientPL -= loosingAmount;
   userToUpdate.exposure += loosingAmount;
   await userToUpdate.save();
@@ -63,7 +63,7 @@ async function handleLosingBet(bet) {
     description: bet.name,
     betId: bet._id,
     createdBy: 0,
-    amount: loosingAmount,
+    amount: - loosingAmount,
     balance: lastMaxWithdraw ? lastMaxWithdraw.balance - loosingAmount : -loosingAmount,
     availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - loosingAmount : -loosingAmount,
     maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + loosingAmount : loosingAmount,
@@ -166,7 +166,7 @@ async function handleWinningBet(bet) {
     description: bet.name,
     betId: bet._id,
     createdBy: 0,
-    amount: TotalLoosingAmount + remainingAmount,
+    amount: remainingAmount,
     balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
     availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount  : remainingAmount,
     maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,

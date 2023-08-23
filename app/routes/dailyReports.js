@@ -38,235 +38,171 @@ async function getAllChildrens(createdByIDs) {
   return Array.from(new Set(userIDs)); // Ensure unique user IDs in the final array
 }
 
-async function getDailyReport(req, res) {
+const getDailyReport = async(req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  let query = {};
-  let depositsQuery = {};
-  depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
-  let userId = (req.decoded.userId);
+  const userId      = parseInt(req.decoded.userId)
+  const currentUser = await User.findOne({ userId: userId});
+  const users       = [currentUser.createdBy, userId];
+  let parents       = [userId]
+  do{
+    childUsers      = await User.distinct("userId", {
+      createdBy: {
+        $in: parents
+      }
+    });
+    console.log(" childUsers ======= ", childUsers);
+    if(childUsers.length)
+      users.push(...childUsers)
+    parents = childUsers
+  }while (childUsers.length > 0)
 
-  if (req.decoded.role !== '5') {
-    query.createdBy = userId;
+  const response = await CashDeposit.aggregate([
+    {  
+      $match: {
+        userId: {
+          $in: users
+        },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        $and: [
+          {
+            createdAt: {$gte: req.query.startDate}
+          },
+          {
+            createdAt: {$lte: req.query.endDate}
+          }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: 'userId',
+        as: 'userInfo'
+      }
+    }, 
+    {
+      $group:{
+        _id: "$userId",
+        amount: { $sum: "$amount"},
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+      }
+    }
+  ]);
+
+  return res.send({
+    success: true,
+    message: 'Commission reports',
+    results: response,
+  });
+
+}
+
+const dailySportsWiseReport = async (req, res) => {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
   }
 
-  try {
-    const users = await User.find(query, { userId: 1, userName: 1, createdBy: 1 }).lean();
-    
-    if (!users || users.length === 0) {
-      return res.status(404).send({ message: 'No users found' });
-    }
-
-    let createdByIDs = users.map((user) => user.userId);
-
-    const allUserIDs = await getAllChildrens(createdByIDs);
-    const combinedArray = [...allUserIDs, ...createdByIDs, userId];
-
-    const deposits = await Deposits.find({ userId: { $in: combinedArray }, ...depositsQuery }).exec();
-
-    if (!deposits || deposits.length === 0) {
-      return res.status(404).send({ message: 'No records found' });
-    }
-
-    const userIds = [...new Set(deposits.map((deposit) => deposit.userId))];
-    const usersData = await User.find({ userId: { $in: userIds } }, 'userId userName').lean();
-
-    const depositMap = {};
-    usersData.forEach((user) => {
-      depositMap[user.userId] = user.userName;
-    });
-
-    const results = deposits.reduce((acc, deposit) => {
-      const existingUser = acc.find((user) => user.userId === deposit.userId);
-      if (existingUser) {
-        existingUser.amount += deposit.amount;
-      } else {
-        acc.push({
-          userId: deposit.userId,
-          userName: depositMap[deposit.userId],
-          amount: deposit.amount,
-        });
+    const Id        =  parseInt(req.query.userId)
+    console.log(" Id ========== ", Id);
+    const response = await CashDeposit.aggregate([
+      {  
+        $match: {
+          userId: Id,
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          $and: [
+            {
+              createdAt: {$gte: req.query.startDate}
+            },
+            {
+              createdAt: {$lte: req.query.endDate}
+            }
+          ]
+        }
+      },
+      {
+        $lookup: {
+          from: 'markettypes',
+          localField: 'marketId',
+          foreignField: 'Id',
+          as: 'marketInfo'
+        }
+      }, 
+      {
+        $group:{
+          _id: "$marketId",
+          amount: { $sum: "$amount"},
+          userId: { $first: "$userId" },
+          name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } }
+        }
       }
-      return acc;
-    }, []);
+    ]);
 
     return res.send({
       success: true,
-      message: 'daily pl records found',
-      results: results,
+      message: 'Market wise Reports !',
+      results: response,
     });
-  } catch (err) {
-    return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-  }
 }
 
-function dailySportsWiseReport(req, res) {
+const dailyMarketsReports = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  let depositsQuery = {};
-  depositsQuery.cashOrCredit =  { $in: ["Bet", "Commission"] }
-  if (req.query.endDate && req.query.startDate) {
-    depositsQuery.createdAt = {
-      $gte: req.query.startDate,
-      $lte: req.query.endDate,
-    };
-  }
+  
+  const userId = req.decoded.userId
+  console.log(" userId ====== ", userId);
+  const Id =  parseInt(req.query.userId)
 
-
-  User.find({userId: req.query.userId})
-    .then((users) => {
-      if (!users || users.length === 0) {
-        return res.status(404).send({ message: 'No users found' });
-      }
-      const userIds = users.map((user) => user.userId);
-
-
-      Deposits.find({ userId: { $in: userIds },  ...depositsQuery })
-        .exec()
-        .then((deposits) => {
-          if (!deposits || deposits.length === 0) {
-            return res.status(404).send({ message: 'No records found' });
+  const response = await CashDeposit.aggregate([
+    {  
+      $match: {
+        userId: Id,
+        marketId: req.query.marketId,
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        $and: [
+          {
+            createdAt: {$gte: req.query.startDate}
+          },
+          {
+            createdAt: {$lte: req.query.endDate}
           }
-
-          const marketIds = deposits.map((deposit) => deposit.marketId);
-
-          MarketType.find({ marketId: { $in: marketIds } }, 'marketId name')
-            .then((markets) => {
-              const marketMap = {};
-              markets.forEach((market) => {
-                marketMap[market.marketId] = market.name;
-              });
-
-              const results = deposits.reduce((acc, deposit) => {
-                const existingMarket = acc.find((item) => item.name === marketMap[deposit.marketId]);
-                if (existingMarket) {
-                  existingMarket.amount += deposit.amount;
-                } else {
-                  acc.push({
-                    name: marketMap[deposit.marketId],
-                    amount: deposit.amount,
-                  });
-                }
-                return acc;
-              }, []);
-
-              return res.send({
-                success: true,
-                message: 'daily sportswise pl records found',
-                results: results,
-              });
-            })
-            .catch((err) => {
-              return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-            });
-        })
-        .catch((err) => {
-          return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-        });
-    })
-    .catch((err) => {
-      return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-    });
-}
-
-function dailyMarketsReports(req, res) {
-  const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
-  }
-
-  let depositsQuery = {};
-  depositsQuery.cashOrCredit = { $in: ["Bet", "Commission"] };
-  if (req.query.endDate && req.query.startDate) {
-    depositsQuery.createdAt = {
-      $gte: req.query.startDate,
-      $lte: req.query.endDate,
-    };
-  }
-
-  const userId = req.query.userId;
-  const marketId = req.query.marketId;
-  Deposits.find({ userId: userId, marketId: marketId, ...depositsQuery }, { _id: 0, amount: 1, createdAt: 1, betId: 1 })
-    .exec()
-    .then((deposits) => {
-      if (!deposits || deposits.length === 0) {
-        return res.status(404).send({ message: 'No deposit records found' });
+        ]
       }
-      const betIds = deposits.map((deposit) => deposit.betId);
-
-      Bets.find({ _id: { $in: betIds }, marketId: marketId }, { _id: 1, event: 1, createdAt: 1, matchId: 1 })
-        .exec()
-        .then((bets) => {
-          if (!bets || bets.length === 0) {
-            return res.status(404).send({ message: 'No bet records found' });
-          }
-          const matchIds = bets.map((bet) => bet.matchId);
-          cricketMatch
-            .find({ id: { $in: matchIds } }, { id: 1, name: 1 })
-            .exec()
-            .then((matches) => {
-              if (!matches || matches.length === 0) {
-                return res.status(404).send({ message: 'No match records found' });
-              }
-              const matchAmounts = {};
-              // Calculate total amount per match by grouping deposits
-              deposits.forEach((deposit) => {
-                const bet = bets.find((bet) => bet._id == deposit.betId);
-                console.log('bet', bet);
-                if (bet) {
-                  const match = matches.find(
-                    (match) => match.id == bet.matchId
-                  );
-                  console.log('match', match);
-                  if (match) {
-                    if (!matchAmounts[match.id]) {
-                      matchAmounts[match.id] = {
-                        matchName: match.name,
-                        amount: deposit.amount,
-                      };
-                    } else {
-                      matchAmounts[match.id].amount += deposit.amount;
-                    }
-                  }
-                }
-              });
-
-              // Sum up the amounts for bets on the same match
-              const results = Object.values(matchAmounts).map(
-                (matchAmount) => ({
-                  Date: deposits[0].createdAt,
-                  Event: matchAmount.matchName,
-                  Amount: matchAmount.amount,
-                })
-              );
-              console.log('results', results);
-              const response = {
-                success: true,
-                message: 'Daily Markets Reports found',
-                results: results,
-              };
-
-              return res.send(response);
-            })
-            .catch((err) => {
-              console.log('Error retrieving match records:', err);
-              return res.status(404).send({ message: 'Error retrieving match records' });
-            });
-        })
-        .catch((err) => {
-          console.log('Error retrieving bet records:', err);
-          return res.status(404).send({ message: 'Error retrieving bet records' });
-        });
-    })
-    .catch((err) => {
-      console.log('Error retrieving deposit records:', err);
-      return res.status(404).send({ message: 'Error retrieving deposit records' });
-    });
+    },
+    {
+      $addFields: {
+        'betIdEvent': { $toObjectId: "$betId" }
+      }
+    },
+    {
+      $lookup: {
+        from: 'bets',
+        localField: 'betIdEvent',
+        foreignField: '_id',
+        as: 'bets'
+      }
+    }, 
+    {
+      $group:{
+        _id: {$arrayElemAt: ["$bets.matchId", 0]},
+        amount: { $sum: "$amount"},
+        userId: { $first: "$userId" },
+        name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
+      }
+    }
+  ]);
+  return res.send({
+    success: true,
+    message: 'Sport wise Reports !',
+    results: response,
+  });
 }
 
 loginRouter.get('/getDailyReport',reportValidator.validate('getDailyPLReport'), getDailyReport);
