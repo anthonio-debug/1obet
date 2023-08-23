@@ -20,6 +20,8 @@ const FancyGames = require('../models/fancyGames');
 const Racing = require('../models/racing');
 const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
+const MarketIDS = require('../models/marketIds');
+
 const loginRouter = express.Router();
 const router = express.Router();
 // process.env.TZ = 'UTC';
@@ -1600,6 +1602,36 @@ async function setMatchShow(req, res) {
       .status(404)
       .send({ message: 'only company can ... ' });
   }
+
+
+  if (req.query.status == false) {
+    const currentEv = await Events.findOne({ Id: req.query.matchId });
+    if (currentEv) {
+      if (currentEv.inplay==true) {
+        const event = await Events.findOneAndUpdate(
+          { Id: req.query.matchId },
+          { $set: {
+            isShowed: req.query.status
+          }},
+          {upsert: false}
+        )
+        await MarketIDS.updateMany(
+          { eventId: req.query.matchId },
+          { inplay: false }
+        );
+
+        return res.status(200).json({
+          success: true,
+          message: 'match updated successful',
+          data: event
+        });
+
+     
+      }
+    }
+  }
+
+
   const event = await Events.findOneAndUpdate(
     { Id: req.query.matchId },
     { $set: {
