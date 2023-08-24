@@ -141,7 +141,7 @@ async function placeBet(req, res) {
     const subMarketId   = subMarketId1.concat(subMarketId2);
     const eventDetail   = await Events.findById(matchId);
     marketId            = eventDetail.sportsId;
-    const [id, marketName]        = eventDetail.marketIds;
+    const [id, marketName] = eventDetail.marketIds.find((market) => market.marketName ==  subMarketName );
 
 
     log(" id ====== ", id);
