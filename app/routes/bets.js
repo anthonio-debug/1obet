@@ -176,9 +176,8 @@ async function placeBet(req, res) {
         return res.status(404).send({ message: `Bet mis match` });
       }
 
-      // console.log('data', oddsData[0].Runners);
-
-      const runnerFromAPI = oddsData[0].Runners.find(runner => runner.SelectionId == selectionId);
+      console.log('data from  API', oddsData);
+      const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
       // console.log('matchOdds.runners', runnerFromAPI);
       // console.log('selection Id', selectionId);
       testRuner = runnerFromAPI

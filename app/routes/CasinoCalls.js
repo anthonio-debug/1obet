@@ -12,6 +12,99 @@ const transactionOptions = {
   writeConcern: { w: 'majority' }
 };
 
+
+const handleLosingBet = async (userId) =>{
+  const userToUpdate = await User.findOne({
+    remoteId: userId,
+    isDeleted: false,
+  });
+
+  if (!userToUpdate) {
+    return res.status(404).send({ message: "user not found" });
+  }
+  userToUpdate.balance  -= loosingAmount;
+  userToUpdate.clientPL -= loosingAmount;
+  userToUpdate.exposure += loosingAmount;
+  await userToUpdate.save();
+
+  let lastMaxWithdraw = await Cash.findOne({
+    userId: userToUpdate.userId,
+  }).sort({
+    _id: -1,
+  });
+  let cash = new Cash({
+    userId: userToUpdate.userId,
+    description: bet.name,
+    betId: bet._id,
+    createdBy: 0,
+    amount: - loosingAmount,
+    balance: lastMaxWithdraw ? lastMaxWithdraw.balance - loosingAmount : -loosingAmount,
+    availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - loosingAmount : -loosingAmount,
+    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + loosingAmount : loosingAmount,
+    cashOrCredit: "Bet",
+    cash: lastMaxWithdraw ? lastMaxWithdraw.cash - loosingAmount : -loosingAmount,
+    marketId: bet.marketId,
+  });
+  await cash.save();
+
+  const parentUserIds = await getParents(userId);
+
+  const parentUser = await User.find({
+    userId: {
+      $in: [...parentUserIds],
+    },
+    isDeleted: false,
+  }).sort({ role: -1 });
+
+  if (!parentUser) {
+    return res.status(404).send({ message: "user not found" });
+  }
+
+  const remainingAmount = bet.winningAmount;
+  const TotalLoosingAmount = bet.loosingAmount;
+
+  let prev = 0;
+  parentUser.forEach((user) => {
+    let current = user.downLineShare;
+    user["commission"] = current - prev;
+    prev = current;
+  });
+
+  let commissionFrom = userToUpdate.userId;
+
+  parentUser.forEach(async (user) => {
+    user.exposure += (user.commission / 100) * remainingAmount;
+    user.availableBalance += (user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount;
+    user.balance  += (user.commission / 100) * TotalLoosingAmount;
+    user.clientPL -= user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * TotalLoosingAmount: 0;
+    user.save();
+    let lastMaxWithdraw = await Cash.findOne({
+      userId: user.userId,
+    }).sort({
+      _id: -1,
+    });
+    let cash = await new Cash({
+      userId: user.userId,
+      description: bet.name,
+      betId: bet._id,
+      createdBy: 0,
+      amount: (user.commission / 100) * TotalLoosingAmount,
+      balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
+      availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
+      maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
+      commissionFrom: commissionFrom,
+      cashOrCredit: "loosing",
+      cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
+      marketId: bet.marketId,
+    });
+    cash.save();
+    commissionFrom = user.userId;
+  });
+
+  await Bets.findByIdAndUpdate(bet._id, { status: 0 });
+}
+
+
 // const client = new MongoClient(config.DBHost);
 
 
@@ -72,12 +165,8 @@ async function debit(req, res) {
   const session = client.startSession();
   try {
     console.log(" debt req.query ======= ", req.query);
-    
-    // console.log(' ====== ', session.emit())
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
-    // console.log(">>>>>>>>>>>, casinoCalls ", casinoCalls);
-    // session.startTransaction();
 
     const payload = req.query;
     const salt = config.saltKey;
@@ -88,8 +177,6 @@ async function debit(req, res) {
       .map(key => `${key}=${payload[key]}`)
       .join('&');
     const hash = createHashKey(salt, queryString);
-    // console.log('queryString:', queryString);
-    // console.log('hash:', hash);
     if (hash !== key) {
       return res.json({
         status: 403,
