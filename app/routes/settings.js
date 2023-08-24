@@ -20,6 +20,8 @@ const FancyGames = require('../models/fancyGames');
 const Racing = require('../models/racing');
 const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
+const MarketIDS = require('../models/marketIds');
+
 const loginRouter = express.Router();
 const router = express.Router();
 // process.env.TZ = 'UTC';
@@ -953,16 +955,7 @@ async function bettorDashboardGames(req, res) {
     const greyHound = await Events.find(
       {
         sportsId: '4339',
-        status: 'OPEN',
-        $or: [
-          { inplay: true },
-          { 
-            $and: [
-              { openDate: { $gt: new Date().getTime()}},
-              { openDate: { $lt: Date.now() + 4 * 60 * 60 * 1000}}
-            ]
-          }
-        ] 
+        status: 'OPEN'
       },
       {
         _id: 1,
@@ -982,16 +975,7 @@ async function bettorDashboardGames(req, res) {
     const horseRace = await Events.find(
       {
         sportsId: '7',
-        status: 'OPEN',
-        $or: [
-          { inplay: true },
-          { 
-            $and: [
-              { openDate: { $gt: new Date().getTime()}},
-              { openDate: { $lt: Date.now() + 4*60*60*1000}}
-            ]
-          }
-        ] 
+        status: 'OPEN'
       },
       {
         _id: 1,
@@ -1011,23 +995,7 @@ async function bettorDashboardGames(req, res) {
     const inPlay = await Events.find(
       {
         status: 'OPEN',
-        inplay: true,
-        $or:[
-          {
-            $and: [
-              { sportsId: "4"},
-              { iconStatus: true}
-            ]
-          },
-          {
-            sportsId: {
-              $in: ["1", "2"]
-            },
-            openDate: {
-              $gt: new Date().getTime() - 2*60*60*1000
-            }
-          }
-        ]
+        inplay: true
       }, 
       {
         _id: 1,
@@ -1600,6 +1568,36 @@ async function setMatchShow(req, res) {
       .status(404)
       .send({ message: 'only company can ... ' });
   }
+
+
+  if (req.query.status == false) {
+    const currentEv = await Events.findOne({ Id: req.query.matchId });
+    if (currentEv) {
+      if (currentEv.inplay==true) {
+        const event = await Events.findOneAndUpdate(
+          { Id: req.query.matchId },
+          { $set: {
+            isShowed: req.query.status
+          }},
+          {upsert: false}
+        )
+        await MarketIDS.updateMany(
+          { eventId: req.query.matchId },
+          { inplay: false }
+        );
+
+        return res.status(200).json({
+          success: true,
+          message: 'match updated successful',
+          data: event
+        });
+
+     
+      }
+    }
+  }
+
+
   const event = await Events.findOneAndUpdate(
     { Id: req.query.matchId },
     { $set: {
