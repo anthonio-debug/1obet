@@ -22,7 +22,8 @@ const RaceOdds = require('../models/raceOdds');
 const RaceMarkets = require('../models/raceMarkets');
 const axios = require('axios')
 const ListMarkets = require('../models/listMarkets')
-const currentPosition = require('../models/CurrentPosition')
+const currentPosition = require('../models/CurrentPosition');
+const { log } = require('async');
 
 async function getParents(userId) {
   const parentUserIds = [];
@@ -108,7 +109,6 @@ async function placeBet(req, res) {
     let runnerName;
     let matchName;
     let marketId;
-    let market;
     let selectedOddsRate;
     const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId  } = req.body;
     const userId = req.decoded.userId;
@@ -141,7 +141,11 @@ async function placeBet(req, res) {
     const subMarketId   = subMarketId1.concat(subMarketId2);
     const eventDetail   = await Events.findById(matchId);
     marketId            = eventDetail.sportsId;
-    market              = eventDetail.marketIds[0];
+    const [id, marketName]        = eventDetail.marketIds;
+
+
+    log(" id ====== ", id);
+    log(" market Name ====== ", marketName);
 
     // Checks for Market Places & Sub Markets  
     if (marketId == '7' || marketId == '4339'){
