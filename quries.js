@@ -497,27 +497,44 @@ db.bettingfigures.insertMany([
   }
 ])
 
-db.users.insertOne({ 
-  "userName" : "bbb", 
-  "password" : '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy', 
-  "reference" : "bbb", 
-  "phone" : "03056959889",  
-  "role" : "5",
-  "isActive" : true,
-  "status" : 1,
-  "notes" : "this is note",
-  "userId" : 1222, 
-  "passwordChanged" : false, 
-  "balance" : 5000000000,
-  "isDeleted":false,
-  "clienPL":5000000000,
-  "availableBalance":25000,
-  "credit":5000000000,
-  "creditLimit":5000000000, 
-  "createdAt" : 1678044562.685, 
-  "updatedAt" : 1678044562.685, 
-  "downLineShare":100 
-})
+db.users.insertOne(
+  {
+    userName: 'sbatto33',
+    password: '$2b$10$pFIAxe0vhv0e3jRXZq8hDuIc00wg89xRtWbWOB3qdPaDk/u/yxgqm',
+    reference: 'de3dswedee3dewe',
+    phone: '1234567898765432',
+    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyNTEsImNyZWF0ZWRCeSI6MjI1MCwicm9sZSI6IjUiLCJpc0FjdGl2ZSI6dHJ1ZSwiaWF0IjoxNjkxMjMwNDQwfQ.HDAnro2KMyEMW10xuaExuYzdB_3kYZEK4o6Rx-7RFeE',
+    role: '5',
+    isActive: true,
+    status: 1,
+    notes: 'fnru9r48ejb',
+    userId: 2257,
+    passwordChanged: false,
+    balance: 9000,
+    createdBy: 2250,
+    bettingAllowed: true,
+    canSettlePL: true,
+    isDeleted: false,
+    clientPL: 10000,
+    credit: 0,
+    creditLimit: 0,
+    availableBalance: 9000,
+    exposure: -1000,
+    blockedMarketPlaces: [],
+    blockedSubMarkets: [],
+    blockedSubMarketsByParent: [],
+    baseCurrency: 'PKR',
+    creditRemaining: 0,
+    cash: 10000,
+    createdAt: 1691230440.066,
+    updatedAt: 1691230440.066,
+    __v: 0,
+    remoteId: 2949973,
+    downLineShare: 0,
+    updatedBy: 2006
+  }
+
+)
 
 db.settings.insertMany([
   {
@@ -1028,6 +1045,39 @@ db.deposits.insertMany([
       createdAt: '2023-08-11'
     }
 ]);
+
+db.inplayevents.insertMany([
+  {
+    _id: ObjectId("64e6345909e4b01bd6b297ae"),
+    Id: '32577800',
+    betSettled: false,
+    competitionId: '9962116',
+    competitionName: 'One Day Internationals',
+    countryCode: null,
+    draw: false,
+    hasFancy: true,
+    iconStatus: true,
+    inplay: true,
+    inplayFromServer: true,
+    isPremium: true,
+    isShowed: true,
+    islocked: false,
+    lastCheckMarket: 1692885205551,
+    marketIds: [
+      { id: '1.217465050', marketName: 'Match Odds', status: 'OPEN' },
+      { id: '1.217465053', marketName: 'Tied Match', status: 'OPEN' }
+    ],
+    matchStopStatus: false,
+    matchType: 'One Day',
+    name: 'Afghanistan v Pakistan',
+    openDate: 1692869400000,
+    sport: 'cricket',
+    sportsId: '4',
+    status: 'OPEN',
+    timezone: 'GMT',
+    winner: '0'
+  }  
+])
 
 db.users.insertOne({
   userName: 'yousufPk12312321',

@@ -99,6 +99,7 @@ async function placeBet(req, res) {
   }
 
   try {
+    console.log("req.decoded.login.role", req.decoded.login);
     if (req.decoded.login.role != '5') {
       return res.status(401).send({ message: 'You are not allowed to bet' });
     }
@@ -142,10 +143,9 @@ async function placeBet(req, res) {
     const eventDetail   = await Events.findById(matchId);
     marketId            = eventDetail.sportsId;
     const {id, marketName} = eventDetail.marketIds.find((market) => market.marketName ==  subMarketName );
+    console.log(" id ====== ", id);
+    console.log(" market Name ====== ", marketName);
 
-
-    log(" id ====== ", id);
-    log(" market Name ====== ", marketName);
 
     // Checks for Market Places & Sub Markets  
     if (marketId == '7' || marketId == '4339'){
@@ -172,31 +172,31 @@ async function placeBet(req, res) {
     }
 
     if (marketId != '7' && marketId != '4339' && subMarketDetail.subMarketId != '104' && subMarketDetail.subMarketId != '128'){
-      const url = `${config.sportsAPIUrl}/odds/?ids=${market}`;
+      const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
       const response = await axios.get(url);
       const oddsData = response.data;
       if (!oddsData) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
       }
-
       console.log('data from  API', oddsData);
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
-      // console.log('matchOdds.runners', runnerFromAPI);
-      // console.log('selection Id', selectionId);
       testRuner = runnerFromAPI
-      
-      if (type == 0){
 
+      const DBOddDetails      = await Odds.findById(oddsId);
+      if(!DBOddDetails){
+        return res.status(404).send({ 
+          message:  `Frontend provided odds _id do not found in db & _id =  ${oddsId}` 
+        });
+      }
+      console.log("DBOddDetails === ", DBOddDetails);
+      if (type == 0){
         ApiResponseOdds         = runnerFromAPI.ExchangePrices.AvailableToBack
-        console.log("ApiResponseOdds AvailableToBack === ", ApiResponseOdds);
-        const DBOddDetails      = await Odds.findById(oddsId);
-        console.log("DBOddDetails === ", DBOddDetails);
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const availableToBack   = OddDetailsTeam.ExchangePrices.AvailableToBack;
-        // console.log('availableToBack', availableToBack);
-        matchedIndex = availableToBack.findIndex((back) => {
-          return back.price === betRate;
+        console.log('availableToBack', availableToBack);
+        matchedIndex            = availableToBack.findIndex((back) => {
+          return back.price == betRate;
         });
         console.log('matchedIndex', matchedIndex);
         if (matchedIndex == -1) {
@@ -207,8 +207,6 @@ async function placeBet(req, res) {
 
       } else if (type == 1){
         ApiResponseOdds         = runnerFromAPI.ExchangePrices.AvailableToLay
-        console.log("ApiResponseOdds AvailableToLay === ", ApiResponseOdds);
-        const DBOddDetails      = await Odds.findById(oddsId);
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const AvailableToLay    = OddDetailsTeam.ExchangePrices.AvailableToLay;
         console.log('AvailableToLay', AvailableToLay);
@@ -240,10 +238,10 @@ async function placeBet(req, res) {
 
     if (marketId == '7' || marketId == '4339'){
 
-      console.log("MarketId ========== ", market);
-      const url = `${config.horseRaceUrl}/odds/?ids=${market}`;
-      const response = await axios.get(url);
-      const oddsData = response.data;
+      console.log("MarketId ========== ", id);
+      const url       = `${config.horseRaceUrl}/odds/?ids=${market}`;
+      const response  = await axios.get(url);
+      const oddsData  = response.data;
       
       console.log("oddsData Runners ====== ", oddsData);
       if (oddsData.length == 0) {
