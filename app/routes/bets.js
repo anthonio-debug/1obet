@@ -286,7 +286,8 @@ const placeBet = async (req, res) => {
         ApiResponseOdds         = runnerFromAPI.exchange.availableToLay
         console.log("ApiResponseOdds AvailableToLay ====== ", ApiResponseOdds);
         const DBOddDetails      = await RaceOdds.findById(oddsId);
-        const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+        const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.selectionId == selectionId);
+
         const AvailableToLay    = OddDetailsTeam.exchange.availableToLay;
         console.log('availableToBack', AvailableToLay);
         matchedIndex = AvailableToLay.findIndex((back) => {
