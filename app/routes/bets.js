@@ -289,6 +289,7 @@ const placeBet = async (req, res) => {
         const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.selectionId == selectionId);
 
         const AvailableToLay    = OddDetailsTeam.exchange.availableToLay;
+        console.log(" AvailableToLay new Server Test  ======= ", AvailableToLay);
         console.log('availableToBack', AvailableToLay);
         matchedIndex = AvailableToLay.findIndex((back) => {
           return back.price == betRate;
