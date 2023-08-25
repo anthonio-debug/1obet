@@ -290,12 +290,11 @@ const placeBet = async (req, res) => {
 
         const AvailableToLay    = OddDetailsTeam.exchange.availableToLay;
         console.log(" AvailableToLay new Server Test  ======= ", AvailableToLay);
-        console.log('availableToBack', AvailableToLay);
         matchedIndex = AvailableToLay.findIndex((back) => {
           return back.price == betRate;
         });
         console.log('matchedIndex', matchedIndex);
-        if (!matchedIndex) {
+        if (!matchedIndex == -1) {
           console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
           return res.status(404).send({ message: `Bet miss matched` });
         }
