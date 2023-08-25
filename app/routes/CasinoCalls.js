@@ -14,53 +14,53 @@ const transactionOptions  = {
 };
 
 
-let credit = {
-  callerId: '1obet_mc_s',
-  callerPassword: '97e502ab8ecdff96f79f3ddfd5759ae8389eecf3',
-  callerPrefix: 'pfzf',
-  action: 'credit',
-  remote_id: '3063523',
-  username: 'user_12222',
-  session_id: '64db7dd801e2a',
-  currency: 'PKR',
-  amount: '0',
-  provider: 'ez',
-  game_id: '22847',
-  game_id_hash: 'ez_ez-bet-on-numbers',
-  transaction_id: 'ez-c4cb6d03-3404-486c-adc2-e7b534ce3334',
-  round_id: '2746682889',
-  gameplay_final: '1',
-  is_freeround_win: '0',
-  is_jackpot_win: '0',
-  jackpot_win_in_amount: '0',
-  gamesession_id: 'ez_724590564e890b7f34e5',
-  original_session_id: '64db7dd801e2a',
-  key: '7a607b0a776361b6a569dc87840ec1c3381d8172'
-}
+// let credit = {
+//   callerId: '1obet_mc_s',
+//   callerPassword: '97e502ab8ecdff96f79f3ddfd5759ae8389eecf3',
+//   callerPrefix: 'pfzf',
+//   action: 'credit',
+//   remote_id: '3063523',
+//   username: 'user_12222',
+//   session_id: '64db7dd801e2a',
+//   currency: 'PKR',
+//   amount: '0',
+//   provider: 'ez',
+//   game_id: '22847',
+//   game_id_hash: 'ez_ez-bet-on-numbers',
+//   transaction_id: 'ez-c4cb6d03-3404-486c-adc2-e7b534ce3334',
+//   round_id: '2746682889',
+//   gameplay_final: '1',
+//   is_freeround_win: '0',
+//   is_jackpot_win: '0',
+//   jackpot_win_in_amount: '0',
+//   gamesession_id: 'ez_724590564e890b7f34e5',
+//   original_session_id: '64db7dd801e2a',
+//   key: '7a607b0a776361b6a569dc87840ec1c3381d8172'
+// }
 
 
-let debit = {
-  callerId: '1obet_mc_s',
-  callerPassword: '97e502ab8ecdff96f79f3ddfd5759ae8389eecf3',
-  callerPrefix: 'pfzf',
-  action: 'debit',
-  remote_id: '3063523',
-  username: 'user_12222',
-  session_id: '64db7dd801e2a',
-  currency: 'PKR',
-  amount: '50',
-  provider: 'ez',
-  game_id: '22847',
-  game_id_hash: 'ez_ez-bet-on-numbers',
-  transaction_id: 'ez-dc1410b3-0218-44bd-9ef4-24cec1fade6e',
-  round_id: '2746711899',
-  gameplay_final: '0',
-  is_freeround_bet: '0',
-  jackpot_contribution_in_amount: '0',
-  gamesession_id: 'ez_724590564e890b7f34e5',
-  original_session_id: '64db7dd801e2a',
-  key: '7bbb86b0d5e61059b1ff25c96b1fa74927ce1652'
-}
+// let debit = {
+//   callerId: '1obet_mc_s',
+//   callerPassword: '97e502ab8ecdff96f79f3ddfd5759ae8389eecf3',
+//   callerPrefix: 'pfzf',
+//   action: 'debit',
+//   remote_id: '3063523',
+//   username: 'user_12222',
+//   session_id: '64db7dd801e2a',
+//   currency: 'PKR',
+//   amount: '50',
+//   provider: 'ez',
+//   game_id: '22847',
+//   game_id_hash: 'ez_ez-bet-on-numbers',
+//   transaction_id: 'ez-dc1410b3-0218-44bd-9ef4-24cec1fade6e',
+//   round_id: '2746711899',
+//   gameplay_final: '0',
+//   is_freeround_bet: '0',
+//   jackpot_contribution_in_amount: '0',
+//   gamesession_id: 'ez_724590564e890b7f34e5',
+//   original_session_id: '64db7dd801e2a',
+//   key: '7bbb86b0d5e61059b1ff25c96b1fa74927ce1652'
+// }
 
 const handleLosingBet = async (payload) => {
   const userToUpdate  = await User.findOne({ remoteId: payload.remote_id, isDeleted: false,});
@@ -153,7 +153,7 @@ const handleLosingBet = async (payload) => {
 
 const handleWinningBet = async (userId) => {
   console.log(`Bet ${bet._id} lost.`);
-  const userId = bet.userId;
+  // const userId = bet.userId;
   const loosingAmount = bet.loosingAmount;
   const betAmount = bet.betAmount;
   const userToUpdate = await User.findOne({
