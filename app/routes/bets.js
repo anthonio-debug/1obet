@@ -241,7 +241,7 @@ const placeBet = async (req, res) => {
     if (marketId == '7' || marketId == '4339'){
 
       console.log("MarketId ========== ", id);
-      const url       = `${config.horseRaceUrl}/odds/?ids=${market}`;
+      const url       = `${config.horseRaceUrl}/odds/?ids=${id}`;
       const response  = await axios.get(url);
       const oddsData  = response.data;
       
