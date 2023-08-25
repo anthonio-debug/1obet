@@ -245,7 +245,7 @@ const placeBet = async (req, res) => {
       const response  = await axios.get(url);
       const oddsData  = response.data;
       
-      console.log("oddsData Runners ====== ", oddsData);
+      console.log("odds Data Runners ====== ", oddsData);
       if (oddsData.length == 0) {
         console.log(`Match odds not found for sports ID`);
         return res.status(404).send({ message: `Bet mis match` });
@@ -291,7 +291,7 @@ const placeBet = async (req, res) => {
         const AvailableToLay    = OddDetailsTeam.exchange.availableToLay;
         console.log('availableToBack', AvailableToLay);
         matchedIndex = AvailableToLay.findIndex((back) => {
-          return back.price === betRate;
+          return back.price == betRate;
         });
         console.log('matchedIndex', matchedIndex);
         if (!matchedIndex) {
