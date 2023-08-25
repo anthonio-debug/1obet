@@ -535,6 +535,22 @@ db.users.insertOne(
   }
 
 )
+db.users.updateMany(
+  {},
+  {
+    $set: {
+      blockedMarketPlaces: [],
+      blockedSubMarkets: [],
+      blockedSubMarketsByParent: []
+    }
+  }
+)
+
+// blockedMarketPlaces: [ '2' ],
+// blockedSubMarkets: [ '127' ],
+// blockedSubMarketsByParent: [],
+
+
 
 db.settings.insertMany([
   {

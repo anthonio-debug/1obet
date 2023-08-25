@@ -2,7 +2,7 @@ const cron = require("node-cron");
 const Bets = require("../../app/models/bets");
 const CricketMatch = require("../../app/models/cricketMatches");
 const User = require("../../app/models/user");
-const Cash = require("../../app/models/deposits");
+
 const { getParents } = require("../../app/routes/bets");
 const Events = require('../../app/models/events');
 require('../../db');

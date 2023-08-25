@@ -25,7 +25,7 @@ const ListMarkets = require('../models/listMarkets')
 const currentPosition = require('../models/CurrentPosition');
 const { log } = require('async');
 
-async function getParents(userId) {
+const getParents = async (userId) => {
   const parentUserIds = [];
   let currentUserId = userId;
   console.log('currentUserId', currentUserId);
@@ -92,9 +92,9 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
   
 };
 
-async function placeBet(req, res) {
+const placeBet = async (req, res) => {
   const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
+  if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
 
@@ -142,19 +142,21 @@ async function placeBet(req, res) {
     const subMarketId   = subMarketId1.concat(subMarketId2);
     const eventDetail   = await Events.findById(matchId);
     marketId            = eventDetail.sportsId;
-    const {id, marketName} = eventDetail.marketIds.find((market) => market.marketName ==  subMarketName );
-    console.log(" id ====== ", id);
-    console.log(" market Name ====== ", marketName);
-
+    console.log(" marketId ======== ", marketId);
+    let id;
 
     // Checks for Market Places & Sub Markets  
     if (marketId == '7' || marketId == '4339'){
+      id = eventDetail.marketIds[0];
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
       if (!subMarketDetail) {
         return res.status(404).send({ message: 'Bet not allowed' });
       }
     }else {
+      const currentMarket =  eventDetail.marketIds.find((market) => market.marketName ==  subMarketName );
+      id = currentMarket.id;
       subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
+
       if (!subMarketDetail) {
         return res.status(404).send({ message: 'you cannot place bet' });
       }
