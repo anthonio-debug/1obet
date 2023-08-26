@@ -107,7 +107,6 @@ const placeBet = async (req, res) => {
     let testRunner;
     let currentSession;
     let subMarketDetail;
-    let matchName;
     let marketId;
     let selectedOddsRate;
     const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId  } = req.body;
@@ -423,7 +422,7 @@ const placeBet = async (req, res) => {
       let  currentSessionOver = Math.ceil(currentOver%5);
       currentSession          = Math.ceil(currentOver/5);
 
-      switch ("T20") {
+      switch (score.type) {
         case 'T10':
           totalSessions       = 2;
           break;
@@ -465,8 +464,9 @@ const placeBet = async (req, res) => {
         })
 
       }
+      console.log(" currentSession ========= ", currentSession);
     }
-    console.log(" ==================== ", );
+
     if(config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)){
       winningAmount = betAmount;
       loosingAmount = betAmount;
@@ -478,7 +478,8 @@ const placeBet = async (req, res) => {
     else if(type == 0){
       winningAmount = ( betAmount * betRate ) - betAmount;
       loosingAmount = betAmount;
-    } else {
+    } 
+    else if(type == 1){
       winningAmount = betAmount;
       loosingAmount = (betAmount * betRate) - betAmount;
     }
@@ -491,7 +492,7 @@ const placeBet = async (req, res) => {
       loosingAmount: loosingAmount,
       winningAmount: winningAmount,
       subMarketId: subMarketDetail.Id,
-      betSession: currentSession? currentSession: '',
+      betSession: currentSession,
       runner: selectionId? selectionId : '',
       type: type,
       event:  eventDetail.name,
@@ -541,69 +542,6 @@ const placeBet = async (req, res) => {
   } catch (error) {
     console.error('error', error);
     return res.status(404).send({ message: `Error placing bet ${error}` });
-  }
-}
-
-const placeFigureBet = async () => {
-  try {
-      const score             = await liveScore(req.body.Id)
-      console.log(score);
-      let currentOver         = score.overs;
-      let secondInnings       = score.secondInnings;  
-      let totalSessions       = 0
-      const type              = 'T20';
-      let  currentSessionOver = Math.ceil(currentOver%5);
-      let  currentSession     = Math.ceil(currentOver/5);
-
-      switch (score.type) {
-          case 'T10':
-              totalSessions       = 2;
-              break;
-          case 'T20':
-              totalSessions       = 4;
-              break;
-          case 'ODI':
-              totalSessions       = 10;
-              break;
-          case 'TEST':
-              totalSessions       = 9;
-              currentSessionOver  = Math.ceil(currentOver%10);
-              currentSession      = Math.ceil(currentOver/10);
-              break;
-          default:
-              break;
-      }
-
-      if(secondInnings && currentSession == totalSessions){
-          res.status(200).json({
-              success: false,
-              message: 'betting not Allowed in last Session',
-              currentSession : currentSession,
-              totalSessions  : totalSessions,
-              over           : currentSessionOver,
-          });
-      }
-      else if(currentSessionOver > 3){
-          res.status(200).json({
-              success : false,
-              message : `betting not Allowed in ${currentSessionOver} over`,
-              currentSession : currentSession,
-              totalSessions  : totalSessions,
-              over           : currentSessionOver,
-          });
-      }else {
-          res.status(200).json({
-              success: false,
-              message: 'Batting Allowd',
-          });
-      }
-  } catch (error) {
-      console.error(error);
-      res.status(200).json({
-          success: false,
-          message: 'Failed to get data',
-          error: error.message,
-      });
   }
 }
 
