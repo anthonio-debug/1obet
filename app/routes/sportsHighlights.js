@@ -13,19 +13,10 @@ async function getAllSportsHighlight(req, res) {
     const sportsHighlights = await inPlayEvents.aggregate([
       { $match: { sportsId: { $in: sportsIdList } } },
       {
-        $lookup: {
-          from: 'Odds',
-          localField: 'Id',
-          foreignField: 'eventId',
-          as: 'oddsData',
-        },
-      },
-      {
         $project: {
           sport: 1,
           name: 1,
           Id: 1,
-          _id: 1,
           sportsId: 1,
           matchType: 1,
           inplay: 1,
@@ -39,12 +30,6 @@ async function getAllSportsHighlight(req, res) {
           status: 1,
           inplayFromServer: 1,
           isShowed: 1,
-          oddsData: { $arrayElemAt: ['$oddsData', 0] },
-        },
-      },
-      {
-        $addFields: {
-          amount: { $ifNull: ['$oddsData.totalMatched', 0] },
         },
       },
       {
