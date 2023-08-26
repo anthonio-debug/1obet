@@ -502,7 +502,7 @@ const placeBet = async (req, res) => {
     bet.save(async (err, result) => {
       if (err) {
         console.log('err', err);
-        return res.status(404).send({ message: 'Error placing bet' });
+        return res.status(404).send({ message: `Error placing bet ${err}` });
       }
       try {
         const position = new currentPosition({
