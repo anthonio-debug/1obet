@@ -457,10 +457,10 @@ const placeBet = async (req, res) => {
       else if(currentSessionOver > 3){
         return res.send({
           success : false,
-          message : `betting not Allowed in ${currentSessionOver} over`,
+          message : `betting not Allowed in ${currentOver} over`,
           currentSession : currentSession,
           totalSessions  : totalSessions,
-          over           : currentSessionOver
+          over           : currentOver
         })
 
       }
@@ -1164,7 +1164,7 @@ const liveSportScore = async (eventId) => {
     return {
         success: true,
         message: 'Live Score',
-        score:  score
+        score: score
     };
   }
   catch (error) {
@@ -1232,8 +1232,8 @@ const cricketLiveScore = async (id) => {
               response.rrr = scoreInfo.spnreqrate2;
           }
       }
-
       [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+      console.log(" score response ========== ", response);
       return response
     }else{
       return data[0]
