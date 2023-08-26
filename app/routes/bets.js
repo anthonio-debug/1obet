@@ -148,10 +148,9 @@ const placeBet = async (req, res) => {
       if (!subMarketDetail) {
         return res.status(404).send({ message: 'Bet not allowed' });
       }
-    } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)){
     }else {
-      const currentMarket =  eventDetail.marketIds.find((market) => market.marketName ==  subMarketName );
-      id = currentMarket.id;
+      const currentMarket =  eventDetail?.marketIds?.find((market) => market.marketName ==  subMarketName );
+      id = currentMarket?.id;
       subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
 
       if (!subMarketDetail) {
