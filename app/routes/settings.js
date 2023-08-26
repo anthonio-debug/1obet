@@ -419,11 +419,18 @@ async function listEventsBySport(req, res) {
         isShowed: true,
       }).sort({ openDate: 1 });
     }else{
-      events = await Events.find({
-        sportsId: sportId,
-        status: 'OPEN',
-        isShowed: true,
-      }).sort({ openDate: 1 });
+      if (sportId == "1" || sportId == "2") {
+        events = await Events.find({
+          sportsId: sportId,
+          status: 'OPEN',
+          isShowed: true,
+        }).sort({ openDate: 1 });
+      } else {
+        events = await Events.find({
+          sportsId: sportId,
+          status: 'OPEN',
+        }).sort({ openDate: 1 });
+      }
     }
     res.status(200).json({
       success: true,
