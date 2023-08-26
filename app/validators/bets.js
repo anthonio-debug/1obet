@@ -6,7 +6,6 @@ module.exports.validate = (method) => {
       return [
         body('selectionId', 'selectionId is required')
           .exists()
-          .isInt()
           .withMessage('selectionId must be number'),
         body('betAmount', 'betAmount is required')
           .exists()

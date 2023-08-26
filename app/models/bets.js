@@ -13,6 +13,7 @@ const betSchema = new mongoose.Schema({
   returnAmount: { type: Number, default: 0 },
   createdAt: { type: Number },
   updatedAt: { type: Number },
+  betSession:{ type: Number },
   status: { type: Number, default: 1 },
   matchId: { type: String },
   winningAmount: { type: Number },

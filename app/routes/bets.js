@@ -468,6 +468,10 @@ const placeBet = async (req, res) => {
       winningAmount = betAmount;
       loosingAmount = betAmount;
     }
+    else if(type == 2){
+      winningAmount = ( betAmount * betRate ) - betAmount;
+      loosingAmount = betAmount;
+    }
     else if(type == 0){
       winningAmount = ( betAmount * betRate ) - betAmount;
       loosingAmount = betAmount;
@@ -484,7 +488,7 @@ const placeBet = async (req, res) => {
       loosingAmount: loosingAmount,
       winningAmount: winningAmount,
       subMarketId: subMarketDetail.Id,
-      currentSession: currentSession? currentSession: '',
+      betSession: currentSession? currentSession: '',
       runner: selectionId? selectionId : '',
       type: type,
       event:  eventDetail.name,
@@ -585,9 +589,6 @@ const placeFigureBet = async () => {
               over           : currentSessionOver,
           });
       }else {
-
-
-
           res.status(200).json({
               success: false,
               message: 'Batting Allowd',
