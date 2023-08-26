@@ -415,37 +415,22 @@ async function listEventsBySport(req, res) {
       events = await Events.find({
         sportsId: sportId,
         iconStatus: true,
-        $or: [
-          { 
-            inplay: true,
-            status: 'OPEN'
-           },
-          { 
-            status: 'OPEN',
-            $and: [
-              { openDate: { $gt: start } },
-              { openDate: { $lt: end } }
-            ]
-          }
-        ]
+        status: 'OPEN',
+        isShowed: true,
       }).sort({ openDate: 1 });
     }else{
-      events = await Events.find({
-        sportsId: sportId,
-        $or: [
-          { 
-            inplay: true,
-            status: 'OPEN'
-          },
-          { 
-            status: 'OPEN',
-            $and: [
-              { openDate: { $gt: start } },
-              { openDate: { $lt: end } }
-            ]
-          }
-        ]
-      }).sort({ openDate: 1 });
+      if (sportId == "1" || sportId == "2") {
+        events = await Events.find({
+          sportsId: sportId,
+          status: 'OPEN',
+          isShowed: true,
+        }).sort({ openDate: 1 });
+      } else {
+        events = await Events.find({
+          sportsId: sportId,
+          status: 'OPEN',
+        }).sort({ openDate: 1 });
+      }
     }
     res.status(200).json({
       success: true,
