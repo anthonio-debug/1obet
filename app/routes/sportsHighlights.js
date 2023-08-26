@@ -10,7 +10,7 @@ async function getAllSportsHighlight(req, res) {
     const sportId = req.query.sport;
     const sportsHighlights = await inPlayEvents.aggregate([
       { $match: { 
-        sportsId: sportId,
+        sportsId: "4",
         openDate: {
           $gte: new Date().getTime() -12*60*60*1000
         }
