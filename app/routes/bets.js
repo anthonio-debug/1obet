@@ -440,7 +440,7 @@ const placeBet = async (req, res) => {
         default:
           return res.json(404, {
             success : false,
-            message : `Match Type is not defined : ${score.type}`,
+            message : `Match Type is not defined : ${eventDetail.type}`,
           });
           break;
       }
