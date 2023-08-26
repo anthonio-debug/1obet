@@ -137,7 +137,10 @@ const placeBet = async (req, res) => {
     const subMarketId2  = await User.distinct("blockedSubMarketsByParent",    { userId :{ $in: parentUserIds }, isDeleted:false });
     const subMarketId   = subMarketId1.concat(subMarketId2);
     const eventDetail   = await Events.findById(matchId);
-    marketId            = eventDetail.sportsId;
+    if(!eventDetail){
+      return res.status(404).send({message: 'EVENT COULD NOT FOUND'});
+    }
+    marketId            = eventDetail?.sportsId;
     console.log(" marketId ======== ", marketId);
     let id;
 
