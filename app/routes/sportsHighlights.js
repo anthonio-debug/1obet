@@ -7,11 +7,14 @@ const Odds = require('../models/odds');
 
 async function getAllSportsHighlight(req, res) {
   try {
-    const sportsIdList = ["1", "2", "4"]; // List of sportsId to filter
-
-    // Use MongoDB aggregation pipeline to filter and process data on the database server
+    const sportId = req.query.sport;
     const sportsHighlights = await inPlayEvents.aggregate([
-      { $match: { sportsId: { $in: sportsIdList } } },
+      { $match: { 
+        sportsId: sportId,
+        openDate: {
+          $gte: new Date().getTime() -12*60*60*1000
+        }
+      } },
       {
         $group: {
           _id: '$sport',
@@ -34,33 +37,12 @@ async function getAllSportsHighlight(req, res) {
           },
         },
       },
-      {
-        $project: {
-          sport: '$_id',
-          data: 1,
-          _id: 0,
-        },
-      },
     ]);
-
-    const formattedData = {};
-    console.log(
-      'formattedData',formattedData
-    );
-    sportsHighlights.forEach((highlight) => {
-      formattedData[highlight.sport] = highlight.data;
-    });
-     // Sort the sports in formattedData alphabetically and populate the sorted data into sortedFormattedData
-     const sortedFormattedData = Object.keys(formattedData).sort((a, b) => a.localeCompare(b))
-     .reduce((acc, sport) => {
-       acc[sport] = formattedData[sport];
-       return acc;
-     }, {});
 
     return res.send({
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
-      results: sortedFormattedData,
+      results: sportsHighlights,
     });
   } catch (err) {
     console.log(err);
