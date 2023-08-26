@@ -415,14 +415,14 @@ const placeBet = async (req, res) => {
           message: `Bet Not Allowed : ${ score }` 
         });
       }
-      console.log('score ====== ', score);
+      console.log(' score ====== ', score );
       let currentOver         = score.overs;
       let secondInnings       = score.secondInnings;  
       let totalSessions       = 0
       let currentSessionOver  = Math.ceil(currentOver%5);
       currentSession          = Math.ceil(currentOver/5);
 
-      switch (eventDetail.type) {
+      switch (eventDetail.matchType) {
         case 'T10':
           totalSessions       = 2;
           break;
@@ -440,7 +440,7 @@ const placeBet = async (req, res) => {
         default:
           return res.json(404, {
             success : false,
-            message : `Match Type is not defined : ${eventDetail.type}`,
+            message : `Match Type is not defined : ${eventDetail.matchType}`,
           });
           break;
       }
