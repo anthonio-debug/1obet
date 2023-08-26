@@ -24,7 +24,6 @@ async function getAllSportsHighlight(req, res) {
           matchType: '$matchType',
           amount: '$amount',
           Id: '$Id',
-          _id: '$_id',
           inplayFromServer: "$inplayFromServer",
           isShowed: "$isShowed",
           inplay: '$inplay',
