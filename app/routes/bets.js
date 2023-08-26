@@ -438,7 +438,7 @@ const placeBet = async (req, res) => {
           currentSession      = Math.ceil(currentOver/10);
           break;
         default:
-          return res.json({
+          return res.json(404, {
             success : false,
             message : `Match Type is not defined : ${score.type}`,
           });
