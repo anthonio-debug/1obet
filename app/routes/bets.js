@@ -406,9 +406,12 @@ const placeBet = async (req, res) => {
     }
 
     if(subMarketDetail.Id == config.Figure){
-      let score = await  liveSportScore(eventDetail.Id);
-      if (!score) {
-        return res.status(404).send({ message: `Bet not allowed : ${ score } ` });
+      let score   = await liveSportScore(eventDetail.Id);
+      if (!score){
+        return res.json({ 
+          status: false,
+          message: `Bet Not Allowed : ${ score }` 
+        });
       }
       console.log('score ====== ', score);
       let currentOver         = score.overs;
@@ -417,7 +420,7 @@ const placeBet = async (req, res) => {
       let  currentSessionOver = Math.ceil(currentOver%5);
       currentSession          = Math.ceil(currentOver/5);
 
-      switch (score.type) {
+      switch ("T20") {
         case 'T10':
           totalSessions       = 2;
           break;
@@ -433,32 +436,34 @@ const placeBet = async (req, res) => {
           currentSession      = Math.ceil(currentOver/10);
           break;
         default:
-          return {
+          return res.json({
             success : false,
             message : `Match Type is not defined : ${score.type}`,
-          };
+          });
           break;
       }
+
       if(secondInnings && currentSession == totalSessions){
-        return {
+        return res.send({
           success: false,
           message: 'betting not Allowed in last Session',
           currentSession : currentSession,
           totalSessions  : totalSessions,
           over           : currentSessionOver,
-        };
+        });
       }
       else if(currentSessionOver > 3){
-        return {
+        return res.send({
           success : false,
           message : `betting not Allowed in ${currentSessionOver} over`,
           currentSession : currentSession,
           totalSessions  : totalSessions,
-          over           : currentSessionOver,
-        };
+          over           : currentSessionOver
+        })
+
       }
     }
-
+    console.log(" ==================== ", );
     if(config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)){
       winningAmount = betAmount;
       loosingAmount = betAmount;
@@ -1201,13 +1206,13 @@ async function reviewFakeBet(req, res) {
 const liveSportScore = async (eventId) => {
   try {
 
-    const event = await Event.findOne({ Id: eventId }, { _id: 0, matchType: 1, sportsId: 1 });
+    const event = await Events.findOne({ Id: eventId }, { _id: 0, matchType: 1, sportsId: 1 });
     const type = event ? event.sportsId : null;
     console.log("event", event);
     let score = {};
 
     if(type == "4"){
-      score = await cricketLiveScore(req.params.id)
+      score = await cricketLiveScore(eventId)
     }else{
       return {
         status: false,
@@ -1222,11 +1227,11 @@ const liveSportScore = async (eventId) => {
   }
   catch (error) {
       console.error(error);
-      res.status(200).json({
+      return {
           success: false,
           message: 'Failed to get data',
           error: error.message,
-      });
+      };
   }
 }
 
