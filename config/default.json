@@ -26,6 +26,15 @@
   "apiUrl":"https://em-api.thegameprovider.com/api/seamless/provider",
   "createCasinoUser": true,
   "casinoMultiples": 10,
-  "fancy" : 104,
-  "bookmaker": 128
+  "SportOddsSubMarkets": [6, 13, 15],
+  "sportMarkets": ["1","2", "4"],
+  "raceMarkets": ["7", "4339"],
+  "Fancy": 7,
+  "BookMaker": 8,
+  "Figure" : 9,
+  "EvenOdd": 10, 
+  "SmallBig" : 34,
+  "Toss": 11,
+  "Cup": 12,
+  "FigureEvenOddSmallBig": [9, 10, 34]
 }

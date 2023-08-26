@@ -1,4 +1,4 @@
-const   express              = require('express');
+const  express              = require('express');
 const  {validationResult }   = require('express-validator');
 const  BettingFigure         = require('../models/BettingFigure');
 const  Event                 = require('../models/events');
@@ -160,7 +160,7 @@ async function livesportscore(req, res) {
       console.log("event", event);
       let score = {};
 
-      if(type == 4){
+      if(type == "4"){
         score = await cricketLiveScore(req.params.id)
       }else{
         score = await otherLiveScore(req.params.id)
@@ -181,16 +181,10 @@ async function livesportscore(req, res) {
     }
 }
 
-async function placeFigureBets(req, res) {
+const placeFigureBets = async (req, res) => {
     try {
         const score             = await liveScore(req.body.Id)
-        console.log(score);
-        let currentOver         = score.overs;
-        let secondInnings       = score.secondInnings;  
-        let totalSessions       = 0
-        const type              = 'T20';
-        let  currentSessionOver = Math.ceil(currentOver%5);
-        let  currentSession     = Math.ceil(currentOver/5);
+
 
         switch (score.type) {
             case 'T10':
@@ -229,9 +223,6 @@ async function placeFigureBets(req, res) {
                 over           : currentSessionOver,
             });
         }else {
-
-
-
             res.status(200).json({
                 success: false,
                 message: 'Batting Allowd',
