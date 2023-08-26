@@ -13,26 +13,6 @@ async function getAllSportsHighlight(req, res) {
     const sportsHighlights = await inPlayEvents.aggregate([
       { $match: { sportsId: { $in: sportsIdList } } },
       {
-        $project: {
-          sport: 1,
-          name: 1,
-          Id: 1,
-          sportsId: 1,
-          matchType: 1,
-          inplay: 1,
-          iconStatus: 1,
-          matchStoppedReason:1,
-          matchStopStatus:1,
-          matchCanceledStatus:1,
-          matchResumedStatus:1,
-          openDate: 1,
-          marketIds: 1,
-          status: 1,
-          inplayFromServer: 1,
-          isShowed: 1,
-        },
-      },
-      {
         $group: {
           _id: '$sport',
           data: {
