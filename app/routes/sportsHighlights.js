@@ -16,25 +16,21 @@ async function getAllSportsHighlight(req, res) {
         }
       } },
       {
-        $group: {
-          _id: '$sport',
-          data: {
-            $push: {
-              match: '$name',
-              openDate: '$openDate',
-              sportsId: '$sportsId',
-              matchType: '$matchType',
-              amount: '$amount',
-              Id: '$Id',
-              _id: '$_id',
-              inplayFromServer: "$inplayFromServer",
-              isShowed: "$isShowed",
-              inplay: '$inplay',
-              marketIds: "$marketIds",
-              status: "$status",
-              iconStatus: '$iconStatus',
-            },
-          },
+        $project: {
+          _id: '$_id',
+          match: '$name',
+          openDate: '$openDate',
+          sportsId: '$sportsId',
+          matchType: '$matchType',
+          amount: '$amount',
+          Id: '$Id',
+          _id: '$_id',
+          inplayFromServer: "$inplayFromServer",
+          isShowed: "$isShowed",
+          inplay: '$inplay',
+          marketIds: "$marketIds",
+          status: "$status",
+          iconStatus: '$iconStatus',
         },
       },
     ]);
