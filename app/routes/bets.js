@@ -407,7 +407,7 @@ const placeBet = async (req, res) => {
       }
     }
 
-    if(subMarketDetail.Id == config.Figure){
+    if(config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)){
       let score   = await liveSportScore(eventDetail.Id);
       if (!score){
         return res.json({ 
@@ -419,10 +419,10 @@ const placeBet = async (req, res) => {
       let currentOver         = score.overs;
       let secondInnings       = score.secondInnings;  
       let totalSessions       = 0
-      let  currentSessionOver = Math.ceil(currentOver%5);
+      let currentSessionOver  = Math.ceil(currentOver%5);
       currentSession          = Math.ceil(currentOver/5);
 
-      switch (score.type) {
+      switch (eventDetail.type) {
         case 'T10':
           totalSessions       = 2;
           break;
