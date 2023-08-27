@@ -1577,7 +1577,7 @@ async function setMatchShow(req, res) {
         return res.status(200).json({
           success: true,
           message: 'match updated successful',
-          data: event
+          data: resp
         });
       }
     }
