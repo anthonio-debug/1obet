@@ -312,43 +312,54 @@ const placeBet = async (req, res) => {
 
     //for fancy
     if (subMarketDetail.Id == config.Fancy ) {
-      const eventId = match.Id
-      const url       = `${config.fancyUrl}/bm_fancy/${eventId}`;
-      const response  = await axios.get(url);
-      const fancyOdds = response?.data?.t3;
-      console.log('fancyOddst3', fancyOdds);
-      if (fancyOdds.length){
-        const selectedTeamOdds = fancyOdds.find(runner => runner.sid == req.body.selectionId);
-        if (!selectedTeamOdds){
+      const eventId = eventDetail.Id
+      const url           = `${config.fancyUrl}/bm_fancy/${eventId}`;
+      const response      = await axios.get(url);
+      const apiFancyOdds  = response?.data?.t3;
+      const DBOddDetails  = await Odds.findById(oddsId);
+      const dbFancyOdds   = DBOddDetails?.data?.t3
+
+      if (apiFancyOdds.length && dbFancyOdds.length){
+        const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
+        const dbSelectedOdds  = dbFancyOdds.find(runner  => runner.sid == req.body.selectionId);
+
+        if (!apiSelectedOdds || !dbSelectedOdds){
           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
-        runnerName = selectedTeamOdds.nat; // Get the runner name from the 'nat' field
-
+        runnerName = apiSelectedOdds.nat; // Get the runner name from the 'nat' field
         let selectedOddsRate = null;
-        const DBOddDetails      = await Odds.findById(oddsId);
+        
         if (req.body.type == 0) {
-          const backOdds = [selectedTeamOdds.b1, selectedTeamOdds.b2, selectedTeamOdds.b3];
-          console.log('backOdds', backOdds)
-          selectedOddsRate = backOdds.find(back => back == req.body.betRate);
+          const apiBackOdds = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
+          const DbBackOdds  = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
+          const index       = DbBackOdds.indexOf(betRate)
+          if (index == -1) {
+            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+            return res.status(404).send({ message: `Bet miss matched` });
+          }
+          if(apiBackOdds[index] < betRate ){
+            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+            return res.status(404).send({ message: `Bet miss matched` });
+          }
         } 
         else if (req.body.type == 1) {
-          const layOdds = [selectedTeamOdds.l1, selectedTeamOdds.l2, selectedTeamOdds.l3];
-          console.log('layOdds', layOdds);
-          selectedOddsRate = layOdds.find(lay => lay == req.body.betRate)
+          const apiBackOdds = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
+          const DbBackOdds  = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
+          const index       = DbBackOdds.indexOf(betRate)
+          if (index == -1) {
+            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+            return res.status(404).send({ message: `Bet miss matched` });
+          }
+          if(apiBackOdds[index] < betRate ){
+            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+            return res.status(404).send({ message: `Bet miss matched` });
+          }
         }
         else {
           console.log('Invalid type value. Type should be 0 or 1.');
           return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
         }
-
-        if (!selectedOddsRate || selectedOddsRate == '0.00') {
-          // If odds are not available or suspended.
-          console.log(`Selected odds for the bet are not available or suspended for the team ${req.body.selectionId}`);
-          return res.status(404).send({ message: `Selected odds for the bet are not available or suspended for the team ${req.body.selectionId}` });
-        }
-        // Now you have the selectedOddsRate based on the selected team and type
-        console.log('Selected Odds:', selectedOddsRate);
       }
 
     }
