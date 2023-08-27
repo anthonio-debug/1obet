@@ -28,11 +28,11 @@ async function addCashDeposit(req, res) {
       return res.status(404).send({ message: 'user not found' });
     }
 
-    if (currentUserParent.role !== '0') {
+    if (currentUserParent.role != '0') {
       if (  req.body.amount > (currentUserParent.clientPL + currentUserParent.credit )) {
         return res
           .status(400)
-          .send({ message: `Max cash deposit is ${currentUserParent.clientPL + currentUserParent.credit}` });
+          .send({ message: `Max cash deposit is ${Math.floor(currentUserParent.clientPL + currentUserParent.credit)}` });
       }
     }
 

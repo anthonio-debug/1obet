@@ -451,6 +451,55 @@ db.submarkettypes.insertMany([
   }
 ])
 
+db.bets.insertMany([
+  {
+    marketId: '4',
+    userId: 12229,
+    betAmount: 1000,
+    betRate: 2.16,
+    returnAmount: 1160,
+    createdAt: 1693090249095,
+    status: 1,
+    matchId: '64ea799109e4b01bd688be20',
+    winningAmount: 200,
+    loosingAmount: 232,
+    subMarketId: '15',
+    event: 'Bl Bicknell v Guillen Meza',
+    runner: '25081703',
+    isfancyOrbookmaker: true, 
+    fancyData: "Fall of 1st wkt MO(OI vs MO)adv",
+    position: 0,
+    type: 1,
+    isFake: 0,
+    updatedAt: 1693090249096,
+    __v: 0
+  },
+  {
+    marketId: '2',
+    userId: 12229,
+    betAmount: 500,
+    betRate: 2.14,
+    returnAmount: 0,
+    createdAt: 1693090296956,
+    status: 1,
+    matchId: '64ea799109e4b01bd688be20',
+    winningAmount: 500,
+    isfancyOrbookmaker: true, 
+    fancyData: "P Salt run(OI vs MO)adv",
+    loosingAmount: 570,
+    subMarketId: '15',
+    event: 'Bl Bicknell v Guillen Meza',
+    runner: '25081703',
+    position: 0,
+    type: 1,
+    isFake: 0,
+    updatedAt: 1693090296956,
+    __v: 0
+  }
+])
+
+
+
 db.bettingfigures.deleteMany({})
 db.bettingfigures.insertMany([
   {
