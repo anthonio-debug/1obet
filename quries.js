@@ -230,10 +230,6 @@ db.sidebarmenus.insertMany([
 
 db.markettypes.insertMany([
   {
-    Id: '6',
-    name: 'All Casino',
-  },
-  {
     Id: '4',
     name: 'cricket',
   },
@@ -252,35 +248,39 @@ db.markettypes.insertMany([
   {
     Id: '4339',
     name: 'Grey Hound',
-  }
+  },
+  {
+    Id: '6',
+    name: 'All Casino',
+  },
 ])
 db.submarkettypes.insertMany([
   {
     Id: 1,
-    name: 'Ezugi Casino',
+    name: 'Sports Book',
     marketId: '6',
   },
   {
     Id: 2,
-    name: 'evolution Casino',
+    name: 'Ezugi Casino',
     marketId: '6',
   },
   {
     Id: 3,
-    name: 'Betfair Games',
+    name: 'evolution Casino',
     marketId: '6',
   },
   {
     Id: 4,
-    name: 'Star Casino',
+    name: 'Betfair Games',
     marketId: '6',
   },
+  
   {
     Id: 5,
-    name: 'Super Nowa',
+    name: '120 British Casino',
     marketId: '6',
   },
-
   {
     Id: 6,
     marketId: '4',
