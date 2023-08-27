@@ -1554,12 +1554,10 @@ async function setMatchShow(req, res) {
       .status(404)
       .send({ message: 'only company can ... ' });
   }
-  console.log(" ============================== ");
-
   if (req.query.status == false) {
     const currentEv = await Events.findOne({ Id: req.query.matchId });
     if (currentEv) {
-      if (currentEv.inplay==true) {
+      if (currentEv.inplay == true) {
         const event = await Events.findOneAndUpdate(
           { Id: req.query.matchId },
           { $set: {
@@ -1567,14 +1565,10 @@ async function setMatchShow(req, res) {
           }},
           {upsert: false}
         )
-
         await MarketIDS.updateMany(
           { eventId: req.query.matchId },
           { inplay: false }
         );
-        
-        const resp = await createNewSession(req.query.matchId)
-        console.log(" resp ============= ", resp);
         return res.status(200).json({
           success: true,
           message: 'match updated successful',
@@ -1582,17 +1576,20 @@ async function setMatchShow(req, res) {
         });
       }
     }
+  }else {
+    const event = await Events.findOneAndUpdate(
+      { Id: req.query.matchId },
+      { $set: {
+        isShowed: req.query.status
+      }},
+      {upsert: false}
+    )
+    const resp = await createNewSession(req.query.matchId)
+    console.log(" resp ============= ", resp);
   }
-  const event = await Events.findOneAndUpdate(
-    { Id: req.query.matchId },
-    { $set: {
-      isShowed: req.query.status
-    }},
-    {upsert: false}
-  )
   return res.status(200).json({
     success: true,
-    message: 'match updated successful',
+    message: 'match updated successfully',
     data: event
   });
 } 
