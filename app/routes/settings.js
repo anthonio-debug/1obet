@@ -980,7 +980,8 @@ async function bettorDashboardGames(req, res) {
     const inPlay = await Events.find(
       {
         status: 'OPEN',
-        inplay: true
+        inplay: true,
+        isShowed: true
       }, 
       {
         _id: 1,
