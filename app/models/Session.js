@@ -5,6 +5,7 @@ let Global = require('../global/settings');
 
 let sessionSchema = new Schema({
   sessionNo: { type: Number },
+  Id: { type: String},
   eventId: { type: Number },
   score: { type: Number, default: 0 },
   updatedAt: { type: Number },
