@@ -415,6 +415,13 @@ const placeBet = async (req, res) => {
           message: `Bet Not Allowed : ${ score }` 
         });
       }
+
+      return res.json({ 
+        status: true,
+        message: `Bet Allowed`,
+        data: score
+      });
+
       console.log(' score ====== ', score );
       let currentOver         = score.overs;
       let secondInnings       = score.secondInnings;  
