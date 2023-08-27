@@ -1579,8 +1579,6 @@ async function setMatchShow(req, res) {
           message: 'match updated successful',
           data: event
         });
-
-     
       }
     }
   }
