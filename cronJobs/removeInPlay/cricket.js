@@ -5,8 +5,6 @@ const Events = require('../../app/models/events');
 const moment = require('moment');
 require('../../db');
 
-
-
 const addInPlayFalse = async (eventIds)=>{
   for(const eventId of eventIds) {
     console.log("eventId ======== ", eventId);

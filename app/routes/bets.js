@@ -92,7 +92,6 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
   
 };
 
-// match odds fancy book maker etc 
 const placeBet = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length != 0) {
@@ -314,28 +313,26 @@ const placeBet = async (req, res) => {
     //for fancy
     if (subMarketDetail.Id == config.Fancy ) {
       const eventId = match.Id
-      const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
-      const response = await axios.get(url);
-      const fancyOdds = response?.data.data;
-      // console.log('fancyOdds',fancyOdds);
-      console.log('fancyOddst3', fancyOdds?.t3);
-      if (fancyOdds){
-        const selectedTeamOdds = fancyOdds.t3.find(runner => runner.sid == req.body.selectionId);
-        console.log('selectedTeamOdds', selectedTeamOdds);
-        if (!selectedTeamOdds) {
+      const url       = `${config.fancyUrl}/bm_fancy/${eventId}`;
+      const response  = await axios.get(url);
+      const fancyOdds = response?.data?.t3;
+      console.log('fancyOddst3', fancyOdds);
+      if (fancyOdds.length){
+        const selectedTeamOdds = fancyOdds.find(runner => runner.sid == req.body.selectionId);
+        if (!selectedTeamOdds){
           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
         runnerName = selectedTeamOdds.nat; // Get the runner name from the 'nat' field
 
         let selectedOddsRate = null;
-
-        if (req.body.type === 0) {
-          // If type is 0 (available to back), try to find a match between the user-provided betRate and any of the available back odds (b1, b2, or b3)
+        const DBOddDetails      = await Odds.findById(oddsId);
+        if (req.body.type == 0) {
           const backOdds = [selectedTeamOdds.b1, selectedTeamOdds.b2, selectedTeamOdds.b3];
           console.log('backOdds', backOdds)
           selectedOddsRate = backOdds.find(back => back == req.body.betRate);
-        } else if (req.body.type === 1) {
+        } 
+        else if (req.body.type == 1) {
           const layOdds = [selectedTeamOdds.l1, selectedTeamOdds.l2, selectedTeamOdds.l3];
           console.log('layOdds', layOdds);
           selectedOddsRate = layOdds.find(lay => lay == req.body.betRate)
@@ -416,11 +413,11 @@ const placeBet = async (req, res) => {
         });
       }
 
-      return res.json({ 
-        status: true,
-        message: `Bet Allowed`,
-        data: score
-      });
+      // return res.json({ 
+      //   status: true,
+      //   message: `Bet Allowed`,
+      //   data: score
+      // });
 
       console.log(' score ====== ', score );
       let currentOver         = score.overs;
@@ -1207,7 +1204,6 @@ async function cricketLiveScore(id) {
             score   = scoreInfo.score2;
             played  = scoreInfo.score1;
         }
-
         if(type == "TEST"){
           score = score.split('&');
           score = score[score.length - 1].trim()
@@ -1218,17 +1214,11 @@ async function cricketLiveScore(id) {
         played = played.filter(element => element != 0).length;
         if(played > 0){
           response.inning  = 2;
-
-            response.target  = (parseInt(target?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0]) + 1).toString();
             if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
-
-                response.rrr = scoreInfo.spnreqrate;
-
+              response.rrr = scoreInfo.spnreqrate;
             }
             else if(scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""){
-
-                response.rrr = scoreInfo.spnreqrate2;
-
+              response.rrr = scoreInfo.spnreqrate2;
             }
         }
 

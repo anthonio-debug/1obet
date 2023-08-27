@@ -42,7 +42,7 @@ const fancyGames = new mongoose.Schema({
   eventName: { type: String, required: false },
   name: { type: String, required: false },
   eventDate: { type: String, required: false },
-  gameId: { type: String, required: false },
+gameId: { type: String, required: false },
   type: { type: String },
   eventId:{ type: String },
   createdAt: { type: Number }
