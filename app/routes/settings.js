@@ -1572,7 +1572,7 @@ async function setMatchShow(req, res) {
         return res.status(200).json({
           success: true,
           message: 'match updated successful',
-          data: resp
+          data: event
         });
       }
     }
@@ -1618,7 +1618,8 @@ const createNewSession = async (matchId) =>{
   for(let i = 1; i <= totalSessions; i++){
     const session = new Session({
       sessionNo: i,
-      eventId: match.Id
+      eventId: match.Id,
+      Id: match._id
     });
     session.save();
   }
