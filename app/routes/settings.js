@@ -1554,6 +1554,7 @@ async function setMatchShow(req, res) {
       .status(404)
       .send({ message: 'only company can ... ' });
   }
+  console.log(" ============================== ");
 
   if (req.query.status == false) {
     const currentEv = await Events.findOne({ Id: req.query.matchId });
