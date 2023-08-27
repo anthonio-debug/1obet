@@ -14,6 +14,8 @@ const betSchema = new mongoose.Schema({
   createdAt: { type: Number },
   updatedAt: { type: Number },
   betSession:{ type: Number },
+  resultId: { type: String, default: null },
+  fancyData: { type: String, default: null },
   status: { type: Number, default: 1 },
   matchId: { type: String },
   winningAmount: { type: Number },
