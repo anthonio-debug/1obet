@@ -16,6 +16,7 @@ const betSchema = new mongoose.Schema({
   betSession:{ type: Number },
   resultId: { type: String, default: null },
   fancyData: { type: String, default: null },
+  isfancyOrbookmaker: {type: Boolean, default: false},
   status: { type: Number, default: 1 },
   matchId: { type: String },
   winningAmount: { type: Number },
@@ -32,6 +33,7 @@ const betSchema = new mongoose.Schema({
   eventId: { type: String },
   sportsId: { type: String },
   runnerName: { type: String },
+  lastCheckResult: { type: Number, default: 0 },
 });
 
 betSchema.pre('save', function (next) {
