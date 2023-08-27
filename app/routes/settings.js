@@ -1599,7 +1599,7 @@ async function setMatchShow(req, res) {
 } 
 
 const createNewSession = async (matchId) =>{
-  const match = await Events.findOne(Id: matchId)
+  const match = await Events.findOne({Id: matchId})
   return match;
 }
 
