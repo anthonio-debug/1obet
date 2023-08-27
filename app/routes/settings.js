@@ -1585,18 +1585,44 @@ async function setMatchShow(req, res) {
       {upsert: false}
     )
     const resp = await createNewSession(req.query.matchId)
-    console.log(" resp ============= ", resp);
+
+    return res.status(200).json({
+      success: true,
+      message: 'match updated successfully',
+      data: event
+    });
+
   }
-  return res.status(200).json({
-    success: true,
-    message: 'match updated successfully',
-    data: event
-  });
 } 
 
 const createNewSession = async (matchId) =>{
   const match = await Events.findOne({Id: matchId})
-  return match;
+  const matchType = match.matchType
+  let totalSessions = 0;
+  switch (matchType) {
+    case 'T10':
+      totalSessions = 4;
+      break;
+    case 'T20':
+      totalSessions = 8;
+      break;
+    case 'ODI':
+      totalSessions = 20;
+      break;
+    case 'TEST':
+      totalSessions = 18;
+      break;
+    default:
+      break;
+  }
+  for(let i = 1; i <= totalSessions; i++){
+    const session = new Session({
+      sessionNo: i,
+      eventId: match.Id
+    });
+    session.save();
+  }
+
 }
 
 
