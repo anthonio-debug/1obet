@@ -15,7 +15,7 @@ settingsSchema.plugin(Global.aggregatePaginate);
 settingsSchema.plugin(Global.paginate);
 
 settingsSchema.pre('save', function (next) {
-  var now = new Date().getTime() / 1000;
+  var now = new Date().getTime();
   if (!this.createdAt) {
     this.createdAt = now;
     this.updatedAt = now;

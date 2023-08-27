@@ -21,9 +21,9 @@ const Racing = require('../models/racing');
 const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
 const MarketIDS = require('../models/marketIds');
-
 const loginRouter = express.Router();
 const router = express.Router();
+const Session = require("../models/Session")
 // process.env.TZ = 'UTC';
 
 const SelectedCasino = require('../models/selectedCasino');
@@ -1555,7 +1555,6 @@ async function setMatchShow(req, res) {
       .send({ message: 'only company can ... ' });
   }
 
-
   if (req.query.status == false) {
     const currentEv = await Events.findOne({ Id: req.query.matchId });
     if (currentEv) {
@@ -1567,11 +1566,14 @@ async function setMatchShow(req, res) {
           }},
           {upsert: false}
         )
+
         await MarketIDS.updateMany(
           { eventId: req.query.matchId },
           { inplay: false }
         );
-
+        
+        const resp = await createNewSession(req.query.matchId)
+        console.log(" resp ============= ", resp);
         return res.status(200).json({
           success: true,
           message: 'match updated successful',
@@ -1582,8 +1584,6 @@ async function setMatchShow(req, res) {
       }
     }
   }
-
-
   const event = await Events.findOneAndUpdate(
     { Id: req.query.matchId },
     { $set: {
@@ -1597,6 +1597,11 @@ async function setMatchShow(req, res) {
     data: event
   });
 } 
+
+const createNewSession = async (matchId) =>{
+  const match = await Events.findOne(Id: matchId)
+  return match;
+}
 
 
 
