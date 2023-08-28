@@ -448,11 +448,11 @@ const placeBet = async (req, res) => {
         });
       }
 
-      // return res.json({ 
-      //   status: true,
-      //   message: `Bet Allowed`,
-      //   data: score
-      // });
+      return res.json({ 
+        status: true,
+        message: `Bet Allowed`,
+        data: score
+      });
 
       console.log(' score ====== ', score );
       let currentOver         = score.overs;
@@ -1228,7 +1228,8 @@ const liveSportScore = async (eventId) => {
 
 async function cricketLiveScore(id) {
     try {
-      const apiResponse   =  await axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}33`);
+      id = 1808280126
+      const apiResponse   =  await axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
       const data          = apiResponse.data;
       if(data[0].score != null ){
         const event         = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
