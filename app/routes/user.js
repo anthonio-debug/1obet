@@ -355,7 +355,7 @@ function getAllUsers(req, res) {
   } else if (req.decoded.login.role == '0') {
   }
   if (req.query.username)
-  query.userName = { $regex: req.body.username, $options: 'i' };
+  query.userName = { $regex: req.query.username, $options: 'i' };
 
   query.isDeleted = false;
   // Exclude the currently logged-in user from the results
