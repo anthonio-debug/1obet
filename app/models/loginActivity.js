@@ -16,7 +16,6 @@ let LoginActivitySchema = new Schema({
 	status: { type: Number, default: 0 },
 	userId: { type: Number, required: true, default: 0 },
 	balance: { type: Number },
-	locationInfo: { type: Schema.Types.Mixed },
 	// deviceId: { type: String, default: '' },
 	role: { type: String, default: 0 },
 	ipAddress: { type: String },

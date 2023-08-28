@@ -10,6 +10,7 @@ const LoginActivity = require('../models/loginActivity');
 const Settings = require('../models/settings');
 const BetLimits = require('../models/betLimits');
 const UserBetSizes = require('../models/userBetSizes');
+const loginRecord = require('../models/loginRecord');
 const axios = require('axios');
 const userBetSizes = require('../models/userBetSizes');
 const { tryEach } = require('async');
@@ -249,6 +250,17 @@ function login(req, res) {
             console.log(err);
           }
 
+
+
+          var loginRecord = new loginRecord({
+            userName: user.userName,
+            userId: user.userId,
+            locationData: geo,
+            createdAt: new Date().getTime()
+          });
+
+          loginRecord.save();
+
           var userDetailsForLoginActivity = {
             userName: user.userName,
             userId: user.userId,
@@ -262,7 +274,6 @@ function login(req, res) {
             ipAddress: ipInfo.clientIp,
             createdAt: new Date().getTime(),
             updatedAt: new Date().getTime(),
-            locationInfo:geo
           };
           // console.log("userDetailsForLoginActivity", userDetailsForLoginActivity);
           saveLoginActivity(userDetailsForLoginActivity, (err, data) => {
