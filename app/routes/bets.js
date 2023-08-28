@@ -152,7 +152,7 @@ const placeBet = async (req, res) => {
       const requiredTime  = new Date().getTime() + config.raceOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime
       if(remainingTimeFromEvent > 0){
-        return  res.send({
+        return  res.status(404).send({
           status: true,
           message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
         })
@@ -168,7 +168,7 @@ const placeBet = async (req, res) => {
       const requiredTime  = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime
       if(remainingTimeFromEvent > 0){
-        return  res.send({
+        return  res.status(404).send({
           status: true,
           message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
         })
