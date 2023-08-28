@@ -24,6 +24,9 @@ const MarketIDS = require('../models/marketIds');
 const loginRouter = express.Router();
 const router = express.Router();
 const Session = require("../models/Session")
+
+const loginRecord = require('../models/loginRecord');
+
 // process.env.TZ = 'UTC';
 
 const SelectedCasino = require('../models/selectedCasino');
@@ -321,34 +324,34 @@ function getDefaultSettings(req, res) {
 async function updateMatchType(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-      return res.status(400).send({ errors: errors.errors });
+    return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const {_id, matchType, iconStatus } = req.body;
-     Events.findByIdAndUpdate(
-        _id,
-        { $set: { matchType: matchType, iconStatus: iconStatus } },
-          (err, updatedMatch) => {
-              if (err) {
-                  console.log("Error updating figure:", err);
-              } else {
-                  console.log("Updated match:", updatedMatch);
-              }
-          }
-      );
-      res.status(200).json({
-          success: true,
-          message: 'Updated Successfully'
-      });
+    const { _id, matchType, iconStatus } = req.body;
+    Events.findByIdAndUpdate(
+      _id,
+      { $set: { matchType: matchType, iconStatus: iconStatus } },
+      (err, updatedMatch) => {
+        if (err) {
+          console.log("Error updating figure:", err);
+        } else {
+          console.log("Updated match:", updatedMatch);
+        }
+      }
+    );
+    res.status(200).json({
+      success: true,
+      message: 'Updated Successfully'
+    });
 
 
-  }catch (error) {
-      console.error(error);
-      res.status(200).json({
-          success: false,
-          message: 'Failed to save fancy data',
-          error: error.message,
-      });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({
+      success: false,
+      message: 'Failed to save fancy data',
+      error: error.message,
+    });
   }
 }
 
@@ -399,26 +402,26 @@ async function listEventsBySport(req, res) {
   try {
     let start;
     let end;
-    let events; 
-    if(sportId == '4' || sportId == '2' || sportId == '1' ){
-      start  = new Date().getTime();
-      end    = new Date().getTime() + 24*60*60*1000;
-    }else if (sportId == '7' || sportId == '4339'){
-      start  = new Date().getTime();
-      end    = new Date().getTime() + 6*60*60*1000;
+    let events;
+    if (sportId == '4' || sportId == '2' || sportId == '1') {
+      start = new Date().getTime();
+      end = new Date().getTime() + 24 * 60 * 60 * 1000;
+    } else if (sportId == '7' || sportId == '4339') {
+      start = new Date().getTime();
+      end = new Date().getTime() + 6 * 60 * 60 * 1000;
     }
     console.log("start == ", start);
     console.log("end == ", end);
     console.log("sportId == ", sportId);
 
-    if(sportId == "4"){
+    if (sportId == "4") {
       events = await Events.find({
         sportsId: sportId,
         iconStatus: true,
         status: 'OPEN',
         isShowed: true,
       }).sort({ openDate: 1 });
-    }else{
+    } else {
       if (sportId == "1" || sportId == "2") {
         events = await Events.find({
           sportsId: sportId,
@@ -510,13 +513,13 @@ async function listOddsAPI(req, res) {
 
     let livesportscoreData = {}
 
-    const event = await Events.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1,name:1,openDate:1,status:1,inplay:1 });
-      const type = event ? event.sportsId : null;
-      if(type == 4){
-        livesportscoreData = await cricketLiveScore(eventIds)
-      }else{
-        livesportscoreData = await otherLiveScore(eventIds)
-      }
+    const event = await Events.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1, name: 1, openDate: 1, status: 1, inplay: 1 });
+    const type = event ? event.sportsId : null;
+    if (type == 4) {
+      livesportscoreData = await cricketLiveScore(eventIds)
+    } else {
+      livesportscoreData = await otherLiveScore(eventIds)
+    }
     // console.log('liveTVResponse', liveTVResponse);
     return res.json({
       success: true,
@@ -560,13 +563,13 @@ async function racesAPI(req, res) {
     const id = req.params.id;
     const racesData = await Events.find(
       { sportsId: id },
-      { meetingId:1,countryCode:1,countryCodes:1,eventTypeId:1,races:1,venue:1,sportsId: 1 }) 
-      
-      return res.json({
-        success: true,
-        message: 'Records',
-        results: racesData,
-      });
+      { meetingId: 1, countryCode: 1, countryCodes: 1, eventTypeId: 1, races: 1, venue: 1, sportsId: 1 })
+
+    return res.json({
+      success: true,
+      message: 'Records',
+      results: racesData,
+    });
   } catch (err) {
     console.error(err);
     return res.json({
@@ -578,91 +581,91 @@ async function racesAPI(req, res) {
 
 async function cricketLiveScore(id) {
   try {
-    const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+    const apiResponse = await axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
     const data = apiResponse.data;
     const response = {};
-    if(typeof(data[0]) == "string"){
+    if (typeof (data[0]) == "string") {
       const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
       const type = event ? event.matchType : null;
-      const scoreInfo     = JSON.parse(data).score
-      let score           = scoreInfo.score1;
-      let played          = scoreInfo.score2;
+      const scoreInfo = JSON.parse(data).score
+      let score = scoreInfo.score1;
+      let played = scoreInfo.score2;
       response.spnnation1 = scoreInfo.spnnation1;
       response.spnnation2 = scoreInfo.spnnation2;
 
-      if(scoreInfo.activenation1 == 1){
-          response.team   =  scoreInfo.spnnation1
-          response.crr    = scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim()
+      if (scoreInfo.activenation1 == 1) {
+        response.team = scoreInfo.spnnation1
+        response.crr = scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim()
 
       }
-      else if(scoreInfo.activenation2 == 1){
-          response.team    = scoreInfo.spnnation2;
-          response.crr     = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
-          score            = scoreInfo.score2;
-          played           = scoreInfo.score1;
+      else if (scoreInfo.activenation2 == 1) {
+        response.team = scoreInfo.spnnation2;
+        response.crr = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
+        score = scoreInfo.score2;
+        played = scoreInfo.score1;
       }
-  
-      response.type   = type
-      response.balls  = scoreInfo.balls
 
-      if(type == "TEST"){
-          score = score.split('&');
-          score = score[score.length - 1].trim()
-          played = played.split('&');
-          played = played[played.length - 1].trim();
+      response.type = type
+      response.balls = scoreInfo.balls
+
+      if (type == "TEST") {
+        score = score.split('&');
+        score = score[score.length - 1].trim()
+        played = played.split('&');
+        played = played[played.length - 1].trim();
       }
       played = played.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
       played = played.filter(element => element != 0).length;
-      if(played > 0){
-          response.secondInnings  = 1;
-          response.spnmessage =  scoreInfo.spnmessage
-           
-          if(scoreInfo.activenation2 == 1){
-              target = scoreInfo.score1 ? scoreInfo.score1 : ""
-          }else if(scoreInfo.activenation1 == 1){
-              target = scoreInfo.score2 ? scoreInfo.score2 : ""
-          }
+      if (played > 0) {
+        response.secondInnings = 1;
+        response.spnmessage = scoreInfo.spnmessage
 
-          response.target  = (parseInt(target.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0]) + 1).toString();
-          if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
-              response.rrr = scoreInfo.spnreqrate;
-          }
-          else if(scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""){
-              response.rrr = scoreInfo.spnreqrate2;
-          }
+        if (scoreInfo.activenation2 == 1) {
+          target = scoreInfo.score1 ? scoreInfo.score1 : ""
+        } else if (scoreInfo.activenation1 == 1) {
+          target = scoreInfo.score2 ? scoreInfo.score2 : ""
+        }
+
+        response.target = (parseInt(target.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0]) + 1).toString();
+        if (scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "") {
+          response.rrr = scoreInfo.spnreqrate;
+        }
+        else if (scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != "") {
+          response.rrr = scoreInfo.spnreqrate2;
+        }
       }
       [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
       return response
-    }else{
+    } else {
       return data[0]
     }
   } catch (error) {
-      console.error(error);
-      return {
-          success: false,
-          message: 'Failed to get data',
-          error: error.message,
-      };
+    console.error(error);
+    return {
+      success: false,
+      message: 'Failed to get data',
+      error: error.message,
+    };
   }
 }
 
 async function otherLiveScore(id) {
   try {
-    const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
-    const data        = apiResponse.data;
-    if(typeof(data[0]) == "string"){
+    const apiResponse = await axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+    const data = apiResponse.data;
+    if (typeof (data[0]) == "string") {
       // const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
       return JSON.parse(data)
-    }else{
+    } else {
       return data[0]
     }
   } catch (error) {
-      console.error(error);
-      return {
-          success: false,
-          message: 'Failed to get data',
-          error: error.message,
-      };
+    console.error(error);
+    return {
+      success: false,
+      message: 'Failed to get data',
+      error: error.message,
+    };
   }
 }
 
@@ -706,22 +709,22 @@ async function racesMarketList(req, res) {
       'state.lastMatchTime': 1,
       'state.totalMatched': 1,
       'state.totalAvailable': 1,
-      'state.status':1,
-      'runners.selectionId':1,
-      'runners.state.lastPriceTraded':1,
-      'runners.state.totalMatched':1,
-      'runners.state.lastPriceTraded':1,
-      'runners.state.status':1,
-      'runners.exchange':1,
+      'state.status': 1,
+      'runners.selectionId': 1,
+      'runners.state.lastPriceTraded': 1,
+      'runners.state.totalMatched': 1,
+      'runners.state.lastPriceTraded': 1,
+      'runners.state.status': 1,
+      'runners.exchange': 1,
 
 
       // Add any other fields you want to exclude from raceOddsData
     };
-    const racesMarketsData = await RaceMarkets.findOne({'eventNodes.marketNodes.marketId': req.params.marketId },);
-    const raceOddsData = await RaceOdds.findOne({ marketId: req.params.marketId },projectionRaceOddsData).sort({_id: -1})
+    const racesMarketsData = await RaceMarkets.findOne({ 'eventNodes.marketNodes.marketId': req.params.marketId },);
+    const raceOddsData = await RaceOdds.findOne({ marketId: req.params.marketId }, projectionRaceOddsData).sort({ _id: -1 })
     console.log('racesMarketsData ==>', racesMarketsData)
-    console.log('raceOddsData ==>', raceOddsData)      
-    if ( raceOddsData?.runners && Array.isArray(raceOddsData?.runners) && racesMarketsData?.eventNodes && Array.isArray(racesMarketsData?.eventNodes)){
+    console.log('raceOddsData ==>', raceOddsData)
+    if (raceOddsData?.runners && Array.isArray(raceOddsData?.runners) && racesMarketsData?.eventNodes && Array.isArray(racesMarketsData?.eventNodes)) {
       const marketNode = racesMarketsData?.eventNodes?.find((eventNode) => eventNode?.marketNodes?.marketId === raceOddsData.marketId);
       if (marketNode && marketNode?.marketNodes?.runners && Array.isArray(marketNode?.marketNodes?.runners)) {
         const mergedRunners = {};
@@ -803,7 +806,7 @@ function updateMatch(req, res) {
           matchStoppedReason: matchStoppedReason,
           matchStopStatus: true,
           matchResumedStatus: false, // Ensure it's not resumed when stopped
-          matchCanceledStatus:matchCanceledStatus
+          matchCanceledStatus: matchCanceledStatus
         };
 
         successMessage = 'Match stopped successfully';
@@ -852,7 +855,7 @@ function updateMatch(req, res) {
         successMessage = 'Match resumed successfully';
 
         Events.findOneAndUpdate(
-          { _id},
+          { _id },
           { $set: updateField },
           (err, updatedMatch) => {
             if (err || !updatedMatch) {
@@ -909,7 +912,7 @@ function updateMatch(req, res) {
 async function bettorDashboardGames(req, res) {
   try {
     const selectedCasinoData = await SelectedCasino.aggregate([
-      { $match: {'games.mobile': JSON.parse(req.query.isMobile)}},
+      { $match: { 'games.mobile': JSON.parse(req.query.isMobile) } },
       {
         $project: {
           games: {
@@ -922,7 +925,7 @@ async function bettorDashboardGames(req, res) {
         }
       },
       {
-        $unwind: '$games' 
+        $unwind: '$games'
       },
       {
         $project: {
@@ -982,7 +985,7 @@ async function bettorDashboardGames(req, res) {
         status: 'OPEN',
         inplay: true,
         isShowed: true
-      }, 
+      },
       {
         _id: 1,
         Id: 1,
@@ -1026,7 +1029,7 @@ async function bettorDashboardGames(req, res) {
 
 async function bettorDashboardGames2(req, res) {
   try {
-    const soccerSalt = await  Events.find(
+    const soccerSalt = await Events.find(
       {
         sportsId: 1,
         status: 'OPEN',
@@ -1068,7 +1071,7 @@ async function bettorDashboardGames2(req, res) {
       })
     );
 
-    const tennisSalt = await  Events.find(
+    const tennisSalt = await Events.find(
       {
         sportsId: 2,
         status: 'OPEN',
@@ -1107,7 +1110,7 @@ async function bettorDashboardGames2(req, res) {
       })
     );
 
-    const cricketSalt = await  Events.find(
+    const cricketSalt = await Events.find(
       {
         sportsId: "4",
         status: 'OPEN',
@@ -1178,7 +1181,7 @@ async function getAllMatchSettlements(req, res) {
     const events = await Events.aggregate([
       {
         $match: {
-          sportsId: { $in: sportsIdArray } 
+          sportsId: { $in: sportsIdArray }
         },
       },
       {
@@ -1367,7 +1370,7 @@ async function getAllMatchSettlements(req, res) {
               }
             }
           ],
-          
+
 
           horseRace: [
             {
@@ -1415,10 +1418,10 @@ async function getAllMatchSettlements(req, res) {
 
     const organizedEvents = {
       soccer: result.docs[0].soccer.docs, // Access the 'docs' array for the specific event type
-  tennis: result.docs[0].tennis.docs,
-  cricket: result.docs[0].cricket.docs,
-  horseRace: result.docs[0].horseRace.docs,
-  greyhound: result.docs[0].greyhound.docs,
+      tennis: result.docs[0].tennis.docs,
+      cricket: result.docs[0].cricket.docs,
+      horseRace: result.docs[0].horseRace.docs,
+      greyhound: result.docs[0].greyhound.docs,
     };
 
     res.status(200).json({
@@ -1447,25 +1450,25 @@ async function getAllGamesResults(req, res) {
     let sort = 1;
     let sortValue = 'openDate';
     let limit = 50;
-    let projection 
-     if(req.body.sportsId == 7 || req.body.sportsId == 4339 ) {
+    let projection
+    if (req.body.sportsId == 7 || req.body.sportsId == 4339) {
       projection = {
         _id: 1,
         marketName: "$name",
         name: "$meetingName",
-        openDate: 1, 
+        openDate: 1,
         winner: 1
       };
-     }
-     else {
+    }
+    else {
       projection = {
         _id: 1,
         name: 1, //should be name of event 
         competitionName: 1, //change field to marketName
-        openDate: 1, 
+        openDate: 1,
         winner: 1
       };
-     }
+    }
 
     if (req.body.numRecords) {
       const numRecords = parseInt(req.body.numRecords);
@@ -1489,8 +1492,8 @@ async function getAllGamesResults(req, res) {
     if (req.body.sportsId) {
       query.sportsId = req.body.sportsId;
     }
-    console.log('startDate',req.body.startDate);
-    console.log('endDate',req.body.endDate);
+    console.log('startDate', req.body.startDate);
+    console.log('endDate', req.body.endDate);
 
     if (req.body.startDate && req.body.endDate) {
       query.openDate = {
@@ -1538,7 +1541,7 @@ async function getAllGamesResults(req, res) {
         results: results.docs,
         total: results.total,
         limit: results.limit,
-        page:  results.page,
+        page: results.page,
         pages: results.pages
       });
     });
@@ -1550,11 +1553,38 @@ async function getAllGamesResults(req, res) {
 
 
 async function setLoginHistories(req, res) {
+
+  /*
   if (req.decoded.role !== '0') {
     return res
       .status(404)
       .send({ message: 'only company can ... ' });
   }
+*/
+  if (!res.body.search) {
+    try {
+      const users = await User.find({});
+      const lastLogins = await Promise.all(
+        users.map(async (user) => {
+          const lastLoginRecord = await loginRecord.findOne({ userName: user.userName })
+            .sort({ loginDate: -1 })
+            .exec();
+
+          return {
+            userName: user.userName,
+            lastLogin: lastLoginRecord ? lastLoginRecord.loginDate : null,
+          };
+        })
+      );
+
+
+      return res.send({ thead: ['Username', 'Last login', 'Ip Address', 'City', 'Location'], data: lastLogins });
+
+    } catch (error) {
+
+    }
+  }
+
 }
 
 
@@ -1570,10 +1600,12 @@ async function setMatchShow(req, res) {
       if (currentEv.inplay == true) {
         const event = await Events.findOneAndUpdate(
           { Id: req.query.matchId },
-          { $set: {
-            isShowed: req.query.status
-          }},
-          {upsert: false}
+          {
+            $set: {
+              isShowed: req.query.status
+            }
+          },
+          { upsert: false }
         )
         await MarketIDS.updateMany(
           { eventId: req.query.matchId },
@@ -1586,13 +1618,15 @@ async function setMatchShow(req, res) {
         });
       }
     }
-  }else {
+  } else {
     const event = await Events.findOneAndUpdate(
       { Id: req.query.matchId },
-      { $set: {
-        isShowed: req.query.status
-      }},
-      {upsert: false}
+      {
+        $set: {
+          isShowed: req.query.status
+        }
+      },
+      { upsert: false }
     )
     const resp = await createNewSession(req.query.matchId)
 
@@ -1603,10 +1637,10 @@ async function setMatchShow(req, res) {
     });
 
   }
-} 
+}
 
-const createNewSession = async (matchId) =>{
-  const match = await Events.findOne({Id: matchId})
+const createNewSession = async (matchId) => {
+  const match = await Events.findOne({ Id: matchId })
   const matchType = match.matchType
   let totalSessions = 0;
   switch (matchType) {
@@ -1625,7 +1659,7 @@ const createNewSession = async (matchId) =>{
     default:
       break;
   }
-  for(let i = 1; i <= totalSessions; i++){
+  for (let i = 1; i <= totalSessions; i++) {
     const session = new Session({
       sessionNo: i,
       eventId: match.Id,

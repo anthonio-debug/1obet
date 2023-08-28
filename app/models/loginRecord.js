@@ -10,6 +10,7 @@ let LoginRecordSchema = new Schema({
 	userName: { type: String },
 	userId: { type: Number, required: true, default: 0 },
 	locationData: { type: Schema.Types.Mixed },
+    ipAddress: { type: String },
 	createdAt: { type: Number },
 })
 
