@@ -5,7 +5,13 @@ const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 let config = require('config');
 const User = require('../models/user');
-var geoip = require('geoip-lite');
+
+//ip location
+const {IP2Location} = require("ip2location-nodejs");
+let ip2location = new IP2Location();
+ip2location.open("../../IP2LOCATION-LITE-DB11.BIN");
+
+
 const LoginActivity = require('../models/loginActivity');
 const Settings = require('../models/settings');
 const BetLimits = require('../models/betLimits');
@@ -242,10 +248,26 @@ function login(req, res) {
             return res.status(404).send({ message: 'setting not found' });
           }
 
-          var geo = {};
+          var geo = {
+            latitude: 0,
+            longitude: 0,
+            region: null,
+            city: null,
+            zipCode: null,
+            country: null
+          };
 
           try {
-            geo = geoip.lookup(ipInfo.clientIp)
+            const geoChecking = ip2location.getAll(ipInfo.clientIp); 
+
+            if (geoChecking) {
+              geo.latitude = geoChecking.latitude;
+              geo.longitude= geoChecking.longitude;
+              geo.region= geoChecking.region;
+              geo.city= geoChecking.city;
+              geo.zipCode= geoChecking.zipCode;
+              geo.country= geoChecking.countryLong;
+            }
           } catch (error) {
             console.log(err);
           }
@@ -256,6 +278,7 @@ function login(req, res) {
             userName: user.userName,
             userId: user.userId,
             locationData: geo,
+            ipAddress: ipInfo.clientIp,
             createdAt: new Date().getTime()
           });
 
