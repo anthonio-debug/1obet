@@ -1850,7 +1850,7 @@ const apiResponse = {
     },
     created: "2023-08-24T17:52:56.622Z",
     __v: 0,
-  };
+};
 
 const apiFancyOdds  = apiResponse?.data?.data?.t3;
 console.log(" apiFancyOdds ====== ", apiFancyOdds.length);
@@ -1905,4 +1905,4 @@ if (apiFancyOdds.length && dbFancyOdds.length){
       console.log('Invalid type value. Type should be 0 or 1.');
     //   return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
     }
-  }
+}
