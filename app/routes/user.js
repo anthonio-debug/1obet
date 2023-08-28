@@ -112,29 +112,29 @@ async function registerUser(req, res) {
               console.log('user_username', user_username);
               if (req.body.role == '5') {
                 console.log('in casino bettor user')
-                  try {
-                    const response = await axios.post(config.apiUrl, {
-                      api_password: config.api_password,
-                      api_login: config.api_username,
-                      method: 'createPlayer',
-                      user_username,
-                      user_password: user_username,
-                      user_nickname: user_username,
-                      currency: config.currency,
-                    });
-                    let data = response.data.response;
-                    console.log('API Response:', response.data);
-                    user.remoteId = data.id;
-                    user.save();
-                  } catch (error) {
-                    console.error(error);
-                    res.status(404).send({
-                      success: false,
-                      message: 'Failed to create player',
-                      results: error,
-                    });
-                  }
+                try {
+                  const response = await axios.post(config.apiUrl, {
+                    api_password: config.api_password,
+                    api_login: config.api_username,
+                    method: 'createPlayer',
+                    user_username,
+                    user_password: user_username,
+                    user_nickname: user_username,
+                    currency: config.currency,
+                  });
+                  let data = response.data.response;
+                  console.log('API Response:', response.data);
+                  user.remoteId = data.id;
+                  user.save();
+                } catch (error) {
+                  console.error(error);
+                  res.status(404).send({
+                    success: false,
+                    message: 'Failed to create player',
+                    results: error,
+                  });
                 }
+              }
               return res.send({
                 message: 'Register Success',
                 success: true,
@@ -320,41 +320,42 @@ function getAllUsers(req, res) {
 
   let query = {};
 
+  // getAllUsers?page=1&numRecords=10&limit=10
+
   let page = 1;
   let sort = -1;
   let sortValue = 'createdAt';
   var limit = config.pageSize;
-  if (req.query.numRecords) {
-    if (isNaN(req.query.numRecords))
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-    if (req.query.numRecords < 0)
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-    if (req.query.numRecords > 100)
-      return res.status(404).send({
-        message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100',
-      });
+  if(req.query.numRecords && !isNaN(req.query.numRecords) && req.query.numRecords > 0)
     limit = Number(req.query.numRecords);
-  }
-  if (req.query.sortValue) sortValue = req.query.sortValue;
-  if (req.query.sort) {
-    sort = Number(req.query.sort);
-  }
-  if (req.query.page) {
-    page = Number(req.query.page);
-  }
+
+  // if (req.query.numRecords) {
+  //   if (isNaN(req.query.numRecords))
+  //     return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+  //   if (req.query.numRecords < 0)
+  //     return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+  //   if (req.query.numRecords > 100)
+  //     return res.status(404).send({
+  //       message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100',
+  //     });
+  //   limit = Number(req.query.numRecords);
+  // }
+
+  if (req.query.sortValue)  sortValue = req.query.sortValue;
+  if (req.query.sort)       sort      = Number(req.query.sort);
+  if (req.query.page)       page      = Number(req.query.page);
 
   if (req.query.userId) {
-    const userId = parseInt(req.query.userId);
+    const userId    = parseInt(req.query.userId);
     query.createdBy = userId;
-  } else if (req.decoded.login.role !== '0') {
+  } else if (req.decoded.login.role != '0') {
     query.createdBy = req.decoded.userId;
   } else if (req.decoded.login.role == '5') {
     query.userId = null;
   } else if (req.decoded.login.role == '0') {
   }
-  if (req.query.userName) {
-    query.userName = req.query.userName;
-  }
+  if (req.query.username)
+    query.userName = req.query.username;
   query.isDeleted = false;
   // Exclude the currently logged-in user from the results
   query.userId = { $ne: req.decoded.userId };
@@ -362,14 +363,10 @@ function getAllUsers(req, res) {
     query,
     { page: page, sort: { [sortValue]: sort }, limit: limit },
     (err, results) => {
-      if (results.total == 0) {
-        return res.status(404).send({ message: 'No records found' });
-      }
-      if (err)
-        return res.status(404).send({ message: 'USERS_PAGINATION_FAILED' });
+      if (err) return res.status(404).send({ message: 'Something went wrong' });
       return res.send({
         success: true,
-        message: 'Users Record Found',
+        message: 'Users list',
         total: results.total,
         results: results,
       });
