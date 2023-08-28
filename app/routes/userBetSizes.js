@@ -112,7 +112,7 @@ async function getAllBetSizes(req, res) {
       return res.status(404).send({ message: 'USER_NOT_FOUND' });
     }
 
-    const createdByZero = user.createdBy === 0;
+    const createdByZero = user.createdBy == 0;
 
     let queryResult;
 

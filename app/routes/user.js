@@ -112,28 +112,28 @@ async function registerUser(req, res) {
               console.log('user_username', user_username);
               if (req.body.role == '5') {
                 console.log('in casino bettor user')
-                  // try {
-                  //   const response = await axios.post(config.apiUrl, {
-                  //     api_password: config.api_password,
-                  //     api_login: config.api_username,
-                  //     method: 'createPlayer',
-                  //     user_username,
-                  //     user_password: user_username,
-                  //     user_nickname: user_username,
-                  //     currency: config.currency,
-                  //   });
-                  //   let data = response.data.response;
-                  //   console.log('API Response:', response.data);
-                  //   user.remoteId = data.id;
-                  //   user.save();
-                  // } catch (error) {
-                  //   console.error(error);
-                  //   res.status(404).send({
-                  //     success: false,
-                  //     message: 'Failed to create player',
-                  //     results: error,
-                  //   });
-                  // }
+                  try {
+                    const response = await axios.post(config.apiUrl, {
+                      api_password: config.api_password,
+                      api_login: config.api_username,
+                      method: 'createPlayer',
+                      user_username,
+                      user_password: user_username,
+                      user_nickname: user_username,
+                      currency: config.currency,
+                    });
+                    let data = response.data.response;
+                    console.log('API Response:', response.data);
+                    user.remoteId = data.id;
+                    user.save();
+                  } catch (error) {
+                    console.error(error);
+                    res.status(404).send({
+                      success: false,
+                      message: 'Failed to create player',
+                      results: error,
+                    });
+                  }
                 }
               return res.send({
                 message: 'Register Success',

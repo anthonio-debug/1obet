@@ -314,12 +314,12 @@ const placeBet = async (req, res) => {
     //for fancy
     else if (subMarketDetail.Id == config.Fancy ) {
       isFancyOrBookMaker = true;
-      const eventId = eventDetail.Id
+      const eventId       = eventDetail.Id
       const url           = `${config.fancyUrl}/bm_fancy/${eventId}`;
       const response      = await axios.get(url);
       const apiFancyOdds  = response?.data?.t3;
       const DBOddDetails  = await Odds.findById(oddsId);
-      const dbFancyOdds   = DBOddDetails?.data?.t3
+      const dbFancyOdds   = response?.data?.data?.t3
 
       if (apiFancyOdds.length && dbFancyOdds.length){
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
@@ -376,8 +376,8 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
       const apiFancyOdds  = response?.data?.t2[0]?.bm1;
-      const DBOddDetails  = await Odds.findById(oddsId);
-      const dbFancyOdds   = DBOddDetails?.data?.t2[0]?.bm1
+      const DBOddDetails  = await FancyGames.findById(oddsId);
+      const dbFancyOdds   = DBOddDetails?.data?.data?.t2[0]?.bm1
 
       if (apiFancyOdds.length && dbFancyOdds.length){
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
@@ -520,13 +520,13 @@ const placeBet = async (req, res) => {
       loosingAmount: loosingAmount,
       winningAmount: winningAmount,
       subMarketId: subMarketDetail.Id,
-      betSession: currentSession,
+      betSession: currentSession? currentSession: null,
       runner: selectionId? selectionId : '',
       type: type,
       event:  eventDetail.name,
-      createdAt: new Date().getTime(),
       isfancyOrbookmaker: isFancyOrBookMaker, 
-      fancyData: runnerName
+      fancyData: runnerName ? runnerName: null,
+      createdAt: new Date().getTime(),
     });
 
     bet.save(async (err, result) => {
