@@ -23,7 +23,7 @@ function updateBetSizes(req, res) {
     updateOne: {
       filter: { betLimitId: betSize._id, userId: req.body.userId },
       update: { $set: { amount: betSize.amount, userId:req.body.userId } },
-      upsert: false,
+      upsert: true,
     },
   }));
 
