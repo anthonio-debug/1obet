@@ -252,14 +252,14 @@ function login(req, res) {
 
 
 
-          var loginRecord = new loginRecord({
+          var loginRecordData = new loginRecord({
             userName: user.userName,
             userId: user.userId,
             locationData: geo,
             createdAt: new Date().getTime()
           });
 
-          loginRecord.save();
+          loginRecordData.save();
 
           var userDetailsForLoginActivity = {
             userName: user.userName,
