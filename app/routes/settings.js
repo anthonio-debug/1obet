@@ -1548,6 +1548,16 @@ async function getAllGamesResults(req, res) {
   }
 }
 
+
+async function setLoginHistories(req, res) {
+  if (req.decoded.role !== '0') {
+    return res
+      .status(404)
+      .send({ message: 'only company can ... ' });
+  }
+}
+
+
 async function setMatchShow(req, res) {
   if (req.decoded.role !== '0') {
     return res
@@ -1665,6 +1675,7 @@ loginRouter.post(
 loginRouter.get('/GetExchangeRates', GetExchangeRates);
 
 loginRouter.get('/setMatchShow', setMatchShow);
+loginRouter.get('/setLoginHistories', setLoginHistories);
 
 loginRouter.get('/getDefaultBetSizes', getDefaultBetSizes);
 router.get('/getDefaultSettings', getDefaultSettings);

@@ -6,22 +6,23 @@
 let mongoose = require('mongoose')
 let Schema = mongoose.Schema
 // let Global = require('../global/settings')
-mongoose.set('debug',true)
+mongoose.set('debug', true)
 
 let LoginActivitySchema = new Schema({
-    userName: { type: String },
+	userName: { type: String },
 	phone: { type: String },
 	token: { type: String, default: '', index: true },
 	isActive: { type: String, default: false },
 	status: { type: Number, default: 0 },
-	userId: {type: Number, required: true, default: 0 },
-	balance: { type : Number },
-    // deviceId: { type: String, default: '' },
+	userId: { type: Number, required: true, default: 0 },
+	balance: { type: Number },
+	locationInfo: { type: Schema.Types.Mixed },
+	// deviceId: { type: String, default: '' },
 	role: { type: String, default: 0 },
 	ipAddress: { type: String },
-    updatedAt: { type: Number },
+	updatedAt: { type: Number },
 	createdAt: { type: Number },
-    createdBy: { type: Number },
+	createdBy: { type: Number },
 })
 
 LoginActivitySchema.pre('update', function (next) {
