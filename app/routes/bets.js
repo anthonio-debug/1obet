@@ -324,7 +324,7 @@ const placeBet = async (req, res) => {
       const DBOddDetails  = await Odds.findById(oddsId);
       const dbFancyOdds   = response?.data?.data?.t3
 
-      if (apiFancyOdds.length && dbFancyOdds.length){
+      if (apiFancyOdds && dbFancyOdds && apiFancyOdds.length && dbFancyOdds.length){
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
         const dbSelectedOdds  = dbFancyOdds.find(runner  => runner.sid == req.body.selectionId);
 
@@ -426,7 +426,9 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if(config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)){
+      console.log(" Entered inside of Figure  ");
       let score   = await liveSportScore(eventDetail.Id);
+      console.log(" After Score Getting ");
       if (!score){
         return res.json({ 
           status: false,
@@ -434,11 +436,11 @@ const placeBet = async (req, res) => {
         });
       }
 
-      // return res.json({ 
-      //   status: true,
-      //   message: `Bet Allowed`,
-      //   data: score
-      // });
+      return res.json({ 
+        status: true,
+        message: `Bet Allowed`,
+        data: score
+      });
 
       console.log(' score ====== ', score );
       let currentOver         = score.overs;
@@ -446,6 +448,8 @@ const placeBet = async (req, res) => {
       let totalSessions       = 0
       let currentSessionOver  = Math.ceil(currentOver%5);
       currentSession          = Math.ceil(currentOver/5);
+
+
 
       switch (eventDetail.matchType) {
         case 'T10':
@@ -1184,21 +1188,20 @@ const liveSportScore = async (eventId) => {
     const event = await Events.findOne({ Id: eventId }, { _id: 0, matchType: 1, sportsId: 1 });
     const type = event ? event.sportsId : null;
     console.log("event", event);
-    let score = {};
 
     if(type == "4"){
-      score = await cricketLiveScore(eventId)
+      const score = await cricketLiveScore(eventId);
+      return {
+        success: true,
+        message: 'Live Score returnig from here ',
+        score: score
+      };
     }else{
       return {
         status: false,
         message: "Figure batting not Allowed !"
       }
     }
-    return {
-        success: true,
-        message: 'Live Score',
-        score: score
-    };
   }
   catch (error) {
       console.error(error);
@@ -1212,13 +1215,13 @@ const liveSportScore = async (eventId) => {
 
 async function cricketLiveScore(id) {
     try {
-      const apiResponse =  await   axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
-      const data = apiResponse.data;
-      const response = {};
-      if(typeof(data[0]) == "string"){
-
-        const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
-        const type          = event ? event.matchType : null;
+      const apiResponse   =  await axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}33`);
+      const data          = apiResponse.data;
+      if(data[0].score != null ){
+        const event         = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+        const type          = event ? event?.matchType : null;
+        console.log(" type ========== ", type);
+        
         const scoreInfo     = JSON.parse(data).score
         let score           = 0;
         let inning          = 1;
@@ -1236,22 +1239,19 @@ async function cricketLiveScore(id) {
           played = played.split('&');
           played = played[played.length - 1].trim();
         }
+
         played = played?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
         played = played.filter(element => element != 0).length;
+        console.log(" played ========== ", played);
         if(played > 0){
-          response.inning  = 2;
-            if(scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "" ){
-              response.rrr = scoreInfo.spnreqrate;
-            }
-            else if(scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != ""){
-              response.rrr = scoreInfo.spnreqrate2;
-            }
+          inning  = 2;
         }
 
         [response.score, response.wickets, response.overs] = score?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-        return response
+        console.log(" response.score ======", response.score);
+        return inning
       }else{
-        return data[0]
+        return data
       }
     } catch (error) {
         console.error(error);
