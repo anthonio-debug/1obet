@@ -246,7 +246,7 @@ function login(req, res) {
           try {
             geo = geoip.lookup(ipInfo.clientIp)
           } catch (error) {
-            
+            console.log(err);
           }
 
           var userDetailsForLoginActivity = {
