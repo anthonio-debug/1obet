@@ -35,6 +35,6 @@
     "socket.io-client": "^4.6.1",
     "uuid": "^9.0.0",
     "xid-js": "^1.0.1",
-    "geoip-lite": "^1.4.7"
+    "ip2location-nodejs": "^9.5.0"
   }
 }
