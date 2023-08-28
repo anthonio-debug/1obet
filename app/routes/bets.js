@@ -115,6 +115,7 @@ const placeBet = async (req, res) => {
     let winningAmount = 0;
     let loosingAmount = 0;
     let isFancyOrBookMaker = false; 
+    let _3rdPartyMarketId = 0
 
     if( betAmount < config.betMinimumAmount) {
       return res.status(404).send({ message: `minimum bet should be ${config.betMinimumAmount}` });
@@ -146,6 +147,7 @@ const placeBet = async (req, res) => {
     // Checks for Market Places & Sub Markets  
     if (config.raceMarkets.includes(marketId)){
       id = eventDetail.marketIds[0];
+      _3rdPartyMarketId = id
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
       if (!subMarketDetail) {
         return res.status(404).send({ message: 'Bet not allowed' });
@@ -153,6 +155,7 @@ const placeBet = async (req, res) => {
     }else {
       const currentMarket =  eventDetail?.marketIds?.find((market) => market.marketName ==  subMarketName );
       id = currentMarket?.id;
+      _3rdPartyMarketId = id
       subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
 
       if (!subMarketDetail) {
@@ -512,7 +515,8 @@ const placeBet = async (req, res) => {
     }
 
     const bet = new Bets({
-      marketId,
+      marketId: _3rdPartyMarketId,
+      sportsId: marketId,
       userId,
       betAmount,
       betRate: betRate,

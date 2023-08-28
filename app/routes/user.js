@@ -317,30 +317,13 @@ function getAllUsers(req, res) {
   }
   console.log('role', req.decoded.role);
   console.log('role2', req.decoded.login.role);
-
   let query = {};
-
-  // getAllUsers?page=1&numRecords=10&limit=10
-
   let page = 1;
   let sort = -1;
   let sortValue = 'createdAt';
   var limit = config.pageSize;
   if(req.query.numRecords && !isNaN(req.query.numRecords) && req.query.numRecords > 0)
     limit = Number(req.query.numRecords);
-
-  // if (req.query.numRecords) {
-  //   if (isNaN(req.query.numRecords))
-  //     return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-  //   if (req.query.numRecords < 0)
-  //     return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-  //   if (req.query.numRecords > 100)
-  //     return res.status(404).send({
-  //       message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100',
-  //     });
-  //   limit = Number(req.query.numRecords);
-  // }
-
   if (req.query.sortValue)  sortValue = req.query.sortValue;
   if (req.query.sort)       sort      = Number(req.query.sort);
   if (req.query.page)       page      = Number(req.query.page);
