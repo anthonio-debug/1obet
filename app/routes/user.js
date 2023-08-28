@@ -9,8 +9,8 @@ const User = require('../models/user');
 //ip location
 const {IP2Location} = require("ip2location-nodejs");
 let ip2location = new IP2Location();
-ip2location.open("../../IP2LOCATION-LITE-DB11.BIN");
-
+ip2location.open("/var/www/html/one-o-bet-backend/IP2LOCATION-LITE-DB11.BIN");
+//
 
 const LoginActivity = require('../models/loginActivity');
 const Settings = require('../models/settings');
