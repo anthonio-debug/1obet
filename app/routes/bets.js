@@ -322,9 +322,10 @@ const placeBet = async (req, res) => {
       const response      = await axios.get(url);
       const apiFancyOdds  = response?.data?.t3;
       const DBOddDetails  = await Odds.findById(oddsId);
-      const dbFancyOdds   = response?.data?.data?.t3
+      const dbFancyOdds   = DBOddDetails?.data?.data?.t3
 
-      if (apiFancyOdds && dbFancyOdds && apiFancyOdds.length && dbFancyOdds.length){
+
+      if (apiFancyOdds?.length && dbFancyOdds?.length){
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
         const dbSelectedOdds  = dbFancyOdds.find(runner  => runner.sid == req.body.selectionId);
 
@@ -374,7 +375,7 @@ const placeBet = async (req, res) => {
       const eventId = eventDetail.Id
       const url           = `${config.fancyUrl}/bm_fancy/${eventId}`;
       const response      = await axios.get(url);
-      if(response?.data?.t2.length){
+      if(response?.data?.t2?.length){
         console.log(`Odds not available for the selected team ${req.body.selectionId}`);
         return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
