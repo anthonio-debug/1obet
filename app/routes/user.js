@@ -5,12 +5,15 @@ const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 let config = require('config');
 const User = require('../models/user');
+var geoip = require('geoip-lite');
 const LoginActivity = require('../models/loginActivity');
 const Settings = require('../models/settings');
 const BetLimits = require('../models/betLimits');
 const UserBetSizes = require('../models/userBetSizes');
+const loginRecord = require('../models/loginRecord');
 const axios = require('axios');
 const userBetSizes = require('../models/userBetSizes');
+const { tryEach } = require('async');
 
 var getIP = require('ipware')().get_ip;
 
@@ -238,6 +241,25 @@ function login(req, res) {
           if (err || !setting) {
             return res.status(404).send({ message: 'setting not found' });
           }
+
+          var geo = {};
+
+          try {
+            geo = geoip.lookup(ipInfo.clientIp)
+          } catch (error) {
+            console.log(err);
+          }
+
+
+
+          var loginRecordData = new loginRecord({
+            userName: user.userName,
+            userId: user.userId,
+            locationData: geo,
+            createdAt: new Date().getTime()
+          });
+
+          loginRecordData.save();
 
           var userDetailsForLoginActivity = {
             userName: user.userName,
