@@ -138,6 +138,7 @@ const placeBet = async (req, res) => {
     const subMarketId2  = await User.distinct("blockedSubMarketsByParent",    { userId :{ $in: parentUserIds }, isDeleted:false });
     const subMarketId   = subMarketId1.concat(subMarketId2);
     const eventDetail   = await Events.findById(matchId);
+
     if(!eventDetail){
       return res.status(404).send({message: 'EVENT COULD NOT FOUND'});
     }
@@ -147,6 +148,16 @@ const placeBet = async (req, res) => {
 
     // Checks for Market Places & Sub Markets  
     if (config.raceMarkets.includes(marketId)){
+
+      const requiredTime  = new Date().getTime() + config.raceOpenBefore;
+      const remainingTimeFromEvent = eventDetail.openDate - requiredTime
+      if(remainingTimeFromEvent > 0){
+        return  res.send({
+          status: true,
+          message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
+        })
+      }
+
       id = eventDetail.marketIds[0];
       _3rdPartyMarketId = id
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
@@ -154,6 +165,15 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: 'Bet not allowed' });
       }
     }else {
+      const requiredTime  = new Date().getTime() + config.sportsOpenBefore;
+      const remainingTimeFromEvent = eventDetail.openDate - requiredTime
+      if(remainingTimeFromEvent > 0){
+        return  res.send({
+          status: true,
+          message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
+        })
+      }
+
       const currentMarket =  eventDetail?.marketIds?.find((market) => market.marketName ==  subMarketName );
       id = currentMarket?.id;
       _3rdPartyMarketId = id
@@ -438,30 +458,21 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if(config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)){
-      console.log(" Entered inside of Figure  ");
       let score   = await liveSportScore(eventDetail.Id);
-      console.log(" After Score Getting ");
       if (!score){
         return res.json({ 
           status: false,
           message: `Bet Not Allowed : ${ score }` 
         });
       }
-
-      return res.json({ 
-        status: true,
-        message: `Bet Allowed`,
-        data: score
-      });
-
-      console.log(' score ====== ', score );
+      console.log(' only  score |||| ====== |||| ', score );
       let currentOver         = score.overs;
-      let secondInnings       = score.secondInnings;  
+      let inning              = score.inning;  
       let totalSessions       = 0
+      if(currentOver%5 == 0) currentOver +=1 
       let currentSessionOver  = Math.ceil(currentOver%5);
-      currentSession          = Math.ceil(currentOver/5);
-
-
+      let currentSession      = Math.ceil(currentOver/5);
+      console.log(" currentSession = ",currentSession, " currentSessionOver =",currentSessionOver, " currentOver =",currentOver );
 
       switch (eventDetail.matchType) {
         case 'T10':
@@ -486,24 +497,30 @@ const placeBet = async (req, res) => {
           break;
       }
 
-      if(secondInnings && currentSession == totalSessions){
+      if(inning == 2 && currentSession == totalSessions){
         return res.send({
           success: false,
           message: 'betting not Allowed in last Session',
           currentSession : currentSession,
           totalSessions  : totalSessions,
-          over           : currentSessionOver,
+          currentSessionOver : currentSessionOver,
         });
       }
       else if(currentSessionOver > 3){
         return res.send({
           success : false,
-          message : `betting not Allowed in ${currentOver} over`,
+          message : `betting not Allowed in ${Math.ceil(currentOver%5)} over`,
           currentSession : currentSession,
           totalSessions  : totalSessions,
           over           : currentOver
         })
 
+      }
+      else {
+        return  res.send({
+          status: true,
+          message: "Bets are Allowed "
+        })
       }
       console.log(" currentSession ========= ", currentSession);
     }
@@ -1204,11 +1221,7 @@ const liveSportScore = async (eventId) => {
 
     if(type == "4"){
       const score = await cricketLiveScore(eventId);
-      return {
-        success: true,
-        message: 'Live Score returnig from here ',
-        score: score
-      };
+      return score
     }else{
       return {
         status: false,
@@ -1228,15 +1241,45 @@ const liveSportScore = async (eventId) => {
 
 async function cricketLiveScore(id) {
     try {
-      id = 1808280126
-      const apiResponse   =  await axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+      // const apiResponse   =  await axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+      const apiResponse = {
+        "status": true,
+        "msg": "Records",
+        "data": [{
+            "score" : {
+              "activenation1": "0",
+              "activenation2": 1,
+              "balls": [
+                  "0",
+                  "1",
+                  "0",
+                  "0",
+                  "0",
+                  "4"
+              ],
+              "dayno": "",
+              "isfinished": "0",
+              "score1": "355-10 (50)",
+              "score2": "184-2 (42.3)",
+              "spnballrunningstatus": "",
+              "spnmessage": "Day 2 | NOT trail by 171 runs",
+              "spnnation1": "SUR",
+              "spnnation2": "NOT",
+              "spnreqrate1": "",
+              "spnreqrate2": "",
+              "spnrunrate1": "",
+              "spnrunrate2": "CRR 3.16 "
+            }
+        }]
+      }
+      const response = {};
       const data          = apiResponse.data;
-      if(data[0].score != null ){
+      if(data[0]?.score != null ){
         const event         = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
         const type          = event ? event?.matchType : null;
-        console.log(" type ========== ", type);
-        
-        const scoreInfo     = JSON.parse(data).score
+        // const scoreInfo     = JSON.parse(data).score
+        const scoreInfo        = data[0].score
+
         let score           = 0;
         let inning          = 1;
         if(scoreInfo.activenation1 == 1){
@@ -1256,16 +1299,13 @@ async function cricketLiveScore(id) {
 
         played = played?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
         played = played.filter(element => element != 0).length;
-        console.log(" played ========== ", played);
         if(played > 0){
           inning  = 2;
         }
 
         [response.score, response.wickets, response.overs] = score?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-        console.log(" response.score ======", response.score);
-        return inning
-      }else{
-        return data
+        response.inning = inning;
+        return response
       }
     } catch (error) {
         console.error(error);

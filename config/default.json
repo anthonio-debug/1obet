@@ -36,5 +36,8 @@
   "SmallBig" : 34,
   "Toss": 11,
   "Cup": 12,
-  "FigureEvenOddSmallBig": [9, 10, 34]
+  "FigureEvenOddSmallBig" : [9, 10, 34],
+  "raceOpenBefore" : 180000,
+  "sportsOpenBefore" : 600000
+
 }

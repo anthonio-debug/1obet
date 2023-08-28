@@ -789,4 +789,171 @@ db.odds.count({})
 
 
 
+/*
+  {
+    "status": true,
+    "msg": "Records",
+    "data": {
+        "activenation1": "0",
+        "activenation2": 1,
+        "balls": [
+            "0",
+            "0",
+            "2",
+            "0",
+            "0",
+            "4"
+        ],
+        "dayno": "",
+        "isfinished": "0",
+        "score1": "277-10 (73.2) & 0-0 (0.0)",
+        "score2": "219-10 (88.4),&,24-0 (6.4)",
+        "spnballrunningstatus": "",
+        "spnmessage": "Day 2 | NOR trail by 34 runs",
+        "spnnation1": "MID",
+        "spnnation2": "NOR",
+        "spnreqrate1": "",
+        "spnreqrate2": "",
+        "spnrunrate1": "",
+        "spnrunrate2": "CRR 3.60"
+    }
+  }
+*/
+
+/*
+  {
+    "status": true,
+    "msg": "Records",
+    "data": {
+        "activenation1": "0",
+        "activenation2": 1,
+        "balls": [
+            "0",
+            "1",
+            "0",
+            "0",
+            "0",
+            "4"
+        ],
+        "dayno": "",
+        "isfinished": "0",
+        "score1": "355-10 (99.2)",
+        "score2": "184-2 (58.1)",
+        "spnballrunningstatus": "",
+        "spnmessage": "Day 2 | NOT trail by 171 runs",
+        "spnnation1": "SUR",
+        "spnnation2": "NOT",
+        "spnreqrate1": "",
+        "spnreqrate2": "",
+        "spnrunrate1": "",
+        "spnrunrate2": "CRR 3.16 "
+    }
+  }
+*/
+
+/*
+  respone of live score API     
+    "score": {
+            "activenation1": 1,
+            "activenation2": "0",
+            "balls": [
+                "0",
+                "0",
+                "0",
+                "1",
+                "0",
+                "0"
+            ],
+            "dayno": "",
+            "isfinished": "0",
+            "score1": "16-2 (4.4)",
+            "score2": "95-8 (20.0)",
+            "spnballrunningstatus": "",
+            "spnmessage": "BAN W Needed 80 runs from 92 balls",
+            "spnnation1": "BAN W",
+            "spnnation2": "IND W",
+            "spnreqrate1": "RR 5.22 ",
+            "spnreqrate2": "",
+            "spnrunrate1": "CRR 3.43 ",
+            "spnrunrate2": ""
+        },
+        "eventId": "32475818"
+    }
+
+*/
+
+/*
+{
+    "status": true,
+    "msg": "Records",
+    "data": {
+        "eventTypeId": 4,
+        "eventId": 32473071,
+        "score": {
+            "home": {
+                "name": "Worcestershire",
+                "halfTimeScore": "",
+                "fullTimeScore": "",
+                "penaltiesScore": "",
+                "penaltiesSequence": [],
+                "highlight": true,
+                "inning1": {
+                    "runs": "242",
+                    "wickets": "ALL_OUT",
+                    "overs": "89.3"
+                },
+                "inning2": {
+                    "runs": "49",
+                    "wickets": "2",
+                    "overs": "18.3"
+                }
+            },
+            "away": {
+                "name": "Yorkshire",
+                "halfTimeScore": "",
+                "fullTimeScore": "",
+                "penaltiesScore": "",
+                "penaltiesSequence": [],
+                "highlight": false,
+                "inning1": {
+                    "runs": "407",
+                    "wickets": "ALL_OUT",
+                    "overs": "92.1"
+                }
+            }
+        },
+        "currentSet": 2,
+        "hasSets": false,
+        "stateOfBall": {
+            "overNumber": "18",
+            "overBallNumber": "3",
+            "bowlerName": "Ben Coad",
+            "batsmanName": "",
+            "batsmanRuns": "",
+            "appealId": "0",
+            "appealTypeName": "Not Out",
+            "wide": "0",
+            "bye": "0",
+            "legBye": "0",
+            "noBall": "0",
+            "outcomeId": "0",
+            "dismissalTypeName": "Not Out",
+            "referralOutcome": "0"
+        },
+        "currentDay": "4",
+        "matchType": "TEST",
+        "fullTimeElapsed": {
+            "hour": 0,
+            "min": 0,
+            "sec": 0
+        },
+        "matchStatus": "RainDelay"
+    }
+}
+
+*/
+
+
+
+
 
