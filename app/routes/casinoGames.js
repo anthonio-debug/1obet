@@ -359,12 +359,7 @@ function addSelectedDashboardGames(req, res) {
     return res.status(200).send({ message: 'you are not allowed to add dashboard games', success: false })
   }
   const { gameId, status } = req.body
-
-  return res.send({
-    gameId: gameId,
-    status: status
-  })
-
+  
   SelectedCasino.updateOne(
     {},
     { $set: { 'games.$[game].isDashboard': status } },
