@@ -370,9 +370,8 @@ const addSelectedDashboardGames =  async (req, res) =>  {
   // });
 
   SelectedCasino.updateOne(
-    {},
+    {'games.id': gameId },
     { $set: { 'games.$[game].isDashboard': status } },
-    { arrayFilters: [{ 'games.id':gameId  }], new: true }
   )
   .then((result) => {
     return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
