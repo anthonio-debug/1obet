@@ -26,13 +26,14 @@ function ToolForResults() {
             const results = await Bets.aggregate([
                 {
                     $match: {
-                        //sportsId: { $in: targetArray },
+                        sportsId: { $in: targetArray },
                         resultId: null
                     }
                 },
                 {
                     $group: {
                         _id: '$marketId',
+                        betDocument: { $first: "$$ROOT" } 
                     }
                 },
                 {
