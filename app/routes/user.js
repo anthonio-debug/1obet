@@ -237,8 +237,8 @@ function login(req, res) {
           return res.status(404).send({ message: 'incorrect password' });
         if (user.isActive == false || user.status == 0)
           return res.status(404).send({ message: 'Account Inactive' });
-        if((req.body.isAdmin && user.role == 5 ) || (!req.body.isAdmin && user.role != 5 ))
-            return res.status(404).send({ message: 'Something went wrong' });
+        // if((req.body.isAdmin && user.role == 5 ) || (!req.body.isAdmin && user.role != 5 ))
+        //     return res.status(404).send({ message: 'Something went wrong' });
 
         var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
         user.token = token;
