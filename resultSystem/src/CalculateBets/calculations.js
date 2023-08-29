@@ -3,7 +3,7 @@ const User = require("../../../app/models/user");
 
 const { getParents } = require("../../../app/routes/bets");
 const Events = require("../../../app/models/events");
-const Cash = require("../../app/models/deposits");
+const Cash = require("../../../app/models/deposits");
 
 async function getEndedMatches(sportsId) {
   try {
