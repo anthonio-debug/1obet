@@ -12,7 +12,11 @@ const sportsAPIUrl = 'http://209.250.242.175:33332';
 const resultRecords = require('../../../app/models/resultRecords');
 const Bets = require('../../../app/models/bets');
 const inPlayEvents = require('../../../app/models/events');
-
+const {
+    handleLosingBet,
+    handleWinningBet, 
+    handleDrawBet
+  } = require('../CalculateBets/calculations')
 
 function scoreChecker() {
     return { eventsResult, racingResult, fancyResult, bookMakerResult };
@@ -34,35 +38,36 @@ function scoreChecker() {
 
                 const bets = await Bets.find({ marketId: betData.marketId, sportsId: betData.sportsId, status: 1 });
 
+                await newRecord.save();
+                await Bets.findOneAndUpdate({ _id: betData._id }, { betData: newRecord._id });
+
+
                 if (result.winnerSelectionId == -1) {
                     console.log("This event Canceled ");
                 } else {
                     for (const bet of bets) {
                         if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
                             console.log("0 ----- winner ");
-                            //await handleWinningBet(bet);
+                            await handleWinningBet(bet);
     
                         } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
                             console.log("0 ----- looser ");
-                            //await handleLosingBet(bet);
+                            await handleLosingBet(bet);
     
                         } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
                             console.log("1 ----- winner ");
-                            //await handleWinningBet(bet);
+                            await handleWinningBet(bet);
     
                         } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
                             console.log("1 ----- looser ");
-                            //await handleLosingBet(bet);
+                            await handleLosingBet(bet);
     
                         } else {
                             console.log("-----  Draw ");
-                            //await handleDrawBet(bet);
+                            await handleDrawBet(bet);
                         }
                     }
                 }
-
-                //await newRecord.save();
-                //await Bets.findOneAndUpdate({ _id: betData._id }, {betData: newRecord._id});
             }
         } catch (error) {
             console.error(error);
@@ -86,36 +91,35 @@ function scoreChecker() {
 
                 const bets = await Bets.find({ marketId: betData.marketId, sportsId: betData.sportsId, status: 1 });
 
+                await newRecord.save();
+                await Bets.findOneAndUpdate({ _id: betData._id }, { betData: newRecord._id });
+
                 if (result.winnerSelectionId == -1) {
                     console.log("This event Canceled ");
                 } else {
                     for (const bet of bets) {
                         if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
                             console.log("0 ----- winner ");
-                            //await handleWinningBet(bet);
+                            await handleWinningBet(bet);
     
                         } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
                             console.log("0 ----- looser ");
-                            //await handleLosingBet(bet);
+                            await handleLosingBet(bet);
     
                         } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
                             console.log("1 ----- winner ");
-                            //await handleWinningBet(bet);
+                            await handleWinningBet(bet);
     
                         } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
                             console.log("1 ----- looser ");
-                            //await handleLosingBet(bet);
+                            await handleLosingBet(bet);
     
                         } else {
                             console.log("-----  Draw ");
-                            //await handleDrawBet(bet);
+                            await handleDrawBet(bet);
                         }
                     }
                 }
-
-
-                //await newRecord.save();
-                //await Bets.findOneAndUpdate({ _id: betData._id }, {betData: newRecord._id});
             }
         } catch (error) {
             console.error(error);
@@ -142,6 +146,8 @@ function scoreChecker() {
                 });
 
 
+                await newRecord.save();
+                await Bets.findOneAndUpdate({ _id: betData._id }, { betData: newRecord._id });
 
                 const bets = await Bets.find({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: null, status: 1 });
 
@@ -151,31 +157,30 @@ function scoreChecker() {
                     for (const bet of bets) {
                         if (bet.type == 0 && bet.runner == result.winnerSelId) {
                             console.log("0 ----- winner ");
-                            //await handleWinningBet(bet);
+                            await handleWinningBet(bet);
     
                         } else if (bet.type == 0 && bet.runner != result.winnerSelId) {
                             console.log("0 ----- looser ");
-                            //await handleLosingBet(bet);
+                            await handleLosingBet(bet);
     
                         } else if (bet.type == 1 && bet.runner != result.winnerSelId) {
                             console.log("1 ----- winner ");
-                            //await handleWinningBet(bet);
+                            await handleWinningBet(bet);
     
                         } else if (bet.type == 1 && bet.runner == result.winnerSelId) {
                             console.log("1 ----- looser ");
-                            //await handleLosingBet(bet);
+                            await handleLosingBet(bet);
     
                         } else {
                             console.log("-----  Draw ");
-                            //await handleDrawBet(bet);
+                            await handleDrawBet(bet);
                         }
                     }
                 }
 
 
 
-                //await newRecord.save();
-                //await Bets.findOneAndUpdate({ _id: betData._id }, { betData: newRecord._id });
+                
             }
         } catch (error) {
             console.error(error);
@@ -208,6 +213,9 @@ function scoreChecker() {
                     resultData: result.result
                 });
 
+                await newRecord.save();
+                await Bets.findOneAndUpdate({ _id: betData._id }, { betData: newRecord._id });
+
 
                 const bets = await Bets.find({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: { $ne: null }, status: 1 });
 
@@ -217,31 +225,26 @@ function scoreChecker() {
                     for (const bet of bets) {
                         if (bet.type == 0 && parseInt(bet.runner) >=  parseInt(result.result)) {
                             console.log("0 ----- winner ");
-                            //await handleWinningBet(bet);
+                            await handleWinningBet(bet);
     
                         } else if (bet.type == 0 && parseInt(bet.runner) < parseInt(result.result)) {
                             console.log("0 ----- looser ");
-                            //await handleLosingBet(bet);
+                            await handleLosingBet(bet);
     
                         } else if (bet.type == 1 &&  parseInt(bet.runner) < parseInt(result.result)) {
                             console.log("1 ----- winner ");
-                            //await handleWinningBet(bet);
+                            await handleWinningBet(bet);
     
                         } else if (bet.type == 1 && parseInt(bet.runner) >=  parseInt(result.result)) {
                             console.log("1 ----- looser ");
-                            //await handleLosingBet(bet);
+                            await handleLosingBet(bet);
     
                         } else {
                             console.log("-----  Draw ");
-                            //await handleDrawBet(bet);
+                            await handleDrawBet(bet);
                         }
                     }
                 }
-
-
-
-                //await newRecord.save();
-                //await Bets.findOneAndUpdate({ _id: betData._id }, { betData: newRecord._id });
             }
         } catch (error) {
             console.error(error);
