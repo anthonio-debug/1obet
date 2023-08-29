@@ -51,7 +51,7 @@ var corsOptions = {
 app.use(cors(corsOptions));
 app.get('/', (req, res) => {
   res.send(
-    '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.com </h2></body>'
+    '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.net </h2></body>'
   );
 });
 
