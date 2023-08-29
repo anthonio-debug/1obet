@@ -23,9 +23,9 @@ const RaceMarkets = require('../models/raceMarkets');
 const axios = require('axios')
 const ListMarkets = require('../models/listMarkets')
 const currentPosition = require('../models/CurrentPosition');
-const { MongoClient }     = require('mongodb');
+const FancyOdds = require('../models/fancyOdds');
 const { log } = require('async');
-const  fancyodds = client.db('Bet99').collection('fancyodds');
+
 
 const getParents = async (userId) => {
   const parentUserIds = [];
@@ -344,7 +344,7 @@ const placeBet = async (req, res) => {
       const url           = `${config.fancyUrl}/bm_fancy/${eventId}`;
       const response      = await axios.get(url);
       const apiFancyOdds  = response?.data?.t3;
-      const DBOddDetails  = await fancyodds.findById(oddsId);
+      const DBOddDetails  = await FancyOdds.findById(oddsId);
       const dbFancyOdds   = DBOddDetails?.data?.data?.t3
 
       if (apiFancyOdds?.length && dbFancyOdds?.length){
@@ -419,7 +419,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
       const apiFancyOdds  = response?.data?.t2?.length ? response?.data?.t2[0]?.bm1:[];
-      const DBOddDetails  = await fancyodds.findById(oddsId);
+      const DBOddDetails  = await FancyOdds.findById(oddsId);
       const dbFancyOdds   = DBOddDetails?.data?.data?.t2[0]?.bm1
 
       if (apiFancyOdds.length && dbFancyOdds.length){
