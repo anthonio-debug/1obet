@@ -230,8 +230,8 @@ function login(req, res) {
     (err, user) => {
       if (err || !user)
         return res.status(404).send({ message: 'user not found' });
-      // check if user password is matched or not.
-      bcrypt.compare(req.body.password, user.password, function (err, result) {
+        // check if user password is matched or not.
+        bcrypt.compare(req.body.password, user.password, function (err, result) {
         if (err) return res.status(404).send({ message: 'incorrect password' });
         if (!result)
           return res.status(404).send({ message: 'incorrect password' });
@@ -240,6 +240,9 @@ function login(req, res) {
         var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
         user.token = token;
         var ipInfo = getIP(req);
+        if((isAdmin && user.role == 5 ) || (!isAdmin && user.role != 5 )){
+          return res.status(404).send({ message: 'Something went wrong' });
+        }
 
         // Retrieve the user's default theme from the database
         Settings.find({}, (err, setting) => {
