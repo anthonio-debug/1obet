@@ -431,9 +431,9 @@ const placeBet = async (req, res) => {
         }
         runnerName = dbSelectedOdds.nat; // Get the runner name from the 'nat' field
         if (req.body.type == 0) {
-          const apiBackOdds   = [apiSelectedOdds.bs1, apiSelectedOdds.bs2, apiSelectedOdds.bs3];
-          const DbBackOdds    = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
-          const DbBackScores  = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
+          const apiBackOdds   = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
+          const DbBackOdds    = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
+          const DbBackScores  = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
           const index         = DbBackOdds.indexOf(betRate)
           TargetScore         = DbBackScores[index]
           if (index == -1) {
@@ -446,9 +446,9 @@ const placeBet = async (req, res) => {
           }
         } 
         else if (req.body.type == 1) {
-          const apiBackOdds   = [apiSelectedOdds.ls1, apiSelectedOdds.ls2, apiSelectedOdds.ls3];
-          const DbBackOdds    = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
-          const DbBackScores  = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
+          const apiBackOdds   = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
+          const DbBackOdds    = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
+          const DbBackScores  = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
           const index         = DbBackOdds.indexOf(betRate)
           TargetScore         = DbBackScores[index]
 
