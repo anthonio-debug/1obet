@@ -444,10 +444,15 @@ const placeBet = async (req, res) => {
           const index         = DbBackOdds.indexOf(betRate)
           TargetScore         = DbBackScores[index]
           if (index == -1) {
-            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-            return res.status(404).send({ message: `Bet miss matched` });
+            console.log(" index apiBackOdds ==== ", apiBackOdds);
+            console.log(" index index ==== ", index);
+            console.log(`Index didn't Match ${betRate}`);
+            return res.status(404).send({ message: `Index didn't Match` });
           }
           if(apiBackOdds[index] < betRate ){
+            console.log(" 2 apiBackOdds ==== ", apiBackOdds);
+            console.log(" 2 index ==== ", index);
+
             console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
             return res.status(404).send({ message: `Bet miss matched` });
           }
