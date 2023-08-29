@@ -294,7 +294,7 @@ db.submarkettypes.insertMany([
   {
     Id: 8,
     marketId: '4',
-    name: 'Book Maker',
+    name: 'Bookmaker',
   },
   {
     Id: 9,
@@ -786,6 +786,42 @@ db.racings.find({})
 db.odds.find({}) 
 db.odds.count({}) 
 
+// new one 
+
+/**
+ [
+
+      {
+            "score": {
+                  "activenation1": 1,
+                  "activenation2": "0",
+                  "balls": [
+                        "w",
+                        "0",
+                        "ww",
+                        "1",
+                        "1",
+                        "ww"
+                  ],
+                  "dayno": "",
+                  "isfinished": "0",
+                  "score1": "3-2 (0.5)",
+                  "score2": "0-0 (0.0)",
+                  "spnballrunningstatus": "",
+                  "spnmessage": "",
+                  "spnnation1": "HT",
+                  "spnnation2": "MW",
+                  "spnreqrate1": "",
+                  "spnreqrate2": "",
+                  "spnrunrate1": "CRR 3.60 ",
+                  "spnrunrate2": ""
+            },
+            "eventId": "1808290412"
+      }
+
+]
+ * */ 
+
 
 
 
@@ -850,6 +886,41 @@ db.odds.count({})
     }
   }
 */
+
+/*
+[
+
+      {
+            "score": {
+                  "activenation1": 1,
+                  "activenation2": "0",
+                  "balls": [
+                        "w",
+                        "0",
+                        "ww",
+                        "1",
+                        "1",
+                        "ww"
+                  ],
+                  "dayno": "",
+                  "isfinished": "0",
+                  "score1": "3-2 (0.5)",
+                  "score2": "0-0 (0.0)",
+                  "spnballrunningstatus": "",
+                  "spnmessage": "",
+                  "spnnation1": "HT",
+                  "spnnation2": "MW",
+                  "spnreqrate1": "",
+                  "spnreqrate2": "",
+                  "spnrunrate1": "CRR 3.60 ",
+                  "spnrunrate2": ""
+            },
+            "eventId": "1808290412"
+      }
+
+]
+
+*/ 
 
 /*
   respone of live score API     
