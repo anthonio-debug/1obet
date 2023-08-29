@@ -360,18 +360,9 @@ const addSelectedDashboardGames =  async (req, res) =>  {
   }
   const { gameId, status } = req.body
 
-  
-
-  // const test = await SelectedCasino.findOne({ 'games.id':gameId })
-  // return res.send({ 
-  //   success: true, 
-  //   message: 'Selected Dashboard games updated successfully' ,
-  //   data: test,
-  // });
-
   SelectedCasino.updateOne(
-    {'games.id': gameId },
-    { $set: { 'games.$[game].isDashboard': status } },
+    { 'games.id': gameId }
+    { $set: { 'games.$.isDashboard': status } },
   )
   .then((result) => {
     return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
