@@ -360,6 +360,11 @@ function addSelectedDashboardGames(req, res) {
   }
   const { gameId, status } = req.body
 
+  return res.send({
+    gameId: gameId,
+    status: status
+  })
+
   SelectedCasino.updateOne(
     {},
     { $set: { 'games.$[game].isDashboard': status } },
