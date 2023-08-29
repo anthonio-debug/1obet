@@ -413,7 +413,7 @@ const placeBet = async (req, res) => {
 
 
         
-      if(response?.data?.data?.t2?.length){
+      if(! response?.data?.data?.t2?.length){
         console.log(`Odds not available for the selected team ||||||  ${req.body.selectionId}`);
         return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
