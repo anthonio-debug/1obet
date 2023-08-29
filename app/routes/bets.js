@@ -405,11 +405,11 @@ const placeBet = async (req, res) => {
         console.log(`Odds not available for the selected team ${req.body.selectionId}`);
         return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
-      if(!response?.data?.t2.length){
+      if(response?.data?.t2.length){
         console.log(`Odds not available for the selected team ${req.body.selectionId}`);
         return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
-      const apiFancyOdds  = response?.data?.t2[0]?.bm1;
+      const apiFancyOdds  = response?.data?.t2?.length ? response?.data?.t2[0]?.bm1:[];
       const DBOddDetails  = await FancyGames.findById(oddsId);
       const dbFancyOdds   = DBOddDetails?.data?.data?.t2[0]?.bm1
 
