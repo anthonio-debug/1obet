@@ -51,7 +51,7 @@ function ToolForResults() {
                         _id: '$marketId',
                         betDocument: { $first: "$$ROOT" }
                     }
-                },
+                }, 
                 {
                     $sort: {
                         lastCheckResult: 1
