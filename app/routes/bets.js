@@ -360,7 +360,7 @@ const placeBet = async (req, res) => {
         
         if (req.body.type == 0) {
           const apiBackOdds2   = [apiSelectedOdds.bs1, apiSelectedOdds.bs2, apiSelectedOdds.bs3];
-          const apiBackOdds = apiBackOdds.map( item => Number(item) )
+          const apiBackOdds    = apiBackOdds2.map( item => Number(item) )
 
           const DbBackOdds    = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
 
