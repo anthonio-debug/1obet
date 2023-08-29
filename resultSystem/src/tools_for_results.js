@@ -58,7 +58,7 @@ function ToolForResults() {
                     }
                 },
                 {
-                    $limit: 5 
+                    $limit: 5
                 }
             ]).exec();
             for (const result of results) {
@@ -95,56 +95,30 @@ function ToolForResults() {
     async function getBetForFancy() {
         const currentTime = new Date().getTime();
         try {
-            const results = await Bets.aggregate([
-                {
-                    $match: {
-                        sportsId: '4',
-                        resultId: null,
-                        marketId: { $ne: null },
-                        isfancyOrbookmaker: true
+            const results = await Bets.findOne({
+                sportsId: '4',
+                resultId: null,
+                isfancyOrbookmaker: true,
 
-                    }
-                },
-                {
-                    $group: {
-                        _id: '$marketId',
-                        betDocument: { $first: "$$ROOT" }
-                    }
-                },
-                {
-                    $sort: {
-                        lastCheckResults: 1
-                    }
-                },
-                {
-                    $limit: 1 
-                }
-            ]).exec();
+            }).sort({
+                lastCheckResults: 1
+            }).limit(1).exec();
 
-
-            for (const result of results) {
-                await Bets.updateMany(
+            if (results) {
+                await Bets.updateOne(
                     {
-                        _id: { $in: result.documentIds },
+                        _id: results._id,
                     },
                     {
                         $set: { lastCheckResult: currentTime }
                     }
                 ).catch(e => console.error(e));
-            }
 
-            for (const result of results) {
-
-                if (result.betDocument.length == 0)
-                    continue;
-
-                if (result.betDocument.fancyData) {
-                    scoreChecker.fancyResult(result.betDocument, result.betDocument.fancyData);
+                if (results.fancyData) {
+                    scoreChecker.fancyResult(results, results.fancyData);
                 } else {
-                    scoreChecker.bookMakerResult(result.betDocument);
+                    scoreChecker.bookMakerResult(results);
                 }
-
-
             }
 
         } catch (error) {
