@@ -365,14 +365,14 @@ const placeBet = async (req, res) => {
           const index         = DbBackOdds.indexOf(betRate)
           TargetScore         = DbBackScores[index]
 
-          if (index == -1) {
-            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-            return res.status(404).send({ message: `Bet miss matched` });
-          }
-          if(apiBackOdds[index] < betRate ){
-            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-            return res.status(404).send({ message: `Bet miss matched` });
-          }
+          // if (index == -1) {
+          //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+          //   return res.status(404).send({ message: `Bet miss matched` });
+          // }
+          // if(apiBackOdds[index] < betRate ){
+          //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+          //   return res.status(404).send({ message: `Bet miss matched` });
+          // }
         } 
         else if (req.body.type == 1) {
           const apiBackOdds   = [apiSelectedOdds.ls1, apiSelectedOdds.ls2, apiSelectedOdds.ls3];
@@ -380,14 +380,14 @@ const placeBet = async (req, res) => {
           const DbBackScores  = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
           const index         = DbBackOdds.indexOf(betRate)
           TargetScore         = DbBackScores[index]
-          if (index == -1) {
-            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-            return res.status(404).send({ message: `Bet miss matched` });
-          }
-          if(apiBackOdds[index] < betRate ){
-            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-            return res.status(404).send({ message: `Bet miss matched` });
-          }
+          // if (index == -1) {
+          //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+          //   return res.status(404).send({ message: `Bet miss matched` });
+          // }
+          // if(apiBackOdds[index] < betRate ){
+          //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+          //   return res.status(404).send({ message: `Bet miss matched` });
+          // }
         }
         else {
           console.log('Invalid type value. Type should be 0 or 1.');
@@ -436,26 +436,26 @@ const placeBet = async (req, res) => {
           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
-        runnerName = dbSelectedOdds.nat; // Get the runner name from the 'nat' field
+        runnerName = null;
         if (req.body.type == 0) {
           const apiBackOdds   = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
           const DbBackOdds    = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
           const DbBackScores  = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
           const index         = DbBackOdds.indexOf(betRate)
           TargetScore         = DbBackScores[index]
-          if (index == -1) {
-            console.log(" index apiBackOdds ==== ", apiBackOdds);
-            console.log(" index index ==== ", index);
-            console.log(`Index didn't Match ${betRate}`);
-            return res.status(404).send({ message: `Index didn't Match` });
-          }
-          if(apiBackOdds[index] < betRate ){
-            console.log(" 2 apiBackOdds ==== ", apiBackOdds);
-            console.log(" 2 index ==== ", index);
+          // if (index == -1) {
+          //   console.log(" index apiBackOdds ==== ", apiBackOdds);
+          //   console.log(" index index ==== ", index);
+          //   console.log(`Index didn't Match ${betRate}`);
+          //   return res.status(404).send({ message: `Index didn't Match` });
+          // }
+          // if(apiBackOdds[index] < betRate ){
+          //   console.log(" 2 apiBackOdds ==== ", apiBackOdds);
+          //   console.log(" 2 index ==== ", index);
 
-            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-            return res.status(404).send({ message: `Bet miss matched` });
-          }
+          //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+          //   return res.status(404).send({ message: `Bet miss matched` });
+          // }
         } 
         // 3.5 "3.5" to float 
         else if (req.body.type == 1) {
