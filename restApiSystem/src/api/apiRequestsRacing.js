@@ -1,0 +1,387 @@
+
+'use strict';
+module.exports = apiRequests;
+
+const axios = require('axios');
+
+const Racing = require('../../../app/models/racing');
+const Event = require('../../../app/models/events');
+const raceMarkets = require('../../../app/models/raceMarkets');
+const RaceOdds = require('../../../app/models/raceOdds')
+
+const horseRaceUrl = "http://136.244.77.249:33333";
+let io;
+
+
+function apiRequests() {
+
+  return { init, racesTodayMeetings, checkOdds };
+
+  function init(_io, express) {
+    io = _io;
+
+    io.on('connection', onConnet);
+  }
+
+  function onConnet(socket) {
+    console.log('Socket connect');
+
+
+
+    socket.on("get_id", async (id) => {
+      const eventInfo = await Event.findOne({ Id: id+''}, {_id: 1});
+
+      if (eventInfo) {
+        socket.emit('event_id_db', eventInfo);
+      } else {
+        console.log(eventInfo, id);
+        //process.exit(1);
+      }
+    });
+
+    socket.on("join", async (channel) => {
+
+      if (!channel) {
+        return socket.emit('err', 'Channel Required');
+      }
+
+      if (channel.length == 0) {
+        return socket.emit('err', 'Channel Required');
+      }
+      if (channel.charAt(0) == '$') {
+
+
+       
+
+        var event_information = await raceMarkets.findOne({ marketId: channel.substring(1) });
+
+        if (event_information) {
+          const lastScore = await RaceOdds.findOne({ marketId: channel.substring(1) });
+
+          if (lastScore) {
+            socket.emit('race_last_odds', lastScore);
+          } else {
+            socket.emit('race_last_odds', { status: false, msg: 'Score record is not exist for this event.' });
+          }
+
+          socket.emit('race_event_info', event_information);
+        } else {
+          socket.emit('race_err', 'Event Not Exist');
+        }
+
+      }
+
+    });
+  }
+
+
+  async function racesTodayMeetings(sportsId,day) {
+    try {
+      const url = `${horseRaceUrl}/meetings/${day}/${sportsId}`;
+      const response = await axios.get(url);
+
+      const horseRacesData = response.data;
+      const bulkOperations = [];
+
+
+      const options = { upsert: true, new: true };
+
+      //start event record
+
+      if (!response.data.meetings) {
+        return console.log('meetings empty. '+url );
+      }
+
+      for (const meeting of response.data.meetings) {
+        for (const race of meeting.races) {
+          var statusDef = 'CLOSED';
+          if (Date.parse(race.startTime) > Date.now()) {
+            statusDef = 'WAITING';
+          }
+          
+
+          var obj = {
+            name: race.marketName,
+            Id: race.raceId,
+            marketIds: [race.marketId],
+            openDate: Date.parse(race.startTime),
+            meetingId: meeting.meetingId,
+            meetingName: meeting.name,
+            countryCode: meeting.countryCode,
+            meetingOpenDate: meeting.openDate,
+            venue: meeting.venue,
+            meetingGoing: meeting.meetingGoing,
+            sportsId: sportsId,
+            status: statusDef
+          }
+          await Event.findOneAndUpdate({ Id: race.raceId }, obj, options);
+        };
+      };
+      //end events
+
+      //record Racing
+      for (const data of horseRacesData.meetings) {
+        var temp = data;
+        temp.countryCodes = horseRacesData.countryCodes;
+        temp.sportsId = sportsId;
+        bulkOperations.push({
+          updateOne: {
+            filter: { meetingId: temp.meetingId },
+            update: { $setOnInsert: temp },
+            upsert: true,
+          },
+        });
+      }
+
+      const r = await Racing.bulkWrite(bulkOperations, { ordered: false });
+      //end racing
+
+
+      //start check description//
+      for (const data of horseRacesData.meetings) {
+        for (const race of data.races) {
+          if (!race || typeof race.marketId === 'undefined' || !race.marketId) {
+            continue;
+          }
+          const old_record = await raceMarkets.findOne({ marketId: race.marketId });
+          if (!old_record) {
+            marketDescription(race.marketId);
+          }
+        }
+      }
+      //end check description
+
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
+  async function marketDescription(marketId) {
+    try {
+      const url = `${horseRaceUrl}/marketDescription/${marketId}`;
+      const response = await axios.get(url);
+      const marketListsData = response.data;
+
+      // Extract relevant data from raceMarkets
+      const eventTypeData = marketListsData.eventTypes;
+      const eventNodeData = eventTypeData.eventNodes;
+      const eventData = eventNodeData.event;
+      const marketNodeData = eventNodeData.marketNodes;
+
+      // Create an instance of the raceMarkets model
+      const eventType = new raceMarkets({
+        marketId: marketNodeData.marketId,
+        eventTypeId: eventTypeData.eventTypeId,
+        eventNodes: {
+          eventId: eventNodeData.eventId,
+          event: {
+            eventName: eventData.eventName,
+            countryCode: eventData.countryCode,
+            timezone: eventData.timezone,
+            venue: eventData.venue,
+            openDate: new Date(eventData.openDate),
+          },
+          marketNodes: {
+            marketId: marketNodeData.marketId,
+            isMarketDataDelayed: marketNodeData.isMarketDataDelayed,
+            state: {
+              betDelay: marketNodeData.state.betDelay,
+              startTime: new Date(marketNodeData.state.startTime),
+              remainingTime: marketNodeData.state.remainingTime,
+              bspReconciled: marketNodeData.state.bspReconciled,
+              complete: marketNodeData.state.complete,
+              inplay: marketNodeData.state.inplay,
+              numberOfWinners: marketNodeData.state.numberOfWinners,
+              numberOfRunners: marketNodeData.state.numberOfRunners,
+              numberOfActiveRunners: marketNodeData.state.numberOfActiveRunners,
+              lastMatchTime: new Date(marketNodeData.state.lastMatchTime),
+              totalMatched: marketNodeData.state.totalMatched,
+              totalAvailable: marketNodeData.state.totalAvailable,
+              crossMatching: marketNodeData.state.crossMatching,
+              runnersVoidable: marketNodeData.state.runnersVoidable,
+              status: marketNodeData.state.status,
+            },
+            description: {
+              persistenceEnabled: marketNodeData.description.persistenceEnabled,
+              bspMarket: marketNodeData.description.bspMarket,
+              marketName: marketNodeData.description.marketName,
+              marketTime: new Date(marketNodeData.description.marketTime),
+              suspendTime: new Date(marketNodeData.description.suspendTime),
+              turnInPlayEnabled: marketNodeData.description.turnInPlayEnabled,
+              marketType: marketNodeData.description.marketType,
+              raceNumber: marketNodeData.description.raceNumber,
+              raceType: marketNodeData.description.raceType,
+              bettingType: marketNodeData.description.bettingType,
+            },
+            rates: {
+              marketBaseRate: marketNodeData.rates.marketBaseRate,
+              discountAllowed: marketNodeData.rates.discountAllowed,
+            },
+            runners: marketNodeData.runners.map(runner => ({
+              selectionId: runner.selectionId,
+              handicap: runner.handicap,
+              description: {
+                runnerName: runner.description.runnerName,
+                metadata: {
+                  SIRE_NAME: runner.description.metadata.SIRE_NAME,
+                  CLOTH_NUMBER_ALPHA: runner.description.metadata.CLOTH_NUMBER_ALPHA,
+                  OFFICIAL_RATING: runner.description.metadata.OFFICIAL_RATING,
+                  COLOURS_DESCRIPTION: runner.description.metadata.COLOURS_DESCRIPTION,
+                  COLOURS_FILENAME: runner.description.metadata.COLOURS_FILENAME,
+                  FORECASTPRICE_DENOMINATOR: runner.description.metadata.FORECASTPRICE_DENOMINATOR,
+                  DAMSIRE_NAME: runner.description.metadata.DAMSIRE_NAME,
+                  WEIGHT_VALUE: runner.description.metadata.WEIGHT_VALUE,
+                  SEX_TYPE: runner.description.metadata.SEX_TYPE,
+                  DAYS_SINCE_LAST_RUN: runner.description.metadata.DAYS_SINCE_LAST_RUN,
+                  WEARING: runner.description.metadata.WEARING,
+                  OWNER_NAME: runner.description.metadata.OWNER_NAME,
+                  DAM_YEAR_BORN: runner.description.metadata.DAM_YEAR_BORN,
+                  SIRE_BRED: runner.description.metadata.SIRE_BRED,
+                  JOCKEY_NAME: runner.description.metadata.JOCKEY_NAME,
+                  DAM_BRED: runner.description.metadata.DAM_BRED,
+                  ADJUSTED_RATING: runner.description.metadata.ADJUSTED_RATING,
+                  runnerId: runner.description.metadata.runnerId,
+                  CLOTH_NUMBER: runner.description.metadata.CLOTH_NUMBER,
+                  SIRE_YEAR_BORN: runner.description.metadata.SIRE_YEAR_BORN,
+                  TRAINER_NAME: runner.description.metadata.TRAINER_NAME,
+                  COLOUR_TYPE: runner.description.metadata.COLOUR_TYPE,
+                  AGE: runner.description.metadata.AGE,
+                  DAMSIRE_BRED: runner.description.metadata.DAMSIRE_BRED,
+                  JOCKEY_CLAIM: runner.description.metadata.JOCKEY_CLAIM,
+                  FORM: runner.description.metadata.FORM,
+                  FORECASTPRICE_NUMERATOR: runner.description.metadata.FORECASTPRICE_NUMERATOR,
+                  BRED: runner.description.metadata.BRED,
+                  DAM_NAME: runner.description.metadata.DAM_NAME,
+                  DAMSIRE_YEAR_BORN: runner.description.metadata.DAMSIRE_YEAR_BORN,
+                  STALL_DRAW: runner.description.metadata.STALL_DRAW,
+                  WEIGHT_UNITS: runner.description.metadata.WEIGHT_UNITS,
+                },
+              },
+              state: {
+                adjustmentFactor: runner.state.adjustmentFactor,
+                sortPriority: runner.state.sortPriority,
+                lastPriceTraded: runner.state.lastPriceTraded,
+                totalMatched: runner.state.totalMatched,
+                status: runner.state.status,
+              },
+            })),
+          },
+        },
+        isMarketDataVirtual: marketListsData.isMarketDataVirtual,
+      });
+
+      // Save the EventType instance to the database
+      await eventType.save();
+
+
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+
+
+  async function checkOdds() {
+
+
+    const sportsIds = [4339, 7];
+
+    for (let i = 0; i < sportsIds.length; i++) {
+
+      var myArray = [];
+
+      var events = await Event.find({
+        sportsId: sportsIds[i] + '',
+        status: 'OPEN'
+      }).sort({ openDate: 1 }).limit(20).exec();
+
+      if (events.length != 20) {
+        const documents = await Event.find({ status: 'WAITING', sportsId: sportsIds[i] + '' })
+          .sort({ openDate: 1 })
+          .limit(20-events.length)
+          .select('_id');
+
+        const documentIds = documents.map(doc => doc._id);
+        await Event.updateMany({ _id: { $in: documentIds } }, { status: 'OPEN' });
+        events = await Event.find({
+          sportsId: sportsIds[i] + '',
+          status: 'OPEN'
+        }).sort({ openDate: 1 }).limit(20).exec();
+      }
+      if (events.length == 0) {
+        return;
+      }
+      for (let index = 0; index < events.length; index++) {
+        const event = events[index];
+        myArray.push({ eventId: event.Id, marketId: event.marketIds[0] });
+      }
+      raceOddsJob(myArray);
+      //console.log('odds event, ',myArray);
+
+
+    }
+
+
+
+  }
+
+  async function raceOddsJob(array) {
+    try {
+      var ids = [];
+      for (let index = 0; index < array.length; index++) {
+        ids.push(array[index].marketId);
+      }
+      //console.log(ids.join(','));
+      const url = `${horseRaceUrl}/odds/?ids=` + ids.join(',');
+      const response = await axios.get(url);
+      const oddsData = response.data;
+      if (oddsData.length > 0) {
+        var index = 0;
+        for (const odds of oddsData) {
+          if (odds) {
+            if (typeof odds.state === 'undefined' || odds.state.status !== 'OPEN') {
+              console.log(array[index].eventId, odds.state.status);
+              await Event.findOneAndUpdate({ Id: array[index].eventId }, { status: odds.state.status, marketID: array[index].marketId });
+              io.emit('racing_status', { status: odds.state.status });
+            } else {
+              odds.createdAt= new Date().getTime()
+              const result = await RaceOdds.collection.insertOne(odds);
+              odds._id = result.insertedId;
+              io.to('$' + array[index].marketId).emit('odds', odds);
+            }
+          } else {
+            await Event.findOneAndUpdate({ Id: array[index].eventId }, { status: 'CLOSED' });
+            console.log(array[index].eventId, 'CLOSED 1');
+
+            io.emit('racing_status', { status: 'CLOSED', marketID: array[index].marketId });
+          }
+          
+          index++;
+        }
+      } else {
+        
+        
+        for (let i = 0; i < array.length; i++) {
+          console.log(array[i].eventId, 'CLOSED 2');
+
+          await Event.findOneAndUpdate({ Id: array[i].eventId }, { status: 'CLOSED' });
+        }
+        console.log(oddsData);
+      }
+      return ({
+        success: true,
+        message: 'Odds Records',
+      });
+    } catch (error) {
+      console.error(error);
+      return ({
+        success: false,
+        message: 'Error retrieving Records',
+      });
+    }
+  }
+
+
+}
