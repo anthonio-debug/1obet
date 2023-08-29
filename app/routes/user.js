@@ -237,12 +237,11 @@ function login(req, res) {
           return res.status(404).send({ message: 'incorrect password' });
         if (user.isActive == false || user.status == 0)
           return res.status(404).send({ message: 'Account Inactive' });
+        if((isAdmin && user.role == 5 ) || (!isAdmin && user.role != 5 ))
+            return res.status(404).send({ message: 'Something went wrong' });
         var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
         user.token = token;
         var ipInfo = getIP(req);
-        if((isAdmin && user.role == 5 ) || (!isAdmin && user.role != 5 )){
-          return res.status(404).send({ message: 'Something went wrong' });
-        }
 
         // Retrieve the user's default theme from the database
         Settings.find({}, (err, setting) => {
