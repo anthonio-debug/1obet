@@ -425,6 +425,11 @@ const placeBet = async (req, res) => {
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
         const dbSelectedOdds  = dbFancyOdds.find(runner  => runner.sid == req.body.selectionId);
 
+        console.log(" apiSelectedOdds ==== ", apiSelectedOdds)
+        console.log(" dbSelectedOdds ==== ", dbSelectedOdds)
+
+
+
         if (!apiSelectedOdds || !dbSelectedOdds){
           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
