@@ -7,7 +7,7 @@ const socketIo = require('socket.io');
 
 
 //Mongoose models
-const inPlayEvents = require('./models/events');
+const inPlayEvents = require('./app/models/events');
 
 //Tool
 const ToolForEvent = require('./src/tools_for_events.js')();

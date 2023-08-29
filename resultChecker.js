@@ -1,5 +1,5 @@
 
-const inPlayEvents = require('./models/events');
+const inPlayEvents = require('./app/models/events');
 
 const ToolForResults = require('./src/tools_for_results.js')();
 
