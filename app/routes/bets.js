@@ -1241,37 +1241,37 @@ const liveSportScore = async (eventId) => {
 
 async function cricketLiveScore(id) {
     try {
-      // const apiResponse   =  await axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
-      const apiResponse = {
-        "status": true,
-        "msg": "Records",
-        "data": [{
-            "score" : {
-              "activenation1": "0",
-              "activenation2": 1,
-              "balls": [
-                  "0",
-                  "1",
-                  "0",
-                  "0",
-                  "0",
-                  "4"
-              ],
-              "dayno": "",
-              "isfinished": "0",
-              "score1": "355-10 (50)",
-              "score2": "184-2 (42.3)",
-              "spnballrunningstatus": "",
-              "spnmessage": "Day 2 | NOT trail by 171 runs",
-              "spnnation1": "SUR",
-              "spnnation2": "NOT",
-              "spnreqrate1": "",
-              "spnreqrate2": "",
-              "spnrunrate1": "",
-              "spnrunrate2": "CRR 3.16 "
-            }
-        }]
-      }
+      const apiResponse   =  await axios.get(`${sportsLiveScore}${id}`);
+      // const apiResponse = {
+      //   "status": true,
+      //   "msg": "Records",
+      //   "data": [{
+      //       "score" : {
+      //         "activenation1": "0",
+      //         "activenation2": 1,
+      //         "balls": [
+      //             "0",
+      //             "1",
+      //             "0",
+      //             "0",
+      //             "0",
+      //             "4"
+      //         ],
+      //         "dayno": "",
+      //         "isfinished": "0",
+      //         "score1": "355-10 (50)",
+      //         "score2": "184-2 (42.3)",
+      //         "spnballrunningstatus": "",
+      //         "spnmessage": "Day 2 | NOT trail by 171 runs",
+      //         "spnnation1": "SUR",
+      //         "spnnation2": "NOT",
+      //         "spnreqrate1": "",
+      //         "spnreqrate2": "",
+      //         "spnrunrate1": "",
+      //         "spnrunrate2": "CRR 3.16 "
+      //       }
+      //   }]
+      // }
       const response = {};
       const data          = apiResponse.data;
       if(data[0]?.score != null ){
