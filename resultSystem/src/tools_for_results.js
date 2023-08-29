@@ -54,7 +54,7 @@ function ToolForResults() {
                 },
                 {
                     $sort: {
-                        lastCheckResults: 1
+                        lastCheckResult: 1
                     }
                 },
                 {
@@ -101,7 +101,7 @@ function ToolForResults() {
                 isfancyOrbookmaker: true,
 
             }).sort({
-                lastCheckResults: 1
+                lastCheckResult: 1
             }).limit(1).exec();
 
             if (results) {
