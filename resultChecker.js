@@ -1,5 +1,5 @@
 
-const inPlayEvents = require('./app/models/events');
+const mongoose = require('mongoose');
 
 const ToolForResults = require('./resultSystem/src/tools_for_results.js')();
 
