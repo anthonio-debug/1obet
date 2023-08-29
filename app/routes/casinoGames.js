@@ -361,8 +361,8 @@ const addSelectedDashboardGames =  async (req, res) =>  {
   const { gameId, status } = req.body
 
   SelectedCasino.updateOne(
-    { 'games.id': gameId }
-    { $set: { 'games.$.isDashboard': status } },
+    { 'games.id': gameId },
+    { $set: { 'games.$.isDashboard': status } }
   )
   .then((result) => {
     return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
