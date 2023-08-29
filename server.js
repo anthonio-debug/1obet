@@ -6,8 +6,7 @@ let config                = require('config');
 let fs                    = require('fs');
 let cors                  = require('cors');
 var morgan                = require('morgan');
-const https               = require('https');
-const option              = require('./option');
+const http               = require('http');
 const apisMiddleware      = require('./app/middlewares/apisMiddleware');
 const loginMiddleWare     = require('./app/middlewares/loginMiddleware');
 const checkRoleMiddleware = require('./app/middlewares/checkRoleMiddleware');
@@ -110,7 +109,7 @@ app.use('/api', require('./app/routes/sportBook').loginRouter);
 
 // LISTEN HERE
 // Create HTTPs server.
-var server = https.createServer(option, app);
+var server = http.createServer(app);
 server.listen(config.PORT, (err) => {
   if (err) throw new Error(err);
   console.log(`Server is listening on port ${config.PORT}`);

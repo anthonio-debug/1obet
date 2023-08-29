@@ -1,5 +1,5 @@
 {
-  "PORT": 3000,
+  "PORT": 3003,
   "DBHost": "mongodb://127.0.0.1/Bet99",
   "DBHostLive": "mongodb+srv://umar:ahmad123@cluster0.dillplp.mongodb.net/Bet99?retryWrites=true&w=majority",
   "secret": "umarIsLove",
