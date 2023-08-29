@@ -421,8 +421,8 @@ const placeBet = async (req, res) => {
       const DBOddDetails  = await FancyOdds.findById(oddsId);
       const dbFancyOdds   = DBOddDetails?.data?.data?.t2[0]?.bm1
 
-      console.log(" DBOddDetails ==== ", DBOddDetails)
-        console.log(" dbFancyOdds ==== ", dbFancyOdds)
+      console.log(" apiFancyOdds ==== ", apiFancyOdds)
+      console.log(" dbFancyOdds ==== ", dbFancyOdds)
 
       if (apiFancyOdds.length && dbFancyOdds.length){
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
