@@ -457,6 +457,7 @@ const placeBet = async (req, res) => {
             return res.status(404).send({ message: `Bet miss matched` });
           }
         } 
+        // 3.5 "3.5" to float 
         else if (req.body.type == 1) {
           const apiBackOdds   = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
           const DbBackOdds    = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
@@ -464,14 +465,14 @@ const placeBet = async (req, res) => {
           const index         = DbBackOdds.indexOf(betRate)
           TargetScore         = DbBackScores[index]
 
-          if (index == -1) {
-            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-            return res.status(404).send({ message: `Bet miss matched` });
-          }
-          if(apiBackOdds[index] < betRate ){
-            console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-            return res.status(404).send({ message: `Bet miss matched` });
-          }
+          // if (index == -1) {
+          //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+          //   return res.status(404).send({ message: `Bet miss matched` });
+          // }
+          // if(apiBackOdds[index] < betRate ){
+          //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+          //   return res.status(404).send({ message: `Bet miss matched` });
+          // }
         }
         else {
           console.log('Invalid type value. Type should be 0 or 1.');

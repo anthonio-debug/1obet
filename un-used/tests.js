@@ -1,1 +1,2 @@
-console.log(" ------ ", [1,2,3].indexOf(4));
+console.log(" ------ ", ["1",2,3].indexOf(1));
+
