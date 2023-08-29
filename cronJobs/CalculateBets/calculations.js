@@ -1,6 +1,6 @@
 const cron = require("node-cron");
 const Bets = require("../../app/models/bets");
-const Cash = require("../../app/models/cashDeposit");
+const Cash = require("../../app/models/deposits");
 const User = require("../../app/models/user");
 
 const { getParents } = require("../../app/routes/bets");
