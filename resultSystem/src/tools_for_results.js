@@ -44,6 +44,7 @@ function ToolForResults() {
                         marketId: { $ne: null },
                         isfancyOrbookmaker: false,
                         sportsId: { $ne: null },
+                        status: 1
                     }
                 },
                 {
@@ -99,6 +100,7 @@ function ToolForResults() {
                 sportsId: '4',
                 resultId: null,
                 isfancyOrbookmaker: true,
+                status: 1
 
             }).sort({
                 lastCheckResult: 1
