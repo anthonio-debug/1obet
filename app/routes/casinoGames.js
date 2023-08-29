@@ -355,26 +355,17 @@ function addSelectedDashboardGames(req, res) {
     return res.status(400).send({ errors: errors.array() });
   }
 
-  if ( req.decoded.role !== '0' ) {
+  if ( req.decoded.role != '0' ) {
     return res.status(200).send({ message: 'you are not allowed to add dashboard games', success: false })
   }
-  const { gameIds } = req.body;
+  const { gameId, status } = req.body
 
-  SelectedCasino.updateMany(
+  SelectedCasino.updateOne(
     {},
-    { $set: { 'games.$[game].isDashboard': true } },
-    { arrayFilters: [{ 'game.id': { $in: gameIds } }], new: true }
+    { $set: { 'games.$[game].isDashboard': status } },
+    { arrayFilters: [{ 'game.id':gameId  }], new: true }
   ).then((result) => {
-    // Update all other games to isDashboard: false
-    SelectedCasino.updateMany(
-      {},
-      { $set: { 'games.$[game].isDashboard': false } },
-      { arrayFilters: [{ 'game.id': { $nin: gameIds } }]}
-    ).then(() => {
-      return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
-    }).catch((err) => {
-      return res.status(500).send({ success: false, message: 'Error updating non-matching games', err });
-    });
+    return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
   }).catch((err) => {
     return res.status(500).send({ success: false, message: 'Error updating selected games', err });
   });
