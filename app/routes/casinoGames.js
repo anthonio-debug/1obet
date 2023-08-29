@@ -349,7 +349,7 @@ function getGamesByName(req, res) {
   });
 }
 
-function addSelectedDashboardGames(req, res) {
+const addSelectedDashboardGames =  async (req, res) =>  {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.array() });
@@ -359,12 +359,20 @@ function addSelectedDashboardGames(req, res) {
     return res.status(200).send({ message: 'you are not allowed to add dashboard games', success: false })
   }
   const { gameId, status } = req.body
-  
+
+  const test = await SelectedCasino.findOne({ 'game.id':gameId })
+  return res.send({ 
+    success: true, 
+    message: 'Selected Dashboard games updated successfully' ,
+    data: test,
+  });
+
   SelectedCasino.updateOne(
     {},
     { $set: { 'games.$[game].isDashboard': status } },
     { arrayFilters: [{ 'game.id':gameId  }], new: true }
-  ).then((result) => {
+  )
+  .then((result) => {
     return res.send({ success: true, message: 'Selected Dashboard games updated successfully' });
   }).catch((err) => {
     return res.status(500).send({ success: false, message: 'Error updating selected games', err });
