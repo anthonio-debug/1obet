@@ -229,16 +229,16 @@ function login(req, res) {
     },
     (err, user) => {
       if (err || !user)
-        return res.status(404).send({ message: 'user not found' });
+        return res.status(404).send({ message: 'Invalid username or password' });
         // check if user password is matched or not.
         bcrypt.compare(req.body.password, user.password, function (err, result) {
-        if (err) return res.status(404).send({ message: 'incorrect password' });
+        if (err) return res.status(404).send({ message: 'Invalid username or password ' });
         if (!result)
-          return res.status(404).send({ message: 'incorrect password' });
+          return res.status(404).send({ message: 'Invalid username or password' });
         if (user.isActive == false || user.status == 0)
-          return res.status(404).send({ message: 'Account Inactive' });
+          return res.status(404).send({ message: 'Your account is inactive' });
         if((req.body.isAdmin && user.role == 5 ) || (!req.body.isAdmin && user.role != 5 ))
-            return res.status(404).send({ message: 'Something went wrong' });
+            return res.status(404).send({ message: 'Invalid username or password' });
 
         var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
         user.token = token;

@@ -169,7 +169,7 @@ const placeBet = async (req, res) => {
     }else {
       const requiredTime  = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime
-      if(remainingTimeFromEvent > 0){
+      if(marketId != config.Toss &&  remainingTimeFromEvent > 0){
         return  res.status(404).send({
           status: true,
           message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
@@ -508,7 +508,7 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if(config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)){
-      let score   = await liveSportScore(eventDetail.Id);
+      let score   = await cricketLiveScore(eventDetail.Id);
       console.log(" Score ======================= ", score)
       if (!score){
         return res.json({ 
@@ -1264,99 +1264,80 @@ async function reviewFakeBet(req, res) {
   }
 }
 
-const liveSportScore = async (eventId) => {
-  try {
-    const event = await Events.findOne({ Id: eventId }, { _id: 0, matchType: 1, sportsId: 1 });
-    const type = event ? event.sportsId : null;
-    console.log("event", event);
+// const liveSportScore = async (eventId) => {
+//   try {
+//     const event = await Events.findOne({ Id: eventId }, { _id: 0, matchType: 1, sportsId: 1 });
+//     const type = event ? event.sportsId : null;
+//     console.log("event", event);
 
-    if(type == "4"){
-      const score = await cricketLiveScore(eventId);
-      return score
-    }else{
-      return {
-        status: false,
-        message: "Figure batting not Allowed !"
-      }
-    }
-  }
-  catch (error) {
-      console.error(error);
-      return {
-          success: false,
-          message: 'Failed to get data',
-          error: error.message,
-      };
-  }
-}
+//     if(type == "4"){
+//       const score = await cricketLiveScore(eventId);
+//       return score
+//     }else{
+//       return {
+//         status: false,
+//         message: "Figure batting not Allowed !"
+//       }
+//     }
+//   }
+//   catch (error) {
+//       console.error(error);
+//       return {
+//           success: false,
+//           message: 'Failed to get data',
+//           error: error.message,
+//       };
+//   }
+// }
 
 async function cricketLiveScore(id) {
     try {
-      const apiResponse   =  await axios.get(`${config.sportsLiveScore}${id}`);
-      // const apiResponse = {
-      //   "status": true,
-      //   "msg": "Records",
-      //   "data": [{
-      //       "score" : {
-      //         "activenation1": "0",
-      //         "activenation2": 1,
-      //         "balls": [
-      //             "0",
-      //             "1",
-      //             "0",
-      //             "0",
-      //             "0",
-      //             "4"
-      //         ],
-      //         "dayno": "",
-      //         "isfinished": "0",
-      //         "score1": "355-10 (50)",
-      //         "score2": "184-2 (42.3)",
-      //         "spnballrunningstatus": "",
-      //         "spnmessage": "Day 2 | NOT trail by 171 runs",
-      //         "spnnation1": "SUR",
-      //         "spnnation2": "NOT",
-      //         "spnreqrate1": "",
-      //         "spnreqrate2": "",
-      //         "spnrunrate1": "",
-      //         "spnrunrate2": "CRR 3.16 "
-      //       }
-      //   }]
-      // }
-      const response = {};
-      const data          = apiResponse.data;
-      if(data[0]?.score != null ){
-        const event         = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
-        const type          = event ? event?.matchType : null;
-        // const scoreInfo     = JSON.parse(data).score
-        const scoreInfo        = data[0].score
+      const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+      const type = event ? event.sportsId : null;
+      console.log("event", event);
 
-        let score           = 0;
-        let inning          = 1;
-        if(scoreInfo.activenation1 == 1){
-          score  = scoreInfo.score1;
-          played = scoreInfo.score2;
-        }
-        else if(scoreInfo.activenation2 == 1){
-            score   = scoreInfo.score2;
-            played  = scoreInfo.score1;
-        }
-        if(type == "TEST"){
-          score = score.split('&');
-          score = score[score.length - 1].trim()
-          played = played.split('&');
-          played = played[played.length - 1].trim();
-        }
+      if(type == "4"){
+        const apiResponse   =  await axios.get(`${config.sportsLiveScore}${id}`);
+        const response = {};
+        const data          = apiResponse.data;
+        if(data[0]?.score != null ){
+          const event         = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+          const type          = event ? event?.matchType : null;
+          // const scoreInfo     = JSON.parse(data).score
+          const scoreInfo        = data[0].score
 
-        played = played?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-        played = played.filter(element => element != 0).length;
-        if(played > 0){
-          inning  = 2;
-        }
+          let score           = 0;
+          let inning          = 1;
+          if(scoreInfo.activenation1 == 1){
+            score  = scoreInfo.score1;
+            played = scoreInfo.score2;
+          }
+          else if(scoreInfo.activenation2 == 1){
+              score   = scoreInfo.score2;
+              played  = scoreInfo.score1;
+          }
+          if(type == "TEST"){
+            score = score.split('&');
+            score = score[score.length - 1].trim()
+            played = played.split('&');
+            played = played[played.length - 1].trim();
+          }
 
-        [response.score, response.wickets, response.overs] = score?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-        response.inning = inning;
-        return response
+          played = played?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+          played = played.filter(element => element != 0).length;
+          if(played > 0){
+            inning  = 2;
+          }
+
+          [response.score, response.wickets, response.overs] = score?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+          response.inning = inning;
+          return response
+        }
+      }else{
+        return {
+          status: false,
+          message: "Figure batting not Allowed !"
+        }
       }
     } catch (error) {
         console.error(error);
