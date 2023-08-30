@@ -1037,6 +1037,7 @@ async function getMatchedBets(req, res) {
           size: '$betAmount',
           runner: '$runner',
           marketId: '$marketId',
+          type: '$type',
           isfancyOrbookmaker: '$isfancyOrbookmaker',
           fancyData: '$fancyData',
           bettor: '$userDetails.userName',
