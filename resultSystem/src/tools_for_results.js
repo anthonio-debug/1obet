@@ -12,23 +12,9 @@ function ToolForResults() {
 
     async function init() {
 
-
-        setInterval(() => {
-            getBetForEvents(sportsIds)
-        }, 10 * 1000);
-
-
-        setInterval(() => {
-            getBetForEvents(sportsIdsforRacing)
-        }, 10 * 1000);
-
-        setInterval(() => {
-            getBetForFancy()
-        }, 30 * 1000);
-
-
-
-
+        getBetForEvents(sportsIds)
+        getBetForEvents(sportsIdsforRacing)
+        getBetForFancy()
 
     }
 
@@ -79,9 +65,9 @@ function ToolForResults() {
                     continue;
 
                 if (result.betDocument.sportsId == 1 || result.betDocument.sportsId == 2 || result.betDocument.sportsId == 4) {
-                    scoreChecker.eventsResult(result.betDocument);
+                    await scoreChecker.eventsResult(result.betDocument);
                 } else if (result.betDocument.sportsId == 7 || result.betDocument.sportsId == 4339) {
-                    scoreChecker.racingResult(result.betDocument);
+                    await scoreChecker.racingResult(result.betDocument);
                 } else {
                     console.log('Undefined sports type ', result.betDocument);
                 }
@@ -91,6 +77,10 @@ function ToolForResults() {
         } catch (error) {
             console.error("Error:", error);
         }
+
+        setTimeout(() => {
+            getBetForEvents(targetArray)
+        }, 10 * 1000);
     }
 
     async function getBetForFancy() {
@@ -117,13 +107,21 @@ function ToolForResults() {
                 ).catch(e => console.error(e));
 
                 if (results.fancyData) {
-                    scoreChecker.fancyResult(results, results.fancyData);
+                    await scoreChecker.fancyResult(results, results.fancyData);
                 } else {
-                    scoreChecker.bookMakerResult(results);
+                    await scoreChecker.bookMakerResult(results);
                 }
             }
 
+            setTimeout(() => {
+                getBetForFancy()
+            }, 30 * 1000);
+
+
         } catch (error) {
+            setTimeout(() => {
+                getBetForFancy()
+            }, 30 * 1000);
             console.error("Error:", error);
         }
     }
