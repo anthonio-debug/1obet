@@ -448,6 +448,11 @@ db.submarkettypes.insertMany([
     Id: 34,
     marketId: '4',
     name: 'Chota Bada'
+  },
+  {
+    Id: 35,
+    marketId: '4',
+    name: 'Tied Match'
   }
 ])
 
