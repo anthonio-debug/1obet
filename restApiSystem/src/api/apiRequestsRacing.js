@@ -288,30 +288,49 @@ function apiRequests() {
 
     const sportsIds = [4339, 7];
 
-    for (let i = 0; i < sportsIds.length; i++) {
+    for (let index = 0; index < sportsIds.length; index++) {
 
+      //console.log('Checking sportID '+ sportsIds[index]);
       var myArray = [];
 
       var events = await Event.find({
-        sportsId: sportsIds[i] + '',
+        sportsId: sportsIds[index] + '',
         status: 'OPEN'
       }).sort({ openDate: 1 }).limit(20).exec();
 
+
+
+      if (events.length) {
+        const checkOther =  await Event.findOne({status: 'WAITING', sportsId: sportsIds[index] + ''}).sort({ openDate: 1 });
+        if (checkOther && checkOther.openDate < events[0].openDate) {
+          await Event.updateMany({ status: 'OPEN',  sportsId: sportsIds[index] + ''}, { status: 'WAITING' });
+          console.log('Old event found. All OPEN events status changed with WAITING');
+          return checkOdds();
+        }
+      }
+
+
       if (events.length != 20) {
-        const documents = await Event.find({ status: 'WAITING', sportsId: sportsIds[i] + '' })
+        const documents = await Event.find({ status: 'WAITING', sportsId: sportsIds[index] + '' })
           .sort({ openDate: 1 })
           .limit(20-events.length)
           .select('_id');
 
+          //console.log(documents.length, ' Selected racing: '+ sportsIds[index]);
+
         const documentIds = documents.map(doc => doc._id);
         await Event.updateMany({ _id: { $in: documentIds } }, { status: 'OPEN' });
         events = await Event.find({
-          sportsId: sportsIds[i] + '',
+          sportsId: sportsIds[index] + '',
           status: 'OPEN'
         }).sort({ openDate: 1 }).limit(20).exec();
       }
+
+
+
       if (events.length == 0) {
-        return;
+        console.log('We not events for racing');
+        continue;
       }
       for (let index = 0; index < events.length; index++) {
         const event = events[index];
@@ -328,6 +347,9 @@ function apiRequests() {
   }
 
   async function raceOddsJob(array) {
+
+    //console.log('Racing markets',array);
+
     try {
       var ids = [];
       for (let index = 0; index < array.length; index++) {

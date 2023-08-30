@@ -39,7 +39,7 @@ function scoreChecker() {
                 const bets = await Bets.find({ marketId: betData.marketId, sportsId: betData.sportsId, status: 1 });
 
                 await newRecord.save();
-                await Bets.findOneAndUpdate({ _id: betData._id }, { betData: newRecord._id });
+                await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, {  $set: { resultId: newRecord._id }   });
 
 
                 if (result.winnerSelectionId == -1) {
@@ -92,7 +92,7 @@ function scoreChecker() {
                 const bets = await Bets.find({ marketId: betData.marketId, sportsId: betData.sportsId, status: 1 });
 
                 await newRecord.save();
-                await Bets.findOneAndUpdate({ _id: betData._id }, { resultId: newRecord._id });
+                await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, {  $set: { resultId: newRecord._id }   });
 
                 if (result.winnerSelectionId == -1) {
                     console.log("This event Canceled ");
@@ -147,7 +147,7 @@ function scoreChecker() {
 
 
                 await newRecord.save();
-                await Bets.findOneAndUpdate({ _id: betData._id }, { resultId: newRecord._id });
+                await Bets.updateMany({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: null }, {  $set: { resultId: newRecord._id }   });
 
                 const bets = await Bets.find({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: null, status: 1 });
 
@@ -207,19 +207,19 @@ function scoreChecker() {
                 if (result.result == null)
                     return;
 
-                var newRecord = new resultRecords({
+                var newRecord = new resultRecords({ 
                     eventId: betData.matchId,
                     marketData: fancyName,
                     resultData: result.result
                 });
 
                 await newRecord.save();
-                await Bets.findOneAndUpdate({ _id: betData._id }, { resultId: newRecord._id });
+                await Bets.updateMany({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: { $ne: null }}, {  $set: { resultId: newRecord._id }   });
 
 
                 const bets = await Bets.find({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: { $ne: null }, status: 1 });
 
-                if (result.winnerSelId == -1) {
+                if (result.result == -1) {
                     console.log("This event Canceled ");
                 } else {
                     for (const bet of bets) {

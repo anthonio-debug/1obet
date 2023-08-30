@@ -18,6 +18,6 @@ const scoreSchema = new Schema({
     },
 });
 
-const Score = mongoose.model('Score', scoreSchema);
+const Score = mongoose.model('resultRecord', scoreSchema);
 
 module.exports = Score;

@@ -204,7 +204,12 @@ async function handleWinningBet(bet) {
     }).sort({
       _id: -1,
     });
-    console.log('lastMaxWithdraw2', lastMaxWithdraw);
+
+    if (!lastMaxWithdraw) {
+      console.log('User cach record not found.',  user);
+    }
+
+    //console.log('lastMaxWithdraw2', lastMaxWithdraw);
     let betTransaction = await new Cash({
       userId: user.userId,
       description: bet.name,
@@ -218,10 +223,14 @@ async function handleWinningBet(bet) {
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
       marketId: bet.marketId,
     });
-    console.log('(lastMaxWithdraw.balance)', lastMaxWithdraw.balance )
-    console.log('(lastMaxWithdraw.avaialebalance)', lastMaxWithdraw.availableBalance )
-    console.log('(lastMaxWithdraw.balance)',typeof lastMaxWithdraw.balance )
-    console.log('(lastMaxWithdraw.availablebalance)',typeof lastMaxWithdraw.availableBalance )
+
+    if (lastMaxWithdraw) {
+      console.log('(lastMaxWithdraw.balance)', lastMaxWithdraw.balance )
+      console.log('(lastMaxWithdraw.avaialebalance)', lastMaxWithdraw.availableBalance )
+      console.log('(lastMaxWithdraw.balance)',typeof lastMaxWithdraw.balance )
+      console.log('(lastMaxWithdraw.availablebalance)',typeof lastMaxWithdraw.availableBalance )
+    }
+
     console.log('user.commission:', user.commission);
     console.log('Type of user.commission:', typeof user.commission);
     console.log('(user.commission / 100):',(user.commission / 100));
