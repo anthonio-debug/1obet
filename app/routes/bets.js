@@ -567,12 +567,13 @@ const placeBet = async (req, res) => {
         })
 
       }
-      else {
-        return  res.send({
-          status: true,
-          message: "Bets are Allowed "
-        })
-      }
+      // else {
+      //   return  res.send({
+      //     status: true,
+      //     message: "Bets are Allowed "
+      //   })
+      // }
+      console.log("Bets are Allowed");
       console.log(" currentSession ========= ", currentSession);
     }
     else {
