@@ -108,8 +108,8 @@ function apiRequests() {
             const score = scores[index];
             io.to('#' + events[index]).emit('score', score);
             const options = {
-              upsert: true, 
-              new: true, 
+              upsert: true,
+              new: true,
             };
 
             const item = {
@@ -218,6 +218,8 @@ function apiRequests() {
               index: index
             });
             await newMarket.save();
+          } else {
+            await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
           }
         }
 
@@ -366,6 +368,8 @@ function apiRequests() {
         // update event status with 'CLOSED-INPLAYLIST' 
         // Also update MarketIDs
         for (let i = 0; i < diff.length; i++) {
+
+          console.log('Event is closed because it not exists on inplaylist: ' + diff[i]);
           await MarketIDS.updateMany({ eventId: diff[i] }, { $set: { inPlay: false, status: 'CLOSED' } });
           await inPlayEvents.updateOne({ Id: diff[i] }, { $set: { status: 'CLOSED-INPLAYLIST', inplay: false, inplayFromServer: false } });
           io.emit('inplay', { eventID: diff[i], inplay: false });
@@ -383,125 +387,131 @@ function apiRequests() {
 
   async function setInplay(sportsId) {
 
-
-    const markets = await MarketIDS.find({ inPlay: true, sportID: sportsId }).exec();
-
-
-    //check current active inplaying MarketIDS
-    if (markets.length > 19) {
-      console.log('Inplay Events is Full');
-      return;
-    }
-
-    var count = markets.length;
+    try {
+      const markets = await MarketIDS.find({ inPlay: true, sportID: sportsId, status: 'OPEN' }).exec();
 
 
-    // Take list of inplay Event. If this event have new marketids that is added after the match start. Add this marketids to checking list.
-    const inPlayEventsDocs = await inPlayEvents.find({ inplay: true, sportsId: sportsId + '', }, 'Id').sort({ openDate: 1 });
-    const eventIds = inPlayEventsDocs.map(doc => doc.Id);
-    const marketIDsPlaying = await MarketIDS.find({
-      eventID: { $in: eventIds },
-      status: 'OPEN',
-      inPlay: { $ne: true }
-    }).sort({ index: 1 });
-    if (marketIDsPlaying.length > 0) {
-      for (let x = 0; x < marketIDsPlaying.length; x++) {
-        const market = marketIDsPlaying[x];
-        await MarketIDS.updateOne({ _id: market._id }, { inPlay: true }).exec();;
-        console.log(market.marketId + ' market updated with inplay');
-        count++;
-        if (count > 19) {
-          break;
-        }
-      }
-      if (count > 19) {
+      //check current active inplaying MarketIDS
+      if (markets.length > 19) {
+        console.log('Inplay Events is Full');
         return;
       }
-    }
+
+      var count = markets.length;
 
 
-    //if list is full return;
-    if (count > 19) {
-      return;
-    }
-
-
-    // if current active marketIDs less then 20. Take a event that is looking inplay true from dataprovider. 
-    // We are storing 'inplay' that is coming data provider and we saving this value with name inplayFromServer
-    // Take inplayFromServer from database and take marketIDs.
-    // If these events have valid marketIDS(status='OPEN')
-    const currentTime = Date.now();
-    const query = {
-      openDate: { $gt: currentTime },
-      inplayFromServer: true,
-      sportsId: sportsId + '',
-      status: 'OPEN',
-      inplay: { $ne: true },
-      isShowed: true,
-    };
-
-    var events = await inPlayEvents.find(query)
-      .sort({ openDate: 1 })
-      .limit(10)
-      .exec();
-
-
-
-
-    if (events.length == 0) {
-      const queryPastEvents = {
-        inplayFromServer: true,
-        sportsId: sportsId + '',
-        isShowed: true,
+      // Take list of inplay Event. If this event have new marketids that is added after the match start. Add this marketids to checking list.
+      const inPlayEventsDocs = await inPlayEvents.find({ inplay: true, sportsId: sportsId + '', }, 'Id').sort({ openDate: 1 });
+      const eventIds = inPlayEventsDocs.map(doc => doc.Id);
+      const marketIDsPlaying = await MarketIDS.find({
+        eventID: { $in: eventIds },
         status: 'OPEN',
-        inplay: { $ne: true }
-      };
-      events = await inPlayEvents.find(queryPastEvents)
-        .sort({ openDate: -1 })
-        .limit(10)
-        .exec();
-    }
-
-
-    for (let index = 0; index < events.length; index++) {
-      const event = events[index];
-      // Before the set inplay true
-      // We are taking last marketIDs record from data provider.
-    
-      await listMarketsByCronJob(event.Id, event.sportsId);
-
-      //if we have active marketIDS, we are add these marketIds to check list.
-      const marketIDs = await MarketIDS.find({ eventId: event.Id, status: 'OPEN' }).sort({ index: 1 });
-      if (marketIDs.length > 0) {
-        console.log(event.name + ' event updated with inplay');
-        await inPlayEvents.updateMany({ Id: event.Id }, { inplay: true }).exec();;
-        io.emit('inplay', { eventID: event.Id, inplay: true });
-        for (let x = 0; x < marketIDs.length; x++) {
-          const market = marketIDs[x];
+        inPlay: { $ne: true }
+      }).sort({ index: 1 });
+      if (marketIDsPlaying.length > 0) {
+        for (let x = 0; x < marketIDsPlaying.length; x++) {
+          const market = marketIDsPlaying[x];
           await MarketIDS.updateOne({ _id: market._id }, { inPlay: true }).exec();;
           console.log(market.marketId + ' market updated with inplay');
           count++;
-          console.log(count);
           if (count > 19) {
             break;
           }
         }
         if (count > 19) {
-          break;
+          return;
         }
-      } else {
-        //If this event not have to marketIDS, we update the status of event with CLOSED.
-        console.log(event.Id + ' was closed. MarketIDS is empty');
-        await inPlayEvents.updateOne({ Id: event.Id }, { inPlay: false, status: 'CLOSED-MARKETIDS' });
       }
 
 
+      //if list is full return;
+      if (count > 19) {
+        return;
+      }
 
+
+      // if current active marketIDs less then 20. Take a event that is looking inplay true from dataprovider. 
+      // We are storing 'inplay' that is coming data provider and we saving this value with name inplayFromServer
+      // Take inplayFromServer from database and take marketIDs.
+      // If these events have valid marketIDS(status='OPEN')
+      const currentTime = Date.now();
+      const query = {
+        openDate: { $gt: currentTime },
+        inplayFromServer: true,
+        sportsId: sportsId + '',
+        status: 'OPEN',
+        inplay: { $ne: true },
+        isShowed: true,
+      };
+
+
+
+
+      var events = await inPlayEvents.find(query)
+        .sort({ openDate: 1 })
+        .limit(10)
+        .exec();
+
+
+
+
+      if (events.length == 0) {
+        const queryPastEvents = {
+          inplayFromServer: true,
+          sportsId: sportsId + '',
+          isShowed: true,
+          status: 'OPEN',
+          inplay: { $ne: true }
+        };
+        events = await inPlayEvents.find(queryPastEvents)
+          .sort({ openDate: -1 })
+          .limit(10)
+          .exec();
+      }
+
+
+      for (let index = 0; index < events.length; index++) {
+        const event = events[index];
+        // Before the set inplay true
+        // We are taking last marketIDs record from data provider.
+
+        await listMarketsByCronJob(event.Id, event.sportsId);
+
+        //if we have active marketIDS, we are add these marketIds to check list.
+        const marketIDs = await MarketIDS.find({ eventId: event.Id, status: 'OPEN' }).sort({ index: 1 });
+        if (marketIDs.length > 0) {
+          console.log(event.name + ' event updated with inplay');
+          await inPlayEvents.updateMany({ Id: event.Id }, { inplay: true }).exec();;
+          io.emit('inplay', { eventID: event.Id, inplay: true });
+          for (let x = 0; x < marketIDs.length; x++) {
+            const market = marketIDs[x];
+            await MarketIDS.updateOne({ _id: market._id }, { inPlay: true }).exec();;
+            console.log(market.marketId + ' market updated with inplay');
+            count++;
+            console.log(count);
+            if (count > 19) {
+              break;
+            }
+          }
+          if (count > 19) {
+            break;
+          }
+        } else {
+          //If this event not have to marketIDS, we update the status of event with CLOSED.
+          await MarketIDS.deleteMany({ eventId: event.Id }).exec();;
+          console.log(event.Id + ' was closed. MarketIDS is empty');
+          //await inPlayEvents.updateOne({ Id: event.Id }, { inPlay: false, status: 'CLOSED-MARKETIDS' });
+        }
+
+
+
+      }
+
+    } catch (error) {
+      console.error(error);
     }
-
   }
 }
-
 
 
 

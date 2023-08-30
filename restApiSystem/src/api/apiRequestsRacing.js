@@ -383,11 +383,8 @@ function apiRequests() {
           index++;
         }
       } else {
-        
-        
         for (let i = 0; i < array.length; i++) {
           console.log(array[i].eventId, 'CLOSED 2');
-
           await Event.findOneAndUpdate({ Id: array[i].eventId }, { status: 'CLOSED' });
         }
         console.log(oddsData);

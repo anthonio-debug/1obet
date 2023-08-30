@@ -14,9 +14,9 @@ const Bets = require('../../../app/models/bets');
 const inPlayEvents = require('../../../app/models/events');
 const {
     handleLosingBet,
-    handleWinningBet, 
+    handleWinningBet,
     handleDrawBet
-  } = require('../CalculateBets/calculations')
+} = require('../CalculateBets/calculations')
 
 function scoreChecker() {
     return { eventsResult, racingResult, fancyResult, bookMakerResult };
@@ -39,29 +39,31 @@ function scoreChecker() {
                 const bets = await Bets.find({ marketId: betData.marketId, sportsId: betData.sportsId, status: 1 });
 
                 await newRecord.save();
-                await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, {  $set: { resultId: newRecord._id }   });
+                await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
 
                 if (result.winnerSelectionId == -1) {
-                    console.log("This event Canceled ");
+                    for (const bet of bets) {
+                        await handleDrawBet(bet);
+                    }
                 } else {
                     for (const bet of bets) {
                         if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
                             console.log("0 ----- winner ");
                             await handleWinningBet(bet);
-    
+
                         } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
                             console.log("0 ----- looser ");
                             await handleLosingBet(bet);
-    
+
                         } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
                             console.log("1 ----- winner ");
                             await handleWinningBet(bet);
-    
+
                         } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
                             console.log("1 ----- looser ");
                             await handleLosingBet(bet);
-    
+
                         } else {
                             console.log("-----  Draw ");
                             await handleDrawBet(bet);
@@ -92,28 +94,30 @@ function scoreChecker() {
                 const bets = await Bets.find({ marketId: betData.marketId, sportsId: betData.sportsId, status: 1 });
 
                 await newRecord.save();
-                await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, {  $set: { resultId: newRecord._id }   });
+                await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
                 if (result.winnerSelectionId == -1) {
-                    console.log("This event Canceled ");
+                    for (const bet of bets) {
+                        await handleDrawBet(bet);
+                    }
                 } else {
                     for (const bet of bets) {
                         if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
                             console.log("0 ----- winner ");
                             await handleWinningBet(bet);
-    
+
                         } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
                             console.log("0 ----- looser ");
                             await handleLosingBet(bet);
-    
+
                         } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
                             console.log("1 ----- winner ");
                             await handleWinningBet(bet);
-    
+
                         } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
                             console.log("1 ----- looser ");
                             await handleLosingBet(bet);
-    
+
                         } else {
                             console.log("-----  Draw ");
                             await handleDrawBet(bet);
@@ -147,30 +151,32 @@ function scoreChecker() {
 
 
                 await newRecord.save();
-                await Bets.updateMany({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: null }, {  $set: { resultId: newRecord._id }   });
+                await Bets.updateMany({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: null }, { $set: { resultId: newRecord._id } });
 
                 const bets = await Bets.find({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: null, status: 1 });
 
                 if (result.winnerSelId == -1) {
-                    console.log("This event Canceled ");
+                    for (const bet of bets) {
+                        await handleDrawBet(bet);
+                    }
                 } else {
                     for (const bet of bets) {
                         if (bet.type == 0 && bet.runner == result.winnerSelId) {
                             console.log("0 ----- winner ");
                             await handleWinningBet(bet);
-    
+
                         } else if (bet.type == 0 && bet.runner != result.winnerSelId) {
                             console.log("0 ----- looser ");
                             await handleLosingBet(bet);
-    
+
                         } else if (bet.type == 1 && bet.runner != result.winnerSelId) {
                             console.log("1 ----- winner ");
                             await handleWinningBet(bet);
-    
+
                         } else if (bet.type == 1 && bet.runner == result.winnerSelId) {
                             console.log("1 ----- looser ");
                             await handleLosingBet(bet);
-    
+
                         } else {
                             console.log("-----  Draw ");
                             await handleDrawBet(bet);
@@ -180,7 +186,7 @@ function scoreChecker() {
 
 
 
-                
+
             }
         } catch (error) {
             console.error(error);
@@ -207,38 +213,40 @@ function scoreChecker() {
                 if (result.result == null)
                     return;
 
-                var newRecord = new resultRecords({ 
+                var newRecord = new resultRecords({
                     eventId: betData.matchId,
                     marketData: fancyName,
                     resultData: result.result
                 });
 
                 await newRecord.save();
-                await Bets.updateMany({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: { $ne: null }}, {  $set: { resultId: newRecord._id }   });
+                await Bets.updateMany({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: { $ne: null } }, { $set: { resultId: newRecord._id } });
 
 
                 const bets = await Bets.find({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: { $ne: null }, status: 1 });
 
                 if (result.result == -1) {
-                    console.log("This event Canceled ");
+                    for (const bet of bets) {
+                        await handleDrawBet(bet);
+                    }
                 } else {
                     for (const bet of bets) {
-                        if (bet.type == 0 && parseInt(bet.runner) >=  parseInt(result.result)) {
+                        if (bet.type == 0 && parseInt(bet.runner) >= parseInt(result.result)) {
                             console.log("0 ----- winner ");
                             await handleWinningBet(bet);
-    
+
                         } else if (bet.type == 0 && parseInt(bet.runner) < parseInt(result.result)) {
                             console.log("0 ----- looser ");
                             await handleLosingBet(bet);
-    
-                        } else if (bet.type == 1 &&  parseInt(bet.runner) < parseInt(result.result)) {
+
+                        } else if (bet.type == 1 && parseInt(bet.runner) < parseInt(result.result)) {
                             console.log("1 ----- winner ");
                             await handleWinningBet(bet);
-    
-                        } else if (bet.type == 1 && parseInt(bet.runner) >=  parseInt(result.result)) {
+
+                        } else if (bet.type == 1 && parseInt(bet.runner) >= parseInt(result.result)) {
                             console.log("1 ----- looser ");
                             await handleLosingBet(bet);
-    
+
                         } else {
                             console.log("-----  Draw ");
                             await handleDrawBet(bet);
