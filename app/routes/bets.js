@@ -509,6 +509,7 @@ const placeBet = async (req, res) => {
     // Figure Even Odd & Small Big
     else if(config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)){
       let score   = await liveSportScore(eventDetail.Id);
+      console.log(" Score ======================= ", score)
       if (!score){
         return res.json({ 
           status: false,
@@ -1291,7 +1292,7 @@ const liveSportScore = async (eventId) => {
 
 async function cricketLiveScore(id) {
     try {
-      const apiResponse   =  await axios.get(`${sportsLiveScore}${id}`);
+      const apiResponse   =  await axios.get(`${config.sportsLiveScore}${id}`);
       // const apiResponse = {
       //   "status": true,
       //   "msg": "Records",
