@@ -369,6 +369,8 @@ const placeBet = async (req, res) => {
           const DbBackScores2  = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
           const DbBackScores   = DbBackScores2.map(item => Number(item))
 
+          console.log(" DbBackOdds ============ ", DbBackOdds);
+
           const index          = DbBackOdds.indexOf(betRate)
           TargetScore          = DbBackScores[index]
 
@@ -391,6 +393,8 @@ const placeBet = async (req, res) => {
 
           const DbBackScores2  = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
           const DbBackScores   = DbBackScores2.map(item => Number(item));
+
+          console.log(" DbBackOdds ============ ", DbBackOdds);
 
           const index          = DbBackOdds.indexOf(betRate);
           TargetScore          = DbBackScores[index];
