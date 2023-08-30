@@ -27,7 +27,7 @@
   "apiUrl":"https://em-api.thegameprovider.com/api/seamless/provider",
   "createCasinoUser": true,
   "casinoMultiples": 10,
-  "SportOddsSubMarkets": [6, 13, 15, 35],
+  "SportOddsSubMarkets": [6, 13, 15, 35, 11],
   "sportMarkets": ["1","2", "4"],
   "raceMarkets": ["7", "4339"],
   "Fancy": 7,
