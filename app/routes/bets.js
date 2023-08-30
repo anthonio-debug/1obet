@@ -1088,11 +1088,10 @@ async function getMatchedBets(req, res) {
 
     if (matchedBets.length > 0) {
       matchedBets = matchedBets.map(item => {
-        // Assume getMultiplier is a function that fetches the multiplier value
         const multiplier = getPercentageSharing(loginUser.userId, item.bettorId);
         return {
           ...item,
-          size: item.size * multiplier
+          sizeCalculated: item.size * multiplier
         };
       });
     }
