@@ -1004,7 +1004,7 @@ async function getMatchedBets(req, res) {
     }
 
     // Use the $lookup aggregation pipeline to fetch matched bets along with user information and related events
-    const matchedBets = await Bets.aggregate([
+    var matchedBets = await Bets.aggregate([
       { $match: { userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] }, status: 1, matchId: matchId } },
       {
         $lookup: {
