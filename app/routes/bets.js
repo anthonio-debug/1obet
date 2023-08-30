@@ -549,7 +549,7 @@ const placeBet = async (req, res) => {
       }
 
       if(inning == 2 && currentSession == totalSessions){
-        return res.send({
+        return res.status(404).send({
           success: false,
           message: 'betting not Allowed in last Session',
           currentSession : currentSession,
@@ -558,7 +558,7 @@ const placeBet = async (req, res) => {
         });
       }
       else if(currentSessionOver > 3){
-        return res.send({
+        return res.status(404).send({
           success : false,
           message : `betting not Allowed in ${Math.ceil(currentOver%5)} over`,
           currentSession : currentSession,
