@@ -49,7 +49,7 @@ const getParents = async (userId) => {
 
   return parentUserIds;
 }
-const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id=0 ) => {
+const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0) => {
   const parentUser = await User.find({
     userId: {
       $in: [...parentUsersIds],
@@ -61,17 +61,17 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
   let prev = 0;
   parentUser.forEach((user) => {
     let current = user.downLineShare;
-    let  commission = current - prev;
+    let commission = current - prev;
     user["commission"] = commission;
     prev = current;
   });
-  for (const user of parentUser){
-    console.log(`user id ${ user.userId } =====`, user.commission);
+  for (const user of parentUser) {
+    console.log(`user id ${user.userId} =====`, user.commission);
     user.exposure -= (user.commission / 100) * winningAmount;
     user.availableBalance -= (user.commission / 100) * winningAmount;
     await user.save();
-    console.log("Saving parent users" );
-    if(matchId != 0){
+    console.log("Saving parent users");
+    if (matchId != 0) {
       // console.log("inside of current position" );
       // const position = new currentPosition({
       //   userId: user.userId,
@@ -91,7 +91,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
 
     }
   }
-  
+
 };
 
 const placeBet = async (req, res) => {
@@ -110,51 +110,51 @@ const placeBet = async (req, res) => {
     let subMarketDetail;
     let marketId;
     let selectedOddsRate;
-    const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId  } = req.body;
+    const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId } = req.body;
     const userId = req.decoded.userId;
     let ApiResponseOdds;
     let matchedIndex;
     let winningAmount = 0;
     let loosingAmount = 0;
-    let isFancyOrBookMaker = false; 
+    let isFancyOrBookMaker = false;
     let _3rdPartyMarketId = 0
     let TargetScore = 0;
 
-    if( betAmount < config.betMinimumAmount) {
+    if (betAmount < config.betMinimumAmount) {
       return res.status(404).send({ message: `minimum bet should be ${config.betMinimumAmount}` });
     }
     const user = await User.findOne({ userId }).exec();
     if (!user) {
       return res.status(404).send({ message: 'illegal user betting' });
     }
-    console.log('userAvailableBalance',user.availableBalance)
-    if ((user.availableBalance < betAmount && type == 0) || (user.availableBalance < betAmount* (betRate -1) && type == 1) ) {
+    console.log('userAvailableBalance', user.availableBalance)
+    if ((user.availableBalance < betAmount && type == 0) || (user.availableBalance < betAmount * (betRate - 1) && type == 1)) {
       return res.status(404).send({ message: 'Insufficient balance' });
     }
     if (user.bettingAllowed == false) {
-      return res.status(404).send({message: 'Bet not allowed'});
+      return res.status(404).send({ message: 'Bet not allowed' });
     }
-    let parentUserIds   = await getParents(user.userId);
-    const marketIds     = await User.distinct("blockedMarketPlaces",          { userId :{ $in: parentUserIds},  isDeleted:false });
-    const subMarketId1  = await User.distinct("blockedSubMarkets",            { userId :{ $in: parentUserIds }, isDeleted:false });
-    const subMarketId2  = await User.distinct("blockedSubMarketsByParent",    { userId :{ $in: parentUserIds }, isDeleted:false });
-    const subMarketId   = subMarketId1.concat(subMarketId2);
-    const eventDetail   = await Events.findById(matchId);
+    let parentUserIds = await getParents(user.userId);
+    const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
+    const subMarketId1 = await User.distinct("blockedSubMarkets", { userId: { $in: parentUserIds }, isDeleted: false });
+    const subMarketId2 = await User.distinct("blockedSubMarketsByParent", { userId: { $in: parentUserIds }, isDeleted: false });
+    const subMarketId = subMarketId1.concat(subMarketId2);
+    const eventDetail = await Events.findById(matchId);
 
-    if(!eventDetail){
-      return res.status(404).send({message: 'EVENT COULD NOT FOUND'});
+    if (!eventDetail) {
+      return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
     }
-    marketId            = eventDetail?.sportsId;
+    marketId = eventDetail?.sportsId;
     console.log(" marketId ======== ", marketId);
     let id;
 
     // Checks for Market Places & Sub Markets  
-    if (config.raceMarkets.includes(marketId)){
+    if (config.raceMarkets.includes(marketId)) {
 
-      const requiredTime  = new Date().getTime() + config.raceOpenBefore;
+      const requiredTime = new Date().getTime() + config.raceOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime
-      if(remainingTimeFromEvent > 0){
-        return  res.status(404).send({
+      if (remainingTimeFromEvent > 0) {
+        return res.status(404).send({
           status: true,
           message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
         })
@@ -166,17 +166,17 @@ const placeBet = async (req, res) => {
       if (!subMarketDetail) {
         return res.status(404).send({ message: 'Bet not allowed' });
       }
-    }else {
-      const requiredTime  = new Date().getTime() + config.sportsOpenBefore;
+    } else {
+      const requiredTime = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime
-      if(marketId != config.Toss &&  remainingTimeFromEvent > 0){
-        return  res.status(404).send({
+      if (marketId != config.Toss && remainingTimeFromEvent > 0) {
+        return res.status(404).send({
           status: true,
           message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
         })
       }
 
-      const currentMarket =  eventDetail?.marketIds?.find((market) => market.marketName ==  subMarketName );
+      const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == subMarketName);
       id = currentMarket?.id;
       _3rdPartyMarketId = id
       subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
@@ -186,17 +186,17 @@ const placeBet = async (req, res) => {
       }
     }
 
-    if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)){
+    if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
       return res.status(404).send({ message: 'Betting disabled' });
-    }  
+    }
     const userMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: marketId }).exec();
-    if (userMaxBetSize  && betAmount > userMaxBetSize.amount){
+    if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
       return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
     }
 
     // cricket tennis soccer odds only match odds 
-    if (config.sportMarkets.includes(marketId) && config.SportOddsSubMarkets.includes(subMarketDetail.Id)){
-      const url      = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+    if (config.sportMarkets.includes(marketId) && config.SportOddsSubMarkets.includes(subMarketDetail.Id)) {
+      const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
       const response = await axios.get(url);
       const oddsData = response.data;
       if (!oddsData) {
@@ -207,19 +207,19 @@ const placeBet = async (req, res) => {
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
       testRunner = runnerFromAPI
 
-      const DBOddDetails      = await Odds.findById(oddsId);
-      if(!DBOddDetails){
-        return res.status(404).send({ 
-          message:  `Frontend provided odds _id do not found in db & _id =  ${oddsId}` 
+      const DBOddDetails = await Odds.findById(oddsId);
+      if (!DBOddDetails) {
+        return res.status(404).send({
+          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
         });
       }
       console.log("DBOddDetails === ", DBOddDetails);
-      if (type == 0){
-        ApiResponseOdds         = runnerFromAPI.ExchangePrices.AvailableToBack
-        const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
-        const availableToBack   = OddDetailsTeam.ExchangePrices.AvailableToBack;
+      if (type == 0) {
+        ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToBack
+        const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+        const availableToBack = OddDetailsTeam.ExchangePrices.AvailableToBack;
         console.log('availableToBack', availableToBack);
-        matchedIndex            = availableToBack.findIndex((back) => {
+        matchedIndex = availableToBack.findIndex((back) => {
           return back.price == betRate;
         });
         console.log('matchedIndex', matchedIndex);
@@ -229,10 +229,10 @@ const placeBet = async (req, res) => {
         }
         selectedOddsRate = availableToBack[matchedIndex].price;
 
-      } else if (type == 1){
-        ApiResponseOdds         = runnerFromAPI.ExchangePrices.AvailableToLay
-        const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
-        const AvailableToLay    = OddDetailsTeam.ExchangePrices.AvailableToLay;
+      } else if (type == 1) {
+        ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToLay
+        const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+        const AvailableToLay = OddDetailsTeam.ExchangePrices.AvailableToLay;
         console.log('AvailableToLay', AvailableToLay);
         matchedIndex = AvailableToLay.findIndex((back) => {
           return back.price === betRate;
@@ -255,19 +255,19 @@ const placeBet = async (req, res) => {
 
       // console.log(`ApiResponseOdds at ${matchedIndex}`, ApiResponseOdds[matchedIndex]);
 
-      if(ApiResponseOdds[matchedIndex].price < betRate ){
+      if (ApiResponseOdds[matchedIndex].price < betRate) {
         return res.status(404).send({ message: `Bet miss matched` });
       }
     }
 
     // HR GH odds market 
-    else if (config.raceMarkets.includes(marketId)){
+    else if (config.raceMarkets.includes(marketId)) {
 
       console.log("MarketId ========== ", id);
-      const url       = `${config.horseRaceUrl}/odds/?ids=${id}`;
-      const response  = await axios.get(url);
-      const oddsData  = response.data;
-      
+      const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
+      const response = await axios.get(url);
+      const oddsData = response.data;
+
       console.log("odds Data Runners ====== ", oddsData);
       if (oddsData.length == 0) {
         console.log(`Match odds not found for sports ID`);
@@ -276,24 +276,24 @@ const placeBet = async (req, res) => {
 
       console.log('data =========== ', oddsData[0]?.runners);
       console.log('selectionId ========= ', selectionId);
-      
+
       const runnerFromAPI = oddsData[0].runners.find((runner) => {
         return runner.selectionId == selectionId
       });
       // 
       testRunner = runnerFromAPI
       console.log('match odds runners ====== ', runnerFromAPI);
-      
-      if (type == 0){
-        ApiResponseOdds         = runnerFromAPI?.exchange?.availableToBack
+
+      if (type == 0) {
+        ApiResponseOdds = runnerFromAPI?.exchange?.availableToBack
         console.log("ApiResponseOdds AvailableToBack === ", ApiResponseOdds);
 
-        const DBOddDetails      = await RaceOdds.findById(oddsId);
+        const DBOddDetails = await RaceOdds.findById(oddsId);
         console.log("DBOddDetails === ", DBOddDetails);
-        const OddDetailsTeam    = DBOddDetails.runners.find((runner) => {
+        const OddDetailsTeam = DBOddDetails.runners.find((runner) => {
           return runner.selectionId == selectionId
         });
-        const availableToBack   = OddDetailsTeam.exchange.availableToBack;
+        const availableToBack = OddDetailsTeam.exchange.availableToBack;
         // console.log('availableToBack', availableToBack);
         matchedIndex = availableToBack.findIndex((back) => {
           return back.price == betRate;
@@ -305,13 +305,13 @@ const placeBet = async (req, res) => {
         }
         selectedOddsRate = availableToBack[matchedIndex].price;
 
-      } else if (type == 1){
-        ApiResponseOdds         = runnerFromAPI.exchange.availableToLay
+      } else if (type == 1) {
+        ApiResponseOdds = runnerFromAPI.exchange.availableToLay
         console.log("ApiResponseOdds AvailableToLay ====== ", ApiResponseOdds);
-        const DBOddDetails      = await RaceOdds.findById(oddsId);
-        const OddDetailsTeam    = DBOddDetails.runners.find(runner => runner.selectionId == selectionId);
+        const DBOddDetails = await RaceOdds.findById(oddsId);
+        const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.selectionId == selectionId);
 
-        const AvailableToLay    = OddDetailsTeam.exchange.availableToLay;
+        const AvailableToLay = OddDetailsTeam.exchange.availableToLay;
         console.log(" AvailableToLay new Server Test  ======= ", AvailableToLay);
         matchedIndex = AvailableToLay.findIndex((back) => {
           return back.price == betRate;
@@ -332,79 +332,79 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: 'Bet miss Matched' });
       }
 
-      if(ApiResponseOdds[matchedIndex].price < betRate ){
+      if (ApiResponseOdds[matchedIndex].price < betRate) {
         return res.status(404).send({ message: `Bet miss matched` });
       }
     }
 
     //for fancy
-    else if (subMarketDetail.Id == config.Fancy ) {
+    else if (subMarketDetail.Id == config.Fancy) {
       isFancyOrBookMaker = true;
-      const eventId       = eventDetail.Id
-      const url           = `${config.fancyUrl}/bm_fancy/${eventId}`;
-      const response      = await axios.get(url);
-      const apiFancyOdds  = response?.data?.data?.t3;
-      const DBOddDetails  = await FancyOdds.findById(oddsId);
-      const dbFancyOdds   = DBOddDetails?.data?.data?.t3
+      const eventId = eventDetail.Id
+      const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
+      const response = await axios.get(url);
+      const apiFancyOdds = response?.data?.data?.t3;
+      const DBOddDetails = await FancyOdds.findById(oddsId);
+      const dbFancyOdds = DBOddDetails?.data?.data?.t3
 
-      if (apiFancyOdds?.length && dbFancyOdds?.length){
+      if (apiFancyOdds?.length && dbFancyOdds?.length) {
 
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
-        const dbSelectedOdds  = dbFancyOdds.find(runner  => runner.sid == req.body.selectionId);
+        const dbSelectedOdds = dbFancyOdds.find(runner => runner.sid == req.body.selectionId);
 
-        if (!apiSelectedOdds || !dbSelectedOdds){
+        if (!apiSelectedOdds || !dbSelectedOdds) {
           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
         runnerName = dbSelectedOdds.nat; // Get the runner name from the 'nat' field
-        
-        if (req.body.type == 0){
 
-          const apiBackOdds2   = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
-          const apiBackOdds    = apiBackOdds2.map(item => Number(item))
+        if (req.body.type == 0) {
 
-          const DbBackOdds2    = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
-          const DbBackOdds     = DbBackOdds2.map(item => Number(item))
+          const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
+          const apiBackOdds = apiBackOdds2.map(item => Number(item))
 
-          const DbBackScores2  = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
-          const DbBackScores   = DbBackScores2.map(item => Number(item))
+          const DbBackOdds2 = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
+          const DbBackOdds = DbBackOdds2.map(item => Number(item))
+
+          const DbBackScores2 = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
+          const DbBackScores = DbBackScores2.map(item => Number(item))
 
           console.log(" DbBackOdds ============ ", DbBackOdds);
 
-          const index          = DbBackOdds.indexOf(betRate)
-          TargetScore          = DbBackScores[index]
+          const index = DbBackOdds.indexOf(betRate)
+          TargetScore = DbBackScores[index]
 
           if (index == -1) {
             console.log(`index ================== ${index}`);
             console.log(`betRate ==================  ${betRate}`);
             return res.status(404).send({ message: `Index miss matched` });
           }
-          if(apiBackOdds[index] < betRate ){
+          if (apiBackOdds[index] < betRate) {
             console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
             return res.status(404).send({ message: `Bet miss matched ` });
           }
-        } 
+        }
         else if (req.body.type == 1) {
-          const apiBackOdds2   = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
-          const apiBackOdds    = apiBackOdds2.map( item => Number(item) );
+          const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
+          const apiBackOdds = apiBackOdds2.map(item => Number(item));
 
-          const DbBackOdds2    = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
-          const DbBackOdds     = DbBackOdds2.map( item => Number(item) );
+          const DbBackOdds2 = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
+          const DbBackOdds = DbBackOdds2.map(item => Number(item));
 
-          const DbBackScores2  = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
-          const DbBackScores   = DbBackScores2.map(item => Number(item));
+          const DbBackScores2 = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
+          const DbBackScores = DbBackScores2.map(item => Number(item));
 
           console.log(" DbBackOdds ============ ", DbBackOdds);
 
-          const index          = DbBackOdds.indexOf(betRate);
-          TargetScore          = DbBackScores[index];
+          const index = DbBackOdds.indexOf(betRate);
+          TargetScore = DbBackScores[index];
 
           if (index == -1) {
             console.log(` 1 index ================== ${index}`);
             console.log(` 1 betRate ==================  ${betRate}`);
             return res.status(404).send({ message: `Index miss matched` });
           }
-          if(apiBackOdds[index] < betRate ){
+          if (apiBackOdds[index] < betRate) {
             console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
             return res.status(404).send({ message: `Bet miss matched` });
           }
@@ -422,79 +422,79 @@ const placeBet = async (req, res) => {
     }
 
     // for bookmaker
-    else if ( subMarketDetail.Id == config.BookMaker) {
+    else if (subMarketDetail.Id == config.BookMaker) {
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id
-      const url           = `${config.fancyUrl}/bm_fancy/${eventId}`;
+      const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
       console.log(" url ===== ", url);
-      const response      = await axios.get(url);
+      const response = await axios.get(url);
       console.log("response ========", response.data);
-        
-      if(! response?.data?.data?.t2?.length){
+
+      if (!response?.data?.data?.t2?.length) {
         console.log(`Odds not available for the selected team ||||||  ${req.body.selectionId}`);
         return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
-      const apiFancyOdds  = response?.data?.data?.t2?.length ? response?.data?.data?.t2[0]?.bm1:[];
-      const DBOddDetails  = await FancyOdds.findById(oddsId);
-      const dbFancyOdds   = DBOddDetails?.data?.data?.t2[0]?.bm1
+      const apiFancyOdds = response?.data?.data?.t2?.length ? response?.data?.data?.t2[0]?.bm1 : [];
+      const DBOddDetails = await FancyOdds.findById(oddsId);
+      const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1
 
       console.log(" apiFancyOdds ==== ", apiFancyOdds)
       console.log(" dbFancyOdds ==== ", dbFancyOdds)
 
-      if (apiFancyOdds.length && dbFancyOdds.length){
+      if (apiFancyOdds.length && dbFancyOdds.length) {
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
-        const dbSelectedOdds  = dbFancyOdds.find(runner  => runner.sid == req.body.selectionId);
+        const dbSelectedOdds = dbFancyOdds.find(runner => runner.sid == req.body.selectionId);
 
-        if (!apiSelectedOdds || !dbSelectedOdds){
+        if (!apiSelectedOdds || !dbSelectedOdds) {
           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
         runnerName = null;
         if (req.body.type == 0) {
-          const apiBackOdds2   = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
-          const apiBackOdds     = apiBackOdds2.map(item => Number(item));
+          const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
+          const apiBackOdds = apiBackOdds2.map(item => Number(item));
 
-          const DbBackOdds2    = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
-          const DbBackOdds     = DbBackOdds2.map(item => Number(item));
+          const DbBackOdds2 = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
+          const DbBackOdds = DbBackOdds2.map(item => Number(item));
 
-          const DbBackScores2  = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
-          const DbBackScores     = DbBackScores2.map(item => Number(item));
+          const DbBackScores2 = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
+          const DbBackScores = DbBackScores2.map(item => Number(item));
 
-          const index         = DbBackOdds.indexOf(betRate)
-          TargetScore         = DbBackScores[index]
+          const index = DbBackOdds.indexOf(betRate)
+          TargetScore = DbBackScores[index]
           if (index == -1) {
             console.log(" index apiBackOdds ==== ", apiBackOdds);
             console.log(" index index ==== ", index);
             console.log(`Index didn't Match ${betRate}`);
             return res.status(404).send({ message: `Index didn't Match` });
           }
-          if(apiBackOdds[index] < betRate ){
+          if (apiBackOdds[index] < betRate) {
             console.log(" 2 apiBackOdds ==== ", apiBackOdds);
             console.log(" 2 index ==== ", index);
 
             console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
             return res.status(404).send({ message: `Bet miss matched` });
           }
-        } 
+        }
         else if (req.body.type == 1) {
-          const apiBackOdds2   = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
-          const apiBackOdds    = apiBackOdds2.map(item => Number(item));
+          const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
+          const apiBackOdds = apiBackOdds2.map(item => Number(item));
 
-          const DbBackOdds2    = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
-          const DbBackOdds     = DbBackOdds2.map(item => Number(item));
+          const DbBackOdds2 = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
+          const DbBackOdds = DbBackOdds2.map(item => Number(item));
 
 
           const DbBackScores2 = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
-          const DbBackScores  = DbBackScores2.map(item => Number(item));
+          const DbBackScores = DbBackScores2.map(item => Number(item));
 
-          const index         = DbBackOdds.indexOf(betRate)
-          TargetScore         = DbBackScores[index]
+          const index = DbBackOdds.indexOf(betRate)
+          TargetScore = DbBackScores[index]
 
           if (index == -1) {
             console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
             return res.status(404).send({ message: `Index miss matched` });
           }
-          if(apiBackOdds[index] < betRate ){
+          if (apiBackOdds[index] < betRate) {
             console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
             return res.status(404).send({ message: `Bet miss matched` });
           }
@@ -507,63 +507,63 @@ const placeBet = async (req, res) => {
     }
 
     // Figure Even Odd & Small Big
-    else if(config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)){
-      let score   = await cricketLiveScore(eventDetail.Id);
+    else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+      let score = await cricketLiveScore(eventDetail.Id);
       console.log(" Score ======================= ", score)
-      if (!score){
-        return res.json({ 
+      if (!score) {
+        return res.json({
           status: false,
-          message: `Bet Not Allowed : ${ score }` 
+          message: `Bet Not Allowed : ${score}`
         });
       }
-      console.log(' only  score |||| ====== |||| ', score );
-      let currentOver         = score.overs;
-      let inning              = score.inning;  
-      let totalSessions       = 0
-      if(currentOver%5 == 0) currentOver +=1 
-      let currentSessionOver  = Math.ceil(currentOver%5);
-      let currentSession      = Math.ceil(currentOver/5);
-      console.log(" currentSession = ",currentSession, " currentSessionOver =",currentSessionOver, " currentOver =",currentOver );
+      console.log(' only  score |||| ====== |||| ', score);
+      let currentOver = score.overs;
+      let inning = score.inning;
+      let totalSessions = 0
+      if (currentOver % 5 == 0) currentOver += 1
+      let currentSessionOver = Math.ceil(currentOver % 5);
+      let currentSession = Math.ceil(currentOver / 5);
+      console.log(" currentSession = ", currentSession, " currentSessionOver =", currentSessionOver, " currentOver =", currentOver);
 
       switch (eventDetail.matchType) {
         case 'T10':
-          totalSessions       = 2;
+          totalSessions = 2;
           break;
         case 'T20':
-          totalSessions       = 4;
+          totalSessions = 4;
           break;
         case 'ODI':
-          totalSessions       = 10;
+          totalSessions = 10;
           break;
         case 'TEST':
-          totalSessions       = 9;
-          currentSessionOver  = Math.ceil(currentOver%10);
-          currentSession      = Math.ceil(currentOver/10);
+          totalSessions = 9;
+          currentSessionOver = Math.ceil(currentOver % 10);
+          currentSession = Math.ceil(currentOver / 10);
           break;
         default:
           return res.json(404, {
-            success : false,
-            message : `Match Type is not defined : ${eventDetail.matchType}`,
+            success: false,
+            message: `Match Type is not defined : ${eventDetail.matchType}`,
           });
           break;
       }
 
-      if(inning == 2 && currentSession == totalSessions){
+      if (inning == 2 && currentSession == totalSessions) {
         return res.status(404).send({
           success: false,
           message: 'betting not Allowed in last Session',
-          currentSession : currentSession,
-          totalSessions  : totalSessions,
-          currentSessionOver : currentSessionOver,
+          currentSession: currentSession,
+          totalSessions: totalSessions,
+          currentSessionOver: currentSessionOver,
         });
       }
-      else if(currentSessionOver > 3){
+      else if (currentSessionOver > 3) {
         return res.status(404).send({
-          success : false,
-          message : `betting not Allowed in ${Math.ceil(currentOver%5)} over`,
-          currentSession : currentSession,
-          totalSessions  : totalSessions,
-          over           : currentOver
+          success: false,
+          message: `betting not Allowed in ${Math.ceil(currentOver % 5)} over`,
+          currentSession: currentSession,
+          totalSessions: totalSessions,
+          over: currentOver
         })
 
       }
@@ -580,21 +580,21 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: `Error Placing bet (Inappropriate Request)` });
     }
 
-    if(config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)){
+    if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
       winningAmount = betAmount;
       loosingAmount = betAmount;
     }
-    else if(type == 2){
-      winningAmount = ( betAmount * betRate ) - betAmount;
+    else if (type == 2) {
+      winningAmount = (betAmount * betRate) - betAmount;
       loosingAmount = betAmount;
     }
 
-    else if(type == 0){
-      winningAmount = ( betAmount * betRate ) - betAmount;
+    else if (type == 0) {
+      winningAmount = (betAmount * betRate) - betAmount;
       loosingAmount = betAmount;
-    } 
+    }
 
-    else if(type == 1){
+    else if (type == 1) {
       winningAmount = betAmount;
       loosingAmount = (betAmount * betRate) - betAmount;
     }
@@ -610,12 +610,12 @@ const placeBet = async (req, res) => {
       loosingAmount: loosingAmount,
       winningAmount: winningAmount,
       subMarketId: subMarketDetail.Id,
-      betSession: currentSession? currentSession: null,
-      runner: selectionId? selectionId : '',
+      betSession: currentSession ? currentSession : null,
+      runner: selectionId ? selectionId : '',
       type: type,
-      event:  eventDetail.name,
-      isfancyOrbookmaker: isFancyOrBookMaker, 
-      fancyData: runnerName ? runnerName: null,
+      event: eventDetail.name,
+      isfancyOrbookmaker: isFancyOrBookMaker,
+      fancyData: runnerName ? runnerName : null,
       createdAt: new Date().getTime(),
     });
 
@@ -680,15 +680,15 @@ async function getUserBets(req, res) {
     message: 'bets record found',
     results: bets,
   });
-  
+
   // =============================
 
   // Initialize variables with default values
-  let query       = {};
-  let page        = 1;
-  let sort        = -1;
-  let sortValue   = 'createdAt';
-  var limit       = config.pageSize;
+  let query = {};
+  let page = 1;
+  let sort = -1;
+  let sortValue = 'createdAt';
+  var limit = config.pageSize;
   if (req.body.numRecords) {
     if (isNaN(req.body.numRecords))
       return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
@@ -994,6 +994,9 @@ async function getMatchedBets(req, res) {
 
     // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
+
+
+
     const matchId = req.query.id
 
     if (loginUser.role == '5') {
@@ -1042,6 +1045,7 @@ async function getMatchedBets(req, res) {
           isfancyOrbookmaker: '$isfancyOrbookmaker',
           fancyData: '$fancyData',
           bettor: '$userDetails.userName',
+          bettorId: '$userDetails.userId',
           master: {
             $cond: [
               { $eq: [loginUser.role, '5'] },
@@ -1075,12 +1079,25 @@ async function getMatchedBets(req, res) {
     }
 
     const eventId = await Events.findById(matchId);
-    const relatedEvents  = await Events.find({
+    const relatedEvents = await Events.find({
       sportId: eventId.sportId,
       openDate: {
         $gt: eventId.openDate
       }
     }).limit(5)
+
+    if (matchedBets.length > 0) {
+      matchedBets = matchedBets.map(item => {
+        // Assume getMultiplier is a function that fetches the multiplier value
+        const multiplier = getPercentageSharing(loginUser.userId, item.bettorId);
+        return {
+          ...item,
+          size: item.size * multiplier
+        };
+      });
+    }
+
+
 
     return res.send({
       success: true,
@@ -1297,62 +1314,74 @@ async function reviewFakeBet(req, res) {
 // }
 
 async function cricketLiveScore(id) {
-    try {
-      const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
-      const type = event ? event.sportsId : null;
-      console.log("event", event);
+  try {
+    const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+    const type = event ? event.sportsId : null;
+    console.log("event", event);
 
-      if(type == "4"){
-        const apiResponse   =  await axios.get(`${config.sportsLiveScore}${id}`);
-        const response = {};
-        const data          = apiResponse.data;
-        if(data[0]?.score != null ){
-          const event         = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
-          const type          = event ? event?.matchType : null;
-          // const scoreInfo     = JSON.parse(data).score
-          const scoreInfo        = data[0].score
+    if (type == "4") {
+      const apiResponse = await axios.get(`${config.sportsLiveScore}${id}`);
+      const response = {};
+      const data = apiResponse.data;
+      if (data[0]?.score != null) {
+        const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+        const type = event ? event?.matchType : null;
+        // const scoreInfo     = JSON.parse(data).score
+        const scoreInfo = data[0].score
 
-          let score           = 0;
-          let inning          = 1;
-          if(scoreInfo.activenation1 == 1){
-            score  = scoreInfo.score1;
-            played = scoreInfo.score2;
-          }
-          else if(scoreInfo.activenation2 == 1){
-              score   = scoreInfo.score2;
-              played  = scoreInfo.score1;
-          }
-          if(type == "TEST"){
-            score = score.split('&');
-            score = score[score.length - 1].trim()
-            played = played.split('&');
-            played = played[played.length - 1].trim();
-          }
-
-          played = played?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-          played = played.filter(element => element != 0).length;
-          if(played > 0){
-            inning  = 2;
-          }
-
-          [response.score, response.wickets, response.overs] = score?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-          response.inning = inning;
-          return response
+        let score = 0;
+        let inning = 1;
+        if (scoreInfo.activenation1 == 1) {
+          score = scoreInfo.score1;
+          played = scoreInfo.score2;
         }
-      }else{
-        return {
-          status: false,
-          message: "Figure batting not Allowed !"
+        else if (scoreInfo.activenation2 == 1) {
+          score = scoreInfo.score2;
+          played = scoreInfo.score1;
         }
+        if (type == "TEST") {
+          score = score.split('&');
+          score = score[score.length - 1].trim()
+          played = played.split('&');
+          played = played[played.length - 1].trim();
+        }
+
+        played = played?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+        played = played.filter(element => element != 0).length;
+        if (played > 0) {
+          inning = 2;
+        }
+
+        [response.score, response.wickets, response.overs] = score?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+        response.inning = inning;
+        return response
       }
-    } catch (error) {
-        console.error(error);
-        return {
-            success: false,
-            message: 'Failed to get data',
-            error: error.message,
-        };
+    } else {
+      return {
+        status: false,
+        message: "Figure batting not Allowed !"
+      }
     }
+  } catch (error) {
+    console.error(error);
+    return {
+      success: false,
+      message: 'Failed to get data',
+      error: error.message,
+    };
+  }
+
+}
+
+async function getPercentageSharing(parent_id, child_id) {
+
+  if (parent_id == child_id)
+    return 1;
+  else {
+    //calculate percentage 
+    return 1;
+  }
+
 }
 
 
