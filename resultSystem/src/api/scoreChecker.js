@@ -219,7 +219,7 @@ function scoreChecker() {
 
                 const bets = await Bets.find({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: { $ne: null }, status: 1 });
 
-                if (result.winnerSelId == -1) {
+                if (result.result == -1) {
                     console.log("This event Canceled ");
                 } else {
                     for (const bet of bets) {
