@@ -79,9 +79,11 @@
   "getDailyReport",
   "dailySportsWiseReport",
   "dailyMarketsReports",
+
   "getCommissionReport",
-  "sportsWiseCommissionReport",
-  "MarketWiseCommissionReport",
+  "SportWiseCommissionReport",
+  "MatchWiseCommissionReport",
+  
   "bookDetail2Report",
   "settlePLAccount",
   "getSettlement",

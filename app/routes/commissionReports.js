@@ -56,7 +56,7 @@ const getCommissionReport = async (req, res) => {
   });
 }
 
-const MarketWiseCommissionReport = async (req, res) => {
+const SportWiseCommissionReport = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
@@ -172,14 +172,14 @@ loginRouter.get(
   getCommissionReport
 );
 loginRouter.get(
-  '/sportsWiseCommissionReport',
+  '/SportWiseCommissionReport',
   reportValidator.validate('dailyPLSportsWiseReport'),
-  sportsWiseCommissionReport
+  SportWiseCommissionReport
 );
 loginRouter.get(
-  '/MarketWiseCommissionReport',
+  '/MatchWiseCommissionReport',
   reportValidator.validate('dailyPlMarketsReports'),
-  MarketWiseCommissionReport
+  MatchWiseCommissionReport
 );
 
 module.exports = { loginRouter };

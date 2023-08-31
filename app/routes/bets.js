@@ -1369,8 +1369,6 @@ async function cricketLiveScore(id) {
 
 }
 
-
-
 async function getPercentageSharing(parent_id, child_id) {
   let currentId = child_id;
   let parent = null;
@@ -1388,7 +1386,6 @@ async function getPercentageSharing(parent_id, child_id) {
     currentId = parent.createdBy;
   }
 }
-
 
 const postmanwork = async (req, res)=>{
   try{
@@ -1419,8 +1416,6 @@ const postmanwork = async (req, res)=>{
     })
   }
 }
-
-
 
 loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
 loginRouter.post('/getUserBets', getUserBets);
