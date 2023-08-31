@@ -22,13 +22,13 @@ const getDailyPLReport = async (req, res) => {
   const childUsers = await User.distinct("userId", { createdBy: userId });
   const users = [userId, ...childUsers]
 
-  const responseWinning = await CashDeposit.aggregate([
+  const response = await CashDeposit.aggregate([
     {
       $match: {
         userId: {
           $in: users
         },
-        cashOrCredit: { $in: ["Bet", "Commission"] },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
             createdAt: { $gte: req.query.startDate }
@@ -52,41 +52,7 @@ const getDailyPLReport = async (req, res) => {
         _id: "$userId",
         amount: { $sum: "$amount" },
         name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
-      }
-    }
-  ]);
-
-
-  const responseLoosing = await CashDeposit.aggregate([
-    {
-      $match: {
-        userId: {
-          $in: users
-        },
-        cashOrCredit: "loosing" ,
-        $and: [
-          {
-            createdAt: { $gte: req.query.startDate }
-          },
-          {
-            createdAt: { $lte: req.query.endDate }
-          }
-        ]
-      }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'userInfo'
-      }
-    },
-    {
-      $group: {
-        _id: "$userId",
-        amount: { $sum: "$amount" },
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
+        marketIds: { $push: "$marketId" }
       }
     }
   ]);
@@ -94,7 +60,7 @@ const getDailyPLReport = async (req, res) => {
   return res.send({
     success: true,
     message: 'Commission reports',
-    results: [responseWinning, responseLoosing],
+    results: response,
   });
 }
 
