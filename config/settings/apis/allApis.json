@@ -37,6 +37,7 @@
   "GetAllCashDepositLedger",
   "GetAllCashCreditLedger",
   "getAllSportsHighlight",
+  "deleteSport",
   "placeBet",
   "getUserBets",
   "updateDefaultLoginPage",
