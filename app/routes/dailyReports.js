@@ -11,32 +11,32 @@ const MarketType = require('../models/marketTypes');
 const Bets = require('../models/bets');
 const loginRouter = express.Router();
 
-async function getAllChildrens(createdByIDs) {
-  const userIDs = [];
-  const queriedUserIDs = new Set(); // Keep track of queried user IDs
 
-  if (createdByIDs.length === 0) {
-    return userIDs;
-  }
+async function findAllChildren(userId) {
+  let allUsers = [userId];
+  let queue = [userId];
+  let processed = new Set(); // İşlenmiş kullanıcıları tutmak için bir Set
 
-  const uniqueIDs = Array.from(new Set(createdByIDs)); // Remove duplicate IDs
-
-  const users = await User.find(
-    { createdBy: { $in: uniqueIDs } },
-    { userId: 1, userName: 1, createdBy: 1 }
-  ).lean();
-
-  for (const user of users) {
-    if (!queriedUserIDs.has(user.userId)) {
-      userIDs.push(user.userId);
-      queriedUserIDs.add(user.userId);
+  while(queue.length > 0) {
+    const currentUserId = queue.shift();
+    
+    // Eğer bu userId zaten işlenmişse, döngüyü atla
+    if(processed.has(currentUserId)) {
+      continue;
     }
+
+    const childUsers = await User.distinct("userId", { createdBy: currentUserId });
+
+    // Şu anda işlenen userId'yi işlenmiş olarak işaretle
+    processed.add(currentUserId);
+
+    allUsers = [...allUsers, ...childUsers];
+    queue = [...queue, ...childUsers];
   }
 
-  const subUserIDs = await getAllChildrens(userIDs);
-  userIDs.push(...subUserIDs);
-  return Array.from(new Set(userIDs)); // Ensure unique user IDs in the final array
+  return allUsers;
 }
+
 
 const getDailyReport = async(req, res) => {
   const errors = validationResult(req);
@@ -44,24 +44,16 @@ const getDailyReport = async(req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId      = parseInt(req.decoded.userId)
-  const currentUser = await User.findOne({ userId: userId});
-  var users       = [currentUser.createdBy, userId];
-  let parents       = [userId]
-  do{
-    childUsers      = await User.distinct("userId", {
-      createdBy: {
-        $in: parents
-      }
-    });
-    console.log(" childUsers ======= ", childUsers);
-    if(childUsers.length)
-      users.push(...childUsers)
-    parents = childUsers
-  }while (childUsers.length > 0)
+  
+
+
+  //change this value for real time
+  const userId = 0;
+  // parseInt(req.decoded.userId)
+  const users = await findAllChildren(0);
 
   const response = await CashDeposit.aggregate([
-    {  
+    {
       $match: {
         userId: {
           $in: users
@@ -69,10 +61,10 @@ const getDailyReport = async(req, res) => {
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
-            createdAt: {$gte: req.query.startDate}
+            createdAt: { $gte: req.query.startDate }
           },
           {
-            createdAt: {$lte: req.query.endDate}
+            createdAt: { $lte: req.query.endDate }
           }
         ]
       }
@@ -84,15 +76,16 @@ const getDailyReport = async(req, res) => {
         foreignField: 'userId',
         as: 'userInfo'
       }
-    }, 
+    },
     {
-      $group:{
+      $group: {
         _id: "$userId",
-        amount: { $sum: "$amount"},
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+        amount: { $sum: "$amount" },
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
       }
     }
   ]);
+
 
   return res.send({
     success: true,
