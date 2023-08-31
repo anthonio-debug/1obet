@@ -122,55 +122,110 @@ const dailyPLSportsWiseReport = async (req, res) => {
   console.log(" userId ====== ", userId);
   const Id =  parseInt(req.query.userId)
 
-  const response = await CashDeposit.aggregate([
-    {  
-      $match: {
-        userId: Id,
-        marketId: req.query.marketId,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
+  if (req.query.marketId) {
+    const response = await CashDeposit.aggregate([
+      {  
+        $match: {
+          userId: Id,
+          marketId: req.query.marketId,
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          $and: [
+            {
+              createdAt: {$gte: req.query.startDate}
+            },
+            {
+              createdAt: {$lte: req.query.endDate}
+            }
+          ]
+        }
+      },
+      {
+        $addFields: {
+          'betIdEvent': { $toObjectId: "$betId" }
+        }
+      },
+      {
+        $lookup: {
+          from: 'bets',
+          localField: 'betIdEvent',
+          foreignField: '_id',
+          as: 'bets'
+        }
+      }, 
+      {
+        $group:{
+          _id: {$arrayElemAt: ["$bets.matchId", 0]},
+          amount: { $sum: "$amount"},
+          userId: { $first: "$userId" },
+          name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
+        }
       }
-    },
-    {
-      $addFields: {
-        'betIdEvent': { $toObjectId: "$betId" }
-      }
-    },
-    {
-      $lookup: {
-        from: 'bets',
-        localField: 'betIdEvent',
-        foreignField: '_id',
-        as: 'bets'
-      }
-    }, 
-    {
-      $group:{
-        _id: {$arrayElemAt: ["$bets.matchId", 0]},
-        amount: { $sum: "$amount"},
-        userId: { $first: "$userId" },
-        name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
-      }
-    }
-  ]);
-  return res.send({
-    success: true,
-    message: 'Sport wise Reports !',
-    results: response,
-  });
+    ]);
 
+    return res.send({
+      success: true,
+      message: 'Sport wise Reports !',
+      results: response,
+    });
+
+  } else if (req.body.marketIds) {
+
+    const response = await CashDeposit.aggregate([
+      {  
+        $match: {
+          userId: Id,
+          marketId: { $in: req.body.marketIds },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          $and: [
+            {
+              createdAt: {$gte: req.query.startDate}
+            },
+            {
+              createdAt: {$lte: req.query.endDate}
+            }
+          ]
+        }
+      },
+      {
+        $addFields: {
+          'betIdEvent': { $toObjectId: "$betId" }
+        }
+      },
+      {
+        $lookup: {
+          from: 'bets',
+          localField: 'betIdEvent',
+          foreignField: '_id',
+          as: 'bets'
+        }
+      }, 
+      {
+        $group:{
+          _id: {$arrayElemAt: ["$bets.matchId", 0]},
+          amount: { $sum: "$amount"},
+          userId: { $first: "$userId" },
+          name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
+        }
+      }
+    ]);
+    return res.send({
+      success: true,
+      message: 'Sport wise Reports !',
+      results: response,
+    });
+  } else {
+    return res.send({
+      success: true,
+      message: 'Sport wise Reports !',
+      results: [],
+    });
+  }
 }
 
 
 loginRouter.get('/getDailyPLReport',reportValidator.validate('getDailyPLReport'), getDailyPLReport);
 loginRouter.get('/dailyPLSportsWiseReport',reportValidator.validate('dailyPLSportsWiseReport'), dailyPLSportsWiseReport);
+loginRouter.post('/dailyPLSportsWiseReport',reportValidator.validate('dailyPLSportsWiseReport'), dailyPLSportsWiseReport);
 loginRouter.get('/dailyPlMarketsReports',reportValidator.validate('dailyPlMarketsReports'), dailyPlMarketsReports);
 
 module.exports = { loginRouter };
