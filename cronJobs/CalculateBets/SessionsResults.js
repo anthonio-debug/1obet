@@ -15,7 +15,7 @@ const cricketOddsCronJob = () => {
                 let ball                = currentOver.split('.')[1]
                 let inning              = score.inning;  
                 
-                log
+                console.log("ball ==== ", ball);
 
                 // if((currentOver % 5 != 0 && eventDetail.matchType != 'Test')  || (currentOver % 10 != 0 && eventDetail.matchType == 'Test')) 
                 //     continue;
