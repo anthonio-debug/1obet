@@ -1389,18 +1389,19 @@ async function getPercentageSharing(parent_id, child_id) {
 }
 
 
-const postmanwork = async  (req, res)=>{
+const postmanwork = async (req, res)=>{
   try{
     const deposits  = await Cash.find({ cashOrCredit: {
       $in: ["Bet", "Commission", "loosing"] 
-    } })
-    for (const deposit of deposits){
+    } });
+    console.log(" deposits  =========", deposits);
+    deposits.forEach( async (deposit) => {
       const bet = await Bets.findById(deposit.betId);
       await Cash.updateOne(
         { _id: deposit._id },
-        { $set: { sportId: bet.sportsId } }
+        { $set: { sportsId: bet.sportsId } }
       );
-    }
+    })
     return res.send({
       message: "Completed !"
     })
