@@ -22,7 +22,7 @@ function ToolForEvent() {
 
       
         fetchEvents();
-        setInterval(fetchEvents, 10 * 60 * 1000);
+        setInterval(fetchEvents, 2 * 60 * 1000);
         setInterval(fetchMarkets, 10 * 1000);
         setInterval(removeOdds, 60 * 60 * 1000);
         setInterval(apiRequests.takeScores, 1 * 1000);
