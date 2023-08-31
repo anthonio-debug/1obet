@@ -1397,7 +1397,9 @@ const postmanwork = async (req, res)=>{
     console.log(" deposits  =========", deposits);
 
     for (let i = 0; i < deposits.length; i++) {
-      const bet = await Bets.findById(deposits[i].betId);
+      const bet = await Bets.findById(mongoose.Types.ObjectId(deposits[i].betId));
+      
+      console.log(" ================= ", bet);
       await Cash.updateOne(
         { _id: deposits[i]._id },
         { $set: { sportsId: bet.sportsId } }
