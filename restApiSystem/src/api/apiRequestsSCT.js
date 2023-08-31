@@ -169,6 +169,34 @@ function apiRequests() {
         }
 
 
+        var eventIDs = []; 
+
+        for (let index = 0; index < events.length; index++) {
+          eventIDs.push(events[index].Id);
+        }
+
+        var allIDS = [];
+        const currentEvents = await inPlayEvents.find({ status: 'OPEN', sportsId: sportsId+'' }, { Id: 1 });
+
+        for (let i = 0; i < currentEvents.length; i++) {
+          allIDS.push(currentEvents[i].Id);
+        }
+
+        var diff = allIDS.filter(item => !eventIDs.includes(item));
+        // if inplayFromServer is true on old records and not available on last list.
+        // update event status with 'CLOSED-INPLAYLIST' 
+        // Also update MarketIDs
+        for (let i = 0; i < diff.length; i++) {
+          console.log('Event is closed because it not exists on listEventsBySport: ' + diff[i]);
+          await MarketIDS.updateMany({ eventId: diff[i] }, { $set: { inPlay: false, status: 'CLOSED' } });
+          await inPlayEvents.updateOne({ Id: diff[i] }, { $set: { status: 'CLOSED-EVENTLIST', inplay: false, inplayFromServer: false } });
+          io.emit('inplay', { eventID: diff[i], inplay: false });
+        }
+
+
+        
+
+
         return ({
           success: true,
           message: 'Events retrieved and saved successfully',

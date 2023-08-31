@@ -11,19 +11,19 @@ const Bets = require('../models/bets');
 const loginRouter = express.Router();
 const cricketMatch = require('../models/cricketMatches');
 
-const getDailyPLReport = async(req, res) =>{
+const getDailyPLReport = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId      = 0;
+  const userId = 0;
   // parseInt(req.decoded.userId)
-  const childUsers  = await User.distinct("userId", { createdBy:  userId });
-  const users       = [userId, ...childUsers]
+  const childUsers = await User.distinct("userId", { createdBy: userId });
+  const users = [userId, ...childUsers]
 
   const response = await CashDeposit.aggregate([
-    {  
+    {
       $match: {
         userId: {
           $in: users
@@ -31,10 +31,10 @@ const getDailyPLReport = async(req, res) =>{
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
-            createdAt: {$gte: req.query.startDate}
+            createdAt: { $gte: req.query.startDate }
           },
           {
-            createdAt: {$lte: req.query.endDate}
+            createdAt: { $lte: req.query.endDate }
           }
         ]
       }
@@ -46,12 +46,12 @@ const getDailyPLReport = async(req, res) =>{
         foreignField: 'userId',
         as: 'userInfo'
       }
-    }, 
+    },
     {
-      $group:{
+      $group: {
         _id: "$userId",
-        amount: { $sum: "$amount"},
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+        amount: { $sum: "$amount" },
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
       }
     }
   ]);
@@ -63,53 +63,53 @@ const getDailyPLReport = async(req, res) =>{
   });
 }
 
-const dailyPlMarketsReports =  async (req, res) => {
+const dailyPlMarketsReports = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
   // const userId = parseInt(req.decoded.userId)
-const Id        =  parseInt(req.query.userId)
-console.log(" Id ========== ", Id);
+  const Id = parseInt(req.query.userId)
+  console.log(" Id ========== ", Id);
 
-const response = await CashDeposit.aggregate([
-  {  
-    $match: {
-      userId: Id,
-      cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-      $and: [
-        {
-          createdAt: {$gte: req.query.startDate}
-        },
-        {
-          createdAt: {$lte: req.query.endDate}
-        }
-      ]
+  const response = await CashDeposit.aggregate([
+    {
+      $match: {
+        userId: Id,
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        $and: [
+          {
+            createdAt: { $gte: req.query.startDate }
+          },
+          {
+            createdAt: { $lte: req.query.endDate }
+          }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'markettypes',
+        localField: 'marketId',
+        foreignField: 'Id',
+        as: 'marketInfo'
+      }
+    },
+    {
+      $group: {
+        _id: "$marketId",
+        amount: { $sum: "$amount" },
+        userId: { $first: "$userId" },
+        name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } }
+      }
     }
-  },
-  {
-    $lookup: {
-      from: 'markettypes',
-      localField: 'marketId',
-      foreignField: 'Id',
-      as: 'marketInfo'
-    }
-  }, 
-  {
-    $group:{
-      _id: "$marketId",
-      amount: { $sum: "$amount"},
-      userId: { $first: "$userId" },
-      name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } }
-    }
-  }
-]);
+  ]);
 
-return res.send({
-  success: true,
-  message: 'Market wise Reports !',
-  results: response,
-});
+  return res.send({
+    success: true,
+    message: 'Market wise Reports !',
+    results: response,
+  });
 }
 
 const dailyPLSportsWiseReport = async (req, res) => {
@@ -119,20 +119,19 @@ const dailyPLSportsWiseReport = async (req, res) => {
   }
   const userId = req.decoded.userId
   console.log(" userId ====== ", userId);
-  const Id =  parseInt(req.query.userId)
+  const Id = parseInt(req.query.userId)
 
   const response = await CashDeposit.aggregate([
-    {  
+    {
       $match: {
         userId: Id,
-        marketId: req.query.marketId,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
-            createdAt: {$gte: req.query.startDate}
+            createdAt: { $gte: req.query.startDate }
           },
           {
-            createdAt: {$lte: req.query.endDate}
+            createdAt: { $lte: req.query.endDate }
           }
         ]
       }
@@ -149,13 +148,13 @@ const dailyPLSportsWiseReport = async (req, res) => {
         foreignField: '_id',
         as: 'bets'
       }
-    }, 
+    },
     {
-      $group:{
-        _id: {$arrayElemAt: ["$bets.matchId", 0]},
-        amount: { $sum: "$amount"},
+      $group: {
+        _id: "$bets.sportsId",
+        amount: { $sum: "$amount" },
         userId: { $first: "$userId" },
-        name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
+        bets: { $push: "$bets" }
       }
     }
   ]);
@@ -165,11 +164,13 @@ const dailyPLSportsWiseReport = async (req, res) => {
     results: response,
   });
 
+
 }
 
 
-loginRouter.get('/getDailyPLReport',reportValidator.validate('getDailyPLReport'), getDailyPLReport);
-loginRouter.get('/dailyPLSportsWiseReport',reportValidator.validate('dailyPLSportsWiseReport'), dailyPLSportsWiseReport);
-loginRouter.get('/dailyPlMarketsReports',reportValidator.validate('dailyPlMarketsReports'), dailyPlMarketsReports);
+loginRouter.get('/getDailyPLReport', reportValidator.validate('getDailyPLReport'), getDailyPLReport);
+loginRouter.get('/dailyPLSportsWiseReport', reportValidator.validate('dailyPLSportsWiseReport'), dailyPLSportsWiseReport);
+loginRouter.post('/dailyPLSportsWiseReport', reportValidator.validate('dailyPLSportsWiseReport'), dailyPLSportsWiseReport);
+loginRouter.get('/dailyPlMarketsReports', reportValidator.validate('dailyPlMarketsReports'), dailyPlMarketsReports);
 
 module.exports = { loginRouter };
