@@ -106,7 +106,7 @@ const SportWiseCommissionReport = async (req, res) => {
   });
 }
 
-const sportsWiseCommissionReport = async (req, res) => {
+const MatchWiseCommissionReport = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
