@@ -67,14 +67,7 @@ const getDailyReport = async(req, res) => {
           $in: users
         },
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
+
       }
     },
     {
