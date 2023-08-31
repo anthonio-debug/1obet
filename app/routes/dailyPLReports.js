@@ -17,8 +17,9 @@ const getDailyPLReport = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId =  parseInt(req.decoded.userId);
-  //
+  //change this value for real time
+  const userId = 0;
+  // parseInt(req.decoded.userId)
   const childUsers = await User.distinct("userId", { createdBy: userId });
   const users = [userId, ...childUsers]
 
