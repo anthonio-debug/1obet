@@ -12,14 +12,23 @@ const Bets = require('../models/bets');
 const loginRouter = express.Router();
 
 
-
 async function findAllChildren(userId) {
   let allUsers = [userId];
   let queue = [userId];
+  let processed = new Set(); // İşlenmiş kullanıcıları tutmak için bir Set
 
   while(queue.length > 0) {
     const currentUserId = queue.shift();
+    
+    // Eğer bu userId zaten işlenmişse, döngüyü atla
+    if(processed.has(currentUserId)) {
+      continue;
+    }
+
     const childUsers = await User.distinct("userId", { createdBy: currentUserId });
+
+    // Şu anda işlenen userId'yi işlenmiş olarak işaretle
+    processed.add(currentUserId);
 
     allUsers = [...allUsers, ...childUsers];
     queue = [...queue, ...childUsers];
@@ -27,7 +36,6 @@ async function findAllChildren(userId) {
 
   return allUsers;
 }
-
 
 
 const getDailyReport = async(req, res) => {
