@@ -46,7 +46,7 @@ const getDailyReport = async(req, res) => {
 
   const userId      = parseInt(req.decoded.userId)
   const currentUser = await User.findOne({ userId: userId});
-  const users       = [currentUser.createdBy, userId];
+  var users       = [currentUser.createdBy, userId];
   let parents       = [userId]
   do{
     childUsers      = await User.distinct("userId", {
@@ -98,6 +98,7 @@ const getDailyReport = async(req, res) => {
     success: true,
     message: 'Commission reports',
     results: response,
+    users
   });
 
 }
