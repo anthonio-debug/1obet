@@ -1,33 +1,48 @@
-const cron = require("node-cron");
-const Events = require('../../app/models/events');
+
+const cron    = require("node-cron");
+const Events  = require('../../app/models/events');
+const axios   = require('axios');
+const config  = require('config');
 require('../../db');
 
-const cricketOddsCronJob = () => {
-    cron.schedule('*/30 * * * * *', async () => {
+const sessionCalc = () => {
+    cron.schedule('*/5 * * * * *', async () => {
         try {
-            const eventsIds = await Events.distinct("Id", { sportsId: "4", inplay: true, status: { $in:['OPEN', 'open'  ] }, isShowed: true });
-            console.log('eventsIds ===== ', eventsIds);
+            // const eventsIds = await Events.distinct("Id", { sportsId: "4", inplay: true, status: { $in:['OPEN', 'open'  ] }, isShowed: true });
+            // console.log('eventsIds ===== ', eventsIds);
+            const  eventsIds = [32593292]
+
             for (let Id of eventsIds){
-                const score  =  cricketLiveScore(Id);
-                console.log(' only  score |||| ====== |||| ', score );
+                const event = await Events.findOne({ Id: Id }, { _id: 0, matchType: 1, sportsId: 1 });
+                const type  = event.matchType;
+                console.log("event", event);
+                const score           = await cricketLiveScore(Id);
+                const currentScore    = Number(score.score)
+                const sessionLength   = type == "TEST" ? 10 : 5;
+                console.log(' only  score  ============= ', score );
+                config.balls.includes(score.balls[0]) ? currentScore = currentScore - Number(score.balls[0]) : ''
 
-                let currentOver         = score.overs;
-                let ball                = currentOver.split('.')[1]
-                let inning              = score.inning;  
-                
-                console.log("ball ==== ", ball);
+                let currentOver = score.overs;
+                let ball        = currentOver.split('.')[1]
+                let inning      = score.inning;  
+                console.log("ball   ===================== ", ball);
+                console.log("inning ===================== ", inning);
 
-                // if((currentOver % 5 != 0 && eventDetail.matchType != 'Test')  || (currentOver % 10 != 0 && eventDetail.matchType == 'Test')) 
-                //     continue;
 
-                // 5.1  5.2 5.6
+                if((currentOver % sessionLength < 1  && ball == 1)  || (currentOver % sessionLength < 1 && ball == 1)){
+                  console.log(" conditional ball  ===================== ", ball)
+                  console.log(" conditional over ===================== ", score.overs % 5);
+                  let sessionToResult      = Math.floor(currentOver/sessionLength);
 
-                if(currentOver % 5 < 1 ){
+                  console.log(" sessionToResult ======= ", sessionToResult);
 
                 }
+                else {
+                    console.log(" ========= else Non conditional  ");
+                } 
 
                 let currentSessionOver  = Math.ceil(currentOver%5);
-                let currentSession      = Math.ceil(currentOver/5);
+                
                 console.log(" currentSession = ",currentSession, " currentSessionOver =",currentSessionOver, " currentOver =",currentOver );
                 
                 switch (eventDetail.matchType) {
@@ -54,74 +69,64 @@ const cricketOddsCronJob = () => {
                 }
                 
             }
-        
         } catch (error) {
             console.error('Error running odds cron job:', error);
         }
     });
 };
 
+sessionCalc()
 
 async function cricketLiveScore(id) {
-    try {
-      const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
-      const type = event ? event.sportsId : null;
-      console.log("event", event);
+  try {
+      const apiResponse   =  await axios.get(`${config.sportsLiveScore}${id}`);
+      const response = {};
+      const data          = apiResponse.data;
+      if(data[0]?.score != null ){
+        const event         = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+        const type          = event ? event?.matchType : null;
+        // const scoreInfo     = JSON.parse(data).score
+        const scoreInfo        = data[0].score
 
-      if(type == "4"){
-        const apiResponse   =  await axios.get(`${config.sportsLiveScore}${id}`);
-        const response = {};
-        const data          = apiResponse.data;
-        if(data[0]?.score != null ){
-          const event         = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
-          const type          = event ? event?.matchType : null;
-          // const scoreInfo     = JSON.parse(data).score
-          const scoreInfo        = data[0].score
-
-          let score           = 0;
-          let inning          = 1;
-          if(scoreInfo.activenation1 == 1){
-            score  = scoreInfo.score1;
-            played = scoreInfo.score2;
-          }
-          else if(scoreInfo.activenation2 == 1){
-              score   = scoreInfo.score2;
-              played  = scoreInfo.score1;
-          }
-          if(type == "TEST"){
-            score = score.split('&');
-            score = score[score.length - 1].trim()
-            played = played.split('&');
-            played = played[played.length - 1].trim();
-          }
-
-          played = played?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-          played = played.filter(element => element != 0).length;
-          if(played > 0){
-            inning  = 2;
-          }
-
-          [response.score, response.wickets, response.overs] = score?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-          response.inning = inning;
-          return response
+        let score           = 0;
+        let inning          = 1;
+        if(scoreInfo.activenation1 == 1){
+          score  = scoreInfo.score1;
+          played = scoreInfo.score2;
         }
-      }else{
-        return {
-          status: false,
-          message: "Figure batting not Allowed !"
+        else if(scoreInfo.activenation2 == 1){
+            score   = scoreInfo.score2;
+            played  = scoreInfo.score1;
         }
+        if(type == "TEST"){
+          score = score.split('&');
+          score = score[score.length - 1].trim()
+          played = played.split('&');
+          played = played[played.length - 1].trim();
+        }
+
+        played = played?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+        played = played.filter(element => element != 0).length;
+        if(played > 0){
+          inning  = 2;
+        }
+
+        [response.score, response.wickets, response.overs] = score?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
+        response.inning = inning;
+        response.balls  = scoreInfo.balls;
+        return response
       }
-    } catch (error) {
-        console.error(error);
-        return {
-            success: false,
-            message: 'Failed to get data',
-            error: error.message,
-        };
-    }
+  } 
+  catch (error) {
+      console.error(error);
+      return {
+          success: false,
+          message: 'Failed to get data',
+          error: error.message,
+      };
+  }
 }
 
-cricketOddsCronJob()
 
 
 

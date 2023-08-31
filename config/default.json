@@ -39,6 +39,7 @@
   "Cup": 12,
   "FigureEvenOddSmallBig" : [9, 10, 34],
   "raceOpenBefore" : 180000,
-  "sportsOpenBefore" : 600000
+  "sportsOpenBefore" : 600000,
+  "balls": ["1", "2", "3", "4", "5", "6"]
 
 }
