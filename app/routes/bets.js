@@ -26,6 +26,7 @@ const currentPosition = require('../models/CurrentPosition');
 const FancyOdds = require('../models/fancyOdds');
 const { log } = require('async');
 const Cash = require("../../app/models/deposits");
+const mongoose = require('mongoose');
 
 
 const getParents = async (userId) => {
