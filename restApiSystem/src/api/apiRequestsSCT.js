@@ -169,7 +169,7 @@ function apiRequests() {
         }
 
 
-        var eventIDs = [];
+        var eventIDs = []; 
 
         for (let index = 0; index < events.length; index++) {
           eventIDs.push(events[index].Id);
