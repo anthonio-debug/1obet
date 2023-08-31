@@ -92,7 +92,7 @@ const MarketWiseCommissionReport = async (req, res) => {
     }, 
     {
       $group:{
-        _id: "$marketId",
+        _id: "$sportsId",
         amount: { $sum: "$amount"},
         name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } }
       }
