@@ -125,7 +125,6 @@ const dailyPLSportsWiseReport = async (req, res) => {
     {
       $match: {
         userId: Id,
-        marketId: req.query.marketId,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
