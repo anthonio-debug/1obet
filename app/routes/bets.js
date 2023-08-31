@@ -1397,7 +1397,7 @@ const postmanwork = async  (req, res)=>{
   for(bet of BetList){
     await Cash.updateMany(
       { betId:  bet._id.toString() },
-      {sportsId: bet.sportsId }
+      { $set: { sportsId: bet.sportsId } }
     )
   }
   return res.send({
