@@ -1091,7 +1091,7 @@ async function getMatchedBets(req, res) {
         const multiplier = getPercentageSharing(loginUser.userId, item.bettorId);
         return {
           ...item,
-          sizeCalculated: item.size * multiplier
+          percentage: multiplier
         };
       });
     }
