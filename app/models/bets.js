@@ -33,7 +33,6 @@ const betSchema = new mongoose.Schema({
   isFake: { type: Number, default: 0 },
   sport: { type: String },
   eventId: { type: String },
-  sportsId: { type: String },
   runnerName: { type: String },
   lastCheckResult: { type: Number, default: 0 },
 });

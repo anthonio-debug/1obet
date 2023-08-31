@@ -68,6 +68,8 @@ async function handleLosingBet(bet) {
     cashOrCredit: "Bet",
     cash: lastMaxWithdraw ? lastMaxWithdraw.cash - loosingAmount : -loosingAmount,
     marketId: bet.marketId,
+    sportsId: bet.sportsId,
+
   });
   await cash.save();
 
@@ -120,6 +122,7 @@ async function handleLosingBet(bet) {
       cashOrCredit: "loosing",
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
       marketId: bet.marketId,
+      sportsId: bet.sportsId,
     });
     cash.save();
     commissionFrom = user.userId;
@@ -171,6 +174,7 @@ async function handleWinningBet(bet) {
     cashOrCredit: "Bet",
     cash: lastMaxWithdraw ? lastMaxWithdraw.cash + remainingAmount : remainingAmount,
     marketId: bet.marketId,
+    sportsId: bet.sportsId
   });
   console.log('usercash',typeof cash);
   await cash.save();
@@ -222,6 +226,7 @@ async function handleWinningBet(bet) {
       betId: bet._id,
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
       marketId: bet.marketId,
+      sportsId: bet.sportsId
     });
 
     if (lastMaxWithdraw) {
@@ -254,6 +259,7 @@ async function handleWinningBet(bet) {
       betId: bet._id,
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
       marketId: bet.marketId,
+      sportsId: bet.sportsId
     });
     // console.log('commissionTransaction====', commissionTransaction);
     await commissionTransaction.save();
@@ -309,7 +315,6 @@ async function handleDrawBet(bet) {
 
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
 }
-
 
 module.exports = {
   getAllBets,

@@ -85,7 +85,7 @@ const MarketWiseCommissionReport = async (req, res) => {
     {
       $lookup: {
         from: 'markettypes',
-        localField: 'marketId',
+        localField: 'sportsId',
         foreignField: 'Id',
         as: 'marketInfo'
       }
@@ -163,6 +163,8 @@ const sportsWiseCommissionReport = async (req, res) => {
   });
 
 }
+
+
 
 loginRouter.get(
   '/getCommissionReport',

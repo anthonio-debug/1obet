@@ -25,6 +25,7 @@ const ListMarkets = require('../models/listMarkets')
 const currentPosition = require('../models/CurrentPosition');
 const FancyOdds = require('../models/fancyOdds');
 const { log } = require('async');
+const Cash = require("../../app/models/deposits");
 
 
 const getParents = async (userId) => {
@@ -1388,6 +1389,21 @@ async function getPercentageSharing(parent_id, child_id) {
 }
 
 
+sportsId
+const postmanwork = async  (req, res)=>{
+  const BetList  = await Bets.find({})
+  for(bet of BetList){
+    await Cash.updateMany(
+      { betId: bet._id },
+      {sportsId: bet.sportsId }
+    )
+  }
+  return res.send({
+    message: "Completed !"
+  })
+}
+
+
 
 loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
 loginRouter.post('/getUserBets', getUserBets);
@@ -1401,5 +1417,7 @@ loginRouter.put('/updateFakeBet/:id', updateFakeBet);
 loginRouter.get('/countFakeBets', countFakeBet);
 loginRouter.post('/approvedFakeBet/:id', approvedFakeBet);
 loginRouter.get('/reviewFakeBet/:id/:sportsId', reviewFakeBet);
+loginRouter.get('/postmanwork', postmanwork);
+
 
 module.exports = { loginRouter, getParents };
