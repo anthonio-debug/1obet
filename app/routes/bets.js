@@ -1395,7 +1395,7 @@ const postmanwork = async  (req, res)=>{
       $in: ["Bet", "Commission", "loosing"] 
     } })
     for (const Id of deposits){
-      const bet = await Bets.findOne({ _id: deposit.Id });
+      const bet = await Bets.findById(Id);
       await Cash.updateOne(
         { _id: deposit._id },
         { $set: { sportId: bet.sportId } }
