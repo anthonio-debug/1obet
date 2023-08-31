@@ -51,7 +51,8 @@ const getDailyPLReport = async(req, res) =>{
       $group:{
         _id: "$userId",
         amount: { $sum: "$amount"},
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
+        marketIds: { $push: "$marketId" }
       }
     }
   ]);
