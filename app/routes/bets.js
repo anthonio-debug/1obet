@@ -1389,13 +1389,14 @@ async function getPercentageSharing(parent_id, child_id) {
 }
 
 
+//  ObjectId 
 
 // sportsId
 const postmanwork = async  (req, res)=>{
   const BetList  = await Bets.find({})
   for(bet of BetList){
     await Cash.updateMany(
-      { betId: bet._id },
+      { betId:  bet._id.toString() },
       {sportsId: bet.sportsId }
     )
   }
