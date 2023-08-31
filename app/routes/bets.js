@@ -1389,7 +1389,8 @@ async function getPercentageSharing(parent_id, child_id) {
 }
 
 
-sportsId
+
+// sportsId
 const postmanwork = async  (req, res)=>{
   const BetList  = await Bets.find({})
   for(bet of BetList){
