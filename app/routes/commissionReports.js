@@ -121,7 +121,7 @@ const MatchWiseCommissionReport = async (req, res) => {
       $match: {
         userId: userId,
         commissionFrom: Id,
-        marketId: req.query.marketId,
+        sportsId: req.query.sportsId,
         cashOrCredit: "Commission",
         $and: [
           {
