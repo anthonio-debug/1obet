@@ -40,19 +40,6 @@ const getDailyPLReport = async (req, res) => {
       }
     },
     {
-      $addFields: {
-        'betIdEvent': { $toObjectId: "$betId" }
-      }
-    },
-    {
-      $lookup: {
-        from: 'bets',
-        localField: 'betIdEvent',
-        foreignField: '_id',
-        as: 'bets'
-      }
-    },
-    {
       $lookup: {
         from: 'users',
         localField: 'userId',
@@ -64,7 +51,6 @@ const getDailyPLReport = async (req, res) => {
       $group: {
         _id: "$userId",
         amount: { $sum: "$amount" },
-        sportsId: { $first: { $arrayElemAt: ["$bets.sportsId", 0] } },
         name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
       }
     }
@@ -135,128 +121,51 @@ const dailyPLSportsWiseReport = async (req, res) => {
   console.log(" userId ====== ", userId);
   const Id = parseInt(req.query.userId)
 
-  if (req.query.marketId) {
-    const response = await CashDeposit.aggregate([
-      {
-        $match: {
-          userId: Id,
-          marketId: req.query.marketId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-          $and: [
-            {
-              createdAt: { $gte: req.query.startDate }
-            },
-            {
-              createdAt: { $lte: req.query.endDate }
-            }
-          ]
-        }
-      },
-      {
-        $addFields: {
-          'betIdEvent': { $toObjectId: "$betId" }
-        }
-      },
-      {
-        $lookup: {
-          from: 'bets',
-          localField: 'betIdEvent',
-          foreignField: '_id',
-          as: 'bets'
-        }
-      },
-      {
-        $group: {
-          _id: { $arrayElemAt: ["$bets.matchId", 0] },
-          amount: { $sum: "$amount" },
-          userId: { $first: "$userId" },
-          name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
-        }
+  const response = await CashDeposit.aggregate([
+    {
+      $match: {
+        userId: Id,
+        marketId: req.query.marketId,
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        $and: [
+          {
+            createdAt: { $gte: req.query.startDate }
+          },
+          {
+            createdAt: { $lte: req.query.endDate }
+          }
+        ]
       }
-    ]);
-
-    return res.send({
-      success: true,
-      message: 'Sport wise Reports !',
-      results: response,
-    });
-
-  } else if (req.body.marketIds) {
-
-    var response = await CashDeposit.aggregate([
-      {
-        $match: {
-          userId: Id,
-          marketId: { $in: req.body.marketIds },
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-          $and: [
-            {
-              createdAt: { $gte: req.query.startDate }
-            },
-            {
-              createdAt: { $lte: req.query.endDate }
-            }
-          ]
-        }
-      },
-      {
-        $addFields: {
-          'betIdEvent': { $toObjectId: "$betId" }
-        }
-      },
-      {
-        $lookup: {
-          from: 'bets',
-          localField: 'betIdEvent',
-          foreignField: '_id',
-          as: 'bets'
-        }
-      },
-      {
-        $group: {
-          _id: { $arrayElemAt: ["$bets.matchId", 0] },
-          amount: { $sum: "$amount" },
-          userId: { $first: "$userId" },
-          sportsId: { $first: { $arrayElemAt: ["$bets.sportsId", 0] } },
-          name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
-        }
+    },
+    {
+      $addFields: {
+        'betIdEvent': { $toObjectId: "$betId" }
       }
-    ]);
-
-
-
-    if (response.length > 0) {
-      const groupedData = {};
-
-      response.forEach(item => {
-        const sportsId = item.sportsId;
-
-        if (!groupedData[sportsId]) {
-          groupedData[sportsId] = {
-            group: sportsId,
-            total: 0,
-            data: []
-          };
-        }
-
-        groupedData[sportsId].total += item.amount;
-        groupedData[sportsId].data.push(item);
-      });
-      response = groupedData;
+    },
+    {
+      $lookup: {
+        from: 'bets',
+        localField: 'betIdEvent',
+        foreignField: '_id',
+        as: 'bets'
+      }
+    },
+    {
+      $group: {
+        _id: "$bets.sportsId",
+        amount: { $sum: "$amount" },
+        userId: { $first: "$userId" },
+        bets: { $push: "$bets" }
+      }
     }
+  ]);
+  return res.send({
+    success: true,
+    message: 'Sport wise Reports !',
+    results: response,
+  });
 
-    return res.send({
-      success: true,
-      message: 'Sport wise Reports !',
-      results: response,
-    });
-  } else {
-    return res.send({
-      success: true,
-      message: 'Sport wise Reports !',
-      results: [],
-    });
-  }
+
 }
 
 
