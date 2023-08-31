@@ -1087,15 +1087,16 @@ async function getMatchedBets(req, res) {
     }).limit(5)
 
     if (matchedBets.length > 0) {
-      matchedBets = matchedBets.map(item => {
-        const multiplier = getPercentageSharing(loginUser.userId, item.bettorId);
+      const promises = matchedBets.map(async item => {
+        const multiplier =  await getPercentageSharing(item.bettorId, loginUser.userId );
         return {
           ...item,
           percentage: multiplier
         };
       });
-    }
+      matchedBets = await Promise.all(promises);
 
+    }
 
 
     return res.send({
@@ -1372,16 +1373,26 @@ async function cricketLiveScore(id) {
 
 }
 
+
+
 async function getPercentageSharing(parent_id, child_id) {
+  let currentId = child_id;
+  let parent = null;
 
   if (parent_id == child_id)
-    return 1;
-  else {
-    //calculate percentage 
-    return 1;
-  }
+  return 1;
 
+  while (true) {
+    parent = await User.findOne({ userId: currentId });
+    if (!parent || parent.createdBy === null || parent.createdBy === undefined ) {
+      return 1;
+    } else if (parent.userId == parent_id){
+      return parent.downLineShare;
+    }
+    currentId = parent.createdBy;
+  }
 }
+
 
 
 loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
