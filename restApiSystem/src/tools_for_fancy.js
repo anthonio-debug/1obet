@@ -81,6 +81,13 @@ function ToolForFancy() {
                         if (facyOdds.hasOwnProperty(key)) {
                             try {
                                 var odd = facyOdds[key];
+
+                                if (odd && odd.data && odd.data.t3.length > 0) {
+                                    odd.data.t3 = odd.data.t3.sort((a, b) => {
+                                        return a.nat.localeCompare(b.nat);
+                                        });
+                                }
+
                                 var newFancyOdds = new FancyOdds({
                                     eventId: processArray[index],
                                     marketId: key,
