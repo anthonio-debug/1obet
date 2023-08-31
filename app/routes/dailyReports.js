@@ -67,7 +67,14 @@ const getDailyReport = async(req, res) => {
           $in: users
         },
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-
+        $and: [
+          {
+            createdAt: {$gte: req.query.startDate}
+          },
+          {
+            createdAt: {$lte: req.query.endDate}
+          }
+        ]
       }
     },
     {
@@ -91,7 +98,6 @@ const getDailyReport = async(req, res) => {
     success: true,
     message: 'Commission reports',
     results: response,
-    users
   });
 
 }
