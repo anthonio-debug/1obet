@@ -1389,19 +1389,29 @@ async function getPercentageSharing(parent_id, child_id) {
 }
 
 
-const ObjectId = require('mongoose').Types.ObjectId;
-// 3456
 const postmanwork = async  (req, res)=>{
-  const BetList  = await Bets.find({})
-  for(const bet of BetList){
-    await Cash.updateMany(
-      { betId: ObjectId(bet._id).toString() },
-      { $set: { sportsId: bet.sportsId } }
-    )
+  try{
+    const deposits  = await Cash.distinct("betId", { cashOrCredit: {
+      $in: ["Bet", "Commission", "loosing"] 
+    } })
+    for (const Id of deposits){
+      const bet = await Bets.findOne({ _id: deposit.Id });
+      await Cash.updateOne(
+        { _id: deposit._id },
+        { $set: { sportId: bet.sportId } }
+      );
+
+    }
+    return res.send({
+      message: "Completed !"
+    })
+
   }
-  return res.send({
-    message: "Completed !"
-  })
+  catch (err){
+    return res.send({
+      message: `Error ${err} !`
+    })
+  }
 }
 
 
