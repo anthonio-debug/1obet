@@ -1400,12 +1400,13 @@ const postmanwork = async (req, res)=>{
     for (let i = 0; i < deposits.length; i++) {
       console.log(" deposits ================= ", deposits[i]);
       const bet = await Bets.findOne({ _id: mongoose.Types.ObjectId(deposits[i].betId) });
-      
       console.log(" ================= ", bet);
-      await Cash.updateOne(
-        { _id: deposits[i]._id },
-        { $set: { sportsId: bet.sportsId } }
-      );
+      if(bet){
+        await Cash.updateOne(
+          { _id: deposits[i]._id },
+          { $set: { sportsId: bet.sportsId } }
+        );
+      }
     }
     return res.send({
       message: "Completed !"
