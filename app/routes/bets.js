@@ -1395,11 +1395,11 @@ const postmanwork = async (req, res)=>{
     const deposits  = await Cash.find({ cashOrCredit: {
       $in: ["Bet", "Commission", "loosing"] 
     } });
-    console.log(" deposits  ================= ", deposits);
+    console.log(" deposits  ================= ", deposits.length);
 
     for (let i = 0; i < deposits.length; i++) {
       console.log(" deposits ================= ", deposits[i]);
-      const bet = await Bets.findById(mongoose.Types.ObjectId(deposits[i].betId));
+      const bet = await Bets.findOne({ _id: mongoose.Types.ObjectId(deposits[i].betId) });
       
       console.log(" ================= ", bet);
       await Cash.updateOne(
