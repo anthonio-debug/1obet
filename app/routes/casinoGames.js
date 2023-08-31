@@ -310,7 +310,7 @@ async function getGame(req, res) {
       cashierurl,
       gameid,
       play_for_fun: config.play_for_fun,
-      currency: config.currency,
+      currency: user.baseCurrency,
     };
 
     const response = await axios.post(config.apiUrl, payload);
