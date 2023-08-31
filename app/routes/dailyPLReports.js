@@ -40,6 +40,19 @@ const getDailyPLReport = async (req, res) => {
       }
     },
     {
+      $addFields: {
+        'betIdEvent': { $toObjectId: "$betId" }
+      }
+    },
+    {
+      $lookup: {
+        from: 'bets',
+        localField: 'betIdEvent',
+        foreignField: '_id',
+        as: 'bets'
+      }
+    },
+    {
       $lookup: {
         from: 'users',
         localField: 'userId',
@@ -51,8 +64,8 @@ const getDailyPLReport = async (req, res) => {
       $group: {
         _id: "$userId",
         amount: { $sum: "$amount" },
+        sportsId: { $first: { $arrayElemAt: ["$bets.sportsId", 0] } },
         name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
-        marketIds: { $push: "$marketId" }
       }
     }
   ]);
