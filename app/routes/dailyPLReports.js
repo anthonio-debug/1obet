@@ -204,6 +204,7 @@ const dailyPLSportsWiseReport = async (req, res) => {
           _id: {$arrayElemAt: ["$bets.matchId", 0]},
           amount: { $sum: "$amount"},
           userId: { $first: "$userId" },
+          sportsId: { $first: { $arrayElemAt: ["$bets.sportsId", 0] } },
           name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
         }
       }
