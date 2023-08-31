@@ -1395,13 +1395,14 @@ const postmanwork = async (req, res)=>{
       $in: ["Bet", "Commission", "loosing"] 
     } });
     console.log(" deposits  =========", deposits);
-    deposits.forEach( async (deposit) => {
-      const bet = await Bets.findById(deposit.betId);
+
+    for (let i = 0; i < deposits.length; i++) {
+      const bet = await Bets.findById(deposits[i].betId);
       await Cash.updateOne(
-        { _id: deposit._id },
+        { _id: deposits[i]._id },
         { $set: { sportsId: bet.sportsId } }
       );
-    })
+    }
     return res.send({
       message: "Completed !"
     })
