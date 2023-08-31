@@ -312,7 +312,7 @@ async function getGame(req, res) {
       cashierurl,
       gameid,
       play_for_fun: config.play_for_fun,
-      currency: user.baseCurrency,
+      currency: user.baseCurrency.toUpperCase(),
     };
 
     const response = await axios.post(config.apiUrl, payload);
