@@ -29,7 +29,7 @@ const Bets = require('../models/bets');
 
 const {
   handleDrawBet
-} = require('../../resultChecker/src/CalculateBets/calculations')
+} = require('../../resultSystem/src/CalculateBets/calculations')
 
 
 const loginRecord = require('../models/loginRecord');
