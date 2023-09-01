@@ -131,43 +131,56 @@ function apiRequests() {
 
 
   async function eventsBySupportJobs(sportsId) {
+
+    function isValidDate(d) {
+      return new Date(d).toString() !== 'Invalid Date';
+    }
+
+
     var url = `${sportsAPIUrl}/listEventsBySport/${sportsId}`;
     try {
       const response = await axios.get(url);
-      const events = response.data;
+      var events = response.data;
       if (events.length > 0) {
-        var sportsEventData = events.map((element) => ({
-          updateOne: {
-            filter: { Id: element.Id },
-            update: {
+
+        events = events.filter(function(item) {
+          return isValidDate(item.openDate);
+        });
+
+        for (const event of events) {
+          const existingDoc = await inPlayEvents.findOne({ Id: event.Id });
+        
+          if (existingDoc && existingDoc.status === 'CLOSED-COMPANY') {
+            continue;
+          }
+        
+          await inPlayEvents.findOneAndUpdate(
+            { Id: event.Id },
+            {
               $set: {
                 sportsId: sportsId,
-                sport: element.sport,
-                competitionId: element.competitionId,
-                competitionName: element.competitionName,
-                Id: element.Id,
-                name: element.name,
-                countryCode: element.countryCode,
-                timezone: element.timezone,
-                openDate: Date.parse(element.openDate),
+                sport: event.sport,
+                competitionId: event.competitionId,
+                competitionName: event.competitionName,
+                Id: event.Id,
+                name: event.name,
+                countryCode: event.countryCode,
+                timezone: event.timezone,
+                openDate: Date.parse(event.openDate),
                 inplay: false,
-                inplayFromServer: element.inplay,
-                hasFancy: element.hasFancy,
-                status: element.status,
-                isPremium: element.isPremium,
-                type: element.type,
-                matchType: getMatchType(element.competitionName, element.name, sportsId)
+                inplayFromServer: event.inplay,
+                hasFancy: event.hasFancy,
+                status: event.status,
+                isPremium: event.isPremium,
+                type: event.type,
+                matchType: getMatchType(event.competitionName, event.name, sportsId)
               },
             },
-            upsert: true,
-          },
-        }));
-        const savedEvents = await inPlayEvents.bulkWrite(sportsEventData);
-
-        for (let index = 0; index < savedEvents?.result?.upserted.length; index++) {
-          const element = savedEvents?.result?.upserted[index];
+            {
+              upsert: true,  
+            }
+          );
         }
-
 
         var eventIDs = []; 
 
@@ -201,7 +214,6 @@ function apiRequests() {
           success: true,
           message: 'Events retrieved and saved successfully',
           events: events,
-          newInsertedIds: savedEvents?.result?.upserted
         });
       } else {
         return ({
@@ -210,6 +222,7 @@ function apiRequests() {
         });
       }
     } catch (error) {
+      console.log('Problem on taking event list');
       console.error(error);
       return ({
         success: false,
