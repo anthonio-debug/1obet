@@ -232,9 +232,10 @@ const getDailyReport = async(req, res) => {
   const currentUser = await User.findOne({ userId: userId});
   const users       = [userId];
   let parents       = [userId];
+  let childUsers;
 
   do{
-    let childUsers     = await User.distinct("userId", {
+    childUsers     = await User.distinct("userId", {
       createdBy: {
         $in: parents
       }
