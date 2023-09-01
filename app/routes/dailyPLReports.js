@@ -312,7 +312,7 @@ const dailyPLMatchWiseReport = async (req, res) => {
         _id: {$arrayElemAt: ["$bets.matchId", 0]},
         amount: { $sum: "$amount"},
         userId: { $first: "$userId" },
-        date: { $first: "$createdAt" },
+        date: { $first: "$date" },
         name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
       }
     }
