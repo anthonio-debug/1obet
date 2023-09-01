@@ -370,18 +370,19 @@ function getAllUsers(req, res) {
   let sort = -1;
   let sortValue = 'createdAt';
   var limit = config.pageSize;
+  query.role = { $ne: '0' };
   if(req.query.numRecords && !isNaN(req.query.numRecords) && req.query.numRecords > 0)
     limit = Number(req.query.numRecords);
   if (req.query.sortValue)  sortValue = req.query.sortValue;
   if (req.query.sort)       sort      = Number(req.query.sort);
   if (req.query.page)       page      = Number(req.query.page);
+  
 
   if (req.query.userId) {
     const userId    = parseInt(req.query.userId);
     query.createdBy = userId;
   } else if (req.decoded.login.role != '0') {
     query.createdBy = req.decoded.userId;
-    query.role = { $ne: '0' };
   } else if (req.decoded.login.role == '5') {
     query.userId = null;
   } else if (req.decoded.login.role == '0') {
