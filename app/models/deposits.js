@@ -26,15 +26,11 @@ depositsSchema.plugin(Global.aggregatePaginate);
 depositsSchema.plugin(Global.paginate);
 
 depositsSchema.pre('save', function (next) {
-  var now = new Date();
-  var year = now.getFullYear().toString(); // Extract last two digits of year
-  var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Convert month to two digits and pad with zero if necessary
-  var day = now.getDate().toString().padStart(2, '0'); // Convert day to two digits and pad with zero if necessary
-  var formattedDate = `${year}-${month}-${day}`;
+  var now = new Date().getTime();
   if (!this.createdAt) {
-    this.createdAt = formattedDate;
+    this.createdAt = now;
   } else {
-    this.updatedAt = formattedDate;
+    this.updatedAt = now;
   }
   next();
 });
