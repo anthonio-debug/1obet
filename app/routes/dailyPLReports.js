@@ -177,7 +177,7 @@ const getDailyPLReport = async(req, res) =>{
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId      = 0;
+  const userId      = req.decoded.userId;
   const childUsers  = await User.distinct("userId", { createdBy:  userId });
   const users       = [userId, ...childUsers]
 
