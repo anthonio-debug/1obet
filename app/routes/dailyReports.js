@@ -315,8 +315,7 @@ const getDailyReport = async(req, res) => {
   return res.send({
     success: true,
     message: 'Daily reports',
-    results: "response"
-    // ?.concat(parentResponse),
+    results: response?.concat(parentResponse),
   });
 
 }
