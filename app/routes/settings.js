@@ -1692,26 +1692,26 @@ async function setMatchShow(req, res) {
 
 const createNewSession = async (matchId) => {
   const match = await Events.findOne({ Id: matchId })
-  const deleted = await totalSessions.deleteMany({ eventId: matchId })
+  const deleted = await Session.deleteMany({ eventId: matchId })
   const matchType = match.matchType
-  let totalSessions = 0;
+  let totalSession = 0;
   switch (matchType) {
     case 'T10':
-      totalSessions = 4;
+      totalSession = 4;
       break;
     case 'T20':
-      totalSessions = 8;
+      totalSession = 8;
       break;
     case 'ODI':
-      totalSessions = 20;
+      totalSession = 20;
       break;
     case 'TEST':
-      totalSessions = 18;
+      totalSession = 18;
       break;
     default:
       break;
   }
-  for (let i = 1; i < totalSessions; i++) {
+  for (let i = 1; i < totalSession; i++) {
     const session = new Session({
       sessionNo: i,
       eventId: match.Id,
