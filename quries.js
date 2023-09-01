@@ -1,3 +1,5 @@
+// Issue in currencies 
+
 db.sidebarmenus.deleteMany({})
 
 db.sidebarmenus.insertMany([
@@ -620,13 +622,13 @@ db.betlimits.insertMany([
 
 db.users.insertOne(
   {
-    userName: 'abcompany',
+    userName: 'shampydicompany',
     password: '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy',
     token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyNTEsImNyZWF0ZWRCeSI6MjI1MCwicm9sZSI6IjUiLCJpc0FjdGl2ZSI6dHJ1ZSwiaWF0IjoxNjkxMjMwNDQwfQ.HDAnro2KMyEMW10xuaExuYzdB_3kYZEK4o6Rx-7RFeE',
     role: '0',
     isActive: true,
     status: 1,
-    userId: 8,
+    userId: 10,
     passwordChanged: false,
     balance: 900000000,
     canSettlePL: true,

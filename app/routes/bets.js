@@ -35,20 +35,14 @@ const getParents = async (userId) => {
   console.log('currentUserId', currentUserId);
 
   while (currentUserId) {
-    const parentUser = await User.findOne({ userId: currentUserId }).exec();
-    // console.log('parentUser',parentUser);
+    const parentUser = await User.findOne({ userId: currentUserId });
+
     if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
-      // console.log('if createdBy not found')
-      break;
-    }
-    if (!parentUser || parentUser.createdBy == currentUserId) {
-      // console.log('No more parent users.');
       break;
     }
     parentUserIds.push(parentUser.createdBy);
     currentUserId = parentUser.createdBy;
   }
-
   console.log(" parentUserIds ========== ", parentUserIds);
   return parentUserIds;
 }
