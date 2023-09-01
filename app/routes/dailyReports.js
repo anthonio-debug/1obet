@@ -238,50 +238,49 @@ const getDailyReport = async(req, res) => {
   let parents       = [userId];
 
   do{
-    childUsers      = await User.distinct("userId", {
+    let childUsers     = await User.distinct("userId", {
       createdBy: {
         $in: parents
       }
     });
     console.log(" child users ======= ", childUsers);
-    if(childUsers.length)
-      users.push(...childUsers)
+    if(childUsers.length) users.push(...childUsers)
     parents = childUsers
   }while (childUsers.length > 0)
 
-  console.log(" child users ======== ", childUsers);
+  console.log(" users list  ======== ", users);
 
-  const response = await CashDeposit.aggregate([
-    {
-      $match: {
-        userId: { $in: users },
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
-      }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'userInfo'
-      }
-    }, 
-    {
-      $group:{
-        _id: "$userId",
-        amount: { $sum: "$amount"},
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-      }
-    }
-  ]);
+  // const response = await CashDeposit.aggregate([
+  //   {
+  //     $match: {
+  //       userId: { $in: users },
+  //       cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+  //       $and: [
+  //         {
+  //           createdAt: {$gte: req.query.startDate}
+  //         },
+  //         {
+  //           createdAt: {$lte: req.query.endDate}
+  //         }
+  //       ]
+  //     }
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'users',
+  //       localField: 'userId',
+  //       foreignField: 'userId',
+  //       as: 'userInfo'
+  //     }
+  //   }, 
+  //   {
+  //     $group:{
+  //       _id: "$userId",
+  //       amount: { $sum: "$amount"},
+  //       name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+  //     }
+  //   }
+  // ]);
 
   // const parentResponse = await CashDeposit.aggregate([
   //   {  
@@ -319,7 +318,7 @@ const getDailyReport = async(req, res) => {
   return res.send({
     success: true,
     message: 'Daily reports',
-    results: response
+    results: "response"
     // ?.concat(parentResponse),
   });
 
