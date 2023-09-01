@@ -234,15 +234,16 @@ const getDailyReport = async(req, res) => {
 
   const userId      = parseInt(req.decoded.userId)
   const currentUser = await User.findOne({ userId: userId});
-  const users       = [currentUser.createdBy, userId];
-  let parents       = [userId]
+  const users       = [userId];
+  let parents       = [userId];
+
   do{
     childUsers      = await User.distinct("userId", {
       createdBy: {
         $in: parents
       }
     });
-    console.log(" childUsers ======= ", childUsers);
+    console.log(" child users ======= ", childUsers);
     if(childUsers.length)
       users.push(...childUsers)
     parents = childUsers
@@ -251,9 +252,15 @@ const getDailyReport = async(req, res) => {
   const response = await CashDeposit.aggregate([
     {  
       $match: {
-        userId: {
-          $in: users
-        },
+        $or: [
+          { userId: { $in: users } },
+          {
+            $and: [
+              { userId : currentUser.createdBy},
+              { createdBy : userId}
+            ]
+          }
+        ],
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
@@ -399,5 +406,5 @@ const dailyMatchWiseReports = async (req, res) => {
 loginRouter.get('/getDailyReport', getDailyReport);
 loginRouter.get('/dailySportsWiseReport', dailySportsWiseReport);
 loginRouter.get('/dailyMatchWiseReports',  dailyMatchWiseReports);
-
+// loginRouter.get('/dailyMatchWiseReports',  dailyMatchWiseReports);
 module.exports = { loginRouter };
