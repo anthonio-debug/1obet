@@ -235,6 +235,7 @@ async function handleWinningBet(bet) {
       sportsId: bet.sportsId,
       upLineAmount: -upMovingAmount
     });
+    
     upMovingAmount = upMovingAmount - (user.commission / 100) * totalRemainingAmount;
 
     if (lastMaxWithdraw) {

@@ -1,4 +1,5 @@
 db.sidebarmenus.deleteMany({})
+
 db.sidebarmenus.insertMany([
   {
     name: "Dashboard",
@@ -228,6 +229,8 @@ db.sidebarmenus.insertMany([
   },
 ])
 
+db.markettypes.deleteMany({})
+
 db.markettypes.insertMany([
   {
     Id: '4',
@@ -254,6 +257,8 @@ db.markettypes.insertMany([
     name: 'All Casino',
   },
 ])
+
+db.submarkettypes.deleteMany({})
 
 db.submarkettypes.insertMany([
   {
@@ -457,55 +462,8 @@ db.submarkettypes.insertMany([
   }
 ])
 
-db.bets.insertMany([
-  {
-    marketId: '4',
-    userId: 12229,
-    betAmount: 1000,
-    betRate: 2.16,
-    TargetScore: 50,
-    returnAmount: 1160,
-    createdAt: 1693090249095,
-    status: 1,
-    TargetScore: 40,
-    matchId: '64ea799109e4b01bd688be20',
-    subMarketId: '15',
-    event: 'Bl Bicknell v Guillen Meza',
-    isfancyOrbookmaker: true, 
-    fancyData: "Fall of 1st wkt MO(OI vs MO)adv",
-    position: 0,
-    type: 1,
-    isFake: 0,
-    updatedAt: 1693090249096,
-    __v: 0
-  },
-  {
-    marketId: '2',
-    userId: 12229,
-    betAmount: 500,
-    betRate: 2.14,
-    returnAmount: 0,
-    createdAt: 1693090296956,
-    status: 1,
-    TargetScore: 150,
-    matchId: '64ea799109e4b01bd688be20',
-    winningAmount: 514,
-    isfancyOrbookmaker: true, 
-    fancyData: "20 over Score",
-    loosingAmount: 570,
-    subMarketId: '15',
-    event: 'Bl Bicknell v Guillen Meza',
-    runner: '25081703',
-    position: 0,
-    type: 1,
-    isFake: 0,
-    updatedAt: 1693090296956,
-    __v: 0
-  }
-])
-
-
 db.bettingfigures.deleteMany({})
+
 db.bettingfigures.insertMany([
   {
     name: "Digit rate" ,
@@ -549,43 +507,7 @@ db.bettingfigures.insertMany([
   }
 ])
 
-db.users.insertOne(
-  {
-    userName: 'shampydicompany',
-    password: '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy',
-    reference: 'de3dswedee3dewe',
-    phone: '1234567898765432',
-    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyNTEsImNyZWF0ZWRCeSI6MjI1MCwicm9sZSI6IjUiLCJpc0FjdGl2ZSI6dHJ1ZSwiaWF0IjoxNjkxMjMwNDQwfQ.HDAnro2KMyEMW10xuaExuYzdB_3kYZEK4o6Rx-7RFeE',
-    role: '0',
-    isActive: true,
-    status: 1,
-    notes: 'fnru9r48ejb',
-    userId: 15,
-    passwordChanged: false,
-    balance: 900000000,
-    bettingAllowed: true,
-    canSettlePL: true,
-    isDeleted: false,
-    clientPL: 900000000,
-    credit: 0,
-    creditLimit: 0,
-    availableBalance: 900000000,
-    exposure: 0,
-    blockedMarketPlaces: [],
-    blockedSubMarkets: [],
-    blockedSubMarketsByParent: [],
-    baseCurrency: 'PKR',
-    creditRemaining: 0,
-    cash: 10000000,
-    createdAt: 1691230440066,
-    updatedAt: 1691230440066,
-    __v: 0,
-    remoteId: 2949973,
-    downLineShare: 0,
-    updatedBy: 2006
-  }
-
-)
+db.settings.deleteMany({})
 
 db.settings.insertMany([
   {
@@ -602,6 +524,7 @@ db.settings.insertMany([
   }
 ])
 
+db.betlimits.deleteMany({})
 db.betlimits.insertMany([
   {
   "_id" : ObjectId("64623bc234ad06204d412beb"),
@@ -695,83 +618,38 @@ db.betlimits.insertMany([
   }
 ])
 
-
-db.deposits.insertMany([
+db.users.insertOne(
   {
-    userId: 2248,
-    amount: 15,
-    balance: 15,
-    availableBalance: 15,
-    maxWithdraw: 15,
-    createdBy: '0',
-    cashOrCredit: 'Commission',
-    cash: 15,
-    marketId: '2',
-    commissionFrom: 2249,
-    betId: '64d69c5ac671aa4e3bfb2016',
-    createdAt: '2023-08-11',
-  },
-  {
-    userId: 2248,
-    amount: 15,
-    balance: 15,
-    availableBalance: 15,
-    maxWithdraw: 15,
-    createdBy: '0',
-    cashOrCredit: 'Commission',
-    cash: 15,
-    marketId: '2',
-    commissionFrom: 2249,
-    betId: '64d69c5ac671aa4e3bfb2016',
-    createdAt: '2023-08-11',
-  },
-  {
-    userId: 2248,
-    amount: 15,
-    balance: 15,
-    availableBalance: 15,
-    maxWithdraw: 15,
-    createdBy: '0',
-    cashOrCredit: 'Commission',
-    cash: 15,
-    marketId: '2',
-    commissionFrom: 2252,
-    betId: '64d69c5ac671aa4e3bfb2016',
-    createdAt: '2023-08-11',
-  },
-  {
-    userId: 2248,
-    amount: 25,
-    balance: 15,
-    availableBalance: 15,
-    maxWithdraw: 15,
-    createdBy: '0',
-    cashOrCredit: 'Commission',
-    cash: 15,
-    marketId: '2',
-    commissionFrom: 2252,
-    betId: '64d69c5ac671aa4e3bfb2016',
-    createdAt: '2023-08-11',
-  },
-]);
-
-db.deposits.insertMany([
-  {
-    "userId": 2248,
-    "amount": 300,
-    "balance": 15,
-    "availableBalance": 15,
-    "maxWithdraw": 15,
-    "createdBy": "0",
-    "cashOrCredit": "Commission",
-    "cash": 15,
-    "marketId": "2",
-    "commissionFrom": 2249,
-    "betId": "64dde631db4489b8f97c2405",
-    "createdAt": "2023-08-11",
-    "betIdEvent": "64dde631db4489b8f97c2405"
+    userName: 'abcompany',
+    password: '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy',
+    token: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIyNTEsImNyZWF0ZWRCeSI6MjI1MCwicm9sZSI6IjUiLCJpc0FjdGl2ZSI6dHJ1ZSwiaWF0IjoxNjkxMjMwNDQwfQ.HDAnro2KMyEMW10xuaExuYzdB_3kYZEK4o6Rx-7RFeE',
+    role: '0',
+    isActive: true,
+    status: 1,
+    userId: 8,
+    passwordChanged: false,
+    balance: 900000000,
+    canSettlePL: true,
+    isDeleted: false,
+    clientPL: 900000000,
+    credit: 0,
+    creditLimit: 0,
+    availableBalance: 900000000,
+    exposure: 0,
+    blockedMarketPlaces: [],
+    blockedSubMarkets: [],
+    baseCurrency: 'PKR',
+    cash: 10000000,
+    createdAt: 1691230440066,
+    updatedAt: 1691230440066,
+    downLineShare: 100,
   }
-])
+
+)
+
+
+
+
 
 
 db.inplayevents.deleteMany({})
@@ -780,7 +658,6 @@ db.racemarkets.deleteMany({})
 db.raceodds.deleteMany({})
 db.racings.deleteMany({})
 db.odds.deleteMany({})
-
 
 db.inplayevents.find({}) 
 db.fancygames.find({}) 
@@ -825,9 +702,6 @@ db.odds.count({})
 
 ]
  * */ 
-
-
-
 
 /*
   {

@@ -49,8 +49,10 @@ const getParents = async (userId) => {
     currentUserId = parentUser.createdBy;
   }
 
+  console.log(" parentUserIds ========== ", parentUserIds);
   return parentUserIds;
 }
+
 const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0) => {
   const parentUser = await User.find({
     userId: {
