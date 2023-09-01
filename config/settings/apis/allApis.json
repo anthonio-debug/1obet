@@ -78,9 +78,10 @@
   "dailyPLMatchWiseReport",
 
   "casino",
+
   "getDailyReport",
   "dailySportsWiseReport",
-  "dailyMarketsReports",
+  "dailyMatchWiseReports",
 
   "getCommissionReport",
   "SportWiseCommissionReport",
