@@ -381,18 +381,20 @@ function getAllUsers(req, res) {
     query.createdBy = userId;
   } else if (req.decoded.login.role != '0') {
     query.createdBy = req.decoded.userId;
+    query.role = { $ne: '0' };
   } else if (req.decoded.login.role == '5') {
     query.userId = null;
   } else if (req.decoded.login.role == '0') {
   }
   if (req.query.username)
   query.userName = { $regex: req.query.username, $options: 'i' };
-
+  
   query.isDeleted = false;
   // Exclude the currently logged-in user from the results
   query.userId = { $ne: req.decoded.userId };
   User.paginate(
     query,
+
     { page: page, sort: { [sortValue]: sort }, limit: limit },
     (err, results) => {
       if (err) return res.status(404).send({ message: 'Something went wrong' });

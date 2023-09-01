@@ -254,6 +254,7 @@ db.markettypes.insertMany([
     name: 'All Casino',
   },
 ])
+
 db.submarkettypes.insertMany([
   {
     Id: 1,
@@ -504,7 +505,6 @@ db.bets.insertMany([
 ])
 
 
-
 db.bettingfigures.deleteMany({})
 db.bettingfigures.insertMany([
   {
@@ -551,7 +551,7 @@ db.bettingfigures.insertMany([
 
 db.users.insertOne(
   {
-    userName: 'abcompany',
+    userName: 'shampydicompany',
     password: '$2b$10$6oFX6hlqmtClXtnPyWHhmOC3lvVlARKCpAG7dBC5.vmlqj6ueb7jy',
     reference: 'de3dswedee3dewe',
     phone: '1234567898765432',
@@ -560,10 +560,9 @@ db.users.insertOne(
     isActive: true,
     status: 1,
     notes: 'fnru9r48ejb',
-    userId: 6,
+    userId: 15,
     passwordChanged: false,
     balance: 900000000,
-    createdBy: 0,
     bettingAllowed: true,
     canSettlePL: true,
     isDeleted: false,
