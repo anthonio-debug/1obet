@@ -252,15 +252,7 @@ const getDailyReport = async(req, res) => {
   const response = await CashDeposit.aggregate([
     {  
       $match: {
-        $or: [
-          { userId: { $in: users } },
-          {
-            $and: [
-              { userId : currentUser.createdBy},
-              { createdBy : userId}
-            ]
-          }
-        ],
+        userId: { $in: users },
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
@@ -289,10 +281,43 @@ const getDailyReport = async(req, res) => {
     }
   ]);
 
+  const parentResponse = await CashDeposit.aggregate([
+    {  
+      $match: {
+        userId: currentUser.createdBy ,
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        $and: [
+          {
+            createdAt: {$gte: req.query.startDate}
+          },
+          {
+            createdAt: {$lte: req.query.endDate}
+          }
+        ]
+      }
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: 'userId',
+        as: 'userInfo'
+      }
+    }, 
+    {
+      $group:{
+        _id: "$userId",
+        parent: true,
+        amount: { $sum: "$upLineAmount"},
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+      }
+    }
+  ]);
+
   return res.send({
     success: true,
-    message: 'Commission reports',
-    results: response,
+    message: 'Daily reports',
+    results: response?.concat(parentResponse),
   });
 
 }
@@ -400,8 +425,6 @@ const dailyMatchWiseReports = async (req, res) => {
     results: response,
   });
 }
-
-
 
 loginRouter.get('/getDailyReport', getDailyReport);
 loginRouter.get('/dailySportsWiseReport', dailySportsWiseReport);

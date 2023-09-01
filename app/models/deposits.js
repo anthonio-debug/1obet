@@ -21,6 +21,7 @@ let depositsSchema = new Schema({
   commissionFrom: { type: Number },
   betId: { type: String },
   sportsId: { type: String },
+  upLineAmount: { type : Number }
 });
 
 depositsSchema.plugin(Global.aggregatePaginate);

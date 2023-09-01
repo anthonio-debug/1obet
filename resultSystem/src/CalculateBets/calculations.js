@@ -97,6 +97,7 @@ async function handleLosingBet(bet) {
   });
 
   let commissionFrom = userToUpdate.userId;
+  let upMovingAmount = TotalLoosingAmount;
 
   parentUser.forEach(async (user) => {
     user.exposure += (user.commission / 100) * remainingAmount;
@@ -123,8 +124,10 @@ async function handleLosingBet(bet) {
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
       marketId: bet.marketId,
       sportsId: bet.sportsId,
+      upLineAmount: upMovingAmount
     });
     cash.save();
+    upMovingAmount = upMovingAmount -   (user.commission / 100) * TotalLoosingAmount;
     commissionFrom = user.userId;
   });
 
@@ -144,13 +147,16 @@ async function handleWinningBet(bet) {
   if (!userToUpdate) {
     return res.status(404).send({ message: "user not found" });
   }
-  const remainingAmount = (bet.winningAmount / 100) * 98;
-  const commissionAmount = (bet.winningAmount / 100) * 2;
-  const totalRemainingAmount = bet.winningAmount;
-  const TotalLoosingAmount = bet.loosingAmount;
+  const remainingAmount       = (bet.winningAmount / 100) * 98;
+  const commissionAmount      = (bet.winningAmount / 100) * 2;
+  const totalRemainingAmount  = bet.winningAmount;
+  const TotalLoosingAmount    = bet.loosingAmount;
+  let   upMovingAmount        = totalRemainingAmount
+  let   upMovingCommAmount    = commissionAmount
+
 
   userToUpdate.balance  += remainingAmount;
-  userToUpdate.clientPL += remainingAmount;
+  userToUpdate.clientPL += remainingAmount; 
 
   userToUpdate.availableBalance += TotalLoosingAmount + remainingAmount;
   userToUpdate.exposure += TotalLoosingAmount;
@@ -226,8 +232,10 @@ async function handleWinningBet(bet) {
       betId: bet._id,
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
       marketId: bet.marketId,
-      sportsId: bet.sportsId
+      sportsId: bet.sportsId,
+      upLineAmount: -upMovingAmount
     });
+    upMovingAmount = upMovingAmount - (user.commission / 100) * totalRemainingAmount;
 
     if (lastMaxWithdraw) {
       console.log('(lastMaxWithdraw.balance)', lastMaxWithdraw.balance )
@@ -236,14 +244,7 @@ async function handleWinningBet(bet) {
       console.log('(lastMaxWithdraw.availablebalance)',typeof lastMaxWithdraw.availableBalance )
     }
 
-    console.log('user.commission:', user.commission);
-    console.log('Type of user.commission:', typeof user.commission);
-    console.log('(user.commission / 100):',(user.commission / 100));
 
-    console.log('Type of (user.commission / 100):', typeof (user.commission / 100));
-    console.log('(user.commission / 100) * totalRemainingAmount',(user.commission / 100) * totalRemainingAmount)
-    console.log('(typpe user.commission / 100) * totalRemainingAmount',typeof (user.commission / 100) * totalRemainingAmount)
-    
     await betTransaction.save();
    
     let commissionTransaction = await new Cash({
@@ -259,10 +260,11 @@ async function handleWinningBet(bet) {
       betId: bet._id,
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
       marketId: bet.marketId,
-      sportsId: bet.sportsId
+      sportsId: bet.sportsId,
+      upLineAmount: upMovingCommAmount
     });
-    // console.log('commissionTransaction====', commissionTransaction);
     await commissionTransaction.save();
+    upMovingCommAmount = upMovingCommAmount - (user.commission / 100) * commissionAmount;
     commissionFrom = user.userId;
   };
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
