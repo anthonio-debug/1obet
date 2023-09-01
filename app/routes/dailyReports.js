@@ -199,32 +199,32 @@ const dailyMarketsReports = async (req, res) => {
 */ 
 
 
-async function getAllChildren(createdByIDs) {
-  const userIDs = [];
-  const queriedUserIDs = new Set(); // Keep track of queried user IDs
+// async function getAllChildren(createdByIDs) {
+//   const userIDs = [];
+//   const queriedUserIDs = new Set(); // Keep track of queried user IDs
 
-  if (createdByIDs.length === 0) {
-    return userIDs;
-  }
+//   if (createdByIDs.length === 0) {
+//     return userIDs;
+//   }
 
-  const uniqueIDs = Array.from(new Set(createdByIDs)); // Remove duplicate IDs
+//   const uniqueIDs = Array.from(new Set(createdByIDs)); // Remove duplicate IDs
 
-  const users = await User.find(
-    { createdBy: { $in: uniqueIDs } },
-    { userId: 1, userName: 1, createdBy: 1 }
-  ).lean();
+//   const users = await User.find(
+//     { createdBy: { $in: uniqueIDs } },
+//     { userId: 1, userName: 1, createdBy: 1 }
+//   ).lean();
 
-  for (const user of users) {
-    if (!queriedUserIDs.has(user.userId)) {
-      userIDs.push(user.userId);
-      queriedUserIDs.add(user.userId);
-    }
-  }
+//   for (const user of users) {
+//     if (!queriedUserIDs.has(user.userId)) {
+//       userIDs.push(user.userId);
+//       queriedUserIDs.add(user.userId);
+//     }
+//   }
 
-  const subUserIDs = await getAllChildren(userIDs);
-  userIDs.push(...subUserIDs);
-  return Array.from(new Set(userIDs)); // Ensure unique user IDs in the final array
-}
+//   const subUserIDs = await getAllChildren(userIDs);
+//   userIDs.push(...subUserIDs);
+//   return Array.from(new Set(userIDs)); // Ensure unique user IDs in the final array
+// }
 
 const getDailyReport = async(req, res) => {
   const errors = validationResult(req);
@@ -237,16 +237,16 @@ const getDailyReport = async(req, res) => {
   const users       = [userId];
   let parents       = [userId];
 
-  do{
-    let childUsers     = await User.distinct("userId", {
-      createdBy: {
-        $in: parents
-      }
-    });
-    console.log(" child users ======= ", childUsers);
-    if(childUsers.length) users.push(...childUsers)
-    parents = childUsers
-  }while (childUsers.length > 0)
+  // do{
+  //   let childUsers     = await User.distinct("userId", {
+  //     createdBy: {
+  //       $in: parents
+  //     }
+  //   });
+  //   console.log(" child users ======= ", childUsers);
+  //   if(childUsers.length) users.push(...childUsers)
+  //   parents = childUsers
+  // }while (childUsers.length > 0)
 
   console.log(" users list  ======== ", users);
 
