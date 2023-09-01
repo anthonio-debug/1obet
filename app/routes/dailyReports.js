@@ -199,7 +199,7 @@ const dailyMarketsReports = async (req, res) => {
 */ 
 
 
-async function getAllChildrens(createdByIDs) {
+async function getAllChildren(createdByIDs) {
   const userIDs = [];
   const queriedUserIDs = new Set(); // Keep track of queried user IDs
 
@@ -221,7 +221,7 @@ async function getAllChildrens(createdByIDs) {
     }
   }
 
-  const subUserIDs = await getAllChildrens(userIDs);
+  const subUserIDs = await getAllChildren(userIDs);
   userIDs.push(...subUserIDs);
   return Array.from(new Set(userIDs)); // Ensure unique user IDs in the final array
 }
@@ -249,8 +249,10 @@ const getDailyReport = async(req, res) => {
     parents = childUsers
   }while (childUsers.length > 0)
 
+  console.log(" child users ======== ", childUsers);
+
   const response = await CashDeposit.aggregate([
-    {  
+    {
       $match: {
         userId: { $in: users },
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
@@ -281,43 +283,44 @@ const getDailyReport = async(req, res) => {
     }
   ]);
 
-  const parentResponse = await CashDeposit.aggregate([
-    {  
-      $match: {
-        userId: currentUser.createdBy ,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
-      }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'userInfo'
-      }
-    }, 
-    {
-      $group:{
-        _id: "$userId",
-        parent: "$userId",
-        amount: { $sum: "$upLineAmount"},
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-      }
-    }
-  ]);
+  // const parentResponse = await CashDeposit.aggregate([
+  //   {  
+  //     $match: {
+  //       userId: currentUser.createdBy ,
+  //       cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+  //       $and: [
+  //         {
+  //           createdAt: {$gte: req.query.startDate}
+  //         },
+  //         {
+  //           createdAt: {$lte: req.query.endDate}
+  //         }
+  //       ]
+  //     }
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'users',
+  //       localField: 'userId',
+  //       foreignField: 'userId',
+  //       as: 'userInfo'
+  //     }
+  //   }, 
+  //   {
+  //     $group:{
+  //       _id: "$userId",
+  //       parent: "$userId",
+  //       amount: { $sum: "$upLineAmount"},
+  //       name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+  //     }
+  //   }
+  // ]);
 
   return res.send({
     success: true,
     message: 'Daily reports',
-    results: response?.concat(parentResponse),
+    results: response
+    // ?.concat(parentResponse),
   });
 
 }
