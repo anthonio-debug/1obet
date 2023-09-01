@@ -35,7 +35,7 @@ depositsSchema.pre('save', function (next) {
   this. date = now.getTime();
   if (!this.createdAt) {
     
-    this.createdAt = formattedDate;
+    this.createdAt =formattedDate ;
   } else {
     this.updatedAt = formattedDate;
   }
