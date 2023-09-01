@@ -305,7 +305,7 @@ const getDailyReport = async(req, res) => {
     {
       $group:{
         _id: "$userId",
-        // parent: ,
+        parent: true,
         amount: { $sum: "$upLineAmount"},
         name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
       }
