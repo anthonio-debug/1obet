@@ -324,9 +324,9 @@ const dailyPLMatchWiseReport = async (req, res) => {
 
 }
 
-loginRouter.get('/getDailyPLReport', reportValidator.validate('getDailyPLReport'), getDailyPLReport);
-loginRouter.get('/dailyPlSportWiseReports', reportValidator.validate('dailyPlSportWiseReports'), dailyPlSportWiseReports);
+loginRouter.get('/getDailyPLReport', getDailyPLReport);
+loginRouter.get('/dailyPlSportWiseReports', dailyPlSportWiseReports);
+loginRouter.get('/dailyPLMatchWiseReport', dailyPLMatchWiseReport);
 // loginRouter.post('/dailyPLSportsWiseReport', reportValidator.validate('dailyPLSportsWiseReport'), dailyPLSportsWiseReport);
-loginRouter.get('/dailyPLMatchWiseReport', reportValidator.validate('dailyPLMatchWiseReport'), dailyPLMatchWiseReport);
 
 module.exports = { loginRouter };
