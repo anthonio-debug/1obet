@@ -12,6 +12,7 @@ const Bets = require('../models/bets');
 const loginRouter = express.Router();
 
 
+/*
 async function findAllChildren(userId) {
   let allUsers = [userId];
   let queue = [userId];
@@ -36,8 +37,6 @@ async function findAllChildren(userId) {
 
   return allUsers;
 }
-
-
 const getDailyReport = async(req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -197,6 +196,11 @@ const dailyMarketsReports = async (req, res) => {
     results: response,
   });
 }
+*/ 
+
+
+
+
 
 loginRouter.get('/getDailyReport',reportValidator.validate('getDailyPLReport'), getDailyReport);
 loginRouter.get('/dailySportsWiseReport',reportValidator.validate('dailyPLSportsWiseReport'), dailySportsWiseReport);
