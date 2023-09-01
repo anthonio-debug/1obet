@@ -153,6 +153,8 @@ function apiRequests() {
 
 
     } catch (error) {
+      console.log('Event Racing Problem');
+
       console.error(error);
     }
   }
@@ -277,6 +279,7 @@ function apiRequests() {
 
 
     } catch (error) {
+      console.log('Market data Problem');
       console.error(error);
     }
   }
@@ -329,7 +332,7 @@ function apiRequests() {
 
 
       if (events.length == 0) {
-        console.log('We not events for racing');
+        //console.log('We not events for racing');
         continue;
       }
       for (let index = 0; index < events.length; index++) {

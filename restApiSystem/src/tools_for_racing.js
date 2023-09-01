@@ -19,7 +19,7 @@ function ToolForRacing() {
         setInterval(getRacing, 2*60 * 60 * 1000);
         getRacing();
         setInterval(apiRequests.checkOdds, 1 * 1000);
-        setInterval(removeOdds, 60 * 60 * 1000);
+        setInterval(removeOdds,  60 * 1000);
 
     }
 
@@ -31,10 +31,10 @@ function ToolForRacing() {
     }
 
     function removeOdds () {
-        const oneHourAgo = new Date().getTime() - 60 * 60 * 1000;
+        const oneHourAgo = new Date().getTime() - 60 * 1000;
         RaceOdds.deleteMany({ createdAt: { $lt: oneHourAgo } }, (err) => {
           if (err) {
-            console.error("Error while deleting documents:", err);
+            console.error("Error while deleting from racing odds", err);
             return;
           }
           console.log("Documents older than 1 hour have been deleted.");

@@ -20,10 +20,17 @@ const FancyGames = require('../models/fancyGames');
 const Racing = require('../models/racing');
 const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
-const MarketIDS = require('../models/marketIds');
 const loginRouter = express.Router();
 const router = express.Router();
 const Session = require("../models/Session")
+const MarketIDS = require('../models/marketIds');
+const Bets = require('../models/bets');
+
+
+const {
+  handleDrawBet
+} = require('../../resultSystem/src/CalculateBets/calculations')
+
 
 const loginRecord = require('../models/loginRecord');
 
@@ -1586,6 +1593,50 @@ async function setLoginHistories(req, res) {
   }
 
 }
+async function setCloseEventWithCancelBet(req, res) {
+  if (req.decoded.role !== '0') {
+    return res
+      .status(404)
+      .send({ message: 'only company can ... ' });
+  }
+
+  if (!req.query.eventId) {
+    return res
+      .status(404)
+      .send({ message: 'Id required ... ' });
+  }
+
+  const currentEv = await Events.findOne({ Id: req.query.eventId });
+
+  if (!currentEv) {
+    return res
+    .status(404)
+    .send({ message: 'Events not exist ... ' });
+  }
+
+  await Events.findOneAndUpdate({_id: currentEv._id}, {status: 'CLOSED-COMPANY'});
+  
+
+  await MarketIDS.updateMany(
+    { eventId: req.query.eventId },
+    { inplay: false, status: 'CLOSED' }
+  );
+
+
+  const bets = await Bets.find({status: 1, matchId: currentEv._id.toString()})
+
+  for (let index = 0; bets < array.length; index++) {
+    const bet = bets[index];
+    await handleDrawBet(bet);
+  }
+
+  return res
+  .status(200)
+  .send({ message: 'Events closed ... ' });
+}
+
+
+
 
 
 async function setMatchShow(req, res) {
@@ -1708,6 +1759,7 @@ loginRouter.post(
 );
 
 loginRouter.get('/GetExchangeRates', GetExchangeRates);
+loginRouter.get('/setCloseEventWithCancelBet', setCloseEventWithCancelBet);
 
 loginRouter.get('/setMatchShow', setMatchShow);
 loginRouter.get('/setLoginHistories', setLoginHistories);
