@@ -227,15 +227,11 @@ const dailyMarketsReports = async (req, res) => {
 // }
 
 const getDailyReport = async(req, res) => {
-  const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
-  }
 
-  const userId      = parseInt(req.decoded.userId)
-  const currentUser = await User.findOne({ userId: userId});
-  const users       = [userId];
-  let parents       = [userId];
+  // const userId      = parseInt(req.decoded.userId)
+  // const currentUser = await User.findOne({ userId: userId});
+  // const users       = [userId];
+  // let parents       = [userId];
 
   // do{
   //   let childUsers     = await User.distinct("userId", {
