@@ -155,7 +155,6 @@ const MatchWiseCommissionReport = async (req, res) => {
     }
   ]);
 
-
   return res.send({
     success: true,
     message: 'Sport wise Commissions !',
