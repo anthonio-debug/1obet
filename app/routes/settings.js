@@ -1614,7 +1614,11 @@ async function setCloseEventWithCancelBet(req, res) {
     .send({ message: 'Events not exist ... ' });
   }
 
-  await Events.findOneAndUpdate({_id: currentEv._id}, {status: 'CLOSED-COMPANY'});
+  if (req.query.reason)  {
+    await Events.findOneAndUpdate({_id: currentEv._id}, {status: 'CLOSED-'+reason, isCanceled: true});
+  } else {
+    await Events.findOneAndUpdate({_id: currentEv._id}, {status: 'CLOSED-COMPANY', isCanceled: true});
+  }
   
 
   await MarketIDS.updateMany(

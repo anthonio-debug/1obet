@@ -150,7 +150,7 @@ function apiRequests() {
         for (const event of events) {
           const existingDoc = await inPlayEvents.findOne({ Id: event.Id });
         
-          if (existingDoc && existingDoc.status === 'CLOSED-COMPANY') {
+          if (existingDoc && existingDoc.isCanceled === true) {
             continue;
           }
         
