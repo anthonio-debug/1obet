@@ -137,5 +137,6 @@
   "getAllSportsBookGamesFromThirdParty",
   "sportGamesList",
   "setMatchShow",
-  "postmanwork"
+  "postmanwork",
+  "sessionCalc"
 ]

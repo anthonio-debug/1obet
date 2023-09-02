@@ -129,7 +129,7 @@ async function registerUser(req, res) {
                     user_username,
                     user_password: user_username,
                     user_nickname: user_username,
-                    currency: config.currency,
+                    currency: req.body.baseCurrency,
                   });
                   let data = response.data.response;
                   console.log('API Response:', response.data);
@@ -189,7 +189,7 @@ async function registerUser(req, res) {
                     user_username,
                     user_password: user_username,
                     user_nickname: user_username,
-                    currency: config.currency,
+                    currency: req.body.baseCurrency,
                   });
                   let data = response.data.response;
                   console.log('API Response:', response.data);
