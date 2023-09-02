@@ -82,19 +82,22 @@ function ToolForFancy() {
                             try {
                                 var odd = facyOdds[key];
 
-                                if (odd && odd.data && odd.data.t3.length > 0) {
+                                if (odd && odd.data && odd.data.t3 &&  odd.data.t3.length > 0) {
                                     odd.data.t3 = odd.data.t3.sort((a, b) => {
                                         return a.nat.localeCompare(b.nat);
                                         });
                                 }
+                                if (odd.gameId) {
+                                    var newFancyOdds = new FancyOdds({
+                                        eventId: odd.gameId,
+                                        marketId: key,
+                                        data: odd,
+                                    });
+                                    await newFancyOdds.save();
+                                    
+                                    io.to('#' + odd.gameId).emit('fancy_odds', newFancyOdds);
+                                }
 
-                                var newFancyOdds = new FancyOdds({
-                                    eventId: processArray[index],
-                                    marketId: key,
-                                    data: odd,
-                                });
-                                await newFancyOdds.save();
-                                io.to('#' + processArray[index]).emit('fancy_odds', newFancyOdds);
                             } catch (error) {
 
                                 console.log(processArray);
