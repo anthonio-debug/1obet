@@ -620,6 +620,24 @@ db.betlimits.insertMany([
   }
 ])
 
+
+db.exchanges.deleteMany({})
+
+db.exchanges.insertMany([
+  { 
+    "exchangeAmount" : 83, 
+    "currency" : "AED"
+  },
+  { 
+    "exchangeAmount" : 330, 
+    "currency" : "EURO"
+  },
+  { 
+    "exchangeAmount" : 3.7, 
+    "currency" : "INR"
+  }
+])
+
 db.users.insertOne(
   {
     userName: 'shampydicompany',
