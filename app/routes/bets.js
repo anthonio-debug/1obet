@@ -665,8 +665,8 @@ async function getUserBets(req, res) {
 
   // to be remove for initial state 
   // ================================
-  console.log("==========", req.decoded.userId);
-  const bets = await Bets.find({ userId: req.decoded.userId });
+  console.log("==========", req.body.userId);
+  const bets = await Bets.find({ userId: req.body.userId });
   return res.send({
     success: true,
     message: 'bets record found',
