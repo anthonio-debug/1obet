@@ -10,6 +10,7 @@ const Odds = require('../../../app/models/odds');
 const FancyEvent = require('../../../app/models/fancyEvent');
 const FancyOdds = require('../../../app/models/fancyOdds');
 const { forEach } = require('lodash');
+var _ = require('lodash');
 
 
 const sportsAPIUrl = 'http://209.250.242.175:33332';
@@ -319,7 +320,7 @@ function apiRequests() {
                   marketId: element.MarketId,
                   isMarketDataDelayed: element.IsMarketDataDelayed,
                   status: element.Status,
-                  eventId: tempArry[index].eventId,
+                  eventId: element.eventId,
                   isInplay: element.IsInplay,
                   numberOfRunners: element.NumberOfRunners,
                   numberOfActiveRunners: element.NumberOfActiveRunners,
@@ -333,12 +334,20 @@ function apiRequests() {
 
                 var el = new Odds(json);
                 el.save();
-                if (tempArry[index].indexID == 0) {
-                  io.to('homepage').emit('odds', { marketId: tempArry[index].market, data: el, eventId: tempArry[index].eventId, status: 'NewOddsHomepage' });
+
+                const ix = _.findIndex(tempArry, function(o) { return o.market == element.MarketId; });
+
+                if (ix != -1 && tempArry[ix].indexID == 0) {
+                  io.to('homepage').emit('odds', { marketId: element.MarketId, data: el, eventId: element.eventId, status: 'NewOddsHomepage' });
                 }
-                io.to('#' + tempArry[index].eventId).emit('odds', { marketId: tempArry[index].market, data: el, eventId: tempArry[index].eventId, status: 'NewOdds' });
+                
+
+
+                io.to('#' + tempArry[index].eventId).emit('odds', { marketId: element.MarketId, data: el, eventId: element.eventId, status: 'NewOdds' });
 
               } else {
+
+                /*
                 var json = {
                   eventId: marketIdsArray[index].eventId,
                   marketId: tempArry[index].market,
@@ -347,16 +356,10 @@ function apiRequests() {
                 var el = new Odds(json);
                 io.emit('odds', json);
                 await MarketIDS.updateOne({ marketId: tempArryForIDs[index] }, { inPlay: false, status: 'RUNNERS NOT EXIST' });
+                */
               }
             } else {
-              var json = {
-                eventId: marketIdsArray[index].eventId,
-                marketId: tempArry[index].market,
-                status: 'CLOSED'
-              };
-              await MarketIDS.updateOne({ marketId: tempArryForIDs[index] }, { inPlay: false, status: 'ODDS NOT EXIST' });
-              var el = new Odds(json);
-              io.emit('odds', json);
+              //await MarketIDS.updateOne({ marketId: tempArryForIDs[index] }, { inPlay: false, status: 'ODDS NOT EXIST' });
             }
           }
         } catch (error) {
