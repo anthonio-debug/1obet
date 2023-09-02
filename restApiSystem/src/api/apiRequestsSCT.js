@@ -63,17 +63,23 @@ function apiRequests() {
             */
           }
 
-          const lastScore = await Score.findOne({ eventId: channel.substring(1) }, null, { _id: -1 });
+          const lastScore = await Score.find({ eventId: channel.substring(1) }).sort({ _id: -1 }).limit(1);;
 
-          if (lastScore) {
-            socket.emit('last_score', lastScore);
+          if (lastScore.length > 0) {
+            socket.emit('last_score', lastScore[0]);
           } else {
             socket.emit('last_score', { status: false, msg: 'Score record is not exist for this event.' });
           }
 
           for (let index = 0; index < event_information.marketIds.length; index++) {
             const marketId = event_information.marketIds[index];
-            event_information.marketIds[index].last_odds = await Odds.findOne({ marketId: marketId.id }, null, { createdAt: -1 });
+
+            const lOdds = await Odds.find({ marketId: marketId.id }).sort({ createdAt: -1 }).limit(1);
+            if (lOdds.length > 0)
+            event_information.marketIds[index].last_odds = lOdds[0]
+
+            
+            
           }
           socket.emit('event_info', event_information);
         } else {
