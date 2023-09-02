@@ -20,7 +20,7 @@ async function getAllSportsHighlight(req, res) {
       },
       {
         $sort: {
-          openDate: -1
+          openDate: 1
         }
       },
       {
