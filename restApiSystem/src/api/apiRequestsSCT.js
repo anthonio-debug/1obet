@@ -8,8 +8,6 @@ const MarketIDS = require('../../../app/models/marketIds');
 const Score = require('../../../app/models/score');
 const Odds = require('../../../app/models/odds');
 const FancyEvent = require('../../../app/models/fancyEvent');
-const FancyOdds = require('../../../app/models/fancyOdds');
-const { forEach } = require('lodash');
 var _ = require('lodash');
 
 
