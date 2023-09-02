@@ -345,6 +345,9 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3
 
+      console.log(" apiFancyOdds ====== ", apiFancyOdds);
+      console.log(" dbFancyOdds  ====== ", dbFancyOdds);
+
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
 
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
@@ -429,7 +432,7 @@ const placeBet = async (req, res) => {
       const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
       console.log(" url ===== ", url);
       const response = await axios.get(url);
-      console.log("response ========", response.data);
+      console.log("bookmaker response ========", response.data);
 
       if (!response?.data?.data?.t2?.length) {
         console.log(`Odds not available for the selected team ||||||  ${req.body.selectionId}`);
@@ -437,7 +440,7 @@ const placeBet = async (req, res) => {
       }
       const apiFancyOdds = response?.data?.data?.t2?.length ? response?.data?.data?.t2[0]?.bm1 : [];
       const DBOddDetails = await FancyOdds.findById(oddsId);
-      const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1
+      const dbFancyOdds  = DBOddDetails?.data?.data?.t2[0]?.bm1
 
       console.log(" apiFancyOdds ==== ", apiFancyOdds)
       console.log(" dbFancyOdds ==== ", dbFancyOdds)
@@ -983,7 +986,6 @@ async function getMatchedBets(req, res) {
     }
 
     const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
-    console.log('bettorMaster', bettorMaster);
     const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
     const createdByIDs = userOfLoginUser.map(user => user.userId);
 
@@ -1281,32 +1283,6 @@ async function reviewFakeBet(req, res) {
     });
   }
 }
-
-// const liveSportScore = async (eventId) => {
-//   try {
-//     const event = await Events.findOne({ Id: eventId }, { _id: 0, matchType: 1, sportsId: 1 });
-//     const type = event ? event.sportsId : null;
-//     console.log("event", event);
-
-//     if(type == "4"){
-//       const score = await cricketLiveScore(eventId);
-//       return score
-//     }else{
-//       return {
-//         status: false,
-//         message: "Figure batting not Allowed !"
-//       }
-//     }
-//   }
-//   catch (error) {
-//       console.error(error);
-//       return {
-//           success: false,
-//           message: 'Failed to get data',
-//           error: error.message,
-//       };
-//   }
-// }
 
 async function cricketLiveScore(id) {
   try {
