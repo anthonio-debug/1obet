@@ -180,7 +180,9 @@ function apiRequests() {
               upsert: true,  
             }
           );
+          
         }
+
 
         var eventIDs = []; 
 

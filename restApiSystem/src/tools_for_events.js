@@ -60,7 +60,7 @@ function ToolForEvent() {
 
     async function fetchMarkets() {
         try {
-            const documents = await inPlayEvents.findOne({ status: 'OPEN', isShowed: true })
+            const documents = await inPlayEvents.findOne({ status: 'OPEN' })
                 .sort({ lastCheckMarket: 1 })
                 .limit(1)
                 .exec();
@@ -70,7 +70,7 @@ function ToolForEvent() {
                 await inPlayEvents.updateMany(
                     { Id: documents.Id },
                     { $set: { lastCheckMarket: Date.now() } }
-                );
+                ); 
                 fetchOddsForEvent(documents.Id);
             }
         } catch (error) {
