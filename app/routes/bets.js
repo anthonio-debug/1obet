@@ -1346,7 +1346,7 @@ async function cricketLiveScore(id) {
 }
 
 
-const sessionCalc = async  () => {
+const sessionCalc = async  (req, res) => {
   try {
     // const eventsIds = await Events.distinct("Id", { sportsId: "4", inplay: true, status: { $in:['OPEN', 'open'  ] }, isShowed: true });
     // console.log('eventsIds ===== ', eventsIds);
@@ -1355,8 +1355,11 @@ const sessionCalc = async  () => {
 
     for (let Id of eventsIds){
       console.log(" ===================== ", Id);
-      const event = await Events.findOne({ Id: Id }, { _id: 0, matchType: 1, sportsId: 1 });
+      const event = await Events.find({ Id: Id }, { _id: 0, matchType: 1, sportsId: 1 }).exec();
       console.log(" event ===================== ", event);
+      // return res.send({
+      //   event: event
+      // })
       const type  = event.matchType;
       const score           = await cricketLiveScore(Id);
       const currentScore    = Number(score.score)
@@ -1475,8 +1478,8 @@ loginRouter.put('/updateFakeBet/:id', updateFakeBet);
 loginRouter.get('/countFakeBets', countFakeBet);
 loginRouter.post('/approvedFakeBet/:id', approvedFakeBet);
 loginRouter.get('/reviewFakeBet/:id/:sportsId', reviewFakeBet);
-loginRouter.get('/sessionCalc', sessionCalc);
+// loginRouter.get('/sessionCalc', sessionCalc);
 loginRouter.get('/postmanwork', postmanwork);
 
 
-module.exports = { sessionCalc, loginRouter, getParents };
+module.exports = { sessionCalc,  loginRouter, getParents };
