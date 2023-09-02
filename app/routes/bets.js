@@ -24,6 +24,7 @@ const axios = require('axios')
 const ListMarkets = require('../models/listMarkets')
 const currentPosition = require('../models/CurrentPosition');
 const FancyOdds = require('../models/fancyOdds');
+const Session   = require('../models/Session');
 const { log } = require('async');
 const Cash = require("../../app/models/deposits");
 const mongoose = require('mongoose');
@@ -1345,73 +1346,65 @@ async function cricketLiveScore(id) {
 
 }
 
-
 const sessionCalc = async  (req, res) => {
   try {
-    // const eventsIds = await Events.distinct("Id", { sportsId: "4", inplay: true, status: { $in:['OPEN', 'open'  ] }, isShowed: true });
+    const eventsIds = await Events.distinct("Id", { sportsId: "4", inplay: true, status: { $in:['OPEN', 'open'  ] }});
     // console.log('eventsIds ===== ', eventsIds);
-    const  eventsIds = [1809020000]
+    // const  eventsIds = [ 1809020000 ]
     console.log(" events Ids ==================== ", eventsIds);
 
     for (let Id of eventsIds){
       console.log(" ===================== ", Id);
-      const event = await Events.find({ Id: Id }, { _id: 0, matchType: 1, sportsId: 1 }).exec();
-      console.log(" event ===================== ", event);
-      // return res.send({
-      //   event: event
-      // })
-      const type  = event.matchType;
-      const score           = await cricketLiveScore(Id);
-      const currentScore    = Number(score.score)
-      const sessionLength   = type == "TEST" ? 10 : 5;
-      console.log(' only  score  ===================== ', score );
-      config.balls.includes(score.balls[5]) ? currentScore = currentScore - Number(score.balls[0]) : ''
 
+      const event = await Events.find({ Id: Id }, { _id: 0, matchType: 1, sportsId: 1 });
+
+      console.log(" event ===================== ", event);
+
+      const type  = event.matchType;
+      if(!config.matchTypes.includes(type)){
+        return `Type of Match is Not Applicable ${type}`
+      }
+
+      const score           = await cricketLiveScore(Id);
+
+      console.log(' only  score  ===================== ', score );
+
+      const currentScore    = Number(score.score)
+
+      const sessionLength   = type == "TEST" ? 10 : 5;
+
+      config.balls.includes(score.balls[5]) ? currentScore = currentScore - Number(score.balls[0]) : ''
         let currentOver = score.overs;
         let ball        = currentOver.split('.')[1]
         let inning      = score.inning;  
+
         console.log("ball   ===================== ", ball);
         console.log("inning ===================== ", inning);
 
 
-        if((currentOver % sessionLength < 1  && ball == 1)  || (currentOver % sessionLength < 1 && ball == 1)){
+        if(currentOver % sessionLength < 1  && ball == 1){
+
           console.log(" conditional ball  ===================== ", ball)
-          console.log(" conditional over ===================== ", score.overs % 5);
+          console.log(" conditional over ===================== ", score.overs % sessionLength);
+
           let sessionToResult      = Math.floor(currentOver/sessionLength);
 
           console.log(" session To Result ======= ", sessionToResult);
 
+          const update = await  Session.findOneAndUpdate({ 
+              eventId: Id,
+              sessionNo: sessionToResult 
+            },
+            {
+              $set: {
+                score: currentScore
+              } 
+          });
+          return `Score Successfully Added to Session # ${sessionToResult} Event Id : ${Id}`;
         }
         else {
-            console.log(" ========= else Non conditional  ");
+            return `Session Not Applicable`;
         } 
-
-        // let currentSessionOver  = Math.ceil(currentOver%5);
-        
-        // console.log(" currentSession = ",currentSession, " currentSessionOver =",currentSessionOver, " currentOver =",currentOver );
-        
-        // switch (eventDetail.matchType) {
-        //     case 'T10':
-        //     totalSessions       = 2;
-        //     break;
-        //     case 'T20':
-        //     totalSessions       = 4;
-        //     break;
-        //     case 'ODI':
-        //     totalSessions       = 10;
-        //     break;
-        //     case 'TEST':
-        //     totalSessions       = 9;
-        //     currentSessionOver  = Math.ceil(currentOver%10);
-        //     currentSession      = Math.ceil(currentOver/10);
-        //     break;
-        //     default:
-        //     return res.json(404, {
-        //         success : false,
-        //         message : `Match Type is not defined : ${eventDetail.matchType}`,
-        //     });
-        //     break;
-        // } 
     }
   } catch (error) {
       console.error('Error running odds cron job:', error);
