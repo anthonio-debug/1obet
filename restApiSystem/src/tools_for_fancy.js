@@ -19,8 +19,6 @@ function ToolForFancy() {
 
         setInterval(getList, 20 * 60 * 1000);
         setInterval(getFancyOdds, 1 * 1000);
-        setInterval(removeOdds, 60 * 60 * 1000);
-
         getList();
     }
 
@@ -140,16 +138,7 @@ function ToolForFancy() {
         }
     }
 
-    function removeOdds () {
-        const oneHourAgo = new Date().getTime() - 60 * 60 * 1000;
-        FancyOdds.deleteMany({ created: { $lt: oneHourAgo } }, (err) => {
-          if (err) {
-            console.error("Error while deleting documents:", err);
-            return;
-          }
-          console.log("Documents older than 1 hour have been deleted.");
-        });
-    }
+
 
 
 

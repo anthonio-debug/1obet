@@ -20,30 +20,28 @@ function ToolForEvent() {
 
         await MarketIDs.deleteMany({});
 
-      
+
         fetchEvents();
         setInterval(fetchEvents, 2 * 60 * 1000);
         setInterval(fetchMarkets, 10 * 1000);
-        setInterval(removeOdds, 60 * 60 * 1000);
         setInterval(apiRequests.takeScores, 1 * 1000);
 
+        setInterval(() => {
+            for (const sportsId of sportsIds) {
+                apiRequests.setInplay(sportsId);
+            }
+        }, 10 * 1000);
+
+        setInterval(async () => {
+            for (const sportsId of sportsIds) {
+                await apiRequests.checkInPlay(sportsId);
+            }
+        }, 15 * 1000);
 
         setInterval(() => {
-          for (const sportsId of sportsIds) {
-            apiRequests.setInplay(sportsId);
-          }
-        }, 10 * 1000);
-      
-        setInterval(async () => {
-          for (const sportsId of sportsIds) {
-            await apiRequests.checkInPlay(sportsId);
-          }
-        }, 15 * 1000);
-      
-        setInterval(() => {
-          for (const sportsId of sportsIds) {
-            fetchOdds(true, sportsId);
-          }
+            for (const sportsId of sportsIds) {
+                fetchOdds(true, sportsId);
+            }
         }, 1000);
 
 
@@ -70,7 +68,7 @@ function ToolForEvent() {
                 await inPlayEvents.updateMany(
                     { Id: documents.Id },
                     { $set: { lastCheckMarket: Date.now() } }
-                ); 
+                );
                 fetchOddsForEvent(documents.Id);
             }
         } catch (error) {
@@ -129,17 +127,6 @@ function ToolForEvent() {
         } catch (error) {
             console.error('Error fetching odds:', error);
         }
-    }
-
-    function removeOdds () {
-        const oneHourAgo = new Date().getTime() - 60 * 60 * 1000;
-        Odds.deleteMany({ createdAt: { $lt: oneHourAgo } }, (err) => {
-          if (err) {
-            console.error("Error while deleting documents:", err);
-            return;
-          }
-          console.log("Documents older than 1 hour have been deleted.");
-        });
     }
 
 }

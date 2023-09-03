@@ -345,9 +345,7 @@ function apiRequests() {
                   io.to('homepage').emit('odds', { marketId: element.MarketId, data: el, eventId: element.eventId, status: 'NewOddsHomepage' });
                 }
                 
-
-
-                io.to('#' + tempArry[index].eventId).emit('odds', { marketId: element.MarketId, data: el, eventId: element.eventId, status: 'NewOdds' });
+                io.to('#' + element.eventId).emit('odds', { marketId: element.MarketId, data: el, eventId: element.eventId, status: 'NewOdds' });
 
               } else {
 
