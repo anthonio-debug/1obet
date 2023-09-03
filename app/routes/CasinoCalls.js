@@ -518,7 +518,7 @@ async function debit(req, res) {
     await session.commitTransaction();
     return res.json({
       status: 200,
-      balance: updatedBalance / casinoMultiples
+      balance: updatedavailableBalance / casinoMultiples
     });
   } catch (err) {
     console.error('Error:', err);
