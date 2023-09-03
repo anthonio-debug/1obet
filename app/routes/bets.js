@@ -1350,8 +1350,8 @@ async function cricketLiveScore(id) {
 
 const sessionCalc = async  (req, res) => {
   try {
+    console.log("===================== CALL START POINT =====================");
     const eventsIds = await Events.distinct("Id", { sportsId: "4", inplay: true, status: { $in:['OPEN', 'open'  ] }});
-
     for (let Id of eventsIds){
       console.log(" ===================== ", Id);
       const event = await Events.find({ Id: Id }, { _id: 0, matchType: 1, sportsId: 1 });
@@ -1409,6 +1409,8 @@ const sessionCalc = async  (req, res) => {
         console.log("Invalid Match Type ");
       }
     }
+    console.log("===================== CALL END POINT =====================");
+
   } catch (error) {
       console.error('Error running odds cron job:', error);
   }
