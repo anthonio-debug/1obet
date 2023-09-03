@@ -420,6 +420,7 @@ async function debit(req, res) {
         );
       // console.log('========== res', userResponse)
       const casinoDebits = new CasinoDebits(payload);
+      await casinoDebits.save();
         //  ==========================================
 
         console.log(" ============ Handle Place Bet ============ ");
@@ -509,18 +510,15 @@ async function debit(req, res) {
           commissionFrom = user.userId;
         });
 
-
-
-
       // =============================== 
-      await casinoDebits.save();
-      await handlePlaceBet(payload)
+      
+      // await handlePlaceBet(payload)
     }, transactionOptions);
 
     await session.commitTransaction();
     return res.json({
       status: 200,
-      balance: updatedBalance / casinoMultiples
+      balance: updatedavailableBalance / casinoMultiples
     });
   } catch (err) {
     console.error('Error:', err);
