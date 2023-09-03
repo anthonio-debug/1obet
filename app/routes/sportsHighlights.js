@@ -38,6 +38,7 @@ async function getAllSportsHighlight(req, res) {
           marketIds: "$marketIds",
           status: "$status",
           iconStatus: '$iconStatus',
+          matchTypeProvider: '$matchTypeProvider',
         },
       },
     ]);
