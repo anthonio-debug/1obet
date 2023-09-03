@@ -2,7 +2,7 @@ const express             = require('express');
 const User                = require('../models/user');
 const router              = express.Router();
 const CasinoDebits        = require('../models/casinoCalls');
-const Cash                = require("../../app/models/deposits");
+// const Cash                = require("../../app/models/deposits");
 const crypto              = require('crypto');
 const config              = require('config')
 const { MongoClient }     = require('mongodb');
@@ -436,13 +436,13 @@ async function debit(req, res) {
         // await userToUpdate.save();
       
         let lastMaxWithdraw = await Cash.findOne({
-          userId: userToUpdate.userId,
+          userId: user.userId,
         }).sort({
           _id: -1,
         });
       
         let cash = new Cash({
-          userId: userToUpdate.userId,
+          userId: user.userId,
           createdBy: 0,
           amount: - amount,
           balance: lastMaxWithdraw ? lastMaxWithdraw.balance - amount : -amount,
@@ -456,7 +456,7 @@ async function debit(req, res) {
         });
         await cash.save();
       
-        const parentUserIds = await getParents(userToUpdate.userId);
+        const parentUserIds = await getParents(user.userId);
       
         const parentUser = await users.find({
           userId: {
