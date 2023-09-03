@@ -2,7 +2,7 @@ const express             = require('express');
 const User                = require('../models/user');
 const router              = express.Router();
 const CasinoDebits        = require('../models/casinoCalls');
-// const Cash                = require("../../app/models/deposits");
+const Cash                = require("../../app/models/deposits");
 const crypto              = require('crypto');
 const config              = require('config')
 const { MongoClient }     = require('mongodb');
@@ -333,7 +333,7 @@ async function debit(req, res) {
     console.log(" debt req.query ======= ", req.query);
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
-    const Cash = client.db('Bet99').collection('deposits');
+    // const Cash = client.db('Bet99').collection('deposits');
 
 
     const payload = req.query;
@@ -437,7 +437,7 @@ async function debit(req, res) {
       
         let lastMaxWithdraw = await Cash.findOne(
           {userId: user.userId},
-          { session }
+          // { session }
         ).sort({
           _id: -1,
         });
