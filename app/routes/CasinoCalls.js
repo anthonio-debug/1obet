@@ -458,14 +458,35 @@ async function debit(req, res) {
         });
         await cash.save();
       
-        const parentUserIds = await getParents(user.userId);
+        // const parentUserIds = await getParents(user.userId);
+        // const getParents = async (userId) => {
+        const parentUserIds = [];
+        let currentUserId = user.userId;
+        console.log('currentUserId', currentUserId);
+      
+        while (currentUserId) {
+          const parentUser = await users.findOne(
+            { userId: currentUserId },
+            {session}
+          );
+          
+          if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
+            break;
+          }
+          parentUserIds.push(parentUser.createdBy);
+          currentUserId = parentUser.createdBy;
+        }
+        console.log(" parentUserIds ========== ", parentUserIds);
+
+        //   return parentUserIds;
+        // }
       
         const parentUser = await users.find({
           userId: {
             $in: [...parentUserIds],
           },
           isDeleted: false,
-        }).sort({ role: -1 });
+        }, {session}).sort({ role: -1 });
       
         if (!parentUser) {
           console.log(" ============ User Not Found ============ ");
