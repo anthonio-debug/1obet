@@ -8,6 +8,7 @@ const config              = require('config')
 const { MongoClient }     = require('mongodb');
 const casinoMultiples     = config.casinoMultiples;
 const { getParents } = require("../../app/routes/bets");
+const { log } = require('async');
 
 const transactionOptions  = {
   readPreference: 'primary',
@@ -65,6 +66,7 @@ const transactionOptions  = {
 // }
 
 const handlePlaceBet = async (payload) => {
+  console.log(" ============ handlePlaceBet ============ ");
   const userToUpdate  = await User.findOne({ remoteId: payload.remote_id, isDeleted: false,});
   if (!userToUpdate) {
     console.log(" ============ User Not Found ============ ");
@@ -156,6 +158,7 @@ const handlePlaceBet = async (payload) => {
 }                                                                                        
 
 const handleWinningBet = async (payload) => {
+  console.log(" ============ handleWinningBet ============ ");
   const amount                = payload.amount * 10;
   const remainingAmount       = (amount / 100) * 98;
   const commissionAmount      = (amount / 100) * 2;
