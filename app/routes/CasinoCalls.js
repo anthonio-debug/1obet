@@ -70,7 +70,10 @@ const handlePlaceBet = async (payload) => {
     console.log(" ============ User Not Found ============ ");
     return res.status(404).send({ message: "user not found" });
   }
-  const amount = payload.amount * 10;
+  const amount          = payload.amount * 10;
+  let   upMovingAmount  = amount
+
+
 
   userToUpdate.balance          -= amount;
   userToUpdate.clientPL         -= amount;
