@@ -1351,67 +1351,63 @@ async function cricketLiveScore(id) {
 const sessionCalc = async  (req, res) => {
   try {
     const eventsIds = await Events.distinct("Id", { sportsId: "4", inplay: true, status: { $in:['OPEN', 'open'  ] }});
-    // console.log('eventsIds ===== ', eventsIds);
-    // const  eventsIds = [ 1809020000 ]
-    console.log(" events Ids ==================== ", eventsIds);
 
     for (let Id of eventsIds){
       console.log(" ===================== ", Id);
-
       const event = await Events.find({ Id: Id }, { _id: 0, matchType: 1, sportsId: 1 });
-
       console.log(" event ===================== ", event);
-
       const type  = event.matchType;
-      console.log(" type ========== ", type);
+      console.log(" type ===================== ", type);
+      if(config.matchTypes.includes(type)){
+        console.log(" Returnning due to invalid  ===================== ", type);
+        const score           = await cricketLiveScore(Id);
+        console.log("score ===================== ", score);
+        if(score != 0){
+          const currentScore    = Number(score.score)
+          const sessionLength   = type == "TEST" ? 10 : 5;
+          config.balls.includes(score.balls[5]) ? currentScore = currentScore - Number(score.balls[5]) : ''
+          let currentOver = score.overs;
+          let ball        = currentOver.split('.')[1]
+          let inning      = score.inning;  
+          console.log("ball   ===================== ", ball);
+          console.log("inning ===================== ", inning);
 
-      if(!config.matchTypes.includes(type)){
-        console.log(" Returnning due to invalid  ========== ", type);
-        // return `Type of Match is Not Applicable ${type}`
-      }
-
-      const score           = await cricketLiveScore(Id);
-
-      console.log("score ============= ", score);
-
-      // console.log(' only  score  ===================== ', score );
-
-      const currentScore    = Number(score.score)
-
-      const sessionLength   = type == "TEST" ? 10 : 5;
-
-      config.balls.includes(score.balls[5]) ? currentScore = currentScore - Number(score.balls[0]) : ''
-        let currentOver = score.overs;
-        let ball        = currentOver.split('.')[1]
-        let inning      = score.inning;  
-
-        console.log("ball   ===================== ", ball);
-        console.log("inning ===================== ", inning);
-
-
-        if(currentOver % sessionLength < 1  && ball == 1){
-
-          console.log(" conditional ball  ===================== ", ball)
-          console.log(" conditional over ===================== ", score.overs % sessionLength);
-
-          let sessionToResult      = Math.floor(currentOver/sessionLength);
-
-          console.log(" session To Result ======= ", sessionToResult);
-
-          const update = await  Session.findOneAndUpdate({ 
-              eventId: Id,
-              sessionNo: sessionToResult 
-            },
-            {
-              $set: {
-                score: currentScore
-              } 
-          });
-          console.log(`Score Successfully Added to Session # ${sessionToResult} Event Id : ${Id}`); 
+          if(currentOver % sessionLength < 1  && ball == 1){
+            // console.log(" conditional ball  ===================== ", ball)
+            console.log(" conditional over ===================== ", score.overs % sessionLength);
+            let sessionAddition =  0 ;
+            if(inning == 2){
+              if(type == "TEST"){
+                sessionAddition = 9
+              }else if (type == "ODI"){
+                sessionAddition = 10
+              }
+              else if (type == "T20"){
+                sessionAddition = 4
+              }else if (type == "T10"){
+                sessionAddition = 2
+              }
+            }
+            let sessionToResult      = Math.floor(currentOver/sessionLength) + sessionAddition;
+            console.log(" session To Result ===================== ", sessionToResult);
+            const update = await  Session.findOneAndUpdate({ 
+                eventId: Id,
+                sessionNo: sessionToResult 
+              },
+              {
+                $set: {
+                  score: currentScore
+                } 
+            });
+            console.log(`Score Successfully Added to Session # ${sessionToResult} Event Id : ${Id}`); 
+          }
+          else {
+            console.log(`Session Not Applicable`);
+          } 
         }
-        else {
-          console.log(`Session Not Applicable`);
-        } 
+      }else {
+        console.log("Invalid Match Type ");
+      }
     }
   } catch (error) {
       console.error('Error running odds cron job:', error);
