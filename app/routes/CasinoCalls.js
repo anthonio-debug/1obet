@@ -330,11 +330,10 @@ async function debit(req, res) {
   await client.connect();
   const session = client.startSession();
   try {
-    console.log(" debt req.query ======= ", req.query);
+    console.log(" debt req.query ============== ", req.query);
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
     // const Cash = client.db('Bet99').collection('deposits');
-
 
     const payload = req.query;
     const salt = config.saltKey;
@@ -443,20 +442,20 @@ async function debit(req, res) {
           _id: -1,
         });
       
-        let cash = new Cash({
-          userId: user.userId,
-          createdBy: 0,
-          amount: - amount,
-          balance: lastMaxWithdraw ? lastMaxWithdraw.balance - amount : -amount,
-          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - amount : -amount,
-          maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : amount,
-          cashOrCredit: "Bet",
-          cash: lastMaxWithdraw ? lastMaxWithdraw.cash - amount : -amount,
-          betId: payload.transaction_id,
-          sportsId: "6",
-          marketId: payload.game_id
-        });
-        await cash.save();
+        // let cash = new Cash({
+        //   userId: user.userId,
+        //   createdBy: 0,
+        //   amount: - amount,
+        //   balance: lastMaxWithdraw ? lastMaxWithdraw.balance - amount : -amount,
+        //   availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - amount : -amount,
+        //   maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : amount,
+        //   cashOrCredit: "Bet",
+        //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash - amount : -amount,
+        //   betId: payload.transaction_id,
+        //   sportsId: "6",
+        //   marketId: payload.game_id
+        // });
+        // await cash.save();
       
         // const parentUserIds = await getParents(user.userId);
         // const getParents = async (userId) => {
@@ -476,7 +475,7 @@ async function debit(req, res) {
           parentUserIds.push(parentUser.createdBy);
           currentUserId = parentUser.createdBy;
         }
-        console.log(" parentUserIds ========== ", parentUserIds);
+        console.log(" parentUserIds ==================== ", parentUserIds);
 
         //   return parentUserIds;
         // }
@@ -488,6 +487,10 @@ async function debit(req, res) {
           isDeleted: false,
         }, {session}).sort({ role: -1 });
       
+
+        console.log(" parentUser  ============ ", parentUser);
+
+
         if (!parentUser) {
           console.log(" ============ User Not Found ============ ");
           return res.json({ status: '500', msg: `Internal Server Error` });
@@ -508,26 +511,27 @@ async function debit(req, res) {
           user.save();
           let lastMaxWithdraw = await Cash.findOne({
             userId: user.userId,
-          }).sort({
+          }, {session}).sort({
             _id: -1,
           });
-          let cash = await new Cash({
-            userId: user.userId,
-            description: "",
-            createdBy: 0,
-            amount: (user.commission / 100) * amount,
-            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * amount : (user.commission / 100) * amount,
-            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * amount : (user.commission / 100) * amount,
-            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * amount : (user.commission / 100) * amount,
-            commissionFrom: commissionFrom,
-            cashOrCredit: "loosing",
-            cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * amount : (user.commission / 100) * amount,
-            betId: payload.transaction_id,
-            sportsId: "6",
-            marketId: payload.game_id,
-            upLineAmount: upMovingAmount
-          });
-          cash.save();
+
+          // let cash = await new Cash({
+          //   userId: user.userId,
+          //   description: "",
+          //   createdBy: 0,
+          //   amount: (user.commission / 100) * amount,
+          //   balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * amount : (user.commission / 100) * amount,
+          //   availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * amount : (user.commission / 100) * amount,
+          //   maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * amount : (user.commission / 100) * amount,
+          //   commissionFrom: commissionFrom,
+          //   cashOrCredit: "loosing",
+          //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * amount : (user.commission / 100) * amount,
+          //   betId: payload.transaction_id,
+          //   sportsId: "6",
+          //   marketId: payload.game_id,
+          //   upLineAmount: upMovingAmount
+          // });
+          // cash.save();
           commissionFrom = user.userId;
         });
 
