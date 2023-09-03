@@ -333,6 +333,8 @@ async function debit(req, res) {
     console.log(" debt req.query ======= ", req.query);
     const casinoCalls = client.db('Bet99').collection('casinocalls');
     const users = client.db('Bet99').collection('users');
+    const Cash = client.db('Bet99').collection('deposits');
+
 
     const payload = req.query;
     const salt = config.saltKey;
@@ -350,7 +352,10 @@ async function debit(req, res) {
       });
     }
 
-    let updatedBalance = 0
+    let updatedavailableBalance = 0
+    let updatedclientPL = 0
+    let updatedbalance = 0
+
 
     await session.withTransaction(async () => {
 
@@ -397,19 +402,119 @@ async function debit(req, res) {
         return res.json({ status: '500', msg: 'Negative bet not allowed!' });
       }
 
-      updatedBalance = user.availableBalance - (debitAmount * casinoMultiples);
-      if (updatedBalance < 0) {
+      updatedavailableBalance = user.availableBalance - (debitAmount * casinoMultiples);
+      updatedclientPL         = user.clientPL         - (debitAmount * casinoMultiples);
+      updatedbalance          = user.balance          - (debitAmount * casinoMultiples);
+
+      if (updatedavailableBalance < 0) {
         await session.abortTransaction();
         return res.json({ status: '500', msg: 'Negative balance not allowed!' });
       }
       let userResponse = await users.updateOne(
-        {_id: user?._id},{ $set: { availableBalance: updatedBalance}},
+        {_id: user?._id},{ $set: { 
+          availableBalance: updatedavailableBalance,
+          clientPL: updatedclientPL,
+          balance: updatedbalance,
+        }},
         { session }
         );
       // console.log('========== res', userResponse)
-      await handlePlaceBet(payload)
       const casinoDebits = new CasinoDebits(payload);
+        //  ==========================================
+
+        console.log(" ============ Handle Place Bet ============ ");
+        // const userToUpdate  = await users.findOne({ remoteId: payload.remote_id, isDeleted: false,});
+        // if (!userToUpdate) {
+        //   console.log(" ============ User Not Found ============ ");
+        //   return res.status(404).send({ message: "user not found" });
+        // }
+        const amount          = payload.amount * casinoMultiples;
+        let   upMovingAmount  = amount
+        // userToUpdate.balance          -= amount;
+        // userToUpdate.clientPL         -= amount;
+        // userToUpdate.availableBalance -= amount;
+        // await userToUpdate.save();
+      
+        let lastMaxWithdraw = await Cash.findOne({
+          userId: userToUpdate.userId,
+        }).sort({
+          _id: -1,
+        });
+      
+        let cash = new Cash({
+          userId: userToUpdate.userId,
+          createdBy: 0,
+          amount: - amount,
+          balance: lastMaxWithdraw ? lastMaxWithdraw.balance - amount : -amount,
+          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - amount : -amount,
+          maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : amount,
+          cashOrCredit: "Bet",
+          cash: lastMaxWithdraw ? lastMaxWithdraw.cash - amount : -amount,
+          betId: payload.transaction_id,
+          sportsId: "6",
+          marketId: payload.game_id
+        });
+        await cash.save();
+      
+        const parentUserIds = await getParents(userToUpdate.userId);
+      
+        const parentUser = await users.find({
+          userId: {
+            $in: [...parentUserIds],
+          },
+          isDeleted: false,
+        }).sort({ role: -1 });
+      
+        if (!parentUser) {
+          console.log(" ============ User Not Found ============ ");
+          return res.json({ status: '500', msg: `Internal Server Error` });
+        }
+        let prev = 0;
+        parentUser.forEach((user) => {
+          let current = user.downLineShare;
+          user["commission"] = current - prev;
+          prev = current;
+        });
+      
+        let commissionFrom = userToUpdate.userId;
+      
+        parentUser.forEach(async (user) => {
+          // user.exposure += (user.commission / 100) * remainingAmount;
+          user.availableBalance += (user.commission / 100) * amount + (user.commission / 100) * amount;
+          user.balance  += (user.commission / 100) * amount;
+          user.clientPL -= user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * amount: 0;
+          user.save();
+          let lastMaxWithdraw = await Cash.findOne({
+            userId: user.userId,
+          }).sort({
+            _id: -1,
+          });
+          let cash = await new Cash({
+            userId: user.userId,
+            description: "",
+            createdBy: 0,
+            amount: (user.commission / 100) * amount,
+            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * amount : (user.commission / 100) * amount,
+            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * amount : (user.commission / 100) * amount,
+            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * amount : (user.commission / 100) * amount,
+            commissionFrom: commissionFrom,
+            cashOrCredit: "loosing",
+            cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * amount : (user.commission / 100) * amount,
+            betId: payload.transaction_id,
+            sportsId: "6",
+            marketId: payload.game_id,
+            upLineAmount: upMovingAmount
+          });
+          cash.save();
+          commissionFrom = user.userId;
+        });
+
+
+
+
+      // =============================== 
       await casinoDebits.save();
+      await handlePlaceBet(payload)
     }, transactionOptions);
 
     await session.commitTransaction();
