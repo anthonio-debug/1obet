@@ -435,9 +435,10 @@ async function debit(req, res) {
         // userToUpdate.availableBalance -= amount;
         // await userToUpdate.save();
       
-        let lastMaxWithdraw = await Cash.findOne({
-          userId: user.userId,
-        }).sort({
+        let lastMaxWithdraw = await Cash.findOne(
+          {userId: user.userId},
+          { session }
+        ).sort({
           _id: -1,
         });
       
