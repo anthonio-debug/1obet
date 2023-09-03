@@ -1361,13 +1361,18 @@ const sessionCalc = async  (req, res) => {
       console.log(" event ===================== ", event);
 
       const type  = event.matchType;
+      console.log(" type ========== ", type);
+
       if(!config.matchTypes.includes(type)){
+        console.log(" Returnning due to invalid  ========== ", type);
         return `Type of Match is Not Applicable ${type}`
       }
 
       const score           = await cricketLiveScore(Id);
 
-      console.log(' only  score  ===================== ', score );
+      console.log("score ============= ", score);
+
+      // console.log(' only  score  ===================== ', score );
 
       const currentScore    = Number(score.score)
 
