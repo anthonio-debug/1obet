@@ -74,10 +74,10 @@ function apiRequests() {
 
             const lOdds = await Odds.find({ marketId: marketId.id }).sort({ createdAt: -1 }).limit(1);
             if (lOdds.length > 0)
-            event_information.marketIds[index].last_odds = lOdds[0]
+              event_information.marketIds[index].last_odds = lOdds[0]
 
-            
-            
+
+
           }
           socket.emit('event_info', event_information);
         } else {
@@ -148,17 +148,17 @@ function apiRequests() {
       var events = response.data;
       if (events.length > 0) {
 
-        events = events.filter(function(item) {
+        events = events.filter(function (item) {
           return isValidDate(item.openDate);
         });
 
         for (const event of events) {
           const existingDoc = await inPlayEvents.findOne({ Id: event.Id });
-        
+
           if (existingDoc && existingDoc.isCanceled === true) {
             continue;
           }
-        
+
           await inPlayEvents.findOneAndUpdate(
             { Id: event.Id },
             {
@@ -182,21 +182,21 @@ function apiRequests() {
               },
             },
             {
-              upsert: true,  
+              upsert: true,
             }
           );
-          
+
         }
 
 
-        var eventIDs = []; 
+        var eventIDs = [];
 
         for (let index = 0; index < events.length; index++) {
           eventIDs.push(events[index].Id);
         }
 
         var allIDS = [];
-        const currentEvents = await inPlayEvents.find({ status: 'OPEN', sportsId: sportsId+'' }, { Id: 1 });
+        const currentEvents = await inPlayEvents.find({ status: 'OPEN', sportsId: sportsId + '' }, { Id: 1 });
 
         for (let i = 0; i < currentEvents.length; i++) {
           allIDS.push(currentEvents[i].Id);
@@ -214,7 +214,7 @@ function apiRequests() {
         }
 
 
-        
+
 
 
         return ({
@@ -301,6 +301,7 @@ function apiRequests() {
     axios.get(url).then(async (response) => {
       const oddsData = response.data;
       let sportIds = { "soccer": "1", "cricket": "4", "tennis": "2" }
+      var checkedMarkets = [];
       if (oddsData.length > 0) {
 
         try {
@@ -318,6 +319,8 @@ function apiRequests() {
                 element.Runners[2]?.ExchangePrices.AvailableToLay.length > 0 ||
                 element.Runners[2]?.ExchangePrices.AvailableToBack.length > 0
               ) {
+
+                checkedMarkets.push(element.MarketId);
                 var json = {
                   sportsId: sportIds[element.sport],
                   runners: element.Runners,
@@ -333,39 +336,30 @@ function apiRequests() {
                 };
 
                 if (element.Status != 'OPEN') {
-                  await MarketIDS.updateOne({ marketId: tempArryForIDs[index] }, { inPlay: false, status: element.Status });
+                  await MarketIDS.updateOne({ marketId: element.MarketId }, { inPlay: false, status: element.Status });
                 }
 
                 var el = new Odds(json);
                 el.save();
 
-                const ix = _.findIndex(tempArry, function(o) { return o.market == element.MarketId; });
+                const ix = _.findIndex(tempArry, function (o) { return o.market == element.MarketId; });
 
                 if (ix != -1 && tempArry[ix].indexID == 0) {
                   io.to('homepage').emit('odds', { marketId: element.MarketId, data: el, eventId: element.eventId, status: 'NewOddsHomepage' });
                 }
-                
-
-
                 io.to('#' + tempArry[index].eventId).emit('odds', { marketId: element.MarketId, data: el, eventId: element.eventId, status: 'NewOdds' });
-
-              } else {
-
-                /*
-                var json = {
-                  eventId: marketIdsArray[index].eventId,
-                  marketId: tempArry[index].market,
-                  status: 'CLOSED'
-                };
-                var el = new Odds(json);
-                io.emit('odds', json);
-                await MarketIDS.updateOne({ marketId: tempArryForIDs[index] }, { inPlay: false, status: 'RUNNERS NOT EXIST' });
-                */
               }
-            } else {
-              //await MarketIDS.updateOne({ marketId: tempArryForIDs[index] }, { inPlay: false, status: 'ODDS NOT EXIST' });
             }
           }
+
+          const filteredArray = tempArry.filter((item) => !checkedMarkets.includes(item.market));
+
+
+          for (let index = 0; index < filteredArray.length; index++) {
+            await MarketIDS.updateOne({ marketId: filteredArray.market }, { inPlay: false, status: 'CLOSED-ODDS-EMPTY' });
+          }
+
+
         } catch (error) {
           console.log(error);
 
