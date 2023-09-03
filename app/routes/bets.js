@@ -1328,6 +1328,8 @@ async function cricketLiveScore(id) {
         response.inning = inning;
         response.balls  = scoreInfo.balls;
         return response
+      }else {
+        return 0
       }
     } else {
       return {
@@ -1409,7 +1411,6 @@ const sessionCalc = async  (req, res) => {
         }
         else {
           console.log(`Session Not Applicable`);
-            // return ;
         } 
     }
   } catch (error) {
