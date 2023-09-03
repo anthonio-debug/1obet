@@ -151,12 +151,11 @@ const handlePlaceBet = async (payload) => {
 }                                                                                        
 
 const handleWinningBet = async (payload) => {
-  // console.log(`Bet ${bet._id} wininng !. `);
-  // const userId = bet.userId;
-  // const loosingAmount = bet.loosingAmount;
-  const amount = payload.amount * 10;
-  const remainingAmount = (amount / 100) * 98;
-  const commissionAmount = (amount / 100) * 2;
+  const amount                = payload.amount * 10;
+  const remainingAmount       = (amount / 100) * 98;
+  const commissionAmount      = (amount / 100) * 2;
+  let   upMovingAmount        = amount
+  let   upMovingCommAmount    = commissionAmount
   const userToUpdate = await User.findOne({
     remoteId: payload.remote_id,
     isDeleted: false,
@@ -192,7 +191,7 @@ const handleWinningBet = async (payload) => {
     sportsId: "6",
     marketId: payload.game_id
   });
-  console.log('usercash',typeof cash);
+  // console.log('usercash',typeof cash);
   await cash.save();
 
   const parentUserIds = await getParents(userToUpdate.userId);
@@ -236,9 +235,8 @@ const handleWinningBet = async (payload) => {
       balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
       availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
       maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * amount : -(user.commission / 100) * amount,
-      cashOrCredit: "Bet",
-      betId: bet._id,
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * amount : -(user.commission / 100) * amount,
+      cashOrCredit: "Bet",
       betId: payload.transaction_id,
       sportsId: "6",
       marketId: payload.game_id,
@@ -255,15 +253,16 @@ const handleWinningBet = async (payload) => {
       balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
       availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
       maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-      cashOrCredit: "Commission",
-      betId: bet._id,
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+      cashOrCredit: "Commission",
       betId: payload.transaction_id,
       sportsId: "6",
       marketId: payload.game_id,
       upLineAmount: upMovingCommAmount
     });
     await commissionTransaction.save();
+    upMovingAmount      = upMovingAmount - (user.commission / 100) * amount;
+    upMovingCommAmount  = upMovingCommAmount - (user.commission / 100) * commissionAmount;
     commissionFrom = user.userId;
   };
 }
@@ -500,6 +499,9 @@ async function credit(req, res) {
         );
 
       // console.log('========== res', userResponse)
+      if (payload.amount > 0) {
+        await handleWinningBet(payload)
+      }
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
 
