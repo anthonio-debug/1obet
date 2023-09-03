@@ -442,20 +442,20 @@ async function debit(req, res) {
           _id: -1,
         });
       
-        // let cash = new Cash({
-        //   userId: user.userId,
-        //   createdBy: 0,
-        //   amount: - amount,
-        //   balance: lastMaxWithdraw ? lastMaxWithdraw.balance - amount : -amount,
-        //   availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - amount : -amount,
-        //   maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : amount,
-        //   cashOrCredit: "Bet",
-        //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash - amount : -amount,
-        //   betId: payload.transaction_id,
-        //   sportsId: "6",
-        //   marketId: payload.game_id
-        // });
-        // await cash.save();
+        let cash = new Cash({
+          userId: user.userId,
+          createdBy: 0,
+          amount: - amount,
+          balance: lastMaxWithdraw ? lastMaxWithdraw.balance - amount : -amount,
+          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - amount : -amount,
+          maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : amount,
+          cashOrCredit: "Bet",
+          cash: lastMaxWithdraw ? lastMaxWithdraw.cash - amount : -amount,
+          betId: payload.transaction_id,
+          sportsId: "6",
+          marketId: payload.game_id
+        });
+        await cash.save();
       
         // const parentUserIds = await getParents(user.userId);
         // const getParents = async (userId) => {
