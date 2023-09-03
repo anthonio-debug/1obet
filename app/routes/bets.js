@@ -1414,7 +1414,7 @@ const sessionCalc = async  (req, res) => {
   } catch (error) {
       console.error('Error running odds cron job:', error);
   }
-};
+}
 
 async function getPercentageSharing(parent_id, child_id) {
   let currentId = child_id;
@@ -1476,7 +1476,6 @@ loginRouter.put('/updateFakeBet/:id', updateFakeBet);
 loginRouter.get('/countFakeBets', countFakeBet);
 loginRouter.post('/approvedFakeBet/:id', approvedFakeBet);
 loginRouter.get('/reviewFakeBet/:id/:sportsId', reviewFakeBet);
-// loginRouter.get('/sessionCalc', sessionCalc);
 loginRouter.get('/postmanwork', postmanwork);
 
 

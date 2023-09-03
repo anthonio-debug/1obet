@@ -62,13 +62,13 @@ const transactionOptions  = {
 //   key: '7bbb86b0d5e61059b1ff25c96b1fa74927ce1652'
 // }
 
-const handleLosingBet = async (payload) => {
+const handlePlaceBet = async (payload) => {
   const userToUpdate  = await User.findOne({ remoteId: payload.remote_id, isDeleted: false,});
   if (!userToUpdate) {
-    return res.status(404).send({ message: "User Not Found" });
+    console.log(" ============ User Not Found ============ ");
+    return res.status(404).send({ message: "user not found" });
   }
-  const amount = payload.amount;
-
+  const amount = payload.amount * 10;
 
   userToUpdate.balance          -= amount;
   userToUpdate.clientPL         -= amount;
@@ -80,21 +80,23 @@ const handleLosingBet = async (payload) => {
   }).sort({
     _id: -1,
   });
+
   let cash = new Cash({
     userId: userToUpdate.userId,
-    betId: bet._id,
     createdBy: 0,
-    amount: - loosingAmount,
-    balance: lastMaxWithdraw ? lastMaxWithdraw.balance - loosingAmount : -loosingAmount,
-    availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - loosingAmount : -loosingAmount,
-    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + loosingAmount : loosingAmount,
+    amount: - amount,
+    balance: lastMaxWithdraw ? lastMaxWithdraw.balance - amount : -amount,
+    availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - amount : -amount,
+    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + amount : amount,
     cashOrCredit: "Bet",
-    cash: lastMaxWithdraw ? lastMaxWithdraw.cash - loosingAmount : -loosingAmount,
-    marketId: bet.marketId,
+    cash: lastMaxWithdraw ? lastMaxWithdraw.cash - amount : -amount,
+    betId: payload.transaction_id,
+    sportsId: "6",
+    marketId: payload.game_id
   });
   await cash.save();
 
-  const parentUserIds = await getParents(userId);
+  const parentUserIds = await getParents(userToUpdate.userId);
 
   const parentUser = await User.find({
     userId: {
@@ -104,12 +106,9 @@ const handleLosingBet = async (payload) => {
   }).sort({ role: -1 });
 
   if (!parentUser) {
+    console.log(" ============ User Not Found ============ ");
     return res.status(404).send({ message: "user not found" });
   }
-
-  const remainingAmount = bet.winningAmount;
-  const TotalLoosingAmount = bet.loosingAmount;
-
   let prev = 0;
   parentUser.forEach((user) => {
     let current = user.downLineShare;
@@ -120,10 +119,10 @@ const handleLosingBet = async (payload) => {
   let commissionFrom = userToUpdate.userId;
 
   parentUser.forEach(async (user) => {
-    user.exposure += (user.commission / 100) * remainingAmount;
-    user.availableBalance += (user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount;
-    user.balance  += (user.commission / 100) * TotalLoosingAmount;
-    user.clientPL -= user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * TotalLoosingAmount: 0;
+    // user.exposure += (user.commission / 100) * remainingAmount;
+    user.availableBalance += (user.commission / 100) * amount + (user.commission / 100) * amount;
+    user.balance  += (user.commission / 100) * amount;
+    user.clientPL -= user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * amount: 0;
     user.save();
     let lastMaxWithdraw = await Cash.findOne({
       userId: user.userId,
@@ -132,48 +131,45 @@ const handleLosingBet = async (payload) => {
     });
     let cash = await new Cash({
       userId: user.userId,
-      description: bet.name,
-      betId: bet._id,
+      description: "",
       createdBy: 0,
-      amount: (user.commission / 100) * TotalLoosingAmount,
-      balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
-      availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
-      maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
+      amount: (user.commission / 100) * amount,
+      balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * amount : (user.commission / 100) * amount,
+      availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * amount : (user.commission / 100) * amount,
+      maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * amount : (user.commission / 100) * amount,
       commissionFrom: commissionFrom,
       cashOrCredit: "loosing",
-      cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
-      marketId: bet.marketId,
+      cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * amount : (user.commission / 100) * amount,
+      betId: payload.transaction_id,
+      sportsId: "6",
+      marketId: payload.game_id,
+      upLineAmount: upMovingAmount
     });
     cash.save();
     commissionFrom = user.userId;
   });
-
-  await Bets.findByIdAndUpdate(bet._id, { status: 0 });
 }                                                                                        
 
-const handleWinningBet = async (userId) => {
-  console.log(`Bet ${bet._id} lost.`);
+const handleWinningBet = async (payload) => {
+  // console.log(`Bet ${bet._id} wininng !. `);
   // const userId = bet.userId;
-  const loosingAmount = bet.loosingAmount;
-  const betAmount = bet.betAmount;
+  // const loosingAmount = bet.loosingAmount;
+  const amount = payload.amount * 10;
+  const remainingAmount = (amount / 100) * 98;
+  const commissionAmount = (amount / 100) * 2;
   const userToUpdate = await User.findOne({
-    userId: userId,
+    remoteId: payload.remote_id,
     isDeleted: false,
   });
 
   if (!userToUpdate) {
+    console.log(" ============ User Not Found ============ ");
     return res.status(404).send({ message: "user not found" });
   }
-  const remainingAmount = (bet.winningAmount / 100) * 98;
-  const commissionAmount = (bet.winningAmount / 100) * 2;
-  const totalRemainingAmount = bet.winningAmount;
-  const TotalLoosingAmount = bet.loosingAmount;
 
   userToUpdate.balance  += remainingAmount;
+  userToUpdate.availableBalance += remainingAmount;
   userToUpdate.clientPL += remainingAmount;
-
-  userToUpdate.availableBalance += TotalLoosingAmount + remainingAmount;
-  userToUpdate.exposure += TotalLoosingAmount;
   await userToUpdate.save();
 
   let lastMaxWithdraw = await Cash.findOne({
@@ -184,8 +180,7 @@ const handleWinningBet = async (userId) => {
   // console.log("lastMaxWithdraw1", lastMaxWithdraw);
   let cash = new Cash({
     userId: userToUpdate.userId,
-    description: bet.name,
-    betId: bet._id,
+    description: "",
     createdBy: 0,
     amount: remainingAmount,
     balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
@@ -193,12 +188,14 @@ const handleWinningBet = async (userId) => {
     maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
     cashOrCredit: "Bet",
     cash: lastMaxWithdraw ? lastMaxWithdraw.cash + remainingAmount : remainingAmount,
-    marketId: bet.marketId,
+    betId: payload.transaction_id,
+    sportsId: "6",
+    marketId: payload.game_id
   });
   console.log('usercash',typeof cash);
   await cash.save();
 
-  const parentUserIds = await getParents(userId);
+  const parentUserIds = await getParents(userToUpdate.userId);
   const parentUser    = await User.find({
     userId: {
       $in: [...parentUserIds],
@@ -207,7 +204,8 @@ const handleWinningBet = async (userId) => {
   }).sort({ role: -1 });
 
   if (!parentUser) {
-    return res.status(404).send({ message: "user not found" });
+    console.log(" ============ Parent Users Not Found ============ ");
+    return res.status(404).send({ message: "parent user not found" });
   }
   let prev = 0;
   for (const user of parentUser) {
@@ -218,46 +216,39 @@ const handleWinningBet = async (userId) => {
   let commissionFrom = userToUpdate.userId;
 
   for (const user of parentUser) {
-    user.exposure += (user.commission / 100) * totalRemainingAmount;
+    // user.exposure += (user.commission / 100) * amount;
     user.balance  -= (user.commission / 100) * remainingAmount;
     user.clientPL += user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * remainingAmount : 0;
    await user.save();
+
     let lastMaxWithdraw = await Cash.findOne({
       userId: user.userId,
     }).sort({
       _id: -1,
     });
-    console.log('lastMaxWithdraw2', lastMaxWithdraw);
+
+    console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
     let betTransaction = await new Cash({
       userId: user.userId,
       description: bet.name,
       createdBy: 0,
-      amount: -(user.commission / 100) * totalRemainingAmount,
-      balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-      availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-      maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+      amount: -(user.commission / 100) * amount,
+      balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
+      availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
+      maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * amount : -(user.commission / 100) * amount,
       cashOrCredit: "Bet",
       betId: bet._id,
-      cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-      marketId: bet.marketId,
+      cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * amount : -(user.commission / 100) * amount,
+      betId: payload.transaction_id,
+      sportsId: "6",
+      marketId: payload.game_id,
+      upLineAmount: upMovingCommAmount
     });
-    console.log('(lastMaxWithdraw.balance)', lastMaxWithdraw.balance )
-    console.log('(lastMaxWithdraw.avaialebalance)', lastMaxWithdraw.availableBalance )
-    console.log('(lastMaxWithdraw.balance)',typeof lastMaxWithdraw.balance )
-    console.log('(lastMaxWithdraw.availablebalance)',typeof lastMaxWithdraw.availableBalance )
-    console.log('user.commission:', user.commission);
-    console.log('Type of user.commission:', typeof user.commission);
-    console.log('(user.commission / 100):',(user.commission / 100));
-
-    console.log('Type of (user.commission / 100):', typeof (user.commission / 100));
-    console.log('(user.commission / 100) * totalRemainingAmount',(user.commission / 100) * totalRemainingAmount)
-    console.log('(typpe user.commission / 100) * totalRemainingAmount',typeof (user.commission / 100) * totalRemainingAmount)
-    
     await betTransaction.save();
    
     let commissionTransaction = await new Cash({
       userId: user.userId,
-      description: bet.name,
+      description: "",
       createdBy: 0,
       commissionFrom: commissionFrom,
       amount: (user.commission / 100) * commissionAmount,
@@ -267,19 +258,15 @@ const handleWinningBet = async (userId) => {
       cashOrCredit: "Commission",
       betId: bet._id,
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-      marketId: bet.marketId,
+      betId: payload.transaction_id,
+      sportsId: "6",
+      marketId: payload.game_id,
+      upLineAmount: upMovingCommAmount
     });
-    // console.log('commissionTransaction====', commissionTransaction);
     await commissionTransaction.save();
     commissionFrom = user.userId;
   };
-  await Bets.findByIdAndUpdate(bet._id, { status: 0 });
 }
-
-
-
-// const client = new MongoClient(config.DBHost);
-
 
 function createHashKey(salt, queryString) {
   const hash = crypto.createHash('sha1').update(salt + queryString).digest('hex');
@@ -330,7 +317,6 @@ async function balance(req, res) {
     return res.json({ status: 500, msg: `Internal error ${err}` });
   }
 }
-
 
 async function debit(req, res) {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
@@ -410,14 +396,13 @@ async function debit(req, res) {
         return res.json({ status: '500', msg: 'Negative balance not allowed!' });
       }
       let userResponse = await users.updateOne(
-        {_id: user?._id},{$set: { availableBalance: updatedBalance}},
+        {_id: user?._id},{ $set: { availableBalance: updatedBalance}},
         { session }
         );
       // console.log('========== res', userResponse)
+      await handlePlaceBet(payload)
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
-
-      // 
     }, transactionOptions);
 
     await session.commitTransaction();
