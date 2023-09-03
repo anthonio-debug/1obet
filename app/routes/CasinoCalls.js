@@ -470,15 +470,14 @@ async function debit(req, res) {
           console.log(" ============ User Not Found ============ ");
           return res.json({ status: '500', msg: `Internal Server Error` });
         }
+        let commissionFrom = user.userId;
         let prev = 0;
         parentUser.forEach((user) => {
           let current = user.downLineShare;
           user["commission"] = current - prev;
           prev = current;
         });
-      
-        let commissionFrom = userToUpdate.userId;
-      
+            
         parentUser.forEach(async (user) => {
           // user.exposure += (user.commission / 100) * remainingAmount;
           user.availableBalance += (user.commission / 100) * amount + (user.commission / 100) * amount;
