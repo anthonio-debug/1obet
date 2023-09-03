@@ -6,7 +6,9 @@ const Cash                = require("../../app/models/deposits");
 const crypto              = require('crypto');
 const config              = require('config')
 const { MongoClient }     = require('mongodb');
-const casinoMultiples     = config.casinoMultiples
+const casinoMultiples     = config.casinoMultiples;
+const { getParents } = require("../../app/routes/bets");
+
 const transactionOptions  = {
   readPreference: 'primary',
   readConcern: { level: 'local' },
