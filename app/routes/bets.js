@@ -1365,7 +1365,7 @@ const sessionCalc = async  (req, res) => {
 
       if(!config.matchTypes.includes(type)){
         console.log(" Returnning due to invalid  ========== ", type);
-        return `Type of Match is Not Applicable ${type}`
+        // return `Type of Match is Not Applicable ${type}`
       }
 
       const score           = await cricketLiveScore(Id);
@@ -1405,10 +1405,11 @@ const sessionCalc = async  (req, res) => {
                 score: currentScore
               } 
           });
-          return `Score Successfully Added to Session # ${sessionToResult} Event Id : ${Id}`;
+          console.log(`Score Successfully Added to Session # ${sessionToResult} Event Id : ${Id}`); 
         }
         else {
-            return `Session Not Applicable`;
+          console.log(`Session Not Applicable`);
+            // return ;
         } 
     }
   } catch (error) {
