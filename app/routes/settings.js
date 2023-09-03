@@ -1652,6 +1652,13 @@ async function setMatchShow(req, res) {
   if (req.query.status == false) {
     const currentEv = await Events.findOne({ Id: req.query.matchId });
     if (currentEv) {
+
+      if (currentEv.sportsId == '4' && currentEv.matchType == '') {
+        return res
+        .status(404)
+        .send({ message: 'You need to save correct match type before this action' });
+      }
+
       if (currentEv.inplay == true) {
         const event = await Events.findOneAndUpdate(
           { Id: req.query.matchId },

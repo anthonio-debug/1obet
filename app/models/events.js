@@ -42,7 +42,8 @@ const inPlayEventsSchema = new mongoose.Schema({
   betSettled : { type: Boolean, default: false },
   winner: { type: String, default: '0' },
   draw: {type: Boolean, default: false},
-  isCanceled: {type: Boolean, default: false}
+  isCanceled: {type: Boolean, default: false},
+  matchTypeProvider: { type: String, default: '' },
 });
 
 inPlayEventsSchema.plugin(Global.paginate);

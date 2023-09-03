@@ -178,7 +178,7 @@ function apiRequests() {
                 status: event.status,
                 isPremium: event.isPremium,
                 type: event.type,
-                matchType: getMatchType(event.competitionName, event.name, sportsId)
+                matchTypeProvider: getMatchType(event.competitionName, event.name, sportsId),
               },
             },
             {
