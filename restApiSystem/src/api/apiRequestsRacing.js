@@ -76,7 +76,7 @@ function apiRequests() {
       }
 
     } catch (error) {
-      
+      console.log(error);
     }
 
 
