@@ -389,6 +389,8 @@ async function debit(req, res) {
         });
       }
       let debitAmount =  parseInt(payload.amount);
+      const amount = debitAmount *casinoMultiples;
+      let   upMovingAmount  = amount;
 
       if (debitAmount > user.availableBalance * casinoMultiples) {
         await session.abortTransaction();
@@ -402,9 +404,9 @@ async function debit(req, res) {
         return res.json({ status: '500', msg: 'Negative bet not allowed!' });
       }
 
-      updatedavailableBalance = user.availableBalance - (debitAmount * casinoMultiples);
-      updatedclientPL         = user.clientPL         - (debitAmount * casinoMultiples);
-      updatedbalance          = user.balance          - (debitAmount * casinoMultiples);
+      updatedavailableBalance = user.availableBalance - (amount);
+      updatedclientPL         = user.clientPL         - (amount);
+      updatedbalance          = user.balance          - (amount);
 
       if (updatedavailableBalance < 0) {
         await session.abortTransaction();
@@ -420,10 +422,8 @@ async function debit(req, res) {
         );
         //  ==========================================
         console.log(" ============ Handle Place Bet 123 ============ ");
-        const amount          = payload.amount * casinoMultiples;
         let lastMaxWithdraw = await Cash.findOne(
           {userId: user.userId},
-          // { session }
         ).sort({
           _id: -1,
         });
@@ -483,8 +483,6 @@ async function debit(req, res) {
         }
         console.log(" ================= Commission Setting Done ================= ");
         for (const user of parentUser) {
-        // parentUser.forEach(async (user) => {
-          // user.exposure += (user.commission / 100) * remainingAmount;
           let availableBalance = user.availableBalance + (user.commission / 100) * amount;
           let balance = user.balance  + (user.commission / 100) * amount;
           let clientPL = user.clientPL - user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * amount: 0;
@@ -520,10 +518,9 @@ async function debit(req, res) {
             marketId: payload.game_id,
             upLineAmount: upMovingAmount
           }
-          // cash.save(cash);
           allTrans.push(cash)
           commissionFrom = user.userId;
-        // });
+          upMovingAmount      = upMovingAmount - (user.commission / 100) * amount;
         }
 
         await Cash.insertMany(allTrans)
