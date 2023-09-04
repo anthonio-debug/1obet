@@ -440,9 +440,10 @@ function apiRequests() {
                 }
 
               }
-              io.emit('racing_status', { status: odds.state.status });
+              io.emit('racing_status', { status: odds.state.statu, marketId: odds.marketId });
 
-         
+              io.to('$' + array[ix].marketId).emit('odds', odds);
+
 
             } else {
               const ix = _.findIndex(array, function (o) { return o.marketId == odds.marketId; });
@@ -462,7 +463,7 @@ function apiRequests() {
         for (let index = 0; index < filteredArray.length; index++) {
           await Event.findOneAndUpdate({ Id: filteredArray[index].eventId }, { status: 'CLOSED' });
           console.log(filteredArray[index].eventId, 'CLOSED 1');
-          io.emit('racing_status', { status: 'CLOSED', marketID: filteredArray[index].marketId });
+          io.emit('racing_status', { status: 'CLOSED', marketId: filteredArray[index].marketId });
         }
 
       } else {

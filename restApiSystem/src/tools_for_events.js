@@ -24,7 +24,7 @@ function ToolForEvent() {
         fetchEvents();
         setInterval(fetchEvents, 2 * 60 * 1000);
         setInterval(fetchMarkets, 10 * 1000);
-        setInterval(apiRequests.takeScores, 1 * 1000);
+        setInterval(apiRequests.takeScores, 5 * 1000);
 
         setInterval(() => {
             for (const sportsId of sportsIds) {
