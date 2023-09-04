@@ -440,7 +440,7 @@ function apiRequests() {
                 }
 
               }
-              io.emit('racing_status', { status: odds.state.statu, marketId: odds.marketId });
+              io.emit('racing_status', { status: odds.state.status, marketId: odds.marketId });
 
               io.to('$' + array[ix].marketId).emit('odds', odds);
 
