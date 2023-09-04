@@ -621,11 +621,10 @@ async function credit(req, res) {
       const amount                = payload.amount * casinoMultiples;
 
       // console.log('========== res', userResponse)
-      if (payload.amount || true) {
+      if (payload.amount > 0) {
         // ============================================
 
-        const amount                = 1000
-        // payload.amount * 10;
+        const amount                = payload.amount * 10;
         const remainingAmount       = (amount / 100) * 98;
         const commissionAmount      = (amount / 100) * 2;
         let   upMovingAmount        = amount;
