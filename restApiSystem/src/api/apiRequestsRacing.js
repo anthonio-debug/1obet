@@ -59,7 +59,7 @@ function apiRequests() {
       const response = await axios.get('http://136.244.77.249:33333/results/?ids='+checking_array.join(','));
       const lastResults = response.data;
 
-      console.log('Last results',checking_array.join(','),lastResults);
+     // console.log('Last results',checking_array.join(','),lastResults);
 
       for (let index = 0; index < lastResults.length; index++) {
           const element = lastResults[index];
@@ -93,10 +93,6 @@ function apiRequests() {
   }
 
   function onConnet(socket) {
-    console.log('Socket connect');
-
-
-
     socket.on("get_id", async (id) => {
       const eventInfo = await Event.findOne({ Id: id + '' }, { _id: 1 });
 
