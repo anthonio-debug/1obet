@@ -418,7 +418,7 @@ async function debit(req, res) {
         { session }
         );
         //  ==========================================
-        console.log(" ============ Handle Place Bet ============ ");
+        console.log(" ============ Handle Place Bet 123 ============ ");
         const amount          = payload.amount * casinoMultiples;
         let lastMaxWithdraw = await Cash.findOne(
           {userId: user.userId},
@@ -442,9 +442,6 @@ async function debit(req, res) {
           marketId: payload.game_id
         }
         allTrans.push(cash)
-      
-        // const parentUserIds = await getParents(user.userId);
-        // const getParents = async (userId) => {
         const parentUserIds = [];
         let currentUserId = user.userId;
         while (currentUserId) {
