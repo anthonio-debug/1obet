@@ -1350,18 +1350,18 @@ async function cricketLiveScore(id) {
 
 const sessionCalc = async  (req, res) => {
   try {
-    console.log("===================== CALL START POINT =====================");
+    // console.log("===================== CALL START POINT =====================");
     const eventsIds = await Events.distinct("Id", { sportsId: "4", inplay: true, status: { $in:['OPEN', 'open'  ] }});
     console.log(" eventsIds ===================== ", eventsIds);
     
     for (let Id of eventsIds){
-      console.log(" ===================== ", Id);
+      console.log("Id ===================== ", Id);
       const event = await Events.findOne({ Id: Id }, { _id: 0, matchType: 1, sportsId: 1 });
       console.log(" event ===================== ", event);
       const type  = event.matchType;
-      console.log(" type ===================== ", type);
+      // console.log(" type ===================== ", type);
       if(config.matchTypes.includes(type)){
-        console.log(" Returnning due to invalid  ===================== ", type);
+        // console.log(" Returnning due to invalid  ===================== ", type);
         const score           = await cricketLiveScore(Id);
         console.log("score ===================== ", score);
         if(score != 0){
@@ -1371,12 +1371,12 @@ const sessionCalc = async  (req, res) => {
           let currentOver = score.overs;
           let ball        = currentOver.split('.')[1]
           let inning      = score.inning;  
-          console.log("ball   ===================== ", ball);
-          console.log("inning ===================== ", inning);
+          // console.log("ball   ===================== ", ball);
+          // console.log("inning ===================== ", inning);
 
           if(currentOver % sessionLength < 1  && ball == 1){
             // console.log(" conditional ball  ===================== ", ball)
-            console.log(" conditional over ===================== ", score.overs % sessionLength);
+            // console.log(" conditional over ===================== ", score.overs % sessionLength);
             let sessionAddition =  0 ;
             if(inning == 2){
               if(type == "TEST"){
@@ -1411,7 +1411,7 @@ const sessionCalc = async  (req, res) => {
         console.log("Invalid Match Type ");
       }
     }
-    console.log("===================== CALL END POINT =====================");
+    // console.log("===================== CALL END POINT =====================");
 
   } catch (error) {
       console.error('Error running odds cron job:', error);
