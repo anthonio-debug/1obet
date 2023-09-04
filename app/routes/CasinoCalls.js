@@ -618,28 +618,32 @@ async function credit(req, res) {
           balance: user.availableBalance / casinoMultiples
         });
       }
-      updatedavailableBalance = user.availableBalance + (amount);
-      updatedclientPL         = user.clientPL         + (amount);
-      updatedbalance          = user.balance          + (amount);
-      let userResponse = await users.updateOne(
-        {_id: user?._id},{ $set: { 
-          availableBalance: updatedavailableBalance,
-          clientPL: updatedclientPL,
-          balance: updatedbalance,
-        }},
-        { session }
-      );
+      const amount                = payload.amount * casinoMultiples;
 
       // console.log('========== res', userResponse)
       if (payload.amount || true) {
         // ============================================
-        console.log(" ============ handle Winning Bet ============ ");
+
         const amount                = 1000
         // payload.amount * 10;
         const remainingAmount       = (amount / 100) * 98;
         const commissionAmount      = (amount / 100) * 2;
         let   upMovingAmount        = amount;
         let   upMovingCommAmount    = commissionAmount;
+
+        console.log(" ============ handle Winning Bet ============ ");
+        updatedavailableBalance = user.availableBalance + (remainingAmount);
+        updatedclientPL         = user.clientPL         + (remainingAmount);
+        updatedbalance          = user.balance          + (remainingAmount);
+        let userResponse = await users.updateOne(
+          {_id: user?._id},{ $set: { 
+            availableBalance: updatedavailableBalance,
+            clientPL: updatedclientPL,
+            balance: updatedbalance,
+          }},
+          { session }
+        );
+
         const allTrans = []
       
         let lastMaxWithdraw = await Cash.findOne(
