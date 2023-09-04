@@ -331,8 +331,7 @@ async function debit(req, res) {
   const session = client.startSession();
   try {
     console.log(" debt req.query ============== ", req.query);
-    const casinoCalls = client.db('Bet99').collection('casinocalls');
-    const users = client.db('Bet99').collection('users');
+    
     // const Cash = client.db('Bet99').collection('deposits');
 
     const payload = req.query;
@@ -357,6 +356,8 @@ async function debit(req, res) {
 
 
     await session.withTransaction(async () => {
+      const casinoCalls = client.db('Bet99').collection('casinocalls');
+      const users = client.db('Bet99').collection('users');
 
       // console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
       const sameTransId = await casinoCalls.countDocuments(
@@ -462,9 +463,11 @@ async function debit(req, res) {
         console.log(" parentUser  ============ ", parentUserIds);
 
         const parentUser = await users
-        .find({ userId: { $in: parentUserIds }, isDeleted: false })
+        .find({ userId: { $in: parentUserIds }, isDeleted: false }, { session })
         .sort({ role: -1 })
-        .session(session)
+        .exec();
+        // .toArray(); 
+        // .session(session)
         // await users.find(
         //   { userId: { $in: parentUserIds}, isDeleted: false}, 
         //   {session}
