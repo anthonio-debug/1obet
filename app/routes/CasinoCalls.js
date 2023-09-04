@@ -498,11 +498,16 @@ async function debit(req, res) {
             { session }
           );
 
-          let lastMaxWithdraw = await Cash.findOne({
-            userId: user.userId,
-          }, {session}).sort({
+          let lastMaxWithdraw = await Cash.findOne(
+            {userId: user.userId},
+            // { session }
+          ).sort({
             _id: -1,
           });
+
+
+
+
 
         //   let cash = {
         //     userId: user.userId,
