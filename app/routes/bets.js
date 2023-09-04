@@ -669,79 +669,86 @@ async function getUserBets(req, res) {
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
+  try {
 
-  // to be remove for initial state 
-  // ================================
-  // console.log("==========", req.body.userId);
-  // const bets = await Bets.find({ userId: req.body.userId });
-  // return res.send({
-  //   success: true,
-  //   message: 'bets record found',
-  //   results: bets,
-  // });
+    // to be remove for initial state 
+    // ================================
+    // console.log("==========", req.body.userId);
+    // const bets = await Bets.find({ userId: req.body.userId });
+    // return res.send({
+    //   success: true,
+    //   message: 'bets record found',
+    //   results: bets,
+    // });
 
-  // =============================
+    // =============================
 
-  // Initialize variables with default values
-  let query = {};
-  let page = 1;
-  let sort = -1;
-  let sortValue = 'createdAt';
-  let limit = config.pageSize;
-  if (req.body.numRecords || !isNaN(req.body.numRecords) || req.body.numRecords > 0) {
-    limit = Number(req.body.numRecords);
-  }
-  if (req.body.sortValue)   sortValue = req.body.sortValue;
-  if (req.body.sort)        sort      = Number(req.body.sort);
-  if (req.body.page)        page      = Number(req.body.page);
-  if (req.body.startDate && req.body.endDate) {
-    const startTimestamp = new Date(req.body.startDate).getTime();
-    const endTimestamp = new Date(req.body.endDate).getTime();
-    query.createdAt = {
-      $gte: startTimestamp,
-      $lte: endTimestamp,
-    };
-  }
-
-  if (req.decoded.role != '5') query.userId = req.body.userId;
-  else if (req.decoded.role == '5') query.userId = req.decoded.userId;
-
-  if (req.body.status) query.status = req.body.status;
-  if (req.body.sportsId) query.sportsId = req.body.sportsId;
-  if(req.body.searchValue) query.event = { $regex: req.query.searchValue, $options: 'i' };
-
-  // if (req.body.searchValue) {
-  //   const searchRegex = new RegExp(req.body.searchValue, 'i');
-  //   query.$or = [
-  //     { name: { $regex: searchRegex } },
-  //     {
-  //       $expr: {
-  //         $regexMatch: { input: { $toString: '$betRate' }, regex: searchRegex },
-  //       },
-  //     },
-  //     {
-  //       $expr: {
-  //         $regexMatch: {
-  //           input: { $toString: '$betAmount' },
-  //           regex: searchRegex,
-  //         },
-  //       },
-  //     },
-  //   ];
-  // }
-
-  Bets.paginate(
-    query,
-    { page: page, sort: { [sortValue]: sort }, limit: limit },
-    (err, results) => {
-      if (err) return res.status(404).send({ message: `Something went wrong  ${err} ` });
-      return res.send({
-        success: true,
-        message: 'bets list',
-        results: results,
-      });
+    // Initialize variables with default values
+    let query = {};
+    let page = 1;
+    let sort = -1;
+    let sortValue = 'createdAt';
+    let limit = config.pageSize;
+    if (req.body.numRecords || isNaN(req.body.numRecords) || req.body.numRecords > 0) {
+      limit = Number(req.body.numRecords);
     }
-  );
+    if (req.body.sortValue)   sortValue = req.body.sortValue;
+    if (req.body.sort)        sort      = Number(req.body.sort);
+    if (req.body.page)        page      = Number(req.body.page);
+    if (req.body.startDate && req.body.endDate) {
+      const startTimestamp = new Date(req.body.startDate).getTime();
+      const endTimestamp = new Date(req.body.endDate).getTime();
+      query.createdAt = {
+        $gte: startTimestamp,
+        $lte: endTimestamp,
+      };
+    }
+
+    if (req.decoded.role != '5') query.userId = req.body.userId;
+    else if (req.decoded.role == '5') query.userId = req.decoded.userId;
+
+    if (req.body.status) query.status = req.body.status;
+    if (req.body.sportsId) query.sportsId = req.body.sportsId;
+    if(req.body.searchValue) query.event = { $regex: req.body.searchValue, $options: 'i' };
+
+    // if (req.body.searchValue) {
+    //   const searchRegex = new RegExp(req.body.searchValue, 'i');
+    //   query.$or = [
+    //     { name: { $regex: searchRegex } },
+    //     {
+    //       $expr: {
+    //         $regexMatch: { input: { $toString: '$betRate' }, regex: searchRegex },
+    //       },
+    //     },
+    //     {
+    //       $expr: {
+    //         $regexMatch: {
+    //           input: { $toString: '$betAmount' },
+    //           regex: searchRegex,
+    //         },
+    //       },
+    //     },
+    //   ];
+    // }
+
+    Bets.paginate(
+      query,
+      { page: page, sort: { [sortValue]: sort }, limit: limit },
+      (err, results) => {
+        if (err) return res.status(404).send({ message: `Something went wrong  ${err} ` });
+        return res.send({
+          success: true,
+          message: 'bets list',
+          results: results,
+        });
+      }
+    );
+  } catch (error) {
+    return res.send({
+      success: false,
+      message: 'Something goes wrong catched'
+    }); 
+  }
 }
 
 function betFunds(req, res) {
