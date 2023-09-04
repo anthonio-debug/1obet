@@ -721,7 +721,7 @@ async function credit(req, res) {
           console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
           let betTransaction = {
             userId: user.userId,
-            description: bet.name,
+            description: "",
             createdBy: 0,
             amount: -(user.commission / 100) * amount,
             balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
