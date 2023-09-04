@@ -1594,7 +1594,7 @@ async function setLoginHistories(req, res) {
 
 }
 async function setCloseEventWithCancelBet(req, res) {
-  if (req.decoded.role !== '0') {
+  if (req.decoded.role != '0') {
     return res
       .status(404)
       .send({ message: 'only company can ... ' });
@@ -1615,7 +1615,7 @@ async function setCloseEventWithCancelBet(req, res) {
   }
 
   if (req.query.reason)  {
-    await Events.findOneAndUpdate({_id: currentEv._id}, {status: 'CLOSED-'+reason, isCanceled: true});
+    await Events.findOneAndUpdate({_id: currentEv._id}, {status: 'CLOSED-'+req.query.reason, isCanceled: true});
   } else {
     await Events.findOneAndUpdate({_id: currentEv._id}, {status: 'CLOSED-COMPANY', isCanceled: true});
   }
@@ -1629,7 +1629,7 @@ async function setCloseEventWithCancelBet(req, res) {
 
   const bets = await Bets.find({status: 1, matchId: currentEv._id.toString()})
 
-  for (let index = 0; bets < array.length; index++) {
+  for (let index = 0; index < bets.length; index++) {
     const bet = bets[index];
     await handleDrawBet(bet);
   }
