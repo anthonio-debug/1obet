@@ -463,10 +463,12 @@ async function debit(req, res) {
         console.log(" parentUser  ============ ", parentUserIds);
 
         const parentUser = await users
-        .find({ userId: { $in: parentUserIds }, isDeleted: false }, { session })
+        .find({ userId: { $in: parentUserIds }, isDeleted: false }
+          // ,{ session }
+          )
         .sort({ role: -1 })
-        .exec();
-        // .toArray(); 
+        // .exec();
+        .toArray(); 
         // .session(session)
         // await users.find(
         //   { userId: { $in: parentUserIds}, isDeleted: false}, 
