@@ -470,13 +470,16 @@ async function debit(req, res) {
         }
         let commissionFrom = user.userId;
         let prev = 0;
-        parentUser.forEach((user) => {
+        for (const user of parentUser) {
+        // parentUser.forEach((user) => {
           let current = user.downLineShare;
           user["commission"] = current - prev;
           prev = current;
-        });
+        // });
+        }
         console.log(" ================= Commission Setting Done ================= ");
-        parentUser.forEach(async (user) => {
+        for (const user of parentUser) {
+        // parentUser.forEach(async (user) => {
           // user.exposure += (user.commission / 100) * remainingAmount;
           user.availableBalance += (user.commission / 100) * amount + (user.commission / 100) * amount;
           user.balance  += (user.commission / 100) * amount;
@@ -507,7 +510,8 @@ async function debit(req, res) {
           // cash.save(cash);
           allTrans.push()
           commissionFrom = user.userId;
-        });
+        // });
+        }
 
         await Cash.insertMany(allTrans)
 
