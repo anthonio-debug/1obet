@@ -768,7 +768,7 @@ async function credit(req, res) {
     await session.commitTransaction();
     return res.json({
       status: 200,
-      balance: updatedBalance / casinoMultiples,
+      balance: updatedavailableBalance / casinoMultiples,
     });
 
   } catch (err) {
