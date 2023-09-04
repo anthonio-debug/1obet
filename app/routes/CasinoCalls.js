@@ -426,6 +426,9 @@ async function debit(req, res) {
         ).sort({
           _id: -1,
         });
+
+        console.log(" lastMaxWithdraw ============== ", lastMaxWithdraw);
+
         const allTrans = [];
       
         let cash = {
@@ -451,11 +454,13 @@ async function debit(req, res) {
           );
           if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
             console.log("break User area ");
-            break;
+            // break;
+            continue;
           }
           parentUserIds.push(parentUser.createdBy);
           currentUserId = parentUser.createdBy;
         }
+        console.log(" parentUser  ============ ", parentUserIds);
 
         const parentUser = await User.find(
           { userId: { $in: parentUserIds}, isDeleted: false}, 
