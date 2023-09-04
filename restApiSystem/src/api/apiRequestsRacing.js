@@ -44,6 +44,11 @@ function apiRequests() {
 
     if (resultCheckerArray.length == 0)
       return;
+
+
+    resultCheckerArray = resultCheckerArray.sort((a, b) => a.lastCheck - b.lastCheck);
+
+
     var checking_array = [];
     var totalIndex = resultCheckerArray.length
     if (resultCheckerArray.length>20) {
@@ -51,6 +56,7 @@ function apiRequests() {
     }
 
     for (let index = 0; index < totalIndex; index++) {
+      resultCheckerArray[index].lastCheck = new Date().getTime();
       checking_array.push(resultCheckerArray[index].marketId);
     }
 
@@ -439,7 +445,7 @@ function apiRequests() {
 
                 const i2 = _.findIndex(resultCheckerArray, function (o) { return o.marketId == odds.marketId; });
                 if (i2 === -1 ) {
-                  resultCheckerArray.push({marketId: odds.marketId,  Id: array[ix].eventId });
+                  resultCheckerArray.push({marketId: odds.marketId,  Id: array[ix].eventId, lastCheck: 0 });
                 }
 
               }
