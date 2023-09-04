@@ -54,15 +54,13 @@ function apiRequests() {
       const response = await axios.get('http://136.244.77.249:33333/results/?ids='+checking_array.join(','));
       const lastResults = response.data;
 
-      console.log(lastResults);
+      console.log('Last results',checking_array.join(','),lastResults);
 
-      for (const key in lastResults) {
-        if (Object.hasOwnProperty.call(lastResults, key)) {
-          const element = lastResults[key];
-          
+      for (let index = 0; index < lastResults.length; index++) {
+          const element = lastResults[index];
           if (element.winnerSelectionId) {
             const ix = _.findIndex(resultCheckerArray, function (o) { return o.marketId == element.marketId; });
-            if (ix != -1) {
+            if (ix !== -1) {
               const item = {
                 eventId: resultCheckerArray[ix].Id,
                 data: winnerSelectionId
@@ -70,9 +68,11 @@ function apiRequests() {
               await Score.findOneAndUpdate({ eventId: resultCheckerArray[ix].Id }, item, options);
               io.to('$' + resultCheckerArray[ix].marketId).emit('winnerForRacing', winnerSelectionId);
               resultCheckerArray.splice(ix,1);
+            } else {
+              console.log(resultCheckerArray, element.marketId);
             }
           }
-        }
+        
       }
 
     } catch (error) {
