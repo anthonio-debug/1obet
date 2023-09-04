@@ -540,6 +540,8 @@ async function debit(req, res) {
 
         await Cash.insertMany(allTrans)
 
+        console.log("allTrans created Successfully");
+
       // =============================== 
       
       // await handlePlaceBet(payload)
