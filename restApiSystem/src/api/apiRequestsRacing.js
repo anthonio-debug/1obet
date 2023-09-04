@@ -67,6 +67,7 @@ function apiRequests() {
               }
               await Score.findOneAndUpdate({ eventId: resultCheckerArray[ix].Id }, item, options);
               io.to('$' + resultCheckerArray[ix].marketId).emit('winnerForRacing', winnerSelectionId);
+              resultCheckerArray.splice(ix,1);
             }
           }
         }
