@@ -118,6 +118,7 @@ const placeBet = async (req, res) => {
     let isFancyOrBookMaker = false;
     let _3rdPartyMarketId = 0
     let TargetScore = 0;
+    let fancyData = null;
 
     if (betAmount < config.betMinimumAmount) {
       return res.status(404).send({ message: `minimum bet should be ${config.betMinimumAmount}` });
@@ -204,9 +205,8 @@ const placeBet = async (req, res) => {
       }
       console.log('data from  API', oddsData);
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
-      testRunner = runnerFromAPI
-
       const DBOddDetails = await Odds.findById(oddsId);
+      runnerName = runnerFromAPI.runnerName
       if (!DBOddDetails) {
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
@@ -280,7 +280,7 @@ const placeBet = async (req, res) => {
         return runner.selectionId == selectionId
       });
       // 
-      testRunner = runnerFromAPI
+      runnerName = runnerFromAPI.runnerName
       console.log('match odds runners ====== ', runnerFromAPI);
 
       if (type == 0) {
@@ -361,6 +361,7 @@ const placeBet = async (req, res) => {
           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
+        fancyData  = dbSelectedOdds.nat
         runnerName = dbSelectedOdds.nat; // Get the runner name from the 'nat' field
 
         if (req.body.type == 0) {
@@ -373,11 +374,10 @@ const placeBet = async (req, res) => {
 
           const DbBackScores2 = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
           const DbBackScores = DbBackScores2.map(item => Number(item))
-
           console.log(" DbBackOdds ============ ", DbBackOdds);
-
           const index = DbBackOdds.indexOf(betRate)
           TargetScore = DbBackScores[index]
+
 
           if (index == -1) {
             console.log(`index ================== ${index}`);
@@ -454,7 +454,8 @@ const placeBet = async (req, res) => {
           console.log(`Odds not available for the selected team ${req.body.selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
-        runnerName = null;
+        fancyData = null;
+        runnerName = dbSelectedOdds.nat; 
         if (req.body.type == 0) {
           const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
           const apiBackOdds = apiBackOdds2.map(item => Number(item));
@@ -579,28 +580,49 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: `Error Placing bet (Inappropriate Request)` });
     }
 
-    if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+
+
+    // selectionId
+    // Figure 0----9 as 
+    // CHOTA   0
+    // BARA   1
+    // KALI    0
+    // JOTTA   1
+
+    // type
+    // Figure 2
+    // KALI JOTTA 3
+    // CHOTA BARA 4
+
+
+    if (type == 4)  {
       winningAmount = betAmount;
       loosingAmount = betAmount;
+      selectionId == 0? runnerName = `CHOTA` : runnerName = `BARA`;
+    }
+    else if (type == 3)  {
+      winningAmount = betAmount;
+      loosingAmount = betAmount;
+      selectionId == 0? runnerName = `KALI` : runnerName = `JOTTA`;
     }
     else if (type == 2) {
       winningAmount = (betAmount * betRate) - betAmount;
       loosingAmount = betAmount;
+      runnerName    = `Figure(${selectionId})`
     }
-
+    else if (type == 1) {
+      winningAmount = betAmount;
+      loosingAmount = (betAmount * betRate) - betAmount;
+    }
     else if (type == 0) {
       winningAmount = (betAmount * betRate) - betAmount;
       loosingAmount = betAmount;
     }
 
-    else if (type == 1) {
-      winningAmount = betAmount;
-      loosingAmount = (betAmount * betRate) - betAmount;
-    }
-
     const bet = new Bets({
       marketId: _3rdPartyMarketId,
       sportsId: marketId,
+      runnerName:runnerName,
       userId,
       betAmount,
       betRate: betRate,
@@ -614,7 +636,7 @@ const placeBet = async (req, res) => {
       type: type,
       event: eventDetail.name,
       isfancyOrbookmaker: isFancyOrBookMaker,
-      fancyData: runnerName ? runnerName : null,
+      fancyData: fancyData,
       createdAt: new Date().getTime(),
     });
 
@@ -670,19 +692,6 @@ async function getUserBets(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
-
-    // to be remove for initial state 
-    // ================================
-    // console.log("==========", req.body.userId);
-    // const bets = await Bets.find({ userId: req.body.userId });
-    // return res.send({
-    //   success: true,
-    //   message: 'bets record found',
-    //   results: bets,
-    // });
-
-    // =============================
-
     // Initialize variables with default values
     let query = {};
     let page = 1;
