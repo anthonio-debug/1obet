@@ -760,6 +760,7 @@ async function credit(req, res) {
         await Cash.insertMany(allTrans)
         // =================================
       }
+      console.log("All Transection Successfull ");
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
 
