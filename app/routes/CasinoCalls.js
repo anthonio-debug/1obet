@@ -538,6 +538,8 @@ async function debit(req, res) {
           commissionFrom = user.userId;
         });
 
+        await Cash.insertMany(allTrans)
+
       // =============================== 
       
       // await handlePlaceBet(payload)
