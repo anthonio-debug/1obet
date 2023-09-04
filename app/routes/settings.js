@@ -1634,9 +1634,10 @@ async function setCloseEventWithCancelBet(req, res) {
     await handleDrawBet(bet);
   }
 
-  return res
-  .status(200)
-  .send({ message: 'Events closed ... ' });
+  return res.send({
+    success: true,
+    message: 'Event Successfully Closed'
+  });
 }
 
 
