@@ -672,13 +672,13 @@ async function getUserBets(req, res) {
 
   // to be remove for initial state 
   // ================================
-  console.log("==========", req.body.userId);
-  const bets = await Bets.find({ userId: req.body.userId });
-  return res.send({
-    success: true,
-    message: 'bets record found',
-    results: bets,
-  });
+  // console.log("==========", req.body.userId);
+  // const bets = await Bets.find({ userId: req.body.userId });
+  // return res.send({
+  //   success: true,
+  //   message: 'bets record found',
+  //   results: bets,
+  // });
 
   // =============================
 
@@ -687,24 +687,16 @@ async function getUserBets(req, res) {
   let page = 1;
   let sort = -1;
   let sortValue = 'createdAt';
-  var limit = config.pageSize;
-  if (req.body.numRecords) {
-    if (isNaN(req.body.numRecords))
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-    if (req.body.numRecords < 0)
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-    if (req.body.numRecords > 100)
-      return res.status(404).send({
-        message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100',
-      });
+  let limit = config.pageSize;
+  if (req.body.numRecords || !isNaN(req.body.numRecords) || req.body.numRecords > 0) {
     limit = Number(req.body.numRecords);
   }
-  if (req.body.sortValue) sortValue = req.body.sortValue;
-  if (req.body.sort) sort = Number(req.body.sort);
-  if (req.body.page) page = Number(req.body.page);
+  if (req.body.sortValue)   sortValue = req.body.sortValue;
+  if (req.body.sort)        sort      = Number(req.body.sort);
+  if (req.body.page)        page      = Number(req.body.page);
   if (req.body.startDate && req.body.endDate) {
-    const startTimestamp = new Date(req.body.startDate).getTime() / 1000;
-    const endTimestamp = new Date(req.body.endDate).getTime() / 1000;
+    const startTimestamp = new Date(req.body.startDate).getTime();
+    const endTimestamp = new Date(req.body.endDate).getTime();
     query.createdAt = {
       $gte: startTimestamp,
       $lte: endTimestamp,
@@ -715,7 +707,9 @@ async function getUserBets(req, res) {
   else if (req.decoded.role == '5') query.userId = req.decoded.userId;
 
   if (req.body.status) query.status = req.body.status;
-  if (req.body.marketId) query.marketId = req.body.marketId;
+  if (req.body.sportsId) query.sportsId = req.body.sportsId;
+  if(req.body.searchValue) query.event = { $regex: req.query.searchValue, $options: 'i' };
+
   // if (req.body.searchValue) {
   //   const searchRegex = new RegExp(req.body.searchValue, 'i');
   //   query.$or = [
@@ -736,24 +730,18 @@ async function getUserBets(req, res) {
   //   ];
   // }
 
-  User.findOne({ userId: req.decoded.userId }, (err, user) => {
-    if (err || !user) {
-      return res.status(404).send({ message: 'User not found' });
+  Bets.paginate(
+    query,
+    { page: page, sort: { [sortValue]: sort }, limit: limit },
+    (err, results) => {
+      if (err) return res.status(404).send({ message: 'Something went wrong' });
+      return res.send({
+        success: true,
+        message: 'bets list',
+        results: results,
+      });
     }
-    Bets.paginate(
-      query,
-      { page: page, sort: { [sortValue]: sort }, limit: limit },
-      (err, result) => {
-        if (err || !result)
-          return res.status(404).send({ message: 'bets not found' });
-        return res.send({
-          success: true,
-          message: 'bets record found',
-          results: result,
-        });
-      }
-    );
-  });
+  );
 }
 
 function betFunds(req, res) {
