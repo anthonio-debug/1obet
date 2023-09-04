@@ -54,6 +54,8 @@ function apiRequests() {
       const response = await axios.get('http://136.244.77.249:33333/results/?ids='+checking_array.join(','));
       const lastResults = response.data;
 
+      console.log(lastResults);
+
       for (const key in lastResults) {
         if (Object.hasOwnProperty.call(lastResults, key)) {
           const element = lastResults[key];
