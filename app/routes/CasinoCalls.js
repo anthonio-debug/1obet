@@ -500,35 +500,30 @@ async function debit(req, res) {
 
           let lastMaxWithdraw = await Cash.findOne(
             {userId: user.userId},
-            // { session }
           ).sort({
             _id: -1,
           });
 
-
-
-
-
-        //   let cash = {
-        //     userId: user.userId,
-        //     description: "",
-        //     createdBy: 0,
-        //     amount: (user.commission / 100) * amount,
-        //     balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * amount : (user.commission / 100) * amount,
-        //     availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * amount : (user.commission / 100) * amount,
-        //     maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * amount : (user.commission / 100) * amount,
-        //     commissionFrom: commissionFrom,
-        //     cashOrCredit: "loosing",
-        //     cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * amount : (user.commission / 100) * amount,
-        //     betId: payload.transaction_id,
-        //     sportsId: "6",
-        //     marketId: payload.game_id,
-        //     upLineAmount: upMovingAmount
-        //   }
-        //   // cash.save(cash);
-        //   allTrans.push(cash)
-        //   commissionFrom = user.userId;
-        // // });
+          let cash = {
+            userId: user.userId,
+            description: "",
+            createdBy: 0,
+            amount: (user.commission / 100) * amount,
+            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * amount : (user.commission / 100) * amount,
+            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * amount : (user.commission / 100) * amount,
+            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * amount : (user.commission / 100) * amount,
+            commissionFrom: commissionFrom,
+            cashOrCredit: "loosing",
+            cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * amount : (user.commission / 100) * amount,
+            betId: payload.transaction_id,
+            sportsId: "6",
+            marketId: payload.game_id,
+            upLineAmount: upMovingAmount
+          }
+          // cash.save(cash);
+          allTrans.push(cash)
+          commissionFrom = user.userId;
+        // });
         }
 
         await Cash.insertMany(allTrans)
