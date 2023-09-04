@@ -734,7 +734,7 @@ async function getUserBets(req, res) {
     query,
     { page: page, sort: { [sortValue]: sort }, limit: limit },
     (err, results) => {
-      if (err) return res.status(404).send({ message: 'Something went wrong' });
+      if (err) return res.status(404).send({ message: `Something went wrong  ${err} ` });
       return res.send({
         success: true,
         message: 'bets list',
