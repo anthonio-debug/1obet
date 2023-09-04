@@ -37,6 +37,11 @@ function apiRequests() {
   async function checkResults () {
 
 
+    const options = {
+      upsert: true,
+      new: true,
+    };
+
     if (resultCheckerArray.length == 0)
       return;
     var checking_array = [];
