@@ -1363,7 +1363,7 @@ const sessionCalc = async  (req, res) => {
         const score           = await cricketLiveScore(Id);
         console.log("score ===================== ", score);
         if(score != 0){
-          const currentScore    = Number(score.score)
+          let currentScore    = Number(score.score)
           const sessionLength   = type == "TEST" ? 10 : 5;
           config.balls.includes(score.balls[5]) ? currentScore = currentScore - Number(score.balls[5]) : ''
           let currentOver = score.overs;
