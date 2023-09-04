@@ -417,24 +417,9 @@ async function debit(req, res) {
         }},
         { session }
         );
-      // console.log('========== res', userResponse)
-      const casinoDebits = new CasinoDebits(payload);
-      await casinoDebits.save();
         //  ==========================================
-
         console.log(" ============ Handle Place Bet ============ ");
-        // const userToUpdate  = await users.findOne({ remoteId: payload.remote_id, isDeleted: false,});
-        // if (!userToUpdate) {
-        //   console.log(" ============ User Not Found ============ ");
-        //   return res.status(404).send({ message: "user not found" });
-        // }
         const amount          = payload.amount * casinoMultiples;
-        let   upMovingAmount  = amount
-        // userToUpdate.balance          -= amount;
-        // userToUpdate.clientPL         -= amount;
-        // userToUpdate.availableBalance -= amount;
-        // await userToUpdate.save();
-      
         let lastMaxWithdraw = await Cash.findOne(
           {userId: user.userId},
           // { session }
@@ -456,45 +441,34 @@ async function debit(req, res) {
           sportsId: "6",
           marketId: payload.game_id
         }
-        // await cash.save();
         allTrans.push(cash)
       
         // const parentUserIds = await getParents(user.userId);
         // const getParents = async (userId) => {
         const parentUserIds = [];
         let currentUserId = user.userId;
-        console.log('currentUserId', currentUserId);
-      
         while (currentUserId) {
           const parentUser = await users.findOne(
             { userId: currentUserId },
             {session}
           );
-          
           if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
+            console.log("break User area ");
             break;
           }
           parentUserIds.push(parentUser.createdBy);
           currentUserId = parentUser.createdBy;
         }
-        console.log(" parentUserIds ==================== ", parentUserIds);
 
-        //   return parentUserIds;
-        // }
-      
-        const parentUser = await users.find({
-          userId: {
-            $in: [...parentUserIds],
-          },
-          isDeleted: false,
-        }, {session}).sort({ role: -1 });
-      
+        const parentUser = await User.find(
+          { userId: { $in: parentUserIds}, isDeleted: false}, 
+          {session}
+        ).sort({ role: -1 });
 
         console.log(" parentUser  ============ ", parentUser);
 
-
         if (!parentUser) {
-          console.log(" ============ User Not Found ============ ");
+          console.log(" ============ Parent User Not Found ============ ");
           return res.json({ status: '500', msg: `Internal Server Error` });
         }
         let commissionFrom = user.userId;
@@ -504,7 +478,7 @@ async function debit(req, res) {
           user["commission"] = current - prev;
           prev = current;
         });
-            
+        console.log(" ================= Commission Setting Done ================= ");
         parentUser.forEach(async (user) => {
           // user.exposure += (user.commission / 100) * remainingAmount;
           user.availableBalance += (user.commission / 100) * amount + (user.commission / 100) * amount;
