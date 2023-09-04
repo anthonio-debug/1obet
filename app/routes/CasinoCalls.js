@@ -462,18 +462,9 @@ async function debit(req, res) {
         }
         console.log(" parentUser  ============ ", parentUserIds);
 
-        const parentUser = await users
-        .find({ userId: { $in: parentUserIds }, isDeleted: false }
-          // ,{ session }
-          )
-        .sort({ role: -1 })
-        // .exec();
-        .toArray(); 
-        // .session(session)
-        // await users.find(
-        //   { userId: { $in: parentUserIds}, isDeleted: false}, 
-        //   {session}
-        // ).sort({ role: -1 });
+        const parentUser = await users.find(
+          { userId: { $in: parentUserIds }, isDeleted: false }
+        ).sort({ role: -1 }).toArray(); 
 
         console.log(" parentUser  ============ ", parentUser);
 
@@ -494,10 +485,19 @@ async function debit(req, res) {
         for (const user of parentUser) {
         // parentUser.forEach(async (user) => {
           // user.exposure += (user.commission / 100) * remainingAmount;
-          user.availableBalance += (user.commission / 100) * amount + (user.commission / 100) * amount;
-          user.balance  += (user.commission / 100) * amount;
-          user.clientPL -= user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * amount: 0;
-          user.save();
+          let availableBalance = user.availableBalance + (user.commission / 100) * amount;
+          let balance = user.balance  + (user.commission / 100) * amount;
+          let clientPL = user.clientPL - user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * amount: 0;
+          
+          let userResponse = await users.updateOne(
+            {_id: user?._id},{ $set: { 
+              availableBalance: availableBalance,
+              clientPL: clientPL,
+              balance: balance,
+            }},
+            { session }
+          );
+          
           let lastMaxWithdraw = await Cash.findOne({
             userId: user.userId,
           }, {session}).sort({
