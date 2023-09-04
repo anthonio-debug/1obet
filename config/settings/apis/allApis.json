@@ -135,6 +135,7 @@
   "sportsBook",
   "sportsBookDirect",
   "getAllSportsBookGamesFromThirdParty",
+  "setCloseEventWithCancelBet",
   "sportGamesList",
   "setMatchShow",
   "postmanwork",
