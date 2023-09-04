@@ -280,7 +280,7 @@ const placeBet = async (req, res) => {
         return runner.selectionId == selectionId
       });
       // 
-      runnerName = runnerFromAPI.runnerName
+      runnerName = req.body.runnerName
       console.log('match odds runners ====== ', runnerFromAPI);
 
       if (type == 0) {
@@ -580,8 +580,6 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: `Error Placing bet (Inappropriate Request)` });
     }
 
-
-
     // selectionId
     // Figure 0----9 as 
     // CHOTA   0
@@ -593,7 +591,6 @@ const placeBet = async (req, res) => {
     // Figure 2
     // KALI JOTTA 3
     // CHOTA BARA 4
-
 
     if (type == 4)  {
       winningAmount = betAmount;
