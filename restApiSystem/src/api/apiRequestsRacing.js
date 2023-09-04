@@ -63,10 +63,10 @@ function apiRequests() {
             if (ix !== -1) {
               const item = {
                 eventId: resultCheckerArray[ix].Id,
-                data: winnerSelectionId
+                data: element.winnerSelectionId
               }
               await Score.findOneAndUpdate({ eventId: resultCheckerArray[ix].Id }, item, options);
-              io.to('$' + resultCheckerArray[ix].marketId).emit('winnerForRacing', winnerSelectionId);
+              io.to('$' + resultCheckerArray[ix].marketId).emit('winnerForRacing', element.winnerSelectionId);
               resultCheckerArray.splice(ix,1);
             } else {
               console.log(resultCheckerArray, element.marketId);
