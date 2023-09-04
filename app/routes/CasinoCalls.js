@@ -452,10 +452,9 @@ async function debit(req, res) {
             { userId: currentUserId },
             {session}
           );
-          if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
+          if (parentUser.role  == "0") {
             console.log("break User area ");
-            // break;
-            continue;
+            break;
           }
           parentUserIds.push(parentUser.createdBy);
           currentUserId = parentUser.createdBy;
