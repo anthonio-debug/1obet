@@ -111,18 +111,18 @@ function apiRequests() {
 
           for (let index = 0; index < scores.length; index++) {
             const score = scores[index];
-            io.to('#' + events[index]).emit('score', score);
+            io.to('#' + score.eventId).emit('score', score);
             const options = {
               upsert: true,
               new: true,
             };
 
             const item = {
-              eventId: events[index],
+              eventId: score.eventId,
               data: score
             }
 
-            await Score.findOneAndUpdate({ eventId: events[index] }, item, options);
+            await Score.findOneAndUpdate({ eventId: score.eventId }, item, options);
           }
 
         }

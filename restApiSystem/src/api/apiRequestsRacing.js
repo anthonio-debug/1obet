@@ -8,7 +8,12 @@ const Racing = require('../../../app/models/racing');
 const Event = require('../../../app/models/events');
 const raceMarkets = require('../../../app/models/raceMarkets');
 const RaceOdds = require('../../../app/models/raceOdds')
+const Score = require('../../../app/models/score');
+
 var _ = require('lodash');
+var resultCheckerArray = [];
+
+
 
 const horseRaceUrl = "http://136.244.77.249:33333";
 let io;
@@ -22,6 +27,61 @@ function apiRequests() {
     io = _io;
 
     io.on('connection', onConnet);
+    setInterval(() => {
+      checkResults();
+    }, 10000);
+
+  }
+
+
+  async function checkResults () {
+
+
+    if (resultCheckerArray.length == 0)
+      return;
+    var checking_array = [];
+    var totalIndex = resultCheckerArray.length
+    if (resultCheckerArray.length>20) {
+      totalIndex = 20
+    }
+
+    for (let index = 0; index < totalIndex; index++) {
+      checking_array.push(resultCheckerArray[index].marketId);
+    }
+
+
+    try {
+      const response = await axios.get('http://136.244.77.249:33333/results/?ids='+checking_array.join(','));
+      const lastResults = response.data;
+
+      for (const key in lastResults) {
+        if (Object.hasOwnProperty.call(lastResults, key)) {
+          const element = lastResults[key];
+          
+          if (element.winnerSelectionId) {
+            const ix = _.findIndex(resultCheckerArray, function (o) { return o.marketId == element.marketId; });
+            if (ix != -1) {
+              const item = {
+                eventId: resultCheckerArray[ix].Id,
+                data: winnerSelectionId
+              }
+              await Score.findOneAndUpdate({ eventId: resultCheckerArray[ix].Id }, item, options);
+              io.to('$' + resultCheckerArray[ix].marketId).emit('winnerForRacing', winnerSelectionId);
+            }
+          }
+        }
+      }
+
+    } catch (error) {
+      
+    }
+
+
+
+
+
+
+
   }
 
   function onConnet(socket) {
@@ -372,8 +432,17 @@ function apiRequests() {
               const ix = _.findIndex(array, function (o) { return o.marketId == odds.marketId; });
               if (ix != -1) {
                 await Event.findOneAndUpdate({ Id: array[ix].eventId }, { status: odds.state.status, marketID: array[ix].marketId });
+
+                const i2 = _.findIndex(resultCheckerArray, function (o) { return o.marketId == odds.marketId; });
+                if (i2 === -1 ) {
+                  resultCheckerArray.push({marketId: odds.marketId,  Id: array[ix].eventId });
+                }
+
               }
               io.emit('racing_status', { status: odds.state.status });
+
+         
+
             } else {
               const ix = _.findIndex(array, function (o) { return o.marketId == odds.marketId; });
               odds.createdAt = new Date().getTime()
