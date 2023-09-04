@@ -1352,6 +1352,8 @@ const sessionCalc = async  (req, res) => {
   try {
     console.log("===================== CALL START POINT =====================");
     const eventsIds = await Events.distinct("Id", { sportsId: "4", inplay: true, status: { $in:['OPEN', 'open'  ] }});
+    console.log(" eventsIds ===================== ", eventsIds);
+    
     for (let Id of eventsIds){
       console.log(" ===================== ", Id);
       const event = await Events.findOne({ Id: Id }, { _id: 0, matchType: 1, sportsId: 1 });
