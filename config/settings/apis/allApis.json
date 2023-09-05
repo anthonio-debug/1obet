@@ -72,16 +72,17 @@
   "addSelectedDashboardGames",
   "FakeBetsList",
   "deleteFakeBet",
+  "casino",
 
   "getDailyPLReport",
   "dailyPlSportWiseReports",
   "dailyPLMatchWiseReport",
-
-  "casino",
+  "dailyPLMatchWiseDetailedReport",
 
   "getDailyReport",
   "dailySportsWiseReport",
   "dailyMatchWiseReports",
+  "dailyMatchWiseDetailedReports",
 
   "getCommissionReport",
   "SportWiseCommissionReport",
