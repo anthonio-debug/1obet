@@ -4,6 +4,7 @@ module.exports = ToolForResults;
 const sportsIdsforRacing = ['4339', '7'];
 const sportsIds = ['4', '2', '1'];
 const Bets = require('../../app/models/bets');
+const Sessions = require('../../app/models/Session');
 const scoreChecker = require('./api/scoreChecker')();
 
 
@@ -12,10 +13,10 @@ function ToolForResults() {
 
     async function init() {
 
-        getBetForEvents(sportsIds)
-        getBetForEvents(sportsIdsforRacing)
-        getBetForFancy()
-
+        //getBetForEvents(sportsIds)
+        //getBetForEvents(sportsIdsforRacing)
+        //getBetForFancy()
+        manuelBetChecker();
     }
 
 
@@ -30,7 +31,8 @@ function ToolForResults() {
                         marketId: { $ne: null },
                         isfancyOrbookmaker: false,
                         sportsId: { $ne: null },
-                        status: 1
+                        status: 1,
+                        type: 1
                     }
                 },
                 {
@@ -38,7 +40,7 @@ function ToolForResults() {
                         _id: '$marketId',
                         betDocument: { $first: "$$ROOT" }
                     }
-                }, 
+                },
                 {
                     $sort: {
                         lastCheckResult: 1
@@ -91,7 +93,6 @@ function ToolForResults() {
                 resultId: null,
                 isfancyOrbookmaker: true,
                 status: 1
-
             }).sort({
                 lastCheckResult: 1
             }).limit(1).exec();
@@ -124,5 +125,61 @@ function ToolForResults() {
             }, 30 * 1000);
             console.error("Error:", error);
         }
+    }
+
+
+
+    async function manuelBetChecker() {
+
+        try {
+            const results = await Bets.aggregate([
+                {
+                    $match: {
+                        status: 1,
+                        type: { $in: [2, 3, 4] },
+                        betSession: { $ne: null }
+                    }
+                },
+                {
+                    $lookup: {
+                        from: "sessions",
+                        let: { matchId: "$matchId", betSession: "$betSession" },
+                        pipeline: [
+                            {
+                                $match: {
+                                    $expr: {
+                                        $and: [
+                                            { $eq: ["$Id", "$$matchId"] },
+                                            { $eq: ["$sessionNo", "$$betSession"] }
+                                        ]
+                                    }
+                                }
+                            }
+                        ],
+                        as: "sessionDetails"
+                    }
+                },
+                {
+                    $unwind: "$sessionDetails"
+                },
+                {
+                    $match: {
+                        "sessionDetails.score": { $ne: 0 }
+                    }
+                },
+                {
+                    $project: {
+                        betData: "$$ROOT", // Retain all the original data from the Bets table
+                        score: "$sessionDetails.score"
+                    }
+                }
+            ]);
+
+            scoreChecker.manuel(results);
+
+        } catch (error) {
+            console.error("Error fetching data:", error);
+        }
+
     }
 }

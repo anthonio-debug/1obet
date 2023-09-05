@@ -19,7 +19,7 @@ const {
 } = require('../CalculateBets/calculations')
 
 function scoreChecker() {
-    return { eventsResult, racingResult, fancyResult, bookMakerResult };
+    return { eventsResult, racingResult, fancyResult, bookMakerResult, manuel };
 
 
     async function eventsResult(betData) {
@@ -259,6 +259,13 @@ function scoreChecker() {
         }
     }
 
+
+    async function manuel(bets) {
+
+        console.log(bets);
+        process.exit(1);
+
+    }
 
 
 }
