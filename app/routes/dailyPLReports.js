@@ -382,6 +382,6 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
 loginRouter.get('/getDailyPLReport', getDailyPLReport);
 loginRouter.get('/dailyPlSportWiseReports', dailyPlSportWiseReports);
 loginRouter.get('/dailyPLMatchWiseReport', dailyPLMatchWiseReport);
-loginRouter.post('/dailyPLMatchWiseDetailedReport', dailyPLMatchWiseDetailedReport);
+loginRouter.get('/dailyPLMatchWiseDetailedReport', dailyPLMatchWiseDetailedReport);
 
 module.exports = { loginRouter };
