@@ -244,7 +244,10 @@ function login(req, res) {
         user.token = token;
         var ipInfo = req.headers['x-real-ip'] || req.connection.remoteAddress;
         console.log(ipInfo);
+        console.log(req.headers);
 
+
+        
         // Retrieve the user's default theme from the database
         Settings.find({}, (err, setting) => {
           console.log('setting', setting[1]);
