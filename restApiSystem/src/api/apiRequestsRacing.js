@@ -58,7 +58,7 @@ function apiRequests() {
       const response = await axios.get('http://136.244.77.249:33333/results/?ids='+resultCheckerArray[0].marketId);
       const lastResults = response.data;
 
-      console.log('Last results',checking_array.join(','),lastResults);
+      console.log('Last results',resultCheckerArray[0], resultCheckerArray.length ,lastResults);
 
       for (let index = 0; index < lastResults.length; index++) {
           const element = lastResults[index];
