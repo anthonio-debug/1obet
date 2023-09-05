@@ -269,10 +269,10 @@ function scoreChecker() {
                 var correctScore = bet.score % 10;
                 if (bet.betData.TargetScore == correctScore) {
                     console.log("0 ----- winner ");
-                    //await handleWinningBet(bet.betData);
+                    await handleWinningBet(bet.betData);
                 } else {
                     console.log("0 ----- looser ");
-                    //await handleLosingBet(bet.betData);
+                    await handleLosingBet(bet.betData);
                 }
             }
 
@@ -280,13 +280,13 @@ function scoreChecker() {
                 var correctScore = bet.score % 2;
                 if (bet.betData.runnerName =='JOTTA' && correctScore == 0) {
                     console.log("0 ----- winner ");
-                    //await handleWinningBet(bet.betData);
+                    await handleWinningBet(bet.betData);
                 } else if (bet.betData.runnerName =='KALI' && correctScore == 1) {
                     console.log("0 ----- winner ");
-                    //await handleWinningBet(bet.betData);
+                    await handleWinningBet(bet.betData);
                 } else {
                     console.log("0 ----- looser ");
-                    //await handleLosingBet(bet.betData);
+                    await handleLosingBet(bet.betData);
                 }
             }
 
@@ -294,18 +294,18 @@ function scoreChecker() {
                 var correctScore = bet.score % 10;
                 if (bet.betData.runnerName =='BARA' && correctScore == 0) {
                     console.log("0 ----- winner ");
-                    //await handleWinningBet(bet.betData);
+                    await handleWinningBet(bet.betData);
                 } else if (bet.betData.runnerName =='CHOTA' && correctScore < 6) {
                     console.log("0 ----- winner ");
-                    //await handleWinningBet(bet.betData);
+                    await handleWinningBet(bet.betData);
                 }
                 else if (bet.betData.runnerName =='BARA' && correctScore > 5) {
                     console.log("0 ----- winner ");
-                    //await handleWinningBet(bet.betData);
+                    await handleWinningBet(bet.betData);
                 }
                  else {
                     console.log("0 ----- looser ");
-                    //await handleLosingBet(bet.betData);
+                    await handleLosingBet(bet.betData);
                 }
             }
 
