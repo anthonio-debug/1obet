@@ -262,6 +262,52 @@ function scoreChecker() {
 
     async function manuel(bets) {
 
+
+        for (let index = 0; index < bets.length; index++) {
+            const bet = bets[index];
+            if (bet.betData.type == 2) {
+                var correctScore = bet.score % 10;
+                if (bet.betData.TargetScore == correctScore) {
+                    console.log("0 ----- winner ");
+                    //await handleWinningBet(bet);
+                } else {
+                    console.log("0 ----- looser ");
+                    //await handleLosingBet(bet);
+                }
+            }
+
+            if (bet.betData.type == 3) {
+                var correctScore = bet.score % 2;
+                if (bet.betData.TargetScore == correctScore) {
+                    console.log("0 ----- winner ");
+                    //await handleWinningBet(bet);
+                } else {
+                    console.log("0 ----- looser ");
+                    //await handleLosingBet(bet);
+                }
+            }
+
+            if (bet.betData.type == 4) {
+                var correctScore = bet.score % 10;
+                if (bet.betData.TargetScore == 1 && correctScore == 0) {
+                    console.log("0 ----- winner ");
+                    //await handleWinningBet(bet);
+                } else if (bet.betData.TargetScore == 0 && correctScore < 5) {
+                    console.log("0 ----- winner ");
+                    //await handleWinningBet(bet);
+                }
+                else if (bet.betData.TargetScore == 1 && correctScore > 5) {
+                    console.log("0 ----- winner ");
+                    //await handleWinningBet(bet);
+                }
+                 else {
+                    console.log("0 ----- looser ");
+                    //await handleLosingBet(bet);
+                }
+            }
+
+        }
+
         console.log(bets);
         process.exit(1);
 
