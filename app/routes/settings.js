@@ -1056,7 +1056,7 @@ async function bettorDashboardGames2(req, res) {
       }
     ).sort({
       inplay: -1,
-      openDate: -1
+      openDate: 1
     });
 
     const soccer = await Promise.all(
@@ -1095,7 +1095,7 @@ async function bettorDashboardGames2(req, res) {
       }
     ).sort({
       inplay: -1,
-      openDate: -1
+      openDate: 1
     })
 
     const tennis = await Promise.all(
@@ -1135,7 +1135,7 @@ async function bettorDashboardGames2(req, res) {
       }
     ).sort({
       inplay: -1,
-      openDate: -1
+      openDate: 1
     })
 
     const cricket = await Promise.all(
