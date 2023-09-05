@@ -331,7 +331,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId      = req.query.userId;
+  const userId      = Number(req.query.userId);
   const childUsers  = await User.distinct("userId", { createdBy:  userId });
   const users       = [userId, ...childUsers];
   console.log(" users ===================  ", users);
