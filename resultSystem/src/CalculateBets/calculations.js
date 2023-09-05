@@ -69,6 +69,7 @@ async function handleLosingBet(bet) {
     cash: lastMaxWithdraw ? lastMaxWithdraw.cash - loosingAmount : -loosingAmount,
     marketId: bet.marketId,
     sportsId: bet.sportsId,
+    matchId: bet.matchId
 
   });
   await cash.save();
@@ -124,7 +125,8 @@ async function handleLosingBet(bet) {
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
       marketId: bet.marketId,
       sportsId: bet.sportsId,
-      upLineAmount: upMovingAmount
+      upLineAmount: upMovingAmount,
+      matchId: bet.matchId
     });
     cash.save();
     upMovingAmount = upMovingAmount -   (user.commission / 100) * TotalLoosingAmount;
@@ -180,7 +182,8 @@ async function handleWinningBet(bet) {
     cashOrCredit: "Bet",
     cash: lastMaxWithdraw ? lastMaxWithdraw.cash + remainingAmount : remainingAmount,
     marketId: bet.marketId,
-    sportsId: bet.sportsId
+    sportsId: bet.sportsId,
+    matchId: bet.matchId
   });
   console.log('usercash',typeof cash);
   await cash.save();
@@ -233,7 +236,8 @@ async function handleWinningBet(bet) {
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
       marketId: bet.marketId,
       sportsId: bet.sportsId,
-      upLineAmount: -upMovingAmount
+      upLineAmount: -upMovingAmount,
+      matchId: bet.matchId
     });
     
     upMovingAmount = upMovingAmount - (user.commission / 100) * totalRemainingAmount;
@@ -262,7 +266,8 @@ async function handleWinningBet(bet) {
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
       marketId: bet.marketId,
       sportsId: bet.sportsId,
-      upLineAmount: upMovingCommAmount
+      upLineAmount: upMovingCommAmount,
+      matchId: bet.matchId
     });
     await commissionTransaction.save();
     upMovingCommAmount = upMovingCommAmount - (user.commission / 100) * commissionAmount;
