@@ -356,13 +356,13 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
         as: 'userInfo'
       }
     }, 
-    // {
-    //   $group:{
-    //     _id: "$userId",
-    //     amount: { $sum: "$amount"},
-    //     name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-    //   }
-    // }
+    {
+      $group:{
+        _id: "$userId",
+        amount: { $sum: "$amount"},
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+      }
+    }
   ]);
 
   return res.send({
