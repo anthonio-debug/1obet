@@ -451,13 +451,13 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
           as: 'bets'
         }
       }, 
-      // {
-      //   $group:{
-      //     _id: "$userId",
-      //     amount: { $sum: "$amount"},
-      //     name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-      //   }
-      // }
+      {
+        $group:{
+          _id: {$arrayElemAt: ["$bets._id", 0]},
+          amount: { $sum: "$amount"},
+          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+        }
+      }
     ]);
     return res.send({
       success: true,
