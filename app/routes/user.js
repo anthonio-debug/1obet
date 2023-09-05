@@ -242,7 +242,7 @@ function login(req, res) {
 
         var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
         user.token = token;
-        var ipInfo = getIP(req);
+        var ipInfo = req.headers['x-real-ip'] || req.connection.remoteAddress;
 
         // Retrieve the user's default theme from the database
         Settings.find({}, (err, setting) => {
@@ -261,7 +261,7 @@ function login(req, res) {
           };
 
           try {
-            const geoChecking = ip2location.getAll(ipInfo.clientIp); 
+            const geoChecking = ip2location.getAll(ipInfo); 
 
             if (geoChecking) {
               geo.latitude = geoChecking.latitude;
@@ -281,7 +281,7 @@ function login(req, res) {
             userName: user.userName,
             userId: user.userId,
             locationData: geo,
-            ipAddress: ipInfo.clientIp,
+            ipAddress: ipInfo,
             createdAt: new Date().getTime()
           });
 
@@ -297,7 +297,7 @@ function login(req, res) {
             token: user.token,
             isActive: user.isActive,
             createdBy: user.createdBy,
-            ipAddress: ipInfo.clientIp,
+            ipAddress: ipInfo,
             createdAt: new Date().getTime(),
             updatedAt: new Date().getTime(),
           };
