@@ -269,10 +269,10 @@ function scoreChecker() {
                 var correctScore = bet.score % 10;
                 if (bet.betData.TargetScore == correctScore) {
                     console.log("0 ----- winner ");
-                    //await handleWinningBet(bet);
+                    //await handleWinningBet(bet.betData);
                 } else {
                     console.log("0 ----- looser ");
-                    //await handleLosingBet(bet);
+                    //await handleLosingBet(bet.betData);
                 }
             }
 
@@ -280,10 +280,10 @@ function scoreChecker() {
                 var correctScore = bet.score % 2;
                 if (bet.betData.TargetScore == correctScore) {
                     console.log("0 ----- winner ");
-                    //await handleWinningBet(bet);
+                    //await handleWinningBet(bet.betData);
                 } else {
                     console.log("0 ----- looser ");
-                    //await handleLosingBet(bet);
+                    //await handleLosingBet(bet.betData);
                 }
             }
 
@@ -291,25 +291,22 @@ function scoreChecker() {
                 var correctScore = bet.score % 10;
                 if (bet.betData.TargetScore == 1 && correctScore == 0) {
                     console.log("0 ----- winner ");
-                    //await handleWinningBet(bet);
+                    //await handleWinningBet(bet.betData);
                 } else if (bet.betData.TargetScore == 0 && correctScore < 6) {
                     console.log("0 ----- winner ");
-                    //await handleWinningBet(bet);
+                    //await handleWinningBet(bet.betData);
                 }
                 else if (bet.betData.TargetScore == 1 && correctScore > 5) {
                     console.log("0 ----- winner ");
-                    //await handleWinningBet(bet);
+                    //await handleWinningBet(bet.betData);
                 }
                  else {
                     console.log("0 ----- looser ");
-                    //await handleLosingBet(bet);
+                    //await handleLosingBet(bet.betData);
                 }
             }
 
         }
-
-        //console.log(bets);
-        //process.exit(1);
 
     }
 

@@ -13,9 +13,9 @@ function ToolForResults() {
 
     async function init() {
 
-        //getBetForEvents(sportsIds)
-        //getBetForEvents(sportsIdsforRacing)
-        //getBetForFancy()
+        getBetForEvents(sportsIds)
+        getBetForEvents(sportsIdsforRacing)
+        getBetForFancy()
         manuelBetChecker();
     }
 
@@ -175,10 +175,17 @@ function ToolForResults() {
                 }
             ]);
 
-            scoreChecker.manuel(results);
+            await scoreChecker.manuel(results);
+            
+            setTimeout(() => {
+                manuelBetChecker()
+            }, 30 * 1000);
 
         } catch (error) {
             console.error("Error fetching data:", error);
+            setTimeout(() => {
+                manuelBetChecker()
+            }, 30 * 1000);
         }
 
     }
