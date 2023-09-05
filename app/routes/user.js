@@ -243,6 +243,7 @@ function login(req, res) {
         var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
         user.token = token;
         var ipInfo = req.headers['x-real-ip'] || req.connection.remoteAddress;
+        console.log(ipInfo);
 
         // Retrieve the user's default theme from the database
         Settings.find({}, (err, setting) => {
