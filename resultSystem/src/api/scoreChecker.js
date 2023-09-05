@@ -278,7 +278,10 @@ function scoreChecker() {
 
             if (bet.betData.type == 3) {
                 var correctScore = bet.score % 2;
-                if (bet.betData.TargetScore == correctScore) {
+                if (bet.betData.runnerName =='JOTTA' && correctScore == 0) {
+                    console.log("0 ----- winner ");
+                    //await handleWinningBet(bet.betData);
+                } else if (bet.betData.runnerName =='KALI' && correctScore == 1) {
                     console.log("0 ----- winner ");
                     //await handleWinningBet(bet.betData);
                 } else {
@@ -289,14 +292,14 @@ function scoreChecker() {
 
             if (bet.betData.type == 4) {
                 var correctScore = bet.score % 10;
-                if (bet.betData.TargetScore == 1 && correctScore == 0) {
+                if (bet.betData.runnerName =='BARA' && correctScore == 0) {
                     console.log("0 ----- winner ");
                     //await handleWinningBet(bet.betData);
-                } else if (bet.betData.TargetScore == 0 && correctScore < 6) {
+                } else if (bet.betData.runnerName =='CHOTA' && correctScore < 6) {
                     console.log("0 ----- winner ");
                     //await handleWinningBet(bet.betData);
                 }
-                else if (bet.betData.TargetScore == 1 && correctScore > 5) {
+                else if (bet.betData.runnerName =='BARA' && correctScore > 5) {
                     console.log("0 ----- winner ");
                     //await handleWinningBet(bet.betData);
                 }
