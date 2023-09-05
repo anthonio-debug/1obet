@@ -324,20 +324,26 @@ const dailyPLMatchWiseReport = async (req, res) => {
   });
 
 }
-const dailyPLMatchWiseDetailedReport = async (req, res) => {
+
+const dailyPLMatchWiseDetailedReport = async(req, res) =>{
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const userId = req.decoded.userId
-  console.log(" userId ====== ", userId);
-  const Id =  parseInt(req.query.userId)
+
+  const userId      = req.query.userId;
+  const childUsers  = await User.distinct("userId", { createdBy:  userId });
+  const users       = [userId, ...childUsers];
+  const matchId     = parseInt(req.query.matchId);
+
 
   const response = await CashDeposit.aggregate([
     {  
       $match: {
-        userId: Id,
-        sportsId: req.query.sportsId,
+        userId: {
+          $in: users
+        },
+        matchId: matchId,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
@@ -350,34 +356,27 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
       }
     },
     {
-      $addFields: {
-        'betIdEvent': { $toObjectId: "$betId" }
-      }
-    },
-    {
       $lookup: {
-        from: 'bets',
-        localField: 'betIdEvent',
-        foreignField: '_id',
-        as: 'bets'
+        from: 'users',
+        localField: 'userId',
+        foreignField: 'userId',
+        as: 'userInfo'
       }
     }, 
     {
       $group:{
-        _id: {$arrayElemAt: ["$bets.matchId", 0]},
+        _id: "$userId",
         amount: { $sum: "$amount"},
-        userId: { $first: "$userId" },
-        date: { $first: "$date" },
-        name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
       }
     }
   ]);
+
   return res.send({
     success: true,
-    message: 'Sport wise Reports !',
+    message: 'Commission reports',
     results: response,
   });
-
 }
 
 loginRouter.get('/getDailyPLReport', getDailyPLReport);
