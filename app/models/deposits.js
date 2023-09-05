@@ -6,7 +6,7 @@ let Global = require('../global/settings');
 
 let depositsSchema = new Schema({
   userId: { type: Number, index: true },
-  matchId: { type: Number, index: true },
+  matchId: { type: String, index: true },
   description: { type: String, required: false },
   amount: { type: Number, required: true, default: 0 },
   balance: { type: Number, required: false, default: 0 },
