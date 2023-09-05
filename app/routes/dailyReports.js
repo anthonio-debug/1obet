@@ -427,7 +427,7 @@ const dailyMatchWiseReports = async (req, res) => {
 const dailyMatchWiseDetailedReports = async(req, res) => {
 
   const userId      = parseInt(req.query.userId)
-  const matchId     = parseInt(req.query.matchId);
+  const matchId     = req.query.matchId;
   const currentUser = await User.findOne({ userId: userId});
   const users       = [userId];
   let parents       = [userId];
@@ -452,14 +452,6 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
         userId: { $in: users },
         matchId: matchId,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
       }
     },
     {
@@ -484,14 +476,6 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
       $match: {
         userId: currentUser.createdBy ,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
       }
     },
     {
