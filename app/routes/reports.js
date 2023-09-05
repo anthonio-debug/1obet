@@ -3,6 +3,7 @@ const { validationResult } = require('express-validator');
 let config = require('config');
 const CashDeposit = require('../models/deposits');
 const User = require('../models/user');
+const loginRecord = require('../models/loginRecord');
 
 const reportValidator = require('../validators/reports');
 const Deposits = require('../models/deposits');
@@ -490,6 +491,33 @@ function GetAllCashDepositLedger(req, res) {
   );
 }
 
+
+async function userLoginActivitLogs(req, res) {
+
+  if (!req.query.id) {
+    return res.json({
+      message: 'User login logs',
+      results: [],
+    });
+  }
+
+  if (req.query.id) {
+    const results = await loginRecord.find({userId: parseInt(req.query.id)}).sort({createdAt: -1});
+    return res.json({
+      message: 'User login logs',
+      results
+    });
+  }
+
+  if (req.query.ip) {
+    const results = await loginRecord.find({ipAddress: (req.query.ip)}).sort({createdAt: -1});
+    return res.json({
+      message: 'User login logs',
+      results
+    });
+  }
+
+}
 loginRouter.post(
   '/cashDepositLedger',
   reportValidator.validate('cashDepositLedger'),
@@ -510,5 +538,6 @@ loginRouter.post('/GetAllCashDepositLedger', GetAllCashDepositLedger);
 
 loginRouter.get('/getCLientList', getClientList);
 loginRouter.get('/profitLossReports', profitLossReports);
+loginRouter.get('/userLoginActivitLogs', userLoginActivitLogs);
 
 module.exports = { loginRouter };
