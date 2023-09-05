@@ -42,30 +42,23 @@ function apiRequests() {
       new: true,
     };
 
-    if (resultCheckerArray.length == 0)
+    if (resultCheckerArray.length == 0) {
       return;
+    }
 
 
     resultCheckerArray = resultCheckerArray.sort((a, b) => a.lastCheck - b.lastCheck);
 
+    resultCheckerArray[0].lastCheck = new Date().getTime();
 
-    var checking_array = [];
-    var totalIndex = resultCheckerArray.length
-    if (resultCheckerArray.length>20) {
-      totalIndex = 20
-    }
-
-    for (let index = 0; index < totalIndex; index++) {
-      resultCheckerArray[index].lastCheck = new Date().getTime();
-      checking_array.push(resultCheckerArray[index].marketId);
-    }
+  
 
 
     try {
-      const response = await axios.get('http://136.244.77.249:33333/results/?ids='+checking_array.join(','));
+      const response = await axios.get('http://136.244.77.249:33333/results/?ids='+resultCheckerArray[0].marketId);
       const lastResults = response.data;
 
-     // console.log('Last results',checking_array.join(','),lastResults);
+      console.log('Last results',checking_array.join(','),lastResults);
 
       for (let index = 0; index < lastResults.length; index++) {
           const element = lastResults[index];
