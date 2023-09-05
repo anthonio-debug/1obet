@@ -292,7 +292,7 @@ function scoreChecker() {
                 if (bet.betData.TargetScore == 1 && correctScore == 0) {
                     console.log("0 ----- winner ");
                     //await handleWinningBet(bet);
-                } else if (bet.betData.TargetScore == 0 && correctScore < 5) {
+                } else if (bet.betData.TargetScore == 0 && correctScore < 6) {
                     console.log("0 ----- winner ");
                     //await handleWinningBet(bet);
                 }
@@ -308,8 +308,8 @@ function scoreChecker() {
 
         }
 
-        console.log(bets);
-        process.exit(1);
+        //console.log(bets);
+        //process.exit(1);
 
     }
 
