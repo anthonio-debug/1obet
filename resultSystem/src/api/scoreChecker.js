@@ -265,9 +265,12 @@ function scoreChecker() {
 
         for (let index = 0; index < bets.length; index++) {
             const bet = bets[index];
+            //figure bets
+
+
             if (bet.betData.type == 2) {
                 var correctScore = bet.score % 10;
-                if (bet.betData.TargetScore == correctScore) {
+                if (bet.betData.runner == correctScore) {
                     console.log("0 ----- winner ");
                     await handleWinningBet(bet.betData);
                 } else {
@@ -276,6 +279,7 @@ function scoreChecker() {
                 }
             }
 
+            //jotta kali
             if (bet.betData.type == 3) {
                 var correctScore = bet.score % 2;
                 if (bet.betData.runnerName =='JOTTA' && correctScore == 0) {
@@ -289,7 +293,7 @@ function scoreChecker() {
                     await handleLosingBet(bet.betData);
                 }
             }
-
+            /// Chota bara
             if (bet.betData.type == 4) {
                 var correctScore = bet.score % 10;
                 if (bet.betData.runnerName =='BARA' && correctScore == 0) {
