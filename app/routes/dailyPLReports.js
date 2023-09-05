@@ -344,15 +344,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
           $in: users
         },
         matchId: matchId,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] }
       }
     },
     {
