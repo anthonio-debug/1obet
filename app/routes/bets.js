@@ -1516,7 +1516,13 @@ const _1 = async (req, res)=>{
 const profitLose = async(req, res) => {
 
   const userId      = parseInt(req.query.userId)
-  const currentUser      = await User.findOne({ userId: userId});
+  const currentUser = await User.findOne({ userId: userId});
+  if(!currentUser){
+    return res.status(404).send({
+      success: false,
+      message: 'Something Went Wrong!'
+    });
+  }
   if(currentUser.role == '5'){
     const response    = await Cash.aggregate([
       {
