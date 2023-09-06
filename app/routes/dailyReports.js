@@ -496,11 +496,11 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
           as: 'betsDetails'
         }
       }, 
-      {
+      { 
         $group:{
           _id: "$betId",
           pl: { $sum: "$amount"},
-          sattledAt: { $first: "$createdAt" },
+          sattledAt: { $first: "$date" },
           betAmount: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
           name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
           createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } }
