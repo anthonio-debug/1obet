@@ -1786,8 +1786,8 @@ const dailyMatchWiseprofitLose = async(req, res) => {
       success: true,
       message: 'Detailed reports',
       results: response,
-      dealer: parent.userName,
-      currentUser: currentUser.userName,
+      dealer: parent?.userName,
+      currentUser: currentUser?.userName,
       Winner: match?.winner,
       isBattor: false
     });
