@@ -181,7 +181,7 @@ async function getFinalReport(req, res) {
 
   const userId      = parseInt(req.decoded.userId)
   const currentUser = await User.findOne({ userId: userId});
-  const users       = [userId];
+  const users       = [];
   let parents       = [userId];
   let childUsers;
 
@@ -207,7 +207,7 @@ async function getFinalReport(req, res) {
   //for chield, amount's mean Balance UpLine (results.clientPL) 
 
 
-  const balanceUplines = await User.find({ userId: {$in: parents} }, {_id: 1, userId: 1, clientPL: 1, userName: 1});
+  const balanceUplines = await User.find({ userId: {$in: users} }, {_id: 1, userId: 1, clientPL: 1, userName: 1});
   
   
   //userName, clientPL, userId
