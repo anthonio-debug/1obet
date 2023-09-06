@@ -433,36 +433,6 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
   const parent      = await User.findOne({ userId: currentUser.createdBy});
   if(currentUser.role == '5'){
     const match       = await Events.findById(matchId)
-    // const response = await Bets.aggregate([
-    //   {
-    //     $match: {
-    //       userId: userId,
-    //       matchId: matchId,
-    //       // cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-    //     }
-    //   },
-    //   {
-    //     $addFields: {
-    //       'betsId': { $toString: "$_id" }
-    //     }
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: 'deposits',
-    //       localField: 'betsId',
-    //       foreignField: 'betId',
-    //       as: 'deposits'
-    //     }
-    //   }, 
-    //   // {
-    //   //   $group:{
-    //   //     _id: {$arrayElemAt: ["$bets._id", 0]},
-    //   //     amount: { $sum: "$amount"},
-    //   //     name: { $first: { $arrayElemAt: ["$bets.runnerName", 0] } }
-    //   //   }
-    //   // }
-    // ]);
-
     const response = await CashDeposit.aggregate([
       {
         $match: {

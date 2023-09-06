@@ -142,6 +142,8 @@
   "postmanwork",
   "sessionCalc",
   "userLoginActivitLogs",
+  
   "profitLose",
-  "EventWiseprofitLose"
+  "EventWiseprofitLose",
+  "dailyMatchWiseprofitLose"
 ]

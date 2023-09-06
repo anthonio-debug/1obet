@@ -1567,6 +1567,7 @@ const profitLose = async(req, res) => {
     });
   }
 }
+
 const EventWiseprofitLose = async(req, res) => {
   if(!req.query.userId || !req.query.sportsId){
     return res.status(404).send({
@@ -1679,6 +1680,147 @@ const EventWiseprofitLose = async(req, res) => {
     });
   }
 }
+const dailyMatchWiseprofitLose = async(req, res) => {
+
+  const userId      = parseInt(req.query.userId)
+  const matchId     = req.query.matchId;
+  const currentUser = await User.findOne({ userId: userId});
+  const parent      = await User.findOne({ userId: currentUser.createdBy});
+
+  if(currentUser.role == '5'){
+    const match       = await Events.findById(matchId)
+    const response = await CashDeposit.aggregate([
+      {
+        $match: {
+          matchId: matchId,
+          $or: [
+            {
+              $and: [{
+                userId: userId,
+              },
+              {
+                cashOrCredit: { $in: ["Bet", "Commission", "loosing"] }
+              }
+              ]
+            },
+            {       
+              cashOrCredit: { $in: ["Commission"] }
+            }
+          ]
+        }
+      },
+      {
+        $addFields: {
+          'betsId': { $toObjectId: "$betId" }
+        }
+      },
+      {
+        $lookup: {
+          from: 'bets',
+          localField: 'betsId',
+          foreignField: '_id',
+          as: 'betsDetails'
+        }
+      }, 
+      { 
+        $group:{
+          _id: "$betId",
+          pl: { $sum: "$amount"},
+          sattledAt: { $first: "$date" },
+          price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
+          name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
+          createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
+          size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
+          type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } }
+
+        }
+      }
+    ]);
+    return res.send({
+      success: true,
+      message: 'Detailed reports',
+      results: response,
+      dealer: parent.userName,
+      currentUser: currentUser.userName,
+      Winner: match?.winner
+      
+    });
+
+  }else {
+    const users       = [userId];
+    let parents       = [userId];
+    let childUsers;
+    do{
+      childUsers     = await User.distinct("userId", {
+        createdBy: {
+          $in: parents
+        }
+      });
+      console.log(" child users ======= ", childUsers);
+      if(childUsers.length) users.push(...childUsers)
+      parents = childUsers
+    }while (childUsers.length > 0)
+  
+    console.log(" users list  ======== ", users);
+  
+    const response = await CashDeposit.aggregate([
+      {
+        $match: {
+          userId: { $in: users },
+          matchId: matchId,
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'userId',
+          as: 'userInfo'
+        }
+      }, 
+      {
+        $group:{
+          _id: "$userId",
+          amount: { $sum: "$amount"},
+          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+        }
+      }
+    ]);
+  
+    const parentResponse = await CashDeposit.aggregate([
+      {  
+        $match: {
+          userId: currentUser.createdBy ,
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'userId',
+          as: 'userInfo'
+        }
+      }, 
+      {
+        $group:{
+          _id: "$userId",
+          // parent: true,
+          amount: { $sum: "$upLineAmount"},
+          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+        }
+      }
+    ]);
+  
+    return res.send({
+      success: true,
+      message: 'Daily reports',
+      results: response?.concat(parentResponse),
+      isDetailed: false
+    });
+  }
+}
 
 loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
 loginRouter.post('/getUserBets', getUserBets);
@@ -1693,9 +1835,9 @@ loginRouter.get('/countFakeBets', countFakeBet);
 loginRouter.post('/approvedFakeBet/:id', approvedFakeBet);
 loginRouter.get('/reviewFakeBet/:id/:sportsId', reviewFakeBet);
 loginRouter.get('/postmanwork', postmanwork);
-
 loginRouter.get('/profitLose', profitLose);
 loginRouter.get('/EventWiseprofitLose', EventWiseprofitLose);
+loginRouter.get('/dailyMatchWiseprofitLose', dailyMatchWiseprofitLose);
 
 
 
