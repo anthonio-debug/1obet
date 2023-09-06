@@ -467,7 +467,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
         $match: {
           userId: userId,
           matchId: matchId,
-          cashOrCredit: { $in: ["Bet"] },
+          cashOrCredit: { $in: ["Bet", "Commission"] },
         }
       },
       {
