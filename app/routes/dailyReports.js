@@ -430,32 +430,64 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
   const matchId     = req.query.matchId;
   const currentUser = await User.findOne({ userId: userId});
   if(currentUser.role == '5'){
-    const response = await Bets.aggregate([
+    // const response = await Bets.aggregate([
+    //   {
+    //     $match: {
+    //       userId: userId,
+    //       matchId: matchId,
+    //       // cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+    //     }
+    //   },
+    //   {
+    //     $addFields: {
+    //       'betsId': { $toString: "$_id" }
+    //     }
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: 'deposits',
+    //       localField: 'betsId',
+    //       foreignField: 'betId',
+    //       as: 'deposits'
+    //     }
+    //   }, 
+    //   // {
+    //   //   $group:{
+    //   //     _id: {$arrayElemAt: ["$bets._id", 0]},
+    //   //     amount: { $sum: "$amount"},
+    //   //     name: { $first: { $arrayElemAt: ["$bets.runnerName", 0] } }
+    //   //   }
+    //   // }
+    // ]);
+
+
+
+    const response = await CashDeposit.aggregate([
       {
         $match: {
           userId: userId,
           matchId: matchId,
-          // cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          cashOrCredit: { $in: ["Bet"] },
         }
       },
       {
         $addFields: {
-          'betsId': { $toString: "$_id" }
+          'betsId': { $toObjectId: "$betId" }
         }
       },
       {
         $lookup: {
-          from: 'deposits',
+          from: 'bets',
           localField: 'betsId',
-          foreignField: 'betId',
-          as: 'deposits'
+          foreignField: '_id',
+          as: 'betsDetails'
         }
       }, 
       // {
       //   $group:{
-      //     _id: {$arrayElemAt: ["$bets._id", 0]},
+      //     _id: "$userId",
       //     amount: { $sum: "$amount"},
-      //     name: { $first: { $arrayElemAt: ["$bets.runnerName", 0] } }
+      //     name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
       //   }
       // }
     ]);
