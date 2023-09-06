@@ -1601,18 +1601,19 @@ const EventWiseprofitLose = async(req, res) => {
       },
       {
         $lookup: {
-          from: 'markettypes',
-          localField: 'sportsId',
-          foreignField: 'Id',
-          as: 'marketInfo'
+          from: 'bets',
+          localField: 'betIdEvent',
+          foreignField: '_id',
+          as: 'bets'
         }
       }, 
       {
         $group:{
-          _id: "$sportsId",
+          _id: {$arrayElemAt: ["$bets.matchId", 0]},
           amount: { $sum: "$amount"},
           userId: { $first: "$userId" },
-          name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } }
+          date: { $first: "$date" },
+          name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
         }
       }
     ]);
@@ -1646,6 +1647,11 @@ const EventWiseprofitLose = async(req, res) => {
           userId: userId,
           sportsId:sportsId,
           cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        }
+      },
+      {
+        $addFields: {
+          'betsId': { $toObjectId: "$betId" }
         }
       },
       {
