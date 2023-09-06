@@ -465,9 +465,21 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
     const response = await CashDeposit.aggregate([
       {
         $match: {
-          userId: userId,
           matchId: matchId,
-          cashOrCredit: { $in: ["Bet", "Commission"] },
+          $or: [
+            {
+              $and: [{
+                userId: userId,
+              },
+              {
+                cashOrCredit: { $in: ["Bet"] }
+              }
+              ]
+            },
+            {       
+              cashOrCredit: { $in: ["Commission"] }
+            }
+          ]
         }
       },
       {
