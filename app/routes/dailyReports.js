@@ -432,7 +432,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
   const currentUser = await User.findOne({ userId: userId});
   const parent      = await User.findOne({ userId: currentUser.createdBy});
   if(currentUser.role == '5'){
-    const match       = await Events.findOne({Id: matchId})
+    const match       = await Events.findById(matchId)
     // const response = await Bets.aggregate([
     //   {
     //     $match: {
@@ -517,7 +517,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
       isDetailed: true,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      Winner: match.winner
+      Winner: match?.winner
       
     });
 

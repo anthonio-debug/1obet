@@ -336,7 +336,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
   const currentUser = await User.findOne({ userId: userId});
 
   if(currentUser.role == 5){
-    const match       = await Events.findOne({Id: matchId})
+    const match       = await Events.findById(matchId)
     const parent      = await User.findOne({ userId: currentUser.createdBy});
     const response = await CashDeposit.aggregate([
       {
@@ -392,7 +392,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
       isDetailed: true,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      Winner: match.winner
+      Winner: match?.winner
     });
   }
   else {
