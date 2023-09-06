@@ -9,6 +9,7 @@ const reportValidator = require('../validators/reports');
 const Deposits = require('../models/deposits');
 const MarketType = require('../models/marketTypes');
 const Bets = require('../models/bets');
+const Events = require('../models/events');
 const loginRouter = express.Router();
 
 
