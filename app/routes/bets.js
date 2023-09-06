@@ -1468,7 +1468,7 @@ const postmanwork = async (req, res)=>{
 }
 
 const profitLose = async(req, res) => {
-  if(!userId){
+  if(!req.query.userId){
     return res.status(404).send({
       success: false,
       message: 'Something Went Wrong!'
@@ -1568,12 +1568,13 @@ const profitLose = async(req, res) => {
   }
 }
 const EventWiseprofitLose = async(req, res) => {
-  if(!userId || !sportsId){
+  if(!req.query.userId || !req.query.sportsId){
     return res.status(404).send({
       success: false,
       message: 'Invalid Request'
     });
   }
+  
   const userId      = parseInt(req.query.userId);
   const sportsId    = parseInt(req.query.sportsId);
   
