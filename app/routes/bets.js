@@ -1516,29 +1516,13 @@ const profitLose = async (req, res)=>{
 const dailyMatchWiseDetailedReports = async(req, res) => {
 
   const userId      = parseInt(req.query.userId)
-  // const matchId     = req.query.matchId;
-  const currentUser = await User.findOne({ userId: userId});
-  // const parent      = await User.findOne({ userId: currentUser.createdBy});
+  const currentUser      = await User.findOne({ userId: userId});
   if(currentUser.role == '5'){
-    const match       = await Events.findById(matchId)
     const response    = await Cash.aggregate([
       {
         $match: {
-          matchId: matchId,
-          $or: [
-            {
-              $and: [{
-                userId: userId,
-              },
-              {
-                cashOrCredit: { $in: ["Bet"] }
-              }
-              ]
-            },
-            {       
-              cashOrCredit: { $in: ["Commission"] }
-            }
-          ]
+            userId: userId,
+            cashOrCredit: { $in: ["Bet"] }
         }
       },
       {
@@ -1548,35 +1532,25 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
       },
       {
         $lookup: {
-          from: 'bets',
-          localField: 'betsId',
-          foreignField: '_id',
-          as: 'betsDetails'
+          from: 'markettypes',
+          localField: 'sportsId',
+          foreignField: 'Id',
+          as: 'marketInfo'
         }
       }, 
-      { 
+      {
         $group:{
-          _id: "$betId",
-          pl: { $sum: "$amount"},
-          sattledAt: { $first: "$date" },
-          price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
-          name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
-          createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
-          size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
-          type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } }
-
+          _id: "$sportsId",
+          amount: { $sum: "$amount"},
+          userId: { $first: "$userId" },
+          name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } }
         }
       }
     ]);
     return res.send({
       success: true,
-      message: 'Detailed reports',
-      results: response,
-      isDetailed: true,
-      dealer: parent.userName,
-      currentUser: currentUser.userName,
-      Winner: match?.winner
-      
+      message: 'Profit Lose reports',
+      results: response
     });
 
   }else {
@@ -1623,13 +1597,10 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
     ]);
     return res.send({
       success: true,
-      message: 'Profit Lose reports',
+      message: 'Profit Lose Reports',
       results: response
     });
   }
-
-
-
 }
 
 loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
