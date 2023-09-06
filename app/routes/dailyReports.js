@@ -446,8 +446,8 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
       {
         $lookup: {
           from: 'deposits',
-          localField: '_id',
-          foreignField: 'betsId',
+          localField: 'betsId',
+          foreignField: 'betId',
           as: 'deposits'
         }
       }, 
