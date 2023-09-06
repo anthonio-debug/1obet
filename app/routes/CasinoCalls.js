@@ -332,7 +332,7 @@ async function debit(req, res) {
   try {
     console.log(" debt req.query ============== ", req.query);
     
-    // const Cash = client.db('Bet99').collection('deposits');
+    // const Cash = client.db(`${config.DBNAME}`).collection('deposits');
 
     const payload = req.query;
     const salt = config.saltKey;
@@ -356,8 +356,8 @@ async function debit(req, res) {
 
 
     await session.withTransaction(async () => {
-      const casinoCalls = client.db('Bet99').collection('casinocalls');
-      const users = client.db('Bet99').collection('users');
+      const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
+      const users = client.db(`${config.DBNAME}`).collection('users');
 
       // console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
       const sameTransId = await casinoCalls.countDocuments(
@@ -552,8 +552,8 @@ async function credit(req, res) {
   try {
     console.log(" credit req.query ======= ", req.query);
     // console.log('======', session.emit())
-    const casinoCalls = client.db('Bet99').collection('casinocalls');
-    const users = client.db('Bet99').collection('users');
+    const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
+    const users = client.db(`${config.DBNAME}`).collection('users');
 
     const payload = req.query;
     const salt = config.saltKey;
@@ -787,8 +787,8 @@ async function rollback(req, res) {
   try {
     console.log(" rollback req.query ======= ", req.query);
     // console.log('======', session.emit())
-    const casinoCalls = client.db('Bet99').collection('casinocalls');
-    const users = client.db('Bet99').collection('users');
+    const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
+    const users = client.db(`${config.DBNAME}`).collection('users');
     // session.startTransaction();
     const payload = req.query;
     const salt = config.saltKey;

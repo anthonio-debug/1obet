@@ -521,8 +521,23 @@ function getAllDeposits(req, res) {
       )
         .sort({ _id: -1 })
         .exec((err, results) => {
-          if (err || !results)
+          if (err){
+            console.log("Error". err);
             return res.status(404).send({ message: 'Record not found' });
+          }
+          if(!results){
+            return res.status(200).send({ 
+              message: 'Record not found',
+              results: {
+                maxWithdraw: 0,
+                creditLimit: 0,
+                balance: 0,
+                credit: 0,
+                availableBalance: 0,
+              }
+            });
+          }
+
           if (user.role == '5') {
             return res.send({
               message: 'Deposit Record Found',
