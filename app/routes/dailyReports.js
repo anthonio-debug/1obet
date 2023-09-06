@@ -461,8 +461,6 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
     //   // }
     // ]);
 
-
-
     const response = await CashDeposit.aggregate([
       {
         $match: {
@@ -501,9 +499,12 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
           _id: "$betId",
           pl: { $sum: "$amount"},
           sattledAt: { $first: "$date" },
-          betAmount: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
+          price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
           name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
-          createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } }
+          createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
+          size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
+          type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } }
+
         }
       }
     ]);
@@ -512,7 +513,9 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
       message: 'Detailed reports',
       results: response,
       isDetailed: true,
-      dealer: parent.userName
+      dealer: parent.userName,
+      currentUser: currentUser.userName
+      
     });
 
   }else {
