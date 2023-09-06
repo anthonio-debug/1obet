@@ -1689,7 +1689,7 @@ const dailyMatchWiseprofitLose = async(req, res) => {
 
   if(currentUser.role == '5'){
     const match       = await Events.findById(matchId)
-    const response = await CashDeposit.aggregate([
+    const response = await Cash.aggregate([
       {
         $match: {
           matchId: matchId,
@@ -1763,7 +1763,7 @@ const dailyMatchWiseprofitLose = async(req, res) => {
   
     console.log(" users list  ======== ", users);
   
-    const response = await CashDeposit.aggregate([
+    const response = await Cash.aggregate([
       {
         $match: {
           userId: { $in: users },
@@ -1788,35 +1788,11 @@ const dailyMatchWiseprofitLose = async(req, res) => {
       }
     ]);
   
-    const parentResponse = await CashDeposit.aggregate([
-      {  
-        $match: {
-          userId: currentUser.createdBy ,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: 'userId',
-          as: 'userInfo'
-        }
-      }, 
-      {
-        $group:{
-          _id: "$userId",
-          // parent: true,
-          amount: { $sum: "$upLineAmount"},
-          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-        }
-      }
-    ]);
   
     return res.send({
       success: true,
       message: 'Daily reports',
-      results: response?.concat(parentResponse),
+      results: response,
       isDetailed: false
     });
   }
