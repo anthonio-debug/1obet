@@ -176,98 +176,90 @@ function cashCreditLedger(req, res) {
   );
 }
 
-function getFinalReport(req, res) {
-  let query = {};
+async function getFinalReport(req, res) {
 
-  if (req.decoded.login.role !== '5') {
-    query.createdBy = (req.decoded.userId);
+
+  const userId      = parseInt(req.decoded.userId)
+  const currentUser = await User.findOne({ userId: userId});
+  const users       = [userId];
+  let parents       = [userId];
+  let childUsers;
+
+  do{
+    childUsers     = await User.distinct("userId", {
+      createdBy: {
+        $in: parents
+      }
+    });
+    console.log(" child users ======= ", childUsers);
+    if(childUsers.length) users.push(...childUsers)
+    parents = childUsers
+  }while (childUsers.length > 0)
+
+  let results = {
+    negativeClients: [],
+    positiveClients: [],
+    totalNegativeClientPL: 0,
+    totalPositiveClientPL: 0
+  };
+
+  //for parent and main account, amount's mean P/L Downline	(results.balance)
+  //for chield, amount's mean Balance UpLine (results.clientPL) 
+
+
+  const balanceUplines = await User.find({ userId: {$in: parents} }, {_id: 1, userId: 1, clientPL: 1, userName: 1});
+  
+  
+  //userName, clientPL, userId
+  
+
+  if (currentUser.balance> -1) {
+    results.positiveClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.balance});
+    results.totalPositiveClientPL = results.totalPositiveClientPL + currentUser.balance;
+  } else {
+    results.negativeClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.balance});
+    results.totalNegativeClientPL = results.totalNegativeClientPL + currentUser.balance;
   }
 
-  User.aggregate(
-    [
-      {
-        $match: query,
-      },
-      {
-        $group: {
-          _id: '$userName',
-          clientPL: { $sum: '$clientPL' },
-        },
-      },
-      {
-        $group: {
-          _id: null,
-          positiveClients: {
-            $push: {
-              $cond: {
-                if: { $gte: ['$clientPL', 0] },
-                then: { userName: '$_id', clientPL: '$clientPL' },
-                else: null,
-              },
-            },
-          },
-          negativeClients: {
-            $push: {
-              $cond: {
-                if: { $lt: ['$clientPL', 0] },
-                then: { userName: '$_id', clientPL: '$clientPL' },
-                else: null,
-              },
-            },
-          },
-          totalPositiveClientPL: {
-            $sum: {
-              $cond: {
-                if: { $gte: ['$clientPL', 0] },
-                then: '$clientPL',
-                else: 0,
-              },
-            },
-          },
-          totalNegativeClientPL: {
-            $sum: {
-              $cond: {
-                if: { $lt: ['$clientPL', 0] },
-                then: '$clientPL',
-                else: 0,
-              },
-            },
-          },
-        },
-      },
-      {
-        $project: {
-          _id: 0,
-          positiveClients: {
-            $filter: {
-              input: '$positiveClients',
-              cond: { $ne: ['$$this', null] },
-            },
-          },
-          negativeClients: {
-            $filter: {
-              input: '$negativeClients',
-              cond: { $ne: ['$$this', null] },
-            },
-          },
-          totalPositiveClientPL: 1,
-          totalNegativeClientPL: 1,
-        },
-      },
-    ],
 
-    function (err, result) {
-      console.log('rerrr', err);
-      if (err) {
-        return res.status(404).send({ message: 'final report not found' });
-      }
-      return res.send({
-        success: true,
-        message: 'final report found',
-        results: result[0],
-      });
+
+  for (let index = 0; index < balanceUplines.length; index++) {
+    const userRecord = array[index];
+    if (userRecord.clientPL> -1) {
+      results.positiveClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: userRecord.clientPL});
+      results.totalPositiveClientPL = results.totalPositiveClientPL + userRecord.clientPL;
+    } else {
+      results.negativeClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: userRecord.clientPL});
+      results.totalNegativeClientPL = results.totalNegativeClientPL + userRecord.clientPL;
     }
-  );
+  }
+
+  if (currentUser.createdBy !== 0) {
+    const parentUserData = await User.find({ userId: currentUser.createdBy }, {_id: 1, userId: 1, balance: 1, userName: 1});
+
+    if (parentUserData) {
+      if (parentUserData.balance> -1) {
+        results.positiveClients.push({userName: parentUserData.userName, userId:parentUserData.userId,  clientPL: parentUserData.balance});
+        results.totalPositiveClientPL = results.totalPositiveClientPL + parentUserData.balance;
+      } else {
+        results.negativeClients.push({userName: parentUserData.userName, userId:parentUserData.userId,  clientPL: parentUserData.balance});
+        results.totalNegativeClientPL = results.totalNegativeClientPL + parentUserData.balance;
+      }
+    }
+
+
+  }
+
+
+
+
+  return res.send({
+    success: true,
+    message: 'final report found',
+    results
+  });
+
+
 }
 
 function getClientList(req, res) {
