@@ -1467,7 +1467,7 @@ const postmanwork = async (req, res)=>{
   }
 }
 
-const profitLose = async (req, res)=>{
+const _1 = async (req, res)=>{
   try{
     const userId      = parseInt(req.decoded.userId);
     const response    = await Cash.aggregate([
@@ -1513,7 +1513,7 @@ const profitLose = async (req, res)=>{
   }
 }
 
-const dailyMatchWiseDetailedReports = async(req, res) => {
+const profitLose = async(req, res) => {
 
   const userId      = parseInt(req.query.userId)
   const currentUser      = await User.findOne({ userId: userId});
