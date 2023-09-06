@@ -1467,6 +1467,52 @@ const postmanwork = async (req, res)=>{
   }
 }
 
+const profitLose = async (req, res)=>{
+  try{
+    const userId      = parseInt(req.decoded.userId);
+    const response    = await CashDeposit.aggregate([
+      {
+        $match: {
+            userId: userId,
+            cashOrCredit: { $in: ["Bet"] }
+        }
+      },
+      {
+        $addFields: {
+          'betsId': { $toObjectId: "$betId" }
+        }
+      },
+      {
+        $lookup: {
+          from: 'markettypes',
+          localField: 'sportsId',
+          foreignField: 'Id',
+          as: 'marketInfo'
+        }
+      }, 
+      {
+        $group:{
+          _id: "$sportsId",
+          amount: { $sum: "$amount"},
+          userId: { $first: "$userId" },
+          name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } }
+        }
+      }
+    ]);
+    return res.send({
+      success: true,
+      message: 'Detailed reports',
+      results: response,
+      
+    });
+  }
+  catch (err){
+    return res.send({
+      message: `Error ${err} !`
+    })
+  }
+}
+
 loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
 loginRouter.post('/getUserBets', getUserBets);
 loginRouter.get('/betFunds', betFunds);
@@ -1480,6 +1526,8 @@ loginRouter.get('/countFakeBets', countFakeBet);
 loginRouter.post('/approvedFakeBet/:id', approvedFakeBet);
 loginRouter.get('/reviewFakeBet/:id/:sportsId', reviewFakeBet);
 loginRouter.get('/postmanwork', postmanwork);
+loginRouter.get('/profitLose', profitLose);
+
 
 
 module.exports = { sessionCalc,  loginRouter, getParents };

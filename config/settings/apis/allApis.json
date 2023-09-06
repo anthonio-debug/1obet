@@ -141,5 +141,6 @@
   "setMatchShow",
   "postmanwork",
   "sessionCalc",
-  "userLoginActivitLogs"
+  "userLoginActivitLogs",
+  "profitLose"
 ]
