@@ -1448,54 +1448,30 @@ async function getAllMatchSettlements(req, res) {
 
 async function getAllGamesResults(req, res) {
   try {
-    if (req.decoded.role !== '5') {
-      return res.status(403).json({ message: 'You are not allowed to do this' });
-    }
+    // if (req.decoded.role != '5') {
+    //   return res.status(403).json({ message: 'You are not allowed to do this' });
+    // }
 
     let query = { winner: { $ne: 0 } };
     let page = 1;
     let sort = 1;
     let sortValue = 'openDate';
-    let limit = 50;
+    let limit = config.pageSize;
     let projection
-    if (req.body.sportsId == 7 || req.body.sportsId == 4339) {
-      projection = {
-        _id: 1,
-        marketName: "$name",
-        name: "$meetingName",
-        openDate: 1,
-        winner: 1
-      };
-    }
-    else {
-      projection = {
-        _id: 1,
-        name: 1, //should be name of event 
-        competitionName: 1, //change field to marketName
-        openDate: 1,
-        winner: 1
-      };
-    }
 
     if (req.body.numRecords) {
-      const numRecords = parseInt(req.body.numRecords);
-      if (isNaN(numRecords) || numRecords < 0) {
-        return res.status(400).json({ message: 'Invalid numRecords value' });
-      }
-      limit = numRecords;
+      if (!isNaN(parseInt(req.body.numRecords)) || parseInt(req.body.numRecords) > 0)
+        limit = numRecords;
     }
-
     if (req.body.sortValue) {
       sortValue = req.body.sortValue;
     }
-
     if (req.body.sort) {
       sort = parseInt(req.body.sort);
     }
     if (req.body.page) {
       page = parseInt(req.body.page);
     }
-
     if (req.body.sportsId) {
       query.sportsId = req.body.sportsId;
     }
@@ -1516,12 +1492,9 @@ async function getAllGamesResults(req, res) {
     }
 
     if (req.body.searchValue) {
-      const searchRegex = new RegExp(req.body.searchValue, 'i');
       query.$or = [
-        { competitionName: { $regex: searchRegex } },
-        { name: { $regex: searchRegex } },
-        { openDate: { $regex: searchRegex } },
-        { winner: { $regex: searchRegex } }
+        { competitionName: { $regex: req.body.searchValue, $options: 'i' } },
+        { name: { $regex: req.body.searchValue, $options: 'i' } },
       ];
     }
 
@@ -1538,7 +1511,7 @@ async function getAllGamesResults(req, res) {
         return res.status(500).json({ message: 'Pagination failed', error: err.message });
       }
 
-      if (results.totalDocs === 0) {
+      if (results.totalDocs == 0) {
         return res.status(404).json({ message: 'No records found' });
       }
 
