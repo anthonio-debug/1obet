@@ -25,8 +25,6 @@ const router = express.Router();
 const Session = require("../models/Session")
 const MarketIDS = require('../models/marketIds');
 const Bets = require('../models/bets');
-
-
 const {
   handleDrawBet
 } = require('../../resultSystem/src/CalculateBets/calculations')
@@ -1480,15 +1478,15 @@ async function getAllGamesResults(req, res) {
 
     if (req.body.startDate && req.body.endDate) {
       query.openDate = {
-        $gte: req.body.startDate,
-        $lte: req.body.endDate
+        $gte: new Date(req.body.startDate).getTime(),
+        $lte: new Date(req.body.endDate).getTime()
       };
     }
     else if (req.body.startDate) {
-      query.openDate = { $gte: req.body.startDate };
+      query.openDate = { $gte: new Date(req.body.startDate).getTime() };
     }
     else if (req.body.endDate) {
-      query.openDate = { $lte: req.body.endDate };
+      query.openDate = { $lte: new Date(req.body.startDate).getTime() };
     }
 
     if (req.body.searchValue) {
