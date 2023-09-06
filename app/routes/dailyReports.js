@@ -438,19 +438,19 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
           // cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         }
       },
-      // {
-      //   $addFields: {
-      //     'betIdEvent': { $toObjectId: "$betId" }
-      //   }
-      // },
-      // {
-      //   $lookup: {
-      //     from: 'deposits',
-      //     localField: '_id',
-      //     foreignField: '_id',
-      //     as: 'bets'
-      //   }
-      // }, 
+      {
+        $addFields: {
+          'betsId': { $toString: "$_id" }
+        }
+      },
+      {
+        $lookup: {
+          from: 'deposits',
+          localField: '_id',
+          foreignField: 'betsId',
+          as: 'deposits'
+        }
+      }, 
       // {
       //   $group:{
       //     _id: {$arrayElemAt: ["$bets._id", 0]},
