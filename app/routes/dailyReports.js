@@ -461,7 +461,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
     ]);
     return res.send({
       success: true,
-      message: 'Daily reports',
+      message: 'Detailed reports',
       results: response,
     });
 
