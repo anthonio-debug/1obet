@@ -430,34 +430,34 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
   const matchId     = req.query.matchId;
   const currentUser = await User.findOne({ userId: userId});
   if(currentUser.role == '5'){
-    const response = await CashDeposit.aggregate([
+    const response = await Bets.aggregate([
       {
         $match: {
           userId: userId,
           matchId: matchId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          // cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         }
       },
-      {
-        $addFields: {
-          'betIdEvent': { $toObjectId: "$betId" }
-        }
-      },
-      {
-        $lookup: {
-          from: 'bets',
-          localField: 'betIdEvent',
-          foreignField: '_id',
-          as: 'bets'
-        }
-      }, 
-      {
-        $group:{
-          _id: {$arrayElemAt: ["$bets._id", 0]},
-          amount: { $sum: "$amount"},
-          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-        }
-      }
+      // {
+      //   $addFields: {
+      //     'betIdEvent': { $toObjectId: "$betId" }
+      //   }
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'deposits',
+      //     localField: '_id',
+      //     foreignField: '_id',
+      //     as: 'bets'
+      //   }
+      // }, 
+      // {
+      //   $group:{
+      //     _id: {$arrayElemAt: ["$bets._id", 0]},
+      //     amount: { $sum: "$amount"},
+      //     name: { $first: { $arrayElemAt: ["$bets.runnerName", 0] } }
+      //   }
+      // }
     ]);
     return res.send({
       success: true,
