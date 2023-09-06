@@ -1473,9 +1473,6 @@ async function getAllGamesResults(req, res) {
     if (req.body.sportsId) {
       query.sportsId = req.body.sportsId;
     }
-    console.log('startDate', req.body.startDate);
-    console.log('endDate', req.body.endDate);
-
     if (req.body.startDate && req.body.endDate) {
       query.openDate = {
         $gte: new Date(req.body.startDate).getTime(),
@@ -1502,6 +1499,8 @@ async function getAllGamesResults(req, res) {
       sort: { [sortValue]: sort },
       select: projection,
     };
+
+    console.log("Query =========== ", query);
 
     Events.paginate(query, options, (err, results) => {
       if (err) {
