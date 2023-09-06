@@ -429,6 +429,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
   const userId      = parseInt(req.query.userId)
   const matchId     = req.query.matchId;
   const currentUser = await User.findOne({ userId: userId});
+  const parent      = await User.findOne({ userId: currentUser.createdBy});
   if(currentUser.role == '5'){
     // const response = await Bets.aggregate([
     //   {
@@ -499,8 +500,10 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
         $group:{
           _id: "$betId",
           amount: { $sum: "$amount"},
+          sattledAt: "$createdAt",
           betAmount: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
-          name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } }
+          name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
+          createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } }
         }
       }
     ]);
@@ -508,6 +511,8 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
       success: true,
       message: 'Detailed reports',
       results: response,
+      isDetailed: true,
+      dealer: parent.userName
     });
 
   }else {
@@ -581,6 +586,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
       success: true,
       message: 'Daily reports',
       results: response?.concat(parentResponse),
+      isDetailed: false
     });
   }
 
