@@ -6,10 +6,10 @@ const User = require('../models/user');
 
 const reportValidator = require('../validators/reports');
 const Deposits = require('../models/deposits');
-const MarketType = require('../models/marketTypes');
+const Events = require('../models/events');
 const Bets = require('../models/bets');
 const loginRouter = express.Router();
-const cricketMatch = require('../models/cricketMatches');
+
 
 /*
 const getDailyPLReport = async (req, res) => {
@@ -336,6 +336,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
   const currentUser = await User.findOne({ userId: userId});
 
   if(currentUser.role == 5){
+    const match       = await Events.findOne({Id: matchId})
     const parent      = await User.findOne({ userId: currentUser.createdBy});
     const response = await CashDeposit.aggregate([
       {
@@ -390,8 +391,8 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
       results: response,
       isDetailed: true,
       dealer: parent.userName,
-      currentUser: currentUser.userName
-      
+      currentUser: currentUser.userName,
+      Winner: match.winner
     });
   }
   else {
