@@ -1686,9 +1686,9 @@ const dailyMatchWiseprofitLose = async(req, res) => {
   const matchId     = req.query.matchId;
   const currentUser = await User.findOne({ userId: userId});
   const parent      = await User.findOne({ userId: currentUser.createdBy});
+  const match       = await Events.findById(matchId)
 
   if(currentUser.role == '5'){
-    const match       = await Events.findById(matchId)
     const response = await Cash.aggregate([
       {
         $match: {
