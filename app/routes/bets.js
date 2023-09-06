@@ -1742,58 +1742,54 @@ const dailyMatchWiseprofitLose = async(req, res) => {
       results: response,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      Winner: match?.winner
-      
+      Winner: match?.winner,
+      isBattor: true
     });
 
   }else {
-    const users       = [userId];
-    let parents       = [userId];
-    let childUsers;
-    do{
-      childUsers     = await User.distinct("userId", {
-        createdBy: {
-          $in: parents
-        }
-      });
-      console.log(" child users ======= ", childUsers);
-      if(childUsers.length) users.push(...childUsers)
-      parents = childUsers
-    }while (childUsers.length > 0)
-  
-    console.log(" users list  ======== ", users);
-  
     const response = await Cash.aggregate([
       {
         $match: {
-          userId: { $in: users },
           matchId: matchId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          userId: userId,
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] }
+        }
+      },
+      {
+        $addFields: {
+          'betsId': { $toObjectId: "$betId" }
         }
       },
       {
         $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: 'userId',
-          as: 'userInfo'
+          from: 'bets',
+          localField: 'betsId',
+          foreignField: '_id',
+          as: 'betsDetails'
         }
       }, 
-      {
+      { 
         $group:{
-          _id: "$userId",
-          amount: { $sum: "$amount"},
-          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+          _id: "$betId",
+          pl: { $sum: "$amount"},
+          sattledAt: { $first: "$date" },
+          price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
+          name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
+          createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
+          size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
+          type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } }
+
         }
       }
     ]);
-  
-  
     return res.send({
       success: true,
-      message: 'Daily reports',
+      message: 'Detailed reports',
       results: response,
-      isDetailed: false
+      dealer: parent.userName,
+      currentUser: currentUser.userName,
+      Winner: match?.winner,
+      isBattor: false
     });
   }
 }
