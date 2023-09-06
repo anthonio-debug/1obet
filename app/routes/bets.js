@@ -1470,7 +1470,7 @@ const postmanwork = async (req, res)=>{
 const profitLose = async (req, res)=>{
   try{
     const userId      = parseInt(req.decoded.userId);
-    const response    = await CashDeposit.aggregate([
+    const response    = await Cash.aggregate([
       {
         $match: {
             userId: userId,
