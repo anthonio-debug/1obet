@@ -1662,15 +1662,15 @@ const EventWiseprofitLose = async(req, res) => {
           as: 'bets'
         }
       }, 
-      // {
-      //   $group:{
-      //     _id: {$arrayElemAt: ["$bets.matchId", 0]},
-      //     amount: { $sum: "$amount"},
-      //     userId: { $first: "$userId" },
-      //     date: { $first: "$date" },
-      //     name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
-      //   }
-      // }
+      {
+        $group:{
+          _id: {$arrayElemAt: ["$bets.matchId", 0]},
+          amount: { $sum: "$amount"},
+          userId: { $first: "$userId" },
+          date: { $first: "$date" },
+          name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
+        }
+      }
     ]);
     return res.send({
       success: true,
