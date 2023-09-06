@@ -1574,9 +1574,9 @@ const EventWiseprofitLose = async(req, res) => {
       message: 'Invalid Request'
     });
   }
-  
+
   const userId      = parseInt(req.query.userId);
-  const sportsId    = parseInt(req.query.sportsId);
+  const sportsId    = req.query.sportsId;
   
   const currentUser = await User.findOne({ userId: userId});
   if(!currentUser){
