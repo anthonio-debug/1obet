@@ -1461,7 +1461,7 @@ async function getAllGamesResults(req, res) {
 
     if (req.body.numRecords) {
       if (!isNaN(parseInt(req.body.numRecords)) || parseInt(req.body.numRecords) > 0)
-        limit = req.body.numRecords);
+        limit = req.body.numRecords;
     }
     if (req.body.sortValue) {
       sortValue = req.body.sortValue;
