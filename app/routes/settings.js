@@ -1453,10 +1453,17 @@ async function getAllGamesResults(req, res) {
     //   return res.status(403).json({ message: 'You are not allowed to do this' });
     // }
 
-    let query = { status: {$ne: 'OPEN'} };
+    let query = { };
 
     if (req.body.sportsId == 1 || req.body.sportsId == 2 || req.body.sportsId == 4) {
       query.isShowed= true;
+      query.status= {$ne: 'OPEN'} 
+    }
+
+    if (req.body.sportsId == 7 || req.body.sportsId == 4339 ) {
+      query.status= {
+        $nin: ["OPEN", "WAITING"]
+      }
     }
 
     let page = 1;
