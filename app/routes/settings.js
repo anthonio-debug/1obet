@@ -1455,6 +1455,13 @@ async function getAllGamesResults(req, res) {
 
     let query = { };
 
+    var fancyCheck = false;
+
+    if (req.body.sportsId == 10) {
+      req.body.sportsId = 4;
+      fancyCheck=true;
+    }
+
     if (req.body.sportsId == 1 || req.body.sportsId == 2 || req.body.sportsId == 4) {
       query.isShowed= true;
       query.status= {$ne: 'OPEN'} 
@@ -1531,7 +1538,11 @@ async function getAllGamesResults(req, res) {
       
       for (let index = 0; index < results.docs.length; index++) {
         const ev = results.docs[index];
-        const marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}});
+        if (fancyCheck) {
+          const marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}, sportId: -1});
+        } else {
+          const marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}});
+        }
 
         if (marketResultForEvent.length>0) {
           for (let i = 0; i < marketResultForEvent.length; i++) {
@@ -1544,7 +1555,11 @@ async function getAllGamesResults(req, res) {
             realResults.push(combinedData);
           }
         }  else {
-          const checkMarketRecord = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}});
+          if (fancyCheck) {
+            const checkMarketRecord = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}, sportId: -1});
+          } else {
+            const checkMarketRecord = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}, sportId: -1});
+          }
           if (checkMarketRecord) {
             const combinedData = {
               ...ev._doc,
