@@ -24,7 +24,7 @@ function apiRequest() {
         try {
             const response = await axios.get(url);
             const results = response.data;
-
+            console.log(results);
             for (let index = 0; index < results.length; index++) {
                 const result = results[index];
                 const marketIndex = _.findIndex(markets, function (o) { return o.marketId == result.marketId; });
