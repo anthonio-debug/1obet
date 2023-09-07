@@ -339,6 +339,15 @@ function apiRequests() {
                   await MarketIDS.updateOne({ marketId: element.MarketId }, { inPlay: false, status: element.Status });
                 }
 
+                var runners = [];
+
+                for (let ix1 = 0; ix1 < element.Runners.length; ix1++) {
+                  const runner = element.Runners[ix1];
+                  runners.push({SelectionId: runner.SelectionId, runnerName: runner.runnerName});
+                }
+
+                await MarketIDS.updateOne({ marketId: element.MarketId }, { $set: {runners: runners} });
+
                 var el = new Odds(json);
                 el.save();
 
@@ -413,7 +422,6 @@ function apiRequests() {
         // update event status with 'CLOSED-INPLAYLIST' 
         // Also update MarketIDs
         for (let i = 0; i < diff.length; i++) {
-
           console.log('Event is closed because it not exists on inplaylist: ' + diff[i]);
           await MarketIDS.updateMany({ eventId: diff[i] }, { $set: { inPlay: false, status: 'CLOSED' } });
           await inPlayEvents.updateOne({ Id: diff[i] }, { $set: { status: 'CLOSED-INPLAYLIST', inplay: false, inplayFromServer: false } });

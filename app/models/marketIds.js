@@ -8,7 +8,10 @@ const MarketIDsSchema = new mongoose.Schema({
   lastCheck: { type: Number,default: 0 },
   sportID: { type: Number,default: 0 },
   index: { type: Number, default: 0 },
-  status: {type: String}
+  status: {type: String},
+  runners:  { type: Schema.Types.Mixed },
+  winnerInfo: { type: Schema.Types.Mixed },
+  lastResultCheckTime: { type: Number, default: 0 },
 });
 
 const MarketIDS = mongoose.model('MarketIDS', MarketIDsSchema);
