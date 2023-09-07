@@ -120,25 +120,24 @@ function apiRequests() {
             status: statusDef
           }
           await Event.findOneAndUpdate({ Id: race.raceId }, obj, options);
+
+          const marketID = await MarketIDS.findOne({ eventId: race.raceId, marketId: race.marketId + '' });
+
+          if (marketID) {
+            const newMarket = new MarketIDS({
+              eventId: race.raceId,
+              marketId: race.marketId + '',
+              marketName: meeting.name,
+              sportID: sportsId,
+              status: 'Race Market',
+              index: 0
+            });
+            await newMarket.save();
+          }
+
+          
+
         };
-
-        const marketID = await MarketIDS.findOne({ eventId: race.raceId, marketId: race.marketId + '' });
-
-        if (marketID) {
-          const newMarket = new MarketIDS({
-            eventId: race.raceId,
-            marketId: race.marketId + '',
-            marketName: meeting.name,
-            sportID: sportsId,
-            status: 'Race Market',
-            index: 0
-          });
-          await newMarket.save();
-        }
-
-
-
-        
 
       };
       //end events
@@ -307,7 +306,7 @@ function apiRequests() {
         const runner = marketNodeData.runners[ix1];
         runners.push({SelectionId: runner.selectionId, runnerName: runner.runner.description.runnerName});
       }
-      
+
       await MarketIDS.updateOne({ marketId: marketId,sportID: eventTypeData.eventTypeId }, { $set: {runners: runners} });
 
     } catch (error) {
