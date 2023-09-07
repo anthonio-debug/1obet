@@ -2,7 +2,7 @@
 module.exports = toolStart;
 const apiRequest = require('./apiRequest')();
 const MarketIDs = require('../app/models/marketIds');
-const inplayevents = require('../app/models/inplayevents');
+const inplayevents = require('../app/models/events');
 
 function toolStart() {
     return { init };
