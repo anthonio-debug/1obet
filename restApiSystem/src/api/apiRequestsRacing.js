@@ -134,7 +134,8 @@ function apiRequests() {
               status: 'Race Market',
               index: 0
             });
-            await newMarket.save();
+           const r1 = await newMarket.save();
+           console.log(r1);
           } else {
             console.log(marketID);
           }
