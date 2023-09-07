@@ -12,6 +12,13 @@ async function addCashDeposit(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
+
+    if ( req.body.amount < 1 ) {
+      return res
+        .status(400)
+        .send({ message: `Invalid Amount!` });
+    }
+
     const userToUpdate = await User.findOne({ 
       userId: req.body.userId,
       isDeleted: false
@@ -29,7 +36,6 @@ async function addCashDeposit(req, res) {
     }
 
     if (currentUserParent.role != '0') {
-
       if (  req.body.amount > (currentUserParent.cash + currentUserParent.credit )) {
         return res
           .status(400)
@@ -227,6 +233,11 @@ async function withDrawCashDeposit(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
+    if ( req.body.amount < 1 ) {
+      return res
+        .status(400)
+        .send({ message: `Invalid Amount!` });
+    }
     const userToUpdate = await User.findOne({ userId: req.body.userId,
       isDeleted: false
     });
