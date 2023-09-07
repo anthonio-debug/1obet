@@ -275,7 +275,9 @@ async function handleWinningBet(bet) {
     commissionFrom = user.userId;
   };
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
-  await CurrentPosition.deleteMany({ betId: bet._id.toString()  })
+  const betIdString = bet._id.toString();
+  console.log(" betIdString =============== ", betIdString);
+  await CurrentPosition.deleteMany({ betId: betIdString })
 }
 
 async function handleDrawBet(bet) {
