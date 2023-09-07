@@ -1538,10 +1538,11 @@ async function getAllGamesResults(req, res) {
       
       for (let index = 0; index < results.docs.length; index++) {
         const ev = results.docs[index];
+        var marketResultForEvent;
         if (fancyCheck) {
-          const marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}, sportId: -1});
+           marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}, sportId: -1});
         } else {
-          const marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}});
+           marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}});
         }
 
         if (marketResultForEvent.length>0) {
@@ -1555,12 +1556,13 @@ async function getAllGamesResults(req, res) {
             realResults.push(combinedData);
           }
         }  else {
+          var  checkMarketRecord2;
           if (fancyCheck) {
-            const checkMarketRecord = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}, sportId: -1});
+             checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}, sportId: -1});
           } else {
-            const checkMarketRecord = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}, sportId: -1});
+             checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}});
           }
-          if (checkMarketRecord) {
+          if (checkMarketRecord2) {
             const combinedData = {
               ...ev._doc,
               marketName: 'WAITING RESULTS',
