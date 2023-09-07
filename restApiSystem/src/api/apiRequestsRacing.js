@@ -125,7 +125,7 @@ function apiRequests() {
 
           const marketID = await MarketIDS.findOne({ eventId: race.raceId, marketId: race.marketId + '' });
 
-          if (marketID) {
+          if (!marketID) {
             const newMarket = new MarketIDS({
               eventId: race.raceId,
               marketId: race.marketId + '',
@@ -135,10 +135,7 @@ function apiRequests() {
               index: 0
             });
             await newMarket.save();
-          }
-
-          
-
+          } 
         };
 
       };
