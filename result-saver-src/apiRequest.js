@@ -20,6 +20,8 @@ function apiRequest() {
             await MarketIDs.findOneAndUpdate({_id: markets[index]._id},{lastResultCheckTime: currentTime })
         }
 
+        console.log(marketIds);
+
         var url = `${horseRaceUrl}/results/?ids=`+marketIds.join(',');
         try {
             const response = await axios.get(url);
