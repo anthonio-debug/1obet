@@ -29,12 +29,13 @@ async function addCredit(req, res) {
       userId: userToUpdate.createdBy,
       isDeleted: false
     });
+
     console.log("currentUserParent--- >>> ", currentUserParent);
     if (!currentUserParent) {
       return res.status(404).send({ message: 'user not found' });
     }
 
-    if (currentUserParent.role !== '0') {
+    if (currentUserParent.role != '0') {
       if (  req.body.amount > (currentUserParent.creditRemaining )) {
         return res
           .status(400)
@@ -62,7 +63,8 @@ async function addCredit(req, res) {
     });
 
     let Dealers = ['1', '2', '3', '4'];
-    if (currentUserParent.role == '0' && userToUpdate.role !== '5') {
+    // Company to Dealer 
+    if (currentUserParent.role == '0' && userToUpdate.role != '5') {
       userToUpdate.credit += req.body.amount;
       userToUpdate.creditRemaining += req.body.amount;
       let cashCredit = new CashCredit({
@@ -70,14 +72,12 @@ async function addCredit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
-        maxWithdraw: lastMaxWithdraw
-          ? lastMaxWithdraw.maxWithdraw + req.body.amount
-          : req.body.amount,
+        maxWithdraw: lastMaxWithdraw? lastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cashOrCredit: 'Credit',
       });
       await cashCredit.save();
     } 
-
+    //  Company to Battor 
     else if (currentUserParent.role == '0' && userToUpdate.role == '5') {
       userToUpdate.balance += req.body.amount;
       userToUpdate.availableBalance += req.body.amount;
@@ -85,25 +85,18 @@ async function addCredit(req, res) {
 
       let cashCredit = new CashCredit({
         userId: userToUpdate.userId,
-        description: req.body.description ? req.body.description : '(Cash)',
+        description: req.body.description ? req.body.description : '(Credit)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
-        balance: lastDeposit
-          ? lastDeposit.balance + req.body.amount
-          : req.body.amount,
-
-        availableBalance: lastDeposit
-          ? lastDeposit.availableBalance + req.body.amount
-          : req.body.amount,
-
-        maxWithdraw: lastMaxWithdraw
-          ? lastMaxWithdraw.maxWithdraw + req.body.amount
-          : req.body.amount,
+        balance: lastDeposit ? lastDeposit.balance + req.body.amount : req.body.amount,
+        availableBalance: lastDeposit ? lastDeposit.availableBalance + req.body.amount : req.body.amount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cashOrCredit: 'Credit',
       });
       await cashCredit.save();
     } 
 
+    // Dealer to Dealer
     else if (Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {
       currentUserParent.creditRemaining -= req.body.amount;
       userToUpdate.credit += req.body.amount;
@@ -112,29 +105,26 @@ async function addCredit(req, res) {
       // Add Cash 
       let cashCredit = new CashCredit({
         userId: userToUpdate.userId,
-        description: req.body.description ? req.body.description : '(Cash)',
+        description: req.body.description ? req.body.description : '(Credit)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
-        maxWithdraw: lastMaxWithdraw
-          ? lastMaxWithdraw.maxWithdraw + req.body.amount
-          : req.body.amount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cashOrCredit: 'Credit',
       });
       await cashCredit.save();
-      // -VS Cash from parent 
+      // -ve Cash from parent 
       let parentCash = new CashCredit({
         userId: currentUserParent.userId,
-        description: req.body.description ? req.body.description : '(Cash)',
+        description: req.body.description ? req.body.description : '(Credit)',
         createdBy: req.decoded.userId,
         amount: -req.body.amount,
-        maxWithdraw: parentLastMaxWithdraw
-          ? parentLastMaxWithdraw.maxWithdraw - req.body.amount
-          : -req.body.amount,
+        maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
         cashOrCredit: 'Credit',
       });
       await parentCash.save();
     } 
 
+    // Dealer to Battor 
     else if (Dealers.includes(currentUserParent.role) && userToUpdate.role == '5') {
       currentUserParent.creditRemaining -= req.body.amount;
 
@@ -176,16 +166,15 @@ async function addCredit(req, res) {
       await parentCash.save();
 
     } 
-    
     else {
-      return res.status(400).send({ message: 'Invalid User Information' });
+      return res.status(400).send({ message: 'Invalid Request!' });
     }
     await userToUpdate.save();
     await currentUserParent.save();
 
     return res.send({
       success: true,
-      message: 'Cash credit added successfully',
+      message: 'Credit added successfully',
       results: null,
     });
   } catch (err) {
