@@ -29,7 +29,8 @@ async function addCashDeposit(req, res) {
     }
 
     if (currentUserParent.role != '0') {
-      if (  req.body.amount > (currentUserParent.clientPL + currentUserParent.credit )) {
+
+      if (  req.body.amount > (currentUserParent.cash + currentUserParent.credit )) {
         return res
           .status(400)
           .send({ message: `Max cash deposit is ${Math.floor(currentUserParent.clientPL + currentUserParent.credit)}` });
@@ -56,7 +57,7 @@ async function addCashDeposit(req, res) {
     });
 
     let Dealers = ['1', '2', '3', '4'];
-    if (currentUserParent.role == '0' && userToUpdate.role !== '5') {
+    if (currentUserParent.role == '0' && userToUpdate.role != '5') {
       userToUpdate.clientPL += req.body.amount;
       userToUpdate.cash += req.body.amount
       let cash = new Cash({
@@ -64,9 +65,7 @@ async function addCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
-        maxWithdraw: lastMaxWithdraw
-          ? lastMaxWithdraw.maxWithdraw + req.body.amount
-          : req.body.amount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
         cashOrCredit: 'Cash',
       });
