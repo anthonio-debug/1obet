@@ -44,7 +44,7 @@ function toolStart() {
                 $match: {
                     readyForScore: { $ne: true },
                     winnerInfo: null,
-                    runners: { $ne: null },
+                    //runners: { $ne: null },
                     sportID:{ $in: [1,2,4] },
                     status: 'OPEN',
                     "eventData.isShowed": true,
