@@ -1544,9 +1544,9 @@ async function getAllGamesResults(req, res) {
               marketName: 'WAITING RESULTS',
               winner: ''
             };
+            realResults.push(combinedData);
           }
 
-          realResults.push(combinedData);
         }
       }
 
