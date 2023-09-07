@@ -1532,7 +1532,7 @@ async function getAllGamesResults(req, res) {
             const combinedData = {
               ...ev._doc,
               marketName: marketData.marketName,
-              winnerInfo: marketData.winnerInfo
+              winner: marketData.winnerInfo
             };
             realResults.push(combinedData);
           }
@@ -1540,7 +1540,7 @@ async function getAllGamesResults(req, res) {
           const combinedData = {
             ...ev._doc,
             marketName: 'WAITING RESULTS',
-            winnerInfo: ''
+            winner: ''
           };
           realResults.push(combinedData);
         }
