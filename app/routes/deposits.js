@@ -63,6 +63,7 @@ async function addCashDeposit(req, res) {
     });
 
     let Dealers = ['1', '2', '3', '4'];
+    // company to Dealer  Deposit 
     if (currentUserParent.role == '0' && userToUpdate.role != '5') {
       userToUpdate.clientPL += req.body.amount;
       userToUpdate.cash += req.body.amount
@@ -78,7 +79,7 @@ async function addCashDeposit(req, res) {
       await cash.save();
 
     } 
-
+    // company to Battor 
     else if (currentUserParent.role == '0' && userToUpdate.role == '5') {
       userToUpdate.balance += req.body.amount;
       userToUpdate.availableBalance += req.body.amount;
@@ -90,27 +91,19 @@ async function addCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
-        balance: lastMaxWithdraw
-          ? lastMaxWithdraw.balance + req.body.amount
-          : req.body.amount,
-
-        availableBalance: lastMaxWithdraw
-          ? lastMaxWithdraw.availableBalance + req.body.amount
-          : req.body.amount,
-        maxWithdraw: lastMaxWithdraw
-          ? lastMaxWithdraw.maxWithdraw + req.body.amount
-          : req.body.amount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance + req.body.amount  : req.body.amount,
+        availableBalance: lastMaxWithdraw  ? lastMaxWithdraw.availableBalance + req.body.amount : req.body.amount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount  : req.body.amount,
         cashOrCredit: 'Cash',
-        cash: lastMaxWithdraw
-        ? lastMaxWithdraw.cash + req.body.amount
-        : req.body.amount,
+        cash: lastMaxWithdraw  ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
       });
       await cash.save();
     } 
 
+    // Dealer to Dealer 
     else if (Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {
-      userToUpdate.clientPL += req.body.amount;
-      userToUpdate.cash += req.body.amount;
+      userToUpdate.clientPL   += req.body.amount;
+      userToUpdate.cash       += req.body.amount;
       // currentUserParent.clientPL -= req.body.amount;
       currentUserParent.cash -= req.body.amount;
 
@@ -120,12 +113,8 @@ async function addCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
-        maxWithdraw: lastMaxWithdraw
-          ? lastMaxWithdraw.maxWithdraw + req.body.amount
-          : req.body.amount,
-        cash: lastMaxWithdraw
-        ? lastMaxWithdraw.cash + req.body.amount
-        : req.body.amount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
+        cash: lastMaxWithdraw ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
         // balance : lastMaxWithdraw - 
         cashOrCredit: 'Cash',
       });
@@ -136,30 +125,20 @@ async function addCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: -req.body.amount,
-        maxWithdraw: parentLastMaxWithdraw
-          ? parentLastMaxWithdraw.maxWithdraw - req.body.amount
-          : -req.body.amount,
+        maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
         cashOrCredit: 'Cash',
-        cash: lastMaxWithdraw
-        ? lastMaxWithdraw.cash - req.body.amount
-        : -req.body.amount,
-        // balance: parentLastMaxWithdraw
-        // ? parentLastMaxWithdraw.balance - req.body.amount
-        // : -req.body.amount,
-        // availableBalance: parentLastMaxWithdraw
-        // ? parentLastMaxWithdraw.availableBalance - req.body.amount
-        // : -req.body.amount,
+        cash: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
       });
       await parentCash.save();
     } 
     
+    // Dealer to Battor 
     else if (Dealers.includes(currentUserParent.role) && userToUpdate.role == '5') {
       console.log('in here');
       userToUpdate.balance += req.body.amount;
       userToUpdate.availableBalance += req.body.amount;
       userToUpdate.clientPL += req.body.amount;
       userToUpdate.cash += req.body.amount;
-
       // currentUserParent.clientPL -= req.body.amount;
       currentUserParent.cash -= req.body.amount;
 
@@ -168,20 +147,10 @@ async function addCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
-        balance: lastMaxWithdraw
-          ? lastMaxWithdraw.balance + req.body.amount
-          : req.body.amount,
-
-        availableBalance: lastMaxWithdraw
-          ? lastMaxWithdraw.availableBalance + req.body.amount
-          : req.body.amount,
-
-        maxWithdraw: lastMaxWithdraw
-          ? lastMaxWithdraw.maxWithdraw + req.body.amount
-          : req.body.amount,
-        cash: lastMaxWithdraw
-          ? lastMaxWithdraw.cash + req.body.amount
-          : req.body.amount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance + req.body.amount : req.body.amount,
+        availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + req.body.amount : req.body.amount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
+        cash: lastMaxWithdraw ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
         cashOrCredit: 'Cash',
       });
       await cash.save();
@@ -193,25 +162,15 @@ async function addCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: -req.body.amount,
-        maxWithdraw: parentLastMaxWithdraw
-          ? parentLastMaxWithdraw.maxWithdraw - req.body.amount
-          : -req.body.amount,
+        maxWithdraw: parentLastMaxWithdraw  ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
         cashOrCredit: 'Cash',
-        maxWithdraw: lastMaxWithdraw
-        ? lastMaxWithdraw.cash - req.body.amount
-        : -req.body.amount,
-        // balance: parentLastMaxWithdraw
-        // ? parentLastMaxWithdraw.balance - req.body.amount
-        // : -req.body.amount,
-        // availableBalance:parentLastMaxWithdraw
-        // ? parentLastMaxWithdraw.availableBalance - req.body.amount
-        // : -req.body.amount
+        maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
       });
       await parentCash.save();
       console.log("parentCash",parentCash);
     } 
     else {
-      return res.status(400).send({ message: 'Invalid User Information' });
+      return res.status(400).send({ message: 'Invalid Request' });
     }
     await userToUpdate.save();
     await currentUserParent.save();
@@ -285,7 +244,7 @@ async function withDrawCashDeposit(req, res) {
     });
 
     let Dealers = ['1', '2', '3', '4'];
-    if (currentUserParent.role == '0' && userToUpdate.role !== '5') {
+    if (currentUserParent.role == '0' && userToUpdate.role != '5') {
 
       userToUpdate.clientPL -= req.body.amount;
       userToUpdate.cash -= req.body.amount;
@@ -295,13 +254,8 @@ async function withDrawCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: -req.body.amount,
-
-        maxWithdraw: lastMaxWithdraw
-          ? lastMaxWithdraw.maxWithdraw - req.body.amount
-          : -req.body.amount,
-        cash: lastMaxWithdraw
-          ? lastMaxWithdraw.cash - req.body.amount
-          : -req.body.amount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
+        cash: lastMaxWithdraw ? lastMaxWithdraw.cash - req.body.amount : -req.body.amount,
         cashOrCredit: 'Cash',
       });
 
