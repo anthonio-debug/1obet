@@ -13,6 +13,9 @@ function apiRequest() {
     return { getRacingResult,getEventResult };
 
     async function getRacingResult(markets) {
+
+        console.log('getWaitingResult for Racings ');
+
         const currentTime = new Date().getTime();
         var marketIds = [];
         for (let index = 0; index < markets.length; index++) {
@@ -54,6 +57,8 @@ function apiRequest() {
         }
     }
     async function getEventResult(markets) {
+        console.log('getWaitingResult for Events ');
+
         const currentTime = new Date().getTime();
         var marketIds = [];
         for (let index = 0; index < markets.length; index++) {

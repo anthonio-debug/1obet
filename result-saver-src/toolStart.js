@@ -11,7 +11,6 @@ function toolStart() {
     }
 
     async function getWaitingResult() {
-        console.log('getWaitingResult for Racings and events');
         try {
 
             const racingMarkets = await MarketIDs.find({readyForScore: true, sportID: {$in: [7, 4339]},winnerInfo: null }).sort({lastResultCheckTime: 1}).limit(1).exec();
