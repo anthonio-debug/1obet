@@ -5,7 +5,7 @@ module.exports = apiRequest;
 const axios = require('axios');
 const horseRaceUrl = "http://136.244.77.249:33333";
 const sportsAPIUrl = 'http://209.250.242.175:33332';
-const MarketIDs = require('../../one-o-bet-backend/app/models/marketIds');
+const MarketIDs = require('../app/models/marketIds');
 var _ = require('lodash');
 
 

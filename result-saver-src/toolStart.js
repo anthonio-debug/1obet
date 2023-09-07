@@ -1,7 +1,7 @@
 'use strict';
 module.exports = toolStart;
 const apiRequest = require('./apiRequests')();
-const MarketIDs = require('../../one-o-bet-backend/app/models/marketIds');
+const MarketIDs = require('../app/models/marketIds');
 
 function toolStart() {
     return { init };
