@@ -135,10 +135,7 @@ function apiRequests() {
               index: 0
             });
            const r1 = await newMarket.save();
-           console.log(r1);
-          } else {
-            console.log(marketID);
-          }
+          } 
         };
 
       };
