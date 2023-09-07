@@ -42,7 +42,7 @@ function toolStart() {
             },
             {
                 $match: {
-                    readyForScore: { $ne: true },
+                    //readyForScore: { $ne: true },
                     winnerInfo: null,
                     //runners: { $ne: null },
                     sportID:{ $in: [1,2,4] },
