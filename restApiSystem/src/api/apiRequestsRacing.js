@@ -427,7 +427,7 @@ function apiRequests() {
 
 
         for (let index = 0; index < filteredArray.length; index++) {
-          await Event.findOneAndUpdate({ Id: filteredArray[index].eventId }, { status: 'CLOSED' });
+          await Event.findOneAndUpdate({ Id: filteredArray[index].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
           console.log(filteredArray[index].eventId, 'CLOSED 1');
           await MarketIDS.updateOne({ eventId: filteredArray[index].eventId }, { $set: {readyForScore: true} });
           io.emit('racing_status', { status: 'CLOSED', marketId: filteredArray[index].marketId });
@@ -436,7 +436,9 @@ function apiRequests() {
       } else {
         for (let i = 0; i < array.length; i++) {
           console.log(array[i].eventId, 'CLOSED 2');
-          await Event.findOneAndUpdate({ Id: array[i].eventId }, { status: 'CLOSED' });
+          await Event.findOneAndUpdate({ Id: array[i].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
+          await MarketIDS.updateOne({ eventId: array[i].eventId }, { $set: {readyForScore: true} });
+
         }
         console.log(oddsData);
       }

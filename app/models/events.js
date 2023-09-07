@@ -44,6 +44,8 @@ const inPlayEventsSchema = new mongoose.Schema({
   draw: {type: Boolean, default: false},
   isCanceled: {type: Boolean, default: false},
   matchTypeProvider: { type: String, default: '' },
+  readyForScore: { type: Boolean, default: false },
+
 });
 
 inPlayEventsSchema.plugin(Global.paginate);
