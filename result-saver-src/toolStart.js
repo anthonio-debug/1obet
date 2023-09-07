@@ -22,6 +22,9 @@ function toolStart() {
         } catch (error) {
             console.log(error);
         }
+        setTimeout(() => {
+            getWaitingResult();
+        }, 3000);
     }
 }
 
