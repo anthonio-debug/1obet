@@ -208,7 +208,7 @@ function apiRequests() {
         // Also update MarketIDs
         for (let i = 0; i < diff.length; i++) {
           console.log('Event is closed because it not exists on listEventsBySport: ' + diff[i]);
-          await MarketIDS.updateMany({ eventId: diff[i] }, { $set: { inPlay: false, status: 'CLOSED' } });
+          await MarketIDS.updateMany({ eventId: diff[i] }, { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } });
           await inPlayEvents.updateOne({ Id: diff[i] }, { $set: { status: 'CLOSED-EVENTLIST', inplay: false, inplayFromServer: false } });
           io.emit('inplay', { eventID: diff[i], inplay: false });
         }
@@ -423,7 +423,7 @@ function apiRequests() {
         // Also update MarketIDs
         for (let i = 0; i < diff.length; i++) {
           console.log('Event is closed because it not exists on inplaylist: ' + diff[i]);
-          await MarketIDS.updateMany({ eventId: diff[i] }, { $set: { inPlay: false, status: 'CLOSED' } });
+          await MarketIDS.updateMany({ eventId: diff[i] }, { $set: { inPlay: false, status: 'CLOSED',readyForScore: true } });
           await inPlayEvents.updateOne({ Id: diff[i] }, { $set: { status: 'CLOSED-INPLAYLIST', inplay: false, inplayFromServer: false } });
           io.emit('inplay', { eventID: diff[i], inplay: false });
         }
