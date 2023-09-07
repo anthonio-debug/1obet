@@ -1537,11 +1537,15 @@ async function getAllGamesResults(req, res) {
             realResults.push(combinedData);
           }
         }  else {
-          const combinedData = {
-            ...ev._doc,
-            marketName: 'WAITING RESULTS',
-            winner: ''
-          };
+          const checkMarketRecord = await MarketIDS.findOne({ eventId: ev.Id});
+          if (checkMarketRecord) {
+            const combinedData = {
+              ...ev._doc,
+              marketName: 'WAITING RESULTS',
+              winner: ''
+            };
+          }
+
           realResults.push(combinedData);
         }
       }
