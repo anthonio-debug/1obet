@@ -166,7 +166,7 @@ function apiRequests() {
             continue;
           }
           const old_record = await raceMarkets.findOne({ marketId: race.marketId });
-          if (!old_record) {
+          if (old_record) {
             marketDescription(race.marketId);
           }
         }
@@ -306,7 +306,7 @@ function apiRequests() {
         runners.push({SelectionId: runner.selectionId, runnerName: runner.runner.description.runnerName});
       }
 
-      await MarketIDS.updateOne({ marketId: marketId,sportID: eventTypeData.eventTypeId }, { $set: {runners: runners} });
+      await MarketIDS.updateOne({ marketId: marketId, sportID: eventTypeData.eventTypeId }, { $set: {runners: runners} });
 
     } catch (error) {
       console.log('Market data Problem');
