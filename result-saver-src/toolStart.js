@@ -30,7 +30,7 @@ function toolStart() {
             await MarketIDs.updateOne({ _id: element._id }, { $set: { readyForScore: true } });
         }
 
-
+        /*
         const results = await MarketIDs.aggregate([
             {
                 $lookup: {
@@ -57,9 +57,7 @@ function toolStart() {
                 }
             }
         ]);
-
-        console.log(results);
-        process.exit(1);
+         */
     }
 
     async function getWaitingResult() {
