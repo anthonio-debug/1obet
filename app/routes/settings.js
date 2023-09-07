@@ -1453,7 +1453,12 @@ async function getAllGamesResults(req, res) {
     //   return res.status(403).json({ message: 'You are not allowed to do this' });
     // }
 
-    let query = { isShowed: true, status: {$ne: 'OPEN'} };
+    let query = { status: {$ne: 'OPEN'} };
+
+    if (req.body.sportsId == 1 || req.body.sportsId == 2 || req.body.sportsId == 4) {
+      query.isShowed= true;
+    }
+
     let page = 1;
     let sort = 1;
     let sortValue = 'openDate';
