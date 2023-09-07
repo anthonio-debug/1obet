@@ -15,8 +15,10 @@ function toolStart() {
         try {
 
             const racingMarkets = await MarketIDs.find({readyForScore: true, sportID: {$in: [7, 4339]},winnerInfo: null }).sort({lastResultCheckTime: 1}).limit(1).exec();
+            if (racingMarkets.length> 0)
             await apiRequest.getRacingResult(racingMarkets);
             const eventMarkets = await MarketIDs.find({readyForScore: true, sportID: {$nin: [7, 4339]},winnerInfo: null }).sort({lastResultCheckTime: 1}).limit(10).exec();
+            if (eventMarkets.length> 0)
             await apiRequest.getEventResult(eventMarkets);
 
         } catch (error) {
