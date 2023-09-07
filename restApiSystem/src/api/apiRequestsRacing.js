@@ -165,10 +165,7 @@ function apiRequests() {
           if (!race || typeof race.marketId === 'undefined' || !race.marketId) {
             continue;
           }
-          const old_record = await raceMarkets.findOne({ marketId: race.marketId });
-          if (old_record) {
-            marketDescription(race.marketId);
-          }
+          marketDescription(race.marketId);
         }
       }
       //end check description
