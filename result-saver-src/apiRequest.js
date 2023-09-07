@@ -40,6 +40,8 @@ function apiRequest() {
                     } else {
                         await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id},{ $set: {winnerInfo: result.winnerSelectionId} });
                     }
+                } else  {
+                    console.log('Record not found');
                 }
 
             }
