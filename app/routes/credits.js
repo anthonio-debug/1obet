@@ -212,7 +212,7 @@ async function withdrawCredit(req, res) {
       return res.status(404).send({ message: 'user not found' });
     }
 
-    if ( userToUpdate.role !== '5'  && req.body.amount >  userToUpdate.clientPL && req.body.amount >  userToUpdate.creditRemaining) {
+    if ( userToUpdate.role != '5'  && req.body.amount >  userToUpdate.creditRemaining) {
       if( userToUpdate.clientPL >  userToUpdate.creditRemaining){
         return res
         .status(400)
@@ -222,7 +222,7 @@ async function withdrawCredit(req, res) {
         .status(400)
         .send({ message: `Max credit to withdraw is ${userToUpdate.clientPL}` });
     }
-    else if( userToUpdate.role == '5'  && req.body.amount >  userToUpdate.availableBalance && req.body.amount >  userToUpdate.credit){
+    else if( userToUpdate.role == '5'  && (req.body.amount >  userToUpdate.availableBalance || req.body.amount >  userToUpdate.credit )){
       if( userToUpdate.availableBalance >  userToUpdate.credit){
         return res
         .status(400)
