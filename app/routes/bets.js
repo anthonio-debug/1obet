@@ -55,8 +55,6 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     },
     isDeleted: false,
   }).sort({ role: -1 });
-
-
   let prev = 0;
   parentUser.forEach((user) => {
     let current = user.downLineShare;
@@ -641,7 +639,7 @@ const placeBet = async (req, res) => {
           matchId: matchId,
           betId: result._id
         })
-        position.save();
+        await position.save();
 
         const updatedUser = await User.findOneAndUpdate(
           { userId: userId },
@@ -652,10 +650,6 @@ const placeBet = async (req, res) => {
             },
           },
         );
-        // console.log("parentUserIds ===========", parentUserIds);
-        // console.log("winningAmount ===========", winningAmount);
-        // console.log("matchId =================", matchId);
-
         await updateParentUserBalance(parentUserIds, winningAmount, matchId, result._id);
 
         return res.send({
