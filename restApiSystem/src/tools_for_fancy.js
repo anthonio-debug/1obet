@@ -7,6 +7,7 @@ const axios = require('axios');
 const inPlayEvents = require('../../app/models/events');
 const FancyEvent = require('../../app/models/fancyEvent');
 const FancyOdds = require('../../app/models/fancyOdds');
+const MarketIDs = require('../../app/models/marketIds');
 
 let io;
 const fancyUrl = 'https://betfairoddsapi.com:3443/api';
@@ -30,12 +31,9 @@ function ToolForFancy() {
         try {
             const response = await axios.get(url);
             const facyData = response.data;
-
-
             if (facyData.length == 0) {
                 return;
             }
-
             for (let index = 0; index < facyData.length; index++) {
                 var object = {
                     eventId: facyData[index].gameId,
@@ -93,6 +91,27 @@ function ToolForFancy() {
                                     });
                                     await newFancyOdds.save();
                                     
+                                    /* Necessary Records for result page. It's broken. 
+
+                                    if (odd && odd.data && odd.data.t3 &&  odd.data.t3.length > 0) {
+                                    await MarketIDs.findOneAndUpdate(
+                                        { eventId: facyData[index].gameId,
+                                         },   
+                                        {
+                                            eventId: eventId: facyData[index].gameId,
+                                            marketId: facyData[index].marketId + '',
+                                            marketName: meeting.name,
+                                            sportID: -1,
+                                            status: 'Race Market',
+                                            index: 0
+                                        },
+                                        {
+                                          new: true,          // güncellenmiş dokümanı döndürür
+                                          upsert: true        // eğer doküman yoksa, yeni bir doküman oluşturur
+                                        }
+                                    );
+                                    }
+                                    */
                                     io.to('#' + odd.gameId).emit('fancy_odds', newFancyOdds);
                                 }
 

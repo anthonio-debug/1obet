@@ -12,6 +12,9 @@ const sportsAPIUrl = 'http://209.250.242.175:33332';
 const resultRecords = require('../../../app/models/resultRecords');
 const Bets = require('../../../app/models/bets');
 const inPlayEvents = require('../../../app/models/events');
+const MarketIDs = require('../../../app/models/marketIds');
+
+
 const {
     handleLosingBet,
     handleWinningBet,
@@ -155,6 +158,27 @@ function scoreChecker() {
 
                 const bets = await Bets.find({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: null, status: 1 });
 
+
+                await MarketIDs.findOneAndUpdate(
+                    { eventId: event.Id,
+                      marketId: 'Bookmaker',
+                     },   
+                    {
+                        eventId: event.Id,
+                        marketId: 'Bookmaker',
+                        marketName: result.eventName,
+                        sportID: -1,
+                        status: 'Bookmaker Result',
+                        winnerInfo: result.winnerSelId,
+                        index: 0
+                    },
+                    {
+                      new: true,
+                      upsert: true
+                    }
+                );
+
+
                 if (result.winnerSelId == -1) {
                     for (const bet of bets) {
                         await handleDrawBet(bet);
@@ -225,6 +249,28 @@ function scoreChecker() {
 
                 const bets = await Bets.find({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: { $ne: null }, status: 1 });
 
+
+                await MarketIDs.findOneAndUpdate(
+                    { eventId: event.Id,
+                      marketId: fancyName,
+                     },   
+                    {
+                        eventId: event.Id,
+                        marketId: fancyName,
+                        marketName: result.fancyName,
+                        sportID: -1,
+                        status: 'Fancy Result',
+                        winnerInfo: result.result,
+                        index: 0
+                    },
+                    {
+                      new: true,
+                      upsert: true
+                    }
+                );
+
+
+
                 if (result.result == -1) {
                     for (const bet of bets) {
                         await handleDrawBet(bet);
@@ -267,6 +313,11 @@ function scoreChecker() {
             const bet = bets[index];
             //figure bets
 
+            const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(bet.betData.matchId) }, { Id: 1 });
+
+
+           
+            
 
             if (bet.betData.type == 2) {
                 var correctScore = bet.score % 10;
@@ -277,6 +328,30 @@ function scoreChecker() {
                     console.log("0 ----- looser ");
                     await handleLosingBet(bet.betData);
                 }
+
+                if (event) {
+                    await MarketIDs.findOneAndUpdate(
+                        { eventId: event.Id,
+                          marketId: 'Session '+bet.betData.betSession+' Betting Figures',
+                         },   
+                        {
+                            eventId: event.Id,
+                            marketId:  'Session '+bet.betData.betSession+' Betting Figures',
+                            marketName:  'Session '+bet.betData.betSession+' Betting Figures',
+                            sportID: -1,
+                            status: 'Session Result',
+                            winnerInfo: correctScore,
+                            index: 0
+                        },
+                        {
+                          new: true,
+                          upsert: true
+                        }
+                    );
+                }
+
+
+
             }
 
             //jotta kali
@@ -292,6 +367,29 @@ function scoreChecker() {
                     console.log("0 ----- looser ");
                     await handleLosingBet(bet.betData);
                 }
+
+                if (event) {
+                    await MarketIDs.findOneAndUpdate(
+                        { eventId: event.Id,
+                          marketId: 'Session '+bet.betData.betSession+' JOTTA KALI',
+                         },   
+                        {
+                            eventId: event.Id,
+                            marketId:  'Session '+bet.betData.betSession+' JOTTA KALI',
+                            marketName:  'Session '+bet.betData.betSession+' JOTTA KALI',
+                            sportID: -1,
+                            status: 'Session Result',
+                            winnerInfo: correctScore,
+                            index: 0
+                        },
+                        {
+                          new: true,
+                          upsert: true
+                        }
+                    );
+                }
+
+
             }
             /// Chota bara
             if (bet.betData.type == 4) {
@@ -311,6 +409,26 @@ function scoreChecker() {
                     console.log("0 ----- looser ");
                     await handleLosingBet(bet.betData);
                 }
+
+                await MarketIDs.findOneAndUpdate(
+                    { eventId: event.Id,
+                      marketId: 'Session '+bet.betData.betSession+' CHOTA BARA',
+                     },   
+                    {
+                        eventId: event.Id,
+                        marketId:  'Session '+bet.betData.betSession+' CHOTA BARA',
+                        marketName:  'Session '+bet.betData.betSession+' CHOTA BARA',
+                        sportID: -1,
+                        status: 'Session Result',
+                        winnerInfo: correctScore,
+                        index: 0
+                    },
+                    {
+                      new: true,
+                      upsert: true
+                    }
+                );
+
             }
 
         }
