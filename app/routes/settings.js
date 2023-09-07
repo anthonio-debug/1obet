@@ -1510,7 +1510,7 @@ async function getAllGamesResults(req, res) {
 
     console.log("Query =========== ", query);
 
-    Events.paginate(query, options, (err, results) => {
+    Events.paginate(query, options, async(err, results) => {
       if (err) {
         console.error(err);
         return res.status(500).json({ message: 'Pagination failed', error: err.message });
@@ -1520,10 +1520,28 @@ async function getAllGamesResults(req, res) {
         return res.status(404).json({ message: 'No records found' });
       }
 
+      var realResults = [];
+      
+      for (let index = 0; index < results.docs.length; index++) {
+        const ev = results.docs[index];
+        const marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}});
+
+        for (let i = 0; i < marketResultForEvent.length; i++) {
+          const marketData = marketResultForEvent[i];
+          const combinedData = {
+            ...ev._doc,
+            marketName: marketData.marketName,
+            winnerInfo: marketData.winnerInfo
+          };
+          realResults.push(combinedData);
+        }
+
+      }
+
       res.status(200).json({
         success: true,
         message: 'Games Record Found',
-        results: results.docs,
+        results: realResults,
         total: results.total,
         limit: results.limit,
         page: results.page,
