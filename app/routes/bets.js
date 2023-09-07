@@ -71,14 +71,6 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     await user.save();
     console.log("Saving parent users");
     if (matchId != 0) {
-      // console.log("inside of current position" );
-      // const position = new currentPosition({
-      //   userId: user.userId,
-      //   amount: - (user.commission / 100) * winningAmount,
-      //   matchId: matchId,
-      // })
-      // position.save();
-
       let position = await new currentPosition({
         userId: user.userId,
         description: "some transection name",
@@ -647,6 +639,7 @@ const placeBet = async (req, res) => {
           userId: userId,
           amount: - loosingAmount,
           matchId: matchId,
+          betId: result._id
         })
         position.save();
 
@@ -663,7 +656,7 @@ const placeBet = async (req, res) => {
         // console.log("winningAmount ===========", winningAmount);
         // console.log("matchId =================", matchId);
 
-        await updateParentUserBalance(parentUserIds, winningAmount, matchId);
+        await updateParentUserBalance(parentUserIds, winningAmount, matchId, result._id);
 
         return res.send({
           success: true,

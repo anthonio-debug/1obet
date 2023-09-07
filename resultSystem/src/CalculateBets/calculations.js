@@ -4,6 +4,7 @@ const User = require("../../../app/models/user");
 const { getParents } = require("../../../app/routes/bets");
 const Events = require("../../../app/models/events");
 const Cash = require("../../../app/models/deposits");
+const CurrentPosition = require("../../../app/models/CurrentPosition");
 
 async function getEndedMatches(sportsId) {
   try {
@@ -274,6 +275,7 @@ async function handleWinningBet(bet) {
     commissionFrom = user.userId;
   };
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
+  await CurrentPosition.deleteMany({ betId: bet._id.toString()  })
 }
 
 async function handleDrawBet(bet) {
