@@ -6,23 +6,26 @@ let Global = require('../global/settings');
 
 let depositsSchema = new Schema({
   userId: { type: Number, index: true },
-  matchId: { type: String, index: true },
   description: { type: String, required: false },
   amount: { type: Number, required: true, default: 0 },
   balance: { type: Number, required: false, default: 0 },
   availableBalance: { type: Number , default: 0},
   maxWithdraw: { type: Number, default: 0 },
-  createdBy: { type: String },
-  updatedAt: { type: String },
-  createdAt: { type: String },
-  date: { type: Number },
-  cashOrCredit: { type: String },
   cash: { type : Number, default: 0 },
+  credit: { type : Number, default: 0 },
+  creditRemaining: { type : Number, default: 0 },
+  cashOrCredit: { type: String },
+  createdBy: { type: String },
+
+  matchId: { type: String, index: true },
   marketId : { type : String },
   commissionFrom: { type: Number },
   betId: { type: String },
   sportsId: { type: String },
-  upLineAmount: { type : Number }
+  upLineAmount: { type : Number },
+  updatedAt: { type: String },
+  createdAt: { type: String },
+  date: { type: Number }
 });
 
 depositsSchema.plugin(Global.aggregatePaginate);

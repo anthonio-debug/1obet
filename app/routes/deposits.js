@@ -43,12 +43,12 @@ async function addCashDeposit(req, res) {
       }
     }
 
-    let lastDeposit = await Cash.findOne({
-      userId: userToUpdate.userId,
-      cashOrCredit: 'Cash',
-    }).sort({
-      _id: -1,
-    });
+    // let lastDeposit = await Cash.findOne({
+    //   userId: userToUpdate.userId,
+    //   cashOrCredit: 'Cash',
+    // }).sort({
+    //   _id: -1,
+    // });
 
     let lastMaxWithdraw = await Cash.findOne({
       userId: userToUpdate.userId,
@@ -67,6 +67,8 @@ async function addCashDeposit(req, res) {
     if (currentUserParent.role == '0' && userToUpdate.role != '5') {
       userToUpdate.clientPL += req.body.amount;
       userToUpdate.cash += req.body.amount
+
+
       let cash = new Cash({
         userId: userToUpdate.userId,
         description: req.body.description ? req.body.description : '(Cash)',
@@ -74,6 +76,8 @@ async function addCashDeposit(req, res) {
         amount: req.body.amount,
         maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
+        credit: lastMaxWithdraw?.credit || 0 ,
+        creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,
         cashOrCredit: 'Cash',
       });
       await cash.save();
@@ -81,6 +85,7 @@ async function addCashDeposit(req, res) {
     } 
     // company to Battor 
     else if (currentUserParent.role == '0' && userToUpdate.role == '5') {
+
       userToUpdate.balance += req.body.amount;
       userToUpdate.availableBalance += req.body.amount;
       userToUpdate.clientPL += req.body.amount;
@@ -94,6 +99,8 @@ async function addCashDeposit(req, res) {
         balance: lastMaxWithdraw ? lastMaxWithdraw.balance + req.body.amount  : req.body.amount,
         availableBalance: lastMaxWithdraw  ? lastMaxWithdraw.availableBalance + req.body.amount : req.body.amount,
         maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount  : req.body.amount,
+        credit: lastMaxWithdraw?.credit || 0 ,
+        creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,
         cashOrCredit: 'Cash',
         cash: lastMaxWithdraw  ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
       });
@@ -115,7 +122,8 @@ async function addCashDeposit(req, res) {
         amount: req.body.amount,
         maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
-        // balance : lastMaxWithdraw - 
+        credit: lastMaxWithdraw?.credit || 0 ,
+        creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,
         cashOrCredit: 'Cash',
       });
       await cash.save();
@@ -127,6 +135,8 @@ async function addCashDeposit(req, res) {
         amount: -req.body.amount,
         maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
         cashOrCredit: 'Cash',
+        credit: parentLastMaxWithdraw?.credit || 0 ,
+        creditRemaining:  parentLastMaxWithdraw?.creditRemaining  || 0,
         cash: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
       });
       await parentCash.save();
@@ -151,6 +161,8 @@ async function addCashDeposit(req, res) {
         availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + req.body.amount : req.body.amount,
         maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
+        credit: lastMaxWithdraw?.credit || 0 ,
+        creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,
         cashOrCredit: 'Cash',
       });
       await cash.save();
@@ -165,6 +177,8 @@ async function addCashDeposit(req, res) {
         maxWithdraw: parentLastMaxWithdraw  ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
         cashOrCredit: 'Cash',
         maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
+        credit: parentLastMaxWithdraw?.credit || 0 ,
+        creditRemaining:  parentLastMaxWithdraw?.creditRemaining  || 0,
       });
       await parentCash.save();
       console.log("parentCash",parentCash);

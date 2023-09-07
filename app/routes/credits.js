@@ -43,12 +43,12 @@ async function addCredit(req, res) {
       }
     }
 
-    let lastDeposit = await CashCredit.findOne({
-      userId: userToUpdate.userId,
-      cashOrCredit: 'Credit',
-    }).sort({
-      _id: -1,
-    });
+    // let lastDeposit = await CashCredit.findOne({
+    //   userId: userToUpdate.userId,
+    //   cashOrCredit: 'Credit',
+    // }).sort({
+    //   _id: -1,
+    // });
 
     let lastMaxWithdraw = await CashCredit.findOne({
       userId: userToUpdate.userId,
@@ -65,8 +65,11 @@ async function addCredit(req, res) {
     let Dealers = ['1', '2', '3', '4'];
     // Company to Dealer 
     if (currentUserParent.role == '0' && userToUpdate.role != '5') {
+
       userToUpdate.credit += req.body.amount;
       userToUpdate.creditRemaining += req.body.amount;
+      // credit
+      // creditRemaining
       let cashCredit = new CashCredit({
         userId: userToUpdate.userId,
         description: req.body.description ? req.body.description : '(Cash)',
