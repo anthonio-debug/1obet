@@ -248,18 +248,16 @@ async function withdrawCredit(req, res) {
     });
 
     let Dealers = ['1', '2', '3', '4'];
-    if (currentUserParent.role == '0' && userToUpdate.role !== '5'){
+    //  Deealer to Company
+    if (currentUserParent.role == '0' && userToUpdate.role != '5'){
       userToUpdate.credit -= req.body.amount;
-
+      userToUpdate.creditRemaining -= req.body.amount;
       let cashCredit = new CashCredit({
         userId: userToUpdate.userId,
-        description: req.body.description ? req.body.description : '(Cash)',
+        description: req.body.description ? req.body.description : '(Credit)',
         createdBy: req.decoded.userId,
         amount: -req.body.amount,
-
-        maxWithdraw: lastMaxWithdraw
-          ? lastMaxWithdraw.maxWithdraw - req.body.amount
-          : req.body.amount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - req.body.amount : req.body.amount,
         cashOrCredit: 'Credit',
       });
       await cashCredit.save();
@@ -293,30 +291,26 @@ async function withdrawCredit(req, res) {
     else if (Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {
       userToUpdate.credit -= req.body.amount;
       userToUpdate.creditRemaining -= req.body.amount;
+
       currentUserParent.creditRemaining += req.body.amount;
 
       // Add Cash 
       let cashCredit = new CashCredit({
         userId: userToUpdate.userId,
-        description: req.body.description ? req.body.description : '(Cash)',
+        description: req.body.description ? req.body.description : '(Credit)',
         createdBy: req.decoded.userId,
         amount: -req.body.amount,
-
-        maxWithdraw: lastMaxWithdraw
-          ? lastMaxWithdraw.maxWithdraw - req.body.amount
-          : req.body.amount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - req.body.amount : req.body.amount,
         cashOrCredit: 'Credit',
       });
       await cashCredit.save();
-      // -VS Cash from parent 
+      // -ve Cash from parent 
       let parentCash = new CashCredit({
         userId: currentUserParent.userId,
-        description: req.body.description ? req.body.description : '(Cash)',
+        description: req.body.description ? req.body.description : '(Credit)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
-        maxWithdraw: parentLastMaxWithdraw
-          ? parentLastMaxWithdraw.maxWithdraw + req.body.amount
-          : req.body.amount,
+        maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cashOrCredit: 'Credit',
       });
 
@@ -367,7 +361,7 @@ async function withdrawCredit(req, res) {
 
     } 
     else {
-      return res.status(400).send({ message: 'Invalid User Information' });
+      return res.status(400).send({ message: 'Invalid Request!' });
     }
 
     await userToUpdate.save();
