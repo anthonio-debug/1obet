@@ -303,7 +303,7 @@ function apiRequests() {
 
       for (let ix1 = 0; ix1 < marketNodeData.runners.length; ix1++) {
         const runner = marketNodeData.runners[ix1];
-        runners.push({SelectionId: runner.selectionId, runnerName: runner.runner.description.runnerName});
+        runners.push({SelectionId: runner.selectionId, runnerName: runner.description.runnerName});
       }
 
       await MarketIDS.updateOne({ marketId: marketId, sportID: eventTypeData.eventTypeId }, { $set: {runners: runners} });
