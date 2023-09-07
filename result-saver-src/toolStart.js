@@ -7,12 +7,32 @@ function toolStart() {
     return { init };
 
     async function init() {
-        getWaitingResult();
+       await setBrokenRecord();
+
+       await getWaitingResult();
+
+        setInterval(() => {
+            setBrokenRecord();
+        }, 10*60*1000);
+
+
+
+
+
+    }
+
+    async function setBrokenRecord() {
+        const checkOldRecordWithoutReady = await MarketIDs.find({readyForScore: {$ne: true}, winnerInfo: null, runners: {$ne: null}, status: {$ne: 'OPEN'} });
+
+        for (let index = 0; index < checkOldRecordWithoutReady.length; index++) {
+            const element = checkOldRecordWithoutReady[index];
+            await MarketIDs.updateOne({ _id: element._id }, { $set: { readyForScore: true } });
+        }
+
     }
 
     async function getWaitingResult() {
         try {
-
             const racingMarkets = await MarketIDs.find({readyForScore: true, sportID: {$in: [7, 4339]},winnerInfo: null }).sort({lastResultCheckTime: 1}).limit(1).exec();
             if (racingMarkets.length> 0)
             await apiRequest.getRacingResult(racingMarkets);
