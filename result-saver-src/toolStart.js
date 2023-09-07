@@ -1,6 +1,6 @@
 'use strict';
 module.exports = toolStart;
-const apiRequest = require('./apiRequests')();
+const apiRequest = require('./apiRequest')();
 const MarketIDs = require('../app/models/marketIds');
 
 function toolStart() {
