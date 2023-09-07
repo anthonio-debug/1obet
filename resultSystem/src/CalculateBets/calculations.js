@@ -249,28 +249,28 @@ async function handleWinningBet(bet) {
       console.log('(lastMaxWithdraw.balance)',typeof lastMaxWithdraw.balance )
       console.log('(lastMaxWithdraw.availablebalance)',typeof lastMaxWithdraw.availableBalance )
     }
-
-
     await betTransaction.save();
    
-    let commissionTransaction = await new Cash({
-      userId: user.userId,
-      description: bet.name,
-      createdBy: 0,
-      commissionFrom: commissionFrom,
-      amount: (user.commission / 100) * commissionAmount,
-      balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-      availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-      maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-      cashOrCredit: "Commission",
-      betId: bet._id,
-      cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-      marketId: bet.marketId,
-      sportsId: bet.sportsId,
-      upLineAmount: upMovingCommAmount,
-      matchId: bet.matchId
-    });
-    await commissionTransaction.save();
+    if(!config.commissionLessSubMarkets.inludes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker ){
+      let commissionTransaction = await new Cash({
+        userId: user.userId,
+        description: bet.name,
+        createdBy: 0,
+        commissionFrom: commissionFrom,
+        amount: (user.commission / 100) * commissionAmount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+        availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+        cashOrCredit: "Commission",
+        betId: bet._id,
+        cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+        marketId: bet.marketId,
+        sportsId: bet.sportsId,
+        upLineAmount: upMovingCommAmount,
+        matchId: bet.matchId
+      });
+      await commissionTransaction.save();
+    }
     upMovingCommAmount = upMovingCommAmount - (user.commission / 100) * commissionAmount;
     commissionFrom = user.userId;
   };
