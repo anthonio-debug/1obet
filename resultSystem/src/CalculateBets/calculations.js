@@ -64,7 +64,7 @@ async function handleLosingBet(bet) {
     amount: - loosingAmount,
     balance: lastMaxWithdraw ? lastMaxWithdraw.balance - loosingAmount : -loosingAmount,
     availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - loosingAmount : -loosingAmount,
-    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + loosingAmount : loosingAmount,
+    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - loosingAmount : loosingAmount,
     cashOrCredit: "Bet",
     cash: lastMaxWithdraw ? lastMaxWithdraw.cash - loosingAmount : -loosingAmount,
     marketId: bet.marketId,
@@ -78,10 +78,10 @@ async function handleLosingBet(bet) {
 
   const parentUser = await User.find({
     userId: {
-      $in: [...parentUserIds],
+      $in: parentUserIds,
     },
     isDeleted: false,
-  }).sort({ role: -1 });
+  }).sort({ userId: -1 });
 
   if (!parentUser) {
     return res.status(404).send({ message: "user not found" });
@@ -194,7 +194,7 @@ async function handleWinningBet(bet) {
       $in: [...parentUserIds],
     },
     isDeleted: false,
-  }).sort({ role: -1 });
+  }).sort({ userId: -1 });
 
   if (!parentUser) {
     return res.status(404).send({ message: "user not found" });
