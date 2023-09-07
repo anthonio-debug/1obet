@@ -12,8 +12,10 @@ function toolStart() {
     async function getWaitingResult() {
         console.log('getWaitingResult for Racings and events');
         try {
-            const racings = await MarketIDs.find({}).limit(10).exec();
-            console.log(racings);
+            const racingMarkets = await MarketIDs.find({readyForScore: true, sportID: {$in: [7, 4339]},winnerInfo: null }).limit(20).exec();
+            console.log(racingMarkets);
+            const eventMarkets = await MarketIDs.find({readyForScore: true, sportID: {$nin: [7, 4339]},winnerInfo: null }).limit(20).exec();
+            console.log(eventMarkets);
         } catch (error) {
             console.log(error);
         }
