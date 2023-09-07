@@ -95,6 +95,8 @@ function apiRequests() {
 
       if (!response.data.meetings) {
         return console.log('meetings empty. ' + url);
+      } else {
+        console.log('Racing Market Taken for '+sportsId + ' '+ day );
       }
 
       for (const meeting of response.data.meetings) {
