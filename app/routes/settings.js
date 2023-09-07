@@ -1544,7 +1544,7 @@ async function getAllGamesResults(req, res) {
             realResults.push(combinedData);
           }
         }  else {
-          const checkMarketRecord = await MarketIDS.findOne({ eventId: ev.Id});
+          const checkMarketRecord = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}});
           if (checkMarketRecord) {
             const combinedData = {
               ...ev._doc,
