@@ -25,6 +25,9 @@ const router = express.Router();
 const Session = require("../models/Session")
 const MarketIDS = require('../models/marketIds');
 const Bets = require('../models/bets');
+
+
+
 const {
   handleDrawBet
 } = require('../../resultSystem/src/CalculateBets/calculations')
@@ -1450,7 +1453,7 @@ async function getAllGamesResults(req, res) {
     //   return res.status(403).json({ message: 'You are not allowed to do this' });
     // }
 
-    let query = { winner: { $ne: 0 } };
+    let query = { isShowed: true, status: {$ne: 'OPEN'} };
     let page = 1;
     let sort = 1;
     let sortValue = 'openDate';
