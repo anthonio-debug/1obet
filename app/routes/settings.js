@@ -1526,16 +1526,24 @@ async function getAllGamesResults(req, res) {
         const ev = results.docs[index];
         const marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}});
 
-        for (let i = 0; i < marketResultForEvent.length; i++) {
-          const marketData = marketResultForEvent[i];
+        if (marketResultForEvent.length>0) {
+          for (let i = 0; i < marketResultForEvent.length; i++) {
+            const marketData = marketResultForEvent[i];
+            const combinedData = {
+              ...ev._doc,
+              marketName: marketData.marketName,
+              winnerInfo: marketData.winnerInfo
+            };
+            realResults.push(combinedData);
+          }
+        }  else {
           const combinedData = {
             ...ev._doc,
-            marketName: marketData.marketName,
-            winnerInfo: marketData.winnerInfo
+            marketName: 'WAITING RESULTS',
+            winnerInfo: ''
           };
           realResults.push(combinedData);
         }
-
       }
 
       res.status(200).json({
