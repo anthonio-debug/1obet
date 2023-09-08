@@ -212,6 +212,7 @@ async function getFinalReport(req, res) {
   
   //userName, clientPL, userId
   
+  /*
 
   if (currentUser.balance> -1) {
     results.positiveClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.balance});
@@ -221,16 +222,31 @@ async function getFinalReport(req, res) {
     results.totalNegativeClientPL = results.totalNegativeClientPL + currentUser.balance;
   }
 
-
+  */
 
   for (let index = 0; index < balanceUplines.length; index++) {
     const userRecord = balanceUplines[index];
-    if (userRecord.clientPL> -1) {
-      results.positiveClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: userRecord.clientPL});
-      results.totalPositiveClientPL = results.totalPositiveClientPL + userRecord.clientPL;
+
+    var usedValue = userRecord.clientPL;
+
+
+    if (userRecord.role == 5) {
+      usedValue = userRecord.clientPL;
     } else {
-      results.negativeClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: userRecord.clientPL});
-      results.totalNegativeClientPL = results.totalNegativeClientPL + userRecord.clientPL;
+      if (userRecord.clientPL != userRecord.cash) {
+        usedValue = userRecord.cash;
+      } else {
+        usedValue = userRecord.clientPL;
+      }
+
+    }
+
+    if (usedValue> -1) {
+      results.positiveClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: usedValueL});
+      results.totalPositiveClientPL = results.totalPositiveClientPL + usedValue;
+    } else {
+      results.negativeClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: usedValue});
+      results.totalNegativeClientPL = results.totalNegativeClientPL + usedValue;
     }
   }
 
