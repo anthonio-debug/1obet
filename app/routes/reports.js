@@ -213,7 +213,7 @@ async function getFinalReport(req, res) {
   //userName, clientPL, userId
   
   
-
+  /*
   if (currentUser.balance> -1) {
     results.positiveClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.balance});
     results.totalPositiveClientPL = results.totalPositiveClientPL + currentUser.balance;
@@ -221,7 +221,7 @@ async function getFinalReport(req, res) {
     results.negativeClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.balance});
     results.totalNegativeClientPL = results.totalNegativeClientPL + currentUser.balance;
   }
-
+*/
 
   if (currentUser.cash> -1) {
     results.positiveClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.cash});
