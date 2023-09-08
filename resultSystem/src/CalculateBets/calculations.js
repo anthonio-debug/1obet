@@ -333,6 +333,7 @@ async function handleWinningBet(bet) {
       betId: bet._id,
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
       marketId: bet.marketId,
+      commissionFrom: commissionFrom,
       sportsId: bet.sportsId,
       upLineAmount: -upMovingAmount,
       matchId: bet.matchId
@@ -364,7 +365,7 @@ async function handleWinningBet(bet) {
       await commissionTransaction.save();
     }
     upMovingCommAmount = upMovingCommAmount - (user.commission / 100) * commissionAmount;
-    commissionFrom = user.userId;
+    commissionFrom     = user.userId;
   };
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
   console.log(" betIdString =============== Starting  ");

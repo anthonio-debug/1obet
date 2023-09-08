@@ -284,6 +284,7 @@ const getDailyReport = async(req, res) => {
     {  
       $match: {
         userId: currentUser.createdBy ,
+        commissionFrom: currentUser.userId,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
