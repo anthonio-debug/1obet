@@ -212,7 +212,7 @@ async function getFinalReport(req, res) {
   
   //userName, clientPL, userId
   
-  /*
+  
 
   if (currentUser.balance> -1) {
     results.positiveClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.balance});
@@ -222,7 +222,15 @@ async function getFinalReport(req, res) {
     results.totalNegativeClientPL = results.totalNegativeClientPL + currentUser.balance;
   }
 
-  */
+
+  if (currentUser.cash> -1) {
+    results.positiveClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.cash});
+    results.totalPositiveClientPL = results.totalPositiveClientPL + currentUser.cash;
+  } else {
+    results.negativeClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.cash});
+    results.totalNegativeClientPL = results.totalNegativeClientPL + currentUser.cash;
+  }
+  
 
   for (let index = 0; index < balanceUplines.length; index++) {
     const userRecord = balanceUplines[index];
