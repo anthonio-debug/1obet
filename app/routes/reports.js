@@ -207,7 +207,7 @@ async function getFinalReport(req, res) {
   //for chield, amount's mean Balance UpLine (results.clientPL) 
 
 
-  const balanceUplines = await User.find({ userId: {$in: users} }, {_id: 1, userId: 1, clientPL: 1, userName: 1});
+  const balanceUplines = await User.find({ userId: {$in: users} }, {_id: 1, userId: 1, clientPL: 1, userName: 1, cash: 1});
   
   
   //userName, clientPL, userId
