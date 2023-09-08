@@ -122,44 +122,45 @@ const bookDetailReport = async(req, res) => {
     }
   ]);
 
-  const parentResponse = await CashDeposit.aggregate([
-    {  
-      $match: {
-        userId: currentUser.createdBy ,
-        commissionFrom: currentUser.userId,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
-      }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'userInfo'
-      }
-    }, 
-    {
-      $group:{
-        _id: "$userId",
-        // parent: true,
-        amount: { $sum: "$upLineAmount"},
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-      }
-    }
-  ]);
+  // const parentResponse = await CashDeposit.aggregate([
+  //   {  
+  //     $match: {
+  //       userId: currentUser.createdBy ,
+  //       commissionFrom: currentUser.userId,
+  //       cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+  //       $and: [
+  //         {
+  //           createdAt: {$gte: req.query.startDate}
+  //         },
+  //         {
+  //           createdAt: {$lte: req.query.endDate}
+  //         }
+  //       ]
+  //     }
+  //   },
+  //   {
+  //     $lookup: {
+  //       from: 'users',
+  //       localField: 'userId',
+  //       foreignField: 'userId',
+  //       as: 'userInfo'
+  //     }
+  //   }, 
+  //   {
+  //     $group:{
+  //       _id: "$userId",
+  //       // parent: true,
+  //       amount: { $sum: "$upLineAmount"},
+  //       name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+  //     }
+  //   }
+  // ]);
 
   return res.send({
     success: true,
     message: 'Daily reports',
-    results: response?.concat(parentResponse),
+    results: response,
+    // results: response?.concat(parentResponse),
   });
 
 }
