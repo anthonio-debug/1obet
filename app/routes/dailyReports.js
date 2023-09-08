@@ -545,6 +545,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
       {  
         $match: {
           userId: currentUser.createdBy ,
+          commissionFrom: currentUser.userId,
           cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         }
       },
@@ -559,7 +560,6 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
       {
         $group:{
           _id: "$userId",
-          // parent: true,
           amount: { $sum: "$upLineAmount"},
           name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
         }

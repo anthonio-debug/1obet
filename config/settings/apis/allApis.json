@@ -84,6 +84,11 @@
   "dailyMatchWiseReports",
   "dailyMatchWiseDetailedReports",
 
+  "bookDetailReport",
+  "bookDetailSportsWiseReport",
+  "bookDetailMatchWiseReports",
+  "bookDetailMatchWiseDetailedReports",
+
   "getCommissionReport",
   "SportWiseCommissionReport",
   "MatchWiseCommissionReport",
