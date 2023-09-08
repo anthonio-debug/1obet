@@ -1453,7 +1453,7 @@ async function getAllGamesResults(req, res) {
     //   return res.status(403).json({ message: 'You are not allowed to do this' });
     // }
 
-    let query = { readyForScore: true };
+    let query = {  };
 
     var fancyCheck = false;
 
@@ -1474,7 +1474,7 @@ async function getAllGamesResults(req, res) {
     }
 
     let page = 1;
-    let sort = 1;
+    let sort = -1;
     let sortValue = 'openDate';
     let limit = config.pageSize;
     let projection
