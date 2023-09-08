@@ -1581,7 +1581,8 @@ async function getAllGamesResults(req, res) {
         total: results.total,
         limit: results.limit,
         page: results.page,
-        pages: results.pages
+        pages: results.pages,
+        mainResult: results.docs
       });
     });
   } catch (error) {
