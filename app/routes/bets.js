@@ -627,7 +627,7 @@ const placeBet = async (req, res) => {
       createdAt: new Date().getTime(),
     });
 
-    bet.svae(async (err, result) => {
+    bet.save(async (err, result) => {
       if (err) {
         console.log('err', err);
         return res.status(404).send({ message: `Error placing bet ${err}` });
