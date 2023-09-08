@@ -313,7 +313,7 @@ async function handleWinningBet(bet) {
     }
     await betTransaction.save();
    
-    if(!config.commissionLessSubMarkets.inludes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker ){
+    if(!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker ){
       let commissionTransaction = await new Cash({
         userId: user.userId,
         description: bet.name,
