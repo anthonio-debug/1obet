@@ -6,6 +6,55 @@ const Events = require("../../../app/models/events");
 const Cash = require("../../../app/models/deposits");
 const CurrentPosition = require("../../../app/models/CurrentPosition");
 
+const config = {
+  "PORT": 3003,
+  "DBNAME": "Bet99",
+  "DBHost": "mongodb://127.0.0.1/Bet99",
+  "DBHostLive": "mongodb+srv://umar:ahmad123@cluster0.dillplp.mongodb.net/Bet99?retryWrites=true&w=majority",
+  "secret": "umarIsLove",
+  "apisFileName": "config/settings/apis/allApis.json",
+  "saltRounds": 10,
+  "pageSize": 10,
+  "oldApiUrl": "https://stage.game-program.com/api/seamless/provider",
+  "old_api_password": "6w9GNrsxZsHBeC795N",
+  "old_api_login": "1obet_mc_s",
+  "language": "en",
+  "play_for_fun": false,
+  "currency": "PKR",
+  "eventListAPIUrl": "https://streamingtv.fun:3440/api",
+  "sportsAPIUrl": "http://209.250.242.175:33332",
+  "fancyUrl": "https://betfairoddsapi.com:3444/api",
+  "liveTvUrl": "https://livesportscore.xyz:3440/api",
+  "liveScoreUrl": "https://livesportscore.xyz:3443/api/getScoreId",
+  "sportsLiveScore": "https://livesportscore.xyz:3440/api/bf_scores/",
+  "horseRaceUrl": "http://136.244.77.249:33333",
+  "oldSaltKey":"Loa0192Jua",
+  "betMinimumAmount": 100,
+  "api_username":"1obet_mc_s",
+  "api_password": "b16gWs7e0QAASLTne0",
+  "saltKey":"qrb4VepLav",
+  "apiUrl":"https://em-api.thegameprovider.com/api/seamless/provider",
+  "createCasinoUser": true,
+  "casinoMultiples": 10,
+  "SportOddsSubMarkets": [6, 13, 15, 35, 11],
+  "sportMarkets": ["1","2", "4"],
+  "raceMarkets": ["7", "4339"],
+  "Fancy": 7,
+  "BookMaker": 8,
+  "Figure" : 9,
+  "EvenOdd": 10, 
+  "SmallBig" : 34,
+  "Toss": 11,
+  "Cup": 12,
+  "FigureEvenOddSmallBig" : [9, 10, 34],
+  "raceOpenBefore" : 1200000000000,
+  "sportsOpenBefore" : 600000,
+  "balls": ["1", "2", "3", "4", "5", "6"],
+  "matchTypes" : ["T10", "T20", "ODI", "TEST"],
+  "commissionLessSubMarkets": [2, 3, 4]
+  
+}
+
 async function getEndedMatches(sportsId) {
   try {
     const endedMatches = await Events.find({
