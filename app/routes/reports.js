@@ -508,7 +508,7 @@ function GetAllCashDepositLedger(req, res) {
 
 async function userLoginActivitLogs(req, res) {
 
-  if (!req.query.id || !req.query.ip) {
+  if (!req.query.id && !req.query.ip) {
     return res.json({
       message: 'User login logs',
       results: [],
