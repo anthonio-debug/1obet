@@ -217,7 +217,7 @@ async function getFinalReport(req, res) {
   if (currentUser.availableBalance> -1) {
     results.positiveClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.availableBalance});
     results.totalPositiveClientPL = results.totalPositiveClientPL + currentUser.availableBalance;
-  } else {availableBalance
+  } else {
     results.negativeClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.availableBalance});
     results.totalNegativeClientPL = results.totalNegativeClientPL + currentUser.availableBalance;
   }
