@@ -1453,7 +1453,7 @@ async function getAllGamesResults(req, res) {
     //   return res.status(403).json({ message: 'You are not allowed to do this' });
     // }
 
-    let query = { };
+    let query = { readyForScore: true };
 
     var fancyCheck = false;
 
