@@ -524,6 +524,20 @@ db.settings.insertMany([
   }
 ])
 
+db.privacypolicies.deleteMany({})
+db.privacypolicies.insertOne(
+  {
+    privacyPolicyContent : "1OBET PRIVACY POLICY"
+  }
+)
+
+db.termsandconditions.deleteMany({})
+db.termsandconditions.insertOne(
+  {
+    termAndConditionsContent: "1OBET TERMS & CONDITIONS "
+  }
+)
+
 db.betlimits.deleteMany({})
 db.betlimits.insertMany([
   {
@@ -656,8 +670,6 @@ db.users.insertOne(
     downLineShare: 100,
   }
 )
-
-
 
 
 
