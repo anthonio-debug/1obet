@@ -229,8 +229,6 @@ async function handleWinningBet(bet) {
     upMovingCommAmount    = commissionAmount
   }
 
-
-
   userToUpdate.balance  += remainingAmount;
   userToUpdate.clientPL += remainingAmount; 
 
