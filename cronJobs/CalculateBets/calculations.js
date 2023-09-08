@@ -266,6 +266,7 @@ async function handleWinningBet(bet) {
       marketId: bet.marketId,
       sportsId: bet.sportsId,
       upLineAmount: -upMovingAmount,
+      commissionFrom:commissionFrom,
       matchId: bet.matchId
     });
     
