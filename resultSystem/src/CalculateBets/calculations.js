@@ -205,12 +205,30 @@ async function handleWinningBet(bet) {
   if (!userToUpdate) {
     return res.status(404).send({ message: "user not found" });
   }
-  const remainingAmount       = (bet.winningAmount / 100) * 98;
-  const commissionAmount      = (bet.winningAmount / 100) * 2;
-  const totalRemainingAmount  = bet.winningAmount;
-  const TotalLoosingAmount    = bet.loosingAmount;
-  let   upMovingAmount        = totalRemainingAmount
-  let   upMovingCommAmount    = commissionAmount
+  let remainingAmount     
+  let commissionAmount    
+  let totalRemainingAmount
+  let TotalLoosingAmount  
+  let upMovingAmount      
+  let upMovingCommAmount  
+
+  if(!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker ){
+    remainingAmount       = (bet.winningAmount / 100) * 98;
+    commissionAmount      = (bet.winningAmount / 100) * 2;
+    totalRemainingAmount  = bet.winningAmount;
+    TotalLoosingAmount    = bet.loosingAmount;
+    upMovingAmount        = totalRemainingAmount
+    upMovingCommAmount    = commissionAmount
+  }
+  else {
+    remainingAmount       = bet.winningAmount;
+    commissionAmount      = (bet.winningAmount / 100) * 2;
+    totalRemainingAmount  = bet.winningAmount;
+    TotalLoosingAmount    = bet.loosingAmount;
+    upMovingAmount        = totalRemainingAmount
+    upMovingCommAmount    = commissionAmount
+  }
+
 
 
   userToUpdate.balance  += remainingAmount;
