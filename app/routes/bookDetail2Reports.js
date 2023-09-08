@@ -37,14 +37,14 @@ const bookDetail2Report = async (req, res) => {
     {
       $lookup: {
         from: 'markettypes',
-        localField: 'marketId',
+        localField: 'sportsId',
         foreignField: 'Id',
         as: 'marketInfo'
       }
     }, 
     {
       $group:{
-        _id: "$marketId",
+        _id: "$sportsId",
         amount: { $sum: "$amount"},
         name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } }
       }
