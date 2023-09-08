@@ -1569,6 +1569,13 @@ async function getAllGamesResults(req, res) {
               winner: ''
             };
             realResults.push(combinedData);
+          } else {
+            const combinedData = {
+              ...ev._doc,
+              marketName: 'WAITING RESULTS 2',
+              winner: ''
+            };
+            realResults.push(combinedData);
           }
 
         }
@@ -1582,7 +1589,6 @@ async function getAllGamesResults(req, res) {
         limit: results.limit,
         page: results.page,
         pages: results.pages,
-        mainResult: results.docs
       });
     });
   } catch (error) {
