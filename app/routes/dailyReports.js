@@ -250,8 +250,8 @@ const getDailyReport = async(req, res) => {
 
   var sportsIdQuery = {$ne: null};
 
-  if (req.query.startId) {
-    sportsIdQuery = req.query.startId;
+  if (req.query.sportId) {
+    sportsIdQuery = req.query.sportId;
   }
 
   const response = await CashDeposit.aggregate([
