@@ -244,7 +244,7 @@ async function getFinalReport(req, res) {
       if (userRecord.clientPL != userRecord.cash) {
         usedValue = userRecord.cash + userRecord.balance;
       } else {
-        usedValue = userRecord.clientPL;
+        usedValue = userRecord.clientPL + userRecord.balance;
       }
 
     }
