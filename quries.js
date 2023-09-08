@@ -655,7 +655,6 @@ db.users.insertOne(
     cash: 0,
     downLineShare: 100,
   }
-
 )
 
 
