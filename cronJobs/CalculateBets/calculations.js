@@ -97,6 +97,12 @@ async function handleLosingBet(bet) {
     prev = current;
   });
 
+
+  parentUser.forEach((user) => {
+    console.log('commission: ' + user["commission"]);
+  });
+
+
   let commissionFrom = userToUpdate.userId;
   let upMovingAmount = TotalLoosingAmount;
 
@@ -134,11 +140,6 @@ async function handleLosingBet(bet) {
   });
 
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
-  console.log(" betIdString =============== Starting  ");
-  console.log(bet._id.toString());
-  const betIdString = bet._id.toString();
-  console.log(" betIdString =============== ", betIdString);
-  await CurrentPosition.deleteMany({ betId: betIdString })
 }
 
 async function handleWinningBet(bet) {
@@ -154,13 +155,29 @@ async function handleWinningBet(bet) {
   if (!userToUpdate) {
     return res.status(404).send({ message: "user not found" });
   }
-  const remainingAmount       = (bet.winningAmount / 100) * 98;
-  const commissionAmount      = (bet.winningAmount / 100) * 2;
-  const totalRemainingAmount  = bet.winningAmount;
-  const TotalLoosingAmount    = bet.loosingAmount;
-  let   upMovingAmount        = totalRemainingAmount
-  let   upMovingCommAmount    = commissionAmount
+  let remainingAmount     
+  let commissionAmount    
+  let totalRemainingAmount
+  let TotalLoosingAmount  
+  let upMovingAmount      
+  let upMovingCommAmount  
 
+  if(!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker ){
+    remainingAmount       = (bet.winningAmount / 100) * 98;
+    commissionAmount      = (bet.winningAmount / 100) * 2;
+    totalRemainingAmount  = bet.winningAmount;
+    TotalLoosingAmount    = bet.loosingAmount;
+    upMovingAmount        = totalRemainingAmount
+    upMovingCommAmount    = commissionAmount
+  }
+  else {
+    remainingAmount       = bet.winningAmount;
+    commissionAmount      = (bet.winningAmount / 100) * 2;
+    totalRemainingAmount  = bet.winningAmount;
+    TotalLoosingAmount    = bet.loosingAmount;
+    upMovingAmount        = totalRemainingAmount
+    upMovingCommAmount    = commissionAmount
+  }
 
   userToUpdate.balance  += remainingAmount;
   userToUpdate.clientPL += remainingAmount; 
@@ -210,6 +227,13 @@ async function handleWinningBet(bet) {
     user["commission"] = current - prev;
     prev = current;
   }
+
+  parentUser.forEach((user) => {
+    console.log('commission: ' + user["commission"]);
+  });
+
+
+
   let commissionFrom = userToUpdate.userId;
 
   for (const user of parentUser) {
@@ -253,28 +277,28 @@ async function handleWinningBet(bet) {
       console.log('(lastMaxWithdraw.balance)',typeof lastMaxWithdraw.balance )
       console.log('(lastMaxWithdraw.availablebalance)',typeof lastMaxWithdraw.availableBalance )
     }
-
-
     await betTransaction.save();
    
-    let commissionTransaction = await new Cash({
-      userId: user.userId,
-      description: bet.name,
-      createdBy: 0,
-      commissionFrom: commissionFrom,
-      amount: (user.commission / 100) * commissionAmount,
-      balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-      availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-      maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-      cashOrCredit: "Commission",
-      betId: bet._id,
-      cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-      marketId: bet.marketId,
-      sportsId: bet.sportsId,
-      upLineAmount: upMovingCommAmount,
-      matchId: bet.matchId
-    });
-    await commissionTransaction.save();
+    if(!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker ){
+      let commissionTransaction = await new Cash({
+        userId: user.userId,
+        description: bet.name,
+        createdBy: 0,
+        commissionFrom: commissionFrom,
+        amount: (user.commission / 100) * commissionAmount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+        availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+        cashOrCredit: "Commission",
+        betId: bet._id,
+        cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+        marketId: bet.marketId,
+        sportsId: bet.sportsId,
+        upLineAmount: upMovingCommAmount,
+        matchId: bet.matchId
+      });
+      await commissionTransaction.save();
+    }
     upMovingCommAmount = upMovingCommAmount - (user.commission / 100) * commissionAmount;
     commissionFrom = user.userId;
   };
@@ -326,19 +350,18 @@ async function handleDrawBet(bet) {
   });
 
   parentUser.forEach((user) => {
+    console.log('commission: ' + user["commission"]);
+  });
+
+
+  parentUser.forEach((user) => {
     user.exposure += (user.commission / 100) * totalRemainingAmount;
     user.availableBalance += (user.commission / 100) * remainingAmount;
     user.save();
   });
 
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
-  console.log(" betIdString =============== Starting  ");
-  console.log(bet._id.toString());
-  const betIdString = bet._id.toString();
-  console.log(" betIdString =============== ", betIdString);
-  await CurrentPosition.deleteMany({ betId: betIdString })
 }
-
 module.exports = {
   getAllBets,
   getEndedMatches,
