@@ -226,11 +226,11 @@ async function getFinalReport(req, res) {
   for (let index = 0; index < balanceUplines.length; index++) {
     const userRecord = balanceUplines[index];
     if (userRecord.clientPL> -1) {
-      results.positiveClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: userRecord.cash});
-      results.totalPositiveClientPL = results.totalPositiveClientPL + userRecord.cash;
+      results.positiveClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: userRecord.clientPL});
+      results.totalPositiveClientPL = results.totalPositiveClientPL + userRecord.clientPL;
     } else {
-      results.negativeClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: userRecord.cash});
-      results.totalNegativeClientPL = results.totalNegativeClientPL + userRecord.cash;
+      results.negativeClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: userRecord.clientPL});
+      results.totalNegativeClientPL = results.totalNegativeClientPL + userRecord.clientPL;
     }
   }
 
