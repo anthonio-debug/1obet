@@ -242,7 +242,7 @@ async function getFinalReport(req, res) {
     }
 
     if (usedValue> -1) {
-      results.positiveClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: usedValueL});
+      results.positiveClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: usedValue});
       results.totalPositiveClientPL = results.totalPositiveClientPL + usedValue;
     } else {
       results.negativeClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: usedValue});
