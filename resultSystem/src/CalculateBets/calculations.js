@@ -98,6 +98,12 @@ async function handleLosingBet(bet) {
     prev = current;
   });
 
+
+  parentUser.forEach((user) => {
+    console.log('commission: ' + user["commission"]);
+  });
+
+
   let commissionFrom = userToUpdate.userId;
   let upMovingAmount = TotalLoosingAmount;
 
@@ -206,6 +212,13 @@ async function handleWinningBet(bet) {
     user["commission"] = current - prev;
     prev = current;
   }
+
+  parentUser.forEach((user) => {
+    console.log('commission: ' + user["commission"]);
+  });
+
+
+
   let commissionFrom = userToUpdate.userId;
 
   for (const user of parentUser) {
@@ -320,6 +333,11 @@ async function handleDrawBet(bet) {
     user["commission"] = current - prev;
     prev = current;
   });
+
+  parentUser.forEach((user) => {
+    console.log('commission: ' + user["commission"]);
+  });
+
 
   parentUser.forEach((user) => {
     user.exposure += (user.commission / 100) * totalRemainingAmount;
