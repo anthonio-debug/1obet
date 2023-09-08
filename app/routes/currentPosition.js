@@ -40,6 +40,9 @@ function getCurrentPosition(req, res) {
           "Id": {
             "$first": "$matches.Id"
           },
+          "marketId": {
+            "$first": "$matches.marketIds"
+          },
           amount: {
             $sum: "$amount"
           }
