@@ -77,7 +77,13 @@ async function registerUser(req, res) {
         { isDeleted: true }
       );
 
-      user.userId = data.userId + 1;
+      var lastUserID = data.userId + 1;
+
+      if (lastUserID< 1000) {
+        lastUserID =1000;
+      }
+
+      user.userId = lastUserID;
       if (req.body.isActive == true) {
         user.status = 1;
       } else {
