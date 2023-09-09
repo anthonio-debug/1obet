@@ -192,11 +192,25 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
     }
 
-    // cricket tennis soccer odds only match odds bookmaker Tied Match Toss 
+    // cricket tennis soccer odds only match odds  Tied Match Toss 
     if (config.sportMarkets.includes(marketId) && config.SportOddsSubMarkets.includes(subMarketDetail.Id)) {
+
+      if(subMarketDetail.Id == config.tiedMatch){
+        const TiedMatchLimit   = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.tiedMatch }).exec();
+        if(!userMaxBetSize){
+          return res.status(404).send({ message: `something went wrong !` });
+        }
+        if (TiedMatchLimit && betAmount > TiedMatchLimit.amount) {
+          return res.status(404).send({ message: `max bet size is : ${TiedMatchLimit.amount}` });
+        }
+      }
+
       const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
       const response = await axios.get(url);
       const oddsData = response.data;
+
+
+
       if (!oddsData) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
@@ -337,11 +351,6 @@ const placeBet = async (req, res) => {
     //for fancy
     else if (subMarketDetail.Id == config.Fancy) {
       const fancyBetLimit  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.Fancy }).exec();
-      
-      console.log(" current User ======  ", userId);
-      console.log(" current marketId ======  ", marketId);
-      console.log(" current config.Fancy ======  ", config.Fancy);
-
       if(!userMaxBetSize){
         return res.status(404).send({ message: `something went wrong !` });
       }
@@ -350,8 +359,6 @@ const placeBet = async (req, res) => {
       }
       console.log(" fancyBetLimit ========== ", fancyBetLimit);
       console.log(" subMarketDetail.Id ============= ", subMarketDetail.Id);
-      return res.status(404).send({ message: `Fancy max bet size is : ${fancyBetLimit.amount}` });
-
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id
       const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
@@ -442,6 +449,9 @@ const placeBet = async (req, res) => {
     // for bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
       const bookMakerBetLimit  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.BookMaker }).exec();
+      if(!bookMakerBetLimit){
+        return res.status(404).send({ message: `something went wrong !` });
+      }
       if (bookMakerBetLimit && betAmount > bookMakerBetLimit.amount) {
         return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
       }
