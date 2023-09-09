@@ -103,10 +103,13 @@ function apiRequests() {
           if (results[index].Id.length == 8)
             events.push(results[index].Id);
         }
-
-        const response = await axios.get(url + events.join(','));
-        const scores = response.data;
-
+        var response,scores;
+        try {
+         response = await axios.get(url + events.join(','));
+         scores = response.data;
+        } catch (error) {
+          return;
+        }
         if (scores.length > 0) {
 
           for (let index = 0; index < scores.length; index++) {
