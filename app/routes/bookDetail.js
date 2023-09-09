@@ -57,7 +57,7 @@ const bookDetailReport = async (req, res) => {
   } catch (error) {
     return res.send({
       success: false,
-      message: error,
+      message: "Something went wrong",
     });
   }
 
@@ -65,6 +65,12 @@ const bookDetailReport = async (req, res) => {
 
 const bookDetailSportsWiseReport = async (req, res) => {
   try {
+    if(!req.query.userId){
+      return res.send({
+        success: false,
+        message: "Request Invalid !",
+      });
+    }
     const Id        =  parseInt(req.query.userId)
     console.log(" Id ========== ", Id);
     const response = await CashDeposit.aggregate([
@@ -107,7 +113,7 @@ const bookDetailSportsWiseReport = async (req, res) => {
   } catch (error) {
     return res.send({
       success: false,
-      message: error,
+      message: "Something went wrong",
     });
   }
 }
@@ -169,17 +175,30 @@ const bookDetailMatchWiseReports = async (req, res) => {
   } catch (error) {
     return res.send({
       success: false,
-      message: error,
+      message: "Something went wrong",
     });
   }
 }
 
 const bookDetailMatchWiseDetailedReports = async(req, res) => {
   try{
-    const userId      = parseInt(req.query.userId)
+    if(!req.query.userId || !req.query.matchId){
+      return res.send({
+        success: false,
+        message: "Request Invalid !",
+      });
+    }
+    const userId      = parseInt(req.query.userId);
+    
     const matchId     = req.query.matchId;
     const currentUser = await User.findOne({ userId: userId});
+    if(!currentUser){
+      return res.send({  success: false,  message: "Something went Wrong !"});
+    }
     const parent      = await User.findOne({ userId: currentUser.createdBy});
+    if(!parent){
+      return res.send({  success: false,  message: "Something went Wrong !"});
+    }
     if(currentUser.role == '5'){
       const match       = await Events.findById(matchId)
       const response    = await CashDeposit.aggregate([
@@ -245,8 +264,7 @@ const bookDetailMatchWiseDetailedReports = async(req, res) => {
       const directChild   = await User.distinct("userId", { createdBy: userId });
       const grandchiltren = await User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
       const users         = [userId, ...directChild, ...grandchiltren];
-      console.log(" users list  ======== ", users);
-    
+
       console.log(" users list  ======== ", users);
     
       const response = await CashDeposit.aggregate([
@@ -310,7 +328,7 @@ const bookDetailMatchWiseDetailedReports = async(req, res) => {
   } catch (error) {
     return res.send({
       success: false,
-      message: error,
+      message: "Something went wrong",
     });
   }
 }
