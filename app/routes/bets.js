@@ -184,9 +184,15 @@ const placeBet = async (req, res) => {
     }
     const userMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: marketId }).exec();
 
+    console.log(" userMaxBetSize ========== ", userMaxBetSize);
+
+    console.log(" betAmount ========== ", betAmount);
+
+
     if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
       return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
     }
+    return res.status(404).send({ message: `Limit Check Failed  : ${userMaxBetSize.amount}` });
 
     // cricket tennis soccer odds only match odds bookmaker Tied Match Toss 
     if (config.sportMarkets.includes(marketId) && config.SportOddsSubMarkets.includes(subMarketDetail.Id)) {
