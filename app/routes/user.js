@@ -33,6 +33,8 @@ async function registerUser(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
 
+  console.log(" User Is creatting   ");
+
   if (req.decoded.role == '5') {
     return res.status(404).send({ message: 'you are not allowed to do this ' });
   }
@@ -97,7 +99,7 @@ async function registerUser(req, res) {
       user.createdBy = req.decoded.userId;
 
       // Add the if condition back here to save the betLimits if parentUser.userId is '0'
-      if (parentUser.userId == 0) {
+      if (parentUser.role == 0) {
         let betLimits = await BetLimits.find({});
         console.log(" betLimits ======= ", betLimits);
         user.save((err, user) => {
