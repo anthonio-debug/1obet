@@ -326,9 +326,10 @@ const bookDetailMatchWiseDetailedReports = async(req, res) => {
       });
     }
   } catch (error) {
+    console.log("Error ============", error);
     return res.send({
       success: false,
-      message: "Something went wrong",
+      message: "Something went wrong !",
     });
   }
 }
