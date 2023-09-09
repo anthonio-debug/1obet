@@ -1741,6 +1741,27 @@ async function setMatchShow(req, res) {
   }
 }
 
+async function setBattingDisabled(req, res) {
+  if (req.decoded.role != '0') {
+    return res
+      .status(404)
+      .send({ message: 'only company can ... ' });
+  }
+  try {
+    const currentEv = await Events.findOneAndUpdate({ Id: req.query.matchId }, { $set:{ betAllowed : req.query.status } })
+    return res.send({
+      success: true,
+      message: 'Event Successfully Closed!'
+    });
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Something went wrong!'
+    });
+  }
+
+}
+
 const createNewSession = async (matchId) => {
   const match = await Events.findOne({ Id: matchId })
   const deleted = await Session.deleteMany({ eventId: matchId })
@@ -1837,5 +1858,9 @@ loginRouter.get('/bettorDashboardGames', bettorDashboardGames);
 loginRouter.get('/bettorDashboardGames2', bettorDashboardGames2);
 loginRouter.get('/getAllMatchSettlements', getAllMatchSettlements);
 loginRouter.post('/getAllGamesResults', getAllGamesResults);
+
+loginRouter.get('/setBattingDisabled', setBattingDisabled);
+
+
 
 module.exports = { loginRouter, router, listOddsAPI };
