@@ -99,6 +99,7 @@ async function registerUser(req, res) {
       // Add the if condition back here to save the betLimits if parentUser.userId is '0'
       if (parentUser.userId == 0) {
         let betLimits = await BetLimits.find({});
+        console.log(" betLimits ======= ", betLimits);
         user.save((err, user) => {
           if (err || !user) {
             return res
@@ -114,12 +115,16 @@ async function registerUser(req, res) {
             sportsId: betLimit.sportsId
           }));
 
+          console.log(" userbetSizesData ============ ", userbetSizesData);
+
+
           UserBetSizes.insertMany(
             userbetSizesData,
             async (err, insertedDocs) => {
               if (err) return res.send({ message: err });
-
+              console.log(" insertedDocs =========== ", insertedDocs);
               let user_username = 'user_' + user.userId;
+
               console.log('user_username', user_username);
               if (req.body.role == '5') {
                 console.log('in casino bettor user')
