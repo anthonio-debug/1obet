@@ -45,5 +45,4 @@
   "balls": ["1", "2", "3", "4", "5", "6"],
   "matchTypes" : ["T10", "T20", "ODI", "TEST"],
   "commissionLessSubMarkets": [2, 3, 4]
-  
 }
