@@ -10,7 +10,8 @@ function toolStart() {
     async function init() {
        await setBrokenRecord();
 
-       await getWaitingResult();
+        getWaitingResultEvent();
+        getWaitingResultRacing();
 
         setInterval(() => {
             setBrokenRecord();
@@ -60,11 +61,9 @@ function toolStart() {
          */
     }
 
-    async function getWaitingResult() {
+    async function getWaitingResultEvent() {
         try {
-            const racingMarkets = await MarketIDs.find({readyForScore: true, sportID: {$in: [7, 4339]},winnerInfo: null }).sort({lastResultCheckTime: 1}).limit(1).exec();
-            if (racingMarkets.length> 0)
-            await apiRequest.getRacingResult(racingMarkets);
+            
             const eventMarkets = await MarketIDs.find({readyForScore: true, sportID: {$in: [1, 2, 4]},winnerInfo: null }).sort({lastResultCheckTime: 1}).limit(10).exec();
             if (eventMarkets.length> 0)
             await apiRequest.getEventResult(eventMarkets);
@@ -73,8 +72,24 @@ function toolStart() {
             console.log(error);
         }
         setTimeout(() => {
-            getWaitingResult();
+            getWaitingResultEvent();
         }, 3000);
     }
+
+
+    async function getWaitingResultRacing() {
+        try {
+            const racingMarkets = await MarketIDs.find({readyForScore: true, sportID: {$in: [7, 4339]},winnerInfo: null }).sort({lastResultCheckTime: 1}).limit(1).exec();
+            if (racingMarkets.length> 0)
+            await apiRequest.getRacingResult(racingMarkets);
+
+        } catch (error) {
+            console.log(error);
+        }
+        setTimeout(() => {
+            getWaitingResultRacing();
+        }, 2000);
+    }
+
 }
 
