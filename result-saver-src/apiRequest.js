@@ -38,24 +38,24 @@ function apiRequest() {
                 if (marketIndex != -1) {
                     if (result.winnerSelectionId == '-1') {
                         await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id},{ $set: {winnerInfo: 'Canceled'} });
-                        await Events.findByIdAndUpdate({Id: markets[marketIndex].eventId+''},{$set: {winner: 'Canceled'}});
+                        await Events.findOneAndUpdate({Id: markets[marketIndex].eventId},{$set: {winner: 'Canceled'}});
                         continue;
                     }
                     if (typeof markets[marketIndex].runners !== 'undefined') {
                         const runnerIndex = _.findIndex(markets[marketIndex].runners, function (o) { return o.SelectionId == result.winnerSelectionId; });
                         if (runnerIndex != -1) {
                             await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id},{ $set: {winnerInfo: markets[marketIndex].runners[runnerIndex].runnerName} });
-                            await Events.findByIdAndUpdate({Id: markets[marketIndex].eventId+''},{$set: {winner: markets[marketIndex].runners[runnerIndex].runnerName}});
+                            await Events.findOneAndUpdate({Id: markets[marketIndex].eventId},{$set: {winner: markets[marketIndex].runners[runnerIndex].runnerName}});
                         } else {
                             await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id},{ $set: {winnerInfo: result.winnerSelectionId} });
-                            await Events.findByIdAndUpdate({Id: markets[marketIndex].eventId+''},{$set: {winner: result.winnerSelectionId}}); 
+                            await Events.findOneAndUpdate({Id: markets[marketIndex].eventId},{$set: {winner: result.winnerSelectionId}}); 
                         }
                     } else {
                         await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id},{ $set: {winnerInfo: result.winnerSelectionId} });
-                        await Events.findByIdAndUpdate({Id: markets[marketIndex].eventId+''},{$set: {winner: result.winnerSelectionId}});
+                        await Events.findOneAndUpdate({Id: markets[marketIndex].eventId},{$set: {winner: result.winnerSelectionId}});
 
                     }
-                    await Events.findByIdAndUpdate({Id: markets[marketIndex].eventId+''},{$set: {isResultSaved: true}});
+                    await Events.findOneAndUpdate({Id: markets[marketIndex].eventId},{$set: {isResultSaved: true}});
                 
                 } else  {
                     console.log('Record not found');
@@ -93,7 +93,7 @@ function apiRequest() {
                         await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id},{ $set: {winnerInfo: 'Canceled'} });
 
                         if (markets[marketIndex].marketName == 'Match Odds') {
-                            await Events.findByIdAndUpdate({Id: markets[marketIndex].eventId+''},{$set: {winner: 'Canceled'}});
+                            await Events.findOneAndUpdate({Id: markets[marketIndex].eventId},{$set: {winner: 'Canceled'}});
                         }
 
                         continue;
@@ -103,23 +103,23 @@ function apiRequest() {
                         if (runnerIndex != -1){
                             await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id},{ $set: {winnerInfo: markets[marketIndex].runners[runnerIndex].runnerName} });
                             if (markets[marketIndex].marketName == 'Match Odds') {
-                                await Events.findByIdAndUpdate({Id: markets[marketIndex].eventId+''},{$set: {winner: markets[marketIndex].runners[runnerIndex].runnerName}});
+                                await Events.findOneAndUpdate({Id: markets[marketIndex].eventId},{$set: {winner: markets[marketIndex].runners[runnerIndex].runnerName}});
                             }
                         } else {
                             await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id},{ $set: {winnerInfo: result.winnerSelectionId} });
                             if (markets[marketIndex].marketName == 'Match Odds') {
-                                await Events.findByIdAndUpdate({Id: markets[marketIndex].eventId+''},{$set: {winner: result.winnerSelectionId}});
+                                await Events.findOneAndUpdate({Id: markets[marketIndex].eventId},{$set: {winner: result.winnerSelectionId}});
                             }
                         }
                     } else {
                         await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id},{ $set: {winnerInfo: result.winnerSelectionId} });
                         if (markets[marketIndex].marketName == 'Match Odds') {
-                            await Events.findByIdAndUpdate({Id: markets[marketIndex].eventId+''},{$set: {winner: result.winnerSelectionId}});
+                            await Events.findOneAndUpdate({Id: markets[marketIndex].eventId},{$set: {winner: result.winnerSelectionId}});
                         }
                     }
 
                 
-                    await Events.findByIdAndUpdate({Id: markets[marketIndex].eventId+''},{$set: {isResultSaved: true}});
+                    await Events.findOneAndUpdate({Id: markets[marketIndex].eventId},{$set: {isResultSaved: true}});
 
 
                 } else  {
