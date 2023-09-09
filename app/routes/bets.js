@@ -1149,7 +1149,9 @@ async function getMatchedBets(req, res) {
     });
   } catch (err) {
     console.error('Aggregation error:', err);
-    return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
+    return res.status(500).send({ message: 'Error retrieving matched bets', 
+    error: err 
+  });
   }
 }
 
