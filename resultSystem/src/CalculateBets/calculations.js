@@ -198,7 +198,7 @@ async function handleLosingBet(bet) {
   });
 
   console.log(" ======================== Moving to Update  Bet Status ");
-  await Bets.findByIdAndUpdate(bet._id, { status: 0, position: bet.loosingAmount });
+  await Bets.findByIdAndUpdate(bet._id, { status: 0, position: bet.loosingAmount * -1 });
 
   console.log(" betIdString =============== Starting ");
   console.log(bet._id.toString());
