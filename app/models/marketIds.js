@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const MarketIDsSchema = new mongoose.Schema({
-  eventId: { type: Number,index: true },
+  eventId: { type: String,index: true },
   marketId: { type: String,index: true },
   marketName:{ type: String},
   inPlay: { type: Boolean, default: false },
