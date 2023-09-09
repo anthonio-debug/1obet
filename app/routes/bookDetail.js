@@ -8,6 +8,8 @@ const Deposits = require('../models/deposits');
 const MarketType = require('../models/marketTypes');
 const Bets = require('../models/bets');
 const loginRouter = express.Router();
+const Events = require('../models/events');
+
 
 
 const bookDetailReport = async (req, res) => {
