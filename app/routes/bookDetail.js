@@ -9,82 +9,14 @@ const MarketType = require('../models/marketTypes');
 const Bets = require('../models/bets');
 const loginRouter = express.Router();
 
-/*
-  function bookDetailReport(req, res) {
-    const errors = validationResult(req);
-    if (errors.errors.length !== 0) {
-      return res.status(400).send({ errors: errors.errors });
-    }
-    let depositsQuery = {};
 
-    if (req.query.endDate && req.query.startDate) {
-      depositsQuery.createdAt = {
-        $gte: req.query.startDate,
-        $lte: req.query.endDate,
-      };
-    }
-
-    User.find({ userId: req.decoded.userId })
-      .then((users) => {
-        if (!users || users.length === 0) {
-          return res.status(404).send({ message: 'No users found' });
-        }
-        const userIds = users.map((user) => user.userId);
-
-        Deposits.find({ userId: { $in: userIds }, ...depositsQuery })
-          .exec()
-          .then((deposits) => {
-            if (!deposits || deposits.length === 0) {
-              return res.status(404).send({ message: 'No records found' });
-            }
-
-            const marketIds = deposits.map((deposit) => deposit.marketId);
-
-            MarketType.find({ marketId: { $in: marketIds } }, 'marketId name')
-              .then((markets) => {
-                const marketMap = {};
-                markets.forEach((market) => {
-                  marketMap[market.marketId] = market.name;
-                });
-
-                const results = deposits.reduce((acc, deposit) => {
-                  const existingMarket = acc.find(
-                    (item) => item.name === marketMap[deposit.marketId]
-                  );
-                  if (existingMarket) {
-                    existingMarket.amount += deposit.amount;
-                  } else {
-                    acc.push({
-                      name: marketMap[deposit.marketId],
-                      amount: deposit.amount,
-                    });
-                  }
-                  return acc;
-                }, []);
-
-                return res.send({
-                  success: true,
-                  message: 'daily sportswise pl records found',
-                  results: results,
-                });
-              })
-              .catch((err) => {
-                return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-              });
-          })
-          .catch((err) => {
-            return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-          });
-      })
-      .catch((err) => {
-        return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
-      });
-  }
-*/
-
-const bookDetailReport = async(req, res) => {
-
+const bookDetailReport = async (req, res) => {
   try {
+    return res.send({
+      success: true,
+      message: 'Daily reports',
+      results: "response"
+    });
     const userId         = parseInt(req.decoded.userId);
     const directChild    = User.distinct("userId", { createdBy: userId });
     const grandchiltren  = User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
@@ -125,8 +57,7 @@ const bookDetailReport = async(req, res) => {
     return res.send({
       success: true,
       message: 'Daily reports',
-      results: response,
-      // results: response?.concat(parentResponse),
+      results: response
     });
   } catch (error) {
     return res.send({
