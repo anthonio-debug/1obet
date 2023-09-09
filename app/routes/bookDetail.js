@@ -12,16 +12,11 @@ const loginRouter = express.Router();
 
 const bookDetailReport = async (req, res) => {
   try {
-
-    
     const userId         = parseInt(req.decoded.userId);
-    const directChild    = User.distinct("userId", { createdBy: userId });
-    return res.send({ success: true, message: 'Daily reports', results: directChild });
-    const grandchiltren  = User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
+    const directChild    = await User.distinct("userId", { createdBy: userId });
+    const grandchiltren  = await User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
     const users          = [userId, ...directChild, ...grandchiltren];
     console.log(" users list  ======== ", users);
-
-
 
     const response = await CashDeposit.aggregate([
       {
@@ -241,8 +236,8 @@ const bookDetailMatchWiseDetailedReports = async(req, res) => {
 
   }else {
     const userId      = parseInt(req.decoded.userId);
-    const directChild = User.distinct("userId", { createdBy: userId });
-    const grandchiltren = User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
+    const directChild = await User.distinct("userId", { createdBy: userId });
+    const grandchiltren = await User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
     const users       = [userId,currentUser.createdBy, ...directChild, ...grandchiltren];
     console.log(" users list  ======== ", users);
     // let parents       = [userId];
