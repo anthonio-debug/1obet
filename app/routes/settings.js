@@ -1540,9 +1540,9 @@ async function getAllGamesResults(req, res) {
         const ev = results.docs[index];
         var marketResultForEvent;
         if (fancyCheck) {
-           marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}, sportId: -1});
+           marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}, sportID: -1});
         } else {
-           marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}});
+           marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}, sportID: {$ne: -1}});
         }
 
         if (marketResultForEvent.length>0) {
@@ -1558,9 +1558,9 @@ async function getAllGamesResults(req, res) {
         }  else {
           var  checkMarketRecord2;
           if (fancyCheck) {
-             checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}, sportId: -1});
+             checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}, sportID: -1});
           } else {
-             checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}});
+             checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}, sportID: {$ne: -1}});
           }
           if (checkMarketRecord2) {
             const combinedData = {
