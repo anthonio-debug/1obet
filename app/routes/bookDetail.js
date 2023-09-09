@@ -113,207 +113,206 @@ const bookDetailSportsWiseReport = async (req, res) => {
 }
 
 const bookDetailMatchWiseReports = async (req, res) => {
-
-  // const errors = validationResult(req);
-  // if (errors.errors.length !== 0) {
-  //   return res.status(400).send({ errors: errors.errors });
-  // }
-  
-  // const userId = req.decoded.userId
-  // console.log(" userId ====== ", userId);
-  const Id =  parseInt(req.query.userId)
-  const response = await CashDeposit.aggregate([
-    {  
-      $match: {
-        userId: Id,
-        sportsId: req.query.sportsId,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
-      }
-    },
-    {
-      $addFields: {
-        'betIdEvent': { $toObjectId: "$betId" }
-      }
-    },
-    {
-      $lookup: {
-        from: 'bets',
-        localField: 'betIdEvent',
-        foreignField: '_id',
-        as: 'bets'
-      }
-    }, 
-    {
-      $group:{
-        _id: {$arrayElemAt: ["$bets.matchId", 0]},
-        amount: { $sum: "$amount"},
-        userId: { $first: "$userId" },
-        date: { $first: "$date" },
-        name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
-      }
-    }
-  ]);
-  return res.send({
-    success: true,
-    message: 'Sport wise Reports !',
-    results: response,
-  });
-}
-
-const bookDetailMatchWiseDetailedReports = async(req, res) => {
-
-  const userId      = parseInt(req.query.userId)
-  const matchId     = req.query.matchId;
-  const currentUser = await User.findOne({ userId: userId});
-  const parent      = await User.findOne({ userId: currentUser.createdBy});
-  if(currentUser.role == '5'){
-    const match       = await Events.findById(matchId)
+  try{
+    // const errors = validationResult(req);
+    // if (errors.errors.length !== 0) {
+    //   return res.status(400).send({ errors: errors.errors });
+    // }
+    
+    // const userId = req.decoded.userId
+    // console.log(" userId ====== ", userId);
+    const Id =  parseInt(req.query.userId)
     const response = await CashDeposit.aggregate([
-      {
+      {  
         $match: {
-          matchId: matchId,
-          $or: [
+          userId: Id,
+          sportsId: req.query.sportsId,
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          $and: [
             {
-              $and: [{
-                userId: userId,
-              },
-              {
-                cashOrCredit: { $in: ["Bet"] }
-              }
-              ]
+              createdAt: {$gte: req.query.startDate}
             },
-            {       
-              cashOrCredit: { $in: ["Commission"] }
+            {
+              createdAt: {$lte: req.query.endDate}
             }
           ]
         }
       },
       {
         $addFields: {
-          'betsId': { $toObjectId: "$betId" }
+          'betIdEvent': { $toObjectId: "$betId" }
         }
       },
       {
         $lookup: {
           from: 'bets',
-          localField: 'betsId',
+          localField: 'betIdEvent',
           foreignField: '_id',
-          as: 'betsDetails'
-        }
-      }, 
-      { 
-        $group:{
-          _id: "$betId",
-          pl: { $sum: "$amount"},
-          sattledAt: { $first: "$date" },
-          price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
-          name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
-          createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
-          size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
-          type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } }
-
-        }
-      }
-    ]);
-    return res.send({
-      success: true,
-      message: 'Detailed reports',
-      results: response,
-      isDetailed: true,
-      dealer: parent.userName,
-      currentUser: currentUser.userName,
-      Winner: match?.winner
-      
-    });
-
-  }else {
-    const userId      = parseInt(req.decoded.userId);
-    const directChild = await User.distinct("userId", { createdBy: userId });
-    const grandchiltren = await User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
-    const users       = [userId,currentUser.createdBy, ...directChild, ...grandchiltren];
-    console.log(" users list  ======== ", users);
-    // let parents       = [userId];
-    let childUsers;
-    // do{
-    //   childUsers     = await User.distinct("userId", {
-    //     createdBy: {
-    //       $in: parents
-    //     }
-    //   });
-    //   console.log(" child users ======= ", childUsers);
-    //   if(childUsers.length) users.push(...childUsers)
-    //   parents = childUsers
-    // }while (childUsers.length > 0)
-  
-    console.log(" users list  ======== ", users);
-  
-    const response = await CashDeposit.aggregate([
-      {
-        $match: {
-          userId: { $in: users },
-          matchId: matchId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: 'userId',
-          as: 'userInfo'
+          as: 'bets'
         }
       }, 
       {
         $group:{
-          _id: "$userId",
+          _id: {$arrayElemAt: ["$bets.matchId", 0]},
           amount: { $sum: "$amount"},
-          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+          userId: { $first: "$userId" },
+          date: { $first: "$date" },
+          name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
         }
       }
     ]);
-  
-    const parentResponse = await CashDeposit.aggregate([
-      {  
-        $match: {
-          userId: currentUser.createdBy ,
-          commissionFrom: currentUser.userId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: 'userId',
-          as: 'userInfo'
-        }
-      }, 
-      {
-        $group:{
-          _id: "$userId",
-          // parent: true,
-          amount: { $sum: "$upLineAmount"},
-          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-        }
-      }
-    ]);
-  
     return res.send({
       success: true,
-      message: 'Daily reports',
-      results: response?.concat(parentResponse),
-      isDetailed: false
+      message: 'Sport wise Reports !',
+      results: response,
+    });
+  } catch (error) {
+    return res.send({
+      success: false,
+      message: error,
     });
   }
+}
 
+const bookDetailMatchWiseDetailedReports = async(req, res) => {
+  try{
+    const userId      = parseInt(req.query.userId)
+    const matchId     = req.query.matchId;
+    const currentUser = await User.findOne({ userId: userId});
+    const parent      = await User.findOne({ userId: currentUser.createdBy});
+    if(currentUser.role == '5'){
+      const match       = await Events.findById(matchId)
+      const response    = await CashDeposit.aggregate([
+        {
+          $match: {
+            matchId: matchId,
+            $or: [
+              {
+                $and: [{
+                  userId: userId,
+                },
+                {
+                  cashOrCredit: { $in: ["Bet"] }
+                }
+                ]
+              },
+              {       
+                cashOrCredit: { $in: ["Commission"] }
+              }
+            ]
+          }
+        },
+        {
+          $addFields: {
+            'betsId': { $toObjectId: "$betId" }
+          }
+        },
+        {
+          $lookup: {
+            from: 'bets',
+            localField: 'betsId',
+            foreignField: '_id',
+            as: 'betsDetails'
+          }
+        }, 
+        { 
+          $group:{
+            _id: "$betId",
+            pl: { $sum: "$amount"},
+            sattledAt: { $first: "$date" },
+            price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
+            name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
+            createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
+            size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
+            type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } }
+
+          }
+        }
+      ]);
+      return res.send({
+        success: true,
+        message: 'Detailed reports',
+        results: response,
+        isDetailed: true,
+        dealer: parent.userName,
+        currentUser: currentUser.userName,
+        Winner: match?.winner
+        
+      });
+
+    }else {
+      const userId        = parseInt(req.decoded.userId);
+      const directChild   = await User.distinct("userId", { createdBy: userId });
+      const grandchiltren = await User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
+      const users         = [userId, ...directChild, ...grandchiltren];
+      console.log(" users list  ======== ", users);
+    
+      console.log(" users list  ======== ", users);
+    
+      const response = await CashDeposit.aggregate([
+        {
+          $match: {
+            userId: { $in: users },
+            matchId: matchId,
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: 'userId',
+            as: 'userInfo'
+          }
+        }, 
+        {
+          $group:{
+            _id: "$userId",
+            amount: { $sum: "$amount"},
+            name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+          }
+        }
+      ]);
+    
+      const parentResponse = await CashDeposit.aggregate([
+        {  
+          $match: {
+            userId: currentUser.createdBy ,
+            commissionFrom: currentUser.userId,
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: 'userId',
+            as: 'userInfo'
+          }
+        }, 
+        {
+          $group:{
+            _id: "$userId",
+            // parent: true,
+            amount: { $sum: "$upLineAmount"},
+            name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+          }
+        }
+      ]);
+    
+      return res.send({
+        success: true,
+        message: 'Daily reports',
+        results: response?.concat(parentResponse),
+        isDetailed: false
+      });
+    }
+  } catch (error) {
+    return res.send({
+      success: false,
+      message: error,
+    });
+  }
 }
 
 loginRouter.get('/bookDetailReport', bookDetailReport );
