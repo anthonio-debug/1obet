@@ -24,7 +24,6 @@ function apiRequests() {
   function init(_io, express) {
     io = _io;
     io.on('connection', onConnet);
-
     console.log('Express conf loading');
   }
 
