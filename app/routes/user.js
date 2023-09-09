@@ -33,6 +33,8 @@ async function registerUser(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
 
+  console.log(" User Is creatting   ");
+
   if (req.decoded.role == '5') {
     return res.status(404).send({ message: 'you are not allowed to do this ' });
   }
