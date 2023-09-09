@@ -184,9 +184,9 @@ const placeBet = async (req, res) => {
     }
     const userMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: marketId }).exec();
 
-    console.log(" userMaxBetSize ========== ", userMaxBetSize);
-
-    console.log(" betAmount ========== ", betAmount);
+    if(!userMaxBetSize){
+      return res.status(404).send({ message: `something went wrong !` });
+    }
 
     if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
       return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
@@ -337,6 +337,14 @@ const placeBet = async (req, res) => {
     //for fancy
     else if (subMarketDetail.Id == config.Fancy) {
       const fancyBetLimit  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.Fancy }).exec();
+      
+      console.log(" current User ======  ", userId);
+      console.log(" current marketId ======  ", marketId);
+      console.log(" current config.Fancy ======  ", config.Fancy);
+
+      if(!userMaxBetSize){
+        return res.status(404).send({ message: `something went wrong !` });
+      }
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
         return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
       }

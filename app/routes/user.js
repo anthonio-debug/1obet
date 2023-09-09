@@ -114,7 +114,8 @@ async function registerUser(req, res) {
             betLimitId: betLimit._id,
             amount: betLimit.maxAmount,
             name: betLimit.name,
-            sportsId: betLimit.sportsId
+            sportsId: betLimit.sportsId,
+            subarket: betLimit.subarket
           }));
 
           console.log(" userbetSizesData ============ ", userbetSizesData);
@@ -176,8 +177,8 @@ async function registerUser(req, res) {
             betLimitId: betLimit.betLimitId,
             amount: betLimit.amount,
             name: betLimit.name,
-            sportsId: betLimit.sportsId
-            // marketId: betLimit.marketId
+            sportsId: betLimit.sportsId,
+            subarket: betLimit.subarket
           }));
 
           UserBetSizes.insertMany(
