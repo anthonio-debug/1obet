@@ -99,7 +99,7 @@ const placeBet = async (req, res) => {
     let subMarketDetail;
     let marketId;
     let selectedOddsRate;
-    const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId } = req.body;
+    const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate } = req.body;
     const userId = req.decoded.userId;
     let ApiResponseOdds;
     let matchedIndex;
@@ -183,6 +183,7 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: 'Betting disabled' });
     }
     const userMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: marketId }).exec();
+
     if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
       return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
     }
@@ -599,14 +600,30 @@ const placeBet = async (req, res) => {
       loosingAmount = betAmount;
       runnerName    = `Figure(${selectionId})`
     }
-    else if (type == 1) {
+
+    else if (type == 1 &&  subMarketDetail.Id != config.Fancy) {
       winningAmount = betAmount;
       loosingAmount = (betAmount * betRate) - betAmount;
     }
-    else if (type == 0) {
+    else if (type == 0 && subMarketDetail.Id != config.Fancy) {
       winningAmount = (betAmount * betRate) - betAmount;
       loosingAmount = betAmount;
     }
+
+    else if (type == 1 &&  subMarketDetail.Id == config.Fancy) {
+      loosingAmount =  (fancyRate/100) * betAmount;
+      winningAmount = betAmount;
+    }
+    else if (type == 0 && subMarketDetail.Id == config.Fancy) {
+      winningAmount =  (fancyRate/100) * betAmount;
+      loosingAmount = betAmount;
+    }
+
+    // fancy Formula 
+    // Back
+    // Value showing below/100)*bet amount = winning amount
+    // Lay
+    // (Value showing below/100)*bet amount = loosing amount
 
     const bet = new Bets({
       marketId: _3rdPartyMarketId,

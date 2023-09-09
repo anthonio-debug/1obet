@@ -5,13 +5,14 @@ mongoose.set('debug', false);
 // let Global = require('../global/settings')
 
 let userBetSizesSchema = new Schema({
-  userId: { type: Number },
-  amount: { type: Number },
+  userId:     { type: Number },
+  amount:     { type: Number },
   betLimitId: { type: String },
-  name: { type: String },
-  createdAt: { type: Number },
-  sportsId:{type:String},
-  updatedAt: { type: Number },
+  name:       { type: String },
+  subarket:   { type: Number },
+  sportsId:   { type:String },
+  createdAt:  { type: Number },
+  updatedAt:  { type: Number }
 });
 
 // betSizesSchema.plugin(Global.aggregatePaginate)

@@ -5,11 +5,12 @@ mongoose.set('debug', false);
 // let Global = require('../global/settings')
 
 let betLimitsSchema = new Schema({
-  name: { type: String, required: true },
+  name:      { type: String, required: true },
   maxAmount: { type: Number, required: true },
+  sportsId:  { type: String },
+  subarket:  { type: Number },
   updatedAt: { type: Number },
-  createdAt: { type: Number },
-  sportsId: { type: String }
+  createdAt: { type: Number }
 });
 
 betLimitsSchema.pre('save', function (next) {

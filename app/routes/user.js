@@ -37,7 +37,7 @@ async function registerUser(req, res) {
     return res.status(404).send({ message: 'you are not allowed to do this ' });
   }
 
-  if (req.body.role !== '5') {
+  if (req.body.role != '5') {
     if (!req.body.downLineShare) {
       return res.status(404).send({ message: 'downLineShare is required' });
     }
@@ -58,15 +58,11 @@ async function registerUser(req, res) {
       const user = new User(req.body);
       // Check if the user's role is 5, and if so, set downLineShare to null Ignore downLineShare field if role is 5
       if (req.body.role == '5') {
-        req.body.downLineShare = undefined;
+        req.body.downLineShare = 0;
       }
       // Check if the downline share is greater than the parent's downline share
       const parentUser = await User.findOne({ userId: req.decoded.userId });
-      if (
-        (parentUser.role !== '0' &&
-          parentUser.downLineShare < req.body.downLineShare) ||
-        req.body.downLineShare >= 100
-      ) {
+      if ( (parentUser.role != '0' && parentUser.downLineShare < req.body.downLineShare) || req.body.downLineShare >= 100) {
         return res.status(404).send({
           message: `Max allowed downline share is 0 - ${parentUser.downLineShare}`,
         });

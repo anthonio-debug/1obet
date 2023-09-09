@@ -453,7 +453,7 @@ db.submarkettypes.insertMany([
   {
     Id: 34,
     marketId: '4',
-    name: 'Chota Bada'
+    name: 'Chotta Bara'
   },
   {
     Id: 35,
@@ -541,94 +541,70 @@ db.termsandconditions.insertOne(
 db.betlimits.deleteMany({})
 db.betlimits.insertMany([
   {
-  "_id" : ObjectId("64623bc234ad06204d412beb"),
-  "name" : "soccer",
+  "name" : "Soccer",
   "sportsId": "1",
   "maxAmount" : 280000
   },
   {
-  "_id" : ObjectId("64623bc234ad06204d412bec"),
-  "name" : "cricket",
-  "sportsId":"4",
-  "maxAmount" : 50000
+    "name" : "Tennis",
+    "sportsId": "2",
+    "maxAmount" : 280000
   },
   {
-  "_id" : ObjectId("64623bc234ad06204d412bed"),
-  "name" : "fancy",
-  "sportsId":"4",
-  "maxAmount" : 200000
+    "name" : "Cricket",
+    "sportsId":"4",
+    "maxAmount" : 50000
   },
   {
-  "_id" : ObjectId("64623bc234ad06204d412bee"),
-  "name" : "races",
-  "sportsId":"7",
-  "maxAmount" : 200000
+    "name" : "Fancy",
+    "sportsId":"4",
+    "subarket": 7,
+    "maxAmount" : 200000
   },
   {
-  "_id" : ObjectId("64623bc234ad06204d412bef"),
-  "name" : "casino",
-  "sportsId": "9",
-  "maxAmount" : 50000
-  },
-  {
-  "_id" : ObjectId("64623bc234ad06204d412bf0"),
-  "name" : "greyHound",
-  "sportsId": "4339",
-  "maxAmount" : 50000
-  },
-  {
-  "_id" : ObjectId("64623bc234ad06204d412bf1"),
-  "name" : "bookMaker",
-  "sportsId":"4",
-  "maxAmount" : 2000000
-  },
-  {
-  "_id" : ObjectId("64623bc234ad06204d412bf2"),
-  "name" : "iceHockey",
-  "sportsId":"",
-  "maxAmount" : 5000000
-  },
-  {
-  "_id" : ObjectId("64623bc234ad06204d412bf3"),
-  "name" : "snooker",
-  "sportsId":"",
-  "maxAmount" : 5000000
-  },
-  {
-  "_id" : ObjectId("64623bc234ad06204d412bf4"),
-  "name" : "kabbadi",
-  "sportsId":"",
-  "maxAmount" : 5000000
-  },
-  {
-    _id: ObjectId("64be3ddf737dd99baec572a6"),
-    name: 'fancy 2',
+    name: 'Tied match',
     "sportsId": "4",
-    maxAmount: 2000
-  },
-  {
-    _id: ObjectId("64be3ddf737dd99baec572a7"),
-    name: 'tied match',
-    "sportsId": "4",
+    "subarket": 35,
     maxAmount: 2000000
   },
   {
-    _id: ObjectId("64be3ddf737dd99baec572a8"),
-    name: 'last figure',
+    "name" : "bookMaker",
+    "sportsId":"4",
+    "subarket": 8,
+    "maxAmount" : 2000000
+  },
+  {
+    name: 'Even Odd',
     "sportsId": "4",
+    "subarket": 10,
     maxAmount: 2000000
   },
   {
-    _id: ObjectId("64be3ddf737dd99baec572a9"),
-    name: 'even/odds',
+    name: 'Chotta Bara',
     "sportsId": "4",
+    "subarket": 34,
     maxAmount: 2000000
   },
   {
-    _id: ObjectId("64be3ddf737dd99baec572aa"),
-    name: 'chota/bara',
+    name: 'Figure',
     "sportsId": "4",
+    "subarket": 9,
     maxAmount: 2000000
+  },
+  {
+    "name" : "Horse races",
+    "sportsId":"7",
+    "maxAmount" : 200000
+  },
+  {
+    "name" : "GreyHound",
+    "sportsId": "4339",
+    "maxAmount" : 50000
+  },
+  {
+    "name" : "casino",
+    "sportsId": "6",
+    "maxAmount" : 50000
   }
 ])
 
@@ -688,6 +664,111 @@ db.raceodds.find({})
 db.racings.find({}) 
 db.odds.find({}) 
 db.odds.count({}) 
+
+
+
+db.betlimits.insertMany([
+  {
+  "_id" : ObjectId("64623bc234ad06204d412beb"),
+  "name" : "Soccer",
+  "sportsId": "1",
+  "maxAmount" : 280000
+  },
+  {
+    "_id" : ObjectId("64623bc234ad06204d412beb"),
+    "name" : "Tennis",
+    "sportsId": "2",
+    "maxAmount" : 280000
+  },
+  {
+    "_id" : ObjectId("64623bc234ad06204d412bec"),
+    "name" : "Cricket",
+    "sportsId":"4",
+    "maxAmount" : 50000
+  },
+  {
+    "_id" : ObjectId("64623bc234ad06204d412bed"),
+    "name" : "Fancy",
+    "sportsId":"4",
+    "subarket": 7,
+    "maxAmount" : 200000
+  },
+  {
+    _id: ObjectId("64be3ddf737dd99baec572a7"),
+    name: 'tied match',
+    "sportsId": "4",
+    "subarket": 35,
+    maxAmount: 2000000
+  },
+  {
+    "_id" : ObjectId("64623bc234ad06204d412bf1"),
+    "name" : "bookMaker",
+    "sportsId":"4",
+    "subarket": 8,
+    "maxAmount" : 2000000
+  },
+  {
+    _id: ObjectId("64be3ddf737dd99baec572a9"),
+    name: 'Even Odd',
+    "sportsId": "4",
+    "subarket": 10,
+    maxAmount: 2000000
+  },
+  {
+    _id: ObjectId("64be3ddf737dd99baec572aa"),
+    name: 'chotta/bara',
+    "sportsId": "4",
+    "subarket": 34,
+    maxAmount: 2000000
+  },
+  {
+    _id: ObjectId("64be3ddf737dd99baec572a8"),
+    name: 'Figure',
+    "sportsId": "4",
+    "subarket": 9,
+    maxAmount: 2000000
+  },
+
+  {
+    "_id" : ObjectId("64623bc234ad06204d412bee"),
+    "name" : "Horse races",
+    "sportsId":"7",
+    "maxAmount" : 200000
+  },
+  {
+    "_id" : ObjectId("64623bc234ad06204d412bef"),
+    "name" : "casino",
+    "sportsId": "6",
+    "maxAmount" : 50000
+  },
+  {
+    "_id" : ObjectId("64623bc234ad06204d412bf0"),
+    "name" : "GreyHound",
+    "sportsId": "4339",
+    "maxAmount" : 50000
+  },
+
+  {
+    "_id" : ObjectId("64623bc234ad06204d412bf2"),
+    "name" : "iceHockey",
+    "sportsId":"",
+    "maxAmount" : 5000000
+  },
+  {
+    "_id" : ObjectId("64623bc234ad06204d412bf3"),
+    "name" : "snooker",
+    "sportsId":"",
+    "maxAmount" : 5000000
+  },
+  {
+    "_id" : ObjectId("64623bc234ad06204d412bf4"),
+    "name" : "kabbadi",
+    "sportsId":"",
+    "maxAmount" : 5000000
+  },
+
+
+])
 
 // new one 
 
