@@ -18,7 +18,6 @@ function ToolForEvent() {
     async function init(_io, express) {
         apiRequests.init(_io, express);
 
-        await MarketIDs.deleteMany({});
 
 
         fetchEvents();
