@@ -124,15 +124,18 @@ const placeBet = async (req, res) => {
     if (user.bettingAllowed == false) {
       return res.status(404).send({ message: 'Bet not allowed' });
     }
-    let parentUserIds = await getParents(user.userId);
-    const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
-    const subMarketId1 = await User.distinct("blockedSubMarkets", { userId: { $in: parentUserIds }, isDeleted: false });
-    const subMarketId2 = await User.distinct("blockedSubMarketsByParent", { userId: { $in: parentUserIds }, isDeleted: false });
-    const subMarketId = subMarketId1.concat(subMarketId2);
-    const eventDetail = await Events.findById(matchId);
+    let parentUserIds   = await getParents(user.userId);
+    const marketIds     = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
+    const subMarketId1  = await User.distinct("blockedSubMarkets", { userId: { $in: parentUserIds }, isDeleted: false });
+    const subMarketId2  = await User.distinct("blockedSubMarketsByParent", { userId: { $in: parentUserIds }, isDeleted: false });
+    const subMarketId   = subMarketId1.concat(subMarketId2);
+    const eventDetail   = await Events.findById(matchId);
 
     if (!eventDetail) {
       return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
+    }
+    if(!eventDetail.betAllowed){
+      return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
     }
     marketId = eventDetail?.sportsId;
     console.log(" marketId ======== ", marketId);
