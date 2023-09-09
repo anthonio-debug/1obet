@@ -451,7 +451,7 @@ function getAllDeposits(req, res) {
       if (err || !parentUser) return res.status(404).send({ message: 'User not found' });
       Cash.findOne(
         { userId: req.query.userId },
-              //creditlimit should be of the parent user
+        // creditlimit should be of the parent user
         { maxWithdraw: 1 }
       )
         .sort({ _id: -1 })
@@ -477,7 +477,7 @@ function getAllDeposits(req, res) {
             return res.send({
               message: 'Deposit Record Found',
               results: {
-                maxWithdraw: user.cash,
+                maxWithdraw: user.availableBalance,
                 creditLimit: parentUser.creditRemaining,
                 balance: user.balance,
                 credit: user.credit,
