@@ -14,7 +14,7 @@ var _ = require('lodash');
 const sportsAPIUrl = 'http://209.250.242.175:33332';
 let io;
 
-
+let runnerCheckerArray = [];
 
 
 function apiRequests() {
@@ -339,14 +339,19 @@ function apiRequests() {
                   await MarketIDS.updateOne({ marketId: element.MarketId }, { inPlay: false, status: element.Status });
                 }
 
-                var runners = [];
 
-                for (let ix1 = 0; ix1 < element.Runners.length; ix1++) {
-                  const runner = element.Runners[ix1];
-                  runners.push({SelectionId: runner.SelectionId, runnerName: runner.runnerName});
+                if (runnerCheckerArray.indexOf(element.MarketId) === -1) {
+                  var runners = [];
+                  for (let ix1 = 0; ix1 < element.Runners.length; ix1++) {
+                    const runner = element.Runners[ix1];
+                    runners.push({SelectionId: runner.SelectionId, runnerName: runner.runnerName});
+                  }
+  
+                  if (runners.length>0) {
+                    await MarketIDS.updateOne({ marketId: element.MarketId, runners: null }, { $set: {runners: runners} });
+                    runnerCheckerArray.push(element.MarketId);
+                  }
                 }
-
-                await MarketIDS.updateOne({ marketId: element.MarketId }, { $set: {runners: runners} });
 
                 var el = new Odds(json);
                 el.save();
