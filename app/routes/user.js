@@ -99,7 +99,7 @@ async function registerUser(req, res) {
       user.createdBy = req.decoded.userId;
 
       // Add the if condition back here to save the betLimits if parentUser.userId is '0'
-      if (parentUser.userId == 0) {
+      if (parentUser.role == 0) {
         let betLimits = await BetLimits.find({});
         console.log(" betLimits ======= ", betLimits);
         user.save((err, user) => {
