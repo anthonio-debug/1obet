@@ -1632,6 +1632,7 @@ async function setLoginHistories(req, res) {
   }
 
 }
+
 async function setCloseEventWithCancelBet(req, res) {
   if (req.decoded.role != '0') {
     return res
@@ -1678,10 +1679,6 @@ async function setCloseEventWithCancelBet(req, res) {
     message: 'Event Successfully Closed'
   });
 }
-
-
-
-
 
 async function setMatchShow(req, res) {
   if (req.decoded.role !== '0') {
@@ -1751,7 +1748,7 @@ async function setBattingDisabled(req, res) {
     const currentEv = await Events.findOneAndUpdate({ Id: req.query.matchId }, { $set:{ betAllowed : req.query.status } })
     return res.send({
       success: true,
-      message: 'Event Successfully Closed!'
+      message: 'Event Successfully updated!'
     });
   } catch (error) {
     return res.status(404).send({

@@ -193,11 +193,11 @@ const bookDetailMatchWiseDetailedReports = async(req, res) => {
     const matchId     = req.query.matchId;
     const currentUser = await User.findOne({ userId: userId});
     if(!currentUser){
-      return res.send({  success: false,  message: "Something went Wrong !"});
+      return res.send({  success: false,  message: "user not found "});
     }
     const parent      = await User.findOne({ userId: currentUser.createdBy});
-    if(!parent){
-      return res.send({  success: false,  message: "Something went Wrong !"});
+    if(!parent && currentUser.role != 0){
+      return res.send({  success: false,  message: "parent missing !"});
     }
     if(currentUser.role == '5'){
       const match       = await Events.findById(matchId)
