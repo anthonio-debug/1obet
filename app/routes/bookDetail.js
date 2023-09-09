@@ -12,16 +12,19 @@ const loginRouter = express.Router();
 
 const bookDetailReport = async (req, res) => {
   try {
-    return res.send({
-      success: true,
-      message: 'Daily reports',
-      results: "response"
-    });
+
     const userId         = parseInt(req.decoded.userId);
     const directChild    = User.distinct("userId", { createdBy: userId });
     const grandchiltren  = User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
     const users          = [userId, ...directChild, ...grandchiltren];
     console.log(" users list  ======== ", users);
+
+
+    return res.send({
+      success: true,
+      message: 'Daily reports',
+      results: "response"
+    });
 
     const response = await CashDeposit.aggregate([
       {
