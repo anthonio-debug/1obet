@@ -188,11 +188,9 @@ const placeBet = async (req, res) => {
 
     console.log(" betAmount ========== ", betAmount);
 
-
     if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
       return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
     }
-    return res.status(404).send({ message: `Limit Check Failed  : ${userMaxBetSize.amount}` });
 
     // cricket tennis soccer odds only match odds bookmaker Tied Match Toss 
     if (config.sportMarkets.includes(marketId) && config.SportOddsSubMarkets.includes(subMarketDetail.Id)) {
@@ -342,6 +340,8 @@ const placeBet = async (req, res) => {
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
         return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
       }
+
+      // return res.status(404).send({ message: `Fancy max bet size is : ${fancyBetLimit.amount}` });
 
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id
