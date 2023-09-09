@@ -340,8 +340,9 @@ const placeBet = async (req, res) => {
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
         return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
       }
-
-      // return res.status(404).send({ message: `Fancy max bet size is : ${fancyBetLimit.amount}` });
+      console.log(" fancyBetLimit ========== ", fancyBetLimit);
+      console.log(" subMarketDetail.Id ============= ", subMarketDetail.Id);
+      return res.status(404).send({ message: `Fancy max bet size is : ${fancyBetLimit.amount}` });
 
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id
