@@ -544,9 +544,8 @@ const placeBet = async (req, res) => {
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
       const FigureEvenOddSmallBig  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: subMarketDetail.Id }).exec();
       if (FigureEvenOddSmallBig && betAmount > FigureEvenOddSmallBig.amount) {
-        return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
+        return res.status(404).send({ message: `max bet size is : ${FigureEvenOddSmallBig.amount}` });
       }
-
 
       let score = await cricketLiveScore(eventDetail.Id);
       console.log(" Score ======================= ", score)
@@ -587,6 +586,8 @@ const placeBet = async (req, res) => {
           });
           break;
       }
+
+
 
       if (inning == 2 && currentSession == totalSessions) {
         return res.status(404).send({
