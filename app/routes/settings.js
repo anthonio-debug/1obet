@@ -1569,7 +1569,7 @@ async function getAllGamesResults(req, res) {
               winner: ''
             };
             realResults.push(combinedData);
-          } else {
+          } else if (!fancyCheck) {
             const combinedData = {
               ...ev._doc,
               marketName: 'WAITING RESULTS 2',
