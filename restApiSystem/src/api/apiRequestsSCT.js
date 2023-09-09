@@ -213,6 +213,7 @@ function apiRequests() {
           await MarketIDS.updateMany({ eventId: diff[i] }, { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } });
           await inPlayEvents.updateOne({ Id: diff[i] }, { $set: { status: 'CLOSED-EVENTLIST', inplay: false, inplayFromServer: false, readyForScore: true } });
           io.emit('inplay', { eventID: diff[i], inplay: false });
+          io.to('eventStatusChange').emit('event_status', { eventId: diff[i], status: 'CLOSED-EVENTLIST' });
         }
 
 
@@ -433,6 +434,7 @@ function apiRequests() {
           await MarketIDS.updateMany({ eventId: diff[i] }, { $set: { inPlay: false, status: 'CLOSED',readyForScore: true } });
           await inPlayEvents.updateOne({ Id: diff[i] }, { $set: { status: 'CLOSED-INPLAYLIST', inplay: false, inplayFromServer: false,  readyForScore: true} });
           io.emit('inplay', { eventID: diff[i], inplay: false });
+          io.to('eventStatusChange').emit('event_status', { eventId: diff[i], status: 'CLOSED-INPLAYLIST' });
         }
 
 
