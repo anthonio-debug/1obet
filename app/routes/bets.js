@@ -188,7 +188,7 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
     }
 
-    // cricket tennis soccer odds only match odds 
+    // cricket tennis soccer odds only match odds bookmaker Tied Match Toss 
     if (config.sportMarkets.includes(marketId) && config.SportOddsSubMarkets.includes(subMarketDetail.Id)) {
       const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
       const response = await axios.get(url);
@@ -332,6 +332,11 @@ const placeBet = async (req, res) => {
 
     //for fancy
     else if (subMarketDetail.Id == config.Fancy) {
+      const fancyBetLimit  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.Fancy }).exec();
+      if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
+        return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
+      }
+
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id
       const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
@@ -421,6 +426,11 @@ const placeBet = async (req, res) => {
 
     // for bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
+      const bookMakerBetLimit  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.BookMaker }).exec();
+      if (bookMakerBetLimit && betAmount > bookMakerBetLimit.amount) {
+        return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
+      }
+
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id
       const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
@@ -507,6 +517,12 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+      const FigureEvenOddSmallBig  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: subMarketDetail.Id }).exec();
+      if (FigureEvenOddSmallBig && betAmount > FigureEvenOddSmallBig.amount) {
+        return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
+      }
+
+
       let score = await cricketLiveScore(eventDetail.Id);
       console.log(" Score ======================= ", score)
       if (!score) {

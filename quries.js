@@ -543,17 +543,17 @@ db.betlimits.insertMany([
   {
   "name" : "Soccer",
   "sportsId": "1",
-  "maxAmount" : 280000
+  "maxAmount" : 250000
   },
   {
     "name" : "Tennis",
     "sportsId": "2",
-    "maxAmount" : 280000
+    "maxAmount" : 250000
   },
   {
     "name" : "Cricket",
     "sportsId":"4",
-    "maxAmount" : 50000
+    "maxAmount" : 5000000
   },
   {
     "name" : "Fancy",
@@ -565,31 +565,31 @@ db.betlimits.insertMany([
     name: 'Tied match',
     "sportsId": "4",
     "subarket": 35,
-    maxAmount: 2000000
+    maxAmount: 200000
   },
   {
     "name" : "bookMaker",
     "sportsId":"4",
     "subarket": 8,
-    "maxAmount" : 2000000
+    "maxAmount" : 200000
   },
   {
     name: 'Even Odd',
     "sportsId": "4",
     "subarket": 10,
-    maxAmount: 2000000
+    maxAmount: 200000
   },
   {
     name: 'Chotta Bara',
     "sportsId": "4",
     "subarket": 34,
-    maxAmount: 2000000
+    maxAmount: 200000
   },
   {
     name: 'Figure',
     "sportsId": "4",
     "subarket": 9,
-    maxAmount: 2000000
+    maxAmount: 200000
   },
   {
     "name" : "Horse races",
@@ -599,7 +599,7 @@ db.betlimits.insertMany([
   {
     "name" : "GreyHound",
     "sportsId": "4339",
-    "maxAmount" : 50000
+    "maxAmount" : 100000
   },
   {
     "name" : "casino",

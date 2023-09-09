@@ -34,6 +34,7 @@ const betSchema = new mongoose.Schema({
   sport: { type: String },
   eventId: { type: String },
   runnerName: { type: String },
+  fancyRate: { type: Number, default: 0 },
   lastCheckResult: { type: Number, default: 0 },
 });
 
