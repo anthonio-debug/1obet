@@ -84,93 +84,61 @@ const loginRouter = express.Router();
 
 const bookDetailReport = async(req, res) => {
 
-  const userId         = parseInt(req.decoded.userId);
-  const directChild    = User.distinct("userId", { createdBy: userId });
-  const grandchiltren  = User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
-  const users          = [userId, ...directChild, ...grandchiltren];
-  console.log(" users list  ======== ", users);
+  try {
+    const userId         = parseInt(req.decoded.userId);
+    const directChild    = User.distinct("userId", { createdBy: userId });
+    const grandchiltren  = User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
+    const users          = [userId, ...directChild, ...grandchiltren];
+    console.log(" users list  ======== ", users);
 
-  const response = await CashDeposit.aggregate([
-    {
-      $match: {
-        userId: { $in: users },
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
+    const response = await CashDeposit.aggregate([
+      {
+        $match: {
+          userId: { $in: users },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          $and: [
+            {
+              createdAt: {$gte: req.query.startDate}
+            },
+            {
+              createdAt: {$lte: req.query.endDate}
+            }
+          ]
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'userId',
+          as: 'userInfo'
+        }
+      }, 
+      {
+        $group:{
+          _id: "$userId",
+          amount: { $sum: "$amount"},
+          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+        }
       }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'userInfo'
-      }
-    }, 
-    {
-      $group:{
-        _id: "$userId",
-        amount: { $sum: "$amount"},
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-      }
-    }
-  ]);
-
-  // const parentResponse = await CashDeposit.aggregate([
-  //   {  
-  //     $match: {
-  //       userId: currentUser.createdBy ,
-  //       commissionFrom: currentUser.userId,
-  //       cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-  //       $and: [
-  //         {
-  //           createdAt: {$gte: req.query.startDate}
-  //         },
-  //         {
-  //           createdAt: {$lte: req.query.endDate}
-  //         }
-  //       ]
-  //     }
-  //   },
-  //   {
-  //     $lookup: {
-  //       from: 'users',
-  //       localField: 'userId',
-  //       foreignField: 'userId',
-  //       as: 'userInfo'
-  //     }
-  //   }, 
-  //   {
-  //     $group:{
-  //       _id: "$userId",
-  //       // parent: true,
-  //       amount: { $sum: "$upLineAmount"},
-  //       name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-  //     }
-  //   }
-  // ]);
-
-  return res.send({
-    success: true,
-    message: 'Daily reports',
-    results: response,
-    // results: response?.concat(parentResponse),
-  });
+    ]);
+    return res.send({
+      success: true,
+      message: 'Daily reports',
+      results: response,
+      // results: response?.concat(parentResponse),
+    });
+  } catch (error) {
+    return res.send({
+      success: false,
+      message: error,
+    });
+  }
 
 }
 
 const bookDetailSportsWiseReport = async (req, res) => {
-  const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
-  }
-
+  try {
     const Id        =  parseInt(req.query.userId)
     console.log(" Id ========== ", Id);
     const response = await CashDeposit.aggregate([
@@ -205,24 +173,29 @@ const bookDetailSportsWiseReport = async (req, res) => {
         }
       }
     ]);
-
     return res.send({
       success: true,
       message: 'Market wise Reports !',
       results: response,
     });
+  } catch (error) {
+    return res.send({
+      success: false,
+      message: error,
+    });
+  }
 }
 
 const bookDetailMatchWiseReports = async (req, res) => {
-  const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
-  }
+
+  // const errors = validationResult(req);
+  // if (errors.errors.length !== 0) {
+  //   return res.status(400).send({ errors: errors.errors });
+  // }
   
   // const userId = req.decoded.userId
   // console.log(" userId ====== ", userId);
   const Id =  parseInt(req.query.userId)
-
   const response = await CashDeposit.aggregate([
     {  
       $match: {

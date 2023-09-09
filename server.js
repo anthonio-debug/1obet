@@ -91,6 +91,7 @@ app.use('/api', require('./app/routes/dailyPLReports').loginRouter);
 app.use('/api', require('./app/routes/dailyReports').loginRouter);
 app.use('/api', require('./app/routes/commissionReports').loginRouter);
 app.use('/api', require('./app/routes/bookDetail2Reports').loginRouter);
+app.use('/api', require('./app/routes/bookDetail').loginRouter);
 app.use('/api', require('./app/routes/currentPosition').loginRouter);
 app.use('/api', require('./app/routes/sportsAPI').loginRouter);
 app.use('/api', require('./app/routes/fancyGames').loginRouter);
