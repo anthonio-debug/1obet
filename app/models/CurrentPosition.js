@@ -16,6 +16,5 @@ let currentPositionSchema = new Schema({
   createdAt: { type: String }
 });
 
-
 const CurrentPosition = mongoose.model('currentPosition', currentPositionSchema);
 module.exports = CurrentPosition;

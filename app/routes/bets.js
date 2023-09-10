@@ -77,6 +77,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
         matchId: matchId,
         runner: selectionId ? selectionId : '',
         marketId: marketId,
+        share : user.commission
       });
       await position.save();
 
@@ -90,7 +91,6 @@ const placeBet = async (req, res) => {
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-
   try {
     console.log("req.decoded.login.role", req.decoded.login);
     if (req.decoded.login.role != '5') {
