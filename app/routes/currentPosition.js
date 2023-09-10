@@ -104,23 +104,23 @@ const currentPositionDetails = async (req, res) => {
       {
         "$unwind": "$bets"
       },
-      {
-        $group: {
-          _id: "$bets.runner",
-          marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
-          matchId: { $first: { $arrayElemAt: ["$bets.matchsId", 0] } }
-          // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
-          // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
+      // {
+      //   $group: {
+      //     _id: "$bets.runner",
+      //     marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
+      //     matchId: { $first: { $arrayElemAt: ["$bets.matchsId", 0] } }
+      //     marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
+      //     marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
 
-          // matchsId: "$matchId",
-          // share: "$share",
-          // loosingAmount: { $sum: "$amount" },          
-          // maxWinningAmount: { $sum: "$bets.loosingAmount" },
-          // runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
-          // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
+      //     // matchsId: "$matchId",
+      //     // share: "$share",
+      //     // loosingAmount: { $sum: "$amount" },          
+      //     // maxWinningAmount: { $sum: "$bets.loosingAmount" },
+      //     // runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
+      //     // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
 
-        }
-      }
+      //   }
+      // }
     ], (err, currentPositionData) => {
       if (err) {
         const response = {
@@ -154,3 +154,4 @@ loginRouter.get('/currentPositionDetails', currentPositionDetails);
 
 
 module.exports = { loginRouter };
+
