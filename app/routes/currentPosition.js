@@ -14,7 +14,7 @@ function getCurrentPosition(req, res) {
       },
       {
         $addFields: {
-          'inPlayEventId': { $toObjectId: "$matchId" }
+          'inPlayEventId': { $toObjectId: "$matchsId" }
         }
       },
       {
@@ -85,7 +85,7 @@ const currentPositionDetails = async (req, res) => {
       {
         $match: {
           userId: userId,
-          matchId: matchId
+          matchsId: matchId
         }
       },
       {
@@ -107,7 +107,11 @@ const currentPositionDetails = async (req, res) => {
       {
         $group: {
           _id: "$bets.runner",
-          marketId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } }
+          marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
+          matchId: { $first: { $arrayElemAt: ["$bets.matchsId", 0] } }
+          // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
+          // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
+
           // matchsId: "$matchId",
           // share: "$share",
           // loosingAmount: { $sum: "$amount" },          

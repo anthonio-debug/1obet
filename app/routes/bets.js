@@ -74,7 +74,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
         description: "some transection name",
         amount: -(user.commission / 100) * winningAmount,
         betId: Id,
-        matchId: matchId,
+        matchsId: matchId,
         share : user.commission
       });
       await position.save();
@@ -697,7 +697,7 @@ const placeBet = async (req, res) => {
         const position = new currentPosition({
           userId: userId,
           amount: - loosingAmount,
-          matchId: matchId,
+          matchsId: matchId,
           betId: result._id,
         })
         await position.save();
