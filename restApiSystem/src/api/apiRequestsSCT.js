@@ -32,6 +32,7 @@ function apiRequests() {
       try {
         if (req.query.id && req.query.data) {
           var d1 = Buffer.from(req.query.data, 'base64').toString('ascii');
+          d1 = JSON.parse(d1);
           io.emit('updateMatch',{eventId: req.query.id, data: d1});
         }
       } catch (error) {
