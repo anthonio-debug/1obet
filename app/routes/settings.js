@@ -1808,7 +1808,7 @@ const createNewSession = async (matchId) => {
 
 }
 
-const sessionList = async ()=>{
+const sessionList = async (req, res)=>{
   try {
     const eventId = Number(req.query.eventId)
     const session =  await Session.find({
@@ -1830,7 +1830,7 @@ const sessionList = async ()=>{
 
 }
 
-const updateSessionScore  = async ()=>{
+const updateSessionScore  = async (req, res)=>{
 
   try {
     if (!req.body.eventId || !req.body.session  || !req.body.score){
