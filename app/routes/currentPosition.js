@@ -76,6 +76,82 @@ function getCurrentPosition(req, res) {
   }
 }
 
+const currentPositionDetails = async (matchId) => {
+  try{
+    const userId = req.decoded.userId;
+    const matchId = req.query.userId;
+
+    currentPosition.aggregate([
+      {
+        $match: {
+          userId: userId,
+          matchId: matchId
+        }
+      },
+      {
+        $addFields: {
+          'betsId': { $toObjectId: "$betId" }
+        }
+      },
+      {
+        "$lookup": {
+          "from": "bets",
+          "localField": "inPlayEventId",
+          "foreignField": "_id",
+          "as": "bets"
+        }
+      },
+      // {
+      //   "$unwind": "$bets"
+      // },
+      // {
+      //   $group: {
+      //     _id: "$matches._id",
+      //     "name": {
+      //       "$first": "$matches.name"
+      //     },
+      //     "sportsId": {
+      //       "$first": "$matches.sportsId"
+      //     },
+      //     "Id": {
+      //       "$first": "$matches.Id"
+      //     },
+      //     "marketId": {
+      //       "$first": "$matches.marketIds"
+      //     },
+      //     amount: {
+      //       $sum: "$amount"
+      //     }
+      //   }
+      // }
+    ], (err, currentPositionData) => {
+      if (err) {
+        const response = {
+          success: false,
+          message: 'Failed to get data',
+          error: err,
+        };
+        res.send(response);
+      } else {
+        const response = {
+          success: true,
+          message: 'current position records',
+          results: currentPositionData
+        };
+        res.send(response);
+      }
+    });
+  }catch(err){
+    const response = {
+      success: true,
+      message: `current position error ${err}`,
+    }
+    res.send(response);
+  }
+}
+
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
+loginRouter.get('/currentPositionDetails', currentPositionDetails);
+
 
 module.exports = { loginRouter };

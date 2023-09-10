@@ -97,6 +97,7 @@
   "settlePLAccount",
   "getSettlement",
   "getCurrentPosition",
+  "currentPositionDetails",
   "updateFakeBet",
   "countFakeBets",
   "profitLossReports",
