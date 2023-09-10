@@ -106,7 +106,7 @@ const currentPositionDetails = async (req, res) => {
       },
       {
         $group: {
-          _id: "$runner",
+          _id: "$bets.runner",
           // matchId: "$matchId",
           // share: "$share",
           // loosingAmount: { $sum: "$amount" },          
@@ -142,6 +142,7 @@ const currentPositionDetails = async (req, res) => {
     res.send(response);
   }
 }
+
 
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
 loginRouter.get('/currentPositionDetails', currentPositionDetails);
