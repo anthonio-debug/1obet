@@ -101,23 +101,19 @@ const currentPositionDetails = async (req, res) => {
           "as": "bets"
         }
       },
-      // {
-      //   "$unwind": "$bets"
-      // },
       {
         $group: {
           _id: "$bets.runner",
           marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
-          matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } }
+          matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } },
           // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
           // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
 
           // matchsId: "$matchId",
-          // share: "$share",
-          // loosingAmount: { $sum: "$amount" },          
-          // maxWinningAmount: { $sum: "$bets.loosingAmount" },
-          // runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
-          // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
+          share: "$share",
+          loosingAmount: { $sum: "$amount" },          
+          maxWinningAmount: { $sum: "$bets.loosingAmount" },
+          runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } }
 
         }
       }
