@@ -181,6 +181,11 @@ function apiRequests() {
             continue;
           }
 
+          if (existingDoc && existingDoc.inplayFromServer != event.inplay) {
+            console.log(existingDoc);
+            console.log(event.inplay);
+          }
+
           await inPlayEvents.findOneAndUpdate(
             { Id: event.Id },
             {
