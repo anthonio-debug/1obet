@@ -194,7 +194,6 @@ function apiRequests() {
                 countryCode: event.countryCode,
                 timezone: event.timezone,
                 openDate: Date.parse(event.openDate),
-                inplay: false,
                 inplayFromServer: event.inplay,
                 hasFancy: event.hasFancy,
                 status: event.status,
