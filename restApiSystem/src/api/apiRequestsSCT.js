@@ -429,7 +429,7 @@ function apiRequests() {
             const event = marketsData[i];
             eventIDs.push(event.Id);
 
-            var ix = _.findIndex(removedInplayList, function (o) { return o.Id == diff[i]; });
+            var ix = _.findIndex(removedInplayList, function (o) { return o.Id == event.Id; });
             if (ix !== -1) {
               console.log('Event Inplay Value Problem:');
               console.log(removedInplayList[ix]);
