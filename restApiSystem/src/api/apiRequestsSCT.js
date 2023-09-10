@@ -15,6 +15,7 @@ const sportsAPIUrl = 'http://209.250.242.175:33332';
 let io;
 
 let runnerCheckerArray = [];
+let removedInplayList = [];
 
 
 function apiRequests() {
@@ -427,6 +428,14 @@ function apiRequests() {
           for (let i = 0; i < marketsData.length; i++) {
             const event = marketsData[i];
             eventIDs.push(event.Id);
+
+            var ix = _.findIndex(removedInplayList, function (o) { return o.Id == diff[i]; });
+            if (ix !== -1) {
+              console.log('Event Inplay Value Problem:');
+              console.log(removedInplayList[ix]);
+              removedInplayList.splice(ix,1);
+            }
+
             //update this events inplay status with data that was come from data provider.
             await inPlayEvents.updateOne({ Id: event.Id }, { inplayFromServer: true, status: event.status });
           }
@@ -449,19 +458,24 @@ function apiRequests() {
         // update event status with 'CLOSED-INPLAYLIST' 
         // Also update MarketIDs
         for (let i = 0; i < diff.length; i++) {
+
+          var ix = _.findIndex(removedInplayList, function (o) { return o.Id == diff[i]; });
+
+          if (ix === -1) {
+            removedInplayList.push({id: diff[i], date: new Date()});
+          }
+          
+
           console.log('Event is closed because it not exists on inplaylist: ' + diff[i]);
           await MarketIDS.updateMany({ eventId: diff[i] }, { $set: { inPlay: false, status: 'CLOSED',readyForScore: true } });
           await inPlayEvents.updateOne({ Id: diff[i] }, { $set: { status: 'CLOSED-INPLAYLIST', inplay: false, inplayFromServer: false,  readyForScore: true} });
           io.emit('inplay', { eventID: diff[i], inplay: false });
           io.to('eventStatusChange').emit('event_status', { eventId: diff[i], status: 'CLOSED-INPLAYLIST' });
+
         }
 
 
-        if (diff.length>0) {
-          console.log('Response: ', response.data);
-          console.log('Diff Array: ', allIDS);
-          console.log(new Date());
-        }
+
 
 
       }, (error) => {
