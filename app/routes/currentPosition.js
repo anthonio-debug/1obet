@@ -106,17 +106,17 @@ const currentPositionDetails = async (req, res) => {
           _id: "$_id",
           marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
           matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } },
-          // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
-          // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
-
-          // matchsId: "$matchId",
-          // share: "$share",
-          // share: { $first: { $arrayElemAt: ["$share", 0] } },
-          loosingAmount: { $sum: "$amount" },          
-          maxWinningAmount: { $sum: "$bets.loosingAmount" },
+          loosingAmount: { $first: "$amount" },
+          maxWinningAmount: {
+            $first: {
+              $multiply: [
+                { $arrayElemAt: ["$bets.loosingAmount", 0] },
+                { $divide: ["$share", 100] }
+              ]
+            }
+          },
           runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
-          // share: "$bets",
-
+          share: { $first: "$share" }
         }
       }
     ], (err, currentPositionData) => {
@@ -148,6 +148,22 @@ const currentPositionDetails = async (req, res) => {
 
 
 /*
+
+{
+  $group: {
+    _id: "$bets.runner",
+    marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
+    matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } },
+    loosingAmount: { $sum: "$amount" },    
+    // rumaxWinningAmountnner: { $first: { $arrayElemAt: ["$bets.loosingAmount", 0] } },
+    maxWinningAmount: { $sum: "$bets.loosingAmount" },
+    runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
+    share: { $first: "$share" }
+
+  }
+}
+
+
 {
   "_id": "64fdcd9a63125f9f142ec55a",
   "userId": 1153,

@@ -638,26 +638,39 @@ const placeBet = async (req, res) => {
       selectionId == 0? runnerName = `KALI` : runnerName = `JOTTA`;
     }
     else if (type == 2) {
-      winningAmount = (betAmount * betRate) - betAmount;
+      winningAmount = (betAmount * betRate);
       loosingAmount = betAmount;
       runnerName    = `Figure(${selectionId})`
     }
 
-    else if (type == 1 &&  subMarketDetail.Id != config.Fancy) {
+    else if (type == 1 &&  !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
       winningAmount = betAmount;
       loosingAmount = (betAmount * betRate) - betAmount;
     }
-    else if (type == 0 && subMarketDetail.Id != config.Fancy) {
+    else if (type == 0 && !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
       winningAmount = (betAmount * betRate) - betAmount;
       loosingAmount = betAmount;
     }
 
+    // BookMaker
+    // ((rate-1) /100 ) * bet_amount = winning amount 
+    // LAY
+    // ((rate-1) /100 ) * bet_amount = loosing amount 
+
+    else if (type == 1 &&  subMarketDetail.Id == config.BookMaker) {
+      loosingAmount =  ((betRate-1) /100) * betAmount;
+      winningAmount = betAmount;
+    }
+    else if (type == 0 && subMarketDetail.Id == config.BookMaker) {
+      winningAmount = ((betRate-1) /100)  * betAmount;
+      loosingAmount = betAmount;
+    }
     else if (type == 1 &&  subMarketDetail.Id == config.Fancy) {
       loosingAmount =  (fancyRate/100) * betAmount;
       winningAmount = betAmount;
     }
     else if (type == 0 && subMarketDetail.Id == config.Fancy) {
-      winningAmount =  (fancyRate/100) * betAmount;
+      winningAmount = (fancyRate/100) * betAmount;
       loosingAmount = betAmount;
     }
 
@@ -1035,9 +1048,9 @@ async function getMatchedBets(req, res) {
       return res.status(404).send({ message: 'User not found' });
     }
 
-    const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
-    const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
-    const createdByIDs = userOfLoginUser.map(user => user.userId);
+    const bettorMaster      = await User.findOne({ userId: loginUser.createdBy });
+    const userOfLoginUser   = await User.find({ createdBy: loginUser.userId });
+    const createdByIDs      = userOfLoginUser.map(user => user.userId);
 
     // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
