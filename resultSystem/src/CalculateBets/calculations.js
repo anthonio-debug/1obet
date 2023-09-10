@@ -426,6 +426,11 @@ async function handleDrawBet(bet) {
   });
 
   await Bets.findByIdAndUpdate(bet._id, { status: 0 });
+  console.log(" betIdString =============== Starting  ");
+  console.log(bet._id.toString());
+  const betIdString = bet._id.toString();
+  console.log(" betIdString =============== ", betIdString);
+  await CurrentPosition.deleteMany({ betId: betIdString })
 }
 
 module.exports = {
