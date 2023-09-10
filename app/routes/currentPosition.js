@@ -79,7 +79,7 @@ function getCurrentPosition(req, res) {
 const currentPositionDetails = async (matchId) => {
   try{
     const userId = req.decoded.userId;
-    const matchId = req.query.userId;
+    const matchId = req.query.matchId;
 
     currentPosition.aggregate([
       {
