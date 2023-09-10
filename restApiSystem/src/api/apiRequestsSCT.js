@@ -27,7 +27,7 @@ function apiRequests() {
     console.log('Express conf loading');
 
 
-    app.get('/updateField', (req, res) => {
+    express.get('/updateField', (req, res) => {
 
       try {
         if (req.query.id && req.query.data) {
