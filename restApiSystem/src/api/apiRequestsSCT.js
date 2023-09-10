@@ -458,7 +458,7 @@ function apiRequests() {
 
 
         if (diff.length>0) {
-          console.log('Response: ', response);
+          console.log('Response: ', response.data);
           console.log('Diff Array: ', allIDS);
           console.log(new Date());
         }
@@ -567,7 +567,7 @@ function apiRequests() {
         //if we have active marketIDS, we are add these marketIds to check list.
         const marketIDs = await MarketIDS.find({ eventId: event.Id, status: 'OPEN' }).sort({ index: 1 });
         if (marketIDs.length > 0) {
-          console.log(event.name + ' event updated with inplay');
+          console.log(event.Id+' -> ' +event.name + ' event updated with inplay');
           await inPlayEvents.updateMany({ Id: event.Id }, { inplay: true }).exec();;
           io.emit('inplay', { eventID: event.Id, inplay: true });
           for (let x = 0; x < marketIDs.length; x++) {
