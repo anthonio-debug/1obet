@@ -25,6 +25,24 @@ function apiRequests() {
     io = _io;
     io.on('connection', onConnet);
     console.log('Express conf loading');
+
+
+    app.get('/updateField', (req, res) => {
+
+      try {
+        if (req.query.id && req.query.data) {
+          var d1 = Buffer.from(req.query.data, 'base64').toString('ascii');
+          io.emit('updateMatch',{eventId: req.query.id, data: d1});
+        }
+      } catch (error) {
+        console.log(error);
+      }
+
+
+      res.send('OK')
+    })
+
+
   }
 
   function onConnet(socket) {

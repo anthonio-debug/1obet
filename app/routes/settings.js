@@ -819,6 +819,10 @@ function updateMatch(req, res) {
 
         successMessage = 'Match stopped successfully';
 
+
+        const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
+        axios.get('http://localhost:3004/updateField?id='+_id+'&data='+base64data);
+
         Events.findOneAndUpdate(
           { _id },
           { $set: updateField },
@@ -862,6 +866,10 @@ function updateMatch(req, res) {
         updateField.matchResumedStatus = matchResumedStatus;
         successMessage = 'Match resumed successfully';
 
+        const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
+        axios.get('http://localhost:3004/updateField?id='+_id+'&data='+base64data);
+
+
         Events.findOneAndUpdate(
           { _id },
           { $set: updateField },
@@ -888,6 +896,11 @@ function updateMatch(req, res) {
       // Update only the matchCanceledStatus
       updateField = { matchCanceledStatus };
       successMessage = 'Match canceled status updated successfully';
+
+
+      const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
+      axios.get('http://localhost:3004/updateField?id='+_id+'&data='+base64data);
+
 
       Events.findOneAndUpdate(
         query,
@@ -1660,6 +1673,10 @@ async function setCloseEventWithCancelBet(req, res) {
     await Events.findOneAndUpdate({_id: currentEv._id}, {status: 'CLOSED-COMPANY', isCanceled: true});
   }
   
+  var updateField = {status: 'CLOSED-COMPANY'};
+  const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
+  axios.get('http://localhost:3004/updateField?id='+_id+'&data='+base64data);
+
 
   await MarketIDS.updateMany(
     { eventId: req.query.eventId },
