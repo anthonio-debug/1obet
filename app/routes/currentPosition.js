@@ -107,7 +107,9 @@ const currentPositionDetails = async (req, res) => {
           marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
           matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } },
           loosingAmount: { $first: "$amount" },    
-          maxWinningAmount: { $first: { $arrayElemAt: ["$bets.loosingAmount", 0] } },
+          maxWinningAmount: { $first: { $divide: [{ $arrayElemAt: ["$bets.loosingAmount", 0] }, "$share"] } },
+
+          // { $first: { $arrayElemAt: ["$bets.loosingAmount", 0] } },
           runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
           share: { $first: "$share" }
         }
