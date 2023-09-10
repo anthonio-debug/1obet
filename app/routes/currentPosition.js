@@ -101,9 +101,9 @@ const currentPositionDetails = async (req, res) => {
           "as": "bets"
         }
       },
-      {
-        "$unwind": "$bets"
-      },
+      // {
+      //   "$unwind": "$bets"
+      // },
       {
         $group: {
           _id: "$bets.runner",
