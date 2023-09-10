@@ -101,29 +101,20 @@ const currentPositionDetails = async (req, res) => {
           "as": "bets"
         }
       },
-      // {
-      //   "$unwind": "$bets"
-      // },
-      // {
-      //   $group: {
-      //     _id: "$matches._id",
-      //     "name": {
-      //       "$first": "$matches.name"
-      //     },
-      //     "sportsId": {
-      //       "$first": "$matches.sportsId"
-      //     },
-      //     "Id": {
-      //       "$first": "$matches.Id"
-      //     },
-      //     "marketId": {
-      //       "$first": "$matches.marketIds"
-      //     },
-      //     amount: {
-      //       $sum: "$amount"
-      //     }
-      //   }
-      // }
+      {
+        "$unwind": "$bets"
+      },
+      {
+        $group: {
+          _id: "$runner",
+          amount: {
+            $sum: "$amount"
+          },          
+          loosingAmount: {
+            $sum: "$bets.loosingAmount"
+          }
+        }
+      }
     ], (err, currentPositionData) => {
       if (err) {
         const response = {
