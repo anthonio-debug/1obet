@@ -1808,6 +1808,52 @@ const createNewSession = async (matchId) => {
 
 }
 
+const sessionList = async ()=>{
+
+  try {
+    const eventId = Number(req.query.eventId)
+    const session =  await Session.find({
+      eventId: eventId
+    });
+
+    return res.status(200).send({
+      success: true,
+      message: 'session list'
+    });
+    
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Something went wrong!'
+    });
+  }
+
+}
+
+const updateSessionScore  = async ()=>{
+
+  try {
+    const eventId = Number(req.body.eventId);
+    const score = Number(req.body.score);
+    
+    const session =  await Session.find({
+      eventId: eventId
+    });
+
+    return res.status(200).send({
+      success: true,
+      message: 'session list'
+    });
+    
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Something went wrong!'
+    });
+  }
+
+}
+
 
 
 loginRouter.post(
@@ -1874,6 +1920,8 @@ loginRouter.get('/getAllMatchSettlements', getAllMatchSettlements);
 loginRouter.post('/getAllGamesResults', getAllGamesResults);
 
 loginRouter.get('/setBattingDisabled', setBattingDisabled);
+loginRouter.get('/sessionList', sessionList);
+
 
 
 
