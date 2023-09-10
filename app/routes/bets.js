@@ -1434,7 +1434,7 @@ const sessionCalc = async  (req, res) => {
           let ball        = currentOver.split('.')[1]
           let inning      = score.inning;  
 
-          if(currentOver % sessionLength < 1  && (ball == 1  )){
+          if(currentOver % sessionLength < 1  && (ball == 1 )){
             // console.log(" conditional ball  ===================== ", ball)
             // console.log(" conditional over ===================== ", score.overs % sessionLength);
             let sessionAddition =  0 ;

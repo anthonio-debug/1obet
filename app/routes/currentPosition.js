@@ -116,6 +116,15 @@ const currentPositionDetails = async (req, res) => {
             }
           },
           runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
+          TargetScore: { $first: { $arrayElemAt: ["$bets.TargetScore", 0] } },
+          betRate: { $first: { $arrayElemAt: ["$bets.betRate", 0] } },
+          betSession: { $first: { $arrayElemAt: ["$bets.betSession", 0] } },
+          resultId: { $first: { $arrayElemAt: ["$bets.resultId", 0] } },
+          fancyData: { $first: { $arrayElemAt: ["$bets.fancyData", 0] } },
+          isfancyOrbookmaker: { $first: { $arrayElemAt: ["$bets.isfancyOrbookmaker", 0] } },
+          subMarketId: { $first: { $arrayElemAt: ["$bets.subMarketId", 0] } },
+          fancyRate: { $first: { $arrayElemAt: ["$bets.fancyRate", 0] } },
+          type: { $first: { $arrayElemAt: ["$bets.type", 0] } },
           share: { $first: "$share" }
         }
       }
@@ -148,6 +157,11 @@ const currentPositionDetails = async (req, res) => {
 
 
 /*
+
+
+
+
+
 
 {
   $group: {
