@@ -108,12 +108,12 @@ const currentPositionDetails = async (req, res) => {
         $group: {
           _id: "$runner",
           matchId: "$matchId",
-          runner: "$bets,runner",
-          marketId: "$bets.marketId",
           share: "$share",
           loosingAmount: { $sum: "$amount" },          
           maxWinningAmount: { $sum: "$bets.loosingAmount" },
-          // name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+          runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
+          marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
+
         }
       }
     ], (err, currentPositionData) => {
