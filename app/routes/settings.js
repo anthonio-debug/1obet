@@ -1809,7 +1809,6 @@ const createNewSession = async (matchId) => {
 }
 
 const sessionList = async ()=>{
-
   try {
     const eventId = Number(req.query.eventId)
     const session =  await Session.find({
@@ -1818,7 +1817,8 @@ const sessionList = async ()=>{
 
     return res.status(200).send({
       success: true,
-      message: 'session list'
+      message: 'session list',
+      results: session,
     });
     
   } catch (error) {
@@ -1833,22 +1833,24 @@ const sessionList = async ()=>{
 const updateSessionScore  = async ()=>{
 
   try {
-    if (!req.body.eventId  || req.body.eventId){
+    if (!req.body.eventId || !req.body.session  || !req.body.score){
       return res.status(404).send({
         success: false,
         message: 'Invalid Request !'
       });
     }
     const eventId = Number(req.body.eventId);
+    const session = Number(req.body.session)
     const score = Number(req.body.score);
 
-    const session =  await Session.find({
-      eventId: eventId
-    });
+    const update =  await Session.findOneAndUpdate(
+      {eventId: eventId, sessionNo: session},
+      {score: score}
+    );
 
     return res.status(200).send({
       success: true,
-      message: 'session list'
+      message: 'session successfully updated !'
     });
     
   } catch (error) {
@@ -1924,13 +1926,8 @@ loginRouter.get('/bettorDashboardGames', bettorDashboardGames);
 loginRouter.get('/bettorDashboardGames2', bettorDashboardGames2);
 loginRouter.get('/getAllMatchSettlements', getAllMatchSettlements);
 loginRouter.post('/getAllGamesResults', getAllGamesResults);
-
 loginRouter.get('/setBattingDisabled', setBattingDisabled);
 loginRouter.get('/sessionList', sessionList);
 loginRouter.post('/updateSessionScore', updateSessionScore);
-
-
-
-
 
 module.exports = { loginRouter, router, listOddsAPI };

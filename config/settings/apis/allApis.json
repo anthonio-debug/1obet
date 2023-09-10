@@ -146,7 +146,8 @@
   "sportGamesList",
   "setMatchShow",
   "postmanwork",
-  "sessionCalc",
+  "sessionList",
+  "updateSessionScore",
   "userLoginActivitLogs",
   
   "profitLose",
