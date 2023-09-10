@@ -557,10 +557,24 @@ const placeBet = async (req, res) => {
       }
       console.log(' only  score |||| ====== |||| ', score);
       let currentOver = score.overs;
+      let type        = score.type
       let inning = score.inning;
+      let sessionAddition = 0;
+      if(inning == 2){
+        if(type == "TEST"){
+          sessionAddition = 9
+        }else if (type == "ODI"){
+          sessionAddition = 10
+        }
+        else if (type == "T20"){
+          sessionAddition = 4
+        }else if (type == "T10"){
+          sessionAddition = 2
+        }
+      }
       let totalSessions = 0
       if (currentOver % 5 == 0) currentOver += 1
-      let currentSessionOver = Math.ceil(currentOver % 5);
+      let currentSessionOver = Math.ceil(currentOver % 5) + sessionAddition;
       currentSession = Math.ceil(currentOver / 5);
       console.log(" currentSession = ", currentSession, " currentSessionOver =", currentSessionOver, " currentOver =", currentOver);
 
@@ -586,8 +600,6 @@ const placeBet = async (req, res) => {
           });
           break;
       }
-
-
 
       if (inning == 2 && currentSession == totalSessions) {
         return res.status(404).send({
@@ -1389,6 +1401,7 @@ async function cricketLiveScore(id) {
         [response.score, response.wickets, response.overs] = score?.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
         response.inning = inning;
         response.balls  = scoreInfo.balls;
+        response.type   = event.matchType;
         return response
       }else {
         return 0
