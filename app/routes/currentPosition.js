@@ -76,7 +76,7 @@ function getCurrentPosition(req, res) {
   }
 }
 
-const currentPositionDetails = async (matchId) => {
+const currentPositionDetails = async (req, res) => {
   try{
     const userId = req.decoded.userId;
     const matchId = req.query.matchId;
@@ -96,7 +96,7 @@ const currentPositionDetails = async (matchId) => {
       {
         "$lookup": {
           "from": "bets",
-          "localField": "inPlayEventId",
+          "localField": "betsId",
           "foreignField": "_id",
           "as": "bets"
         }
@@ -142,6 +142,7 @@ const currentPositionDetails = async (matchId) => {
       }
     });
   }catch(err){
+    console.log("current positiion Error ============= ", err);
     const response = {
       success: true,
       message: `current position error ${err}`,
