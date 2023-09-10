@@ -104,23 +104,23 @@ const currentPositionDetails = async (req, res) => {
       {
         "$unwind": "$bets"
       },
-      // {
-      //   $group: {
-      //     _id: "$bets.runner",
-      //     marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
-      //     matchId: { $first: { $arrayElemAt: ["$bets.matchsId", 0] } }
-      //     marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
-      //     marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
+      {
+        $group: {
+          _id: "$bets.runner",
+          marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
+          matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } }
+          // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
+          // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
 
-      //     // matchsId: "$matchId",
-      //     // share: "$share",
-      //     // loosingAmount: { $sum: "$amount" },          
-      //     // maxWinningAmount: { $sum: "$bets.loosingAmount" },
-      //     // runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
-      //     // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
+          // matchsId: "$matchId",
+          // share: "$share",
+          // loosingAmount: { $sum: "$amount" },          
+          // maxWinningAmount: { $sum: "$bets.loosingAmount" },
+          // runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
+          // marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } }
 
-      //   }
-      // }
+        }
+      }
     ], (err, currentPositionData) => {
       if (err) {
         const response = {
@@ -147,6 +147,51 @@ const currentPositionDetails = async (req, res) => {
     res.send(response);
   }
 }
+
+
+/*
+{
+  "_id": "64fdcd9a63125f9f142ec55a",
+  "userId": 1153,
+  "description": "some transection name",
+  "amount": -2062.5,
+  "matchsId": "64fb1afaf8e611afeacbcec8",
+  "betId": "64fdcd9a63125f9f142ec553",
+  "share": 75,
+  "__v": 0,
+  "betsId": "64fdcd9a63125f9f142ec553",
+  "bets": {
+      "_id": "64fdcd9a63125f9f142ec553",
+      "sportsId": "4",
+      "marketId": "1.218012968",
+      "userId": 1154,
+      "betAmount": 1000,
+      "betRate": 3.75,
+      "returnAmount": 0,
+      "createdAt": 1694354842711,
+      "betSession": null,
+      "resultId": null,
+      "fancyData": null,
+      "isfancyOrbookmaker": false,
+      "TargetScore": 0,
+      "status": 1,
+      "matchId": "64fb1afaf8e611afeacbcec8",
+      "winningAmount": 2750,
+      "loosingAmount": 1000,
+      "subMarketId": "6",
+      "event": "Pakistan v India",
+      "runner": "7461",
+      "position": 0,
+      "type": 0,
+      "isFake": 0,
+      "runnerName": "Pakistan",
+      "fancyRate": 0,
+      "lastCheckResult": 0,
+      "updatedAt": 1694354842711,
+      "__v": 0
+  }
+}
+*/
 
 
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
