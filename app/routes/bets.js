@@ -76,7 +76,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
         betId: Id,
         matchId: matchId,
         runner: selectionId ? selectionId : '',
-        marketId: _3rdPartyMarketId,
+        marketId: marketId,
       });
       await position.save();
 
