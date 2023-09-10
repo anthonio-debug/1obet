@@ -7,8 +7,7 @@ module.exports = ToolForRacing;
 const sportsIds = [4339, 7];
 
 const apiRequests = require('./api/apiRequestsRacing.js')();
-
-const RaceOdds = require('../../app/models/raceOdds')
+var cron = require('node-cron');
 
 
 function ToolForRacing() {
@@ -19,6 +18,11 @@ function ToolForRacing() {
         setInterval(getRacing, 2*60 * 60 * 1000);
         getRacing();
         setInterval(apiRequests.checkOdds, 1 * 1000);
+
+        cron.schedule('30 21 * * *', () => {
+            getRacing();
+        },{timezone: "America/New_York"});
+
     }
 
     function getRacing() {
