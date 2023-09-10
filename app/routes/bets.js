@@ -658,12 +658,15 @@ const placeBet = async (req, res) => {
     // ((rate-1) /100 ) * bet_amount = loosing amount 
 
     else if (type == 1 &&  subMarketDetail.Id == config.BookMaker) {
-      loosingAmount =  ((betRate-1) /100) * betAmount;
+      loosingAmount =  ((betRate-1) / 100) * betAmount;
       winningAmount = betAmount;
+      console.log(" 1 loosingAmount =========  ", loosingAmount);
     }
     else if (type == 0 && subMarketDetail.Id == config.BookMaker) {
-      winningAmount = ((betRate-1) /100)  * betAmount;
+      winningAmount = ((betRate-1) / 100)  * betAmount;
       loosingAmount = betAmount;
+      console.log(" 0  loosingAmount =========  ", winningAmount);
+
     }
     else if (type == 1 &&  subMarketDetail.Id == config.Fancy) {
       loosingAmount =  (fancyRate/100) * betAmount;
@@ -1430,10 +1433,8 @@ const sessionCalc = async  (req, res) => {
           let currentOver = score.overs;
           let ball        = currentOver.split('.')[1]
           let inning      = score.inning;  
-          // console.log("ball   ===================== ", ball);
-          // console.log("inning ===================== ", inning);
 
-          if(currentOver % sessionLength < 1  && ball == 1){
+          if(currentOver % sessionLength < 1  && (ball == 1  )){
             // console.log(" conditional ball  ===================== ", ball)
             // console.log(" conditional over ===================== ", score.overs % sessionLength);
             let sessionAddition =  0 ;
