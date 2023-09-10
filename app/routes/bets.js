@@ -643,11 +643,11 @@ const placeBet = async (req, res) => {
       runnerName    = `Figure(${selectionId})`
     }
 
-    else if (type == 1 &&  !ExcludedBackLay.includes(subMarketDetail.Id)) {
+    else if (type == 1 &&  !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
       winningAmount = betAmount;
       loosingAmount = (betAmount * betRate) - betAmount;
     }
-    else if (type == 0 && ExcludedBackLay.includes(subMarketDetail.Id)) {
+    else if (type == 0 && !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
       winningAmount = (betAmount * betRate) - betAmount;
       loosingAmount = betAmount;
     }
