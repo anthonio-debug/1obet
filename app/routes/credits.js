@@ -37,10 +37,12 @@ async function addCredit(req, res) {
     }
 
     if (currentUserParent.role != '0') {
-      if (  req.body.amount > (currentUserParent.creditRemaining )) {
+      if ( req.body.amount > currentUserParent.creditRemaining  || 
+          (currentUserParent.cash < 0 && req.body.amount >  currentUserParent.creditRemaining + currentUserParent.cash)
+      ){
         return res
           .status(400)
-          .send({ message: `Max available credit is is ${currentUserParent.creditRemaining}` });
+          .send({ message: `Max available credit is is ${currentUserParent.cash < 0 ? currentUserParent.creditRemaining + currentUserParent.cash : currentUserParent.creditRemaining }` });
       }
     }
 
