@@ -457,6 +457,12 @@ function apiRequests() {
         }
 
 
+        if (diff.length>0) {
+          console.log('Response: ', response);
+          console.log('Diff Array: ', allIDS);
+          console.log(new Date());
+        }
+
 
       }, (error) => {
         console.log(error);
