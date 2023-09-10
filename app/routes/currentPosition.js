@@ -124,6 +124,7 @@ const currentPositionDetails = async (req, res) => {
           isfancyOrbookmaker: { $first: { $arrayElemAt: ["$bets.isfancyOrbookmaker", 0] } },
           subMarketId: { $first: { $arrayElemAt: ["$bets.subMarketId", 0] } },
           fancyRate: { $first: { $arrayElemAt: ["$bets.fancyRate", 0] } },
+          runnerId: { $first: { $arrayElemAt: ["$bets.runnerName", 0] } },
           type: { $first: { $arrayElemAt: ["$bets.type", 0] } },
           share: { $first: "$share" }
         }

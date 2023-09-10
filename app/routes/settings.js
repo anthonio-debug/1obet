@@ -1833,9 +1833,15 @@ const sessionList = async ()=>{
 const updateSessionScore  = async ()=>{
 
   try {
+    if (!req.body.eventId  || req.body.eventId){
+      return res.status(404).send({
+        success: false,
+        message: 'Invalid Request !'
+      });
+    }
     const eventId = Number(req.body.eventId);
     const score = Number(req.body.score);
-    
+
     const session =  await Session.find({
       eventId: eventId
     });
@@ -1921,6 +1927,8 @@ loginRouter.post('/getAllGamesResults', getAllGamesResults);
 
 loginRouter.get('/setBattingDisabled', setBattingDisabled);
 loginRouter.get('/sessionList', sessionList);
+loginRouter.post('/updateSessionScore', updateSessionScore);
+
 
 
 
