@@ -11,6 +11,7 @@ let currentPositionSchema = new Schema({
   betId: { type: String },
   runner: { type: String },
   marketId: { type: String },
+  share: { type: Number },
   updatedAt: { type: String },
   createdAt: { type: String }
 });
