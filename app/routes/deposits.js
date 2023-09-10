@@ -36,10 +36,10 @@ async function addCashDeposit(req, res) {
     }
 
     if (currentUserParent.role != '0') {
-      if (  req.body.amount > (currentUserParent.cash + currentUserParent.credit )) {
+      if (  req.body.amount > (currentUserParent.cash + currentUserParent.creditRemaining )) {
         return res
           .status(400)
-          .send({ message: `Max cash deposit is ${Math.floor(currentUserParent.cash + currentUserParent.credit)}` });
+          .send({ message: `Max cash deposit is ${Math.floor(currentUserParent.cash + currentUserParent.creditRemaining)}` });
       }
     }
 
