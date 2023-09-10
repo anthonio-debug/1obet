@@ -638,7 +638,7 @@ const placeBet = async (req, res) => {
       selectionId == 0? runnerName = `KALI` : runnerName = `JOTTA`;
     }
     else if (type == 2) {
-      winningAmount = (betAmount * betRate) - betAmount;
+      winningAmount = (betAmount * betRate);
       loosingAmount = betAmount;
       runnerName    = `Figure(${selectionId})`
     }
