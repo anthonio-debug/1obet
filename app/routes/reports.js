@@ -179,22 +179,22 @@ function cashCreditLedger(req, res) {
 async function getFinalReport(req, res) {
 
 
-  const userId      = parseInt(req.decoded.userId)
-  const currentUser = await User.findOne({ userId: userId});
-  const users       = [];
-  let parents       = [userId];
+  const userId = parseInt(req.decoded.userId)
+  const currentUser = await User.findOne({ userId: userId });
+  const users = [];
+  let parents = [userId];
   let childUsers;
 
-  do{
-    childUsers     = await User.distinct("userId", {
+  do {
+    childUsers = await User.distinct("userId", {
       createdBy: {
         $in: parents
       }
     });
     console.log(" child users ======= ", childUsers);
-    if(childUsers.length) users.push(...childUsers)
+    if (childUsers.length) users.push(...childUsers)
     parents = childUsers
-  }while (childUsers.length > 0)
+  } while (childUsers.length > 0)
 
   let results = {
     negativeClients: [],
@@ -207,30 +207,30 @@ async function getFinalReport(req, res) {
   //for chield, amount's mean Balance UpLine (results.clientPL) 
 
 
-  const balanceUplines = await User.find({ userId: {$in: users} });
-  
-  
+  const balanceUplines = await User.find({ userId: { $in: users } });
+
+
   //userName, clientPL, userId
-  
-  
-  
-  if (currentUser.balance> -1) {
-    results.positiveClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.balance});
+
+
+
+  if (currentUser.balance > -1) {
+    results.positiveClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: currentUser.balance });
     results.totalPositiveClientPL = results.totalPositiveClientPL + currentUser.balance;
   } else {
-    results.negativeClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.balance});
+    results.negativeClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: currentUser.balance });
     results.totalNegativeClientPL = results.totalNegativeClientPL + currentUser.balance;
   }
 
 
-  if (currentUser.cash> -1) {
-    results.positiveClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.cash});
+  if (currentUser.cash > -1) {
+    results.positiveClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: currentUser.cash });
     results.totalPositiveClientPL = results.totalPositiveClientPL + currentUser.cash;
   } else {
-    results.negativeClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.cash});
+    results.negativeClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: currentUser.cash });
     results.totalNegativeClientPL = results.totalNegativeClientPL + currentUser.cash;
   }
-  
+
 
   for (let index = 0; index < balanceUplines.length; index++) {
     const userRecord = balanceUplines[index];
@@ -249,11 +249,11 @@ async function getFinalReport(req, res) {
 
     }
 
-    if (usedValue> -1) {
-      results.positiveClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: usedValue});
+    if (usedValue > -1) {
+      results.positiveClients.push({ userName: userRecord.userName, userId: userRecord.userId, clientPL: usedValue });
       results.totalPositiveClientPL = results.totalPositiveClientPL + usedValue;
     } else {
-      results.negativeClients.push({userName: userRecord.userName, userId:userRecord.userId,  clientPL: usedValue});
+      results.negativeClients.push({ userName: userRecord.userName, userId: userRecord.userId, clientPL: usedValue });
       results.totalNegativeClientPL = results.totalNegativeClientPL + usedValue;
     }
   }
@@ -262,17 +262,17 @@ async function getFinalReport(req, res) {
 
   var currentPL = currentUser.clientPL;
   if (currentUser.createdBy !== 0) {
-    const parentUserData = await User.findOne({ userId: currentUser.createdBy }, {_id: 1, userId: 1, balance: 1, userName: 1});
+    const parentUserData = await User.findOne({ userId: currentUser.createdBy }, { _id: 1, userId: 1, balance: 1, userName: 1 });
     if (parentUserData) {
-        results.negativeClients.push({userName: parentUserData.userName, userId:parentUserData.userId,  clientPL: currentUser.clientPL * -1});
-        results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL * -1);
+      results.negativeClients.push({ userName: parentUserData.userName, userId: parentUserData.userId, clientPL: currentUser.clientPL * -1 });
+      results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL * -1);
     } else {
-        results.negativeClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.clientPL * -1});
-        results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL * -1);
+      results.negativeClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: currentUser.clientPL * -1 });
+      results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL * -1);
     }
   } else {
-        results.negativeClients.push({userName: currentUser.userName, userId:currentUser.userId,  clientPL: currentUser.clientPL * -1});
-        results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL * -1);
+    results.negativeClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: currentUser.clientPL * -1 });
+    results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL * -1);
   }
 
 
@@ -513,35 +513,34 @@ function GetAllCashDepositLedger(req, res) {
 
 
 async function user_book(req, res) {
-  const userId      = parseInt(req.decoded.userId)
-  var query = {status: 1}
+  const userId = parseInt(req.decoded.userId)
+  var query = { status: 1 }
   if (req.body.matchId) {
     query.matchId = req.body.matchId;
   }
-  
+
 
   if (req.body.myUser) {
-    var users  = await User.distinct("userId", { createdBy: userId});
-    query.userId = {$in: users};
+    var users = await User.distinct("userId", { createdBy: userId });
+    query.userId = { $in: users };
   } else {
-    var users       = [userId];
-    let parents       = [userId];
+    var users = [userId];
+    let parents = [userId];
     let childUsers;
 
-    do{
-      childUsers     = await User.distinct("userId", {
+    do {
+      childUsers = await User.distinct("userId", {
         createdBy: {
           $in: parents
         }
       });
       console.log(" child users ======= ", childUsers);
-      if(childUsers.length) users.push(...childUsers)
+      if (childUsers.length) users.push(...childUsers)
       parents = childUsers
-    }while (childUsers.length > 0)
-    query.userId = {$in: users}
+    } while (childUsers.length > 0)
+    query.userId = { $in: users }
   }
 
-  //console.log(query);
 
   var bookRecord = await Bets.aggregate([
     { $match: query },
@@ -555,17 +554,16 @@ async function user_book(req, res) {
     },
     { $unwind: '$userDetails' },
     {
-      $project: {
-        ..."$ROOT",
-        username: "$userDetails.username" 
+      $set: {
+        username: "$userDetails.username"
       }
     }]);
 
-    return res.json({
-      message: 'User Book List',
-      results:bookRecord
-    });
-  
+  return res.json({
+    message: 'User Book List',
+    results: bookRecord
+  });
+
 
 
 }
@@ -581,7 +579,7 @@ async function userLoginActivitLogs(req, res) {
   }
 
   if (req.query.id) {
-    const results = await loginRecord.find({userId: parseInt(req.query.id)}).sort({createdAt: -1});
+    const results = await loginRecord.find({ userId: parseInt(req.query.id) }).sort({ createdAt: -1 });
     return res.json({
       message: 'User login logs',
       results
@@ -589,7 +587,7 @@ async function userLoginActivitLogs(req, res) {
   }
 
   if (req.query.ip) {
-    const results = await loginRecord.find({ipAddress: (req.query.ip)}).sort({createdAt: -1});
+    const results = await loginRecord.find({ ipAddress: (req.query.ip) }).sort({ createdAt: -1 });
     return res.json({
       message: 'User login logs',
       results
