@@ -441,6 +441,8 @@ async function debit(req, res) {
           maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - amount : -amount,
           cashOrCredit: "Bet",
           cash: lastMaxWithdraw ? lastMaxWithdraw.cash - amount : -amount,
+          credit: lastMaxWithdraw?.credit || 0 ,
+          creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
           betId: payload.transaction_id,
           sportsId: "6",
           marketId: payload.game_id
@@ -513,6 +515,8 @@ async function debit(req, res) {
             cashOrCredit: "loosing",
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * amount : (user.commission / 100) * amount,
             betId: payload.transaction_id,
+            credit: lastMaxWithdraw?.credit || 0 ,
+            creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
             sportsId: "6",
             marketId: payload.game_id,
             upLineAmount: upMovingAmount
@@ -620,7 +624,7 @@ async function credit(req, res) {
           balance: user.availableBalance / casinoMultiples
         });
       }
-      const amount                = payload.amount * casinoMultiples;
+      const amount  = payload.amount * casinoMultiples;
 
       // console.log('========== res', userResponse)
       if (payload.amount > 0) {
@@ -664,6 +668,8 @@ async function credit(req, res) {
           maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
           cashOrCredit: "Bet",
           cash: lastMaxWithdraw ? lastMaxWithdraw.cash + remainingAmount : remainingAmount,
+          credit: lastMaxWithdraw?.credit || 0 ,
+          creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
           betId: payload.transaction_id,
           sportsId: "6",
           marketId: payload.game_id
@@ -706,19 +712,19 @@ async function credit(req, res) {
 
         for (const user of parentUser) {
 
-
           let availableBalance  = user.availableBalance - (user.commission / 100) * amount;
           let balance           = user.balance  - (user.commission / 100) * amount;
           let clientPL          = user.clientPL + user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * amount: 0;
         
-          let userResponse = await users.updateOne(
+          let userResponse      = await users.updateOne(
             {_id: user?._id},{ $set: { 
               availableBalance: availableBalance,
               clientPL: clientPL,
               balance: balance
             }},
             { session }
-          );        
+          );   
+
           console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
           let betTransaction = {
             userId: user.userId,
@@ -731,6 +737,8 @@ async function credit(req, res) {
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * amount : -(user.commission / 100) * amount,
             cashOrCredit: "Bet",
             betId: payload.transaction_id,
+            credit: lastMaxWithdraw?.credit || 0 ,
+            creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
             sportsId: "6",
             marketId: payload.game_id,
             upLineAmount: upMovingCommAmount
@@ -749,6 +757,8 @@ async function credit(req, res) {
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
             cashOrCredit: "Commission",
             betId: payload.transaction_id,
+            credit: lastMaxWithdraw?.credit || 0 ,
+            creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
             sportsId: "6",
             marketId: payload.game_id,
             upLineAmount: upMovingCommAmount

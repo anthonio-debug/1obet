@@ -271,6 +271,8 @@ async function handleWinningBet(bet) {
     maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
     cashOrCredit: "Bet",
     cash: lastMaxWithdraw ? lastMaxWithdraw.cash + remainingAmount : remainingAmount,
+    credit: lastMaxWithdraw?.credit || 0 ,
+    creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
     marketId: bet.marketId,
     sportsId: bet.sportsId,
     matchId: bet.matchId
@@ -334,6 +336,8 @@ async function handleWinningBet(bet) {
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
       marketId: bet.marketId,
       commissionFrom: commissionFrom,
+      credit: lastMaxWithdraw?.credit || 0 ,
+      creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
       sportsId: bet.sportsId,
       upLineAmount: -upMovingAmount,
       matchId: bet.matchId
@@ -359,6 +363,8 @@ async function handleWinningBet(bet) {
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
         marketId: bet.marketId,
         sportsId: bet.sportsId,
+        credit: lastMaxWithdraw?.credit || 0 ,
+        creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
         upLineAmount: upMovingCommAmount,
         matchId: bet.matchId
       });
