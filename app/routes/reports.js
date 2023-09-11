@@ -620,27 +620,72 @@ async function fancy_full_book(req, res) {
       message: 'Fancy name and matchId required'
     });
   }
+  var result = [];
 
-  const result = await Bets.aggregate([
-    {
-      $match: { userId: userId, status: 1, matchId: req.body.matchId, fancyData: req.body.fancyName }
-    },
-    {
-      $group: {
-        _id: { runner: "$runner", type: "$type" },
-        totalWinningAmount: { $sum: "$winningAmount" },
-        totalLoosingAmount: { $sum: "$loosingAmount" }
+  if (!req.body.isAdmin) {
+
+    result = await Bets.aggregate([
+      {
+        $match: { userId: userId, status: 1, matchId: req.body.matchId, fancyData: req.body.fancyName }
+      },
+      {
+        $group: {
+          _id: { runner: "$runner", type: "$type" },
+          totalWinningAmount: { $sum: "$winningAmount" },
+          totalLoosingAmount: { $sum: "$loosingAmount" }
+        }
+      },
+      {
+        $project: {
+          runner: "$_id.runner",
+          type: "$_id.type",
+          totalWinningAmount: 1,
+          totalLoosingAmount: 1
+        }
       }
-    },
-    {
-      $project: {
-        runner: "$_id.runner",
-        type: "$_id.type",
-        totalWinningAmount: 1,
-        totalLoosingAmount: 1
+    ]);
+  } else {
+
+
+    var users = [userId];
+    let parents = [userId];
+    let childUsers;
+
+    do {
+      childUsers = await User.distinct("userId", {
+        createdBy: {
+          $in: parents
+        }
+      });
+      if (childUsers.length) users.push(...childUsers)
+      parents = childUsers
+    } while (childUsers.length > 0)
+
+
+
+    result = await Bets.aggregate([
+      {
+        $match: { userId: {$in: users}, status: 1, matchId: req.body.matchId, fancyData: req.body.fancyName }
+      },
+      {
+        $group: {
+          _id: { runner: "$runner", type: "$type" },
+          totalWinningAmount: { $sum: "$winningAmount" },
+          totalLoosingAmount: { $sum: "$loosingAmount" }
+        }
+      },
+      {
+        $project: {
+          runner: "$_id.runner",
+          type: "$_id.type",
+          totalWinningAmount: 1,
+          totalLoosingAmount: 1
+        }
       }
-    }
-  ]);
+    ]);
+
+
+  }
 
   return res.json({
     message: 'List',
