@@ -555,7 +555,7 @@ async function user_book(req, res) {
     { $unwind: '$userDetails' },
     {
       $set: {
-        username: "$userDetails.username"
+        userName: "$userDetails.userName"
       }
     }]);
 
