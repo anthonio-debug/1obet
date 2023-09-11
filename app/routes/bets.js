@@ -1119,6 +1119,8 @@ async function getMatchedBets(req, res) {
           fancyData: '$fancyData',
           bettor: '$userDetails.userName',
           bettorId: '$userDetails.userId',
+          fancyRate: '$fancyRate',
+
           master: {
             $cond: [
               { $eq: [loginUser.role, '5'] },
