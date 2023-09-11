@@ -779,6 +779,7 @@ async function credit(req, res) {
     }, transactionOptions);
 
     await session.commitTransaction();
+    console.log(" Amount Returnning to Casino from Credit  ", updatedavailableBalance / 10);
     return res.json({
       status: 200,
       balance: updatedavailableBalance / casinoMultiples,
