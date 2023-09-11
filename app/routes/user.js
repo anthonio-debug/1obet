@@ -608,7 +608,7 @@ function getCurrentUser(req, res) {
       success: true,
       message: 'users record found',
       results: user,
-      correctExposure
+      correctExposure: []
     });
   });
 }
