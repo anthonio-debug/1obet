@@ -554,6 +554,14 @@ async function user_book(req, res) {
     },
     { $unwind: '$userDetails' },
     {
+      $lookup: {
+        from: 'marketids',
+        localField: 'marketId',
+        foreignField: 'marketId',
+        as: 'marketDetails'
+      }
+    },
+    {
       $project: {
         sportsId: 1,
         marketId: 1,
@@ -564,10 +572,33 @@ async function user_book(req, res) {
         loosingAmount: 1,
         event: 1,
         runnerName: 1,
+        type: 1,  
         username: "$userDetails.userName",
+        runners: { 
+          $ifNull: [ { $arrayElemAt: [ "$marketDetails.runners", 0 ] }, [] ]
+        },
         _id: 1,
       }
-    }]);
+    },
+    {
+      $group: {
+        _id: {
+          userId: "$userId",
+          marketId: "$marketId",
+          type: "$type"
+        },
+        betAmountTotal: { $sum: "$betAmount" },
+        betRateAverage: { $avg: "$betRate" },
+        totalWinningAmount: { $sum: "$winningAmount" },
+        totalLoosingAmount: { $sum: "$loosingAmount" },
+        runners: { $first: "$runners" },  
+        username: { $first: "$username" }  
+      }
+    }
+]);
+
+
+
 
   return res.json({
     message: 'User Book List',
