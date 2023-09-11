@@ -541,7 +541,7 @@ async function user_book(req, res) {
     query.userId = {$in: users}
   }
 
-
+  console.log(query);
 
   var bookRecord = await Bets.aggregate([
     query,
