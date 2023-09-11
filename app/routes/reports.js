@@ -564,7 +564,7 @@ async function user_book(req, res) {
           loosingAmount: 1, 
           event: 1, 
           runnerName: 1, 
-          username: "$userDetails.username", 
+          username: "$userDetails.userName", 
           _id: 1, 
       }
   }]);
