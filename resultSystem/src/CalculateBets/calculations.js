@@ -115,9 +115,11 @@ async function handleLosingBet(bet) {
     amount: - loosingAmount,
     balance: lastMaxWithdraw ? lastMaxWithdraw.balance - loosingAmount : -loosingAmount,
     availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - loosingAmount : -loosingAmount,
-    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - loosingAmount : loosingAmount,
+    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - loosingAmount : loosingAmount,  
     cashOrCredit: "Bet",
     cash: lastMaxWithdraw ? lastMaxWithdraw.cash - loosingAmount : -loosingAmount,
+    credit: lastMaxWithdraw?.credit || 0 ,
+    creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
     marketId: bet.marketId,
     sportsId: bet.sportsId,
     matchId: bet.matchId
@@ -185,6 +187,8 @@ async function handleLosingBet(bet) {
       commissionFrom: commissionFrom,
       cashOrCredit: "loosing",
       cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
+      credit: lastMaxWithdraw ? lastMaxWithdraw.credit: 0,
+      creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining  : 0,
       marketId: bet.marketId,
       sportsId: bet.sportsId,
       upLineAmount: upMovingAmount,
@@ -310,19 +314,17 @@ async function handleWinningBet(bet) {
     user.balance -= (user.commission / 100) * remainingAmount;
     user.clientPL += user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * remainingAmount : 0;
     await user.save();
+
     let lastMaxWithdraw = await Cash.findOne({
       userId: user.userId,
-    }).sort({
-      _id: -1,
-    });
+    }).sort({ _id: -1 });
 
-    console.log(" =============== Parent User  Successfull ");
+    console.log(" =============== Parent User Successfull ");
 
     if (!lastMaxWithdraw) {
       console.log('User cach record not found.', user);
     }
-
-    //console.log('lastMaxWithdraw2', lastMaxWithdraw);
+    
     let betTransaction = await new Cash({
       userId: user.userId,
       description: bet.name,
@@ -345,10 +347,10 @@ async function handleWinningBet(bet) {
 
     upMovingAmount = upMovingAmount - (user.commission / 100) * totalRemainingAmount;
     await betTransaction.save();
-    console.log(" =============== Parent Commition  Successfull ");
-
+    console.log(" =============== Parent bet Transaction  Successfull ");
 
     if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker) {
+      let lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
       let commissionTransaction = await new Cash({
         userId: user.userId,
         description: bet.name,
@@ -370,8 +372,8 @@ async function handleWinningBet(bet) {
       });
       await commissionTransaction.save();
     }
-    upMovingCommAmount = upMovingCommAmount - (user.commission / 100) * commissionAmount;
-    commissionFrom = user.userId;
+    upMovingCommAmount  = upMovingCommAmount - (user.commission / 100) * commissionAmount;
+    commissionFrom      = user.userId;
   };
   await Bets.findByIdAndUpdate(bet._id, { status: 0, position: bet.winningAmount });
   console.log(" betIdString =============== Starting  ");

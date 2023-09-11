@@ -238,15 +238,11 @@ async function withdrawCredit(req, res) {
 
     let lastMaxWithdraw = await CashCredit.findOne({
       userId: userToUpdate.userId,
-    }).sort({
-      _id: -1,
-    });
+    }).sort({ _id: -1 });
 
     let parentLastMaxWithdraw = await CashCredit.findOne({
       userId: currentUserParent.userId,
-    }).sort({
-      _id: -1,
-    });
+    }).sort({ _id: -1 });
 
     let Dealers = ['1', '2', '3', '4'];
     //  Deealer to Company
@@ -267,6 +263,7 @@ async function withdrawCredit(req, res) {
       await cashCredit.save();
     } 
 
+    //  battor  to company  
     else if (currentUserParent.role == '0' && userToUpdate.role == '5'){
       userToUpdate.balance -= req.body.amount;
       userToUpdate.availableBalance -= req.body.amount;
@@ -276,18 +273,19 @@ async function withdrawCredit(req, res) {
         userId: userToUpdate.userId,
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
-        amount: req.body.amount,
+        amount: - req.body.amount,
         balance: lastMaxWithdraw ? lastMaxWithdraw.balance - req.body.amount : req.body.amount,
-        availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - req.body.amount : req.body.amount,
-        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - req.body.amount : req.body.amount,
+        availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - req.body.amount : -req.body.amount,
+        maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
         cash: lastMaxWithdraw?.cash || 0 ,
         credit: lastMaxWithdraw ? lastMaxWithdraw.credit - req.body.amount : -req.body.amount,
-        creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining - req.body.amount : -req.body.amount,
+        // creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining - req.body.amount : -req.body.amount,
         cashOrCredit: 'Credit',
       });
       await cashCredit.save();
     } 
 
+    // Dealer to Dealer
     else if (Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {
       userToUpdate.credit -= req.body.amount;
       userToUpdate.creditRemaining -= req.body.amount;
@@ -324,6 +322,7 @@ async function withdrawCredit(req, res) {
 
     } 
     
+    // Battor to Dealer 
     else if(Dealers.includes(currentUserParent.role) && userToUpdate.role == '5'){
       userToUpdate.balance -= req.body.amount;
       userToUpdate.availableBalance -= req.body.amount;
@@ -363,6 +362,7 @@ async function withdrawCredit(req, res) {
       await parentCash.save();
 
     } 
+
     else {
       return res.status(400).send({ message: 'Invalid Request!' });
     }
