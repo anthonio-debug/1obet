@@ -509,6 +509,68 @@ function GetAllCashDepositLedger(req, res) {
 }
 
 
+
+
+
+async function user_book(req, res) {
+  const userId      = parseInt(req.decoded.userId)
+  var query = {status: 1}
+  if (req.body.matchId) {
+    query.matchId = req.body.matchId;
+  }
+  
+
+  if (req.body.myUser) {
+    var users  = await User.distinct("userId", { createdBy: userId});
+    query.userId = {$in: users};
+  } else {
+    var users       = [userId];
+    let parents       = [userId];
+    let childUsers;
+
+    do{
+      childUsers     = await User.distinct("userId", {
+        createdBy: {
+          $in: parents
+        }
+      });
+      console.log(" child users ======= ", childUsers);
+      if(childUsers.length) users.push(...childUsers)
+      parents = childUsers
+    }while (childUsers.length > 0)
+    query.userId = {$in: users}
+  }
+
+
+
+  var bookRecord = await Bets.aggregate([
+    query,
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: 'userId',
+        as: 'userDetails'
+      }
+    },
+    { $unwind: '$userDetails' },
+    {
+      $project: {
+        ..."$bets", 
+        username: "$userDetails.username" 
+      }
+    }]);
+
+    return res.json({
+      message: 'User Book List',
+      results:bookRecord
+    });
+  
+
+
+}
+
+
 async function userLoginActivitLogs(req, res) {
 
   if (!req.query.id && !req.query.ip) {
@@ -552,6 +614,8 @@ loginRouter.get('/getFinalReport', getFinalReport);
 loginRouter.post('/GetAllCashCreditLedger', GetAllCashCreditLedger);
 
 loginRouter.post('/GetAllCashDepositLedger', GetAllCashDepositLedger);
+loginRouter.post('/user_book', user_book);
+
 
 loginRouter.get('/getCLientList', getClientList);
 loginRouter.get('/profitLossReports', profitLossReports);

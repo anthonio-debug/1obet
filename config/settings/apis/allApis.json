@@ -153,5 +153,7 @@
   "profitLose",
   "EventWiseprofitLose",
   "dailyMatchWiseprofitLose",
-  "setBattingDisabled"
+  "setBattingDisabled",
+
+  "user_book"
 ]
