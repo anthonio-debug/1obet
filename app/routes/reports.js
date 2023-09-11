@@ -591,6 +591,8 @@ async function user_book(req, res) {
         betRateAverage: { $avg: "$betRate" },
         totalWinningAmount: { $sum: "$winningAmount" },
         totalLoosingAmount: { $sum: "$loosingAmount" },
+        runnerName: { $first: "$runnerName" },  
+        event: { $first: "$event" },  
         runners: { $first: "$runners" },  
         username: { $first: "$username" }  
       }
