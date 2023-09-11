@@ -155,5 +155,6 @@
   "dailyMatchWiseprofitLose",
   "setBattingDisabled",
 
-  "user_book"
+  "user_book",
+  "fancy_full_book"
 ]

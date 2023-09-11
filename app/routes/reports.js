@@ -555,19 +555,19 @@ async function user_book(req, res) {
     { $unwind: '$userDetails' },
     {
       $project: {
-          sportsId: 1, 
-          marketId: 1, 
-          userId: 1, 
-          betAmount: 1, 
-          betRate: 1, 
-          winningAmount: 1, 
-          loosingAmount: 1, 
-          event: 1, 
-          runnerName: 1, 
-          username: "$userDetails.userName", 
-          _id: 1, 
+        sportsId: 1,
+        marketId: 1,
+        userId: 1,
+        betAmount: 1,
+        betRate: 1,
+        winningAmount: 1,
+        loosingAmount: 1,
+        event: 1,
+        runnerName: 1,
+        username: "$userDetails.userName",
+        _id: 1,
       }
-  }]);
+    }]);
 
   return res.json({
     message: 'User Book List',
@@ -577,6 +577,45 @@ async function user_book(req, res) {
 
 
 }
+
+
+async function fancy_full_book(req, res) {
+  const userId = parseInt(req.decoded.userId);
+
+  if (!req.body.matchId || !req.body.fancyName) {
+    return res.json({
+      message: 'Fancy name and matchId required'
+    });
+  }
+
+  const result = await Bets.aggregate([
+    {
+      $match: { userId: userId, status: 1, matchId: req.body.matchId, fancyData: req.body.fancyName }
+    },
+    {
+      $group: {
+        _id: { runner: "$runner", type: "$type" },
+        totalWinningAmount: { $sum: "$winningAmount" },
+        totalLoosingAmount: { $sum: "$loosingAmount" }
+      }
+    },
+    {
+      $project: {
+        runner: "$_id.runner",
+        type: "$_id.type",
+        totalWinningAmount: 1,
+        totalLoosingAmount: 1
+      }
+    }
+  ]);
+
+  return res.json({
+    message: 'List',
+    results: result
+  });
+
+}
+
 
 
 async function userLoginActivitLogs(req, res) {
@@ -623,6 +662,7 @@ loginRouter.post('/GetAllCashCreditLedger', GetAllCashCreditLedger);
 
 loginRouter.post('/GetAllCashDepositLedger', GetAllCashDepositLedger);
 loginRouter.post('/user_book', user_book);
+loginRouter.post('/fancy_full_book', fancy_full_book);
 
 
 loginRouter.get('/getCLientList', getClientList);
