@@ -135,10 +135,10 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
     }
     if(!eventDetail.betAllowed){
-      return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
+      return res.status(404).send({ message: 'Batting Not Allowd' });      
     }
     if(eventDetail.status.toUpperCase() != "OPEN"){
-      return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
+      return res.status(404).send({ message: 'Batting Not Allowd' });      
     }
 
 
@@ -1125,6 +1125,7 @@ async function getMatchedBets(req, res) {
           bettor: '$userDetails.userName',
           bettorId: '$userDetails.userId',
           fancyRate: '$fancyRate',
+          subMarketId: '$subMarketId',
 
           master: {
             $cond: [
