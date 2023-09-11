@@ -42,7 +42,7 @@ const getParents = async (userId,downLineShare) => {
       break;
     }
     if (downLineShare)
-    parentUserIds.push({id: parentUser.userId, downLineShare: parentUser.downLineShare});
+    parentUserIds.push({id: parentUser.userId, downLineShare: parentUser.downLineShare, username: parentUser.userName});
     else
     parentUserIds.push(parentUser.createdBy);
     currentUserId = parentUser.createdBy;
