@@ -255,6 +255,7 @@ function login(req, res) {
         if (!user.token) {          
           var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
           user.token = token;
+          user.save();
         }
         var ipInfo = req.headers['x-real-ip'] || req.connection.remoteAddress;
 
