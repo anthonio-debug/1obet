@@ -137,6 +137,11 @@ const placeBet = async (req, res) => {
     if(!eventDetail.betAllowed){
       return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
     }
+    if(eventDetail.status.toUpperCase() != " "){
+      return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
+    }
+
+
     marketId = eventDetail?.sportsId;
     console.log(" marketId ======== ", marketId);
     let id;
@@ -1852,22 +1857,119 @@ const dailyMatchWiseprofitLose = async(req, res) => {
 
 const postmanwork = async (req, res)=>{
   try{
-    const deposits  = await Cash.find({ cashOrCredit: {
-      $in: ["Bet", "Commission", "loosing"] 
-    } });
-    console.log(" deposits  ================= ", deposits.length);
-
-    for (let i = 0; i < deposits.length; i++) {
-      console.log(" deposits ================= ", deposits[i]);
-      const bet = await Bets.findOne({ _id: mongoose.Types.ObjectId(deposits[i].betId) });
-      console.log(" ================= ", bet);
-      if(bet){
-        await Cash.updateOne(
-          { _id: deposits[i]._id },
-          { $set: { sportsId: bet.sportsId } }
-        );
-      }
+    const users = await User.find({ role: { $ne: '0' }  });
+    await userBetSizes.deleteMany();
+    for (const user of users){
+      const response = userBetSizes.insertMany([
+        {
+          userId: user.useerId,
+          amount: 250000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd20',
+          name: 'Soccer',
+          sportsId: '1'
+        },
+        {
+          userId: user.useerId,
+          amount: 250000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd21',
+          name: 'Tennis',
+          sportsId: '2'
+        },
+        {
+          userId: user.useerId,
+          amount: 500000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd22',
+          name: 'Cricket',
+          sportsId: '4'
+        },
+        {
+          userId: user.useerId,
+          amount: 200000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd23',
+          name: 'Fancy',
+          subarket: 7,
+          sportsId: '4'
+        },
+        {
+          userId: user.useerId,
+          amount: 200000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd24',
+          name: 'Tied match',
+          subarket: 35,
+          sportsId: '4'
+        },
+        {
+          userId: user.useerId,
+          amount: 200000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd25',
+          name: 'bookMaker',
+          subarket: 8,
+          sportsId: '4'
+        },
+        {
+          userId: user.useerId,
+          amount: 200000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd26',
+          name: 'Even Odd',
+          subarket: 10,
+          sportsId: '4'
+        },
+        {
+          userId: user.useerId,
+          amount: 200000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd27',
+          name: 'Chotta Bara',
+          subarket: 34,
+          sportsId: '4'
+        },
+        {
+          userId: user.useerId,
+          amount: 200000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd28',
+          name: 'Figure',
+          subarket: 9,
+          sportsId: '4'
+        },
+        {
+          userId: user.useerId,
+          amount: 200000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd29',
+          name: 'Horse races',
+          sportsId: '7'
+        },
+        {
+          userId: user.useerId,
+          amount: 100000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd2a',
+          name: 'GreyHound',
+          sportsId: '4339'
+        },
+        {
+          userId: user.useerId,
+          amount: 50000,
+          betLimitId: '64fc9f9fac96fd64a8d0bd2b',
+          name: 'casino',
+          sportsId: '6'
+        }
+      ])  
     }
+
+    // const deposits  = await Cash.find({ cashOrCredit: {
+    //   $in: ["Bet", "Commission", "loosing"] 
+    // } });
+    // console.log(" deposits  ================= ", deposits.length);
+
+    // for (let i = 0; i < deposits.length; i++) {
+    //   console.log(" deposits ================= ", deposits[i]);
+    //   const bet = await Bets.findOne({ _id: mongoose.Types.ObjectId(deposits[i].betId) });
+    //   console.log(" ================= ", bet);
+    //   if(bet){
+    //     await Cash.updateOne(
+    //       { _id: deposits[i]._id },
+    //       { $set: { sportsId: bet.sportsId } }
+    //     );
+    //   }
+    // }
     return res.send({
       message: "Completed !"
     })
