@@ -1860,7 +1860,7 @@ const postmanwork = async (req, res)=>{
     const users = await User.find({ role: { $ne: '0' }  });
     await userBetSizes.deleteMany();
     for (const user of users){
-      const response = userBetSizes.insertMany([
+      const response = await  userBetSizes.insertMany([
         {
           userId: user.useerId,
           amount: 250000,
