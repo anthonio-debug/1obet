@@ -544,7 +544,9 @@ async function user_book(req, res) {
   //console.log(query);
 
   var bookRecord = await Bets.aggregate([
-    { $match: query },
+    { 
+
+    },
     {
       $lookup: {
         from: 'users',
@@ -556,7 +558,7 @@ async function user_book(req, res) {
     { $unwind: '$userDetails' },
     {
       $project: {
-        ..."$bets", 
+        ..."$ROOT",
         username: "$userDetails.username" 
       }
     }]);
