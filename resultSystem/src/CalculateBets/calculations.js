@@ -151,12 +151,6 @@ async function handleLosingBet(bet) {
     user["commission"] = current - prev;
     prev = current;
   });
-
-
-  parentUser.forEach((user) => {
-    console.log('commission: ' + user["commission"]);
-  });
-
   console.log(" ======================== Commitions Calculated  Sucessfully ");
 
   let commissionFrom = userToUpdate.userId;
@@ -172,9 +166,7 @@ async function handleLosingBet(bet) {
 
     let lastMaxWithdraw = await Cash.findOne({
       userId: user.userId,
-    }).sort({
-      _id: -1,
-    });
+    }).sort({ _id: -1 });
     let cash = await new Cash({
       userId: user.userId,
       description: bet.name,
@@ -186,7 +178,7 @@ async function handleLosingBet(bet) {
       maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
       commissionFrom: commissionFrom,
       cashOrCredit: "loosing",
-      cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
+      cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
       credit: lastMaxWithdraw ? lastMaxWithdraw.credit: 0,
       creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining  : 0,
       marketId: bet.marketId,
@@ -281,7 +273,7 @@ async function handleWinningBet(bet) {
     sportsId: bet.sportsId,
     matchId: bet.matchId
   });
-  console.log('usercash', typeof cash);
+  // console.log('usercash', typeof cash);
   await cash.save();
   console.log(" =============== Cash  Save Successfull ");
 
@@ -315,9 +307,7 @@ async function handleWinningBet(bet) {
     user.clientPL += user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * remainingAmount : 0;
     await user.save();
 
-    let lastMaxWithdraw = await Cash.findOne({
-      userId: user.userId,
-    }).sort({ _id: -1 });
+    let lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
 
     console.log(" =============== Parent User Successfull ");
 
@@ -335,7 +325,7 @@ async function handleWinningBet(bet) {
       maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
       cashOrCredit: "Bet",
       betId: bet._id,
-      cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+      cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
       marketId: bet.marketId,
       commissionFrom: commissionFrom,
       credit: lastMaxWithdraw?.credit || 0 ,
@@ -362,7 +352,7 @@ async function handleWinningBet(bet) {
         maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
         cashOrCredit: "Commission",
         betId: bet._id,
-        cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+        cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
         marketId: bet.marketId,
         sportsId: bet.sportsId,
         credit: lastMaxWithdraw?.credit || 0 ,
