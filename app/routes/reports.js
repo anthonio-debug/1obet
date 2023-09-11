@@ -10,6 +10,8 @@ const Deposits = require('../models/deposits');
 const MarketType = require('../models/marketTypes');
 const Bets = require('../models/bets');
 const loginRouter = express.Router();
+const { getParents } = require("./bets");
+
 
 function cashDepositLedger(req, res) {
   const errors = validationResult(req);
@@ -572,11 +574,11 @@ async function user_book(req, res) {
         loosingAmount: 1,
         event: 1,
         runnerName: 1,
-        type: 1,  
+        type: 1,
         username: "$userDetails.userName",
         marketName: "$marketDetails.marketName",
-        runners: { 
-          $ifNull: [ { $arrayElemAt: [ "$marketDetails.runners", 0 ] }, [] ]
+        runners: {
+          $ifNull: [{ $arrayElemAt: ["$marketDetails.runners", 0] }, []]
         },
         _id: 1,
       }
@@ -586,26 +588,32 @@ async function user_book(req, res) {
         _id: {
           userId: "$userId",
           marketId: "$marketId",
-          type: "$type"
+          type: "$type",
+          downLineShare: "$downLineShare",
         },
         betAmountTotal: { $sum: "$betAmount" },
         betRateAverage: { $avg: "$betRate" },
         totalWinningAmount: { $sum: "$winningAmount" },
         totalLoosingAmount: { $sum: "$loosingAmount" },
-        runnerName: { $first: "$runnerName" },  
-        event: { $first: "$event" },  
-        runners: { $first: "$runners" },  
-        username: { $first: "$username" }  
+        runnerName: { $first: "$runnerName" },
+        event: { $first: "$event" },
+        runners: { $first: "$runners" },
+        username: { $first: "$username" }
       }
     }
-]);
+  ]);
 
-
-
+  const updatedValues = await Promise.all(bookRecord.map(async record => {
+    const parentInfo = await getParents(record._id.userId, true);
+    return {
+      ...record,
+      parentInfo
+    };
+  }));
 
   return res.json({
     message: 'User Book List',
-    results: bookRecord
+    results: updatedValues
   });
 
 
@@ -666,7 +674,7 @@ async function fancy_full_book(req, res) {
 
     result = await Bets.aggregate([
       {
-        $match: { userId: {$in: users}, status: 1, matchId: req.body.matchId, fancyData: req.body.fancyName }
+        $match: { userId: { $in: users }, status: 1, matchId: req.body.matchId, fancyData: req.body.fancyName }
       },
       {
         $group: {

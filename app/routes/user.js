@@ -603,21 +603,7 @@ function getCurrentUser(req, res) {
   User.findOne({ userId: req.decoded.userId }, async (err, user) => {
     if (err || !user)
       return res.status(404).send({ message: 'user not found' });
-      const correctExposure = await Bets.aggregate([
-        {
-            $match: {
-                userId: user.userId,
-                status: 0
-            }
-        },
-        {
-            $group: {
-                _id: null,
-                totalWinningAmount: { $sum: "$winningAmount" },
-                totalLoosingAmount: { $sum: "$loosingAmount" }
-            }
-        }
-    ]);
+      
     return res.send({
       success: true,
       message: 'users record found',

@@ -30,7 +30,7 @@ const Cash = require("../../app/models/deposits");
 const mongoose = require('mongoose');
 
 
-const getParents = async (userId) => {
+const getParents = async (userId,downLineShare) => {
   const parentUserIds = [];
   let currentUserId = userId;
   console.log('currentUserId', currentUserId);
@@ -41,6 +41,9 @@ const getParents = async (userId) => {
     if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
       break;
     }
+    if (downLineShare)
+    parentUserIds.push({id: parentUser.userId, downLineShare: parentUser.downLineShare});
+    else
     parentUserIds.push(parentUser.createdBy);
     currentUserId = parentUser.createdBy;
   }
