@@ -582,9 +582,6 @@ async function credit(req, res) {
         msg: 'INCORRECT_KEY_VALIDATION'
       });
     }
-
-
-    console.log(" Amount Returnning to Casino from Credit  ", 100 / 10);
     // console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> ${payload.remote_id}`);
     let updatedavailableBalance = 0
     let updatedclientPL = 0
@@ -610,6 +607,7 @@ async function credit(req, res) {
         await session.abortTransaction();
         return res.json({ status: '500', msg: `Internal Error no User` });
       }
+      updatedavailableBalance = user.availableBalance;
 
       if (sameTransId > 0) {
         console.log('====== same Trans already Exists ', sameTransId)
@@ -777,7 +775,6 @@ async function credit(req, res) {
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
       console.log("All Transection Successfull ");
-
 
     }, transactionOptions);
 
