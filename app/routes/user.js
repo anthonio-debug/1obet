@@ -249,11 +249,13 @@ function login(req, res) {
           return res.status(404).send({ message: 'Invalid username or password' });
         if (user.isActive == false || user.status == 0)
           return res.status(404).send({ message: 'Your account is inactive' });
-        if((req.body.isAdmin && user.role == 5 ) || (!req.body.isAdmin && user.role != 5 ))
-            return res.status(404).send({ message: 'Invalid username or password' });
+        if((req.body.isAdmin && user.role == 5 ) || (!req.body.isAdmin && user.role != 5 )) 
+          return res.status(404).send({ message: 'Invalid username or password' });
 
-        var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
-        user.token = token;
+        if (!user.token) {          
+          var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
+          user.token = token;
+        }
         var ipInfo = req.headers['x-real-ip'] || req.connection.remoteAddress;
 
         // Retrieve the user's default theme from the database
@@ -364,7 +366,8 @@ function getNonExpiringToken(userId, createdBy, role, isActive) {
     role: role,
     isActive: isActive,
   };
-  var token = jwt.sign(payload, config.secret, {});
+  const expiresIn = 30 * 24 * 60 * 60;
+  var token = jwt.sign(payload, config.secret, {expiresIn});
   return token;
 }
 
