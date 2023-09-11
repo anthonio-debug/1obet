@@ -19,6 +19,8 @@ const UserBetSizes = require('../models/userBetSizes');
 const loginRecord = require('../models/loginRecord');
 const axios = require('axios');
 const userBetSizes = require('../models/userBetSizes');
+const Bets = require('../models/bets');
+
 const { tryEach } = require('async');
 
 var getIP = require('ipware')().get_ip;
@@ -598,13 +600,29 @@ function getCurrentUser(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  User.findOne({ userId: req.decoded.userId }, (err, user) => {
+  User.findOne({ userId: req.decoded.userId }, async (err, user) => {
     if (err || !user)
       return res.status(404).send({ message: 'user not found' });
+      const correctExposure = await Bets.aggregate([
+        {
+            $match: {
+                userId: user.userId,
+                status: 0
+            }
+        },
+        {
+            $group: {
+                _id: null,
+                totalWinningAmount: { $sum: "$winningAmount" },
+                totalLoosingAmount: { $sum: "$loosingAmount" }
+            }
+        }
+    ]);
     return res.send({
       success: true,
       message: 'users record found',
       results: user,
+      correctExposure
     });
   });
 }
