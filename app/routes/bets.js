@@ -713,6 +713,7 @@ const placeBet = async (req, res) => {
       event: eventDetail.name,
       isfancyOrbookmaker: isFancyOrBookMaker,
       fancyData: fancyData,
+      fancyRate: fancyRate,
       createdAt: new Date().getTime(),
     });
 
