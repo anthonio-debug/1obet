@@ -554,10 +554,20 @@ async function user_book(req, res) {
     },
     { $unwind: '$userDetails' },
     {
-      $set: {
-        userName: "$userDetails.userName"
+      $project: {
+          sportsId: 1, 
+          marketId: 1, 
+          userId: 1, 
+          betAmount: 1, 
+          betRate: 1, 
+          winningAmount: 1, 
+          loosingAmount: 1, 
+          event: 1, 
+          runnerName: 1, 
+          username: "$userDetails.username", 
+          _id: 1, 
       }
-    }]);
+  }]);
 
   return res.json({
     message: 'User Book List',
