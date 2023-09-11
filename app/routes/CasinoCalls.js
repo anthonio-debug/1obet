@@ -441,8 +441,8 @@ async function debit(req, res) {
           maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - amount : -amount,
           cashOrCredit: "Bet",
           cash: lastMaxWithdraw ? lastMaxWithdraw.cash - amount : -amount,
-          credit: lastMaxWithdraw?.credit || 0 ,
-          creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
+          credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+          creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
           betId: payload.transaction_id,
           sportsId: "6",
           marketId: payload.game_id
@@ -515,8 +515,8 @@ async function debit(req, res) {
             cashOrCredit: "loosing",
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash + (user.commission / 100) * amount : (user.commission / 100) * amount,
             betId: payload.transaction_id,
-            credit: lastMaxWithdraw?.credit || 0 ,
-            creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
+            credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+            creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
             sportsId: "6",
             marketId: payload.game_id,
             upLineAmount: upMovingAmount
