@@ -568,6 +568,7 @@ async function user_book(req, res) {
         runnerName: 1,
         type: 1,
         username: "$userDetails.userName",
+        downLineShare: "$userDetails.downLineShare",
         marketName: "$marketDetails.marketName",
         runners: {
           $ifNull: [{ $arrayElemAt: ["$marketDetails.runners", 0] }, []]
