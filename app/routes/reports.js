@@ -620,7 +620,7 @@ async function user_book(req, res) {
         for (let index = 0; index < alllParent.length; index++) {
           const parentID = alllParent[index];
           if (parentID == userId && index>0) {
-            subChild = index;
+            subChild = index -1 ;
             break;
           }
         }
@@ -632,14 +632,12 @@ async function user_book(req, res) {
           }
 
         } else {
-          parentInfo.push(0);
+          parentInfo.push({id: currentUser.userId, downLineShare: currentUser.downLineShare, username: currentUser.userName});
         }
 
 
       }
-    } else  {
-      parentInfo.push(1);
-    }
+    } 
 
     return {
       ...record,
