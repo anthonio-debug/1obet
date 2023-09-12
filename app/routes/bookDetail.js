@@ -55,8 +55,6 @@ const bookDetailReport = async (req, res) => {
 
     for (let index = 0; index < response.length; index++) {
       const element = response[index];
-      console.log(element);
-      continue;
       const r1 = await CashDeposit.aggregate([
         {
           $match: {
