@@ -604,7 +604,7 @@ async function user_book(req, res) {
       const alllParent = await getParents(record._id.userId);
 
       if (alllParent.length < 2) {
-        parentInfo.push({id: currentUser.userId, downLineShare: 100 - currentUser.downLineShare, username: currentUser.userName});
+        parentInfo.push({id: currentUser.userId, downLineShare: currentUser.downLineShare, username: currentUser.userName});
       } else {
 
         var subChild = null; 
@@ -623,7 +623,7 @@ async function user_book(req, res) {
           }
 
         } else {
-          parentInfo.push({id: currentUser.userId, downLineShare: 100 - currentUser.downLineShare, username: currentUser.userName});
+          parentInfo.push({id: currentUser.userId, downLineShare:  currentUser.downLineShare, username: currentUser.userName});
         }
 
 
