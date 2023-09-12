@@ -44,14 +44,68 @@ const bookDetailReport = async (req, res) => {
         $group:{
           _id: "$userId",
           amount: { $sum: "$amount"},
-          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
+          betsIdArray: { $push: "$betsId" }
         }
       }
     ]);
+
+    var parentDatas = [];
+    var realResult = response;
+
+
+    for (let index = 0; index < response.length; index++) {
+      const element = response[index];
+      
+      const r1 = await CashDeposit.aggregate([
+        {
+          $match: {
+            userId: {$ne: element._id},
+            betsId: { $in: element.betsIdArray },
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+            $and: [
+              {
+                createdAt: {$gte: req.query.startDate}
+              },
+              {
+                createdAt: {$lte: req.query.endDate}
+              }
+            ]
+          }
+        },
+        {
+          $lookup: {
+            from: 'users',
+            localField: 'userId',
+            foreignField: 'userId',
+            as: 'userInfo'
+          }
+        }, 
+        {
+          $group:{
+            _id: "$userId",
+            amount: { $sum: "$amount"},
+            name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
+          }
+        }
+      ]);
+
+      for (let i = 0; i < r1.length; i++) {
+        realResult.push(r1[i]);
+      }
+    }
+
+
+
+
+
+    
+
+
     return res.send({
       success: true,
       message: 'Daily reports',
-      results: response
+      results: realResult
     });
   } catch (error) {
     return res.send({
