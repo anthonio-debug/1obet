@@ -15,15 +15,13 @@ const Events = require('../models/events');
 const bookDetailReport = async (req, res) => {
   try {
     const userId         = parseInt(req.decoded.userId);
-    const directChild    = await User.distinct("userId", { createdBy: userId });
-    const grandchiltren  = await User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
-    const users          = [userId, ...directChild, ...grandchiltren];
+    const grandchiltren  = await User.distinct("userId", { createdBy: userId, role: '5' });
     console.log(" users list  ======== ", users);
 
     const response = await CashDeposit.aggregate([
       {
         $match: {
-          userId: { $in: users },
+          userId: { $in: grandchiltren },
           cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           $and: [
             {
