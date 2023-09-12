@@ -637,7 +637,9 @@ async function user_book(req, res) {
 
 
       }
-    } 
+    } else  {
+      parentInfo.push(1);
+    }
 
     return {
       ...record,
