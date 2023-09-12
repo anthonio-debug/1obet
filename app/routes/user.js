@@ -257,6 +257,18 @@ function login(req, res) {
           user.token = token;
           user.save();
         }
+        else if(user.token){
+          jwt.verify(token, config.secret, function (err, decoded) {           
+            if(err ||  decoded.exp < new Date().getTime()){
+              var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
+              user.token = token;
+              user.save();
+            }
+          })
+        }
+
+
+
         var ipInfo = req.headers['x-real-ip'] || req.connection.remoteAddress;
 
         // Retrieve the user's default theme from the database
