@@ -50,11 +50,14 @@ const bookDetailReport = async (req, res) => {
       }
     ]);
 
-    var realResult = response.toObject();;
+    const realResult1 = response.map(r => r.toObject());
+
+    var realResult = [];
 
 
-    for (let index = 0; index < realResult.length; index++) {
-      const element = realResult[index];
+    for (let index = 0; index < realrealResult1esult.length; index++) {
+      const element = realResult1[index];
+      realResult.push(element);
       const r1 = await CashDeposit.aggregate([
         {
           $match: {
