@@ -137,7 +137,7 @@ const placeBet = async (req, res) => {
     if(!eventDetail.betAllowed){
       return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
     }
-    if(eventDetail.status.toUpperCase() != " "){
+    if(eventDetail.status.toUpperCase() != "OPEN"){
       return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
     }
 
