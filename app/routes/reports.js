@@ -584,7 +584,7 @@ async function user_book(req, res) {
           type: "$type",
           runnerName: "$runnerName"
         },
-        downLineShare: "$downLineShare",
+        downLineShare: { $first: "$downLineShare" },
         betAmountTotal: { $sum: "$betAmount" },
         betRateAverage: { $avg: "$betRate" },
         totalWinningAmount: { $sum: "$winningAmount" },
