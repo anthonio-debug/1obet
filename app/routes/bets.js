@@ -30,7 +30,7 @@ const Cash = require("../../app/models/deposits");
 const mongoose = require('mongoose');
 
 
-const getParents = async (userId,downLineShare) => {
+const getParents = async (userId) => {
   const parentUserIds = [];
   let currentUserId = userId;
   console.log('currentUserId', currentUserId);
@@ -41,9 +41,6 @@ const getParents = async (userId,downLineShare) => {
     if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
       break;
     }
-    if (downLineShare)
-    parentUserIds.push({id: parentUser.userId, downLineShare: parentUser.downLineShare, username: parentUser.userName});
-    else
     parentUserIds.push(parentUser.createdBy);
     currentUserId = parentUser.createdBy;
   }
@@ -138,10 +135,10 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
     }
     if(!eventDetail.betAllowed){
-      return res.status(404).send({ message: 'Batting Not Allowd' });      
+      return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
     }
-    if(eventDetail.status.toUpperCase() != "OPEN"){
-      return res.status(404).send({ message: 'Batting Not Allowd' });      
+    if(eventDetail.status.toUpperCase() != " "){
+      return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
     }
 
 
@@ -1128,7 +1125,6 @@ async function getMatchedBets(req, res) {
           bettor: '$userDetails.userName',
           bettorId: '$userDetails.userId',
           fancyRate: '$fancyRate',
-          subMarketId: '$subMarketId',
 
           master: {
             $cond: [
@@ -1864,31 +1860,30 @@ const postmanwork = async (req, res)=>{
     const users = await User.find({ role: { $ne: '0' }  });
     await userBetSizes.deleteMany();
     for (const user of users){
-      console.log(" userid for bet limit  ",  user.userId);
-      const response = await  userBetSizes.insertMany([
+      const response = userBetSizes.insertMany([
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 250000,
           betLimitId: '64fc9f9fac96fd64a8d0bd20',
           name: 'Soccer',
           sportsId: '1'
         },
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 250000,
           betLimitId: '64fc9f9fac96fd64a8d0bd21',
           name: 'Tennis',
           sportsId: '2'
         },
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 500000,
           betLimitId: '64fc9f9fac96fd64a8d0bd22',
           name: 'Cricket',
           sportsId: '4'
         },
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 200000,
           betLimitId: '64fc9f9fac96fd64a8d0bd23',
           name: 'Fancy',
@@ -1896,7 +1891,7 @@ const postmanwork = async (req, res)=>{
           sportsId: '4'
         },
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 200000,
           betLimitId: '64fc9f9fac96fd64a8d0bd24',
           name: 'Tied match',
@@ -1904,7 +1899,7 @@ const postmanwork = async (req, res)=>{
           sportsId: '4'
         },
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 200000,
           betLimitId: '64fc9f9fac96fd64a8d0bd25',
           name: 'bookMaker',
@@ -1912,7 +1907,7 @@ const postmanwork = async (req, res)=>{
           sportsId: '4'
         },
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 200000,
           betLimitId: '64fc9f9fac96fd64a8d0bd26',
           name: 'Even Odd',
@@ -1920,7 +1915,7 @@ const postmanwork = async (req, res)=>{
           sportsId: '4'
         },
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 200000,
           betLimitId: '64fc9f9fac96fd64a8d0bd27',
           name: 'Chotta Bara',
@@ -1928,7 +1923,7 @@ const postmanwork = async (req, res)=>{
           sportsId: '4'
         },
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 200000,
           betLimitId: '64fc9f9fac96fd64a8d0bd28',
           name: 'Figure',
@@ -1936,21 +1931,21 @@ const postmanwork = async (req, res)=>{
           sportsId: '4'
         },
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 200000,
           betLimitId: '64fc9f9fac96fd64a8d0bd29',
           name: 'Horse races',
           sportsId: '7'
         },
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 100000,
           betLimitId: '64fc9f9fac96fd64a8d0bd2a',
           name: 'GreyHound',
           sportsId: '4339'
         },
         {
-          userId: user.userId,
+          userId: user.useerId,
           amount: 50000,
           betLimitId: '64fc9f9fac96fd64a8d0bd2b',
           name: 'casino',

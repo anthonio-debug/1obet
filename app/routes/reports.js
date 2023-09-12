@@ -522,6 +522,8 @@ async function user_book(req, res) {
   }
 
 
+  const currentUser  = await User.findOne({userId: userId});
+
   if (req.body.myUser) {
     var users = await User.distinct("userId", { createdBy: userId });
     query.userId = { $in: users };
@@ -604,7 +606,41 @@ async function user_book(req, res) {
   ]);
 
   const updatedValues = await Promise.all(bookRecord.map(async record => {
-    const parentInfo = await getParents(record._id.userId, true);
+    const parentInfo = []
+
+
+    if (record._id.userId !== userId) {
+      const alllParent = await getParents(record._id.userId);
+
+      if (alllParent.length <2) {
+        parentInfo.push({id: currentUser.userId, downLineShare: currentUser.downLineShare, username: currentUser.userName});
+      } else {
+
+        var subChild = null; 
+        for (let index = 0; index < alllParent.length; index++) {
+          const parentID = alllParent[index];
+          if (parentID == userId && index>0) {
+            subChild = index;
+            break;
+          }
+        }
+
+        if (subChild) {
+          const myParentInfo  = await User.findOne({userId: alllParent[subChild]});
+          if (myParentInfo) {
+            parentInfo.push({id: currentUser.userId, downLineShare: currentUser.downLineShare - myParentInfo.downLineShare, username: currentUser.userName});
+          }
+
+        }
+
+
+      }
+
+
+
+
+    }
+
     return {
       ...record,
       parentInfo
