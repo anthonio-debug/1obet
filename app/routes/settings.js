@@ -1927,6 +1927,32 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
 }
 
 
+const getEventWinnerName = async (req, res) => {
+
+
+  try {
+    if (!req.body.eventId) {
+      return res.status(404).send({
+        success: false,
+        message: 'Invalid Request !'
+      });
+    }
+
+    const result = await Events.findOne({Id:req.body.eventId },{winner})
+    
+    return res.status(200).send({
+      success: true,
+      result
+    });
+
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Something went wrong!'
+    });
+  }
+}
+
 
 
 loginRouter.post(
@@ -1997,6 +2023,8 @@ loginRouter.post('/updateSessionScore', updateSessionScore);
 
 
 
+
+loginRouter.post('/getEventWinnerName', getEventWinnerName);
 
 loginRouter.post('/getMarketIDSData', getMarketIDSData);
 loginRouter.post('/saveMarketIDSWinnerRunner', saveMarketIDSWinnerRunner);
