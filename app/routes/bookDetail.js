@@ -107,6 +107,7 @@ const bookDetailReport = async (req, res) => {
       results: realResult
     });
   } catch (error) {
+    console.error(error);
     return res.send({
       success: false,
       message: "Something went wrong",
