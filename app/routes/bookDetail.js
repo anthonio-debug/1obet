@@ -14,8 +14,8 @@ const Events = require('../models/events');
 
 const bookDetailReport = async (req, res) => {
   try {
-    const userId         = parseInt(req.decoded.userId);
-    const grandchiltren  = await User.distinct("userId", { createdBy: userId, role: '5' });
+    const userId = parseInt(req.decoded.userId);
+    const grandchiltren = await User.distinct("userId", { createdBy: userId, role: '5' });
 
     const response = await CashDeposit.aggregate([
       {
@@ -24,10 +24,10 @@ const bookDetailReport = async (req, res) => {
           cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           $and: [
             {
-              createdAt: {$gte: req.query.startDate}
+              createdAt: { $gte: req.query.startDate }
             },
             {
-              createdAt: {$lte: req.query.endDate}
+              createdAt: { $lte: req.query.endDate }
             }
           ]
         }
@@ -39,11 +39,11 @@ const bookDetailReport = async (req, res) => {
           foreignField: 'userId',
           as: 'userInfo'
         }
-      }, 
+      },
       {
-        $group:{
+        $group: {
           _id: "$userId",
-          amount: { $sum: "$amount"},
+          amount: { $sum: "$amount" },
           name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
           betsIdArray: { $push: "$betId" }
         }
@@ -55,41 +55,44 @@ const bookDetailReport = async (req, res) => {
 
     for (let index = 0; index < response.length; index++) {
       const element = response[index];
-      const r1 = await CashDeposit.aggregate([
-        {
-          $match: {
-            userId: {$ne: element._id},
-            betId: { $in: element.betsIdArray },
-            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-            $and: [
-              {
-                createdAt: {$gte: req.query.startDate}
-              },
-              {
-                createdAt: {$lte: req.query.endDate}
-              }
-            ]
-          }
-        },
-        {
-          $lookup: {
-            from: 'users',
-            localField: 'userId',
-            foreignField: 'userId',
-            as: 'userInfo'
-          }
-        }, 
-        {
-          $group:{
-            _id: "$userId",
-            amount: { $sum: "$amount"},
-            name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
-          }
-        }
-      ]);
+      if (Array.isArray(element.betsIdArray) && element.betsIdArray.length > 0) {
 
-      for (let i = 0; i < r1.length; i++) {
-        realResult.push(r1[i]);
+        const r1 = await CashDeposit.aggregate([
+          {
+            $match: {
+              userId: { $ne: element._id },
+              betId: { $in: element.betsIdArray },
+              cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+              $and: [
+                {
+                  createdAt: { $gte: req.query.startDate }
+                },
+                {
+                  createdAt: { $lte: req.query.endDate }
+                }
+              ]
+            }
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'userId',
+              foreignField: 'userId',
+              as: 'userInfo'
+            }
+          },
+          {
+            $group: {
+              _id: "$userId",
+              amount: { $sum: "$amount" },
+              name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
+            }
+          }
+        ]);
+
+        for (let i = 0; i < r1.length; i++) {
+          realResult.push(r1[i]);
+        }
       }
     }
 
@@ -97,7 +100,7 @@ const bookDetailReport = async (req, res) => {
 
 
 
-    
+
 
 
     return res.send({
@@ -117,25 +120,25 @@ const bookDetailReport = async (req, res) => {
 
 const bookDetailSportsWiseReport = async (req, res) => {
   try {
-    if(!req.query.userId){
+    if (!req.query.userId) {
       return res.send({
         success: false,
         message: "Request Invalid !",
       });
     }
-    const Id        =  parseInt(req.query.userId)
+    const Id = parseInt(req.query.userId)
     console.log(" Id ========== ", Id);
     const response = await CashDeposit.aggregate([
-      {  
+      {
         $match: {
           userId: Id,
           cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           $and: [
             {
-              createdAt: {$gte: req.query.startDate}
+              createdAt: { $gte: req.query.startDate }
             },
             {
-              createdAt: {$lte: req.query.endDate}
+              createdAt: { $lte: req.query.endDate }
             }
           ]
         }
@@ -147,11 +150,11 @@ const bookDetailSportsWiseReport = async (req, res) => {
           foreignField: 'Id',
           as: 'marketInfo'
         }
-      }, 
+      },
       {
-        $group:{
+        $group: {
           _id: "$sportsId",
-          amount: { $sum: "$amount"},
+          amount: { $sum: "$amount" },
           userId: { $first: "$userId" },
           name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } }
         }
@@ -171,27 +174,27 @@ const bookDetailSportsWiseReport = async (req, res) => {
 }
 
 const bookDetailMatchWiseReports = async (req, res) => {
-  try{
+  try {
     // const errors = validationResult(req);
     // if (errors.errors.length !== 0) {
     //   return res.status(400).send({ errors: errors.errors });
     // }
-    
+
     // const userId = req.decoded.userId
     // console.log(" userId ====== ", userId);
-    const Id =  parseInt(req.query.userId)
+    const Id = parseInt(req.query.userId)
     const response = await CashDeposit.aggregate([
-      {  
+      {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
           cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           $and: [
             {
-              createdAt: {$gte: req.query.startDate}
+              createdAt: { $gte: req.query.startDate }
             },
             {
-              createdAt: {$lte: req.query.endDate}
+              createdAt: { $lte: req.query.endDate }
             }
           ]
         }
@@ -208,11 +211,11 @@ const bookDetailMatchWiseReports = async (req, res) => {
           foreignField: '_id',
           as: 'bets'
         }
-      }, 
+      },
       {
-        $group:{
-          _id: {$arrayElemAt: ["$bets.matchId", 0]},
-          amount: { $sum: "$amount"},
+        $group: {
+          _id: { $arrayElemAt: ["$bets.matchId", 0] },
+          amount: { $sum: "$amount" },
           userId: { $first: "$userId" },
           date: { $first: "$date" },
           name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
@@ -232,28 +235,28 @@ const bookDetailMatchWiseReports = async (req, res) => {
   }
 }
 
-const bookDetailMatchWiseDetailedReports = async(req, res) => {
-  try{
-    if(!req.query.userId || !req.query.matchId){
+const bookDetailMatchWiseDetailedReports = async (req, res) => {
+  try {
+    if (!req.query.userId || !req.query.matchId) {
       return res.send({
         success: false,
         message: "Request Invalid !",
       });
     }
-    const userId      = parseInt(req.query.userId);
-    
-    const matchId     = req.query.matchId;
-    const currentUser = await User.findOne({ userId: userId});
-    if(!currentUser){
-      return res.send({  success: false,  message: "user not found "});
+    const userId = parseInt(req.query.userId);
+
+    const matchId = req.query.matchId;
+    const currentUser = await User.findOne({ userId: userId });
+    if (!currentUser) {
+      return res.send({ success: false, message: "user not found " });
     }
-    const parent      = await User.findOne({ userId: currentUser.createdBy});
-    if(!parent && currentUser.role != 0){
-      return res.send({  success: false,  message: "parent missing !"});
+    const parent = await User.findOne({ userId: currentUser.createdBy });
+    if (!parent && currentUser.role != 0) {
+      return res.send({ success: false, message: "parent missing !" });
     }
-    if(currentUser.role == '5'){
-      const match       = await Events.findById(matchId)
-      const response    = await CashDeposit.aggregate([
+    if (currentUser.role == '5') {
+      const match = await Events.findById(matchId)
+      const response = await CashDeposit.aggregate([
         {
           $match: {
             matchId: matchId,
@@ -267,7 +270,7 @@ const bookDetailMatchWiseDetailedReports = async(req, res) => {
                 }
                 ]
               },
-              {       
+              {
                 cashOrCredit: { $in: ["Commission"] }
               }
             ]
@@ -285,11 +288,11 @@ const bookDetailMatchWiseDetailedReports = async(req, res) => {
             foreignField: '_id',
             as: 'betsDetails'
           }
-        }, 
-        { 
-          $group:{
+        },
+        {
+          $group: {
             _id: "$betId",
-            pl: { $sum: "$amount"},
+            pl: { $sum: "$amount" },
             sattledAt: { $first: "$date" },
             price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
             name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
@@ -308,17 +311,17 @@ const bookDetailMatchWiseDetailedReports = async(req, res) => {
         dealer: parent.userName,
         currentUser: currentUser.userName,
         Winner: match?.winner
-        
+
       });
 
-    }else {
-      const userId        = parseInt(req.decoded.userId);
-      const directChild   = await User.distinct("userId", { createdBy: userId });
+    } else {
+      const userId = parseInt(req.decoded.userId);
+      const directChild = await User.distinct("userId", { createdBy: userId });
       const grandchiltren = await User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
-      const users         = [userId, ...directChild, ...grandchiltren];
+      const users = [userId, ...directChild, ...grandchiltren];
 
       console.log(" users list  ======== ", users);
-    
+
       const response = await CashDeposit.aggregate([
         {
           $match: {
@@ -334,20 +337,20 @@ const bookDetailMatchWiseDetailedReports = async(req, res) => {
             foreignField: 'userId',
             as: 'userInfo'
           }
-        }, 
+        },
         {
-          $group:{
+          $group: {
             _id: "$userId",
-            amount: { $sum: "$amount"},
+            amount: { $sum: "$amount" },
             name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
           }
         }
       ]);
-    
+
       const parentResponse = await CashDeposit.aggregate([
-        {  
+        {
           $match: {
-            userId: currentUser.createdBy ,
+            userId: currentUser.createdBy,
             commissionFrom: currentUser.userId,
             cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           }
@@ -359,17 +362,17 @@ const bookDetailMatchWiseDetailedReports = async(req, res) => {
             foreignField: 'userId',
             as: 'userInfo'
           }
-        }, 
+        },
         {
-          $group:{
+          $group: {
             _id: "$userId",
             // parent: true,
-            amount: { $sum: "$upLineAmount"},
+            amount: { $sum: "$upLineAmount" },
             name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
           }
         }
       ]);
-    
+
       return res.send({
         success: true,
         message: 'Daily reports',
@@ -386,9 +389,9 @@ const bookDetailMatchWiseDetailedReports = async(req, res) => {
   }
 }
 
-loginRouter.get('/bookDetailReport', bookDetailReport );
-loginRouter.get('/bookDetailSportsWiseReport', bookDetailSportsWiseReport );
-loginRouter.get('/bookDetailMatchWiseReports', bookDetailMatchWiseReports );
-loginRouter.get('/bookDetailMatchWiseDetailedReports', bookDetailMatchWiseDetailedReports );
+loginRouter.get('/bookDetailReport', bookDetailReport);
+loginRouter.get('/bookDetailSportsWiseReport', bookDetailSportsWiseReport);
+loginRouter.get('/bookDetailMatchWiseReports', bookDetailMatchWiseReports);
+loginRouter.get('/bookDetailMatchWiseDetailedReports', bookDetailMatchWiseDetailedReports);
 
 module.exports = { loginRouter };
