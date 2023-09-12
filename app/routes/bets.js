@@ -675,12 +675,12 @@ const placeBet = async (req, res) => {
     // ((rate-1) /100 ) * bet_amount = loosing amount 
 
     else if (type == 1 &&  subMarketDetail.Id == config.BookMaker) {
-      loosingAmount =  ((betRate-1) / 100) * betAmount;
+      loosingAmount =  (betRate * betAmount) /100;
       winningAmount = betAmount;
       console.log(" 1 loosingAmount =========  ", loosingAmount);
     }
     else if (type == 0 && subMarketDetail.Id == config.BookMaker) {
-      winningAmount = ((betRate-1) / 100)  * betAmount;
+      winningAmount = (betRate * betAmount)/100;
       loosingAmount = betAmount;
       console.log(" 0  loosingAmount =========  ", winningAmount);
 
