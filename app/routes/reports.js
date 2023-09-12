@@ -637,9 +637,7 @@ async function user_book(req, res) {
 
 
       }
-    } else  {
-      parentInfo.push({id: currentUser.userId, downLineShare: currentUser.downLineShare, username: currentUser.userName});
-    }
+    } 
 
     return {
       ...record,
