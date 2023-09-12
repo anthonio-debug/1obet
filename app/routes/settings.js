@@ -1880,7 +1880,7 @@ const getMarketIDSData = async (req, res) => {
     }
 
     const result = await MarketIDS.find(
-      { eventId: req.body.eventId, runners: {$ne : null} },
+      { eventId: req.body.eventId, runners: { $ne: null } },
     );
 
     return res.status(200).send({
@@ -1913,7 +1913,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
         message: 'Invalid Request !'
       });
     }
-    
+
     return res.status(200).send({
       success: true,
     });
@@ -1938,8 +1938,8 @@ const getEventWinnerName = async (req, res) => {
       });
     }
 
-    const result = await Events.findOne({Id:req.body.eventId },{winner})
-    
+    const result = await Events.findOne({ Id: req.body.eventId }, { winner: 1 });
+
     return res.status(200).send({
       success: true,
       result
