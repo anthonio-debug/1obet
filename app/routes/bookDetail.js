@@ -45,12 +45,11 @@ const bookDetailReport = async (req, res) => {
           _id: "$userId",
           amount: { $sum: "$amount"},
           name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
-          betsIdArray: { $push: "$betsId" }
+          betsIdArray: { $push: "$betId" }
         }
       }
     ]);
 
-    var parentDatas = [];
     var realResult = response;
 
 
@@ -61,7 +60,7 @@ const bookDetailReport = async (req, res) => {
         {
           $match: {
             userId: {$ne: element._id},
-            betsId: { $in: element.betsIdArray },
+            betId: { $in: element.betsIdArray },
             cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
             $and: [
               {
