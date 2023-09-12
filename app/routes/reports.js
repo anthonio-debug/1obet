@@ -587,6 +587,7 @@ async function user_book(req, res) {
         downLineShare: { $first: "$downLineShare" },
         betAmountTotal: { $sum: "$betAmount" },
         betRateAverage: { $avg: "$betRate" },
+        marketName: { $first: "$marketName" },
         totalWinningAmount: { $sum: "$winningAmount" },
         totalLoosingAmount: { $sum: "$loosingAmount" },
         event: { $first: "$event" },
