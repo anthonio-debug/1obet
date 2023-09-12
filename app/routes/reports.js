@@ -506,7 +506,9 @@ function GetAllCashDepositLedger(req, res) {
 
 async function user_book(req, res) {
   const userId = parseInt(req.decoded.userId)
-  var query = { status: 1 }
+  var query = { status: 1, marketId: {$ne: null} }
+
+
   if (req.body.matchId) {
     query.matchId = req.body.matchId;
   }
