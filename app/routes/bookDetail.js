@@ -16,7 +16,6 @@ const bookDetailReport = async (req, res) => {
   try {
     const userId         = parseInt(req.decoded.userId);
     const grandchiltren  = await User.distinct("userId", { createdBy: userId, role: '5' });
-    console.log(" users list  ======== ", users);
 
     const response = await CashDeposit.aggregate([
       {
