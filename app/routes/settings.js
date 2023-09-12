@@ -821,7 +821,7 @@ function updateMatch(req, res) {
 
 
         const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
-        axios.get('http://localhost:3004/updateField?id='+_id+'&data='+base64data);
+        axios.get('http://localhost:3004/updateField?id=' + _id + '&data=' + base64data);
 
         Events.findOneAndUpdate(
           { _id },
@@ -867,7 +867,7 @@ function updateMatch(req, res) {
         successMessage = 'Match resumed successfully';
 
         const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
-        axios.get('http://localhost:3004/updateField?id='+_id+'&data='+base64data);
+        axios.get('http://localhost:3004/updateField?id=' + _id + '&data=' + base64data);
 
 
         Events.findOneAndUpdate(
@@ -899,7 +899,7 @@ function updateMatch(req, res) {
 
 
       const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
-      axios.get('http://localhost:3004/updateField?id='+_id+'&data='+base64data);
+      axios.get('http://localhost:3004/updateField?id=' + _id + '&data=' + base64data);
 
 
       Events.findOneAndUpdate(
@@ -1472,16 +1472,16 @@ async function getAllGamesResults(req, res) {
 
     if (req.body.sportsId == 10) {
       req.body.sportsId = 4;
-      fancyCheck=true;
+      fancyCheck = true;
     }
 
     if (req.body.sportsId == 1 || req.body.sportsId == 2 || req.body.sportsId == 4) {
-      query.isShowed= true;
-      query.status= {$ne: 'OPEN'} 
+      query.isShowed = true;
+      query.status = { $ne: 'OPEN' }
     }
 
-    if (req.body.sportsId == 7 || req.body.sportsId == 4339 ) {
-      query.status= {
+    if (req.body.sportsId == 7 || req.body.sportsId == 4339) {
+      query.status = {
         $nin: ["OPEN", "WAITING"]
       }
     }
@@ -1537,7 +1537,7 @@ async function getAllGamesResults(req, res) {
 
     console.log("Query =========== ", query);
 
-    Events.paginate(query, options, async(err, results) => {
+    Events.paginate(query, options, async (err, results) => {
       if (err) {
         console.error(err);
         return res.status(500).json({ message: 'Pagination failed', error: err.message });
@@ -1548,17 +1548,17 @@ async function getAllGamesResults(req, res) {
       }
 
       var realResults = [];
-      
+
       for (let index = 0; index < results.docs.length; index++) {
         const ev = results.docs[index];
         var marketResultForEvent;
         if (fancyCheck) {
-           marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}, sportID: -1});
+          marketResultForEvent = await MarketIDS.find({ eventId: ev.Id, winnerInfo: { $ne: null }, sportID: -1 });
         } else {
-           marketResultForEvent = await MarketIDS.find({ eventId: ev.Id , winnerInfo: {$ne: null}, sportID: {$ne: -1}});
+          marketResultForEvent = await MarketIDS.find({ eventId: ev.Id, winnerInfo: { $ne: null }, sportID: { $ne: -1 } });
         }
 
-        if (marketResultForEvent.length>0) {
+        if (marketResultForEvent.length > 0) {
           for (let i = 0; i < marketResultForEvent.length; i++) {
             const marketData = marketResultForEvent[i];
             const combinedData = {
@@ -1568,12 +1568,12 @@ async function getAllGamesResults(req, res) {
             };
             realResults.push(combinedData);
           }
-        }  else {
-          var  checkMarketRecord2;
+        } else {
+          var checkMarketRecord2;
           if (fancyCheck) {
-             checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}, sportID: -1});
+            checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: { $ne: null }, sportID: -1 });
           } else {
-             checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: {$ne: null}, sportID: {$ne: -1}});
+            checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: { $ne: null }, sportID: { $ne: -1 } });
           }
           if (checkMarketRecord2) {
             const combinedData = {
@@ -1663,19 +1663,19 @@ async function setCloseEventWithCancelBet(req, res) {
 
   if (!currentEv) {
     return res
-    .status(404)
-    .send({ message: 'Events not exist ... ' });
+      .status(404)
+      .send({ message: 'Events not exist ... ' });
   }
 
-  if (req.query.reason)  {
-    await Events.findOneAndUpdate({_id: currentEv._id}, {status: 'CLOSED-'+req.query.reason, isCanceled: true});
+  if (req.query.reason) {
+    await Events.findOneAndUpdate({ _id: currentEv._id }, { status: 'CLOSED-' + req.query.reason, isCanceled: true });
   } else {
-    await Events.findOneAndUpdate({_id: currentEv._id}, {status: 'CLOSED-COMPANY', isCanceled: true});
+    await Events.findOneAndUpdate({ _id: currentEv._id }, { status: 'CLOSED-COMPANY', isCanceled: true });
   }
-  
-  var updateField = {status: 'CLOSED-COMPANY'};
+
+  var updateField = { status: 'CLOSED-COMPANY' };
   const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
-  axios.get('http://localhost:3004/updateField?id='+_id+'&data='+base64data);
+  axios.get('http://localhost:3004/updateField?id=' + _id + '&data=' + base64data);
 
 
   await MarketIDS.updateMany(
@@ -1684,7 +1684,7 @@ async function setCloseEventWithCancelBet(req, res) {
   );
 
 
-  const bets = await Bets.find({status: 1, matchId: currentEv._id.toString()})
+  const bets = await Bets.find({ status: 1, matchId: currentEv._id.toString() })
 
   for (let index = 0; index < bets.length; index++) {
     const bet = bets[index];
@@ -1709,8 +1709,8 @@ async function setMatchShow(req, res) {
 
       if (currentEv.sportsId == '4' && currentEv.matchType == '') {
         return res
-        .status(404)
-        .send({ message: 'You need to save correct match type before this action' });
+          .status(404)
+          .send({ message: 'You need to save correct match type before this action' });
       }
 
       if (currentEv.inplay == true) {
@@ -1762,7 +1762,7 @@ async function setBattingDisabled(req, res) {
       .send({ message: 'only company can ... ' });
   }
   try {
-    const currentEv = await Events.findOneAndUpdate({ Id: req.query.matchId }, { $set:{ betAllowed : req.query.status } })
+    const currentEv = await Events.findOneAndUpdate({ Id: req.query.matchId }, { $set: { betAllowed: req.query.status } })
     return res.send({
       success: true,
       message: 'Event Successfully updated!'
@@ -1808,10 +1808,10 @@ const createNewSession = async (matchId) => {
 
 }
 
-const sessionList = async (req, res)=>{
+const sessionList = async (req, res) => {
   try {
     const eventId = Number(req.query.eventId)
-    const session =  await Session.find({
+    const session = await Session.find({
       eventId: eventId
     });
 
@@ -1820,7 +1820,7 @@ const sessionList = async (req, res)=>{
       message: 'session list',
       results: session,
     });
-    
+
   } catch (error) {
     return res.status(404).send({
       success: false,
@@ -1830,10 +1830,10 @@ const sessionList = async (req, res)=>{
 
 }
 
-const updateSessionScore  = async (req, res)=>{
+const updateSessionScore = async (req, res) => {
 
   try {
-    if (!req.body.eventId || !req.body.session  || !req.body.score){
+    if (!req.body.eventId || !req.body.session || !req.body.score) {
       return res.status(404).send({
         success: false,
         message: 'Invalid Request !'
@@ -1843,16 +1843,16 @@ const updateSessionScore  = async (req, res)=>{
     const session = Number(req.body.session)
     const score = Number(req.body.score);
 
-    const update =  await Session.findOneAndUpdate(
-      {eventId: eventId, sessionNo: session},
-      {score: score}
+    const update = await Session.findOneAndUpdate(
+      { eventId: eventId, sessionNo: session },
+      { score: score }
     );
 
     return res.status(200).send({
       success: true,
       message: 'session successfully updated !'
     });
-    
+
   } catch (error) {
     return res.status(404).send({
       success: false,
@@ -1861,6 +1861,71 @@ const updateSessionScore  = async (req, res)=>{
   }
 
 }
+
+const getMarketIDSData = async (req, res) => {
+
+  if (req.decoded.role != '0') {
+    return res
+      .status(404)
+      .send({ message: 'only company can ... ' });
+  }
+
+
+  try {
+    if (!req.body.eventId) {
+      return res.status(404).send({
+        success: false,
+        message: 'Invalid Request !'
+      });
+    }
+
+    const result = await MarketIDS.find(
+      { eventId: req.body.eventId, runners: {$ne : null} },
+    );
+
+    return res.status(200).send({
+      success: true,
+      results: result
+    });
+
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Something went wrong!'
+    });
+  }
+}
+
+
+const saveMarketIDSWinnerRunner = async (req, res) => {
+
+  if (req.decoded.role != '0') {
+    return res
+      .status(404)
+      .send({ message: 'only company can ... ' });
+  }
+
+
+  try {
+    if (!req.body.eventId || req.body.marketId || req.body.runnerId) {
+      return res.status(404).send({
+        success: false,
+        message: 'Invalid Request !'
+      });
+    }
+    
+    return res.status(200).send({
+      success: true,
+    });
+
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Something went wrong!'
+    });
+  }
+}
+
 
 
 
@@ -1929,5 +1994,14 @@ loginRouter.post('/getAllGamesResults', getAllGamesResults);
 loginRouter.get('/setBattingDisabled', setBattingDisabled);
 loginRouter.get('/sessionList', sessionList);
 loginRouter.post('/updateSessionScore', updateSessionScore);
+
+
+
+
+loginRouter.post('/getMarketIDSData', getMarketIDSData);
+loginRouter.post('/saveMarketIDSWinnerRunner', saveMarketIDSWinnerRunner);
+
+
+
 
 module.exports = { loginRouter, router, listOddsAPI };

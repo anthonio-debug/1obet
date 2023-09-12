@@ -156,5 +156,7 @@
   "setBattingDisabled",
 
   "user_book",
-  "fancy_full_book"
+  "fancy_full_book",
+  "getMarketIDSData",
+  "saveMarketIDSWinnerRunner"
 ]
