@@ -740,9 +740,11 @@ const placeBet = async (req, res) => {
 //Qaiser
 
 expAmount = calculateExposure('_3rdPartyMarketId')
-		  console.log("-----------------------------",expAmount);
+		  console.log("====================================================================",expAmount);
 		  
-		  
+		  console.log("====================================================================",expAmount);
+		  console.log("====================================================================",expAmount);
+		  console.log("====================================================================",expAmount);
  const lastBetsCount = await  Bets.countDocuments({
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
