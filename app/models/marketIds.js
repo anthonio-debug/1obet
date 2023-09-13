@@ -13,6 +13,9 @@ const MarketIDsSchema = new mongoose.Schema({
   winnerInfo: { type: mongoose.Schema.Types.Mixed },
   lastResultCheckTime: { type: Number, default: 0 },
   readyForScore: { type: Boolean, default: false },
+  manuelClose: { type: Boolean, default: false },
+  winnerRunnerData: { type: String },
+
 });
 
 const MarketIDS = mongoose.model('MarketIDS', MarketIDsSchema);

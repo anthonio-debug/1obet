@@ -1907,16 +1907,68 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
 
 
   try {
-    if (!req.body.eventId || req.body.marketId || req.body.runnerId) {
+    if (!req.body.eventId || !req.body.marketId || !req.body.runnerId) {
       return res.status(404).send({
         success: false,
         message: 'Invalid Request !'
       });
     }
 
-    return res.status(200).send({
+    const market = await MarketIDS.find(
+      { eventId: req.body.eventId, marketId: req.body.marketId },
+    );
+
+
+    if (!market) {
+      return res.status(404).send({
+        success: false,
+        message: 'Market is not exist for this event'
+      }); 
+    }
+
+
+    if (!market.runners || market.runners.length == 0) {
+      await MarketIDS.findOneAndUpdate(
+          { eventId: req.body.eventId, marketId: req.body.marketId },
+          { $set: { winnerInfo: req.body.runnerId, manuelClose: true, winnerRunnerData: req.body.runnerId } },
+      );
+      return res.send({
+        success: true,
+        message: 'Winner runner saved',
+      });
+    }
+
+    
+   
+    var selectedR = null;
+
+    for (let index = 0; index < market.runners.length; index++) {
+      const r = market.runners[index];
+      if (r.SelectionId == req.body.runnerId) {
+        selectedR = r;
+        break;
+      }
+    }
+
+
+    if (selectedR) {
+      await MarketIDS.findOneAndUpdate(
+        { eventId: req.body.eventId, marketId: req.body.marketId },
+        { $set: { winnerInfo: selectedR.runnerName, manuelClose: true, winnerRunnerData: req.body.runnerId } },
+      );
+    } else {
+      await MarketIDS.findOneAndUpdate(
+        { eventId: req.body.eventId, marketId: req.body.marketId },
+        { $set: { winnerInfo: req.body.runnerId, manuelClose: true, winnerRunnerData: req.body.runnerId } },
+    );
+    }
+
+
+    return res.send({
       success: true,
+      message: 'Winner runner saved',
     });
+
 
   } catch (error) {
     return res.status(404).send({
