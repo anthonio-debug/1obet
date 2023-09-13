@@ -739,7 +739,7 @@ const placeBet = async (req, res) => {
 
 //Qaiser
 
-expAmount = calculateExposure('_3rdPartyMarketId')
+const expAmount = calculateExposure('_3rdPartyMarketId')
 		  console.log("====================================================================",expAmount);
 		  
 		  console.log("====================================================================",expAmount);
