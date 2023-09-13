@@ -91,13 +91,13 @@ async function registerUser(req, res) {
       }
 
       user.downLineShare = req.body.downLineShare;
-      var token = getNonExpiringToken(
-        user.userId,
-        req.decoded.userId,
-        req.body.role,
-        user.isActive
-      );
-      user.token = token;
+      // var token = getNonExpiringToken(
+      //   user.userId,
+      //   req.decoded.userId,
+      //   req.body.role,
+      //   user.isActive
+      // );
+      // user.token = token;
       user.createdBy = req.decoded.userId;
 
       // Add the if condition back here to save the betLimits if parentUser.userId is '0'
