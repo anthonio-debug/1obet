@@ -736,6 +736,30 @@ const placeBet = async (req, res) => {
         })
         await position.save();
 
+
+//Qaiser
+
+expAmount = calculateExposure('_3rdPartyMarketId')
+		  console.log("-----------------------------",expAmount);
+		  
+		  
+ const lastBetsCount = await  Bets.countDocuments({
+          marketId: _3rdPartyMarketId,
+          userId: req.decoded.userId,
+          type: type
+        });
+        let expAmount = loosingAmount;
+        if(lastBetsCount){
+          expAmount = calculateExposure(_3rdPartyMarketId)
+		  console.log(expAmount);
+        }
+//end Qaiser
+
+
+
+
+
+
         const updatedUser = await User.findOneAndUpdate(
           { userId: userId },
           {
@@ -764,6 +788,15 @@ const placeBet = async (req, res) => {
     return res.status(404).send({ message: `Error placing bet ${error}` });
   }
 }
+
+
+
+async function calculateExposure(_3rdPartyMarketId){
+	
+	return 'Qaiser tests';
+	
+}
+
 
 async function getUserBets(req, res) {
   const errors = validationResult(req);
