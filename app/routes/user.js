@@ -259,7 +259,7 @@ function login(req, res) {
           user.save();
         }
         else if(user.token){
-          jwt.verify(token, config.secret, function (err, decoded) {       
+          jwt.verify(user.token, config.secret, function (err, decoded) {       
             if(err ||  decoded.expr < new Date().getTime()){
               console.log(" =========================  Expired token =====================  ");
               console.log(" ================== decoded ", decoded);
