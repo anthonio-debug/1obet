@@ -109,6 +109,7 @@ const placeBet = async (req, res) => {
     let _3rdPartyMarketId = 0
     let TargetScore = 0;
     let fancyData = null;
+    let oddsInfo = null
 
     if (betAmount < config.betMinimumAmount) {
       return res.status(404).send({ message: `minimum bet should be ${config.betMinimumAmount}` });
@@ -223,6 +224,7 @@ const placeBet = async (req, res) => {
       console.log('data from  API', oddsData);
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
       const DBOddDetails = await Odds.findById(oddsId);
+      oddsInfo           = DBOddDetails;
       runnerName = runnerFromAPI.runnerName
       if (!DBOddDetails) {
         return res.status(404).send({
@@ -268,9 +270,6 @@ const placeBet = async (req, res) => {
         console.log('Selected odds not found for the bet');
         return res.status(404).send({ message: 'Bet miss Matched' });
       }
-
-      // console.log(`ApiResponseOdds at ${matchedIndex}`, ApiResponseOdds[matchedIndex]);
-
       if (ApiResponseOdds[matchedIndex].price < betRate) {
         return res.status(404).send({ message: `Bet miss matched` });
       }
@@ -305,6 +304,7 @@ const placeBet = async (req, res) => {
         console.log("ApiResponseOdds AvailableToBack === ", ApiResponseOdds);
 
         const DBOddDetails = await RaceOdds.findById(oddsId);
+        oddsInfo           = DBOddDetails;
         console.log("DBOddDetails === ", DBOddDetails);
         const OddDetailsTeam = DBOddDetails.runners.find((runner) => {
           return runner.selectionId == selectionId
@@ -354,7 +354,7 @@ const placeBet = async (req, res) => {
     }
 
     //for fancy
-    else if (subMarketDetail.Id == config.Fancy) {
+    else if (subMarketDetail.Id == config.Fancy){
       const fancyBetLimit  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.Fancy }).exec();
       if(!userMaxBetSize){
         return res.status(404).send({ message: `something went wrong !` });
@@ -371,6 +371,7 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = response?.data?.data?.t3;
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3
+      oddsInfo           = dbFancyOdds;
 
       console.log(" apiFancyOdds ====== ", apiFancyOdds);
       console.log(" dbFancyOdds  ====== ", dbFancyOdds);
@@ -475,6 +476,7 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = response?.data?.data?.t2?.length ? response?.data?.data?.t2[0]?.bm1 : [];
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds  = DBOddDetails?.data?.data?.t2[0]?.bm1
+      oddsInfo           = dbFancyOdds;
 
       console.log(" apiFancyOdds ==== ", apiFancyOdds)
       console.log(" dbFancyOdds ==== ", dbFancyOdds)
@@ -699,19 +701,21 @@ const placeBet = async (req, res) => {
       loosingAmount = betAmount;
     }
 
-
     let expAmount = loosingAmount;
-    let lastBetsCount = await  Bets.countDocuments({
-      marketId: _3rdPartyMarketId,
-      userId: req.decoded.userId,
-      type: type
-    });
-    lastBetsCount = 1;
+    // let lastBetsCount = await  Bets.countDocuments({
+    //   marketId: _3rdPartyMarketId,
+    //   userId: req.decoded.userId,
+    //   type: type
+    // });
+    // lastBetsCount = 1;
       
-    if(lastBetsCount){
-      expAmount = calculateExposure(_3rdPartyMarketId)
-      console.log(expAmount);
-    }
+    // if(lastBetsCount){
+    //   console.log(" ============== _3rdPartyMarketId ". _3rdPartyMarketId);
+    //   expAmount = calculateExposure(_3rdPartyMarketId)
+    //   console.log(expAmount);
+    // }
+
+    console.log(" ================ RUNNER INFO ================= ", oddsInfo);
     return res.json({
       msg: "Hello before bet placing !"
     })
