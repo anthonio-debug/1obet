@@ -210,10 +210,10 @@ const placeBet = async (req, res) => {
           return res.status(404).send({ message: `max bet size is : ${TiedMatchLimit.amount}` });
         }
       }
-
       const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
       const response = await axios.get(url);
       const oddsData = response.data;
+      console.log(" oddsData Test ============ ", oddsData);
       if (!oddsData) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
