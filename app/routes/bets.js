@@ -798,8 +798,6 @@ const placeBet = async (req, res) => {
 
 
 async function calculateExposure(marketId, runners, userId){
-  const odds    = await Odds.find({ marketId: marketId }).sort({ _id: -1});
-  const runners = odds.runners
   console.log(" ================ Runners ================ ", runners);
   return 0
 }
