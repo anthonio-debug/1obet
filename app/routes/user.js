@@ -253,13 +253,15 @@ function login(req, res) {
           return res.status(404).send({ message: 'Invalid username or password' });
 
         if (!user.token) {          
+          console.log(" =========================  Missing token =====================  ");
           var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
           user.token = token;
           user.save();
         }
         else if(user.token){
-          jwt.verify(token, config.secret, function (err, decoded) {           
+          jwt.verify(token, config.secret, function (err, decoded) {       
             if(err ||  decoded.exp < new Date().getTime()){
+              console.log(" =========================  Expired token =====================  ");
               var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
               user.token = token;
               user.save();
