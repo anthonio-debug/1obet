@@ -299,7 +299,7 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await RaceOdds.findById(oddsId);
       const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.selectionId == selectionId);
       let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => runner.SelectionId);
+      runnerForSaveInbets = runners.map((runner) => runner.selectionId);
 
       if (type == 0) {
         ApiResponseOdds = runnerFromAPI?.exchange?.availableToBack
