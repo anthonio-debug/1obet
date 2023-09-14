@@ -685,6 +685,11 @@ const placeBet = async (req, res) => {
       console.log(" 0  loosingAmount =========  ", winningAmount);
 
     }
+    // fancy Formula 
+    // Back
+    // Value showing below/100)*bet amount = winning amount
+    // Lay
+    // (Value showing below/100)*bet amount = loosing amount
     else if (type == 1 &&  subMarketDetail.Id == config.Fancy) {
       loosingAmount =  (fancyRate/100) * betAmount;
       winningAmount = betAmount;
@@ -694,11 +699,24 @@ const placeBet = async (req, res) => {
       loosingAmount = betAmount;
     }
 
-    // fancy Formula 
-    // Back
-    // Value showing below/100)*bet amount = winning amount
-    // Lay
-    // (Value showing below/100)*bet amount = loosing amount
+
+    let expAmount = loosingAmount;
+    const lastBetsCount = await  Bets.countDocuments({
+      marketId: _3rdPartyMarketId,
+      userId: req.decoded.userId,
+      type: type
+    });
+    lastBetsCount = 1;
+      
+    if(lastBetsCount){
+      expAmount = calculateExposure(_3rdPartyMarketId)
+      console.log(expAmount);
+    }
+    return res.json({
+      msg: "Hello before bet placing !"
+    })
+
+
 
     const bet = new Bets({
       marketId: _3rdPartyMarketId,
@@ -735,27 +753,20 @@ const placeBet = async (req, res) => {
           betId: result._id,
         })
         await position.save();
-
-
-//Qaiser
-let expAmount1 = loosingAmount;
-let expAmount = calculateExposure('_3rdPartyMarketId')
-		  console.log("====================================================================",expAmount);
-		  
-		  console.log("====================================================================",expAmount);
-		  console.log("====================================================================",expAmount);
-		  console.log("====================================================================",expAmount);
- const lastBetsCount = await  Bets.countDocuments({
-          marketId: _3rdPartyMarketId,
-          userId: req.decoded.userId,
-          type: type
-        });
+    //Qaiser
+      let expAmount = loosingAmount;
+      const lastBetsCount = await  Bets.countDocuments({
+        marketId: _3rdPartyMarketId,
+        userId: req.decoded.userId,
+        type: type
+      });
+      lastBetsCount = 1;
         
-        if(lastBetsCount){
-          expAmount = calculateExposure(_3rdPartyMarketId)
-		  console.log(expAmount);
-        }
-//end Qaiser
+      if(lastBetsCount){
+        expAmount = calculateExposure(_3rdPartyMarketId)
+		    console.log(expAmount);
+      }
+    //end Qaiser
 
 
 
@@ -793,10 +804,11 @@ let expAmount = calculateExposure('_3rdPartyMarketId')
 
 
 
-async function calculateExposure(_3rdPartyMarketId){
-	
-	return 'Qaiser tests';
-	
+async function calculateExposure(marketId){
+  const odds    = await Odds.find({ marketId: marketId }).sort({ _id: -1});
+  const runners = odds.runners
+  console.log(" ================ Runners ================ ", runners);
+  return 0
 }
 
 
