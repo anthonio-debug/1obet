@@ -109,7 +109,7 @@ const placeBet = async (req, res) => {
     let _3rdPartyMarketId = 0
     let TargetScore = 0;
     let fancyData = null;
-    let oddsInfo = null
+    let runnerForSaveInbets = null
 
     if (betAmount < config.betMinimumAmount) {
       return res.status(404).send({ message: `minimum bet should be ${config.betMinimumAmount}` });
@@ -215,16 +215,15 @@ const placeBet = async (req, res) => {
       const response = await axios.get(url);
       const oddsData = response.data;
 
-
-
       if (!oddsData) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
       }
-      console.log('data from  API', oddsData);
+      console.log(' data from  API ', oddsData);
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
       const DBOddDetails = await Odds.findById(oddsId);
-      oddsInfo           = DBOddDetails;
+      let runners = DBOddDetails?.runners;
+      runnerForSaveInbets = runners.map((runner) => runner.SelectionId);
       const OddDetailsRunner = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
       runnerName = OddDetailsRunner?.runnerName
       if (!DBOddDetails) {
@@ -289,29 +288,24 @@ const placeBet = async (req, res) => {
         console.log(`Match odds not found for sports ID`);
         return res.status(404).send({ message: `Bet mis match` });
       }
-
-      console.log('data =========== ', oddsData[0]?.runners);
-      console.log('selectionId ========= ', selectionId);
+      // console.log('data =========== ', oddsData[0]?.runners);
+      console.log('selectionId =========== ', selectionId);
 
       const runnerFromAPI = oddsData[0].runners.find((runner) => {
         return runner.selectionId == selectionId
       });
-      // 
       runnerName = req.body.runnerName
       console.log('match odds runners ====== ', runnerFromAPI);
+      const DBOddDetails = await RaceOdds.findById(oddsId);
+      const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.selectionId == selectionId);
+      let runners = DBOddDetails?.runners;
+      runnerForSaveInbets = runners.map((runner) => runner.SelectionId);
 
       if (type == 0) {
         ApiResponseOdds = runnerFromAPI?.exchange?.availableToBack
         console.log("ApiResponseOdds AvailableToBack === ", ApiResponseOdds);
-
-        const DBOddDetails = await RaceOdds.findById(oddsId);
-        oddsInfo           = DBOddDetails;
         console.log("DBOddDetails === ", DBOddDetails);
-        const OddDetailsTeam = DBOddDetails.runners.find((runner) => {
-          return runner.selectionId == selectionId
-        });
         const availableToBack = OddDetailsTeam.exchange.availableToBack;
-        // console.log('availableToBack', availableToBack);
         matchedIndex = availableToBack.findIndex((back) => {
           return back.price == betRate;
         });
@@ -325,9 +319,6 @@ const placeBet = async (req, res) => {
       } else if (type == 1) {
         ApiResponseOdds = runnerFromAPI.exchange.availableToLay
         console.log("ApiResponseOdds AvailableToLay ====== ", ApiResponseOdds);
-        const DBOddDetails = await RaceOdds.findById(oddsId);
-        const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.selectionId == selectionId);
-
         const AvailableToLay = OddDetailsTeam.exchange.availableToLay;
         console.log(" AvailableToLay new Server Test  ======= ", AvailableToLay);
         matchedIndex = AvailableToLay.findIndex((back) => {
@@ -372,7 +363,7 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = response?.data?.data?.t3;
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3
-      oddsInfo           = dbFancyOdds;
+      runnerForSaveInbets = dbFancyOdds;
 
       console.log(" apiFancyOdds ====== ", apiFancyOdds);
       console.log(" dbFancyOdds  ====== ", dbFancyOdds);
@@ -477,7 +468,7 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = response?.data?.data?.t2?.length ? response?.data?.data?.t2[0]?.bm1 : [];
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds  = DBOddDetails?.data?.data?.t2[0]?.bm1
-      oddsInfo           = dbFancyOdds;
+      runnerForSaveInbets           = dbFancyOdds;
 
       console.log(" apiFancyOdds ==== ", apiFancyOdds)
       console.log(" dbFancyOdds ==== ", dbFancyOdds)
@@ -672,32 +663,25 @@ const placeBet = async (req, res) => {
       loosingAmount = betAmount;
     }
 
-    // BookMaker
-    // ((rate-1) /100 ) * bet_amount = winning amount 
-    // LAY
-    // ((rate-1) /100 ) * bet_amount = loosing amount 
-
     else if (type == 1 &&  subMarketDetail.Id == config.BookMaker) {
+      // ((rate) /100 ) * bet_amount = loosing amount 
       loosingAmount =  (betRate * betAmount) /100;
       winningAmount = betAmount;
       console.log(" 1 loosingAmount =========  ", loosingAmount);
     }
     else if (type == 0 && subMarketDetail.Id == config.BookMaker) {
+      // ((rate) /100 ) * bet_amount = winning amount 
       winningAmount = (betRate * betAmount)/100;
       loosingAmount = betAmount;
       console.log(" 0  loosingAmount =========  ", winningAmount);
-
     }
-    // fancy Formula 
-    // Back
-    // Value showing below/100)*bet amount = winning amount
-    // Lay
-    // (Value showing below/100)*bet amount = loosing amount
     else if (type == 1 &&  subMarketDetail.Id == config.Fancy) {
+      // (Value showing below/100)*bet amount = loosing amount
       loosingAmount =  (fancyRate/100) * betAmount;
       winningAmount = betAmount;
     }
     else if (type == 0 && subMarketDetail.Id == config.Fancy) {
+      // Value showing below/100)*bet amount = winning amount
       winningAmount = (fancyRate/100) * betAmount;
       loosingAmount = betAmount;
     }
@@ -716,7 +700,7 @@ const placeBet = async (req, res) => {
     //   console.log(expAmount);
     // }
 
-    console.log(" ================ RUNNER INFO ================= ", oddsInfo);
+    console.log(" ================ RUNNER INFO ================ ", runnerForSaveInbets);
     return res.json({
       msg: "Hello before bet placing !"
     })
