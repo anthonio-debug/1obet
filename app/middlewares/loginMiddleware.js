@@ -39,7 +39,7 @@ function check(req, res, next, token) {
         req.decoded.login = userObj
         if (decoded.user !== userObj.email) return res.status(404).send({ message: 'Invalid or expired authorization token' })
         var dateNow = new Date();
-        if(decoded.exp < dateNow.getTime()){
+        if(decoded.expr < dateNow.getTime()){
           return res.status(404).send({ message: 'Invalid or expired authorization token' })
         }
         next()

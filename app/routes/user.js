@@ -260,7 +260,7 @@ function login(req, res) {
         }
         else if(user.token){
           jwt.verify(token, config.secret, function (err, decoded) {       
-            if(err ||  decoded.exp < new Date().getTime()){
+            if(err ||  decoded.expr < new Date().getTime()){
               console.log(" =========================  Expired token =====================  ");
               var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
               user.token = token;
@@ -380,7 +380,7 @@ function getNonExpiringToken(userId, createdBy, role, isActive) {
     createdBy: createdBy,
     role: role,
     isActive: isActive,
-    exp: new Date().getTime() + 12*60*60*1000
+    expr: new Date().getTime() + 12*60*60*1000
   };
   var token = jwt.sign(payload, config.secret, { expiresIn: new Date().getTime() + 12*60*60*1000 });
   return token;
