@@ -214,16 +214,15 @@ const placeBet = async (req, res) => {
       const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
       const response = await axios.get(url);
       const oddsData = response.data;
-
       if (!oddsData) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
       }
       console.log(' data from  API ', oddsData);
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
-      const DBOddDetails = await Odds.findById(oddsId);
+      const DBOddDetails  = await Odds.findById(oddsId);
       let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => runner.SelectionId);
+      runnerForSaveInbets  = runners.map((runner) => runner.SelectionId);
       const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName
       if (!DBOddDetails) {
@@ -231,7 +230,10 @@ const placeBet = async (req, res) => {
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
         });
       }
-      console.log("DBOddDetails === ", DBOddDetails);
+      
+      console.log("DBOddDetails  === ", DBOddDetails);
+      console.log("runnerFromAPI === ", runnerFromAPI);
+
       if (type == 0) {
         ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToBack
         const availableToBack = OddDetailsTeam.ExchangePrices.AvailableToBack;
