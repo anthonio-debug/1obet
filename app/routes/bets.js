@@ -224,8 +224,8 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await Odds.findById(oddsId);
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets = runners.map((runner) => runner.SelectionId);
-      const OddDetailsRunner = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
-      runnerName = OddDetailsRunner?.runnerName
+      const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+      runnerName = OddDetailsTeam?.runnerName
       if (!DBOddDetails) {
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
@@ -234,7 +234,6 @@ const placeBet = async (req, res) => {
       console.log("DBOddDetails === ", DBOddDetails);
       if (type == 0) {
         ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToBack
-        const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const availableToBack = OddDetailsTeam.ExchangePrices.AvailableToBack;
         console.log('availableToBack', availableToBack);
         matchedIndex = availableToBack.findIndex((back) => {
@@ -249,7 +248,6 @@ const placeBet = async (req, res) => {
 
       } else if (type == 1) {
         ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToLay
-        const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
         const AvailableToLay = OddDetailsTeam.ExchangePrices.AvailableToLay;
         console.log('AvailableToLay', AvailableToLay);
         matchedIndex = AvailableToLay.findIndex((back) => {
