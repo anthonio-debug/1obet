@@ -36,6 +36,9 @@ const betSchema = new mongoose.Schema({
   runnerName: { type: String },
   fancyRate: { type: Number, default: 0 },
   lastCheckResult: { type: Number, default: 0 },
+  calculateExp: { ype: Boolean, default: true},
+  exposureAmount: { type: Number, default: 0 },
+  runnersPosition: { type: Array , default: [] }
 });
 
 betSchema.pre('save', function (next) {

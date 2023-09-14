@@ -222,7 +222,10 @@ const placeBet = async (req, res) => {
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
       const DBOddDetails  = await Odds.findById(oddsId);
       let runners = DBOddDetails?.runners;
-      runnerForSaveInbets  = runners.map((runner) => runner.SelectionId);
+      runnerForSaveInbets  = runners.map((runner) => ({
+        runner: runner.SelectionId,
+        amount: 0
+      }));
       const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName
       if (!DBOddDetails) {
@@ -299,7 +302,10 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await RaceOdds.findById(oddsId);
       const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.selectionId == selectionId);
       let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => runner.selectionId);
+      runnerForSaveInbets  = runners.map((runner) => ({
+        runner: runner.selectionId,
+        amount: 0
+      }));
 
       if (type == 0) {
         ApiResponseOdds = runnerFromAPI?.exchange?.availableToBack
@@ -363,13 +369,9 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = response?.data?.data?.t3;
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3
-      runnerForSaveInbets = dbFancyOdds;
-
       console.log(" apiFancyOdds ====== ", apiFancyOdds);
       console.log(" dbFancyOdds  ====== ", dbFancyOdds);
-
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
-
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
         const dbSelectedOdds = dbFancyOdds.find(runner => runner.sid == req.body.selectionId);
 
@@ -381,7 +383,8 @@ const placeBet = async (req, res) => {
           return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
         }
         fancyData  = dbSelectedOdds.nat
-        runnerName = dbSelectedOdds.nat; // Get the runner name from the 'nat' field
+        runnerName = dbSelectedOdds.nat; 
+        // Get the runner name from the 'nat' field
 
         if (req.body.type == 0) {
 
@@ -469,8 +472,10 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds  = DBOddDetails?.data?.data?.t2[0]?.bm1
       runners = dbFancyOdds;
-      runnerForSaveInbets  = runners.map((runner) => runner.sid);
-
+      runnerForSaveInbets  = runners.map((runner) => ({
+        runner: runner.sid,
+        amount: 0
+      }));
       console.log(" apiFancyOdds ==== ", apiFancyOdds)
       console.log(" dbFancyOdds ==== ", dbFancyOdds)
 
@@ -688,18 +693,16 @@ const placeBet = async (req, res) => {
     }
 
     let expAmount = loosingAmount;
-    // let lastBetsCount = await  Bets.countDocuments({
-    //   marketId: _3rdPartyMarketId,
-    //   userId: req.decoded.userId,
-    //   type: type
-    // });
-    // lastBetsCount = 1;
-      
-    // if(lastBetsCount){
-    //   console.log(" ============== _3rdPartyMarketId ". _3rdPartyMarketId);
-    //   expAmount = calculateExposure(_3rdPartyMarketId)
-    //   console.log(expAmount);
-    // }
+    let lastBetsCount = await Bets.countDocuments({
+      marketId: _3rdPartyMarketId,
+      userId: req.decoded.userId,
+      type: type
+    });
+    if(lastBetsCount){
+      console.log(" ================ _3rdPartyMarketId ". _3rdPartyMarketId);
+      expAmount = calculateExposure(_3rdPartyMarketId, runnerForSaveInbets, req.decoded.useerId)
+      console.log(expAmount);
+    }
 
     console.log(" ================ RUNNER INFO ================ ", runnerForSaveInbets);
     return res.json({
@@ -794,7 +797,7 @@ const placeBet = async (req, res) => {
 
 
 
-async function calculateExposure(marketId){
+async function calculateExposure(marketId, runners, userId){
   const odds    = await Odds.find({ marketId: marketId }).sort({ _id: -1});
   const runners = odds.runners
   console.log(" ================ Runners ================ ", runners);
