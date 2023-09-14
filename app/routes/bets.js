@@ -701,7 +701,7 @@ const placeBet = async (req, res) => {
 
 
     let expAmount = loosingAmount;
-    const lastBetsCount = await  Bets.countDocuments({
+    let lastBetsCount = await  Bets.countDocuments({
       marketId: _3rdPartyMarketId,
       userId: req.decoded.userId,
       type: type
