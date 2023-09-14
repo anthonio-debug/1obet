@@ -692,22 +692,30 @@ const placeBet = async (req, res) => {
       loosingAmount = betAmount;
     }
 
-    let expAmount = loosingAmount;
-    let lastBetsCount = await Bets.countDocuments({
-      marketId: _3rdPartyMarketId,
-      userId: req.decoded.userId,
-      type: type
-    });
-    if(lastBetsCount){
-      console.log(" ================ _3rdPartyMarketId ". _3rdPartyMarketId);
-      expAmount = calculateExposure(_3rdPartyMarketId, runnerForSaveInbets, req.decoded.useerId)
-      console.log(expAmount);
-    }
+    // let expAmount = 0;
+    // let runnersPosition = [];
+    // let lastBetsCount = await Bets.countDocuments({
+    //   marketId: _3rdPartyMarketId,
+    //   userId: req.decoded.userId,
+    //   type: type
+    // });
 
-    console.log(" ================ RUNNER INFO ================ ", runnerForSaveInbets);
-    return res.json({
-      msg: "Hello before bet placing !"
-    })
+    // if(lastBetsCount){
+    //   console.log(" ================ _3rdPartyMarketId". _3rdPartyMarketId);
+    //   res = calculateExposure(_3rdPartyMarketId, runnerForSaveInbets, req.decoded.useerId);
+    //   expAmount = expAmount;
+    //   runnersPosition: runnersPosition
+    // }else {
+    //   expAmount       = loosingAmount;
+    //   runnersPosition = runnerForSaveInbets.map((item) => {
+    //     if(item.runner == selectionId) runner.amount = loosingAmount
+    //   })
+    // }
+
+    // console.log(" ================ RUNNER INFO ================ ", runnerForSaveInbets);
+    // return res.json({
+    //   msg: "Hello before bet placing !"
+    // })
 
 
 
@@ -798,8 +806,29 @@ const placeBet = async (req, res) => {
 
 
 async function calculateExposure(marketId, runners, userId){
+  let lastBet = await Bets.countDocuments({
+    marketId: marketId,
+    userId: userId
+  }).sort({ _id: -1 });
+
+  const lastrunnersPosition = lastBet.runnersPosition;
+  // if Back was choose
+  //  $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( currentWinningAmount ) 
+  //  $Clickedrunner_new_value = 56
+  //  $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount In fact liability amount which will be in minus ) = (-100 ) +  ( -100 )  = 200
+
+
+  // Lay was CHOOSEN
+  //    $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( -  (loosing money )liablityAmount ) => ( 67 ) + ( -34 ) = 33
+  //    $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount )   ( - 100 ) + ( + 100 )
+
+
+
   console.log(" ================ Runners ================ ", runners);
-  return 0
+  return {
+    runnersPosition: [],
+    expAmount : 200
+  }
 }
 
 
