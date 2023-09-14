@@ -262,6 +262,9 @@ function login(req, res) {
           jwt.verify(token, config.secret, function (err, decoded) {       
             if(err ||  decoded.expr < new Date().getTime()){
               console.log(" =========================  Expired token =====================  ");
+              console.log(" ================== decoded ", decoded);
+              console.log(" ================== err ", err);
+
               var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
               user.token = token;
               user.save();
