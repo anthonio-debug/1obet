@@ -225,7 +225,8 @@ const placeBet = async (req, res) => {
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
       const DBOddDetails = await Odds.findById(oddsId);
       oddsInfo           = DBOddDetails;
-      runnerName = runnerFromAPI.runnerName
+      const OddDetailsRunner = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+      runnerName = OddDetailsRunner?.runnerName
       if (!DBOddDetails) {
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
