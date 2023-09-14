@@ -468,7 +468,8 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = response?.data?.data?.t2?.length ? response?.data?.data?.t2[0]?.bm1 : [];
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds  = DBOddDetails?.data?.data?.t2[0]?.bm1
-      runnerForSaveInbets           = dbFancyOdds;
+      runners = dbFancyOdds;
+      runnerForSaveInbets  = runners.map((runner) => runner.sid);
 
       console.log(" apiFancyOdds ==== ", apiFancyOdds)
       console.log(" dbFancyOdds ==== ", dbFancyOdds)
