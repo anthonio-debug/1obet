@@ -2069,12 +2069,19 @@ const postmanwork = async (req, res)=>{
     const _3oattires = await  axios.get("http://138.68.171.26:3003/teenpatti/t20");
     const _3oatti = _3oattires.data;
 
+
+    const _3oattiresultRes = await  axios.get("http://138.68.171.26:3003/teenpatti/t20/result");
+    const _3oattiResult = _3oattiresultRes.data;
+
+    
+     
     const teen8res = await  axios.get("https://betfairoddsapi.com:3445/api/l_result/teen8");
     const teen8 = teen8res.data;
 
     return res.send({
       message: "Completed !",
       _3oatti: _3oatti,
+      _3oattiResult:_3oattiResult,
       teen8: teen8
     })
 
