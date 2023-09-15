@@ -702,8 +702,8 @@ const placeBet = async (req, res) => {
       console.log(" ================ _3rdPartyMarketId ". _3rdPartyMarketId);
       res = calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount);
       expAmount = res.expAmount;
-      runnersPosition: res.runnersPosition;
-      prevExpAmount: res.prevExpAmount;
+      runnersPosition =  res.runnersPosition;
+      prevExpAmount =  res.prevExpAmount;
     }else {
       expAmount = loosingAmount;
       if(type == 0){
@@ -811,14 +811,10 @@ const placeBet = async (req, res) => {
 }
 
 async function calculateExposure(marketId, userId, type, selectedRunner, loosingAmount, winningAmount){
-  console.log(" ====================== marketId ================  ", marketId);
-  console.log(" ====================== userId ================  ", userId);
   let lastBet = await Bets.find({
     marketId: marketId,
     userId: userId
   }).sort({ _id: -1 }).limit(1);
-
-  console.log(" ===================== LAST BET  ======================", lastBet);
   let prevExpAmount = lastBet[0].exposureAmount
   const lastrunnersPosition = lastBet[0].runnersPosition;
   let newPosition;
@@ -846,14 +842,6 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
       return item 
     });
   }
-
-
-
-
-  console.log(" ================ new newPositionPosition ================ ", newPosition);
-  // console.log(" ================ new prevExpAmount ================ ", prevExpAmount);
-  console.log(" ================ new prevExpAmount ================ ", prevExpAmount);
-  
   return {
     runnersPosition: newPosition,
     expAmount : 200,
