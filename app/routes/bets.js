@@ -701,13 +701,14 @@ const placeBet = async (req, res) => {
       userId: req.decoded.userId
     });
 
+    console.log(" ================ Selection id ============ ", selectionId);
     if(lastBetsCount){
       console.log(" ================ _3rdPartyMarketId ". _3rdPartyMarketId);
       const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount);
       runnersPosition =  resp.runnersPosition;
       prevExpAmount =  resp.prevExpAmount;
     }else {
-      console.log(" ================ Selection id ============ ", selectionId);
+
       if(type == 0){
         runnersPosition = runnerForSaveInbets.map((item)=>{
           if(item.runner == selectionId){
