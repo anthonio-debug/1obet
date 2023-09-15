@@ -45,5 +45,21 @@
   "balls": ["1", "2", "3", "4", "5", "6"],
   "matchTypes" : ["T10", "T20", "ODI", "TEST"],
   "commissionLessSubMarkets": [2, 3, 4],
-  "ExcludedBackLay": [7, 8]
+  "ExcludedBackLay": [7, 8],
+  "figureRunners": [
+    { "runner": 0, "amount": 0 },
+    { "runner": 1, "amount": 0 },
+    { "runner": 2, "amount": 0 },
+    { "runner": 3, "amount": 0 },
+    { "runner": 4, "amount": 0 },
+    { "runner": 5, "amount": 0 },
+    { "runner": 6, "amount": 0 },
+    { "runner": 7, "amount": 0 },
+    { "runner": 8, "amount": 0 },
+    { "runner": 9, "amount": 0 }
+  ],
+  "FancyKaliJotaChottaBara":[
+    { "runner": 1, "amount": 0 },
+    { "runner": 0, "amount": 0 }
+  ]
 }

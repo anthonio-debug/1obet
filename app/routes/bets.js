@@ -371,15 +371,15 @@ const placeBet = async (req, res) => {
       console.log(" apiFancyOdds ====== ", apiFancyOdds);
       console.log(" dbFancyOdds  ====== ", dbFancyOdds);
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
-        const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
-        const dbSelectedOdds = dbFancyOdds.find(runner => runner.sid == req.body.selectionId);
+        const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == selectionId);
+        const dbSelectedOdds = dbFancyOdds.find(runner => runner.sid == selectionId);
 
         if (!apiSelectedOdds || !dbSelectedOdds) {
           console.log(" apiSelectedOdds ====== ", apiSelectedOdds);
           console.log(" dbSelectedOdds ====== ", dbSelectedOdds);
 
-          console.log(`Odds not available for the selected team ${req.body.selectionId}`);
-          return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
+          console.log(`Odds not available for the selected team ${selectionId}`);
+          return res.status(404).send({ message: `Odds not available for the selected team ${selectionId}` });
         }
         fancyData  = dbSelectedOdds.nat
         runnerName = dbSelectedOdds.nat; 
@@ -645,16 +645,19 @@ const placeBet = async (req, res) => {
       winningAmount = betAmount;
       loosingAmount = betAmount;
       selectionId == 0? runnerName = `CHOTA` : runnerName = `BARA`;
+      runnerForSaveInbets  = config.FancyKaliJotaChottaBara
     }
     else if (type == 3)  {
       winningAmount = betAmount;
       loosingAmount = betAmount;
       selectionId == 0? runnerName = `KALI` : runnerName = `JOTTA`;
+      runnerForSaveInbets  = config.FancyKaliJotaChottaBara
     }
     else if (type == 2) {
       winningAmount = (betAmount * betRate);
       loosingAmount = betAmount;
       runnerName    = `Figure(${selectionId})`
+      runnerForSaveInbets  = config.FigureEvenOddSmallBig
     }
 
     else if (type == 1 &&  !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
@@ -682,16 +685,17 @@ const placeBet = async (req, res) => {
       // (Value showing below/100)*bet amount = loosing amount
       loosingAmount =  (fancyRate/100) * betAmount;
       winningAmount = betAmount;
+      runnerForSaveInbets  = config.FancyKaliJotaChottaBara
     }
     else if (type == 0 && subMarketDetail.Id == config.Fancy) {
       // Value showing below/100)*bet amount = winning amount
       winningAmount = (fancyRate/100) * betAmount;
       loosingAmount = betAmount;
+      runnerForSaveInbets  = config.FancyKaliJotaChottaBara
     }
 
-    let expAmount = 0;
-    let prevExpAmount = 0;
     let runnersPosition = [];
+    let prevExpAmount = 0;
     let lastBetsCount = await Bets.countDocuments({
       marketId: _3rdPartyMarketId,
       userId: req.decoded.userId,
@@ -701,7 +705,6 @@ const placeBet = async (req, res) => {
     if(lastBetsCount){
       console.log(" ================ _3rdPartyMarketId ". _3rdPartyMarketId);
       const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount);
-      expAmount = resp.expAmount;
       runnersPosition =  resp.runnersPosition;
       prevExpAmount =  resp.prevExpAmount;
     }else {
@@ -727,16 +730,13 @@ const placeBet = async (req, res) => {
         })
       }
     }
-
-    // console.log(" ================ RUNNER INFO ================ ", runnerForSaveInbets);
+    let expAmount = runnersPosition.reduce((min, current) => {
+      return current.amount < min.amount ? current : min;
+    }, runnersPosition[0]);
+    expAmount = expAmount.amount;
     console.log(" ================ RUNNER INFO ================ ", runnersPosition);
-    console.log(" ================ EXP INFO ================ ", expAmount);
-
-    // return res.json({
-    //   msg: "Hello before bet placing !",
-    //   runnersPosition: runnersPosition,
-    //   expAmount: expAmount
-    // });
+    console.log(" ================ EXP AMOUNT ================ ", expAmount);
+    expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
 
     const bet = new Bets({
       marketId: _3rdPartyMarketId,
@@ -762,7 +762,7 @@ const placeBet = async (req, res) => {
       runnersPosition: runnersPosition
     });
     let setCalculateExpFalse = await Bets.updateMany(
-      { marketId: marketId, userId: userId },
+      { marketId: _3rdPartyMarketId, userId: userId },
       {calculateExp: false}
     );
 
@@ -797,6 +797,7 @@ const placeBet = async (req, res) => {
           message: 'Bet placed successfully',
           results: result,
         });
+
       }
       catch (error) {
         console.error('error', error);
@@ -815,7 +816,6 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
     marketId: marketId,
     userId: userId
   }).sort({ _id: -1 }).limit(1);
-  let prevExpAmount = lastBet[0].exposureAmount
   const lastrunnersPosition = lastBet[0].runnersPosition;
   let newPosition;
   if(type == 0){
@@ -844,8 +844,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
   }
   return {
     runnersPosition: newPosition,
-    expAmount : 200,
-    prevExpAmount:prevExpAmount
+    prevExpAmount:lastBet[0].exposureAmount
   }
 }
 
