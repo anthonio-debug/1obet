@@ -727,14 +727,13 @@ const placeBet = async (req, res) => {
           return item 
         })
       }
-      runnersPosition = runnerForSaveInbets.map((item) => {
-        if(item.runner == selectionId){
-          item.amount = 99
-         }
-
-
-        if(item.runner == selectionId) runner.amount = loosingAmount
-      })
+      
+      // runnersPosition = runnerForSaveInbets.map((item) => {
+      //   if(item.runner == selectionId){
+      //     item.amount = 99
+      //    }
+        // if(item.runner == selectionId) runner.amount = loosingAmount
+      // })
     }
 
     // console.log(" ================ RUNNER INFO ================ ", runnerForSaveInbets);
