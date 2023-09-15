@@ -100,6 +100,7 @@ const placeBet = async (req, res) => {
     let marketId;
     let selectedOddsRate;
     const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate } = req.body;
+    console.log(" ==================== SELECTION ID TOP  ===================",selectionId);
     const userId = req.decoded.userId;
     let ApiResponseOdds;
     let matchedIndex;
@@ -109,7 +110,8 @@ const placeBet = async (req, res) => {
     let _3rdPartyMarketId = 0
     let TargetScore = 0;
     let fancyData = null;
-    let runnerForSaveInbets = null
+    let runnerForSaveInbets = null;
+    let expoisureType = 1;
 
     if (betAmount < config.betMinimumAmount) {
       return res.status(404).send({ message: `minimum bet should be ${config.betMinimumAmount}` });
@@ -645,19 +647,22 @@ const placeBet = async (req, res) => {
       winningAmount = betAmount;
       loosingAmount = betAmount;
       selectionId == 0? runnerName = `CHOTA` : runnerName = `BARA`;
-      runnerForSaveInbets  = config.FancyKaliJotaChottaBara
+      runnerForSaveInbets  = config.FancyKaliJotaChottaBara;
+      expoisureType = 2
     }
     else if (type == 3)  {
       winningAmount = betAmount;
       loosingAmount = betAmount;
       selectionId == 0? runnerName = `KALI` : runnerName = `JOTTA`;
       runnerForSaveInbets  = config.FancyKaliJotaChottaBara
+      expoisureType = 2
     }
     else if (type == 2) {
       winningAmount = (betAmount * betRate);
       loosingAmount = betAmount;
       runnerName    = `Figure(${selectionId})`
-      runnerForSaveInbets  = config.FigureEvenOddSmallBig
+      runnerForSaveInbets  = config.FigureEvenOddSmallBig;
+      expoisureType = 2;
     }
 
     else if (type == 1 &&  !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
@@ -686,12 +691,14 @@ const placeBet = async (req, res) => {
       loosingAmount =  (fancyRate/100) * betAmount;
       winningAmount = betAmount;
       runnerForSaveInbets  = config.FancyKaliJotaChottaBara
+      expoisureType = 2
     }
     else if (type == 0 && subMarketDetail.Id == config.Fancy) {
       // Value showing below/100)*bet amount = winning amount
       winningAmount = (fancyRate/100) * betAmount;
       loosingAmount = betAmount;
       runnerForSaveInbets  = config.FancyKaliJotaChottaBara
+      expoisureType = 2
     }
 
     let runnersPosition = [];
@@ -701,33 +708,36 @@ const placeBet = async (req, res) => {
       userId: req.decoded.userId
     });
 
-    console.log(" ================ Selection id ============ ", selectionId);
+    console.log(" ================ Selection ID ============ ", selectionId);
     if(lastBetsCount){
-      console.log(" ================ _3rdPartyMarketId ". _3rdPartyMarketId);
+      // console.log(" ================ _3rdPartyMarketId ". _3rdPartyMarketId);
       const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount);
       runnersPosition =  resp.runnersPosition;
       prevExpAmount =  resp.prevExpAmount;
     }else {
+      if(expoisureType == 2){
 
-      if(type == 0){
-        runnersPosition = runnerForSaveInbets.map((item)=>{
-          if(item.runner == selectionId){
-            item.amount = item.amount + winningAmount
-          }else {
-            item.amount = item.amount - loosingAmount
-          }
-          return item 
-        })
-
-      }else if(type == 1){
-        runnersPosition = runnerForSaveInbets.map((item)=>{
-          if(item.runner == selectionId){
-            item.amount = item.amount - loosingAmount
-          }else {
-            item.amount = item.amount + winningAmount
-          }
-          return item 
-        })
+      }else {
+        if(type == 0){
+          runnersPosition = runnerForSaveInbets.map((item)=>{
+            if(item.runner == selectionId){
+              item.amount = item.amount + winningAmount
+            }else {
+              item.amount = item.amount - loosingAmount
+            }
+            return item 
+          })
+  
+        }else if(type == 1){
+          runnersPosition = runnerForSaveInbets.map((item)=>{
+            if(item.runner == selectionId){
+              item.amount = item.amount - loosingAmount
+            }else {
+              item.amount = item.amount + winningAmount
+            }
+            return item 
+          })
+        }
       }
     }
     let expAmount = runnersPosition.reduce((min, current) => {
@@ -816,13 +826,12 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
     marketId: marketId,
     userId: userId
   }).sort({ _id: -1 }).limit(1);
+
   const lastrunnersPosition = lastBet[0].runnersPosition;
+
   console.log("=================== last runners Position ================", lastrunnersPosition);
   let newPosition;
-  if(type == 0){
-    console.log(" ================= Back is called  =================  ");
-    //  $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( currentWinningAmount ) 
-    //  $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount In fact liability amount which will be in minus ) = (-100 ) +  ( -100 )  = 200
+  if(expoisureType == 2){
     newPosition = lastrunnersPosition.map((item)=>{
       if(item.runner == selectedRunner){
         item.amount = item.amount + winningAmount
@@ -831,18 +840,32 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
       }
       return item 
     })
-  }else if(type == 1){
-    console.log(" ================= Lay is called  =================  ");
-    // $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( -  (loosing money )liablityAmount ) => ( 67 ) + ( -34 ) = 33
-    // $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount )   ( - 100 ) + ( + 100 )
-    newPosition = lastrunnersPosition.map((item)=>{
-      if(item.runner == selectedRunner){
-        item.amount = item.amount + (-loosingAmount)
-      }else {
-        item.amount = item.amount + winningAmount
-      }
-      return item 
-    });
+  }else {
+    if(type == 0){
+      console.log(" ================= Back is called  =================  ");
+      //  $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( currentWinningAmount ) 
+      //  $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount In fact liability amount which will be in minus ) = (-100 ) +  ( -100 )  = 200
+      newPosition = lastrunnersPosition.map((item)=>{
+        if(item.runner == selectedRunner){
+          item.amount = item.amount + winningAmount
+        }else {
+          item.amount = item.amount + (-loosingAmount)
+        }
+        return item 
+      })
+    }else if(type == 1){
+      console.log(" ================= Lay is called  =================  ");
+      // $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( -  (loosing money )liablityAmount ) => ( 67 ) + ( -34 ) = 33
+      // $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount )   ( - 100 ) + ( + 100 )
+      newPosition = lastrunnersPosition.map((item)=>{
+        if(item.runner == selectedRunner){
+          item.amount = item.amount + (-loosingAmount)
+        }else {
+          item.amount = item.amount + winningAmount
+        }
+        return item 
+      });
+    }
   }
   return {
     runnersPosition: newPosition,
