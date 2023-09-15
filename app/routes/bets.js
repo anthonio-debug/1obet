@@ -821,7 +821,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
   console.log(" ===================== LAST BET  ======================", lastBet);
   let prevExpAmount = lastBet[0].exposureAmount
   const lastrunnersPosition = lastBet[0].runnersPosition;
-  const newPosition = [];
+  let newPosition;
   if(type == 0){
     //  $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( currentWinningAmount ) 
     //  $Clickedrunner_new_value = 56
