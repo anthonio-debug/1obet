@@ -142,7 +142,6 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
     }
 
-
     marketId = eventDetail?.sportsId;
     console.log(" marketId ======== ", marketId);
     let id;
@@ -361,7 +360,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
       }
       console.log(" fancyBetLimit ========== ", fancyBetLimit);
-      console.log(" subMarketDetail.Id ============= ", subMarketDetail.Id);
+      console.log(" subMarketDetail.Id ========== ", subMarketDetail.Id);
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id
       const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
@@ -444,9 +443,7 @@ const placeBet = async (req, res) => {
         console.log(`Odds not available for the selected team ${req.body.selectionId}`);
         return res.status(404).send({ message: `Odds not available for the selected team ${req.body.selectionId}` });
       }
-
     }
-
     // for bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
       const bookMakerBetLimit  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.BookMaker }).exec();
@@ -813,17 +810,15 @@ const placeBet = async (req, res) => {
   }
 }
 
-
-
 async function calculateExposure(marketId, userId, type, selectedRunner, loosingAmount, winningAmount){
   let lastBet = await Bets.countDocuments({
     marketId: marketId,
     userId: userId
   }).sort({ _id: -1 });
-  prevExpAmount = lastBet.calculateExp
+  let prevExpAmount = lastBet.calculateExp
 
   const lastrunnersPosition = lastBet.runnersPosition;
-  const newPosition = []
+  const newPosition = [];
   if(type == 0){
     //  $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( currentWinningAmount ) 
     //  $Clickedrunner_new_value = 56
@@ -846,7 +841,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
         item.amount = item.amount + winningAmount
       }
       return item 
-    })
+    });
   }
 
 
@@ -859,7 +854,6 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
     prevExpAmount:prevExpAmount
   }
 }
-
 
 async function getUserBets(req, res) {
   const errors = validationResult(req);
