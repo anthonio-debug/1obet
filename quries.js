@@ -1009,3 +1009,20 @@ db.betlimits.insertMany([
 
 
 
+
+
+
+    //Qaiser
+      // let expAmount = loosingAmount;
+      // const lastBetsCount = await  Bets.countDocuments({
+      //   marketId: _3rdPartyMarketId,
+      //   userId: req.decoded.userId,
+      //   type: type
+      // });
+      // // lastBetsCount = 1;
+        
+      // if(lastBetsCount){
+      //   expAmount = calculateExposure(_3rdPartyMarketId)
+		  //   console.log(expAmount);
+      // }
+    //end Qaiser

@@ -693,6 +693,7 @@ const placeBet = async (req, res) => {
     }
 
     let expAmount = 0;
+    let prevExpAmount = 0;
     let runnersPosition = [];
     let lastBetsCount = await Bets.countDocuments({
       marketId: _3rdPartyMarketId,
@@ -704,7 +705,8 @@ const placeBet = async (req, res) => {
       console.log(" ================ _3rdPartyMarketId ". _3rdPartyMarketId);
       res = calculateExposure(_3rdPartyMarketId, req.decoded.useerId, type, selectionId, loosingAmount, winningAmount);
       expAmount = res.expAmount;
-      runnersPosition: res.runnersPosition
+      runnersPosition: res.runnersPosition;
+      prevExpAmount: res.prevExpAmount;
     }else {
       expAmount = loosingAmount;
       if(type == 0){
@@ -733,15 +735,11 @@ const placeBet = async (req, res) => {
     console.log(" ================ RUNNER INFO ================ ", runnersPosition);
     console.log(" ================ EXP INFO ================ ", expAmount);
 
-    return res.json({
-      msg: "Hello before bet placing !",
-      runnersPosition: runnersPosition,
-      expAmount: expAmount
-    });
-
-
-
-
+    // return res.json({
+    //   msg: "Hello before bet placing !",
+    //   runnersPosition: runnersPosition,
+    //   expAmount: expAmount
+    // });
 
     const bet = new Bets({
       marketId: _3rdPartyMarketId,
@@ -763,7 +761,13 @@ const placeBet = async (req, res) => {
       fancyData: fancyData,
       fancyRate: fancyRate,
       createdAt: new Date().getTime(),
+      exposureAmount: expAmount,
+      runnersPosition: runnersPosition
     });
+    let setCalculateExpFalse = await Bets.updateMany(
+      { marketId: marketId, userId: userId },
+      {calculateExp: false}
+    );
 
     bet.save(async (err, result) => {
       if (err) {
@@ -778,32 +782,14 @@ const placeBet = async (req, res) => {
           betId: result._id,
         })
         await position.save();
-    //Qaiser
-      // let expAmount = loosingAmount;
-      // const lastBetsCount = await  Bets.countDocuments({
-      //   marketId: _3rdPartyMarketId,
-      //   userId: req.decoded.userId,
-      //   type: type
-      // });
-      // // lastBetsCount = 1;
-        
-      // if(lastBetsCount){
-      //   expAmount = calculateExposure(_3rdPartyMarketId)
-		  //   console.log(expAmount);
-      // }
-    //end Qaiser
 
-
-
-
-
-
+        const totalExpAmount = expAmount - prevExpAmount
         const updatedUser = await User.findOneAndUpdate(
           { userId: userId },
           {
             $inc: {
-              availableBalance: -loosingAmount,
-              exposure: -loosingAmount
+              availableBalance: -totalExpAmount,
+              exposure: -totalExpAmount
             },
           },
         );
@@ -834,6 +820,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
     marketId: marketId,
     userId: userId
   }).sort({ _id: -1 });
+  prevExpAmount = lastBet.calculateExp
 
   const lastrunnersPosition = lastBet.runnersPosition;
   const newPosition = []
@@ -845,19 +832,20 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
       if(item.runner == selectedRunner){
         item.amount = item.amount + winningAmount
       }else {
-        item.amount = item.amount - loosingAmount
+        item.amount = item.amount + (-loosingAmount)
       }
+      return item 
     })
-    return item 
   }else if(type == 1){
     // $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( -  (loosing money )liablityAmount ) => ( 67 ) + ( -34 ) = 33
     // $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount )   ( - 100 ) + ( + 100 )
     newPosition = lastrunnersPosition.map((item)=>{
       if(item.runner == selectedRunner){
-        item.amount = item.amount - loosingAmount
+        item.amount = item.amount + (-loosingAmount)
       }else {
         item.amount = item.amount + winningAmount
       }
+      return item 
     })
   }
 
@@ -867,7 +855,8 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
   console.log(" ================ Runners ================ ", runners);
   return {
     runnersPosition: newPosition,
-    expAmount : 200
+    expAmount : 200,
+    prevExpAmount:prevExpAmount
   }
 }
 
@@ -1964,102 +1953,102 @@ const dailyMatchWiseprofitLose = async(req, res) => {
 
 const postmanwork = async (req, res)=>{
   try{
-    const users = await User.find({ role: { $ne: '0' }  });
-    await userBetSizes.deleteMany();
-    for (const user of users){
-      const response = userBetSizes.insertMany([
-        {
-          userId: user.useerId,
-          amount: 250000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd20',
-          name: 'Soccer',
-          sportsId: '1'
-        },
-        {
-          userId: user.useerId,
-          amount: 250000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd21',
-          name: 'Tennis',
-          sportsId: '2'
-        },
-        {
-          userId: user.useerId,
-          amount: 500000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd22',
-          name: 'Cricket',
-          sportsId: '4'
-        },
-        {
-          userId: user.useerId,
-          amount: 200000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd23',
-          name: 'Fancy',
-          subarket: 7,
-          sportsId: '4'
-        },
-        {
-          userId: user.useerId,
-          amount: 200000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd24',
-          name: 'Tied match',
-          subarket: 35,
-          sportsId: '4'
-        },
-        {
-          userId: user.useerId,
-          amount: 200000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd25',
-          name: 'bookMaker',
-          subarket: 8,
-          sportsId: '4'
-        },
-        {
-          userId: user.useerId,
-          amount: 200000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd26',
-          name: 'Even Odd',
-          subarket: 10,
-          sportsId: '4'
-        },
-        {
-          userId: user.useerId,
-          amount: 200000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd27',
-          name: 'Chotta Bara',
-          subarket: 34,
-          sportsId: '4'
-        },
-        {
-          userId: user.useerId,
-          amount: 200000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd28',
-          name: 'Figure',
-          subarket: 9,
-          sportsId: '4'
-        },
-        {
-          userId: user.useerId,
-          amount: 200000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd29',
-          name: 'Horse races',
-          sportsId: '7'
-        },
-        {
-          userId: user.useerId,
-          amount: 100000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd2a',
-          name: 'GreyHound',
-          sportsId: '4339'
-        },
-        {
-          userId: user.useerId,
-          amount: 50000,
-          betLimitId: '64fc9f9fac96fd64a8d0bd2b',
-          name: 'casino',
-          sportsId: '6'
-        }
-      ])  
-    }
+    // const users = await User.find({ role: { $ne: '0' }  });
+    // await userBetSizes.deleteMany();
+    // for (const user of users){
+    //   const response = userBetSizes.insertMany([
+    //     {
+    //       userId: user.useerId,
+    //       amount: 250000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd20',
+    //       name: 'Soccer',
+    //       sportsId: '1'
+    //     },
+    //     {
+    //       userId: user.useerId,
+    //       amount: 250000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd21',
+    //       name: 'Tennis',
+    //       sportsId: '2'
+    //     },
+    //     {
+    //       userId: user.useerId,
+    //       amount: 500000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd22',
+    //       name: 'Cricket',
+    //       sportsId: '4'
+    //     },
+    //     {
+    //       userId: user.useerId,
+    //       amount: 200000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd23',
+    //       name: 'Fancy',
+    //       subarket: 7,
+    //       sportsId: '4'
+    //     },
+    //     {
+    //       userId: user.useerId,
+    //       amount: 200000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd24',
+    //       name: 'Tied match',
+    //       subarket: 35,
+    //       sportsId: '4'
+    //     },
+    //     {
+    //       userId: user.useerId,
+    //       amount: 200000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd25',
+    //       name: 'bookMaker',
+    //       subarket: 8,
+    //       sportsId: '4'
+    //     },
+    //     {
+    //       userId: user.useerId,
+    //       amount: 200000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd26',
+    //       name: 'Even Odd',
+    //       subarket: 10,
+    //       sportsId: '4'
+    //     },
+    //     {
+    //       userId: user.useerId,
+    //       amount: 200000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd27',
+    //       name: 'Chotta Bara',
+    //       subarket: 34,
+    //       sportsId: '4'
+    //     },
+    //     {
+    //       userId: user.useerId,
+    //       amount: 200000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd28',
+    //       name: 'Figure',
+    //       subarket: 9,
+    //       sportsId: '4'
+    //     },
+    //     {
+    //       userId: user.useerId,
+    //       amount: 200000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd29',
+    //       name: 'Horse races',
+    //       sportsId: '7'
+    //     },
+    //     {
+    //       userId: user.useerId,
+    //       amount: 100000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd2a',
+    //       name: 'GreyHound',
+    //       sportsId: '4339'
+    //     },
+    //     {
+    //       userId: user.useerId,
+    //       amount: 50000,
+    //       betLimitId: '64fc9f9fac96fd64a8d0bd2b',
+    //       name: 'casino',
+    //       sportsId: '6'
+    //     }
+    //   ])  
+    // }
 
     // const deposits  = await Cash.find({ cashOrCredit: {
     //   $in: ["Bet", "Commission", "loosing"] 
@@ -2077,8 +2066,16 @@ const postmanwork = async (req, res)=>{
     //     );
     //   }
     // }
+    const _3oattires = await  axios.get("http://138.68.171.26:3003/teenpatti/t20");
+    const _3oatti = _3oattires.data;
+
+    const teen8res = await  axios.get("https://betfairoddsapi.com:3445/api/l_result/teen8");
+    const teen8 = teen8res.data;
+
     return res.send({
-      message: "Completed !"
+      message: "Completed !",
+      _3oatti: _3oatti,
+      teen8: teen8
     })
 
   }
