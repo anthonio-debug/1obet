@@ -811,11 +811,11 @@ const placeBet = async (req, res) => {
 }
 
 async function calculateExposure(marketId, userId, type, selectedRunner, loosingAmount, winningAmount){
-  let lastBet = await Bets.countDocuments({
+  let lastBet = await Bets.find({
     marketId: marketId,
     userId: userId
-  }).sort({ _id: -1 });
-  let prevExpAmount = lastBet.calculateExp
+  }).sort({ _id: -1 }).limit(1);
+  let prevExpAmount = lastBet[0].calculateExp
 
   const lastrunnersPosition = lastBet.runnersPosition;
   const newPosition = [];
