@@ -815,6 +815,8 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
     marketId: marketId,
     userId: userId
   }).sort({ _id: -1 }).limit(1);
+
+  console.log(" ===================== LAST BET  ======================", lastBet);
   let prevExpAmount = lastBet[0].exposureAmount
   const lastrunnersPosition = lastBet[0].runnersPosition;
   const newPosition = [];
