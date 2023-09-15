@@ -1026,3 +1026,52 @@ db.betlimits.insertMany([
 		  //   console.log(expAmount);
       // }
     //end Qaiser
+
+
+
+  
+[
+  { runner: 1, amount: 0  },
+  { runner: 2, amount: 0  },
+  { runner: 3, amount: 0  },
+  { runner: 4, amount: 0  },
+  { runner: 5, amount: 0  },
+  { runner: 6, amount: 0  }
+]
+
+
+// Lay 
+// Amount 1000  Rate : 6.8  Selected =1 
+// Selected = rate-1 * amt = loosing 
+
+[
+   { runner: 1, amount: -5800  },
+   { runner: 2, amount: 1000  },
+   { runner: 3, amount: 1000  },
+   { runner: 4, amount: 1000  },
+   { runner: 5, amount: 1000  },
+   { runner: 6, amount: 1000  }
+]
+// Back  
+// Amount 1000  Rate : 5.3  Selected =1 
+// Selected = rate-1 * amt = winning  
+[
+   { runner: 1, amount: -1500  },
+   { runner: 2, amount: 0  },
+   { runner: 3, amount: 0  },
+   { runner: 4, amount: 0  },
+   { runner: 5, amount: 0  },
+   { runner: 6, amount: 0  }
+]
+
+// Back  
+// Amount 1000  Rate : 6.4  Selected =4
+// Selected = rate-1 * amt = winning  
+[
+   { runner: 1, amount: -2500  },
+   { runner: 2, amount: -1000  },
+   { runner: 3, amount: -1000  },
+   { runner: 4, amount: 5400  },
+   { runner: 5, amount: -1000  },
+   { runner: 6, amount: -1000  }
+]

@@ -707,6 +707,7 @@ const placeBet = async (req, res) => {
       runnersPosition =  resp.runnersPosition;
       prevExpAmount =  resp.prevExpAmount;
     }else {
+      console.log(" ================ Selection id ============ ", selectionId);
       if(type == 0){
         runnersPosition = runnerForSaveInbets.map((item)=>{
           if(item.runner == selectionId){
