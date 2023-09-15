@@ -101,6 +101,8 @@ const placeBet = async (req, res) => {
     let selectedOddsRate;
     const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate } = req.body;
     console.log(" ==================== SELECTION ID TOP  ===================",selectionId);
+    console.log(" ==================== type ID TOP  ===================",type);
+    
     const userId = req.decoded.userId;
     let ApiResponseOdds;
     let matchedIndex;
