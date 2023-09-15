@@ -851,6 +851,9 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
 
 
   console.log(" ================ new newPositionPosition ================ ", newPosition);
+  // console.log(" ================ new prevExpAmount ================ ", prevExpAmount);
+  console.log(" ================ new prevExpAmount ================ ", prevExpAmount);
+  
   return {
     runnersPosition: newPosition,
     expAmount : 200,
