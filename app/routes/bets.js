@@ -709,7 +709,7 @@ const placeBet = async (req, res) => {
       expAmount = loosingAmount;
       if(type == 0){
         runnersPosition = runnerForSaveInbets.map((item)=>{
-          if(item.runner == selectedRunner){
+          if(item.runner == selectionId){
             item.amount = item.amount + winningAmount
           }else {
             item.amount = item.amount - loosingAmount
@@ -719,7 +719,7 @@ const placeBet = async (req, res) => {
 
       }else if(type == 1){
         runnersPosition = runnerForSaveInbets.map((item)=>{
-          if(item.runner == selectedRunner){
+          if(item.runner == selectionId){
             item.amount = item.amount - loosingAmount
           }else {
             item.amount = item.amount + winningAmount
