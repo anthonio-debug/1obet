@@ -850,7 +850,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
 
 
 
-  console.log(" ================ Runners ================ ", runners);
+  console.log(" ================ new newPositionPosition ================ ", newPosition);
   return {
     runnersPosition: newPosition,
     expAmount : 200,
