@@ -664,7 +664,7 @@ const placeBet = async (req, res) => {
       winningAmount = (betAmount * betRate);
       loosingAmount = betAmount;
       runnerName    = `Figure(${selectionId})`
-      runnerForSaveInbets  = config.FigureEvenOddSmallBig;
+      runnerForSaveInbets  = config.figureRunners;
       expoisureType = 2;
     }
 
