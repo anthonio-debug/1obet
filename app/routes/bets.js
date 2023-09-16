@@ -556,9 +556,9 @@ const placeBet = async (req, res) => {
       let score = await cricketLiveScore(eventDetail.Id);
       console.log(" Score ======================= ", score)
       if (!score) {
-        return res.json({
+        return res.status(404).json({
           status: false,
-          message: `Bet Not Allowed : ${score}`
+          message: `Bet Not Allowed`
         });
       }
       console.log(' only  score |||| ====== |||| ', score);
