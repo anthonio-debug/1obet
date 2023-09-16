@@ -1914,7 +1914,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
       });
     }
 
-    const market = await MarketIDS.find(
+    const market = await MarketIDS.findOne(
       { eventId: req.body.eventId, marketId: req.body.marketId },
     );
 
@@ -1934,8 +1934,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
       );
       return res.send({
         success: true,
-        message: 'Winner runner saved without runner name.',
-        runners: market
+        message: 'Winner runner saved without runner name.'
       });
     }
 
