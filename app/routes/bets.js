@@ -372,8 +372,8 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = response?.data?.data?.t3;
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3
-      console.log(" apiFancyOdds ====== ", apiFancyOdds);
-      console.log(" dbFancyOdds  ====== ", dbFancyOdds);
+      // console.log(" apiFancyOdds ====== ", apiFancyOdds);
+      // console.log(" dbFancyOdds  ====== ", dbFancyOdds);
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == selectionId);
         const dbSelectedOdds = dbFancyOdds.find(runner => runner.sid == selectionId);
@@ -664,7 +664,7 @@ const placeBet = async (req, res) => {
       winningAmount = (betAmount * betRate);
       loosingAmount = betAmount;
       runnerName    = `Figure(${selectionId})`
-      runnerForSaveInbets  = config.FigureEvenOddSmallBig;
+      runnerForSaveInbets  = config.figureRunners;
       expoisureType = 2;
     }
 
@@ -853,10 +853,13 @@ const placeBet = async (req, res) => {
 }
 
 async function calculateExposure(marketId, userId, type, selectedRunner, loosingAmount, winningAmount, expoisureType){
+  console.log(" = marketId =", marketId);
   let lastBet = await Bets.find({
     marketId: marketId,
     userId: userId
   }).sort({ _id: -1 }).limit(1);
+
+  console.log(" ============= lastBet ", lastBet);
 
   const lastrunnersPosition = lastBet[0].runnersPosition;
 
@@ -865,7 +868,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
 
   let newPosition;
   if(expoisureType == 3){
-    if(type == 0){
+    // if(type == 0){
       console.log(" ================= fancy  Back is called  =================  ");
       newPosition = lastrunnersPosition.map((item)=>{
         if(item.runner == type){
@@ -875,20 +878,21 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
         }
         return item 
       })
-    }else if(type == 1){
-      console.log(" ================= Fancy  Lay is called  =================  ");
-      newPosition = lastrunnersPosition.map((item)=>{
-        if(item.runner == type){
-          item.amount = item.amount + (-loosingAmount)
-        }else {
-          item.amount = item.amount + winningAmount
-        }
-        return item 
-      });
-    }
+    // }
+    // else if(type == 1){
+    //   console.log(" ================= Fancy  Lay is called  =================  ");
+    //   newPosition = lastrunnersPosition.map((item)=>{
+    //     if(item.runner == type){
+    //       item.amount = item.amount + winningAmount
+    //     }else {
+    //       item.amount = item.amount + (-loosingAmount)
+    //     }
+    //     return item 
+    //   });
+    // }
   }else if(expoisureType == 2){
     newPosition = lastrunnersPosition.map((item)=>{
-      if(item.runner == selectionId){
+      if(item.runner == selectedRunner){
         item.amount = item.amount + winningAmount
       }else {
         item.amount = item.amount - loosingAmount
