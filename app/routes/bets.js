@@ -708,6 +708,7 @@ const placeBet = async (req, res) => {
 
     let runnersPosition = [];
     let prevExpAmount = 0;
+    let expAmount =  0 
 
     let lastBetsCount = await Bets.countDocuments({
       marketId: _3rdPartyMarketId,
@@ -776,7 +777,7 @@ const placeBet = async (req, res) => {
           }
         }
       }
-      let expAmount = runnersPosition.reduce((min, current) => {
+      expAmount = runnersPosition.reduce((min, current) => {
         return current.amount < min.amount ? current : min;
       }, runnersPosition[0]);
       expAmount = expAmount.amount;
