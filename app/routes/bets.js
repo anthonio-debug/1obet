@@ -848,6 +848,8 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
   const lastrunnersPosition = lastBet[0].runnersPosition;
 
   console.log("=================== last runners Position ================", lastrunnersPosition);
+  console.log("=================== expoisureType ================", expoisureType);
+
   let newPosition;
   if(expoisureType == 3){
     newPosition = runnerForSaveInbets.map((item)=>{
