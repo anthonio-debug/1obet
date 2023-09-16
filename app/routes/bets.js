@@ -853,7 +853,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
   let newPosition;
   if(expoisureType == 3){
     if(type == 0){
-      console.log(" ================= Back is called  =================  ");
+      console.log(" ================= fancy  Back is called  =================  ");
       //  $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( currentWinningAmount ) 
       //  $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount In fact liability amount which will be in minus ) = (-100 ) +  ( -100 )  = 200
       newPosition = lastrunnersPosition.map((item)=>{
@@ -865,7 +865,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
         return item 
       })
     }else if(type == 1){
-      console.log(" ================= Lay is called  =================  ");
+      console.log(" ================= Fancy  Lay is called  =================  ");
       // $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( -  (loosing money )liablityAmount ) => ( 67 ) + ( -34 ) = 33
       // $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount )   ( - 100 ) + ( + 100 )
       newPosition = lastrunnersPosition.map((item)=>{
