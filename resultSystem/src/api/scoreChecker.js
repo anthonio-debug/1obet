@@ -29,8 +29,16 @@ function scoreChecker() {
         console.log('Result checking event');
         var url = `${sportsAPIUrl}/results/?ids=${betData.marketId}`;
         try {
-            const response = await axios.get(url);
-            const results = response.data;
+            var results;
+            const manuelRecord = await MarketIDs.findOne({marketId: betData.marketId, manuelClose: true, winnerRunnerData: {$ne: null}});
+            
+            if (manuelRecord) {
+                results = [{winnerSelectionId: manuelRecord.winnerRunnerData}];
+            } else  {
+                const response = await axios.get(url);
+                results = response.data;
+            }
+
             if (results.length > 0) {
                 const result = results[0];
                 var newRecord = new resultRecords({
@@ -84,8 +92,15 @@ function scoreChecker() {
 
         var url = `${horseRaceUrl}/results/?ids=${betData.marketId}`;
         try {
-            const response = await axios.get(url);
-            const results = response.data;
+            var results;
+            const manuelRecord = await MarketIDs.findOne({marketId: betData.marketId, manuelClose: true, winnerRunnerData: {$ne: null}});
+            
+            if (manuelRecord) {
+                results = [{winnerSelectionId: manuelRecord.winnerRunnerData}];
+            } else  {
+                const response = await axios.get(url);
+                results = response.data;
+            }
             if (results.length > 0) {
                 const result = results[0];
                 var newRecord = new resultRecords({
