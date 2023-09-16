@@ -610,7 +610,7 @@ const placeBet = async (req, res) => {
       if (inning == 2 && currentSession == totalSessions) {
         return res.status(404).send({
           success: false,
-          message: 'betting not Allowed !',
+          message: 'betting not allowed !',
           currentSession: currentSession,
           totalSessions: totalSessions,
           currentSessionOver: currentSessionOver,
