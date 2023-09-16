@@ -1935,6 +1935,7 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
       return res.send({
         success: true,
         message: 'Winner runner saved without runner name.',
+        runners: market.runners
       });
     }
 
