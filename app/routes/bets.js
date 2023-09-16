@@ -555,14 +555,13 @@ const placeBet = async (req, res) => {
       }
 
       let score = await cricketLiveScore(eventDetail.Id);
-      console.log(" Score ======================= ", score)
+      // console.log(" Score ======================= ", score)
       if (!score) {
         return res.status(404).json({
           status: false,
           message: `Bet Not Allowed`
         });
       }
-      console.log(' only  score |||| ====== |||| ', score);
       let currentOver = score.overs;
       let type        = score.type
       let inning = score.inning;
@@ -627,6 +626,7 @@ const placeBet = async (req, res) => {
         })
 
       }
+      _3rdPartyMarketId = subMarketDetail.Id 
       console.log("Bets are Allowed");
       console.log(" currentSession ========= ", currentSession);
     }
@@ -706,50 +706,43 @@ const placeBet = async (req, res) => {
 
     let runnersPosition = [];
     let prevExpAmount = 0;
+
     let lastBetsCount = await Bets.countDocuments({
       marketId: _3rdPartyMarketId,
       userId: req.decoded.userId
     });
-
     console.log(" ================ Selection ID ================ ", selectionId);
-    if(lastBetsCount){
-      const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType);
-      runnersPosition =  resp.runnersPosition;
-      prevExpAmount =  resp.prevExpAmount;
+    if(subMarketDetail.Id == config.Fancy){
+      expAmount = loosingAmount
     }else {
-      if(expoisureType == 3){
-        if(type == 0){
-          console.log(" ================ Fancy  Back is called  ================  ");
-          runnersPosition = runnerForSaveInbets.map((item)=>{
-            if(item.runner == type){
-              item.amount = item.amount + winningAmount
-            }else {
-              item.amount = item.amount + (-loosingAmount)
-            }
-            return item 
-          })
-        }else if(type == 1){
-          console.log(" ================ Fancy  Lay is called  ================  ");
-          runnersPosition = runnerForSaveInbets.map((item)=>{
-            if(item.runner == type){
-              item.amount = item.amount + (-loosingAmount)
-            }else {
-              item.amount = item.amount + winningAmount
-            }
-            return item 
-          });
-        }
-      }else if(expoisureType == 2){
-        runnersPosition = runnerForSaveInbets.map((item)=>{
-          if(item.runner == selectionId){
-            item.amount = item.amount + winningAmount
-          }else {
-            item.amount = item.amount - loosingAmount
-          }
-          return item 
-        })
+      if(lastBetsCount){
+        const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType);
+        runnersPosition =  resp.runnersPosition;
+        prevExpAmount =  resp.prevExpAmount;
       }else {
-        if(type == 0){
+        if(expoisureType == 3){
+          if(type == 0){
+            console.log(" ================ Fancy  Back is called  ================  ");
+            runnersPosition = runnerForSaveInbets.map((item)=>{
+              if(item.runner == type){
+                item.amount = item.amount + winningAmount
+              }else {
+                item.amount = item.amount + (-loosingAmount)
+              }
+              return item 
+            })
+          }else if(type == 1){
+            console.log(" ================ Fancy  Lay is called  ================  ");
+            runnersPosition = runnerForSaveInbets.map((item)=>{
+              if(item.runner == type){
+                item.amount = item.amount + (-loosingAmount)
+              }else {
+                item.amount = item.amount + winningAmount
+              }
+              return item 
+            });
+          }
+        }else if(expoisureType == 2){
           runnersPosition = runnerForSaveInbets.map((item)=>{
             if(item.runner == selectionId){
               item.amount = item.amount + winningAmount
@@ -758,27 +751,37 @@ const placeBet = async (req, res) => {
             }
             return item 
           })
-  
-        }else if(type == 1){
-          runnersPosition = runnerForSaveInbets.map((item)=>{
-            if(item.runner == selectionId){
-              item.amount = item.amount - loosingAmount
-            }else {
-              item.amount = item.amount + winningAmount
-            }
-            return item 
-          })
+        }else {
+          if(type == 0){
+            runnersPosition = runnerForSaveInbets.map((item)=>{
+              if(item.runner == selectionId){
+                item.amount = item.amount + winningAmount
+              }else {
+                item.amount = item.amount - loosingAmount
+              }
+              return item 
+            })
+    
+          }else if(type == 1){
+            runnersPosition = runnerForSaveInbets.map((item)=>{
+              if(item.runner == selectionId){
+                item.amount = item.amount - loosingAmount
+              }else {
+                item.amount = item.amount + winningAmount
+              }
+              return item 
+            })
+          }
         }
       }
+      let expAmount = runnersPosition.reduce((min, current) => {
+        return current.amount < min.amount ? current : min;
+      }, runnersPosition[0]);
+      expAmount = expAmount.amount;
+      console.log(" ================ RUNNER INFO ================ ", runnersPosition);
+      console.log(" ================ EXP AMOUNT ================ ", expAmount);
+      expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
     }
-    let expAmount = runnersPosition.reduce((min, current) => {
-      return current.amount < min.amount ? current : min;
-    }, runnersPosition[0]);
-    expAmount = expAmount.amount;
-    console.log(" ================ RUNNER INFO ================ ", runnersPosition);
-    console.log(" ================ EXP AMOUNT ================ ", expAmount);
-    expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
-
     const bet = new Bets({
       marketId: _3rdPartyMarketId,
       sportsId: marketId,
@@ -802,10 +805,13 @@ const placeBet = async (req, res) => {
       exposureAmount: expAmount,
       runnersPosition: runnersPosition
     });
-    let setCalculateExpFalse = await Bets.updateMany(
-      { marketId: _3rdPartyMarketId, userId: userId },
-      {calculateExp: false}
-    );
+    if(subMarketDetail.Id != config.Fancy){
+      let setCalculateExpFalse = await Bets.updateMany(
+        { marketId: _3rdPartyMarketId, userId: userId, matchId: matchId },
+        {calculateExp: false}
+      );
+    }
+
 
     bet.save(async (err, result) => {
       if (err) {
