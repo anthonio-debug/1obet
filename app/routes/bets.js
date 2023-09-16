@@ -692,56 +692,32 @@ const placeBet = async (req, res) => {
       loosingAmount =  (fancyRate/100) * betAmount;
       winningAmount = betAmount;
       runnerForSaveInbets  = config.FancyKaliJotaChottaBara
-      expoisureType = 3
     }
     else if (type == 0 && subMarketDetail.Id == config.Fancy) {
       // Value showing below/100)*bet amount = winning amount
       winningAmount = (fancyRate/100) * betAmount;
       loosingAmount = betAmount;
       runnerForSaveInbets  = config.FancyKaliJotaChottaBara
-      expoisureType = 3
     }
 
     let runnersPosition = [];
     let prevExpAmount = 0;
     let expAmount =  0 
-
-    let lastBetsCount = await Bets.countDocuments({
-      marketId: _3rdPartyMarketId,
-      userId: req.decoded.userId
-    });
     console.log(" ================ Selection ID ================ ", selectionId);
     if(subMarketDetail.Id == config.Fancy){
       expAmount = loosingAmount
     }else {
+      let lastBetsCount = await Bets.countDocuments({
+        marketId: _3rdPartyMarketId,
+        userId: req.decoded.userId,
+        matchId: matchId
+      });
       if(lastBetsCount){
         const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType, matchId);
         runnersPosition =  resp.runnersPosition;
         prevExpAmount =  resp.prevExpAmount;
       }else {
-        if(expoisureType == 3){
-          if(type == 0){
-            console.log(" ================ Fancy  Back is called  ================  ");
-            runnersPosition = runnerForSaveInbets.map((item)=>{
-              if(item.runner == type){
-                item.amount = item.amount + winningAmount
-              }else {
-                item.amount = item.amount + (-loosingAmount)
-              }
-              return item 
-            })
-          }else if(type == 1){
-            console.log(" ================ Fancy  Lay is called  ================  ");
-            runnersPosition = runnerForSaveInbets.map((item)=>{
-              if(item.runner == type){
-                item.amount = item.amount + (-loosingAmount)
-              }else {
-                item.amount = item.amount + winningAmount
-              }
-              return item 
-            });
-          }
-        }else if(expoisureType == 2){
+        if(expoisureType == 2){
           runnersPosition = runnerForSaveInbets.map((item)=>{
             if(item.runner == selectionId){
               item.amount = item.amount + winningAmount
