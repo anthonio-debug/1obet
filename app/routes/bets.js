@@ -693,14 +693,14 @@ const placeBet = async (req, res) => {
       loosingAmount =  (fancyRate/100) * betAmount;
       winningAmount = betAmount;
       runnerForSaveInbets  = config.FancyKaliJotaChottaBara
-      expoisureType = 2
+      expoisureType = 3
     }
     else if (type == 0 && subMarketDetail.Id == config.Fancy) {
       // Value showing below/100)*bet amount = winning amount
       winningAmount = (fancyRate/100) * betAmount;
       loosingAmount = betAmount;
       runnerForSaveInbets  = config.FancyKaliJotaChottaBara
-      expoisureType = 2
+      expoisureType = 3
     }
 
     let runnersPosition = [];
@@ -713,12 +713,28 @@ const placeBet = async (req, res) => {
     console.log(" ================ Selection ID ============ ", selectionId);
     if(lastBetsCount){
       // console.log(" ================ _3rdPartyMarketId ". _3rdPartyMarketId);
-      const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount);
+      const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType);
       runnersPosition =  resp.runnersPosition;
       prevExpAmount =  resp.prevExpAmount;
     }else {
-      if(expoisureType == 2){
-
+      if(expoisureType == 3){
+        runnersPosition = runnerForSaveInbets.map((item)=>{
+          if(item.runner == type){
+            item.amount = item.amount + winningAmount
+          }else {
+            item.amount = item.amount - loosingAmount
+          }
+          return item 
+        })
+      }else if(expoisureType == 2){
+        runnersPosition = runnerForSaveInbets.map((item)=>{
+          if(item.runner == selectionId){
+            item.amount = item.amount + winningAmount
+          }else {
+            item.amount = item.amount - loosingAmount
+          }
+          return item 
+        })
       }else {
         if(type == 0){
           runnersPosition = runnerForSaveInbets.map((item)=>{
@@ -823,7 +839,7 @@ const placeBet = async (req, res) => {
   }
 }
 
-async function calculateExposure(marketId, userId, type, selectedRunner, loosingAmount, winningAmount){
+async function calculateExposure(marketId, userId, type, selectedRunner, loosingAmount, winningAmount, expoisureType){
   let lastBet = await Bets.find({
     marketId: marketId,
     userId: userId
@@ -833,12 +849,21 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
 
   console.log("=================== last runners Position ================", lastrunnersPosition);
   let newPosition;
-  if(expoisureType == 2){
-    newPosition = lastrunnersPosition.map((item)=>{
-      if(item.runner == selectedRunner){
+  if(expoisureType == 3){
+    newPosition = runnerForSaveInbets.map((item)=>{
+      if(item.runner == type){
         item.amount = item.amount + winningAmount
       }else {
-        item.amount = item.amount + (-loosingAmount)
+        item.amount = item.amount - loosingAmount
+      }
+      return item 
+    })
+  }else if(expoisureType == 2){
+    newPosition = runnerForSaveInbets.map((item)=>{
+      if(item.runner == selectionId){
+        item.amount = item.amount + winningAmount
+      }else {
+        item.amount = item.amount - loosingAmount
       }
       return item 
     })
