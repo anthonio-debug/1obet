@@ -852,14 +852,31 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
 
   let newPosition;
   if(expoisureType == 3){
-    newPosition = lastrunnersPosition.map((item)=>{
-      if(item.runner == type){
-        item.amount = item.amount + winningAmount
-      }else {
-        item.amount = item.amount - loosingAmount
-      }
-      return item 
-    })
+    if(type == 0){
+      console.log(" ================= Back is called  =================  ");
+      //  $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( currentWinningAmount ) 
+      //  $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount In fact liability amount which will be in minus ) = (-100 ) +  ( -100 )  = 200
+      newPosition = lastrunnersPosition.map((item)=>{
+        if(item.runner == type){
+          item.amount = item.amount + winningAmount
+        }else {
+          item.amount = item.amount + (-loosingAmount)
+        }
+        return item 
+      })
+    }else if(type == 1){
+      console.log(" ================= Lay is called  =================  ");
+      // $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( -  (loosing money )liablityAmount ) => ( 67 ) + ( -34 ) = 33
+      // $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount )   ( - 100 ) + ( + 100 )
+      newPosition = lastrunnersPosition.map((item)=>{
+        if(item.runner == type){
+          item.amount = item.amount + (-loosingAmount)
+        }else {
+          item.amount = item.amount + winningAmount
+        }
+        return item 
+      });
+    }
   }else if(expoisureType == 2){
     newPosition = lastrunnersPosition.map((item)=>{
       if(item.runner == selectionId){
