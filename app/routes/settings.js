@@ -1923,23 +1923,23 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
       return res.status(404).send({
         success: false,
         message: 'Market is not exist for this event'
-      }); 
+      });
     }
 
 
     if (!market.runners || market.runners.length == 0) {
       await MarketIDS.findOneAndUpdate(
-          { eventId: req.body.eventId, marketId: req.body.marketId },
-          { $set: { winnerInfo: req.body.runnerId, manuelClose: true, winnerRunnerData: req.body.runnerId } },
+        { eventId: req.body.eventId, marketId: req.body.marketId },
+        { $set: { winnerInfo: req.body.runnerId, manuelClose: true, winnerRunnerData: req.body.runnerId } },
       );
       return res.send({
         success: true,
-        message: 'Winner runner saved',
+        message: 'Winner runner saved without runner name.',
       });
     }
 
-    
-   
+
+
     var selectedR = null;
 
     for (let index = 0; index < market.runners.length; index++) {
@@ -1952,22 +1952,38 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
 
 
     if (selectedR) {
+
+
+      if (market.marketName == 'Match Odds') {
+        await Events.findOneAndUpdate(
+          { eventId: req.body.eventId },
+          { $set: { winner: selectedR.runnerName } },
+        );
+      }
+
       await MarketIDS.findOneAndUpdate(
         { eventId: req.body.eventId, marketId: req.body.marketId },
         { $set: { winnerInfo: selectedR.runnerName, manuelClose: true, winnerRunnerData: req.body.runnerId } },
       );
+
+      return res.send({
+        success: true,
+        message: 'Winner runner saved with runner name.',
+      });
+
     } else {
       await MarketIDS.findOneAndUpdate(
         { eventId: req.body.eventId, marketId: req.body.marketId },
         { $set: { winnerInfo: req.body.runnerId, manuelClose: true, winnerRunnerData: req.body.runnerId } },
-    );
+      );
+      return res.send({
+        success: true,
+        message: 'Winner runner saved without runner name 1.',
+      });
     }
 
 
-    return res.send({
-      success: true,
-      message: 'Winner runner saved',
-    });
+
 
 
   } catch (error) {
