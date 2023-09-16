@@ -98,7 +98,9 @@ async function handleLosingBet(bet) {
   }
   userToUpdate.balance -= loosingAmount;
   userToUpdate.clientPL -= loosingAmount;
-  userToUpdate.exposure += loosingAmount;
+  if(bet.calculateExp){
+    userToUpdate.exposure += bet.exposureAmount;
+  }
   await userToUpdate.save();
   console.log(" ======================== User Updating Sucessfully ");
 
@@ -241,11 +243,14 @@ async function handleWinningBet(bet) {
     upMovingCommAmount = commissionAmount
   }
 
+  let expAmount = 0;
   userToUpdate.balance += remainingAmount;
   userToUpdate.clientPL += remainingAmount;
-
-  userToUpdate.availableBalance += TotalLoosingAmount + remainingAmount;
-  userToUpdate.exposure += TotalLoosingAmount;
+  if(bet.calculateExp){
+    userToUpdate.exposure += bet.exposureAmount;
+    expAmount = bet.exposureAmount;
+  }
+  userToUpdate.availableBalance += expAmount + remainingAmount;
   await userToUpdate.save();
   console.log(" =============== User Updated Successfull ");
 
@@ -390,9 +395,11 @@ async function handleDrawBet(bet) {
   const totalRemainingAmount = bet.winningAmount;
   const TotalLoosingAmount = bet.loosingAmount;
 
-  userToUpdate.availableBalance += TotalLoosingAmount;
-  userToUpdate.exposure += TotalLoosingAmount;
-  await userToUpdate.save();
+  if(bet.calculateExp){
+    userToUpdate.availableBalance += bet.exposureAmount;
+    userToUpdate.exposure += bet.exposureAmount;
+    await userToUpdate.save();
+  }
 
   const parentUserIds = await getParents(userId);
   const parentUser = await User.find({
@@ -403,7 +410,7 @@ async function handleDrawBet(bet) {
   }).sort({ role: -1 });
 
   if (!parentUser) {
-    return res.status(404).send({ message: "user not found" });
+    return res.status(404).send({ message: "user not found !" });
   }
   let prev = 0;
   parentUser.forEach((user) => {
