@@ -372,8 +372,8 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = response?.data?.data?.t3;
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3
-      console.log(" apiFancyOdds ====== ", apiFancyOdds);
-      console.log(" dbFancyOdds  ====== ", dbFancyOdds);
+      // console.log(" apiFancyOdds ====== ", apiFancyOdds);
+      // console.log(" dbFancyOdds  ====== ", dbFancyOdds);
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
         const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == selectionId);
         const dbSelectedOdds = dbFancyOdds.find(runner => runner.sid == selectionId);
@@ -888,7 +888,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
     }
   }else if(expoisureType == 2){
     newPosition = lastrunnersPosition.map((item)=>{
-      if(item.runner == selectionId){
+      if(item.runner == selectedRunner){
         item.amount = item.amount + winningAmount
       }else {
         item.amount = item.amount - loosingAmount
