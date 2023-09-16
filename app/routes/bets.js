@@ -580,8 +580,8 @@ const placeBet = async (req, res) => {
       }
       let totalSessions = 0
       if (currentOver % 5 == 0) currentOver += 1
-      let currentSessionOver = Math.ceil(currentOver % 5) + sessionAddition;
-      currentSession = Math.ceil(currentOver / 5);
+      let currentSessionOver = Math.ceil(currentOver % 5);
+      currentSession = Math.ceil(currentOver / 5) + sessionAddition;
       console.log(" currentSession = ", currentSession, " currentSessionOver =", currentSessionOver, " currentOver =", currentOver);
 
       switch (eventDetail.matchType) {
@@ -617,7 +617,7 @@ const placeBet = async (req, res) => {
         });
       }
       else if (currentSessionOver > 3) {
-        console.log(" ================ currentSessionOver ===================", currentSessionOver);
+        console.log(" ================ currentSessionOver ================ ", currentSessionOver);
         
         return res.status(404).send({
           success: false,
