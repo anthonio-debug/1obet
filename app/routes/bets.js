@@ -852,7 +852,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
 
   let newPosition;
   if(expoisureType == 3){
-    newPosition = runnerForSaveInbets.map((item)=>{
+    newPosition = lastrunnersPosition.map((item)=>{
       if(item.runner == type){
         item.amount = item.amount + winningAmount
       }else {
@@ -861,7 +861,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
       return item 
     })
   }else if(expoisureType == 2){
-    newPosition = runnerForSaveInbets.map((item)=>{
+    newPosition = lastrunnersPosition.map((item)=>{
       if(item.runner == selectionId){
         item.amount = item.amount + winningAmount
       }else {
