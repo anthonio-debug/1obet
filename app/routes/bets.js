@@ -617,6 +617,8 @@ const placeBet = async (req, res) => {
         });
       }
       else if (currentSessionOver > 3) {
+        console.log(" ================ currentSessionOver ===================", currentSessionOver);
+        
         return res.status(404).send({
           success: false,
           message: `betting not Allowed in ${Math.ceil(currentOver % 5)} over`,
