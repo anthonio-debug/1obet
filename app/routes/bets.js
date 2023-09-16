@@ -868,7 +868,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
 
   let newPosition;
   if(expoisureType == 3){
-    if(type == 0){
+    // if(type == 0){
       console.log(" ================= fancy  Back is called  =================  ");
       newPosition = lastrunnersPosition.map((item)=>{
         if(item.runner == type){
@@ -878,17 +878,18 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
         }
         return item 
       })
-    }else if(type == 1){
-      console.log(" ================= Fancy  Lay is called  =================  ");
-      newPosition = lastrunnersPosition.map((item)=>{
-        if(item.runner == type){
-          item.amount = item.amount + (-loosingAmount)
-        }else {
-          item.amount = item.amount + winningAmount
-        }
-        return item 
-      });
-    }
+    // }
+    // else if(type == 1){
+    //   console.log(" ================= Fancy  Lay is called  =================  ");
+    //   newPosition = lastrunnersPosition.map((item)=>{
+    //     if(item.runner == type){
+    //       item.amount = item.amount + winningAmount
+    //     }else {
+    //       item.amount = item.amount + (-loosingAmount)
+    //     }
+    //     return item 
+    //   });
+    // }
   }else if(expoisureType == 2){
     newPosition = lastrunnersPosition.map((item)=>{
       if(item.runner == selectedRunner){
