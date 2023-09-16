@@ -770,8 +770,6 @@ db.betlimits.insertMany([
 
 ])
 
-// new one 
-
 /**
  [
 
@@ -806,272 +804,70 @@ db.betlimits.insertMany([
 ]
  * */ 
 
-/*
-  {
-    "status": true,
-    "msg": "Records",
-    "data": {
-        "activenation1": "0",
-        "activenation2": 1,
-        "balls": [
-            "0",
-            "0",
-            "2",
-            "0",
-            "0",
-            "4"
-        ],
-        "dayno": "",
-        "isfinished": "0",
-        "score1": "277-10 (73.2) & 0-0 (0.0)",
-        "score2": "219-10 (88.4),&,24-0 (6.4)",
-        "spnballrunningstatus": "",
-        "spnmessage": "Day 2 | NOR trail by 34 runs",
-        "spnnation1": "MID",
-        "spnnation2": "NOR",
-        "spnreqrate1": "",
-        "spnreqrate2": "",
-        "spnrunrate1": "",
-        "spnrunrate2": "CRR 3.60"
-    }
-  }
-*/
-
-/*
-  {
-    "status": true,
-    "msg": "Records",
-    "data": {
-        "activenation1": "0",
-        "activenation2": 1,
-        "balls": [
-            "0",
-            "1",
-            "0",
-            "0",
-            "0",
-            "4"
-        ],
-        "dayno": "",
-        "isfinished": "0",
-        "score1": "355-10 (99.2)",
-        "score2": "184-2 (58.1)",
-        "spnballrunningstatus": "",
-        "spnmessage": "Day 2 | NOT trail by 171 runs",
-        "spnnation1": "SUR",
-        "spnnation2": "NOT",
-        "spnreqrate1": "",
-        "spnreqrate2": "",
-        "spnrunrate1": "",
-        "spnrunrate2": "CRR 3.16 "
-    }
-  }
-*/
-
-/*
-[
-
-      {
-            "score": {
-                  "activenation1": 1,
-                  "activenation2": "0",
-                  "balls": [
-                        "w",
-                        "0",
-                        "ww",
-                        "1",
-                        "1",
-                        "ww"
-                  ],
-                  "dayno": "",
-                  "isfinished": "0",
-                  "score1": "3-2 (0.5)",
-                  "score2": "0-0 (0.0)",
-                  "spnballrunningstatus": "",
-                  "spnmessage": "",
-                  "spnnation1": "HT",
-                  "spnnation2": "MW",
-                  "spnreqrate1": "",
-                  "spnreqrate2": "",
-                  "spnrunrate1": "CRR 3.60 ",
-                  "spnrunrate2": ""
-            },
-            "eventId": "1808290412"
-      }
-
-]
-
-*/ 
-
-/*
-  respone of live score API     
-    "score": {
-            "activenation1": 1,
-            "activenation2": "0",
-            "balls": [
-                "0",
-                "0",
-                "0",
-                "1",
-                "0",
-                "0"
-            ],
-            "dayno": "",
-            "isfinished": "0",
-            "score1": "16-2 (4.4)",
-            "score2": "95-8 (20.0)",
-            "spnballrunningstatus": "",
-            "spnmessage": "BAN W Needed 80 runs from 92 balls",
-            "spnnation1": "BAN W",
-            "spnnation2": "IND W",
-            "spnreqrate1": "RR 5.22 ",
-            "spnreqrate2": "",
-            "spnrunrate1": "CRR 3.43 ",
-            "spnrunrate2": ""
-        },
-        "eventId": "32475818"
-    }
-
-*/
-
-/*
-{
-    "status": true,
-    "msg": "Records",
-    "data": {
-        "eventTypeId": 4,
-        "eventId": 32473071,
-        "score": {
-            "home": {
-                "name": "Worcestershire",
-                "halfTimeScore": "",
-                "fullTimeScore": "",
-                "penaltiesScore": "",
-                "penaltiesSequence": [],
-                "highlight": true,
-                "inning1": {
-                    "runs": "242",
-                    "wickets": "ALL_OUT",
-                    "overs": "89.3"
-                },
-                "inning2": {
-                    "runs": "49",
-                    "wickets": "2",
-                    "overs": "18.3"
-                }
-            },
-            "away": {
-                "name": "Yorkshire",
-                "halfTimeScore": "",
-                "fullTimeScore": "",
-                "penaltiesScore": "",
-                "penaltiesSequence": [],
-                "highlight": false,
-                "inning1": {
-                    "runs": "407",
-                    "wickets": "ALL_OUT",
-                    "overs": "92.1"
-                }
-            }
-        },
-        "currentSet": 2,
-        "hasSets": false,
-        "stateOfBall": {
-            "overNumber": "18",
-            "overBallNumber": "3",
-            "bowlerName": "Ben Coad",
-            "batsmanName": "",
-            "batsmanRuns": "",
-            "appealId": "0",
-            "appealTypeName": "Not Out",
-            "wide": "0",
-            "bye": "0",
-            "legBye": "0",
-            "noBall": "0",
-            "outcomeId": "0",
-            "dismissalTypeName": "Not Out",
-            "referralOutcome": "0"
-        },
-        "currentDay": "4",
-        "matchType": "TEST",
-        "fullTimeElapsed": {
-            "hour": 0,
-            "min": 0,
-            "sec": 0
-        },
-        "matchStatus": "RainDelay"
-    }
-}
-
-*/
 
 
 
 
-
-
-
-
-    //Qaiser
-      // let expAmount = loosingAmount;
-      // const lastBetsCount = await  Bets.countDocuments({
-      //   marketId: _3rdPartyMarketId,
-      //   userId: req.decoded.userId,
-      //   type: type
-      // });
-      // // lastBetsCount = 1;
-        
-      // if(lastBetsCount){
-      //   expAmount = calculateExposure(_3rdPartyMarketId)
-		  //   console.log(expAmount);
-      // }
-    //end Qaiser
+//Qaiser
+  // let expAmount = loosingAmount;
+  // const lastBetsCount = await  Bets.countDocuments({
+  //   marketId: _3rdPartyMarketId,
+  //   userId: req.decoded.userId,
+  //   type: type
+  // });
+  // // lastBetsCount = 1;
+    
+  // if(lastBetsCount){
+  //   expAmount = calculateExposure(_3rdPartyMarketId)
+  //   console.log(expAmount);
+  // }
+//end Qaiser
 
 
 
   
-[
-  { runner: 1, amount: 0  },
-  { runner: 2, amount: 0  },
-  { runner: 3, amount: 0  },
-  { runner: 4, amount: 0  },
-  { runner: 5, amount: 0  },
-  { runner: 6, amount: 0  }
-]
+// [
+//   { runner: 1, amount: 0  },
+//   { runner: 2, amount: 0  },
+//   { runner: 3, amount: 0  },
+//   { runner: 4, amount: 0  },
+//   { runner: 5, amount: 0  },
+//   { runner: 6, amount: 0  }
+// ]
 
 
-// Lay 
-// Amount 1000  Rate : 6.8  Selected =1 
-// Selected = rate-1 * amt = loosing 
+// // Lay 
+// // Amount 1000  Rate : 6.8  Selected =1 
+// // Selected = rate-1 * amt = loosing 
 
-[
-   { runner: 1, amount: -5800  },
-   { runner: 2, amount: 1000  },
-   { runner: 3, amount: 1000  },
-   { runner: 4, amount: 1000  },
-   { runner: 5, amount: 1000  },
-   { runner: 6, amount: 1000  }
-]
-// Back  
-// Amount 1000  Rate : 5.3  Selected =1 
-// Selected = rate-1 * amt = winning  
-[
-   { runner: 1, amount: -1500  },
-   { runner: 2, amount: 0  },
-   { runner: 3, amount: 0  },
-   { runner: 4, amount: 0  },
-   { runner: 5, amount: 0  },
-   { runner: 6, amount: 0  }
-]
+// [
+//    { runner: 1, amount: -5800  },
+//    { runner: 2, amount: 1000  },
+//    { runner: 3, amount: 1000  },
+//    { runner: 4, amount: 1000  },
+//    { runner: 5, amount: 1000  },
+//    { runner: 6, amount: 1000  }
+// ]
+// // Back  
+// // Amount 1000  Rate : 5.3  Selected =1 
+// // Selected = rate-1 * amt = winning  
+// [
+//    { runner: 1, amount: -1500  },
+//    { runner: 2, amount: 0  },
+//    { runner: 3, amount: 0  },
+//    { runner: 4, amount: 0  },
+//    { runner: 5, amount: 0  },
+//    { runner: 6, amount: 0  }
+// ]
 
-// Back  
-// Amount 1000  Rate : 6.4  Selected =4
-// Selected = rate-1 * amt = winning  
-[
-   { runner: 1, amount: -2500  },
-   { runner: 2, amount: -1000  },
-   { runner: 3, amount: -1000  },
-   { runner: 4, amount: 5400  },
-   { runner: 5, amount: -1000  },
-   { runner: 6, amount: -1000  }
-]
+// // Back  
+// // Amount 1000  Rate : 6.4  Selected =4
+// // Selected = rate-1 * amt = winning  
+// [
+//    { runner: 1, amount: -2500  },
+//    { runner: 2, amount: -1000  },
+//    { runner: 3, amount: -1000  },
+//    { runner: 4, amount: 5400  },
+//    { runner: 5, amount: -1000  },
+//    { runner: 6, amount: -1000  }
+// ]

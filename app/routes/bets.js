@@ -385,9 +385,10 @@ const placeBet = async (req, res) => {
           console.log(`Odds not available for the selected team ${selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${selectionId}` });
         }
+        // Get the runner name from the 'nat' field
         fancyData  = dbSelectedOdds.nat
         runnerName = dbSelectedOdds.nat; 
-        // Get the runner name from the 'nat' field
+        _3rdPartyMarketId = dbSelectedOdds.mid; 
 
         if (req.body.type == 0) {
 
@@ -710,7 +711,7 @@ const placeBet = async (req, res) => {
       userId: req.decoded.userId
     });
 
-    console.log(" ================ Selection ID ============ ", selectionId);
+    console.log(" ================ Selection ID ================ ", selectionId);
     if(lastBetsCount){
       const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType);
       runnersPosition =  resp.runnersPosition;
@@ -718,7 +719,7 @@ const placeBet = async (req, res) => {
     }else {
       if(expoisureType == 3){
         if(type == 0){
-          console.log(" ================= Fancy  Back is called  =================  ");
+          console.log(" ================ Fancy  Back is called  ================  ");
           runnersPosition = runnerForSaveInbets.map((item)=>{
             if(item.runner == type){
               item.amount = item.amount + winningAmount
@@ -728,7 +729,7 @@ const placeBet = async (req, res) => {
             return item 
           })
         }else if(type == 1){
-          console.log(" ================= Fancy  Lay is called  =================  ");
+          console.log(" ================ Fancy  Lay is called  ================  ");
           runnersPosition = runnerForSaveInbets.map((item)=>{
             if(item.runner == type){
               item.amount = item.amount + (-loosingAmount)
