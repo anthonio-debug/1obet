@@ -122,10 +122,6 @@ const placeBet = async (req, res) => {
     if (!user) {
       return res.status(404).send({ message: 'illegal user betting' });
     }
-    console.log('userAvailableBalance', user.availableBalance)
-    if ((user.availableBalance < betAmount && type == 0) || (user.availableBalance < betAmount * (betRate - 1) && type == 1)) {
-      return res.status(404).send({ message: 'Insufficient balance' });
-    }
     if (user.bettingAllowed == false) {
       return res.status(404).send({ message: 'Bet not allowed' });
     }
@@ -808,6 +804,12 @@ const placeBet = async (req, res) => {
       exposureAmount: expAmount,
       runnersPosition: runnersPosition
     });
+    console.log('userAvailableBalance', user.availableBalance)
+    // if ((user.availableBalance < betAmount && type == 0) || (user.availableBalance < betAmount * (betRate - 1) && type == 1)) {
+    if (user.availableBalance < expAmount-prevExpAmount ) {
+      return res.status(404).send({ message: 'Insufficient balance' });
+    }
+
     if(subMarketDetail.Id != config.Fancy){
       let setCalculateExpFalse = await Bets.updateMany(
         { marketId: _3rdPartyMarketId, userId: userId, matchId: matchId },
