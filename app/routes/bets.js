@@ -649,14 +649,20 @@ const placeBet = async (req, res) => {
       winningAmount = betAmount;
       loosingAmount = betAmount;
       selectionId == 0? runnerName = `CHOTA` : runnerName = `BARA`;
-      runnerForSaveInbets  = config.FancyKaliJotaChottaBara;
+      runnerForSaveInbets  = [
+        { "runner": 1, "amount": 0 },
+        { "runner": 0, "amount": 0 }
+      ]
       expoisureType = 2
     }
     else if (type == 3)  {
       winningAmount = betAmount;
       loosingAmount = betAmount;
       selectionId == 0? runnerName = `KALI` : runnerName = `JOTTA`;
-      runnerForSaveInbets  = config.FancyKaliJotaChottaBara
+      runnerForSaveInbets  = [
+        { "runner": 1, "amount": 0 },
+        { "runner": 0, "amount": 0 }
+      ]
       expoisureType = 2
     }
     else if (type == 2) {
