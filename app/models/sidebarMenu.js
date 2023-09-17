@@ -11,6 +11,7 @@ let sideBarSchema = new Schema({
   darkIcon: { type: String },
   link: { type: String },
   type: { type: Number, default: 0 },
+  sort_by: { type: Number },
   marketId: { type: String },
   updatedAt: { type: Number },
   createdAt: { type: Number }
