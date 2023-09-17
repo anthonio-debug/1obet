@@ -10,6 +10,8 @@ let sessionSchema = new Schema({
   score: { type: Number, default: 0 },
   updatedAt: { type: Number },
   createdAt: { type: Number },
+  manuelSave: { type: Boolean, default: false },
+
 });
 
 sessionSchema.plugin(Global.aggregatePaginate);

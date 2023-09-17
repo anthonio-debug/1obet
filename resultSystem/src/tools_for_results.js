@@ -164,7 +164,8 @@ function ToolForResults() {
                 },
                 {
                     $match: {
-                        "sessionDetails.score": { $ne: 0 }
+                        "sessionDetails.score": { $ne: 0 },
+                        "sessionDetails.manuelSave": true,
                     }
                 },
                 {

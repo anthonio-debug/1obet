@@ -30,10 +30,13 @@ function scoreChecker() {
         var url = `${sportsAPIUrl}/results/?ids=${betData.marketId}`;
         try {
             var results;
-            const manuelRecord = await MarketIDs.findOne({marketId: betData.marketId, manuelClose: true, winnerRunnerData: {$ne: null}});
+            const manuelRecord = await MarketIDs.findOne({marketId: betData.marketId, winnerRunnerData: {$ne: null}});
             
             if (manuelRecord) {
-                results = [{winnerSelectionId: manuelRecord.winnerRunnerData}];
+                if (typeof manuelRecord.manuelClose !== undefined)
+                results = [{winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose}];
+                else
+                results = [{winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: false}];
             } else  {
                 const response = await axios.get(url);
                 results = response.data;
@@ -55,10 +58,17 @@ function scoreChecker() {
 
                 if (result.winnerSelectionId == -1) {
                     for (const bet of bets) {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true &&  result.manuelClose == false)  {
+                            continue;
+                        }
+                        
                         await handleDrawBet(bet);
                     }
                 } else {
                     for (const bet of bets) {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true &&  result.manuelClose == false)  {
+                            continue;
+                        }
                         if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
                             console.log("0 ----- winner ");
                             await handleWinningBet(bet);
@@ -93,10 +103,13 @@ function scoreChecker() {
         var url = `${horseRaceUrl}/results/?ids=${betData.marketId}`;
         try {
             var results;
-            const manuelRecord = await MarketIDs.findOne({marketId: betData.marketId, manuelClose: true, winnerRunnerData: {$ne: null}});
+            const manuelRecord = await MarketIDs.findOne({marketId: betData.marketId, winnerRunnerData: {$ne: null}});
             
             if (manuelRecord) {
-                results = [{winnerSelectionId: manuelRecord.winnerRunnerData}];
+                if (typeof manuelRecord.manuelClose !== undefined)
+                results = [{winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose}];
+                else
+                results = [{winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: false}];
             } else  {
                 const response = await axios.get(url);
                 results = response.data;
@@ -116,10 +129,16 @@ function scoreChecker() {
 
                 if (result.winnerSelectionId == -1) {
                     for (const bet of bets) {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                            continue;
+                        }
                         await handleDrawBet(bet);
                     }
                 } else {
                     for (const bet of bets) {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                            continue;
+                        }
                         if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
                             console.log("0 ----- winner ");
                             await handleWinningBet(bet);
@@ -155,10 +174,22 @@ function scoreChecker() {
             if (!event)
                 return;
 
-            var url = ` https://betfairoddsapi.com:3443/api/bookmaker_result/${event.Id}`;
 
-            const response = await axios.get(url);
-            const results = response.data;
+            var results
+            const manuelRecord = await MarketIDs.findOne({marketId: 'Bookmaker', eventId: event.Id, winnerRunnerData: {$ne: null}});
+
+            if (manuelRecord) {
+                if (typeof manuelRecord.manuelClose !== undefined)
+                results = [{winnerSelId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose}];
+                else
+                results = [{winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false}];
+            } else {
+                var url = ` https://betfairoddsapi.com:3443/api/bookmaker_result/${event.Id}`;
+                const response = await axios.get(url);
+                results = response.data;    
+            }
+
+
             if (results.length > 0) {
                 const result = results[0];
                 var newRecord = new resultRecords({
@@ -196,10 +227,16 @@ function scoreChecker() {
 
                 if (result.winnerSelId == -1) {
                     for (const bet of bets) {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                            continue;
+                        }
                         await handleDrawBet(bet);
                     }
                 } else {
                     for (const bet of bets) {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                            continue;
+                        }
                         if (bet.type == 0 && bet.runner == result.winnerSelId) {
                             console.log("0 ----- winner ");
                             await handleWinningBet(bet);
@@ -242,10 +279,22 @@ function scoreChecker() {
             if (!event)
                 return;
 
-            var url = ` https://betfairoddsapi.com:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
+            var results
+            const manuelRecord = await MarketIDs.findOne({marketId: 'Bookmaker', eventId: event.Id, winnerRunnerData: {$ne: null}});
 
-            const response = await axios.get(url);
-            const results = response.data;
+            if (manuelRecord) {
+                if (typeof manuelRecord.manuelClose !== undefined)
+                results = [{result: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose}];
+                else
+                results = [{result: manuelRecord.winnerRunnerData, manuelClose: false}];
+            } else {
+                var url = ` https://betfairoddsapi.com:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
+                const response = await axios.get(url);
+                results = response.data;
+            }
+    
+
+
             if (results.length > 0) {
                 const result = results[0];
 
@@ -288,10 +337,16 @@ function scoreChecker() {
 
                 if (result.result == -1) {
                     for (const bet of bets) {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                            continue;
+                        }
                         await handleDrawBet(bet);
                     }
                 } else {
                     for (const bet of bets) {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                            continue;
+                        }
                         if (bet.type == 0 && parseInt(bet.runner) >= parseInt(result.result)) {
                             console.log("0 ----- winner ");
                             await handleWinningBet(bet);
@@ -329,20 +384,25 @@ function scoreChecker() {
             //figure bets
 
             const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(bet.betData.matchId) }, { Id: 1 });
-
-
            
-            
 
             if (bet.betData.type == 2) {
-                var correctScore = bet.score % 10;
-                if (bet.betData.runner == correctScore) {
-                    console.log("0 ----- winner ");
-                    await handleWinningBet(bet.betData);
-                } else {
-                    console.log("0 ----- looser ");
-                    await handleLosingBet(bet.betData);
+                var correctScore;
+                if (bet.score == -1) {
+                    await handleDrawBet(bet.betData);
+                    correctScore = -1;
+                } else  {
+                     correctScore = bet.score % 10;
+                    if (bet.betData.runner == correctScore) {
+                        console.log("0 ----- winner ");
+                        await handleWinningBet(bet.betData);
+                    } else {
+                        console.log("0 ----- looser ");
+                        await handleLosingBet(bet.betData);
+                    }    
                 }
+
+
 
                 if (event) {
                     await MarketIDs.findOneAndUpdate(
@@ -371,7 +431,14 @@ function scoreChecker() {
 
             //jotta kali
             if (bet.betData.type == 3) {
-                var correctScore = bet.score % 2;
+                var correctScore;
+                if (bet.score == -1) {
+                    await handleDrawBet(bet.betData);
+                    correctScore = -1;
+
+                } else  {
+                  
+                 correctScore = bet.score % 2;
                 if (bet.betData.runnerName =='JOTTA' && correctScore == 0) {
                     console.log("0 ----- winner ");
                     await handleWinningBet(bet.betData);
@@ -381,7 +448,10 @@ function scoreChecker() {
                 } else {
                     console.log("0 ----- looser ");
                     await handleLosingBet(bet.betData);
+                }  
                 }
+
+
 
                 if (event) {
                     await MarketIDs.findOneAndUpdate(
@@ -408,7 +478,12 @@ function scoreChecker() {
             }
             /// Chota bara
             if (bet.betData.type == 4) {
-                var correctScore = bet.score % 10;
+                var correctScore;
+                if (bet.score == -1) {
+                    await handleDrawBet(bet.betData);
+                    correctScore = -1;
+                } else  {
+                 correctScore = bet.score % 10;
                 if (bet.betData.runnerName =='BARA' && correctScore == 0) {
                     console.log("0 ----- winner ");
                     await handleWinningBet(bet.betData);
@@ -423,7 +498,11 @@ function scoreChecker() {
                  else {
                     console.log("0 ----- looser ");
                     await handleLosingBet(bet.betData);
+                }  
                 }
+
+
+              
 
                 await MarketIDs.findOneAndUpdate(
                     { eventId: event.Id,
