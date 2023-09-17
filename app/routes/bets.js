@@ -225,6 +225,7 @@ const placeBet = async (req, res) => {
         runner: runner.SelectionId,
         amount: 0
       }));
+      console.log(" ============================ ========================== ", runnerForSaveInbets);
       const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName
       if (!DBOddDetails) {
@@ -749,6 +750,7 @@ const placeBet = async (req, res) => {
           }
         }
       }
+      console.log(" ================ runner For SaveIn bets INFO ================ ", runnerForSaveInbets);
       console.log(" ================ RUNNER INFO ================ ", runnersPosition);
       console.log(" ================ EXP AMOUNT ================ ", expAmount);
       expAmount = runnersPosition.reduce((min, current) => {
