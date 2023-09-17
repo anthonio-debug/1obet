@@ -714,12 +714,14 @@ const placeBet = async (req, res) => {
         matchId: matchId,
         status: 1
       });
+      console.log(" ======================= Total Count of Prev Bets ", lastBetsCount);
       if(lastBetsCount){
         const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType, matchId);
         runnersPosition =  resp.runnersPosition;
         prevExpAmount =  resp.prevExpAmount;
       }else {
         if(expoisureType == 2){
+          console.log(" ========== runnerForSaveInbets ================ ", runnerForSaveInbets);
           runnersPosition = runnerForSaveInbets.map((item)=>{
             if(item.runner == selectionId){
               item.amount = item.amount + winningAmount
@@ -728,8 +730,10 @@ const placeBet = async (req, res) => {
             }
             return item 
           })
+          console.log(" ========== runnersPosition ================ ", runnersPosition);
         }else {
           if(type == 0){
+
             const runnerCurrentPosition  = runnerForSaveInbets.map((item)=>{
               if(item.runner == selectionId){
                 item.amount = item.amount + winningAmount
