@@ -711,7 +711,8 @@ const placeBet = async (req, res) => {
       let lastBetsCount = await Bets.countDocuments({
         marketId: _3rdPartyMarketId,
         userId: req.decoded.userId,
-        matchId: matchId
+        matchId: matchId,
+        status: 1
       });
       if(lastBetsCount){
         const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType, matchId);
@@ -795,7 +796,7 @@ const placeBet = async (req, res) => {
 
     if(subMarketDetail.Id != config.Fancy){
       let setCalculateExpFalse = await Bets.updateMany(
-        { marketId: _3rdPartyMarketId, userId: userId, matchId: matchId },
+        { marketId: _3rdPartyMarketId, userId: userId, matchId: matchId, status: 1 },
         {calculateExp: false}
       );
     }
@@ -851,7 +852,8 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
   let lastBet = await Bets.find({
     marketId: marketId,
     userId: userId,
-    matchId: matchId
+    matchId: matchId,
+    status: 1
   }).sort({ _id: -1 }).limit(1);
 
   console.log(" ============= lastBet ", lastBet);
