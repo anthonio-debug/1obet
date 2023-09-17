@@ -30,14 +30,14 @@ function scoreChecker() {
         var url = `${sportsAPIUrl}/results/?ids=${betData.marketId}`;
         try {
             var results;
-            const manuelRecord = await MarketIDs.findOne({marketId: betData.marketId, winnerRunnerData: {$ne: null}});
-            
+            const manuelRecord = await MarketIDs.findOne({ marketId: betData.marketId, winnerRunnerData: { $ne: null } });
+
             if (manuelRecord) {
                 if (typeof manuelRecord.manuelClose !== undefined)
-                results = [{winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose}];
+                    results = [{ winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose }];
                 else
-                results = [{winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: false}];
-            } else  {
+                    results = [{ winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: false }];
+            } else {
                 const response = await axios.get(url);
                 results = response.data;
             }
@@ -58,15 +58,15 @@ function scoreChecker() {
 
                 if (result.winnerSelectionId == -1) {
                     for (const bet of bets) {
-                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true &&  result.manuelClose == false)  {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        
+
                         await handleDrawBet(bet);
                     }
                 } else {
                     for (const bet of bets) {
-                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true &&  result.manuelClose == false)  {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
                         if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
@@ -103,14 +103,14 @@ function scoreChecker() {
         var url = `${horseRaceUrl}/results/?ids=${betData.marketId}`;
         try {
             var results;
-            const manuelRecord = await MarketIDs.findOne({marketId: betData.marketId, winnerRunnerData: {$ne: null}});
-            
+            const manuelRecord = await MarketIDs.findOne({ marketId: betData.marketId, winnerRunnerData: { $ne: null } });
+
             if (manuelRecord) {
                 if (typeof manuelRecord.manuelClose !== undefined)
-                results = [{winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose}];
+                    results = [{ winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose }];
                 else
-                results = [{winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: false}];
-            } else  {
+                    results = [{ winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: false }];
+            } else {
                 const response = await axios.get(url);
                 results = response.data;
             }
@@ -129,14 +129,14 @@ function scoreChecker() {
 
                 if (result.winnerSelectionId == -1) {
                     for (const bet of bets) {
-                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
                         await handleDrawBet(bet);
                     }
                 } else {
                     for (const bet of bets) {
-                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
                         if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
@@ -176,17 +176,17 @@ function scoreChecker() {
 
 
             var results
-            const manuelRecord = await MarketIDs.findOne({marketId: 'Bookmaker', eventId: event.Id, winnerRunnerData: {$ne: null}});
+            const manuelRecord = await MarketIDs.findOne({ marketId: 'Bookmaker', eventId: event.Id, winnerRunnerData: { $ne: null } });
 
             if (manuelRecord) {
                 if (typeof manuelRecord.manuelClose !== undefined)
-                results = [{winnerSelId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose}];
+                    results = [{ winnerSelId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose }];
                 else
-                results = [{winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false}];
+                    results = [{ winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false }];
             } else {
                 var url = ` https://betfairoddsapi.com:3443/api/bookmaker_result/${event.Id}`;
                 const response = await axios.get(url);
-                results = response.data;    
+                results = response.data;
             }
 
 
@@ -206,9 +206,10 @@ function scoreChecker() {
 
 
                 await MarketIDs.findOneAndUpdate(
-                    { eventId: event.Id,
-                      marketId: 'Bookmaker',
-                     },   
+                    {
+                        eventId: event.Id,
+                        marketId: 'Bookmaker',
+                    },
                     {
                         eventId: event.Id,
                         marketId: 'Bookmaker',
@@ -216,25 +217,26 @@ function scoreChecker() {
                         sportID: -1,
                         status: 'Bookmaker Result',
                         winnerInfo: result.winnerSelId,
+                        winnerRunnerData: result.winnerSelId,
                         index: 0
                     },
                     {
-                      new: true,
-                      upsert: true
+                        new: true,
+                        upsert: true
                     }
                 );
 
 
                 if (result.winnerSelId == -1) {
                     for (const bet of bets) {
-                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
                         await handleDrawBet(bet);
                     }
                 } else {
                     for (const bet of bets) {
-                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
                         if (bet.type == 0 && bet.runner == result.winnerSelId) {
@@ -280,19 +282,19 @@ function scoreChecker() {
                 return;
 
             var results
-            const manuelRecord = await MarketIDs.findOne({marketId: 'Bookmaker', eventId: event.Id, winnerRunnerData: {$ne: null}});
+            const manuelRecord = await MarketIDs.findOne({ marketId: 'Bookmaker', eventId: event.Id, winnerRunnerData: { $ne: null } });
 
             if (manuelRecord) {
                 if (typeof manuelRecord.manuelClose !== undefined)
-                results = [{result: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose}];
+                    results = [{ result: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose }];
                 else
-                results = [{result: manuelRecord.winnerRunnerData, manuelClose: false}];
+                    results = [{ result: manuelRecord.winnerRunnerData, manuelClose: false }];
             } else {
                 var url = ` https://betfairoddsapi.com:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
                 const response = await axios.get(url);
                 results = response.data;
             }
-    
+
 
 
             if (results.length > 0) {
@@ -315,9 +317,10 @@ function scoreChecker() {
 
 
                 await MarketIDs.findOneAndUpdate(
-                    { eventId: event.Id,
-                      marketId: fancyName,
-                     },   
+                    {
+                        eventId: event.Id,
+                        marketId: fancyName,
+                    },
                     {
                         eventId: event.Id,
                         marketId: fancyName,
@@ -325,11 +328,13 @@ function scoreChecker() {
                         sportID: -1,
                         status: 'Fancy Result',
                         winnerInfo: result.result,
+                        winnerRunnerData: result.result,
+
                         index: 0
                     },
                     {
-                      new: true,
-                      upsert: true
+                        new: true,
+                        upsert: true
                     }
                 );
 
@@ -337,14 +342,14 @@ function scoreChecker() {
 
                 if (result.result == -1) {
                     for (const bet of bets) {
-                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
                         await handleDrawBet(bet);
                     }
                 } else {
                     for (const bet of bets) {
-                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false)  {
+                        if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
                         if (bet.type == 0 && parseInt(bet.runner) >= parseInt(result.result)) {
@@ -384,43 +389,44 @@ function scoreChecker() {
             //figure bets
 
             const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(bet.betData.matchId) }, { Id: 1 });
-           
+
 
             if (bet.betData.type == 2) {
                 var correctScore;
                 if (bet.score == -1) {
                     await handleDrawBet(bet.betData);
                     correctScore = -1;
-                } else  {
-                     correctScore = bet.score % 10;
+                } else {
+                    correctScore = bet.score % 10;
                     if (bet.betData.runner == correctScore) {
                         console.log("0 ----- winner ");
                         await handleWinningBet(bet.betData);
                     } else {
                         console.log("0 ----- looser ");
                         await handleLosingBet(bet.betData);
-                    }    
+                    }
                 }
 
 
 
                 if (event) {
                     await MarketIDs.findOneAndUpdate(
-                        { eventId: event.Id,
-                          marketId: 'Session '+bet.betData.betSession+' Betting Figures',
-                         },   
                         {
                             eventId: event.Id,
-                            marketId:  'Session '+bet.betData.betSession+' Betting Figures',
-                            marketName:  'Session '+bet.betData.betSession+' Betting Figures',
+                            marketId: 'Session ' + bet.betData.betSession + ' Betting Figures',
+                        },
+                        {
+                            eventId: event.Id,
+                            marketId: 'Session ' + bet.betData.betSession + ' Betting Figures',
+                            marketName: 'Session ' + bet.betData.betSession + ' Betting Figures',
                             sportID: -1,
                             status: 'Session Result',
                             winnerInfo: correctScore,
                             index: 0
                         },
                         {
-                          new: true,
-                          upsert: true
+                            new: true,
+                            upsert: true
                         }
                     );
                 }
@@ -436,40 +442,41 @@ function scoreChecker() {
                     await handleDrawBet(bet.betData);
                     correctScore = -1;
 
-                } else  {
-                  
-                 correctScore = bet.score % 2;
-                if (bet.betData.runnerName =='JOTTA' && correctScore == 0) {
-                    console.log("0 ----- winner ");
-                    await handleWinningBet(bet.betData);
-                } else if (bet.betData.runnerName =='KALI' && correctScore == 1) {
-                    console.log("0 ----- winner ");
-                    await handleWinningBet(bet.betData);
                 } else {
-                    console.log("0 ----- looser ");
-                    await handleLosingBet(bet.betData);
-                }  
+
+                    correctScore = bet.score % 2;
+                    if (bet.betData.runnerName == 'JOTTA' && correctScore == 0) {
+                        console.log("0 ----- winner ");
+                        await handleWinningBet(bet.betData);
+                    } else if (bet.betData.runnerName == 'KALI' && correctScore == 1) {
+                        console.log("0 ----- winner ");
+                        await handleWinningBet(bet.betData);
+                    } else {
+                        console.log("0 ----- looser ");
+                        await handleLosingBet(bet.betData);
+                    }
                 }
 
 
 
                 if (event) {
                     await MarketIDs.findOneAndUpdate(
-                        { eventId: event.Id,
-                          marketId: 'Session '+bet.betData.betSession+' JOTTA KALI',
-                         },   
                         {
                             eventId: event.Id,
-                            marketId:  'Session '+bet.betData.betSession+' JOTTA KALI',
-                            marketName:  'Session '+bet.betData.betSession+' JOTTA KALI',
+                            marketId: 'Session ' + bet.betData.betSession + ' JOTTA KALI',
+                        },
+                        {
+                            eventId: event.Id,
+                            marketId: 'Session ' + bet.betData.betSession + ' JOTTA KALI',
+                            marketName: 'Session ' + bet.betData.betSession + ' JOTTA KALI',
                             sportID: -1,
                             status: 'Session Result',
                             winnerInfo: correctScore,
                             index: 0
                         },
                         {
-                          new: true,
-                          upsert: true
+                            new: true,
+                            upsert: true
                         }
                     );
                 }
@@ -482,44 +489,45 @@ function scoreChecker() {
                 if (bet.score == -1) {
                     await handleDrawBet(bet.betData);
                     correctScore = -1;
-                } else  {
-                 correctScore = bet.score % 10;
-                if (bet.betData.runnerName =='BARA' && correctScore == 0) {
-                    console.log("0 ----- winner ");
-                    await handleWinningBet(bet.betData);
-                } else if (bet.betData.runnerName =='CHOTA' && correctScore < 6) {
-                    console.log("0 ----- winner ");
-                    await handleWinningBet(bet.betData);
-                }
-                else if (bet.betData.runnerName =='BARA' && correctScore > 5) {
-                    console.log("0 ----- winner ");
-                    await handleWinningBet(bet.betData);
-                }
-                 else {
-                    console.log("0 ----- looser ");
-                    await handleLosingBet(bet.betData);
-                }  
+                } else {
+                    correctScore = bet.score % 10;
+                    if (bet.betData.runnerName == 'BARA' && correctScore == 0) {
+                        console.log("0 ----- winner ");
+                        await handleWinningBet(bet.betData);
+                    } else if (bet.betData.runnerName == 'CHOTA' && correctScore < 6) {
+                        console.log("0 ----- winner ");
+                        await handleWinningBet(bet.betData);
+                    }
+                    else if (bet.betData.runnerName == 'BARA' && correctScore > 5) {
+                        console.log("0 ----- winner ");
+                        await handleWinningBet(bet.betData);
+                    }
+                    else {
+                        console.log("0 ----- looser ");
+                        await handleLosingBet(bet.betData);
+                    }
                 }
 
 
-              
+
 
                 await MarketIDs.findOneAndUpdate(
-                    { eventId: event.Id,
-                      marketId: 'Session '+bet.betData.betSession+' CHOTA BARA',
-                     },   
                     {
                         eventId: event.Id,
-                        marketId:  'Session '+bet.betData.betSession+' CHOTA BARA',
-                        marketName:  'Session '+bet.betData.betSession+' CHOTA BARA',
+                        marketId: 'Session ' + bet.betData.betSession + ' CHOTA BARA',
+                    },
+                    {
+                        eventId: event.Id,
+                        marketId: 'Session ' + bet.betData.betSession + ' CHOTA BARA',
+                        marketName: 'Session ' + bet.betData.betSession + ' CHOTA BARA',
                         sportID: -1,
                         status: 'Session Result',
                         winnerInfo: correctScore,
                         index: 0
                     },
                     {
-                      new: true,
-                      upsert: true
+                        new: true,
+                        upsert: true
                     }
                 );
 
