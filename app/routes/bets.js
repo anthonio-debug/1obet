@@ -729,7 +729,7 @@ const placeBet = async (req, res) => {
           })
         }else {
           if(type == 0){
-            runnersPosition = runnerForSaveInbets.map((item)=>{
+            const runnerCurrentPosition  = runnerForSaveInbets.map((item)=>{
               if(item.runner == selectionId){
                 item.amount = item.amount + winningAmount
               }else {
@@ -737,7 +737,10 @@ const placeBet = async (req, res) => {
               }
               return item 
             })
-    
+            console.log(" ================== runnerCurrentPosition ================== ", runnerCurrentPosition);
+            runnersPosition = runnerCurrentPosition;
+            console.log(" ================== runnersPosition ================== ", runnersPosition);
+            
           }else if(type == 1){
             runnersPosition = runnerForSaveInbets.map((item)=>{
               if(item.runner == selectionId){
