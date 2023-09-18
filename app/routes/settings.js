@@ -2082,8 +2082,8 @@ const getSessionScore = async (req, res) => {
 
    
   return res.status(200).send({
-    success: false,
-    message: await Session.findOne({eventId: req.query.eventId, sessionNo: req.query.sessionNo})
+    success: true,
+    result: await Session.findOne({eventId: req.query.eventId, sessionNo: parseInt(req.query.sessionNo)})
   });
 
 
