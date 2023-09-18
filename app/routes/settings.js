@@ -2028,12 +2028,12 @@ const getWaitingBetsForManuel = async (req, res) => {
     }
 
     var sortedArray = Object.keys(groups)
-    .map(key => ({ key, openDate: groups[key].eventData.openDate }))
-    .sort((a, b) => a.openDate - b.openDate);
+    .map(key => ({ key, data: groups[key] }))
+    .sort((a, b) => a.data.eventData.openDate - b.data.eventData.openDate);
 
     return res.status(200).send({
       success: false,
-      results: sortedArray
+      results: groups
     });
 
   
