@@ -160,5 +160,7 @@
   "getMarketIDSData",
   "saveMarketIDSWinnerRunner",
   "getEventWinnerName",
-  "getWaitingBetsForManuel"
+  "getWaitingBetsForManuel",
+  "setSessionScore",
+  "getSessionScore"
 ]

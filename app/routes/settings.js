@@ -2069,6 +2069,30 @@ const getEventWinnerName = async (req, res) => {
 }
 
 
+const getSessionScore = async (req, res) => {
+
+  if (!req.query.eventId || req.query.sessionNo) {
+    return res.status(404).send({
+      success: false,
+      message: 'eventId or sessionNo is missing'
+    });
+  }
+
+   
+  return res.status(200).send({
+    success: false,
+    message: await Session.findOne({eventId: req.query.eventId, sessionNo: req.query.sessionNo});
+  });
+
+
+}
+
+
+const setSessionScore = async (req, res) => {
+
+}
+
+
 
 loginRouter.post(
   '/updateDefaultTheme',
@@ -2148,6 +2172,8 @@ loginRouter.post('/saveMarketIDSWinnerRunner', saveMarketIDSWinnerRunner);
 
 loginRouter.get('/getWaitingBetsForManuel', getWaitingBetsForManuel);
 
+loginRouter.get('/getSessionScore', getSessionScore);
+loginRouter.post('/setSessionScore', setSessionScore);
 
 
 
