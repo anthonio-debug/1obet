@@ -245,6 +245,7 @@ async function getAllSelectedCasinos(req, res) {
   const marketId          = config.casinoMarketId ;
 
   console.log(" ================== parentUserIds =========================", parentUserIds);
+  console.log(" ================== marketIds =========================", marketIds);
   console.log(" ================== subMarketId =========================", subMarketId);
   console.log(" ================== marketId =========================", marketId);
 
