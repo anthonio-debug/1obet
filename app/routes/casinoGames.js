@@ -248,8 +248,14 @@ async function getAllSelectedCasinos(req, res) {
   console.log(" ================== marketIds =========================", marketIds);
   console.log(" ================== subMarketId =========================", subMarketId);
   console.log(" ================== marketId =========================", marketId);
+  console.log(" ================== marketId =========================", marketId);
+  console.log(" ================== user =========================", user);
 
-  if ((marketIds.length &&  marketIds.includes(marketId)) || (subMarketId.length && subMarketId.includes(subMarketDetail.Id)) || user.betLockStatus == true || (user.blockedSubMarketsByParent.length &&  user.blockedSubMarketsByParent.includes(subMarketDetail.Id))) {
+
+  
+
+
+  if ( marketIds.includes(marketId) ||subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true ||  user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
     return res.status(404).send({ message: 'Betting disabled' });
   }
   let query = {};
