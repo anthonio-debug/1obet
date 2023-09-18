@@ -102,14 +102,14 @@ function addTermsAndConditions(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  if (req.decoded.role !== '0') {
+  if (req.decoded.role != '0') {
     return res
       .status(404)
-      .send({ message: 'only company can add terms and conditions' });
+      .send({ message: 'Something went wrong !' });
   }
   //server _id
   termsAndConditions.findOneAndUpdate(
-    { _id: '6460b601fe9cc89998d9eb29' },
+    {},
     { $set: { termAndConditionsContent: req.body.termAndConditionsContent } },
     { new: true },
     (err, results) => {
@@ -163,7 +163,7 @@ function addPrivacyPolicy(req, res) {
 
   //server _id
   PrivacyPolicy.findOneAndUpdate(
-    { _id: '64647166707979d7b58f4417' },
+    {},
     { $set: { privacyPolicyContent: req.body.privacyPolicyContent } },
     { new: true },
     (err, results) => {
