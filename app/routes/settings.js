@@ -2020,6 +2020,7 @@ const getWaitingBetsForManuel = async (req, res) => {
             
           } 
         }
+        item.eventIds = eventData.Id;
 
 
         groups[main_group_key].bets.push(item);
