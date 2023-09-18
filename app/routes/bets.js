@@ -280,7 +280,6 @@ const placeBet = async (req, res) => {
 
     // soccer only over under 
     else if (marketId = "6" && subMarketDetail.Id == 14) {
-      const overunderMarketId = 1.217673846
       const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
       const response = await axios.get(url);
       const oddsData = response.data;
