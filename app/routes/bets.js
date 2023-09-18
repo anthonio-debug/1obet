@@ -292,12 +292,13 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `Bet mis match` });
       }
       console.log(' data from  API ', oddsData);
+
+      const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+      console.log(" ======================== runnerFromAPI ======================== ", runnerFromAPI);
+
       return res.json({
         Message: "Hello From "
       })
-      const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.SelectionId == selectionId);
-      console.log(" ======================== runnerFromAPI ======================== ", runnerFromAPI);
-
       const DBOddDetails  = await Odds.findById(oddsId);
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets  = runners.map((runner) => ({
