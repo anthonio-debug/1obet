@@ -1995,6 +1995,40 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
 }
 
 
+const getWaitingBetsForManuel = async (req, res) => {
+
+  try {
+    
+    const results = await Bets.find({status: 1, isManuel:true}, {_id:1, matchId: 1, marketId:1,betAmount:1,winningAmount:1,loosingAmount:1,type:1, });
+    var groups = {};
+    for (var i = 0; i < results.length; i++) {
+        var item = results[i];
+        var main_group_key = item.matchId + "_" + item.marketId;
+    
+        if (!groups[main_group_key]) {
+          groups[main_group_key] = [];
+        }
+    
+        groups[main_group_key].push(item);
+    }
+
+    return res.status(200).send({
+      success: false,
+      results: groups
+    });
+
+  
+
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Something went wrong!'
+    });
+  }
+
+};
+
+
 const getEventWinnerName = async (req, res) => {
 
 
@@ -2096,6 +2130,10 @@ loginRouter.post('/getEventWinnerName', getEventWinnerName);
 
 loginRouter.post('/getMarketIDSData', getMarketIDSData);
 loginRouter.post('/saveMarketIDSWinnerRunner', saveMarketIDSWinnerRunner);
+
+
+
+loginRouter.get('/getWaitingBetsForManuel', getWaitingBetsForManuel);
 
 
 
