@@ -2092,6 +2092,21 @@ const getSessionScore = async (req, res) => {
 
 
 const setSessionScore = async (req, res) => {
+  if (!req.body.eventId || !req.body.sessionNo || !req.body.score) {
+    return res.status(404).send({
+      success: false,
+      message: 'eventId or sessionNo or score is missing'
+    });
+  }
+
+  await Session.findOneAndUpdate(
+    {eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo)},
+    { $set: { score: parseInt(req.body.score), manuelSave: true } },
+  );
+
+  return res.status(200).send({
+    success: true,
+  });
 
 }
 
