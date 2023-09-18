@@ -2080,10 +2080,11 @@ const getSessionScore = async (req, res) => {
     });
   }
 
+  const result = await Session.findOne({eventId: req.query.eventId, sessionNo: parseInt(req.query.sessionNo)});
    
   return res.status(200).send({
     success: true,
-    result: await Session.findOne({eventId: req.query.eventId, sessionNo: parseInt(req.query.sessionNo)})
+    result
   });
 
 
