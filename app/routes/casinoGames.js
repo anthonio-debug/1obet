@@ -235,8 +235,9 @@ function getCategoryCasinoGames(req, res) {
 }
 
 async function getAllSelectedCasinos(req, res) {
-  const user              = await User.find({  userId: req.decoded.userId })
-  let parentUserIds       = await getParents(user.userId);
+  const user              = await User.find({  userId: req.decoded.userId });
+  console.log("  ");
+  let parentUserIds       = await getParents(req.decoded.userId);
   const marketIds         = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
   const subMarketId1      = await User.distinct("blockedSubMarkets", { userId: { $in: parentUserIds }, isDeleted: false });
   const subMarketId2      = await User.distinct("blockedSubMarketsByParent", { userId: { $in: parentUserIds }, isDeleted: false });

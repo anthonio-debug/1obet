@@ -308,7 +308,7 @@ db.submarkettypes.insertMany([
     Id: 5,
     name: '120 British Casino',
     marketId: '6',
-    countryCode: null,
+    countryCode: "",
   },
   {
     Id: 6,
