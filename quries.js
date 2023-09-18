@@ -283,27 +283,32 @@ db.submarkettypes.insertMany([
     Id: 1,
     name: 'Sports Book',
     marketId: '6',
+    countryCode: 'Sports Book',
   },
   {
     Id: 2,
     name: 'Ezugi Casino',
     marketId: '6',
+    countryCode: 'ezugi',
   },
   {
     Id: 3,
     name: 'evolution Casino',
     marketId: '6',
+    countryCode: 'evolution',
   },
   {
     Id: 4,
     name: 'Betfair Games',
     marketId: '6',
+    countryCode: 'BF Games',
   },
   
   {
     Id: 5,
     name: '120 British Casino',
     marketId: '6',
+    countryCode: null,
   },
   {
     Id: 6,

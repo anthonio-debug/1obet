@@ -7,6 +7,7 @@ const loginRouter = express.Router();
 const axios = require('axios');
 let config = require('config');
 const User = require('../models/user');
+const getParents = require('./bets')
 
 async function addCasinoGameDetails(req, res) {
   if( req.decoded.role != '0' ){
@@ -215,20 +216,31 @@ function getCategoryCasinoGames(req, res) {
 }
 
 async function getAllSelectedCasinos(req, res) {
-    let query = {};
-  
-    let page = 1;
-    let limit = 20;
-    if (req.body.numRecords) {
-      if (isNaN(req.body.numRecords))
-        return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-      if (req.body.numRecords < 0)
-        return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
-      limit = Number(req.body.numRecords);
-    }
-    if (req.body.page) {
-      page = Number(req.body.page);
-    }
+  const user              = await User.find({  userId: req.decoded.userId })
+  let parentUserIds       = await getParents(user.userId);
+  const marketIds         = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
+  const subMarketId1      = await User.distinct("blockedSubMarkets", { userId: { $in: parentUserIds }, isDeleted: false });
+  const subMarketId2      = await User.distinct("blockedSubMarketsByParent", { userId: { $in: parentUserIds }, isDeleted: false });
+  const subMarketId       = subMarketId1.concat(subMarketId2);
+  const subMarketDetail   = await SubMarketType.findOne({ countryCode: gameCategory, marketId: config.casinoMarketId })
+  const marketId          = config.casinoMarketId ;
+  if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
+    return res.status(404).send({ message: 'Betting disabled' });
+  }
+  let query = {};
+
+  let page = 1;
+  let limit = 20;
+  if (req.body.numRecords) {
+    if (isNaN(req.body.numRecords))
+      return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+    if (req.body.numRecords < 0)
+      return res.status(400).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+    limit = Number(req.body.numRecords);
+  }
+  if (req.body.page) {
+    page = Number(req.body.page);
+  }
   
   // Check for isMobile parameter in the request body
   if (req.body.isMobile == true) {
