@@ -25,6 +25,7 @@ const router = express.Router();
 const Session = require("../models/Session")
 const MarketIDS = require('../models/marketIds');
 const Bets = require('../models/bets');
+const mongoose = require('mongoose');
 
 
 
@@ -2008,7 +2009,11 @@ const getWaitingBetsForManuel = async (req, res) => {
         if (!groups[main_group_key]) {
           groups[main_group_key] = [];
         }
-    
+        const eventData = await Events.findOne({_id: mongoose.Types.ObjectId(item.matchId)},{Id: 1});
+        if (eventData) {
+          item.marketData = await MarketIDS.findOne({eventId:eventData.Id, marketId: item.marketId });
+        } 
+
         groups[main_group_key].push(item);
     }
 
