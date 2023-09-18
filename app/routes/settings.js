@@ -2000,7 +2000,7 @@ const getWaitingBetsForManuel = async (req, res) => {
 
   try {
     
-    const results = await Bets.find({status: 1, isManuel:true}, {_id:1, matchId: 1, marketId:1,betAmount:1,winningAmount:1,loosingAmount:1,type:1, });
+    const results = await Bets.find({status: 1, isManuel:true}, {_id:1, matchId: 1, marketId:1,betAmount:1,winningAmount:1,loosingAmount:1,type:1, betSession:1 });
     var groups = {};
     for (var i = 0; i < results.length; i++) {
         var item = results[i];
