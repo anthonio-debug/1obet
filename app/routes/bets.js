@@ -354,6 +354,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: 'Bet miss Matched' });
       }
       if (ApiResponseOdds[matchedIndex].price < betRate) {
+        console.log('ApiResponseOdds Price not matched ');
         return res.status(404).send({ message: `Bet miss matched` });
       }
       return res.json({
