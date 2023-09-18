@@ -305,9 +305,6 @@ const placeBet = async (req, res) => {
 
 
       console.log(" ============================ ========================== ", runnerForSaveInbets);
-      return res.json({
-        Message: "Hello From "
-      })
       const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName
       if (!DBOddDetails) {
@@ -318,6 +315,9 @@ const placeBet = async (req, res) => {
       
       console.log("DBOddDetails  === ", DBOddDetails);
       console.log("runnerFromAPI === ", runnerFromAPI);
+      return res.json({
+        Message: "Hello From "
+      })
 
       if (type == 0) {
         ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToBack
