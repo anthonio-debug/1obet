@@ -315,9 +315,7 @@ const placeBet = async (req, res) => {
       
       console.log("DBOddDetails  === ", DBOddDetails);
       console.log("runnerFromAPI === ", runnerFromAPI);
-      return res.json({
-        Message: "Hello From "
-      })
+
 
       if (type == 0) {
         ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToBack
@@ -358,6 +356,9 @@ const placeBet = async (req, res) => {
       if (ApiResponseOdds[matchedIndex].price < betRate) {
         return res.status(404).send({ message: `Bet miss matched` });
       }
+      return res.json({
+        Message: "Hello From "
+      })
     }
 
     // HR GH odds market 
