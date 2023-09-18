@@ -224,6 +224,11 @@ async function getAllSelectedCasinos(req, res) {
   const subMarketId       = subMarketId1.concat(subMarketId2);
   const subMarketDetail   = await SubMarketType.findOne({ countryCode: gameCategory, marketId: config.casinoMarketId })
   const marketId          = config.casinoMarketId ;
+
+  console.log(" ================== parentUserIds =========================", parentUserIds);
+  console.log(" ================== subMarketId =========================", subMarketId);
+  console.log(" ================== marketId =========================", marketId);
+
   if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
     return res.status(404).send({ message: 'Betting disabled' });
   }
