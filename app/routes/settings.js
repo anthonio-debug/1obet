@@ -114,6 +114,7 @@ function addTermsAndConditions(req, res) {
     { new: true },
     (err, results) => {
       if (err || !results) {
+        console.log(" Data Not Saved ============= ", err);
         return res.status(404).send({ message: 'Data Not Saved' });
       }
       return res.send({
@@ -167,6 +168,7 @@ function addPrivacyPolicy(req, res) {
     { new: true },
     (err, results) => {
       if (err || !results) {
+        console.log(" Data Not Saved ============== ", err);
         return res.status(404).send({ message: 'Data Not Saved' });
       }
 
@@ -2007,12 +2009,12 @@ const getWaitingBetsForManuel = async (req, res) => {
         var main_group_key = item.matchId + "_" + item.marketId;
     
         if (!groups[main_group_key]) {
-          groups[main_group_key] = {eventData: {eventName: null, marketData: null, eventId:null,openDate:null}, bets: []};
-          const eventData = await Events.findOne({_id: mongoose.Types.ObjectId(item.matchId)},{Id: 1, name: 1, openDate: 1});
+          groups[main_group_key] = {eventData: {eventName: null, marketData: null, eventId:null}, bets: []};
+          const eventData = await Events.findOne({_id: mongoose.Types.ObjectId(item.matchId)},{Id: 1, name: 1});
           if (eventData) {
             groups[main_group_key].eventData.eventName = eventData.name;
             groups[main_group_key].eventData.eventId = eventData.Id;
-            groups[main_group_key].eventData.openDate = eventData.openDate;
+            
             const marketData = await MarketIDS.findOne({eventId:eventData.Id, marketId: item.marketId });
             if (marketData) {
               groups[main_group_key].eventData.marketData = marketData;
@@ -2026,10 +2028,6 @@ const getWaitingBetsForManuel = async (req, res) => {
 
         groups[main_group_key].bets.push(item);
     }
-
-    var sortedArray = Object.keys(groups)
-    .map(key => ({ key, data: groups[key] }))
-    .sort((a, b) => a.data.eventData.openDate - b.data.eventData.openDate);
 
     return res.status(200).send({
       success: false,
