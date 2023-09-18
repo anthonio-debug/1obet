@@ -2007,8 +2007,8 @@ const getWaitingBetsForManuel = async (req, res) => {
         var main_group_key = item.matchId + "_" + item.marketId;
     
         if (!groups[main_group_key]) {
-          groups[main_group_key] = {eventData: {}, bets: []};
-          const eventData = await Events.findOne({_id: mongoose.Types.ObjectId(item.matchId)},{Id: 1});
+          groups[main_group_key] = {eventData: {eventName: null, marketData: null}, bets: []};
+          const eventData = await Events.findOne({_id: mongoose.Types.ObjectId(item.matchId)},{Id: 1, name: 1});
           if (eventData) {
             groups[main_group_key].eventData.eventName = eventData.name;
             const marketData = await MarketIDS.findOne({eventId:eventData.Id, marketId: item.marketId });
@@ -2018,9 +2018,7 @@ const getWaitingBetsForManuel = async (req, res) => {
               groups[main_group_key].eventData.marketData = null;
             }
             
-          } else {
-            groups[main_group_key].eventData = {eventName: null,marketData: null }
-          }
+          } 
         }
 
 
