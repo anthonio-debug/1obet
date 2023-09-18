@@ -99,7 +99,7 @@ const placeBet = async (req, res) => {
     let subMarketDetail;
     let marketId;
     let selectedOddsRate;
-    const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate } = req.body;
+    const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate, overunderMarketId } = req.body;
     console.log(" ==================== BET RATE ===================",betRate);
     console.log(" ====================  Fancy Rate  ===================",fancyRate);
     
@@ -219,6 +219,84 @@ const placeBet = async (req, res) => {
       }
       console.log(' data from  API ', oddsData);
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+      const DBOddDetails  = await Odds.findById(oddsId);
+      let runners = DBOddDetails?.runners;
+      runnerForSaveInbets  = runners.map((runner) => ({
+        runner: runner.SelectionId,
+        amount: 0
+      }));
+      console.log(" ============================ ========================== ", runnerForSaveInbets);
+      const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+      runnerName = OddDetailsTeam?.runnerName
+      if (!DBOddDetails) {
+        return res.status(404).send({
+          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
+        });
+      }
+      
+      console.log("DBOddDetails  === ", DBOddDetails);
+      console.log("runnerFromAPI === ", runnerFromAPI);
+
+      if (type == 0) {
+        ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToBack
+        const availableToBack = OddDetailsTeam.ExchangePrices.AvailableToBack;
+        console.log('availableToBack', availableToBack);
+        matchedIndex = availableToBack.findIndex((back) => {
+          return back.price == betRate;
+        });
+        console.log('matchedIndex', matchedIndex);
+        if (matchedIndex == -1) {
+          console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+          return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
+        }
+        selectedOddsRate = availableToBack[matchedIndex].price;
+
+      } else if (type == 1) {
+        ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToLay
+        const AvailableToLay = OddDetailsTeam.ExchangePrices.AvailableToLay;
+        console.log('AvailableToLay', AvailableToLay);
+        matchedIndex = AvailableToLay.findIndex((back) => {
+          return back.price === betRate;
+        });
+        console.log('matchedIndex', matchedIndex);
+        if (matchedIndex == -1) {
+          console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+          return res.status(404).send({ message: `Bet miss matched` });
+        }
+        selectedOddsRate = AvailableToLay[matchedIndex].price;
+
+      } else {
+        console.log('Invalid type value. Type should be 0 or 1.');
+        return res.status(400).send({ message: 'Bet miss matched' });
+      }
+      if (!selectedOddsRate) {
+        console.log('Selected odds not found for the bet');
+        return res.status(404).send({ message: 'Bet miss Matched' });
+      }
+      if (ApiResponseOdds[matchedIndex].price < betRate) {
+        return res.status(404).send({ message: `Bet miss matched` });
+      }
+    }
+
+    // soccer odds only over under 
+    if (marketId = "6" && subMarketDetail.Id == 14) {
+      const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
+      const response = await axios.get(url);
+      const oddsData = response.data;
+
+      console.log(" oddsData  ================= ", oddsData);
+
+      if (!oddsData) {
+        console.log(`Match odds not found for sports ID ${sportsId}`);
+        return res.status(404).send({ message: `Bet mis match` });
+      }
+      console.log(' data from  API ', oddsData);
+      return res.json({
+        Message: "Hello From "
+      })
+      const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.SelectionId == selectionId);
+      console.log(" ======================== runnerFromAPI ======================== ", runnerFromAPI);
+
       const DBOddDetails  = await Odds.findById(oddsId);
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets  = runners.map((runner) => ({
