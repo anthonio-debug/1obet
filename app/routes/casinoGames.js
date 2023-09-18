@@ -7,7 +7,24 @@ const loginRouter = express.Router();
 const axios = require('axios');
 let config = require('config');
 const User = require('../models/user');
-const getParents = require('./bets')
+
+const getParents = async (userId) => {
+  const parentUserIds = [];
+  let currentUserId = userId;
+  console.log('currentUserId', currentUserId);
+
+  while (currentUserId) {
+    const parentUser = await User.findOne({ userId: currentUserId });
+
+    if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
+      break;
+    }
+    parentUserIds.push(parentUser.createdBy);
+    currentUserId = parentUser.createdBy;
+  }
+  console.log(" parentUserIds ========== ", parentUserIds);
+  return parentUserIds;
+}
 
 async function addCasinoGameDetails(req, res) {
   if( req.decoded.role != '0' ){
