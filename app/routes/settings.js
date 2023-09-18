@@ -2017,10 +2017,10 @@ const getWaitingBetsForManuel = async (req, res) => {
             } else {
               groups[main_group_key].eventData.marketData = null;
             }
-            
+            item.eventIds = eventData.Id;
           } 
         }
-        item.eventIds = eventData.Id;
+        
 
 
         groups[main_group_key].bets.push(item);
