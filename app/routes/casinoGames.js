@@ -241,7 +241,7 @@ async function getAllSelectedCasinos(req, res) {
   const subMarketId1      = await User.distinct("blockedSubMarkets", { userId: { $in: parentUserIds }, isDeleted: false });
   const subMarketId2      = await User.distinct("blockedSubMarketsByParent", { userId: { $in: parentUserIds }, isDeleted: false });
   const subMarketId       = subMarketId1.concat(subMarketId2);
-  const subMarketDetail   = await SubMarketType.findOne({ countryCode: gameCategory, marketId: config.casinoMarketId })
+  const subMarketDetail   = await SubMarketType.findOne({ countryCode: req.body.gameCategory, marketId: config.casinoMarketId })
   const marketId          = config.casinoMarketId ;
 
   console.log(" ================== parentUserIds =========================", parentUserIds);
