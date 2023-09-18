@@ -108,7 +108,7 @@ function addTermsAndConditions(req, res) {
       .send({ message: 'Something went wrong !' });
   }
   //server _id
-  termsAndConditions.findOneAndUpdate(
+  termsAndConditions.updateMany(
     {},
     { $set: { termAndConditionsContent: req.body.termAndConditionsContent } },
     { new: true },
@@ -162,7 +162,7 @@ function addPrivacyPolicy(req, res) {
   }
 
   //server _id
-  PrivacyPolicy.findOneAndUpdate(
+  PrivacyPolicy.updateMany(
     {},
     { $set: { privacyPolicyContent: req.body.privacyPolicyContent } },
     { new: true },
