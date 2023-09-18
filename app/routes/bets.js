@@ -278,8 +278,8 @@ const placeBet = async (req, res) => {
       }
     }
 
-    // soccer odds only over under 
-    if (marketId = "6" && subMarketDetail.Id == 14) {
+    // soccer only over under 
+    else if (marketId = "6" && subMarketDetail.Id == 14) {
       const overunderMarketId = 1.218429009
       const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
       const response = await axios.get(url);
@@ -357,9 +357,6 @@ const placeBet = async (req, res) => {
         console.log('ApiResponseOdds Price not matched ');
         return res.status(404).send({ message: `Bet miss matched` });
       }
-      return res.json({
-        Message: "Hello From "
-      })
     }
 
     // HR GH odds market 
