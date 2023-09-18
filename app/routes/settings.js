@@ -2073,7 +2073,7 @@ const getEventWinnerName = async (req, res) => {
 
 const getSessionScore = async (req, res) => {
 
-  if (!req.query.eventId || req.query.sessionNo) {
+  if (!req.query.eventId || !req.query.sessionNo) {
     return res.status(404).send({
       success: false,
       message: 'eventId or sessionNo is missing'
