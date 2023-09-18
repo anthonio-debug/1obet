@@ -296,16 +296,18 @@ const placeBet = async (req, res) => {
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
       console.log(" ======================== runnerFromAPI ======================== ", runnerFromAPI);
 
-      return res.json({
-        Message: "Hello From "
-      })
       const DBOddDetails  = await Odds.findById(oddsId);
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets  = runners.map((runner) => ({
         runner: runner.SelectionId,
         amount: 0
       }));
+
+
       console.log(" ============================ ========================== ", runnerForSaveInbets);
+      return res.json({
+        Message: "Hello From "
+      })
       const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName
       if (!DBOddDetails) {
