@@ -426,7 +426,7 @@ async function handleDrawBet(bet) {
 
   parentUser.forEach((user) => {
     user.exposure += (user.commission / 100) * totalRemainingAmount;
-    user.availableBalance += (user.commission / 100) * remainingAmount;
+    user.availableBalance += (user.commission / 100) * totalRemainingAmount;
     user.save();
   });
 
