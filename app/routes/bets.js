@@ -912,7 +912,18 @@ const placeBet = async (req, res) => {
       winningAmount = (betAmount * betRate);
       loosingAmount = betAmount;
       runnerName    = `Figure(${selectionId})`
-      runnerForSaveInbets  = config.figureRunners;
+      runnerForSaveInbets  = [
+        { "runner": 0, "amount": 0 },
+        { "runner": 1, "amount": 0 },
+        { "runner": 2, "amount": 0 },
+        { "runner": 3, "amount": 0 },
+        { "runner": 4, "amount": 0 },
+        { "runner": 5, "amount": 0 },
+        { "runner": 6, "amount": 0 },
+        { "runner": 7, "amount": 0 },
+        { "runner": 8, "amount": 0 },
+        { "runner": 9, "amount": 0 }
+      ];
       expoisureType = 2;
     }
 
