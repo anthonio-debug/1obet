@@ -453,7 +453,7 @@ const placeBet = async (req, res) => {
       const oddsData = response.data;
       console.log(" oddsData  ================= ", oddsData.length);
       if (oddsData.length == 0) {
-        console.log(`Match odds not found for sports ID ${sportsId}`);
+        console.log(`Match odds not found for sports ID ${marketId}`);
         return res.status(404).send({ message: `Bet mis match` });
       }
       console.log(' data from  API ', oddsData);
