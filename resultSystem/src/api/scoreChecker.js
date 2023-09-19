@@ -98,7 +98,6 @@ function scoreChecker() {
 
     }
     async function racingResult(betData) {
-        console.log(betData);
         console.log('Result checking racing');
 
         var url = `${horseRaceUrl}/results/?ids=${betData.marketId}`;
@@ -106,6 +105,7 @@ function scoreChecker() {
             var results;
             const manuelRecord = await MarketIDs.findOne({ marketId: betData.marketId, winnerRunnerData: { $ne: null } });
 
+            console.log(manuelRecord);
             if (manuelRecord) {
                 if (typeof manuelRecord.manuelClose !== undefined)
                     results = [{ winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose }];
@@ -128,11 +128,15 @@ function scoreChecker() {
                 await newRecord.save();
                 await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
+
+
+
                 if (result.winnerSelectionId == -1) {
                     for (const bet of bets) {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
+                        console.log('handle draw');
                         await handleDrawBet(bet);
                     }
                 } else {
