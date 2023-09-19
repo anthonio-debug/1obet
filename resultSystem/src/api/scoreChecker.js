@@ -98,6 +98,7 @@ function scoreChecker() {
 
     }
     async function racingResult(betData) {
+        console.log(betData);
         console.log('Result checking racing');
 
         var url = `${horseRaceUrl}/results/?ids=${betData.marketId}`;
