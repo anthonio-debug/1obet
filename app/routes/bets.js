@@ -363,7 +363,7 @@ const placeBet = async (req, res) => {
           const oddsData = response.data;
           console.log(" ================ oddsData ================ ", oddsData);
           const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
-          selectedOddsValue   = 0;
+          let selectedOddsValue   = 0;
 
           if (type == 0) {
             ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
@@ -399,6 +399,8 @@ const placeBet = async (req, res) => {
           multipeResponse.push(selectedOddsValue)
         }, 1000*i);  
       }
+      console.log(" ================ multipeResponse ================ ", "multipeResponse");
+
       console.log(" ================ multipeResponse ================ ", multipeResponse);
       return res.json({
         msg: " completed"
