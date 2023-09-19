@@ -27,7 +27,7 @@ function ToolForResults() {
                 {
                     $match: {
                         sportsId: { $in: targetArray },
-                        resultId: null,
+                        //resultId: null,
                         marketId: { $ne: null },
                         isfancyOrbookmaker: false,
                         sportsId: { $ne: null },
