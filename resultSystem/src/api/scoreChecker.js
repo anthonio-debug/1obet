@@ -282,7 +282,7 @@ function scoreChecker() {
                 return;
 
             var results
-            const manuelRecord = await MarketIDs.findOne({ marketId: fancyData, eventId: event.Id, winnerRunnerData: { $ne: null } });
+            const manuelRecord = await MarketIDs.findOne({ marketId: fancyName, eventId: event.Id, winnerRunnerData: { $ne: null } });
 
             if (manuelRecord) {
                 if (typeof manuelRecord.manuelClose !== undefined)
