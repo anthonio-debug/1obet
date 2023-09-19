@@ -633,6 +633,7 @@ const placeBet = async (req, res) => {
         fancyData  = dbSelectedOdds.nat
         runnerName = dbSelectedOdds.nat; 
         _3rdPartyMarketId = dbSelectedOdds.mid; 
+        console.log(" _3rdPartyMarketId =========== ", _3rdPartyMarketId);
 
         if (req.body.type == 0) {
 
