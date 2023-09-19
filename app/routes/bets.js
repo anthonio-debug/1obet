@@ -396,6 +396,7 @@ const placeBet = async (req, res) => {
             // selectedOddsRate = AvailableToLay[matchedIndex].price;
   
           } 
+          console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
           multipeResponse.push(selectedOddsValue)
         }, 1000*i);  
       }
