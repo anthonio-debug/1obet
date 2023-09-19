@@ -127,11 +127,15 @@ function scoreChecker() {
                 await newRecord.save();
                 await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
+
+
+
                 if (result.winnerSelectionId == -1) {
                     for (const bet of bets) {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
+                        console.log('handle bet');
                         await handleDrawBet(bet);
                     }
                 } else {
@@ -282,7 +286,7 @@ function scoreChecker() {
                 return;
 
             var results
-            const manuelRecord = await MarketIDs.findOne({ marketId: fancyData, eventId: event.Id, winnerRunnerData: { $ne: null } });
+            const manuelRecord = await MarketIDs.findOne({ marketId: fancyName, eventId: event.Id, winnerRunnerData: { $ne: null } });
 
             if (manuelRecord) {
                 if (typeof manuelRecord.manuelClose !== undefined)
