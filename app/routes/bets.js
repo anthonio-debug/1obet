@@ -451,7 +451,7 @@ const placeBet = async (req, res) => {
       const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
       const response = await axios.get(url);
       const oddsData = response.data;
-      console.log(" oddsData  ================= ", oddsData);
+      console.log(" oddsData  ================= ", oddsData.length);
       if (oddsData.length) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
