@@ -27,10 +27,9 @@ function ToolForResults() {
                 {
                     $match: {
                         sportsId: { $in: targetArray },
-                        resultId: null,
+                        //resultId: null,
                         marketId: { $ne: null },
                         isfancyOrbookmaker: false,
-                        sportsId: { $ne: null },
                         status: 1,
                         type: {$in: [0,1]}
                     }
@@ -50,6 +49,9 @@ function ToolForResults() {
                     $limit: 5
                 }
             ]).exec();
+
+            //console.log(targetArray);
+
             for (const result of results) {
                 await Bets.updateMany(
                     {
@@ -60,6 +62,7 @@ function ToolForResults() {
                     }
                 ).catch(e => console.error(e));
             }
+
 
             for (const result of results) {
 

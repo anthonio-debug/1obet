@@ -98,7 +98,7 @@ function scoreChecker() {
 
     }
     async function racingResult(betData) {
-        console.log('Result checking racing');
+        console.log('Result checking racing with '+betData.marketId);
 
         var url = `${horseRaceUrl}/results/?ids=${betData.marketId}`;
         try {
@@ -135,7 +135,7 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        console.log('handle bet');
+                        console.log('handle bet draw');
                         await handleDrawBet(bet);
                     }
                 } else {
