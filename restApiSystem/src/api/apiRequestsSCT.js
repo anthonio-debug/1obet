@@ -119,7 +119,7 @@ function apiRequests() {
       var events = [];
       if (results.length > 0) {
         for (let index = 0; index < results.length; index++) {
-          if (results[index].Id.length == 8)
+          //if (results[index].Id.length == 8)
             events.push(results[index].Id);
         }
         var response,scores;
@@ -127,6 +127,7 @@ function apiRequests() {
          response = await axios.get(url + events.join(','));
          scores = response.data;
         } catch (error) {
+          console.log(error);
           return;
         }
         if (scores.length > 0) {
@@ -149,7 +150,7 @@ function apiRequests() {
 
         }
       } else {
-        //console.log('Events emp');
+        console.log('Events emp');
       }
     } catch (error) {
       console.log(error);

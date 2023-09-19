@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 
 const scoreSchema = new Schema({
   eventId: {
-    type: Number,
+    type: String,
     required: true,
     index: true, // Bu alanın bir indeks olmasını sağlar
   },
