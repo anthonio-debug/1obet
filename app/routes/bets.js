@@ -353,15 +353,17 @@ const placeBet = async (req, res) => {
     // }
 
     // Under Dev Match offs 
-
     else if (config.sportMarkets.includes(marketId) && config.SportOddsSubMarkets.includes(subMarketDetail.Id)) {
       const multipeResponse = [];
-      setTimeout( async () => {
-        const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-        const response = await axios.get(url);
-        const oddsData = response.data;
-        multipeResponse.push(oddsData)
-      }, 1000);
+      // make Sure No More Records Then 4 
+      for (let i = 0; i < 4; i++) {
+        setTimeout( async () => {      
+          const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+          const response = await axios.get(url);
+          const oddsData = response.data;
+          multipeResponse.push(oddsData)
+        }, 1000);  
+      }
 
       setTimeout( async () => {
         console.log(" ========================  Match Odds ======================== ");
@@ -441,7 +443,7 @@ const placeBet = async (req, res) => {
         if (ApiResponseOdds[matchedIndex].price < betRate) {
           return res.status(404).send({ message: `Bet miss matched` });
         }
-      }, 5001);
+      }, 4050);
     }
     // dev ends 
 
@@ -625,6 +627,8 @@ const placeBet = async (req, res) => {
           console.log(`Odds not available for the selected team ${selectionId}`);
           return res.status(404).send({ message: `Odds not available for the selected team ${selectionId}` });
         }
+        console.log(" apiSelectedOdds ====== ", apiSelectedOdds);
+        console.log(" dbSelectedOdds ====== ", dbSelectedOdds);
         // Get the runner name from the 'nat' field
         fancyData  = dbSelectedOdds.nat
         runnerName = dbSelectedOdds.nat; 
