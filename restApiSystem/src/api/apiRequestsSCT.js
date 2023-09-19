@@ -119,7 +119,7 @@ function apiRequests() {
       var events = [];
       if (results.length > 0) {
         for (let index = 0; index < results.length; index++) {
-          if (results[index].Id.length == 8)
+          //if (results[index].Id.length == 8)
             events.push(results[index].Id);
         }
         var response,scores;
