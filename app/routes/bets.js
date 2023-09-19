@@ -363,45 +363,46 @@ const placeBet = async (req, res) => {
           const oddsData = response.data;
           console.log(" ================ oddsData ================ ", oddsData);
           const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+          selectedOddsValue   = 0;
 
           if (type == 0) {
-            ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToBack
-            const availableToBack = OddDetailsTeam.ExchangePrices.AvailableToBack;
-            console.log('availableToBack', availableToBack);
-            matchedIndex = availableToBack.findIndex((back) => {
-              return back.price == betRate;
-            });
-            console.log('matchedIndex', matchedIndex);
-            if (matchedIndex == -1) {
-              console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-              return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
-            }
-            selectedOddsRate = availableToBack[matchedIndex].price;
+            ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+            selectedOddsValue = ApiResponseOdds[0]?.price
+            // const availableToBack = OddDetailsTeam.ExchangePrices.AvailableToBack;
+            // console.log('availableToBack', availableToBack);
+            // matchedIndex = availableToBack.findIndex((back) => {
+            //   return back.price == betRate;
+            // });
+            // console.log('matchedIndex', matchedIndex);
+            // if (matchedIndex == -1) {
+            //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+            //   return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
+            // }
+            // selectedOddsRate = availableToBack[matchedIndex].price;
   
           } else if (type == 1) {
-            ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToLay
-            console.log('AvailableToLay', AvailableToLay);
-            matchedIndex = AvailableToLay.findIndex((back) => {
-              return back.price === betRate;
-            });
-            console.log('matchedIndex', matchedIndex);
-            if (matchedIndex == -1) {
-              console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-              return res.status(404).send({ message: `Bet miss matched` });
-            }
-            selectedOddsRate = AvailableToLay[matchedIndex].price;
+            ApiResponseOdds   = runnerFromAPI.ExchangePrices.AvailableToLay
+            selectedOddsValue = ApiResponseOdds[0]?.price
+
+            // console.log('AvailableToLay', AvailableToLay);
+            // matchedIndex = AvailableToLay.findIndex((back) => {
+            //   return back.price === betRate;
+            // });
+            // console.log('matchedIndex', matchedIndex);
+            // if (matchedIndex == -1) {
+            //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+            //   return res.status(404).send({ message: `Bet miss matched` });
+            // }
+            // selectedOddsRate = AvailableToLay[matchedIndex].price;
   
           } 
-
-
-
-          multipeResponse.push(oddsData)
+          multipeResponse.push(selectedOddsValue)
         }, 1000*i);  
       }
       console.log(" ================ multipeResponse ================ ", multipeResponse);
-      // return res.json({
-      //   msg: " completed"
-      // })
+      return res.json({
+        msg: " completed"
+      })
       setTimeout( async () => {
         console.log(" ========================  Match Odds ======================== ");
         if(subMarketDetail.Id == config.tiedMatch){
