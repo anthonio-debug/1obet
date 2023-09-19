@@ -135,7 +135,7 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        console.log('handle bet');
+                        console.log('handle bet draw');
                         await handleDrawBet(bet);
                     }
                 } else {

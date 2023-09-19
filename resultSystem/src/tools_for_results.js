@@ -51,7 +51,7 @@ function ToolForResults() {
                 }
             ]).exec();
 
-            console.log(targetArray);
+            //console.log(targetArray);
 
             for (const result of results) {
                 await Bets.updateMany(
