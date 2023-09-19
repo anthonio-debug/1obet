@@ -105,7 +105,7 @@ function scoreChecker() {
             var results;
             const manuelRecord = await MarketIDs.findOne({ marketId: betData.marketId, winnerRunnerData: { $ne: null } });
 
-            console.log(manuelRecord,betData.marketId);
+            console.log(manuelRecord);
             if (manuelRecord) {
                 if (typeof manuelRecord.manuelClose !== undefined)
                     results = [{ winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose }];
