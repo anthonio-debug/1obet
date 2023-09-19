@@ -9,7 +9,7 @@ for (let i = 1; i < 5; i++) {
     // const response = await axios.get(url);
     const oddsData = response.data;
     console.log(oddsData);
-    multipeResponse.push(oddsData)
+    multipeResponse.push(1+ i)
   }, 1000*i);  
 }
 

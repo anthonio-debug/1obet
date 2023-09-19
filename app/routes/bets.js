@@ -362,9 +362,12 @@ const placeBet = async (req, res) => {
           const response = await axios.get(url);
           const oddsData = response.data;
           multipeResponse.push(oddsData)
-        }, 1000);  
+        }, 1000*i);  
       }
-
+      console.log(" ================ multipeResponse ================ ", multipeResponse);
+      return res.json({
+        msg: " completed"
+      })
       setTimeout( async () => {
         console.log(" ========================  Match Odds ======================== ");
         if(subMarketDetail.Id == config.tiedMatch){
@@ -449,6 +452,8 @@ const placeBet = async (req, res) => {
 
     // soccer only over under 
     else if (marketId == "1" && subMarketDetail.Id == 14) {
+      _3rdPartyMarketId = overunderMarketId; 
+      console.log(" _3rdPartyMarketId =========== ", _3rdPartyMarketId);
       console.log(" ========================  over under  ======================== ");
       const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
       const response = await axios.get(url);
