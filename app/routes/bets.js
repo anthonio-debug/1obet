@@ -420,18 +420,18 @@ const placeBet = async (req, res) => {
       setTimeout( async () => {
         let min = Math.min(...multipeResponse);
         let max = Math.max(...multipeResponse);
-        if(betRate <=  min || betRate >= max){
-          // break 
-          console.log(" Bet Rate is not Applicable in  betRate <=  min || betRate >= max");
+        if(betRate <  min || betRate > max){
+          console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
           return res.status(404).send({
             message: `Bet Miss matched`
           });
         }
+        else {
+          return res.status(404).send({
+            message: `Bet Applicable `
+          });
+        }
       }, 4100);
-
-      return res.status(404).send({
-        message: `Bet Applicable `
-      });
 
     }
     // dev ends 
