@@ -400,9 +400,10 @@ const placeBet = async (req, res) => {
           multipeResponse.push(selectedOddsValue)
         }, 1000*i);  
       }
-      console.log(" ================ multipeResponse ================ ", "multipeResponse");
-
-      console.log(" ================ multipeResponse ================ ", multipeResponse);
+      setTimeout(() => {        
+        console.log(" ================ multipeResponse ================ ", "multipeResponse");
+        console.log(" ================ multipeResponse ================ ", multipeResponse);
+      }, 5000);
       return res.json({
         msg: " completed"
       })
