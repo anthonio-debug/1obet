@@ -1,4 +1,6 @@
 db.sidebarmenus.deleteMany({})
+db.sidebarmenus.deleteOne( { "_id" : ObjectId("64fb1b0b0439ae8e42ccac77") } )
+
 
 db.sidebarmenus.insertMany([
   {
