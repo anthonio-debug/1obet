@@ -420,6 +420,10 @@ const placeBet = async (req, res) => {
       setTimeout( async () => {
         let min = Math.min(...multipeResponse);
         let max = Math.max(...multipeResponse);
+        console.log(" ================== min ======================== ", min);
+        console.log(" ================== max ======================== ", max);
+        console.log(" ================== betRate ======================== ", betRate);
+
         if(betRate <  min || betRate > max){
           msg = "Bet Miss matched !";
           console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ")
@@ -431,8 +435,6 @@ const placeBet = async (req, res) => {
       }, 4100);
 
     }
-    // dev ends 
-
     // soccer only over under 
     else if (marketId == "1" && subMarketDetail.Id == 14) {
       _3rdPartyMarketId = overunderMarketId; 
