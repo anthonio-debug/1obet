@@ -50,6 +50,9 @@ function ToolForResults() {
                     $limit: 5
                 }
             ]).exec();
+
+            console.log(targetArray);
+
             for (const result of results) {
                 await Bets.updateMany(
                     {
@@ -61,7 +64,6 @@ function ToolForResults() {
                 ).catch(e => console.error(e));
             }
 
-            console.log(results);
 
             for (const result of results) {
 
