@@ -447,12 +447,12 @@ const placeBet = async (req, res) => {
 
     // soccer only over under 
     else if (marketId == "1" && subMarketDetail.Id == 14) {
-      console.log(" ========================  Match Odds ======================== ");
+      console.log(" ========================  over under  ======================== ");
       const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
       const response = await axios.get(url);
       const oddsData = response.data;
       console.log(" oddsData  ================= ", oddsData.length);
-      if (oddsData.length) {
+      if (oddsData.length == 0) {
         console.log(`Match odds not found for sports ID ${sportsId}`);
         return res.status(404).send({ message: `Bet mis match` });
       }
