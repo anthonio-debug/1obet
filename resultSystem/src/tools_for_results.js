@@ -61,6 +61,8 @@ function ToolForResults() {
                 ).catch(e => console.error(e));
             }
 
+            console.log(results);
+
             for (const result of results) {
 
                 if (result.betDocument.length == 0)
