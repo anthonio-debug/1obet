@@ -105,7 +105,6 @@ function scoreChecker() {
             var results;
             const manuelRecord = await MarketIDs.findOne({ marketId: betData.marketId, winnerRunnerData: { $ne: null } });
 
-            console.log(manuelRecord);
             if (manuelRecord) {
                 if (typeof manuelRecord.manuelClose !== undefined)
                     results = [{ winnerSelectionId: manuelRecord.winnerRunnerData, manuelClose: manuelRecord.manuelClose }];
@@ -136,7 +135,7 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        console.log('handle draw');
+                        console.log('handle bet');
                         await handleDrawBet(bet);
                     }
                 } else {
