@@ -361,6 +361,7 @@ const placeBet = async (req, res) => {
           const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           const response = await axios.get(url);
           const oddsData = response.data;
+          console.log(" ================ oddsData ================ ", oddsData);
           multipeResponse.push(oddsData)
         }, 1000*i);  
       }
