@@ -149,7 +149,7 @@ function apiRequests() {
 
         }
       } else {
-        //console.log('Events emp');
+        console.log('Events emp');
       }
     } catch (error) {
       console.log(error);
