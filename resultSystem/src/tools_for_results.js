@@ -30,7 +30,6 @@ function ToolForResults() {
                         //resultId: null,
                         marketId: { $ne: null },
                         isfancyOrbookmaker: false,
-                        sportsId: { $ne: null },
                         status: 1,
                         type: {$in: [0,1]}
                     }
