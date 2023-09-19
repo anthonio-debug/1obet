@@ -127,6 +127,7 @@ function apiRequests() {
          response = await axios.get(url + events.join(','));
          scores = response.data;
         } catch (error) {
+          console.log(error);
           return;
         }
         if (scores.length > 0) {
