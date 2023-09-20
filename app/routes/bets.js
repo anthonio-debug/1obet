@@ -274,6 +274,9 @@ const placeBet = async (req, res) => {
       console.log(" ================== min ======================== ", min);
       console.log(" ================== max ======================== ", max);
       console.log(" ================== betRate ======================== ", betRate);
+      console.log(" ================== multipeResponse ======================== ", multipeResponse);
+
+      
       if (betRate < min || betRate > max) {
         console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
         return res.status(404).send({
