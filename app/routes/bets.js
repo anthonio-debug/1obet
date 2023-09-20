@@ -773,7 +773,6 @@ const placeBet = async (req, res) => {
       //   return res.status(404).send({ message: `Bet miss matched` });
       // }
     }
-    
     else {
       return res.status(404).send({ message: `Error Placing bet (Inappropriate Request)` });
     }
@@ -875,13 +874,9 @@ const placeBet = async (req, res) => {
         winningAmount = (fancyRate/100) * betAmount;
         loosingAmount = betAmount;
       }
-
       /* ------------ */
 
-
-
       /*  Current Position Of Runners  Calculations   */ 
-
       let runnersPosition = [];
       let prevExpAmount = 0;
       let expAmount =  0 
@@ -950,12 +945,10 @@ const placeBet = async (req, res) => {
         console.log(" ================ EXP AMOUNT ================ ", expAmount);
         expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
       }
-
       /* ------------ */
 
 
       /* Placing Bet Area  */ 
-
       const bet = new Bets({
         marketId: _3rdPartyMarketId,
         sportsId: marketId,
@@ -984,7 +977,6 @@ const placeBet = async (req, res) => {
       if (user.availableBalance < expAmount-prevExpAmount ) {
         return res.status(404).send({ message: 'Insufficient balance' });
       }
-
       if(subMarketDetail.Id != config.Fancy){
         let setCalculateExpFalse = await Bets.updateMany(
           { marketId: _3rdPartyMarketId, userId: userId, matchId: matchId, status: 1 },
