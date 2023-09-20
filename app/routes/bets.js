@@ -201,6 +201,11 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
     }
 
+
+
+
+    //  ========================================================= 
+
     // cricket only Tied Match & Toss 
     if (config.sportMarkets.includes(marketId) && config.cricketSubMarkets.includes(subMarketDetail.Id)) {
       console.log(" ======================== Tied Match Toss ======================== ");
@@ -956,13 +961,11 @@ const placeBet = async (req, res) => {
       // (Value showing below/100)*bet amount = loosing amount
       loosingAmount =  (fancyRate/100) * betAmount;
       winningAmount = betAmount;
-      runnerForSaveInbets  = config.FancyKaliJotaChottaBara
     }
     else if (type == 0 && subMarketDetail.Id == config.Fancy) {
       // Value showing below/100)*bet amount = winning amount
       winningAmount = (fancyRate/100) * betAmount;
       loosingAmount = betAmount;
-      runnerForSaveInbets  = config.FancyKaliJotaChottaBara
     }
 
     let runnersPosition = [];
@@ -1034,9 +1037,6 @@ const placeBet = async (req, res) => {
       expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
     }
 
-
-
-
     console.log(" =================== Before BET pLACE  isFancyOrBookMaker ========================== ", isFancyOrBookMaker)
 
     const bet = new Bets({
@@ -1074,7 +1074,6 @@ const placeBet = async (req, res) => {
         {calculateExp: false}
       );
     }
-
 
     bet.save(async (err, result) => {
       if (err) {
