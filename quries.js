@@ -1,6 +1,4 @@
 db.sidebarmenus.deleteMany({})
-db.sidebarmenus.deleteOne( { "_id" : ObjectId("64fb1b0b0439ae8e42ccac77") } )
-
 
 db.sidebarmenus.insertMany([
   {
@@ -9,7 +7,7 @@ db.sidebarmenus.insertMany([
     darkIcon: "https://1obet.com/assets/dark-icons/dashboard.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 0,
-    link: "/home",
+    link: "/",
   },
   {
     name: "Cricket",
@@ -57,24 +55,6 @@ db.sidebarmenus.insertMany([
     link: "/greyhound",
   },
   {
-    name: "Asian Games",
-    lightIcon: "https://1obet.com/assets/light-icons/asian-games.png",
-    darkIcon: "https://1obet.com/assets/dark-icons/asian-games.png",
-    marketId: "tyv234543-432453343423-53423d332",
-    market: 'tyv234543-432453343423-53423d332',
-    type: 1,
-    link: "/asian-games",
-  },
-    {
-    name: "Asian Games",
-    lightIcon: "https://1obet.com/assets/light-icons/asian-games.png",
-    darkIcon: "https://1obet.com/assets/dark-icons/asian-games.png",
-    marketId: "tyv234543-432453343423-53423d332",
-    market: 'tyv234543-432453343423-53423d332',
-    type: 0,
-    link: "/asian-games",
-  },
-  {
     name: "Sports Book",
     lightIcon: "https://1obet.com/assets/light-icons/all-sports.png",
     darkIcon: "https://1obet.com/assets/dark-icons/all-sports.png",
@@ -115,6 +95,14 @@ db.sidebarmenus.insertMany([
     link: "/all-world-casino",
   },
   {
+    name: "Asian Games",
+    lightIcon: "https://1obet.com/assets/light-icons/royal-casino.png",
+    darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
+    marketId: "tyv234543-432453343423-53423d332",
+    type: 0,
+    link: "/asian-games",
+  },
+  {
     name: "Result",
     lightIcon: "https://1obet.com/assets/light-icons/results.png",
     darkIcon: "https://1obet.com/assets/dark-icons/results.png",
@@ -122,13 +110,14 @@ db.sidebarmenus.insertMany([
     type: 0,
     link: "/result",
   },
+
   {
     name: "Dashboard",
     lightIcon: "https://1obet.com/assets/light-icons/dashboard.png",
     darkIcon: "https://1obet.com/assets/dark-icons/dashboard.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 1,
-    link: "/home",
+    link: "/",
   },
   {
     name: "Users",
@@ -247,6 +236,14 @@ db.sidebarmenus.insertMany([
     type: 1,
     link: "/all-world-casino",
   },
+  {
+    name: "Asian Games",
+    lightIcon: "https://1obet.com/assets/light-icons/royal-casino.png",
+    darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
+    marketId: "tyv234543-432453343423-53423d332",
+    type: 1,
+    link: "/asian-games",
+  },  
 ])
 
 db.markettypes.deleteMany({})
@@ -492,43 +489,43 @@ db.bettingfigures.deleteMany({})
 db.bettingfigures.insertMany([
   {
     name: "Digit rate" ,
-    amount: 6.5
+    amount: 8.75
   },
   {
     name: "Digit rate" ,
-    amount: 17.5
+    amount: 8.75
   },
   {
     name: "Digit rate" ,
-    amount: 4.5
+    amount: 8.75
   },
   {
     name: "Digit rate" ,
-    amount: 9.5
+    amount: 8.75
   },
   {
     name: "Digit rate" ,
-    amount: 3.5
+    amount: 8.75
   },
   {
     name: "Digit rate" ,
-    amount: 12.5
+    amount: 8.75
   },
   {
     name: "Digit rate" ,
-    amount: 11.5
+    amount: 8.75
   },
   {
     name: "Digit rate" ,
-    amount: 7.3
+    amount: 8.75
   },
   {
     name: "Digit rate" ,
-    amount: 5.5
+    amount: 8.75
   },
   {
     name: "Digit rate" ,
-    amount: 11.6
+    amount: 8.75
   }
 ])
 
@@ -548,20 +545,6 @@ db.settings.insertMany([
   "updatedAt" : 1683894409.774
   }
 ])
-
-db.privacypolicies.deleteMany({})
-db.privacypolicies.insertOne(
-  {
-    privacyPolicyContent : "1OBET PRIVACY POLICY"
-  }
-)
-
-db.termsandconditions.deleteMany({})
-db.termsandconditions.insertOne(
-  {
-    termAndConditionsContent: "1OBET TERMS & CONDITIONS "
-  }
-)
 
 db.betlimits.deleteMany({})
 db.betlimits.insertMany([
@@ -657,7 +640,7 @@ db.users.insertOne(
     role: '0',
     isActive: true,
     status: 1,
-    userId: 100,
+    userId: 1300,
     passwordChanged: false,
     balance: 0,
     canSettlePL: true,
@@ -671,6 +654,19 @@ db.users.insertOne(
     downLineShare: 100,
   }
 )
+db.privacypolicies.deleteMany({})
+db.privacypolicies.insertOne(
+  {
+    privacyPolicyContent : "1OBET PRIVACY POLICY"
+  }
+)
+
+db.termsandconditions.deleteMany({})
+db.termsandconditions.insertOne(
+  {
+    termAndConditionsContent: "1OBET TERMS & CONDITIONS"
+  }
+)
 
 
 
@@ -682,13 +678,13 @@ db.raceodds.deleteMany({})
 db.racings.deleteMany({})
 db.odds.deleteMany({})
 
-db.inplayevents.find({}) 
-db.fancygames.find({}) 
-db.racemarkets.find({}) 
-db.raceodds.find({}) 
-db.racings.find({}) 
-db.odds.find({}) 
-db.odds.count({}) 
+db.inplayevents.countDocuments({}) 
+db.fancygames.countDocuments({}) 
+db.racemarkets.countDocuments({}) 
+db.raceodds.countDocuments({}) 
+db.racings.countDocuments({}) 
+db.odds.countDocuments({}) 
+db.odds.countDocuments({}) 
 
 
 
@@ -795,107 +791,9 @@ db.betlimits.insertMany([
 
 ])
 
-/**
- [
-
-      {
-        "score": {
-              "activenation1": 1,
-              "activenation2": "0",
-              "balls": [
-                    "w",
-                    "0",
-                    "ww",
-                    "1",
-                    "1",
-                    "ww"
-              ],
-              "dayno": "",
-              "isfinished": "0",
-              "score1": "3-2 (0.5)",
-              "score2": "0-0 (0.0)",
-              "spnballrunningstatus": "",
-              "spnmessage": "",
-              "spnnation1": "HT",
-              "spnnation2": "MW",
-              "spnreqrate1": "",
-              "spnreqrate2": "",
-              "spnrunrate1": "CRR 3.60 ",
-              "spnrunrate2": ""
-        },
-        "eventId": "1808290412"
-      }
-
-]
- * */ 
 
 
-
-
-
-//Qaiser
-  // let expAmount = loosingAmount;
-  // const lastBetsCount = await  Bets.countDocuments({
-  //   marketId: _3rdPartyMarketId,
-  //   userId: req.decoded.userId,
-  //   type: type
-  // });
-  // // lastBetsCount = 1;
-    
-  // if(lastBetsCount){
-  //   expAmount = calculateExposure(_3rdPartyMarketId)
-  //   console.log(expAmount);
-  // }
-//end Qaiser
-
-
-
-  
-// [
-//   { runner: 1, amount: 0  },
-//   { runner: 2, amount: 0  },
-//   { runner: 3, amount: 0  },
-//   { runner: 4, amount: 0  },
-//   { runner: 5, amount: 0  },
-//   { runner: 6, amount: 0  }
-// ]
-
-
-// // Lay 
-// // Amount 1000  Rate : 6.8  Selected =1 
-// // Selected = rate-1 * amt = loosing 
-
-// [
-//    { runner: 1, amount: -5800  },
-//    { runner: 2, amount: 1000  },
-//    { runner: 3, amount: 1000  },
-//    { runner: 4, amount: 1000  },
-//    { runner: 5, amount: 1000  },
-//    { runner: 6, amount: 1000  }
-// ]
-// // Back  
-// // Amount 1000  Rate : 5.3  Selected =1 
-// // Selected = rate-1 * amt = winning  
-// [
-//    { runner: 1, amount: -1500  },
-//    { runner: 2, amount: 0  },
-//    { runner: 3, amount: 0  },
-//    { runner: 4, amount: 0  },
-//    { runner: 5, amount: 0  },
-//    { runner: 6, amount: 0  }
-// ]
-
-// // Back  
-// // Amount 1000  Rate : 6.4  Selected =4
-// // Selected = rate-1 * amt = winning  
-// [
-//    { runner: 1, amount: -2500  },
-//    { runner: 2, amount: -1000  },
-//    { runner: 3, amount: -1000  },
-//    { runner: 4, amount: 5400  },
-//    { runner: 5, amount: -1000  },
-//    { runner: 6, amount: -1000  }
-// ]
+// pm2 start apiSystem.js resultChecker.js resultSaver.js server.js
 
 
 

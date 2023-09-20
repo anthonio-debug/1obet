@@ -459,12 +459,14 @@ const placeBet = async (req, res) => {
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
         return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
       }
+
       console.log(" fancyBetLimit ========== ", fancyBetLimit);
       console.log(" subMarketDetail.Id ========== ", subMarketDetail.Id);
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id
       const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
       const response = await axios.get(url);
+      console.log(" ================== API response ================== ", response);
       const apiFancyOdds = response?.data?.data?.t3;
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3
