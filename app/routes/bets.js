@@ -225,40 +225,15 @@ const placeBet = async (req, res) => {
           // console.log(" ================ oddsData ================ ", oddsData);
           const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
           let selectedOddsValue   = 0;
-
           if (type == 0) {
-            ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
-            selectedOddsValue = ApiResponseOdds[0]?.price
-            // const availableToBack = OddDetailsTeam.ExchangePrices.AvailableToBack;
-            // console.log('availableToBack', availableToBack);
-            // matchedIndex = availableToBack.findIndex((back) => {
-            //   return back.price == betRate;
-            // });
-            // console.log('matchedIndex', matchedIndex);
-            // if (matchedIndex == -1) {
-            //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-            //   return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
-            // }
-            // selectedOddsRate = availableToBack[matchedIndex].price;
-  
+            const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+            selectedOddsValue = ApiResponseOdds.length > 0 ?  ApiResponseOdds[0]?.price : 0
           } else if (type == 1) {
-            ApiResponseOdds   = runnerFromAPI.ExchangePrices.AvailableToLay
-            selectedOddsValue = ApiResponseOdds[0]?.price
-
-            // console.log('AvailableToLay', AvailableToLay);
-            // matchedIndex = AvailableToLay.findIndex((back) => {
-            //   return back.price === betRate;
-            // });
-            // console.log('matchedIndex', matchedIndex);
-            // if (matchedIndex == -1) {
-            //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
-            //   return res.status(404).send({ message: `Bet miss matched` });
-            // }
-            // selectedOddsRate = AvailableToLay[matchedIndex].price;
-  
+            const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
+            selectedOddsValue = ApiResponseOdds.length > 0 ?  ApiResponseOdds[0]?.price : 0
           } 
           console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
-          multipeResponse.push(selectedOddsValue)
+          if(selectedOddsValue > 0 ) multipeResponse.push(selectedOddsValue)
         }, 1000*i);  
       }
       console.log(" ===================================== Before Calling Of Timeout call  ");
@@ -287,14 +262,14 @@ const placeBet = async (req, res) => {
           const runnerFromAPI = oddsData[0]?.Runners?.find(runner => runner.SelectionId == selectionId);
           let selectedOddsValue   = 0;
           if (type == 0) {
-            ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
-            selectedOddsValue = ApiResponseOdds[0]?.price
+            const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+            selectedOddsValue = ApiResponseOdds.length > 0 ?  ApiResponseOdds[0]?.price : 0
           } else if (type == 1) {
-            ApiResponseOdds   = runnerFromAPI.ExchangePrices.AvailableToLay
-            selectedOddsValue = ApiResponseOdds[0]?.price
+            const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
+            selectedOddsValue = ApiResponseOdds.length > 0 ?  ApiResponseOdds[0]?.price : 0
           } 
           console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
-          multipeResponse.push(selectedOddsValue)
+          if(selectedOddsValue > 0 ) multipeResponse.push(selectedOddsValue)
         }, 1000*i);  
       }
 
@@ -463,11 +438,11 @@ const placeBet = async (req, res) => {
           const runnerFromAPI = oddsData[0]?.Runners?.find(runner => runner.SelectionId == selectionId);
           let selectedOddsValue   = 0;
           if (type == 0) {
-            ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+            const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
             selectedOddsValue = ApiResponseOdds.length > 0 ?  ApiResponseOdds[0]?.price : 0
           } else if (type == 1) {
-            ApiResponseOdds   = runnerFromAPI.ExchangePrices.AvailableToLay
-            selectedOddsValue = ApiResponseOdds[0]?.price
+            const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
+            selectedOddsValue = ApiResponseOdds.length > 0 ?  ApiResponseOdds[0]?.price : 0
           } 
           console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
           if(selectedOddsValue > 0 ) multipeResponse.push(selectedOddsValue)
