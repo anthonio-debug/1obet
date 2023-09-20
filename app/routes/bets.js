@@ -766,7 +766,6 @@ const placeBet = async (req, res) => {
         }, 1000*i);  
       }
 
-
       // console.log("odds Data Runners ====== ", oddsData);
       // if (oddsData.length == 0) {
       //   console.log(`Match odds not found for sports ID`);
