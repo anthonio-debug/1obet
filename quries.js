@@ -1940,3 +1940,16 @@ const placeBet = async (req, res) => {
   }
 }
 */
+
+
+      // selectionId
+      // Figure 0----9 as 
+      // CHOTA   0
+      // BARA   1
+      // KALI    0
+      // JOTTA   1
+
+      // type
+      // Figure 2
+      // KALI JOTTA 3
+      // CHOTA BARA 4

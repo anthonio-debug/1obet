@@ -82,9 +82,447 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     }
   }
 
-};
+}
 
 const placeBet = async (req, res) => {
+  const errors = validationResult(req);
+  if (errors.errors.length != 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  try {
+    if (req.decoded.login.role != '5') {
+      return res.status(401).send({ message: 'You are not allowed to bet' });
+    }
+
+    let runnerName;
+    let currentSession;
+    let subMarketDetail;
+    let marketId;
+    let selectedOddsRate;
+    const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate, overunderMarketId } = req.body;
+    const userId = req.decoded.userId;
+    let ApiResponseOdds;
+    let matchedIndex;
+    let winningAmount = 0;
+    let loosingAmount = 0;
+    let isFancyOrBookMaker = false;
+    let _3rdPartyMarketId = 0
+    let TargetScore = 0;
+    let fancyData = null;
+    let runnerForSaveInbets = null;
+    let expoisureType = 1;
+
+    const multipeResponse = [];
+
+    if (betAmount < config.betMinimumAmount) {
+      return res.status(404).send({ message: `minimum bet should be ${config.betMinimumAmount}` });
+    }
+    const user = await User.findOne({ userId }).exec();
+    if (!user) {
+      return res.status(404).send({ message: 'illegal user betting' });
+    }
+    if (user.bettingAllowed == false) {
+      return res.status(404).send({ message: 'Bet not allowed' });
+    }
+    let parentUserIds   = await getParents(user.userId);
+    const marketIds     = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
+    const subMarketId1  = await User.distinct("blockedSubMarkets", { userId: { $in: parentUserIds }, isDeleted: false });
+    const subMarketId2  = await User.distinct("blockedSubMarketsByParent", { userId: { $in: parentUserIds }, isDeleted: false });
+    const subMarketId   = subMarketId1.concat(subMarketId2);
+    const eventDetail   = await Events.findById(matchId);
+
+    if (!eventDetail) {
+      return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
+    }
+    if(!eventDetail.betAllowed){
+      return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
+    }
+    if(eventDetail.status.toUpperCase() != "OPEN"){
+      return res.status(404).send({ message: 'Batting Not Allowd on this Match' });      
+    }
+
+    marketId = eventDetail?.sportsId;
+    console.log(" marketId ======== ", marketId);
+    let id;
+
+    // Checks for Market Places & Sub Markets  
+    if (config.raceMarkets.includes(marketId)) {
+
+      const requiredTime = new Date().getTime() + config.raceOpenBefore;
+      const remainingTimeFromEvent = eventDetail.openDate - requiredTime
+      if (remainingTimeFromEvent > 0) {
+        return res.status(404).send({
+          status: true,
+          message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
+        })
+      }
+
+      id = eventDetail.marketIds[0];
+      _3rdPartyMarketId = id
+      subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
+      if (!subMarketDetail) {
+        return res.status(404).send({ message: 'Bet not allowed' });
+      }
+    } else {
+      const requiredTime = new Date().getTime() + config.sportsOpenBefore;
+      const remainingTimeFromEvent = eventDetail.openDate - requiredTime
+      if (marketId != config.Toss && remainingTimeFromEvent > 0) {
+        return res.status(404).send({
+          status: true,
+          message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
+        })
+      }
+
+      const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == subMarketName);
+      id = currentMarket?.id;
+      _3rdPartyMarketId = id
+      subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
+
+      if (!subMarketDetail) {
+        return res.status(404).send({ message: 'you cannot place bet' });
+      }
+    }
+    console.log(" ================== subMarketDetail ================== ", subMarketDetail);
+
+    if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
+      return res.status(404).send({ message: 'Betting disabled' });
+    }
+    const userMaxBetSize = await userBetSizes.findOne({ userId: userId, sportsId: marketId }).exec();
+
+    if(!userMaxBetSize){
+      return res.status(404).send({ message: `something went wrong !` });
+    }
+
+    if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+      return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
+    }
+
+
+    if (config.sportMarkets.includes(marketId) && config.SportOddsSubMarkets.includes(subMarketDetail.Id)) {
+      console.log(" ========================  Match Odds ======================== ");
+      const DBOddDetails  = await Odds.findById(oddsId);
+      if (!DBOddDetails) {
+        return res.status(404).send({
+          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
+        });
+      }
+      let runners = DBOddDetails?.runners;
+      runnerForSaveInbets  = runners.map((runner) => ({
+        runner: runner.SelectionId,
+        amount: 0
+      }));
+      const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+      runnerName = OddDetailsTeam?.runnerName
+      console.log(" ============================ ========================== ", runnerForSaveInbets);
+
+      // make Sure No More Records Then 4 
+      for (let i = 0; i < 4; i++) {
+        setTimeout( async () => {      
+          const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+          const response = await axios.get(url);
+          const oddsData = response.data;
+          console.log(" ================ oddsData ================ ", oddsData);
+          const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+          let selectedOddsValue   = 0;
+
+          if (type == 0) {
+            ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+            selectedOddsValue = ApiResponseOdds[0]?.price
+            // const availableToBack = OddDetailsTeam.ExchangePrices.AvailableToBack;
+            // console.log('availableToBack', availableToBack);
+            // matchedIndex = availableToBack.findIndex((back) => {
+            //   return back.price == betRate;
+            // });
+            // console.log('matchedIndex', matchedIndex);
+            // if (matchedIndex == -1) {
+            //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+            //   return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
+            // }
+            // selectedOddsRate = availableToBack[matchedIndex].price;
+  
+          } else if (type == 1) {
+            ApiResponseOdds   = runnerFromAPI.ExchangePrices.AvailableToLay
+            selectedOddsValue = ApiResponseOdds[0]?.price
+
+            // console.log('AvailableToLay', AvailableToLay);
+            // matchedIndex = AvailableToLay.findIndex((back) => {
+            //   return back.price === betRate;
+            // });
+            // console.log('matchedIndex', matchedIndex);
+            // if (matchedIndex == -1) {
+            //   console.log(`No availableToBack odds matched with the bet rate ${betRate}`);
+            //   return res.status(404).send({ message: `Bet miss matched` });
+            // }
+            // selectedOddsRate = AvailableToLay[matchedIndex].price;
+  
+          } 
+          console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
+          multipeResponse.push(selectedOddsValue)
+        }, 1000*i);  
+      }
+      console.log(" ===================================== Before Calling Of Timeout call  ");
+    }
+    else {
+      return res.status(404).send({ message: `Error Placing bet (Inappropriate Request)` });
+    }
+    const delay = 4100
+
+    setTimeout( async () => {
+
+      let min = Math.min(...multipeResponse);
+      let max = Math.max(...multipeResponse);
+      console.log(" ================== min ======================== ", min);
+      console.log(" ================== max ======================== ", max);
+      console.log(" ================== betRate ======================== ", betRate);
+      if (betRate < min || betRate > max) {
+        console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
+        if (!responseSent) {
+          return res.status(404).send({
+            message: `Bet Miss Matched `
+          });
+        }
+      }
+
+
+
+
+      /* Winning Loosing Calculations  */
+
+      if (type == 4)  {
+        winningAmount = betAmount;
+        loosingAmount = betAmount;
+        selectionId == 0? runnerName = `CHOTA` : runnerName = `BARA`;
+        runnerForSaveInbets  = [
+          { "runner": 1, "amount": 0 },
+          { "runner": 0, "amount": 0 }
+        ]
+        expoisureType = 2
+      }
+      else if (type == 3)  {
+        winningAmount = betAmount;
+        loosingAmount = betAmount;
+        selectionId == 0? runnerName = `KALI` : runnerName = `JOTTA`;
+        runnerForSaveInbets  = [
+          { "runner": 1, "amount": 0 },
+          { "runner": 0, "amount": 0 }
+        ]
+        expoisureType = 2
+      }
+      else if (type == 2) {
+        winningAmount = (betAmount * betRate);
+        loosingAmount = betAmount;
+        runnerName    = `Figure(${selectionId})`
+        runnerForSaveInbets  = [
+          { "runner": 0, "amount": 0 },
+          { "runner": 1, "amount": 0 },
+          { "runner": 2, "amount": 0 },
+          { "runner": 3, "amount": 0 },
+          { "runner": 4, "amount": 0 },
+          { "runner": 5, "amount": 0 },
+          { "runner": 6, "amount": 0 },
+          { "runner": 7, "amount": 0 },
+          { "runner": 8, "amount": 0 },
+          { "runner": 9, "amount": 0 }
+        ];
+        expoisureType = 2;
+      }
+      else if (type == 1 &&  !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
+        winningAmount = betAmount;
+        loosingAmount = (betAmount * betRate) - betAmount;
+      }
+      else if (type == 0 && !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
+        winningAmount = (betAmount * betRate) - betAmount;
+        loosingAmount = betAmount;
+      }
+
+      else if (type == 1 &&  subMarketDetail.Id == config.BookMaker) {
+        // ((rate) /100 ) * bet_amount = loosing amount 
+        loosingAmount =  (betRate * betAmount) /100;
+        winningAmount = betAmount;
+        console.log(" 1 loosingAmount =========  ", loosingAmount);
+      }
+      else if (type == 0 && subMarketDetail.Id == config.BookMaker) {
+        // ((rate) /100 ) * bet_amount = winning amount 
+        winningAmount = (betRate * betAmount)/100;
+        loosingAmount = betAmount;
+        console.log(" 0  loosingAmount =========  ", winningAmount);
+      }
+      else if (type == 1 &&  subMarketDetail.Id == config.Fancy) {
+        // (Value showing below/100)*bet amount = loosing amount
+        loosingAmount =  (fancyRate/100) * betAmount;
+        winningAmount = betAmount;
+      }
+      else if (type == 0 && subMarketDetail.Id == config.Fancy) {
+        // Value showing below/100)*bet amount = winning amount
+        winningAmount = (fancyRate/100) * betAmount;
+        loosingAmount = betAmount;
+      }
+
+      /* ------------ */
+
+
+
+      /*  Current Position Of Runners  Calculations   */ 
+
+      let runnersPosition = [];
+      let prevExpAmount = 0;
+      let expAmount =  0 
+      console.log(" ================ Selection ID ================ ", selectionId);
+      if(subMarketDetail.Id == config.Fancy){
+        expAmount = loosingAmount
+      }else {
+        let lastBetsCount = await Bets.countDocuments({
+          marketId: _3rdPartyMarketId,
+          userId: req.decoded.userId,
+          matchId: matchId,
+          status: 1
+        });
+        console.log(" ======================= Total Count of Prev Bets ", lastBetsCount);
+        if(lastBetsCount){
+          const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType, matchId);
+          runnersPosition =  resp.runnersPosition;
+          prevExpAmount =  resp.prevExpAmount;
+        }else {
+          if(expoisureType == 2){
+            console.log(" ========== runnerForSaveInbets ================ ", runnerForSaveInbets);
+            runnersPosition = runnerForSaveInbets.map((item)=>{
+              if(item.runner == selectionId){
+                item.amount = item.amount + winningAmount
+              }else {
+                item.amount = item.amount - loosingAmount
+              }
+              return item 
+            })
+            console.log(" ========== runnersPosition ================ ", runnersPosition);
+          }else {
+            if(type == 0){
+  
+              const runnerCurrentPosition  = runnerForSaveInbets.map((item)=>{
+                if(item.runner == selectionId){
+                  item.amount = item.amount + winningAmount
+                }else {
+                  item.amount = item.amount - loosingAmount
+                }
+                return item 
+              })
+              console.log(" ================== runnerCurrentPosition ================== ", runnerCurrentPosition);
+              runnersPosition = runnerCurrentPosition;
+              console.log(" ================== runnersPosition ================== ", runnersPosition);
+              
+            }else if(type == 1){
+              runnersPosition = runnerForSaveInbets.map((item)=>{
+                if(item.runner == selectionId){
+                  item.amount = item.amount - loosingAmount
+                }else {
+                  item.amount = item.amount + winningAmount
+                }
+                return item 
+              })
+            }
+          }
+        }
+        console.log(" ================ runner For SaveIn bets INFO ================ ", runnerForSaveInbets);
+        console.log(" ================ RUNNER INFO ================ ", runnersPosition);
+        console.log(" ================ EXP AMOUNT ================ ", expAmount);
+        expAmount = runnersPosition.reduce((min, current) => {
+          return current.amount < min.amount ? current : min;
+        }, runnersPosition[0]);
+        expAmount = expAmount.amount;
+        console.log(" ================ RUNNER INFO ================ ", runnersPosition);
+        console.log(" ================ EXP AMOUNT ================ ", expAmount);
+        expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
+      }
+
+      /* ------------ */
+
+
+      /* Placing Bet Area  */ 
+
+      const bet = new Bets({
+        marketId: _3rdPartyMarketId,
+        sportsId: marketId,
+        runnerName:runnerName,
+        userId,
+        betAmount,
+        betRate: betRate,
+        TargetScore: TargetScore,
+        matchId: matchId,
+        loosingAmount: loosingAmount,
+        winningAmount: winningAmount,
+        subMarketId: subMarketDetail.Id,
+        betSession: currentSession ? currentSession : null,
+        runner: selectionId ? selectionId : '',
+        type: type,
+        event: eventDetail.name,
+        isfancyOrbookmaker: isFancyOrBookMaker,
+        fancyData: fancyData,
+        fancyRate: fancyRate,
+        createdAt: new Date().getTime(),
+        exposureAmount: expAmount,
+        runnersPosition: runnersPosition
+      });
+      // if ((user.availableBalance < betAmount && type == 0) || (user.availableBalance < betAmount * (betRate - 1) && type == 1)) {
+      console.log('userAvailableBalance', user.availableBalance)
+      if (user.availableBalance < expAmount-prevExpAmount ) {
+        return res.status(404).send({ message: 'Insufficient balance' });
+      }
+
+      if(subMarketDetail.Id != config.Fancy){
+        let setCalculateExpFalse = await Bets.updateMany(
+          { marketId: _3rdPartyMarketId, userId: userId, matchId: matchId, status: 1 },
+          {calculateExp: false}
+        );
+      }
+
+      bet.save(async (err, result) => {
+        if (err) {
+          console.log('err', err);
+          return res.status(404).send({ message: `Error placing bet ${err}` });
+        }
+        try {
+          const position = new currentPosition({
+            userId: userId,
+            amount: - loosingAmount,
+            matchsId: matchId,
+            betId: result._id,
+          })
+          await position.save();
+  
+          const totalExpAmount = expAmount - prevExpAmount
+          const updatedUser = await User.findOneAndUpdate(
+            { userId: userId },
+            {
+              $inc: {
+                availableBalance: -totalExpAmount,
+                exposure: -totalExpAmount
+              },
+            },
+          );
+          await updateParentUserBalance(parentUserIds, winningAmount, matchId, result._id, selectionId, _3rdPartyMarketId);
+  
+          return res.send({
+            success: true,
+            message: 'Bet placed successfully',
+            results: result,
+          });
+  
+        }
+        catch (error) {
+          console.error('error', error);
+          return res.status(404).send({ message: 'Error updating user balance' });
+        }
+      });
+      /* -------------- */ 
+
+    }, delay);
+
+  } catch (error) {
+    console.error('error', error);
+    return res.status(404).send({ message: `Error placing bet ${error}` });
+  }
+}
+
+const placeBetOld = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
@@ -361,6 +799,7 @@ const placeBet = async (req, res) => {
     // }
 
     // Under Dev Match offs 
+
     else if (config.sportMarkets.includes(marketId) && config.SportOddsSubMarkets.includes(subMarketDetail.Id)) {
       console.log(" ========================  Match Odds ======================== ");
       const DBOddDetails  = await Odds.findById(oddsId);
@@ -448,6 +887,7 @@ const placeBet = async (req, res) => {
       console.log(" ===================================== Before Calling Of Timeout call  ");
 
     }
+
     // soccer only over under 
     else if (marketId == "1" && subMarketDetail.Id == 14) {
       _3rdPartyMarketId = overunderMarketId; 
