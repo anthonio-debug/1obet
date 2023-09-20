@@ -464,13 +464,13 @@ const placeBet = async (req, res) => {
           let selectedOddsValue   = 0;
           if (type == 0) {
             ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
-            selectedOddsValue = ApiResponseOdds[0]?.price
+            selectedOddsValue = ApiResponseOdds.length > 0 ?  ApiResponseOdds[0]?.price : 0
           } else if (type == 1) {
             ApiResponseOdds   = runnerFromAPI.ExchangePrices.AvailableToLay
             selectedOddsValue = ApiResponseOdds[0]?.price
           } 
           console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
-          multipeResponse.push(selectedOddsValue)
+          if(selectedOddsValue > 0 ) multipeResponse.push(selectedOddsValue)
         }, 1000*i);  
       }
     }
@@ -761,6 +761,11 @@ const placeBet = async (req, res) => {
 
     // HR GH odds market 
     else if (config.raceMarkets.includes(marketId)) {
+
+
+
+
+
 
       console.log("MarketId ========== ", id);
       const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
