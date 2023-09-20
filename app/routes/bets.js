@@ -576,18 +576,18 @@ const placeBet = async (req, res) => {
           const eventId = eventDetail.Id;
           const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
           const response = await axios.get(url);
-          console.log(" ================== ================== ", response.data?.data?.t2);
+          console.log(" ================== ================== ", response.data?.data?.t2[0].bm1);
 
           const apiFancyOdds = response?.data?.data?.t2?.length > 0 ? response?.data?.data?.t2[0]?.bm1 : [];
           const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
           let selectedOddsValue   = 0;
           if (type == 0) {
-            const apiBackOdds = Number(apiSelectedOdds.b3);
-            const scores = Number(apiSelectedOdds.bs3);
+            const apiBackOdds = Number(apiSelectedOdds.b1);
+            const scores = Number(apiSelectedOdds.bs1);
             selectedOddsValue = apiBackOdds
           } else if (type == 1) {
-            const apiBackOdds = Number(apiSelectedOdds.l3);
-            const DbBackScores = Number(dbSelectedOdds.ls3);
+            const apiBackOdds = Number(apiSelectedOdds.l1);
+            const DbBackScores = Number(dbSelectedOdds.ls1);
             selectedOddsValue = apiBackOdds
           } 
           console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
