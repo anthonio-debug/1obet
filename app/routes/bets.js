@@ -227,10 +227,10 @@ const placeBet = async (req, res) => {
           let selectedOddsValue   = 0;
           if (type == 0) {
             const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
-            selectedOddsValue = ApiResponseOdds.length > 0 ?  ApiResponseOdds[0]?.price : 0
+            selectedOddsValue = ApiResponseOdds && ApiResponseOdds.length > 0 ?  ApiResponseOdds[0]?.price : 0
           } else if (type == 1) {
             const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
-            selectedOddsValue = ApiResponseOdds.length > 0 ?  ApiResponseOdds[0]?.price : 0
+            selectedOddsValue = ApiResponseOdds && ApiResponseOdds.length > 0 ?  ApiResponseOdds[0]?.price : 0
           } 
           console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
           if(selectedOddsValue > 0 ) multipeResponse.push(selectedOddsValue)
