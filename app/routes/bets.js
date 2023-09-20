@@ -834,27 +834,32 @@ const placeBet = async (req, res) => {
     else {
       return res.status(404).send({ message: `Error Placing bet (Inappropriate Request)` });
     }
-    const delay = 4100
+    let  delay = 4100
+    let  echckOdds = true;
+    if([7, 8, 11].includes(subMarketDetail.Id)){
+      delay = 1
+      echckOdds = false; 
+    }
+
 
     setTimeout( async () => {
 
-      let min = Math.min(...multipeResponse);
-      let max = Math.max(...multipeResponse);
-      console.log(" ================== min ======================== ", min);
-      console.log(" ================== max ======================== ", max);
-      console.log(" ================== betRate ======================== ", betRate);
-      console.log(" ================== multipeResponse ======================== ", multipeResponse);
-
-      
-      if (betRate < min || betRate > max) {
-        console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
-        return res.status(404).send({
-          message: `Bet Miss Matched `
-        });
+      if(echckOdds){
+        let min = Math.min(...multipeResponse);
+        let max = Math.max(...multipeResponse);
+        console.log(" ================== min ======================== ", min);
+        console.log(" ================== max ======================== ", max);
+        console.log(" ================== betRate ======================== ", betRate);
+        console.log(" ================== multipeResponse ======================== ", multipeResponse);
+  
+        
+        if (betRate < min || betRate > max) {
+          console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
+          return res.status(404).send({
+            message: `Bet Miss Matched `
+          });
+        }
       }
-
-
-
 
       /* Winning Loosing Calculations  */
 
