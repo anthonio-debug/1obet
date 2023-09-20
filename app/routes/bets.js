@@ -836,7 +836,7 @@ const placeBet = async (req, res) => {
     }
     let  delay = 4100
     let  echckOdds = true;
-    if([7, 8, 11].includes(subMarketDetail.Id)){
+    if([7, 8,  9, 10, 11, 34].includes(subMarketDetail.Id)){
       delay = 1
       echckOdds = false; 
     }
