@@ -423,14 +423,17 @@ const placeBet = async (req, res) => {
         console.log(" ================== min ======================== ", min);
         console.log(" ================== max ======================== ", max);
         console.log(" ================== betRate ======================== ", betRate);
-
-        if(betRate <  min || betRate > max){
-          msg = "Bet Miss matched !";
-          console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ")
-          return res.status(404).send({
-            message: `Bet Miss Matched `
-          });
-
+        let responseSent = false; 
+        if (betRate < min || betRate > max) {
+          console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
+          
+          // Check if the response has already been sent before sending it again
+          if (!responseSent) {
+            responseSent = true; // Set the flag to true
+            return res.status(404).send({
+              message: `Bet Miss Matched `
+            });
+          }
         }
       }, 4100);
 
