@@ -100,8 +100,8 @@ const placeBet = async (req, res) => {
     let marketId;
     let selectedOddsRate;
     const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate, overunderMarketId } = req.body;
-    console.log(" ==================== BET RATE ===================",betRate);
-    console.log(" ====================  Fancy Rate  ===================",fancyRate);
+    // console.log(" ==================== BET RATE ===================",betRate);
+    // console.log(" ====================  Fancy Rate  ===================",fancyRate);
     
     const userId = req.decoded.userId;
     let ApiResponseOdds;
@@ -109,6 +109,7 @@ const placeBet = async (req, res) => {
     let winningAmount = 0;
     let loosingAmount = 0;
     let isFancyOrBookMaker = false;
+    console.log(" =================== INNITIAL  isFancyOrBookMaker ========================== ", isFancyOrBookMaker);
     let _3rdPartyMarketId = 0
     let TargetScore = 0;
     let fancyData = null;
@@ -437,6 +438,8 @@ const placeBet = async (req, res) => {
         }
       }, 4100);
 
+      console.log(" ===================================== Before Calling Of Timeout call  ");
+
     }
     // soccer only over under 
     else if (marketId == "1" && subMarketDetail.Id == 14) {
@@ -681,6 +684,7 @@ const placeBet = async (req, res) => {
           console.log('Invalid type value. Type should be 0 or 1.');
           return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
         }
+        console.log(" =================== isFancyOrBookMaker ========================== ", isFancyOrBookMaker);
       }
       else {
         console.log(`Odds not available for the selected team ${req.body.selectionId}`);
@@ -1027,6 +1031,12 @@ const placeBet = async (req, res) => {
       console.log(" ================ EXP AMOUNT ================ ", expAmount);
       expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
     }
+
+
+
+
+    console.log(" =================== Before BET pLACE  isFancyOrBookMaker ========================== ", isFancyOrBookMaker)
+
     const bet = new Bets({
       marketId: _3rdPartyMarketId,
       sportsId: marketId,
