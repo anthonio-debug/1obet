@@ -109,6 +109,7 @@ const placeBet = async (req, res) => {
     let winningAmount = 0;
     let loosingAmount = 0;
     let isFancyOrBookMaker = false;
+    console.log(" =================== INNITIAL  isFancyOrBookMaker ========================== ");
     console.log(" =================== INNITIAL  isFancyOrBookMaker ========================== ", isFancyOrBookMaker);
     let _3rdPartyMarketId = 0
     let TargetScore = 0;
@@ -200,7 +201,7 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
     }
 
-    // cricket only  Tied Match & Toss 
+    // cricket only Tied Match & Toss 
     if (config.sportMarkets.includes(marketId) && config.cricketSubMarkets.includes(subMarketDetail.Id)) {
       console.log(" ======================== Tied Match Toss ======================== ");
       const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -272,6 +273,7 @@ const placeBet = async (req, res) => {
       }
     }
 
+    // stop 
     // // cricket Tennis soccer Match odds
     // else if (config.sportMarkets.includes(marketId) && config.SportOddsSubMarkets.includes(subMarketDetail.Id)) {
     //   console.log(" ========================  Match Odds ======================== ");
