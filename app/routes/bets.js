@@ -573,6 +573,7 @@ const placeBet = async (req, res) => {
       for (let i = 0; i < 4; i++) {
         isFancyOrBookMaker = true;
         setTimeout( async () => {
+          const eventId = eventDetail.Id;
           const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
           const response = await axios.get(url);
           const apiFancyOdds = response?.data?.data?.t2?.length > 0 ? response?.data?.data?.t2[0]?.bm1 : [];
