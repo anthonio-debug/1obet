@@ -576,8 +576,8 @@ const placeBet = async (req, res) => {
           const eventId = eventDetail.Id;
           const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
           const response = await axios.get(url);
-          console.log(" ================== ================== ", response.data);
-          
+          console.log(" ================== ================== ", response.data?.data?.t2);
+
           const apiFancyOdds = response?.data?.data?.t2?.length > 0 ? response?.data?.data?.t2[0]?.bm1 : [];
           const apiSelectedOdds = apiFancyOdds.find(runner => runner.sid == req.body.selectionId);
           let selectedOddsValue   = 0;
