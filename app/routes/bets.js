@@ -260,7 +260,7 @@ const placeBet = async (req, res) => {
     }
 
     // Tennis Match Odds 
-    if (config.sportMarkets.includes(marketId) && config.tennisOdds == subMarketDetail.Id) {
+    else if (config.sportMarkets.includes(marketId) && config.tennisOdds == subMarketDetail.Id) {
       console.log(" ======================== Tennis Match Odds ======================== ");
       const DBOddDetails  = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -318,7 +318,7 @@ const placeBet = async (req, res) => {
     }
 
     // Cricket Match Odds 
-    if (config.sportMarkets.includes(marketId) && config.tennisOdds == subMarketDetail.Id){
+    else if (config.sportMarkets.includes(marketId) && config.tennisOdds == subMarketDetail.Id){
       console.log(" ======================== Cricket Match Odds ======================== ");
       const DBOddDetails  = await Odds.findById(oddsId);
       if (!DBOddDetails) {
