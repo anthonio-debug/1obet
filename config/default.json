@@ -54,6 +54,9 @@
     { "runner": 1, "amount": 0 },
     { "runner": 0, "amount": 0 }
   ],
+  "soccerOdds": 13,
+  "tennisOdds": 15,
+  "cricketOdds": 6,
   "Fancy": 7,
   "BookMaker": 8,
   "Figure" : 9,
