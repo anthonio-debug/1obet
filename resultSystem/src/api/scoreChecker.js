@@ -236,6 +236,8 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
+                        if (typeof result.manuelClose === 'undefined')
+                        continue;
                         await handleDrawBet(bet);
                     }
                 } else {
@@ -243,6 +245,8 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
+                        if (typeof result.manuelClose === 'undefined')
+                        continue;
                         if (bet.type == 0 && bet.runner == result.winnerSelId) {
                             console.log("0 ----- winner ");
                             await handleWinningBet(bet);
@@ -349,6 +353,8 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
+                        if (typeof result.manuelClose === 'undefined')
+                        continue;
                         await handleDrawBet(bet);
                     }
                 } else {
@@ -356,6 +362,9 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
+                        if (typeof result.manuelClose === 'undefined')
+                        continue;
+
                         if (bet.type == 0 && parseInt(bet.runner) >= parseInt(result.result)) {
                             console.log("0 ----- winner ");
                             await handleWinningBet(bet);
