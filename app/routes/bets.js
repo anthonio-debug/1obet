@@ -1123,6 +1123,7 @@ const placeBet = async (req, res) => {
         betSession: currentSession ? currentSession : null,
         runner: selectionId ? selectionId : '',
         type: type,
+        status: 1,
         event: eventDetail.name,
         isfancyOrbookmaker: isFancyOrBookMaker,
         fancyData: fancyData,
