@@ -855,13 +855,26 @@ const placeBet = async (req, res) => {
         console.log(" ================== betRate ======================== ", betRate);
         console.log(" ================== multipeResponse ======================== ", multipeResponse);
   
-        
-        if (betRate < min || betRate > max) {
+        if (type ==  0 &&  betRate <  min) {
           console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
           return res.status(404).send({
             message: `Bet Miss Matched `
           });
         }
+
+        if (type ==  1 && betRate > max) {
+          console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
+          return res.status(404).send({
+            message: `Bet Miss Matched `
+          });
+        }
+        
+        // if (betRate < min || betRate > max) {
+        //   console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
+        //   return res.status(404).send({
+        //     message: `Bet Miss Matched `
+        //   });
+        // }
       }
 
       /* Winning Loosing Calculations  */
