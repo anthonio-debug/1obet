@@ -11,6 +11,7 @@ const betSchema = new mongoose.Schema({
   userId: { type: Number, required: true },
   betAmount: { type: Number, required: true },
   betRate: { type: Number, required: true }, // bet rate chosen by user
+  selectedBetRate: { type: Number, required: true },
   returnAmount: { type: Number, default: 0 },
   createdAt: { type: Number },
   updatedAt: { type: Number },

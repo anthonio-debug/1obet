@@ -93,6 +93,9 @@ const placeBet = async (req, res) => {
     if (req.decoded.login.role != '5') {
       return res.status(401).send({ message: 'You are not allowed to bet' });
     }
+    if (req.decoded.userId != 1390) {
+      return res.status(401).send({ message: 'We are Openning for bets soon' });   
+    }
     let runnerName;
     let currentSession;
     let subMarketDetail;
@@ -235,6 +238,7 @@ const placeBet = async (req, res) => {
           }
         } 
         if(!selectedOddsValue.includes(betRate)){
+          console.log(" ========================= selectedOddsValue  ========================= ", selectedOddsValue);
           console.log(" selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
@@ -352,7 +356,6 @@ const placeBet = async (req, res) => {
       }
       console.log(" ===================================== Before Calling Of Timeout call  ");
     }
-
 
     // soccer over under 
     else if (config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.overUnder){
@@ -954,13 +957,6 @@ const placeBet = async (req, res) => {
             message: `Bet Miss Matched `
           });
         }
-        
-        // if (betRate < min || betRate > max) {
-        //   console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
-        //   return res.status(404).send({
-        //     message: `Bet Miss Matched `
-        //   });
-        // }
       }
 
       /* Winning Loosing Calculations  */
@@ -1116,6 +1112,7 @@ const placeBet = async (req, res) => {
         userId,
         betAmount,
         betRate: betRate,
+        selectedBetRate: selectedBetRate,
         TargetScore: TargetScore,
         matchId: matchId,
         loosingAmount: loosingAmount,
