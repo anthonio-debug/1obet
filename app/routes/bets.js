@@ -94,7 +94,7 @@ const placeBet = async (req, res) => {
       return res.status(401).send({ message: 'You are not allowed to bet' });
     }
     if (req.decoded.userId != 1390) {
-      return res.status(401).send({ message: 'We are Openning for bets soon' });   
+      return res.status(404).send({ message: 'We are Openning for bets soon' });   
     }
     let runnerName;
     let currentSession;
@@ -296,6 +296,7 @@ const placeBet = async (req, res) => {
           }
         } 
         if(!selectedOddsValue.includes(betRate)){
+          console.log(" ====================== selectedOddsValue ===================== ", selectedOddsValue);
           console.log(" selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
@@ -392,6 +393,7 @@ const placeBet = async (req, res) => {
           }
         } 
         if(!selectedOddsValue.includes(betRate)){
+          console.log(" ====================== selectedOddsValue ===================== ", selectedOddsValue);
           console.log(" selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
