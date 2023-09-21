@@ -228,11 +228,13 @@ const placeBet = async (req, res) => {
         let selectedOddsValue   = [];
         if (type == 0) {
           const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+          console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
             selectedOddsValue = ApiResponseOdds.map(runner => runner.price)
           }
         } else if (type == 1) {
           const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
+          console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
             selectedOddsValue = ApiResponseOdds.map(runner => runner.price)
           }
