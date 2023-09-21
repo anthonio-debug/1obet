@@ -373,6 +373,8 @@ const placeBet = async (req, res) => {
         runner: runner.SelectionId,
         amount: 0
       }));
+      const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+      runnerName = OddDetailsTeam?.runnerName
 
       if(selectedBetRate == betRate){
         const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
