@@ -566,6 +566,7 @@ const placeBet = async (req, res) => {
       runners = dbFancyOdds;
       fancyData = null;
       runnerName = dbFancyOdds?.nat; 
+      _3rdPartyMarketId = "Bookmaker" 
       runnerForSaveInbets  = runners.map((runner) => ({
         runner: runner.sid,
         amount: 0
