@@ -185,6 +185,7 @@ const placeBet = async (req, res) => {
       }
     }
 
+
     console.log(" ================== subMarketDetail ================== ", subMarketDetail);
 
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
@@ -225,21 +226,21 @@ const placeBet = async (req, res) => {
         const oddsData = response.data;
         console.log(" ================ oddsData ================ ", oddsData);
         const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
-        let selectedOddsValue   = [];
+        let selectedOddsValue   = 0;
         if (type == 0) {
           const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
           console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds.map(runner => runner.price)
+            selectedOddsValue = ApiResponseOdds[0].price
           }
         } else if (type == 1) {
           const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
           console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds.map(runner => runner.price)
+            selectedOddsValue = ApiResponseOdds[0].price
           }
         } 
-        if(!selectedOddsValue.includes(betRate)){
+        if(selectedOddsValue != betRate){
           console.log(" ========================= selectedOddsValue  ========================= ", selectedOddsValue);
           console.log(" selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
@@ -285,19 +286,19 @@ const placeBet = async (req, res) => {
         const oddsData = response.data;
         console.log(" ================ oddsData ================ ", oddsData);
         const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
-        let selectedOddsValue   = [];
+        let selectedOddsValue   = 0;
         if (type == 0) {
           const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds.map(runner => runner.price)
+            selectedOddsValue = ApiResponseOdds[0].price
           }
         } else if (type == 1) {
           const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds.map(runner => runner.price)
+            selectedOddsValue = ApiResponseOdds[0].price
           }
         } 
-        if(!selectedOddsValue.includes(betRate)){
+        if(selectedOddsValue != betRate){
           console.log(" ====================== selectedOddsValue ===================== ", selectedOddsValue);
           console.log(" selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
@@ -384,19 +385,19 @@ const placeBet = async (req, res) => {
         const oddsData = response?.data;
         console.log(" ================ oddsData ================ ", oddsData);
         const runnerFromAPI = oddsData[0]?.Runners?.find(runner => runner.SelectionId == selectionId);
-        let selectedOddsValue   = [];
+        let selectedOddsValue   = 0;
         if (type == 0) {
           const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds.map(runner => runner.price)
+            selectedOddsValue = ApiResponseOdds[0].price
           }
         } else if (type == 1) {
           const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds.map(runner => runner.price)
+            selectedOddsValue = ApiResponseOdds[0].price
           }
         } 
-        if(!selectedOddsValue.includes(betRate)){
+        if(selectedOddsValue != betRate){
           console.log(" ====================== selectedOddsValue ===================== ", selectedOddsValue);
           console.log(" selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
@@ -436,11 +437,11 @@ const placeBet = async (req, res) => {
         const response = await axios.get(url);
         const oddsData = response.data;
         const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
-        let selectedOddsValue   = [];
+        let selectedOddsValue   = 0;
         if (type == 0) {
           const ApiResponseOdds = runnerFromAPI?.exchange?.availableToBack;
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds.map(runner => runner.price)
+            selectedOddsValue = ApiResponseOdds[0].price
           }
         } else if (type == 1) {
           const ApiResponseOdds = runnerFromAPI.exchange?.AvailableToLay
@@ -448,7 +449,7 @@ const placeBet = async (req, res) => {
             selectedOddsValue = ApiResponseOdds.map(runner => runner.price)
           }
         } 
-        if(!selectedOddsValue.includes(betRate)){
+        if(selectedOddsValue != betRate){
           console.log(" ============== selectedOddsValue ================== ", selectedOddsValue);
           console.log(" selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
@@ -938,7 +939,7 @@ const placeBet = async (req, res) => {
     }
     let  delay = 4100
     let  echckOdds = true;
-    if([7, 8, 9, 10, 11, 34].includes(subMarketDetail.Id) || marketId != "4"){
+    if(marketId != "4"){
       delay = 1
       echckOdds = false; 
     }
