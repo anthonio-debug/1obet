@@ -2002,7 +2002,7 @@ const getWaitingBetsForManuel = async (req, res) => {
 
   try {
     
-    const results = await Bets.find({status: 1, isManuel:true}).sort({_id: -1});
+    const results = await Bets.find({status: 1, isManuel:true}).sort({createdAt: -1});
     var groups = {};
     for (var i = 0; i < results.length; i++) {
         var item = results[i];
