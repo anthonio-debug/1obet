@@ -1149,6 +1149,7 @@ const placeBet = async (req, res) => {
           return res.status(404).send({ message: `Error placing bet ${err}` });
         }
         try {
+          console.log( " ========================== result ========================== ", result);
           const position = new currentPosition({
             userId: userId,
             amount: - loosingAmount,
