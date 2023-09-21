@@ -111,7 +111,7 @@ async function handleLosingBet(bet) {
   });
   let cash = new Cash({
     userId: userToUpdate.userId,
-    description: bet.name,
+    description: `Event (${bet.event}) Runner (${bet.runnerName})`,
     betId: bet._id,
     createdBy: 0,
     amount: - loosingAmount,
@@ -171,7 +171,7 @@ async function handleLosingBet(bet) {
     }).sort({ _id: -1 });
     let cash = await new Cash({
       userId: user.userId,
-      description: bet.name,
+      description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
       betId: bet._id,
       createdBy: 0,
       amount: (user.commission / 100) * TotalLoosingAmount,
@@ -243,14 +243,12 @@ async function handleWinningBet(bet) {
     upMovingCommAmount = commissionAmount
   }
 
-  let expAmount = 0;
   userToUpdate.balance += remainingAmount;
   userToUpdate.clientPL += remainingAmount;
   if(bet.calculateExp){
     userToUpdate.exposure += bet.exposureAmount;
-    expAmount = bet.exposureAmount;
   }
-  userToUpdate.availableBalance += expAmount + remainingAmount;
+  userToUpdate.availableBalance += loosingAmount + remainingAmount;
   await userToUpdate.save();
   console.log(" =============== User Updated Successfull ");
 
@@ -263,7 +261,7 @@ async function handleWinningBet(bet) {
   // console.log("lastMaxWithdraw1", lastMaxWithdraw);
   let cash = new Cash({
     userId: userToUpdate.userId,
-    description: bet.name,
+    description: `Event (${bet.event}) Runner (${bet.runnerName})`,
     betId: bet._id,
     createdBy: 0,
     amount: remainingAmount,
@@ -322,7 +320,7 @@ async function handleWinningBet(bet) {
     
     let betTransaction = await new Cash({
       userId: user.userId,
-      description: bet.name,
+      description: `Event (${bet.event}) Runner (${bet.runnerName})`,
       createdBy: 0,
       amount: -(user.commission / 100) * totalRemainingAmount,
       balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
@@ -348,7 +346,7 @@ async function handleWinningBet(bet) {
       let lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
       let commissionTransaction = await new Cash({
         userId: user.userId,
-        description: bet.name,
+        description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
         createdBy: 0,
         commissionFrom: commissionFrom,
         amount: (user.commission / 100) * commissionAmount,
@@ -430,7 +428,7 @@ async function handleDrawBet(bet) {
     user.save();
   });
 
-  await Bets.findByIdAndUpdate(bet._id, { status: 0 });
+  await Bets.findByIdAndUpdate(bet._id, { status: 2 });
   console.log(" betIdString =============== Starting  ");
   console.log(bet._id.toString());
   const betIdString = bet._id.toString();

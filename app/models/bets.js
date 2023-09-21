@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 let Global = require('../global/settings');
 /**
  * [betSchema description]
- *  @status [ 1 active), 2 (settled), 3 (cancelled), 4 (voided)]
+ *  @status [ 1 active), 0 (settled), 2 (cancelled), 3 (voided)]
  *  @type [ 0(back), 1 (lay) ]
  */
 const betSchema = new mongoose.Schema({
