@@ -427,7 +427,7 @@ const placeBet = async (req, res) => {
         const response = await axios.get(url);
         const oddsData = response.data;
         const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
-        let selectedOddsValue   = 0;
+        let selectedOddsValue   = [];
         if (type == 0) {
           const ApiResponseOdds = runnerFromAPI?.exchange?.availableToBack;
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
@@ -440,6 +440,7 @@ const placeBet = async (req, res) => {
           }
         } 
         if(!selectedOddsValue.includes(betRate)){
+          console.log(" ============== selectedOddsValue ================== ", selectedOddsValue);
           console.log(" selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
