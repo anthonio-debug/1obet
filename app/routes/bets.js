@@ -420,7 +420,7 @@ const placeBet = async (req, res) => {
         runner: runner.selectionId,
         amount: 0
       }));
-      
+
       if(selectedBetRate == betRate){
 
         const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
@@ -928,7 +928,7 @@ const placeBet = async (req, res) => {
     }
     let  delay = 4100
     let  echckOdds = true;
-    if([7, 8, 9, 10, 11, 34].includes(subMarketDetail.Id)){
+    if([7, 8, 9, 10, 11, 34].includes(subMarketDetail.Id) || marketId != "4"){
       delay = 1
       echckOdds = false; 
     }
