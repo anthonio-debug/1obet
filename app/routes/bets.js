@@ -577,6 +577,7 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds  = DBOddDetails?.data?.data?.t2[0]?.bm1
       runners = dbFancyOdds;
+      _3rdPartyMarketId = "Bookmaker";
       runnerForSaveInbets  = runners.map((runner) => ({
         runner: runner.sid,
         amount: 0
