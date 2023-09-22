@@ -1061,7 +1061,7 @@ const placeBet = async (req, res) => {
       }
       console.log(' data from  API ', oddsData);
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
-      if (!DBOddDetails) {
+      if (!runnerFromAPI) {
         console.log(" ================== Frontend provided odds _id do not found in db & _id =  ");
         return res.status(404).send({
           message: `Bet Miss Match`
@@ -1073,7 +1073,7 @@ const placeBet = async (req, res) => {
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
         });
       }
-      
+
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets  = runners.map((runner) => ({
         runner: runner.SelectionId,
