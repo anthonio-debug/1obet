@@ -731,8 +731,6 @@ const placeBet = async (req, res) => {
       }
 
       else if (type == 0 &&  selectedBetRate != betRate){
-
-
         for (let i = 0; i < 4; i++) {
           setTimeout( async () => {      
             const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
@@ -740,8 +738,10 @@ const placeBet = async (req, res) => {
             const oddsData = response.data;
             console.log( " =================== oddsData =============== ", oddsData );
             const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
-            const ApiResponseOdds = runnerFromAPI?.exchange?.AvailableToBack;
             console.log( " =================== ApiResponseOdds =============== ", ApiResponseOdds );
+
+            const ApiResponseOdds = runnerFromAPI?.exchange?.AvailableToBack;
+            console.log( " =================== runnerFromAPI =============== ", runnerFromAPI );
 
             let selectedOddsValue = ApiResponseOdds[0]?.price
             console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
