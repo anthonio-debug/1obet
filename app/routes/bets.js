@@ -693,12 +693,15 @@ const placeBet = async (req, res) => {
       else if (type == 1 &&  selectedBetRate != betRate){
         for (let i = 0; i < 4; i++) {
           setTimeout( async () => {      
+
             const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log( " =================== oddsData =============== ", oddsData );
             
             const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
+            console.log( " =================== runnerFromAPI =============== ", runnerFromAPI );
+
             const ApiResponseOdds = runnerFromAPI?.exchange?.AvailableToLay;
             console.log( " =================== ApiResponseOdds =============== ", ApiResponseOdds );
 
