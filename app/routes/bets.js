@@ -248,7 +248,7 @@ const placeBet = async (req, res) => {
         } 
         if(selectedOddsValue != betRate){
           console.log(" ========================= selectedOddsValue  ========================= ", selectedOddsValue);
-          console.log(" selectedBetRate == betRate Value Not found In this Array ");
+          console.log(" 251 selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
           });
@@ -405,7 +405,7 @@ const placeBet = async (req, res) => {
         } 
         if(selectedOddsValue != betRate){
           console.log(" ========================= selectedOddsValue  ========================= ", selectedOddsValue);
-          console.log(" selectedBetRate == betRate Value Not found In this Array ");
+          console.log(" 408 selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
           });
@@ -601,7 +601,7 @@ const placeBet = async (req, res) => {
         } 
         if(selectedOddsValue != betRate){
           console.log(" ====================== selectedOddsValue ===================== ", selectedOddsValue);
-          console.log(" selectedBetRate == betRate Value Not found In this Array ");
+          console.log(" 604 selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
           });
@@ -653,7 +653,7 @@ const placeBet = async (req, res) => {
         } 
         if(selectedOddsValue != betRate){
           console.log(" ============== selectedOddsValue ================== ", selectedOddsValue);
-          console.log(" selectedBetRate == betRate Value Not found In this Array ");
+          console.log(" 656 selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
           });
@@ -1170,7 +1170,7 @@ const placeBet = async (req, res) => {
         winningAmount = betAmount;
         console.log(" 1 loosingAmount =========  ", loosingAmount);
       }
-      
+
       else if (type == 0 && subMarketDetail.Id == config.BookMaker) {
         // ((rate) /100 ) * bet_amount = winning amount 
         winningAmount = (betRate * betAmount)/100;
