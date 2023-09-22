@@ -909,8 +909,9 @@ const placeBet = async (req, res) => {
       const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName
       console.log(" ============================ ========================== ", runnerForSaveInbets);
-
+      console.log(" ========================================== id ========================================== ", id);
       if(selectedBetRate == betRate){
+
         const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
         const response = await axios.get(url);
         const oddsData = response.data;
@@ -938,7 +939,7 @@ const placeBet = async (req, res) => {
           });
         }
       }
-      
+
       else if (type == 1 && betRate > selectedBetRate &&  betRate-0.3 > selectedBetRate){
         console.log(" type == 1 && betRate > selectedBetRate &&  betRate-0.3 > selectedBetRate Value Not found In this Array ");
         return res.status(404).send({
