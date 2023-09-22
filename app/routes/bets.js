@@ -702,7 +702,7 @@ const placeBet = async (req, res) => {
             const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
             console.log( " =================== runnerFromAPI =============== ", runnerFromAPI );
 
-            const ApiResponseOdds = runnerFromAPI?.exchange?.AvailableToLay;
+            const ApiResponseOdds = runnerFromAPI?.exchange?.availableToLay;
             console.log( " =================== ApiResponseOdds =============== ", ApiResponseOdds );
 
             let selectedOddsValue = ApiResponseOdds[0]?.price
@@ -743,7 +743,7 @@ const placeBet = async (req, res) => {
             const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
             console.log( " =================== runnerFromAPI =============== ", runnerFromAPI );
 
-            const ApiResponseOdds = runnerFromAPI?.exchange?.AvailableToBack;
+            const ApiResponseOdds = runnerFromAPI?.exchange?.availableToBack;
             console.log( " =================== runnerFromAPI =============== ", runnerFromAPI );
 
             let selectedOddsValue = ApiResponseOdds[0]?.price
