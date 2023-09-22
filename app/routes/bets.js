@@ -84,7 +84,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
 
 }
 
-const placeBet_dev = async (req, res) => {
+const placeBet = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
@@ -92,9 +92,6 @@ const placeBet_dev = async (req, res) => {
   try {
     if (req.decoded.login.role != '5') {
       return res.status(401).send({ message: 'You are not allowed to bet' });
-    }
-    if (req.decoded.userId != 1390) {
-      return res.status(404).send({ message: 'We are Openning for bets soon' });   
     }
     let runnerName;
     let currentSession;
@@ -1406,7 +1403,7 @@ const placeBet_dev = async (req, res) => {
   }
 }
 
-const placeBet = async (req, res) => {
+const placeBet_dev = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
