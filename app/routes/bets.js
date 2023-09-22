@@ -1086,14 +1086,16 @@ const placeBet = async (req, res) => {
 
 
     setTimeout( async () => {
+
       console.log(" ============================ multipeResponse ========================== ", multipeResponse);
-      let SeletedBetTateAfterValidtion
-      if(multipeResponse.length == 0 && selectedBetRate == betRate ){
+      let SeletedBetTateAfterValidtion = 0
+      if(multipeResponse.length == 0 && selectedBetRate != betRate ){
         console.log(" multipeResponse Is Empty  ");
         return res.status(404).send({
           message: `Bet Miss Matched `
         });
       }
+
       if(echckOdds){
         let min = Math.min(...multipeResponse);
         let max = Math.max(...multipeResponse);  
@@ -1168,6 +1170,7 @@ const placeBet = async (req, res) => {
         winningAmount = betAmount;
         console.log(" 1 loosingAmount =========  ", loosingAmount);
       }
+      
       else if (type == 0 && subMarketDetail.Id == config.BookMaker) {
         // ((rate) /100 ) * bet_amount = winning amount 
         winningAmount = (betRate * betAmount)/100;
