@@ -84,7 +84,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
 
 }
 
-const placeBet = async (req, res) => {
+const placeBet_dev = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
@@ -1198,7 +1198,7 @@ const placeBet = async (req, res) => {
   }
 }
 
-const placeBet_final = async (req, res) => {
+const placeBet = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
