@@ -115,6 +115,8 @@ const placeBet_dev = async (req, res) => {
     let runnerForSaveInbets = null;
     let expoisureType = 1;
     const multipeResponse = [];
+    const multipeResponseForSecurityCheck = [];
+    const BetTime = new Date().getTime();
 
     if (betAmount < config.betMinimumAmount) {
       return res.status(404).send({ message: `minimum bet should be ${config.betMinimumAmount}` });
@@ -259,6 +261,103 @@ const placeBet_dev = async (req, res) => {
         return res.status(404).send({
           message: `Bet Miss Matched `
         });
+      }
+
+      else if (type == 1 && betRate < selectedBetRate){
+        console.log(" type == 1 && betRate < selectedBetRate ");
+        return res.status(404).send({
+          message: `Bet Miss Matched `
+        });
+      }
+      else if (type == 0 && betRate > selectedBetRate){
+        console.log(" type == 1 && betRate < selectedBetRate ");
+        return res.status(404).send({
+          message: `Bet Miss Matched `
+        });
+      }
+
+      else if (type == 1 &&  selectedBetRate != betRate){
+        for (let i = 0; i < 4; i++) {
+          setTimeout( async () => {      
+            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            const response = await axios.get(url);
+            const oddsData = response.data;
+            console.log(" ================ oddsData ================ ", oddsData);
+            const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+            ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToLay;
+            console.log(" ================ ApiResponseOdds ================ ", ApiResponseOdds);
+            /**
+             * 
+             * selectedRate 30
+             * Bet Rate 29
+             * 
+             */
+            
+            let selectedOddsValue = ApiResponseOdds[0]?.price
+            console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
+            if(selectedOddsValue <= betRate){
+              multipeResponse.push(selectedOddsValue)
+            }
+            multipeResponseForSecurityCheck.push(selectedOddsValue)
+          }, 1000*i);  
+        }
+
+        // LAY:
+        // BetRate: 33
+        // SelectedRate: 30
+
+        // {
+
+        // 4second API=> 
+        // 1st second=> 35 => save into array
+        // 2nd       => 34 => save into array or donot save
+        // 3rd       => 75 => save and move next
+        // 4th       => 36 => save or do not save
+
+        // }
+        // if array has some values which are lesser than SeleectedRate then take the latest/top most index value.
+        // ELSE
+        // mistmatch.....
+
+      }
+
+      else if (type == 0 &&  selectedBetRate != betRate){
+
+
+        for (let i = 0; i < 4; i++) {
+          setTimeout( async () => {      
+            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            const response = await axios.get(url);
+            const oddsData = response.data;
+            console.log(" ================ oddsData ================ ", oddsData);
+            const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+            ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+            console.log(" ================ ApiResponseOdds ================ ", ApiResponseOdds);
+            let selectedOddsValue = ApiResponseOdds[0]?.price
+            console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
+            if(selectedOddsValue >= betRate){
+              multipeResponse.push(selectedOddsValue)
+            }
+            multipeResponseForSecurityCheck.push(selectedOddsValue)
+          }, 1000*i);  
+        }
+
+        // Selected Rate: 30
+        // BetRate      : 27
+
+
+        // {
+
+        // 4second API=> 
+        // 1st second=> 32 => save or do not save
+        // 2nd       => 23 => rejected
+        // 3rd       => 31 => save and move next
+        // 4th       => 36 => save and move next
+        // }
+
+        // if array has some values which are lesser than SeleectedRate then take the latest/top most index value.
+        // ELSE
+        // mistmatch.....
       }
     }
 
@@ -946,7 +1045,17 @@ const placeBet_dev = async (req, res) => {
 
 
     setTimeout( async () => {
+      console.log(" ============================ multipeResponse ========================== ", multipeResponse);
+      let SeletedBetTateAfterValidtion
+      if(multipeResponse.length == 0 ){
+        console.log(" multipeResponse Is Empty  ");
+        return res.status(404).send({
+          message: `Bet Miss Matched `
+        });
+      }
+      else {
 
+      }
       if(echckOdds){
         let min = Math.min(...multipeResponse);
         let max = Math.max(...multipeResponse);  
