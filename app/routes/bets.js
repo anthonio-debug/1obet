@@ -640,16 +640,19 @@ const placeBet = async (req, res) => {
         const response = await axios.get(url);
         const oddsData = response.data;
         const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
+        console.log(" =================== runnerFromAPI ====================== ", runnerFromAPI);
         let selectedOddsValue   = 0;
         if (type == 0) {
           const ApiResponseOdds = runnerFromAPI?.exchange?.availableToBack;
+          console.log(" ========================== ApiResponseOdds ========================== ", ApiResponseOdds);
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
             selectedOddsValue = ApiResponseOdds[0].price
           }
         } else if (type == 1) {
           const ApiResponseOdds = runnerFromAPI.exchange?.AvailableToLay
+          console.log(" ========================== ApiResponseOdds ========================== ", ApiResponseOdds);
           if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds.map(runner => runner.price)
+            selectedOddsValue = ApiResponseOdds[0].price
           }
         } 
         if(selectedOddsValue != betRate){
