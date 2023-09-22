@@ -693,8 +693,12 @@ const placeBet = async (req, res) => {
             const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
             const response = await axios.get(url);
             const oddsData = response.data;
+            console.log( " =================== oddsData =============== ", oddsData );
+            
             const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
             const ApiResponseOdds = runnerFromAPI?.exchange?.AvailableToLay;
+            console.log( " =================== ApiResponseOdds =============== ", ApiResponseOdds );
+
             let selectedOddsValue = ApiResponseOdds[0]?.price
             console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
             if(selectedOddsValue <= betRate){
@@ -731,8 +735,11 @@ const placeBet = async (req, res) => {
             const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
             const response = await axios.get(url);
             const oddsData = response.data;
+            console.log( " =================== oddsData =============== ", oddsData );
             const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
             const ApiResponseOdds = runnerFromAPI?.exchange?.AvailableToBack;
+            console.log( " =================== ApiResponseOdds =============== ", ApiResponseOdds );
+
             let selectedOddsValue = ApiResponseOdds[0]?.price
             console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
             if(selectedOddsValue <= betRate){
@@ -1168,15 +1175,11 @@ const placeBet = async (req, res) => {
     // }
 
 
-    console.log(" ================== UNTILL  ================== ");
-
-
-
+    console.log(" ============================ UNTILL  ============================ ");
 
     setTimeout( async () => {
 
-      
-      console.log(" ============================ multipeResponse ========================== ", multipeResponse);
+      console.log(" ============================ multipeResponse ============================ ", multipeResponse);
       let SeletedBetTateAfterValidtion = 0
       if(multipeResponse.length == 0 && selectedBetRate != betRate ){
         console.log(" multipeResponse Is Empty  ");
