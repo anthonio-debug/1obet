@@ -116,7 +116,7 @@ const placeBet = async (req, res) => {
     const multipeResponseForSecurityCheck = [];
     const BetTime = new Date().getTime();
 
-    /* =================================== =================================== */ 
+    /* ====================================================================== */ 
 
 
     /* ============================== Innitial Checks  ============================== */ 
@@ -207,6 +207,7 @@ const placeBet = async (req, res) => {
     /* ==================================================================== */ 
 
     /* ================================== Market Specific Checks ================================== */ 
+
     // Socer Match Odds 
     if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
       console.log(" ======================== Soccer  Match Odds ======================== ");
@@ -247,7 +248,7 @@ const placeBet = async (req, res) => {
           }
         } 
         if(selectedOddsValue != betRate){
-          console.log(" ========================= selectedOddsValue  ========================= ", selectedOddsValue);
+          console.log(" ========================= selectedOddsValue  ========================= ", betRate, " == ",  selectedOddsValue);
           console.log(" 251 selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
@@ -404,7 +405,7 @@ const placeBet = async (req, res) => {
           }
         } 
         if(selectedOddsValue != betRate){
-          console.log(" ========================= selectedOddsValue  ========================= ", selectedOddsValue);
+          console.log(" ========================= selectedOddsValue  ========================= ", betRate, " == ", selectedOddsValue);
           console.log(" 408 selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
@@ -600,7 +601,7 @@ const placeBet = async (req, res) => {
           }
         } 
         if(selectedOddsValue != betRate){
-          console.log(" ====================== selectedOddsValue ===================== ", selectedOddsValue);
+          console.log(" ====================== selectedOddsValue ===================== ", betRate, " == ", selectedOddsValue);
           console.log(" 604 selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
@@ -652,7 +653,7 @@ const placeBet = async (req, res) => {
           }
         } 
         if(selectedOddsValue != betRate){
-          console.log(" ============== selectedOddsValue ================== ", selectedOddsValue);
+          console.log(" ============== selectedOddsValue ================== ", betRate, " == ",  selectedOddsValue);
           console.log(" 656 selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
@@ -670,6 +671,93 @@ const placeBet = async (req, res) => {
         return res.status(404).send({
           message: `Bet Miss Matched `
         });
+      }
+
+      else if (type == 1 && betRate < selectedBetRate){
+        console.log(" type == 1 && betRate < selectedBetRate ");
+        return res.status(404).send({
+          message: `Bet Miss Matched `
+        });
+      }
+
+      else if (type == 0 && betRate > selectedBetRate){
+        console.log(" type == 1 && betRate < selectedBetRate ");
+        return res.status(404).send({
+          message: `Bet Miss Matched `
+        });
+      }
+
+      else if (type == 1 &&  selectedBetRate != betRate){
+        for (let i = 0; i < 4; i++) {
+          setTimeout( async () => {      
+            const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
+            const response = await axios.get(url);
+            const oddsData = response.data;
+            const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
+            const ApiResponseOdds = runnerFromAPI?.exchange?.AvailableToLay;
+            let selectedOddsValue = ApiResponseOdds[0]?.price
+            console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
+            if(selectedOddsValue <= betRate){
+              multipeResponse.push(selectedOddsValue)
+            }
+            multipeResponseForSecurityCheck.push(selectedOddsValue)
+          }, 1000*i);  
+        }
+
+        // LAY:
+        // BetRate: 33
+        // SelectedRate: 30
+
+        // {
+
+        // 4second API=> 
+        // 1st second=> 35 => save into array
+        // 2nd       => 34 => save into array or donot save
+        // 3rd       => 75 => save and move next
+        // 4th       => 36 => save or do not save
+
+        // }
+        // if array has some values which are lesser than SeleectedRate then take the latest/top most index value.
+        // ELSE
+        // mistmatch.....
+
+      }
+
+      else if (type == 0 &&  selectedBetRate != betRate){
+
+
+        for (let i = 0; i < 4; i++) {
+          setTimeout( async () => {      
+            const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
+            const response = await axios.get(url);
+            const oddsData = response.data;
+            const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
+            const ApiResponseOdds = runnerFromAPI?.exchange?.AvailableToBack;
+            let selectedOddsValue = ApiResponseOdds[0]?.price
+            console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
+            if(selectedOddsValue <= betRate){
+              multipeResponse.push(selectedOddsValue)
+            }
+            multipeResponseForSecurityCheck.push(selectedOddsValue)
+          }, 1000*i);  
+        }
+
+        // Selected Rate: 30
+        // BetRate      : 27
+
+
+        // {
+
+        // 4second API=> 
+        // 1st second=> 32 => save or do not save
+        // 2nd       => 23 => rejected
+        // 3rd       => 31 => save and move next
+        // 4th       => 36 => save and move next
+        // }
+
+        // if array has some values which are lesser than SeleectedRate then take the latest/top most index value.
+        // ELSE
+        // mistmatch.....
       }
     }
 
@@ -1087,6 +1175,7 @@ const placeBet = async (req, res) => {
 
     setTimeout( async () => {
 
+      
       console.log(" ============================ multipeResponse ========================== ", multipeResponse);
       let SeletedBetTateAfterValidtion = 0
       if(multipeResponse.length == 0 && selectedBetRate != betRate ){
