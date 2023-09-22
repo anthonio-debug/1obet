@@ -738,7 +738,7 @@ const placeBet = async (req, res) => {
             const oddsData = response.data;
             console.log( " =================== oddsData =============== ", oddsData );
             const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
-            console.log( " =================== ApiResponseOdds =============== ", ApiResponseOdds );
+            console.log( " =================== runnerFromAPI =============== ", runnerFromAPI );
 
             const ApiResponseOdds = runnerFromAPI?.exchange?.AvailableToBack;
             console.log( " =================== runnerFromAPI =============== ", runnerFromAPI );
