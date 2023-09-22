@@ -1377,12 +1377,10 @@ const placeBet = async (req, res) => {
         event: eventDetail.name,
         isfancyOrbookmaker: isFancyOrBookMaker,
         fancyData: fancyData,
-        fancyRate: fancyRate,
-        createdAt: new Date().getTime(),
         exposureAmount: expAmount,
         runnersPosition: runnersPosition,
         ratesRecord: multipeResponseForSecurityCheck,
-        createdAt: BetTime
+        betTime: BetTime
       });
       // if ((user.availableBalance < betAmount && type == 0) || (user.availableBalance < betAmount * (betRate - 1) && type == 1)) {
       console.log('userAvailableBalance', user.availableBalance)
