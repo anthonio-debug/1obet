@@ -182,14 +182,6 @@ const placeBet = async (req, res) => {
     else {
       const requiredTime = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime
-      console.log( " ================= subMarketDetail.Id ", subMarketDetail );
-      if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
-        return res.status(404).send({
-          status: true,
-          message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
-        })
-      }
-
       const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == subMarketName);
       id = currentMarket?.id;
       _3rdPartyMarketId = id
@@ -197,6 +189,13 @@ const placeBet = async (req, res) => {
 
       if (!subMarketDetail) {
         return res.status(404).send({ message: 'you cannot place bet' });
+      }
+      console.log( " ================= subMarketDetail.Id ", subMarketDetail );
+      if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
+        return res.status(404).send({
+          status: true,
+          message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
+        })
       }
     }
 
