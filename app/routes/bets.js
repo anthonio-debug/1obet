@@ -912,7 +912,7 @@ const placeBet = async (req, res) => {
       console.log(" ========================================== id ========================================== ", id);
       if(selectedBetRate == betRate){
 
-        const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+        const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
         const response = await axios.get(url);
         const oddsData = response.data;
         console.log(" ================ oddsData ================ ", oddsData);
@@ -971,7 +971,7 @@ const placeBet = async (req, res) => {
       else if (type == 1 &&  selectedBetRate != betRate){
         for (let i = 0; i < 4; i++) {
           setTimeout( async () => {      
-            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(" ================ oddsData ================ ", oddsData);
@@ -1018,7 +1018,7 @@ const placeBet = async (req, res) => {
 
         for (let i = 0; i < 4; i++) {
           setTimeout( async () => {      
-            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(" ================ oddsData ================ ", oddsData);
