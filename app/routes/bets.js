@@ -182,7 +182,8 @@ const placeBet = async (req, res) => {
     else {
       const requiredTime = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime
-      if (marketId != config.Toss && remainingTimeFromEvent > 0) {
+      console.log( " ================= subMarketDetail.Id ", subMarketDetail );
+      if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
         return res.status(404).send({
           status: true,
           message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
