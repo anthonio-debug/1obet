@@ -1208,12 +1208,15 @@ const placeBet = async (req, res) => {
       return res.status(401).send({ message: 'You are not allowed to bet' });
     }
 
+    if (![1311, 1390].includes(req.decoded.userId)) {
+      return res.status(404).send({ message: 'We are Openning for bets soon' });   
+    }
     let runnerName;
     let currentSession;
     let subMarketDetail;
     let marketId;
     let selectedOddsRate;
-    const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate, overunderMarketId } = req.body;
+    const { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate, overunderMarketId, selectedAmount } = req.body;
     const userId = req.decoded.userId;
     let ApiResponseOdds;
     let matchedIndex;
