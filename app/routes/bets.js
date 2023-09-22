@@ -1143,14 +1143,11 @@ const placeBet = async (req, res) => {
     setTimeout( async () => {
       console.log(" ============================ multipeResponse ========================== ", multipeResponse);
       let SeletedBetTateAfterValidtion
-      if(multipeResponse.length == 0 ){
+      if(multipeResponse.length == 0 && selectedBetRate == betRate ){
         console.log(" multipeResponse Is Empty  ");
         return res.status(404).send({
           message: `Bet Miss Matched `
         });
-      }
-      else {
-
       }
       if(echckOdds){
         let min = Math.min(...multipeResponse);
