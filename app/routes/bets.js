@@ -1171,7 +1171,7 @@ const placeBet = async (req, res) => {
     /* =================================================================== */ 
 
     let  delay = 4100
-    let  echckOdds = true;
+    let  echckOdds = false;
     // if(marketId != "4"){
     //   delay = 1
     //   echckOdds = false; 
@@ -1196,14 +1196,14 @@ const placeBet = async (req, res) => {
         let max = Math.max(...multipeResponse);  
         
         if (type ==  0 &&  betRate <  min) {
-          console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
+          console.log(" 1199 Bet Rate is not Applicable in  betRate <  min || betRate > max ");
           return res.status(404).send({
             message: `Bet Miss Matched `
           });
         }
 
         if (type ==  1 && betRate > max) {
-          console.log(" Bet Rate is not Applicable in  betRate <  min || betRate > max ");
+          console.log(" 1206 Bet Rate is not Applicable in  betRate <  min || betRate > max ");
           return res.status(404).send({
             message: `Bet Miss Matched `
           });
