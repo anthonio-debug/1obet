@@ -182,7 +182,11 @@ const placeBet = async (req, res) => {
     else {
       const requiredTime = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime
-      const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == subMarketName);
+      let thirdPartyMarketName = subMarketName
+      if(subMarketName == "Toss"){
+        thirdPartyMarketName = "To Win the Toss"
+      }
+      const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == thirdPartyMarketName);
       id = currentMarket?.id;
       _3rdPartyMarketId = id
       subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
@@ -1050,7 +1054,7 @@ const placeBet = async (req, res) => {
 
     // cricket Toss 
     else if (config.sportMarkets.includes(marketId) &&  subMarketDetail.Id == config.Toss) {
-      console.log(" ======================== Tied Match Toss ======================== ");
+      console.log(" ======================== Toss ======================== ");
       const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
       const response = await axios.get(url);
       const oddsData = response.data;
