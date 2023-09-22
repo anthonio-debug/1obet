@@ -902,6 +902,7 @@ const placeBetOld = async (req, res) => {
       if (!subMarketDetail) {
         return res.status(404).send({ message: 'you cannot place bet' });
       }
+      console.log( " ================= subMarketDetail.Id ", subMarketDetail );
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
         return res.status(404).send({
           status: true,
