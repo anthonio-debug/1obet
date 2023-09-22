@@ -275,7 +275,15 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `
         });
       }
-      else if (type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate){
+
+      /**
+       *  SelectedRate 18
+       *  BetRate 17
+       * 0ve amount 1.5
+       * 18 - 1.5 
+       * 16.5  
+       * */ 
+      else if (type == 0 && selectedBetRate < betRate &&  selectedBetRate - Digitaddition > betRate){
         console.log(" type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array ");
         return res.status(404).send({
           message: `Bet Miss Matched `
@@ -388,7 +396,7 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `
         });
       }
-      else if (type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate){
+      else if (type == 0 && selectedBetRate < betRate &&  selectedBetRate - Digitaddition > betRate){
         console.log(" type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array ");
         return res.status(404).send({
           message: `Bet Miss Matched `
@@ -685,7 +693,7 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `
         });
       }
-      else if (type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate){
+      else if (type == 0 && selectedBetRate < betRate &&  selectedBetRate - Digitaddition > betRate){
         console.log(" type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array ");
         return res.status(404).send({
           message: `Bet Miss Matched `
@@ -845,7 +853,7 @@ const placeBet = async (req, res) => {
         });
       }
 
-      else if (type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate){
+      else if (type == 0 && selectedBetRate < betRate &&  selectedBetRate - Digitaddition > betRate){
         console.log(" type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array ");
         return res.status(404).send({
           message: `Bet Miss Matched `
