@@ -115,6 +115,7 @@ const placeBet = async (req, res) => {
     const multipeResponse = [];
     const multipeResponseForSecurityCheck = [];
     const BetTime = new Date().getTime();
+    let id = 0;
 
     /* ====================================================================== */ 
 
@@ -149,8 +150,6 @@ const placeBet = async (req, res) => {
 
     marketId = eventDetail?.sportsId;
     console.log(" marketId ======== ", marketId);
-    let id;
-
     // Checks for Market Places & Sub Markets  
     if (config.raceMarkets.includes(marketId)) {
       const requiredTime = new Date().getTime() + config.raceOpenBefore;
@@ -189,6 +188,7 @@ const placeBet = async (req, res) => {
       }
     }
 
+    console.log(" ================== top id ================== ", id);
 
     console.log(" ================== subMarketDetail ================== ", subMarketDetail);
 
