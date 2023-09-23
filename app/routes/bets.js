@@ -1404,7 +1404,7 @@ const placeBet = async (req, res) => {
 
     let  delay = 4100
     const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, config.Fancy, config.BookMaker]
-    if(delayExcludedMarkets.includes(subMarketDetail.Id)   || selectedBetRate == betRate){
+    if(delayExcludedMarkets.includes(subMarketDetail.Id)){
       delay = 1
     }
 
