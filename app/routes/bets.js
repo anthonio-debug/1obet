@@ -761,23 +761,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue)
           }, 1000*i);  
         }
-
-        // Selected Rate: 30
-        // BetRate      : 27
-
-
-        // {
-
-        // 4second API=> 
-        // 1st second=> 32 => save or do not save
-        // 2nd       => 23 => rejected
-        // 3rd       => 31 => save and move next
-        // 4th       => 36 => save and move next
-        // }
-
-        // if array has some values which are lesser than SeleectedRate then take the latest/top most index value.
-        // ELSE
-        // mistmatch.....
       }
     }
 
@@ -1606,6 +1589,7 @@ const placeBet = async (req, res) => {
         event: eventDetail.name,
         isfancyOrbookmaker: isFancyOrBookMaker,
         fancyData: fancyData,
+        fancyRate: fancyRate,
         exposureAmount: expAmount,
         runnersPosition: runnersPosition,
         ratesRecord: multipeResponseForSecurityCheck,
