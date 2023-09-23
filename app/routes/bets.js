@@ -654,18 +654,6 @@ const placeBet = async (req, res) => {
       }));
 
       if(selectedBetRate == betRate){
-
-      
-        if(selectedOddsValue != betRate){
-          console.log(" ============== selectedOddsValue ================== ", betRate, " == ",  selectedOddsValue);
-          console.log(" 656 selectedBetRate == betRate Value Not found In this Array ");
-          return res.status(404).send({
-            message: `Bet Miss Matched `
-          });
-        }
-      }
-
-      if(selectedBetRate == betRate){
         for (let i = 1; i < 5; i++) {
           setTimeout( async () => {
             const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
