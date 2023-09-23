@@ -47,7 +47,7 @@ const config = {
   "Toss": 11,
   "Cup": 12,
   "FigureEvenOddSmallBig": [9, 10, 34],
-  "raceOpenBefore": 1200000000000,
+  "raceOpenBefore": 120000,
   "sportsOpenBefore": 600000,
   "balls": ["1", "2", "3", "4", "5", "6"],
   "matchTypes": ["T10", "T20", "ODI", "TEST"],
