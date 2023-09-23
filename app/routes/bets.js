@@ -1411,6 +1411,7 @@ const placeBet = async (req, res) => {
       console.log(" ============================ multipeResponse ============================ ", multipeResponse);
       console.log(" ============================ multipeResponseForSecurityCheck ============================ ", multipeResponseForSecurityCheck);
 
+      console.log(" Pre Bet Rate ===============  ", betRate);
       
       if(multipeResponse.length == 0 && selectedBetRate != betRate){
         console.log(" multipeResponse Is Empty !");
@@ -1420,7 +1421,9 @@ const placeBet = async (req, res) => {
       }
       else if(multipeResponse.length > 0 && selectedBetRate != betRate  && delayExcludedMarkets.includes(subMarketDetail.Id)){
         betRate = multipeResponse[multipeResponse.length - 1]
+        console.log(" Inside  Bet Rate ===============  ", betRate);
       }
+      console.log(" Post Bet Rate ===============  ", betRate);
 
       /* Winning Loosing Calculations  */
 
