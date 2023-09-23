@@ -1593,7 +1593,8 @@ const placeBet = async (req, res) => {
         exposureAmount: expAmount,
         runnersPosition: runnersPosition,
         ratesRecord: multipeResponseForSecurityCheck,
-        betTime: BetTime
+        betTime: BetTime,
+        multipeResponse: multipeResponse
       });
       // if ((user.availableBalance < betAmount && type == 0) || (user.availableBalance < betAmount * (betRate - 1) && type == 1)) {
       console.log('userAvailableBalance', user.availableBalance)

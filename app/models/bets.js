@@ -41,8 +41,10 @@ const betSchema = new mongoose.Schema({
   exposureAmount: { type: Number, default: 0 },
   runnersPosition: { type: Array },
   ratesRecord: { type: Array },
+  multipeResponse: { type: Array },
   betTime: { type: Number },
   isManuel: { type: Boolean, default: true },
+
 });
 
 betSchema.pre('save', function (next) {
