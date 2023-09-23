@@ -673,7 +673,7 @@ const placeBet = async (req, res) => {
               }
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             } else if (type == 1) {
-              const ApiResponseOdds = runnerFromAPI.exchange?.AvailableToLay
+              const ApiResponseOdds = runnerFromAPI.exchange?.availableToLay
               console.log(" ========================== ApiResponseOdds ========================== ", ApiResponseOdds);
               if(ApiResponseOdds && ApiResponseOdds.length > 0){
                 selectedOddsValue = ApiResponseOdds[0].price
