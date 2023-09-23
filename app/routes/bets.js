@@ -1564,7 +1564,6 @@ const placeBet = async (req, res) => {
 
         console.log(" ================== mytest ================  ", mytest);
 
-
         if(lastBetsCount > 0){
           const lastBet = await Bets.find({
             marketId: _3rdPartyMarketId,
@@ -1574,32 +1573,16 @@ const placeBet = async (req, res) => {
             fancyData: fancyData
           }).sort({ _id: -1 }).limit(1);
           console.log(" =================== lastBet ====================  ", lastBet[0].runnersPosition);
-
-          if(type == 0){
-            console.log(" ================= Back is called  =================  ");
-            //  $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( currentWinningAmount ) 
-            //  $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount In fact liability amount which will be in minus ) = (-100 ) +  ( -100 )  = 200
+          // if(type == 0){
             newPosition = lastBet[0].runnersPosition.map((item)=>{
-              if(item.runner == 0){
+              if(item.runner == type){
                 item.amount = item.amount + winningAmount
               }else {
                 item.amount = item.amount + (-loosingAmount)
               }
               return item 
             })
-          }else if(type == 1){
-            console.log(" ================= Lay is called  =================  ");
-            // $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( -  (loosing money )liablityAmount ) => ( 67 ) + ( -34 ) = 33
-            // $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount )   ( - 100 ) + ( + 100 )
-            newPosition = lastBet[0].runnersPosition.map((item)=>{
-              if(item.runner == 1){
-                item.amount = item.amount + (-loosingAmount)
-              }else {
-                item.amount = item.amount + winningAmount
-              }
-              return item 
-            });
-          }
+          // }
           runnersPosition =  newPosition,
           prevExpAmount =  lastBet[0].exposureAmount;
         }else {
