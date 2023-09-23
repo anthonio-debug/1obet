@@ -1520,12 +1520,20 @@ const placeBet = async (req, res) => {
         // (Value showing below/100)*bet amount = loosing amount
         loosingAmount =  (fancyRate/100) * betAmount;
         winningAmount = betAmount;
+        runnerForSaveInbets  = [
+          { "runner": 1, "amount": 0 },
+          { "runner": 0, "amount": 0 }
+        ]
       }
 
       else if (type == 0 && subMarketDetail.Id == config.Fancy) {
         // Value showing below/100)*bet amount = winning amount
         winningAmount = (fancyRate/100) * betAmount;
         loosingAmount = betAmount;
+        runnerForSaveInbets  = [
+          { "runner": 1, "amount": 0 },
+          { "runner": 0, "amount": 0 }
+        ]
       }
 
       /* ------------ */
