@@ -1568,7 +1568,7 @@ const placeBet = async (req, res) => {
         if(lastBetsCount > 0){
           const lastBet = await Bets.find({
             marketId: _3rdPartyMarketId,
-            userId: userId,
+            userId: req.decoded.userId,
             matchId: matchId,
             status: 1,
             fancyData: fancyData
