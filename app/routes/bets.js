@@ -801,7 +801,7 @@ const placeBet = async (req, res) => {
       if(selectedBetRate == betRate){
         for (let i = 1; i < 5; i++) {
           setTimeout( async () => {
-            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(" ================ oddsData ================ ", oddsData);
