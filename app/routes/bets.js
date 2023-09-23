@@ -1573,18 +1573,31 @@ const placeBet = async (req, res) => {
             fancyData: fancyData
           }).sort({ _id: -1 }).limit(1);
           console.log(" =================== lastBet ====================  ", lastBet[0].runnersPosition);
-          // if(type == 0){
-            const fancyNewPosition = lastBet[0].runnersPosition.map((item)=>{
-              if(item.runner == type){
-                item.amount = item.amount + winningAmount
-              }else {
-                item.amount = item.amount + (-loosingAmount)
-              }
-              return item 
-            })
-          // }
+          const fancyNewPosition = lastBet[0].runnersPosition.map((item)=>{
+            if(item.runner == type){
+              item.amount = item.amount + winningAmount
+            }else {
+              item.amount = item.amount + (-loosingAmount)
+            }
+            return item 
+          })
+
           runnersPosition =  fancyNewPosition,
           prevExpAmount =  lastBet[0].exposureAmount;
+
+          // console.log(" ================ runner For SaveIn bets INFO ================ ", runnerForSaveInbets);
+          console.log(" ================ RUNNER INFO ================ ", runnersPosition);
+          console.log(" ================ EXP AMOUNT ================ ", expAmount);
+          expAmount = runnersPosition.reduce((min, current) => {
+            return current.amount < min.amount ? current : min;
+          }, runnersPosition[0]);
+          expAmount = expAmount.amount;
+          console.log(" ================ RUNNER INFO ================ ", runnersPosition);
+          console.log(" ================ EXP AMOUNT ================ ", expAmount);
+          expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
+
+
+
         }else {
           // if(type == 0){
             const runnerCurrentPosition  = runnerForSaveInbets.map((item)=>{
