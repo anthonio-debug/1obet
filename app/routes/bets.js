@@ -2137,7 +2137,8 @@ async function getMatchedBets(req, res) {
             ]
           },
         }
-      }
+      },
+      { $sort: { _id: -1 } }
     ]).exec();
 
     // if (!matchedBets || matchedBets.length == 0) {
