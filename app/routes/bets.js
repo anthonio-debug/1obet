@@ -1573,22 +1573,32 @@ const placeBet = async (req, res) => {
             fancyData: fancyData
           }).sort({ _id: -1 }).limit(1);
           console.log(" =================== lastBet ====================  ", lastBet[0].runnersPosition);
-          // if(type == 0){
-            newPosition = lastBet[0].runnersPosition.map((item)=>{
-              if(item.runner == type){
-                item.amount = item.amount + winningAmount
-              }else {
-                item.amount = item.amount + (-loosingAmount)
-              }
-              return item 
-            })
-          // }
-          runnersPosition =  newPosition,
+          const fancyNewPosition = lastBet[0].runnersPosition.map((item)=>{
+            if(item.runner == type){
+              item.amount = item.amount + winningAmount
+            }else {
+              item.amount = item.amount + (-loosingAmount)
+            }
+            return item 
+          })
+
+          runnersPosition =  fancyNewPosition,
           prevExpAmount =  lastBet[0].exposureAmount;
+          // console.log(" ================ runner For SaveIn bets INFO ================ ", runnerForSaveInbets);
+          console.log(" ================ RUNNER INFO ================ ", runnersPosition);
+          console.log(" ================ EXP AMOUNT ================ ", expAmount);
+          expAmount = runnersPosition.reduce((min, current) => {
+            return current.amount < min.amount ? current : min;
+          }, runnersPosition[0]);
+          expAmount = expAmount.amount;
+          console.log(" ================ RUNNER INFO ================ ", runnersPosition);
+          console.log(" ================ EXP AMOUNT ================ ", expAmount);
+          expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
+
         }else {
-          if(type == 0){
+          // if(type == 0){
             const runnerCurrentPosition  = runnerForSaveInbets.map((item)=>{
-              if(item.runner == 0){
+              if(item.runner == type){
                 item.amount = item.amount + winningAmount
               }else {
                 item.amount = item.amount - loosingAmount
@@ -1599,16 +1609,17 @@ const placeBet = async (req, res) => {
             runnersPosition = runnerCurrentPosition;
             console.log(" ================== runnersPosition ================== ", runnersPosition);
             
-          }else if(type == 1){
-            runnersPosition = runnerForSaveInbets.map((item)=>{
-              if(item.runner == 1){
-                item.amount = item.amount - loosingAmount
-              }else {
-                item.amount = item.amount + winningAmount
-              }
-              return item 
-            })
-          }
+          // }
+          // else if(type == 1){
+          //   runnersPosition = runnerForSaveInbets.map((item)=>{
+          //     if(item.runner == 1){
+          //       item.amount = item.amount - loosingAmount
+          //     }else {
+          //       item.amount = item.amount + winningAmount
+          //     }
+          //     return item 
+          //   })
+          // }
         }
 
       }else {
@@ -1711,6 +1722,19 @@ const placeBet = async (req, res) => {
       if(subMarketDetail.Id != config.Fancy){
         let setCalculateExpFalse = await Bets.updateMany(
           { marketId: _3rdPartyMarketId, userId: userId, matchId: matchId, status: 1 },
+          {calculateExp: false}
+        );
+      }
+
+      if(subMarketDetail.Id == config.Fancy){
+        let setCalculateExpFalse = await Bets.updateMany(
+          { 
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            status: 1,
+            fancyData: fancyData
+          },
           {calculateExp: false}
         );
       }
