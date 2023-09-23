@@ -1553,13 +1553,16 @@ const placeBet = async (req, res) => {
           fancyData: fancyData
         });
         if(lastBetsCount > 0){
-          let lastBet = await Bets.find({
-            marketId: marketId,
+          const lastBet = await Bets.find({
+            marketId: _3rdPartyMarketId,
             userId: userId,
             matchId: matchId,
             status: 1,
             fancyData: fancyData
           }).sort({ _id: -1 }).limit(1);
+
+
+          console.log(" =================== lastBet ====================  ", lastBet);
 
           if(type == 0){
             console.log(" ================= Back is called  =================  ");
