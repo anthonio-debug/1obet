@@ -1574,7 +1574,7 @@ const placeBet = async (req, res) => {
           }).sort({ _id: -1 }).limit(1);
           console.log(" =================== lastBet ====================  ", lastBet[0].runnersPosition);
           // if(type == 0){
-            newPosition = lastBet[0].runnersPosition.map((item)=>{
+            const fancyNewPosition = lastBet[0].runnersPosition.map((item)=>{
               if(item.runner == type){
                 item.amount = item.amount + winningAmount
               }else {
@@ -1583,12 +1583,12 @@ const placeBet = async (req, res) => {
               return item 
             })
           // }
-          runnersPosition =  newPosition,
+          runnersPosition =  fancyNewPosition,
           prevExpAmount =  lastBet[0].exposureAmount;
         }else {
-          if(type == 0){
+          // if(type == 0){
             const runnerCurrentPosition  = runnerForSaveInbets.map((item)=>{
-              if(item.runner == 0){
+              if(item.runner == type){
                 item.amount = item.amount + winningAmount
               }else {
                 item.amount = item.amount - loosingAmount
@@ -1599,16 +1599,17 @@ const placeBet = async (req, res) => {
             runnersPosition = runnerCurrentPosition;
             console.log(" ================== runnersPosition ================== ", runnersPosition);
             
-          }else if(type == 1){
-            runnersPosition = runnerForSaveInbets.map((item)=>{
-              if(item.runner == 1){
-                item.amount = item.amount - loosingAmount
-              }else {
-                item.amount = item.amount + winningAmount
-              }
-              return item 
-            })
-          }
+          // }
+          // else if(type == 1){
+          //   runnersPosition = runnerForSaveInbets.map((item)=>{
+          //     if(item.runner == 1){
+          //       item.amount = item.amount - loosingAmount
+          //     }else {
+          //       item.amount = item.amount + winningAmount
+          //     }
+          //     return item 
+          //   })
+          // }
         }
 
       }else {
