@@ -755,7 +755,7 @@ const placeBet = async (req, res) => {
 
             let selectedOddsValue = ApiResponseOdds[0]?.price
             console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
-            if(selectedOddsValue <= betRate){
+            if(selectedOddsValue >= betRate){
               multipeResponse.push(selectedOddsValue)
             }
             multipeResponseForSecurityCheck.push(selectedOddsValue)
