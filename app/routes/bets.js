@@ -1412,14 +1412,14 @@ const placeBet = async (req, res) => {
       console.log(" ============================ multipeResponseForSecurityCheck ============================ ", multipeResponseForSecurityCheck);
 
       console.log(" Pre Bet Rate ===============  ", betRate);
-      
+      console.log( " selectedBetRate ===============  ", selectedBetRate);
       if(multipeResponse.length == 0 && selectedBetRate != betRate){
         console.log(" multipeResponse Is Empty !");
         return res.status(404).send({
           message: `Bet Miss Matched `
         });
       }
-      else if(multipeResponse.length > 0 && selectedBetRate != betRate  && delayExcludedMarkets.includes(subMarketDetail.Id)){
+      else if(multipeResponse.length > 0 && selectedBetRate != betRate  && !delayExcludedMarkets.includes(subMarketDetail.Id)){
         betRate = multipeResponse[multipeResponse.length - 1]
         console.log(" Inside  Bet Rate ===============  ", betRate);
       }
