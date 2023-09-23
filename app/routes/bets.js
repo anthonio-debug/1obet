@@ -1552,6 +1552,19 @@ const placeBet = async (req, res) => {
           status: 1,
           fancyData: fancyData
         });
+        console.log(" ================== lastBetsCount ================  ", lastBetsCount);
+
+        let mytest = await Bets.find({
+          marketId: _3rdPartyMarketId,
+          userId: req.decoded.userId,
+          matchId: matchId,
+          status: 1,
+          fancyData: fancyData
+        }).sort({ _id: -1 }).limit(1);
+
+        console.log(" ================== mytest ================  ", mytest);
+
+
         if(lastBetsCount > 0){
           const lastBet = await Bets.find({
             marketId: _3rdPartyMarketId,
@@ -1560,8 +1573,6 @@ const placeBet = async (req, res) => {
             status: 1,
             fancyData: fancyData
           }).sort({ _id: -1 }).limit(1);
-
-
           console.log(" =================== lastBet ====================  ", lastBet.runnersPosition);
 
           if(type == 0){
