@@ -485,7 +485,7 @@ const placeBet = async (req, res) => {
     }
 
     // Cricket Match Odds 
-    else if (config.sportMarkets.includes(marketId) && config.tennisOdds == subMarketDetail.Id){
+    else if (config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id){
       console.log(" ======================== Soccer  Match Odds ======================== ");
 
       const DBOddDetails  = await Odds.findById(oddsId);
