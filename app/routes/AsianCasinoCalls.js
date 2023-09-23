@@ -632,8 +632,8 @@ async function credit(req, res) {
         // ============================================
 
         const amount                = payload.amount * 10;
-        const remainingAmount       = (amount / 100) * 98;
-        const commissionAmount      = (amount / 100) * 2;
+        const remainingAmount       = (amount / 100) * 99;
+        const commissionAmount      = (amount / 100) * 1;
         let   upMovingAmount        = amount;
         let   upMovingCommAmount    = commissionAmount;
 
