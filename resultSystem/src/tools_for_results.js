@@ -93,7 +93,7 @@ function ToolForResults() {
         try {
             const results = await Bets.findOne({
                 sportsId: '4',
-                resultId: null,
+                //resultId: null,
                 isfancyOrbookmaker: true,
                 status: 1
             }).sort({
