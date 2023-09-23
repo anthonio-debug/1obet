@@ -1584,7 +1584,6 @@ const placeBet = async (req, res) => {
 
           runnersPosition =  fancyNewPosition,
           prevExpAmount =  lastBet[0].exposureAmount;
-
           // console.log(" ================ runner For SaveIn bets INFO ================ ", runnerForSaveInbets);
           console.log(" ================ RUNNER INFO ================ ", runnersPosition);
           console.log(" ================ EXP AMOUNT ================ ", expAmount);
@@ -1595,8 +1594,6 @@ const placeBet = async (req, res) => {
           console.log(" ================ RUNNER INFO ================ ", runnersPosition);
           console.log(" ================ EXP AMOUNT ================ ", expAmount);
           expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
-
-
 
         }else {
           // if(type == 0){
@@ -1725,6 +1722,19 @@ const placeBet = async (req, res) => {
       if(subMarketDetail.Id != config.Fancy){
         let setCalculateExpFalse = await Bets.updateMany(
           { marketId: _3rdPartyMarketId, userId: userId, matchId: matchId, status: 1 },
+          {calculateExp: false}
+        );
+      }
+
+      if(subMarketDetail.Id == config.Fancy){
+        let setCalculateExpFalse = await Bets.updateMany(
+          { 
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            status: 1,
+            fancyData: fancyData
+          },
           {calculateExp: false}
         );
       }
