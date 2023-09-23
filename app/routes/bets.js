@@ -469,10 +469,10 @@ const placeBet = async (req, res) => {
             const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             const response = await axios.get(url);
             const oddsData = response.data;
-            console.log(" ================ oddsData ================ ", oddsData);
+            // console.log(" ================ oddsData ================ ", oddsData);
             const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
             ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
-            console.log(" ================ ApiResponseOdds ================ ", ApiResponseOdds);
+            // console.log(" ================ ApiResponseOdds ================ ", ApiResponseOdds);
             let selectedOddsValue = ApiResponseOdds[0]?.price
             console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
             if(selectedOddsValue >= betRate){
@@ -481,23 +481,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue)
           }, 1000*i);  
         }
-
-        // Selected Rate: 30
-        // BetRate      : 27
-
-
-        // {
-
-        // 4second API=> 
-        // 1st second=> 32 => save or do not save
-        // 2nd       => 23 => rejected
-        // 3rd       => 31 => save and move next
-        // 4th       => 36 => save and move next
-        // }
-
-        // if array has some values which are lesser than SeleectedRate then take the latest/top most index value.
-        // ELSE
-        // mistmatch.....
       }
     }
 
@@ -1443,6 +1426,9 @@ const placeBet = async (req, res) => {
     setTimeout( async () => {
 
       console.log(" ============================ multipeResponse ============================ ", multipeResponse);
+      console.log(" ============================ multipeResponseForSecurityCheck ============================ ", multipeResponseForSecurityCheck);
+
+      
       if(multipeResponse.length == 0 && selectedBetRate != betRate){
         console.log(" multipeResponse Is Empty !");
         return res.status(404).send({
