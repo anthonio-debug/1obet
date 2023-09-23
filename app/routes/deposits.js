@@ -428,7 +428,7 @@ function getLedgerDetails(req, res) {
         },
       ];
     }
-    Cash.paginate(cashQuery, { page: page, sort: { [sortValue]: sort }, limit: limit }, (err, results) => {
+    Cash.paginate(cashQuery, { page: page, sort: { _id: -1 }, limit: limit }, (err, results) => {
       if (err || !results || results.length == 0) {
         return res.status(404).send({ message: 'Deposit record not found' });
       }
