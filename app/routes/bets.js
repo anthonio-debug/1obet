@@ -782,6 +782,7 @@ const placeBet = async (req, res) => {
 
     // soccer over under 
     else if (config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.overUnder){
+      _3rdPartyMarketId = overunderMarketId
       console.log(" ======================== Soccer over under  ======================== ");
       const DBOddDetails  = await Odds.findById(oddsId);
       if (!DBOddDetails) {
