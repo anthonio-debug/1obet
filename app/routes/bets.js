@@ -361,31 +361,38 @@ const placeBet = async (req, res) => {
       console.log(" ============================ ========================== ", runnerForSaveInbets);
 
       if(selectedBetRate == betRate){
-        const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-        const response = await axios.get(url);
-        const oddsData = response.data;
-        console.log(" ================ oddsData ================ ", oddsData);
-        const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
-        let selectedOddsValue   = 0;
-        if (type == 0) {
-          const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
-          console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
-          if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds[0].price
-          }
-        } else if (type == 1) {
-          const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
-          console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
-          if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds[0].price
-          }
-        } 
-        if(selectedOddsValue != betRate){
-          console.log(" ========================= selectedOddsValue  ========================= ", betRate, " == ", selectedOddsValue);
-          console.log(" 408 selectedBetRate == betRate Value Not found In this Array ");
-          return res.status(404).send({
-            message: `Bet Miss Matched `
-          });
+        for (let i = 1; i < 5; i++) {
+          setTimeout( async () => {
+            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            const response = await axios.get(url);
+            const oddsData = response.data;
+            console.log(" ================ oddsData ================ ", oddsData);
+            const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+            let selectedOddsValue   = 0;
+            if (type == 0) {
+              const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+              console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
+              if(ApiResponseOdds && ApiResponseOdds.length > 0){
+                selectedOddsValue = ApiResponseOdds[0].price
+              }
+              if(selectedOddsValue != 0 && betRate <= selectedOddsValue){
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+
+            } 
+            else if (type == 1) {
+              const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
+              console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
+              if(ApiResponseOdds && ApiResponseOdds.length > 0){
+                selectedOddsValue = ApiResponseOdds[0]?.price
+              }
+              if(selectedOddsValue != 0 && betRate >=  selectedOddsValue){
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+            } 
+          }, 1000 * i);
         }
       }
       else if (type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate){
@@ -648,31 +655,47 @@ const placeBet = async (req, res) => {
 
       if(selectedBetRate == betRate){
 
-        const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
-        const response = await axios.get(url);
-        const oddsData = response.data;
-        const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
-        console.log(" =================== runnerFromAPI ====================== ", runnerFromAPI);
-        let selectedOddsValue   = 0;
-        if (type == 0) {
-          const ApiResponseOdds = runnerFromAPI?.exchange?.availableToBack;
-          console.log(" ========================== ApiResponseOdds ========================== ", ApiResponseOdds);
-          if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds[0].price
-          }
-        } else if (type == 1) {
-          const ApiResponseOdds = runnerFromAPI.exchange?.AvailableToLay
-          console.log(" ========================== ApiResponseOdds ========================== ", ApiResponseOdds);
-          if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds[0].price
-          }
-        } 
+      
         if(selectedOddsValue != betRate){
           console.log(" ============== selectedOddsValue ================== ", betRate, " == ",  selectedOddsValue);
           console.log(" 656 selectedBetRate == betRate Value Not found In this Array ");
           return res.status(404).send({
             message: `Bet Miss Matched `
           });
+        }
+      }
+
+      if(selectedBetRate == betRate){
+        for (let i = 1; i < 5; i++) {
+          setTimeout( async () => {
+            const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
+            const response = await axios.get(url);
+            const oddsData = response.data;
+            const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
+            console.log(" =================== runnerFromAPI ====================== ", runnerFromAPI);
+            let selectedOddsValue   = 0;
+            if (type == 0) {
+              const ApiResponseOdds = runnerFromAPI?.exchange?.availableToBack;
+              console.log(" ========================== ApiResponseOdds ========================== ", ApiResponseOdds);
+              if(ApiResponseOdds && ApiResponseOdds.length > 0){
+                selectedOddsValue = ApiResponseOdds[0].price
+              }
+              if(selectedOddsValue != 0 && betRate <= selectedOddsValue){
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+            } else if (type == 1) {
+              const ApiResponseOdds = runnerFromAPI.exchange?.AvailableToLay
+              console.log(" ========================== ApiResponseOdds ========================== ", ApiResponseOdds);
+              if(ApiResponseOdds && ApiResponseOdds.length > 0){
+                selectedOddsValue = ApiResponseOdds[0].price
+              }
+              if(selectedOddsValue != 0 && betRate >=  selectedOddsValue){
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+            } 
+          }, 1000 * i);
         }
       }
       else if (type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate){
@@ -788,32 +811,38 @@ const placeBet = async (req, res) => {
       console.log(" ============================ ========================== ", runnerForSaveInbets);
       console.log(" ========================================== id ========================================== ", id);
       if(selectedBetRate == betRate){
+        for (let i = 1; i < 5; i++) {
+          setTimeout( async () => {
+            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            const response = await axios.get(url);
+            const oddsData = response.data;
+            console.log(" ================ oddsData ================ ", oddsData);
+            const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+            let selectedOddsValue   = 0;
+            if (type == 0) {
+              const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+              console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
+              if(ApiResponseOdds && ApiResponseOdds.length > 0){
+                selectedOddsValue = ApiResponseOdds[0].price
+              }
+              if(selectedOddsValue != 0 && betRate <= selectedOddsValue){
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
 
-        const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
-        const response = await axios.get(url);
-        const oddsData = response.data;
-        console.log(" ================ oddsData ================ ", oddsData);
-        const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
-        let selectedOddsValue   = 0;
-        if (type == 0) {
-          const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
-          console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
-          if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds[0].price
-          }
-        } else if (type == 1) {
-          const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
-          console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
-          if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds[0].price
-          }
-        } 
-        if(selectedOddsValue != betRate){
-          console.log(" ========================= selectedOddsValue  ========================= ", betRate, " == ", selectedOddsValue);
-          console.log(" 408 selectedBetRate == betRate Value Not found In this Array ");
-          return res.status(404).send({
-            message: `Bet Miss Matched `
-          });
+            } 
+            else if (type == 1) {
+              const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
+              console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
+              if(ApiResponseOdds && ApiResponseOdds.length > 0){
+                selectedOddsValue = ApiResponseOdds[0]?.price
+              }
+              if(selectedOddsValue != 0 && betRate >=  selectedOddsValue){
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+            } 
+          }, 1000 * i);
         }
       }
 
@@ -950,31 +979,38 @@ const placeBet = async (req, res) => {
       console.log(" ============================ ========================== ", runnerForSaveInbets);
 
       if(selectedBetRate == betRate){
-        const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-        const response = await axios.get(url);
-        const oddsData = response.data;
-        console.log(" ================ oddsData ================ ", oddsData);
-        const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
-        let selectedOddsValue   = 0;
-        if (type == 0) {
-          const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
-          console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
-          if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds[0].price
-          }
-        } else if (type == 1) {
-          const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
-          console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
-          if(ApiResponseOdds && ApiResponseOdds.length > 0){
-            selectedOddsValue = ApiResponseOdds[0].price
-          }
-        } 
-        if(selectedOddsValue != betRate){
-          console.log(" ========================= selectedOddsValue  ========================= ", betRate, " == ",  selectedOddsValue);
-          console.log(" 251 selectedBetRate == betRate Value Not found In this Array ");
-          return res.status(404).send({
-            message: `Bet Miss Matched `
-          });
+        for (let i = 1; i < 5; i++) {
+          setTimeout( async () => {
+            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            const response = await axios.get(url);
+            const oddsData = response.data;
+            console.log(" ================ oddsData ================ ", oddsData);
+            const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+            let selectedOddsValue   = 0;
+            if (type == 0) {
+              const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+              console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
+              if(ApiResponseOdds && ApiResponseOdds.length > 0){
+                selectedOddsValue = ApiResponseOdds[0].price
+              }
+              if(selectedOddsValue != 0 && betRate <= selectedOddsValue){
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+
+            } 
+            else if (type == 1) {
+              const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
+              console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
+              if(ApiResponseOdds && ApiResponseOdds.length > 0){
+                selectedOddsValue = ApiResponseOdds[0]?.price
+              }
+              if(selectedOddsValue != 0 && betRate >=  selectedOddsValue){
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+            } 
+          }, 1000 * i);
         }
       }
       else if (type == 1 && betRate < selectedBetRate){
