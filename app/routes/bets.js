@@ -1568,7 +1568,7 @@ const placeBet = async (req, res) => {
             console.log(" ================= Back is called  =================  ");
             //  $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( currentWinningAmount ) 
             //  $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount In fact liability amount which will be in minus ) = (-100 ) +  ( -100 )  = 200
-            newPosition = runnerForSaveInbets.map((item)=>{
+            newPosition = lastBet.runnersPosition.map((item)=>{
               if(item.runner == 0){
                 item.amount = item.amount + winningAmount
               }else {
@@ -1580,7 +1580,7 @@ const placeBet = async (req, res) => {
             console.log(" ================= Lay is called  =================  ");
             // $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( -  (loosing money )liablityAmount ) => ( 67 ) + ( -34 ) = 33
             // $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount )   ( - 100 ) + ( + 100 )
-            newPosition = runnerForSaveInbets.map((item)=>{
+            newPosition = lastBet.runnersPosition.map((item)=>{
               if(item.runner == 1){
                 item.amount = item.amount + (-loosingAmount)
               }else {
