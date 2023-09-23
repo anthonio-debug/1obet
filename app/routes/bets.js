@@ -164,7 +164,7 @@ const placeBet = async (req, res) => {
     // Checks for Market Places & Sub Markets  
     if (config.raceMarkets.includes(marketId)) {
       const requiredTime = new Date().getTime() + config.raceOpenBefore;
-      const remainingTimeFromEvent = eventDetail.ate - requiredTime
+      const remainingTimeFromEvent = eventDetail.openDate - requiredTime
       if (remainingTimeFromEvent > 0) {
         return res.status(404).send({
           status: true,
