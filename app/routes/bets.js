@@ -1562,7 +1562,7 @@ const placeBet = async (req, res) => {
           }).sort({ _id: -1 }).limit(1);
 
 
-          console.log(" =================== lastBet ====================  ", lastBet);
+          console.log(" =================== lastBet ====================  ", lastBet.runnersPosition);
 
           if(type == 0){
             console.log(" ================= Back is called  =================  ");
