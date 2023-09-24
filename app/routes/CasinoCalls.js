@@ -176,7 +176,9 @@ async function debit(req, res) {
       
         let cash = {
           userId: user.userId,
-          description: "Bet for Casino",
+          description: `Casino (${payload.game_id})`,
+          date: now.getTime(),
+          createdAt: formattedDate,
           createdBy: 0,
           amount: - amount,
           balance: lastMaxWithdraw ? lastMaxWithdraw.balance - amount : -amount,
@@ -248,8 +250,9 @@ async function debit(req, res) {
 
           let cash = {
             userId: user.userId,
-            description: "Amount gettin from User on casino",
-            description: "",
+            description: `Casino (${payload.game_id})`,
+            date: now.getTime(),
+            createdAt: formattedDate,
             createdBy: 0,
             amount: (user.commission / 100) * amount,
             balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * amount : (user.commission / 100) * amount,
@@ -381,6 +384,12 @@ async function credit(req, res) {
         let   upMovingAmount        = amount;
         let   upMovingCommAmount    = commissionAmount;
 
+        const now = new Date();
+        const year = now.getFullYear().toString();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0'); 
+        const day = now.getDate().toString().padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+
         console.log(" ============ handle Winning Bet ============ ");
         updatedavailableBalance = user.availableBalance + (remainingAmount);
         updatedclientPL         = user.clientPL         + (remainingAmount);
@@ -406,7 +415,9 @@ async function credit(req, res) {
         let cash = {
           userId: user.userId,
           description: "",
-          description: "Bet for Casino",
+          description: `Casino (${payload.game_id})`,
+          date: now.getTime(),
+          createdAt: formattedDate,
           createdBy: 0,
           amount: remainingAmount,
           balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
@@ -418,7 +429,8 @@ async function credit(req, res) {
           creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
           betId: payload.transaction_id,
           sportsId: "6",
-          marketId: payload.game_id
+          marketId: payload.game_id,
+
         }
         allTrans.push(cash)
 
@@ -474,7 +486,9 @@ async function credit(req, res) {
           console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
           let betTransaction = {
             userId: user.userId,
-            description: "Amount givent to Bet for Casino",
+            description: `Casino (${payload.game_id})`,
+            date: now.getTime(),
+            createdAt: formattedDate,
             description: "",
             createdBy: 0,
             amount: -(user.commission / 100) * amount,
@@ -494,7 +508,9 @@ async function credit(req, res) {
           
           let commissionTransaction ={
             userId: user.userId,
-            description: "Commission from Casino",
+            description: `Casino (${payload.game_id})`,
+            date: now.getTime(),
+            createdAt: formattedDate,
             createdBy: 0,
             commissionFrom: commissionFrom,
             amount: (user.commission / 100) * commissionAmount,
