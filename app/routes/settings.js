@@ -2027,8 +2027,8 @@ const getWaitingBetsForManuel = async (req, res) => {
        const u1 = await  User.findOne({userId: item.userId},{userName: 1});
        if (u1) {
         item.userName = u1.userName;
-       }
-        groups[main_group_key].bets.push(item);
+       } 
+       groups[main_group_key].bets.push(item);
     }
 
     return res.status(200).send({
