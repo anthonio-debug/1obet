@@ -61,7 +61,6 @@ async function addCashDeposit(req, res) {
       userToUpdate.clientPL += req.body.amount;
       userToUpdate.cash += req.body.amount
 
-
       let cash = new Cash({
         userId: userToUpdate.userId,
         description: req.body.description ? req.body.description : '(Cash)',
@@ -169,7 +168,7 @@ async function addCashDeposit(req, res) {
         maxWithdraw: parentLastMaxWithdraw  ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
         cashOrCredit: 'Cash',
         maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
-        cash: lastMaxWithdraw ? lastMaxWithdraw.cash - req.body.amount : -req.body.amount,
+        cash: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0 ,
         creditRemaining:  parentLastMaxWithdraw?.creditRemaining  || 0,
       });
