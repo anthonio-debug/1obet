@@ -2024,10 +2024,12 @@ const getWaitingBetsForManuel = async (req, res) => {
           } 
         }
         
-       const u1 = await  User.findOne({userId: item.userId},{userName: 1});
+       const u1 = await User.findOne({userId: item.userId},{userName: 1});
        if (u1) {
         item.userName = u1.userName;
-       } 
+       } else {
+        item.userName = u1;
+       }
        groups[main_group_key].bets.push(item);
     }
 
