@@ -137,7 +137,6 @@ async function addCashDeposit(req, res) {
     
     // Dealer to Battor 
     else if (Dealers.includes(currentUserParent.role) && userToUpdate.role == '5') {
-      console.log('in here');
       userToUpdate.balance += req.body.amount;
       userToUpdate.availableBalance += req.body.amount;
       userToUpdate.clientPL += req.body.amount;
@@ -170,6 +169,7 @@ async function addCashDeposit(req, res) {
         maxWithdraw: parentLastMaxWithdraw  ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
         cashOrCredit: 'Cash',
         maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
+        cash: lastMaxWithdraw ? lastMaxWithdraw.cash - req.body.amount : -req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0 ,
         creditRemaining:  parentLastMaxWithdraw?.creditRemaining  || 0,
       });

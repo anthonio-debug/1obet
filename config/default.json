@@ -28,7 +28,7 @@
   "currency": "PKR",
   "createCasinoUser": true,
   "casinoMultiples": 10,
-
+  "commission": 2,
   "SportOddsSubMarkets": [6, 13, 15],
   "sportMarkets": ["1","2", "4"],
   "raceMarkets": ["7", "4339"],

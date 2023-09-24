@@ -164,11 +164,7 @@ async function debit(req, res) {
         );
         //  ==========================================
         console.log(" ============ Handle Place Bet ============ ");
-        let lastMaxWithdraw = await Cash.findOne(
-          {userId: user.userId},
-        ).sort({
-          _id: -1,
-        });
+        let lastMaxWithdraw = await Cash.findOne( {userId: user.userId}).sort({ _id: -1 });
 
         console.log(" lastMaxWithdraw ============== ", lastMaxWithdraw);
 
@@ -235,11 +231,11 @@ async function debit(req, res) {
         }
         console.log(" ================= Commission Setting Done ================= ");
         for (const user of parentUser) {
-          let availableBalance = user.availableBalance + (user.commission / 100) * amount;
-          let balance = user.balance  + (user.commission / 100) * amount;
-          let clientPL = user.clientPL - user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * amount: 0;
+          const availableBalance = user.availableBalance + (user.commission / 100) * amount;
+          const balance = user.balance  + (user.commission / 100) * amount;
+          const clientPL = user.clientPL - user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * amount: 0;
           
-          let userResponse = await users.updateOne(
+          const userResponse = await users.updateOne(
             {_id: user?._id},{ $set: { 
               availableBalance: availableBalance,
               clientPL: clientPL,
@@ -248,13 +244,13 @@ async function debit(req, res) {
             { session }
           );
 
-          let lastMaxWithdraw = await Cash.findOne(
+          const lastMaxWithdraw = await Cash.findOne(
             {userId: user.userId},
           ).sort({
             _id: -1,
           });
 
-          let cash = {
+          const cash = {
             userId: user.userId,
             description: `Casino (${payload.game_id})`,
             date: now.getTime(),
@@ -384,9 +380,9 @@ async function credit(req, res) {
       if (payload.amount > 0) {
         // ============================================
 
-        const amount                = payload.amount * 10;
-        const remainingAmount       = (amount / 100) * 98;
-        const commissionAmount      = (amount / 100) * 2;
+        const amount                = payload.amount * config.casinoMultiples;
+        const remainingAmount       = (amount / 100) * 100 - config.commission;
+        const commissionAmount      = (amount / 100) * config.commission;
         let   upMovingAmount        = amount;
         let   upMovingCommAmount    = commissionAmount;
 
@@ -475,6 +471,8 @@ async function credit(req, res) {
         console.log(" ================= Commission Setting Done ================= ");
 
         for (const user of parentUser) {
+
+          let lastMaxWithdraw = await Cash.findOne( {userId: user.userId}).sort({ _id: -1 });
 
           let availableBalance  = user.availableBalance - (user.commission / 100) * amount;
           let balance           = user.balance  - (user.commission / 100) * amount;
