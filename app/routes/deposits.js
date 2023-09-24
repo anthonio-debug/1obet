@@ -409,9 +409,9 @@ function getLedgerDetails(req, res) {
     }
     
     // Add support for startDate and endDate search
-    if (req.body.startDate && req.body.endDate) {
-      cashQuery.createdAt = { $gte: req.body.startDate, $lte: req.body.endDate };
-    }
+    // if (req.body.startDate && req.body.endDate) {
+    //   cashQuery.createdAt = { $gte: req.body.startDate, $lte: req.body.endDate };
+    // }
     if (req.body.searchValue) {
       const searchRegex = new RegExp(req.body.searchValue, 'i');
       cashQuery.$or = [
@@ -455,8 +455,7 @@ function getAllDeposits(req, res) {
         { userId: req.query.userId },
         // creditlimit should be of the parent user
         { maxWithdraw: 1 }
-      )
-        .sort({ _id: -1 })
+      ).sort({ _id: -1 })
         .exec((err, results) => {
           if (err){
             console.log("Error". err);
