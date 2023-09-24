@@ -353,8 +353,8 @@ async function withDrawCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
-        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance + req.body.amount : req.body.amount,
-        availableBalance: parentLastMaxWithdraw ? parentLastMaxWithdraw.availableBalance + req.body.amount : req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance : 0,
+        availableBalance: parentLastMaxWithdraw ? parentLastMaxWithdraw.availableBalance : 0,
         maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cash: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0 ,
@@ -363,6 +363,7 @@ async function withDrawCashDeposit(req, res) {
       });
       await parentCash.save();
     } 
+
     else {
       return res.status(400).send({ message: 'Invalid Request' });
     }
