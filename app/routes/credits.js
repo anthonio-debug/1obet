@@ -189,7 +189,6 @@ async function addCredit(req, res) {
     return res.status(404).send({ message: 'server error', err });
   }
 }
-
 async function withdrawCredit(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
