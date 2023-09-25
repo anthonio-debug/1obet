@@ -281,7 +281,7 @@ const amount             = bettor_winning_amount * config.casinoMultiples;
              amount: -(user.commission / 100) * amount,
              balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
              availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
-             maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * amount : -(user.commission / 100) * amount * 0,  //max withdraw cant be negative 
+             maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * amount : -(user.commission / 100) * amount * 0,  max withdraw cant be negative 
              cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * amount : -(user.commission / 100) * amount,
              cashOrCredit: "Bet",
              betId: payload.transaction_id,
