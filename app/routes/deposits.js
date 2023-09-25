@@ -43,19 +43,17 @@ async function addCashDeposit(req, res) {
       }
     }
 
-    let lastMaxWithdraw = await Cash.findOne({
-      userId: userToUpdate.userId,
-    }).sort({
-      _id: -1,
-    });
+    const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
+    const lastMaxWithdraw = cUserRes.length > 0? cUserRes[0] : null
 
-    let parentLastMaxWithdraw = await Cash.findOne({
-      userId: currentUserParent.userId,
-    }).sort({
-      _id: -1,
-    });
+    console.log(" ======================= lastMaxWithdraw =================================  ", lastMaxWithdraw);
 
-    let Dealers = ['1', '2', '3', '4'];
+    const parentRes = await Cash.find({ userId: currentUserParent.userId }).sort({ _id: -1 }).limit(1);
+    const parentLastMaxWithdraw = parentRes.length > 0? parentRes[0] : null
+
+    console.log(" ======================= parentLastMaxWithdraw =================================  ", parentLastMaxWithdraw);
+
+    const Dealers = ['1', '2', '3', '4'];
     // company to Dealer  Deposit 
     if (currentUserParent.role == '0' && userToUpdate.role != '5') {
       userToUpdate.clientPL += req.body.amount;
@@ -66,6 +64,8 @@ async function addCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance  : 0,
+        availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance : 0,
         maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
         credit: lastMaxWithdraw?.credit || 0 ,
@@ -91,10 +91,10 @@ async function addCashDeposit(req, res) {
         balance: lastMaxWithdraw ? lastMaxWithdraw.balance + req.body.amount  : req.body.amount,
         availableBalance: lastMaxWithdraw  ? lastMaxWithdraw.availableBalance + req.body.amount : req.body.amount,
         maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount  : req.body.amount,
+        cash: lastMaxWithdraw  ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
         credit: lastMaxWithdraw?.credit || 0 ,
         creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,
         cashOrCredit: 'Cash',
-        cash: lastMaxWithdraw  ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
       });
       await cash.save();
     } 
@@ -112,6 +112,8 @@ async function addCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance  : 0,
+        availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance : 0,
         maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash + req.body.amount : req.body.amount,
         credit: lastMaxWithdraw?.credit || 0 ,
@@ -125,11 +127,13 @@ async function addCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: -req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance  : 0,
+        availableBalance: parentLastMaxWithdraw ? parentLastMaxWithdraw.availableBalance : 0,
         maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
-        cashOrCredit: 'Cash',
+        cash: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0 ,
         creditRemaining:  parentLastMaxWithdraw?.creditRemaining  || 0,
-        cash: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
+        cashOrCredit: 'Cash',
       });
       await parentCash.save();
     } 
@@ -165,12 +169,13 @@ async function addCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: -req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance  : 0,
+        availableBalance: parentLastMaxWithdraw ? parentLastMaxWithdraw.availableBalance : 0,
         maxWithdraw: parentLastMaxWithdraw  ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
-        cashOrCredit: 'Cash',
-        maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
         cash: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0 ,
         creditRemaining:  parentLastMaxWithdraw?.creditRemaining  || 0,
+        cashOrCredit: 'Cash',
       });
       await parentCash.save();
       console.log("parentCash",parentCash);
@@ -232,17 +237,12 @@ async function withDrawCashDeposit(req, res) {
           .send({ message: `Max cash withdraw is ${userToUpdate.availableBalance }` });
     }
 
-    let lastMaxWithdraw = await Cash.findOne({
-      userId: userToUpdate.userId,
-    }).sort({
-      _id: -1,
-    });
-
-    let parentLastMaxWithdraw = await Cash.findOne({
-      userId: currentUserParent.userId,
-    }).sort({
-      _id: -1,
-    });
+    const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
+    const lastMaxWithdraw = cUserRes.length > 0? cUserRes[0] : null
+    console.log(" ======================= lastMaxWithdraw =================================  ", lastMaxWithdraw);
+    const parentRes = await Cash.find({ userId: currentUserParent.userId }).sort({ _id: -1 }).limit(1);
+    const parentLastMaxWithdraw = parentRes.length > 0? parentRes[0] : null
+    console.log(" ======================= parentLastMaxWithdraw =================================  ", parentLastMaxWithdraw);
 
     let Dealers = ['1', '2', '3', '4'];
     // Company to Dealer 
@@ -256,6 +256,8 @@ async function withDrawCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: -req.body.amount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance  : 0,
+        availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance : 0,
         maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash - req.body.amount : -req.body.amount,
         cashOrCredit: 'Cash',
@@ -303,6 +305,8 @@ async function withDrawCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: -req.body.amount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance  : 0,
+        availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance : 0,
         maxWithdraw: lastMaxWithdraw  ? lastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash - req.body.amount : -req.body.amount,
         credit: lastMaxWithdraw?.credit || 0 ,
@@ -316,6 +320,8 @@ async function withDrawCashDeposit(req, res) {
         description: req.body.description ? req.body.description : '(Cash)',
         createdBy: req.decoded.userId,
         amount: req.body.amount,
+        balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance  : 0,
+        availableBalance: parentLastMaxWithdraw ? parentLastMaxWithdraw.availableBalance : 0,
         maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.maxWithdraw + req.body.amount : req.body.amount,
         cash: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash + req.body.amount : req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0 ,
