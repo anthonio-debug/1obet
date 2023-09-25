@@ -223,10 +223,10 @@ async function withdrawCredit(req, res) {
     if ( userToUpdate.role != '5'  &&  req.body.amount >  userToUpdate.clientPL && req.body.amount >  userToUpdate.creditRemaining) {
 
       if( userToUpdate.clientPL >  userToUpdate.creditRemaining){
-       
-      } return res
+        return res
         .status(400)
         .send({ message: `Max credit to withdraw is ${userToUpdate.creditRemaining}` });
+      } 
       return res
         .status(400)
         .send({ message: `Max credit to withdraw is ${userToUpdate.clientPL}` });
