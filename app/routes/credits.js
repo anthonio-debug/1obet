@@ -47,11 +47,13 @@ async function addCredit(req, res) {
     }
 
 
-    const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 });
+    const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const lastMaxWithdraw = cUserRes.length > 0? cUserRes[0] : null
-
-    const parentRes = await Cash.find({ userId: currentUserParent.userId }).sort({ _id: -1 });
+    console.log(" ======================= lastMaxWithdraw =================================  ", lastMaxWithdraw);
+    const parentRes = await Cash.find({ userId: currentUserParent.userId }).sort({ _id: -1 }).limit(1);
     const parentLastMaxWithdraw = parentRes.length > 0? parentRes[0] : null
+    console.log(" ======================= parentLastMaxWithdraw =================================  ", parentLastMaxWithdraw);
+
 
 
     let Dealers = ['1', '2', '3', '4'];
@@ -241,11 +243,13 @@ async function withdrawCredit(req, res) {
       .send({ message: `Max credit to withdraw is ${userToUpdate.availableBalance}` });
     }
 
-    const cUserRes = await Cash.find({       userId: userToUpdate.userId }).sort({ _id: -1 });
+    const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const lastMaxWithdraw = cUserRes.length > 0? cUserRes[0] : null
-
-    const parentRes = await Cash.find({ userId: currentUserParent.userId }).sort({ _id: -1 });
+    console.log(" ======================= lastMaxWithdraw =================================  ", lastMaxWithdraw);
+    const parentRes = await Cash.find({ userId: currentUserParent.userId }).sort({ _id: -1 }).limit(1);
     const parentLastMaxWithdraw = parentRes.length > 0? parentRes[0] : null
+    console.log(" ======================= parentLastMaxWithdraw =================================  ", parentLastMaxWithdraw);
+
 
     let Dealers = ['1', '2', '3', '4'];
     //  Deealer to Company
