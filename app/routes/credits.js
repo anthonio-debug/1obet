@@ -215,9 +215,9 @@ async function withdrawCredit(req, res) {
       return res.status(404).send({ message: 'user not found' });
     }
 
-    if (userToUpdate.role != '5' && (( req.body.amount >  userToUpdate.creditRemaining) ||  (userToUpdate.clientPL < 0   &&  req.body.amount >  (userToUpdate.creditRemaining + userToUpdate.clientPL )))) {
-      if(userToUpdate.clientPL < 0 ){
-        return res.status(400).send({ message: `Max credit to withdraw is ${userToUpdate.creditRemaining + userToUpdate.clientPL }` });
+    if (userToUpdate.role != '5' && (( req.body.amount >  userToUpdate.creditRemaining) ||  (userToUpdate.cash < 0   &&  req.body.amount >  (userToUpdate.creditRemaining + userToUpdate.cash )))) {
+      if(userToUpdate.cash < 0 ){
+        return res.status(400).send({ message: `Max credit to withdraw is ${userToUpdate.creditRemaining + userToUpdate.cash }` });
       } 
       return res.status(400).send({ message: `Max credit to withdraw is ${userToUpdate.creditRemaining}` });
     }
