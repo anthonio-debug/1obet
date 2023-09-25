@@ -22,14 +22,14 @@ const WinLoseTransManagement  = async ()=> {
 difference  = credit - debit;
 bettor_winning_amount = 0;
 bettor_lost_amount = 0;
-
+console.log("======-=============test logs========================");
 UpdatedExposure = (user.exposure) + ( debit );
 if(difference < 0){
 	
 	
 	bettor_lost_amount = debit-credit;
 	amount = bettor_lost_amount * config.casinoMultiples
-	console.log(" ============ Handle Place Bet ============ ");
+	console.log(" ============ Handle Place Bet wit ============ ");
         let lastMaxWithdraw = await Cash.findOne( {userId: user.userId}).sort({ _id: -1 });
 
         console.log(" lastMaxWithdraw ============== ", lastMaxWithdraw);
