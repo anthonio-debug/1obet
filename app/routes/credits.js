@@ -203,44 +203,30 @@ async function withdrawCredit(req, res) {
   }
   try {
     if ( req.body.amount < 1 ) {
-      return res
-        .status(400)
-        .send({ message: `Invalid Amount!` });
+      return res.status(400).send({ message: `Invalid Amount!` });
     }
     const userToUpdate = await User.findOne({ userId: req.body.userId ,isDeleted: false});
     if (!userToUpdate) {
       return res.status(404).send({ message: 'user not found' });
     }
     
-    const currentUserParent = await User.findOne({
-      userId: userToUpdate.createdBy,
-      isDeleted: false
-    });
+    const currentUserParent = await User.findOne({ userId: userToUpdate.createdBy, isDeleted: false });
     if (!currentUserParent) {
       return res.status(404).send({ message: 'user not found' });
     }
 
-    if ( userToUpdate.role != '5'  &&  req.body.amount >  userToUpdate.clientPL && req.body.amount >  userToUpdate.creditRemaining) {
-
-      if( userToUpdate.clientPL >  userToUpdate.creditRemaining){
-        return res
-        .status(400)
-        .send({ message: `Max credit to withdraw is ${userToUpdate.creditRemaining}` });
+    if (userToUpdate.role != '5' && (( req.body.amount >  userToUpdate.creditRemaining) ||  (userToUpdate.cash < 0   &&  req.body.amount >  (userToUpdate.creditRemaining + userToUpdate.cash )))) {
+      if(userToUpdate.cash < 0 ){
+        return res.status(400).send({ message: `Max credit to withdraw is ${userToUpdate.creditRemaining + userToUpdate.cash }` });
       } 
-      return res
-        .status(400)
-        .send({ message: `Max credit to withdraw is ${userToUpdate.clientPL}` });
+      return res.status(400).send({ message: `Max credit to withdraw is ${userToUpdate.creditRemaining}` });
     }
     
     else if( userToUpdate.role == '5'  && (req.body.amount >  userToUpdate.availableBalance || req.body.amount >  userToUpdate.credit )){
       if( userToUpdate.availableBalance >  userToUpdate.credit){
-        return res
-        .status(400)
-        .send({ message: `Max credit to withdraw is ${userToUpdate.credit}` });
+        return res.status(400).send({ message: `Max credit to withdraw is ${userToUpdate.credit}` });
       }
-      return res
-      .status(400)
-      .send({ message: `Max credit to withdraw is ${userToUpdate.availableBalance}` });
+      return res.status(400).send({ message: `Max credit to withdraw is ${userToUpdate.availableBalance}` });
     }
 
     const cUserRes = await CashCredit.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
