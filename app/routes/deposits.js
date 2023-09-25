@@ -172,7 +172,6 @@ async function addCashDeposit(req, res) {
         balance: parentLastMaxWithdraw ? parentLastMaxWithdraw.balance  : 0,
         availableBalance: parentLastMaxWithdraw ? parentLastMaxWithdraw.availableBalance : 0,
         maxWithdraw: parentLastMaxWithdraw  ? parentLastMaxWithdraw.maxWithdraw - req.body.amount : -req.body.amount,
-        maxWithdraw: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
         cash: parentLastMaxWithdraw ? parentLastMaxWithdraw.cash - req.body.amount : -req.body.amount,
         credit: parentLastMaxWithdraw?.credit || 0 ,
         creditRemaining:  parentLastMaxWithdraw?.creditRemaining  || 0,
