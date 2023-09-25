@@ -24,7 +24,7 @@ bettor_winning_amount = 0;
 bettor_lost_amount = 0;
 
 UpdatedExposure = (user.exposure) + ( debit );
-console("debit:",debit , "--credit:" , credit);
+console.log("debit:",debit , "--credit:" , credit);
 if(difference < 0){
 	
 	
