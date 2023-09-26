@@ -41,7 +41,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
   const formattedDate = `${year}-${month}-${day}`;
 
   if (action == 0) {
-    let amount = payload.amount * config.casinoMultiples;
+    let amount = payload.amount * casinoMultiples;
     let UpdatedExposure = user.exposure - amount;
     console.log(" ============ Handle Place Bet ============ ");
 
@@ -482,7 +482,7 @@ async function balancefun(req, res) {
   }
 }
 
-async function debit(req, res) {
+async function debitfun(req, res) {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -589,7 +589,7 @@ async function debit(req, res) {
   }
 }
 
-async function credit(req, res) {
+async function creditfun(req, res) {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -661,7 +661,7 @@ async function credit(req, res) {
         });
       }
       const amount = payload.amount * casinoMultiples;
-      const res = await WinLoseTransManagement(balance, payload, user, 1);
+      const res = await WinLoseTransManagement(0, payload, user, 1);
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
     }, transactionOptions);
@@ -682,7 +682,7 @@ async function credit(req, res) {
   }
 }
 
-async function rollback(req, res) {
+async function rollbackfun(req, res) {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -822,11 +822,11 @@ function casino(req, res) {
     case 'balance':
       return balancefun(req, res);
     case 'debit':
-      return debit(req, res);
+      return debitfun(req, res);
     case 'credit':
-      return credit(req, res);
+      return creditfun(req, res);
     case 'rollback':
-      return rollback(req, res);
+      return rollbackfun(req, res);
     default:
       return res.send({ status: '400', msg: 'Invalid action' });
   }
