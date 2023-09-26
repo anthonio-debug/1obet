@@ -470,7 +470,7 @@ function createHashKey(salt, queryString) {
   return hash;
 }
 
-async function balance(req, res) {
+async function balancefun(req, res) {
   const payload = req.query;
   const salt = config.saltKey;
   const key = payload.key;
@@ -1151,7 +1151,7 @@ function casino(req, res) {
   }
   switch (action) {
     case 'balance':
-      return balance(req, res);
+      return balancefun(req, res);
     case 'debit':
       return debit(req, res);
     case 'credit':
