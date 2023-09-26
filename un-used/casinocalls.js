@@ -32,7 +32,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
     let bettor_lost_amount = 0;
   */
 
-  console.log(" ================ payload amount: :", payload.amount);
+  console.log(" ================ payload amount : ", payload.amount);
 
   const now = new Date();
   const year = now.getFullYear().toString();
@@ -87,6 +87,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
        * its mean User lose 1100 
        * 
        */
+
       const updatedavailableBalance = user.availableBalance + (credit * config.casinoMultiples);
       const updatedclientPL = user.clientPL + (difference * config.casinoMultiples);
       const updatedbalance = user.balance + (difference * config.casinoMultiples);
@@ -192,7 +193,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       await casinoDebits.save();
       console.log("=========== END OF if(difference < 0){===============");
     }
-    else if (difference > 0) {
+    else if (difference > 0){
       console.log("=============start of }else if (difference > 0){=============");
       //     Win Some Amount  
       //so available balance will be updated with credit money ( user.availablebalance+credit ), 
@@ -230,12 +231,6 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       let upMovingCommAmount = commissionAmount;
 
       console.log("========== upMovingCommAmount ==============", upMovingCommAmount);
-
-      const now = new Date();
-      const year = now.getFullYear().toString();
-      const month = (now.getMonth() + 1).toString().padStart(2, '0');
-      const day = now.getDate().toString().padStart(2, '0');
-      const formattedDate = `${year}-${month}-${day}`;
 
       console.log(" ============ handle Winning Bet ============ ");
       const updatedavailableBalance = user.availableBalance + (remainingAmount);
