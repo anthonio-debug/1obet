@@ -69,7 +69,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       action: 'debit',
       game_id: payload.game_id,
       round_id: payload.round_id,
-      remote_id: payload.remote_id,
+      remote_id: Number(payload.remote_id)
     })
 
     console.log(" ======================= lastDebit =======================  ", lastDebit);
