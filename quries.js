@@ -807,6 +807,72 @@ db.betlimits.insertMany([
       // KALI JOTTA 3
       // CHOTA BARA 4
 
+/*
+
+* All Terms 
+    * Balance
+    * Available Balance
+    * Client Pl 
+    * Cash 
+    * Credit 
+    * credit Remaining 
+    * exposure
+    * P/L Downline is (Balance)
+    * Balance UpLine is (Client Pl)
+     
+* Terms Effected (Battor) 
+    * Effect By Cash Deposit (Balance, Available Balance, clientPL, Cash)  * Cash: Not *Effective* Effect By Field for Battor
+    * Effect By Cash Withdraw (Balance, Available Balance, clientPL, Cash) 
+    * Effect By Effect By Credit Deposit (Credit, credit Remaining) * credit Remaining : Not Effective Field for Battor 
+    * Effect By Bet Place (exposure, Available Balance)
+    * Effect By Bet Calculation  (exposure, Available Balance, Balance, clientPL)
+
+
+* Terms Effected (Dealer) 
+    * Effect By Cash Deposit (clientPL, Cash)
+    * Effect By Cash Withdraw (clientPL, Cash) 
+    * Effect By Credit Deposit (Credit, credit Remaining)
+    * Effect By Credit Withdraw (Credit, credit Remaining)
+    * Effect By Bet Place (exposure, Available Balance)
+    * Effect By Bet Calculation  (exposure, Available Balance, Balance, clientPL)
+
+
+* Terms Explanations (Battor) 
+    * Balance   => Total available Amount in User Account (Cash + Credit)
+    * Available Balance =>  Total useable Amount in User Account (Balance - exposure)
+    * Client Pl => Sum of All (winnings + lossings + Balance Deposit + Balance Withdraw )
+    * Cash     => How much Cash deposit + withdraw  in account but  not Effective 
+    * Credit   => Total credit Deposit 
+    * credit Remaining  How much credit deposit + withdraw  in account but not Effective 
+    * exposure => Maintain How much Amount of User is using in Current Active bets 
+
+
+* Terms Explanations (Dealer) 
+    * Balance   => total Profit lose in User Account (Bet Win + Lose )
+    * Available_Balance =>  Total useable Amount in User Account  (Balance - exposure)
+    * ClientPl => Sum of All (winnings + lossings + Balance Deposit + Balance Withdraw )
+    * Cash     => How much Cash deposit + withdraw  in account but  not Effective 
+    * Credit   => Total credit Deposit 
+    * credit Remaining  How much credit deposit + withdraw + given to childs  in account
+    * exposure => Maintain How much Amount of User is using in Current Active bets of his children
+
+
+* If Battor of a dealer lose bet 
+    * Balance will + 
+    * ClientPl -
+
+
+* If Battor of a dealer wins bet 
+    * Balance will -- 
+    * ClientPl ++
+
+
+I hope All clear if Still Some problem we can discuss 
+
+*/
+
+
+
 
 const placeBetOld = async (req, res) => {
   const errors = validationResult(req);

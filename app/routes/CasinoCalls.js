@@ -26,15 +26,15 @@ const WinLoseTransManagement  = async (balance, payload,user,action) => {
 //credit=  600 or 1350 or 1800
 
 
-bettor_winning_amount = 0;
-bettor_lost_amount = 0;
+let bettor_winning_amount = 0;
+let bettor_lost_amount = 0;
 
 
 console.log( "--payload amount: :" , payload.amount);
 if(action== '0'){
 	
-	amount = payload.amount * config.casinoMultiples;
-	UpdatedExposure = (user.exposure) + ( - amount );
+	let amount = payload.amount * config.casinoMultiples;
+	let UpdatedExposure = (user.exposure) + ( - amount );
 
 	console.log(" ============ Handle Place Bet ============ ");
         let lastMaxWithdraw = await Cash.findOne( {userId: user.userId}).sort({ _id: -1 });
@@ -51,14 +51,15 @@ if(action== '0'){
       
         console.log("----------",payload,"-----",amount, "===UpdatedExposure: " , UpdatedExposure);
 		console.log(" ============ Update user balances ============ ");
-         updatedavailableBalance = user.availableBalance - (amount);
-         updatedclientPL         = user.clientPL         - (remainingAmount);
-         updatedbalance          = user.balance          - (remainingAmount);
+         let updatedavailableBalance = user.availableBalance - (amount);
+         let updatedclientPL         = user.clientPL         - (amount);
+         let updatedbalance          = user.balance          - (amount);
          let userResponse = await users.updateOne(
            {_id: user?._id},{ $set: { 
              availableBalance: updatedavailableBalance,
 			 exposure: UpdatedExposure,
-            
+             clientPL: updatedclientPL,
+               balance: updatedbalance
            }},
            { session }
         );
@@ -125,14 +126,18 @@ if(difference < 0){
 //400-1500 = -900 OR 1499-1500 = -1 OR 0-1500 = -1500
 	//suppose 1300 was lost money. credit of 200 will be added to available balance
 	
-	updatedavailableBalance = user.availableBalance + (credit*config.casinoMultiples);
+	let updatedavailableBalance = user.availableBalance + (credit*config.casinoMultiples);
+	let updatedclientPL = user.clientPL+ (credit*config.casinoMultiples);
+	let updatedbalance = user.balance+ (credit*config.casinoMultiples);
 	//remove all exposure equal to total debit money of 1500
-	amount = debit * config.casinoMultiples;
-	UpdatedExposure = (user.exposure) + (  amount );
+	let amount = debit * config.casinoMultiples;
+	let UpdatedExposure = (user.exposure) + (  amount );
 	let userResponseI = await users.updateOne(
            {_id: user?._id},{ $set: { 
              availableBalance: updatedavailableBalance,
 			 exposure: UpdatedExposure,
+			  clientPL: updatedclientPL,
+               balance: updatedbalance
             
            }},
            { session }
@@ -217,28 +222,29 @@ for (const user of parentUser) {
            allTrans.push(betTransaction)
           
            
-           upMovingAmount      = upMovingAmount - (user.commission / 100) * amount;
-           upMovingCommAmount  = upMovingCommAmount - (user.commission / 100) * commissionAmount;
-           commissionFrom = user.userId;
+           let upMovingAmount      = upMovingAmount - (user.commission / 100) * amount;
+           let upMovingCommAmount  = upMovingCommAmount - (user.commission / 100) * commissionAmount;
+           let commissionFrom = user.userId;
          }
          await Cash.insertMany(allTrans );
 		
 		
 		//end of code to give lost money to all share holders
-	
+	const casinoDebits = new CasinoDebits(payload);
+        await casinoDebits.save();
         console.log("=========== END OF if(difference < 0){===============");
 }else if (difference > 0){
 	console.log("=============start of }else if (difference > 0){=============");
 //     Win Some Amount  
 //so available balance will be updated with credit money ( user.availablebalance+credit ), 
-updatedavailableBalance = user.availableBalance + (credit*config.casinoMultiples);
+let updatedavailableBalancee = user.availableBalance + (credit*config.casinoMultiples);
 	//remove all exposure equal to total debit money of 1500
 	//set exposure to original ( user.exposure +  debit )
-	amount = debit * config.casinoMultiples;
-	UpdatedExposure = (user.exposure) + (  amount );
+	//let amount = debit * config.casinoMultiples;
+	let UpdatedExposure = (user.exposure) - (  debit * config.casinoMultiples );
 	let userResponse3 = await users.updateOne(
            {_id: user?._id},{ $set: { 
-             //availableBalance: updatedavailableBalance,
+             
 			 exposure: UpdatedExposure,
             
            }},
@@ -246,7 +252,7 @@ updatedavailableBalance = user.availableBalance + (credit*config.casinoMultiples
         );
 	
     console.log("=============start of giving commissions and loss shares on amount which is WON by bettor");
-	bettor_won_amount = credit - debit;
+	let bettor_won_amount = credit - debit;
 	//deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
 	
 	console.log("==========bettor_won_amount==============",bettor_won_amount);
@@ -271,9 +277,9 @@ updatedavailableBalance = user.availableBalance + (credit*config.casinoMultiples
          const formattedDate = `${year}-${month}-${day}`;
 
          console.log(" ============ handle Winning Bet ============ ");
-         updatedavailableBalance = user.availableBalance + (remainingAmount);
-         updatedclientPL         = user.clientPL         + (remainingAmount);
-         updatedbalance          = user.balance          + (remainingAmount);
+         let updatedavailableBalance = user.availableBalance + (remainingAmount);
+         let updatedclientPL         = user.clientPL         + (remainingAmount);
+         let updatedbalance          = user.balance          + (remainingAmount);
          let userResponse = await users.updateOne(
            {_id: user?._id},{ $set: { 
              availableBalance: updatedavailableBalance,
@@ -417,7 +423,8 @@ updatedavailableBalance = user.availableBalance + (credit*config.casinoMultiples
          await Cash.insertMany(allTrans );
 	console.log("=============end of giving commissions and loss shares on amount which is WON by bettor");
 	
-	
+	const casinoDebits = new CasinoDebits(payload);
+        await casinoDebits.save();
 console.log("=============end of }else if (difference > 0){=============");
 }else {
 	
@@ -463,7 +470,7 @@ function createHashKey(salt, queryString) {
   return hash;
 }
 
-async function balancefun(req, res) {
+async function balance(req, res) {
   const payload = req.query;
   const salt = config.saltKey;
   const key = payload.key;
@@ -1144,7 +1151,7 @@ function casino(req, res) {
   }
   switch (action) {
     case 'balance':
-      return balancefun(req, res);
+      return balance(req, res);
     case 'debit':
       return debit(req, res);
     case 'credit':
