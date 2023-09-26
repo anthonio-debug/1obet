@@ -17,6 +17,8 @@ const transactionOptions  = {
 };
 
 const WinLoseTransManagement  = async (balance, payload,user,action) => {
+  const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
+  const users = client.db(`${config.DBNAME}`).collection('users');
 	/*
 	action= 0 debit
 	action= 1 credit( decsion came from casino )
