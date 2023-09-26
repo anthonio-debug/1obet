@@ -228,11 +228,13 @@ async function getFinalReport(req, res) {
     var usedValue = userRecord.clientPL;
 
 
+
+    /*
     if (userRecord.role == 5) {
       usedValue = userRecord.clientPL;
     } else {
         usedValue = userRecord.cash + userRecord.balance;
-    }
+    }*/
 
     if (usedValue > -1) {
       results.positiveClients.push({ userName: userRecord.userName, userId: userRecord.userId, clientPL: usedValue });
