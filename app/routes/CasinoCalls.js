@@ -17,6 +17,9 @@ const transactionOptions  = {
 };
 
 const WinLoseTransManagement  = async (balance, payload,user,action) => {
+  const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+  await client.connect();
+  const session = client.startSession();
   const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
   const users = client.db(`${config.DBNAME}`).collection('users');
 	/*
