@@ -565,9 +565,6 @@ async function debitfun(req, res) {
       }
       let balance = user.availableBalance / casinoMultiples;
       const res = await WinLoseTransManagement(balance, payload, user, 0);
-      const casinoDebits = new CasinoDebits(payload);
-      await casinoDebits.save();
-      console.log("allTrans created Successfully");
     }, transactionOptions);
 
     await session.commitTransaction();
@@ -591,7 +588,6 @@ async function creditfun(req, res) {
   const session = client.startSession();
   try {
     console.log(" credit req.query ======= ", req.query);
-    // console.log('======', session.emit())
     const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
     const users = client.db(`${config.DBNAME}`).collection('users');
 
@@ -615,8 +611,6 @@ async function creditfun(req, res) {
     }
 
     let updatedavailableBalance = 0
-    let updatedclientPL = 0
-    let updatedbalance = 0
     await session.withTransaction(async () => {
       const sameTransId = await casinoCalls.countDocuments(
         {
