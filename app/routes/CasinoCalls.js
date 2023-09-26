@@ -32,7 +32,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
     let bettor_lost_amount = 0;
   */
 
-  console.log(" ================ payload amount : ", payload.amount);
+  console.log(" ================ credit payload ================ ", payload);
 
   const now = new Date();
   const year = now.getFullYear().toString();
