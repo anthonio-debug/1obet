@@ -71,6 +71,9 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       round_id: payload.round_id,
       remote_id: payload.remote_id,
     })
+
+    console.log(" ======================= lastDebit =======================  ", lastDebit);
+
     const debit = lastDebit.amount;
     const credit = payload.amount;
     const difference = credit - debit;
