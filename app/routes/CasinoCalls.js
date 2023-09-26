@@ -62,7 +62,9 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
     console.log("allTrans created Successfully");
     return 0
   }
+
   else if (action == 1) {
+    console.log(" ======================= CREDIT IS CAALED =======================   ");
     const lastDebit = await casinoCalls.findOne({
       action: 'debit',
       game_id: payload.game_id,
@@ -73,7 +75,8 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
     const credit = payload.amount;
     const difference = credit - debit;
     if (difference < 0) {
-      console.log("===========if(difference < 0){===============");
+      console.log(" ======================= difference < 0 =======================   ");
+
       /**
        * lose some money mean there will not be any commission only adjust the lost amount into exposure. 
        * 400-1500 = -1100 OR 1499-1500 = -1 OR 0-1500 = -1500
@@ -105,7 +108,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
 
       //divide lost money to all share holders.
 
-      let vattorLostTran = {
+      let BattorLostTran = {
         userId: user.userId,
         description: `Casino (${payload.game_id})`,
         amount: - bettor_lost_amount,
@@ -123,7 +126,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
         cashOrCredit: "Bet",
         sportsId: "6",
       }
-      allTrans.push(vattorLostTran)
+      allTrans.push(BattorLostTran)
 
       //start of code for giving shares to all share holders
       const parentUserIds = [];
@@ -221,8 +224,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
     }
 
     else if (difference > 0){
-      const allTrans = [];
-      console.log("=============start of }else if (difference > 0){=============");
+      console.log(" ======================= difference < 0 =======================   ");
 
       /**
        * Win Some Amount  
@@ -421,14 +423,14 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
       console.log("=============end of }else if (difference > 0){=============");
-    } 
-    
-    
+    }
+
     else {
       console.log("=============}else {=============");
       console.log("=============}else {=============");
     }
     console.log("All Transection Successfull ");
+    return 0
   }
 }
 
@@ -652,8 +654,6 @@ async function creditfun(req, res) {
       }
       const amount = payload.amount * casinoMultiples;
       const res = await WinLoseTransManagement(0, payload, user, 1);
-      const casinoDebits = new CasinoDebits(payload);
-      await casinoDebits.save();
     }, transactionOptions);
 
     await session.commitTransaction();
