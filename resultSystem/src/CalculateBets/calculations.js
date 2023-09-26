@@ -301,6 +301,7 @@ async function handleWinningBet(bet) {
   for (const user of parentUser) {
     user.exposure += (user.commission / 100) * totalRemainingAmount;
     user.balance -= (user.commission / 100) * remainingAmount;
+    user.availableBalance += (user.commission / 100) * commissionAmount;
     user.clientPL += user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * remainingAmount : 0;
     await user.save();
 
