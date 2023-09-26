@@ -64,7 +64,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
       $in: [...parentUsersIds],
     },
     isDeleted: false,
-  }).sort({ role: -1 });
+  }).sort({ userId: -1 });
   let prev = 0;
   parentUser.forEach((user) => {
     let current = user.downLineShare;
