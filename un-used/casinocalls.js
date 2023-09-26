@@ -508,10 +508,6 @@ async function debitfun(req, res) {
     }
 
     let updatedavailableBalance = 0
-    let updatedclientPL = 0
-    let updatedbalance = 0
-
-
     await session.withTransaction(async () => {
       const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
       const users = client.db(`${config.DBNAME}`).collection('users');
@@ -561,7 +557,7 @@ async function debitfun(req, res) {
         return res.json({ status: '500', msg: 'Negative bet not allowed!' });
       }
 
-      const updatedavailableBalance = user.availableBalance - (amount);
+      updatedavailableBalance = user.availableBalance - (amount);
 
       if (updatedavailableBalance < 0) {
         await session.abortTransaction();
@@ -575,7 +571,7 @@ async function debitfun(req, res) {
     }, transactionOptions);
 
     await session.commitTransaction();
-    console.log(" Amount Returnning to Casino from Credit  ", updatedavailableBalance / 10);
+    console.log(" Amount Returnning to Casino from Debit  ", updatedavailableBalance / casinoMultiples);
     return res.json({
       status: 200,
       balance: updatedavailableBalance / casinoMultiples
