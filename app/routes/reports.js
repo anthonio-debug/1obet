@@ -187,16 +187,13 @@ async function getFinalReport(req, res) {
   let parents = [userId];
   let childUsers;
 
-  do {
-    childUsers = await User.distinct("userId", {
-      createdBy: {
-        $in: parents
-      }
-    });
-    console.log(" child users ======= ", childUsers);
-    if (childUsers.length) users.push(...childUsers)
-    parents = childUsers
-  } while (childUsers.length > 0)
+  childUsers = await User.distinct("userId", {
+    createdBy: {
+      $in: parents
+    }
+  });
+  console.log(" child users ======= ", childUsers);
+  if (childUsers.length) users.push(...childUsers)
 
   let results = {
     negativeClients: [],
@@ -215,13 +212,15 @@ async function getFinalReport(req, res) {
   //userName, clientPL, userId
 
 
+  results.positiveClients.push({ userName: 'Cash', userId: currentUser.userId, clientPL: currentUser.credit + currentUser.cash   });
+  results.totalPositiveClientPL = results.totalPositiveClientPL + currentUser.credit + currentUser.cash 
 
   if (currentUser.balance > -1) {
-    results.positiveClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: currentUser.credit + currentUser.cash - currentUser.balance  });
-    results.totalPositiveClientPL = results.totalPositiveClientPL + currentUser.credit + currentUser.cash - currentUser.balance
+    results.positiveClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL:  currentUser.balance  });
+    results.totalPositiveClientPL = results.totalPositiveClientPL +  currentUser.balance
   } else {
-    results.negativeClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: currentUser.credit + currentUser.cash - currentUser.balance });
-    results.totalNegativeClientPL = results.totalNegativeClientPL + currentUser.credit + currentUser.cash - currentUser.balance;
+    results.negativeClients.push({ userName:currentUser.userName, userId: currentUser.userId, clientPL:  currentUser.balance });
+    results.totalNegativeClientPL = results.totalNegativeClientPL +  currentUser.balance;
   }
 
 
@@ -231,15 +230,13 @@ async function getFinalReport(req, res) {
     var usedValue = userRecord.clientPL;
 
 
+
+
+    
     if (userRecord.role == 5) {
       usedValue = userRecord.clientPL;
     } else {
-      if (userRecord.clientPL != userRecord.cash) {
-        usedValue = userRecord.cash + userRecord.balance;
-      } else {
         usedValue = userRecord.clientPL + userRecord.balance;
-      }
-
     }
 
     if (usedValue > -1) {
