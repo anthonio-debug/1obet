@@ -187,7 +187,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
 
         const availableBalance = user.availableBalance + (user.commission / 100) * bettor_lost_amount;
         const balance = user.balance + (user.commission / 100) * bettor_lost_amount;
-        const clientPL = user.clientPL - user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * bettor_lost_amount : 0;
+        const clientPL = user.clientPL - user.downLineShare != 100 ?  user.clientPL - ((100 - user.downLineShare) / 100) * bettor_lost_amount : 0;
         const userResponse = await users.updateOne(
           { _id: user?._id }, 
           {
@@ -356,7 +356,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
 
         let availableBalance = user.balance - (user.commission / 100) * remainingAmount;
         let balance = user.balance - (user.commission / 100) * remainingAmount;
-        let clientPL = user.clientPL + user.downLineShare != 100 ? ((100 - user.downLineShare) / 100) * remainingAmount : 0;
+        let clientPL = user.clientPL + user.downLineShare != 100 ? user.clientPL + ((100 - user.downLineShare) / 100) * remainingAmount : 0;
 
         let userResponse = await users.updateOne(
           { _id: user?._id }, {
