@@ -32,7 +32,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
     let bettor_lost_amount = 0;
   */
 
-  console.log(" ================ payload amount : ", payload.amount);
+  console.log(" ================ credit payload ================ ", payload);
 
   const now = new Date();
   const year = now.getFullYear().toString();
@@ -77,6 +77,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
     const debit = lastDebit.amount;
     const credit = payload.amount;
     const difference = credit - debit;
+    const allTrans = [];
     if (difference < 0) {
       console.log(" ======================= difference < 0 =======================   ");
 
@@ -93,13 +94,13 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
        * its mean User lose 1100 
        * 
        */
-      const updatedavailableBalance = user.availableBalance + (credit * config.casinoMultiples);
-      const updatedclientPL = user.clientPL + (difference * config.casinoMultiples);
-      const updatedbalance = user.balance + (difference * config.casinoMultiples);
-      const bettor_lost_amount = debit - credit;
+      const updatedavailableBalance = user.availableBalance + (credit * casinoMultiples);
+      const updatedclientPL = user.clientPL + (difference * casinoMultiples);
+      const updatedbalance = user.balance + (difference * casinoMultiples);
+      const bettor_lost_amount = (debit - credit) * casinoMultiples;
       const allTrans = [];
 
-      //remove all exposure equal to total debit money of 1500
+      // remove all exposure equal to total debit money of 1500
 
       const amount = debit * config.casinoMultiples;
       const UpdatedExposure = user.exposure + amount;
@@ -109,13 +110,16 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
         { session }
       );
 
+      const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
+      const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
+
+      console.log(" ====================== ====================== ", lastMaxWithdraw);
       //divide lost money to all share holders.
 
       let BattorLostTran = {
         userId: user.userId,
         description: `Casino (${payload.game_id})`,
         amount: - bettor_lost_amount,
-
         balance: lastMaxWithdraw ? lastMaxWithdraw.balance - bettor_lost_amount : -bettor_lost_amount,
         availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
         maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,  
@@ -227,7 +231,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
     }
 
     else if (difference > 0){
-      console.log(" ======================= difference < 0 =======================   ");
+      console.log(" ======================= difference < 0 ======================= ");
 
       /**
        * Win Some Amount  
@@ -249,9 +253,9 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       let bettor_won_amount = credit - debit;
       //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
       
-      const amount = bettor_won_amount * config.casinoMultiples;
-      const remainingAmount = (amount / 100) * ( 100 - config.commission  );
-      const commissionAmount = (amount / 100) * config.commission;
+      const amount = bettor_won_amount * casinoMultiples;
+      const remainingAmount = (amount / 100) * ( 100 - commission  );
+      const commissionAmount = (amount / 100) * commission;
       let upMovingAmount = amount;
       let commissionFrom = user.userId;
       let upMovingCommAmount = commissionAmount;
