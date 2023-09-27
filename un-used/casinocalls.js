@@ -120,6 +120,9 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       let BattorLostTran = {
         userId: user.userId,
         description: `Casino (${payload.game_id})`,
+        date: now.getTime(),
+        createdAt: formattedDate,
+
         amount: - bettor_lost_amount,
         balance: lastMaxWithdraw ? lastMaxWithdraw.balance - bettor_lost_amount : -bettor_lost_amount,
         availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
@@ -254,8 +257,8 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
       
       const amount = bettor_won_amount * casinoMultiples;
-      const remainingAmount = (amount / 100) * ( 100 - commission  );
-      const commissionAmount = (amount / 100) * commission;
+      const remainingAmount = (amount / 100) * ( 100 - config.commission  );
+      const commissionAmount = (amount / 100) * config.commission;
       let upMovingAmount = amount;
       let commissionFrom = user.userId;
       let upMovingCommAmount = commissionAmount;
@@ -344,7 +347,6 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
         prev = current;
       }
       console.log(" ================= Commission Setting Done ================= ");
-
 
       for (const user of parentUser) {
 
@@ -671,10 +673,14 @@ async function creditfun(req, res) {
     }, transactionOptions);
 
     await session.commitTransaction();
+
+
     console.log(" Amount Returnning to Casino from Credit  ", updatedavailableBalance / casinoMultiples);
+
+    const finaluser = await users.findOne({remoteId: parseInt(payload.remote_id)});
     return res.json({
       status: 200,
-      balance: updatedavailableBalance / casinoMultiples,
+      balance: finaluser.availableBalance / casinoMultiples,
     });
 
   } catch (err) {

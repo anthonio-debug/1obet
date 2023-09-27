@@ -673,10 +673,14 @@ async function creditfun(req, res) {
     }, transactionOptions);
 
     await session.commitTransaction();
+
+
     console.log(" Amount Returnning to Casino from Credit  ", updatedavailableBalance / casinoMultiples);
+
+    const finaluser = await users.findOne({remoteId: parseInt(payload.remote_id)});
     return res.json({
       status: 200,
-      balance: updatedavailableBalance / casinoMultiples,
+      balance: finaluser.availableBalance / casinoMultiples,
     });
 
   } catch (err) {
