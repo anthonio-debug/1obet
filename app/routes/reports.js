@@ -220,7 +220,7 @@ async function getFinalReport(req, res) {
     results.totalPositiveClientPL = results.totalPositiveClientPL +  currentUser.balance
   } else {
     results.negativeClients.push({ userName:currentUser.userName, userId: currentUser.userId, clientPL:  currentUser.balance });
-    results.totalNegativeClientPL = results.totalNegativeClientPL +  currentUser.balance;
+    results.totalNegativeClientPL = results.totalNegativeClientPL -  currentUser.balance;
   }
 
 
@@ -236,7 +236,7 @@ async function getFinalReport(req, res) {
     if (userRecord.role == 5) {
       usedValue = userRecord.clientPL;
     } else {
-        usedValue = userRecord.clientPL + userRecord.balance;
+        usedValue = userRecord.clientPL;
     }
 
     if (usedValue > -1) {
