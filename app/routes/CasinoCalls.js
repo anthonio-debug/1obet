@@ -64,7 +64,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
   }
 
   else if (action == 1) {
-    console.log(" ======================= CREDIT IS CAALED =======================   ");
+    console.log(" ======================= CREDIT IS CAALED ======================= ");
     const lastDebit = await casinoCalls.findOne({
       action: 'debit',
       game_id: payload.game_id,
@@ -94,6 +94,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
        * its mean User lose 1100 
        * 
        */
+
       const updatedavailableBalance = user.availableBalance + (credit * casinoMultiples);
       const updatedclientPL = user.clientPL + (difference * casinoMultiples);
       const updatedbalance = user.balance + (difference * casinoMultiples);
@@ -227,7 +228,6 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       //end of code to give lost money to all share holders
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
-      console.log("=========== END OF if(difference < 0){===============");
     }
 
     else if (difference > 0){
@@ -432,9 +432,16 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       console.log("=============end of }else if (difference > 0){=============");
     }
 
-    else {
-      console.log("=============}else {=============");
-      console.log("=============}else {=============");
+    else if(difference == 0) {
+      const updatedavailableBalance = user.availableBalance + ( debit*casinoMultiples )
+      const UpdatedExposure = user.exposure + ( debit*casinoMultiples )
+      await users.updateOne(
+        { _id: user?._id },
+        { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure } },
+        { session }
+      );
+      const casinoDebits = new CasinoDebits(payload);
+      await casinoDebits.save();
     }
     console.log("All Transection Successfull ");
     return 0
