@@ -120,6 +120,9 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       let BattorLostTran = {
         userId: user.userId,
         description: `Casino (${payload.game_id})`,
+        date: now.getTime(),
+        createdAt: formattedDate,
+
         amount: - bettor_lost_amount,
         balance: lastMaxWithdraw ? lastMaxWithdraw.balance - bettor_lost_amount : -bettor_lost_amount,
         availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
@@ -344,7 +347,6 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
         prev = current;
       }
       console.log(" ================= Commission Setting Done ================= ");
-
 
       for (const user of parentUser) {
 
