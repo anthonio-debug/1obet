@@ -220,7 +220,7 @@ async function getFinalReport(req, res) {
     results.totalPositiveClientPL = results.totalPositiveClientPL +  currentUser.balance
   } else {
     results.negativeClients.push({ userName:currentUser.userName, userId: currentUser.userId, clientPL:  currentUser.balance });
-    results.totalNegativeClientPL = results.totalNegativeClientPL -  currentUser.balance;
+    results.totalNegativeClientPL = results.totalNegativeClientPL +  currentUser.balance;
   }
 
 
@@ -254,14 +254,14 @@ async function getFinalReport(req, res) {
     const parentUserData = await User.findOne({ userId: currentUser.createdBy }, { _id: 1, userId: 1, balance: 1, userName: 1 });
     if (parentUserData) {
       results.negativeClients.push({ userName: parentUserData.userName, userId: parentUserData.userId, clientPL: (currentUser.credit  - currentUser.clientPL) * -1 });
-      results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.credit - currentUser.clientPL) * -1;
+      results.totalNegativeClientPL = results.totalNegativeClientPL + ( currentUser.clientPL) * -1;
     } else {
       results.negativeClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: (currentUser.credit - currentUser.clientPL) * -1});
-      results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.credit  - currentUser.clientPL) * -1;
+      results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL) * -1;
     }
   } else {
     results.negativeClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: (currentUser.credit  - currentUser.clientPL) * -1});
-    results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.credit - currentUser.clientPL) * -1;
+    results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL) * -1;
   }
 
 
