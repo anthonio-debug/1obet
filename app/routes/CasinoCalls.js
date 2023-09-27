@@ -257,8 +257,8 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
       
       const amount = bettor_won_amount * casinoMultiples;
-      const remainingAmount = (amount / 100) * ( 100 - commission  );
-      const commissionAmount = (amount / 100) * commission;
+      const remainingAmount = (amount / 100) * ( 100 - config.commission  );
+      const commissionAmount = (amount / 100) * config.commission;
       let upMovingAmount = amount;
       let commissionFrom = user.userId;
       let upMovingCommAmount = commissionAmount;
