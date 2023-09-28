@@ -578,8 +578,6 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
 
 }
 
-
-
 const tesTingsheet = async(req, res) =>{
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -639,7 +637,7 @@ const tesTingsheet = async(req, res) =>{
     {
       $group:{
         _id: "$userId",
-        name: "$userName",
+        // name: "$userName",
         amount: "$clientPL",
       }
     }
