@@ -591,7 +591,7 @@ const tesTingsheet = async(req, res) =>{
   const currentUser = await User.findOne({ userId: userId })
   const parentUser  = await User.findOne({ userId: currentUser.createdBy })
 
-  const res = [
+  const resp = [
     {
       _id: currentUser.userId,
       name: cash,
@@ -629,7 +629,7 @@ const tesTingsheet = async(req, res) =>{
   return res.send({
     success: true,
     message: 'Final Sheet Reports',
-    results: res.concat(response)
+    results: resp.concat(response)
   });
 
 }
