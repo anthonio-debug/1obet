@@ -637,8 +637,8 @@ const tesTingsheet = async(req, res) =>{
     {
       $group:{
         _id: "$userId",
-        // name: "$userName",
-        amount: "$clientPL",
+        name: { $first: "$userName" },
+        amount:  { $sum: "$clientPL" } 
       }
     }
   ]);
