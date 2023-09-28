@@ -234,9 +234,9 @@ async function getFinalReport(req, res) {
 
     
     if (userRecord.role == 5) {
-      usedValue = userRecord.clientPL+currentUser.credit;
+      usedValue = userRecord.clientPL+userRecord.credit;
     } else {
-        usedValue = userRecord.clientPL+currentUser.credit;
+        usedValue = userRecord.clientPL+userRecord.credit;
     }
 
     if (usedValue > -1) {
