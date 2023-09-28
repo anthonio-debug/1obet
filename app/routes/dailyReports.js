@@ -578,8 +578,65 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
 
 }
 
+
+
+const tesTingsheet = async(req, res) =>{
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+
+  const userId      = req.decoded.userId;
+  const users       = await User.distinct("userId", { createdBy:  userId });
+  const currentUser = await User.findOne({ userId: userId })
+  const parentUser  = await User.findOne({ userId: currentUser.createdBy })
+
+  const res = [
+    {
+      _id: currentUser.userId,
+      name: cash,
+      amount : currentUser.cash
+    },
+    {
+      _id: currentUser.userId,
+      name: currentUser.userName,
+      amount : currentUser.balance
+    },
+    {
+      _id: parentUser.userId,
+      name: parentUser.userName,
+      amount : currentUser.clientPL * (-1)
+    }
+  ]
+
+  const response = await User.aggregate([
+    {  
+      $match: {
+        userId: {
+          $in: users
+        }
+      }
+    },
+    {
+      $group:{
+        _id: "$userId",
+        name: "$userName",
+        amount: "$clientPL",
+      }
+    }
+  ]);
+
+  return res.send({
+    success: true,
+    message: 'Final Sheet Reports',
+    results: res.concat(response)
+  });
+
+}
+
 loginRouter.get('/getDailyReport', getDailyReport);
 loginRouter.get('/dailySportsWiseReport', dailySportsWiseReport);
 loginRouter.get('/dailyMatchWiseReports',  dailyMatchWiseReports);
 loginRouter.get('/dailyMatchWiseDetailedReports',  dailyMatchWiseDetailedReports);
+loginRouter.get('/tesTingsheet', tesTingsheet);
 module.exports = { loginRouter };

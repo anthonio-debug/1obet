@@ -162,5 +162,7 @@
   "getEventWinnerName",
   "getWaitingBetsForManuel",
   "setSessionScore",
-  "getSessionScore"
+  "getSessionScore",
+
+  "tesTingsheet"
 ]
