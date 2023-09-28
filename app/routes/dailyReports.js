@@ -594,7 +594,7 @@ const tesTingsheet = async(req, res) =>{
   const resp = [
     {
       _id: currentUser.userId,
-      name: cash,
+      name: "cash",
       amount : currentUser.cash
     },
     {
