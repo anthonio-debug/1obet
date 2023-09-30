@@ -66,6 +66,6 @@
   "Cup": 12,
   "tiedMatch": 35,
   "overUnder": 14,
-  "raceOpenBefore" : 1200000000000000,
+  "raceOpenBefore" : 120000,
   "sportsOpenBefore" : 600000
 }

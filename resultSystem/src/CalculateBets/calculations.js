@@ -415,11 +415,6 @@ async function handleDrawBet(bet) {
   });
 
   parentUser.forEach((user) => {
-    console.log('commission: ' + user["commission"]);
-  });
-
-
-  parentUser.forEach((user) => {
     user.exposure += (user.commission / 100) * totalRemainingAmount;
     user.availableBalance += (user.commission / 100) * totalRemainingAmount;
     user.save();
