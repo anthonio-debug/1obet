@@ -212,8 +212,8 @@ async function getFinalReport(req, res) {
   //userName, clientPL, userId
 
 
-  results.positiveClients.push({ userName: 'Cash', userId: currentUser.userId, clientPL: currentUser.credit + currentUser.cash   });
-  results.totalPositiveClientPL = results.totalPositiveClientPL + currentUser.credit + currentUser.cash 
+  results.positiveClients.push({ userName: 'Cash', userId: currentUser.userId, clientPL: currentUser.creditRemaining + currentUser.cash   });
+  results.totalPositiveClientPL = results.totalPositiveClientPL + currentUser.creditRemaining + currentUser.cash 
 
   if (currentUser.balance > -1) {
     results.positiveClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL:  currentUser.balance  });
@@ -234,9 +234,9 @@ async function getFinalReport(req, res) {
 
     
     if (userRecord.role == 5) {
-      usedValue = userRecord.clientPL;
+      usedValue = userRecord.clientPL+userRecord.creditRemaining;
     } else {
-        usedValue = userRecord.clientPL;
+        usedValue = userRecord.clientPL+userRecord.creditRemaining;
     }
 
     if (usedValue > -1) {
@@ -253,15 +253,15 @@ async function getFinalReport(req, res) {
   if (currentUser.createdBy !== 0) {
     const parentUserData = await User.findOne({ userId: currentUser.createdBy }, { _id: 1, userId: 1, balance: 1, userName: 1 });
     if (parentUserData) {
-      results.negativeClients.push({ userName: parentUserData.userName, userId: parentUserData.userId, clientPL: ( currentUser.clientPL) * -1 });
-      results.totalNegativeClientPL = results.totalNegativeClientPL + ( currentUser.clientPL) * -1;
+      results.negativeClients.push({ userName: parentUserData.userName, userId: parentUserData.userId, clientPL: ( currentUser.clientPL + currentUser.credit) * -1 });
+      results.totalNegativeClientPL = results.totalNegativeClientPL + ( currentUser.clientPL + currentUser.credit) * -1;
     } else {
-      results.negativeClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: ( currentUser.clientPL) * -1});
-      results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL) * -1;
+      results.negativeClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: ( currentUser.clientPL+ currentUser.credit) * -1});
+      results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL+ currentUser.credit) * -1;
     }
   } else {
-    results.negativeClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: ( currentUser.clientPL) * -1});
-    results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL) * -1;
+    results.negativeClients.push({ userName: currentUser.userName, userId: currentUser.userId, clientPL: ( currentUser.clientPL+ currentUser.credit) * -1});
+    results.totalNegativeClientPL = results.totalNegativeClientPL + (currentUser.clientPL + currentUser.credit) * -1;
   }
 
 
