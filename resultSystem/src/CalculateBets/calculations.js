@@ -245,7 +245,8 @@ async function handleWinningBet(bet) {
   if(bet.calculateExp){
     userToUpdate.exposure += bet.exposureAmount;
   }
-  userToUpdate.availableBalance += loosingAmount + remainingAmount;
+  //userToUpdate.availableBalance += loosingAmount + remainingAmount;
+  userToUpdate.availableBalance +=  remainingAmount;
   await userToUpdate.save();
   console.log(" =============== User Updated Successfull ");
 
