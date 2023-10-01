@@ -130,7 +130,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
         cash:  lastMaxWithdraw?.cash || 0 ,
         credit: lastMaxWithdraw?.credit || 0 ,
         creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
-
+        calledArea: " difference < 0 ",
         createdBy: 0,
         // matchId: bet.matchId,
         betId: payload.transaction_id,
@@ -234,7 +234,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
     }
 
     else if (difference > 0){
-      console.log(" ======================= difference < 0 ======================= ");
+      console.log(" ======================= difference > 0 ======================= ");
 
       /**
        * Win Some Amount  
@@ -263,13 +263,13 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       let commissionFrom = user.userId;
       let upMovingCommAmount = commissionAmount;
       
-      console.log("==========bettor_won_amount==============", bettor_won_amount);
-      console.log("==========amount==============", amount);
-      console.log("==========remainingAmount==============", remainingAmount);
-      console.log("==========commissionAmount==============", commissionAmount);
-      console.log("==========upMovingAmount==============", upMovingAmount);
-      console.log("========== upMovingCommAmount ==============", upMovingCommAmount);
-      console.log(" ============ handle Winning Bet ============ ");
+      // console.log("==========bettor_won_amount==============", bettor_won_amount);
+      // console.log("==========amount==============", amount);
+      // console.log("==========remainingAmount==============", remainingAmount);
+      // console.log("==========commissionAmount==============", commissionAmount);
+      // console.log("==========upMovingAmount==============", upMovingAmount);
+      // console.log("========== upMovingCommAmount ==============", upMovingCommAmount);
+      // console.log(" ============ handle Winning Bet ============ ");
 
       const updatedavailableBalance = user.availableBalance + (remainingAmount) + debit*config.casinoMultiples;
       const updatedclientPL = user.clientPL + (remainingAmount);
@@ -291,14 +291,13 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
       const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
 
-      console.log("lastMaxWithdraw1", lastMaxWithdraw);
+      console.log(" ================ lastMaxWithdraw ================ ", lastMaxWithdraw);
       let UserWinBetTrans = {
         userId: user.userId,
         description: `Casino (${payload.game_id})`,
         date: now.getTime(),
         createdAt: formattedDate,
         createdBy: 0,
-
         amount: remainingAmount,
         balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
         availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
@@ -308,9 +307,9 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
         credit: lastMaxWithdraw?.credit || 0,
         creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
         betId: payload.transaction_id,
+        calledArea: "difference > 0",
         sportsId: "6",
         marketId: payload.game_id,
-
       }
       allTrans.push(UserWinBetTrans)
 

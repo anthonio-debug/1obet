@@ -15,6 +15,7 @@ let depositsSchema = new Schema({
   credit: { type : Number, default: 0 },
   creditRemaining: { type : Number, default: 0 },
   cashOrCredit: { type: String },
+  calledArea: { type: String },
   createdBy: { type: String },
 
   matchId: { type: String, index: true },
