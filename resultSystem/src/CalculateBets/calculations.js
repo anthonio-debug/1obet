@@ -239,16 +239,18 @@ async function handleWinningBet(bet) {
     upMovingAmount = totalRemainingAmount
     upMovingCommAmount = commissionAmount
   }
-  
-   userToUpdate.balance += remainingAmount;
-   userToUpdate.clientPL += remainingAmount;
-   let varclientPL = userToUpdate.clientPL = userToUpdate.clientPL + remainingAmount
+
+  userToUpdate.balance += remainingAmount;
+  userToUpdate.clientPL += remainingAmount;
+  let varclientPL = userToUpdate.clientPL;
   userToUpdate.availableBalance =  varclientPL;
+  
+  
+  
   if(bet.calculateExp){
     userToUpdate.exposure += bet.exposureAmount;
   }
   //userToUpdate.availableBalance += loosingAmount + remainingAmount;
-  
   await userToUpdate.save();
   console.log(" =============== User Updated Successfull ");
 
