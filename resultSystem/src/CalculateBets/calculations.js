@@ -239,12 +239,11 @@ async function handleWinningBet(bet) {
     upMovingAmount = totalRemainingAmount
     upMovingCommAmount = commissionAmount
   }
-  let prevbalance = userToUpdate.balance;
-  let prevavailablebalance = userToUpdate.availableBalance;
+  
+  userToUpdate.availableBalance =  userToUpdate.balance + remainingAmount;
   userToUpdate.balance += remainingAmount;
   userToUpdate.clientPL += remainingAmount;
-  let varclientPL = prevbalance + remainingAmount;
-  userToUpdate.availableBalance =  varclientPL;
+  
   
   
   
