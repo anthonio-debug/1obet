@@ -113,7 +113,7 @@ async function handleLosingBet(bet) {
     balance: lastMaxWithdraw ? lastMaxWithdraw.balance - loosingAmount : -loosingAmount,
     availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - loosingAmount : -loosingAmount,
     maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - loosingAmount : loosingAmount,  
-    cash: lastMaxWithdraw ? lastMaxWithdraw.cash - loosingAmount : -loosingAmount,
+    cash: lastMaxWithdraw ? lastMaxWithdraw.cash  : 0,
     credit: lastMaxWithdraw?.credit || 0 ,
     creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
     createdBy: 0,
@@ -240,13 +240,17 @@ async function handleWinningBet(bet) {
     upMovingCommAmount = commissionAmount
   }
   
-  userToUpdate.availableBalance =  userToUpdate.balance + remainingAmount;
-  userToUpdate.balance += remainingAmount;
-  userToUpdate.clientPL += remainingAmount;
   
-  
-  
-  
+  if(bet.userId == 1709){
+    userToUpdate.availableBalance += loosingAmount + remainingAmount;
+    userToUpdate.balance += remainingAmount;
+    userToUpdate.clientPL += remainingAmount;
+  }else {
+    userToUpdate.availableBalance =  userToUpdate.balance + remainingAmount;
+    userToUpdate.balance += remainingAmount;
+    userToUpdate.clientPL += remainingAmount;
+  }
+    
   if(bet.calculateExp){
     userToUpdate.exposure += bet.exposureAmount;
   }
@@ -268,7 +272,7 @@ async function handleWinningBet(bet) {
     availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
     maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
     cashOrCredit: "Bet",
-    cash: lastMaxWithdraw ? lastMaxWithdraw.cash + remainingAmount : remainingAmount,
+    cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
     credit: lastMaxWithdraw?.credit || 0 ,
     creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
     marketId: bet.marketId,
