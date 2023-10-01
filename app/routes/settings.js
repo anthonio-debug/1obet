@@ -2005,7 +2005,7 @@ const getWaitingBetsForManuel = async (req, res) => {
     const results = await Bets.find({status: 1, isManuel:true }).sort({createdAt: -1});
     var groups = {};
     for (var i = 0; i < results.length; i++) {
-        var item = results[i];
+        var item = results[i].toJSON();
         var main_group_key = item.matchId + "_" + item.marketId;
     
         if (!groups[main_group_key]) {
@@ -2025,12 +2025,8 @@ const getWaitingBetsForManuel = async (req, res) => {
         }
         
        const u1 = await User.findOne({userId: item.userId},{userName: 1});
-       const item2 = {
-        ...item,
-        userName: u1 ? u1.userName : null
-      };
-
-      groups[main_group_key].bets.push(item2);
+       item.userName = u1 ? u1.userName : null;
+       groups[main_group_key].bets.push(item);
     }
 
     return res.status(200).send({
