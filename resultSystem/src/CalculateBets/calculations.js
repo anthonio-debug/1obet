@@ -82,12 +82,12 @@ async function getAllBets(Id) {
 }
 
 async function handleLosingBet(bet) {
-  console.log(`Bet ${bet._id} lost.`);
 
+  console.log(`Bet ${bet._id} lost.`);
   const userId = bet.userId;
   const loosingAmount = bet.loosingAmount;
-  const betAmount = bet.betAmount;
   console.log("loosingAmount", loosingAmount);
+
   const userToUpdate = await User.findOne({
     userId: userId,
     isDeleted: false,
@@ -98,6 +98,7 @@ async function handleLosingBet(bet) {
   }
   userToUpdate.balance -= loosingAmount;
   userToUpdate.clientPL -= loosingAmount;
+  userToUpdate.availableBalance -=  bet.loosingAmount;
   if(bet.calculateExp){
     userToUpdate.exposure += bet.exposureAmount;
   }
@@ -239,22 +240,23 @@ async function handleWinningBet(bet) {
     upMovingAmount = totalRemainingAmount
     upMovingCommAmount = commissionAmount
   }
+
+
+  userToUpdate.balance += remainingAmount;
+  userToUpdate.clientPL += remainingAmount;
+  userToUpdate.availableBalance += bet.winningAmount;
   
-  
-  if(bet.userId == 1709){
-    userToUpdate.availableBalance += loosingAmount + remainingAmount;
-    userToUpdate.balance += remainingAmount;
-    userToUpdate.clientPL += remainingAmount;
-  }else {
-    userToUpdate.availableBalance =  userToUpdate.balance + remainingAmount;
-    userToUpdate.balance += remainingAmount;
-    userToUpdate.clientPL += remainingAmount;
-  }
-    
+  /** 
+     * Shah G codes
+     * userToUpdate.availableBalance =  userToUpdate.balance + remainingAmount;
+     * userToUpdate.balance += remainingAmount;
+     * userToUpdate.clientPL += remainingAmount;
+  */ 
+
   if(bet.calculateExp){
-    userToUpdate.exposure += bet.exposureAmount;
+    userToUpdate.exposure +=  bet.exposureAmount;
   }
-  //userToUpdate.availableBalance += loosingAmount + remainingAmount;
+
   await userToUpdate.save();
   console.log(" =============== User Updated Successfull ");
 
@@ -386,8 +388,6 @@ async function handleDrawBet(bet) {
   console.log(`Bet ${bet._id} lost.`);
 
   const userId = bet.userId;
-  const loosingAmount = bet.loosingAmount;
-  const betAmount = bet.betAmount;
   const userToUpdate = await User.findOne({
     userId: userId,
     isDeleted: false,
@@ -396,11 +396,10 @@ async function handleDrawBet(bet) {
   if (!userToUpdate) {
     return res.status(404).send({ message: "user not found" });
   }
-  const totalRemainingAmount = bet.winningAmount;
-  const TotalLoosingAmount = bet.loosingAmount;
-
   if(bet.calculateExp){
-    userToUpdate.availableBalance += bet.exposureAmount;
+    if(bet.exposureAmount == bet.loosingAmount){
+      userToUpdate.availableBalance += bet.exposureAmount;
+    }
     userToUpdate.exposure += bet.exposureAmount;
     await userToUpdate.save();
   }
