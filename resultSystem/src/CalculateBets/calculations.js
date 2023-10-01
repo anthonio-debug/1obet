@@ -96,12 +96,14 @@ async function handleLosingBet(bet) {
   if (!userToUpdate) {
     return res.status(404).send({ message: "user not found" });
   }
-  userToUpdate.balance -= loosingAmount;
-  userToUpdate.clientPL -= loosingAmount;
-  userToUpdate.availableBalance -=  bet.loosingAmount;
+  userToUpdate.balance          -= loosingAmount;
+  userToUpdate.clientPL         -= loosingAmount;
+  let userToUpdateAvailableBalance   = -loosingAmount;
   if(bet.calculateExp){
+    userToUpdateAvailableBalance += bet.exposureAmount
     userToUpdate.exposure += bet.exposureAmount;
   }
+  userToUpdate.availableBalance -= loosingAmount;
   await userToUpdate.save();
   console.log(" ======================== User Updating Sucessfully ");
 
@@ -244,7 +246,12 @@ async function handleWinningBet(bet) {
 
   userToUpdate.balance += remainingAmount;
   userToUpdate.clientPL += remainingAmount;
-  userToUpdate.availableBalance += bet.winningAmount;
+  let userToUpdateAvailableBalance   =  bet.winningAmount;
+  if(bet.calculateExp){
+    userToUpdateAvailableBalance += bet.exposureAmount
+    userToUpdate.exposure += bet.exposureAmount;
+  }
+  userToUpdate.availableBalance -= loosingAmount;
   
   /** 
      * Shah G codes
@@ -253,9 +260,6 @@ async function handleWinningBet(bet) {
      * userToUpdate.clientPL += remainingAmount;
   */ 
 
-  if(bet.calculateExp){
-    userToUpdate.exposure +=  bet.exposureAmount;
-  }
 
   await userToUpdate.save();
   console.log(" =============== User Updated Successfull ");
@@ -385,8 +389,7 @@ async function handleWinningBet(bet) {
 }
 
 async function handleDrawBet(bet) {
-  console.log(`Bet ${bet._id} lost.`);
-
+  console.log(` Bet ${bet._id} Draw. `);
   const userId = bet.userId;
   const userToUpdate = await User.findOne({
     userId: userId,
@@ -397,9 +400,7 @@ async function handleDrawBet(bet) {
     return res.status(404).send({ message: "user not found" });
   }
   if(bet.calculateExp){
-    if(bet.exposureAmount == bet.loosingAmount){
-      userToUpdate.availableBalance += bet.exposureAmount;
-    }
+    userToUpdate.availableBalance += bet.exposureAmount;
     userToUpdate.exposure += bet.exposureAmount;
     await userToUpdate.save();
   }
