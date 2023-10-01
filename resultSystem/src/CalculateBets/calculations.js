@@ -242,8 +242,8 @@ async function handleWinningBet(bet) {
 
   userToUpdate.balance += remainingAmount;
   userToUpdate.clientPL += remainingAmount;
-  let varclientPL = userToUpdate.clientPL;
-  userToUpdate.availableBalance =  302;
+  let varclientPL = userToUpdate.clientPL + remainingAmount;
+  userToUpdate.availableBalance =  varclientPL;
   
   
   
