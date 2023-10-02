@@ -404,6 +404,8 @@ const handleDrawBet = async (bet, status = 1) => {
     await userToUpdate.save();
   }
 
+  const totalRemainingAmount = bet.winningAmount;
+
   const parentUserIds = await getParents(userId);
   const parentUser = await User.find({
     userId: {
