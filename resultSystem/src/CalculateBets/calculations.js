@@ -437,10 +437,10 @@ const handleDrawBet = async (bet, status = 1) => {
 }
 
 module.exports = {
+  handleDrawBet,
   getAllBets,
   getEndedMatches,
   handleLosingBet,
-  handleWinningBet,
-  handleDrawBet
+  handleWinningBet
 }
 

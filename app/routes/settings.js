@@ -2098,6 +2098,29 @@ const setSessionScore = async (req, res) => {
 
 }
 
+const cancelSingleBet = async (req, res) => {
+  if(req.decoded.role != 0){
+    return res.status(404).send({
+      success: false,
+      message: 'Unauthorized Operation',
+    }); 
+  }
+  const bet = await Bets.findById(req.body.betId)
+  if(!bet){
+    return res.status(404).send({
+      success: false,
+      message: 'bet could not foud',
+    }); 
+  }
+  console.log(" ================ Bet ================ ", bet);
+  await handleDrawBet(bet, 2);
+  return res.send({
+    success: true,
+    message: 'canceled Successfully !',
+  }); 
+
+}
+
 
 loginRouter.post(
   '/updateDefaultTheme',
@@ -2170,5 +2193,5 @@ loginRouter.post('/saveMarketIDSWinnerRunner', saveMarketIDSWinnerRunner);
 loginRouter.get('/getWaitingBetsForManuel', getWaitingBetsForManuel);
 loginRouter.get('/getSessionScore', getSessionScore);
 loginRouter.post('/setSessionScore', setSessionScore);
-
+loginRouter.post('/cancelSingleBet', cancelSingleBet);
 module.exports = { loginRouter, router, listOddsAPI };

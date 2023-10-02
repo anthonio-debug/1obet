@@ -28,10 +28,6 @@ const Session   = require('../models/Session');
 const { log } = require('async');
 const Cash = require("../../app/models/deposits");
 const mongoose = require('mongoose');
-const {
-  handleDrawBet
-} = require('../../resultSystem/src/CalculateBets/calculations')
-
 const handleLimitValue = async (selectedRate, marketId)=>{
   if(selectedRate?.toString()?.split('.')?.length ==1 && selectedRate >= 30) return 6;
   else if(selectedRate?.toString()?.split('.')?.length == 1 && selectedRate >= 20) return 3;
@@ -2944,29 +2940,7 @@ const dailyMatchWiseprofitLose = async(req, res) => {
   }
 }
 
-const cancelSingleBet = async (req, res) => {
-  if(req.decoded.role != 0){
-    return res.status(404).send({
-      success: false,
-      message: 'Unauthorized Operation',
-    }); 
-  }
-  const bet = await Bets.findById(req.body.betId)
-  if(!bet){
-    return res.status(404).send({
-      success: false,
-      message: 'bet could not foud',
-    }); 
-  }
-  console.log(" ================ Bet ================ ", bet);
-  await handleDrawBet(bet);
-  
-  return res.send({
-    success: true,
-    message: 'canceled Successfully !',
-  }); 
 
-}
 
 
 const postmanwork = async (req, res)=>{
@@ -3128,6 +3102,6 @@ loginRouter.get('/postmanwork', postmanwork);
 loginRouter.get('/profitLose', profitLose);
 loginRouter.get('/EventWiseprofitLose', EventWiseprofitLose);
 loginRouter.get('/dailyMatchWiseprofitLose', dailyMatchWiseprofitLose);
-loginRouter.post('/cancelSingleBet', cancelSingleBet);
+
 
 module.exports = { sessionCalc,  loginRouter, getParents };
