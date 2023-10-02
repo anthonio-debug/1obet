@@ -387,7 +387,7 @@ async function handleWinningBet(bet) {
   await CurrentPosition.deleteMany({ betId: betIdString })
 }
 
-async function handleDrawBet(bet) {
+const handleDrawBet = async (bet, status = 1) => {
   console.log(` Bet ${bet._id} Draw. `);
   const userId = bet.userId;
   const userToUpdate = await User.findOne({
@@ -428,7 +428,7 @@ async function handleDrawBet(bet) {
     user.save();
   });
 
-  await Bets.findByIdAndUpdate(bet._id, { status: 2 });
+  await Bets.findByIdAndUpdate(bet._id, { status: status });
   console.log(" betIdString =============== Starting  ");
   console.log(bet._id.toString());
   const betIdString = bet._id.toString();
