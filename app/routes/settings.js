@@ -1622,7 +1622,7 @@ async function setLoginHistories(req, res) {
       .status(404)
       .send({ message: 'only company can ... ' });
   }
-*/
+ */
   if (!res.body.search) {
     try {
       const users = await User.find({});
@@ -1873,7 +1873,6 @@ const getMarketIDSData = async (req, res) => {
       .send({ message: 'only company can ... ' });
   }
 
-
   try {
     if (!req.body.eventId) {
       return res.status(404).send({
@@ -1898,7 +1897,6 @@ const getMarketIDSData = async (req, res) => {
     });
   }
 }
-
 
 const saveMarketIDSWinnerRunner = async (req, res) => {
 
@@ -1940,8 +1938,6 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
         message: 'Winner runner saved without runner name.'
       });
     }
-
-
 
     var selectedR = null;
 
@@ -1985,10 +1981,6 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
       });
     }
 
-
-
-
-
   } catch (error) {
     return res.status(404).send({
       success: false,
@@ -1996,7 +1988,6 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
     });
   }
 }
-
 
 const getWaitingBetsForManuel = async (req, res) => {
 
@@ -2045,10 +2036,7 @@ const getWaitingBetsForManuel = async (req, res) => {
 
 };
 
-
 const getEventWinnerName = async (req, res) => {
-
-
   try {
     if (!req.body.eventId) {
       return res.status(404).send({
@@ -2072,7 +2060,6 @@ const getEventWinnerName = async (req, res) => {
   }
 }
 
-
 const getSessionScore = async (req, res) => {
 
   if (!req.query.eventId || !req.query.sessionNo) {
@@ -2092,7 +2079,6 @@ const getSessionScore = async (req, res) => {
 
 }
 
-
 const setSessionScore = async (req, res) => {
   if (!req.body.eventId || !req.body.sessionNo || !req.body.score) {
     return res.status(404).send({
@@ -2111,7 +2097,6 @@ const setSessionScore = async (req, res) => {
   });
 
 }
-
 
 
 loginRouter.post(
@@ -2179,22 +2164,11 @@ loginRouter.post('/getAllGamesResults', getAllGamesResults);
 loginRouter.get('/setBattingDisabled', setBattingDisabled);
 loginRouter.get('/sessionList', sessionList);
 loginRouter.post('/updateSessionScore', updateSessionScore);
-
-
-
-
 loginRouter.post('/getEventWinnerName', getEventWinnerName);
-
 loginRouter.post('/getMarketIDSData', getMarketIDSData);
 loginRouter.post('/saveMarketIDSWinnerRunner', saveMarketIDSWinnerRunner);
-
-
-
 loginRouter.get('/getWaitingBetsForManuel', getWaitingBetsForManuel);
-
 loginRouter.get('/getSessionScore', getSessionScore);
 loginRouter.post('/setSessionScore', setSessionScore);
-
-
 
 module.exports = { loginRouter, router, listOddsAPI };
