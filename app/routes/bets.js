@@ -1187,7 +1187,7 @@ const placeBet = async (req, res) => {
           const DbBackScores  = DbBackScores2.map(item => Number(item))
           console.log(" DbBackOdds ============ ", DbBackOdds);
           const index = DbBackOdds.indexOf(betRate)
-          TargetScore = DbBackScores[index]
+          TargetScore = betRate
 
           if (index == -1) {
             console.log(`index ================== ${index}`);
@@ -1212,7 +1212,7 @@ const placeBet = async (req, res) => {
           console.log(" DbBackOdds ============ ", DbBackOdds);
 
           const index = DbBackOdds.indexOf(betRate);
-          TargetScore = DbBackScores[index];
+          TargetScore = betRate
 
           if (index == -1) {
             console.log(` 1 index ================== ${index}`);
@@ -2940,7 +2940,7 @@ const dailyMatchWiseprofitLose = async(req, res) => {
     });
   }
 }
-
+a
 const postmanwork = async (req, res)=>{
   try{
     // const users = await User.find({ role: { $ne: '0' }  });
