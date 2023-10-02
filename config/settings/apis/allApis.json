@@ -163,6 +163,6 @@
   "getWaitingBetsForManuel",
   "setSessionScore",
   "getSessionScore",
-  
+  "cancelSingleBet",
   "tesTingsheet"
 ]
