@@ -2944,7 +2944,7 @@ const dailyMatchWiseprofitLose = async(req, res) => {
   }
 }
 
-const cancelSingleBet = async (req, res) =>{
+const cancelSingleBet = async (req, res) => {
   if(req.decoded.role != 0){
     return res.status(404).send({
       success: false,
@@ -2958,7 +2958,9 @@ const cancelSingleBet = async (req, res) =>{
       message: 'bet could not foud',
     }); 
   }
+  console.log(" ================ Bet ================ ", bet);
   await handleDrawBet(bet);
+  
   return res.send({
     success: true,
     message: 'canceled Successfully !',
