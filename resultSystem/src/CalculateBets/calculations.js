@@ -103,7 +103,7 @@ async function handleLosingBet(bet) {
     userToUpdateAvailableBalance += bet.exposureAmount
     userToUpdate.exposure += bet.exposureAmount;
   }
-  userToUpdate.availableBalance -= loosingAmount;
+  userToUpdate.availableBalance += userToUpdateAvailableBalance;
   await userToUpdate.save();
   console.log(" ======================== User Updating Sucessfully ");
 
@@ -251,7 +251,7 @@ async function handleWinningBet(bet) {
     userToUpdateAvailableBalance += bet.exposureAmount
     userToUpdate.exposure += bet.exposureAmount;
   }
-  userToUpdate.availableBalance -= loosingAmount;
+  userToUpdate.availableBalance += userToUpdateAvailableBalance;
   
   /** 
      * Shah G codes
