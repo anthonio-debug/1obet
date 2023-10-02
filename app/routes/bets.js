@@ -1177,14 +1177,14 @@ const placeBet = async (req, res) => {
 
         if (req.body.type == 0) {
 
-          const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
-          const apiBackOdds = apiBackOdds2.map(item => Number(item))
+          const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
+          const apiBackOdds  = apiBackOdds2.map(item => Number(item))
 
-          const DbBackOdds2 = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
-          const DbBackOdds = DbBackOdds2.map(item => Number(item))
+          const DbBackOdds2 = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
+          const DbBackOdds  = DbBackOdds2.map(item => Number(item))
 
-          const DbBackScores2 = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
-          const DbBackScores = DbBackScores2.map(item => Number(item))
+          const DbBackScores2 = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
+          const DbBackScores  = DbBackScores2.map(item => Number(item))
           console.log(" DbBackOdds ============ ", DbBackOdds);
           const index = DbBackOdds.indexOf(betRate)
           TargetScore = DbBackScores[index]
@@ -1200,13 +1200,13 @@ const placeBet = async (req, res) => {
           }
         }
         else if (req.body.type == 1) {
-          const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
+          const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
           const apiBackOdds = apiBackOdds2.map(item => Number(item));
 
-          const DbBackOdds2 = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
+          const DbBackOdds2 = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
           const DbBackOdds = DbBackOdds2.map(item => Number(item));
 
-          const DbBackScores2 = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
+          const DbBackScores2 = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
           const DbBackScores = DbBackScores2.map(item => Number(item));
 
           console.log(" DbBackOdds ============ ", DbBackOdds);
