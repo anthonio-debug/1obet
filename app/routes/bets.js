@@ -2940,7 +2940,6 @@ const dailyMatchWiseprofitLose = async(req, res) => {
     });
   }
 }
-a
 const postmanwork = async (req, res)=>{
   try{
     // const users = await User.find({ role: { $ne: '0' }  });
