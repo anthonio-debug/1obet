@@ -199,7 +199,7 @@ const battorcurrentPosition = async (req, res) => {
           "marketId": {
             "$first": "$matches.marketIds"
           },
-          amount: {
+          amount: -{
             $sum: "$exposureAmount"
           }
         }
