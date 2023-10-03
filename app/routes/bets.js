@@ -1056,80 +1056,208 @@ const placeBet = async (req, res) => {
     }
 
     // cricket Toss 
-    else if (config.sportMarkets.includes(marketId) &&  subMarketDetail.Id == config.Toss) {
-      console.log(" ======================== Toss ======================== ");
-      const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-      const response = await axios.get(url);
-      const oddsData = response.data;
-      console.log(" oddsData Test ============ ", oddsData);
-      if (!oddsData) {
-        console.log(`Match odds not found for sports ID ${sportsId}`);
-        return res.status(404).send({ message: `Bet mis match` });
-      }
-      console.log(' data from  API ', oddsData);
-      const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
-      if (!runnerFromAPI) {
-        console.log(" ================== Frontend provided odds _id do not found in db & _id =  ");
-        return res.status(404).send({
-          message: `Bet Miss Match`
-        });
-      }
+    // else if (config.sportMarkets.includes(marketId) &&  subMarketDetail.Id == config.Toss) {
+    //   console.log(" ======================== Toss ======================== ");
+    //   const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+    //   const response = await axios.get(url);
+    //   const oddsData = response.data;
+    //   console.log(" oddsData Test ============ ", oddsData);
+    //   if (!oddsData) {
+    //     console.log(`Match odds not found for sports ID ${sportsId}`);
+    //     return res.status(404).send({ message: `Bet mis match` });
+    //   }
+    //   console.log(' data from  API ', oddsData);
+    //   const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+    //   if (!runnerFromAPI) {
+    //     console.log(" ================== Frontend provided odds _id do not found in db & _id =  ");
+    //     return res.status(404).send({
+    //       message: `Bet Miss Match`
+    //     });
+    //   }
+    //   const DBOddDetails  = await Odds.findById(oddsId);
+    //   if (!DBOddDetails) {
+    //     return res.status(404).send({
+    //       message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
+    //     });
+    //   }
+
+    //   let runners = DBOddDetails?.runners;
+    //   runnerForSaveInbets  = runners.map((runner) => ({
+    //     runner: runner.SelectionId,
+    //     amount: 0
+    //   }));
+    //   console.log(" ============================ ========================== ", runnerForSaveInbets);
+    //   const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
+    //   runnerName = OddDetailsTeam?.runnerName
+
+
+
+    //   if (type == 0) {
+    //     ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack
+    //     const availableToBack = OddDetailsTeam.ExchangePrices.AvailableToBack;
+    //     console.log('availableToBack', availableToBack);
+    //     matchedIndex = availableToBack.findIndex((back) => {
+    //       return back.price == betRate;
+    //     });
+    //     console.log('matchedIndex', matchedIndex);
+    //     if (matchedIndex == -1) {
+    //       console.log(`751 No availableToBack odds matched with the bet rate ${betRate}`);
+    //       return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
+    //     }
+    //     selectedOddsRate = availableToBack[matchedIndex].price;
+
+    //   } else if (type == 1) {
+    //     ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToLay
+    //     const AvailableToLay = OddDetailsTeam.ExchangePrices.AvailableToLay;
+    //     console.log('AvailableToLay', AvailableToLay);
+    //     matchedIndex = AvailableToLay.findIndex((back) => {
+    //       return back.price === betRate;
+    //     });
+    //     console.log('matchedIndex', matchedIndex);
+    //     if (matchedIndex == -1) {
+    //       console.log(`764 No availableToBack odds matched with the bet rate ${betRate}`);
+    //       return res.status(404).send({ message: `Bet miss matched` });
+    //     }
+    //     selectedOddsRate = AvailableToLay[matchedIndex].price;
+
+    //   } else {
+    //     console.log('Invalid type value. Type should be 0 or 1.');
+    //     return res.status(400).send({ message: 'Bet miss matched' });
+    //   }
+    //   if (!selectedOddsRate) {
+    //     console.log('Selected odds not found for the bet');
+    //     return res.status(404).send({ message: 'Bet miss Matched' });
+    //   }
+    //   if (ApiResponseOdds[matchedIndex].price < betRate) {
+    //     return res.status(404).send({ message: `Bet miss matched` });
+    //   }
+    // }
+
+    else if (config.sportMarkets.includes(marketId) &&  subMarketDetail.Id == config.Toss){
+      _3rdPartyMarketId = overunderMarketId
+      console.log(" ======================== Soccer over under  ======================== ");
       const DBOddDetails  = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
         });
       }
-
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets  = runners.map((runner) => ({
         runner: runner.SelectionId,
         amount: 0
       }));
-      console.log(" ============================ ========================== ", runnerForSaveInbets);
       const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName
+      console.log(" ============================ ========================== ", runnerForSaveInbets);
+      console.log(" ========================================== id ========================================== ", id);
+      if(selectedBetRate == betRate){
+        for (let i = 1; i < 5; i++) {
+          setTimeout( async () => {
+            const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
+            const response = await axios.get(url);
+            const oddsData = response.data;
+            console.log(" ================ oddsData ================ ", oddsData);
+            const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+            let selectedOddsValue   = 0;
+            if (type == 0) {
+              const ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+              console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
+              if(ApiResponseOdds && ApiResponseOdds.length > 0){
+                selectedOddsValue = ApiResponseOdds[0].price
+              }
+              if(selectedOddsValue != 0 && betRate <= selectedOddsValue){
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
 
-
-
-      if (type == 0) {
-        ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack
-        const availableToBack = OddDetailsTeam.ExchangePrices.AvailableToBack;
-        console.log('availableToBack', availableToBack);
-        matchedIndex = availableToBack.findIndex((back) => {
-          return back.price == betRate;
-        });
-        console.log('matchedIndex', matchedIndex);
-        if (matchedIndex == -1) {
-          console.log(`751 No availableToBack odds matched with the bet rate ${betRate}`);
-          return res.status(404).send({ message: `No availableToBack odds matched with the bet rate ${req.body.betRate}` });
+            } 
+            else if (type == 1) {
+              const ApiResponseOdds = runnerFromAPI.ExchangePrices?.AvailableToLay
+              console.log(" =============== ApiResponseOdds ============ ", ApiResponseOdds);
+              if(ApiResponseOdds && ApiResponseOdds.length > 0){
+                selectedOddsValue = ApiResponseOdds[0]?.price
+              }
+              if(selectedOddsValue != 0 && betRate >=  selectedOddsValue){
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+            } 
+          }, 1000 * i);
         }
-        selectedOddsRate = availableToBack[matchedIndex].price;
-
-      } else if (type == 1) {
-        ApiResponseOdds = runnerFromAPI.ExchangePrices.AvailableToLay
-        const AvailableToLay = OddDetailsTeam.ExchangePrices.AvailableToLay;
-        console.log('AvailableToLay', AvailableToLay);
-        matchedIndex = AvailableToLay.findIndex((back) => {
-          return back.price === betRate;
+      }
+      else if (type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate){
+        console.log(" type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate Value Not found In this Array ");
+        return res.status(404).send({
+          message: `Bet Miss Matched `
         });
-        console.log('matchedIndex', matchedIndex);
-        if (matchedIndex == -1) {
-          console.log(`764 No availableToBack odds matched with the bet rate ${betRate}`);
-          return res.status(404).send({ message: `Bet miss matched` });
-        }
-        selectedOddsRate = AvailableToLay[matchedIndex].price;
+      }
+      else if (type == 0 && selectedBetRate < betRate &&  selectedBetRate - Digitaddition > betRate){
+        console.log(" type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array ");
+        return res.status(404).send({
+          message: `Bet Miss Matched `
+        });
+      }
+      else if (type == 1 && betRate < selectedBetRate){
+        console.log(" type == 1 && betRate < selectedBetRate ");
+        return res.status(404).send({
+          message: `Bet Miss Matched `
+        });
+      }
+      else if (type == 0 && betRate > selectedBetRate){
+        console.log(" type == 1 && betRate < selectedBetRate ");
+        return res.status(404).send({
+          message: `Bet Miss Matched `
+        });
+      }
 
-      } else {
-        console.log('Invalid type value. Type should be 0 or 1.');
-        return res.status(400).send({ message: 'Bet miss matched' });
+      else if (type == 1 &&  selectedBetRate != betRate){
+        for (let i = 0; i < 4; i++) {
+          setTimeout( async () => {      
+            const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
+            const response = await axios.get(url);
+            const oddsData = response.data;
+            console.log(" ================ oddsData ================ ", oddsData);
+            const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+            ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToLay;
+            console.log(" ================ ApiResponseOdds ================ ", ApiResponseOdds);
+            /**
+             * 
+             * selectedRate 30
+             * Bet Rate 29
+             * 
+             */
+            
+            let selectedOddsValue = ApiResponseOdds[0]?.price
+            console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
+            if(selectedOddsValue <= betRate){
+              multipeResponse.push(selectedOddsValue)
+            }
+            multipeResponseForSecurityCheck.push(selectedOddsValue)
+          }, 1000*i);  
+        }
       }
-      if (!selectedOddsRate) {
-        console.log('Selected odds not found for the bet');
-        return res.status(404).send({ message: 'Bet miss Matched' });
-      }
-      if (ApiResponseOdds[matchedIndex].price < betRate) {
-        return res.status(404).send({ message: `Bet miss matched` });
+
+      else if (type == 0 &&  selectedBetRate != betRate){
+
+
+        for (let i = 0; i < 4; i++) {
+          setTimeout( async () => {      
+            const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
+            const response = await axios.get(url);
+            const oddsData = response.data;
+            console.log(" ================ oddsData ================ ", oddsData);
+            const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
+            ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+            console.log(" ================ ApiResponseOdds ================ ", ApiResponseOdds);
+            let selectedOddsValue = ApiResponseOdds[0]?.price
+            console.log( " =================== selectedOddsValue =============== ", selectedOddsValue );
+            if(selectedOddsValue >= betRate){
+              multipeResponse.push(selectedOddsValue)
+            }
+            multipeResponseForSecurityCheck.push(selectedOddsValue)
+          }, 1000*i);  
+        }
       }
     }
 

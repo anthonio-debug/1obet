@@ -156,76 +156,87 @@ const currentPositionDetails = async (req, res) => {
   }
 }
 
-
-/*
-
-
-
-
-
-
-{
-  $group: {
-    _id: "$bets.runner",
-    marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
-    matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } },
-    loosingAmount: { $sum: "$amount" },    
-    // rumaxWinningAmountnner: { $first: { $arrayElemAt: ["$bets.loosingAmount", 0] } },
-    maxWinningAmount: { $sum: "$bets.loosingAmount" },
-    runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
-    share: { $first: "$share" }
-
+const battorcurrentPosition = async (req, res) => {
+  try{
+    const userId = req.decoded.userId;
+    Bets.aggregate([
+      {
+        $match: {
+          userId: userId,
+          status: 1
+        }
+      },
+      {
+        $addFields: {
+          'betsId': { $toObjectId: "$betId" }
+        }
+      },
+      {
+        "$lookup": {
+          "from": "bets",
+          "localField": "betsId",
+          "foreignField": "_id",
+          "as": "bets"
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
+          matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } },
+          loosingAmount: { $first: "$amount" },
+          maxWinningAmount: {
+            $first: {
+              $multiply: [
+                { $arrayElemAt: ["$bets.loosingAmount", 0] },
+                { $divide: ["$share", 100] }
+              ]
+            }
+          },
+          runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
+          TargetScore: { $first: { $arrayElemAt: ["$bets.TargetScore", 0] } },
+          betRate: { $first: { $arrayElemAt: ["$bets.betRate", 0] } },
+          betSession: { $first: { $arrayElemAt: ["$bets.betSession", 0] } },
+          resultId: { $first: { $arrayElemAt: ["$bets.resultId", 0] } },
+          fancyData: { $first: { $arrayElemAt: ["$bets.fancyData", 0] } },
+          isfancyOrbookmaker: { $first: { $arrayElemAt: ["$bets.isfancyOrbookmaker", 0] } },
+          subMarketId: { $first: { $arrayElemAt: ["$bets.subMarketId", 0] } },
+          fancyRate: { $first: { $arrayElemAt: ["$bets.fancyRate", 0] } },
+          runnerId: { $first: { $arrayElemAt: ["$bets.runnerName", 0] } },
+          type: { $first: { $arrayElemAt: ["$bets.type", 0] } },
+          share: { $first: "$share" }
+        }
+      }
+    ], (err, currentPositionData) => {
+      if (err) {
+        const response = {
+          success: false,
+          message: 'Failed to get data',
+          error: err,
+        };
+        res.send(response);
+      } else {
+        const response = {
+          success: true,
+          message: 'current position records',
+          results: currentPositionData
+        };
+        res.send(response);
+      }
+    });
+  }catch(err){
+    console.log("current positiion Error ============= ", err);
+    const response = {
+      success: true,
+      message: `current position error ${err}`,
+    }
+    res.send(response);
   }
 }
-
-
-{
-  "_id": "64fdcd9a63125f9f142ec55a",
-  "userId": 1153,
-  "description": "some transection name",
-  "amount": -2062.5,
-  "matchsId": "64fb1afaf8e611afeacbcec8",
-  "betId": "64fdcd9a63125f9f142ec553",
-  "share": 75,
-  "__v": 0,
-  "betsId": "64fdcd9a63125f9f142ec553",
-  "bets": {
-      "_id": "64fdcd9a63125f9f142ec553",
-      "sportsId": "4",
-      "marketId": "1.218012968",
-      "userId": 1154,
-      "betAmount": 1000,
-      "betRate": 3.75,
-      "returnAmount": 0,
-      "createdAt": 1694354842711,
-      "betSession": null,
-      "resultId": null,
-      "fancyData": null,
-      "isfancyOrbookmaker": false,
-      "TargetScore": 0,
-      "status": 1,
-      "matchId": "64fb1afaf8e611afeacbcec8",
-      "winningAmount": 2750,
-      "loosingAmount": 1000,
-      "subMarketId": "6",
-      "event": "Pakistan v India",
-      "runner": "7461",
-      "position": 0,
-      "type": 0,
-      "isFake": 0,
-      "runnerName": "Pakistan",
-      "fancyRate": 0,
-      "lastCheckResult": 0,
-      "updatedAt": 1694354842711,
-      "__v": 0
-  }
-}
-*/
-
 
 loginRouter.get('/getCurrentPosition', getCurrentPosition);
 loginRouter.get('/currentPositionDetails', currentPositionDetails);
-
+loginRouter.get('/battorcurrentPosition', battorcurrentPosition);
 
 module.exports = { loginRouter };
 
