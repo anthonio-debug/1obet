@@ -137,6 +137,10 @@ const placeBet = async (req, res) => {
     if (!user) {
       return res.status(404).send({ message: 'illegal user betting' });
     }
+    if(user.availableBalance <= 0) {
+      return res.status(404).send({ message: 'Insufficient balance' });
+    }
+
     if (user.bettingAllowed == false) {
       return res.status(404).send({ message: 'Bet not allowed' });
     }
@@ -299,7 +303,6 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `
         });
       }
-
       else if (type == 1 &&  selectedBetRate != betRate){
         for (let i = 0; i < 4; i++) {
           setTimeout( async () => {      
@@ -319,7 +322,6 @@ const placeBet = async (req, res) => {
           }, 1000*i);  
         }
       }
-
       else if (type == 0 &&  selectedBetRate != betRate){
         for (let i = 0; i < 4; i++) {
           setTimeout( async () => {      
@@ -1154,11 +1156,9 @@ const placeBet = async (req, res) => {
         // Get the runner name from the 'nat' field
         fancyData  = dbSelectedOdds.nat
         runnerName = dbSelectedOdds.nat; 
-        _3rdPartyMarketId = dbSelectedOdds.nat; 
-        console.log(" _3rdPartyMarketId =========== ", _3rdPartyMarketId);
+        _3rdPartyMarketId = dbSelectedOdds.nat;
 
         if (req.body.type == 0) {
-
           const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
           const apiBackOdds  = apiBackOdds2.map(item => Number(item))
 
@@ -1524,7 +1524,7 @@ const placeBet = async (req, res) => {
       /*  Current Position Of Runners  Calculations   */ 
       let runnersPosition = [];
       let prevExpAmount = 0;
-      let expAmount =  0 
+      let expAmount =  0;
       console.log(" ================ Selection ID ================ ", selectionId);
       if(subMarketDetail.Id == config.Fancy){
         expAmount = loosingAmount
@@ -1699,9 +1699,11 @@ const placeBet = async (req, res) => {
       });
       // if ((user.availableBalance < betAmount && type == 0) || (user.availableBalance < betAmount * (betRate - 1) && type == 1)) {
       console.log('userAvailableBalance', user.availableBalance)
-      if (user.availableBalance < expAmount-prevExpAmount ) {
+
+      if ( user.availableBalance < expAmount-prevExpAmount ) {
         return res.status(404).send({ message: 'Insufficient balance' });
       }
+
       if(subMarketDetail.Id != config.Fancy){
         let setCalculateExpFalse = await Bets.updateMany(
           { marketId: _3rdPartyMarketId, userId: userId, matchId: matchId, status: 1 },
