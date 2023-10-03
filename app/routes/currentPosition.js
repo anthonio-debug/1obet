@@ -163,48 +163,44 @@ const battorcurrentPosition = async (req, res) => {
       {
         $match: {
           userId: userId,
-          status: 1
+          status: 1,
+          calculateExp: true
         }
       },
       {
         $addFields: {
-          'betsId': { $toObjectId: "$betId" }
+          'matchesId': { $toObjectId: "$matchId" }
         }
       },
       {
         "$lookup": {
-          "from": "bets",
-          "localField": "betsId",
+          "from": "inplayevents",
+          "localField": "inPlayEventId",
           "foreignField": "_id",
-          "as": "bets"
+          "as": "matches"
         }
       },
       {
+        "$unwind": "$matches"
+      },
+      {
         $group: {
-          _id: "$_id",
-          marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
-          matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } },
-          loosingAmount: { $first: "$amount" },
-          maxWinningAmount: {
-            $first: {
-              $multiply: [
-                { $arrayElemAt: ["$bets.loosingAmount", 0] },
-                { $divide: ["$share", 100] }
-              ]
-            }
+          _id: "$matches._id",
+          "name": {
+            "$first": "$matches.name"
           },
-          runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
-          TargetScore: { $first: { $arrayElemAt: ["$bets.TargetScore", 0] } },
-          betRate: { $first: { $arrayElemAt: ["$bets.betRate", 0] } },
-          betSession: { $first: { $arrayElemAt: ["$bets.betSession", 0] } },
-          resultId: { $first: { $arrayElemAt: ["$bets.resultId", 0] } },
-          fancyData: { $first: { $arrayElemAt: ["$bets.fancyData", 0] } },
-          isfancyOrbookmaker: { $first: { $arrayElemAt: ["$bets.isfancyOrbookmaker", 0] } },
-          subMarketId: { $first: { $arrayElemAt: ["$bets.subMarketId", 0] } },
-          fancyRate: { $first: { $arrayElemAt: ["$bets.fancyRate", 0] } },
-          runnerId: { $first: { $arrayElemAt: ["$bets.runnerName", 0] } },
-          type: { $first: { $arrayElemAt: ["$bets.type", 0] } },
-          share: { $first: "$share" }
+          "sportsId": {
+            "$first": "$matches.sportsId"
+          },
+          "Id": {
+            "$first": "$matches.Id"
+          },
+          "marketId": {
+            "$first": "$matches.marketIds"
+          },
+          amount: {
+            $sum: "$exposureAmount"
+          }
         }
       }
     ], (err, currentPositionData) => {
