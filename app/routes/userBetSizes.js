@@ -44,62 +44,71 @@ function betsNews(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-
+  let results = "Welcome to 1obet.com - System under Maintenance - Zero commissions on chota bara, kalli jotta, fancies - Customer complain cell 24 hours "
   if (req.decoded.role == '5') {
-    const marketId = req.query.marketId;
-    const query = { userId: Number(req.decoded.userId) };
-    if (marketId) {
-      MarketType.findOne({ marketId }, (err, market) => {
-        if (err || !market) {
-          // check if market is not found
-          return res.status(404).send({ message: 'Market not found' });
-        }
-        const marketName = market.name.toLowerCase();
-        query[marketName] = { $exists: true };
-        UserBetSizes.findOne(
-          { userId: req.decoded.userId, name: marketName },
-          (err, data) => {
-            if (err || !data) {
-              // check if bet size data is not found
-              return res.status(404).send({ message: 'News not found' });
-            }
-            const results = {
-              betSizes: {
-                userId: data.userId,
-                [marketName]: data.amount,
-              },
-              text: 'Welcome to 1obet.com.-Announcement :- All casino Profit Loss will be 1 to 10 Ratio from now On.Her casino may Jeet Har 1 ka 10 ho ge. -Welcome . -Welcome . -Welcome to 1obet.com',
-            };
-            return res.send({
-              success: true,
-              message: 'News Data found',
-              results,
-            });
-          }
-        );
-      });
-    } else if (!req.query.marketId) {
-      const results = {
-        betSizes: null,
-        text: 'Welcome to 1obet.com.-Announcement :- All casino Profit Loss will be 1 to 10 Ratio from now On.Her casino may Jeet Har 1 ka 10 ho ge. -Welcome . -Welcome . -Welcome to 1obet.com',
-      };
-      return res.send({
-        success: true,
-        message: 'News Data found',
-        results,
-      });
-    }
-  } else {
-    const results = {
-      betSizes: null,
-      text: 'Welcome to 1obet.com Zero commissions on chota bara, kalli jotta, fancies. Customer complain cell 24 hours',
+    results = {
+      text: 'Welcome to 1obet.com - System under Maintenance - Announcement - All casino Profit Loss will be 1 to 10 Ratio - Her casino may Jeet Har 1 ka 10 ho ge - Welcome to Exchange - Zero commissions on chota bara, kalli jotta, fancies - Customer complain cell 24 hours',
     };
-    return res.send({
-      success: true,
-      message: 'News Data found',
-      results,
-    });
   }
+  return res.send({
+    success: true,
+    message: 'News Data',
+    results,
+  });
+
+    // const marketId = req.query.marketId;
+    // const query = { userId: Number(req.decoded.userId) };
+    // if (marketId) {
+      // MarketType.findOne({ marketId }, (err, market) => {
+        // if (err || !market) {
+          // check if market is not found
+          // return res.status(404).send({ message: 'Market not found' });
+        // }
+        // const marketName = market.name.toLowerCase();
+        // query[marketName] = { $exists: true };
+        // UserBetSizes.findOne(
+          // { userId: req.decoded.userId, name: marketName },
+          // (err, data) => {
+            // if (err || !data) {
+              // check if bet size data is not found
+              // return res.status(404).send({ message: 'News not found' });
+            // }
+            // const results = {
+            //   betSizes: {
+            //     userId: data.userId,
+            //     [marketName]: data.amount,
+            //   },
+            //   text: 'Welcome to 1obet.com-Announcement :- All casino Profit Loss will be 1 to 10 Ratio from now On.Her casino may Jeet Har 1 ka 10 ho ge. -Welcome . -Welcome . -Welcome to 1obet.com',
+            // };
+            // return res.send({
+              // success: true,
+              // message: 'News Data found',
+              // results,
+            // });
+          // }
+      //   );
+      // });
+    // } 
+  //   else if (!req.query.marketId) {
+  //     const results = {
+  //       betSizes: null,
+  //       // text: 'Welcome to 1obet.com -Announcement :- All casino Profit Loss will be 1 to 10 Ratio from now On.Her casino may Jeet Har 1 ka 10 ho ge. -Welcome . -Welcome . -Welcome to 1obet.com',
+  //       text: 'Welcome to 1obet.com - Announcement - All casino Profit Loss will be 1 to 10 Ratio - Her casino may Jeet Har 1 ka 10 ho ge - Welcome to Exchange - Zero commissions on chota bara, kalli jotta, fancies - Customer complain cell 24 hours - System under Maintenance',
+  //     };
+  //     return res.send({
+  //       success: true,
+  //       message: 'News Data found',
+  //       results,
+  //     });
+  //   }
+  // } 
+  // else {
+    // const results = {
+    //   betSizes: null,
+    //   // text: 'Welcome to 1obet.com Zero commissions on chota bara, kalli jotta, fancies. Customer complain cell 24 hours',
+    //   text: 'Welcome to 1obet.com - Announcement - All casino Profit Loss will be 1 to 10 Ratio - Her casino may Jeet Har 1 ka 10 ho ge - Welcome to Exchange - Zero commissions on chota bara, kalli jotta, fancies - Customer complain cell 24 hours - System under Maintenance',
+    // };
+  // }
 }
 
 async function getAllBetSizes(req, res) {
