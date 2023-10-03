@@ -1134,8 +1134,8 @@ const placeBet = async (req, res) => {
     // }
 
     else if (config.sportMarkets.includes(marketId) &&  subMarketDetail.Id == config.Toss){
-      _3rdPartyMarketId = overunderMarketId
-      console.log(" ======================== Soccer over under  ======================== ");
+      console.log(" ======================== Soccer  Match Odds ======================== ");
+
       const DBOddDetails  = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         return res.status(404).send({
@@ -1150,11 +1150,11 @@ const placeBet = async (req, res) => {
       const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName
       console.log(" ============================ ========================== ", runnerForSaveInbets);
-      console.log(" ========================================== id ========================================== ", id);
+
       if(selectedBetRate == betRate){
         for (let i = 1; i < 5; i++) {
           setTimeout( async () => {
-            const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
+            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(" ================ oddsData ================ ", oddsData);
@@ -1186,18 +1186,6 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       }
-      else if (type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate){
-        console.log(" type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate Value Not found In this Array ");
-        return res.status(404).send({
-          message: `Bet Miss Matched `
-        });
-      }
-      else if (type == 0 && selectedBetRate < betRate &&  selectedBetRate - Digitaddition > betRate){
-        console.log(" type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array ");
-        return res.status(404).send({
-          message: `Bet Miss Matched `
-        });
-      }
       else if (type == 1 && betRate < selectedBetRate){
         console.log(" type == 1 && betRate < selectedBetRate ");
         return res.status(404).send({
@@ -1210,11 +1198,10 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `
         });
       }
-
       else if (type == 1 &&  selectedBetRate != betRate){
         for (let i = 0; i < 4; i++) {
           setTimeout( async () => {      
-            const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
+            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(" ================ oddsData ================ ", oddsData);
@@ -1237,13 +1224,10 @@ const placeBet = async (req, res) => {
           }, 1000*i);  
         }
       }
-
       else if (type == 0 &&  selectedBetRate != betRate){
-
-
         for (let i = 0; i < 4; i++) {
           setTimeout( async () => {      
-            const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
+            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(" ================ oddsData ================ ", oddsData);
