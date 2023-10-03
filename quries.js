@@ -103,6 +103,14 @@ db.sidebarmenus.insertMany([
     link: "/asian-games",
   },
   {
+    name: "Current",
+    lightIcon: "https://1obet.com/assets/light-icons/royal-casino.png",
+    darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
+    marketId: "tyv234543-432453343423-53423d332",
+    type: 0,
+    link: "/asian-games",
+  },
+  {
     name: "Result",
     lightIcon: "https://1obet.com/assets/light-icons/results.png",
     darkIcon: "https://1obet.com/assets/dark-icons/results.png",
