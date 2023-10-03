@@ -92,7 +92,7 @@ function betsNews(req, res) {
   } else {
     const results = {
       betSizes: null,
-      text: 'Welcome to 1obet.com',
+      text: 'Welcome to 1obet.com Zero commissions on chota bara, kalli jotta, fancies. Customer complain cell 24 hours',
     };
     return res.send({
       success: true,
