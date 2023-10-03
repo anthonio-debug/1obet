@@ -325,10 +325,10 @@ function scoreChecker() {
                 });
 
                 await newRecord.save();
-                await Bets.updateMany({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: { $ne: null } }, { $set: { resultId: newRecord._id } });
+                await Bets.updateMany({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: fancyName }, { $set: { resultId: newRecord._id } });
 
 
-                const bets = await Bets.find({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: { $ne: null }, status: 1 });
+                const bets = await Bets.find({ matchId: event._id.toString(), isfancyOrbookmaker: true, fancyData: fancyName, status: 1 });
 
 
                 await MarketIDs.findOneAndUpdate(
