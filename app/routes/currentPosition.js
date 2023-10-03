@@ -1,5 +1,6 @@
 const express         = require('express');
 const currentPosition = require('../models/CurrentPosition');
+const Bets = require('../models/bets');
 const loginRouter     = express.Router();
 
 function getCurrentPosition(req, res) {
