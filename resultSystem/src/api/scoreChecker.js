@@ -376,17 +376,15 @@ function scoreChecker() {
                         //check type
                         //for type 0    
                         if (bet.type == 0) {
-                            //if result bigger then targetScore better win  
-                            if (parseInt(bet.TargetScore) < parseInt(result.result))
+                            if (parseInt(bet.TargetScore) > parseInt(result.result))
                                 await handleWinningBet(bet);
-                            else //else better lose
+                            else 
                                 await handleLosingBet(bet);
 
                         } else if (bet.type == 1) {
-                            //if result lower then targetScore better win  
-                            if (parseInt(bet.TargetScore) > parseInt(result.result))
+                            if (parseInt(bet.TargetScore) <= parseInt(result.result))
                                 await handleWinningBet(bet);
-                            else //else  better lose
+                            else 
                                 await handleLosingBet(bet);
                         } else {
                             await handleDrawBet(bet);

@@ -85,7 +85,7 @@ function ToolForResults() {
 
         setTimeout(() => {
             getBetForEvents(targetArray)
-        }, 2 * 1000);
+        }, 4 * 1000);
     }
 
     async function getBetForFancy() {
