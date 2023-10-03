@@ -85,7 +85,7 @@ function ToolForResults() {
 
         setTimeout(() => {
             getBetForEvents(targetArray)
-        }, 10 * 1000);
+        }, 2 * 1000);
     }
 
     async function getBetForFancy() {
@@ -119,13 +119,13 @@ function ToolForResults() {
 
             setTimeout(() => {
                 getBetForFancy()
-            }, 30 * 1000);
+            }, 5 * 1000);
 
 
         } catch (error) {
             setTimeout(() => {
                 getBetForFancy()
-            }, 30 * 1000);
+            }, 5 * 1000);
             console.error("Error:", error);
         }
     }
@@ -183,13 +183,13 @@ function ToolForResults() {
             
             setTimeout(() => {
                 manuelBetChecker()
-            }, 30 * 1000);
+            }, 5 * 1000);
 
         } catch (error) {
             console.error("Error fetching data:", error);
             setTimeout(() => {
                 manuelBetChecker()
-            }, 30 * 1000);
+            }, 5 * 1000);
         }
 
     }
