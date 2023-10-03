@@ -170,7 +170,7 @@ const battorcurrentPosition = async (req, res) => {
       },
       {
         $addFields: {
-          'matchesId': { $toObjectId: "$matchId" }
+          'inPlayEventId': { $toObjectId: "$matchId" }
         }
       },
       {
