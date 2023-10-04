@@ -2105,18 +2105,22 @@ const cancelSingleBet = async (req, res) => {
       message: 'Unauthorized Operation',
     }); 
   }
-  const bet = await Bets.findById(req.body.betId)
+  const bet = await Bets.findById(req.body.betId);
   if(!bet){
     return res.status(404).send({
       success: false,
       message: 'bet could not foud',
     }); 
   }
-  console.log(" ================ Bet ================ ", bet);
-  await handleDrawBet(bet, 2);
+  const marketId = bet.marketId;
+  const userId = bet.userId
+  const allBets = await Bets.find({marketId: marketId, userId: userId})
+  for (const bet of allBets) {
+    await handleDrawBet(bet, 2);
+  }
   return res.send({
     success: true,
-    message: 'canceled Successfully !',
+    message: 'bet canceled Successfully !',
   }); 
 
 }
