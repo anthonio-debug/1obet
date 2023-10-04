@@ -241,24 +241,15 @@ async function handleWinningBet(bet) {
     upMovingAmount = totalRemainingAmount
     upMovingCommAmount = commissionAmount
   }
-
-
+  
   userToUpdate.balance += remainingAmount;
   userToUpdate.clientPL += remainingAmount;
-  let userToUpdateAvailableBalance   =  bet.winningAmount;
+  let userToUpdateAvailableBalance   =  bet.remainingAmount;
   if(bet.calculateExp){
     userToUpdateAvailableBalance += bet.exposureAmount
     userToUpdate.exposure += bet.exposureAmount;
   }
   userToUpdate.availableBalance += userToUpdateAvailableBalance;
-  
-  /** 
-     * Shah G codes
-     * userToUpdate.availableBalance =  userToUpdate.balance + remainingAmount;
-     * userToUpdate.balance += remainingAmount;
-     * userToUpdate.clientPL += remainingAmount;
-  */ 
-
 
   await userToUpdate.save();
   console.log(" =============== User Updated Successfull ");
