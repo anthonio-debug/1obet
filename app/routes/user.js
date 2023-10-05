@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 let config = require('config');
 const User = require('../models/user');
-app.set('secret', config.secret);
+
 //ip location
 const {IP2Location} = require("ip2location-nodejs");
 let ip2location = new IP2Location();
@@ -441,6 +441,7 @@ function getAllUsers(req, res) {
     }
   );
 }
+app.set('secret', config.secret);
 
 function changePassword(req, res) {
   const errors = validationResult(req);
