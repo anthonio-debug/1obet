@@ -161,5 +161,6 @@
   "cancelSingleBet",
   "tesTingsheet",
   "battors-list",
-  "user-latest-ledger"
+  "user-latest-ledger",
+  "delete-user"
 ]

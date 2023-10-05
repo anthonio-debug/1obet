@@ -848,6 +848,26 @@ const userSingleLedger = async (req, res)=>{
   });
 }
 
+const  deleteUser = async (req, res) => {
+  if (req.decoded.role != 0) {
+    return res.status(404).send({ message: '-----' });
+  }
+
+  return res.send({
+    success: true,
+    message: 'user deleted succesfully !',
+    results: null,
+  });
+
+  const currentUser = User.find(req.query.uerId)
+
+  return res.send({
+    success: true,
+    message: 'user deleted succesfully !',
+    results: null,
+  });
+}
+
 router.post('/login', userValidation.validate('login'), login);
 loginRouter.post(
   '/register',
@@ -906,6 +926,10 @@ loginRouter.post(
 loginRouter.post('/searchSingleUser', searchSingleUser);
 loginRouter.get('/battors-list', battorsList);
 loginRouter.get('/user-latest-ledger', userSingleLedger);
+
+loginRouter.get('/delete-user', deleteUser);
+
+
 
 
 
