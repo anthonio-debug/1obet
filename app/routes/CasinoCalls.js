@@ -16,6 +16,37 @@ const transactionOptions = {
   writeConcern: { w: 'majority' }
 };
 
+const getParents = async (userId) => {
+  const parentUserIds = [];
+  let currentUserId = userId;
+  console.log('currentUserId', currentUserId);
+
+  while (currentUserId) {
+    const parentUser = await User.findOne({ userId: currentUserId });
+
+    if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
+      break;
+    }
+    parentUserIds.push(parentUser.createdBy);
+    currentUserId = parentUser.createdBy;
+  }
+  console.log(" parentUserIds ========== ", parentUserIds);
+  return parentUserIds;
+}
+
+const checkMarketBlocked = async (user) => {
+  let parentUserIds       = await getParents(user.userId);
+  const marketIds         = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
+  const marketId          = config.casinoMarketId ;
+  
+  if(marketIds.includes(marketId)){
+    return 1;
+  }else {
+    return 0;
+  }
+
+}
+
 const WinLoseTransManagement = async (balance, payload, user, action) => {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
@@ -543,6 +574,14 @@ async function debitfun(req, res) {
         await session.abortTransaction();
         return res.json({ status: '500', msg: `Internal error no user` });
       }
+
+
+      const checkMarketBlockedResponse = await checkMarketBlocked();
+      if(checkMarketBlockedResponse == 1){
+        await session.abortTransaction(user);
+        return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
+      }
+
       if (sameTransId > 0) {
         await session.abortTransaction();
         return res.json({
@@ -550,7 +589,7 @@ async function debitfun(req, res) {
           balance: user.availableBalance / casinoMultiples,
         });
       }
-      // console.log('==========user', user)
+
       if (sameTransId > 0) {
         await session.abortTransaction();
         return res.json({
