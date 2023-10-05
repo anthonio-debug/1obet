@@ -801,7 +801,7 @@ db.betlimits.insertMany([
 
 
 
-// pm2 start apiSystem.js resultChecker.js resultSaver.js server.js
+// pm2 start apiSystem.js resultChecker.js resultSaver.js server.js ./cronJobs/SessionsResults.js 
 
       // selectionId
       // Figure 0----9 as 

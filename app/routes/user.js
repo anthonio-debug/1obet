@@ -5,7 +5,7 @@ const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 let config = require('config');
 const User = require('../models/user');
-
+app.set('secret', config.secret);
 //ip location
 const {IP2Location} = require("ip2location-nodejs");
 let ip2location = new IP2Location();
@@ -390,8 +390,6 @@ function getNonExpiringToken(userId, createdBy, role, isActive) {
   var token = jwt.sign(payload, config.secret, { expiresIn: new Date().getTime() + 12*60*60*1000 });
   return token;
 }
-
-app.set('secret', config.secret);
 
 function getAllUsers(req, res) {
   // Initialize variables with default values
@@ -801,6 +799,41 @@ function searchSingleUser(req, res) {
   });
 }
 
+const battorsList = async () => {
+  if (req.decoded.role != 0) {
+    return res.status(404).send({ message: 'you are not allowed to do this' });
+  }
+  let query = {};
+  let page = 1;
+  let sort = -1;
+  let sortValue = '_id';
+  var limit = config.pageSize;
+  query.role = 5;
+  if(req.query.numRecords && !isNaN(req.query.numRecords) && req.query.numRecords > 0)
+    limit = Number(req.query.numRecords);
+  if (req.query.sortValue)  sortValue = req.query.sortValue;
+  if (req.query.sort)       sort      = Number(req.query.sort);
+  if (req.query.page)       page      = Number(req.query.page);
+
+  if (req.query.username)
+  query.userName = { $regex: req.query.username, $options: 'i' };
+  query.isDeleted = false;
+  query.userId = { $ne: req.decoded.userId };
+  User.paginate(
+    query,
+    { page: page, sort: { [sortValue]: sort }, limit: limit },
+    (err, results) => {
+      if (err) return res.status(404).send({ message: 'Something went wrong' });
+      return res.send({
+        success: true,
+        message: 'Users list',
+        total: results.total,
+        results: results,
+      });
+    }
+  );
+}
+
 
 router.post('/login', userValidation.validate('login'), login);
 loginRouter.post(
@@ -849,6 +882,7 @@ loginRouter.post(
   checkValidation
 );
 
+
 loginRouter.get('/getSettlement', getSettlement);
 loginRouter.post(
   '/settlePLAccount',
@@ -857,5 +891,6 @@ loginRouter.post(
 );
 
 loginRouter.post('/searchSingleUser', searchSingleUser);
+loginRouter.get('/battorsList', battorsList);
 
 module.exports = { router, loginRouter };
