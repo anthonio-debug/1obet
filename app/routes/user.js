@@ -852,14 +852,23 @@ const  deleteUser = async (req, res) => {
   if (req.decoded.role != 0) {
     return res.status(404).send({ message: '-----' });
   }
+  const userId = req.query.id;
+  let  userIds  = [userId];
+  const finalUsers = [];
+  do{
+    const dealers = User.distinct("userId", { createdBy: { $in: userIds }, role: { $ne: '5' } })
+    const battors = User.distinct("userId", { createdBy: { $in: userIds }, role: '5' });
+    finalUsers.push(...dealers, ...battors);
+    console.log("dealers list ========== ", dealers);
+    console.log("battors list ========== ", battors);
+    userIds = dealers;
+    if(dealers.length == 0){
+      break;
+    }
 
-  return res.send({
-    success: true,
-    message: 'user deleted succesfully !',
-    results: null,
-  });
+  }while(dealers.length > 0)
 
-  const currentUser = User.find(req.query.uerId)
+  console.log("All Users list ========== ", finalUsers);
 
   return res.send({
     success: true,
