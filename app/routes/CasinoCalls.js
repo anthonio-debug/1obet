@@ -515,6 +515,12 @@ async function balancefun(req, res) {
       return res.json({ status: 500, msg: 'Internal error no user' });
     }
 
+    const checkMarketBlockedResponse = await checkMarketBlocked(user);
+    if(checkMarketBlockedResponse == 1){
+      await session.abortTransaction();
+      return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
+    }
+
     const balance = user.availableBalance;
     if (balance < 0) {
       return res.json({ status: 500, msg: 'Negative amount not allowed!' });
@@ -576,7 +582,7 @@ async function debitfun(req, res) {
       }
 
 
-      const checkMarketBlockedResponse = await checkMarketBlocked();
+      const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if(checkMarketBlockedResponse == 1){
         await session.abortTransaction(user);
         return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
@@ -687,6 +693,11 @@ async function creditfun(req, res) {
         console.log(" ========================= User Not Found ============= ");
         await session.abortTransaction();
         return res.json({ status: '500', msg: `Internal Error no User` });
+      }
+      const checkMarketBlockedResponse = await checkMarketBlocked(user);
+      if(checkMarketBlockedResponse == 1){
+        await session.abortTransaction();
+        return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
       }
       updatedavailableBalance = user.availableBalance;
 
