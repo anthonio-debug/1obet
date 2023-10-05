@@ -806,12 +806,12 @@ const battorsList = async (req, res) => {
   if (req.decoded.role != 0) {
     return res.status(404).send({ message: '-----' });
   }
-  let query = {};
+  let usersQuery = {};
   let page = 1;
   let sort = -1;
   let sortValue = '_id';
   var limit = config.pageSize;
-  query.role = 5;
+  usersQuery.role = 5;
   if(req.query.numRecords && !isNaN(req.query.numRecords) && req.query.numRecords > 0)
     limit = Number(req.query.numRecords);
   if (req.query.sortValue)  sortValue = req.query.sortValue;
@@ -819,11 +819,10 @@ const battorsList = async (req, res) => {
   if (req.query.page)       page      = Number(req.query.page);
 
   if (req.query.username)
-  query.userName = { $regex: req.query.username, $options: 'i' };
-  query.isDeleted = false;
-  // query.userId = { $ne: req.decoded.userId };
+  usersQuery.userName = { $regex: req.query.username, $options: 'i' };
+  usersQuery.isDeleted = false;
   User.paginate(
-    query,
+    usersQuery,
     { page: page, sort: { [sortValue]: sort }, limit: limit },
     (err, results) => {
       if (err) return res.status(404).send({ message: 'Something went wrong' });
