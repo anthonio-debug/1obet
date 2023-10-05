@@ -6,7 +6,7 @@ const { validationResult } = require('express-validator');
 let config = require('config');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
-
+const Bets = require('../models/bets');
 
 //ip location
 const {IP2Location} = require("ip2location-nodejs");
@@ -867,6 +867,9 @@ const  deleteUser = async (req, res) => {
     }
   }while(true)
   console.log("All Users list ========== ", finalUsers);
+  const respone = User.deleteMany({ userId: { $in: finalUsers } });
+  const depositDelete = await Deposits.deleteMany({ userId: {$in: finalUsers } });
+  const betsDelete = await Bets.deleteMany({ userId: {$in: finalUsers } });
 
   return res.send({
     success: true,
