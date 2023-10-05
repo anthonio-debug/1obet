@@ -800,9 +800,9 @@ function searchSingleUser(req, res) {
   });
 }
 
-const battorsList = async () => {
+const battorsList = async (req, res) => {
   if (req.decoded.role != 0) {
-    return res.status(404).send({ message: 'you are not allowed to do this' });
+    return res.status(404).send({ message: '-----' });
   }
   let query = {};
   let page = 1;
@@ -892,6 +892,6 @@ loginRouter.post(
 );
 
 loginRouter.post('/searchSingleUser', searchSingleUser);
-loginRouter.get('/battorsList', battorsList);
+loginRouter.get('/battors-list', battorsList);
 
 module.exports = { router, loginRouter };
