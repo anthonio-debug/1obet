@@ -865,8 +865,7 @@ const  deleteUser = async (req, res) => {
     if(dealers.length == 0){
       break;
     }
-  }while(dealers.length > 0)
-
+  }while(true)
   console.log("All Users list ========== ", finalUsers);
 
   return res.send({
