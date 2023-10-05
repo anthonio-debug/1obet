@@ -16,7 +16,7 @@ const transactionOptions = {
   writeConcern: { w: 'majority' }
 };
 
-const getParents = async (userId) => {
+const getParentsCasino = async (userId) => {
   const parentUserIds = [];
   let currentUserId = userId;
   console.log('currentUserId', currentUserId);
@@ -38,7 +38,7 @@ const checkMarketBlocked = async (user) => {
   let parentUserIds       = await getParents(user.userId);
   const marketIds         = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
   const marketId          = config.casinoMarketId ;
-  
+
   if(marketIds.includes(marketId)){
     return 1;
   }else {
