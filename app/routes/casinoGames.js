@@ -256,9 +256,6 @@ async function getAllSelectedCasinos(req, res) {
 
 
   try {
-    // if ( marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true ||  user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
-    //   return res.status(404).send({ message: 'Betting disabled' });
-    // }
   } catch (error) {
     console.log(error);
   }
@@ -320,9 +317,26 @@ async function getAllSelectedCasinos(req, res) {
    'category' : 1
  });
 
+ if ( marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true ||  user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
+    // return res.status(404).send({ message:  });
+    return res.send({
+      message: 'Betting is disabled',
+      success: true,
+      battingDisabled: true,
+      results: paginatedGames,
+      categories:casinoCategories,
+      pagination: {
+        total: totalRecords,
+        totalPages: totalPages,
+        currentPage: page,
+        recordsPerPage: limit
+      }
+    });
+  }
   return res.send({
     message: 'Selected Casino Games List',
     success: true,
+    battingDisabled: false,
     results: paginatedGames,
     categories:casinoCategories,
     pagination: {
