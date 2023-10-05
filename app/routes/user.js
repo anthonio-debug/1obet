@@ -6,7 +6,7 @@ const { validationResult } = require('express-validator');
 let config = require('config');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
-const Bets = require('../models/bets');
+// const Bets = require('../models/bets');
 
 //ip location
 const {IP2Location} = require("ip2location-nodejs");
