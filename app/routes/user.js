@@ -5,6 +5,8 @@ const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
 let config = require('config');
 const User = require('../models/user');
+const Deposits = require('../models/deposits');
+
 
 //ip location
 const {IP2Location} = require("ip2location-nodejs");
@@ -819,7 +821,7 @@ const battorsList = async (req, res) => {
   if (req.query.username)
   query.userName = { $regex: req.query.username, $options: 'i' };
   query.isDeleted = false;
-  query.userId = { $ne: req.decoded.userId };
+  // query.userId = { $ne: req.decoded.userId };
   User.paginate(
     query,
     { page: page, sort: { [sortValue]: sort }, limit: limit },
@@ -835,6 +837,17 @@ const battorsList = async (req, res) => {
   );
 }
 
+const userSingleLedger = async (req, res)=>{
+  if (req.decoded.role != 0) {
+    return res.status(404).send({ message: '-----' });
+  }
+  const lastDeposit = Deposits.find({ userId: req.query.userId }).sort({_id: -1}).limit(1);
+  return res.send({
+    success: true,
+    message: 'user ledger last record',
+    result: lastDeposit,
+  });
+}
 
 router.post('/login', userValidation.validate('login'), login);
 loginRouter.post(
@@ -893,5 +906,8 @@ loginRouter.post(
 
 loginRouter.post('/searchSingleUser', searchSingleUser);
 loginRouter.get('/battors-list', battorsList);
+loginRouter.get('/user-latest-ledger', userSingleLedger);
+
+
 
 module.exports = { router, loginRouter };

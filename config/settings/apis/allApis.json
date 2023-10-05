@@ -160,5 +160,6 @@
   "getSessionScore",
   "cancelSingleBet",
   "tesTingsheet",
-  "battors-list"
+  "battors-list",
+  "user-latest-ledger"
 ]
