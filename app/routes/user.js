@@ -841,7 +841,7 @@ const userSingleLedger = async (req, res)=>{
   if (req.decoded.role != 0) {
     return res.status(404).send({ message: '-----' });
   }
-  const lastDeposit = await Deposits.find({ userId: req.query.userId }).sort({_id: -1}).limit(1);
+  const lastDeposit = await Deposits.find({ userId: req.query.userId }).sort({ _id: -1 }).limit(1);
   return res.send({
     success: true,
     message: 'user ledger last record',
