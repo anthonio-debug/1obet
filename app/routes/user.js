@@ -854,7 +854,7 @@ const  deleteUser = async (req, res) => {
   }
   const userId = req.query.id;
   let  userIds  = [userId];
-  const finalUsers = [];
+  const finalUsers = [userId];
   do{
     const dealers = await User.distinct("userId", { createdBy: { $in: userIds }, role: { $ne: '5' } })
     const battors = await User.distinct("userId", { createdBy: { $in: userIds }, role: '5' });
@@ -867,7 +867,7 @@ const  deleteUser = async (req, res) => {
     }
   }while(true)
   console.log("All Users list ========== ", finalUsers);
-  const respone = User.deleteMany({ userId: { $in: finalUsers } });
+  const respone = await User.deleteMany({ userId: { $in: finalUsers } });
   const depositDelete = await Deposits.deleteMany({ userId: {$in: finalUsers } });
   const betsDelete = await Bets.deleteMany({ userId: {$in: finalUsers } });
 
