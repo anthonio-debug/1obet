@@ -856,8 +856,8 @@ const  deleteUser = async (req, res) => {
   let  userIds  = [userId];
   const finalUsers = [];
   do{
-    const dealers = User.distinct("userId", { createdBy: { $in: userIds }, role: { $ne: '5' } })
-    const battors = User.distinct("userId", { createdBy: { $in: userIds }, role: '5' });
+    const dealers = await User.distinct("userId", { createdBy: { $in: userIds }, role: { $ne: '5' } })
+    const battors = await User.distinct("userId", { createdBy: { $in: userIds }, role: '5' });
     finalUsers.push(...dealers, ...battors);
     console.log("dealers list ========== ", dealers);
     console.log("battors list ========== ", battors);
@@ -865,7 +865,6 @@ const  deleteUser = async (req, res) => {
     if(dealers.length == 0){
       break;
     }
-
   }while(dealers.length > 0)
 
   console.log("All Users list ========== ", finalUsers);
