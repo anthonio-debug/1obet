@@ -138,13 +138,7 @@ const placeBet = async (req, res) => {
     if (!user) {
       return res.status(404).send({ message: 'illegal user betting' });
     }
-   /*
-    if(user.availableBalance <= 0) {
-      return res.status(404).send({ message: 'Insufficient balance' });
-    }
-	*/
 	
-
     if (user.bettingAllowed == false) {
       return res.status(404).send({ message: 'Bet not allowed' });
     }
@@ -1606,7 +1600,49 @@ const placeBet = async (req, res) => {
           // }
         }
 
-      }else {
+      }
+      else if(expoisureType == 2){
+        let lastBetsCount = await Bets.countDocuments({
+          marketId: _3rdPartyMarketId,
+          userId: req.decoded.userId,
+          betSession: currentSession,
+          matchId: matchId,
+          status: 1
+        });
+        /*  ============================ */
+        if(lastBetsCount > 0){
+          let lastBet = await Bets.find({
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            betSession: currentSession,
+            matchId: matchId,
+            status: 1
+          }).sort({ _id: -1 }).limit(1);
+          console.log(" ============= lastBet ", lastBet);
+          const lastrunnersPosition = lastBet[0].runnersPosition;
+          runnersPosition = lastrunnersPosition.map((item)=>{
+            if(item.runner == selectedRunner){
+              item.amount = item.amount + winningAmount
+            }else {
+              item.amount = item.amount - loosingAmount
+            }
+            return item 
+          })
+          prevExpAmount = lastBet[0].exposureAmount
+        }
+        else {
+          runnersPosition = runnerForSaveInbets.map((item)=>{
+            if(item.runner == selectionId){
+              item.amount = item.amount + winningAmount
+            }else {
+              item.amount = item.amount - loosingAmount
+            }
+            return item 
+          })
+        }
+        /* ============================= */ 
+      }
+      else {
         let lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
@@ -1619,9 +1655,8 @@ const placeBet = async (req, res) => {
           runnersPosition =  resp.runnersPosition;
           prevExpAmount =  resp.prevExpAmount;
         }else {
-          if(expoisureType == 2){
-            console.log(" ========== runnerForSaveInbets ================ ", runnerForSaveInbets);
-            runnersPosition = runnerForSaveInbets.map((item)=>{
+          if(type == 0){
+            const runnerCurrentPosition  = runnerForSaveInbets.map((item)=>{
               if(item.runner == selectionId){
                 item.amount = item.amount + winningAmount
               }else {
@@ -1629,36 +1664,26 @@ const placeBet = async (req, res) => {
               }
               return item 
             })
-            console.log(" ========== runnersPosition ================ ", runnersPosition);
-          }else {
-            if(type == 0){
-              const runnerCurrentPosition  = runnerForSaveInbets.map((item)=>{
-                if(item.runner == selectionId){
-                  item.amount = item.amount + winningAmount
-                }else {
-                  item.amount = item.amount - loosingAmount
-                }
-                return item 
-              })
-              console.log(" ================== runnerCurrentPosition ================== ", runnerCurrentPosition);
-              runnersPosition = runnerCurrentPosition;
-              console.log(" ================== runnersPosition ================== ", runnersPosition);
-              
-            }else if(type == 1){
-              runnersPosition = runnerForSaveInbets.map((item)=>{
-                if(item.runner == selectionId){
-                  item.amount = item.amount - loosingAmount
-                }else {
-                  item.amount = item.amount + winningAmount
-                }
-                return item 
-              })
-            }
+            console.log(" ================== runnerCurrentPosition ================== ", runnerCurrentPosition);
+            runnersPosition = runnerCurrentPosition;
+            console.log(" ================== runnersPosition ================== ", runnersPosition);
+            
+          }else if(type == 1){
+            runnersPosition = runnerForSaveInbets.map((item)=>{
+              if(item.runner == selectionId){
+                item.amount = item.amount - loosingAmount
+              }else {
+                item.amount = item.amount + winningAmount
+              }
+              return item 
+            })
           }
         }
+
         console.log(" ================ runner For SaveIn bets INFO ================ ", runnerForSaveInbets);
         console.log(" ================ RUNNER INFO ================ ", runnersPosition);
         console.log(" ================ EXP AMOUNT ================ ", expAmount);
+        
         expAmount = runnersPosition.reduce((min, current) => {
           return current.amount < min.amount ? current : min;
         }, runnersPosition[0]);
@@ -1699,7 +1724,6 @@ const placeBet = async (req, res) => {
         multipeResponse: multipeResponse,
         isManuel: isManuel
       });
-      // if ((user.availableBalance < betAmount && type == 0) || (user.availableBalance < betAmount * (betRate - 1) && type == 1)) {
       console.log('userAvailableBalance', user.availableBalance)
 
       if ( user.availableBalance < expAmount-prevExpAmount ) {
@@ -1785,50 +1809,29 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
   }).sort({ _id: -1 }).limit(1);
 
   console.log(" ============= lastBet ", lastBet);
-
-  ` `
-
   const lastrunnersPosition = lastBet[0].runnersPosition;
-
-  console.log("=================== last runners Position ================", lastrunnersPosition);
-  console.log("=================== expoisureType ================", expoisureType);
-
   let newPosition;
-  if(expoisureType == 2){
+  if(type == 0){
+    console.log(" ================= Back is called  =================  ");
     newPosition = lastrunnersPosition.map((item)=>{
       if(item.runner == selectedRunner){
         item.amount = item.amount + winningAmount
       }else {
-        item.amount = item.amount - loosingAmount
+        item.amount = item.amount + (-loosingAmount)
       }
       return item 
     })
-  }else {
-    if(type == 0){
-      console.log(" ================= Back is called  =================  ");
-      //  $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( currentWinningAmount ) 
-      //  $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount In fact liability amount which will be in minus ) = (-100 ) +  ( -100 )  = 200
-      newPosition = lastrunnersPosition.map((item)=>{
-        if(item.runner == selectedRunner){
-          item.amount = item.amount + winningAmount
-        }else {
-          item.amount = item.amount + (-loosingAmount)
-        }
-        return item 
-      })
-    }else if(type == 1){
-      console.log(" ================= Lay is called  =================  ");
-      // $Clickedrunner_new_value = ( $Clickedrunner_prev_value )  + ( -  (loosing money )liablityAmount ) => ( 67 ) + ( -34 ) = 33
-      // $Otherrunner_new_value =  ( $Otherrunner_prev_value)  + ( BetAmount )   ( - 100 ) + ( + 100 )
-      newPosition = lastrunnersPosition.map((item)=>{
-        if(item.runner == selectedRunner){
-          item.amount = item.amount + (-loosingAmount)
-        }else {
-          item.amount = item.amount + winningAmount
-        }
-        return item 
-      });
-    }
+  }
+  else if(type == 1){
+    console.log(" ================= Lay is called  =================  ");
+    newPosition = lastrunnersPosition.map((item)=>{
+      if(item.runner == selectedRunner){
+        item.amount = item.amount + (-loosingAmount)
+      }else {
+        item.amount = item.amount + winningAmount
+      }
+      return item 
+    });
   }
   return {
     runnersPosition: newPosition,
