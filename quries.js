@@ -2941,3 +2941,7 @@ const placeBet_dev = async (req, res) => {
     return res.status(404).send({ message: `Error placing bet ${error}` });
   }
 }
+
+
+
+db.uers.distinct("userId", { userId: {$nin: [ 1412, 1650,1861, 1865, 1879, 1884, 1930 ]}, exposure : {$gt: 0} })

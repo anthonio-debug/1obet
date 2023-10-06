@@ -1639,14 +1639,14 @@ const placeBet = async (req, res) => {
             }
             return item 
           })
-          expAmount = runnersPosition.reduce((min, current) => {
-            return current.amount < min.amount ? current : min;
-          }, runnersPosition[0]);
-          expAmount = expAmount.amount;
-          console.log(" ================ RUNNER INFO ================ ", runnersPosition);
-          console.log(" ================ EXP AMOUNT ================ ", expAmount);
-          expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
         }
+        expAmount = runnersPosition.reduce((min, current) => {
+          return current.amount < min.amount ? current : min;
+        }, runnersPosition[0]);
+        expAmount = expAmount.amount;
+        console.log(" ================ RUNNER INFO ================ ", runnersPosition);
+        console.log(" ================ EXP AMOUNT ================ ", expAmount);
+        expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
         /* ============================= */ 
       }
       else {
@@ -1700,8 +1700,6 @@ const placeBet = async (req, res) => {
         expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
       }
       /* ------------ */
-
-
       /* Placing Bet Area  */ 
       const bet = new Bets({
         marketId: _3rdPartyMarketId,
