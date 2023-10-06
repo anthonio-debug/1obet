@@ -2114,7 +2114,7 @@ const cancelSingleBet = async (req, res) => {
   }
   const marketId = bet.marketId;
   const userId = bet.userId
-  const allBets = await Bets.find({marketId: marketId, userId: userId})
+  const allBets = await Bets.find({marketId: marketId, userId: userId, status: 1})
   for (const bet of allBets) {
     await handleDrawBet(bet, 2);
   }
