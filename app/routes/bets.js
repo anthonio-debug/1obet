@@ -125,6 +125,7 @@ const placeBet = async (req, res) => {
     const multipeResponseForSecurityCheck = [];
     const BetTime = new Date().getTime();
     let id = 0;
+    let isManuel = true;
 
     /* ====================================================================== */ 
 
@@ -1123,6 +1124,7 @@ const placeBet = async (req, res) => {
 
     //for fancy
     else if (subMarketDetail.Id == config.Fancy){
+      isManuel = false;
       const fancyBetLimit  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.Fancy }).exec();
       if(!userMaxBetSize){
         return res.status(404).send({ message: `something went wrong !` });
@@ -1487,21 +1489,18 @@ const placeBet = async (req, res) => {
         winningAmount = (betAmount * betRate) - betAmount;
         loosingAmount = betAmount;
       }
-
       else if (type == 1 &&  subMarketDetail.Id == config.BookMaker) {
         // ((rate) /100 ) * bet_amount = loosing amount 
         loosingAmount =  (betRate * betAmount) /100;
         winningAmount = betAmount;
         console.log(" 1 loosingAmount =========  ", loosingAmount);
       }
-
       else if (type == 0 && subMarketDetail.Id == config.BookMaker) {
         // ((rate) /100 ) * bet_amount = winning amount 
         winningAmount = (betRate * betAmount)/100;
         loosingAmount = betAmount;
         console.log(" 0  loosingAmount =========  ", winningAmount);
       }
-
       else if (type == 1 &&  subMarketDetail.Id == config.Fancy) {
         // (Value showing below/100)*bet amount = loosing amount
         loosingAmount =  (fancyRate/100) * betAmount;
@@ -1511,7 +1510,6 @@ const placeBet = async (req, res) => {
           { "runner": 0, "amount": 0 }
         ]
       }
-
       else if (type == 0 && subMarketDetail.Id == config.Fancy) {
         // Value showing below/100)*bet amount = winning amount
         winningAmount = (fancyRate/100) * betAmount;
@@ -1698,7 +1696,8 @@ const placeBet = async (req, res) => {
         runnersPosition: runnersPosition,
         ratesRecord: multipeResponseForSecurityCheck,
         betTime: BetTime,
-        multipeResponse: multipeResponse
+        multipeResponse: multipeResponse,
+        isManuel: isManuel
       });
       // if ((user.availableBalance < betAmount && type == 0) || (user.availableBalance < betAmount * (betRate - 1) && type == 1)) {
       console.log('userAvailableBalance', user.availableBalance)
