@@ -137,9 +137,12 @@ const placeBet = async (req, res) => {
     if (!user) {
       return res.status(404).send({ message: 'illegal user betting' });
     }
+   /*
     if(user.availableBalance <= 0) {
       return res.status(404).send({ message: 'Insufficient balance' });
     }
+	*/
+	
 
     if (user.bettingAllowed == false) {
       return res.status(404).send({ message: 'Bet not allowed' });
