@@ -1621,7 +1621,7 @@ const placeBet = async (req, res) => {
           console.log(" ============= lastBet ", lastBet);
           const lastrunnersPosition = lastBet[0].runnersPosition;
           runnersPosition = lastrunnersPosition.map((item)=>{
-            if(item.runner == selectedRunner){
+            if(item.runner == selectionId){
               item.amount = item.amount + winningAmount
             }else {
               item.amount = item.amount - loosingAmount

@@ -317,7 +317,7 @@ async function getAllSelectedCasinos(req, res) {
    'category' : 1
  });
 
- if ( marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true ||  user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
+ if ( marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true ) {
     // return res.status(404).send({ message:  });
     return res.send({
       message: 'Betting is disabled',
