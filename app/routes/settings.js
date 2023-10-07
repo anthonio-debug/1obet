@@ -2112,11 +2112,23 @@ const cancelSingleBet = async (req, res) => {
       message: 'bet could not foud',
     }); 
   }
-  const marketId = bet.marketId;
-  const userId = bet.userId
-  const allBets = await Bets.find({marketId: marketId, userId: userId, status: 1})
-  for (const bet of allBets) {
-    await handleDrawBet(bet, 2);
+  if([2,3,4].includes(bet.type)){
+    const marketId = bet.marketId;
+    const matchId  = bet.matchId;
+    const userId   = bet.userId;
+    const session  = bet.betSession;
+    const allBets  = await Bets.find({ matchId: matchId, betSession: session, marketId: marketId, userId: userId, status: 1})
+    for (const bet of allBets) {
+      await handleDrawBet(bet, 2);
+    }
+  }else {
+    const marketId = bet.marketId;
+    const matchId = bet.matchId;
+    const userId   = bet.userId;
+    const allBets = await Bets.find({matchId: matchId, marketId: marketId, userId: userId, status: 1})
+    for (const bet of allBets) {
+      await handleDrawBet(bet, 2);
+    }
   }
   return res.send({
     success: true,
