@@ -43,7 +43,7 @@ const betSchema = new mongoose.Schema({
   ratesRecord: { type: Array },
   multipeResponse: { type: Array },
   betTime: { type: Number },
-  isManuel: { type: Boolean, default: true },
+  isManuel: { type: Boolean, default: false },
 
 });
 
