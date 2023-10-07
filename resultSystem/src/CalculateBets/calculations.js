@@ -124,7 +124,8 @@ async function handleLosingBet(bet) {
     sportsId: bet.sportsId,
     matchId: bet.matchId,
     betId: bet._id,
-
+    betType: bet.type,
+    betDateTime: bet.betTime
   });
   await cash.save();
 
@@ -185,7 +186,9 @@ async function handleLosingBet(bet) {
       sportsId: bet.sportsId,
       upLineAmount: upMovingAmount,
       betId: bet._id,
-      matchId: bet.matchId
+      matchId: bet.matchId,
+      betType: bet.type,
+      betDateTime: bet.betTime
     });
     cash.save();
     console.log(" ======================== Parent User Cash Updating Sucessfully ");
@@ -258,6 +261,7 @@ async function handleWinningBet(bet) {
   let lastMaxWithdraw = lastTrans.length > 0? lastTrans[0] : null
 
   // console.log("lastMaxWithdraw1", lastMaxWithdraw);
+
   let cash = new Cash({
     userId: userToUpdate.userId,
     description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -273,7 +277,9 @@ async function handleWinningBet(bet) {
     creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
     marketId: bet.marketId,
     sportsId: bet.sportsId,
-    matchId: bet.matchId
+    matchId: bet.matchId,
+    betType: bet.type,
+    betDateTime: bet.betTime
   });
   // console.log('usercash', typeof cash);
   await cash.save();
@@ -337,7 +343,9 @@ async function handleWinningBet(bet) {
       sportsId: bet.sportsId,
       upLineAmount: -upMovingAmount,
       betId: bet._id,
-      matchId: bet.matchId
+      matchId: bet.matchId,
+      betType: bet.type,
+      betDateTime: bet.betTime
     });
 
     upMovingAmount = upMovingAmount - (user.commission / 100) * totalRemainingAmount;
@@ -363,7 +371,9 @@ async function handleWinningBet(bet) {
         credit: lastMaxWithdraw?.credit || 0 ,
         creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
         upLineAmount: upMovingCommAmount,
-        matchId: bet.matchId
+        matchId: bet.matchId,
+        betType: bet.type,
+        betDateTime: bet.betTime
       });
       await commissionTransaction.save();
     }

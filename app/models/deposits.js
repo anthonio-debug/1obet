@@ -26,7 +26,9 @@ let depositsSchema = new Schema({
   upLineAmount: { type : Number },
   updatedAt: { type: String },
   createdAt: { type: String },
-  date: { type: Number }
+  date: { type: Number },
+  betType: {type: Number},
+  betDateTime: {type: Number}
 });
 
 depositsSchema.plugin(Global.aggregatePaginate);
