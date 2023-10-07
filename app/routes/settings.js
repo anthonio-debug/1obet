@@ -2118,7 +2118,25 @@ const cancelSingleBet = async (req, res) => {
     for (const bet of allBets) {
       await handleDrawBet(bet, 2);
     }
-  }else {
+  }
+  else if(bet.isfancyOrbookmaker == true && bet.fancyData !== null){
+    const marketId      = bet.marketId;
+    const matchId       = bet.matchId;
+    const userId        = bet.userId;
+    const TargetScore   = bet.TargetScore;
+    const allBets       = await Bets.find({ 
+      TargetScore: TargetScore, 
+      matchId: matchId, 
+      marketId: marketId, 
+      userId: userId, 
+      isfancyOrbookmaker: true,
+      status: 1
+    })
+    for (const bet of allBets) {
+      await handleDrawBet(bet, 2);
+    }
+  }
+  else {
     const marketId = bet.marketId;
     const matchId = bet.matchId;
     const userId   = bet.userId;
