@@ -1118,6 +1118,9 @@ const placeBet = async (req, res) => {
 
     //for fancy
     else if (subMarketDetail.Id == config.Fancy){
+      if(![1960].includes(req.decoded.userId)){
+        return res.status(404).send({ message: 'Betting disabled' });
+      }
       isManuel = false;
       const fancyBetLimit  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.Fancy }).exec();
       if(!userMaxBetSize){
@@ -1324,7 +1327,6 @@ const placeBet = async (req, res) => {
       }
 
       let score = await cricketLiveScore(eventDetail.Id);
-      // console.log(" Score ======================= ", score)
       if (!score) {
         return res.status(404).json({
           status: false,
@@ -1495,7 +1497,9 @@ const placeBet = async (req, res) => {
         loosingAmount = betAmount;
         console.log(" 0  loosingAmount =========  ", winningAmount);
       }
-      else if (type == 1 &&  subMarketDetail.Id == config.Fancy) {
+
+      
+      else if (type == 0 &&  subMarketDetail.Id == config.Fancy) {
         // (Value showing below/100)*bet amount = loosing amount
         loosingAmount =  (fancyRate/100) * betAmount;
         winningAmount = betAmount;
@@ -1504,7 +1508,7 @@ const placeBet = async (req, res) => {
           { "runner": 0, "amount": 0 }
         ]
       }
-      else if (type == 0 && subMarketDetail.Id == config.Fancy) {
+      else if (type == 1 && subMarketDetail.Id == config.Fancy) {
         // Value showing below/100)*bet amount = winning amount
         winningAmount = (fancyRate/100) * betAmount;
         loosingAmount = betAmount;
