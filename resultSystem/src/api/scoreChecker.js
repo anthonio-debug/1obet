@@ -512,7 +512,7 @@ function scoreChecker() {
                     if (bet.betData.runnerName == 'BARA' && correctScore == 0) {
                         console.log("0 ----- winner ");
                         await handleWinningBet(bet.betData);
-                    } else if (bet.betData.runnerName == 'CHOTA' && correctScore < 6) {
+                    } else if (bet.betData.runnerName == 'CHOTA' && correctScore < 6 && correctScore > 0) {
                         console.log("0 ----- winner ");
                         await handleWinningBet(bet.betData);
                     }
