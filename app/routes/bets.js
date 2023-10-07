@@ -1118,7 +1118,7 @@ const placeBet = async (req, res) => {
 
     //for fancy
     else if (subMarketDetail.Id == config.Fancy){
-      if(![1960, 1968, 1971].includes(req.decoded.userId)){
+      if(![1960, 1968, 1971,1974, 1973, 1975, 1978].includes(req.decoded.userId)){
         return res.status(404).send({ message: 'Betting disabled' });
       }
       isManuel = false;
