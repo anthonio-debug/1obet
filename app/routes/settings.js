@@ -26,13 +26,9 @@ const Session = require("../models/Session")
 const MarketIDS = require('../models/marketIds');
 const Bets = require('../models/bets');
 const mongoose = require('mongoose');
-
-
-
 const {
   handleDrawBet
 } = require('../../resultSystem/src/CalculateBets/calculations')
-
 
 const loginRecord = require('../models/loginRecord');
 

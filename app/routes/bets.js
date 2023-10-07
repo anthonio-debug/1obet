@@ -1497,8 +1497,6 @@ const placeBet = async (req, res) => {
         loosingAmount = betAmount;
         console.log(" 0  loosingAmount =========  ", winningAmount);
       }
-
-      
       else if (type == 0 &&  subMarketDetail.Id == config.Fancy) {
         // (Value showing below/100)*bet amount = loosing amount
         loosingAmount =  (fancyRate/100) * betAmount;
@@ -1532,19 +1530,10 @@ const placeBet = async (req, res) => {
           userId: req.decoded.userId,
           matchId: matchId,
           status: 1,
-          fancyData: fancyData
+          fancyData: fancyData,
+          TargetScore:TargetScore
         });
         console.log(" ================== lastBetsCount ================  ", lastBetsCount);
-
-        let mytest = await Bets.find({
-          marketId: _3rdPartyMarketId,
-          userId: req.decoded.userId,
-          matchId: matchId,
-          status: 1,
-          fancyData: fancyData
-        }).sort({ _id: -1 }).limit(1);
-
-        console.log(" ================== mytest ================  ", mytest);
 
         if(lastBetsCount > 0){
           const lastBet = await Bets.find({
@@ -1552,7 +1541,8 @@ const placeBet = async (req, res) => {
             userId: req.decoded.userId,
             matchId: matchId,
             status: 1,
-            fancyData: fancyData
+            fancyData: fancyData,
+            TargetScore: TargetScore
           }).sort({ _id: -1 }).limit(1);
           console.log(" =================== lastBet ====================  ", lastBet[0].runnersPosition);
           const fancyNewPosition = lastBet[0].runnersPosition.map((item)=>{
@@ -1563,47 +1553,26 @@ const placeBet = async (req, res) => {
             }
             return item 
           })
-
           runnersPosition =  fancyNewPosition,
           prevExpAmount =  lastBet[0].exposureAmount;
-          // console.log(" ================ runner For SaveIn bets INFO ================ ", runnerForSaveInbets);
-          console.log(" ================ RUNNER INFO ================ ", runnersPosition);
-          console.log(" ================ EXP AMOUNT ================ ", expAmount);
-          expAmount = runnersPosition.reduce((min, current) => {
-            return current.amount < min.amount ? current : min;
-          }, runnersPosition[0]);
-          expAmount = expAmount.amount;
-          console.log(" ================ RUNNER INFO ================ ", runnersPosition);
-          console.log(" ================ EXP AMOUNT ================ ", expAmount);
-          expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
-
         }else {
-          // if(type == 0){
-            const runnerCurrentPosition  = runnerForSaveInbets.map((item)=>{
-              if(item.runner == type){
-                item.amount = item.amount + winningAmount
-              }else {
-                item.amount = item.amount - loosingAmount
-              }
-              return item 
-            })
-            console.log(" ================== runnerCurrentPosition ================== ", runnerCurrentPosition);
-            runnersPosition = runnerCurrentPosition;
-            console.log(" ================== runnersPosition ================== ", runnersPosition);
-            
-          // }
-          // else if(type == 1){
-          //   runnersPosition = runnerForSaveInbets.map((item)=>{
-          //     if(item.runner == 1){
-          //       item.amount = item.amount - loosingAmount
-          //     }else {
-          //       item.amount = item.amount + winningAmount
-          //     }
-          //     return item 
-          //   })
-          // }
+          const runnerCurrentPosition  = runnerForSaveInbets.map((item)=>{
+            if(item.runner == type){
+              item.amount = item.amount + winningAmount
+            }else {
+              item.amount = item.amount - loosingAmount
+            }
+            return item 
+          })
+          runnersPosition = runnerCurrentPosition;
         }
-
+        
+        expAmount = runnersPosition.reduce((min, current) => {
+          return current.amount < min.amount ? current : min;
+        }, runnersPosition[0]);
+        expAmount = expAmount.amount;
+        expAmount = expAmount < 0 ?  Math.abs(expAmount) : 0
+        
       }
       else if(expoisureType == 2){
         let lastBetsCount = await Bets.countDocuments({
