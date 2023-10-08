@@ -173,7 +173,7 @@ function ToolForResults() {
                 },
                 {
                     $project: {
-                        betData: "$$ROOT", // Retain all the original data from the Bets table
+                        betData: "$$ROOT" // Retain all the original data from the Bets table
                         score: "$sessionDetails.score"
                     }
                 }
