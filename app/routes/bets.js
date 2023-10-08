@@ -1349,7 +1349,8 @@ const placeBet = async (req, res) => {
           sessionAddition = 2
         }
       }
-      let totalSessions = 0
+      let totalSessions = 0;
+      TargetScore = currentOver;
       if (currentOver % 5 == 0) currentOver += 1
       let currentSessionOver = Math.ceil(currentOver % 5);
       currentSession = Math.ceil(currentOver / 5) + sessionAddition;
@@ -2583,10 +2584,10 @@ const profitLose = async(req, res) => {
     });
   }
   try {
-
     const userId      = parseInt(req.query.userId)
     const currentUser = await User.findOne({ userId: userId});
     if(!currentUser){
+      console.log("line 2 ========= Something Went Wrong!");
       return res.status(404).send({
         success: false,
         message: 'Something Went Wrong!'
