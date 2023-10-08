@@ -2576,6 +2576,7 @@ async function getPercentageSharing(parent_id, child_id) {
 
 const profitLose = async(req, res) => {
   if(!req.query.userId){
+    console.log("line 2579 Something Went Wrong!");
     return res.status(404).send({
       success: false,
       message: 'Something Went Wrong!'
@@ -2679,6 +2680,7 @@ const EventWiseprofitLose = async(req, res) => {
     const sportsId    = req.query.sportsId;
     const currentUser = await User.findOne({ userId: userId});
     if(!currentUser){
+      console.log("line 2682 Something Went Wrong!");
       return res.status(404).send({
         success: false,
         message: 'Something Went Wrong!'
@@ -2779,6 +2781,7 @@ const EventWiseprofitLose = async(req, res) => {
     }
   } catch (error) {
     console.log("Catched", error);
+    console.log("line 2783 Something Went Wrong!");
     return res.status(404).send({
       success: false,
       message: 'Something Went Wrong!'
@@ -2905,6 +2908,7 @@ const dailyMatchWiseprofitLose = async(req, res) => {
     }
   } catch (error) {
     console.log("Catched", error);
+    console.log("line 2910 Something Went Wrong!");
     return res.status(404).send({
       success: false,
       message: 'Something Went Wrong!'
