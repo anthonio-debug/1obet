@@ -1121,7 +1121,7 @@ const placeBet = async (req, res) => {
       if(![1960, 1968, 1971,1974, 1973, 1975, 1978,1979,1980,1981,1982,1983,1984,1985].includes(req.decoded.userId)){
         //return res.status(404).send({ message: 'Betting disabled' });
       }
-      //isManuel = false;
+      isManuel = false;
       const fancyBetLimit  = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.Fancy }).exec();
       if(!userMaxBetSize){
         return res.status(404).send({ message: `something went wrong !` });
