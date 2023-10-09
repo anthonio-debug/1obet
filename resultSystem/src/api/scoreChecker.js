@@ -61,7 +61,7 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        if (typeof result.manuelClose === 'undefined')
+                        if (typeof result.manuelClose === 'undefined' && bet.isManuel == true)
                             continue;
                         await handleDrawBet(bet);
                     }
@@ -70,7 +70,7 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        if (typeof result.manuelClose === 'undefined')
+                        if (typeof result.manuelClose === 'undefined' && bet.isManuel == true)
                             continue;
                         if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
                             console.log("0 ----- winner ");
@@ -138,7 +138,7 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        if (typeof result.manuelClose === 'undefined')
+                        if (typeof result.manuelClose === 'undefined' && bet.isManuel == true)
                             continue;
                         console.log('handle bet draw');
                         await handleDrawBet(bet);
@@ -148,7 +148,7 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        if (typeof result.manuelClose === 'undefined')
+                        if (typeof result.manuelClose === 'undefined' && bet.isManuel == true)
                             continue;
                         if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
                             console.log("0 ----- winner ");
@@ -243,7 +243,7 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        if (typeof result.manuelClose === 'undefined')
+                        if (typeof result.manuelClose === 'undefined' && bet.isManuel == true)
                             continue;
                         await handleDrawBet(bet);
                     }
@@ -252,7 +252,7 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        if (typeof result.manuelClose === 'undefined')
+                        if (typeof result.manuelClose === 'undefined' && bet.isManuel == true)
                             continue;
                         if (bet.type == 0 && bet.runner == result.winnerSelId) {
                             console.log("0 ----- winner ");
@@ -360,7 +360,7 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        if (typeof result.manuelClose === 'undefined')
+                        if (typeof result.manuelClose === 'undefined' && bet.isManuel == true)
                             continue;
                         await handleDrawBet(bet);
                     }
@@ -369,7 +369,7 @@ function scoreChecker() {
                         if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
                             continue;
                         }
-                        if (typeof result.manuelClose === 'undefined')
+                        if (typeof result.manuelClose === 'undefined' && bet.isManuel == true)
                             continue;
 
 
