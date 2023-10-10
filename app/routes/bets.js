@@ -642,7 +642,7 @@ const placeBet = async (req, res) => {
 
     // GH HR match odds 
     else if (config.raceMarkets.includes(marketId)) {
-		//isManuel = false;
+		isManuel = false;
       runnerName = req.body.runnerName
       console.log(" ============================ GH & HR ============================ ");
       const DBOddDetails = await RaceOdds.findById(oddsId);
