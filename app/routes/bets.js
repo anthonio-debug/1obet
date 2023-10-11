@@ -1808,7 +1808,23 @@ const placeBet = async (req, res) => {
       }
       let totalSessions = 0;
       TargetScore = currentOver;
-      // if (currentOver % 5 == 0) currentOver += 1;
+      if (type == 'TEST' && currentOver % 10 == 0){
+        return res.status(404).send({
+          success: false,
+          message: 'betting not allowed !',
+          currentSession: currentSession,
+          totalSessions: totalSessions,
+          currentSessionOver: currentSessionOver,
+        });
+      }else if(type != 'TEST' && currentOver % 5 == 0){
+        return res.status(404).send({
+          success: false,
+          message: 'betting not allowed !',
+          currentSession: currentSession,
+          totalSessions: totalSessions,
+          currentSessionOver: currentSessionOver,
+        });
+      }
       let currentSessionOver = Math.ceil(currentOver % 5);
       currentSession = Math.ceil(currentOver / 5) + sessionAddition;
       console.log(
