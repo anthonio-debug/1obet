@@ -209,8 +209,6 @@ async function addCashDeposit(req, res) {
       user_new_balance: user_new_balance,
       user_new_availableBalance: user_new_availableBalance,
       user_new_exposure: user_new_exposure,
-      marketId: bet.marketId,
-      sportsId: bet.sportsId,
     })
     await ExpTran.save();
 
@@ -425,9 +423,7 @@ async function withDrawCashDeposit(req, res) {
       user_prev_exposure: user_prev_exposure,
       user_new_balance: user_new_balance,
       user_new_availableBalance: user_new_availableBalance,
-      user_new_exposure: user_new_exposure,
-      marketId: bet.marketId,
-      sportsId: bet.sportsId,
+      user_new_exposure: user_new_exposure
     })
     await ExpTran.save();
 
