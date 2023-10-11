@@ -79,7 +79,6 @@ const config = {
   "sportsOpenBefore" : 600000
 }
 
-
 async function getEndedMatches(sportsId) {
   try {
     const endedMatches = await Events.find({
@@ -171,7 +170,8 @@ async function handleLosingBet(bet) {
   lastTrans = await Cash.find({  userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
 
   const ExpTran = new ExpRec({
-    trans_from: "Bet",
+    userId: updatedUser.userId,
+    trans_from: "BetLose",
     trans_from_id: bet._id,
     trans_bet_status :  0,
     user_prev_balance: user_prev_balance,
@@ -326,7 +326,8 @@ async function handleWinningBet(bet) {
   const user_new_exposure = updatedUser.clientPL;
 
   const ExpTran = new ExpRec({
-    trans_from: "Bet",
+    userId: updatedUser.userId,
+    trans_from: "BetWin",
     trans_from_id: bet._id,
     trans_bet_status :  0,
     user_prev_balance: user_prev_balance,
@@ -484,14 +485,27 @@ const handleDrawBet = async (bet, status = 1) => {
   if (!userToUpdate) {
     return res.status(404).send({ message: "user not found" });
   }
+  const user_prev_balance = userToUpdate.balance;
+  const user_prev_availableBalance = userToUpdate.availableBalance;
+  const user_prev_exposure = userToUpdate.exposure;
   if(bet.calculateExp){
     userToUpdate.availableBalance += bet.exposureAmount;
     userToUpdate.exposure += bet.exposureAmount;
     await userToUpdate.save();
   }
 
+  const updatedUser = await User.findOne({
+    userId: userId,
+    isDeleted: false,
+  });
+
+  const user_new_balance = updatedUser.balance;
+  const user_new_availableBalance = updatedUser.availableBalance;
+  const user_new_exposure = updatedUser.clientPL;
+
   const ExpTran = new ExpRec({
-    trans_from: "Bet",
+    userId: updatedUser.userId,
+    trans_from: "BetDrawOrCanceled",
     trans_from_id: bet._id,
     trans_bet_status :  status,
     user_prev_balance: user_prev_balance,

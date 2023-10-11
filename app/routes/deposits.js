@@ -200,6 +200,7 @@ async function addCashDeposit(req, res) {
 
     const updatedUserLastLedger = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const ExpTran = new ExpRec({
+            userId: updatedUser.userId,
       trans_from: "cashDeposit",
       trans_from_id: updatedUserLastLedger._id,
       trans_bet_status :  0,
@@ -415,6 +416,7 @@ async function withDrawCashDeposit(req, res) {
     const user_new_exposure = updatedUser.clientPL;
     const updatedUserLastLedger = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const ExpTran = new ExpRec({
+      userId: updatedUser.userId,
       trans_from: "cashWithDraw",
       trans_from_id: updatedUserLastLedger._id,
       trans_bet_status :  0,

@@ -198,6 +198,7 @@ async function addCredit(req, res) {
     const updatedUserLastLedger = await CashCredit.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
 
     const ExpTran = new ExpRec({
+      userId: updatedUser.userId,
       trans_from: "creditDeposit",
       trans_from_id: updatedUserLastLedger._id,
       trans_bet_status :  0,
@@ -410,6 +411,7 @@ async function withdrawCredit(req, res) {
     const updatedUserLastLedger = await CashCredit.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
 
     const ExpTran = new ExpRec({
+      userId: updatedUser.userId,
       trans_from: "creditWithDraw",
       trans_from_id: updatedUserLastLedger._id,
       trans_bet_status :  0,

@@ -3,6 +3,7 @@ mongoose.set('debug', false);
 
 let Global = require('../global/settings');
 const ExpRec = new mongoose.Schema({
+    userId: { type: Number },
     trans_from: { type: String, required: false },
     trans_from_id: { type: Number, required: false },
     user_prev_balance: { type: Number },
