@@ -7,7 +7,6 @@ const cashValidator = require('../validators/deposits');
 const loginRouter = express.Router();
 const ExpRec = require("../models/ExpRec");
 
-
 async function addCashDeposit(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -199,9 +198,10 @@ async function addCashDeposit(req, res) {
     const user_new_availableBalance = updatedUser.availableBalance;
     const user_new_exposure = updatedUser.clientPL;
 
+    const updatedUserLastLedger = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const ExpTran = new ExpRec({
-      trans_from: "Bet",
-      trans_from_id: bet._id,
+      trans_from: "cashDeposit",
+      trans_from_id: updatedUserLastLedger._id,
       trans_bet_status :  0,
       user_prev_balance: user_prev_balance,
       user_prev_availableBalance: user_prev_availableBalance,
@@ -415,10 +415,10 @@ async function withDrawCashDeposit(req, res) {
     const user_new_balance = updatedUser.balance;
     const user_new_availableBalance = updatedUser.availableBalance;
     const user_new_exposure = updatedUser.clientPL;
-
+    const updatedUserLastLedger = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const ExpTran = new ExpRec({
-      trans_from: "Bet",
-      trans_from_id: bet._id,
+      trans_from: "cashWithDraw",
+      trans_from_id: updatedUserLastLedger._id,
       trans_bet_status :  0,
       user_prev_balance: user_prev_balance,
       user_prev_availableBalance: user_prev_availableBalance,
