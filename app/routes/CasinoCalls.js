@@ -111,7 +111,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
     const difference = credit - debit;
     const allTrans   = [];
     if (difference < 0) {
-      console.log(" ======================= difference < 0 =======================   ");
+      console.log("   ======================= difference < 0 =======================   ");
       /**
        * lose some money mean there will not be any commission only adjust the lost amount into exposure. 
        * 400-1500 = -1100 OR 1499-1500 = -1 OR 0-1500 = -1500
@@ -465,7 +465,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
 
     else if(difference == 0) {
       const updatedavailableBalance = user.availableBalance + ( debit*casinoMultiples )
-      const UpdatedExposure = user.exposure + ( debit*casinoMultiples )
+      const UpdatedExposure         = user.exposure + ( debit*casinoMultiples )
       await users.updateOne(
         { _id: user?._id },
         { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure } },

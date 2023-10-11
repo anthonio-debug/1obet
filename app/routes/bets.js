@@ -267,6 +267,7 @@ const placeBet = async (req, res) => {
       user.betLockStatus == true ||
       user.blockedSubMarketsByParent.includes(subMarketDetail.Id)
     ) {
+      console.log(" Not Allowed CALLED By Market  ");
       return res.status(404).send({ message: 'Betting disabled' });
     }
     const userMaxBetSize = await userBetSizes.findOne({
