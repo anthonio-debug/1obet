@@ -2,9 +2,10 @@ const express = require('express');
 const { validationResult } = require('express-validator');
 let config = require('config');
 const CashCredit = require('../models/deposits');
-
 const User = require('../models/user');
 const cashValidator = require('../validators/deposits');
+const ExpRec = require("../../../app/models/ExpRec");
+
 const loginRouter = express.Router();
 
 async function addCredit(req, res) {
@@ -24,7 +25,10 @@ async function addCredit(req, res) {
     if (!userToUpdate) {
       return res.status(404).send({ message: 'user not found' });
     }
-    
+    const user_prev_balance = userToUpdate.balance;
+    const user_prev_availableBalance = userToUpdate.availableBalance;
+    const user_prev_exposure = userToUpdate.exposure;
+
     const currentUserParent = await User.findOne({
       userId: userToUpdate.createdBy,
       isDeleted: false
@@ -184,6 +188,28 @@ async function addCredit(req, res) {
     }
     await userToUpdate.save();
     await currentUserParent.save();
+    const updatedUser = await User.findOne({
+      userId:  req.body.userId,
+      isDeleted: false,
+    });
+    const user_new_balance = updatedUser.balance;
+    const user_new_availableBalance = updatedUser.availableBalance;
+    const user_new_exposure = updatedUser.clientPL;
+
+    const ExpTran = new ExpRec({
+      trans_from: "Bet",
+      trans_from_id: bet._id,
+      trans_bet_status :  0,
+      user_prev_balance: user_prev_balance,
+      user_prev_availableBalance: user_prev_availableBalance,
+      user_prev_exposure: user_prev_exposure,
+      user_new_balance: user_new_balance,
+      user_new_availableBalance: user_new_availableBalance,
+      user_new_exposure: user_new_exposure,
+      marketId: bet.marketId,
+      sportsId: bet.sportsId,
+    })
+    await ExpTran.save();
 
     return res.send({
       success: true,
@@ -209,6 +235,9 @@ async function withdrawCredit(req, res) {
     if (!userToUpdate) {
       return res.status(404).send({ message: 'user not found' });
     }
+    const user_prev_balance = userToUpdate.balance;
+    const user_prev_availableBalance = userToUpdate.availableBalance;
+    const user_prev_exposure = userToUpdate.exposure;
     
     const currentUserParent = await User.findOne({ userId: userToUpdate.createdBy, isDeleted: false });
     if (!currentUserParent) {
@@ -370,6 +399,29 @@ async function withdrawCredit(req, res) {
 
     await userToUpdate.save();
     await currentUserParent.save();
+
+    const updatedUser = await User.findOne({
+      userId:  req.body.userId,
+      isDeleted: false,
+    });
+    const user_new_balance = updatedUser.balance;
+    const user_new_availableBalance = updatedUser.availableBalance;
+    const user_new_exposure = updatedUser.clientPL;
+
+    const ExpTran = new ExpRec({
+      trans_from: "Bet",
+      trans_from_id: bet._id,
+      trans_bet_status :  0,
+      user_prev_balance: user_prev_balance,
+      user_prev_availableBalance: user_prev_availableBalance,
+      user_prev_exposure: user_prev_exposure,
+      user_new_balance: user_new_balance,
+      user_new_availableBalance: user_new_availableBalance,
+      user_new_exposure: user_new_exposure,
+      marketId: bet.marketId,
+      sportsId: bet.sportsId,
+    })
+    await ExpTran.save();
 
     return res.send({
       success: true,

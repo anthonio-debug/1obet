@@ -4,6 +4,8 @@ const { getParents } = require("../../../app/routes/bets");
 const Events = require("../../../app/models/events");
 const Cash = require("../../../app/models/deposits");
 const CurrentPosition = require("../../../app/models/CurrentPosition");
+const ExpRec = require("../../../app/models/ExpRec");
+
 
 const config = {
   "PORT": 3003,
@@ -119,8 +121,12 @@ async function handleLosingBet(bet) {
   if (!userToUpdate) {
     return res.status(404).send({ message: "user not found" });
   }
-  userToUpdate.balance          -= loosingAmount;
-  userToUpdate.clientPL         -= loosingAmount;
+  const user_prev_balance = userToUpdate.balance;
+  const user_prev_availableBalance = userToUpdate.availableBalance;
+  const user_prev_exposure = userToUpdate.exposure;
+
+  userToUpdate.balance  -= loosingAmount;
+  userToUpdate.clientPL -= loosingAmount;
   let userToUpdateAvailableBalance   = -loosingAmount;
   if(bet.calculateExp){
     userToUpdateAvailableBalance += bet.exposureAmount
@@ -128,6 +134,15 @@ async function handleLosingBet(bet) {
   }
   userToUpdate.availableBalance += userToUpdateAvailableBalance;
   await userToUpdate.save();
+
+  const updatedUser = await User.findOne({
+    userId: userId,
+    isDeleted: false,
+  });
+
+  const user_new_balance = updatedUser.balance;
+  const user_new_availableBalance = updatedUser.availableBalance;
+  const user_new_exposure = updatedUser.clientPL;
   console.log(" ======================== User Updating Sucessfully ");
 
   let lastTrans       = await Cash.find({  userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
@@ -152,6 +167,23 @@ async function handleLosingBet(bet) {
     betDateTime: bet.betTime
   });
   await cash.save();
+
+  lastTrans = await Cash.find({  userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
+
+  const ExpTran = new ExpRec({
+    trans_from: "Bet",
+    trans_from_id: bet._id,
+    trans_bet_status :  0,
+    user_prev_balance: user_prev_balance,
+    user_prev_availableBalance: user_prev_availableBalance,
+    user_prev_exposure: user_prev_exposure,
+    user_new_balance: user_new_balance,
+    user_new_availableBalance: user_new_availableBalance,
+    user_new_exposure: user_new_exposure,
+    marketId: bet.marketId,
+    sportsId: bet.sportsId,
+  })
+  await ExpTran.save();
 
   console.log(" ======================== Cash Updating Sucessfully ");
 
@@ -193,7 +225,7 @@ async function handleLosingBet(bet) {
     let lastTrans       = await Cash.find({  userId: user.userId }).sort({ _id: -1 }).limit(1);
     let lastMaxWithdraw = lastTrans.length > 0? lastTrans[0] : null
 
-    let cash = await new Cash({
+    let cash = new Cash({
       userId: user.userId,
       description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
       createdBy: 0,
@@ -269,6 +301,10 @@ async function handleWinningBet(bet) {
     upMovingCommAmount = commissionAmount
   }
 
+  const user_prev_balance = userToUpdate.balance;
+  const user_prev_availableBalance = userToUpdate.availableBalance;
+  const user_prev_exposure = userToUpdate.exposure;
+
   userToUpdate.balance += remainingAmount;
   userToUpdate.clientPL += remainingAmount;
   let userToUpdateAvailableBalance   =  remainingAmount;
@@ -279,6 +315,31 @@ async function handleWinningBet(bet) {
   userToUpdate.availableBalance += userToUpdateAvailableBalance;
 
   await userToUpdate.save();
+
+  const updatedUser = await User.findOne({
+    userId: userId,
+    isDeleted: false,
+  });
+
+  const user_new_balance = updatedUser.balance;
+  const user_new_availableBalance = updatedUser.availableBalance;
+  const user_new_exposure = updatedUser.clientPL;
+
+  const ExpTran = new ExpRec({
+    trans_from: "Bet",
+    trans_from_id: bet._id,
+    trans_bet_status :  0,
+    user_prev_balance: user_prev_balance,
+    user_prev_availableBalance: user_prev_availableBalance,
+    user_prev_exposure: user_prev_exposure,
+    user_new_balance: user_new_balance,
+    user_new_availableBalance: user_new_availableBalance,
+    user_new_exposure: user_new_exposure,
+    marketId: bet.marketId,
+    sportsId: bet.sportsId,
+  })
+  await ExpTran.save();
+
   console.log(" =============== User Updated Successfull ");
 
   let lastTrans       = await Cash.find({  userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
@@ -350,7 +411,7 @@ async function handleWinningBet(bet) {
       console.log('User cach record not found.', user);
     }
     
-    let betTransaction = await new Cash({
+    let betTransaction = new Cash({
       userId: user.userId,
       description: `Event (${bet.event}) Runner (${bet.runnerName})`,
       createdBy: 0,
@@ -378,7 +439,7 @@ async function handleWinningBet(bet) {
 
     if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker) {
       let lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-      let commissionTransaction = await new Cash({
+      let commissionTransaction = new Cash({
         userId: user.userId,
         description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
         createdBy: 0,
@@ -428,6 +489,21 @@ const handleDrawBet = async (bet, status = 1) => {
     userToUpdate.exposure += bet.exposureAmount;
     await userToUpdate.save();
   }
+
+  const ExpTran = new ExpRec({
+    trans_from: "Bet",
+    trans_from_id: bet._id,
+    trans_bet_status :  status,
+    user_prev_balance: user_prev_balance,
+    user_prev_availableBalance: user_prev_availableBalance,
+    user_prev_exposure: user_prev_exposure,
+    user_new_balance: user_new_balance,
+    user_new_availableBalance: user_new_availableBalance,
+    user_new_exposure: user_new_exposure,
+    marketId: bet.marketId,
+    sportsId: bet.sportsId,
+  })
+  await ExpTran.save();
 
   const totalRemainingAmount = bet.winningAmount;
 
