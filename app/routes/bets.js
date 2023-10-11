@@ -2390,11 +2390,7 @@ async function getUserBets(req, res) {
         $lte: endTimestamp,
       };
     }
-
-    if (req.body.status) {
-      query.status = req.body.status;
-    }
-
+    query.status = req.body.status;
     if (req.decoded.role != '5') query.userId = req.body.userId;
     else if (req.decoded.role == '5') query.userId = req.decoded.userId;
 
