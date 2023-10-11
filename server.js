@@ -102,6 +102,7 @@ app.use('/api', require('./app/routes/Racing').loginRouter);
 app.use('/api', require('./app/routes/BettingFigures').loginRouter);
 app.use('/api', require('./app/routes/sportBook').loginRouter);
 app.use('/api', require('./app/routes/marketPositions').loginRouter);
+app.use('/api', require('./app/routes/marketShares').loginRouter);
 
 // // Allowed Apis for this role
 // app.use(function (req, res, next) {
