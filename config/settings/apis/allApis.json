@@ -162,5 +162,6 @@
   "tesTingsheet",
   "battors-list",
   "user-latest-ledger",
-  "delete-user"
+  "delete-user",
+  "marketPositions"
 ]
