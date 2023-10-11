@@ -134,6 +134,7 @@ const placeBet = async (req, res) => {
       overunderMarketId,
       selectedAmount,
     } = req.body;
+    console.log(" =============== betRate ===============  ", betRate);
     const selectedBetRate = selectedAmount;
     const userId = req.decoded.userId;
     let ApiResponseOdds;
@@ -1790,7 +1791,7 @@ const placeBet = async (req, res) => {
           message: `Bet Not Allowed`,
         });
       }
-      let currentOver = score.overs;
+      let currentOver = Number(score.overs);
       let type = score.type;
       let inning = score.inning;
       let sessionAddition = 0;
@@ -2203,7 +2204,7 @@ const placeBet = async (req, res) => {
         runnerName: runnerName,
         userId,
         betAmount,
-        betRate: betRate,
+        betRate: Number(betRate),
         selectedBetRate: selectedBetRate,
         TargetScore: TargetScore,
         matchId: matchId,
