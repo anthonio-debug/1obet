@@ -1,14 +1,14 @@
-const express             = require('express');
-const app                 = express();
-const mongoose            = require('mongoose');
-const bodyParser          = require('body-parser');
-let config                = require('config');
-let fs                    = require('fs');
-let cors                  = require('cors');
-var morgan                = require('morgan');
-const http               = require('http');
-const apisMiddleware      = require('./app/middlewares/apisMiddleware');
-const loginMiddleWare     = require('./app/middlewares/loginMiddleware');
+const express = require('express');
+const app = express();
+const mongoose = require('mongoose');
+const bodyParser = require('body-parser');
+let config = require('config');
+let fs = require('fs');
+let cors = require('cors');
+var morgan = require('morgan');
+const http = require('http');
+const apisMiddleware = require('./app/middlewares/apisMiddleware');
+const loginMiddleWare = require('./app/middlewares/loginMiddleware');
 const checkRoleMiddleware = require('./app/middlewares/checkRoleMiddleware');
 
 var apisContent = fs.readFileSync(config.apisFileName);
@@ -101,6 +101,8 @@ app.use('/api', require('./app/routes/liveScore').loginRouter);
 app.use('/api', require('./app/routes/Racing').loginRouter);
 app.use('/api', require('./app/routes/BettingFigures').loginRouter);
 app.use('/api', require('./app/routes/sportBook').loginRouter);
+app.use('/api', require('./app/routes/marketPositions').loginRouter);
+app.use('/api', require('./app/routes/marketShares').loginRouter);
 
 // // Allowed Apis for this role
 // app.use(function (req, res, next) {
