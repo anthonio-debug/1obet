@@ -1761,21 +1761,11 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
-<<<<<<< HEAD
-      if (
-        ![
-          1991, 1968, 1971, 1974, 1973, 1975, 1978, 1979, 1980, 1981, 1982,
-          1983, 1984, 1985, 2005,
-        ].includes(req.decoded.userId)
-      ) {
-        return res.status(404).send({ message: 'Betting disabled' });
-=======
 
 		if(![1991, 1968, 1971,1974, 1973, 1975, 1978,1979,1980,1981,1982,1983,1984,1985,2005].includes(req.decoded.userId)){
       console.log(" 1766 Not Allowed CALLED By Market  ");
         //return res.status(404).send({ message: 'Betting disabled' });
 
->>>>>>> fbdd02363b83515b8e3fbc538f09840bd1daeaf6
       }
 
       const FigureEvenOddSmallBig = await userBetSizes
