@@ -48,6 +48,7 @@ const checkMarketBlocked = async (user) => {
 }
 
 const WinLoseTransManagement = async (balance, payload, user, action) => {
+
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -65,27 +66,27 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
 
   console.log(" ================ credit payload ================ ", payload);
 
-  const now = new Date();
-  const year = now.getFullYear().toString();
+  const now   = new Date();
+  const year  = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
-  const day = now.getDate().toString().padStart(2, '0');
+  const day   = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
-
+  
   if (action == 0) {
-    let amount = payload.amount * casinoMultiples;
-    let UpdatedExposure = user.exposure - amount;
-    console.log(" ============ Handle Place Bet ============ ");
+    let amount                  = Number(payload.amount) * casinoMultiples;
+    let UpdatedExposure         = user.exposure - amount;
+    let updatedavailableBalance = user.availableBalance - (amount);
+    // console.log(" ============ Handle Place Bet ============ ");
 
     /**
      * let lastMaxWithdrawRes = await Cash.find( {userId: user.userId}).sort({ _id: -1 }); 
      * let lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0]: null
      * console.log(" lastMaxWithdraw ============== ", lastMaxWithdraw);
      */
-    console.log("----------", payload, "-----", amount, "===UpdatedExposure: ", UpdatedExposure);
+    console.log("----------", payload, "-----", amount, " === UpdatedExposure: ", UpdatedExposure);
     console.log(" ============ Update user balances ============ ");
-    let updatedavailableBalance = user.availableBalance - (amount);
     let userResponse = await users.updateOne(
-      { _id: user?._id }, { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure } },
+      { _id: user._id }, { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure } },
       { session }
     );
     const casinoDebits = new CasinoDebits(payload);
@@ -105,13 +106,12 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
 
     console.log(" ======================= lastDebit =======================  ", lastDebit);
 
-    const debit = lastDebit.amount;
-    const credit = payload.amount;
+    const debit      = Number(lastDebit.amount);
+    const credit     = Number(payload.amount);
     const difference = credit - debit;
-    const allTrans = [];
+    const allTrans   = [];
     if (difference < 0) {
-      console.log(" ======================= difference < 0 =======================   ");
-
+      console.log("   ======================= difference < 0 =======================   ");
       /**
        * lose some money mean there will not be any commission only adjust the lost amount into exposure. 
        * 400-1500 = -1100 OR 1499-1500 = -1 OR 0-1500 = -1500
@@ -125,7 +125,6 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
        * its mean User lose 1100 
        * 
        */
-
       const updatedavailableBalance = user.availableBalance + (credit * casinoMultiples);
       const updatedclientPL = user.clientPL + (difference * casinoMultiples);
       const updatedbalance = user.balance + (difference * casinoMultiples);
@@ -466,7 +465,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
 
     else if(difference == 0) {
       const updatedavailableBalance = user.availableBalance + ( debit*casinoMultiples )
-      const UpdatedExposure = user.exposure + ( debit*casinoMultiples )
+      const UpdatedExposure         = user.exposure + ( debit*casinoMultiples )
       await users.updateOne(
         { _id: user?._id },
         { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure } },
@@ -579,20 +578,10 @@ async function debitfun(req, res) {
         await session.abortTransaction();
         return res.json({ status: '500', msg: `Internal error no user` });
       }
-
-
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if(checkMarketBlockedResponse == 1){
         await session.abortTransaction(user);
         return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
-      }
-
-      if (sameTransId > 0) {
-        await session.abortTransaction();
-        return res.json({
-          status: 200,
-          balance: user.availableBalance / casinoMultiples,
-        });
       }
 
       if (sameTransId > 0) {
@@ -650,11 +639,10 @@ async function creditfun(req, res) {
   try {
     console.log(" credit req.query ======= ", req.query);
     const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
-    const users = client.db(`${config.DBNAME}`).collection('users');
-
-    const payload = req.query;
-    const salt = config.saltKey;
-    const key = payload.key;
+    const users       = client.db(`${config.DBNAME}`).collection('users');
+    const payload     = req.query;
+    const salt        = config.saltKey;
+    const key         = payload.key;
     delete payload.key;
 
     const queryString = Object.keys(payload).map(key => `${key}=${payload[key]}`).join('&');

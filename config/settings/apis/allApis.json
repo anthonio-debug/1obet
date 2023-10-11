@@ -163,5 +163,6 @@
   "battors-list",
   "user-latest-ledger",
   "delete-user",
-  "marketPositions"
+  "marketPositions",
+  "marketGainWithDuplicates"
 ]
