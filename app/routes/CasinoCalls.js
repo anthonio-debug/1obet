@@ -106,13 +106,12 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
 
     console.log(" ======================= lastDebit =======================  ", lastDebit);
 
-    const debit = lastDebit.amount;
-    const credit = payload.amount;
+    const debit      = Number(lastDebit.amount);
+    const credit     = Number(payload.amount);
     const difference = credit - debit;
-    const allTrans = [];
+    const allTrans   = [];
     if (difference < 0) {
       console.log(" ======================= difference < 0 =======================   ");
-
       /**
        * lose some money mean there will not be any commission only adjust the lost amount into exposure. 
        * 400-1500 = -1100 OR 1499-1500 = -1 OR 0-1500 = -1500
@@ -126,7 +125,6 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
        * its mean User lose 1100 
        * 
        */
-
       const updatedavailableBalance = user.availableBalance + (credit * casinoMultiples);
       const updatedclientPL = user.clientPL + (difference * casinoMultiples);
       const updatedbalance = user.balance + (difference * casinoMultiples);
