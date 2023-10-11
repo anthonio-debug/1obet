@@ -4,7 +4,7 @@ let config = require('config');
 const CashCredit = require('../models/deposits');
 const User = require('../models/user');
 const cashValidator = require('../validators/deposits');
-const ExpRec = require("../../../app/models/ExpRec");
+const ExpRec = require("../models/ExpRec");
 
 const loginRouter = express.Router();
 

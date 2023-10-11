@@ -5,7 +5,7 @@ const Cash = require('../models/deposits');
 const User = require('../models/user');
 const cashValidator = require('../validators/deposits');
 const loginRouter = express.Router();
-const ExpRec = require("../../../app/models/ExpRec");
+const ExpRec = require("../models/ExpRec");
 
 
 async function addCashDeposit(req, res) {
