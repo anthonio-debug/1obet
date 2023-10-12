@@ -731,10 +731,8 @@ async function rollbackfun(req, res) {
   const session = client.startSession();
   try {
     console.log(" rollback req.query ======= ", req.query);
-    // console.log('======', session.emit())
     const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
     const users = client.db(`${config.DBNAME}`).collection('users');
-    // session.startTransaction();
     const payload = req.query;
     const salt = config.saltKey;
     const key = payload.key;
