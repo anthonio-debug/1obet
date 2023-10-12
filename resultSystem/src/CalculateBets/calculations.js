@@ -323,7 +323,7 @@ async function handleWinningBet(bet) {
 
   const user_new_balance = updatedUser.balance;
   const user_new_availableBalance = updatedUser.availableBalance;
-  const user_new_exposure = updatedUser.clientPL;
+  const user_new_exposure = updatedUser.exposure;
 
   const ExpTran = new ExpRec({
     userId: updatedUser.userId,
