@@ -491,8 +491,8 @@ const handleDrawBet = async (bet, status = 1) => {
   if(bet.calculateExp){
     userToUpdate.availableBalance += bet.exposureAmount;
     userToUpdate.exposure += bet.exposureAmount;
-    await userToUpdate.save();
   }
+  await userToUpdate.save();
 
   const updatedUser = await User.findOne({
     userId: userId,

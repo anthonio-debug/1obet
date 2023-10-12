@@ -110,6 +110,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
     const credit     = Number(payload.amount);
     const difference = credit - debit;
     const allTrans   = [];
+    // lose some Amount 
     if (difference < 0) {
       console.log("   ======================= difference < 0 =======================   ");
       /**
@@ -262,7 +263,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
     }
-
+    // Win some Amount 
     else if (difference > 0){
       console.log(" ======================= difference > 0 ======================= ");
 
@@ -292,18 +293,10 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       let upMovingAmount = amount;
       let commissionFrom = user.userId;
       let upMovingCommAmount = commissionAmount;
-      
-      // console.log("==========bettor_won_amount==============", bettor_won_amount);
-      // console.log("==========amount==============", amount);
-      // console.log("==========remainingAmount==============", remainingAmount);
-      // console.log("==========commissionAmount==============", commissionAmount);
-      // console.log("==========upMovingAmount==============", upMovingAmount);
-      // console.log("========== upMovingCommAmount ==============", upMovingCommAmount);
-      // console.log(" ============ handle Winning Bet ============ ");
 
       const updatedavailableBalance = user.availableBalance + (remainingAmount) + debit*config.casinoMultiples;
       const updatedclientPL = user.clientPL + (remainingAmount);
-      const updatedbalance = user.balance + (remainingAmount);
+      const updatedbalance  = user.balance + (remainingAmount);
       const UpdatedExposure = (user.exposure) + (debit * config.casinoMultiples);
       const userResponse = await users.updateOne(
         { _id: user?._id },
@@ -462,7 +455,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       await casinoDebits.save();
       console.log("=============end of }else if (difference > 0){=============");
     }
-
+    // No Win lose 
     else if(difference == 0) {
       const updatedavailableBalance = user.availableBalance + ( debit*casinoMultiples )
       const UpdatedExposure         = user.exposure + ( debit*casinoMultiples )
@@ -538,11 +531,10 @@ async function debitfun(req, res) {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
+  const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
+  const users = client.db(`${config.DBNAME}`).collection('users');
   try {
     console.log(" debt req.query ============== ", req.query);
-
-    // const Cash = client.db(`${config.DBNAME}`).collection('deposits');
-
     const payload = req.query;
     const salt = config.saltKey;
     const key = payload.key;
@@ -561,15 +553,12 @@ async function debitfun(req, res) {
 
     let updatedavailableBalance = 0
     await session.withTransaction(async () => {
-      const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
-      const users = client.db(`${config.DBNAME}`).collection('users');
 
       // console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
       const sameTransId = await casinoCalls.countDocuments(
         { transaction_id: payload.transaction_id, remote_id: parseInt(payload.remote_id), round_id: payload.round_id, action: 'debit' },
         { session }
       );
-      // console.log('====== sameTransId', sameTransId)
       const user = await users.findOne(
         { remoteId: parseInt(payload.remote_id) },
         { session }
@@ -619,9 +608,13 @@ async function debitfun(req, res) {
 
     await session.commitTransaction();
     console.log(" Amount Returnning to Casino from Debit  ", updatedavailableBalance / casinoMultiples);
+    const updatedUser = await users.findOne(
+      { remoteId: parseInt(payload.remote_id) },
+      { session }
+    )
     return res.json({
       status: 200,
-      balance: updatedavailableBalance / casinoMultiples
+      balance: updatedUser.availableBalance / casinoMultiples
     });
   } catch (err) {
     console.error('Error:', err);
@@ -713,10 +706,14 @@ async function creditfun(req, res) {
 
     console.log(" Amount Returnning to Casino from Credit  ", updatedavailableBalance / casinoMultiples);
 
-    const finaluser = await users.findOne({remoteId: parseInt(payload.remote_id)});
+    const updatedUser = await users.findOne(
+      { remoteId: parseInt(payload.remote_id) },
+      { session }
+    )
+
     return res.json({
       status: 200,
-      balance: finaluser.availableBalance / casinoMultiples,
+      balance: updatedUser.availableBalance / casinoMultiples
     });
 
   } catch (err) {
@@ -745,9 +742,7 @@ async function rollbackfun(req, res) {
     const queryString = Object.keys(payload)
       .map(key => `${key}=${payload[key]}`)
       .join('&');
-    // console.log('queryString', queryString);
     const hash = createHashKey(salt, queryString);
-    // console.log('hash', hash);
     if (hash !== key) {
       return res.json({
         status: 403,
@@ -799,12 +794,14 @@ async function rollbackfun(req, res) {
         );
 
         let amount = 0;
+        let exposureAmut = 0 
         const action = rollbackTransaction.action;
         if (action == "credit") {
           amount = - parseInt(rollbackTransaction.amount);
         }
         else if (action == "debit") {
           amount = parseInt(rollbackTransaction.amount);
+          exposureAmut = parseInt(rollbackTransaction.amount);
         }
         else if (action == 'rollback') {
           await session.abortTransaction();
@@ -813,24 +810,26 @@ async function rollbackfun(req, res) {
             balance: user.availableBalance / casinoMultiples
           });
         }
-        updatedBalance = user.availableBalance + (amount * casinoMultiples);
-        let userResponse = await users.updateOne(
-          { _id: user?._id }, { $set: { availableBalance: updatedBalance } },
+        updatedBalance    = user.availableBalance + (amount * casinoMultiples);
+        updatedExposureAmount  = user.exposure + (amount * casinoMultiples);
+
+        await users.updateOne(
+          { _id: user?._id }, { $set: {exposure: updatedExposureAmount,  availableBalance: updatedBalance } },
           { session }
         );
-
-        // console.log("=========== >> userResponse", userResponse);
 
         const casinoDebits = new CasinoDebits(payload);
         await casinoDebits.save();
         await session.commitTransaction();
 
+        const updatedUser = await users.findOne(
+          { remoteId: parseInt(payload.remote_id) },
+          { session }
+        )
         return res.json({
           status: 200,
-          balance: updatedBalance / casinoMultiples
+          balance: updatedUser.availableBalance / casinoMultiples
         });
-
-
       }, transactionOptions);
     } else {
       const user2 = await users.findOne(
@@ -845,7 +844,6 @@ async function rollbackfun(req, res) {
         });
       }
     }
-
   } catch (err) {
     await session.abortTransaction();
     console.error(err);
