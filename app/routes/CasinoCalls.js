@@ -14,24 +14,6 @@ const transactionOptions = {
   readPreference: 'primary',
   readConcern: { level: 'local' },
   writeConcern: { w: 'majority' }
-};
-
-const getParentsCasino = async (userId) => {
-  const parentUserIds = [];
-  let currentUserId = userId;
-  console.log('currentUserId', currentUserId);
-
-  while (currentUserId) {
-    const parentUser = await User.findOne({ userId: currentUserId });
-
-    if (!parentUser || !parentUser.createdBy || parentUser.createdBy == currentUserId) {
-      break;
-    }
-    parentUserIds.push(parentUser.createdBy);
-    currentUserId = parentUser.createdBy;
-  }
-  console.log(" parentUserIds ========== ", parentUserIds);
-  return parentUserIds;
 }
 
 const checkMarketBlocked = async (user) => {
@@ -875,5 +857,4 @@ function casino(req, res) {
 }
 
 router.get('/casino', casino);
-
 module.exports = { router };
