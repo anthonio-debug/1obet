@@ -200,7 +200,7 @@ async function addCashDeposit(req, res) {
 
     const updatedUserLastLedger = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const ExpTran = new ExpRec({
-            userId: updatedUser.userId,
+      userId: updatedUser.userId,
       trans_from: "cashDeposit",
       trans_from_id: updatedUserLastLedger._id,
       trans_bet_status :  0,
