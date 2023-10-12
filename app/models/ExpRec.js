@@ -14,7 +14,7 @@ const ExpRec = new mongoose.Schema({
     trans_bet_status: { type: Number, default: 1 },
     user_new_exposure: { type: Number },
     sportsId: { type: Number },
-    marketId: { type: Number },
+    marketId: { type: String },
     createdAt: { type: Number },
     updatedAt:  { type: Number }
 });
