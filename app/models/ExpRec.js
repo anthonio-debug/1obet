@@ -5,7 +5,7 @@ let Global = require('../global/settings');
 const ExpRec = new mongoose.Schema({
     userId: { type: Number },
     trans_from: { type: String, required: false },
-    trans_from_id: { type: Number, required: false },
+    trans_from_id: { type: String, required: false },
     user_prev_balance: { type: Number },
     user_prev_availableBalance: { type: Number },
     user_prev_exposure: { type: String, required: false },
@@ -14,7 +14,7 @@ const ExpRec = new mongoose.Schema({
     trans_bet_status: { type: Number, default: 1 },
     user_new_exposure: { type: Number },
     sportsId: { type: Number },
-    marketId: { type: Number },
+    marketId: { type: String },
     createdAt: { type: Number },
     updatedAt:  { type: Number }
 });
