@@ -141,7 +141,7 @@ async function handleLosingBet(bet) {
 
   const user_new_balance = updatedUser.balance;
   const user_new_availableBalance = updatedUser.availableBalance;
-  const user_new_exposure = updatedUser.clientPL;
+  const user_new_exposure = updatedUser.exposure;
   console.log(" ======================== User Updating Sucessfully ");
 
   let lastTrans       = await Cash.find({  userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
@@ -501,7 +501,7 @@ const handleDrawBet = async (bet, status = 1) => {
 
   const user_new_balance = updatedUser.balance;
   const user_new_availableBalance = updatedUser.availableBalance;
-  const user_new_exposure = updatedUser.clientPL;
+  const user_new_exposure = updatedUser.exposure;
 
   const ExpTran = new ExpRec({
     userId: updatedUser.userId,

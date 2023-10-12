@@ -194,7 +194,7 @@ async function addCredit(req, res) {
     });
     const user_new_balance = updatedUser.balance;
     const user_new_availableBalance = updatedUser.availableBalance;
-    const user_new_exposure = updatedUser.clientPL;
+    const user_new_exposure = updatedUser.exposure;
     const updatedUserLastLedger = await CashCredit.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
 
     const ExpTran = new ExpRec({
