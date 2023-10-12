@@ -14,7 +14,7 @@ const MaxBetSize = require('../models/betLimits');
 const SideBarMenu = require('../models/sidebarMenu');
 const Events = require('../models/events');
 const EventBySports = require('../models/eventsBySport');
-const config = require('config')
+const config = require('config');
 const axios = require('axios');
 const FancyGames = require('../models/fancyGames');
 const Racing = require('../models/racing');
@@ -22,13 +22,13 @@ const RaceMarkets = require('../models/raceMarkets');
 const RaceOdds = require('../models/raceOdds');
 const loginRouter = express.Router();
 const router = express.Router();
-const Session = require("../models/Session")
+const Session = require('../models/Session');
 const MarketIDS = require('../models/marketIds');
 const Bets = require('../models/bets');
 const mongoose = require('mongoose');
 const {
-  handleDrawBet
-} = require('../../resultSystem/src/CalculateBets/calculations')
+  handleDrawBet,
+} = require('../../resultSystem/src/CalculateBets/calculations');
 
 const loginRecord = require('../models/loginRecord');
 
@@ -99,9 +99,7 @@ function addTermsAndConditions(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   if (req.decoded.role != '0') {
-    return res
-      .status(404)
-      .send({ message: 'Something went wrong !' });
+    return res.status(404).send({ message: 'Something went wrong !' });
   }
   //server _id
   termsAndConditions.updateMany(
@@ -110,7 +108,7 @@ function addTermsAndConditions(req, res) {
     { new: true },
     (err, results) => {
       if (err || !results) {
-        console.log(" Data Not Saved ============= ", err);
+        console.log(' Data Not Saved ============= ', err);
         return res.status(404).send({ message: 'Data Not Saved' });
       }
       return res.send({
@@ -164,7 +162,7 @@ function addPrivacyPolicy(req, res) {
     { new: true },
     (err, results) => {
       if (err || !results) {
-        console.log(" Data Not Saved ============== ", err);
+        console.log(' Data Not Saved ============== ', err);
         return res.status(404).send({ message: 'Data Not Saved' });
       }
 
@@ -340,18 +338,16 @@ async function updateMatchType(req, res) {
       { $set: { matchType: matchType, iconStatus: iconStatus } },
       (err, updatedMatch) => {
         if (err) {
-          console.log("Error updating figure:", err);
+          console.log('Error updating figure:', err);
         } else {
-          console.log("Updated match:", updatedMatch);
+          console.log('Updated match:', updatedMatch);
         }
       }
     );
     res.status(200).json({
       success: true,
-      message: 'Updated Successfully'
+      message: 'Updated Successfully',
     });
-
-
   } catch (error) {
     console.error(error);
     res.status(200).json({
@@ -417,11 +413,11 @@ async function listEventsBySport(req, res) {
       start = new Date().getTime();
       end = new Date().getTime() + 6 * 60 * 60 * 1000;
     }
-    console.log("start == ", start);
-    console.log("end == ", end);
-    console.log("sportId == ", sportId);
+    console.log('start == ', start);
+    console.log('end == ', end);
+    console.log('sportId == ', sportId);
 
-    if (sportId == "4") {
+    if (sportId == '4') {
       events = await Events.find({
         sportsId: sportId,
         iconStatus: true,
@@ -429,7 +425,7 @@ async function listEventsBySport(req, res) {
         isShowed: true,
       }).sort({ openDate: 1 });
     } else {
-      if (sportId == "1" || sportId == "2") {
+      if (sportId == '1' || sportId == '2') {
         events = await Events.find({
           sportsId: sportId,
           status: 'OPEN',
@@ -463,7 +459,7 @@ async function listEventsByCompetition(req, res) {
     const events = await EventBySports.find({
       sportsId: sportsId,
       competitionId: competitionId,
-      type: "eventsByCompetitions"
+      type: 'eventsByCompetitions',
     });
 
     res.status(200).json({
@@ -482,7 +478,7 @@ async function listEventsByCompetition(req, res) {
 }
 
 async function listInplayEvents(req, res) {
-  const sportsId = req.query.ids.split(',');;
+  const sportsId = req.query.ids.split(',');
   try {
     const inplayEvents = await Events.find({ sportsId: { $in: sportsId } });
 
@@ -503,29 +499,42 @@ async function listInplayEvents(req, res) {
 
 async function listOddsAPI(req, res) {
   try {
-    const eventIds = req.query.ids
+    const eventIds = req.query.ids;
     // const odds = await Odds.find({ eventId: { $in: eventIds } });
     const odds = await Odds.aggregate([
       { $match: { eventId: eventIds } },
       { $sort: { createdAt: -1 } },
-      { $group: { _id: "$marketName", odds: { $first: "$$ROOT" } } },
-      { $replaceRoot: { newRoot: "$odds" } }
-    ]).exec()
+      { $group: { _id: '$marketName', odds: { $first: '$$ROOT' } } },
+      { $replaceRoot: { newRoot: '$odds' } },
+    ]).exec();
     // const url = `${config.liveTvUrl}/get_live_tv_url/${eventIds}`;
     // const liveTVResponse = await axios.get(url);
     // const liveTVData = liveTVResponse.data;
-    const fancyData = await FancyGames.findOne({ eventId: { $in: eventIds } }).sort({ createdAt: -1 })
+    const fancyData = await FancyGames.findOne({
+      eventId: { $in: eventIds },
+    }).sort({ createdAt: -1 });
 
     console.log('fancyData', fancyData);
 
-    let livesportscoreData = {}
+    let livesportscoreData = {};
 
-    const event = await Events.findOne({ Id: eventIds }, { _id: 0, matchType: 1, sportsId: 1, name: 1, openDate: 1, status: 1, inplay: 1 });
+    const event = await Events.findOne(
+      { Id: eventIds },
+      {
+        _id: 0,
+        matchType: 1,
+        sportsId: 1,
+        name: 1,
+        openDate: 1,
+        status: 1,
+        inplay: 1,
+      }
+    );
     const type = event ? event.sportsId : null;
     if (type == 4) {
-      livesportscoreData = await cricketLiveScore(eventIds)
+      livesportscoreData = await cricketLiveScore(eventIds);
     } else {
-      livesportscoreData = await otherLiveScore(eventIds)
+      livesportscoreData = await otherLiveScore(eventIds);
     }
     // console.log('liveTVResponse', liveTVResponse);
     return res.json({
@@ -535,7 +544,7 @@ async function listOddsAPI(req, res) {
         odds,
         fancyData: fancyData ? [fancyData] : [],
         livesportscoreData,
-        matchData: event
+        matchData: event,
       },
     });
   } catch (error) {
@@ -546,7 +555,6 @@ async function listOddsAPI(req, res) {
     });
   }
 }
-
 
 //for only backend
 function addSideBarMenu(req, res) {
@@ -570,7 +578,16 @@ async function racesAPI(req, res) {
     const id = req.params.id;
     const racesData = await Events.find(
       { sportsId: id },
-      { meetingId: 1, countryCode: 1, countryCodes: 1, eventTypeId: 1, races: 1, venue: 1, sportsId: 1 })
+      {
+        meetingId: 1,
+        countryCode: 1,
+        countryCodes: 1,
+        eventTypeId: 1,
+        races: 1,
+        venue: 1,
+        sportsId: 1,
+      }
+    );
 
     return res.json({
       success: true,
@@ -588,63 +605,85 @@ async function racesAPI(req, res) {
 
 async function cricketLiveScore(id) {
   try {
-    const apiResponse = await axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+    const apiResponse = await axios.get(
+      `https://livesportscore.xyz:3440/api/bf_scores/${id}`
+    );
     const data = apiResponse.data;
     const response = {};
-    if (typeof (data[0]) == "string") {
-      const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
+    if (typeof data[0] == 'string') {
+      const event = await Events.findOne(
+        { Id: id },
+        { _id: 0, matchType: 1, sportsId: 1 }
+      );
       const type = event ? event.matchType : null;
-      const scoreInfo = JSON.parse(data).score
+      const scoreInfo = JSON.parse(data).score;
       let score = scoreInfo.score1;
       let played = scoreInfo.score2;
       response.spnnation1 = scoreInfo.spnnation1;
       response.spnnation2 = scoreInfo.spnnation2;
 
       if (scoreInfo.activenation1 == 1) {
-        response.team = scoreInfo.spnnation1
-        response.crr = scoreInfo.spnrunrate1.substring(scoreInfo.spnrunrate1.indexOf(' ') + 1).trim()
-
-      }
-      else if (scoreInfo.activenation2 == 1) {
+        response.team = scoreInfo.spnnation1;
+        response.crr = scoreInfo.spnrunrate1
+          .substring(scoreInfo.spnrunrate1.indexOf(' ') + 1)
+          .trim();
+      } else if (scoreInfo.activenation2 == 1) {
         response.team = scoreInfo.spnnation2;
-        response.crr = scoreInfo.spnrunrate2.substring(scoreInfo.spnrunrate2.indexOf(' ') + 1).trim()
+        response.crr = scoreInfo.spnrunrate2
+          .substring(scoreInfo.spnrunrate2.indexOf(' ') + 1)
+          .trim();
         score = scoreInfo.score2;
         played = scoreInfo.score1;
       }
 
-      response.type = type
-      response.balls = scoreInfo.balls
+      response.type = type;
+      response.balls = scoreInfo.balls;
 
-      if (type == "TEST") {
+      if (type == 'TEST') {
         score = score.split('&');
-        score = score[score.length - 1].trim()
+        score = score[score.length - 1].trim();
         played = played.split('&');
         played = played[played.length - 1].trim();
       }
-      played = played.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-      played = played.filter(element => element != 0).length;
+      played = played
+        .replaceAll(/[\s-]/g, ',')
+        .replaceAll(/[())]/g, '')
+        .split(',');
+      played = played.filter((element) => element != 0).length;
       if (played > 0) {
         response.secondInnings = 1;
-        response.spnmessage = scoreInfo.spnmessage
+        response.spnmessage = scoreInfo.spnmessage;
 
         if (scoreInfo.activenation2 == 1) {
-          target = scoreInfo.score1 ? scoreInfo.score1 : ""
+          target = scoreInfo.score1 ? scoreInfo.score1 : '';
         } else if (scoreInfo.activenation1 == 1) {
-          target = scoreInfo.score2 ? scoreInfo.score2 : ""
+          target = scoreInfo.score2 ? scoreInfo.score2 : '';
         }
 
-        response.target = (parseInt(target.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',')[0]) + 1).toString();
-        if (scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != "") {
+        response.target = (
+          parseInt(
+            target
+              .replaceAll(/[\s-]/g, ',')
+              .replaceAll(/[())]/g, '')
+              .split(',')[0]
+          ) + 1
+        ).toString();
+        if (scoreInfo.spnreqrate1 != null && scoreInfo.spnreqrate1 != '') {
           response.rrr = scoreInfo.spnreqrate;
-        }
-        else if (scoreInfo.spnreqrate2 != null && scoreInfo.spnreqrate2 != "") {
+        } else if (
+          scoreInfo.spnreqrate2 != null &&
+          scoreInfo.spnreqrate2 != ''
+        ) {
           response.rrr = scoreInfo.spnreqrate2;
         }
       }
-      [response.score, response.wickets, response.overs] = score.replaceAll(/[\s-]/g, ',').replaceAll(/[())]/g, '').split(',');
-      return response
+      [response.score, response.wickets, response.overs] = score
+        .replaceAll(/[\s-]/g, ',')
+        .replaceAll(/[())]/g, '')
+        .split(',');
+      return response;
     } else {
-      return data[0]
+      return data[0];
     }
   } catch (error) {
     console.error(error);
@@ -658,13 +697,15 @@ async function cricketLiveScore(id) {
 
 async function otherLiveScore(id) {
   try {
-    const apiResponse = await axios.get(`https://livesportscore.xyz:3440/api/bf_scores/${id}`);
+    const apiResponse = await axios.get(
+      `https://livesportscore.xyz:3440/api/bf_scores/${id}`
+    );
     const data = apiResponse.data;
-    if (typeof (data[0]) == "string") {
+    if (typeof data[0] == 'string') {
       // const event = await Events.findOne({ Id: id }, { _id: 0, matchType: 1, sportsId: 1 });
-      return JSON.parse(data)
+      return JSON.parse(data);
     } else {
-      return data[0]
+      return data[0];
     }
   } catch (error) {
     console.error(error);
@@ -675,7 +716,6 @@ async function otherLiveScore(id) {
     };
   }
 }
-
 
 async function racesMarketList(req, res) {
   try {
@@ -699,12 +739,12 @@ async function racesMarketList(req, res) {
       'eventNodes.marketNodes.runners.description.metadata.JOCKEY_NAME': 1,
       'eventNodes.marketNodes.runners.description.metadata.CLOTH_NUMBER': 1,
       'eventNodes.marketNodes.runners.description.metadata.TRAINER_NAME': 1,
-      'eventNodes.event.eventName': 1
+      'eventNodes.event.eventName': 1,
     };
 
     const projectionRaceOddsData = {
-      'marketId': 1,
-      'isMarketDataDelayed': 1,
+      marketId: 1,
+      isMarketDataDelayed: 1,
       'state.betDelay': 1,
       'state.startTime': 1,
       'state.remainingTime': 1,
@@ -724,19 +764,37 @@ async function racesMarketList(req, res) {
       'runners.state.status': 1,
       'runners.exchange': 1,
 
-
       // Add any other fields you want to exclude from raceOddsData
     };
-    const racesMarketsData = await RaceMarkets.findOne({ 'eventNodes.marketNodes.marketId': req.params.marketId },);
-    const raceOddsData = await RaceOdds.findOne({ marketId: req.params.marketId }, projectionRaceOddsData).sort({ _id: -1 })
-    console.log('racesMarketsData ==>', racesMarketsData)
-    console.log('raceOddsData ==>', raceOddsData)
-    if (raceOddsData?.runners && Array.isArray(raceOddsData?.runners) && racesMarketsData?.eventNodes && Array.isArray(racesMarketsData?.eventNodes)) {
-      const marketNode = racesMarketsData?.eventNodes?.find((eventNode) => eventNode?.marketNodes?.marketId === raceOddsData.marketId);
-      if (marketNode && marketNode?.marketNodes?.runners && Array.isArray(marketNode?.marketNodes?.runners)) {
+    const racesMarketsData = await RaceMarkets.findOne({
+      'eventNodes.marketNodes.marketId': req.params.marketId,
+    });
+    const raceOddsData = await RaceOdds.findOne(
+      { marketId: req.params.marketId },
+      projectionRaceOddsData
+    ).sort({ _id: -1 });
+    console.log('racesMarketsData ==>', racesMarketsData);
+    console.log('raceOddsData ==>', raceOddsData);
+    if (
+      raceOddsData?.runners &&
+      Array.isArray(raceOddsData?.runners) &&
+      racesMarketsData?.eventNodes &&
+      Array.isArray(racesMarketsData?.eventNodes)
+    ) {
+      const marketNode = racesMarketsData?.eventNodes?.find(
+        (eventNode) =>
+          eventNode?.marketNodes?.marketId === raceOddsData.marketId
+      );
+      if (
+        marketNode &&
+        marketNode?.marketNodes?.runners &&
+        Array.isArray(marketNode?.marketNodes?.runners)
+      ) {
         const mergedRunners = {};
         raceOddsData?.runners.forEach((runner) => {
-          const matchingRunner = marketNode?.marketNodes?.runners.find((r) => r.selectionId === runner?.selectionId);
+          const matchingRunner = marketNode?.marketNodes?.runners.find(
+            (r) => r.selectionId === runner?.selectionId
+          );
           if (matchingRunner) {
             mergedRunners[runner?.selectionId] = {
               ...runner,
@@ -750,18 +808,20 @@ async function racesMarketList(req, res) {
         console.error('Invalid data structure. Market runners data not found.');
       }
     } else {
-      console.error('Invalid data structure. Please check the provided objects.');
+      console.error(
+        'Invalid data structure. Please check the provided objects.'
+      );
     }
 
     // console.log('racesMarketsData', racesMarketsData);
-    console.log('raceOddsData ===>', raceOddsData)
+    console.log('raceOddsData ===>', raceOddsData);
     return res.send({
       success: true,
       message: 'Records',
       results: {
         racesMarketsData,
-        raceOddsData
-      }
+        raceOddsData,
+      },
     });
   } catch (error) {
     console.error('Error retrieving races:', error);
@@ -782,7 +842,13 @@ function updateMatch(req, res) {
       .status(404)
       .send({ message: 'only company can add default theme' });
   }
-  const { _id, updateType, matchStoppedReason, matchCanceledStatus, matchResumedStatus } = req.body;
+  const {
+    _id,
+    updateType,
+    matchStoppedReason,
+    matchCanceledStatus,
+    matchResumedStatus,
+  } = req.body;
 
   let query = {};
   let updateField = {};
@@ -813,14 +879,17 @@ function updateMatch(req, res) {
           matchStoppedReason: matchStoppedReason,
           matchStopStatus: true,
           matchResumedStatus: false, // Ensure it's not resumed when stopped
-          matchCanceledStatus: matchCanceledStatus
+          matchCanceledStatus: matchCanceledStatus,
         };
 
         successMessage = 'Match stopped successfully';
 
-
-        const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
-        axios.get('http://localhost:3004/updateField?id=' + _id + '&data=' + base64data);
+        const base64data = Buffer.from(JSON.stringify(updateField)).toString(
+          'base64'
+        );
+        axios.get(
+          'http://localhost:3004/updateField?id=' + _id + '&data=' + base64data
+        );
 
         Events.findOneAndUpdate(
           { _id },
@@ -865,9 +934,12 @@ function updateMatch(req, res) {
         updateField.matchResumedStatus = matchResumedStatus;
         successMessage = 'Match resumed successfully';
 
-        const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
-        axios.get('http://localhost:3004/updateField?id=' + _id + '&data=' + base64data);
-
+        const base64data = Buffer.from(JSON.stringify(updateField)).toString(
+          'base64'
+        );
+        axios.get(
+          'http://localhost:3004/updateField?id=' + _id + '&data=' + base64data
+        );
 
         Events.findOneAndUpdate(
           { _id },
@@ -896,10 +968,12 @@ function updateMatch(req, res) {
       updateField = { matchCanceledStatus };
       successMessage = 'Match canceled status updated successfully';
 
-
-      const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
-      axios.get('http://localhost:3004/updateField?id=' + _id + '&data=' + base64data);
-
+      const base64data = Buffer.from(JSON.stringify(updateField)).toString(
+        'base64'
+      );
+      axios.get(
+        'http://localhost:3004/updateField?id=' + _id + '&data=' + base64data
+      );
 
       Events.findOneAndUpdate(
         query,
@@ -939,13 +1013,13 @@ async function bettorDashboardGames(req, res) {
             $filter: {
               input: '$games',
               as: 'game',
-              cond: { $eq: ['$$game.isDashboard', true] }
-            }
-          }
-        }
+              cond: { $eq: ['$$game.isDashboard', true] },
+            },
+          },
+        },
       },
       {
-        $unwind: '$games'
+        $unwind: '$games',
       },
       {
         $project: {
@@ -955,15 +1029,15 @@ async function bettorDashboardGames(req, res) {
           id_hash: '$games.id_hash',
           image_filled: '$games.image_filled',
           isDashboard: '$games.isDashboard',
-          mobile: '$games.mobile'
-        }
-      }
+          mobile: '$games.mobile',
+        },
+      },
     ]);
 
     const greyHound = await Events.find(
       {
         sportsId: '4339',
-        status: 'OPEN'
+        status: 'OPEN',
       },
       {
         _id: 1,
@@ -973,17 +1047,17 @@ async function bettorDashboardGames(req, res) {
         competitionName: 1,
         inplay: 1,
         countryCode: 1,
-        marketIds: 1
+        marketIds: 1,
       }
     ).sort({
       inplay: -1,
-      openDate: -1
+      openDate: -1,
     });
 
     const horseRace = await Events.find(
       {
         sportsId: '7',
-        status: 'OPEN'
+        status: 'OPEN',
       },
       {
         _id: 1,
@@ -993,18 +1067,18 @@ async function bettorDashboardGames(req, res) {
         competitionName: 1,
         inplay: 1,
         countryCode: 1,
-        marketIds: 1
+        marketIds: 1,
       }
     ).sort({
       inplay: -1,
-      openDate: -1
+      openDate: -1,
     });
 
     const inPlay = await Events.find(
       {
         status: 'OPEN',
         inplay: true,
-        isShowed: true
+        isShowed: true,
       },
       {
         _id: 1,
@@ -1013,13 +1087,13 @@ async function bettorDashboardGames(req, res) {
         name: 1,
         competitionName: 1,
         inplay: 1,
-        sportsId: 1
+        sportsId: 1,
         // oddsData: {
         //   $slice: ["$odds", 1]
         // }
       }
     ).sort({
-      openDate: -1
+      openDate: -1,
     });
 
     const organizedEvents = {
@@ -1034,9 +1108,6 @@ async function bettorDashboardGames(req, res) {
       message: 'Event By Sports Records',
       results: organizedEvents,
     });
-
-
-
   } catch (error) {
     console.error(error);
     res.status(200).json({
@@ -1069,14 +1140,16 @@ async function bettorDashboardGames2(req, res) {
       }
     ).sort({
       inplay: -1,
-      openDate: 1
+      openDate: 1,
     });
 
     const soccer = await Promise.all(
       soccerSalt.map(async (event) => {
         if (event.marketIds && event.marketIds.length > 0) {
           const marketId = event.marketIds[0].id;
-          const oddsData = await Odds.findOne({ marketId: marketId }).sort({ createdAt: -1 });
+          const oddsData = await Odds.findOne({ marketId: marketId }).sort({
+            createdAt: -1,
+          });
           return {
             ...event.toObject(),
             odds: oddsData,
@@ -1108,14 +1181,16 @@ async function bettorDashboardGames2(req, res) {
       }
     ).sort({
       inplay: -1,
-      openDate: 1
-    })
+      openDate: 1,
+    });
 
     const tennis = await Promise.all(
       tennisSalt.map(async (event) => {
         if (event.marketIds && event.marketIds.length > 0) {
           const marketId = event.marketIds[0].id;
-          const oddsData = await Odds.findOne({ marketId: marketId }).sort({ createdAt: -1 });
+          const oddsData = await Odds.findOne({ marketId: marketId }).sort({
+            createdAt: -1,
+          });
           return {
             ...event.toObject(),
             odds: oddsData,
@@ -1132,7 +1207,7 @@ async function bettorDashboardGames2(req, res) {
 
     const cricketSalt = await Events.find(
       {
-        sportsId: "4",
+        sportsId: '4',
         status: 'OPEN',
         iconStatus: true,
         isShowed: true,
@@ -1148,14 +1223,16 @@ async function bettorDashboardGames2(req, res) {
       }
     ).sort({
       inplay: -1,
-      openDate: 1
-    })
+      openDate: 1,
+    });
 
     const cricket = await Promise.all(
       cricketSalt.map(async (event) => {
         if (event.marketIds && event.marketIds.length > 0) {
           const marketId = event.marketIds[0].id;
-          const oddsData = await Odds.findOne({ marketId: marketId }).sort({ createdAt: -1 });
+          const oddsData = await Odds.findOne({ marketId: marketId }).sort({
+            createdAt: -1,
+          });
           return {
             ...event.toObject(),
             odds: oddsData,
@@ -1170,7 +1247,6 @@ async function bettorDashboardGames2(req, res) {
       })
     );
 
-
     const organizedEvents = {
       soccer: soccer,
       tennis: tennis,
@@ -1182,9 +1258,6 @@ async function bettorDashboardGames2(req, res) {
       message: 'Event By Sports Records',
       results: organizedEvents,
     });
-
-
-
   } catch (error) {
     console.error(error);
     res.status(200).json({
@@ -1201,7 +1274,7 @@ async function getAllMatchSettlements(req, res) {
     const events = await Events.aggregate([
       {
         $match: {
-          sportsId: { $in: sportsIdArray }
+          sportsId: { $in: sportsIdArray },
         },
       },
       {
@@ -1211,19 +1284,23 @@ async function getAllMatchSettlements(req, res) {
               $match: {
                 sportsId: '1',
                 winner: 0,
-                openDate: { $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") },
-              }
+                openDate: {
+                  $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format(
+                    'M/DD/YYYY h:mm:ss A +00:00'
+                  ),
+                },
+              },
             },
             {
-              $sort: { openDate: 1 }
+              $sort: { openDate: 1 },
             },
             {
               $lookup: {
-                from: "odds",
-                localField: "Id",
-                foreignField: "eventId",
-                as: "odds"
-              }
+                from: 'odds',
+                localField: 'Id',
+                foreignField: 'eventId',
+                as: 'odds',
+              },
             },
             {
               $project: {
@@ -1238,16 +1315,16 @@ async function getAllMatchSettlements(req, res) {
                   $cond: {
                     if: {
                       $and: [
-                        { $isArray: "$odds" },
-                        { $gt: [{ $size: "$odds" }, 0] },
-                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
-                      ]
+                        { $isArray: '$odds' },
+                        { $gt: [{ $size: '$odds' }, 0] },
+                        { $isArray: { $arrayElemAt: ['$odds.runners', 0] } },
+                      ],
                     },
-                    then: { $arrayElemAt: ["$odds.runners", 0] },
-                    else: [] // Empty array if any condition is not met
-                  }
-                }
-              }
+                    then: { $arrayElemAt: ['$odds.runners', 0] },
+                    else: [], // Empty array if any condition is not met
+                  },
+                },
+              },
             },
             {
               $project: {
@@ -1258,34 +1335,37 @@ async function getAllMatchSettlements(req, res) {
                 inplay: 1,
                 name: 1,
                 openDate: 1,
-                "oddsData.SelectionId": 1,
-                "oddsData.runnerName": 1
-              }
+                'oddsData.SelectionId': 1,
+                'oddsData.runnerName': 1,
+              },
             },
             {
               $sort: {
-                createdAt: 1
-              }
-            }
-          ]
-          ,
+                createdAt: 1,
+              },
+            },
+          ],
           tennis: [
             {
               $match: {
                 sportsId: '2',
                 winner: 0,
-                openDate: { $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") },
-              }
+                openDate: {
+                  $lt: moment(new Date(Date.now() - 110 * 60 * 1000)).format(
+                    'M/DD/YYYY h:mm:ss A +00:00'
+                  ),
+                },
+              },
             },
             { $sort: { openDate: 1 } },
 
             {
               $lookup: {
-                from: "odds",
-                localField: "Id",
-                foreignField: "eventId",
-                as: "odds"
-              }
+                from: 'odds',
+                localField: 'Id',
+                foreignField: 'eventId',
+                as: 'odds',
+              },
             },
             {
               $project: {
@@ -1300,16 +1380,16 @@ async function getAllMatchSettlements(req, res) {
                   $cond: {
                     if: {
                       $and: [
-                        { $isArray: "$odds" },
-                        { $gt: [{ $size: "$odds" }, 0] },
-                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
-                      ]
+                        { $isArray: '$odds' },
+                        { $gt: [{ $size: '$odds' }, 0] },
+                        { $isArray: { $arrayElemAt: ['$odds.runners', 0] } },
+                      ],
                     },
-                    then: { $arrayElemAt: ["$odds.runners", 0] },
-                    else: [] // Empty array if any condition is not met
-                  }
-                }
-              }
+                    then: { $arrayElemAt: ['$odds.runners', 0] },
+                    else: [], // Empty array if any condition is not met
+                  },
+                },
+              },
             },
             {
               $project: {
@@ -1320,32 +1400,36 @@ async function getAllMatchSettlements(req, res) {
                 inplay: 1,
                 name: 1,
                 openDate: 1,
-                "oddsData.SelectionId": 1,
-                "oddsData.runnerName": 1
-              }
+                'oddsData.SelectionId': 1,
+                'oddsData.runnerName': 1,
+              },
             },
             {
               $sort: {
-                createdAt: 1
-              }
-            }
+                createdAt: 1,
+              },
+            },
           ],
           cricket: [
             {
               $match: {
                 sportsId: '4',
                 winner: 0,
-                openDate: { $lt: moment(new Date(Date.now() - 180 * 60 * 1000)).format("M/DD/YYYY h:mm:ss A +00:00") },
-              }
+                openDate: {
+                  $lt: moment(new Date(Date.now() - 180 * 60 * 1000)).format(
+                    'M/DD/YYYY h:mm:ss A +00:00'
+                  ),
+                },
+              },
             },
             { $sort: { openDate: 1 } },
             {
               $lookup: {
-                from: "odds",
-                localField: "Id",
-                foreignField: "eventId",
-                as: "odds"
-              }
+                from: 'odds',
+                localField: 'Id',
+                foreignField: 'eventId',
+                as: 'odds',
+              },
             },
             {
               $project: {
@@ -1360,16 +1444,16 @@ async function getAllMatchSettlements(req, res) {
                   $cond: {
                     if: {
                       $and: [
-                        { $isArray: "$odds" },
-                        { $gt: [{ $size: "$odds" }, 0] },
-                        { $isArray: { $arrayElemAt: ["$odds.runners", 0] } }
-                      ]
+                        { $isArray: '$odds' },
+                        { $gt: [{ $size: '$odds' }, 0] },
+                        { $isArray: { $arrayElemAt: ['$odds.runners', 0] } },
+                      ],
                     },
-                    then: { $arrayElemAt: ["$odds.runners", 0] },
-                    else: [] // Empty array if any condition is not met
-                  }
-                }
-              }
+                    then: { $arrayElemAt: ['$odds.runners', 0] },
+                    else: [], // Empty array if any condition is not met
+                  },
+                },
+              },
             },
             {
               $project: {
@@ -1380,25 +1464,28 @@ async function getAllMatchSettlements(req, res) {
                 inplay: 1,
                 name: 1,
                 openDate: 1,
-                "oddsData.SelectionId": 1,
-                "oddsData.runnerName": 1
-              }
+                'oddsData.SelectionId': 1,
+                'oddsData.runnerName': 1,
+              },
             },
             {
               $sort: {
-                createdAt: 1
-              }
-            }
+                createdAt: 1,
+              },
+            },
           ],
-
 
           horseRace: [
             {
               $match: {
                 sportsId: '7',
                 winner: 0,
-                openDate: { $lt: moment(new Date(Date.now() - 10 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") },
-              }
+                openDate: {
+                  $lt: moment(new Date(Date.now() - 10 * 60 * 1000)).format(
+                    'YYYY-MM-DDTHH:mm:ss+00:00'
+                  ),
+                },
+              },
             },
             {
               $project: {
@@ -1408,8 +1495,8 @@ async function getAllMatchSettlements(req, res) {
                 name: 1,
                 meetingName: 1,
                 inplay: 1,
-                status: 1
-              }
+                status: 1,
+              },
             },
           ],
           greyhound: [
@@ -1417,8 +1504,12 @@ async function getAllMatchSettlements(req, res) {
               $match: {
                 sportsId: '4339',
                 winner: 0,
-                openDate: { $lt: moment(new Date(Date.now() - 5 * 60 * 1000)).format("YYYY-MM-DDTHH:mm:ss+00:00") },
-              }
+                openDate: {
+                  $lt: moment(new Date(Date.now() - 5 * 60 * 1000)).format(
+                    'YYYY-MM-DDTHH:mm:ss+00:00'
+                  ),
+                },
+              },
             },
             {
               $project: {
@@ -1428,8 +1519,8 @@ async function getAllMatchSettlements(req, res) {
                 name: 1,
                 competitionName: 1,
                 inplay: 1,
-                status: 1
-              }
+                status: 1,
+              },
             },
           ],
         },
@@ -1474,25 +1565,32 @@ async function getAllGamesResults(req, res) {
       fancyCheck = true;
     }
 
-    if (req.body.sportsId == 1 || req.body.sportsId == 2 || req.body.sportsId == 4) {
+    if (
+      req.body.sportsId == 1 ||
+      req.body.sportsId == 2 ||
+      req.body.sportsId == 4
+    ) {
       query.isShowed = true;
-      query.status = { $ne: 'OPEN' }
+      query.status = { $ne: 'OPEN' };
     }
 
     if (req.body.sportsId == 7 || req.body.sportsId == 4339) {
       query.status = {
-        $nin: ["OPEN", "WAITING"]
-      }
+        $nin: ['OPEN', 'WAITING'],
+      };
     }
 
     let page = 1;
     let sort = -1;
     let sortValue = 'openDate';
     let limit = config.pageSize;
-    let projection
+    let projection;
 
     if (req.body.numRecords) {
-      if (!isNaN(parseInt(req.body.numRecords)) || parseInt(req.body.numRecords) > 0)
+      if (
+        !isNaN(parseInt(req.body.numRecords)) ||
+        parseInt(req.body.numRecords) > 0
+      )
         limit = req.body.numRecords;
     }
     if (req.body.sortValue) {
@@ -1510,13 +1608,11 @@ async function getAllGamesResults(req, res) {
     if (req.body.startDate && req.body.endDate) {
       query.openDate = {
         $gte: new Date(req.body.startDate).getTime(),
-        $lte: new Date(req.body.endDate).getTime()
+        $lte: new Date(req.body.endDate).getTime(),
       };
-    }
-    else if (req.body.startDate) {
+    } else if (req.body.startDate) {
       query.openDate = { $gte: new Date(req.body.startDate).getTime() };
-    }
-    else if (req.body.endDate) {
+    } else if (req.body.endDate) {
       query.openDate = { $lte: new Date(req.body.startDate).getTime() };
     }
 
@@ -1534,12 +1630,14 @@ async function getAllGamesResults(req, res) {
       select: projection,
     };
 
-    console.log("Query =========== ", query);
+    console.log('Query =========== ', query);
 
     Events.paginate(query, options, async (err, results) => {
       if (err) {
         console.error(err);
-        return res.status(500).json({ message: 'Pagination failed', error: err.message });
+        return res
+          .status(500)
+          .json({ message: 'Pagination failed', error: err.message });
       }
 
       if (results.totalDocs == 0) {
@@ -1552,9 +1650,17 @@ async function getAllGamesResults(req, res) {
         const ev = results.docs[index];
         var marketResultForEvent;
         if (fancyCheck) {
-          marketResultForEvent = await MarketIDS.find({ eventId: ev.Id, winnerInfo: { $ne: null }, sportID: -1 });
+          marketResultForEvent = await MarketIDS.find({
+            eventId: ev.Id,
+            winnerInfo: { $ne: null },
+            sportID: -1,
+          });
         } else {
-          marketResultForEvent = await MarketIDS.find({ eventId: ev.Id, winnerInfo: { $ne: null }, sportID: { $ne: -1 } });
+          marketResultForEvent = await MarketIDS.find({
+            eventId: ev.Id,
+            winnerInfo: { $ne: null },
+            sportID: { $ne: -1 },
+          });
         }
 
         if (marketResultForEvent.length > 0) {
@@ -1563,33 +1669,40 @@ async function getAllGamesResults(req, res) {
             const combinedData = {
               ...ev._doc,
               marketName: marketData.marketName,
-              winner: marketData.winnerInfo
+              winner: marketData.winnerInfo,
             };
             realResults.push(combinedData);
           }
         } else {
           var checkMarketRecord2;
           if (fancyCheck) {
-            checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: { $ne: null }, sportID: -1 });
+            checkMarketRecord2 = await MarketIDS.findOne({
+              eventId: ev.Id,
+              runners: { $ne: null },
+              sportID: -1,
+            });
           } else {
-            checkMarketRecord2 = await MarketIDS.findOne({ eventId: ev.Id, runners: { $ne: null }, sportID: { $ne: -1 } });
+            checkMarketRecord2 = await MarketIDS.findOne({
+              eventId: ev.Id,
+              runners: { $ne: null },
+              sportID: { $ne: -1 },
+            });
           }
           if (checkMarketRecord2) {
             const combinedData = {
               ...ev._doc,
               marketName: 'WAITING RESULTS',
-              winner: ''
+              winner: '',
             };
             realResults.push(combinedData);
           } else if (!fancyCheck) {
             const combinedData = {
               ...ev._doc,
               marketName: 'WAITING RESULTS 2',
-              winner: ''
+              winner: '',
             };
             realResults.push(combinedData);
           }
-
         }
       }
 
@@ -1605,13 +1718,13 @@ async function getAllGamesResults(req, res) {
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ message: 'Failed to get events', error: error.message });
+    res
+      .status(500)
+      .json({ message: 'Failed to get events', error: error.message });
   }
 }
 
-
 async function setLoginHistories(req, res) {
-
   /*
   if (req.decoded.role !== '0') {
     return res
@@ -1624,7 +1737,8 @@ async function setLoginHistories(req, res) {
       const users = await User.find({});
       const lastLogins = await Promise.all(
         users.map(async (user) => {
-          const lastLoginRecord = await loginRecord.findOne({ userName: user.userName })
+          const lastLoginRecord = await loginRecord
+            .findOne({ userName: user.userName })
             .sort({ loginDate: -1 })
             .exec();
 
@@ -1635,55 +1749,58 @@ async function setLoginHistories(req, res) {
         })
       );
 
-
-      return res.send({ thead: ['Username', 'Last login', 'Ip Address', 'City', 'Location'], data: lastLogins });
-
-    } catch (error) {
-
-    }
+      return res.send({
+        thead: ['Username', 'Last login', 'Ip Address', 'City', 'Location'],
+        data: lastLogins,
+      });
+    } catch (error) {}
   }
-
 }
 
 async function setCloseEventWithCancelBet(req, res) {
   if (req.decoded.role != '0') {
-    return res
-      .status(404)
-      .send({ message: 'only company can ... ' });
+    return res.status(404).send({ message: 'only company can ... ' });
   }
 
   if (!req.query.eventId) {
-    return res
-      .status(404)
-      .send({ message: 'Id required ... ' });
+    return res.status(404).send({ message: 'Id required ... ' });
   }
 
   const currentEv = await Events.findOne({ Id: req.query.eventId });
 
   if (!currentEv) {
-    return res
-      .status(404)
-      .send({ message: 'Events not exist ... ' });
+    return res.status(404).send({ message: 'Events not exist ... ' });
   }
 
   if (req.query.reason) {
-    await Events.findOneAndUpdate({ _id: currentEv._id }, { status: 'CLOSED-' + req.query.reason, isCanceled: true });
+    await Events.findOneAndUpdate(
+      { _id: currentEv._id },
+      { status: 'CLOSED-' + req.query.reason, isCanceled: true }
+    );
   } else {
-    await Events.findOneAndUpdate({ _id: currentEv._id }, { status: 'CLOSED-COMPANY', isCanceled: true });
+    await Events.findOneAndUpdate(
+      { _id: currentEv._id },
+      { status: 'CLOSED-COMPANY', isCanceled: true }
+    );
   }
 
   var updateField = { status: 'CLOSED-COMPANY' };
-  const base64data = Buffer.from(JSON.stringify(updateField)).toString('base64');
-  axios.get('http://localhost:3004/updateField?id=' + _id + '&data=' + base64data);
-
+  const base64data = Buffer.from(JSON.stringify(updateField)).toString(
+    'base64'
+  );
+  axios.get(
+    'http://localhost:3004/updateField?id=' + _id + '&data=' + base64data
+  );
 
   await MarketIDS.updateMany(
     { eventId: req.query.eventId },
     { inplay: false, status: 'CLOSED' }
   );
 
-
-  const bets = await Bets.find({ status: 1, matchId: currentEv._id.toString() })
+  const bets = await Bets.find({
+    status: 1,
+    matchId: currentEv._id.toString(),
+  });
 
   for (let index = 0; index < bets.length; index++) {
     const bet = bets[index];
@@ -1692,24 +1809,21 @@ async function setCloseEventWithCancelBet(req, res) {
 
   return res.send({
     success: true,
-    message: 'Event Successfully Closed'
+    message: 'Event Successfully Closed',
   });
 }
 
 async function setMatchShow(req, res) {
   if (req.decoded.role !== '0') {
-    return res
-      .status(404)
-      .send({ message: 'only company can ... ' });
+    return res.status(404).send({ message: 'only company can ... ' });
   }
   if (req.query.status == false) {
     const currentEv = await Events.findOne({ Id: req.query.matchId });
     if (currentEv) {
-
       if (currentEv.sportsId == '4' && currentEv.matchType == '') {
-        return res
-          .status(404)
-          .send({ message: 'You need to save correct match type before this action' });
+        return res.status(404).send({
+          message: 'You need to save correct match type before this action',
+        });
       }
 
       if (currentEv.inplay == true) {
@@ -1717,11 +1831,11 @@ async function setMatchShow(req, res) {
           { Id: req.query.matchId },
           {
             $set: {
-              isShowed: req.query.status
-            }
+              isShowed: req.query.status,
+            },
           },
           { upsert: false }
-        )
+        );
         await MarketIDS.updateMany(
           { eventId: req.query.matchId },
           { inplay: false }
@@ -1729,7 +1843,7 @@ async function setMatchShow(req, res) {
         return res.status(200).json({
           success: true,
           message: 'match updated successful',
-          data: event
+          data: event,
         });
       }
     }
@@ -1738,47 +1852,46 @@ async function setMatchShow(req, res) {
       { Id: req.query.matchId },
       {
         $set: {
-          isShowed: req.query.status
-        }
+          isShowed: req.query.status,
+        },
       },
       { upsert: false }
-    )
-    const resp = await createNewSession(req.query.matchId)
+    );
+    const resp = await createNewSession(req.query.matchId);
 
     return res.status(200).json({
       success: true,
       message: 'match updated successfully',
-      data: event
+      data: event,
     });
-
   }
 }
 
 async function setBattingDisabled(req, res) {
   if (req.decoded.role != '0') {
-    return res
-      .status(404)
-      .send({ message: 'only company can ... ' });
+    return res.status(404).send({ message: 'only company can ... ' });
   }
   try {
-    const currentEv = await Events.findOneAndUpdate({ Id: req.query.matchId }, { $set: { betAllowed: req.query.status } })
+    const currentEv = await Events.findOneAndUpdate(
+      { Id: req.query.matchId },
+      { $set: { betAllowed: req.query.status } }
+    );
     return res.send({
       success: true,
-      message: 'Event Successfully updated!'
+      message: 'Event Successfully updated!',
     });
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Something went wrong!'
+      message: 'Something went wrong!',
     });
   }
-
 }
 
 const createNewSession = async (matchId) => {
-  const match = await Events.findOne({ Id: matchId })
-  const deleted = await Session.deleteMany({ eventId: matchId })
-  const matchType = match.matchType
+  const match = await Events.findOne({ Id: matchId });
+  const deleted = await Session.deleteMany({ eventId: matchId });
+  const matchType = match.matchType;
   let totalSession = 0;
   switch (matchType) {
     case 'T10':
@@ -1800,18 +1913,17 @@ const createNewSession = async (matchId) => {
     const session = new Session({
       sessionNo: i,
       eventId: match.Id,
-      Id: match._id
+      Id: match._id,
     });
     session.save();
   }
-
-}
+};
 
 const sessionList = async (req, res) => {
   try {
-    const eventId = Number(req.query.eventId)
+    const eventId = Number(req.query.eventId);
     const session = await Session.find({
-      eventId: eventId
+      eventId: eventId,
     });
 
     return res.status(200).send({
@@ -1819,27 +1931,24 @@ const sessionList = async (req, res) => {
       message: 'session list',
       results: session,
     });
-
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Something went wrong!'
+      message: 'Something went wrong!',
     });
   }
-
-}
+};
 
 const updateSessionScore = async (req, res) => {
-
   try {
     if (!req.body.eventId || !req.body.session || !req.body.score) {
       return res.status(404).send({
         success: false,
-        message: 'Invalid Request !'
+        message: 'Invalid Request !',
       });
     }
     const eventId = Number(req.body.eventId);
-    const session = Number(req.body.session)
+    const session = Number(req.body.session);
     const score = Number(req.body.score);
 
     const update = await Session.findOneAndUpdate(
@@ -1849,89 +1958,85 @@ const updateSessionScore = async (req, res) => {
 
     return res.status(200).send({
       success: true,
-      message: 'session successfully updated !'
+      message: 'session successfully updated !',
     });
-
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Something went wrong!'
+      message: 'Something went wrong!',
     });
   }
-
-}
+};
 
 const getMarketIDSData = async (req, res) => {
-
   if (req.decoded.role != '0') {
-    return res
-      .status(404)
-      .send({ message: 'only company can ... ' });
+    return res.status(404).send({ message: 'only company can ... ' });
   }
 
   try {
     if (!req.body.eventId) {
       return res.status(404).send({
         success: false,
-        message: 'Invalid Request !'
+        message: 'Invalid Request !',
       });
     }
 
-    const result = await MarketIDS.find(
-      { eventId: req.body.eventId, runners: { $ne: null } },
-    );
+    const result = await MarketIDS.find({
+      eventId: req.body.eventId,
+      runners: { $ne: null },
+    });
 
     return res.status(200).send({
       success: true,
-      results: result
+      results: result,
     });
-
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Something went wrong!'
+      message: 'Something went wrong!',
     });
   }
-}
+};
 
 const saveMarketIDSWinnerRunner = async (req, res) => {
-
   if (req.decoded.role != '0') {
-    return res
-      .status(404)
-      .send({ message: 'only company can ... ' });
+    return res.status(404).send({ message: 'only company can ... ' });
   }
-
 
   try {
     if (!req.body.eventId || !req.body.marketId || !req.body.runnerId) {
       return res.status(404).send({
         success: false,
-        message: 'Invalid Request !'
+        message: 'Invalid Request !',
       });
     }
 
-    const market = await MarketIDS.findOne(
-      { eventId: req.body.eventId, marketId: req.body.marketId },
-    );
-
+    const market = await MarketIDS.findOne({
+      eventId: req.body.eventId,
+      marketId: req.body.marketId,
+    });
 
     if (!market) {
       return res.status(404).send({
         success: false,
-        message: 'Market is not exist for this event'
+        message: 'Market is not exist for this event',
       });
     }
-
 
     if (!market.runners || market.runners.length == 0) {
       await MarketIDS.findOneAndUpdate(
         { eventId: req.body.eventId, marketId: req.body.marketId },
-        { $set: { winnerInfo: req.body.runnerId, manuelClose: true, winnerRunnerData: req.body.runnerId } },
+        {
+          $set: {
+            winnerInfo: req.body.runnerId,
+            manuelClose: true,
+            winnerRunnerData: req.body.runnerId,
+          },
+        }
       );
       return res.send({
         success: true,
-        message: 'Winner runner saved without runner name.'
+        message: 'Winner runner saved without runner name.',
       });
     }
 
@@ -1945,91 +2050,107 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
       }
     }
 
-
     if (selectedR) {
-
-
       if (market.marketName == 'Match Odds') {
         await Events.findOneAndUpdate(
           { eventId: req.body.eventId },
-          { $set: { winner: selectedR.runnerName } },
+          { $set: { winner: selectedR.runnerName } }
         );
       }
 
       await MarketIDS.findOneAndUpdate(
         { eventId: req.body.eventId, marketId: req.body.marketId },
-        { $set: { winnerInfo: selectedR.runnerName, manuelClose: true, winnerRunnerData: req.body.runnerId } },
+        {
+          $set: {
+            winnerInfo: selectedR.runnerName,
+            manuelClose: true,
+            winnerRunnerData: req.body.runnerId,
+          },
+        }
       );
 
       return res.send({
         success: true,
         message: 'Winner runner saved with runner name.',
       });
-
     } else {
       await MarketIDS.findOneAndUpdate(
         { eventId: req.body.eventId, marketId: req.body.marketId },
-        { $set: { winnerInfo: req.body.runnerId, manuelClose: true, winnerRunnerData: req.body.runnerId } },
+        {
+          $set: {
+            winnerInfo: req.body.runnerId,
+            manuelClose: true,
+            winnerRunnerData: req.body.runnerId,
+          },
+        }
       );
       return res.send({
         success: true,
         message: 'Winner runner saved without runner name 1.',
       });
     }
-
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Something went wrong!'
+      message: 'Something went wrong!',
     });
   }
-}
+};
 
 const getWaitingBetsForManuel = async (req, res) => {
-
   try {
-    
-    const results = await Bets.find({status: 1, isManuel:true }).sort({createdAt: -1});
+    const results = await Bets.find({ status: 1, isManuel: true }).sort({
+      createdAt: -1,
+    });
+    console.log('results:', results);
     var groups = {};
     for (var i = 0; i < results.length; i++) {
-        var item = results[i].toJSON();
-        var main_group_key = item.matchId + "_" + item.marketId;
-    
+      var item = results[i].toJSON();
+      if (item.betSession) {
+        var main_group_key =
+          item.matchId + '_' + item.marketId + '_' + item.betSession;
+
         if (!groups[main_group_key]) {
-          groups[main_group_key] = {eventData: {eventName: null, marketData: null, eventId:null}, bets: []};
-          const eventData = await Events.findOne({_id: mongoose.Types.ObjectId(item.matchId)},{Id: 1, name: 1});
+          groups[main_group_key] = {
+            eventData: { eventName: null, marketData: null, eventId: null },
+            bets: [],
+          };
+          const eventData = await Events.findOne(
+            { _id: mongoose.Types.ObjectId(item.matchId) },
+            { Id: 1, name: 1 }
+          );
           if (eventData) {
             groups[main_group_key].eventData.eventName = eventData.name;
             groups[main_group_key].eventData.eventId = eventData.Id;
-            
-            const marketData = await MarketIDS.findOne({eventId:eventData.Id, marketId: item.marketId });
+
+            const marketData = await MarketIDS.findOne({
+              eventId: eventData.Id,
+              marketId: item.marketId,
+            });
             if (marketData) {
               groups[main_group_key].eventData.marketData = marketData;
             } else {
               groups[main_group_key].eventData.marketData = null;
             }
-          } 
+          }
         }
-        
-       const u1 = await User.findOne({userId: item.userId},{userName: 1});
-       item.userName = u1 ? u1.userName : null;
-       groups[main_group_key].bets.push(item);
+
+        const u1 = await User.findOne({ userId: item.userId }, { userName: 1 });
+        item.userName = u1 ? u1.userName : null;
+        groups[main_group_key].bets.push(item);
+      }
     }
 
     return res.status(200).send({
       success: true,
-      results: groups
+      results: groups,
     });
-
-  
-
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Something went wrong!'
+      message: 'Something went wrong!',
     });
   }
-
 };
 
 const getEventWinnerName = async (req, res) => {
@@ -2037,110 +2158,121 @@ const getEventWinnerName = async (req, res) => {
     if (!req.body.eventId) {
       return res.status(404).send({
         success: false,
-        message: 'Invalid Request !'
+        message: 'Invalid Request !',
       });
     }
 
-    const result = await Events.findOne({ Id: req.body.eventId }, { winner: 1 });
+    const result = await Events.findOne(
+      { Id: req.body.eventId },
+      { winner: 1 }
+    );
 
     return res.status(200).send({
       success: true,
-      result
+      result,
     });
-
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Something went wrong!'
+      message: 'Something went wrong!',
     });
   }
-}
+};
 
 const getSessionScore = async (req, res) => {
-
   if (!req.query.eventId || !req.query.sessionNo) {
     return res.status(404).send({
       success: false,
-      message: 'eventId or sessionNo is missing'
+      message: 'eventId or sessionNo is missing',
     });
   }
 
-  const result = await Session.findOne({eventId: req.query.eventId, sessionNo: parseInt(req.query.sessionNo)});
-   
-  return res.status(200).send({
-    success: true,
-    result
+  const result = await Session.findOne({
+    eventId: req.query.eventId,
+    sessionNo: parseInt(req.query.sessionNo),
   });
 
-
-}
+  return res.status(200).send({
+    success: true,
+    result,
+  });
+};
 
 const setSessionScore = async (req, res) => {
   if (!req.body.eventId || !req.body.sessionNo || !req.body.score) {
     return res.status(404).send({
       success: false,
-      message: 'eventId or sessionNo or score is missing'
+      message: 'eventId or sessionNo or score is missing',
     });
   }
 
   await Session.findOneAndUpdate(
-    {eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo)},
-    { $set: { score: parseInt(req.body.score), manuelSave: true } },
+    { eventId: req.body.eventId, sessionNo: parseInt(req.body.sessionNo) },
+    { $set: { score: parseInt(req.body.score), manuelSave: true } }
   );
 
   return res.status(200).send({
     success: true,
   });
-
-}
+};
 
 const cancelSingleBet = async (req, res) => {
-  if(req.decoded.role != 0){
+  if (req.decoded.role != 0) {
     return res.status(404).send({
       success: false,
       message: 'Unauthorized Operation',
-    }); 
+    });
   }
   const bet = await Bets.findById(req.body.betId);
-  if(!bet){
+  if (!bet) {
     return res.status(404).send({
       success: false,
       message: 'bet could not foud',
-    }); 
+    });
   }
-  if([2,3,4].includes(bet.type)){
-    const marketId = bet.marketId;
-    const matchId  = bet.matchId;
-    const userId   = bet.userId;
-    const session  = bet.betSession;
-    const type     = bet.type
-    const allBets  = await Bets.find({type: type, matchId: matchId, betSession: session, marketId: marketId, userId: userId, status: 1})
-    for (const bet of allBets) {
-      await handleDrawBet(bet, 2);
-    }
-  }
-  else if(bet.isfancyOrbookmaker == true && bet.fancyData !== null){
-    const marketId      = bet.marketId;
-    const matchId       = bet.matchId;
-    const userId        = bet.userId;
-    const TargetScore   = bet.TargetScore;
-    const allBets       = await Bets.find({ 
-      TargetScore: TargetScore, 
-      matchId: matchId, 
-      marketId: marketId, 
-      userId: userId, 
-      isfancyOrbookmaker: true,
-      status: 1
-    })
-    for (const bet of allBets) {
-      await handleDrawBet(bet, 2);
-    }
-  }
-  else {
+  if ([2, 3, 4].includes(bet.type)) {
     const marketId = bet.marketId;
     const matchId = bet.matchId;
-    const userId   = bet.userId;
-    const allBets = await Bets.find({matchId: matchId, marketId: marketId, userId: userId, status: 1})
+    const userId = bet.userId;
+    const session = bet.betSession;
+    const type = bet.type;
+    const allBets = await Bets.find({
+      type: type,
+      matchId: matchId,
+      betSession: session,
+      marketId: marketId,
+      userId: userId,
+      status: 1,
+    });
+    for (const bet of allBets) {
+      await handleDrawBet(bet, 2);
+    }
+  } else if (bet.isfancyOrbookmaker == true && bet.fancyData !== null) {
+    const marketId = bet.marketId;
+    const matchId = bet.matchId;
+    const userId = bet.userId;
+    const TargetScore = bet.TargetScore;
+    const allBets = await Bets.find({
+      TargetScore: TargetScore,
+      matchId: matchId,
+      marketId: marketId,
+      userId: userId,
+      isfancyOrbookmaker: true,
+      status: 1,
+    });
+    for (const bet of allBets) {
+      await handleDrawBet(bet, 2);
+    }
+  } else {
+    const marketId = bet.marketId;
+    const matchId = bet.matchId;
+    const userId = bet.userId;
+    const allBets = await Bets.find({
+      matchId: matchId,
+      marketId: marketId,
+      userId: userId,
+      status: 1,
+    });
     for (const bet of allBets) {
       await handleDrawBet(bet, 2);
     }
@@ -2148,10 +2280,8 @@ const cancelSingleBet = async (req, res) => {
   return res.send({
     success: true,
     message: 'bet canceled Successfully !',
-  }); 
-
-}
-
+  });
+};
 
 loginRouter.post(
   '/updateDefaultTheme',
