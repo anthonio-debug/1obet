@@ -11,7 +11,7 @@ const Bets = require('../models/bets');
 const loginRouter = express.Router();
 
 const marketGainWithDuplicates = async (req, res) => {
-  console.log('req:', req);
+  // console.log('req:', req);
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
