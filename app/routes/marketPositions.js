@@ -15,18 +15,27 @@ const getMarketPositions = async (req, res) => {
   }
   const Id = parseInt(req.query.userId);
   console.log(' Id ========== ', Id);
+  console.log(req.query.startDate);
+  console.log(req.query.endDate);
+  const page = req.query.page || 1; // Get the page number from the request or default to 1
+  const pageSize = req.query.pageSize || 10; // Set the page size or default to 10
+  const searchTerm = req.query.searchTerm || ''; // Get the search term from the request or default to an empty string
 
   const response = await Bets.aggregate([
     {
       $match: {
         userId: Id,
-        $and: [
-          {
-            createdAt: { $gte: req.query.startDate },
-          },
-          {
-            createdAt: { $lte: req.query.endDate },
-          },
+        // $and: [
+        //   {
+        //     createdAt: { $gte: req.query.startDate },
+        //   },
+        //   {
+        //     createdAt: { $lte: req.query.endDate },
+        //   },
+        // ],
+        $or: [
+          { runnerName: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive regex match on runnerName
+          // Add additional fields for search as needed
         ],
       },
     },
@@ -49,6 +58,15 @@ const getMarketPositions = async (req, res) => {
         },
         createdAt: { $first: '$createdAt' },
       },
+    },
+    {
+      $sort: { createdAt: -1 }, // Optionally sort the results by createdAt in descending order
+    },
+    {
+      $skip: (page - 1) * pageSize, // Skip documents based on the page number and page size
+    },
+    {
+      $limit: pageSize, // Limit the number of documents returned to the page size
     },
   ]);
   return res.send({
