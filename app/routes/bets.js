@@ -1229,13 +1229,7 @@ const placeBet = async (req, res) => {
 
     // Cricket Cup Winner
     else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.Cup) {
-
-      return res.status(404).send({
-        message: `Frontend provided odds _id do not found in db & _id =  ${ subMarketDetail.Id }`,
-      });
-      console.log(
-        ' ======================== Soccer  Match Odds ======================== '
-      );
+      console.log(' ======================== Soccer  Match Odds ======================== ' );
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
