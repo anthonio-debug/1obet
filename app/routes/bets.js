@@ -231,6 +231,11 @@ const placeBet = async (req, res) => {
       if (subMarketName == 'Toss') {
         thirdPartyMarketName = 'To Win the Toss';
       }
+
+      if (["Winner", "Cup Winner", "Cup"].includes(subMarketName)){
+        subMarketName = "Cup Winner";
+      }
+
       const currentMarket = eventDetail?.marketIds?.find(
         (market) => market.marketName == thirdPartyMarketName
       );
@@ -260,7 +265,6 @@ const placeBet = async (req, res) => {
     // console.log(' ================== subMarketDetail ================== ', subMarketDetail );
 
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id) ) {
-      // console.log(" 270 Not Allowed CALLED By Market  ");
       return res.status(404).send({ message: 'Betting disabled' });
     }
     const userMaxBetSize = await userBetSizes.findOne({
@@ -544,10 +548,7 @@ const placeBet = async (req, res) => {
     }
 
     // Cricket Match Odds
-    else if (
-      config.sportMarkets.includes(marketId) &&
-      config.cricketOdds == subMarketDetail.Id
-    ) {
+    else if ( config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id ) {
       console.log(' ======================== Soccer  Match Odds ======================== ');
 
       const DBOddDetails = await Odds.findById(oddsId);
@@ -1767,14 +1768,6 @@ const placeBet = async (req, res) => {
     }
 
     setTimeout(async () => {
-      // console.log(
-      //   ' ============================ multipeResponse ============================ ',
-      //   multipeResponse
-      // );
-      // console.log(
-      //   ' ============================ multipeResponseForSecurityCheck ============================ ',
-      //   multipeResponseForSecurityCheck
-      // );
 
       console.log(' Pre Bet Rate ===============  ', betRate);
       console.log(' selectedBetRate ===============  ', selectedBetRate);
