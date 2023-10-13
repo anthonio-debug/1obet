@@ -1,29 +1,33 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 let config = require('config');
+const CashDeposit = require('../models/deposits');
 const User = require('../models/user');
 
 const reportValidator = require('../validators/reports');
+const Deposits = require('../models/deposits');
+const Events = require('../models/events');
 const Bets = require('../models/bets');
 const loginRouter = express.Router();
 
 const marketGainWithDuplicates = async (req, res) => {
+  // console.log('req:', req);
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
   const userId = Number(req.query.userId);
 
-  const matchId = req.query.matchId;
+  const marketId = req.query.marketId;
   const currentUser = await User.findOne({ userId: userId });
 
   if (currentUser.role == 5) {
-    const match = await Events.findById(matchId);
+    // const market = await Events.findOne({ marketId });
     const parent = await User.findOne({ userId: currentUser.createdBy });
     const response = await CashDeposit.aggregate([
       {
         $match: {
-          matchId: matchId,
+          marketId: marketId,
           $or: [
             {
               $and: [
@@ -71,12 +75,12 @@ const marketGainWithDuplicates = async (req, res) => {
     ]);
     return res.send({
       success: true,
-      message: 'Detailed reports',
+      message: 'Market Shares Reports by MarketId',
       results: response,
       isDetailed: true,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      Winner: match?.winner,
+      // Winner: market?.winner,
     });
   } else {
     const childUsers = await User.distinct('userId', { createdBy: userId });
@@ -89,7 +93,7 @@ const marketGainWithDuplicates = async (req, res) => {
           userId: {
             $in: users,
           },
-          matchId: matchId,
+          marketId: marketId,
           cashOrCredit: { $in: ['Bet', 'Commission', 'loosing'] },
         },
       },
