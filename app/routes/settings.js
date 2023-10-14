@@ -2106,39 +2106,39 @@ const getWaitingBetsForManuel = async (req, res) => {
     var groups = {};
     for (var i = 0; i < results.length; i++) {
       var item = results[i].toJSON();
-      if (item.betSession) {
-        var main_group_key =
-          item.matchId + '_' + item.marketId + '_' + item.betSession;
+      // if (item.betSession) {
+      var main_group_key =
+        item.matchId + '_' + item.marketId + '_' + item.betSession;
 
-        if (!groups[main_group_key]) {
-          groups[main_group_key] = {
-            eventData: { eventName: null, marketData: null, eventId: null },
-            bets: [],
-          };
-          const eventData = await Events.findOne(
-            { _id: mongoose.Types.ObjectId(item.matchId) },
-            { Id: 1, name: 1 }
-          );
-          if (eventData) {
-            groups[main_group_key].eventData.eventName = eventData.name;
-            groups[main_group_key].eventData.eventId = eventData.Id;
+      if (!groups[main_group_key]) {
+        groups[main_group_key] = {
+          eventData: { eventName: null, marketData: null, eventId: null },
+          bets: [],
+        };
+        const eventData = await Events.findOne(
+          { _id: mongoose.Types.ObjectId(item.matchId) },
+          { Id: 1, name: 1 }
+        );
+        if (eventData) {
+          groups[main_group_key].eventData.eventName = eventData.name;
+          groups[main_group_key].eventData.eventId = eventData.Id;
 
-            const marketData = await MarketIDS.findOne({
-              eventId: eventData.Id,
-              marketId: item.marketId,
-            });
-            if (marketData) {
-              groups[main_group_key].eventData.marketData = marketData;
-            } else {
-              groups[main_group_key].eventData.marketData = null;
-            }
+          const marketData = await MarketIDS.findOne({
+            eventId: eventData.Id,
+            marketId: item.marketId,
+          });
+          if (marketData) {
+            groups[main_group_key].eventData.marketData = marketData;
+          } else {
+            groups[main_group_key].eventData.marketData = null;
           }
         }
-
-        const u1 = await User.findOne({ userId: item.userId }, { userName: 1 });
-        item.userName = u1 ? u1.userName : null;
-        groups[main_group_key].bets.push(item);
       }
+
+      const u1 = await User.findOne({ userId: item.userId }, { userName: 1 });
+      item.userName = u1 ? u1.userName : null;
+      groups[main_group_key].bets.push(item);
+      // }
     }
 
     return res.status(200).send({
