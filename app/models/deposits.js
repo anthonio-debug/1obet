@@ -28,7 +28,6 @@ let depositsSchema = new Schema({
   createdAt: { type: String },
   date: { type: Number },
   betType: {type: Number},
-  betSession: {type: Number},
   betDateTime: {type: Number}
 });
 
