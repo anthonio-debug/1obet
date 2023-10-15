@@ -12,7 +12,6 @@ const MarketIDS = require('../models/marketIds');
 const loginRouter = express.Router();
 
 const marketGainWithDuplicates = async (req, res) => {
-  // console.log('req:', req);
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
@@ -21,7 +20,6 @@ const marketGainWithDuplicates = async (req, res) => {
 
   const marketId = req.query.marketId;
   const currentUser = await User.findOne({ userId: userId });
-  // console.log('currentUser:', currentUser);
   if (currentUser?.role == 5) {
     const marketData = await MarketIDS.findOne({
       marketId: marketId,
@@ -83,7 +81,7 @@ const marketGainWithDuplicates = async (req, res) => {
       isDetailed: true,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      Winner: marketData?.winner,
+      Winner: marketData?.winnerInfo,
     });
   } else {
     const childUsers = await User.distinct('userId', { createdBy: userId });
