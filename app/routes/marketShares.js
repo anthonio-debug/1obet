@@ -8,6 +8,7 @@ const reportValidator = require('../validators/reports');
 const Deposits = require('../models/deposits');
 const Events = require('../models/events');
 const Bets = require('../models/bets');
+const MarketIDS = require('../models/marketIds');
 const loginRouter = express.Router();
 
 const marketGainWithDuplicates = async (req, res) => {
@@ -20,9 +21,11 @@ const marketGainWithDuplicates = async (req, res) => {
 
   const marketId = req.query.marketId;
   const currentUser = await User.findOne({ userId: userId });
-
-  if (currentUser.role == 5) {
-    // const market = await Events.findOne({ marketId });
+  // console.log('currentUser:', currentUser);
+  if (currentUser?.role == 5) {
+    const marketData = await MarketIDS.findOne({
+      marketId: marketId,
+    });
     const parent = await User.findOne({ userId: currentUser.createdBy });
     const response = await CashDeposit.aggregate([
       {
@@ -80,7 +83,7 @@ const marketGainWithDuplicates = async (req, res) => {
       isDetailed: true,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      // Winner: market?.winner,
+      Winner: marketData?.winner,
     });
   } else {
     const childUsers = await User.distinct('userId', { createdBy: userId });
