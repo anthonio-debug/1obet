@@ -9,9 +9,9 @@ const Deposits = require('../models/deposits');
 // const Bets = require('../models/bets');
 
 //ip location
-const {IP2Location} = require("ip2location-nodejs");
+const { IP2Location } = require('ip2location-nodejs');
 let ip2location = new IP2Location();
-ip2location.open("/var/www/html/one-o-bet-backend/IP2LOCATION-LITE-DB11.BIN");
+ip2location.open('/var/www/html/one-o-bet-backend/IP2LOCATION-LITE-DB11.BIN');
 //
 
 const LoginActivity = require('../models/loginActivity');
@@ -37,7 +37,7 @@ async function registerUser(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  console.log(" User Is creatting   ");
+  console.log(' User Is creatting   ');
 
   if (req.decoded.role == '5') {
     return res.status(404).send({ message: 'you are not allowed to do this ' });
@@ -68,11 +68,16 @@ async function registerUser(req, res) {
       }
       // Check if the downline share is greater than the parent's downline share
       const parentUser = await User.findOne({ userId: req.decoded.userId });
-      if ((parentUser.role != 0  && parentUser.downLineShare <= req.body.downLineShare) || 
-        req.body.downLineShare >= 100 || 
-        (req.body.role != 5  &&  req.body.downLineShare == 0)) {
+      if (
+        (parentUser.role != 0 &&
+          parentUser.downLineShare <= req.body.downLineShare) ||
+        req.body.downLineShare >= 100 ||
+        (req.body.role != 5 && req.body.downLineShare == 0)
+      ) {
         return res.status(404).send({
-          message: `Max allowed downline share is 1 - ${parentUser.downLineShare  - 1}`,
+          message: `Max allowed downline share is 1 - ${
+            parentUser.downLineShare - 1
+          }`,
         });
       }
       // Update their isDeleted field to true using updateMany()
@@ -83,8 +88,8 @@ async function registerUser(req, res) {
 
       var lastUserID = data.userId + 1;
 
-      if (lastUserID< 1000) {
-        lastUserID =1000;
+      if (lastUserID < 1000) {
+        lastUserID = 1000;
       }
 
       user.userId = lastUserID;
@@ -107,7 +112,7 @@ async function registerUser(req, res) {
       // Add the if condition back here to save the betLimits if parentUser.userId is '0'
       if (parentUser.role == 0) {
         let betLimits = await BetLimits.find({});
-        console.log(" betLimits ======= ", betLimits);
+        console.log(' betLimits ======= ', betLimits);
         user.save((err, user) => {
           if (err || !user) {
             return res
@@ -121,22 +126,21 @@ async function registerUser(req, res) {
             amount: betLimit.maxAmount,
             name: betLimit.name,
             sportsId: betLimit.sportsId,
-            subarket: betLimit.subarket
+            subarket: betLimit.subarket,
           }));
 
-          console.log(" userbetSizesData ============ ", userbetSizesData);
-
+          console.log(' userbetSizesData ============ ', userbetSizesData);
 
           UserBetSizes.insertMany(
             userbetSizesData,
             async (err, insertedDocs) => {
               if (err) return res.send({ message: err });
-              console.log(" insertedDocs =========== ", insertedDocs);
+              console.log(' insertedDocs =========== ', insertedDocs);
               let user_username = 'user_' + user.userId;
 
               console.log('user_username', user_username);
               if (req.body.role == '5') {
-                console.log('in casino bettor user')
+                console.log('in casino bettor user');
                 try {
                   const response = await axios.post(config.apiUrl, {
                     api_password: config.api_password,
@@ -184,7 +188,7 @@ async function registerUser(req, res) {
             amount: betLimit.amount,
             name: betLimit.name,
             sportsId: betLimit.sportsId,
-            subarket: betLimit.subarket
+            subarket: betLimit.subarket,
           }));
 
           UserBetSizes.insertMany(
@@ -194,9 +198,9 @@ async function registerUser(req, res) {
 
               let user_username = 'user_' + user.userId;
               console.log('user_username', user_username);
-           
+
               if (req.body.role == '5') {
-              console.log('in casino bettor user')
+                console.log('in casino bettor user');
                 try {
                   const response = await axios.post(config.apiUrl, {
                     api_password: config.api_password,
@@ -245,38 +249,59 @@ function login(req, res) {
     },
     (err, user) => {
       if (err || !user)
-        return res.status(404).send({ message: 'Invalid username or password' });
-        // check if user password is matched or not.
-        bcrypt.compare(req.body.password, user.password, function (err, result) {
-        if (err) return res.status(404).send({ message: 'Invalid username or password ' });
+        return res
+          .status(404)
+          .send({ message: 'Invalid username or password' });
+      // check if user password is matched or not.
+      bcrypt.compare(req.body.password, user.password, function (err, result) {
+        if (err)
+          return res
+            .status(404)
+            .send({ message: 'Invalid username or password ' });
         if (!result)
-          return res.status(404).send({ message: 'Invalid username or password' });
+          return res
+            .status(404)
+            .send({ message: 'Invalid username or password' });
         if (user.isActive == false || user.status == 0)
           return res.status(404).send({ message: 'Your account is inactive' });
-        if((req.body.isAdmin && user.role == 5 ) || (!req.body.isAdmin && user.role != 5 )) 
-          return res.status(404).send({ message: 'Invalid username or password' });
+        if (
+          (req.body.isAdmin && user.role == 5) ||
+          (!req.body.isAdmin && user.role != 5)
+        )
+          return res
+            .status(404)
+            .send({ message: 'Invalid username or password' });
 
-        if (!user.token) {          
-          console.log(" =========================  Missing token =====================  ");
-          var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
+        if (!user.token) {
+          console.log(
+            ' =========================  Missing token =====================  '
+          );
+          var token = getNonExpiringToken(
+            user.userId,
+            user.createdBy,
+            user.role
+          );
           user.token = token;
           user.save();
-        }
-        else if(user.token){
-          jwt.verify(user.token, config.secret, function (err, decoded) {       
-            if(err ||  decoded.expr < new Date().getTime()){
-              console.log(" =========================  Expired token =====================  ");
-              console.log(" ================== decoded ", decoded);
-              console.log(" ================== err ", err);
+        } else if (user.token) {
+          jwt.verify(user.token, config.secret, function (err, decoded) {
+            if (err || decoded.expr < new Date().getTime()) {
+              console.log(
+                ' =========================  Expired token =====================  '
+              );
+              console.log(' ================== decoded ', decoded);
+              console.log(' ================== err ', err);
 
-              var token = getNonExpiringToken(user.userId, user.createdBy, user.role);
+              var token = getNonExpiringToken(
+                user.userId,
+                user.createdBy,
+                user.role
+              );
               user.token = token;
               user.save();
             }
-          })
+          });
         }
-
-
 
         var ipInfo = req.headers['x-real-ip'] || req.connection.remoteAddress;
 
@@ -293,32 +318,30 @@ function login(req, res) {
             region: null,
             city: null,
             zipCode: null,
-            country: null
+            country: null,
           };
 
           try {
-            const geoChecking = ip2location.getAll(ipInfo); 
+            const geoChecking = ip2location.getAll(ipInfo);
 
             if (geoChecking) {
               geo.latitude = geoChecking.latitude;
-              geo.longitude= geoChecking.longitude;
-              geo.region= geoChecking.region;
-              geo.city= geoChecking.city;
-              geo.zipCode= geoChecking.zipCode;
-              geo.country= geoChecking.countryLong;
+              geo.longitude = geoChecking.longitude;
+              geo.region = geoChecking.region;
+              geo.city = geoChecking.city;
+              geo.zipCode = geoChecking.zipCode;
+              geo.country = geoChecking.countryLong;
             }
           } catch (error) {
             console.log(err);
           }
-
-
 
           var loginRecordData = new loginRecord({
             userName: user.userName,
             userId: user.userId,
             locationData: geo,
             ipAddress: ipInfo,
-            createdAt: new Date().getTime()
+            createdAt: new Date().getTime(),
           });
 
           loginRecordData.save();
@@ -387,9 +410,11 @@ function getNonExpiringToken(userId, createdBy, role, isActive) {
     createdBy: createdBy,
     role: role,
     isActive: isActive,
-    expr: new Date().getTime() + 12*60*60*1000
+    expr: new Date().getTime() + 12 * 60 * 60 * 1000,
   };
-  var token = jwt.sign(payload, config.secret, { expiresIn: new Date().getTime() + 12*60*60*1000 });
+  var token = jwt.sign(payload, config.secret, {
+    expiresIn: new Date().getTime() + 12 * 60 * 60 * 1000,
+  });
   return token;
 }
 
@@ -406,15 +431,18 @@ function getAllUsers(req, res) {
   let sortValue = 'createdAt';
   var limit = config.pageSize;
   query.role = { $ne: '0' };
-  if(req.query.numRecords && !isNaN(req.query.numRecords) && req.query.numRecords > 0)
+  if (
+    req.query.numRecords &&
+    !isNaN(req.query.numRecords) &&
+    req.query.numRecords > 0
+  )
     limit = Number(req.query.numRecords);
-  if (req.query.sortValue)  sortValue = req.query.sortValue;
-  if (req.query.sort)       sort      = Number(req.query.sort);
-  if (req.query.page)       page      = Number(req.query.page);
-  
+  if (req.query.sortValue) sortValue = req.query.sortValue;
+  if (req.query.sort) sort = Number(req.query.sort);
+  if (req.query.page) page = Number(req.query.page);
 
   if (req.query.userId) {
-    const userId    = parseInt(req.query.userId);
+    const userId = parseInt(req.query.userId);
     query.createdBy = userId;
   } else if (req.decoded.login.role != '0') {
     query.createdBy = req.decoded.userId;
@@ -423,8 +451,8 @@ function getAllUsers(req, res) {
   } else if (req.decoded.login.role == '0') {
   }
   if (req.query.username)
-  query.userName = { $regex: req.query.username, $options: 'i' };
-  
+    query.userName = { $regex: req.query.username, $options: 'i' };
+
   query.isDeleted = false;
   // Exclude the currently logged-in user from the results
   query.userId = { $ne: req.decoded.userId };
@@ -476,12 +504,19 @@ function updateUser(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-
+  // console.log('req.body:', req.body);
   User.findOne({ userId: req.body.id }, (err, user) => {
     if (err || !user) {
       return res.status(404).send({ message: 'User not found' });
     }
 
+    const token = getNonExpiringToken(
+      user.userId,
+      user.createdBy,
+      user.role,
+      req.body.isActive
+    );
+    // console.log('updatedtoken:', token);
     let updateData = {
       isActive: req.body.isActive,
       canSettlePL: req.body.canSettlePL,
@@ -492,9 +527,23 @@ function updateUser(req, res) {
       updatedBy: req.decoded.userId,
       password: user.password,
     };
-    if (req.body.isActive == true) {
+    const status = req.body.isActive == 'true' ? 1 : 0;
+    // console.log('status:', status);
+    var userDetailsForLoginActivity = {
+      userName: user.userName,
+      userId: user.userId,
+      balance: user.balance,
+      status: status,
+      phone: req.body.phone,
+      role: user.role,
+      token: token,
+      isActive: req.body.isActive,
+      createdBy: user.createdBy,
+      updatedAt: new Date().getTime(),
+    };
+    if (req.body.isActive == 'true') {
       updateData.status = 1;
-    } else if (req.body.isActive == false) {
+    } else if (req.body.isActive == 'false') {
       updateData.status = 0;
     }
     if (req.body.password && req.body.password !== '') {
@@ -512,11 +561,22 @@ function updateUser(req, res) {
             if (err) {
               return res.status(404).send({ message: 'User not updated' });
             }
-            return res.send({
-              success: true,
-              message: 'User updated successfully',
-              results: null,
-            });
+            LoginActivity.findOneAndUpdate(
+              {
+                userId: req.body.id,
+              },
+              userDetailsForLoginActivity,
+              { upsert: true, new: true },
+              (err, user) => {
+                if (err)
+                  return res.send({ message: 'login activity not updated' });
+                return res.send({
+                  success: true,
+                  message: 'User updated successfully',
+                  results: null,
+                });
+              }
+            );
           }
         );
       });
@@ -533,11 +593,22 @@ function updateUser(req, res) {
           if (err) {
             return res.status(404).send({ message: 'User not updated' });
           }
-          return res.send({
-            success: true,
-            message: 'User updated successfully',
-            results: null,
-          });
+          LoginActivity.findOneAndUpdate(
+            {
+              userId: req.body.id,
+            },
+            userDetailsForLoginActivity,
+            { upsert: true, new: true },
+            (err, user) => {
+              if (err)
+                return res.send({ message: 'login activity not updated' });
+              return res.send({
+                success: true,
+                message: 'User updated successfully',
+                results: null,
+              });
+            }
+          );
         }
       );
     }
@@ -561,7 +632,9 @@ function searchUsers(req, res) {
     if (req.body.numRecords < 0)
       return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
     if (req.body.numRecords > 100)
-      return res.status(404).send({ message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100' });
+      return res
+        .status(404)
+        .send({ message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100' });
     limit = Number(req.body.numRecords);
   }
 
@@ -582,24 +655,24 @@ function searchUsers(req, res) {
         from: 'users',
         localField: 'createdBy',
         foreignField: 'userId',
-        as: 'masterDetails'
-      }
+        as: 'masterDetails',
+      },
     },
     {
       $project: {
         _id: 1,
         userName: 1,
-        userId:1,
-        baseCurrency:1,
+        userId: 1,
+        baseCurrency: 1,
         master: {
           $cond: [
             { $eq: [{ $size: '$masterDetails' }, 0] },
             'Unknown', // If masterDetails array is empty, set the master name as 'Unknown'
-            { $arrayElemAt: ['$masterDetails.userName', 0] } // Get the first element from the masterDetails array
-          ]
-        }
-      }
-    }
+            { $arrayElemAt: ['$masterDetails.userName', 0] }, // Get the first element from the masterDetails array
+          ],
+        },
+      },
+    },
   ]).exec((err, results) => {
     if (err || !results || results.length === 0) {
       return res.status(404).send({ message: 'No records found' });
@@ -627,12 +700,12 @@ function getCurrentUser(req, res) {
   User.findOne({ userId: req.decoded.userId }, async (err, user) => {
     if (err || !user)
       return res.status(404).send({ message: 'user not found' });
-      
+
     return res.send({
       success: true,
       message: 'users record found',
       results: user,
-      correctExposure: []
+      correctExposure: [],
     });
   });
 }
@@ -763,7 +836,7 @@ function searchSingleUser(req, res) {
 
   const query = {};
   query.userName = req.body.userName;
-  query.isDeleted = false
+  query.isDeleted = false;
   User.aggregate([
     { $match: query },
     {
@@ -771,24 +844,24 @@ function searchSingleUser(req, res) {
         from: 'users',
         localField: 'createdBy',
         foreignField: 'userId',
-        as: 'masterDetails'
-      }
+        as: 'masterDetails',
+      },
     },
     {
       $project: {
         _id: 1,
-        userId:1,
+        userId: 1,
         userName: 1,
-        baseCurrency:1,
+        baseCurrency: 1,
         master: {
           $cond: [
             { $eq: [{ $size: '$masterDetails' }, 0] },
             '', // If masterDetails array is empty, set the master name as ''
-            { $arrayElemAt: ['$masterDetails.userName', 0] }
-          ]
-        }
-      }
-    }
+            { $arrayElemAt: ['$masterDetails.userName', 0] },
+          ],
+        },
+      },
+    },
   ]).exec((err, results) => {
     if (err || !results || results.length === 0) {
       return res.status(404).send({ message: 'No records found' });
@@ -797,7 +870,7 @@ function searchSingleUser(req, res) {
     return res.send({
       success: true,
       message: 'User record found',
-      user: results
+      user: results,
     });
   });
 }
@@ -812,14 +885,18 @@ const battorsList = async (req, res) => {
   let sortValue = '_id';
   var limit = config.pageSize;
   usersQuery.role = 5;
-  if(req.query.numRecords && !isNaN(req.query.numRecords) && req.query.numRecords > 0)
+  if (
+    req.query.numRecords &&
+    !isNaN(req.query.numRecords) &&
+    req.query.numRecords > 0
+  )
     limit = Number(req.query.numRecords);
-  if (req.query.sortValue)  sortValue = req.query.sortValue;
-  if (req.query.sort)       sort      = Number(req.query.sort);
-  if (req.query.page)       page      = Number(req.query.page);
+  if (req.query.sortValue) sortValue = req.query.sortValue;
+  if (req.query.sort) sort = Number(req.query.sort);
+  if (req.query.page) page = Number(req.query.page);
 
   if (req.query.username)
-  usersQuery.userName = { $regex: req.query.username, $options: 'i' };
+    usersQuery.userName = { $regex: req.query.username, $options: 'i' };
   usersQuery.isDeleted = false;
   User.paginate(
     usersQuery,
@@ -834,49 +911,59 @@ const battorsList = async (req, res) => {
       });
     }
   );
-}
+};
 
-const userSingleLedger = async (req, res)=>{
+const userSingleLedger = async (req, res) => {
   if (req.decoded.role != 0) {
     return res.status(404).send({ message: '-----' });
   }
-  const lastDeposit = await Deposits.find({ userId: req.query.userId}).sort({ _id: -1 }).limit(10);
+  const lastDeposit = await Deposits.find({ userId: req.query.userId })
+    .sort({ _id: -1 })
+    .limit(10);
   return res.send({
     success: true,
     message: 'user ledger last record',
     result: lastDeposit,
   });
-}
+};
 
-const  deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
   if (req.decoded.role != 0) {
     return res.status(404).send({ message: '-----' });
   }
   const userId = req.query.id;
-  let  userIds  = [userId];
+  let userIds = [userId];
   const finalUsers = [userId];
-  do{
-    const dealers = await User.distinct("userId", { createdBy: { $in: userIds }, role: { $ne: '5' } })
-    const battors = await User.distinct("userId", { createdBy: { $in: userIds }, role: '5' });
+  do {
+    const dealers = await User.distinct('userId', {
+      createdBy: { $in: userIds },
+      role: { $ne: '5' },
+    });
+    const battors = await User.distinct('userId', {
+      createdBy: { $in: userIds },
+      role: '5',
+    });
     finalUsers.push(...dealers, ...battors);
-    console.log("dealers list ========== ", dealers);
-    console.log("battors list ========== ", battors);
+    console.log('dealers list ========== ', dealers);
+    console.log('battors list ========== ', battors);
     userIds = dealers;
-    if(dealers.length == 0){
+    if (dealers.length == 0) {
       break;
     }
-  }while(true)
-  console.log("All Users list ========== ", finalUsers);
+  } while (true);
+  console.log('All Users list ========== ', finalUsers);
   const respone = await User.deleteMany({ userId: { $in: finalUsers } });
-  const depositDelete = await Deposits.deleteMany({ userId: {$in: finalUsers } });
-  const betsDelete = await Bets.deleteMany({ userId: {$in: finalUsers } });
+  const depositDelete = await Deposits.deleteMany({
+    userId: { $in: finalUsers },
+  });
+  const betsDelete = await Bets.deleteMany({ userId: { $in: finalUsers } });
 
   return res.send({
     success: true,
     message: 'user deleted succesfully !',
     results: null,
   });
-}
+};
 
 router.post('/login', userValidation.validate('login'), login);
 loginRouter.post(
@@ -925,7 +1012,6 @@ loginRouter.post(
   checkValidation
 );
 
-
 loginRouter.get('/getSettlement', getSettlement);
 loginRouter.post(
   '/settlePLAccount',
@@ -938,9 +1024,5 @@ loginRouter.get('/battors-list', battorsList);
 loginRouter.get('/user-latest-ledger', userSingleLedger);
 
 loginRouter.get('/delete-user', deleteUser);
-
-
-
-
 
 module.exports = { router, loginRouter };
