@@ -112,7 +112,7 @@ async function registerUser(req, res) {
       // Add the if condition back here to save the betLimits if parentUser.userId is '0'
       if (parentUser.role == 0) {
         let betLimits = await BetLimits.find({});
-        console.log(' betLimits ======= ', betLimits);
+        // console.log(' betLimits ======= ', betLimits);
         user.save((err, user) => {
           if (err || !user) {
             return res
@@ -129,13 +129,13 @@ async function registerUser(req, res) {
             subarket: betLimit.subarket,
           }));
 
-          console.log(' userbetSizesData ============ ', userbetSizesData);
+          // console.log(' userbetSizesData ============ ', userbetSizesData);
 
           UserBetSizes.insertMany(
             userbetSizesData,
             async (err, insertedDocs) => {
               if (err) return res.send({ message: err });
-              console.log(' insertedDocs =========== ', insertedDocs);
+              // console.log(' insertedDocs =========== ', insertedDocs);
               let user_username = 'user_' + user.userId;
 
               console.log('user_username', user_username);
@@ -152,7 +152,7 @@ async function registerUser(req, res) {
                     currency: req.body.baseCurrency,
                   });
                   let data = response.data.response;
-                  console.log('API Response:', response.data);
+                  // console.log('API Response:', response.data);
                   user.remoteId = data.id;
                   user.save();
                 } catch (error) {
@@ -212,7 +212,7 @@ async function registerUser(req, res) {
                     currency: req.body.baseCurrency,
                   });
                   let data = response.data.response;
-                  console.log('API Response:', response.data);
+                  // console.log('API Response:', response.data);
                   user.remoteId = data.id;
                   user.save();
                 } catch (error) {
@@ -307,7 +307,7 @@ function login(req, res) {
 
         // Retrieve the user's default theme from the database
         Settings.find({}, (err, setting) => {
-          console.log('setting', setting[1]);
+          // console.log('setting', setting[1]);
           if (err || !setting) {
             return res.status(404).send({ message: 'setting not found' });
           }
@@ -423,8 +423,8 @@ function getAllUsers(req, res) {
   if (req.decoded.role == '5') {
     return res.status(404).send({ message: 'you are not allowed to do this' });
   }
-  console.log('role', req.decoded.role);
-  console.log('role2', req.decoded.login.role);
+  // console.log('role', req.decoded.role);
+  // console.log('role2', req.decoded.login.role);
   let query = {};
   let page = 1;
   let sort = -1;
@@ -944,14 +944,14 @@ const deleteUser = async (req, res) => {
       role: '5',
     });
     finalUsers.push(...dealers, ...battors);
-    console.log('dealers list ========== ', dealers);
-    console.log('battors list ========== ', battors);
+    // console.log('dealers list ========== ', dealers);
+    // console.log('battors list ========== ', battors);
     userIds = dealers;
     if (dealers.length == 0) {
       break;
     }
   } while (true);
-  console.log('All Users list ========== ', finalUsers);
+  // console.log('All Users list ========== ', finalUsers);
   const respone = await User.deleteMany({ userId: { $in: finalUsers } });
   const depositDelete = await Deposits.deleteMany({
     userId: { $in: finalUsers },
