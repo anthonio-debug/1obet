@@ -640,6 +640,16 @@ function getLedgerDetails(req, res) {
 
     cashPipeline.push(
       {
+        $match: {
+          $expr: {
+            $regexMatch: {
+              input: '$betId',
+              regex: /^[0-9a-fA-F]{24}$/,
+            },
+          },
+        },
+      },
+      {
         $addFields: {
           betsId: { $toObjectId: '$betId' },
         },
@@ -653,6 +663,11 @@ function getLedgerDetails(req, res) {
         },
       },
       {
+        $addFields: {
+          betSession: { $arrayElemAt: ['$betsDetails.betSession', 0] },
+        },
+      },
+      {
         $sort: { _id: -1 },
       },
       {
@@ -663,69 +678,25 @@ function getLedgerDetails(req, res) {
       }
     );
     console.log('cashPipeline:', cashPipeline);
-    Cash.aggregate(
-      [
-        {
-          $match: { userId: Number(req.body.userId) },
-        },
-        {
-          $sort: { _id: -1 },
-        },
-        {
-          $match: {
-            $expr: {
-              $regexMatch: {
-                input: '$betId',
-                regex: /^[0-9a-fA-F]{24}$/,
-              },
-            },
-          },
-        },
-        {
-          $addFields: {
-            betsId: { $toObjectId: '$betId' },
-          },
-        },
-        {
-          $lookup: {
-            from: 'bets',
-            localField: 'betsId',
-            foreignField: '_id',
-            as: 'betsDetails',
-          },
-        },
-        {
-          $addFields: {
-            betSession: { $arrayElemAt: ['$betsDetails.betSession', 0] },
-          },
-        },
-        {
-          $facet: {
-            metadata: [{ $count: 'total' }],
-            results: [{ $skip: (page - 1) * limit }, { $limit: limit }],
-          },
-        },
-      ],
-      (err, result) => {
-        console.log('result:', result);
-        if (
-          err ||
-          !result ||
-          result.length === 0 ||
-          result[0].results.length === 0
-        ) {
-          return res.status(404).send({ message: 'Deposit record not found' });
-        }
-
-        const responseData = {
-          message: 'Deposit Records',
-          total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
-          docs: result[0].results,
-        };
-
-        return res.send(responseData);
+    Cash.aggregate(cashPipeline, (err, result) => {
+      console.log('result:', result);
+      if (
+        err ||
+        !result ||
+        result.length === 0 ||
+        result[0].results.length === 0
+      ) {
+        return res.status(404).send({ message: 'Deposit record not found' });
       }
-    );
+
+      const responseData = {
+        message: 'Deposit Records',
+        total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
+        results: { docs: result[0].results },
+      };
+
+      return res.send(responseData);
+    });
 
     // let cashQuery = { userId: req.body.userId };
 
