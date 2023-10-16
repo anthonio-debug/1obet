@@ -32,16 +32,12 @@ async function addCasinoGameDetails(req, res) {
   // if( req.decoded.role != '0' ){
   //   return res.status(200).send({ message: 'you are not allowed to add games',success:false})
   // }
-  let qbody;
   try {
-    if(req.body) {
-      qbody = req.body;
-    } else {
-      qbody = {
+    const response = await axios.post(
+      `${config.worldCasinoOnlineUrl}/auth/userauthentication`, {
         partnerKey: config.worldCasinoOnlinePartnerKey,
         game: {
-          gameCode: config.worldCasinoOnlineGameCode || "TP",
-          providerCode: config.worldCasinoOnlineProviderCode || "SN",
+          gameCode: null,
         },
         timestamp: `${new Date().getTime()}`,
         user: {
@@ -50,11 +46,7 @@ async function addCasinoGameDetails(req, res) {
           displayName: config.worldCasinoOnlineDisplayName,
           backUrl: config.worldCasinoOnlineRedirectionUrl,
         },
-      };
-    }
-    const response = await axios.post(
-      `${config.worldCasinoOnlineUrl}/auth/userauthentication`,
-      qbody
+      }
     );
 
     console.log("Response:", response.data);
@@ -63,7 +55,7 @@ async function addCasinoGameDetails(req, res) {
     if(resp.sessionId === null || resp.sessionId === undefined) {
       res
         .status(400)
-        .send({ success: false, message: 'Bad request', resp, qbody });
+        .send({ success: false, message: 'Bad request', resp });
     } else {
       // const gameList = response.data.response;
       // const bulkOps = gameList.map((game) => ({
@@ -77,13 +69,18 @@ async function addCasinoGameDetails(req, res) {
       // }));
   
       // await CasinoGames.bulkWrite(bulkOps);
-      res.send({ success: true, message: 'Casino games added successfully', data: resp, qbody });
+      
+      const games = await axios.get(
+        resp.launchURL
+      );
+
+      res.send({ success: true, message: 'Casino games added successfully', data: resp, games });
     }
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .send({ success: false, message: 'Failed to add casino games', error, qbody });
+      .send({ success: false, message: 'Failed to add casino games', error });
   }
 }
 
