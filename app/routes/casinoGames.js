@@ -32,6 +32,39 @@ const getParents = async (userId) => {
   return parentUserIds;
 };
 
+async function getCasinoGames(req, res) {
+  try {
+    const response = await axios.post(
+      `${config.worldCasinoOnlineUrl}/games`,
+      {
+        partnerKey: config.worldCasinoOnlinePartnerKey,
+        game: {
+          gameCode: null,
+        },
+        timestamp: `${new Date().getTime()}`,
+        user: {
+          id: config.worldCasinoOnlineUserId,
+          currency: config.currency,
+          displayName: config.worldCasinoOnlineDisplayName,
+          backUrl: config.worldCasinoOnlineRedirectionUrl,
+        },
+      }
+    );
+    
+    res.send({
+      success: true,
+      message: "Casino games get successfully",
+      response,
+      //games,
+    });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .send({ success: false, message: "Failed to get casino games", error });
+  }
+}
+
 async function addCasinoGameDetails(req, res) {
   // if( req.decoded.role != '0' ){
   //   return res.status(200).send({ message: 'you are not allowed to add games',success:false})
@@ -77,15 +110,15 @@ async function addCasinoGameDetails(req, res) {
       //   resp.launchURL
       // );
 
-      const games = await axios.post(`${config.worldCasinoOnlineUrl}/games`, {
-        partnerKey: config.worldCasinoOnlinePartnerKey,
-      });
+      // const games = await axios.post(`${config.worldCasinoOnlineUrl}/games`, {
+      //   partnerKey: config.worldCasinoOnlinePartnerKey,
+      // });
 
       res.send({
         success: true,
         message: "Casino games added successfully",
         data: resp,
-        games,
+        //games,
       });
     }
   } catch (error) {
@@ -672,6 +705,7 @@ async function getGameDirect(req, res) {
 
 loginRouter.post("/getSelectedGamesBySearch", getSelectedGamesBySearch);
 loginRouter.post("/addCasinoGameDetails", addCasinoGameDetails);
+loginRouter.post("/getCasinoGames", getCasinoGames);
 
 loginRouter.get("/getAllCasinoCategories", getAllCasinoCategories);
 
