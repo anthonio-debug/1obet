@@ -77,13 +77,13 @@ async function addCasinoGameDetails(req, res) {
       // }));
   
       // await CasinoGames.bulkWrite(bulkOps);
-      res.send({ success: true, message: 'Casino games added successfully', data: resp });
+      res.send({ success: true, message: 'Casino games added successfully', data: resp, qbody });
     }
   } catch (error) {
     console.error(error);
     res
       .status(500)
-      .send({ success: false, message: 'Failed to add casino games', error });
+      .send({ success: false, message: 'Failed to add casino games', error, qbody });
   }
 }
 
