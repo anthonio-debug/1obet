@@ -41,6 +41,7 @@ async function getCasinoGames(req, res) {
         providerCode: null,
       }
     );
+    console.log(response);
     
     res.send({
       success: true,
