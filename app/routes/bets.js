@@ -238,11 +238,20 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: 'Bet not allowed' });
       }
     } else {
-      const requiredTime = new Date().getTime() + config.sportsOpenBefore;
+      let thirdPartyMarketName     = subMarketName;
+      const requiredTime           = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime;
-      let thirdPartyMarketName = subMarketName;
+      
       if (subMarketName == 'Toss') {
         thirdPartyMarketName = 'To Win the Toss';
+        const requiredTime = new Date().getTime() - config.tossCloseToss;
+        const remainingTimeFromEventStart = eventDetail.openDate - requiredTime;
+        if (subMarketDetail.Id == config.Toss && remainingTimeFromEventStart < 0) {
+          return res.status(404).send({
+            status: true,
+            message: `Bets are not Allowed Now In this market`,
+          });
+        }
       }
 
       if (["Winner", "Cup Winner", "Cup"].includes(subMarketName)){
@@ -712,6 +721,11 @@ const placeBet = async (req, res) => {
 
     // GH HR match odds
     else if (config.raceMarkets.includes(marketId)) {
+      if(betRate > 50){
+        return res.status(404).send({
+          message: `Bet Miss Matched `,
+        });
+      }
       //isManuel = false;
       runnerName = req.body.runnerName;
       console.log( ' ============================ GH & HR ============================ ');
