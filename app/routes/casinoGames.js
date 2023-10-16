@@ -33,9 +33,11 @@ async function addCasinoGameDetails(req, res) {
   //   return res.status(200).send({ message: 'you are not allowed to add games',success:false})
   // }
   try {
-    const response = await axios.post(
-      `${config.worldCasinoOnlineUrl}/auth/userauthentication`,
-      {
+    let qbody;
+    if(req.body.sendParam) {
+      qbody = req.body;
+    } else {
+      qbody = {
         partnerKey: config.worldCasinoOnlinePartnerKey,
         game: {
           gameCode: config.worldCasinoOnlineGameCode || "TP",
@@ -48,15 +50,17 @@ async function addCasinoGameDetails(req, res) {
           displayName: config.worldCasinoOnlineDisplayName,
           backUrl: config.worldCasinoOnlineRedirectionUrl,
         },
-      }
+      };
+    }
+    const response = await axios.post(
+      `${config.worldCasinoOnlineUrl}/auth/userauthentication`,
+      qbody
     );
 
     console.log("Response:", response.data);
 
     const resp = response.data;
-    if(response.status === 200 && resp && resp.status && resp.status.code === "LOGIN_FAILED") {
-      throw new Error(resp);
-    } else if(response.status !== 200) {
+    if(resp.sessionId === null || resp.sessionId === undefined) {
       throw new Error(resp);
     } else {
       // const gameList = response.data.response;
