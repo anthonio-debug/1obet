@@ -188,6 +188,11 @@ const placeBet = async (req, res) => {
     if (!eventDetail) {
       return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
     }
+
+
+    console.log("================================ (eventDetail.status.toUpperCase()", eventDetail.status.toUpperCase());
+
+ 
     if (!eventDetail.betAllowed) {
       return res
         .status(404)
