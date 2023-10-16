@@ -80,7 +80,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
 
   else if (action == 1) {
     const game = await SelectedCasino.findOne(
-      { "games.id": 1 },
+      { "games.id": payload.game_id },
       { "games.$": 1 }
     );
     
