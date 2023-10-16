@@ -33,16 +33,25 @@ async function addCasinoGameDetails(req, res) {
     return res.status(200).send({ message: 'you are not allowed to add games',success:false})
   }
   try {
-    const response = await axios.post(config.apiUrl, {
-      api_password: config.api_password,
-      api_login: config.api_username,
-      method: 'getGameList',
-      show_additional: true,
-      show_systems: 1,
-      currency: 'PKR',
-    });
+    const response = await axios.post(
+      `${config.worldCasinoOnlineUrl}/auth/userauthentication`,
+      {
+        partnerKey: config.worldCasinoOnlinePartnerKey,
+        game: {
+          gameCode: config.worldCasinoOnlineGameCode || "TP",
+          providerCode: config.worldCasinoOnlineProviderCode || "SN",
+        },
+        timestamp: `${new Date().getTime()}`,
+        user: {
+          id: config.worldCasinoOnlineUserId,
+          currency: config.currency,
+          displayName: config.worldCasinoOnlineDisplayName,
+          backUrl: config.worldCasinoOnlineRedirectionUrl,
+        },
+      }
+    );
 
-    console.log('Response:', response.data);
+    console.log("Response:", response.data);
     const gameList = response.data.response;
     const bulkOps = gameList.map((game) => ({
       updateOne: {
