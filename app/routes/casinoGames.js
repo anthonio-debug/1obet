@@ -33,29 +33,46 @@ async function addCasinoGameDetails(req, res) {
     return res.status(200).send({ message: 'you are not allowed to add games',success:false})
   }
   try {
-    const response = await axios.post(config.apiUrl, {
-      api_password: config.api_password,
-      api_login: config.api_username,
-      method: 'getGameList',
-      show_additional: true,
-      show_systems: 1,
-      currency: 'PKR',
-    });
-
-    console.log('Response:', response.data);
-    const gameList = response.data.response;
-    const bulkOps = gameList.map((game) => ({
-      updateOne: {
-        filter: { category: game.category },
-        update: {
-          $push: { games: { ...game, details: JSON.parse(game.details) } },
+    const response = await axios.post(
+      `${config.worldCasinoOnlineUrl}/auth/userauthentication`,
+      {
+        partnerKey: config.worldCasinoOnlinePartnerKey,
+        game: {
+          gameCode: config.worldCasinoOnlineGameCode || "TP",
+          providerCode: config.worldCasinoOnlineProviderCode || "SN",
         },
-        upsert: true,
-      },
-    }));
+        timestamp: `${new Date().getTime()}`,
+        user: {
+          id: config.worldCasinoOnlineUserId,
+          currency: config.currency,
+          displayName: config.worldCasinoOnlineDisplayName,
+          backUrl: config.worldCasinoOnlineRedirectionUrl,
+        },
+      }
+    );
 
-    await CasinoGames.bulkWrite(bulkOps);
-    res.send({ success: true, message: 'Casino games added successfully' });
+    console.log("Response:", response.data);
+
+    const resp = response.data;
+    if(response.status === 200 && resp && resp.status && resp.status.code === "LOGIN_FAILED") {
+      throw new Error(resp);
+    } else if(response.status !== 200) {
+      throw new Error(resp);
+    } else {
+      // const gameList = response.data.response;
+      // const bulkOps = gameList.map((game) => ({
+      //   updateOne: {
+      //     filter: { category: game.category },
+      //     update: {
+      //       $push: { games: { ...game, details: JSON.parse(game.details) } },
+      //     },
+      //     upsert: true,
+      //   },
+      // }));
+  
+      // await CasinoGames.bulkWrite(bulkOps);
+      res.send({ success: true, message: 'Casino games added successfully' });
+    }
   } catch (error) {
     console.error(error);
     res
