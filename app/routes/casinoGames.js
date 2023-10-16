@@ -52,19 +52,27 @@ async function addCasinoGameDetails(req, res) {
     );
 
     console.log("Response:", response.data);
-    const gameList = response.data.response;
-    const bulkOps = gameList.map((game) => ({
-      updateOne: {
-        filter: { category: game.category },
-        update: {
-          $push: { games: { ...game, details: JSON.parse(game.details) } },
-        },
-        upsert: true,
-      },
-    }));
 
-    await CasinoGames.bulkWrite(bulkOps);
-    res.send({ success: true, message: 'Casino games added successfully' });
+    const resp = response.data;
+    if(response.status === 200 && resp && resp.status && resp.status.code === "LOGIN_FAILED") {
+      throw new Error(resp);
+    } else if(response.status !== 200) {
+      throw new Error(resp);
+    } else {
+      // const gameList = response.data.response;
+      // const bulkOps = gameList.map((game) => ({
+      //   updateOne: {
+      //     filter: { category: game.category },
+      //     update: {
+      //       $push: { games: { ...game, details: JSON.parse(game.details) } },
+      //     },
+      //     upsert: true,
+      //   },
+      // }));
+  
+      // await CasinoGames.bulkWrite(bulkOps);
+      res.send({ success: true, message: 'Casino games added successfully' });
+    }
   } catch (error) {
     console.error(error);
     res
