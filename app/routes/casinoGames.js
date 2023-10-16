@@ -33,27 +33,25 @@ const getParents = async (userId) => {
 };
 
 async function getCasinoGames(req, res) {
-  try {
-    const response = await axios.post(
-      `${config.worldCasinoOnlineApiUrl}/games`,
-      {
-        partnerKey: config.worldCasinoOnlinePartnerKey,
-        providerCode: null,
-      }
-    );
-    
-    res.send({
-      success: true,
-      message: "Casino games get successfully",
-      response,
-      //games,
+  axios
+    .post(`${config.worldCasinoOnlineApiUrl}/games`, {
+      partnerKey: config.worldCasinoOnlinePartnerKey,
+      providerCode: null,
+    })
+    .then((response) => {
+      res.send({
+        success: true,
+        message: "Casino games get successfully",
+        response,
+        //games,
+      });
+    })
+    .catch((error) => {
+      console.error(error);
+      res
+        .status(500)
+        .send({ success: false, message: "Failed to get casino games", error });
     });
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .send({ success: false, message: "Failed to get casino games", error });
-  }
 }
 
 async function addCasinoGameDetails(req, res) {
@@ -61,22 +59,19 @@ async function addCasinoGameDetails(req, res) {
   //   return res.status(200).send({ message: 'you are not allowed to add games',success:false})
   // }
   try {
-    const response = await axios.post(
-      `${config.worldCasinoOnlineAuthUrl}`,
-      {
-        partnerKey: config.worldCasinoOnlinePartnerKey,
-        game: {
-          gameCode: null,
-        },
-        timestamp: `${new Date().getTime()}`,
-        user: {
-          id: config.worldCasinoOnlineUserId,
-          currency: config.currency,
-          displayName: config.worldCasinoOnlineDisplayName,
-          backUrl: config.worldCasinoOnlineRedirectionUrl,
-        },
-      }
-    );
+    const response = await axios.post(`${config.worldCasinoOnlineAuthUrl}`, {
+      partnerKey: config.worldCasinoOnlinePartnerKey,
+      game: {
+        gameCode: null,
+      },
+      timestamp: `${new Date().getTime()}`,
+      user: {
+        id: config.worldCasinoOnlineUserId,
+        currency: config.currency,
+        displayName: config.worldCasinoOnlineDisplayName,
+        backUrl: config.worldCasinoOnlineRedirectionUrl,
+      },
+    });
 
     console.log("Response:", response.data);
 
@@ -443,12 +438,10 @@ async function getGame(req, res) {
     }
 
     if (req.decoded.role !== "5") {
-      return res
-        .status(200)
-        .send({
-          message: "you are not allowed to play casino games",
-          success: false,
-        });
+      return res.status(200).send({
+        message: "you are not allowed to play casino games",
+        success: false,
+      });
     }
     const { homeurl, cashierurl, gameid } = req.body;
     const user = await User.findOne({ userId: req.decoded.userId });
@@ -511,12 +504,10 @@ const addSelectedDashboardGames = async (req, res) => {
   }
 
   if (req.decoded.role != "0") {
-    return res
-      .status(200)
-      .send({
-        message: "you are not allowed to add dashboard games",
-        success: false,
-      });
+    return res.status(200).send({
+      message: "you are not allowed to add dashboard games",
+      success: false,
+    });
   }
   const { gameId, status } = req.body;
 
@@ -531,13 +522,11 @@ const addSelectedDashboardGames = async (req, res) => {
       });
     })
     .catch((err) => {
-      return res
-        .status(500)
-        .send({
-          success: false,
-          message: "Error updating selected games",
-          err,
-        });
+      return res.status(500).send({
+        success: false,
+        message: "Error updating selected games",
+        err,
+      });
     });
 };
 
@@ -658,12 +647,10 @@ async function getGameDirect(req, res) {
     }
 
     if (req.decoded.role !== "5") {
-      return res
-        .status(200)
-        .send({
-          message: "you are not allowed to play casino games",
-          success: false,
-        });
+      return res.status(200).send({
+        message: "you are not allowed to play casino games",
+        success: false,
+      });
     }
     const { homeurl, cashierurl, gameid } = req.body;
     const user = await User.findOne({ userId: req.decoded.userId });
