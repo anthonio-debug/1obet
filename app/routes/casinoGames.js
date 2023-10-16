@@ -83,7 +83,7 @@ async function addCasinoGameDetails(req, res) {
     console.error(error);
     res
       .status(500)
-      .send({ success: false, message: 'Failed to add casino games', error, qbody });
+      .send({ success: false, message: 'Failed to add casino games', error });
   }
 }
 
