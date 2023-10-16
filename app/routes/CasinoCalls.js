@@ -154,6 +154,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
         creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
         calledArea: " difference < 0 ",
         createdBy: 0,
+        event: game.name,
         // matchId: bet.matchId,
         betId: payload.transaction_id,
         cashOrCredit: "Bet",
@@ -242,6 +243,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
           betId: payload.transaction_id,
           cashOrCredit: "Bet",
           sportsId: "6",
+          event: game.name, 
           marketId: payload.game_id,
           upLineAmount: upMovingAmount
         }
@@ -322,6 +324,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
         creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
         betId: payload.transaction_id,
         calledArea: "difference > 0",
+        event: game.name,
         sportsId: "6",
         marketId: payload.game_id,
       }
@@ -397,13 +400,12 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
           cashOrCredit: "Bet",
           sportsId: "6",
+          event: game.name,
           marketId: payload.game_id,
           betId: payload.transaction_id,
           upLineAmount: upMovingCommAmount
         }
         allTrans.push(betTransaction)
-
-
 
         const prevBalance =  lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * amount : -(user.commission / 100) * amount; 
         const prevAvailableBalance =  lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * amount : -(user.commission / 100) * amount;
@@ -429,6 +431,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
           cashOrCredit: "Commission",
           betId: payload.transaction_id,
           sportsId: "6",
+          event: game.name,
           marketId: payload.game_id,
           upLineAmount: upMovingCommAmount
         }
