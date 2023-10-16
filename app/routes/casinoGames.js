@@ -461,7 +461,7 @@ async function getGame(req, res) {
     const { homeurl, cashierurl, gameid } = req.body;
     const user = await User.findOne({ userId: req.decoded.userId });
 
-    console.log(" Get Game user ======= ", user);
+    // console.log(" Get Game user ======= ", user);
 
     const payload = {
       api_password: config.api_password,

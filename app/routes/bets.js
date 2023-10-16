@@ -3442,6 +3442,8 @@ const dailyMatchWiseprofitLose = async (req, res) => {
             },
             size: { $first: { $arrayElemAt: ['$betsDetails.betRate', 0] } },
             type: { $first: { $arrayElemAt: ['$betsDetails.type', 0] } },
+            fancyData: { $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] } },
+            isfancyOrbookmaker: { $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] } }  
           },
         },
       ]);
@@ -3513,134 +3515,43 @@ const dailyMatchWiseprofitLose = async (req, res) => {
 
 const postmanwork = async (req, res) => {
   try {
-    // const users = await User.find({ role: { $ne: '0' }  });
-    // await userBetSizes.deleteMany();
-    // for (const user of users){
-    //   const response = userBetSizes.insertMany([
-    //     {
-    //       userId: user.useerId,
-    //       amount: 250000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd20',
-    //       name: 'Soccer',
-    //       sportsId: '1'
-    //     },
-    //     {
-    //       userId: user.useerId,
-    //       amount: 250000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd21',
-    //       name: 'Tennis',
-    //       sportsId: '2'
-    //     },
-    //     {
-    //       userId: user.useerId,
-    //       amount: 500000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd22',
-    //       name: 'Cricket',
-    //       sportsId: '4'
-    //     },
-    //     {
-    //       userId: user.useerId,
-    //       amount: 200000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd23',
-    //       name: 'Fancy',
-    //       subarket: 7,
-    //       sportsId: '4'
-    //     },
-    //     {
-    //       userId: user.useerId,
-    //       amount: 200000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd24',
-    //       name: 'Tied match',
-    //       subarket: 35,
-    //       sportsId: '4'
-    //     },
-    //     {
-    //       userId: user.useerId,
-    //       amount: 200000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd25',
-    //       name: 'bookMaker',
-    //       subarket: 8,
-    //       sportsId: '4'
-    //     },
-    //     {
-    //       userId: user.useerId,
-    //       amount: 200000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd26',
-    //       name: 'Even Odd',
-    //       subarket: 10,
-    //       sportsId: '4'
-    //     },
-    //     {
-    //       userId: user.useerId,
-    //       amount: 200000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd27',
-    //       name: 'Chotta Bara',
-    //       subarket: 34,
-    //       sportsId: '4'
-    //     },
-    //     {
-    //       userId: user.useerId,
-    //       amount: 200000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd28',
-    //       name: 'Figure',
-    //       subarket: 9,
-    //       sportsId: '4'
-    //     },
-    //     {
-    //       userId: user.useerId,
-    //       amount: 200000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd29',
-    //       name: 'Horse races',
-    //       sportsId: '7'
-    //     },
-    //     {
-    //       userId: user.useerId,
-    //       amount: 100000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd2a',
-    //       name: 'GreyHound',
-    //       sportsId: '4339'
-    //     },
-    //     {
-    //       userId: user.useerId,
-    //       amount: 50000,
-    //       betLimitId: '64fc9f9fac96fd64a8d0bd2b',
-    //       name: 'casino',
-    //       sportsId: '6'
-    //     }
-    //   ])
-    // }
 
-    // const deposits  = await Cash.find({ cashOrCredit: {
-    //   $in: ["Bet", "Commission", "loosing"]
-    // } });
-    // console.log(" deposits  ================= ", deposits.length);
+    var axios = require('axios');
 
-    // for (let i = 0; i < deposits.length; i++) {
-    //   console.log(" deposits ================= ", deposits[i]);
-    //   const bet = await Bets.findOne({ _id: mongoose.Types.ObjectId(deposits[i].betId) });
-    //   console.log(" ================= ", bet);
-    //   if(bet){
-    //     await Cash.updateOne(
-    //       { _id: deposits[i]._id },
-    //       { $set: { sportsId: bet.sportsId } }
-    //     );
-    //   }
-    // }
+    var data = {
+      "partnerKey": "6yhUl8mtfTZQcyhfIY22nXVRVHGKz21XXXXXXXXXXXXXXXXXXXXXXXXXX",
+      "game": {
+        "gameCode": "TP",
+        "providerCode": "SN"    
+      },    
+      "timestamp": "1624862458",    
+      "user": {      
+        "id": "XX",      
+        "currency": "INR",      
+        "displayName":"",       
+        "backUrl":"https://1obet.com"   
+      }};
+
+    var config = {
+      method: 'post',
+      maxBodyLength: Infinity,
+        url: 'https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication',
+        headers: { },
+        data : data
+      };
+
+      axios(config)
+      .then(function (response) {
+        console.log(JSON.stringify(response.data));
+      })
+    .catch(function (error) {
+      console.log(error);
+    });
+
+
     const _3oattires = await axios.get(
       'http://138.68.171.26:3003/teenpatti/t20'
     );
-    const _3oatti = _3oattires.data;
-
-    const _3oattiresultRes = await axios.get(
-      'http://138.68.171.26:3003/teenpatti/t20/result'
-    );
-    const _3oattiResult = _3oattiresultRes.data;
-
-    const teen8res = await axios.get(
-      'https://betfairoddsapi.com:3445/api/l_result/teen8'
-    );
-    const teen8 = teen8res.data;
-
     return res.send({
       message: 'Completed !',
       _3oatti: _3oatti,

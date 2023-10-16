@@ -9,6 +9,7 @@ const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
 const { getParents } = require("../../app/routes/bets");
 const { log } = require('async');
+const SelectedCasino = require("../models/selectedCasino");
 
 const transactionOptions = {
   readPreference: 'primary',
@@ -16,7 +17,7 @@ const transactionOptions = {
   writeConcern: { w: 'majority' }
 }
 
-const checkMarketBlocked = async (user) => {
+const checkMarketBlocked  = async (user) => {
   let parentUserIds       = await getParents(user.userId);
   const marketIds         = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
   const marketId          = config.casinoMarketId ;
@@ -78,6 +79,20 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
   }
 
   else if (action == 1) {
+    const gamesList  = await SelectedCasino.findOne(
+      { "games.id": payload.game_id },
+      { "games.$": 1 }
+    );
+
+    const game = gamesList.games[0];
+    
+    console.log(" ====================== game ====================== ");
+
+    console.log(game);
+
+    console.log(" ====================== game ====================== ");
+
+
     console.log(" ======================= CREDIT IS CAALED ======================= ");
     const lastDebit = await casinoCalls.findOne({
       action: 'debit',
@@ -145,6 +160,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
         creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
         calledArea: " difference < 0 ",
         createdBy: 0,
+        event: game.name,
         // matchId: bet.matchId,
         betId: payload.transaction_id,
         cashOrCredit: "Bet",
@@ -233,6 +249,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
           betId: payload.transaction_id,
           cashOrCredit: "Bet",
           sportsId: "6",
+          event: game.name, 
           marketId: payload.game_id,
           upLineAmount: upMovingAmount
         }
@@ -313,6 +330,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
         creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
         betId: payload.transaction_id,
         calledArea: "difference > 0",
+        event: game.name,
         sportsId: "6",
         marketId: payload.game_id,
       }
@@ -388,13 +406,12 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
           cashOrCredit: "Bet",
           sportsId: "6",
+          event: game.name,
           marketId: payload.game_id,
           betId: payload.transaction_id,
           upLineAmount: upMovingCommAmount
         }
         allTrans.push(betTransaction)
-
-
 
         const prevBalance =  lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * amount : -(user.commission / 100) * amount; 
         const prevAvailableBalance =  lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * amount : -(user.commission / 100) * amount;
@@ -420,6 +437,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
           cashOrCredit: "Commission",
           betId: payload.transaction_id,
           sportsId: "6",
+          event: game.name,
           marketId: payload.game_id,
           upLineAmount: upMovingCommAmount
         }
