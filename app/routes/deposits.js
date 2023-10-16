@@ -720,7 +720,7 @@ function getLedgerDetails(req, res) {
         const responseData = {
           message: 'Deposit Records',
           total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
-          results: result[0].results,
+          docs: result[0].results,
         };
 
         return res.send(responseData);
