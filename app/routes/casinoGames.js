@@ -77,7 +77,6 @@ async function addCasinoGameDetails(req, res) {
       const games = await axios.post(
         `${config.worldCasinoOnlineUrl}/games`, {
           partnerKey: config.worldCasinoOnlinePartnerKey,
-          providerCode: null,
         }
       );
 
