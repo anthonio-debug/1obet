@@ -38,6 +38,7 @@ async function getCasinoGames(req, res) {
       `${config.worldCasinoOnlineApiUrl}/games`,
       {
         partnerKey: config.worldCasinoOnlinePartnerKey,
+        providerCode: null,
       }
     );
     
