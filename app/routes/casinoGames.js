@@ -33,11 +33,12 @@ const getParents = async (userId) => {
 };
 
 async function getCasinoGames(req, res) {
+  const q = {
+    partnerKey: config.worldCasinoOnlinePartnerKey,
+    providerCode: null,
+  };
   axios
-    .post(`${config.worldCasinoOnlineApiUrl}/games`, {
-      partnerKey: config.worldCasinoOnlinePartnerKey,
-      providerCode: null,
-    })
+    .post(`${config.worldCasinoOnlineApiUrl}/games`, q)
     .then((response) => {
       res.send({
         success: true,
