@@ -70,8 +70,15 @@ async function addCasinoGameDetails(req, res) {
   
       // await CasinoGames.bulkWrite(bulkOps);
       
-      const games = await axios.get(
-        resp.launchURL
+      // const games = await axios.get(
+      //   resp.launchURL
+      // );
+      
+      const games = await axios.post(
+        `${config.worldCasinoOnlineUrl}/games`, {
+          partnerKey: config.worldCasinoOnlinePartnerKey,
+          providerCode: null,
+        }
       );
 
       res.send({ success: true, message: 'Casino games added successfully', data: resp, games });
