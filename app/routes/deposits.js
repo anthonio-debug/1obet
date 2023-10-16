@@ -696,7 +696,7 @@ function getLedgerDetails(req, res) {
         },
         {
           $addFields: {
-            betSession: '$betsDetails.betSession',
+            betSession: { $arrayElemAt: ['$betsDetails.betSession', 0] },
           },
         },
         {
