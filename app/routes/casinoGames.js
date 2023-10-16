@@ -33,7 +33,7 @@ const getParents = async (userId) => {
 };
 
 async function getCasinoGames(req, res) {
-  let response;
+  let response = null;
   try {
     response = await axios.post(
       `${config.worldCasinoOnlineApiUrl}/games`,
