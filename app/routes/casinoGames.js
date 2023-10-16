@@ -35,19 +35,9 @@ const getParents = async (userId) => {
 async function getCasinoGames(req, res) {
   try {
     const response = await axios.post(
-      `${config.worldCasinoOnlineUrl}/games`,
+      `${config.worldCasinoOnlineApiUrl}/games`,
       {
         partnerKey: config.worldCasinoOnlinePartnerKey,
-        game: {
-          gameCode: null,
-        },
-        timestamp: `${new Date().getTime()}`,
-        user: {
-          id: config.worldCasinoOnlineUserId,
-          currency: config.currency,
-          displayName: config.worldCasinoOnlineDisplayName,
-          backUrl: config.worldCasinoOnlineRedirectionUrl,
-        },
       }
     );
     
@@ -71,7 +61,7 @@ async function addCasinoGameDetails(req, res) {
   // }
   try {
     const response = await axios.post(
-      `${config.worldCasinoOnlineUrl}/auth/userauthentication`,
+      `${config.worldCasinoOnlineAuthUrl}`,
       {
         partnerKey: config.worldCasinoOnlinePartnerKey,
         game: {
