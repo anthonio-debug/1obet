@@ -483,8 +483,9 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
           name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
           createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
           size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
-          type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } }
-
+          type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
+          fancyData: { $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] } },
+          isfancyOrbookmaker: { $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] } }
         }
       }
     ]);
