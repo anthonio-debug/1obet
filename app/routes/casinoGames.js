@@ -29,9 +29,9 @@ const getParents = async (userId) => {
 }
 
 async function addCasinoGameDetails(req, res) {
-  if( req.decoded.role != '0' ){
-    return res.status(200).send({ message: 'you are not allowed to add games',success:false})
-  }
+  // if( req.decoded.role != '0' ){
+  //   return res.status(200).send({ message: 'you are not allowed to add games',success:false})
+  // }
   try {
     const response = await axios.post(
       `${config.worldCasinoOnlineUrl}/auth/userauthentication`,
