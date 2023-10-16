@@ -17,7 +17,7 @@
   "sportsLiveScore": "https://livesportscore.xyz:3440/api/bf_scores/",
   "horseRaceUrl": "http://136.244.77.249:33333",
   "worldCasinoOnlineAuthUrl": "https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication",
-  "worldCasinoOnlineApiUrl": "https://stage.worldcasinoonline.com/api",
+  "worldCasinoOnlineApiUrl": "https://stageapiauth.worldcasinoonline.com/api",
   "oldSaltKey":"Loa0192Jua",
   "betMinimumAmount": 100,
   "api_username":"1obet_mc_s",
