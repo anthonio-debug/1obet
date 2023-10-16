@@ -138,7 +138,7 @@ const MatchWiseCommissionReport = async (req, res) => {
         $group:{
           _id: "$marketId",
           amount: { $sum: "$amount" },
-          name:   { $first: "event" }
+          name:   { $first: "$event" }
         }
       }
     ]);
