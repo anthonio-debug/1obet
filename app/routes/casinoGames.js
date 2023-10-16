@@ -63,7 +63,7 @@ async function addCasinoGameDetails(req, res) {
     if(resp.sessionId === null || resp.sessionId === undefined) {
       res
         .status(400)
-        .send({ success: false, message: 'Bad request', resp });
+        .send({ success: false, message: 'Bad request', resp, qbody });
     } else {
       // const gameList = response.data.response;
       // const bulkOps = gameList.map((game) => ({
