@@ -289,8 +289,8 @@ function login(req, res) {
               console.log(
                 ' =========================  Expired token =====================  '
               );
-              console.log(' ================== decoded ', decoded);
-              console.log(' ================== err ', err);
+              // console.log(' ================== decoded ', decoded);
+              // console.log(' ================== err ', err);
 
               var token = getNonExpiringToken(
                 user.userId,
