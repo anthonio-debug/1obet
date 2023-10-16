@@ -33,8 +33,9 @@ const getParents = async (userId) => {
 };
 
 async function getCasinoGames(req, res) {
+  let response;
   try {
-    const response = await axios.post(
+    response = await axios.post(
       `${config.worldCasinoOnlineApiUrl}/games`,
       {
         partnerKey: config.worldCasinoOnlinePartnerKey,
@@ -53,7 +54,7 @@ async function getCasinoGames(req, res) {
     console.error(error);
     res
       .status(500)
-      .send({ success: false, message: "Failed to get casino games", error });
+      .send({ success: false, message: "Failed to get casino games", error, response });
   }
 }
 
