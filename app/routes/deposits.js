@@ -640,18 +640,19 @@ function getLedgerDetails(req, res) {
 
     cashPipeline.push(
       {
-        $match: {
-          $expr: {
-            $regexMatch: {
-              input: '$betId',
-              regex: /^[0-9a-fA-F]{24}$/,
+        $addFields: {
+          betsId: {
+            $cond: {
+              if: {
+                $regexMatch: {
+                  input: '$betId',
+                  regex: /^[0-9a-fA-F]{24}$/,
+                },
+              },
+              then: { $toObjectId: '$betId' },
+              else: null,
             },
           },
-        },
-      },
-      {
-        $addFields: {
-          betsId: { $toObjectId: '$betId' },
         },
       },
       {
@@ -691,8 +692,17 @@ function getLedgerDetails(req, res) {
 
       const responseData = {
         message: 'Deposit Records',
-        total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
-        results: { docs: result[0].results },
+
+        results: {
+          docs: result[0].results,
+          total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
+          limit: limit ? limit : 0,
+          page: page ? page : 0,
+          pages:
+            limit && result[0].metadata[0].total
+              ? Number((result[0].metadata[0].total / limit).toFixed(0))
+              : 0,
+        },
       };
 
       return res.send(responseData);
