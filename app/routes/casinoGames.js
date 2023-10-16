@@ -51,7 +51,7 @@ async function getCasinoGames(req, res) {
       console.error(error);
       res
         .status(500)
-        .send({ success: false, message: "Failed to get casino games", error });
+        .send({ success: false, message: "Failed to get casino games", error, q });
     });
 }
 
