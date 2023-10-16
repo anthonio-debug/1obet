@@ -9,6 +9,7 @@ const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
 const { getParents } = require("../../app/routes/bets");
 const { log } = require('async');
+const SelectedCasino = require("../models/selectedCasino");
 
 const transactionOptions = {
   readPreference: 'primary',
@@ -16,7 +17,7 @@ const transactionOptions = {
   writeConcern: { w: 'majority' }
 }
 
-const checkMarketBlocked = async (user) => {
+const checkMarketBlocked  = async (user) => {
   let parentUserIds       = await getParents(user.userId);
   const marketIds         = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
   const marketId          = config.casinoMarketId ;
@@ -78,6 +79,14 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
   }
 
   else if (action == 1) {
+    const game = await SelectedCasino.findOne({ "games.id": payload.game_id });
+    console.log(" ====================== game ====================== ");
+
+    console.log(game);
+
+    console.log(" ====================== game ====================== ");
+
+
     console.log(" ======================= CREDIT IS CAALED ======================= ");
     const lastDebit = await casinoCalls.findOne({
       action: 'debit',
