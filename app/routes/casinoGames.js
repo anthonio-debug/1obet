@@ -33,12 +33,21 @@ const getParents = async (userId) => {
 };
 
 async function getCasinoGames(req, res) {
-  const q = {
+  let data = JSON.stringify({
     partnerKey: config.worldCasinoOnlinePartnerKey,
-    providerCode: null,
+    providerCode: null
+  });
+  let aconf = {
+    method: "post",
+    maxBodyLength: Infinity,
+    url: `${config.worldCasinoOnlineApiUrl}/games`,
+    headers: {
+      "Content-Type": "application/json",
+    },
+    data,
   };
   axios
-    .post(`${config.worldCasinoOnlineApiUrl}/games`, q)
+    .request(aconf)
     .then((response) => {
       res.send({
         success: true,
@@ -51,7 +60,12 @@ async function getCasinoGames(req, res) {
       console.error(error);
       res
         .status(500)
-        .send({ success: false, message: "Failed to get casino games", error, q });
+        .send({
+          success: false,
+          message: "Failed to get casino games",
+          error,
+          q,
+        });
     });
 }
 
