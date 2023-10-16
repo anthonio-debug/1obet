@@ -83,15 +83,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       { "games.id": payload.game_id },
       { "games.$": 1 }
     );
-
     const game = gamesList.games[0];
-    
-    console.log(" ====================== game ====================== ");
-
-    console.log(game);
-
-    console.log(" ====================== game ====================== ");
-
 
     console.log(" ======================= CREDIT IS CAALED ======================= ");
     const lastDebit = await casinoCalls.findOne({
@@ -101,7 +93,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       remote_id: Number(payload.remote_id)
     })
 
-    console.log(" ======================= lastDebit =======================  ", lastDebit);
+    // console.log(" ======================= lastDebit =======================  ", lastDebit);
 
     const debit      = Number(lastDebit.amount);
     const credit     = Number(payload.amount);
