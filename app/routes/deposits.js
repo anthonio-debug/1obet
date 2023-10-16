@@ -668,11 +668,24 @@ function getLedgerDetails(req, res) {
         {
           $match: { userId: Number(req.body.userId) },
         },
-        // {
-        //   $addFields: {
-        //     betsId: { $toObjectId: '$betId' },
-        //   },
-        // },
+        {
+          $sort: { _id: -1 },
+        },
+        {
+          $match: {
+            $expr: {
+              $regexMatch: {
+                input: '$betId',
+                regex: /^[0-9a-fA-F]{24}$/,
+              },
+            },
+          },
+        },
+        {
+          $addFields: {
+            betsId: { $toObjectId: '$betId' },
+          },
+        },
         {
           $lookup: {
             from: 'bets',
@@ -682,7 +695,9 @@ function getLedgerDetails(req, res) {
           },
         },
         {
-          $sort: { _id: -1 },
+          $addFields: {
+            betSession: '$betsDetails.betSession',
+          },
         },
         {
           $facet: {
