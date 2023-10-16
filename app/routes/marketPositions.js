@@ -74,6 +74,7 @@ const getMarketPositions = async (req, res) => {
         _id: "$userId",
         name: { $first: "$userName" },
         amount: { $sum: "$clientPL" },
+        role: { $first: "$role" },
       },
     },
   ]);
