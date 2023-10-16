@@ -32,9 +32,9 @@ async function addCasinoGameDetails(req, res) {
   // if( req.decoded.role != '0' ){
   //   return res.status(200).send({ message: 'you are not allowed to add games',success:false})
   // }
+  let qbody;
   try {
-    let qbody;
-    if(req.body.sendParam) {
+    if(req.body) {
       qbody = req.body;
     } else {
       qbody = {
@@ -83,7 +83,7 @@ async function addCasinoGameDetails(req, res) {
     console.error(error);
     res
       .status(500)
-      .send({ success: false, message: 'Failed to add casino games', error });
+      .send({ success: false, message: 'Failed to add casino games', error, qbody });
   }
 }
 
