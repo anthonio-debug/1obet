@@ -41,7 +41,7 @@ function check(req, res, next, token) {
         }); //when the testing, comment
 
       jwt.verify(token, config.secret, function (err, decoded) {
-        console.log('decoded:', decoded);
+        // console.log('decoded:', decoded);
         if (err)
           return res
             .status(404)

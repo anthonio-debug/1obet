@@ -148,7 +148,7 @@ const currentPositionDetails = async (req, res) => {
       }
     });
   }catch(err){
-    console.log("current positiion Error ============= ", err);
+    // console.log("current positiion Error ============= ", err);
     const response = {
       success: true,
       message: `current position error ${err}`,
