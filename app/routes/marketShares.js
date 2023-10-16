@@ -1,14 +1,14 @@
-const express = require('express');
-const { validationResult } = require('express-validator');
-let config = require('config');
-const CashDeposit = require('../models/deposits');
-const User = require('../models/user');
+const express = require("express");
+const { validationResult } = require("express-validator");
+let config = require("config");
+const CashDeposit = require("../models/deposits");
+const User = require("../models/user");
 
-const reportValidator = require('../validators/reports');
-const Deposits = require('../models/deposits');
-const Events = require('../models/events');
-const Bets = require('../models/bets');
-const MarketIDS = require('../models/marketIds');
+const reportValidator = require("../validators/reports");
+const Deposits = require("../models/deposits");
+const Events = require("../models/events");
+const Bets = require("../models/bets");
+const MarketIDS = require("../models/marketIds");
 const loginRouter = express.Router();
 
 const marketGainWithDuplicates = async (req, res) => {
@@ -36,47 +36,53 @@ const marketGainWithDuplicates = async (req, res) => {
                   userId: userId,
                 },
                 {
-                  cashOrCredit: { $in: ['Bet'] },
+                  cashOrCredit: { $in: ["Bet"] },
                 },
               ],
             },
             {
-              cashOrCredit: { $in: ['Commission'] },
+              cashOrCredit: { $in: ["Commission"] },
             },
           ],
         },
       },
       {
         $addFields: {
-          betsId: { $toObjectId: '$betId' },
+          betsId: { $toObjectId: "$betId" },
         },
       },
       {
         $lookup: {
-          from: 'bets',
-          localField: 'betsId',
-          foreignField: '_id',
-          as: 'betsDetails',
+          from: "bets",
+          localField: "betsId",
+          foreignField: "_id",
+          as: "betsDetails",
         },
       },
       {
         $group: {
-          _id: '$betId',
-          pl: { $sum: '$amount' },
-          sattledAt: { $first: '$date' },
-          price: { $first: { $arrayElemAt: ['$betsDetails.betAmount', 0] } },
-          name: { $first: { $arrayElemAt: ['$betsDetails.runnerName', 0] } },
+          _id: "$betId",
+          pl: { $sum: "$amount" },
+          sattledAt: { $first: "$date" },
+          price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
+          name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
           createdAt: {
-            $first: { $arrayElemAt: ['$betsDetails.createdAt', 0] },
+            $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] },
           },
-          size: { $first: { $arrayElemAt: ['$betsDetails.betRate', 0] } },
-          type: { $first: { $arrayElemAt: ['$betsDetails.type', 0] } },
+          size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
+          type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
+          isfancyOrbookmaker: {
+            $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] },
+          },
+          fancyData: {
+            $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] },
+          },
         },
       },
     ]);
     return res.send({
       success: true,
-      message: 'Market Shares Reports by MarketId',
+      message: "Market Shares Reports by MarketId",
       results: response,
       isDetailed: true,
       dealer: parent.userName,
@@ -84,9 +90,9 @@ const marketGainWithDuplicates = async (req, res) => {
       Winner: marketData?.winnerInfo,
     });
   } else {
-    const childUsers = await User.distinct('userId', { createdBy: userId });
+    const childUsers = await User.distinct("userId", { createdBy: userId });
     const users = [userId, ...childUsers];
-    console.log(' users ===================  ', users);
+    console.log(" users ===================  ", users);
 
     const response = await CashDeposit.aggregate([
       {
@@ -95,34 +101,34 @@ const marketGainWithDuplicates = async (req, res) => {
             $in: users,
           },
           marketId: marketId,
-          cashOrCredit: { $in: ['Bet', 'Commission', 'loosing'] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         },
       },
       {
         $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: 'userId',
-          as: 'userInfo',
+          from: "users",
+          localField: "userId",
+          foreignField: "userId",
+          as: "userInfo",
         },
       },
       {
         $group: {
-          _id: '$userId',
-          amount: { $sum: '$amount' },
-          name: { $first: { $arrayElemAt: ['$userInfo.userName', 0] } },
+          _id: "$userId",
+          amount: { $sum: "$amount" },
+          name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
         },
       },
     ]);
 
     return res.send({
       success: true,
-      message: 'Commission reports',
+      message: "Commission reports",
       results: response,
     });
   }
 };
 
-loginRouter.get('/marketShares', marketGainWithDuplicates);
+loginRouter.get("/marketShares", marketGainWithDuplicates);
 
 module.exports = { loginRouter };
