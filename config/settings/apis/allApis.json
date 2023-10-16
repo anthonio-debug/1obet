@@ -56,6 +56,7 @@
   "getLedgerDetails",
   "getAllDeposits",
   "addCasinoGameDetails",
+  "getCasinoGames",
   "getAllCasinoCategories",
   "getSelectedCasinoCategories",
   "addSelectedCasinoCategories",
