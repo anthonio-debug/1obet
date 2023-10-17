@@ -15,51 +15,10 @@ const getMarketPositions = async (req, res) => {
 
   const userId = req.body.userId;
 
-  const resp = [];
   const users = await User.distinct("userId", { createdBy: userId });
   const currentUser = await User.findOne({ userId: userId });
-  if (currentUser.role == 0) {
-    resp.push(
-      {
-        _id: currentUser.userId,
-        name: "cash",
-        amount: currentUser.cash,
-      },
-      {
-        _id: currentUser.userId,
-        name: currentUser.userName,
-        amount: currentUser.balance,
-      }
-    );
-  } else {
-    const parentUser = await User.findOne({ userId: currentUser.createdBy });
-    console.log(
-      " ================== parentUser ================  ",
-      parentUser
-    );
-    resp.push(
-      {
-        _id: currentUser.userId,
-        name: "cash",
-        amount: currentUser.cash,
-      },
-      {
-        _id: currentUser.userId,
-        name: currentUser.userName,
-        amount: currentUser.balance,
-      },
-      {
-        _id: parentUser.userId,
-        name: parentUser.userName,
-        amount: currentUser.clientPL * -1,
-      }
-    );
-  }
 
-  console.log(
-    " ================== currentUser ================  ",
-    currentUser
-  );
+  const parentUser = await User.findOne({ userId: currentUser.createdBy });
 
   const response = await User.aggregate([
     {
@@ -78,6 +37,14 @@ const getMarketPositions = async (req, res) => {
       },
     },
   ]);
+
+  parentUser &&
+    response.push({
+      _id: parentUser.userId,
+      name: parentUser.userName,
+      amount: parentUser.$clientPL,
+      role: parentUser.role,
+    });
 
   return res.send({
     success: true,
