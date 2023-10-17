@@ -244,7 +244,7 @@ const placeBet = async (req, res) => {
       
       if (subMarketName == 'Toss') {
         thirdPartyMarketName = 'To Win the Toss';
-        const requiredTime = new Date().getTime() - config.tossCloseToss;
+        const requiredTime = new Date().getTime() - config.tossCloseTime;
         const remainingTimeFromEventStart = eventDetail.openDate - requiredTime;
         if (subMarketDetail.Id == config.Toss && remainingTimeFromEventStart < 0) {
           return res.status(404).send({

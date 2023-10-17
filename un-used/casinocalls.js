@@ -1,22 +1,21 @@
 const express = require('express');
-const User = require('../models/user');
-const router = express.Router();
-const CasinoDebits = require('../models/casinoCalls');
-const Cash = require("../../app/models/deposits");
+const User    = require('../app/models/user');
+const CasinoDebits = require('../app/models/casinoCalls');
+const Cash   = require("..//app/models/deposits");
 const crypto = require('crypto');
 const config = require('config')
 const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
-const { getParents } = require("../../app/routes/bets");
-const { log } = require('async');
-
+const { getParents }  = require("../app/routes/bets");
+const ExpRec = require("../app/models/ExpRec");
+const router  = express.Router();
 const transactionOptions = {
   readPreference: 'primary',
   readConcern: { level: 'local' },
   writeConcern: { w: 'majority' }
 };
 
-const WinLoseTransManagement = async (balance, payload, user, action) => {
+const WinLoseTransManagement = async (balance, payload, users, action) => {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -39,6 +38,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
+  const user = await users.findOne({remoteId: Number(payload.remote_id)});
 
   if (action == 0) {
     let amount = payload.amount * casinoMultiples;
@@ -64,6 +64,9 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
   }
 
   else if (action == 1) {
+    const user_prev_balance = user.balance;
+    const user_prev_availableBalance = user.availableBalance;
+    const user_prev_exposure = user.exposure;
     console.log(" ======================= CREDIT IS CAALED ======================= ");
     const lastDebit = await casinoCalls.findOne({
       action: 'debit',
@@ -263,19 +266,19 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       let commissionFrom = user.userId;
       let upMovingCommAmount = commissionAmount;
       
-      console.log("==========bettor_won_amount==============", bettor_won_amount);
-      console.log("==========amount==============", amount);
-      console.log("==========remainingAmount==============", remainingAmount);
-      console.log("==========commissionAmount==============", commissionAmount);
-      console.log("==========upMovingAmount==============", upMovingAmount);
-      console.log("========== upMovingCommAmount ==============", upMovingCommAmount);
-      console.log(" ============ handle Winning Bet ============ ");
+      // console.log("==========bettor_won_amount==============", bettor_won_amount);
+      // console.log("==========amount==============", amount);
+      // console.log("==========remainingAmount==============", remainingAmount);
+      // console.log("==========commissionAmount==============", commissionAmount);
+      // console.log("==========upMovingAmount==============", upMovingAmount);
+      // console.log("========== upMovingCommAmount ==============", upMovingCommAmount);
+      // console.log(" ============ handle Winning Bet ============ ");
 
       const updatedavailableBalance = user.availableBalance + (remainingAmount) + debit*config.casinoMultiples;
       const updatedclientPL = user.clientPL + (remainingAmount);
       const updatedbalance = user.balance + (remainingAmount);
       const UpdatedExposure = (user.exposure) + (debit * config.casinoMultiples);
-      const userResponse = await users.updateOne(
+      await users.updateOne(
         { _id: user?._id },
         {
           $set: {
@@ -445,6 +448,25 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
     }
+    const user_new_balance = user.balance;
+    const user_new_availableBalance = user.availableBalance;
+    const user_new_exposure = user.exposure;
+  
+    const ExpTran = new ExpRec({
+      userId: user.userId,
+      trans_from: "casinobet",
+      trans_from_id: payload.transaction_id,
+      trans_bet_status :  0,
+      user_prev_balance: user_prev_balance,
+      user_prev_availableBalance: user_prev_availableBalance,
+      user_prev_exposure: user_prev_exposure,
+      user_new_balance: user_new_balance,
+      user_new_availableBalance: user_new_availableBalance,
+      user_new_exposure: user_new_exposure,
+      marketId: bet.marketId,
+      sportsId: 6,
+    })
+    await ExpTran.save();
     console.log("All Transection Successfull ");
     return 0
   }
