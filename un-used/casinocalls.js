@@ -469,9 +469,9 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
       sportsId: 6,
     })
     await ExpTran.save();
-    console.log("=====================================================");
+    console.log(" ===================================================== ");
     console.log("All Transection Successfull ");
-    console.log("=====================================================");
+    console.log(" ===================================================== ");
     return 0
   }
 }
