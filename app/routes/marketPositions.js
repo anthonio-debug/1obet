@@ -38,6 +38,14 @@ const getMarketPositions = async (req, res) => {
     },
   ]);
 
+  currentUser &&
+    response.push({
+      _id: currentUser.userId,
+      name: currentUser.userName,
+      amount: currentUser.clientPL,
+      role: currentUser.role,
+    });
+
   parentUser &&
     response.push({
       _id: parentUser.userId,
