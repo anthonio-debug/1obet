@@ -1,5 +1,6 @@
 db.sidebarmenus.deleteMany({})
 
+
 db.sidebarmenus.insertMany([
   {
     name: "Dashboard",

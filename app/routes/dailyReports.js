@@ -241,24 +241,24 @@ const getDailyReport = async(req, res) => {
         $in: parents
       }
     });
-    console.log(" child users ======= ", childUsers);
+    // console.log(" child users ======= ", childUsers);
     if(childUsers.length) users.push(...childUsers)
     parents = childUsers
   }while (childUsers.length > 0)
 
   console.log(" users list  ======== ", users);
 
-  var sportsIdQuery = {$ne: null};
+  // var sportsIdQuery = {$ne: null};
 
-  if (req.query.sportId) {
-    sportsIdQuery = req.query.sportId;
-  }
+  // if (req.query.sportId) {
+  //   sportsIdQuery = req.query.sportId;
+  // }
 
   const response = await CashDeposit.aggregate([
     {
       $match: {
         userId: { $in: users },
-        sportsId: sportsIdQuery,
+        // sportsId: sportsIdQuery,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
