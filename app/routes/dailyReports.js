@@ -12,7 +12,6 @@ const Bets = require('../models/bets');
 const Events = require('../models/events');
 const loginRouter = express.Router();
 
-
 /*
 async function findAllChildren(userId) {
   let allUsers = [userId];
@@ -198,7 +197,6 @@ const dailyMarketsReports = async (req, res) => {
   });
 }
 */ 
-
 
 // async function getAllChildren(createdByIDs) {
 //   const userIDs = [];
