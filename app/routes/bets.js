@@ -189,9 +189,7 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
     }
 
-
     console.log("================================ (eventDetail.status.toUpperCase()", eventDetail.status.toUpperCase());
-
  
     if (!eventDetail.betAllowed) {
       return res
@@ -208,9 +206,6 @@ const placeBet = async (req, res) => {
         .status(404)
         .send({ message: 'Batting Not Allowd on this Match' });
     }
-
-
-    
 
     marketId = eventDetail?.sportsId;
     const Digitaddition = await handleLimitValue(betRate, marketId);

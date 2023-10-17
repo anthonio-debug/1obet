@@ -37,6 +37,7 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
   const session = client.startSession();
   const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
   const users = client.db(`${config.DBNAME}`).collection('users');
+  const user  = await users.findOne({remoteId: Number(payload.remote_id)});
 
   /*
     action= 0 debit
@@ -79,6 +80,9 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
   }
 
   else if (action == 1) {
+    const user_prev_balance = user.balance;
+    const user_prev_availableBalance = user.availableBalance;
+    const user_prev_exposure = user.exposure;
     const gamesList  = await SelectedCasino.findOne(
       { "games.id": payload.game_id },
       { "games.$": 1 }
@@ -459,7 +463,30 @@ const WinLoseTransManagement = async (balance, payload, user, action) => {
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
     }
+
+    const updatedUser = await users.findOne({remoteId: Number(payload.remote_id)});
+    const user_new_balance = updatedUser.balance;
+    const user_new_availableBalance = updatedUser.availableBalance;
+    const user_new_exposure = updatedUser.exposure;
+  
+    const ExpTran = new ExpRec({
+      userId: user.userId,
+      trans_from: "casinobet",
+      trans_from_id: payload.transaction_id,
+      trans_bet_status :  0,
+      user_prev_balance: user_prev_balance,
+      user_prev_availableBalance: user_prev_availableBalance,
+      user_prev_exposure: user_prev_exposure,
+      user_new_balance: user_new_balance,
+      user_new_availableBalance: user_new_availableBalance,
+      user_new_exposure: user_new_exposure,
+      marketId: bet.marketId,
+      sportsId: 6,
+    })
+    await ExpTran.save();
+    console.log(" ===================================================== ");
     console.log("All Transection Successfull ");
+    console.log(" ===================================================== ");
     return 0
   }
 }
