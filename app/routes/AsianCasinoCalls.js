@@ -469,7 +469,7 @@ async function credit(req, res) {
             { session }
           );   
 
-          console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
+          // console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
           let betTransaction = {
             userId: user.userId,
             description: "Casino Batting",
