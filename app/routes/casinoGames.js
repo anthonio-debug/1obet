@@ -1,6 +1,7 @@
 const express = require("express");
 const CasinoGames = require("../models/casinoGames");
 const SelectedCasino = require("../models/selectedCasino");
+const AsianGames = require("../models/AsianGames");
 const selectedCasinoValidator = require("../validators/casinoGames");
 const { validationResult } = require("express-validator");
 const Markets = require("../models/marketTypes");
@@ -35,7 +36,7 @@ const getParents = async (userId) => {
 async function getCasinoGames(req, res) {
   let data = JSON.stringify({
     partnerKey: config.worldCasinoOnlinePartnerKey,
-    providerCode: null
+    providerCode: null,
   });
   let aconf = {
     method: "post",
@@ -58,14 +59,12 @@ async function getCasinoGames(req, res) {
     })
     .catch((error) => {
       console.error(error);
-      res
-        .status(500)
-        .send({
-          success: false,
-          message: "Failed to get casino games",
-          error,
-          q,
-        });
+      res.status(500).send({
+        success: false,
+        message: "Failed to get casino games",
+        error,
+        q,
+      });
     });
 }
 
@@ -122,6 +121,69 @@ async function addCasinoGameDetails(req, res) {
         //games,
       });
     }
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .send({ success: false, message: "Failed to add casino games", error });
+  }
+}
+
+async function getAsianCasinoGames(req, res) {
+  try {
+    const providers = [
+      "SN",
+      "PG",
+      "XPG",
+      "EV",
+      "EZ",
+      "QT",
+      "AWC",
+      "BN",
+      "PP",
+      "GT",
+      "OT",
+    ];
+
+    await providers.forEach(async (provider) => {
+      const response = await axios.post(
+        `${config.worldCasinoOnlineApiUrl}/games`,
+        {
+          partnerKey: config.worldCasinoOnlinePartnerKey,
+          game: {
+            gameCode: "TP",
+            providerCode: provider,
+          },
+          timestamp: `${new Date().getTime()}`,
+          user: {
+            id: config.worldCasinoOnlineUserId,
+            currency: config.currency,
+            displayName: config.worldCasinoOnlineDisplayName,
+            backUrl: config.worldCasinoOnlineRedirectionUrl,
+          },
+        }
+      );
+
+      const bulkData = [];
+
+      await response.data.games.forEach((game) => {
+        bulkData.push({
+          name: game.name,
+          code: game.code,
+          providerCode: game.providerCode,
+          providerName: game.providerName,
+          thumb: game.thumb,
+          category: game.category,
+        });
+      });
+
+      await AsianGames.insertMany(bulkData);
+    });
+
+    res.send({
+      success: true,
+      message: "Casino games added successfully",
+    });
   } catch (error) {
     console.error(error);
     res
@@ -699,6 +761,7 @@ async function getGameDirect(req, res) {
 loginRouter.post("/getSelectedGamesBySearch", getSelectedGamesBySearch);
 loginRouter.post("/addCasinoGameDetails", addCasinoGameDetails);
 loginRouter.post("/getCasinoGames", getCasinoGames);
+loginRouter.post("/getAsianCasinoGames", getAsianCasinoGames);
 
 loginRouter.get("/getAllCasinoCategories", getAllCasinoCategories);
 

@@ -1,10 +1,10 @@
-const express = require('express');
-const { validationResult } = require('express-validator');
-let config = require('config');
-const User = require('../models/user');
+const express = require("express");
+const { validationResult } = require("express-validator");
+let config = require("config");
+const User = require("../models/user");
 
-const reportValidator = require('../validators/reports');
-const Bets = require('../models/bets');
+const reportValidator = require("../validators/reports");
+const Bets = require("../models/bets");
 const loginRouter = express.Router();
 
 const getMarketPositions = async (req, res) => {
@@ -12,65 +12,47 @@ const getMarketPositions = async (req, res) => {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const Id = Number(req.body.userId);
-  const page = Number(req.body.page) || 1; // Get the page number from the request or default to 1
-  const pageSize = Number(req.body.pageSize) || 10; // Set the page size or default to 10
-  const searchTerm = req.query.searchTerm || ''; // Get the search term from the request or default to an empty string
-  const response = await Bets.aggregate([
+
+  const userId = req.body.userId;
+
+  const users = await User.distinct("userId", { createdBy: userId });
+  const currentUser = await User.findOne({ userId: userId });
+
+  const parentUser = await User.findOne({ userId: currentUser.createdBy });
+
+  const response = await User.aggregate([
     {
       $match: {
-        userId: Id,
-        // $and: [
-        //   {
-        //     createdAt: { $gte: req.query.startDate },
-        //   },
-        //   {
-        //     createdAt: { $lte: req.query.endDate },
-        //   },
-        // ],
-        $or: [
-          { runnerName: { $regex: searchTerm, $options: 'i' } }, // Case-insensitive regex match on runnerName
-          // Add additional fields for search as needed
-        ],
-      },
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'user_info',
+        userId: {
+          $in: users,
+        },
       },
     },
     {
       $group: {
-        _id: '$marketId',
-        userId: { $first: '$userId' },
-        runnerName: { $first: '$runnerName' },
-        positions: { $sum: '$position' },
-        availableBalance: {
-          $first: { $arrayElemAt: ['$user_info.availableBalance', 0] },
-        },
-        createdAt: { $first: '$createdAt' },
+        _id: "$userId",
+        name: { $first: "$userName" },
+        amount: { $sum: "$clientPL" },
+        role: { $first: "$role" },
       },
     },
-    {
-      $sort: { createdAt: -1 }, // Optionally sort the results by createdAt in descending order
-    },
-    {
-      $skip: (page - 1) * pageSize, // Skip documents based on the page number and page size
-    },
-    {
-      $limit: pageSize, // Limit the number of documents returned to the page size
-    },
   ]);
+
+  parentUser &&
+    response.push({
+      _id: parentUser.userId,
+      name: parentUser.userName,
+      amount: parentUser.$clientPL,
+      role: parentUser.role,
+    });
+
   return res.send({
     success: true,
-    message: 'Market Positions Reports !',
+    message: "Market Positions Reports !",
     results: response,
   });
 };
 
-loginRouter.post('/marketPositions', getMarketPositions);
+loginRouter.post("/marketPositions", getMarketPositions);
 
 module.exports = { loginRouter };
