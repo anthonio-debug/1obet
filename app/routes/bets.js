@@ -2289,8 +2289,8 @@ const placeBet = async (req, res) => {
           await User.findOneAndUpdate(
             { userId: userId },
             {
-              availableBalance: UserExpAmount,
-              exposure: UserAvlBalAmount,
+              exposure: UserExpAmount,
+              availableBalance: UserAvlBalAmount,
             }
           );
           await updateParentUserBalance(
