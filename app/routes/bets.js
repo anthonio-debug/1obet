@@ -1907,7 +1907,9 @@ const placeBet = async (req, res) => {
       _3rdPartyMarketId = subMarketDetail.Id;
       console.log('Bets are Allowed');
       console.log(' currentSession ========= ', currentSession);
-    } else {
+    } 
+
+    else {
       return res
         .status(404)
         .send({ message: `Error Placing bet (Inappropriate Request)` });
@@ -1930,14 +1932,13 @@ const placeBet = async (req, res) => {
       console.log(' Pre Bet Rate ===============  ', betRate);
       console.log(' selectedBetRate ===============  ', selectedBetRate);
 
-      if ( multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)
-      ) {
+      if ( multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         console.log(' multipeResponse Is Empty !');
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
-      } else if ( multipeResponse.length > 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)
-      ) {
+      } 
+      else if ( multipeResponse.length > 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         betRate = multipeResponse[multipeResponse.length - 1];
         console.log(' Inside  Bet Rate ===============  ', betRate);
       }
@@ -2238,15 +2239,15 @@ const placeBet = async (req, res) => {
       });
       console.log('userAvailableBalance', user.availableBalance);
 
-      if (user.availableBalance < expAmount - prevExpAmount) {
+      if (user.availableBalance < (expAmount - prevExpAmount)){
         return res.status(404).send({ message: 'Insufficient balance' });
       }
 
       if (subMarketDetail.Id != config.Fancy) {
-        let setCalculateExpFalse = await Bets.updateMany(
+        await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
-            userId: userId,
+            userId: req.decoded.userId,
             matchId: matchId,
             status: 1,
           },
@@ -2260,9 +2261,9 @@ const placeBet = async (req, res) => {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
-            status: 1,
             fancyData: fancyData,
             TargetScore: TargetScore,
+            status: 1
           },
           { calculateExp: false }
         );
@@ -2274,11 +2275,6 @@ const placeBet = async (req, res) => {
           return res.status(404).send({ message: `Error placing bet ${err}` });
         }
         try {
-          // console.log(
-          //   ' ========================== result ========================== ',
-          //   result
-          // );
-          
           const position = new currentPosition({
             userId: userId,
             amount: -loosingAmount,
@@ -2288,13 +2284,13 @@ const placeBet = async (req, res) => {
           await position.save();
 
           const totalExpAmount = expAmount - prevExpAmount;
-          const updatedUser = await User.findOneAndUpdate(
+          const UserExpAmount = user.exposure + prevExpAmount - expAmount;
+          const UserAvlBalAmount = user.availableBalance + prevExpAmount - expAmount;
+          await User.findOneAndUpdate(
             { userId: userId },
             {
-              $inc: {
-                availableBalance: -totalExpAmount,
-                exposure: -totalExpAmount,
-              },
+              availableBalance: UserExpAmount,
+              exposure: UserAvlBalAmount,
             }
           );
           await updateParentUserBalance(
@@ -2308,7 +2304,7 @@ const placeBet = async (req, res) => {
 
           return res.send({
             success: true,
-            message: 'Bet placed successfully',
+            message: 'Bet placed successfully! ',
             results: result,
           });
         } catch (error) {
@@ -2317,7 +2313,7 @@ const placeBet = async (req, res) => {
             .status(404)
             .send({ message: 'Error updating user balance' });
         }
-      });
+      })
       /* -------------- */
     }, delay);
   } catch (error) {
