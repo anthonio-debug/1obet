@@ -577,6 +577,7 @@ async function getListAsianGames(req, res) {
     query["games.mobile"] = true;
   } else if (req.body.isMobile == false) {
     // console.log('in here isMobile false');
+
     query["games.mobile"] = false;
   }
 
@@ -619,7 +620,7 @@ async function getListAsianGames(req, res) {
 
   if (
     marketIds.includes(marketId) ||
-    subMarketId.includes(subMarketDetail.Id) ||
+    subMarketId.includes(subMarketDetail?.Id) ||
     user.betLockStatus == true
   ) {
     // return res.status(404).send({ message:  });
