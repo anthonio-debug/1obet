@@ -31,7 +31,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
     let bettor_lost_amount = 0;
   */
 
-  console.log(" ================ credit payload ================ ", payload);
+  // console.log(" ================ credit payload ================ ", payload);
 
   const now = new Date();
   const year = now.getFullYear().toString();
@@ -50,7 +50,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
      * let lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0]: null
      * console.log(" lastMaxWithdraw ============== ", lastMaxWithdraw);
      */
-    console.log("----------", payload, "-----", amount, "===UpdatedExposure: ", UpdatedExposure);
+    // console.log("----------", payload, "-----", amount, "===UpdatedExposure: ", UpdatedExposure);
     console.log(" ============ Update user balances ============ ");
     let updatedavailableBalance = user.availableBalance - (amount);
     let userResponse = await users.updateOne(
@@ -75,7 +75,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
       remote_id: Number(payload.remote_id)
     })
 
-    console.log(" ======================= lastDebit =======================  ", lastDebit);
+    // console.log(" ======================= lastDebit =======================  ", lastDebit);
 
     const debit = lastDebit.amount;
     const credit = payload.amount;
@@ -117,7 +117,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
       const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
       const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
 
-      console.log(" ====================== ====================== ", lastMaxWithdraw);
+      // console.log(" ====================== ====================== ", lastMaxWithdraw);
       //divide lost money to all share holders.
 
       let BattorLostTran = {
@@ -152,7 +152,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
           { session }
         );
         if (parentUser.role == "0") {
-          console.log("break User area ");
+          // console.log("break User area ");
           break;
         }
         parentUserIds.push(parentUser.createdBy);
@@ -164,7 +164,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
         { userId: { $in: parentUserIds }, isDeleted: false }
       ).sort({ role: -1 }).toArray();
 
-      console.log(" parentUser  ============ ", parentUser);
+      // console.log(" parentUser  ============ ", parentUser);
 
       if (!parentUser) {
         console.log(" ============ Parent User Not Found ============ ");
@@ -205,7 +205,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
 
         const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
         const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
-        console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
+        // console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
         let betTransaction = {
           userId: user.userId,
           description: `Casino (${payload.game_id})`,
@@ -294,7 +294,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
       const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
       const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
 
-      console.log("lastMaxWithdraw1", lastMaxWithdraw);
+      // console.log("lastMaxWithdraw1", lastMaxWithdraw);
       let UserWinBetTrans = {
         userId: user.userId,
         description: `Casino (${payload.game_id})`,
@@ -325,7 +325,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
           { session }
         );
         if (parentUser.role == "0") {
-          console.log("break User area ");
+          // console.log("break User area ");
           break;
         }
         parentUserIds.push(parentUser.createdBy);
@@ -337,7 +337,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
         { userId: { $in: parentUserIds }, isDeleted: false }
       ).sort({ role: -1 }).toArray();
 
-      console.log(" parentUser  ============ ", parentUser);
+      // console.log(" parentUser  ============ ", parentUser);
 
       if (!parentUser) {
         console.log(" ============ Parent User Not Found ============ ");
@@ -355,7 +355,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
 
         const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
         const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
-        console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
+        // console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
 
         let availableBalance = user.balance - (user.commission / 100) * remainingAmount;
         let balance = user.balance - (user.commission / 100) * remainingAmount;
@@ -527,7 +527,7 @@ async function debitfun(req, res) {
   await client.connect();
   const session = client.startSession();
   try {
-    console.log(" debt req.query ============== ", req.query);
+    // console.log(" debt req.query ============== ", req.query);
 
     // const Cash = client.db(`${config.DBNAME}`).collection('deposits');
 
@@ -627,7 +627,7 @@ async function creditfun(req, res) {
   await client.connect();
   const session = client.startSession();
   try {
-    console.log(" credit req.query ======= ", req.query);
+    // console.log(" credit req.query ======= ", req.query);
     const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
     const users = client.db(`${config.DBNAME}`).collection('users');
 
@@ -719,7 +719,7 @@ async function rollbackfun(req, res) {
   await client.connect();
   const session = client.startSession();
   try {
-    console.log(" rollback req.query ======= ", req.query);
+    // console.log(" rollback req.query ======= ", req.query);
     // console.log('======', session.emit())
     const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
     const users = client.db(`${config.DBNAME}`).collection('users');
