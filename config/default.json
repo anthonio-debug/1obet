@@ -74,5 +74,5 @@
   "overUnder": 14,
   "raceOpenBefore" : 120000,
   "sportsOpenBefore" : 600000,
-  "tossCloseToss":  600000
+  "tossCloseTime":  600000
 }
