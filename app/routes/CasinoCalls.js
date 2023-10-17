@@ -30,7 +30,7 @@ const checkMarketBlocked  = async (user) => {
 
 }
 
-const WinLoseTransManagement = async (balance, payload, users, action) => {
+const WinLoseTransManagement = async (balance, payload, users123, action) => {
 
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
