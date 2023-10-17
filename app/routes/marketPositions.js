@@ -42,7 +42,7 @@ const getMarketPositions = async (req, res) => {
     response.push({
       _id: parentUser.userId,
       name: parentUser.userName,
-      amount: parentUser.$clientPL,
+      amount: parentUser.clientPL,
       role: parentUser.role,
     });
 

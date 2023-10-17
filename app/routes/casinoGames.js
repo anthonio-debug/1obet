@@ -507,6 +507,151 @@ async function getAllSelectedCasinos(req, res) {
   });
 }
 
+async function getListAsianGames(req, res) {
+  const user = await User.findOne({ userId: req.decoded.userId });
+  let parentUserIds = await getParents(req.decoded.userId);
+  const marketIds = await User.distinct("blockedMarketPlaces", {
+    userId: { $in: parentUserIds },
+    isDeleted: false,
+  });
+  const subMarketId1 = await User.distinct("blockedSubMarkets", {
+    userId: { $in: parentUserIds },
+    isDeleted: false,
+  });
+  const subMarketId2 = await User.distinct("blockedSubMarketsByParent", {
+    userId: { $in: parentUserIds },
+    isDeleted: false,
+  });
+  const subMarketId = subMarketId1.concat(subMarketId2);
+  const subMarketDetail = await SubMarketType.findOne({
+    countryCode: req.body.gameCategory,
+    marketId: config.casinoMarketId,
+  });
+  const marketId = config.casinoMarketId;
+
+  console.log(
+    " ================== parentUserIds =========================",
+    parentUserIds
+  );
+  console.log(
+    " ================== marketIds =========================",
+    marketIds
+  );
+  console.log(
+    " ================== subMarketId =========================",
+    subMarketId
+  );
+  console.log(
+    " ================== marketId =========================",
+    marketId
+  );
+  console.log(
+    " ================== marketId =========================",
+    marketId
+  );
+  console.log(" ================== user =========================", user);
+
+  try {
+  } catch (error) {
+    console.log(error);
+  }
+
+  let query = {};
+
+  let page = 1;
+  let limit = 20;
+  if (req.body.numRecords) {
+    if (isNaN(req.body.numRecords))
+      return res.status(400).send({ message: "NUMBER_RECORDS_IS_NOT_PROPER" });
+    if (req.body.numRecords < 0)
+      return res.status(400).send({ message: "NUMBER_RECORDS_IS_NOT_PROPER" });
+    limit = Number(req.body.numRecords);
+  }
+  if (req.body.page) {
+    page = Number(req.body.page);
+  }
+
+  // Check for isMobile parameter in the request body
+  if (req.body.isMobile == true) {
+    // console.log('in here isMobile true');
+    query["games.mobile"] = true;
+  } else if (req.body.isMobile == false) {
+    // console.log('in here isMobile false');
+    query["games.mobile"] = false;
+  }
+
+  // Check for gameCategory parameter in the request body
+  if (req.body.gameCategory != "") {
+    // console.log('in gameCategoryCheck');
+    query["games.category"] = req.body.gameCategory;
+  }
+
+  // return res.send(query);
+
+  const casino = await CasinoGames.find(query, {
+    _id: 0,
+    "games.id": 1,
+    "games.name": 1,
+    "games.image_filled": 1,
+    "games.isDashboard": 1,
+    "games.mobile": 1,
+    "games.id_hash": 1,
+  });
+  // console.log('casino',casino);
+  const games = casino
+    .flatMap((casino) => casino.games)
+    .filter((game) => game.mobile === req.body.isMobile);
+  // console.log('games',games);
+  // Apply pagination based on the requested number of records
+  const totalRecords = games.length;
+  const totalPages = Math.ceil(totalRecords / limit);
+  const startIndex = (page - 1) * limit;
+  const endIndex = Math.min(startIndex + limit, totalRecords);
+  const paginatedGames = games.slice(startIndex, endIndex);
+
+  const casinoCategories = await CasinoGames.find(
+    {},
+    {
+      _id: 0,
+      category: 1,
+    }
+  );
+
+  if (
+    marketIds.includes(marketId) ||
+    subMarketId.includes(subMarketDetail.Id) ||
+    user.betLockStatus == true
+  ) {
+    // return res.status(404).send({ message:  });
+    return res.send({
+      message: "Betting is disabled",
+      success: true,
+      battingDisabled: true,
+      results: paginatedGames,
+      categories: casinoCategories,
+      pagination: {
+        total: totalRecords,
+        totalPages: totalPages,
+        currentPage: page,
+        recordsPerPage: limit,
+      },
+    });
+  }
+  return res.send({
+    message: "Asian Games List",
+    success: true,
+    battingDisabled: false,
+    results: paginatedGames,
+    categories: casinoCategories,
+    pagination: {
+      total: totalRecords,
+      totalPages: totalPages,
+      currentPage: page,
+      recordsPerPage: limit,
+    },
+  });
+}
+
 async function getGame(req, res) {
   try {
     const errors = validationResult(req);
@@ -768,6 +913,7 @@ loginRouter.get("/getAllCasinoCategories", getAllCasinoCategories);
 loginRouter.get("/getCategoryCasinoGames", getCategoryCasinoGames);
 
 loginRouter.post("/getAllSelectedCasinos", getAllSelectedCasinos);
+loginRouter.post("/getListAsianGames", getListAsianGames);
 
 loginRouter.post(
   "/addSelectedCasinoCategories",

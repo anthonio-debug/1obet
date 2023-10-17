@@ -63,6 +63,7 @@
   "addSelectedCasinoCategories",
   "getCategoryCasinoGames",
   "getAllSelectedCasinos",
+  "getListAsianGames",
   "getGame",
   "getDashboardGames",
   "createBetRates",
