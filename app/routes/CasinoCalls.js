@@ -480,7 +480,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
       user_new_balance: user_new_balance,
       user_new_availableBalance: user_new_availableBalance,
       user_new_exposure: user_new_exposure,
-      marketId: bet.marketId,
+      marketId: payload.game_id,
       sportsId: 6,
     })
     await ExpTran.save();
