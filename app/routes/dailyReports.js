@@ -233,7 +233,7 @@ const getDailyReport = async(req, res) => {
   const currentUser = await User.findOne({ userId: userId});
   const users       = [userId];
   let parents       = [userId];
-  let childUsers;
+  let childUsers = [];
 
   do{
     childUsers     = await User.distinct("userId", {
