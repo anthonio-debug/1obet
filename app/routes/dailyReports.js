@@ -248,17 +248,17 @@ const getDailyReport = async(req, res) => {
 
   console.log(" users list  ======== ", users);
 
-  // var sportsIdQuery = {$ne: null};
+  var sportsIdQuery = {$ne: null};
 
-  // if (req.query.sportId) {
-  //   sportsIdQuery = req.query.sportId;
-  // }
+  if (req.query.sportId) {
+    sportsIdQuery = req.query.sportId;
+  }
 
   const response = await CashDeposit.aggregate([
     {
       $match: {
         userId: { $in: users },
-        // sportsId: sportsIdQuery,
+        sportsId: sportsIdQuery,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
