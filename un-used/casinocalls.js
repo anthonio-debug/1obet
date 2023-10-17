@@ -448,9 +448,11 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
     }
-    const user_new_balance = user.balance;
-    const user_new_availableBalance = user.availableBalance;
-    const user_new_exposure = user.exposure;
+
+    const updatedUser = await users.findOne({remoteId: Number(payload.remote_id)});
+    const user_new_balance = updatedUser.balance;
+    const user_new_availableBalance = updatedUser.availableBalance;
+    const user_new_exposure = updatedUser.exposure;
   
     const ExpTran = new ExpRec({
       userId: user.userId,
@@ -467,7 +469,9 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
       sportsId: 6,
     })
     await ExpTran.save();
+    console.log("=====================================================");
     console.log("All Transection Successfull ");
+    console.log("=====================================================");
     return 0
   }
 }
