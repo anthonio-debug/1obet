@@ -2,13 +2,13 @@ const express = require('express');
 const User = require('../models/user');
 const router = express.Router();
 const CasinoDebits = require('../models/casinoCalls');
-const Cash = require("../../app/models/deposits");
+const Cash   = require("../../app/models/deposits");
 const crypto = require('crypto');
 const config = require('config')
 const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
-const { getParents } = require("../../app/routes/bets");
-const { log } = require('async');
+const { getParents }  = require("../../app/routes/bets");
+const ExpRec  = require("../../app/models/ExpRec");
 const SelectedCasino = require("../models/selectedCasino");
 
 const transactionOptions = {
