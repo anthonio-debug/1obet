@@ -449,6 +449,7 @@ const WinLoseTransManagement = async (balance, payload, users, action) => {
       await casinoDebits.save();
     }
 
+    
     const updatedUser = await users.findOne({remoteId: Number(payload.remote_id)});
     const user_new_balance = updatedUser.balance;
     const user_new_availableBalance = updatedUser.availableBalance;
