@@ -194,17 +194,17 @@ const placeBet = async (req, res) => {
     if (!eventDetail.betAllowed) {
       return res
         .status(404)
-        .send({ message: 'Batting Not Allowd on this Match 1' });
+        .send({ message: 'Batting Not Allowd on this Match' });
     }
     if (eventDetail.status.toUpperCase() != 'OPEN') {
       return res
         .status(404)
-        .send({ message: 'Batting Not Allowd on this Match 2' });
+        .send({ message: 'Batting Not Allowd on this Match' });
     }
-    if (!eventDetail.matchStopStatus) {
+    if (eventDetail.matchStopStatus) {
       return res
         .status(404)
-        .send({ message: 'Batting Not Allowd on this Match 3' });
+        .send({ message: 'Batting Not Allowd on this Match' });
     }
 
     marketId = eventDetail?.sportsId;
