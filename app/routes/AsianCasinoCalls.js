@@ -2,7 +2,6 @@ const express             = require('express');
 const User                = require('../models/user');
 const AsianCasinoDebits        = require('../models/AsiancasinoCalls');
 const Cash                = require("../../app/models/deposits");
-const crypto              = require('crypto');
 const config              = require('config')
 const { MongoClient }     = require('mongodb');
 const casinoMultiples     = config.casinoMultiples;
@@ -697,7 +696,7 @@ async function credit(req, res) {
   }
 }
 
-router.post('/balance', balance);
-router.post('/debit', debit);
-router.post('/credit', credit);
+router.get('/balance', balance);
+router.get('/debit', debit);
+router.get('/credit', credit);
 module.exports = { router };
