@@ -2,7 +2,6 @@ const express             = require('express');
 const User                = require('../models/user');
 const AsianCasinoDebits        = require('../models/AsiancasinoCalls');
 const Cash                = require("../../app/models/deposits");
-const crypto              = require('crypto');
 const config              = require('config')
 const { MongoClient }     = require('mongodb');
 const casinoMultiples     = config.casinoMultiples;
@@ -30,7 +29,7 @@ const checkMarketBlocked  = async (user) => {
 }
 
 const WinLoseTransManagement = async (payload, action) => {
-
+  return 0;
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -490,7 +489,7 @@ const WinLoseTransManagement = async (payload, action) => {
 }
 
 async function balance(req, res){
-  const payload = req.query;
+  const payload = req.body;
   try {
     const user = await User.findOne({ userId: payload.userId });
     if (!user) {
@@ -526,7 +525,7 @@ async function debit(req, res) {
   try {
     const casinoCalls = client.db(`${config.DBNAME}`).collection('asiancasinocalls');
     const users       = client.db(`${config.DBNAME}`).collection('users');
-    const payload     = req.query;
+    const payload     = req.body;
     console.log(" debit req.query ============ ", payload);
     const game  = payload.gameData;
     const trans = payload.transactionData;
@@ -596,8 +595,13 @@ async function debit(req, res) {
       { session }
     )
     return res.json({
-      status: 200,
-      balance: updatedUser.availableBalance / casinoMultiples
+      status:{
+        code: 200,
+        message: "Balance Details"
+      },
+      balance: updatedUser.availableBalance / casinoMultiples,
+      userId: updatedUser.userId,
+      timestamp: new Date().getTime() / 1000
     });
 
   } catch (err) {
@@ -617,7 +621,7 @@ async function credit(req, res) {
     console.log(" credit req.query ======= ", req.query);
     const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
     const users       = client.db(`${config.DBNAME}`).collection('users');
-    const payload     = req.query;
+    const payload     = req.body;
     const game        = payload.gameData;
     const trans       = payload.transactionData;
     console.log(" debit req.query ============ ", payload);
@@ -682,10 +686,14 @@ async function credit(req, res) {
       { session }
     )
     console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
-
     return res.json({
-      status: 200,
-      balance: updatedUser.availableBalance / casinoMultiples
+      status:{
+        code: 200,
+        message: "Balance Details"
+      },
+      balance: updatedUser.availableBalance / casinoMultiples,
+      userId: updatedUser.userId,
+      timestamp: new Date().getTime() / 1000
     });
 
   } catch (err) {
@@ -697,7 +705,9 @@ async function credit(req, res) {
   }
 }
 
-router.post('/asiancasino/balance', balance);
-router.post('/asiancasino/debit', debit);
-router.post('/asiancasino/credit', credit);
+
+
+router.post('/balance', balance);
+router.post('/debit', debit);
+router.post('/credit', credit);
 module.exports = { router };
