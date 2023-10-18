@@ -158,6 +158,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
         event: game.name,
         // matchId: bet.matchId,
         betId: payload.transaction_id,
+        marketId: payload.game_id,
         cashOrCredit: "Bet",
         sportsId: "6",
       }
@@ -404,6 +405,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
           event: game.name,
           marketId: payload.game_id,
           betId: payload.transaction_id,
+          marketId: payload.game_id,
           upLineAmount: upMovingCommAmount
         }
         allTrans.push(betTransaction)
