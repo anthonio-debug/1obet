@@ -696,7 +696,7 @@ async function credit(req, res) {
   }
 }
 
-router.get('/asian/balance', balance);
-router.get('/asian/debit', debit);
-router.get('/asian/credit', credit);
+router.get('/balance', balance);
+router.get('/debit', debit);
+router.get('/credit', credit);
 module.exports = { router };
