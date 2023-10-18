@@ -595,8 +595,13 @@ async function debit(req, res) {
       { session }
     )
     return res.json({
-      status: 200,
-      balance: updatedUser.availableBalance / casinoMultiples
+      status:{
+        code: 200,
+        message: "Balance Details"
+      },
+      balance: updatedUser.availableBalance / casinoMultiples,
+      userId: updatedUser.userId,
+      timestamp: new Date().getTime() / 1000
     });
 
   } catch (err) {
@@ -681,10 +686,14 @@ async function credit(req, res) {
       { session }
     )
     console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
-
     return res.json({
-      status: 200,
-      balance: updatedUser.availableBalance / casinoMultiples
+      status:{
+        code: 200,
+        message: "Balance Details"
+      },
+      balance: updatedUser.availableBalance / casinoMultiples,
+      userId: updatedUser.userId,
+      timestamp: new Date().getTime() / 1000
     });
 
   } catch (err) {
@@ -695,6 +704,8 @@ async function credit(req, res) {
     await client.close();
   }
 }
+
+
 
 router.post('/balance', balance);
 router.post('/debit', debit);
