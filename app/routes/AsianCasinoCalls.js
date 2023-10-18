@@ -697,7 +697,7 @@ async function credit(req, res) {
   }
 }
 
-router.post('/asiancasino/balance', balance);
-router.post('/asiancasino/debit', debit);
-router.post('/asiancasino/credit', credit);
+router.post('/balance', balance);
+router.post('/debit', debit);
+router.post('/credit', credit);
 module.exports = { router };
