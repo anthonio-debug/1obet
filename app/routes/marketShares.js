@@ -20,7 +20,11 @@ const marketGainWithDuplicates = async (req, res) => {
 
   const marketId = req.query.marketId;
 
-  const condition = marketId ? { marketId: marketId } : { sportId: 6 };
+  const condition =
+    "" + marketId == "null" ? { sportID: 6 } : { marketId: marketId };
+
+  console.log(condition);
+
   const currentUser = await User.findOne({ userId: userId });
   if (currentUser?.role == 5) {
     const marketData = await MarketIDS.findOne(condition);
