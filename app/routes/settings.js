@@ -2102,7 +2102,7 @@ const getWaitingBetsForManuel = async (req, res) => {
     const results = await Bets.find({ status: 1, isManuel: true }).sort({
       createdAt: -1,
     });
-    console.log('results:', results);
+    // console.log('results:', results);
     var groups = {};
     for (var i = 0; i < results.length; i++) {
       var item = results[i].toJSON();

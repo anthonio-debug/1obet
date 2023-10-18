@@ -29,6 +29,7 @@
   "saltKey":"sl1obt3GF",
   "staging_api_password": "6w9GNrsxZsHBeC795N",
   "staging_api_login": "1obet_mc_s",
+  "AsianCasinopartnerKey": "2fazKPGm1UPqF+8Au+vyzvGFhRy7YbQr+AhtWxtj1YO3Kbr4qkiEOic+4j8/Nesf",
   "language": "en",
   "play_for_fun": false,
   "currency": "PKR",
@@ -44,22 +45,6 @@
   "balls": ["1", "2", "3", "4", "5", "6"],
   "matchTypes" : ["T10", "T20", "ODI", "TEST"],
   "ExcludedBackLay": [7, 8],
-  "figureRunners": [
-    { "runner": 0, "amount": 0 },
-    { "runner": 1, "amount": 0 },
-    { "runner": 2, "amount": 0 },
-    { "runner": 3, "amount": 0 },
-    { "runner": 4, "amount": 0 },
-    { "runner": 5, "amount": 0 },
-    { "runner": 6, "amount": 0 },
-    { "runner": 7, "amount": 0 },
-    { "runner": 8, "amount": 0 },
-    { "runner": 9, "amount": 0 }
-  ],
-  "FancyKaliJotaChottaBara":[
-    { "runner": 1, "amount": 0 },
-    { "runner": 0, "amount": 0 }
-  ],
   "soccerOdds": 13,
   "tennisOdds": 15,
   "cricketOdds": 6,

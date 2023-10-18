@@ -167,5 +167,8 @@
   "user-latest-ledger",
   "delete-user",
   "marketPositions",
-  "marketShares"
+  "marketShares",
+  "asiancasino/balance",
+  "asiancasino/debit",
+  "asiancasino/credit"
 ]

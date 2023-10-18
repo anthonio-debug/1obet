@@ -7,8 +7,8 @@ const crypto = require('crypto');
 const config = require('config')
 const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
-const { getParents }  = require("../../app/routes/bets");
-const ExpRec  = require("../../app/models/ExpRec");
+const { getParents }  = require("./bets");
+const ExpRec  = require("..//models/ExpRec");
 const SelectedCasino = require("../models/selectedCasino");
 
 const transactionOptions = {
@@ -572,9 +572,14 @@ async function debitfun(req, res) {
     let updatedavailableBalance = 0
     await session.withTransaction(async () => {
 
-      // console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
       const sameTransId = await casinoCalls.countDocuments(
-        { transaction_id: payload.transaction_id, remote_id: parseInt(payload.remote_id), round_id: payload.round_id, action: 'debit' },
+        { 
+          transaction_id: payload.transaction_id, 
+          remote_id: parseInt(payload.remote_id), 
+          round_id: payload.round_id,
+          game_id: payload.game_id,
+          action: 'debit' 
+        },
         { session }
       );
       const user = await users.findOne(
@@ -677,6 +682,7 @@ async function creditfun(req, res) {
           transaction_id: payload.transaction_id,
           remote_id: parseInt(payload.remote_id),
           round_id: payload.round_id,
+          game_id: payload.game_id,
           action: "credit"
         },
         { session, readPreference: 'primary' }
