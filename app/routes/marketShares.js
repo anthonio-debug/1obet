@@ -19,16 +19,16 @@ const marketGainWithDuplicates = async (req, res) => {
   const userId = Number(req.query.userId);
 
   const marketId = req.query.marketId;
+
+  const condition = marketId ? { marketId: marketId } : { sportId: 6 };
   const currentUser = await User.findOne({ userId: userId });
   if (currentUser?.role == 5) {
-    const marketData = await MarketIDS.findOne({
-      marketId: marketId,
-    });
+    const marketData = await MarketIDS.findOne(condition);
     const parent = await User.findOne({ userId: currentUser.createdBy });
     const response = await CashDeposit.aggregate([
       {
         $match: {
-          marketId: marketId,
+          ...condition,
           $or: [
             {
               $and: [
@@ -100,7 +100,7 @@ const marketGainWithDuplicates = async (req, res) => {
           userId: {
             $in: users,
           },
-          marketId: marketId,
+          ...condition,
           cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         },
       },
