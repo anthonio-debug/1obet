@@ -168,7 +168,7 @@
   "delete-user",
   "marketPositions",
   "marketShares",
-  "asiancasino/balance",
-  "asiancasino/debit",
-  "asiancasino/credit"
+  "balance",
+  "debit",
+  "credit"
 ]
