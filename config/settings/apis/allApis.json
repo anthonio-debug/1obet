@@ -76,7 +76,9 @@
   "FakeBetsList",
   "deleteFakeBet",
   "casino",
-  "asiancasino",
+  "balance",
+  "debit",
+  "credit",
   "getDailyPLReport",
   "dailyPlSportWiseReports",
   "dailyPLMatchWiseReport",
@@ -167,8 +169,5 @@
   "user-latest-ledger",
   "delete-user",
   "marketPositions",
-  "marketShares",
-  "balance",
-  "debit",
-  "credit"
+  "marketShares"
 ]

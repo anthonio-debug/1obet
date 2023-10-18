@@ -66,6 +66,7 @@ app.use('/api', require('./app/routes/settings').router);
 app.use('/api', require('./app/routes/CasinoCalls').router);
 app.use('/api', require('./app/routes/AsianCasinoCalls').router);
 
+
 // Login middleware
 app.use(function (req, res, next) {
   loginMiddleWare(req, res, next);
