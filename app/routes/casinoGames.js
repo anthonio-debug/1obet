@@ -2,6 +2,7 @@ const express = require("express");
 const CasinoGames = require("../models/casinoGames");
 const SelectedCasino = require("../models/selectedCasino");
 const AsianGames = require("../models/AsianGames");
+const AsianProviders = require("../models/AsianProviders");
 const selectedCasinoValidator = require("../validators/casinoGames");
 const { validationResult } = require("express-validator");
 const Markets = require("../models/marketTypes");
@@ -131,54 +132,35 @@ async function addCasinoGameDetails(req, res) {
 
 async function getAsianCasinoGames(req, res) {
   try {
-    const providers = [
-      "SN",
-      "PG",
-      "XPG",
-      "EV",
-      "EZ",
-      "QT",
-      "AWC",
-      "BN",
-      "PP",
-      "GT",
-      "OT",
-    ];
+    const providers = await AsianProviders.find();
 
-    await providers.forEach(async (provider) => {
-      const response = await axios.post(
-        `${config.worldCasinoOnlineApiUrl}/games`,
-        {
-          partnerKey: config.worldCasinoOnlinePartnerKey,
-          game: {
-            gameCode: "TP",
-            providerCode: provider,
-          },
-          timestamp: `${new Date().getTime()}`,
-          user: {
-            id: config.worldCasinoOnlineUserId,
-            currency: config.currency,
-            displayName: config.worldCasinoOnlineDisplayName,
-            backUrl: config.worldCasinoOnlineRedirectionUrl,
-          },
+    providers &&
+      (await providers.forEach(async (provider) => {
+        const response = await axios.post(
+          `${config.worldCasinoOnlineApiUrl}/games`,
+          {
+            partnerKey: config.worldCasinoOnlinePartnerKey,
+            providerCode: provider.providerCode,
+          }
+        );
+
+        const bulkData = [];
+
+        if (response) {
+          await response.data.games.forEach((game) => {
+            bulkData.push({
+              name: game.name,
+              code: game.code,
+              providerCode: game.providerCode,
+              providerName: game.providerName,
+              thumb: game.thumb,
+              category: game.category,
+            });
+          });
+
+          await AsianGames.insertMany(bulkData);
         }
-      );
-
-      const bulkData = [];
-
-      await response.data.games.forEach((game) => {
-        bulkData.push({
-          name: game.name,
-          code: game.code,
-          providerCode: game.providerCode,
-          providerName: game.providerName,
-          thumb: game.thumb,
-          category: game.category,
-        });
-      });
-
-      await AsianGames.insertMany(bulkData);
-    });
+      }));
 
     res.send({
       success: true,
@@ -907,7 +889,7 @@ async function getGameDirect(req, res) {
 loginRouter.post("/getSelectedGamesBySearch", getSelectedGamesBySearch);
 loginRouter.post("/addCasinoGameDetails", addCasinoGameDetails);
 loginRouter.post("/getCasinoGames", getCasinoGames);
-loginRouter.post("/getAsianCasinoGames", getAsianCasinoGames);
+loginRouter.get("/getAsianCasinoGames", getAsianCasinoGames);
 
 loginRouter.get("/getAllCasinoCategories", getAllCasinoCategories);
 
