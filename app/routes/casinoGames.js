@@ -152,7 +152,7 @@ async function getAsianCasinoGames(req, res) {
               name: game.name,
               code: game.code,
               providerCode: game.providerCode,
-              providerName: game.providerName,
+              providerName: provider.providerName,
               thumb: game.thumb,
               category: game.category,
             });
@@ -552,6 +552,8 @@ async function getListAsianGames(req, res) {
   if (req.body.page) {
     page = Number(req.body.page);
   }
+
+  console.log(req.body.gameCategory);
 
   // Check for gameCategory parameter in the request body
   if (req.body.gameCategory != "") {
