@@ -81,14 +81,12 @@ async function addCasinoGameDetails(req, res) {
       },
       timestamp: `${new Date().getTime()}`,
       user: {
-        id: req.body.userId,
+        id: "" + req.body.userId,
         currency: req.body.currency,
         displayName: config.worldCasinoOnlineDisplayName,
         backUrl: config.worldCasinoOnlineRedirectionUrl,
       },
     });
-
-    console.log("Response:", response.data);
 
     const resp = response.data;
     if (resp.sessionId === null || resp.sessionId === undefined) {
