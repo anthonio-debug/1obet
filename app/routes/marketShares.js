@@ -21,18 +21,19 @@ const marketGainWithDuplicates = async (req, res) => {
   const marketId = req.query.marketId;
 
   const condition =
-    "" + marketId == "null" ? { sportID: 6 } : { marketId: marketId };
-
-  console.log(condition);
+    "" + marketId == "null"
+      ? [{ sportsId: "6" }, { sportID: 6 }]
+      : { marketId: marketId };
 
   const currentUser = await User.findOne({ userId: userId });
   if (currentUser?.role == 5) {
-    const marketData = await MarketIDS.findOne(condition);
+    const marketData = await MarketIDS.findOne(condition[1]);
+    console.log(marketData);
     const parent = await User.findOne({ userId: currentUser.createdBy });
     const response = await CashDeposit.aggregate([
       {
         $match: {
-          ...condition,
+          ...condition[0],
           $or: [
             {
               $and: [
@@ -52,7 +53,18 @@ const marketGainWithDuplicates = async (req, res) => {
       },
       {
         $addFields: {
-          betsId: { $toObjectId: "$betId" },
+          betsId: {
+            $cond: {
+              if: {
+                $regexMatch: {
+                  input: "$betId",
+                  regex: /^[0-9a-fA-F]{24}$/,
+                },
+              },
+              then: { $toObjectId: "$betId" },
+              else: null,
+            },
+          },
         },
       },
       {
@@ -104,7 +116,7 @@ const marketGainWithDuplicates = async (req, res) => {
           userId: {
             $in: users,
           },
-          ...condition,
+          ...condition[0],
           cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         },
       },
