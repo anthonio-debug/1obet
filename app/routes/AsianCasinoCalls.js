@@ -29,7 +29,7 @@ const checkMarketBlocked  = async (user) => {
 }
 
 const WinLoseTransManagement = async (payload, action) => {
-
+  return 0;
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
