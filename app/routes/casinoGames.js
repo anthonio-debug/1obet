@@ -77,12 +77,12 @@ async function addCasinoGameDetails(req, res) {
     const response = await axios.post(`${config.worldCasinoOnlineAuthUrl}`, {
       partnerKey: config.worldCasinoOnlinePartnerKey,
       game: {
-        gameCode: null,
+        gameCode: req.body.gameCode,
       },
       timestamp: `${new Date().getTime()}`,
       user: {
-        id: config.worldCasinoOnlineUserId,
-        currency: config.currency,
+        id: req.body.userId,
+        currency: req.body.currency,
         displayName: config.worldCasinoOnlineDisplayName,
         backUrl: config.worldCasinoOnlineRedirectionUrl,
       },
@@ -152,7 +152,7 @@ async function getAsianCasinoGames(req, res) {
               name: game.name,
               code: game.code,
               providerCode: game.providerCode,
-              providerName: game.providerName,
+              providerName: provider.providerName,
               thumb: game.thumb,
               category: game.category,
             });
@@ -553,52 +553,32 @@ async function getListAsianGames(req, res) {
     page = Number(req.body.page);
   }
 
-  // Check for isMobile parameter in the request body
-  if (req.body.isMobile == true) {
-    // console.log('in here isMobile true');
-    query["games.mobile"] = true;
-  } else if (req.body.isMobile == false) {
-    // console.log('in here isMobile false');
-
-    query["games.mobile"] = false;
-  }
+  console.log(req.body.gameCategory);
 
   // Check for gameCategory parameter in the request body
   if (req.body.gameCategory != "") {
     // console.log('in gameCategoryCheck');
-    query["games.category"] = req.body.gameCategory;
+    query["providerName"] = req.body.gameCategory;
   }
 
   // return res.send(query);
 
-  const casino = await CasinoGames.find(query, {
+  const casino = await AsianGames.find(query, {
     _id: 0,
-    "games.id": 1,
-    "games.name": 1,
-    "games.image_filled": 1,
-    "games.isDashboard": 1,
-    "games.mobile": 1,
-    "games.id_hash": 1,
+    name: 1,
+    code: 1,
+    providerCode: 1,
+    providerName: 1,
+    thumb: 1,
+    category: 1,
   });
-  // console.log('casino',casino);
-  const games = casino
-    .flatMap((casino) => casino.games)
-    .filter((game) => game.mobile === req.body.isMobile);
   // console.log('games',games);
   // Apply pagination based on the requested number of records
-  const totalRecords = games.length;
+  const totalRecords = casino.length;
   const totalPages = Math.ceil(totalRecords / limit);
   const startIndex = (page - 1) * limit;
   const endIndex = Math.min(startIndex + limit, totalRecords);
-  const paginatedGames = games.slice(startIndex, endIndex);
-
-  const casinoCategories = await CasinoGames.find(
-    {},
-    {
-      _id: 0,
-      category: 1,
-    }
-  );
+  const paginatedGames = casino.slice(startIndex, endIndex);
 
   if (
     marketIds.includes(marketId) ||
@@ -611,7 +591,6 @@ async function getListAsianGames(req, res) {
       success: true,
       battingDisabled: true,
       results: paginatedGames,
-      categories: casinoCategories,
       pagination: {
         total: totalRecords,
         totalPages: totalPages,
@@ -625,7 +604,6 @@ async function getListAsianGames(req, res) {
     success: true,
     battingDisabled: false,
     results: paginatedGames,
-    categories: casinoCategories,
     pagination: {
       total: totalRecords,
       totalPages: totalPages,
