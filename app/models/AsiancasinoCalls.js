@@ -4,13 +4,11 @@ const casinoCallsSchema = new mongoose.Schema({
   userId: { type: Number },
   currency:  { type: String },
   partnerKey: { type: String },
-
   providerCode:  { type: String },
   providerTransactionId:  { type: String },
   gameCode:  { type: String },
   description:  { type: String },
   providerRoundId:  { type: String },
-  
   id:  { type: String },
   amount:  { type: Number },
   referenceId:  { type: String },
