@@ -490,6 +490,9 @@ const WinLoseTransManagement = async (payload, action) => {
 
 async function balance(req, res){
   const payload = req.body;
+  return res.send({
+    payload
+  })
   try {
     const user = await User.findOne({ userId: payload.userId });
     if (!user) {
