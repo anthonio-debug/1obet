@@ -523,6 +523,11 @@ async function balance(req, res){
 }
 
 async function debit(req, res) {
+  console.log(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect(); 
   const session = client.startSession();
@@ -623,6 +628,11 @@ async function debit(req, res) {
 }
 
 async function credit(req, res) {
+  console.log(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
