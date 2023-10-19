@@ -489,7 +489,7 @@ const WinLoseTransManagement = async (payload, action) => {
 }
 
 async function balance(req, res){
-  const payload = req;
+  const payload = req.body;
   return res.send({
     payload
   })
