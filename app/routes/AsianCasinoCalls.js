@@ -491,9 +491,9 @@ const bodyParser2 = require('body-parser');
 router.use(bodyParser2.urlencoded({ extended: true }));
 async function balance(req, res){
   const payload = req.body;
-  return res.send({
-    payload
-  })
+  // return res.send({
+  //   payload
+  // })
   try {
     const user = await User.findOne({ userId: payload.userId });
     if (!user) {
