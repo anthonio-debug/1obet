@@ -28,74 +28,49 @@ const marketGainWithDuplicates = async (req, res) => {
   const currentUser = await User.findOne({ userId: userId });
   if (currentUser?.role == 5) {
     const marketData = await MarketIDS.findOne(condition[1]);
-    console.log(marketData);
+
     const parent = await User.findOne({ userId: currentUser.createdBy });
-    const response = await CashDeposit.aggregate([
-      {
-        $match: {
-          ...condition[0],
-          $or: [
+
+    const depositRes = await CashDeposit.findOne({
+      marketId: marketId,
+      $or: [
+        {
+          $and: [
             {
-              $and: [
-                {
-                  userId: userId,
-                },
-                {
-                  cashOrCredit: { $in: ["Bet"] },
-                },
-              ],
+              userId: userId,
             },
             {
-              cashOrCredit: { $in: ["Commission"] },
+              cashOrCredit: { $in: ["Bet"] },
             },
           ],
         },
-      },
-      {
-        $addFields: {
-          betsId: {
-            $cond: {
-              if: {
-                $regexMatch: {
-                  input: "$betId",
-                  regex: /^[0-9a-fA-F]{24}$/,
-                },
-              },
-              then: { $toObjectId: "$betId" },
-              else: null,
-            },
-          },
+        {
+          cashOrCredit: { $in: ["Commission"] },
         },
-      },
-      {
-        $lookup: {
-          from: "bets",
-          localField: "betsId",
-          foreignField: "_id",
-          as: "betsDetails",
-        },
-      },
-      {
-        $group: {
-          _id: "$betId",
-          pl: { $sum: "$amount" },
-          sattledAt: { $first: "$date" },
-          price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
-          name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
-          createdAt: {
-            $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] },
-          },
-          size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
-          type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
-          isfancyOrbookmaker: {
-            $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] },
-          },
-          fancyData: {
-            $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] },
-          },
-        },
-      },
-    ]);
+      ],
+    });
+
+    if (!depositRes)
+      return res.status(404).send({ message: "Cannot find desposit" });
+
+    let response = {
+      _id: depositRes.betId,
+      pl: depositRes.amount,
+      sattledAt: depositRes.date,
+    };
+
+    if (depositRes.sportsId != "6") {
+      const betRes = await Bets.findOne({ _id: depositRes.betId });
+      console.log(2222, betRes.userId);
+      response.price = betRes.betAmount;
+      response.name = betRes.runnerName;
+      response.createdAt = betRes.createdAt;
+      response.size = betRes.betRate;
+      response.type = betRes.type;
+      response.isfancyOrbookmaker = betRes.isfancyOrbookmaker;
+      response.fancyData = betRes.fancyData;
+    }
+
     return res.send({
       success: true,
       message: "Market Shares Reports by MarketId",
