@@ -80,7 +80,7 @@ async function addCasinoGameDetails(req, res) {
       },
       timestamp: `${new Date().getTime() / 1000}`,
       user: {
-        id: req.body.userId,
+        id: req.body.userId.toString(),
         currency: req.body.currency,
         displayName: user.userName,
         backUrl: config.worldCasinoOnlineRedirectionUrl
