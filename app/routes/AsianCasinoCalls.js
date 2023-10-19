@@ -487,7 +487,7 @@ const WinLoseTransManagement = async (payload, action) => {
     return 0
   }
 }
-
+app.use(bodyParser.urlencoded({ extended: false }));
 async function balance(req, res){
   const payload = req.body;
   return res.send({
