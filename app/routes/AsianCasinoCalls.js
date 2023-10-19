@@ -606,7 +606,7 @@ async function debit(req, res) {
       { userId: parseInt(payload.user.Id) },
       { session }
     )
-
+    const date =  new Date().getTime() / 1000
     return res.json({
       partnerKey: config.worldCasinoOnlinePartnerKey,
       status:{
@@ -615,7 +615,7 @@ async function debit(req, res) {
       },
       balance: updatedUser.availableBalance / casinoMultiples,
       userId: updatedUser.userId.toString(),
-      timestamp: new Date().getTime().toString()
+      timestamp: date.toString()
     });
 
   } catch (err) {
