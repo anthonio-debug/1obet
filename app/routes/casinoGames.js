@@ -70,9 +70,6 @@ async function getCasinoGames(req, res) {
 }
 
 async function addCasinoGameDetails(req, res) {
-  // if( req.decoded.role != '0' ){
-  //   return res.status(200).send({ message: 'you are not allowed to add games',success:false})
-  // }
   try {
     const user = await  User.find({ userId: req.body.userId })
     const response = await axios.post(`${config.worldCasinoOnlineAuthUrl}`, {
@@ -83,7 +80,7 @@ async function addCasinoGameDetails(req, res) {
       },
       timestamp: `${new Date().getTime() / 1000}`,
       user: {
-        id: req.body.userId.toString(),
+        id: req.body.userId,
         currency: req.body.currency,
         displayName: user.userName,
         backUrl: config.worldCasinoOnlineRedirectionUrl
@@ -91,7 +88,7 @@ async function addCasinoGameDetails(req, res) {
     });
 
     const resp = response.data;
-    if (resp.sessionId === null || resp.sessionId === undefined) {
+    if (resp.sessionId == null || resp.sessionId == undefined) {
       res.status(400).send({ success: false, message: "Bad request", resp });
     } else {
       // const gameList = response.data.response;
