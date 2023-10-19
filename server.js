@@ -41,7 +41,7 @@ app.use(morgan('combined'));
 // READ FORM DATA
 app.use(express.urlencoded({ extended: false }));
 
-app.use(bodyParser.urlencoded({ extended: false })); //support encoded bodies
+app.use(bodyParser.urlencoded({ extended: true })); //support encoded bodies
 app.use(bodyParser.json({ strict: false }));
 var corsOptions = {
   origin: true,
