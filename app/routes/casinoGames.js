@@ -74,17 +74,19 @@ async function addCasinoGameDetails(req, res) {
   //   return res.status(200).send({ message: 'you are not allowed to add games',success:false})
   // }
   try {
+    const user = await  User.find({ userId: req.body.userId })
     const response = await axios.post(`${config.worldCasinoOnlineAuthUrl}`, {
       partnerKey: config.worldCasinoOnlinePartnerKey,
       game: {
         gameCode: req.body.gameCode,
+        providerCode:  req.body.providerCode
       },
-      timestamp: `${new Date().getTime()}`,
+      timestamp: `${new Date().getTime() / 1000}`,
       user: {
-        id: "" + req.body.userId,
+        id: req.body.userId.toString(),
         currency: req.body.currency,
-        displayName: config.worldCasinoOnlineDisplayName,
-        backUrl: config.worldCasinoOnlineRedirectionUrl,
+        displayName: user.userName,
+        backUrl: config.worldCasinoOnlineRedirectionUrl
       },
     });
 
