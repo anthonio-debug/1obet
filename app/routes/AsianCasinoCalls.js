@@ -489,9 +489,6 @@ const WinLoseTransManagement = async (payload, action) => {
 }
 async function balance(req, res){
   const payload = req.body;
-  // return res.send({
-  //   payload
-  // })
   try {
     const user = await User.findOne({ userId: Number(payload.userId) });
     if (!user) {
@@ -596,14 +593,16 @@ async function debit(req, res) {
       { userId: parseInt(payload.user.Id) },
       { session }
     )
+
     return res.json({
+      partnerKey: config.worldCasinoOnlinePartnerKey,
       status:{
         "code": "SUCCESS",
         "message": ""
       },
       balance: updatedUser.availableBalance / casinoMultiples,
-      userId: updatedUser.userId,
-      timestamp: new Date().getTime() / 1000
+      userId: updatedUser.userId.toString(),
+      timestamp: new Date().getTime().toString()
     });
 
   } catch (err) {
@@ -681,21 +680,20 @@ async function credit(req, res) {
 
     await session.commitTransaction();
 
-
-    
     const updatedUser = await users.findOne(
       { userId: parseInt(payload.user.Id) },
       { session }
     )
     console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
     return res.json({
+      partnerKey: config.worldCasinoOnlinePartnerKey,
       status:{
         "code": "SUCCESS",
         "message": ""
       },
       balance: updatedUser.availableBalance / casinoMultiples,
-      userId: updatedUser.userId,
-      timestamp: new Date().getTime() / 1000
+      userId: updatedUser.userId.toString(),
+      timestamp: new Date().getTime().toString()
     });
 
   } catch (err) {
