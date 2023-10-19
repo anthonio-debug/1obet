@@ -525,7 +525,10 @@ async function debit(req, res) {
     const casinoCalls = client.db(`${config.DBNAME}`).collection('asiancasinocalls');
     const users       = client.db(`${config.DBNAME}`).collection('users');
     const payload     = req.body;
+    console.log(" ================================================================= ");
     console.log(" debit req.query ============ ", payload);
+    console.log(" ================================================================= ");
+
     const game  = payload.gameData;
     const trans = payload.transactionData;
     await session.withTransaction(async () => {
