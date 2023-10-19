@@ -508,8 +508,8 @@ async function balance(req, res){
     }
     return res.json({
       status:{
-        code: 200,
-        message: "Balance Details"
+        "code": "SUCCESS",
+        "message": ""
       },
       balance: balance/casinoMultiples,
       userId: user.userId,
@@ -600,8 +600,8 @@ async function debit(req, res) {
     )
     return res.json({
       status:{
-        code: 200,
-        message: "Balance Details"
+        "code": "SUCCESS",
+        "message": ""
       },
       balance: updatedUser.availableBalance / casinoMultiples,
       userId: updatedUser.userId,
@@ -692,8 +692,8 @@ async function credit(req, res) {
     console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
     return res.json({
       status:{
-        code: 200,
-        message: "Balance Details"
+        "code": "SUCCESS",
+        "message": ""
       },
       balance: updatedUser.availableBalance / casinoMultiples,
       userId: updatedUser.userId,
