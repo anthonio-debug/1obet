@@ -12,7 +12,6 @@ const casinoCallsSchema = new mongoose.Schema({
   id:  { type: String },
   amount:  { type: Number },
   referenceId:  { type: String },
-
   user: { type: Object, required: false },
   gameData: { type: Object, required: false },
   transactionData: { type: Object, required: false },

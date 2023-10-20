@@ -29,7 +29,7 @@ const checkMarketBlocked  = async (user) => {
 }
 
 const WinLoseTransManagement = async (payload, action) => {
-  return 0;
+  return 1;
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -725,13 +725,31 @@ async function debit(req, res) {
 
       let balance = user.availableBalance / casinoMultiples;
       const response = await WinLoseTransManagement(payload, 0);
+      if(response == 1){
+        await casinoCalls.insertOne({
+          userId: parseInt(payload.user.id),
+          currency: payload.user.currency,
+          partnerKey: payload.partnerKey,
+          providerCode: game.providerCode,
+          providerTransactionId: game.providerTransactionId,
+          gameCode: game?.gameCode,
+          description: game?.description,
+          providerRoundId: game?.providerRoundId,
+          id: trans.id,
+          amount: trans.id,
+          referenceId: trans.id,
+          user: payload.user,
+          gameData: game,
+          transactionData: trans,
+          timestamp: payload.timestamp
+        })
+      }
     }, transactionOptions);
 
     await session.commitTransaction();
 
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
     const testAmt = payload.transactionData.amount * casinoMultiples
-    const date =  new Date().getTime() / 1000
     return res.json({
       partnerKey: config.worldCasinoOnlinePartnerKey,
       status:{
@@ -777,7 +795,7 @@ async function credit(req, res) {
     await session.withTransaction(async () => {
       const sameTransId = await casinoCalls.countDocuments(
         {
-          userId: payload.user.Id,
+          userId: parseInt(payload.user.id),
           providerTransactionId: game.providerTransactionId, 
           providerCode: game.providerCode, 
           gameCode: game.gameCode, 
@@ -822,6 +840,26 @@ async function credit(req, res) {
       }
       const amount = payload.amount * casinoMultiples;
       const response = await WinLoseTransManagement(payload, 1);
+      // if(response == 1){
+      //   await casinoCalls.insertOne({
+      //     userId: parseInt(payload.user.id),
+      //     currency: payload.user.currency,
+      //     partnerKey: payload.partnerKey,
+      //     providerCode: game.providerCode,
+      //     providerTransactionId: game.providerTransactionId,
+      //     gameCode: game?.gameCode,
+      //     description: game?.description,
+      //     providerRoundId: game?.providerRoundId,
+      //     id: trans.id,
+      //     amount: trans.id,
+      //     referenceId: trans.id,
+      //     user: payload.user,
+      //     gameData: game,
+      //     transactionData: trans,
+      //     timestamp: payload.timestamp
+      //   })
+      // }      
+
     }, transactionOptions);
 
     await session.commitTransaction();
