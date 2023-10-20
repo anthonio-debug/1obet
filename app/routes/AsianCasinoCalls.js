@@ -631,7 +631,7 @@ async function debit(req, res) {
 async function credit(req, res) {
   console.log(" ================================================================= ");
   console.log(" ================================================================= ");
-  console.log(" ================================ CREDIT ================================= ");
+  console.log(" ============================ CREDIT  ============================ ");
   console.log(" ================================================================= ");
   console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
@@ -662,7 +662,7 @@ async function credit(req, res) {
 
       // console.log('====== sameTransId', sameTransId)
       const user = await users.findOne(
-        { userId: parseInt(payload.user.Id) },
+        { userId: parseInt(payload.user.id) },
         { session }
       );
       if (!user) {
@@ -700,7 +700,7 @@ async function credit(req, res) {
     await session.commitTransaction();
 
     const updatedUser = await users.findOne(
-      { userId: parseInt(payload.user.Id) },
+      { userId: parseInt(payload.user.id) },
       { session }
     )
     console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
