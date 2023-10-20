@@ -553,14 +553,15 @@ async function debit(req, res) {
         },
         { session }
       );   
-      const user = await users.findOne(
-        { userId: parseInt(payload.user.id) },
-        { session }
-      )
+
+      console.log(" ================== ID# =================== ", payload.user.id);
+
+      const user = await users.findOne({ userId: parseInt(payload.user.id) })
       if (!user) {
         await session.abortTransaction();
         return res.json({ status: '500', msg: `Internal error no user` });
       }
+      console.log(" ================== user =================== ", user);
 
       if (sameTransId > 0) {
         await session.abortTransaction();
