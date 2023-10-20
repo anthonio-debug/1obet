@@ -638,7 +638,6 @@ async function credit(req, res) {
   await client.connect();
   const session = client.startSession();
   try {
-    console.log(" credit req.query ======= ", req.query);
     const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
     const users       = client.db(`${config.DBNAME}`).collection('users');
     const payload     = req.body;
