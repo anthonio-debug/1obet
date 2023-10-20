@@ -809,7 +809,7 @@ async function credit(req, res) {
   await client.connect();
   const session = client.startSession();
   try {
-    const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
+    const casinoCalls = client.db(`${config.DBNAME}`).collection('asiancasinocalls');
     const users       = client.db(`${config.DBNAME}`).collection('users');
     const payload     = req.body;
     const game        = payload.gameData;
@@ -953,24 +953,24 @@ async function credit(req, res) {
       const response = await WinLoseTransManagement(payload, 1);
       if(response == 1){
         await casinoCalls.insertOne({
-          userId: parseInt(payload.user.id),
-          currency: payload.user.currency,
-          partnerKey: payload.partnerKey,
-          providerCode: game.providerCode,
-          providerTransactionId: game.providerTransactionId,
+          userId: parseInt(payload?.user?.id),
+          currency: payload?.user?.currency,
+          partnerKey: payload?.partnerKey,
+          providerCode: game?.providerCode,
+          providerTransactionId: game?.providerTransactionId,
           gameCode: game?.gameCode,
           description: game?.description,
           providerRoundId: game?.providerRoundId,
-          id: trans.id,
-          amount: trans.id,
-          referenceId: trans.id,
-          user: payload.user,
+          id: trans?.id,
+          amount: trans?.id,
+          referenceId: trans?.id,
+          user: payload?.user,
           gameData: game,
           transactionData: trans,
           timestamp: payload.timestamp,
           type: "CREDIT"
         })
-        console.warn(">>> response == 1");
+        console.warn(" ================== RESPONSE INSIDE ================== ");
       }      
 
     }, transactionOptions);
