@@ -604,7 +604,7 @@ async function debit(req, res) {
     await session.commitTransaction();
 
     const updatedUser = await users.findOne(
-      { userId: parseInt(payload.user.Id) },
+      { userId: parseInt(payload.user.id) },
       { session }
     )
     const date =  new Date().getTime() / 1000
