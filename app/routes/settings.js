@@ -2184,31 +2184,44 @@ async function addTermsAndConditions(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  if (req.decoded.role != '0') {
-    return res.status(404).send({ message: 'Something went wrong !' });
+  try {
+    if (req.decoded.role != '0') {
+      return res.status(404).send({ message: 'Something went wrong !' });
+    }
+    const response = await PrivacyPolicy.findOneAndUpdate(
+      {},
+      { $set: { termAndConditionsContent: req.body.termAndConditionsContent } },
+    )
+    return res.send({
+      success: true,
+      message: 'Terms And Conditions Added Successfully',
+      results: response,
+    });
+  }catch (err) {
+    console.log("Error ${err} !", `Error ${err}`);
+    return res.send({
+      message: `Something went wrong `,
+    });
   }
-  const response = await PrivacyPolicy.findOneAndUpdate(
-    {},
-    { $set: { termAndConditionsContent: req.body.termAndConditionsContent } },
-  )
-  return res.send({
-    success: true,
-    message: 'Terms And Conditions Added Successfully',
-    results: response,
-  });
 }
 
 async function GetAllTermsAndConditions(req, res) {
-  const response = await PrivacyPolicy.findOne(
-    {},
-    { termAndConditionsContent: 1, createdAt: 1, updatedAt: 1 }
-  )
-
-  return res.send({
-    success: true,
-    message: 'Terms And Conditions Record Found',
-    results: response,
-  });
+  try{
+    const response = await PrivacyPolicy.findOne(
+      {},
+      { termAndConditionsContent: 1, createdAt: 1, updatedAt: 1 }
+    )
+    return res.send({
+      success: true,
+      message: 'Terms And Conditions Record Found',
+      results: response,
+    })
+  }catch (err) {
+    console.log("Error ${err} !", `Error ${err}`);
+    return res.send({
+      message: `Something went wrong `,
+    });
+  }
   
 }
 
@@ -2222,28 +2235,41 @@ async function addPrivacyPolicy(req, res) {
       .status(404)
       .send({ message: 'only company can add privacy policies' });
   }
-
-  const response = await PrivacyPolicy.findOneAndUpdate(
-    {},
-    { $set: { privacyPolicyContent: req.body.privacyPolicyContent } },
-  );
-  return res.send({
-    success: true,
-    message: 'Privacy Policy Added Successfully',
-    results: response,
-  });
+  try{
+    const response = await PrivacyPolicy.findOneAndUpdate(
+      {},
+      { $set: { privacyPolicyContent: req.body.privacyPolicyContent } },
+    );
+    return res.send({
+      success: true,
+      message: 'Privacy Policy Added Successfully',
+      results: response,
+    });
+  }catch (err) {
+    console.log("Error ${err} !", `Error ${err}`);
+    return res.send({
+      message: `Something went wrong `,
+    });
+  }
 }
 
 function GetAllPrivacyPolicy(req, res) {
-  const privacyPolicy = PrivacyPolicy.findOne(
-    {},
-    { privacyPolicyContent: 1, createdAt: 1, updatedAt: 1 }
-  )
-  return res.send({
-    success: true,
-    message: 'Privacy Policy Record',
-    results: privacyPolicy,
-  });
+  try{
+    const privacyPolicy = PrivacyPolicy.findOne(
+      {},
+      { privacyPolicyContent: 1, createdAt: 1, updatedAt: 1 }
+    )
+    return res.send({
+      success: true,
+      message: 'Privacy Policy Record',
+      results: privacyPolicy,
+    })
+  }catch (err) {
+    console.log("Error ${err} !", `Error ${err}`);
+    return res.send({
+      message: `Something went wrong `,
+    });
+  }
 }
 
 async function addRules(req, res) {
@@ -2256,26 +2282,42 @@ async function addRules(req, res) {
       .status(404)
       .send({ message: 'only company can add privacy policies' });
   }
-  const response = await PrivacyPolicy.findOneAndUpdate({},
-    { $set: { rules: req.body.rules } },
-  );
+  try{
+    const response = await PrivacyPolicy.findOneAndUpdate({},
+      { $set: { rules: req.body.rules } },
+    );
 
-  return res.send({
-    success: true,
-    message: 'Rules & Regulations successfully added',
-    results: response
-  });
+    return res.send({
+      success: true,
+      message: 'Rules & Regulations successfully added',
+      results: response
+    });
+  }catch (err) {
+    console.log("Error ${err} !", `Error ${err}`);
+    return res.send({
+      message: `Something went wrong `,
+    });
+  }
 }
 
-function GetRule(req, res) {
-  const privacy = await PrivacyPolicy.findOne({},
-    { rules: 1, createdAt: 1, updatedAt: 1, _id: 1 }
-  );
-  return res.send({
-    success: true,
-    message: 'Rules & Regulations',
-    results: success,
-  });
+async function GetRule(req, res) {
+  try {
+    const privacy = await PrivacyPolicy.findOne({},
+      { rules: 1, createdAt: 1, updatedAt: 1, _id: 1 }
+    );
+    return res.send({
+      success: true,
+      message: 'Rules & Regulations',
+      results: success,
+    });
+  }
+  catch (err) {
+    console.log("Error ${err} !", `Error ${err}`);
+    return res.send({
+      message: `Something went wrong `,
+    });
+  }
+
 }
 
 loginRouter.post(
