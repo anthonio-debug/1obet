@@ -755,7 +755,8 @@ async function debit(req, res) {
           user: payload.user,
           gameData: game,
           transactionData: trans,
-          timestamp: payload.timestamp
+          timestamp: payload.timestamp,
+          type: "DEBIT"
         })
       }
     }, transactionOptions);
@@ -955,7 +956,8 @@ async function credit(req, res) {
           user: payload.user,
           gameData: game,
           transactionData: trans,
-          timestamp: payload.timestamp
+          timestamp: payload.timestamp,
+          type: "CREDIT"
         })
       }      
 
