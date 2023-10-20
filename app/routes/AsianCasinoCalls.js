@@ -489,6 +489,9 @@ const WinLoseTransManagement = async (payload, action) => {
 }
 
 async function balance(req, res){
+  console.log(" ================================================================= ");
+  console.log(" ======================== balance REQUEST ======================== ");
+  console.log(" ================================================================= ");
   const payload     = req.body;
   const timestamp   = new Date().getTime() / 1000
   try {
@@ -584,6 +587,9 @@ async function balance(req, res){
 
 
 async function debit(req, res) {
+  console.log(" ================================================================= ");
+  console.log(" ========================= DEBIT REQUEST ========================= ");
+  console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect(); 
   const session = client.startSession();
@@ -625,6 +631,7 @@ async function debit(req, res) {
           gameCode: game.gameCode, 
           providerRoundId: game.providerRoundId, 
           id: trans.id, 
+          type: "DEBIT"
         },
         { session }
       );   
@@ -795,6 +802,9 @@ async function debit(req, res) {
 }
 
 async function credit(req, res) {
+  console.log(" ================================================================= ");
+  console.log(" ======================== CREDIT  REQUEST ======================== ");
+  console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -818,6 +828,7 @@ async function credit(req, res) {
           gameCode: game.gameCode, 
           providerRoundId: game.providerRoundId, 
           id: trans.id, 
+          type: "CREDIT"
         },
         { session }
       );
@@ -941,6 +952,7 @@ async function credit(req, res) {
 
       const response = await WinLoseTransManagement(payload, 1);
       if(response == 1){
+        console.warn(">>> response == 1");
         await casinoCalls.insertOne({
           userId: parseInt(payload.user.id),
           currency: payload.user.currency,
