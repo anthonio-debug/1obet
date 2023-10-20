@@ -487,24 +487,75 @@ const WinLoseTransManagement = async (payload, action) => {
     return 0
   }
 }
+
 async function balance(req, res){
-  console.log(" ================================================================= ");
-  console.log(" ================================================================= ");
-  console.log(" ================================================================= ");
-  console.log(" ================================================================= ");
-  console.log(" ================================================================= ");
-  const payload = req.body;
+  const payload     = req.body;
+  const timestamp   = new Date().getTime() / 1000
   try {
+    if(payload.partnerKey != partnerKey){
+      return res.json({
+        partnerKey : payload?.partnerKey,
+        userId : payload?.user?.id,
+        balance : 0.0,
+        status:{
+          "code" : "VALIDATION_ERROR",
+          "message" : "partnerKey is not valid or empty"
+        },
+        timestamp : timestamp
+      })
+    }
     const user = await User.findOne({ userId: Number(payload.userId) });
     if (!user) {
-      return res.json({ status: 500, msg: 'Internal error no user' });
+      return res.json({
+        partnerKey : payload?.partnerKey,
+        userId : payload?.user?.id,
+        balance:0.0,
+        status:{
+          "code":"VALIDATION_ERROR",
+          "message":"Userid is not valid or empty"
+        },
+        timestamp : timestamp
+      })
     }
+
+    if (!payload.timestamp || payload.timestamp == "" ){
+      return res.json({
+        partnerKey : payload?.partnerKey,
+        userId : payload?.user?.id,
+        balance:0.0,
+        status:{
+          "code" : "VALIDATION_ERROR",
+          "message" : "Timestamp is not valid or empty"
+        },
+        timestamp : timestamp
+      })
+    }
+
     if(payload.partnerKey != partnerKey){
-      return res.json({ status: 400, msg: 'Invalid Or Expired Token' });
+      return res.json({
+        partnerKey : payload?.partnerKey,
+        userId : payload?.user?.id,
+        balance : 0.0,
+        status:{
+          "code" : "VALIDATION_ERROR",
+          "message" : "partnerKey is not valid or empty"
+        },
+        timestamp : timestamp
+      })
     }
+
     const balance = user.availableBalance;
     if (balance < 0) {
-      return res.json({ status: 500, msg: 'Negative amount not allowed!' });
+      return res.json({
+        partnerKey : payload?.partnerKey,
+        userId : payload?.user?.id,
+        balance : 0.0,
+        status:{
+          "code" : "VALIDATION_ERROR",
+          "message" : "Internal server error !"
+        },
+        timestamp : timestamp
+      })
     }
     return res.json({
       status:{
@@ -517,17 +568,22 @@ async function balance(req, res){
     });
 
   } catch (err) {
-    console.error(err);
-    return res.json({ status: 500, msg: `Internal error ${err}` });
+    console.error(`Internal Error ${err}`);
+    return res.json({
+      partnerKey : payload?.partnerKey,
+      userId : payload?.user?.id,
+      balance : 0.0,
+      status:{
+        "code" : "VALIDATION_ERROR",
+        "message" : "Internal server error !"
+      },
+      timestamp : timestamp
+    })
   }
 }
 
+
 async function debit(req, res) {
-  console.log(" ================================================================= ");
-  console.log(" ================================================================= ");
-  console.log(" ============================== DEBIT ============================ ");
-  console.log(" ================================================================= ");
-  console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect(); 
   const session = client.startSession();
@@ -535,12 +591,31 @@ async function debit(req, res) {
     const casinoCalls = client.db(`${config.DBNAME}`).collection('asiancasinocalls');
     const users       = client.db(`${config.DBNAME}`).collection('users');
     const payload     = req.body;
+    const timestamp   = new Date().getTime() / 1000;
+
     console.log(" ================================================================= ");
-    console.log(" ======================== debit req.query ======================== ", payload);
+    console.log(" ====================== Debit Request Ruery ====================== ", payload);
     console.log(" ================================================================= ");
 
     const game  = payload.gameData;
     const trans = payload.transactionData;
+    if(payload.partnerKey != partnerKey){
+      return res.json({
+        partnerKey : payload?.partnerKey,
+        userId : payload?.user?.id,
+        balance : 0.0,
+        status:{
+          "code" : "VALIDATION_ERROR",
+          "message" : "partnerKey is not valid or empty"
+        },
+        timestamp : timestamp
+      })
+    }
+    const validatedResponse = validateDebit(payload);
+    if(validatedResponse.status == 1){
+
+    }
+
     await session.withTransaction(async () => {
       const sameTransId = await casinoCalls.countDocuments(
         {
@@ -553,52 +628,103 @@ async function debit(req, res) {
         },
         { session }
       );   
-
-      console.log(" ================== ID# =================== ", payload.user.id);
-
       const user = await users.findOne({ userId: parseInt(payload.user.id) })
       if (!user) {
         await session.abortTransaction();
-        return res.json({ status: '500', msg: `Internal error no user` });
+        return res.json({
+          partnerKey : payload?.partnerKey,
+          userId : payload?.user?.id,
+          balance : 0.0,
+          status:{
+            "code":"VALIDATION_ERROR",
+            "message":"Userid is not valid or empty"
+          },
+          timestamp : timestamp
+        })
       }
-      console.log(" ================== user =================== ", user);
 
       if (sameTransId > 0) {
         await session.abortTransaction();
         return res.json({
-          status: 200,
-          balance: user.availableBalance / casinoMultiples,
-        });
+          partnerKey : payload?.partnerKey,
+          userId : payload?.user?.id,
+          balance : user ?  user?.availableBalance / casinoMultiples : 0.0,
+          status:{
+            code:"VALIDATION_ERROR",
+            message:"Request already processed"
+          },
+          timestamp : timestamp
+        })
       }
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
+
       if(checkMarketBlockedResponse == 1){
         await session.abortTransaction(user);
-        return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
+        return res.json({
+          partnerKey : payload?.partnerKey,
+          userId : payload?.user?.id,
+          balance : user ? user?.availableBalance / casinoMultiples: 0.0,
+          status:{
+            "code" : "SUCCESS",
+            "message" : ""
+          },
+          timestamp : timestamp
+        })
       }
+
       let debitAmount =  parseInt(payload.transactionData.amount);
       const amount    = debitAmount *casinoMultiples;
 
       if (debitAmount > user.availableBalance * casinoMultiples) {
         await session.abortTransaction();
         return res.json({
+          partnerKey : payload?.partnerKey,
+          userId : payload?.user?.id,
+          balance : user?.availableBalance / casinoMultiples,
+          status:{
+            "code":"VALIDATION_ERROR",
+            "message":"Userid is not valid or empty"
+          },
+          timestamp : timestamp
+        })
+        return res.json({
           status: 403,
           message: "Insufficient balance amount",
         });
       }
+
       if (parseInt(payload.transactionData.amount) < 0) {
-        await session.abortTransaction();
-        return res.json({ status: '500', msg: 'Negative bet not allowed!' });
+        await session.abortTransaction();    
+        return res.json({
+          partnerKey : payload?.partnerKey,
+          userId : payload?.user?.id,
+          balance : user ?  user?.availableBalance / casinoMultiples : 0.0,
+          status:{
+            code:"VALIDATION_ERROR",
+            message:"Field Amount format is not correct"
+          },
+          timestamp : timestamp
+        })
       }
 
-      const updatedavailableBalance = user.availableBalance - (amount);
+      const updatedavailableBalance = user?.availableBalance - (amount);
 
       if (updatedavailableBalance < 0) {
         await session.abortTransaction();
-        return res.json({ status: 500, msg: 'Negative balance not allowed!' });
+        return res.json({
+          partnerKey : payload?.partnerKey,
+          userId : payload?.user?.id,
+          balance : user? user.availableBalance / casinoMultiples: 0.0,
+          status:{
+            "code":"VALIDATION_ERROR",
+            "message":"amount must be less then available balance"
+          },
+          timestamp : timestamp
+        })
       }
 
       let balance = user.availableBalance / casinoMultiples;
-      const res = await WinLoseTransManagement(payload, 0);
+      const response = await WinLoseTransManagement(payload, 0);
     }, transactionOptions);
 
     await session.commitTransaction();
@@ -614,12 +740,21 @@ async function debit(req, res) {
       },
       balance: ( updatedUser.availableBalance - testAmt) / casinoMultiples,
       userId: updatedUser.userId.toString(),
-      timestamp: date.toString()
+      timestamp: timestamp
     });
 
   } catch (err) {
-    console.error('Error:', err);
-    return res.json({ status: 500, msg: `Internal error ${err}` });
+    console.error(`Error  ${err} `);
+    return res.json({
+      partnerKey : payload?.partnerKey,
+      userId : payload?.user?.id,
+      balance : 0.0,
+      status:{
+        "code" : "VALIDATION_ERROR",
+        "message" : "Internal server error !"
+      },
+      timestamp : timestamp
+    })
   } finally {
     await session.endSession();
     await client.close();
@@ -627,11 +762,6 @@ async function debit(req, res) {
 }
 
 async function credit(req, res) {
-  console.log(" ================================================================= ");
-  console.log(" ================================================================= ");
-  console.log(" ============================ CREDIT  ============================ ");
-  console.log(" ================================================================= ");
-  console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -691,7 +821,7 @@ async function credit(req, res) {
         });
       }
       const amount = payload.amount * casinoMultiples;
-      const res = await WinLoseTransManagement(payload, 1);
+      const response = await WinLoseTransManagement(payload, 1);
     }, transactionOptions);
 
     await session.commitTransaction();
@@ -711,14 +841,36 @@ async function credit(req, res) {
     });
 
   } catch (err) {
-    console.error('Error:', err);
-    return res.json({ status: 500, msg: `Internal error ${err}` });
+    console.error(`Internal Error ${err}`);
+    return res.json({
+      partnerKey : payload?.partnerKey,
+      userId : payload?.user?.id,
+      balance : 0.0,
+      status:{
+        "code" : "VALIDATION_ERROR",
+        "message" : "Internal server error !"
+      },
+      timestamp : timestamp
+    })
   } finally {
     await session.endSession();
     await client.close();
   }
 }
 
+const validateDebit =  (payload) => {
+  if(!payload?.transactionData?.id){
+      return {
+        status: 1,
+        msg: "Transaction id is null or empty"
+      }
+  }else if(true){
+    return {
+      status: 1,
+      msg: "Transaction id is null or empty"
+    }
+  }
+}
 
 
 router.post('/balance', balance);
