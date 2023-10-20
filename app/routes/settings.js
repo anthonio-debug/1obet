@@ -2268,7 +2268,7 @@ async function addRules(req, res) {
 }
 
 function GetRule(req, res) {
-  const privacy = PrivacyPolicy.findOne({},
+  const privacy = await PrivacyPolicy.findOne({},
     { rules: 1, createdAt: 1, updatedAt: 1, _id: 1 }
   );
   return res.send({
