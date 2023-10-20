@@ -93,111 +93,6 @@ function updateDefaultLoginPage(req, res) {
   );
 }
 
-function addTermsAndConditions(req, res) {
-  const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
-  }
-  if (req.decoded.role != '0') {
-    return res.status(404).send({ message: 'Something went wrong !' });
-  }
-  //server _id
-  termsAndConditions.updateMany(
-    {},
-    { $set: { termAndConditionsContent: req.body.termAndConditionsContent } },
-    { new: true },
-    (err, results) => {
-      if (err || !results) {
-        console.log(' Data Not Saved ============= ', err);
-        return res.status(404).send({ message: 'Data Not Saved' });
-      }
-      return res.send({
-        success: true,
-        message: 'Terms And Conditions Added Successfully',
-        results: results,
-      });
-    }
-  );
-}
-
-function GetAllTermsAndConditions(req, res) {
-  // if (req.decoded.role !== '0') {
-  //   return res
-  //     .status(404)
-  //     .send({ message: 'only company can see terms and conditions' });
-  // }
-  termsAndConditions
-    .findOne(
-      {},
-      { termAndConditionsContent: 1, createdAt: 1, updatedAt: 1, _id: 1 }
-    )
-    .sort({ _id: -1 })
-    .exec((err, success) => {
-      if (err || !success)
-        return res.status(404).send({ message: 'Record Not Found' });
-      else
-        return res.send({
-          success: true,
-          message: 'Terms And Conditions Record Found',
-          results: success,
-        });
-    });
-}
-
-function addPrivacyPolicy(req, res) {
-  const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
-  }
-  if (req.decoded.role !== '0') {
-    return res
-      .status(404)
-      .send({ message: 'only company can add privacy policies' });
-  }
-
-  //server _id
-  PrivacyPolicy.updateMany(
-    {},
-    { $set: { privacyPolicyContent: req.body.privacyPolicyContent } },
-    { new: true },
-    (err, results) => {
-      if (err || !results) {
-        console.log(' Data Not Saved ============== ', err);
-        return res.status(404).send({ message: 'Data Not Saved' });
-      }
-
-      return res.send({
-        success: true,
-        message: 'Privacy Policy Added Successfully',
-        results: results,
-      });
-    }
-  );
-}
-
-function GetAllPrivacyPolicy(req, res) {
-  // if (req.decoded.role !== '0') {
-  //   return res
-  //     .status(404)
-  //     .send({ message: 'only company can see privacy policies' });
-  // }
-  PrivacyPolicy.findOne(
-    {},
-    { privacyPolicyContent: 1, createdAt: 1, updatedAt: 1, _id: 1 }
-  )
-    .sort({ _id: -1 })
-    .exec((err, success) => {
-      if (err || !success)
-        return res.status(404).send({ message: 'Record Not Found' });
-      else
-        return res.send({
-          success: true,
-          message: 'Privacy Policy Record Found',
-          results: success,
-        });
-    });
-}
-
 function updateDefaultExchange(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -2274,6 +2169,7 @@ const cancelSingleBet = async (req, res) => {
       status: 1,
     });
     for (const bet of allBets) {
+      console.log(" ============ BET ============ ", bet);
       await handleDrawBet(bet, 2);
     }
   }
@@ -2282,6 +2178,105 @@ const cancelSingleBet = async (req, res) => {
     message: 'bet canceled Successfully !',
   });
 };
+
+async function addTermsAndConditions(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  if (req.decoded.role != '0') {
+    return res.status(404).send({ message: 'Something went wrong !' });
+  }
+  const response = await PrivacyPolicy.findOneAndUpdate(
+    {},
+    { $set: { termAndConditionsContent: req.body.termAndConditionsContent } },
+  )
+  return res.send({
+    success: true,
+    message: 'Terms And Conditions Added Successfully',
+    results: response,
+  });
+}
+
+async function GetAllTermsAndConditions(req, res) {
+  const response = await PrivacyPolicy.findOne(
+    {},
+    { termAndConditionsContent: 1, createdAt: 1, updatedAt: 1 }
+  )
+
+  return res.send({
+    success: true,
+    message: 'Terms And Conditions Record Found',
+    results: response,
+  });
+  
+}
+
+async function addPrivacyPolicy(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  if (req.decoded.role !== '0') {
+    return res
+      .status(404)
+      .send({ message: 'only company can add privacy policies' });
+  }
+
+  const response = await PrivacyPolicy.findOneAndUpdate(
+    {},
+    { $set: { privacyPolicyContent: req.body.privacyPolicyContent } },
+  );
+  return res.send({
+    success: true,
+    message: 'Privacy Policy Added Successfully',
+    results: response,
+  });
+}
+
+function GetAllPrivacyPolicy(req, res) {
+  const privacyPolicy = PrivacyPolicy.findOne(
+    {},
+    { privacyPolicyContent: 1, createdAt: 1, updatedAt: 1 }
+  )
+  return res.send({
+    success: true,
+    message: 'Privacy Policy Record',
+    results: privacyPolicy,
+  });
+}
+
+async function addRules(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  if (req.decoded.role !== '0') {
+    return res
+      .status(404)
+      .send({ message: 'only company can add privacy policies' });
+  }
+  const response = await PrivacyPolicy.findOneAndUpdate({},
+    { $set: { rules: req.body.rules } },
+  );
+
+  return res.send({
+    success: true,
+    message: 'Rules & Regulations successfully added',
+    results: response
+  });
+}
+
+function GetRule(req, res) {
+  const privacy = PrivacyPolicy.findOne({},
+    { rules: 1, createdAt: 1, updatedAt: 1, _id: 1 }
+  );
+  return res.send({
+    success: true,
+    message: 'Rules & Regulations',
+    results: success,
+  });
+}
 
 loginRouter.post(
   '/updateDefaultTheme',
@@ -2310,6 +2305,10 @@ loginRouter.post(
   settingsValidation.validate('updateDefaultExchange'),
   updateDefaultExchange
 );
+
+router.get('/GetRule', GetRule);
+router.post('/addRules', addRules);
+
 
 loginRouter.post(
   '/updateDefaultBetSizes',
