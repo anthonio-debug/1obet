@@ -2253,9 +2253,9 @@ async function addPrivacyPolicy(req, res) {
   }
 }
 
-function GetAllPrivacyPolicy(req, res) {
+async function GetAllPrivacyPolicy(req, res) {
   try{
-    const privacyPolicy = PrivacyPolicy.findOne(
+    const privacyPolicy = await PrivacyPolicy.findOne(
       {},
       { privacyPolicyContent: 1, createdAt: 1, updatedAt: 1 }
     )
@@ -2303,12 +2303,12 @@ async function addRules(req, res) {
 async function GetRule(req, res) {
   try {
     const privacy = await PrivacyPolicy.findOne({},
-      { rules: 1, createdAt: 1, updatedAt: 1, _id: 1 }
+      { rules: 1, createdAt: 1, updatedAt: 1 }
     );
     return res.send({
       success: true,
       message: 'Rules & Regulations',
-      results: success,
+      results: privacy,
     });
   }
   catch (err) {
@@ -2349,7 +2349,7 @@ loginRouter.post(
 );
 
 router.get('/GetRule', GetRule);
-router.post('/addRules', addRules);
+loginRouter.post('/addRules', addRules);
 
 
 loginRouter.post(
