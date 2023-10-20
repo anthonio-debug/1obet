@@ -619,7 +619,7 @@ async function debit(req, res) {
     await session.withTransaction(async () => {
       const sameTransId = await casinoCalls.countDocuments(
         {
-          userId: payload.user.Id,
+          userId: parseInt(payload.user.id),
           providerTransactionId: game.providerTransactionId, 
           providerCode: game.providerCode, 
           gameCode: game.gameCode, 
