@@ -603,10 +603,8 @@ async function debit(req, res) {
 
     await session.commitTransaction();
 
-    const updatedUser = await users.findOne(
-      { userId: parseInt(payload.user.id) },
-      { session }
-    )
+    const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
+    const testAmt = payload.transactionData.amount * casinoMultiples
     const date =  new Date().getTime() / 1000
     return res.json({
       partnerKey: config.worldCasinoOnlinePartnerKey,
@@ -614,7 +612,7 @@ async function debit(req, res) {
         "code": "SUCCESS",
         "message": ""
       },
-      balance: updatedUser.availableBalance / casinoMultiples,
+      balance: ( updatedUser.availableBalance - testAmt) / casinoMultiples,
       userId: updatedUser.userId.toString(),
       timestamp: date.toString()
     });
@@ -638,7 +636,6 @@ async function credit(req, res) {
   await client.connect();
   const session = client.startSession();
   try {
-    console.log(" credit req.query ======= ", req.query);
     const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
     const users       = client.db(`${config.DBNAME}`).collection('users');
     const payload     = req.body;
@@ -700,6 +697,7 @@ async function credit(req, res) {
     await session.commitTransaction();
 
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
+    const testAmt = payload.transactionData.amount * casinoMultiples
     console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
     return res.json({
       partnerKey: config.worldCasinoOnlinePartnerKey,
@@ -707,7 +705,7 @@ async function credit(req, res) {
         "code": "SUCCESS",
         "message": ""
       },
-      balance: updatedUser.availableBalance / casinoMultiples,
+      balance: (updatedUser.availableBalance + testAmt) / casinoMultiples,
       userId: updatedUser.userId.toString(),
       timestamp: new Date().getTime().toString()
     });
