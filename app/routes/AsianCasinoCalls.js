@@ -625,6 +625,7 @@ async function debit(req, res) {
           gameCode: game.gameCode, 
           providerRoundId: game.providerRoundId, 
           id: trans.id, 
+          type: "DEBIT"
         },
         { session }
       );   
@@ -818,6 +819,7 @@ async function credit(req, res) {
           gameCode: game.gameCode, 
           providerRoundId: game.providerRoundId, 
           id: trans.id, 
+          type: "CREDIT"
         },
         { session }
       );
@@ -941,6 +943,7 @@ async function credit(req, res) {
 
       const response = await WinLoseTransManagement(payload, 1);
       if(response == 1){
+        console.warn(">>> response == 1");
         await casinoCalls.insertOne({
           userId: parseInt(payload.user.id),
           currency: payload.user.currency,
