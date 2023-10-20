@@ -1,6 +1,6 @@
 const express             = require('express');
 const User                = require('../models/user');
-const AsianCasinoDebits        = require('../models/AsiancasinoCalls');
+const AsianCasinoDebits   = require('../models/AsiancasinoCalls');
 const Cash                = require("../../app/models/deposits");
 const config              = require('config')
 const { MongoClient }     = require('mongodb');
@@ -489,9 +489,9 @@ const WinLoseTransManagement = async (payload, action) => {
 }
 
 async function balance(req, res){
-  console.log(" ================================================================= ");
-  console.log(" ======================== balance REQUEST ======================== ");
-  console.log(" ================================================================= ");
+  console.warn(" ================================================================= ");
+  console.warn(" ======================== balance REQUEST ======================== ");
+  console.warn(" ================================================================= ");
   const payload     = req.body;
   const timestamp   = new Date().getTime() / 1000
   try {
@@ -587,9 +587,9 @@ async function balance(req, res){
 
 
 async function debit(req, res) {
-  console.log(" ================================================================= ");
-  console.log(" ========================= DEBIT REQUEST ========================= ");
-  console.log(" ================================================================= ");
+  console.warn(" ================================================================= ");
+  console.warn(" ========================= DEBIT REQUEST ========================= ");
+  console.warn(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect(); 
   const session = client.startSession();
@@ -802,9 +802,9 @@ async function debit(req, res) {
 }
 
 async function credit(req, res) {
-  console.log(" ================================================================= ");
-  console.log(" ======================== CREDIT  REQUEST ======================== ");
-  console.log(" ================================================================= ");
+  console.warn(" ================================================================= ");
+  console.warn(" ======================== CREDIT  REQUEST ======================== ");
+  console.warn(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -816,7 +816,7 @@ async function credit(req, res) {
     const trans       = payload.transactionData;
 
     console.log(" ================================================================= ");
-    console.log(" ====================== CREEDIT Request Ruery ====================== ", payload);
+    console.log(" ===================== CREDIT  Request Query ===================== ", payload);
     console.log(" ================================================================= ");
 
     await session.withTransaction(async () => {
@@ -952,7 +952,6 @@ async function credit(req, res) {
 
       const response = await WinLoseTransManagement(payload, 1);
       if(response == 1){
-        console.warn(">>> response == 1");
         await casinoCalls.insertOne({
           userId: parseInt(payload.user.id),
           currency: payload.user.currency,
@@ -971,6 +970,7 @@ async function credit(req, res) {
           timestamp: payload.timestamp,
           type: "CREDIT"
         })
+        console.warn(">>> response == 1");
       }      
 
     }, transactionOptions);
