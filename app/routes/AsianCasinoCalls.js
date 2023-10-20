@@ -805,7 +805,7 @@ async function credit(req, res) {
     const trans       = payload.transactionData;
 
     console.log(" ================================================================= ");
-    console.log(" ====================== Debit Request Ruery ====================== ", payload);
+    console.log(" ====================== CREEDIT Request Ruery ====================== ", payload);
     console.log(" ================================================================= ");
 
     await session.withTransaction(async () => {
