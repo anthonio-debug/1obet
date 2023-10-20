@@ -45,6 +45,8 @@
   "GetAllTermsAndConditions",
   "addPrivacyPolicy",
   "GetAllPrivacyPolicy",
+  "addRules",
+  "GetRule",
   "updateDefaultExchange",
   "GetExchangeRates",
   "betFunds",

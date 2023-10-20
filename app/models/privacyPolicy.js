@@ -4,6 +4,8 @@ mongoose.set('debug', false);
 let Global = require('../global/settings');
 const privacyPolicySchema = new mongoose.Schema({
   privacyPolicyContent: { type: String, required: false },
+  rules: { type: String, required: false },
+  termAndConditionsContent: { type: String, required: false },
   createdAt: { type: Number },
   updatedAt: { type: Number },
 });
