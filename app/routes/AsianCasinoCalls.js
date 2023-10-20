@@ -525,7 +525,7 @@ async function balance(req, res){
 async function debit(req, res) {
   console.log(" ================================================================= ");
   console.log(" ================================================================= ");
-  console.log(" ====================================== DEBIT =========================== ");
+  console.log(" ============================== DEBIT ============================ ");
   console.log(" ================================================================= ");
   console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
@@ -536,7 +536,7 @@ async function debit(req, res) {
     const users       = client.db(`${config.DBNAME}`).collection('users');
     const payload     = req.body;
     console.log(" ================================================================= ");
-    console.log(" debit req.query ============ ", payload);
+    console.log(" ======================== debit req.query ======================== ", payload);
     console.log(" ================================================================= ");
 
     const game  = payload.gameData;
@@ -554,7 +554,7 @@ async function debit(req, res) {
         { session }
       );   
       const user = await users.findOne(
-        { userId: parseInt(payload.user.Id) },
+        { userId: parseInt(payload.user.id) },
         { session }
       )
       if (!user) {
