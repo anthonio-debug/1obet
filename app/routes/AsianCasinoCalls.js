@@ -699,10 +699,7 @@ async function credit(req, res) {
 
     await session.commitTransaction();
 
-    const updatedUser = await users.findOne(
-      { userId: parseInt(payload.user.id) },
-      { session }
-    )
+    const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
     console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
     return res.json({
       partnerKey: config.worldCasinoOnlinePartnerKey,
