@@ -710,8 +710,6 @@ async function debit(req, res) {
         } 
       }
 
-
-
       let debitAmount =  parseInt(payload.transactionData.amount);
       const amount    = debitAmount *casinoMultiples;
 
@@ -762,8 +760,6 @@ async function debit(req, res) {
           timestamp : timestamp
         })
       }
-
-      let balance = user.availableBalance / casinoMultiples;
       const response = await WinLoseTransManagement(payload, 0);
       if(response == 1){
         await casinoCalls.insertOne({
@@ -784,6 +780,12 @@ async function debit(req, res) {
           timestamp: payload.timestamp,
           type: "DEBIT"
         })
+        await User.updateOne({
+          userId: parseInt(payload.user.id),
+        },
+        {$srt: {
+          availableBalance : updatedavailableBalance
+        }})
       }
     }, transactionOptions);
 
@@ -1009,6 +1011,12 @@ async function credit(req, res) {
           timestamp: payload.timestamp,
           type: "CREDIT"
         })
+        await User.updateOne({
+          userId: parseInt(payload.user.id),
+        },
+        {$srt: {
+          availableBalance : updatedavailableBalance
+        }})
         console.warn(" ================== RESPONSE INSIDE ================== ");
       }      
 
