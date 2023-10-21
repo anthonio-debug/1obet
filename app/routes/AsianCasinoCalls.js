@@ -693,7 +693,10 @@ async function debit(req, res) {
             },
             timestamp : timestamp
           })
-        }  
+        } 
+        else {
+          // Will cancel Bet Here 
+        } 
       }
 
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
