@@ -665,7 +665,7 @@ async function debit(req, res) {
       }
       /* ========= */
 
-      if (sameTransId > 0) {
+      if (sameTransId > 0 && game.description != "cancel" ) {
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -678,6 +678,24 @@ async function debit(req, res) {
           timestamp : timestamp
         })
       }
+
+      if (sameTransId > 0 && game.description == "cancel" ) {
+        const transAvaiable = await casinoCalls.findOne({ id: trans.referenceId});
+        if(!transAvaiable  || transAvaiable.cancelProcessed ==  true ){
+          await session.abortTransaction();
+          return res.json({
+            partnerKey : payload?.partnerKey,
+            userId : payload?.user?.id,
+            balance : user ?  user?.availableBalance / casinoMultiples : 0.0,
+            status:{
+              code:"VALIDATION_ERROR",
+              message:"Cancel transaction may not exist or already processed"
+            },
+            timestamp : timestamp
+          })
+        }  
+      }
+
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if(checkMarketBlockedResponse == 1){
         await session.abortTransaction(user);
@@ -1008,20 +1026,8 @@ async function credit(req, res) {
     await client.close();
   }
 }
+// Cancel transaction may not exist or already processed
 
-const validateDebit =  (payload) => {
-  if(!payload?.transactionData?.id){
-      return {
-        status: 1,
-        msg: "Transaction id is null or empty"
-      }
-  }else if(true){
-    return {
-      status: 1,
-      msg: "Transaction id is null or empty"
-    }
-  }
-}
 
 
 router.post('/balance', balance);
