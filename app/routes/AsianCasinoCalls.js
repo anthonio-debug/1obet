@@ -617,10 +617,6 @@ async function debit(req, res) {
         timestamp : timestamp
       })
     }
-    const validatedResponse = validateDebit(payload);
-    if(validatedResponse.status == 1){
-
-    }
 
     await session.withTransaction(async () => {
       const sameTransId = await casinoCalls.countDocuments(
