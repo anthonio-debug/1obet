@@ -780,12 +780,15 @@ async function debit(req, res) {
           timestamp: payload.timestamp,
           type: "DEBIT"
         })
-        await User.updateOne({
-          userId: parseInt(payload.user.id),
-        },
-        {$srt: {
-          availableBalance : updatedavailableBalance
-        }})
+        const userResponse = await users.updateOne(
+          { userId: parseInt(payload.user.id)},
+          {
+            $set: {
+              availableBalance: updatedavailableBalance
+            }
+          },
+          { session }
+        )
       }
     }, transactionOptions);
 
@@ -947,7 +950,7 @@ async function credit(req, res) {
       let creditAmount =  parseInt(payload.transactionData.amount);
       const amount    = creditAmount *casinoMultiples;
 
-      const updatedavailableBalance = user?.availableBalance - (amount);
+      const updatedavailableBalance = user?.availableBalance + (amount);
 
       if (creditAmount > user.availableBalance * casinoMultiples) {
         await session.abortTransaction();
@@ -1011,13 +1014,15 @@ async function credit(req, res) {
           timestamp: payload.timestamp,
           type: "CREDIT"
         })
-        await User.updateOne({
-            userId: parseInt(payload.user.id),
+        const userResponse = await users.updateOne(
+          { userId: parseInt(payload.user.id)},
+          {
+            $set: {
+              availableBalance: updatedavailableBalance
+            }
           },
-          {$srt: {
-            availableBalance : updatedavailableBalance
-          }
-        })
+          { session }
+        )
         console.warn(" ================== RESPONSE INSIDE ================== ");
       }      
 
