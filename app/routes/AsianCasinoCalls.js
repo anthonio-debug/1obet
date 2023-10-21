@@ -1011,12 +1011,13 @@ async function credit(req, res) {
           timestamp: payload.timestamp,
           type: "CREDIT"
         })
-        await User.updateOne({
-          userId: parseInt(payload.user.id),
-        },
-        {$srt: {
-          availableBalance : updatedavailableBalance
-        }})
+        // await User.updateOne({
+        //     userId: parseInt(payload.user.id),
+        //   },
+        //   {$srt: {
+        //     availableBalance : updatedavailableBalance
+        //   }
+        // })
         console.warn(" ================== RESPONSE INSIDE ================== ");
       }      
 
