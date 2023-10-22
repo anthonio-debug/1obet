@@ -92,7 +92,7 @@ const updateParentUserBalance = async (
   for (const user of parentUser) {
     console.log(`user id ${user.userId} =====`, user.commission);
     const amountToBeSub = (user.commission / 100) * winningAmount;
-    const finalAmount = amountToBeSub.toFixed(2)
+    const finalAmount = Number(amountToBeSub.toFixed(2))
     user.exposure    -= finalAmount;
     user.availableBalance -= finalAmount;
     await user.save();
@@ -2294,7 +2294,7 @@ const placeBet = async (req, res) => {
         try {
           const position = new currentPosition({
             userId: userId,
-            amount: -loosingAmount.toFixed(2),
+            amount: -Number(loosingAmount.toFixed(2)),
             matchsId: matchId,
             betId: result._id,
           });
@@ -2302,9 +2302,9 @@ const placeBet = async (req, res) => {
 
           const totalExpAmount = expAmount - prevExpAmount;
           const UserExpAmountFix = user.exposure + prevExpAmount - expAmount;
-          const UserExpAmount = UserExpAmountFix.toFixed(2);
+          const UserExpAmount = Number(UserExpAmountFix.toFixed(2));
           const UserAvlBalAmountAmt = user.availableBalance + prevExpAmount - expAmount;
-          const UserAvlBalAmount = UserAvlBalAmountAmt.toFixed(2);
+          const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(2));
 
           await User.findOneAndUpdate(
             { userId: userId },
