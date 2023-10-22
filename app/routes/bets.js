@@ -91,15 +91,17 @@ const updateParentUserBalance = async (
 
   for (const user of parentUser) {
     console.log(`user id ${user.userId} =====`, user.commission);
-    user.exposure -= (user.commission / 100) * winningAmount;
-    user.availableBalance -= (user.commission / 100) * winningAmount;
+    const amountToBeSub = (user.commission / 100) * winningAmount;
+    const finalAmount = Number(amountToBeSub.toFixed(2))
+    user.exposure    -= finalAmount;
+    user.availableBalance -= finalAmount;
     await user.save();
     console.log('Saving parent users');
     if (matchId != 0) {
       let position = await new currentPosition({
         userId: user.userId,
         description: 'some transection name',
-        amount: -(user.commission / 100) * winningAmount,
+        amount: -finalAmount,
         betId: Id,
         matchsId: matchId,
         share: user.commission,
@@ -2292,15 +2294,18 @@ const placeBet = async (req, res) => {
         try {
           const position = new currentPosition({
             userId: userId,
-            amount: -loosingAmount,
+            amount: -Number(loosingAmount.toFixed(2)),
             matchsId: matchId,
             betId: result._id,
           });
           await position.save();
 
           const totalExpAmount = expAmount - prevExpAmount;
-          const UserExpAmount = user.exposure + prevExpAmount - expAmount;
-          const UserAvlBalAmount = user.availableBalance + prevExpAmount - expAmount;
+          const UserExpAmountFix = user.exposure + prevExpAmount - expAmount;
+          const UserExpAmount = Number(UserExpAmountFix.toFixed(2));
+          const UserAvlBalAmountAmt = user.availableBalance + prevExpAmount - expAmount;
+          const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(2));
+
           await User.findOneAndUpdate(
             { userId: userId },
             {
