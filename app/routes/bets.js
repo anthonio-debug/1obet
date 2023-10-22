@@ -81,12 +81,14 @@ const updateParentUserBalance = async (
     isDeleted: false,
   }).sort({ userId: -1 });
   let prev = 0;
-  parentUser.forEach((user) => {
-    let current = user.downLineShare;
+
+  for (const user of parentUser) {
+    let current    = user.downLineShare;
     let commission = current - prev;
     user['commission'] = commission;
     prev = current;
-  });
+  }
+
   for (const user of parentUser) {
     console.log(`user id ${user.userId} =====`, user.commission);
     user.exposure -= (user.commission / 100) * winningAmount;
@@ -105,6 +107,7 @@ const updateParentUserBalance = async (
       await position.save();
     }
   }
+  
 }
 
 const placeBet = async (req, res) => {
@@ -1981,8 +1984,7 @@ const placeBet = async (req, res) => {
           { runner: 9, amount: 0 },
         ];
         expoisureType = 2;
-      } else if ( type == 1 && !config.ExcludedBackLay.includes(subMarketDetail.Id)
-      ) {
+      } else if ( type == 1 && !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
       } else if ( type == 0 && !config.ExcludedBackLay.includes(subMarketDetail.Id) ) {
@@ -2254,8 +2256,21 @@ const placeBet = async (req, res) => {
           { calculateExp: false }
         );
       }
-
-      if (subMarketDetail.Id == config.Fancy) {
+      else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+        let setCalculateExpFalse = await Bets.updateMany(
+          {
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            fancyData: fancyData,
+            TargetScore: TargetScore,
+            betSession: currentSession,
+            status: 1
+          },
+          { calculateExp: false }
+        );
+      }
+      else{
         let setCalculateExpFalse = await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
