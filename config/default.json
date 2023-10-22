@@ -57,7 +57,7 @@
   "Cup": 12,
   "tiedMatch": 35,
   "overUnder": 14,
-  "raceOpenBefore" : 120000,
-  "sportsOpenBefore" : 60000000,
+  "raceOpenBefore" : 12000000,
+  "sportsOpenBefore" : 600000,
   "tossCloseTime":  2700000
 }
