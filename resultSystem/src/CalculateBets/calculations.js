@@ -109,7 +109,7 @@ async function handleLosingBet(bet) {
 
   console.log(`Bet ${bet._id} lost.`);
   const userId = bet.userId;
-  const loosingAmount = bet.loosingAmount;
+  const loosingAmount = bet.loosingAmount.toFixed(2);
   console.log("loosingAmount", loosingAmount);
 
   const userToUpdate = await User.findOne({
@@ -128,10 +128,10 @@ async function handleLosingBet(bet) {
   userToUpdate.clientPL -= loosingAmount;
   let userToUpdateAvailableBalance   = -loosingAmount;
   if(bet.calculateExp){
-    userToUpdateAvailableBalance += bet.exposureAmount
-    userToUpdate.exposure += bet.exposureAmount;
+    userToUpdateAvailableBalance += bet.exposureAmount.toFixed(2)
+    userToUpdate.exposure += bet.exposureAmount.toFixed(2);
   }
-  userToUpdate.availableBalance += userToUpdateAvailableBalance;
+  userToUpdate.availableBalance += userToUpdateAvailableBalance.toFixed(2);
   await userToUpdate.save();
 
   const updatedUser = await User.findOne({
@@ -200,8 +200,8 @@ async function handleLosingBet(bet) {
     return res.status(404).send({ message: "user not found" });
   }
 
-  const remainingAmount    = bet.winningAmount;
-  const TotalLoosingAmount = bet.loosingAmount;
+  const remainingAmount    = bet.winningAmount.toFixed(2);
+  const TotalLoosingAmount = bet.loosingAmount.toFixed(2);
 
   let prev = 0;
   parentUser.forEach((user) => {
