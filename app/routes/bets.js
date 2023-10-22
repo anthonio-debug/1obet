@@ -81,12 +81,14 @@ const updateParentUserBalance = async (
     isDeleted: false,
   }).sort({ userId: -1 });
   let prev = 0;
+
   for (const user of parentUser) {
     let current    = user.downLineShare;
     let commission = current - prev;
     user['commission'] = commission;
     prev = current;
   }
+
   for (const user of parentUser) {
     console.log(`user id ${user.userId} =====`, user.commission);
     user.exposure -= (user.commission / 100) * winningAmount;
@@ -105,6 +107,7 @@ const updateParentUserBalance = async (
       await position.save();
     }
   }
+  
 }
 
 const placeBet = async (req, res) => {
