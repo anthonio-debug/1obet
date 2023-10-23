@@ -112,10 +112,7 @@ async function handleLosingBet(bet) {
   const loosingAmount = Number(bet.loosingAmount.toFixed(2));
   console.log("loosingAmount", loosingAmount);
 
-  const userToUpdate = await User.findOne({
-    userId: userId,
-    isDeleted: false,
-  });
+  const userToUpdate = await User.findOne({ userId: userId, isDeleted: false });
 
   if (!userToUpdate) {
     return res.status(404).send({ message: "user not found" });
@@ -204,17 +201,20 @@ async function handleLosingBet(bet) {
   const TotalLoosingAmount = Number(bet.loosingAmount.toFixed(2));
 
   let prev = 0;
-  parentUser.forEach((user) => {
+  // parentUser.forEach((user) => {
+  for (const user of parentUser) {
     let current = user.downLineShare;
     user["commission"] = current - prev;
     prev = current;
-  });
+  }
+  // });
   console.log(" ======================== Commitions Calculated  Sucessfully ");
 
   let commissionFrom = userToUpdate.userId;
-  let upMovingAmount = TotalLoosingAmount;
+  let upMovingAmount = Number(TotalLoosingAmount.toFixed(2));
 
-  parentUser.forEach(async (user) => {
+  // parentUser.forEach(async (user) => {
+  for (const user of parentUser) {
     user.exposure += Number(((user.commission / 100) * remainingAmount).toFixed(2));
     user.availableBalance += Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(2));
     user.balance += Number(((user.commission / 100) * TotalLoosingAmount).toFixed(2));
@@ -250,9 +250,10 @@ async function handleLosingBet(bet) {
 
     console.log(" ======================== Parent User Cash Updating Sucessfully ");
 
-    upMovingAmount = Number((upMovingAmount - (user.commission / 100) * TotalLoosingAmount).toFixed(2));
+    upMovingAmount = Number((upMovingAmount - Number(((user.commission / 100) * TotalLoosingAmount).toFixed(2))).toFixed(2));
     commissionFrom = user.userId;
-  });
+  }
+  // });
 
   console.log(" ======================== Moving to Update  Bet Status ");
   await Bets.findByIdAndUpdate(bet._id, { status: 0, position: bet.loosingAmount * -1 });
@@ -286,17 +287,17 @@ async function handleWinningBet(bet) {
   let upMovingCommAmount
 
   if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker) {
-    remainingAmount      = Number(((bet.winningAmount / 100) * 98).toFixed(2));
-    commissionAmount     = Number(((bet.winningAmount / 100) * 2).toFixed(2));
-    totalRemainingAmount = Number(bet.winningAmount.toFixed(2));
+    remainingAmount      = Number(((Number(bet.winningAmount.toFixed(2)) / 100) * 98).toFixed(2));
+    commissionAmount     = Number(((Number(bet.winningAmount.toFixed(2)) / 100) * 2).toFixed(2));
+    totalRemainingAmount = Number(Number(bet.winningAmount.toFixed(2)).toFixed(2));
     TotalLoosingAmount   = Number(bet.loosingAmount.toFixed(2));
     upMovingAmount       = Number(totalRemainingAmount.toFixed(2))
     upMovingCommAmount   = Number(commissionAmount.toFixed(2))
   }
   else {
-    remainingAmount      = Number(bet.winningAmount.toFixed(2));
-    commissionAmount     = Number(((bet.winningAmount / 100) * 2).toFixed(2));
-    totalRemainingAmount = Number(bet.winningAmount.toFixed(2));
+    remainingAmount      = Number(Number(bet.winningAmount.toFixed(2)).toFixed(2));
+    commissionAmount     = Number(((Number(bet.winningAmount.toFixed(2)) / 100) * 2).toFixed(2));
+    totalRemainingAmount = Number(Number(bet.winningAmount.toFixed(2)).toFixed(2));
     TotalLoosingAmount   = Number(bet.loosingAmount.toFixed(2));
     upMovingAmount       = Number(totalRemainingAmount.toFixed(2))
     upMovingCommAmount   = Number(commissionAmount.toFixed(2))
@@ -465,7 +466,7 @@ async function handleWinningBet(bet) {
     upMovingCommAmount  = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(2));
     commissionFrom      = user.userId;
   };
-  await Bets.findByIdAndUpdate(bet._id, { status: 0, position: bet.winningAmount });
+  await Bets.findByIdAndUpdate(bet._id, { status: 0, position: Number(bet.winningAmount.toFixed(2)) });
   console.log(" betIdString =============== Starting  ");
   console.log(bet._id.toString());
   const betIdString = bet._id.toString();
@@ -495,10 +496,7 @@ const handleDrawBet = async (bet, status = 1) => {
   }
   await userToUpdate.save();
 
-  const updatedUser = await User.findOne({
-    userId: userId,
-    isDeleted: false,
-  });
+  const updatedUser = await User.findOne({ userId: userId, isDeleted: false });
 
   const user_new_balance = updatedUser.balance;
   const user_new_availableBalance = updatedUser.availableBalance;
