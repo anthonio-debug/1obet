@@ -518,7 +518,7 @@ const handleDrawBet = async (bet, status = 1) => {
   })
   await ExpTran.save();
 
-  const totalRemainingAmount = bet.winningAmount;
+  const totalRemainingAmount = Number(bet.winningAmount.toFixed(2));
 
   const parentUserIds = await getParents(userId);
   const parentUser = await User.find({
@@ -542,6 +542,7 @@ const handleDrawBet = async (bet, status = 1) => {
     user.exposure += Number(((user.commission / 100) * totalRemainingAmount).toFixed(2));
     user.availableBalance += Number(((user.commission / 100) * totalRemainingAmount).toFixed(2));
     user.save();
+    console.log(" ===================== ===================== ", Number(((user.commission / 100) * totalRemainingAmount).toFixed(2)));
   });
 
   await Bets.findByIdAndUpdate(bet._id, { status: status });
