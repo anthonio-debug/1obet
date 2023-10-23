@@ -69,63 +69,63 @@ async function getCasinoGames(req, res) {
     });
 }
 
-async function addCasinoGameDetails(req, res) {
-  try {
-    const user = await  User.find({ userId: req.body.userId })
-    const response = await axios.post(`${config.worldCasinoOnlineAuthUrl}`, {
-      partnerKey: config.worldCasinoOnlinePartnerKey,
-      game: {
-        gameCode: req.body.gameCode,
-        providerCode:  req.body.providerCode
-      },
-      timestamp: `${new Date().getTime() / 1000}`,
-      user: {
-        id: (req.body.userId).toString(),
-        currency: req.body.currency,
-        displayName: user.userName,
-        backUrl: config.worldCasinoOnlineRedirectionUrl
-      },
-    });
+// async function addCasinoGameDetails(req, res) {
+//   try {
+//     const user = await  User.find({ userId: req.body.userId })
+//     const response = await axios.post(`${config.worldCasinoOnlineAuthUrl}`, {
+//       partnerKey: config.worldCasinoOnlinePartnerKey,
+//       game: {
+//         gameCode: req.body.gameCode,
+//         providerCode:  req.body.providerCode
+//       },
+//       timestamp: `${new Date().getTime() / 1000}`,
+//       user: {
+//         id: (req.body.userId).toString(),
+//         currency: req.body.currency,
+//         displayName: user.userName,
+//         backUrl: config.worldCasinoOnlineRedirectionUrl
+//       },
+//     });
 
-    const resp = response.data;
-    if (resp.sessionId == null || resp.sessionId == undefined) {
-      res.status(400).send({ success: false, message: "Bad request", resp });
-    } else {
-      // const gameList = response.data.response;
-      // const bulkOps = gameList.map((game) => ({
-      //   updateOne: {
-      //     filter: { category: game.category },
-      //     update: {
-      //       $push: { games: { ...game, details: JSON.parse(game.details) } },
-      //     },
-      //     upsert: true,
-      //   },
-      // }));
+//     const resp = response.data;
+//     if (resp.sessionId == null || resp.sessionId == undefined) {
+//       res.status(400).send({ success: false, message: "Bad request", resp });
+//     } else {
+//       // const gameList = response.data.response;
+//       // const bulkOps = gameList.map((game) => ({
+//       //   updateOne: {
+//       //     filter: { category: game.category },
+//       //     update: {
+//       //       $push: { games: { ...game, details: JSON.parse(game.details) } },
+//       //     },
+//       //     upsert: true,
+//       //   },
+//       // }));
 
-      // await CasinoGames.bulkWrite(bulkOps);
+//       // await CasinoGames.bulkWrite(bulkOps);
 
-      // const games = await axios.get(
-      //   resp.launchURL
-      // );
+//       // const games = await axios.get(
+//       //   resp.launchURL
+//       // );
 
-      // const games = await axios.post(`${config.worldCasinoOnlineUrl}/games`, {
-      //   partnerKey: config.worldCasinoOnlinePartnerKey,
-      // });
+//       // const games = await axios.post(`${config.worldCasinoOnlineUrl}/games`, {
+//       //   partnerKey: config.worldCasinoOnlinePartnerKey,
+//       // });
 
-      res.send({
-        success: true,
-        message: "Casino games added successfully",
-        data: resp,
-        //games,
-      });
-    }
-  } catch (error) {
-    console.error(error);
-    res
-      .status(500)
-      .send({ success: false, message: "Failed to add casino games", error });
-  }
-}
+//       res.send({
+//         success: true,
+//         message: "Casino games added successfully",
+//         data: resp,
+//         //games,
+//       });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res
+//       .status(500)
+//       .send({ success: false, message: "Failed to add casino games", error });
+//   }
+// }
 
 async function getAsianCasinoGames(req, res) {
   try {
