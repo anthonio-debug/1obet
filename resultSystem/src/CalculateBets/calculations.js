@@ -488,9 +488,10 @@ const handleDrawBet = async (bet, status = 1) => {
   const user_prev_availableBalance = userToUpdate.availableBalance;
   const user_prev_exposure = userToUpdate.exposure;
   if(bet.calculateExp){
-    Number(bet.exposureAmount.toFixed(2))
-    userToUpdate.availableBalance = updatedUserBalance;
-    userToUpdate.exposure = updatedUserBalance;
+    const updatedUserAvlBalance = Number((userToUpdate.availableBalance + Number(bet.exposureAmount.toFixed(2))).toFixed(2));
+    const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount.toFixed(2))).toFixed(2));
+    userToUpdate.availableBalance = updatedUserAvlBalance;
+    userToUpdate.exposure = updatedUserExp;
   }
   await userToUpdate.save();
 
