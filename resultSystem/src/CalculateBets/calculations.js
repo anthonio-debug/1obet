@@ -488,8 +488,9 @@ const handleDrawBet = async (bet, status = 1) => {
   const user_prev_availableBalance = userToUpdate.availableBalance;
   const user_prev_exposure = userToUpdate.exposure;
   if(bet.calculateExp){
-    userToUpdate.availableBalance += Number(bet.exposureAmount.toFixed(2));
-    userToUpdate.exposure += Number(bet.exposureAmount.toFixed(2));
+    Number(bet.exposureAmount.toFixed(2))
+    userToUpdate.availableBalance = updatedUserBalance;
+    userToUpdate.exposure = updatedUserBalance;
   }
   await userToUpdate.save();
 
@@ -532,25 +533,31 @@ const handleDrawBet = async (bet, status = 1) => {
     return res.status(404).send({ message: "user not found !" });
   }
   let prev = 0;
-  parentUser.forEach((user) => {
+  // parentUser.forEach((user) => {
+  for (const user of parentUser) {
     let current = user.downLineShare;
     user["commission"] = current - prev;
     prev = current;
-  });
+  }
+  // });
 
-  parentUser.forEach((user) => {
-    const amountToBeAdded = Number(( user.exposure + ((user.commission / 100) * totalRemainingAmount)).toFixed(2));
-    user.exposure = amountToBeAdded;
-    user.availableBalance = amountToBeAdded;
+  // parentUser.forEach((user) => {
+  for (const user of parentUser) {
+    const amountToBeAddedExp = Number(( user.exposure + Number((user.commission / 100) * totalRemainingAmount).toFixed(2)).toFixed(2));
+    const amountToBeAddedAvlBalance = Number(( user.availableBalance + Number((user.commission / 100) * totalRemainingAmount).toFixed(2)).toFixed(2));
+    console.log(" ===================== exposure ===================== ",  Number(( user.exposure + ((user.commission / 100) * totalRemainingAmount)).toFixed(2)));
+    console.log(" ===================== availableBalance ===================== ",  Number(( user.availableBalance + ((user.commission / 100) * totalRemainingAmount)).toFixed(2)));
+    user.exposure = amountToBeAddedExp;
+    user.availableBalance = amountToBeAddedAvlBalance;
     user.save();
-    console.log(" ===================== ===================== ",  Number(( user.exposure + ((user.commission / 100) * totalRemainingAmount)).toFixed(2)));
-  });
+  }
+  // });
 
   await Bets.findByIdAndUpdate(bet._id, { status: status });
-  console.log(" betIdString =============== Starting  ");
+  console.log(" betIdString ============================== Starting  ");
   console.log(bet._id.toString());
   const betIdString = bet._id.toString();
-  console.log(" betIdString =============== ", betIdString);
+  console.log(" betIdString ============================== ", betIdString);
   await CurrentPosition.deleteMany({ betId: betIdString })
 }
 
