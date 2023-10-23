@@ -627,7 +627,7 @@ async function debit(req, res) {
           gameCode: game.gameCode, 
           providerRoundId: game.providerRoundId, 
           id: trans.id, 
-          type: "DEBIT"
+          // type: "DEBIT"
         },
         { session }
       );   
@@ -852,7 +852,7 @@ async function credit(req, res) {
           gameCode: game.gameCode, 
           providerRoundId: game.providerRoundId, 
           id: trans.id, 
-          type: "CREDIT"
+          // type: "CREDIT"
         },
         { session }
       );
