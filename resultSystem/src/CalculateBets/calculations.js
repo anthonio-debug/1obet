@@ -539,10 +539,11 @@ const handleDrawBet = async (bet, status = 1) => {
   });
 
   parentUser.forEach((user) => {
-    user.exposure += Number(((user.commission / 100) * totalRemainingAmount).toFixed(2));
-    user.availableBalance += Number(((user.commission / 100) * totalRemainingAmount).toFixed(2));
+    const amountToBeAdded = Number(( user.exposure + ((user.commission / 100) * totalRemainingAmount)).toFixed(2));
+    user.exposure = amountToBeAdded;
+    user.availableBalance = amountToBeAdded;
     user.save();
-    console.log(" ===================== ===================== ", Number(((user.commission / 100) * totalRemainingAmount).toFixed(2)));
+    console.log(" ===================== ===================== ",  Number(( user.exposure + ((user.commission / 100) * totalRemainingAmount)).toFixed(2)));
   });
 
   await Bets.findByIdAndUpdate(bet._id, { status: status });
