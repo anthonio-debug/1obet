@@ -543,8 +543,8 @@ const handleDrawBet = async (bet, status = 1) => {
 
   // parentUser.forEach((user) => {
   for (const user of parentUser) {
-    const amountToBeAddedExp = Number(( user.exposure + Number((user.commission / 100) * totalRemainingAmount).toFixed(2)).toFixed(2));
-    const amountToBeAddedAvlBalance = Number(( user.availableBalance + Number((user.commission / 100) * totalRemainingAmount).toFixed(2)).toFixed(2));
+    const amountToBeAddedExp = Number(( user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
+    const amountToBeAddedAvlBalance = Number(( user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
     console.log(" ===================== exposure ===================== ",  Number(( user.exposure + ((user.commission / 100) * totalRemainingAmount)).toFixed(2)));
     console.log(" ===================== availableBalance ===================== ",  Number(( user.availableBalance + ((user.commission / 100) * totalRemainingAmount)).toFixed(2)));
     user.exposure = amountToBeAddedExp;
