@@ -58,6 +58,7 @@
   "getLedgerDetails",
   "getAllDeposits",
   "addCasinoGameDetails",
+  "addEuCasinoGameDetails",
   "getAsianCasinoGames",
   "getCasinoGames",
   "getAllCasinoCategories",
