@@ -127,12 +127,48 @@ async function addCasinoGameDetails(req, res) {
   }
 }
 
+async function addEuCasinoGameDetails(req, res) {
+  if( req.decoded.role != '0' ){
+    return res.status(200).send({ message: 'you are not allowed to add games',success:false})
+  }
+  try {
+    const response = await axios.post(config.apiUrl, {
+      api_password: config.api_password,
+      api_login: config.api_username,
+      method: 'getGameList',
+      show_additional: true,
+      show_systems: 1,
+      currency: 'PKR',
+    });
+
+    console.log('Response:', response.data);
+    const gameList = response.data.response;
+    const bulkOps = gameList.map((game) => ({
+      updateOne: {
+        filter: { category: game.category },
+        update: {
+          $push: { games: { ...game, details: JSON.parse(game.details) } },
+        },
+        upsert: true,
+      },
+    }));
+
+    await CasinoGames.bulkWrite(bulkOps);
+    res.send({ success: true, message: 'Casino games added successfully' });
+  } catch (error) {
+    console.error(error);
+    res
+      .status(500)
+      .send({ success: false, message: 'Failed to add casino games' });
+  }
+}
+
 async function getAsianCasinoGames(req, res) {
   try {
     const providers = await AsianProviders.find();
 
     providers &&
-      (await providers.forEach(async (provider) => {
+      ( providers.forEach(async (provider) => {
         const response = await axios.post(
           `${config.worldCasinoOnlineApiUrl}/games`,
           {
@@ -872,6 +908,10 @@ loginRouter.get("/getCategoryCasinoGames", getCategoryCasinoGames);
 
 loginRouter.post("/getAllSelectedCasinos", getAllSelectedCasinos);
 loginRouter.post("/getListAsianGames", getListAsianGames);
+
+loginRouter.get("/addEuCasinoGameDetails", addEuCasinoGameDetails);
+
+
 
 loginRouter.post(
   "/addSelectedCasinoCategories",
