@@ -966,7 +966,9 @@ async function credit(req, res) {
             { id: trans.referenceId}, 
             {$set : { cancelProcessed: true }
           });
-          const updatedavailableBalance = user?.availableBalance - (amount);
+          let debitAmount =  parseInt(payload.transactionData.amount);
+          const amount = debitAmount *casinoMultiples;
+          const updatedavailableBalance = user?.availableBalance + (amount);
           const userResponse = await users.updateOne(
             { userId: parseInt(payload.user.id)},
             {
