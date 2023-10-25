@@ -723,17 +723,6 @@ async function debit(req, res) {
             },
             { session }
           )
-          const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
-          return res.json({
-            partnerKey: config.worldCasinoOnlinePartnerKey,
-            status:{
-              "code": "SUCCESS",
-              "message": ""
-            },
-            balance: (updatedUser.availableBalance) / casinoMultiples,
-            userId: updatedUser.userId.toString(),
-            timestamp: timestamp
-          });
         } 
       }else {
         let debitAmount =  parseInt(payload.transactionData.amount);
@@ -830,16 +819,16 @@ async function debit(req, res) {
 
   } catch (err) {
     console.error(`Error  ${err} `);
-    // return res.json({
-    //   partnerKey : req?.body?.partnerKey,
-    //   userId : req?.body?.user?.id,
-    //   balance : 0.0,
-    //   status:{
-    //     "code" : "VALIDATION_ERROR",
-    //     "message" : "Internal server error !"
-    //   },
-    //   timestamp : new Date().getTime() / 1000
-    // })
+    return res.json({
+      partnerKey : req?.body?.partnerKey,
+      userId : req?.body?.user?.id,
+      balance : 0.0,
+      status:{
+        "code" : "VALIDATION_ERROR",
+        "message" : "Internal server error !"
+      },
+      timestamp : new Date().getTime() / 1000
+    })
   } finally {
     await session.endSession();
     await client.close();
