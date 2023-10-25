@@ -695,7 +695,7 @@ const debit =  async(req, res) => {
         if(!transAvaiable  || transAvaiable.cancelProcessed ==  1 ){
           console.log( " ================================= 6 =================================== ");
           await session.abortTransaction();
-          return await res.json({
+          return res.json({
             partnerKey : payload?.partnerKey,
             userId : payload?.user?.id,
             balance : user ?  user?.availableBalance / casinoMultiples : 0.0,
@@ -726,7 +726,6 @@ const debit =  async(req, res) => {
             { session }
           )
         } 
-        return;
       }
       
       else {
@@ -811,16 +810,16 @@ const debit =  async(req, res) => {
       }
     }, transactionOptions);
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
-    return res.json({
-      partnerKey: config.worldCasinoOnlinePartnerKey,
-      status:{
-        "code": "SUCCESS",
-        "message": ""
-      },
-      balance: ( updatedUser.availableBalance) / casinoMultiples,
-      userId: updatedUser.userId.toString(),
-      timestamp: timestamp
-    });
+    // return res.json({
+    //   partnerKey: config.worldCasinoOnlinePartnerKey,
+    //   status:{
+    //     "code": "SUCCESS",
+    //     "message": ""
+    //   },
+    //   balance: ( updatedUser.availableBalance) / casinoMultiples,
+    //   userId: updatedUser.userId.toString(),
+    //   timestamp: timestamp
+    // });
 
   } catch (err) {
     console.log( " ================================= 12 =================================== ");
