@@ -597,7 +597,6 @@ const debit =  async(req, res) => {
     const users       = client.db(`${config.DBNAME}`).collection('users');
     const payload     = req.body;
     const timestamp   = new Date().getTime() / 1000;
-    let TransStatus = 0
 
     console.log(" ================================================================= ");
     console.log(" ====================== Debit Request Ruery ====================== ", payload);
@@ -860,6 +859,7 @@ const credit = async (req, res) => {
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
+  const timestamp   = new Date().getTime() / 1000;
   try {
     const casinoCalls = client.db(`${config.DBNAME}`).collection('asiancasinocalls');
     const users       = client.db(`${config.DBNAME}`).collection('users');
