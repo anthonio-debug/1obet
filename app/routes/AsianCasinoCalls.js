@@ -710,8 +710,8 @@ async function debit(req, res) {
         else {
           // Will cancel Bet Here 
           const transAvaiable = await casinoCalls.findOneAndUpdate(
-            { id: trans.referenceId}, 
-            {$set : { cancelProcessed: 1 }
+            { id: trans.referenceId }, 
+            { $set : { cancelProcessed: 1 }
           });
           let debitAmount =  parseInt(payload.transactionData.amount);
           const amount = debitAmount *casinoMultiples;
@@ -804,7 +804,7 @@ async function debit(req, res) {
             { session }
           )
         }
-        await session.commitTransaction();
+        // await session.commitTransaction();
       }
     }, transactionOptions);
 
@@ -823,7 +823,7 @@ async function debit(req, res) {
     });
 
   } catch (err) {
-    console.error(`Error :  ${err} `);
+    console.error(` Error :  ${err} `);
     // return res.json({
     //   partnerKey : req?.body?.partnerKey,
     //   userId : req?.body?.user?.id,
