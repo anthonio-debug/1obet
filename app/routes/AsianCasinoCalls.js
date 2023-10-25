@@ -585,7 +585,7 @@ const balance = async (req, res) => {
   }
 }
 
-const debit =  async (req, res) => {
+const debit =  async(req, res) => {
   console.warn(" ================================================================= ");
   console.warn(" ========================= DEBIT REQUEST ========================= ");
   console.warn(" ================================================================= ");
@@ -688,7 +688,6 @@ const debit =  async (req, res) => {
           },
           timestamp : timestamp
         })
-        res.end();
       }
 
       else if (sameTransId > 0 && game.description == "cancel" ) {
@@ -696,7 +695,7 @@ const debit =  async (req, res) => {
         if(!transAvaiable  || transAvaiable.cancelProcessed ==  1 ){
           console.log( " ================================= 6 =================================== ");
           await session.abortTransaction();
-          return res.json({
+          return await res.json({
             partnerKey : payload?.partnerKey,
             userId : payload?.user?.id,
             balance : user ?  user?.availableBalance / casinoMultiples : 0.0,
