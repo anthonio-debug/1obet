@@ -708,6 +708,10 @@ async function debit(req, res) {
         } 
         else {
           // Will cancel Bet Here 
+          const transAvaiable = await casinoCalls.findOneAndUpdate(
+            { id: trans.referenceId}, 
+            {$set : { cancelProcessed: true }
+          });
         } 
       }
 
@@ -936,7 +940,10 @@ async function credit(req, res) {
           })
         } 
         else {
-          // Will cancel Bet Here 
+          const transAvaiable = await casinoCalls.findOneAndUpdate(
+            { id: trans.referenceId}, 
+            {$set : { cancelProcessed: true }
+          });
         } 
       }
 
