@@ -693,7 +693,7 @@ async function debit(req, res) {
 
       if (sameTransId > 0 && game.description == "cancel" ) {
         const transAvaiable = await casinoCalls.findOne({ id: trans.referenceId});
-        if(!transAvaiable  || transAvaiable.cancelProcessed ==  true ){
+        if(!transAvaiable  || transAvaiable.cancelProcessed ==  1 ){
           await session.abortTransaction();
           return res.json({
             partnerKey : payload?.partnerKey,
@@ -711,6 +711,27 @@ async function debit(req, res) {
           const transAvaiable = await casinoCalls.findOneAndUpdate(
             { id: trans.referenceId}, 
             {$set : { cancelProcessed: true }
+          });
+          const updatedavailableBalance = user?.availableBalance + (amount);
+          const userResponse = await users.updateOne(
+            { userId: parseInt(payload.user.id)},
+            {
+              $set: {
+                availableBalance: updatedavailableBalance
+              }
+            },
+            { session }
+          )
+          const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
+          return res.json({
+            partnerKey: config.worldCasinoOnlinePartnerKey,
+            status:{
+              "code": "SUCCESS",
+              "message": ""
+            },
+            balance: (updatedUser.availableBalance) / casinoMultiples,
+            userId: updatedUser.userId.toString(),
+            timestamp: timestamp
           });
         } 
       }
@@ -800,14 +821,13 @@ async function debit(req, res) {
     await session.commitTransaction();
 
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
-    const testAmt = payload.transactionData.amount * casinoMultiples
     return res.json({
       partnerKey: config.worldCasinoOnlinePartnerKey,
       status:{
         "code": "SUCCESS",
         "message": ""
       },
-      balance: ( updatedUser.availableBalance - testAmt) / casinoMultiples,
+      balance: ( updatedUser.availableBalance) / casinoMultiples,
       userId: updatedUser.userId.toString(),
       timestamp: timestamp
     });
@@ -926,7 +946,7 @@ async function credit(req, res) {
 
       if (sameTransId > 0 && game.description == "cancel" ) {
         const transAvaiable = await casinoCalls.findOne({ id: trans.referenceId});
-        if(!transAvaiable  || transAvaiable.cancelProcessed ==  true ){
+        if(!transAvaiable  || transAvaiable.cancelProcessed ==  1 ){
           await session.abortTransaction();
           return res.json({
             partnerKey : payload?.partnerKey,
@@ -943,6 +963,27 @@ async function credit(req, res) {
           const transAvaiable = await casinoCalls.findOneAndUpdate(
             { id: trans.referenceId}, 
             {$set : { cancelProcessed: true }
+          });
+          const updatedavailableBalance = user?.availableBalance - (amount);
+          const userResponse = await users.updateOne(
+            { userId: parseInt(payload.user.id)},
+            {
+              $set: {
+                availableBalance: updatedavailableBalance
+              }
+            },
+            { session }
+          )
+          const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
+          return res.json({
+            partnerKey: config.worldCasinoOnlinePartnerKey,
+            status:{
+              "code": "SUCCESS",
+              "message": ""
+            },
+            balance: (updatedUser.availableBalance) / casinoMultiples,
+            userId: updatedUser.userId.toString(),
+            timestamp: timestamp
           });
         } 
       }
@@ -1039,7 +1080,6 @@ async function credit(req, res) {
     await session.commitTransaction();
 
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
-    const testAmt = payload.transactionData.amount * casinoMultiples
     console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
     return res.json({
       partnerKey: config.worldCasinoOnlinePartnerKey,
@@ -1047,7 +1087,7 @@ async function credit(req, res) {
         "code": "SUCCESS",
         "message": ""
       },
-      balance: (updatedUser.availableBalance + testAmt) / casinoMultiples,
+      balance: (updatedUser.availableBalance) / casinoMultiples,
       userId: updatedUser.userId.toString(),
       timestamp: new Date().getTime().toString()
     });
