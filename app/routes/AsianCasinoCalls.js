@@ -605,6 +605,7 @@ async function debit(req, res) {
     const game  = payload.gameData;
     const trans = payload.transactionData;
     if(payload.partnerKey != partnerKey){
+      console.log( " ================================= 1 =================================== ");
       await session.abortTransaction();
       return res.json({
         partnerKey : payload?.partnerKey,
@@ -634,6 +635,7 @@ async function debit(req, res) {
       );   
       const user = await users.findOne({ userId: parseInt(payload.user.id) })
       if (!user) {
+        console.log( " ================================= 2 =================================== ");
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -649,6 +651,7 @@ async function debit(req, res) {
 
       /* === Validations can work on it === */ 
       if(!trans.id || trans.id == "" ){
+        console.log( " ================================= 3 =================================== ");
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -665,7 +668,8 @@ async function debit(req, res) {
 
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if(checkMarketBlockedResponse == 1){
-        await session.abortTransaction(user);
+        console.log( " ================================= 4 =================================== ");
+        await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
           userId : payload?.user?.id,
@@ -679,6 +683,7 @@ async function debit(req, res) {
       }
 
       if (sameTransId > 0 && game.description != "cancel" ){
+        console.log( " ================================= 5 =================================== ");
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -695,6 +700,7 @@ async function debit(req, res) {
       else if (sameTransId > 0 && game.description == "cancel" ) {
         const transAvaiable = await casinoCalls.findOne({ id: trans.referenceId});
         if(!transAvaiable  || transAvaiable.cancelProcessed ==  1 ){
+          console.log( " ================================= 6 =================================== ");
           await session.abortTransaction();
           return res.json({
             partnerKey : payload?.partnerKey,
@@ -708,6 +714,7 @@ async function debit(req, res) {
           })
         } 
         else {
+          console.log( " ================================= Come into ELSE =================================== ");
           // Will cancel Bet Here 
           const transAvaiable = await casinoCalls.findOneAndUpdate(
             { id: trans.referenceId }, 
@@ -716,7 +723,7 @@ async function debit(req, res) {
           let debitAmount =  parseInt(payload.transactionData.amount);
           const amount = debitAmount *casinoMultiples;
           const updatedavailableBalance = user?.availableBalance + (amount);
-          const userResponse = await users.updateOne(
+          await users.updateOne(
             { userId: parseInt(payload.user.id)},
             {
               $set: {
@@ -729,9 +736,11 @@ async function debit(req, res) {
       }
       
       else {
+        console.log( " ================================= 10 =================================== ");
         let debitAmount =  parseInt(payload.transactionData.amount);
         const amount    = debitAmount *casinoMultiples;
         if (debitAmount > user.availableBalance * casinoMultiples) {
+          
           await session.abortTransaction();
           return res.json({
             partnerKey : payload?.partnerKey,
@@ -808,7 +817,7 @@ async function debit(req, res) {
       }
     }, transactionOptions);
 
-
+    console.log( " ================================= 11 =================================== ");
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
     return res.json({
       partnerKey: config.worldCasinoOnlinePartnerKey,
@@ -822,6 +831,7 @@ async function debit(req, res) {
     });
 
   } catch (err) {
+    console.log( " ================================= 12 =================================== ");
     console.error(` Error :  ${err} `);
     return res.json({
       partnerKey : req?.body?.partnerKey,
@@ -861,12 +871,7 @@ async function credit(req, res) {
       const sameTransId = await casinoCalls.countDocuments(
         {
           userId: parseInt(payload.user.id),
-          // providerTransactionId: game.providerTransactionId, 
-          // providerCode: game.providerCode, 
-          // gameCode: game.gameCode, 
-          // providerRoundId: game.providerRoundId, 
-          id: trans.id, 
-          // type: "CREDIT"
+          id: trans.id
         },
         { session }
       );
@@ -890,6 +895,7 @@ async function credit(req, res) {
 
       /* === Validations can work on it === */ 
       if(!trans.id || trans.id == "" ){
+        await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
           userId : payload?.user?.id,
@@ -906,7 +912,7 @@ async function credit(req, res) {
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
 
       if(checkMarketBlockedResponse == 1){
-        await session.abortTransaction(user);
+        await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
           userId : payload?.user?.id,
@@ -919,7 +925,7 @@ async function credit(req, res) {
         })
       }
 
-      if (sameTransId > 0 && game.description != "cancel" ) {
+      if (sameTransId > 0 && game.description?.toLowerCase() != "cancel" ) {
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -933,10 +939,11 @@ async function credit(req, res) {
         })
       }
 
-      else if (sameTransId > 0 && game.description == "cancel" ) {
+      else if (sameTransId > 0 && game.description?.toLowerCase() == "cancel" ) {
         const transAvaiable = await casinoCalls.findOne({ id: trans.referenceId});
         if(!transAvaiable  || transAvaiable.cancelProcessed ==  1 ){
           await session.abortTransaction();
+          console.log("==================== BEFORE ========================");
           return res.json({
             partnerKey : payload?.partnerKey,
             userId : payload?.user?.id,
@@ -947,6 +954,7 @@ async function credit(req, res) {
             },
             timestamp : timestamp
           })
+          console.log("==================== BEFORE ========================");
         } 
         else {
           const transAvaiable = await casinoCalls.findOneAndUpdate(
@@ -1100,8 +1108,6 @@ async function credit(req, res) {
   }
 }
 
-
-// Cancel transaction may not exist or already processed
 
 router.post('/balance', balance);
 router.post('/debit', debit);
