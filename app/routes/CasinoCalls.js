@@ -606,7 +606,7 @@ async function debitfun(req, res) {
       }
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if(checkMarketBlockedResponse == 1){
-        await session.abortTransaction(user);
+        await session.abortTransaction();
         return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
       }
 
@@ -910,6 +910,11 @@ function casino(req, res) {
     default:
       return res.send({ status: '400', msg: 'Invalid action' });
   }
+}
+
+
+function abc(){
+  
 }
 
 router.get('/casino', casino);
