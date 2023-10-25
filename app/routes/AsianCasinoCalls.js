@@ -804,9 +804,10 @@ async function debit(req, res) {
             { session }
           )
         }
+        await session.commitTransaction();
       }
     }, transactionOptions);
-    await session.commitTransaction();
+
 
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
     
