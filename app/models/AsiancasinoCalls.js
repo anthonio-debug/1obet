@@ -17,7 +17,7 @@ const casinoCallsSchema = new mongoose.Schema({
   transactionData: { type: Object, required: false },
   timestamp: { type: String },
   type:  { type: String },
-  cancelProcessed: { type: Boolean, default: false },
+  cancelProcessed: { type: Number, default: 0 },
 });
 
 const AsianCasinoCalls = mongoose.model('AsianCasinoCalls', casinoCallsSchema);
