@@ -20,6 +20,9 @@ const casinoCallsSchema = new mongoose.Schema({
   cancelProcessed: { type: Number, default: 0 },
 });
 
+
+
+
 const AsianCasinoCalls = mongoose.model('AsianCasinoCalls', casinoCallsSchema);
 
 module.exports = AsianCasinoCalls;

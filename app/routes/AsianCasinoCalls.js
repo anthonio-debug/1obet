@@ -690,7 +690,7 @@ async function debit(req, res) {
         })
       }
 
-      if (sameTransId > 0 && game.description == "cancel" ) {
+      else if (sameTransId > 0 && game.description == "cancel" ) {
         const transAvaiable = await casinoCalls.findOne({ id: trans.referenceId});
         if(!transAvaiable  || transAvaiable.cancelProcessed ==  1 ){
           await session.abortTransaction();
@@ -709,7 +709,7 @@ async function debit(req, res) {
           // Will cancel Bet Here 
           const transAvaiable = await casinoCalls.findOneAndUpdate(
             { id: trans.referenceId}, 
-            {$set : { cancelProcessed: true }
+            {$set : { cancelProcessed: 1 }
           });
           let debitAmount =  parseInt(payload.transactionData.amount);
           const amount = debitAmount *casinoMultiples;
@@ -820,7 +820,6 @@ async function debit(req, res) {
       }
     }, transactionOptions);
 
-    await session.commitTransaction();
 
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
     return res.json({
@@ -847,6 +846,7 @@ async function debit(req, res) {
       timestamp : timestamp
     })
   } finally {
+    await session.commitTransaction();
     await session.endSession();
     await client.close();
   }
@@ -946,7 +946,7 @@ async function credit(req, res) {
         })
       }
 
-      if (sameTransId > 0 && game.description == "cancel" ) {
+      else if (sameTransId > 0 && game.description == "cancel" ) {
         const transAvaiable = await casinoCalls.findOne({ id: trans.referenceId});
         if(!transAvaiable  || transAvaiable.cancelProcessed ==  1 ){
           await session.abortTransaction();
@@ -964,7 +964,7 @@ async function credit(req, res) {
         else {
           const transAvaiable = await casinoCalls.findOneAndUpdate(
             { id: trans.referenceId}, 
-            {$set : { cancelProcessed: true }
+            {$set : { cancelProcessed: 1 }
           });
           let debitAmount =  parseInt(payload.transactionData.amount);
           const amount = debitAmount *casinoMultiples;
@@ -1081,8 +1081,6 @@ async function credit(req, res) {
 
     }, transactionOptions);
 
-    await session.commitTransaction();
-
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
     console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
     return res.json({
@@ -1109,6 +1107,7 @@ async function credit(req, res) {
       timestamp : timestamp
     })
   } finally {
+    await session.commitTransaction();
     await session.endSession();
     await client.close();
   }
