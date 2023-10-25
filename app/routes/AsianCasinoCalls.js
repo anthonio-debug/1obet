@@ -831,14 +831,14 @@ async function debit(req, res) {
   } catch (err) {
     console.error(`Error  ${err} `);
     return res.json({
-      partnerKey : payload?.partnerKey,
-      userId : payload?.user?.id,
+      partnerKey : req?.body?.partnerKey,
+      userId : req?.body?.user?.id,
       balance : 0.0,
       status:{
         "code" : "VALIDATION_ERROR",
         "message" : "Internal server error !"
       },
-      timestamp : timestamp
+      timestamp : new Date().getTime() / 1000
     })
   } finally {
     await session.endSession();
