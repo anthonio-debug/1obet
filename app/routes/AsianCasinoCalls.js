@@ -585,7 +585,6 @@ async function balance(req, res){
   }
 }
 
-
 async function debit(req, res) {
   console.warn(" ================================================================= ");
   console.warn(" ========================= DEBIT REQUEST ========================= ");
@@ -677,7 +676,7 @@ async function debit(req, res) {
         })
       }
 
-      if (sameTransId > 0 && game.description != "cancel" ) {
+      if (sameTransId > 0 && game.description != "cancel" ){
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -712,6 +711,7 @@ async function debit(req, res) {
             { id: trans.referenceId}, 
             {$set : { cancelProcessed: true }
           });
+          const amount = debitAmount *casinoMultiples;
           const updatedavailableBalance = user?.availableBalance + (amount);
           const userResponse = await users.updateOne(
             { userId: parseInt(payload.user.id)},
@@ -804,6 +804,7 @@ async function debit(req, res) {
           gameData: game,
           transactionData: trans,
           timestamp: payload.timestamp,
+          cancelProcessed: 0,
           type: "DEBIT"
         })
         const userResponse = await users.updateOne(
@@ -1109,6 +1110,8 @@ async function credit(req, res) {
     await client.close();
   }
 }
+
+
 // Cancel transaction may not exist or already processed
 
 router.post('/balance', balance);
