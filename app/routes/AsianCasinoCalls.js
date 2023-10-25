@@ -622,10 +622,11 @@ async function debit(req, res) {
       const sameTransId = await casinoCalls.countDocuments(
         {
           userId: parseInt(payload.user.id),
-          providerTransactionId: game.providerTransactionId, 
-          providerCode: game.providerCode, 
-          gameCode: game.gameCode, 
-          providerRoundId: game.providerRoundId, 
+          // providerTransactionId: game.providerTransactionId, 
+          // providerCode: game.providerCode, 
+          // gameCode: game.gameCode, 
+          // description:  game.description, 
+          // providerRoundId: game.providerRoundId, 
           id: trans.id, 
           // type: "DEBIT"
         },
@@ -847,10 +848,10 @@ async function credit(req, res) {
       const sameTransId = await casinoCalls.countDocuments(
         {
           userId: parseInt(payload.user.id),
-          providerTransactionId: game.providerTransactionId, 
-          providerCode: game.providerCode, 
-          gameCode: game.gameCode, 
-          providerRoundId: game.providerRoundId, 
+          // providerTransactionId: game.providerTransactionId, 
+          // providerCode: game.providerCode, 
+          // gameCode: game.gameCode, 
+          // providerRoundId: game.providerRoundId, 
           id: trans.id, 
           // type: "CREDIT"
         },
