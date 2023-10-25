@@ -967,8 +967,8 @@ const credit = async (req, res) => {
           });
           let debitAmount =  parseInt(payload.transactionData.amount);
           const amount = debitAmount *casinoMultiples;
-          const updatedavailableBalance = user?.availableBalance + (amount);
-          const userResponse = await users.updateOne(
+          const updatedavailableBalance = user?.availableBalance - (amount);
+          await users.updateOne(
             { userId: parseInt(payload.user.id)},
             {
               $set: {
@@ -978,6 +978,8 @@ const credit = async (req, res) => {
             { session }
           )
           const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
+          console.log(" Amount Returnning to Casino from DEBIT  ", updatedUser.availableBalance / casinoMultiples);
+          await session.commitTransaction();
           return res.json({
             partnerKey: config.worldCasinoOnlinePartnerKey,
             status:{
@@ -986,112 +988,117 @@ const credit = async (req, res) => {
             },
             balance: (updatedUser.availableBalance) / casinoMultiples,
             userId: updatedUser.userId.toString(),
-            timestamp: timestamp
+            timestamp: new Date().getTime().toString()
           });
         } 
       }
+      
+      else {
+        if (parseInt( payload.transactionData.amount) < 0 ) {
+          await session.abortTransaction();
+          return res.json({
+            status: 500,
+            balance: user.availableBalance / casinoMultiples
+          });
+        }
 
-      if (parseInt( payload.transactionData.amount) < 0 ) {
-        await session.abortTransaction();
+        let creditAmount =  parseInt(payload.transactionData.amount);
+        const amount    = creditAmount *casinoMultiples;
+
+        const updatedavailableBalance = user?.availableBalance + (amount);
+
+        if (creditAmount > user.availableBalance * casinoMultiples) {
+          await session.abortTransaction();
+          return res.json({
+            partnerKey : payload?.partnerKey,
+            userId : payload?.user?.id,
+            balance : user?.availableBalance / casinoMultiples,
+            status:{
+              "code":"VALIDATION_ERROR",
+              "message":"insufficient balance"
+            },
+            timestamp : timestamp
+          })
+        }
+
+        if (parseInt(payload.transactionData.amount) < 0) {
+          await session.abortTransaction();    
+          return res.json({
+            partnerKey : payload?.partnerKey,
+            userId : payload?.user?.id,
+            balance : user ?  user?.availableBalance / casinoMultiples : 0.0,
+            status:{
+              code:"VALIDATION_ERROR",
+              message:"Field Amount format is not correct"
+            },
+            timestamp : timestamp
+          })
+        }
+
+        if (updatedavailableBalance < 0) {
+          await session.abortTransaction();
+          return res.json({
+            partnerKey : payload?.partnerKey,
+            userId : payload?.user?.id,
+            balance : user? user.availableBalance / casinoMultiples: 0.0,
+            status:{
+              "code":"VALIDATION_ERROR",
+              "message":"insufficient balance"
+            },
+            timestamp : timestamp
+          })
+        }
+
+        const response = await WinLoseTransManagement(payload, 1);
+        if(response == 1){
+          await casinoCalls.insertOne({
+            userId: parseInt(payload?.user?.id),
+            currency: payload?.user?.currency,
+            partnerKey: payload?.partnerKey,
+            providerCode: game?.providerCode,
+            providerTransactionId: game?.providerTransactionId,
+            gameCode: game?.gameCode,
+            description: game?.description,
+            providerRoundId: game?.providerRoundId,
+            id: trans?.id,
+            amount: trans?.id,
+            referenceId: trans?.id,
+            user: payload?.user,
+            gameData: game,
+            transactionData: trans,
+            timestamp: payload.timestamp,
+            type: "CREDIT"
+          })
+          const userResponse = await users.updateOne(
+            { userId: parseInt(payload.user.id)},
+            {
+              $set: {
+                availableBalance: updatedavailableBalance
+              }
+            },
+            { session }
+          )
+          console.warn(" ================== RESPONSE INSIDE ================== ");
+        }
+
+        const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
+        console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
+        await session.commitTransaction();
         return res.json({
-          status: 500,
-          balance: user.availableBalance / casinoMultiples
+          partnerKey: config.worldCasinoOnlinePartnerKey,
+          status:{
+            "code": "SUCCESS",
+            "message": ""
+          },
+          balance: (updatedUser.availableBalance) / casinoMultiples,
+          userId: updatedUser.userId.toString(),
+          timestamp: new Date().getTime().toString()
         });
+
       }
-
-      let creditAmount =  parseInt(payload.transactionData.amount);
-      const amount    = creditAmount *casinoMultiples;
-
-      const updatedavailableBalance = user?.availableBalance + (amount);
-
-      if (creditAmount > user.availableBalance * casinoMultiples) {
-        await session.abortTransaction();
-        return res.json({
-          partnerKey : payload?.partnerKey,
-          userId : payload?.user?.id,
-          balance : user?.availableBalance / casinoMultiples,
-          status:{
-            "code":"VALIDATION_ERROR",
-            "message":"insufficient balance"
-          },
-          timestamp : timestamp
-        })
-      }
-
-      if (parseInt(payload.transactionData.amount) < 0) {
-        await session.abortTransaction();    
-        return res.json({
-          partnerKey : payload?.partnerKey,
-          userId : payload?.user?.id,
-          balance : user ?  user?.availableBalance / casinoMultiples : 0.0,
-          status:{
-            code:"VALIDATION_ERROR",
-            message:"Field Amount format is not correct"
-          },
-          timestamp : timestamp
-        })
-      }
-
-      if (updatedavailableBalance < 0) {
-        await session.abortTransaction();
-        return res.json({
-          partnerKey : payload?.partnerKey,
-          userId : payload?.user?.id,
-          balance : user? user.availableBalance / casinoMultiples: 0.0,
-          status:{
-            "code":"VALIDATION_ERROR",
-            "message":"insufficient balance"
-          },
-          timestamp : timestamp
-        })
-      }
-
-      const response = await WinLoseTransManagement(payload, 1);
-      if(response == 1){
-        await casinoCalls.insertOne({
-          userId: parseInt(payload?.user?.id),
-          currency: payload?.user?.currency,
-          partnerKey: payload?.partnerKey,
-          providerCode: game?.providerCode,
-          providerTransactionId: game?.providerTransactionId,
-          gameCode: game?.gameCode,
-          description: game?.description,
-          providerRoundId: game?.providerRoundId,
-          id: trans?.id,
-          amount: trans?.id,
-          referenceId: trans?.id,
-          user: payload?.user,
-          gameData: game,
-          transactionData: trans,
-          timestamp: payload.timestamp,
-          type: "CREDIT"
-        })
-        const userResponse = await users.updateOne(
-          { userId: parseInt(payload.user.id)},
-          {
-            $set: {
-              availableBalance: updatedavailableBalance
-            }
-          },
-          { session }
-        )
-        console.warn(" ================== RESPONSE INSIDE ================== ");
-      }      
-
     }, transactionOptions);
 
-    const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
-    console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
-    return res.json({
-      partnerKey: config.worldCasinoOnlinePartnerKey,
-      status:{
-        "code": "SUCCESS",
-        "message": ""
-      },
-      balance: (updatedUser.availableBalance) / casinoMultiples,
-      userId: updatedUser.userId.toString(),
-      timestamp: new Date().getTime().toString()
-    });
+
 
   } catch (err) {
     console.error(`Internal Error ${err}`);
