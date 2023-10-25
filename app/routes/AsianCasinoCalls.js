@@ -690,7 +690,7 @@ async function debit(req, res) {
         })
       }
 
-      if (sameTransId > 0 && game.description == "cancel" ) {
+      else if (sameTransId > 0 && game.description == "cancel" ) {
         const transAvaiable = await casinoCalls.findOne({ id: trans.referenceId});
         if(!transAvaiable  || transAvaiable.cancelProcessed ==  1 ){
           await session.abortTransaction();
@@ -946,7 +946,7 @@ async function credit(req, res) {
         })
       }
 
-      if (sameTransId > 0 && game.description == "cancel" ) {
+      else if (sameTransId > 0 && game.description == "cancel" ) {
         const transAvaiable = await casinoCalls.findOne({ id: trans.referenceId});
         if(!transAvaiable  || transAvaiable.cancelProcessed ==  1 ){
           await session.abortTransaction();
