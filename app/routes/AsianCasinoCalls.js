@@ -597,6 +597,7 @@ const debit =  async(req, res) => {
     const users       = client.db(`${config.DBNAME}`).collection('users');
     const payload     = req.body;
     const timestamp   = new Date().getTime() / 1000;
+    let TransStatus = 0
 
     console.log(" ================================================================= ");
     console.log(" ====================== Debit Request Ruery ====================== ", payload);
@@ -708,7 +709,6 @@ const debit =  async(req, res) => {
         } 
         else {
           console.log( " ================================= Come into ELSE =================================== ");
-          // Will cancel Bet Here 
           const transAvaiable = await casinoCalls.findOneAndUpdate(
             { id: trans.referenceId }, 
             { $set : { cancelProcessed: 1 }
@@ -726,6 +726,7 @@ const debit =  async(req, res) => {
             { session }
           )
           const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
+          await session.commitTransaction();
           return res.json({
             partnerKey: config.worldCasinoOnlinePartnerKey,
             status:{
@@ -818,6 +819,7 @@ const debit =  async(req, res) => {
           )
         }
         const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
+        await session.commitTransaction();
         return res.json({
           partnerKey: config.worldCasinoOnlinePartnerKey,
           status:{
@@ -830,7 +832,6 @@ const debit =  async(req, res) => {
         });
       }
     }, transactionOptions);
-    await session.commitTransaction();
 
 
   } catch (err) {
@@ -1105,7 +1106,6 @@ const credit = async (req, res) => {
       timestamp : timestamp
     })
   } finally {
-    await session.commitTransaction();
     await session.endSession();
     await client.close();
   }
