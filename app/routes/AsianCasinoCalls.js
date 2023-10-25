@@ -489,9 +489,9 @@ const WinLoseTransManagement = async (payload, action) => {
 }
 
 const balance = async (req, res) => {
-  console.warn(" ================================================================= ");
-  console.warn(" ======================== balance REQUEST ======================== ");
-  console.warn(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ======================== balance REQUEST ======================== ");
+  console.log(" ================================================================= ");
   const payload     = req.body;
   const timestamp   = new Date().getTime() / 1000
   try {
@@ -586,9 +586,9 @@ const balance = async (req, res) => {
 }
 
 const debit =  async(req, res) => {
-  console.warn(" ================================================================= ");
-  console.warn(" ========================= DEBIT REQUEST ========================= ");
-  console.warn(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ========================= DEBIT REQUEST ========================= ");
+  console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect(); 
   const session = client.startSession();
@@ -628,7 +628,6 @@ const debit =  async(req, res) => {
       );   
       const user = await users.findOne({ userId: parseInt(payload.user.id) })
       if (!user) {
-        console.log( " ================================= 2 =================================== ");
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -644,7 +643,6 @@ const debit =  async(req, res) => {
 
       /* === Validations can work on it === */ 
       if(!trans.id || trans.id == "" ){
-        console.log( " ================================= 3 =================================== ");
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -661,7 +659,6 @@ const debit =  async(req, res) => {
 
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if(checkMarketBlockedResponse == 1){
-        console.log( " ================================= 4 =================================== ");
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -676,7 +673,6 @@ const debit =  async(req, res) => {
       }
 
       if (sameTransId > 0 && game.description != "cancel" ){
-        console.log( " ================================= 5 =================================== ");
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -834,7 +830,6 @@ const debit =  async(req, res) => {
 
 
   } catch (err) {
-    console.log( " ================================= 12 =================================== ");
     console.error(` Error :  ${err} `);
     return res.json({
       partnerKey : req?.body?.partnerKey,
@@ -853,9 +848,9 @@ const debit =  async(req, res) => {
 }
 
 const credit = async (req, res) => {
-  console.warn(" ================================================================= ");
-  console.warn(" ======================== CREDIT  REQUEST ======================== ");
-  console.warn(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ======================== CREDIT  REQUEST ======================== ");
+  console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -1078,7 +1073,6 @@ const credit = async (req, res) => {
             },
             { session }
           )
-          console.warn(" ================== RESPONSE INSIDE ================== ");
         }
 
         const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
