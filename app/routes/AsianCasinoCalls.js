@@ -706,7 +706,6 @@ const debit =  async (req, res) => {
             },
             timestamp : timestamp
           })
-          res.end();
         } 
         else {
           console.log( " ================================= Come into ELSE =================================== ");
@@ -728,6 +727,7 @@ const debit =  async (req, res) => {
             { session }
           )
         } 
+        return;
       }
       
       else {
