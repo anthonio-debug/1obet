@@ -810,7 +810,6 @@ async function debit(req, res) {
 
 
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
-    
     return res.json({
       partnerKey: config.worldCasinoOnlinePartnerKey,
       status:{
