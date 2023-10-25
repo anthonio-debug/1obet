@@ -489,9 +489,9 @@ const WinLoseTransManagement = async (payload, action) => {
 }
 
 const balance = async (req, res) => {
-  console.warn(" ================================================================= ");
-  console.warn(" ======================== balance REQUEST ======================== ");
-  console.warn(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ======================== balance REQUEST ======================== ");
+  console.log(" ================================================================= ");
   const payload     = req.body;
   const timestamp   = new Date().getTime() / 1000
   try {
@@ -586,9 +586,9 @@ const balance = async (req, res) => {
 }
 
 const debit =  async(req, res) => {
-  console.warn(" ================================================================= ");
-  console.warn(" ========================= DEBIT REQUEST ========================= ");
-  console.warn(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ========================= DEBIT REQUEST ========================= ");
+  console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect(); 
   const session = client.startSession();
@@ -853,9 +853,9 @@ const debit =  async(req, res) => {
 }
 
 const credit = async (req, res) => {
-  console.warn(" ================================================================= ");
-  console.warn(" ======================== CREDIT  REQUEST ======================== ");
-  console.warn(" ================================================================= ");
+  console.log(" ================================================================= ");
+  console.log(" ======================== CREDIT  REQUEST ======================== ");
+  console.log(" ================================================================= ");
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -1078,7 +1078,6 @@ const credit = async (req, res) => {
             },
             { session }
           )
-          console.warn(" ================== RESPONSE INSIDE ================== ");
         }
 
         const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
