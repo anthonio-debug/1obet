@@ -735,92 +735,87 @@ async function debit(req, res) {
             timestamp: timestamp
           });
         } 
-      }
-
-      let debitAmount =  parseInt(payload.transactionData.amount);
-      const amount    = debitAmount *casinoMultiples;
-
-      if (debitAmount > user.availableBalance * casinoMultiples) {
-        await session.abortTransaction();
-        return res.json({
-          partnerKey : payload?.partnerKey,
-          userId : payload?.user?.id,
-          balance : user?.availableBalance / casinoMultiples,
-          status:{
-            "code":"VALIDATION_ERROR",
-            "message":"Userid is not valid or empty"
-          },
-          timestamp : timestamp
-        })
-        return res.json({
-          status: 403,
-          message: "Insufficient balance amount",
-        });
-      }
-
-      if (parseInt(payload.transactionData.amount) < 0) {
-        await session.abortTransaction();    
-        return res.json({
-          partnerKey : payload?.partnerKey,
-          userId : payload?.user?.id,
-          balance : user ?  user?.availableBalance / casinoMultiples : 0.0,
-          status:{
-            code:"VALIDATION_ERROR",
-            message:"Field Amount format is not correct"
-          },
-          timestamp : timestamp
-        })
-      }
-
-      const updatedavailableBalance = user?.availableBalance - (amount);
-
-      if (updatedavailableBalance < 0) {
-        await session.abortTransaction();
-        return res.json({
-          partnerKey : payload?.partnerKey,
-          userId : payload?.user?.id,
-          balance : user? user.availableBalance / casinoMultiples: 0.0,
-          status:{
-            "code":"VALIDATION_ERROR",
-            "message":"amount must be less then available balance"
-          },
-          timestamp : timestamp
-        })
-      }
-      const response = await WinLoseTransManagement(payload, 0);
-      if(response == 1){
-        await casinoCalls.insertOne({
-          userId: parseInt(payload.user.id),
-          currency: payload.user.currency,
-          partnerKey: payload.partnerKey,
-          providerCode: game.providerCode,
-          providerTransactionId: game.providerTransactionId,
-          gameCode: game?.gameCode,
-          description: game?.description,
-          providerRoundId: game?.providerRoundId,
-          id: trans.id,
-          amount: trans.id,
-          referenceId: trans.id,
-          user: payload.user,
-          gameData: game,
-          transactionData: trans,
-          timestamp: payload.timestamp,
-          cancelProcessed: 0,
-          type: "DEBIT"
-        })
-        const userResponse = await users.updateOne(
-          { userId: parseInt(payload.user.id)},
-          {
-            $set: {
-              availableBalance: updatedavailableBalance
-            }
-          },
-          { session }
-        )
+      }else {
+        let debitAmount =  parseInt(payload.transactionData.amount);
+        const amount    = debitAmount *casinoMultiples;
+        if (debitAmount > user.availableBalance * casinoMultiples) {
+          await session.abortTransaction();
+          return res.json({
+            partnerKey : payload?.partnerKey,
+            userId : payload?.user?.id,
+            balance : user?.availableBalance / casinoMultiples,
+            status:{
+              "code":"VALIDATION_ERROR",
+              "message":"Userid is not valid or empty"
+            },
+            timestamp : timestamp
+          })
+          return res.json({
+            status: 403,
+            message: "Insufficient balance amount",
+          });
+        }
+        if (parseInt(payload.transactionData.amount) < 0) {
+          await session.abortTransaction();    
+          return res.json({
+            partnerKey : payload?.partnerKey,
+            userId : payload?.user?.id,
+            balance : user ?  user?.availableBalance / casinoMultiples : 0.0,
+            status:{
+              code:"VALIDATION_ERROR",
+              message:"Field Amount format is not correct"
+            },
+            timestamp : timestamp
+          })
+        }
+        const updatedavailableBalance = user?.availableBalance - (amount);
+        if (updatedavailableBalance < 0) {
+          await session.abortTransaction();
+          return res.json({
+            partnerKey : payload?.partnerKey,
+            userId : payload?.user?.id,
+            balance : user? user.availableBalance / casinoMultiples: 0.0,
+            status:{
+              "code":"VALIDATION_ERROR",
+              "message":"amount must be less then available balance"
+            },
+            timestamp : timestamp
+          })
+        }
+        const response = await WinLoseTransManagement(payload, 0);
+        if(response == 1){
+          await casinoCalls.insertOne({
+            userId: parseInt(payload.user.id),
+            currency: payload.user.currency,
+            partnerKey: payload.partnerKey,
+            providerCode: game.providerCode,
+            providerTransactionId: game.providerTransactionId,
+            gameCode: game?.gameCode,
+            description: game?.description,
+            providerRoundId: game?.providerRoundId,
+            id: trans.id,
+            amount: trans.id,
+            referenceId: trans.id,
+            user: payload.user,
+            gameData: game,
+            transactionData: trans,
+            timestamp: payload.timestamp,
+            cancelProcessed: 0,
+            type: "DEBIT"
+          })
+          const userResponse = await users.updateOne(
+            { userId: parseInt(payload.user.id)},
+            {
+              $set: {
+                availableBalance: updatedavailableBalance
+              }
+            },
+            { session }
+          )
+        }
       }
     }, transactionOptions);
-
-
+    await session.commitTransaction();
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
     return res.json({
       partnerKey: config.worldCasinoOnlinePartnerKey,
@@ -846,7 +841,6 @@ async function debit(req, res) {
       timestamp : timestamp
     })
   } finally {
-    await session.commitTransaction();
     await session.endSession();
     await client.close();
   }
