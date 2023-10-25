@@ -605,6 +605,7 @@ async function debit(req, res) {
     const game  = payload.gameData;
     const trans = payload.transactionData;
     if(payload.partnerKey != partnerKey){
+      await session.abortTransaction();
       return res.json({
         partnerKey : payload?.partnerKey,
         userId : payload?.user?.id,
@@ -648,6 +649,7 @@ async function debit(req, res) {
 
       /* === Validations can work on it === */ 
       if(!trans.id || trans.id == "" ){
+        await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
           userId : payload?.user?.id,
@@ -724,7 +726,9 @@ async function debit(req, res) {
             { session }
           )
         } 
-      }else {
+      }
+      
+      else {
         let debitAmount =  parseInt(payload.transactionData.amount);
         const amount    = debitAmount *casinoMultiples;
         if (debitAmount > user.availableBalance * casinoMultiples) {
@@ -739,11 +743,8 @@ async function debit(req, res) {
             },
             timestamp : timestamp
           })
-          return res.json({
-            status: 403,
-            message: "Insufficient balance amount",
-          });
         }
+
         if (parseInt(payload.transactionData.amount) < 0) {
           await session.abortTransaction();    
           return res.json({
@@ -757,6 +758,7 @@ async function debit(req, res) {
             timestamp : timestamp
           })
         }
+
         const updatedavailableBalance = user?.availableBalance - (amount);
         if (updatedavailableBalance < 0) {
           await session.abortTransaction();
@@ -805,7 +807,9 @@ async function debit(req, res) {
       }
     }, transactionOptions);
     await session.commitTransaction();
+
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
+    
     return res.json({
       partnerKey: config.worldCasinoOnlinePartnerKey,
       status:{
@@ -818,7 +822,7 @@ async function debit(req, res) {
     });
 
   } catch (err) {
-    console.error(`Error  ${err} `);
+    console.error(`Error :  ${err} `);
     return res.json({
       partnerKey : req?.body?.partnerKey,
       userId : req?.body?.user?.id,
