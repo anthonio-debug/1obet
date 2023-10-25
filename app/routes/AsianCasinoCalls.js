@@ -709,7 +709,7 @@ async function debit(req, res) {
           // Will cancel Bet Here 
           const transAvaiable = await casinoCalls.findOneAndUpdate(
             { id: trans.referenceId}, 
-            {$set : { cancelProcessed: true }
+            {$set : { cancelProcessed: 1 }
           });
           let debitAmount =  parseInt(payload.transactionData.amount);
           const amount = debitAmount *casinoMultiples;
@@ -964,7 +964,7 @@ async function credit(req, res) {
         else {
           const transAvaiable = await casinoCalls.findOneAndUpdate(
             { id: trans.referenceId}, 
-            {$set : { cancelProcessed: true }
+            {$set : { cancelProcessed: 1 }
           });
           let debitAmount =  parseInt(payload.transactionData.amount);
           const amount = debitAmount *casinoMultiples;
