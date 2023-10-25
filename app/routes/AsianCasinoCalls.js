@@ -628,7 +628,6 @@ const debit =  async(req, res) => {
       );   
       const user = await users.findOne({ userId: parseInt(payload.user.id) })
       if (!user) {
-        console.log( " ================================= 2 =================================== ");
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -644,7 +643,6 @@ const debit =  async(req, res) => {
 
       /* === Validations can work on it === */ 
       if(!trans.id || trans.id == "" ){
-        console.log( " ================================= 3 =================================== ");
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -661,7 +659,6 @@ const debit =  async(req, res) => {
 
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if(checkMarketBlockedResponse == 1){
-        console.log( " ================================= 4 =================================== ");
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -676,7 +673,6 @@ const debit =  async(req, res) => {
       }
 
       if (sameTransId > 0 && game.description != "cancel" ){
-        console.log( " ================================= 5 =================================== ");
         await session.abortTransaction();
         return res.json({
           partnerKey : payload?.partnerKey,
@@ -834,7 +830,6 @@ const debit =  async(req, res) => {
 
 
   } catch (err) {
-    console.log( " ================================= 12 =================================== ");
     console.error(` Error :  ${err} `);
     return res.json({
       partnerKey : req?.body?.partnerKey,
