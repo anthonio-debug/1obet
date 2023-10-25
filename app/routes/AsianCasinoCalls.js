@@ -820,7 +820,6 @@ async function debit(req, res) {
       }
     }, transactionOptions);
 
-    await session.commitTransaction();
 
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
     return res.json({
@@ -847,6 +846,7 @@ async function debit(req, res) {
       timestamp : timestamp
     })
   } finally {
+    await session.commitTransaction();
     await session.endSession();
     await client.close();
   }
@@ -1081,8 +1081,6 @@ async function credit(req, res) {
 
     }, transactionOptions);
 
-    await session.commitTransaction();
-
     const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
     console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
     return res.json({
@@ -1109,6 +1107,7 @@ async function credit(req, res) {
       timestamp : timestamp
     })
   } finally {
+    await session.commitTransaction();
     await session.endSession();
     await client.close();
   }
