@@ -1,6 +1,4 @@
 db.sidebarmenus.deleteMany({})
-
-
 db.sidebarmenus.insertMany([
   {
     name: "Dashboard",
@@ -256,7 +254,6 @@ db.sidebarmenus.insertMany([
 ])
 
 db.markettypes.deleteMany({})
-
 db.markettypes.insertMany([
   {
     Id: '4',
@@ -285,7 +282,6 @@ db.markettypes.insertMany([
 ])
 
 db.submarkettypes.deleteMany({})
-
 db.submarkettypes.insertMany([
   {
     Id: 1,
@@ -494,7 +490,6 @@ db.submarkettypes.insertMany([
 ])
 
 db.bettingfigures.deleteMany({})
-
 db.bettingfigures.insertMany([
   {
     name: "Digit rate" ,
@@ -539,7 +534,6 @@ db.bettingfigures.insertMany([
 ])
 
 db.settings.deleteMany({})
-
 db.settings.insertMany([
   {
   "_id" : ObjectId("645e20c8023e705fdc7edad2"),
@@ -556,7 +550,6 @@ db.settings.insertMany([
 ])
 
 db.betlimits.deleteMany({})
-
 db.betlimits.insertMany([
   {
   "name" : "Soccer",
@@ -627,7 +620,6 @@ db.betlimits.insertMany([
 ])
 
 db.exchanges.deleteMany({})
-
 db.exchanges.insertMany([
   { 
     "exchangeAmount" : 83, 
@@ -650,7 +642,7 @@ db.users.insertOne(
     role: '0',
     isActive: true,
     status: 1,
-    userId: 2300,
+    userId: 2500,
     passwordChanged: false,
     canSettlePL: true,
     isDeleted: false,
@@ -671,6 +663,22 @@ db.users.insertOne(
     token: ''
   }
 )
+
+db.asianproviders.deleteMany({})
+db.asianproviders.insertMany([
+  { 
+    "providerCode" : "EV", 
+    "providerName" : "Evolution"
+  },
+  { 
+    "providerCode" : "SN", 
+    "providerName" : "Supernowa"
+  },
+  { 
+    "providerCode" : "EZ", 
+    "providerName" : "Ezugi"
+  },
+])
 
 db.privacypolicies.deleteMany({})
 

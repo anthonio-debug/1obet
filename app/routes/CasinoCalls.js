@@ -559,7 +559,7 @@ async function balancefun(req, res) {
   }
 }
 
-async function debitfun(req, res) {
+async function debitfun(req, res){
   const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -910,11 +910,6 @@ function casino(req, res) {
     default:
       return res.send({ status: '400', msg: 'Invalid action' });
   }
-}
-
-
-function abc(){
-  
 }
 
 router.get('/casino', casino);
