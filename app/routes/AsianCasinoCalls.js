@@ -621,7 +621,7 @@ const debit =  async(req, res) => {
     await session.withTransaction(async () => {
       const sameTransId = await casinoCalls.countDocuments(
         {
-          userId: parseInt(payload.user.id),
+          // userId: parseInt(payload.user.id),
           id: trans.id,
         },
         { session }
@@ -869,7 +869,7 @@ const credit = async (req, res) => {
     await session.withTransaction(async () => {
       const sameTransId = await casinoCalls.countDocuments(
         {
-          userId: parseInt(payload.user.id),
+          // userId: parseInt(payload.user.id),
           id: trans.id
         },
         { session }
