@@ -760,8 +760,8 @@ const debit =  async(req, res) => {
             )
           }
 
-          const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
           await session.commitTransaction();
+          const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
           return res.json({
             partnerKey: config.worldCasinoOnlinePartnerKey,
             status:{
@@ -1034,9 +1034,9 @@ const credit = async (req, res) => {
             )
           }
   
+          await session.commitTransaction();
           const updatedUser = await users.findOne({ userId: parseInt(payload.user.id) })
           console.log(" Amount Returnning to Casino from Credit  ", updatedUser.availableBalance / casinoMultiples);
-          await session.commitTransaction();
           return res.json({
             partnerKey: config.worldCasinoOnlinePartnerKey,
             status:{
@@ -1066,7 +1066,6 @@ const credit = async (req, res) => {
             },
             timestamp : timestamp
           })
-          console.log("==================== BEFORE ========================");
         } 
         else {
           const transAvaiable = await casinoCalls.findOneAndUpdate(
