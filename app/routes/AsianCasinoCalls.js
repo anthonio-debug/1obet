@@ -4,7 +4,7 @@ const AsianCasinoDebits   = require('../models/AsiancasinoCalls');
 const Cash                = require("../../app/models/deposits");
 const config              = require('config')
 const { MongoClient }     = require('mongodb');
-const casinoMultiples     = config.casinoMultiples;
+const casinoMultiples     = 1;
 const partnerKey          = config.AsianCasinopartnerKey;
 const { getParents }      = require("../routes/bets");
 const router              = express.Router();
@@ -125,7 +125,7 @@ const WinLoseTransManagement = async (payload, action) => {
 
       // remove all exposure equal to total debit money of 1500
 
-      const amount = debit * config.casinoMultiples;
+      const amount = debit * casinoMultiples;
       const UpdatedExposure = user.exposure + amount;
       const userResponseI = await users.updateOne(
         { _id: user?._id },
@@ -267,7 +267,7 @@ const WinLoseTransManagement = async (payload, action) => {
       /**
        * remove all exposure equal to total debit money of 1500
        * set exposure to original ( user.exposure +  debit )
-       * let amount = debit * config.casinoMultiples;
+       * let amount = debit * casinoMultiples;
        * avl balance - 1500
        * Expoisure -1500 
        * Credit  Amount 1600 
@@ -286,10 +286,10 @@ const WinLoseTransManagement = async (payload, action) => {
       let commissionFrom = user.userId;
       let upMovingCommAmount = commissionAmount;
 
-      const updatedavailableBalance = user.availableBalance + (remainingAmount) + debit*config.casinoMultiples;
+      const updatedavailableBalance = user.availableBalance + (remainingAmount) + debit*casinoMultiples;
       const updatedclientPL = user.clientPL + (remainingAmount);
       const updatedbalance  = user.balance + (remainingAmount);
-      const UpdatedExposure = (user.exposure) + (debit * config.casinoMultiples);
+      const UpdatedExposure = (user.exposure) + (debit * casinoMultiples);
       const userResponse = await users.updateOne(
         { _id: user?._id },
         {
@@ -797,6 +797,7 @@ const debit =  async(req, res) => {
             { session }
           )
           await session.commitTransaction();
+          console.log(" ============================ Completed Trans ========================= ");
           const updatedUser = await users.findOne({ userId: parseInt(payload.user.id)});
           return res.json({
             partnerKey: config.worldCasinoOnlinePartnerKey,
@@ -1060,8 +1061,8 @@ const credit = async (req, res) => {
             {$set : { cancelProcessed: 1 }
           });
           let debitAmount =  parseInt(payload.transactionData.amount);
-          const amount = debitAmount *casinoMultiples;
-          const updatedavailableBalance = user?.availableBalance - (amount);
+          const amount    = debitAmount *casinoMultiples;
+          const updatedavailableBalance = user.availableBalance - (amount);
           await users.updateOne(
             { userId: parseInt(payload.user.id)},
             {
