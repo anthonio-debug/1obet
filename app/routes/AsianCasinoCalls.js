@@ -534,19 +534,6 @@ const balance = async (req, res) => {
       })
     }
 
-    if(payload.partnerKey != partnerKey){
-      return res.json({
-        partnerKey : payload?.partnerKey,
-        userId : payload?.user?.id,
-        balance : 0.0,
-        status:{
-          "code" : "VALIDATION_ERROR",
-          "message" : "partnerKey is not valid or empty"
-        },
-        timestamp : timestamp
-      })
-    }
-
     const balance = user.availableBalance;
     if (balance < 0) {
       return res.json({
@@ -740,7 +727,7 @@ const debit =  async(req, res) => {
               description: game?.description,
               providerRoundId: game?.providerRoundId,
               id: trans.id,
-              amount: trans.id,
+              amount: trans.amount,
               referenceId: trans.id,
               user: payload.user,
               gameData: game,
@@ -1015,8 +1002,8 @@ const credit = async (req, res) => {
               description: game?.description,
               providerRoundId: game?.providerRoundId,
               id: trans?.id,
-              amount: trans?.id,
-              referenceId: trans?.id,
+              amount: trans?.amount,
+              referenceId: trans?.referenceId,
               user: payload?.user,
               gameData: game,
               transactionData: trans,
