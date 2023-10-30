@@ -35,6 +35,7 @@ const loginRecord = require('../models/loginRecord');
 // process.env.TZ = 'UTC';
 
 const SelectedCasino = require('../models/selectedCasino');
+const BetPlaceHold = require('../models/betPlaceHold');
 
 function updateDefaultTheme(req, res) {
   const errors = validationResult(req);
@@ -165,6 +166,7 @@ function updateDefaultBetSizes(req, res) {
       { _id: betLimit._id },
       { $set: { maxAmount: betLimit.maxAmount } },
       { new: true, upsert: true }
+
     );
   });
 
@@ -228,7 +230,7 @@ async function updateMatchType(req, res) {
   }
   try {
     const { _id, matchType, iconStatus } = req.body;
-    Events.findByIdAndUpdate(
+   const EventData = await Events.findByIdAndUpdate(
       _id,
       { $set: { matchType: matchType, iconStatus: iconStatus } },
       (err, updatedMatch) => {
@@ -239,6 +241,22 @@ async function updateMatchType(req, res) {
         }
       }
     );
+    const updatedBet = await BetPlaceHold.findOneAndUpdate({
+      eventId: _id
+ }, // sportsId is always 4
+ {
+     $set: {
+         sportsId:6,
+         secondsValue: 4,
+         eventId: eventId
+     }
+ }, {
+     new: true,
+     upsert: true
+ } 
+ // Create new document if not found
+);
+console.log(updatedBet)
     res.status(200).json({
       success: true,
       message: 'Updated Successfully',
