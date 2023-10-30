@@ -73,9 +73,10 @@ async function updateBetPlaceHold(req, res) {
 }
 
 async function getBetPlaceHold(req, res) {
+    const eventId = req.params.eventId;
     try {
         const bet = await BetPlaceHold.find({
-            sportsId: 4
+            sportsId: 4, eventId: eventId
         }); // sportsId is always 4
 
         if (bet) {
@@ -105,7 +106,7 @@ router.put(
 );
 
 router.get(
-    '/getBetPlaceHold',
+    '/getBetPlaceHold/:eventId',
     //   betLockValidator.validate('addBetLock'),
     getBetPlaceHold
 );
