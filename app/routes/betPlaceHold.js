@@ -11,33 +11,33 @@ let config = require('config');
 const BetPlaceHold = require('../models/betPlaceHold');
 const router = express.Router();
 
-async function addBetPlaceHold(req, res) {
-    const {
-        sportsId,
-        eventId,
-        secondsValue
-    } = req.body;
+// async function addBetPlaceHold(req, res) {
+//     const {
+//         sportsId,
+//         eventId,
+//         secondsValue
+//     } = req.body;
 
-    try {
-        const newBet = new BetPlaceHold({
-            sportsId: 4, // Set sportsId to 4 (fixed value)
-            eventId: eventId,
-            secondsValue: secondsValue,
-        });
+//     try {
+//         const newBet = new BetPlaceHold({
+//             sportsId: 4, // Set sportsId to 4 (fixed value)
+//             eventId: eventId,
+//             secondsValue: secondsValue,
+//         });
 
-        await newBet.save();
-        return res.json({
-            success: true,
-            message: 'BetPlaceHold created successfully',
-            data: newBet,
-        });
-    } catch (error) {
-        console.error(error);
-        return res.status(500).json({
-            message: 'Internal Server Error'
-        });
-    }
-}
+//         await newBet.save();
+//         return res.json({
+//             success: true,
+//             message: 'BetPlaceHold created successfully',
+//             data: newBet,
+//         });
+//     } catch (error) {
+//         console.error(error);
+//         return res.status(500).json({
+//             message: 'Internal Server Error'
+//         });
+//     }
+// }
 async function updateBetPlaceHold(req, res) {
     const {
         secondsValue,
@@ -45,7 +45,7 @@ async function updateBetPlaceHold(req, res) {
     } = req.body
     try {
         const updatedBet = await BetPlaceHold.findOneAndUpdate({
-                sportsId: 4
+                sportsId: 4, eventId: eventId
             }, // sportsId is always 4
             {
                 $set: {
@@ -55,7 +55,8 @@ async function updateBetPlaceHold(req, res) {
             }, {
                 new: true,
                 upsert: true
-            } // Create new document if not found
+            } 
+            // Create new document if not found
         );
 
         return res.json({
@@ -73,7 +74,7 @@ async function updateBetPlaceHold(req, res) {
 
 async function getBetPlaceHold(req, res) {
     try {
-        const bet = await BetPlaceHold.findOne({
+        const bet = await BetPlaceHold.find({
             sportsId: 4
         }); // sportsId is always 4
 
@@ -96,7 +97,7 @@ async function getBetPlaceHold(req, res) {
     }
 }
 
-router.post('/addBetPlaceHold', addBetPlaceHold)
+// router.post('/addBetPlaceHold', addBetPlaceHold)
 router.put(
     '/updateBetPlaceHold',
     //   betLockValidator.validate('addBetLock'),
@@ -104,7 +105,7 @@ router.put(
 );
 
 router.get(
-    '/get_betPlaceHold',
+    '/getBetPlaceHold',
     //   betLockValidator.validate('addBetLock'),
     getBetPlaceHold
 );
