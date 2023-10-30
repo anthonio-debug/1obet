@@ -172,5 +172,8 @@
   "user-latest-ledger",
   "delete-user",
   "marketPositions",
-  "marketShares"
+  "marketShares",
+  "addBetPlaceHold",
+  "updateBetPlaceHold",
+  "getBetPlaceHold"
 ]
