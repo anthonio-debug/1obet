@@ -241,23 +241,30 @@ async function updateMatchType(req, res) {
         }
       }
     );
-	
-    const updatedBet = await BetPlaceHold.findOneAndUpdate({
-      eventId: eventId
- }, // sportsId is always 4
- {
-     $set: {
-         sportsId:6,
+
+
+//coded by qaiser started
+const BetSecondsVal = await BetPlaceHold
+        .findOne({
+         
+          eventId: eventId
+        })
+        .exec();
+      if (!BetSecondsVal) {
+		const betseconds = new BetSecondsVal({
+       sportsId:6,
          secondsValue: 4,
          eventId: eventId
-     }
- }, {
-     new: true,
-     upsert: true
- } 
- // Create new document if not found
-);
-console.log(updatedBet)
+    });
+    betseconds.save();
+	  }
+//end of code for qaiser on event with bet delayed time
+
+
+
+	
+    
+
     res.status(200).json({
       success: true,
       message: 'Updated Successfully',
