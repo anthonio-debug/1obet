@@ -244,7 +244,7 @@ async function updateMatchType(req, res) {
 
 
 //coded by qaiser started on event with bet delayed time
-console.log("I am here with event Id:",eventId);
+console.log("I am here with event Id---------------------------------:",eventId);
 const BetSecondsVal = await BetPlaceHold
         .findOne({
          
