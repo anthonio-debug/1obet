@@ -242,13 +242,13 @@ async function updateMatchType(req, res) {
       }
     );
     const updatedBet = await BetPlaceHold.findOneAndUpdate({
-      eventId: _id
+      eventId: eventId
  }, // sportsId is always 4
  {
      $set: {
          sportsId:6,
          secondsValue: 4,
-         eventId: _id
+         eventId: eventId
      }
  }, {
      new: true,
