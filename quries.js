@@ -1,5 +1,3 @@
-const BetPlaceHold = require("./app/models/betPlaceHold")
-
 db.sidebarmenus.deleteMany({})
 db.sidebarmenus.insertMany([
   {
@@ -1028,7 +1026,6 @@ const placeBetOld = async (req, res) => {
       console.log(' data from  API ', oddsData);
       const runnerFromAPI = oddsData[0]?.Runners.find(runner => runner.SelectionId == selectionId);
       const DBOddDetails  = await Odds.findById(oddsId);
-
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets  = runners.map((runner) => ({
         runner: runner.SelectionId,
@@ -1174,30 +1171,23 @@ const placeBetOld = async (req, res) => {
     else if (config.sportMarkets.includes(marketId) && config.SportOddsSubMarkets.includes(subMarketDetail.Id)) {
       console.log(" ========================  Match Odds ======================== ");
       const DBOddDetails  = await Odds.findById(oddsId);
-
       if (!DBOddDetails) {
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
         });
       }
       let runners = DBOddDetails?.runners;
-      const eventid = DBOddDetails.eventId
-      const BetPlaceData = await BetPlaceHold.findOne({
-        eventId: eventid
-    }) 
       runnerForSaveInbets  = runners.map((runner) => ({
         runner: runner.SelectionId,
         amount: 0
       }));
       const OddDetailsTeam = DBOddDetails.runners.find(runner => runner.SelectionId == selectionId);
-      
       runnerName = OddDetailsTeam?.runnerName
       console.log(" ============================ ========================== ", runnerForSaveInbets);
-     
-    const secondValue = BetPlaceData.secondsValue
+
       const multipeResponse = [];
       // make Sure No More Records Then 4 
-      for (let i = 0; i < secondValue; i++) {
+      for (let i = 0; i < 4; i++) {
         setTimeout( async () => {      
           const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
           const response = await axios.get(url);
