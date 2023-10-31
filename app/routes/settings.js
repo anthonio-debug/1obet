@@ -248,7 +248,7 @@ async function updateMatchType(req, res) {
      $set: {
          sportsId:6,
          secondsValue: 4,
-         eventId: eventId
+         eventId: _id
      }
  }, {
      new: true,
