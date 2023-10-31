@@ -229,7 +229,7 @@ async function updateMatchType(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const { _id, matchType, iconStatus } = req.body;
+    const { _id, matchType, iconStatus,eventId } = req.body;
    const EventData = await Events.findByIdAndUpdate(
       _id,
       { $set: { matchType: matchType, iconStatus: iconStatus } },
@@ -241,8 +241,9 @@ async function updateMatchType(req, res) {
         }
       }
     );
+	
     const updatedBet = await BetPlaceHold.findOneAndUpdate({
-      eventId: _id
+      eventId: eventId
  }, // sportsId is always 4
  {
      $set: {
