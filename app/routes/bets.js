@@ -588,9 +588,17 @@ const placeBet = async (req, res) => {
       );
       runnerName = OddDetailsTeam?.runnerName;
       // console.log(' ============================ ========================== ', runnerForSaveInbets );
-
+	/*start of code by qaiser */
+	const BetPlaceData = await BetPlaceHold.findOne({
+        eventId: DBOddDetails.eventId
+    });
+	
+	console.log('start of code by qaiser..Secondsvalue: ',BetPlaceData.secondsValue);
+	/*end of code by qaiser*/
+	
       if (selectedBetRate == betRate) {
-        for (let i = 1; i < 5; i++) {
+		  
+        for (let i = 1; i < BetPlaceData.secondsValue; i++) {
           setTimeout(async () => {
             const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             const response = await axios.get(url);
