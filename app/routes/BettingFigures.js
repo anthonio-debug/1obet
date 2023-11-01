@@ -55,7 +55,7 @@ async function UpdateBettingFigures(req, res) {
         console.error(error);
         res.status(200).json({
             success: false,
-            message: 'Failed to save fancy data',
+            message: 'Failed to save fancy data3',
             error: error.message,
         });
     }

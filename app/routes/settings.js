@@ -284,6 +284,7 @@ async function updateMatchType(req, res) {
   return res.status(400).send({ errors: errors.errors });
   }
   try {
+
   const { _id, matchType, iconStatus } = req.body;
   
   const updatedData = await Events.findByIdAndUpdate(
@@ -313,6 +314,7 @@ async function updateMatchType(req, res) {
   });
   }
   }
+
 
 function getSideBarMenu(req, res) {
   let type = [];
