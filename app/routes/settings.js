@@ -285,7 +285,8 @@ async function updateMatchType(req, res) {
   }
   try {
   const { _id, matchType, iconStatus } = req.body;
-  Events.findByIdAndUpdate(
+  
+  const updatedData = await Events.findByIdAndUpdate(
   _id,
   { $set: { matchType: matchType, iconStatus: iconStatus } },
   (err, updatedMatch) => {
@@ -296,11 +297,12 @@ async function updateMatchType(req, res) {
   }
   }
   );
+  console.log(updatedData)
+
   res.status(200).json({
   success: true,
-  message: 'Updated Successfully'
+  message: 'Updated Successfully',
   });
-  
   
   } catch (error) {
   console.error(error);
