@@ -52,7 +52,7 @@ async function getFancyData(req, res) {
     console.error(error);
     res.status(200).json({
       success: false,
-      message: 'Failed to save fancy data',
+      message: 'Failed to save fancy data2',
       error: error.message,
     });
   }

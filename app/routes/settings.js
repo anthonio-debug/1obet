@@ -243,26 +243,7 @@ async function updateMatchType(req, res) {
     );
 
 
-
-
-
-
-	
-    
-
-    res.status(200).json({
-      success: true,
-      message: 'Updated Successfully',
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(200).json({
-      success: false,
-      message: 'Failed to save fancy data',
-      error: error.message,
-    });
-  }
-  //coded by qaiser started on event with bet delayed time
+//coded by qaiser started on event with bet delayed time
 console.log("I am here with event Id---------------------------------:",eventId);
 const BetSecondsVal = await BetPlaceHold
         .findOne({
@@ -281,6 +262,22 @@ const BetSecondsVal = await BetPlaceHold
 //end of code for qaiser on event with bet delayed time
 
 
+
+	
+    
+
+    res.status(200).json({
+      success: true,
+      message: 'Updated Successfully',
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(200).json({
+      success: false,
+      message: 'Failed to save fancy data4',
+      error: error.message,
+    });
+  }
 }
 
 function getSideBarMenu(req, res) {
