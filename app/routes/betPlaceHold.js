@@ -45,7 +45,7 @@ async function updateBetPlaceHold(req, res) {
     } = req.body
     try {
         const updatedBet = await BetPlaceHold.findOneAndUpdate({
-                 eventId: eventId
+                sportsId: 4, eventId: eventId
             }, // sportsId is always 4
             {
                 $set: {
@@ -76,7 +76,7 @@ async function getBetPlaceHold(req, res) {
     const eventId = req.params.eventId;
     try {
         const bet = await BetPlaceHold.find({
-            eventId: eventId
+            sportsId: 4, eventId: eventId
         }); // sportsId is always 4
 
         if (bet) {
