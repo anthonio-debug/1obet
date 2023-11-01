@@ -25,6 +25,7 @@ const router = express.Router();
 const Session = require("../models/Session");
 const MarketIDS = require("../models/marketIds");
 const Bets = require("../models/bets");
+const BetPlaceHold = require("../models/betaPlaceHold");
 const mongoose = require("mongoose");
 const {
   handleDrawBet,
@@ -279,7 +280,26 @@ async function updateMatchType(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const { _id, matchType, iconStatus } = req.body;
+    const { _id, matchType, iconStatus, eventId } = req.body;
+
+    //coded by qaiser started on event with bet delayed time
+    console.log(
+      "I am here with event Id---------------------------------:",
+      eventId
+    );
+
+    const BetSecondsVal = await BetPlaceHold.findOne({
+      eventId: eventId,
+    }).exec();
+
+    if (!BetSecondsVal) {
+      const betseconds = new BetPlaceHold({
+        sportsId: 6,
+        secondsValue: 4,
+        eventId: eventId,
+      });
+      betseconds.save();
+    }
 
     const updatedData = await Events.findByIdAndUpdate(
       _id,
