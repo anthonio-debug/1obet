@@ -296,7 +296,7 @@ async function updateMatchType(req, res) {
   console.log("Updated match:", updatedMatch);
   }
   }
-  );
+  ).clone().catch(function(err){ console.log(err)})
   console.log(updatedData)
 
   res.status(200).json({
@@ -306,9 +306,9 @@ async function updateMatchType(req, res) {
   
   } catch (error) {
   console.error(error);
-  res.status(200).json({
+  res.status(500).json({
   success: false,
-  message: 'Failed to save fancy data',
+  message: 'Failed to save fancy datas',
   error: error.message,
   });
   }
