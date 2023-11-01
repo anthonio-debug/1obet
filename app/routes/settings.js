@@ -243,23 +243,7 @@ async function updateMatchType(req, res) {
     );
 
 
-//coded by qaiser started on event with bet delayed time
-console.log("I am here with event Id---------------------------------:",eventId);
-const BetSecondsVal = await BetPlaceHold
-        .findOne({
-         
-          eventId: eventId
-        })
-        .exec();
-      if (!BetSecondsVal) {
-		const betseconds = new BetSecondsVal({
-       sportsId:6,
-         secondsValue: 4,
-         eventId: eventId
-    });
-    betseconds.save();
-	  }
-//end of code for qaiser on event with bet delayed time
+
 
 
 
@@ -278,6 +262,25 @@ const BetSecondsVal = await BetPlaceHold
       error: error.message,
     });
   }
+  //coded by qaiser started on event with bet delayed time
+console.log("I am here with event Id---------------------------------:",eventId);
+const BetSecondsVal = await BetPlaceHold
+        .findOne({
+         
+          eventId: eventId
+        })
+        .exec();
+      if (!BetSecondsVal) {
+		const betseconds = new BetSecondsVal({
+       sportsId:6,
+         secondsValue: 4,
+         eventId: eventId
+    });
+    betseconds.save();
+	  }
+//end of code for qaiser on event with bet delayed time
+
+
 }
 
 function getSideBarMenu(req, res) {
