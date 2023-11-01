@@ -223,62 +223,98 @@ function getDefaultSettings(req, res) {
   });
 }
 
+// async function updateMatchType(req, res) {
+//   const errors = validationResult(req);
+//   if (!errors.isEmpty()) {
+//     return res.status(400).send({ errors: errors.errors });
+//   }
+//   try {
+//     const { _id, matchType, iconStatus,eventId } = req.body;
+//    const EventData = await Events.findByIdAndUpdate(
+//       _id,
+//       { $set: { matchType: matchType, iconStatus: iconStatus } },
+//       (err, updatedMatch) => {
+//         if (err) {
+//           console.log('Error updating figure:', err);
+//         } else {
+//           console.log('Updated match:', updatedMatch);
+//         }
+//       }
+//     );
+    
+//       //coded by qaiser started on event with bet delayed time
+// // console.log("I am here with event Id---------------------------------:",eventId);
+// // const BetSecondsVal = await BetPlaceHold
+// //         .findOne({
+         
+// //           eventId: eventId
+// //         })
+// //         .exec();
+// //       if (!BetSecondsVal) {
+// // 		const betseconds = new BetSecondsVal({
+// //        sportsId:6,
+// //          secondsValue: 4,
+// //          eventId: eventId
+// //     });
+// //     betseconds.save();
+// // 	  }
+// //end of code for qaiser on event with bet delayed time
+
+
+//     res.status(200).json({
+//       success: true,
+//       message: 'Updated Successfully',
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({
+//       success: false,
+//       message: 'Failed to save fancy data',
+//       error: error.message,
+//     });
+//   }
+
+
+// }
+
+
 async function updateMatchType(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).send({ errors: errors.errors });
+  return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const { _id, matchType, iconStatus,eventId } = req.body;
-   const EventData = await Events.findByIdAndUpdate(
-      _id,
-      { $set: { matchType: matchType, iconStatus: iconStatus } },
-      (err, updatedMatch) => {
-        if (err) {
-          console.log('Error updating figure:', err);
-        } else {
-          console.log('Updated match:', updatedMatch);
-        }
-      }
-    );
 
-
-//coded by qaiser started on event with bet delayed time
-console.log("I am here with event Id---------------------------------:",eventId);
-const BetSecondsVal = await BetPlaceHold
-        .findOne({
-         
-          eventId: eventId
-        })
-        .exec();
-      if (!BetSecondsVal) {
-		const betseconds = new BetSecondsVal({
-       sportsId:6,
-         secondsValue: 4,
-         eventId: eventId
-    });
-    betseconds.save();
-	  }
-//end of code for qaiser on event with bet delayed time
-
-
-
-	
-    
-
-    res.status(200).json({
-      success: true,
-      message: 'Updated Successfully',
-    });
-  } catch (error) {
-    console.error(error);
-    res.status(200).json({
-      success: false,
-      message: 'Failed to save fancy data4',
-      error: error.message,
-    });
+  const { _id, matchType, iconStatus } = req.body;
+  
+  const updatedData = await Events.findByIdAndUpdate(
+  _id,
+  { $set: { matchType: matchType, iconStatus: iconStatus } },
+  (err, updatedMatch) => {
+  if (err) {
+  console.log("Error updating figure:", err);
+  } else {
+  console.log("Updated match:", updatedMatch);
   }
-}
+  }
+  ).clone().catch(function(err){ console.log(err)})
+  console.log(updatedData)
+
+  res.status(200).json({
+  success: true,
+  message: 'Updated Successfully',
+  });
+  
+  } catch (error) {
+  console.error(error);
+  res.status(500).json({
+  success: false,
+  message: 'Failed to save fancy datas',
+  error: error.message,
+  });
+  }
+  }
+>>>>>>> f9e665c71fbd11a572aa5025ad2f8f11c6719aa4
 
 function getSideBarMenu(req, res) {
   let type = [];
