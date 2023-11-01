@@ -309,7 +309,7 @@ async function updateMatchType(req, res) {
   console.error(error);
   res.status(500).json({
   success: false,
-  message: 'Failed to save fancy datas',
+  message: 'Failed to save fancy data4',
   error: error.message,
   });
   }
