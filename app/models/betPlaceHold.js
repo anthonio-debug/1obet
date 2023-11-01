@@ -6,7 +6,7 @@ let Schema = mongoose.Schema;
 
 let betPlaceHoldSchema = new Schema({
   sportsId: { type: Number, default:4 },
-  secondsValue: { type: Number, required: true, default:4 },
+  secondsValue: { type: Number, required: true },
   eventId:{type:Number},
   updatedAt: { type: Number },
   createdAt: { type: Number }
