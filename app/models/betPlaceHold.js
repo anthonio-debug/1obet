@@ -5,7 +5,7 @@ let Schema = mongoose.Schema;
 // let Global = require('../global/settings')
 
 let betPlaceHoldSchema = new Schema({
-  sportsId: { type: Number, default:6 },
+  sportsId: { type: Number, default:4 },
   secondsValue: { type: Number, required: true, default:4 },
   eventId:{type:Number},
   updatedAt: { type: Number },
