@@ -314,7 +314,7 @@ async function updateMatchType(req, res) {
   });
   }
   }
->>>>>>> f9e665c71fbd11a572aa5025ad2f8f11c6719aa4
+
 
 function getSideBarMenu(req, res) {
   let type = [];
