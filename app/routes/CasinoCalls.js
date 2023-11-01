@@ -642,7 +642,7 @@ async function debitfun(req, res){
       }
       else {
         let balance = user.availableBalance / casinoMultiples;
-        const response = await WinLoseTransManagement(balance, payload, user, 0);
+        const res = await WinLoseTransManagement(balance, payload, user, 0);
         await session.commitTransaction();
         const updatedUser = await users.findOne(
           { remoteId: parseInt(payload.remote_id) },
