@@ -12,10 +12,7 @@ const loginMiddleWare = require('./app/middlewares/loginMiddleware');
 const checkRoleMiddleware = require('./app/middlewares/checkRoleMiddleware');
 
 var apisContent = fs.readFileSync(config.apisFileName);
-// console.log(apisContent)
 var jsonApis = JSON.parse(apisContent);
-console.log(jsonApis)
-  
 let options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -68,7 +65,7 @@ app.use('/api', require('./app/routes/user').router);
 app.use('/api', require('./app/routes/settings').router);
 app.use('/api', require('./app/routes/CasinoCalls').router);
 app.use('/api', require('./app/routes/AsianCasinoCalls').router);
-app.use('/api', require('./app/routes/betPlaceHold').router);
+
 
 // Login middleware
 app.use(function (req, res, next) {
@@ -107,8 +104,6 @@ app.use('/api', require('./app/routes/BettingFigures').loginRouter);
 app.use('/api', require('./app/routes/sportBook').loginRouter);
 app.use('/api', require('./app/routes/marketPositions').loginRouter);
 app.use('/api', require('./app/routes/marketShares').loginRouter);
-
-
 
 // // Allowed Apis for this role
 // app.use(function (req, res, next) {

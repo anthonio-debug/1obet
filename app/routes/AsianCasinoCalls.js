@@ -669,7 +669,7 @@ const debit =  async(req, res) => {
           })
         }else {
           console.log( " ================================= 10 =================================== ");
-          let debitAmount =  Number(payload.transactionData.amount);
+          let debitAmount =  parseInt(payload.transactionData.amount);
           const amount    = debitAmount *casinoMultiples;
           if (debitAmount > user.availableBalance * casinoMultiples) {
             
@@ -784,7 +784,7 @@ const debit =  async(req, res) => {
             { id: trans.referenceId }, 
             { $set : { cancelProcessed: 1 }
           });
-          let debitAmount =  Number(payload.transactionData.amount);
+          let debitAmount =  parseInt(payload.transactionData.amount);
           const amount = debitAmount *casinoMultiples;
           const updatedavailableBalance = user?.availableBalance + (amount);
           await users.updateOne(
@@ -944,7 +944,7 @@ const credit = async (req, res) => {
             });
           }
   
-          let creditAmount =  Number(payload.transactionData.amount);
+          let creditAmount =  parseInt(payload.transactionData.amount);
           const amount    = creditAmount *casinoMultiples;
   
           const updatedavailableBalance = user?.availableBalance + (amount);
@@ -1060,7 +1060,7 @@ const credit = async (req, res) => {
             { id: trans.referenceId}, 
             {$set : { cancelProcessed: 1 }
           });
-          let debitAmount =  Number(payload.transactionData.amount);
+          let debitAmount =  parseInt(payload.transactionData.amount);
           const amount    = debitAmount *casinoMultiples;
           const updatedavailableBalance = user.availableBalance - (amount);
           await users.updateOne(
