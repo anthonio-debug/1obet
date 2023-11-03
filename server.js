@@ -36,7 +36,7 @@ mongoose
 // console.log('dirname',__dirname);
 // JSON
 app.use(express.json());
-app.use(morgan("combined"));
+app.use(morgan("dev"));
 
 // READ FORM DATA
 app.use(express.urlencoded({ extended: false }));
