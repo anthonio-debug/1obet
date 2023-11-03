@@ -367,56 +367,90 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
   if(currentUser.role == 5){
     const match       = await Events.findById(matchId)
     const parent      = await User.findOne({ userId: currentUser.createdBy});
-    const response = await CashDeposit.aggregate([
-      {
-        $match: {
-          matchId: matchId,
-          $or: [
-            {
-              $and: [{
-                userId: userId,
-              },
+    let response = []
+    if(match.sportsId){
+      response = await CashDeposit.aggregate([
+        {
+          $match: {
+            matchId: matchId,
+            $or: [
               {
-                cashOrCredit: { $in: ["Bet"] }
+                $and: [{
+                  userId: userId,
+                },
+                {
+                  cashOrCredit: { $in: ["Bet"] }
+                }
+                ]
+              },
+              {       
+                cashOrCredit: { $in: ["Commission"] }
               }
-              ]
-            },
-            {       
-              cashOrCredit: { $in: ["Commission"] }
-            }
-          ]
+            ]
+          }
+        },
+        { 
+          $group:{
+            _id: "$betId",
+            pl: { $sum: "$amount"},
+            sattledAt: { $first: "$date" },
+            sportsId:  { $first: "$sportsId" },
+            event: { $first: "$event" },
+          }
         }
-      },
-      {
-        $addFields: {
-          'betsId': { $toObjectId: "$betId" }
+      ]);
+    }else {
+      response = await CashDeposit.aggregate([
+        {
+          $match: {
+            matchId: matchId,
+            $or: [
+              {
+                $and: [{
+                  userId: userId,
+                },
+                {
+                  cashOrCredit: { $in: ["Bet"] }
+                }
+                ]
+              },
+              {       
+                cashOrCredit: { $in: ["Commission"] }
+              }
+            ]
+          }
+        },
+        {
+          $addFields: {
+            'betsId': { $toObjectId: "$betId" }
+          }
+        },
+        {
+          $lookup: {
+            from: 'bets',
+            localField: 'betsId',
+            foreignField: '_id',
+            as: 'betsDetails'
+          }
+        }, 
+        { 
+          $group:{
+            _id: "$_id",
+            pl: { $sum: "$amount"},
+            sattledAt: { $first: "$date" },
+            sportsId: { $first: { $arrayElemAt: ["$betsDetails.sportsId", 0] } },
+            price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
+            name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
+            createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
+            size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
+            type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
+            fancyData: { $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] } },
+            isfancyOrbookmaker: { $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] } }
+  
+          }
         }
-      },
-      {
-        $lookup: {
-          from: 'bets',
-          localField: 'betsId',
-          foreignField: '_id',
-          as: 'betsDetails'
-        }
-      }, 
-      { 
-        $group:{
-          _id: "$_id",
-          pl: { $sum: "$amount"},
-          sattledAt: { $first: "$date" },
-          sportsId: { $first: { $arrayElemAt: ["$betsDetails.sportsId", 0] } },
-          price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
-          name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
-          createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
-          size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
-          type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
-          fancyData: { $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] } },
-          isfancyOrbookmaker: { $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] } }
-
-        }
-      }
-    ]);
+      ]);
+    }
     return res.send({
       success: true,
       message: 'Detailed reports',
