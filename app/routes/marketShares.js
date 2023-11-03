@@ -20,14 +20,12 @@ const marketGainWithDuplicates = async (req, res) => {
 
   const marketId = req.query.marketId;
 
-  const condition =
-    "" + marketId == "null"
-      ? [{ sportsId: "6" }, { sportID: 6 }]
-      : { marketId: marketId };
+  // const condition = { marketId: marketId }
+  // "" + marketId == "null" ? [{ sportsId: "6" }, { sportID: 6 }] : { marketId: marketId };
 
   const currentUser = await User.findOne({ userId: userId });
   if (currentUser?.role == 5) {
-    const marketData = await MarketIDS.findOne(condition[1]);
+    const marketData = await MarketIDS.findOne({ marketId: marketId });
 
     const parent = await User.findOne({ userId: currentUser.createdBy });
 
@@ -50,18 +48,17 @@ const marketGainWithDuplicates = async (req, res) => {
       ],
     });
 
-    if (!depositRes)
-      return res.status(404).send({ message: "Cannot find desposit" });
+    if (!depositRes) return res.status(404).send({ message: "Cannot find desposit" });
 
     let response = {
       _id: depositRes.betId,
       pl: depositRes.amount,
       sattledAt: depositRes.date,
-    };
+      sportsId: depositRes.sportsId
+    }
 
     if (depositRes.sportsId != "6") {
       const betRes = await Bets.findOne({ _id: depositRes.betId });
-      console.log(2222, betRes.userId);
       response.price = betRes.betAmount;
       response.name = betRes.runnerName;
       response.createdAt = betRes.createdAt;
@@ -69,6 +66,7 @@ const marketGainWithDuplicates = async (req, res) => {
       response.type = betRes.type;
       response.isfancyOrbookmaker = betRes.isfancyOrbookmaker;
       response.fancyData = betRes.fancyData;
+      
     }
 
     return res.send({

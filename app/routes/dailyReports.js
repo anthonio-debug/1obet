@@ -506,6 +506,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
           _id: "$betId",
           pl: { $sum: "$amount"},
           sattledAt: { $first: "$date" },
+          sportsId: { $first: "$sportsId" },
           price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
           name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
           createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
