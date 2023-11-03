@@ -6,7 +6,6 @@ const Cash = require("../../../app/models/deposits");
 const CurrentPosition = require("../../../app/models/CurrentPosition");
 const ExpRec = require("../../../app/models/ExpRec");
 
-
 const config = {
   "PORT": 3003,
   "DBNAME": "Bet99",

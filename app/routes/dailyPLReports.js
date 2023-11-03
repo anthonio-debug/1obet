@@ -405,7 +405,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
           _id: "$betId",
           pl: { $sum: "$amount"},
           sattledAt: { $first: "$date" },
-          sportsId: { $first: "$sportsId" },
+          sportsId: { $first: { $arrayElemAt: ["$betsDetails.sportsId", 0] } },
           price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
           name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
           createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
