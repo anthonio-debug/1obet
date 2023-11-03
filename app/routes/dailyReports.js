@@ -469,11 +469,64 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
 
   if(currentUser.role == '5'){
     console.log(" =============================== 5 =========================== ");
-    const match       = await Events.findById(matchId);
-    let response = [];
-    if([1, 2, 4, 7, 4339, "1", "2", "4", "7", "4339"].includes(match.sportsId)){
-    console.log(" =============================== Includes Part  =========================== ");
-      
+    let match = null
+    matchId.length > 10 ? match = await Events.findOne({ _id : ObjectId(`${matchId}`) }) : '';
+    let response;
+    if(!match){
+      console.log(" =============================== Includes Part  =========================== ");
+ 
+        response = await CashDeposit.aggregate([
+          {
+            $match: {
+              matchId: matchId,
+              $or: [
+                {
+                  $and: [{
+                    userId: userId,
+                  },
+                  {
+                    cashOrCredit: { $in: ["Bet"] }
+                  }
+                  ]
+                },
+                {       
+                  cashOrCredit: { $in: ["Commission"] }
+                }
+              ]
+            }
+          },
+          {
+            $addFields: {
+              'betsId': { $toObjectId: "$betId" }
+            }
+          },
+          {
+            $lookup: {
+              from: 'bets',
+              localField: 'betsId',
+              foreignField: '_id',
+              as: 'betsDetails'
+            }
+          }, 
+          { 
+            $group:{
+              _id: "$_id",
+              pl: { $sum: "$amount"},
+              sattledAt: { $first: "$date" },
+              sportsId: { $first: { $arrayElemAt: ["$betsDetails.sportsId", 0] } },
+              price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
+              name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
+              createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
+              size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
+              type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
+              fancyData: { $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] } },
+              isfancyOrbookmaker: { $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] } }
+            }
+          }
+        ]);
+  
+    }else {
+      console.log(" =============================== ELSE RUNS =========================== ");
       response = await CashDeposit.aggregate([
         {
           $match: {
@@ -494,70 +547,16 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
             ]
           }
         },
-        {
-          $addFields: {
-            'betsId': { $toObjectId: "$betId" }
-          }
-        },
-        {
-          $lookup: {
-            from: 'bets',
-            localField: 'betsId',
-            foreignField: '_id',
-            as: 'betsDetails'
-          }
-        }, 
         { 
           $group:{
             _id: "$_id",
             pl: { $sum: "$amount"},
             sattledAt: { $first: "$date" },
-            sportsId: { $first: { $arrayElemAt: ["$betsDetails.sportsId", 0] } },
-            price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
-            name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
-            createdAt: { $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] } },
-            size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
-            type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
-            fancyData: { $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] } },
-            isfancyOrbookmaker: { $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] } }
+            sportsId:  { $first: "$sportsId" },
+            event: { $first: "$event" },
           }
         }
-      ]);
-
-    }else {
-      console.log(" =============================== ELSE RUNS =========================== ");
-
-      response = {}
-      // response = await CashDeposit.aggregate([
-      //   {
-      //     $match: {
-      //       matchId: matchId,
-      //       $or: [
-      //         {
-      //           $and: [{
-      //             userId: userId,
-      //           },
-      //           {
-      //             cashOrCredit: { $in: ["Bet"] }
-      //           }
-      //           ]
-      //         },
-      //         {       
-      //           cashOrCredit: { $in: ["Commission"] }
-      //         }
-      //       ]
-      //     }
-      //   },
-      //   { 
-      //     $group:{
-      //       _id: "$_id",
-      //       pl: { $sum: "$amount"},
-      //       sattledAt: { $first: "$date" },
-      //       sportsId:  { $first: "$sportsId" },
-      //       event: { $first: "$event" },
-      //     }
-      //   }
-      // ]);
+      ])
     }
     return res.send({
       success: true,
@@ -645,8 +644,6 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
       isDetailed: false
     });
   }
-
-
 
 }
 

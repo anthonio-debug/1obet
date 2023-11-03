@@ -366,12 +366,12 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
 
   if(currentUser.role == 5){
     console.log(" =============================== 5 =========================== ");
-    const match       = await Events.findById(matchId)
-    const parent      = await User.findOne({ userId: currentUser.createdBy});
-    let response = [];
-    console.log();
-    if([1, 2, 4, 7, 4339, "1", "2", "4", "7", "4339"].includes(match.sportsId)){
-    console.log(" =============================== Includes Part  =========================== ");
+    let match = null;
+    matchId.length > 10 ? match = await Events.findOne({ _id : ObjectId(`${matchId}`) }) : '';
+    const parent = await User.findOne({ userId: currentUser.createdBy});
+    let response;
+    if(!match){
+      console.log(" =============================== Includes Part  =========================== ");
       response = await CashDeposit.aggregate([
         {
           $match: {
@@ -425,38 +425,36 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
     }
     else {
       console.log(" =============================== ELSE RUNS =========================== ");
-
-      response = {}
-      // response = await CashDeposit.aggregate([
-      //   {
-      //     $match: {
-      //       matchId: matchId,
-      //       $or: [
-      //         {
-      //           $and: [{
-      //             userId: userId,
-      //           },
-      //           {
-      //             cashOrCredit: { $in: ["Bet"] }
-      //           }
-      //           ]
-      //         },
-      //         {       
-      //           cashOrCredit: { $in: ["Commission"] }
-      //         }
-      //       ]
-      //     }
-      //   },
-      //   { 
-      //     $group:{
-      //       _id: "$_id",
-      //       pl: { $sum: "$amount"},
-      //       sattledAt: { $first: "$date" },
-      //       sportsId:  { $first: "$sportsId" },
-      //       event: { $first: "$event" },
-      //     }
-      //   }
-      // ]);
+      response = await CashDeposit.aggregate([
+        {
+          $match: {
+            matchId: matchId,
+            $or: [
+              {
+                $and: [{
+                  userId: userId,
+                },
+                {
+                  cashOrCredit: { $in: ["Bet"] }
+                }
+                ]
+              },
+              {       
+                cashOrCredit: { $in: ["Commission"] }
+              }
+            ]
+          }
+        },
+        { 
+          $group:{
+            _id: "$_id",
+            pl: { $sum: "$amount"},
+            sattledAt: { $first: "$date" },
+            sportsId:  { $first: "$sportsId" },
+            event: { $first: "$event" },
+          }
+        }
+      ]);
     }
     return res.send({
       success: true,
