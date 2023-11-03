@@ -524,6 +524,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
         ]);
   
     }else {
+      console.log(" ================= matchId ================= ", matchId);
       response = await CashDeposit.aggregate([
         {
           $match: {
@@ -569,7 +570,6 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
     });
 
   }else {
-    console.log(" =============================== 5 =========================== ");
     const users       = [userId];
     let parents       = [userId];
     let childUsers;

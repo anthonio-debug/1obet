@@ -424,6 +424,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
       ]);
     }
     else {
+      console.log(" ================= matchId ================= ", matchId);
       response = await CashDeposit.aggregate([
         {
           $match: {
