@@ -469,7 +469,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
   if(currentUser.role == '5'){
     const match       = await Events.findById(matchId);
     let response = [];
-    if(match.sportsId){
+    if(match.sportsId == "6"){
       response = await CashDeposit.aggregate([
         {
           $match: {

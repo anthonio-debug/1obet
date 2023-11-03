@@ -368,7 +368,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
     const match       = await Events.findById(matchId)
     const parent      = await User.findOne({ userId: currentUser.createdBy});
     let response = []
-    if(match.sportsId){
+    if(match.sportsId  == "6"){
       response = await CashDeposit.aggregate([
         {
           $match: {
