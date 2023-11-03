@@ -1,15 +1,15 @@
-const express = require('express');
+const express = require("express");
 const app = express();
-const mongoose = require('mongoose');
-const bodyParser = require('body-parser');
-let config = require('config');
-let fs = require('fs');
-let cors = require('cors');
-var morgan = require('morgan');
-const http = require('http');
-const apisMiddleware = require('./app/middlewares/apisMiddleware');
-const loginMiddleWare = require('./app/middlewares/loginMiddleware');
-const checkRoleMiddleware = require('./app/middlewares/checkRoleMiddleware');
+const mongoose = require("mongoose");
+const bodyParser = require("body-parser");
+let config = require("config");
+let fs = require("fs");
+let cors = require("cors");
+var morgan = require("morgan");
+const http = require("http");
+const apisMiddleware = require("./app/middlewares/apisMiddleware");
+const loginMiddleWare = require("./app/middlewares/loginMiddleware");
+const checkRoleMiddleware = require("./app/middlewares/checkRoleMiddleware");
 
 var apisContent = fs.readFileSync(config.apisFileName);
 var jsonApis = JSON.parse(apisContent);
@@ -19,12 +19,12 @@ let options = {
   connectTimeoutMS: 30000, // 30 seconds
 };
 
-mongoose.set('strictQuery', false);
+mongoose.set("strictQuery", false);
 mongoose.set({ debug: false });
 mongoose
   .connect(config.DBHost, options)
   .then(() => {
-    console.log('Database connected');
+    console.log("Database connected");
   })
   .catch((err) => {
     console.log(` Database did not connect because ${err}`);
@@ -36,7 +36,7 @@ mongoose
 // console.log('dirname',__dirname);
 // JSON
 app.use(express.json());
-app.use(morgan('combined'));
+app.use(morgan("combined"));
 
 // READ FORM DATA
 app.use(express.urlencoded({ extended: false }));
@@ -49,7 +49,7 @@ var corsOptions = {
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
 app.use(cors(corsOptions));
-app.get('/', (req, res) => {
+app.get("/", (req, res) => {
   res.send(
     '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.net </h2></body>'
   );
@@ -61,11 +61,10 @@ app.use(function (req, res, next) {
 });
 
 //Without Authorization
-app.use('/api', require('./app/routes/user').router);
-app.use('/api', require('./app/routes/settings').router);
-app.use('/api', require('./app/routes/CasinoCalls').router);
-app.use('/api', require('./app/routes/AsianCasinoCalls').router);
-
+app.use("/api", require("./app/routes/user").router);
+app.use("/api", require("./app/routes/settings").router);
+app.use("/api", require("./app/routes/CasinoCalls").router);
+app.use("/api", require("./app/routes/AsianCasinoCalls").router);
 
 // Login middleware
 app.use(function (req, res, next) {
@@ -76,34 +75,35 @@ app.use(function (req, res, next) {
 });
 
 // APIS With Authorization
-app.use('/api', require('./app/routes/user').loginRouter);
-app.use('/api', require('./app/routes/userBetSizes').loginRouter);
-app.use('/api', require('./app/routes/modulePermissionsUsers').loginRouter);
-app.use('/api', require('./app/routes/modulePermissions').loginRouter);
-app.use('/api', require('./app/routes/marketPlaces').loginRouter);
-app.use('/api', require('./app/routes/betLocks').loginRouter);
-app.use('/api', require('./app/routes/deposits').loginRouter);
-app.use('/api', require('./app/routes/credits').loginRouter);
-app.use('/api', require('./app/routes/reports').loginRouter);
-app.use('/api', require('./app/routes/settings').loginRouter);
-app.use('/api', require('./app/routes/sportsHighlights').loginRouter);
-app.use('/api', require('./app/routes/bets').loginRouter);
-app.use('/api', require('./app/routes/casinoGames').loginRouter);
-app.use('/api', require('./app/routes/dailyPLReports').loginRouter);
-app.use('/api', require('./app/routes/dailyReports').loginRouter);
-app.use('/api', require('./app/routes/commissionReports').loginRouter);
-app.use('/api', require('./app/routes/bookDetail2Reports').loginRouter);
-app.use('/api', require('./app/routes/bookDetail').loginRouter);
-app.use('/api', require('./app/routes/currentPosition').loginRouter);
-app.use('/api', require('./app/routes/sportsAPI').loginRouter);
-app.use('/api', require('./app/routes/fancyGames').loginRouter);
-app.use('/api', require('./app/routes/liveTv').loginRouter);
-app.use('/api', require('./app/routes/liveScore').loginRouter);
-app.use('/api', require('./app/routes/Racing').loginRouter);
-app.use('/api', require('./app/routes/BettingFigures').loginRouter);
-app.use('/api', require('./app/routes/sportBook').loginRouter);
-app.use('/api', require('./app/routes/marketPositions').loginRouter);
-app.use('/api', require('./app/routes/marketShares').loginRouter);
+app.use("/api", require("./app/routes/user").loginRouter);
+app.use("/api", require("./app/routes/userBetSizes").loginRouter);
+app.use("/api", require("./app/routes/modulePermissionsUsers").loginRouter);
+app.use("/api", require("./app/routes/modulePermissions").loginRouter);
+app.use("/api", require("./app/routes/marketPlaces").loginRouter);
+app.use("/api", require("./app/routes/betLocks").loginRouter);
+app.use("/api", require("./app/routes/deposits").loginRouter);
+app.use("/api", require("./app/routes/credits").loginRouter);
+app.use("/api", require("./app/routes/reports").loginRouter);
+app.use("/api", require("./app/routes/settings").loginRouter);
+app.use("/api", require("./app/routes/sportsHighlights").loginRouter);
+app.use("/api", require("./app/routes/bets").loginRouter);
+app.use("/api", require("./app/routes/casinoGames").loginRouter);
+app.use("/api", require("./app/routes/dailyPLReports").loginRouter);
+app.use("/api", require("./app/routes/dailyReports").loginRouter);
+app.use("/api", require("./app/routes/commissionReports").loginRouter);
+app.use("/api", require("./app/routes/bookDetail2Reports").loginRouter);
+app.use("/api", require("./app/routes/bookDetail").loginRouter);
+app.use("/api", require("./app/routes/currentPosition").loginRouter);
+app.use("/api", require("./app/routes/sportsAPI").loginRouter);
+app.use("/api", require("./app/routes/fancyGames").loginRouter);
+app.use("/api", require("./app/routes/liveTv").loginRouter);
+app.use("/api", require("./app/routes/liveScore").loginRouter);
+app.use("/api", require("./app/routes/Racing").loginRouter);
+app.use("/api", require("./app/routes/BettingFigures").loginRouter);
+app.use("/api", require("./app/routes/sportBook").loginRouter);
+app.use("/api", require("./app/routes/marketPositions").loginRouter);
+app.use("/api", require("./app/routes/marketShares").loginRouter);
+app.use("/api", require("./app/routes/betPlaceHold").loginRouter);
 
 // // Allowed Apis for this role
 // app.use(function (req, res, next) {
