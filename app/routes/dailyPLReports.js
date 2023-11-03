@@ -424,6 +424,8 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
       ]);
     }
     else {
+      console.log(" =============================== ELSE RUNS =========================== ");
+
       response = {}
       // response = await CashDeposit.aggregate([
       //   {
