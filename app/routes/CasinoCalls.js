@@ -104,6 +104,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
       const difference = credit - debit;
       const allTrans   = [];
       // lose some Amount 
+      const betTime = rand(30, 120);
       if (difference < 0) {
         console.log("   ======================= difference < 0 =======================   ");
         /**
@@ -155,11 +156,13 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
           creditRemaining:  lastMaxWithdraw?.creditRemaining  || 0,   
           calledArea: " difference < 0 ",
           createdBy: 0,
+          casinoBetAmount: debit,
           event: game.name,
-          // matchId: bet.matchId,
+          betTime,
           betId: payload.transaction_id,
           marketId: payload.game_id,
           cashOrCredit: "Bet",
+
           sportsId: "6",
         }
         allTrans.push(BattorLostTran)
@@ -237,6 +240,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
             createdAt: formattedDate,
             commissionFrom: commissionFrom,
             createdBy: 0,
+            betTime,
+            casinoBetAmount: debit,
             amount: (user.commission / 100) * bettor_lost_amount,
             balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * bettor_lost_amount : (user.commission / 100) * bettor_lost_amount,
             availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * bettor_lost_amount : (user.commission / 100) * bettor_lost_amount,
@@ -321,6 +326,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
           date: now.getTime(),
           createdAt: formattedDate,
           createdBy: 0,
+          betTime,
+          casinoBetAmount: debit,
           amount: remainingAmount,
           balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
           availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
@@ -402,6 +409,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
             date: now.getTime(),
             createdAt: formattedDate,
             createdBy: 0,
+            betTime,
+            casinoBetAmount: debit,
             amount: -(user.commission / 100) * amount,
             balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
             availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
@@ -429,6 +438,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
             date: now.getTime(),
             createdAt: formattedDate,
             createdBy: 0,
+            betTime,
+            casinoBetAmount: debit,
             commissionFrom: commissionFrom,
             amount: (user.commission / 100) * commissionAmount,
             balance: prevBalance + (user.commission / 100) * commissionAmount,
@@ -456,11 +467,11 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
         }
 
         await Cash.insertMany(allTrans);
-        console.log("=============end of giving commissions and loss shares on amount which is WON by bettor");
+        console.log(" =============end of giving commissions and loss shares on amount which is WON by bettor");
 
         const casinoDebits = new CasinoDebits(payload);
         await casinoDebits.save();
-        console.log("=============end of }else if (difference > 0){=============");
+        console.log(" =============end of }else if (difference > 0){=============");
       }
       // No Win lose 
       else if(difference == 0) {
