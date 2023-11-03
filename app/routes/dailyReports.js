@@ -559,8 +559,10 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
             sportsId:  { $first: "$sportsId" },
             event: { $first: "$event" },
             price: { $first: "$casinoBetAmount" },
-            type: { $first: "$type" }, // Use an accumulator here
-            size: { $first: "$size" }  
+            type: { $first: "$type" },
+            size: { $first: "$size" },
+            createdAt: { $first: "$betTime" }
+            ,
           }
         }
       ])

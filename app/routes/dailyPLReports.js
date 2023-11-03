@@ -460,7 +460,8 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
             event: { $first: "$event" },
             price: { $first: "$casinoBetAmount" },
             type: { $first: "$type" }, // Use an accumulator here
-            size: { $first: "$size" }  
+            size: { $first: "$size" },
+            createdAt: { $first: "$betTime" }  
           }
         }
       ]);
