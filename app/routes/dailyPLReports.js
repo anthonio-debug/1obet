@@ -447,8 +447,8 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
         },
         {
           $addFields: {
-            "type": 0,
-            "size": 1
+            type: 0,
+            size: 1
           }
         },
         { 
