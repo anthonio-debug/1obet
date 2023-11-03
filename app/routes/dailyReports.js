@@ -472,7 +472,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
     let match = null
     matchId.length > 10 ? match = await Events.findOne({ _id : ObjectId(`${matchId}`) }) : '';
     let response;
-    if(!match){
+    if(match){
       console.log(" =============================== Includes Part  =========================== ");
  
         response = await CashDeposit.aggregate([
