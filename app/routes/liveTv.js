@@ -2,6 +2,7 @@ const express = require("express");
 let config = require("config");
 const axios = require("axios");
 const loginRouter = express.Router();
+const router = express.Router();
 
 async function liveTv(req, res) {
   const eventId = req.params.eventId;
@@ -48,6 +49,6 @@ async function liveDrateTp20(req, res) {
 
 // Define the route for the API
 loginRouter.get("/liveTv/:eventId", liveTv);
-loginRouter.get("/liveTv/d_rate/teen20", liveDrateTp20);
+router.get("/liveTv/d_rate/teen20", liveDrateTp20);
 
-module.exports = { loginRouter };
+module.exports = { loginRouter, router };
