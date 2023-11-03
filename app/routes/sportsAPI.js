@@ -496,7 +496,7 @@ async function fancyDataByCronjob(eventId) {
     console.error(error);
     return({
       success: false,
-      message: 'Failed to save fancy data',
+      message: 'Failed to save fancy data1',
       error: error.message,
     });
   }

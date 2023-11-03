@@ -1,38 +1,39 @@
-const express = require('express');
-var jwt = require('jsonwebtoken');
-const userValidation = require('../validators/user');
-const bcrypt = require('bcrypt');
-const { validationResult } = require('express-validator');
-let config = require('config');
-const Bets = require('../models/bets');
-const User = require('../models/user');
-const CricketMatch = require('../models/cricketMatches');
-const Markets = require('../models/marketTypes');
-const SubMarketType = require('../models/subMarketTypes');
+const express = require("express");
+var jwt = require("jsonwebtoken");
+const userValidation = require("../validators/user");
+const bcrypt = require("bcrypt");
+const { validationResult } = require("express-validator");
+let config = require("config");
+const Bets = require("../models/bets");
+const User = require("../models/user");
+const CricketMatch = require("../models/cricketMatches");
+const Markets = require("../models/marketTypes");
+const SubMarketType = require("../models/subMarketTypes");
 const loginRouter = express.Router();
-const betValidator = require('../validators/bets');
-const maxAllowedBetSizes = require('../models/betLimits');
-const userBetSizes = require('../models/userBetSizes');
-const betRates = require('../models/betRate');
-const MarketType = require('../models/marketTypes');
-const Odds = require('../models/odds');
-const Events = require('../models/events');
-const FancyGames = require('../models/fancyGames');
-const RaceOdds = require('../models/raceOdds');
-const RaceMarkets = require('../models/raceMarkets');
-const axios = require('axios');
-const ListMarkets = require('../models/listMarkets');
-const currentPosition = require('../models/CurrentPosition');
-const FancyOdds = require('../models/fancyOdds');
-const Session = require('../models/Session');
-const { log } = require('async');
-const Cash = require('../../app/models/deposits');
-const mongoose = require('mongoose');
+const betValidator = require("../validators/bets");
+const maxAllowedBetSizes = require("../models/betLimits");
+const userBetSizes = require("../models/userBetSizes");
+const betRates = require("../models/betRate");
+const MarketType = require("../models/marketTypes");
+const Odds = require("../models/odds");
+const Events = require("../models/events");
+const FancyGames = require("../models/fancyGames");
+const RaceOdds = require("../models/raceOdds");
+const RaceMarkets = require("../models/raceMarkets");
+const axios = require("axios");
+const ListMarkets = require("../models/listMarkets");
+const currentPosition = require("../models/CurrentPosition");
+const FancyOdds = require("../models/fancyOdds");
+const Session = require("../models/Session");
+const { log } = require("async");
+const Cash = require("../../app/models/deposits");
+const mongoose = require("mongoose");
+const BetPlaceHold = require("../models/betaPlaceHold");
 const handleLimitValue = async (selectedRate, marketId) => {
-  if (selectedRate?.toString()?.split('.')?.length == 1 && selectedRate >= 30)
+  if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
     return 6;
   else if (
-    selectedRate?.toString()?.split('.')?.length == 1 &&
+    selectedRate?.toString()?.split(".")?.length == 1 &&
     selectedRate >= 20
   )
     return 3;
@@ -42,12 +43,12 @@ const handleLimitValue = async (selectedRate, marketId) => {
   else if (selectedRate >= 3) return 0.15;
   else if (selectedRate >= 2) return 0.06;
   else if (selectedRate >= 1) return 0.03;
-}
+};
 
 const getParents = async (userId) => {
   const parentUserIds = [];
   let currentUserId = userId;
-  console.log('currentUserId', currentUserId);
+  console.log("currentUserId", currentUserId);
 
   while (currentUserId) {
     const parentUser = await User.findOne({ userId: currentUserId });
@@ -62,9 +63,9 @@ const getParents = async (userId) => {
     parentUserIds.push(parentUser.createdBy);
     currentUserId = parentUser.createdBy;
   }
-  console.log(' parentUserIds ========== ', parentUserIds);
+  console.log(" parentUserIds ========== ", parentUserIds);
   return parentUserIds;
-}
+};
 
 const updateParentUserBalance = async (
   parentUsersIds,
@@ -72,7 +73,7 @@ const updateParentUserBalance = async (
   matchId = 0,
   Id = 0,
   selectionId = 0,
-  marketId = ''
+  marketId = ""
 ) => {
   const parentUser = await User.find({
     userId: {
@@ -83,24 +84,24 @@ const updateParentUserBalance = async (
   let prev = 0;
 
   for (const user of parentUser) {
-    let current    = user.downLineShare;
+    let current = user.downLineShare;
     let commission = current - prev;
-    user['commission'] = commission;
+    user["commission"] = commission;
     prev = current;
   }
 
   for (const user of parentUser) {
     console.log(`user id ${user.userId} =====`, user.commission);
     const amountToBeSub = (user.commission / 100) * winningAmount;
-    const finalAmount = Number(amountToBeSub.toFixed(2))
-    user.exposure    -= finalAmount;
+    const finalAmount = Number(amountToBeSub.toFixed(2));
+    user.exposure -= finalAmount;
     user.availableBalance -= finalAmount;
     await user.save();
-    console.log('Saving parent users');
+    console.log("Saving parent users");
     if (matchId != 0) {
       let position = await new currentPosition({
         userId: user.userId,
-        description: 'some transection name',
+        description: "some transection name",
         amount: -finalAmount,
         betId: Id,
         matchsId: matchId,
@@ -109,8 +110,7 @@ const updateParentUserBalance = async (
       await position.save();
     }
   }
-  
-}
+};
 
 const placeBet = async (req, res) => {
   const errors = validationResult(req);
@@ -118,8 +118,8 @@ const placeBet = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
-    if (req.decoded.login.role != '5') {
-      return res.status(401).send({ message: 'You are not allowed to bet' });
+    if (req.decoded.login.role != "5") {
+      return res.status(401).send({ message: "You are not allowed to bet" });
     }
     /* =============================  Base Settings   ============================== */
     let runnerName;
@@ -168,22 +168,22 @@ const placeBet = async (req, res) => {
     }
     const user = await User.findOne({ userId }).exec();
     if (!user) {
-      return res.status(404).send({ message: 'illegal user betting' });
+      return res.status(404).send({ message: "illegal user betting" });
     }
 
     if (user.bettingAllowed == false) {
-      return res.status(404).send({ message: 'Bet not allowed' });
+      return res.status(404).send({ message: "Bet not allowed" });
     }
     let parentUserIds = await getParents(user.userId);
-    const marketIds = await User.distinct('blockedMarketPlaces', {
+    const marketIds = await User.distinct("blockedMarketPlaces", {
       userId: { $in: parentUserIds },
       isDeleted: false,
     });
-    const subMarketId1 = await User.distinct('blockedSubMarkets', {
+    const subMarketId1 = await User.distinct("blockedSubMarkets", {
       userId: { $in: parentUserIds },
       isDeleted: false,
     });
-    const subMarketId2 = await User.distinct('blockedSubMarketsByParent', {
+    const subMarketId2 = await User.distinct("blockedSubMarketsByParent", {
       userId: { $in: parentUserIds },
       isDeleted: false,
     });
@@ -191,30 +191,33 @@ const placeBet = async (req, res) => {
     const eventDetail = await Events.findById(matchId);
 
     if (!eventDetail) {
-      return res.status(404).send({ message: 'EVENT COULD NOT FOUND' });
+      return res.status(404).send({ message: "EVENT COULD NOT FOUND" });
     }
 
-    console.log("================================ (eventDetail.status.toUpperCase()", eventDetail.status.toUpperCase());
- 
+    console.log(
+      "================================ (eventDetail.status.toUpperCase()",
+      eventDetail.status.toUpperCase()
+    );
+
     if (!eventDetail.betAllowed) {
       return res
         .status(404)
-        .send({ message: 'Batting Not Allowd on this Match' });
+        .send({ message: "Batting Not Allowd on this Match" });
     }
-    if (eventDetail.status.toUpperCase() != 'OPEN') {
+    if (eventDetail.status.toUpperCase() != "OPEN") {
       return res
         .status(404)
-        .send({ message: 'Batting Not Allowd on this Match' });
+        .send({ message: "Batting Not Allowd on this Match" });
     }
     if (eventDetail.matchStopStatus) {
       return res
         .status(404)
-        .send({ message: 'Batting Not Allowd on this Match' });
+        .send({ message: "Batting Not Allowd on this Match" });
     }
 
     marketId = eventDetail?.sportsId;
     const Digitaddition = await handleLimitValue(betRate, marketId);
-    console.log(' marketId ======== ', marketId);
+    console.log(" marketId ======== ", marketId);
     // Checks for Market Places & Sub Markets
     if (config.raceMarkets.includes(marketId)) {
       const requiredTime = new Date().getTime() + config.raceOpenBefore;
@@ -235,17 +238,20 @@ const placeBet = async (req, res) => {
         marketId: marketId,
       }).exec();
       if (!subMarketDetail) {
-        return res.status(404).send({ message: 'Bet not allowed' });
+        return res.status(404).send({ message: "Bet not allowed" });
       }
     } else {
-      let thirdPartyMarketName     = subMarketName;
-      const requiredTime           = new Date().getTime() + config.sportsOpenBefore;
+      let thirdPartyMarketName = subMarketName;
+      const requiredTime = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime;
-      
-      if (subMarketName == 'Toss') {
-        thirdPartyMarketName = 'To Win the Toss';
+
+      if (subMarketName == "Toss") {
+        thirdPartyMarketName = "To Win the Toss";
         const requiredTime = new Date().getTime() - config.tossCloseTime;
-        if (subMarketDetail.Id == config.Toss && requiredTime >= remainingTimeFromEventStart) {
+        if (
+          subMarketDetail.Id == config.Toss &&
+          requiredTime >= remainingTimeFromEventStart
+        ) {
           return res.status(404).send({
             status: true,
             message: `Bets are not Allowed Now In this market`,
@@ -253,7 +259,7 @@ const placeBet = async (req, res) => {
         }
       }
 
-      if (["Winner", "Cup Winner", "Cup"].includes(subMarketName)){
+      if (["Winner", "Cup Winner", "Cup"].includes(subMarketName)) {
         subMarketName = "Cup Winner";
       }
 
@@ -268,7 +274,7 @@ const placeBet = async (req, res) => {
       }).exec();
 
       if (!subMarketDetail) {
-        return res.status(404).send({ message: 'you cannot place bet' });
+        return res.status(404).send({ message: "you cannot place bet" });
       }
       // console.log(' ================= subMarketDetail.Id ', subMarketDetail);
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
@@ -285,8 +291,13 @@ const placeBet = async (req, res) => {
 
     // console.log(' ================== subMarketDetail ================== ', subMarketDetail );
 
-    if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id) ) {
-      return res.status(404).send({ message: 'Betting disabled' });
+    if (
+      marketIds.includes(marketId) ||
+      subMarketId.includes(subMarketDetail.Id) ||
+      user.betLockStatus == true ||
+      user.blockedSubMarketsByParent.includes(subMarketDetail.Id)
+    ) {
+      return res.status(404).send({ message: "Betting disabled" });
     }
     const userMaxBetSize = await userBetSizes.findOne({
       userId: userId,
@@ -307,7 +318,10 @@ const placeBet = async (req, res) => {
     /* ================================== Market Specific Checks ================================== */
 
     // Socer Match Odds
-    if ( config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
+    if (
+      config.sportMarkets.includes(marketId) &&
+      config.soccerOdds == subMarketDetail.Id
+    ) {
       // console.log(' ======================== Soccer  Match Odds ======================== ');
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -362,12 +376,20 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * i);
         }
-      } else if ( type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
+      } else if (
+        type == 1 &&
+        betRate > selectedBetRate &&
+        betRate - Digitaddition > selectedBetRate
+      ) {
         // console.log( ' type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate Value Not found In this Array ');
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
-      } else if ( type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
+      } else if (
+        type == 0 &&
+        selectedBetRate < betRate &&
+        selectedBetRate - Digitaddition > betRate
+      ) {
         // console.log(' type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array ');
         return res.status(404).send({
           message: `Bet Miss Matched `,
@@ -426,8 +448,13 @@ const placeBet = async (req, res) => {
     }
 
     // Tennis Match Odds
-    else if ( config.sportMarkets.includes(marketId) && config.tennisOdds == subMarketDetail.Id) {
-      console.log( ' ======================== Tennis Match Odds ======================== ' );
+    else if (
+      config.sportMarkets.includes(marketId) &&
+      config.tennisOdds == subMarketDetail.Id
+    ) {
+      console.log(
+        " ======================== Tennis Match Odds ======================== "
+      );
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         return res.status(404).send({
@@ -481,12 +508,20 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * i);
         }
-      } else if ( type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate ) {
+      } else if (
+        type == 1 &&
+        betRate > selectedBetRate &&
+        betRate - Digitaddition > selectedBetRate
+      ) {
         // console.log( ' type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate Value Not found In this Array ');
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
-      } else if ( type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
+      } else if (
+        type == 0 &&
+        selectedBetRate < betRate &&
+        selectedBetRate - Digitaddition > betRate
+      ) {
         // console.log(' type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array ');
         return res.status(404).send({
           message: `Bet Miss Matched `,
@@ -569,8 +604,13 @@ const placeBet = async (req, res) => {
     }
 
     // Cricket Match Odds
-    else if ( config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id ) {
-      console.log(' ======================== Soccer  Match Odds ======================== ');
+    else if (
+      config.sportMarkets.includes(marketId) &&
+      config.cricketOdds == subMarketDetail.Id
+    ) {
+      console.log(
+        " ======================== Soccer  Match Odds ======================== "
+      );
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -588,9 +628,19 @@ const placeBet = async (req, res) => {
       );
       runnerName = OddDetailsTeam?.runnerName;
       // console.log(' ============================ ========================== ', runnerForSaveInbets );
+      /*start of code by qaiser */
+      const BetPlaceData = await BetPlaceHold.findOne({
+        eventId: DBOddDetails.eventId,
+      });
+
+      console.log(
+        "start of code by qaiser..Secondsvalue: ",
+        BetPlaceData.secondsValue
+      );
+      /*end of code by qaiser*/
 
       if (selectedBetRate == betRate) {
-        for (let i = 1; i < 5; i++) {
+        for (let i = 1; i < BetPlaceData.secondsValue; i++) {
           setTimeout(async () => {
             const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             const response = await axios.get(url);
@@ -720,14 +770,16 @@ const placeBet = async (req, res) => {
 
     // GH HR match odds
     else if (config.raceMarkets.includes(marketId)) {
-      if(betRate > 50){
+      if (betRate > 50) {
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       }
       //isManuel = false;
       runnerName = req.body.runnerName;
-      console.log( ' ============================ GH & HR ============================ ');
+      console.log(
+        " ============================ GH & HR ============================ "
+      );
       const DBOddDetails = await RaceOdds.findById(oddsId);
       const OddDetailsTeam = DBOddDetails.runners.find(
         (runner) => runner.selectionId == selectionId
@@ -787,7 +839,7 @@ const placeBet = async (req, res) => {
         betRate - Digitaddition > selectedBetRate
       ) {
         console.log(
-          ' type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate Value Not found In this Array '
+          " type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate Value Not found In this Array "
         );
         return res.status(404).send({
           message: `Bet Miss Matched `,
@@ -798,18 +850,18 @@ const placeBet = async (req, res) => {
         selectedBetRate - Digitaddition > betRate
       ) {
         console.log(
-          ' type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array '
+          " type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array "
         );
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && betRate < selectedBetRate) {
-        console.log(' type == 1 && betRate < selectedBetRate ');
+        console.log(" type == 1 && betRate < selectedBetRate ");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
-        console.log(' type == 1 && betRate < selectedBetRate ');
+        console.log(" type == 1 && betRate < selectedBetRate ");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -905,10 +957,13 @@ const placeBet = async (req, res) => {
     }
 
     // soccer over under
-    else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.overUnder){
+    else if (
+      config.sportMarkets.includes(marketId) &&
+      subMarketDetail.Id == config.overUnder
+    ) {
       _3rdPartyMarketId = overunderMarketId;
       console.log(
-        ' ======================== Soccer over under  ======================== '
+        " ======================== Soccer over under  ======================== "
       );
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -926,11 +981,11 @@ const placeBet = async (req, res) => {
       );
       runnerName = OddDetailsTeam?.runnerName;
       console.log(
-        ' ============================ ========================== ',
+        " ============================ ========================== ",
         runnerForSaveInbets
       );
       console.log(
-        ' ========================================== id ========================================== ',
+        " ========================================== id ========================================== ",
         id
       );
       if (selectedBetRate == betRate) {
@@ -940,7 +995,7 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(
-              ' ================ oddsData ================ ',
+              " ================ oddsData ================ ",
               oddsData
             );
             const runnerFromAPI = oddsData[0]?.Runners.find(
@@ -951,7 +1006,7 @@ const placeBet = async (req, res) => {
               const ApiResponseOdds =
                 runnerFromAPI?.ExchangePrices?.AvailableToBack;
               console.log(
-                ' =============== ApiResponseOdds ============ ',
+                " =============== ApiResponseOdds ============ ",
                 ApiResponseOdds
               );
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
@@ -965,7 +1020,7 @@ const placeBet = async (req, res) => {
               const ApiResponseOdds =
                 runnerFromAPI.ExchangePrices?.AvailableToLay;
               console.log(
-                ' =============== ApiResponseOdds ============ ',
+                " =============== ApiResponseOdds ============ ",
                 ApiResponseOdds
               );
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
@@ -984,7 +1039,7 @@ const placeBet = async (req, res) => {
         betRate - Digitaddition > selectedBetRate
       ) {
         console.log(
-          ' type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate Value Not found In this Array '
+          " type == 1 && betRate > selectedBetRate &&  betRate-Digitaddition > selectedBetRate Value Not found In this Array "
         );
         return res.status(404).send({
           message: `Bet Miss Matched `,
@@ -995,18 +1050,18 @@ const placeBet = async (req, res) => {
         selectedBetRate - Digitaddition > betRate
       ) {
         console.log(
-          ' type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array '
+          " type == 0 && selectedBetRate > betRate &&  selectedBetRate - Digitaddition > betRate Value Not found In this Array "
         );
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && betRate < selectedBetRate) {
-        console.log(' type == 1 && betRate < selectedBetRate ');
+        console.log(" type == 1 && betRate < selectedBetRate ");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
-        console.log(' type == 1 && betRate < selectedBetRate ');
+        console.log(" type == 1 && betRate < selectedBetRate ");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -1017,7 +1072,7 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(
-              ' ================ oddsData ================ ',
+              " ================ oddsData ================ ",
               oddsData
             );
             const runnerFromAPI = oddsData[0]?.Runners.find(
@@ -1025,7 +1080,7 @@ const placeBet = async (req, res) => {
             );
             ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToLay;
             console.log(
-              ' ================ ApiResponseOdds ================ ',
+              " ================ ApiResponseOdds ================ ",
               ApiResponseOdds
             );
             /**
@@ -1037,7 +1092,7 @@ const placeBet = async (req, res) => {
 
             let selectedOddsValue = ApiResponseOdds[0]?.price;
             console.log(
-              ' =================== selectedOddsValue =============== ',
+              " =================== selectedOddsValue =============== ",
               selectedOddsValue
             );
             if (selectedOddsValue <= betRate) {
@@ -1070,7 +1125,7 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(
-              ' ================ oddsData ================ ',
+              " ================ oddsData ================ ",
               oddsData
             );
             const runnerFromAPI = oddsData[0]?.Runners.find(
@@ -1078,12 +1133,12 @@ const placeBet = async (req, res) => {
             );
             ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
             console.log(
-              ' ================ ApiResponseOdds ================ ',
+              " ================ ApiResponseOdds ================ ",
               ApiResponseOdds
             );
             let selectedOddsValue = ApiResponseOdds[0]?.price;
             console.log(
-              ' =================== selectedOddsValue =============== ',
+              " =================== selectedOddsValue =============== ",
               selectedOddsValue
             );
             if (selectedOddsValue >= betRate) {
@@ -1112,9 +1167,12 @@ const placeBet = async (req, res) => {
     }
 
     // cricket Tied Match
-    else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.tiedMatch) {
+    else if (
+      config.sportMarkets.includes(marketId) &&
+      subMarketDetail.Id == config.tiedMatch
+    ) {
       console.log(
-        ' ======================== Soccer  Match Odds ======================== '
+        " ======================== Soccer  Match Odds ======================== "
       );
 
       const DBOddDetails = await Odds.findById(oddsId);
@@ -1133,9 +1191,13 @@ const placeBet = async (req, res) => {
       );
       runnerName = OddDetailsTeam?.runnerName;
       console.log(
-        ' ============================ ========================== ',
+        " ============================ ========================== ",
         runnerForSaveInbets
       );
+
+      const BetPlaceData = await BetPlaceHold.findOne({
+        eventId: DBOddDetails.eventId,
+      });
 
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5; i++) {
@@ -1144,7 +1206,7 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(
-              ' ================ oddsData ================ ',
+              " ================ oddsData ================ ",
               oddsData
             );
             const runnerFromAPI = oddsData[0]?.Runners.find(
@@ -1155,7 +1217,7 @@ const placeBet = async (req, res) => {
               const ApiResponseOdds =
                 runnerFromAPI?.ExchangePrices?.AvailableToBack;
               console.log(
-                ' =============== ApiResponseOdds ============ ',
+                " =============== ApiResponseOdds ============ ",
                 ApiResponseOdds
               );
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
@@ -1169,7 +1231,7 @@ const placeBet = async (req, res) => {
               const ApiResponseOdds =
                 runnerFromAPI.ExchangePrices?.AvailableToLay;
               console.log(
-                ' =============== ApiResponseOdds ============ ',
+                " =============== ApiResponseOdds ============ ",
                 ApiResponseOdds
               );
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
@@ -1183,12 +1245,12 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       } else if (type == 1 && betRate < selectedBetRate) {
-        console.log(' type == 1 && betRate < selectedBetRate ');
+        console.log(" type == 1 && betRate < selectedBetRate ");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
-        console.log(' type == 1 && betRate < selectedBetRate ');
+        console.log(" type == 1 && betRate < selectedBetRate ");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -1199,7 +1261,7 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(
-              ' ================ oddsData ================ ',
+              " ================ oddsData ================ ",
               oddsData
             );
             const runnerFromAPI = oddsData[0]?.Runners.find(
@@ -1207,12 +1269,12 @@ const placeBet = async (req, res) => {
             );
             ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToLay;
             console.log(
-              ' ================ ApiResponseOdds ================ ',
+              " ================ ApiResponseOdds ================ ",
               ApiResponseOdds
             );
             let selectedOddsValue = ApiResponseOdds[0]?.price;
             console.log(
-              ' =================== selectedOddsValue =============== ',
+              " =================== selectedOddsValue =============== ",
               selectedOddsValue
             );
             if (selectedOddsValue <= betRate) {
@@ -1228,7 +1290,7 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(
-              ' ================ oddsData ================ ',
+              " ================ oddsData ================ ",
               oddsData
             );
             const runnerFromAPI = oddsData[0]?.Runners.find(
@@ -1236,12 +1298,12 @@ const placeBet = async (req, res) => {
             );
             ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
             console.log(
-              ' ================ ApiResponseOdds ================ ',
+              " ================ ApiResponseOdds ================ ",
               ApiResponseOdds
             );
             let selectedOddsValue = ApiResponseOdds[0]?.price;
             console.log(
-              ' =================== selectedOddsValue =============== ',
+              " =================== selectedOddsValue =============== ",
               selectedOddsValue
             );
             if (selectedOddsValue >= betRate) {
@@ -1254,8 +1316,13 @@ const placeBet = async (req, res) => {
     }
 
     // Cricket Cup Winner
-    else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.Cup) {
-      console.log(' ======================== Soccer  Match Odds ======================== ' );
+    else if (
+      config.sportMarkets.includes(marketId) &&
+      subMarketDetail.Id == config.Cup
+    ) {
+      console.log(
+        " ======================== Soccer  Match Odds ======================== "
+      );
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -1273,7 +1340,7 @@ const placeBet = async (req, res) => {
       );
       runnerName = OddDetailsTeam?.runnerName;
       console.log(
-        ' ============================ ========================== ',
+        " ============================ ========================== ",
         runnerForSaveInbets
       );
 
@@ -1284,7 +1351,7 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(
-              ' ================ oddsData ================ ',
+              " ================ oddsData ================ ",
               oddsData
             );
             const runnerFromAPI = oddsData[0]?.Runners.find(
@@ -1295,7 +1362,7 @@ const placeBet = async (req, res) => {
               const ApiResponseOdds =
                 runnerFromAPI?.ExchangePrices?.AvailableToBack;
               console.log(
-                ' =============== ApiResponseOdds ============ ',
+                " =============== ApiResponseOdds ============ ",
                 ApiResponseOdds
               );
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
@@ -1309,7 +1376,7 @@ const placeBet = async (req, res) => {
               const ApiResponseOdds =
                 runnerFromAPI.ExchangePrices?.AvailableToLay;
               console.log(
-                ' =============== ApiResponseOdds ============ ',
+                " =============== ApiResponseOdds ============ ",
                 ApiResponseOdds
               );
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
@@ -1323,12 +1390,12 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       } else if (type == 1 && betRate < selectedBetRate) {
-        console.log(' type == 1 && betRate < selectedBetRate ');
+        console.log(" type == 1 && betRate < selectedBetRate ");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
-        console.log(' type == 1 && betRate < selectedBetRate ');
+        console.log(" type == 1 && betRate < selectedBetRate ");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -1339,7 +1406,7 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(
-              ' ================ oddsData ================ ',
+              " ================ oddsData ================ ",
               oddsData
             );
             const runnerFromAPI = oddsData[0]?.Runners.find(
@@ -1347,12 +1414,12 @@ const placeBet = async (req, res) => {
             );
             ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToLay;
             console.log(
-              ' ================ ApiResponseOdds ================ ',
+              " ================ ApiResponseOdds ================ ",
               ApiResponseOdds
             );
             let selectedOddsValue = ApiResponseOdds[0]?.price;
             console.log(
-              ' =================== selectedOddsValue =============== ',
+              " =================== selectedOddsValue =============== ",
               selectedOddsValue
             );
             if (selectedOddsValue <= betRate) {
@@ -1368,7 +1435,7 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(
-              ' ================ oddsData ================ ',
+              " ================ oddsData ================ ",
               oddsData
             );
             const runnerFromAPI = oddsData[0]?.Runners.find(
@@ -1376,12 +1443,12 @@ const placeBet = async (req, res) => {
             );
             ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
             console.log(
-              ' ================ ApiResponseOdds ================ ',
+              " ================ ApiResponseOdds ================ ",
               ApiResponseOdds
             );
             let selectedOddsValue = ApiResponseOdds[0]?.price;
             console.log(
-              ' =================== selectedOddsValue =============== ',
+              " =================== selectedOddsValue =============== ",
               selectedOddsValue
             );
             if (selectedOddsValue >= betRate) {
@@ -1394,9 +1461,12 @@ const placeBet = async (req, res) => {
     }
 
     // cricket Toss
-    else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.Toss) {
+    else if (
+      config.sportMarkets.includes(marketId) &&
+      subMarketDetail.Id == config.Toss
+    ) {
       console.log(
-        ' ======================== Soccer  Match Odds ======================== '
+        " ======================== Soccer  Match Odds ======================== "
       );
 
       const DBOddDetails = await Odds.findById(oddsId);
@@ -1415,7 +1485,7 @@ const placeBet = async (req, res) => {
       );
       runnerName = OddDetailsTeam?.runnerName;
       console.log(
-        ' ============================ ========================== ',
+        " ============================ ========================== ",
         runnerForSaveInbets
       );
 
@@ -1426,7 +1496,7 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             console.log(
-              ' ================ oddsData ================ ',
+              " ================ oddsData ================ ",
               oddsData
             );
             const runnerFromAPI = oddsData[0]?.Runners.find(
@@ -1437,7 +1507,7 @@ const placeBet = async (req, res) => {
               const ApiResponseOdds =
                 runnerFromAPI?.ExchangePrices?.AvailableToBack;
               console.log(
-                ' =============== ApiResponseOdds ============ ',
+                " =============== ApiResponseOdds ============ ",
                 ApiResponseOdds
               );
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
@@ -1451,7 +1521,7 @@ const placeBet = async (req, res) => {
               const ApiResponseOdds =
                 runnerFromAPI.ExchangePrices?.AvailableToLay;
               console.log(
-                ' =============== ApiResponseOdds ============ ',
+                " =============== ApiResponseOdds ============ ",
                 ApiResponseOdds
               );
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
@@ -1495,21 +1565,21 @@ const placeBet = async (req, res) => {
           .send({ message: `max bet size is : ${fancyBetLimit.amount}` });
       }
 
-      console.log(' fancyBetLimit ========== ', fancyBetLimit);
-      console.log(' subMarketDetail.Id ========== ', subMarketDetail.Id);
+      console.log(" fancyBetLimit ========== ", fancyBetLimit);
+      console.log(" subMarketDetail.Id ========== ", subMarketDetail.Id);
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id;
       const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
       const response = await axios.get(url);
       console.log(
-        ' ================== API response ================== ',
+        " ================== API response ================== ",
         response
       );
       const apiFancyOdds = response?.data?.data?.t3;
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
-      console.log(' apiFancyOdds ====== ', apiFancyOdds);
-      console.log(' dbFancyOdds  ====== ', dbFancyOdds);
+      console.log(" apiFancyOdds ====== ", apiFancyOdds);
+      console.log(" dbFancyOdds  ====== ", dbFancyOdds);
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
         const apiSelectedOdds = apiFancyOdds.find(
           (runner) => runner.sid == selectionId
@@ -1519,20 +1589,18 @@ const placeBet = async (req, res) => {
         );
 
         if (!apiSelectedOdds || !dbSelectedOdds) {
-          console.log(' apiSelectedOdds ====== ', apiSelectedOdds);
-          console.log(' dbSelectedOdds ====== ', dbSelectedOdds);
+          console.log(" apiSelectedOdds ====== ", apiSelectedOdds);
+          console.log(" dbSelectedOdds ====== ", dbSelectedOdds);
 
           console.log(
             `Odds not available for the selected team ${selectionId}`
           );
-          return res
-            .status(404)
-            .send({
-              message: `Odds not available for the selected team ${selectionId}`,
-            });
+          return res.status(404).send({
+            message: `Odds not available for the selected team ${selectionId}`,
+          });
         }
-        console.log(' apiSelectedOdds ====== ', apiSelectedOdds);
-        console.log(' dbSelectedOdds ====== ', dbSelectedOdds);
+        console.log(" apiSelectedOdds ====== ", apiSelectedOdds);
+        console.log(" dbSelectedOdds ====== ", dbSelectedOdds);
         // Get the runner name from the 'nat' field
         fancyData = dbSelectedOdds.nat;
         runnerName = dbSelectedOdds.nat;
@@ -1559,7 +1627,7 @@ const placeBet = async (req, res) => {
             dbSelectedOdds.ls3,
           ];
           const DbBackScores = DbBackScores2.map((item) => Number(item));
-          console.log(' DbBackOdds ============ ', DbBackOdds);
+          console.log(" DbBackOdds ============ ", DbBackOdds);
           const index = DbBackOdds.indexOf(betRate);
           TargetScore = betRate;
 
@@ -1596,7 +1664,7 @@ const placeBet = async (req, res) => {
           ];
           const DbBackScores = DbBackScores2.map((item) => Number(item));
 
-          console.log(' DbBackOdds ============ ', DbBackOdds);
+          console.log(" DbBackOdds ============ ", DbBackOdds);
 
           const index = DbBackOdds.indexOf(betRate);
           TargetScore = betRate;
@@ -1613,24 +1681,22 @@ const placeBet = async (req, res) => {
             return res.status(404).send({ message: `Bet miss matched` });
           }
         } else {
-          console.log('Invalid type value. Type should be 0 or 1.');
+          console.log("Invalid type value. Type should be 0 or 1.");
           return res
             .status(400)
-            .send({ message: 'Invalid type value. Type should be 0 or 1.' });
+            .send({ message: "Invalid type value. Type should be 0 or 1." });
         }
         console.log(
-          ' =================== isFancyOrBookMaker ========================== ',
+          " =================== isFancyOrBookMaker ========================== ",
           isFancyOrBookMaker
         );
       } else {
         console.log(
           `Odds not available for the selected team ${req.body.selectionId}`
         );
-        return res
-          .status(404)
-          .send({
-            message: `Odds not available for the selected team ${req.body.selectionId}`,
-          });
+        return res.status(404).send({
+          message: `Odds not available for the selected team ${req.body.selectionId}`,
+        });
       }
     }
 
@@ -1655,19 +1721,17 @@ const placeBet = async (req, res) => {
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id;
       const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
-      console.log(' url ===== ', url);
+      console.log(" url ===== ", url);
       const response = await axios.get(url);
-      console.log('bookmaker response ========', response.data);
+      console.log("bookmaker response ========", response.data);
 
       if (!response?.data?.data?.t2?.length) {
         console.log(
           `Odds not available for the selected team ||||||  ${req.body.selectionId}`
         );
-        return res
-          .status(404)
-          .send({
-            message: `Odds not available for the selected team ${req.body.selectionId}`,
-          });
+        return res.status(404).send({
+          message: `Odds not available for the selected team ${req.body.selectionId}`,
+        });
       }
       const apiFancyOdds = response?.data?.data?.t2?.length
         ? response?.data?.data?.t2[0]?.bm1
@@ -1675,13 +1739,13 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
       runners = dbFancyOdds;
-      _3rdPartyMarketId = 'Bookmaker';
+      _3rdPartyMarketId = "Bookmaker";
       runnerForSaveInbets = runners.map((runner) => ({
         runner: runner.sid,
         amount: 0,
       }));
-      console.log(' apiFancyOdds ==== ', apiFancyOdds);
-      console.log(' dbFancyOdds ==== ', dbFancyOdds);
+      console.log(" apiFancyOdds ==== ", apiFancyOdds);
+      console.log(" dbFancyOdds ==== ", dbFancyOdds);
 
       if (apiFancyOdds.length && dbFancyOdds.length) {
         const apiSelectedOdds = apiFancyOdds.find(
@@ -1695,11 +1759,9 @@ const placeBet = async (req, res) => {
           console.log(
             `Odds not available for the selected team ${req.body.selectionId}`
           );
-          return res
-            .status(404)
-            .send({
-              message: `Odds not available for the selected team ${req.body.selectionId}`,
-            });
+          return res.status(404).send({
+            message: `Odds not available for the selected team ${req.body.selectionId}`,
+          });
         }
         fancyData = null;
         runnerName = dbSelectedOdds.nat;
@@ -1728,14 +1790,14 @@ const placeBet = async (req, res) => {
           const index = DbBackOdds.indexOf(betRate);
           TargetScore = DbBackScores[index];
           if (index == -1) {
-            console.log(' index apiBackOdds ==== ', apiBackOdds);
-            console.log(' index index ==== ', index);
+            console.log(" index apiBackOdds ==== ", apiBackOdds);
+            console.log(" index index ==== ", index);
             console.log(`Index didn't Match ${betRate}`);
             return res.status(404).send({ message: `Index didn't Match` });
           }
           if (apiBackOdds[index] < betRate) {
-            console.log(' 2 apiBackOdds ==== ', apiBackOdds);
-            console.log(' 2 index ==== ', index);
+            console.log(" 2 apiBackOdds ==== ", apiBackOdds);
+            console.log(" 2 index ==== ", index);
 
             console.log(
               `No availableToBack odds matched with the bet rate ${betRate}`
@@ -1780,21 +1842,24 @@ const placeBet = async (req, res) => {
             return res.status(404).send({ message: `Bet miss matched` });
           }
         } else {
-          console.log('Invalid type value. Type should be 0 or 1.');
+          console.log("Invalid type value. Type should be 0 or 1.");
           return res
             .status(400)
-            .send({ message: 'Invalid type value. Type should be 0 or 1.' });
+            .send({ message: "Invalid type value. Type should be 0 or 1." });
         }
       }
     }
 
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
-
-		  if(![1991, 1968, 1971,1974, 1973, 1975, 1978,1979,1980,1981,1982,1983,1984,1985,2005].includes(req.decoded.userId)){
-      console.log(" 1766 Not Allowed CALLED By Market  ");
+      if (
+        ![
+          1991, 1968, 1971, 1974, 1973, 1975, 1978, 1979, 1980, 1981, 1982,
+          1983, 1984, 1985, 2005,
+        ].includes(req.decoded.userId)
+      ) {
+        console.log(" 1766 Not Allowed CALLED By Market  ");
         //return res.status(404).send({ message: 'Betting disabled' });
-
       }
 
       const FigureEvenOddSmallBig = await userBetSizes
@@ -1805,11 +1870,9 @@ const placeBet = async (req, res) => {
         })
         .exec();
       if (FigureEvenOddSmallBig && betAmount > FigureEvenOddSmallBig.amount) {
-        return res
-          .status(404)
-          .send({
-            message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
-          });
+        return res.status(404).send({
+          message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
+        });
       }
 
       let score = await cricketLiveScore(eventDetail.Id);
@@ -1824,30 +1887,30 @@ const placeBet = async (req, res) => {
       let inning = score.inning;
       let sessionAddition = 0;
       if (inning == 2) {
-        if (type == 'TEST') {
+        if (type == "TEST") {
           sessionAddition = 9;
-        } else if (type == 'ODI') {
+        } else if (type == "ODI") {
           sessionAddition = 10;
-        } else if (type == 'T20') {
+        } else if (type == "T20") {
           sessionAddition = 4;
-        } else if (type == 'T10') {
+        } else if (type == "T10") {
           sessionAddition = 2;
         }
       }
       let totalSessions = 0;
       TargetScore = currentOver;
-      if (type == 'TEST' && currentOver % 10 == 0){
+      if (type == "TEST" && currentOver % 10 == 0) {
         return res.status(404).send({
           success: false,
-          message: 'betting not allowed !',
+          message: "betting not allowed !",
           currentSession: currentSession,
           totalSessions: totalSessions,
           currentSessionOver: currentSessionOver,
         });
-      }else if(type != 'TEST' && currentOver % 5 == 0){
+      } else if (type != "TEST" && currentOver % 5 == 0) {
         return res.status(404).send({
           success: false,
-          message: 'betting not allowed !',
+          message: "betting not allowed !",
           currentSession: currentSession,
           totalSessions: totalSessions,
           currentSessionOver: currentSessionOver,
@@ -1856,25 +1919,25 @@ const placeBet = async (req, res) => {
       let currentSessionOver = Math.ceil(currentOver % 5);
       currentSession = Math.ceil(currentOver / 5) + sessionAddition;
       console.log(
-        ' currentSession = ',
+        " currentSession = ",
         currentSession,
-        ' currentSessionOver =',
+        " currentSessionOver =",
         currentSessionOver,
-        ' currentOver =',
+        " currentOver =",
         currentOver
       );
 
       switch (eventDetail.matchType) {
-        case 'T10':
+        case "T10":
           totalSessions = 2;
           break;
-        case 'T20':
+        case "T20":
           totalSessions = 4;
           break;
-        case 'ODI':
+        case "ODI":
           totalSessions = 10;
           break;
-        case 'TEST':
+        case "TEST":
           totalSessions = 9;
           currentSessionOver = Math.ceil(currentOver % 10);
           currentSession = Math.ceil(currentOver / 10);
@@ -1890,14 +1953,14 @@ const placeBet = async (req, res) => {
       if (inning == 2 && currentSession == totalSessions + sessionAddition) {
         return res.status(404).send({
           success: false,
-          message: 'betting not allowed !',
+          message: "betting not allowed !",
           currentSession: currentSession,
           totalSessions: totalSessions,
           currentSessionOver: currentSessionOver,
         });
       } else if (currentSessionOver > 3) {
         console.log(
-          ' ================ currentSessionOver ================ ',
+          " ================ currentSessionOver ================ ",
           currentSessionOver
         );
 
@@ -1910,11 +1973,9 @@ const placeBet = async (req, res) => {
         });
       }
       _3rdPartyMarketId = subMarketDetail.Id;
-      console.log('Bets are Allowed');
-      console.log(' currentSession ========= ', currentSession);
-    } 
-
-    else {
+      console.log("Bets are Allowed");
+      console.log(" currentSession ========= ", currentSession);
+    } else {
       return res
         .status(404)
         .send({ message: `Error Placing bet (Inappropriate Request)` });
@@ -1933,21 +1994,25 @@ const placeBet = async (req, res) => {
     }
 
     setTimeout(async () => {
+      console.log(" Pre Bet Rate ===============  ", betRate);
+      console.log(" selectedBetRate ===============  ", selectedBetRate);
 
-      console.log(' Pre Bet Rate ===============  ', betRate);
-      console.log(' selectedBetRate ===============  ', selectedBetRate);
-
-      if ( multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
-        console.log(' multipeResponse Is Empty !');
+      if (
+        multipeResponse.length == 0 &&
+        !delayExcludedMarkets.includes(subMarketDetail.Id)
+      ) {
+        console.log(" multipeResponse Is Empty !");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
-      } 
-      else if ( multipeResponse.length > 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
+      } else if (
+        multipeResponse.length > 0 &&
+        !delayExcludedMarkets.includes(subMarketDetail.Id)
+      ) {
         betRate = multipeResponse[multipeResponse.length - 1];
-        console.log(' Inside  Bet Rate ===============  ', betRate);
+        console.log(" Inside  Bet Rate ===============  ", betRate);
       }
-      console.log(' Post Bet Rate ===============  ', betRate);
+      console.log(" Post Bet Rate ===============  ", betRate);
 
       /* Winning Loosing Calculations  */
 
@@ -1986,22 +2051,28 @@ const placeBet = async (req, res) => {
           { runner: 9, amount: 0 },
         ];
         expoisureType = 2;
-      } else if ( type == 1 && !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
+      } else if (
+        type == 1 &&
+        !config.ExcludedBackLay.includes(subMarketDetail.Id)
+      ) {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
-      } else if ( type == 0 && !config.ExcludedBackLay.includes(subMarketDetail.Id) ) {
+      } else if (
+        type == 0 &&
+        !config.ExcludedBackLay.includes(subMarketDetail.Id)
+      ) {
         winningAmount = betAmount * betRate - betAmount;
         loosingAmount = betAmount;
       } else if (type == 1 && subMarketDetail.Id == config.BookMaker) {
         // ((rate) /100 ) * bet_amount = loosing amount
         loosingAmount = (betRate * betAmount) / 100;
         winningAmount = betAmount;
-        console.log(' 1 loosingAmount =========  ', loosingAmount);
+        console.log(" 1 loosingAmount =========  ", loosingAmount);
       } else if (type == 0 && subMarketDetail.Id == config.BookMaker) {
         // ((rate) /100 ) * bet_amount = winning amount
         winningAmount = (betRate * betAmount) / 100;
         loosingAmount = betAmount;
-        console.log(' 0  loosingAmount =========  ', winningAmount);
+        console.log(" 0  loosingAmount =========  ", winningAmount);
       } else if (type == 0 && subMarketDetail.Id == config.Fancy) {
         // (Value showing below/100)*bet amount = loosing amount
         loosingAmount = (fancyRate / 100) * betAmount;
@@ -2026,7 +2097,10 @@ const placeBet = async (req, res) => {
       let runnersPosition = [];
       let prevExpAmount = 0;
       let expAmount = 0;
-      console.log(' ================ Selection ID ================ ',selectionId);
+      console.log(
+        " ================ Selection ID ================ ",
+        selectionId
+      );
       if (subMarketDetail.Id == config.Fancy) {
         let lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
@@ -2036,7 +2110,10 @@ const placeBet = async (req, res) => {
           fancyData: fancyData,
           TargetScore: TargetScore,
         });
-        console.log(' ================== lastBetsCount ================  ',lastBetsCount);
+        console.log(
+          " ================== lastBetsCount ================  ",
+          lastBetsCount
+        );
 
         if (lastBetsCount > 0) {
           const lastBet = await Bets.find({
@@ -2046,8 +2123,13 @@ const placeBet = async (req, res) => {
             status: 1,
             fancyData: fancyData,
             TargetScore: TargetScore,
-          }).sort({ _id: -1 }).limit(1);
-          console.log(' =================== lastBet ====================  ',lastBet[0].runnersPosition );
+          })
+            .sort({ _id: -1 })
+            .limit(1);
+          console.log(
+            " =================== lastBet ====================  ",
+            lastBet[0].runnersPosition
+          );
           const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
             if (item.runner == type) {
               item.amount = item.amount + winningAmount;
@@ -2056,7 +2138,7 @@ const placeBet = async (req, res) => {
             }
             return item;
           });
-          runnersPosition = fancyNewPosition
+          runnersPosition = fancyNewPosition;
           prevExpAmount = lastBet[0].exposureAmount;
         } else {
           const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
@@ -2094,7 +2176,7 @@ const placeBet = async (req, res) => {
           })
             .sort({ _id: -1 })
             .limit(1);
-          console.log(' ============= lastBet ', lastBet);
+          console.log(" ============= lastBet ", lastBet);
           const lastrunnersPosition = lastBet[0].runnersPosition;
           runnersPosition = lastrunnersPosition.map((item) => {
             if (item.runner == selectionId) {
@@ -2120,11 +2202,11 @@ const placeBet = async (req, res) => {
         }, runnersPosition[0]);
         expAmount = expAmount.amount;
         console.log(
-          ' ================ RUNNER INFO ================ ',
+          " ================ RUNNER INFO ================ ",
           runnersPosition
         );
         console.log(
-          ' ================ EXP AMOUNT ================ ',
+          " ================ EXP AMOUNT ================ ",
           expAmount
         );
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
@@ -2137,7 +2219,7 @@ const placeBet = async (req, res) => {
           status: 1,
         });
         console.log(
-          ' ======================= Total Count of Prev Bets ',
+          " ======================= Total Count of Prev Bets ",
           lastBetsCount
         );
         if (lastBetsCount) {
@@ -2164,12 +2246,12 @@ const placeBet = async (req, res) => {
               return item;
             });
             console.log(
-              ' ================== runnerCurrentPosition ================== ',
+              " ================== runnerCurrentPosition ================== ",
               runnerCurrentPosition
             );
             runnersPosition = runnerCurrentPosition;
             console.log(
-              ' ================== runnersPosition ================== ',
+              " ================== runnersPosition ================== ",
               runnersPosition
             );
           } else if (type == 1) {
@@ -2185,15 +2267,15 @@ const placeBet = async (req, res) => {
         }
 
         console.log(
-          ' ================ runner For SaveIn bets INFO ================ ',
+          " ================ runner For SaveIn bets INFO ================ ",
           runnerForSaveInbets
         );
         console.log(
-          ' ================ RUNNER INFO ================ ',
+          " ================ RUNNER INFO ================ ",
           runnersPosition
         );
         console.log(
-          ' ================ EXP AMOUNT ================ ',
+          " ================ EXP AMOUNT ================ ",
           expAmount
         );
 
@@ -2202,11 +2284,11 @@ const placeBet = async (req, res) => {
         }, runnersPosition[0]);
         expAmount = expAmount.amount;
         console.log(
-          ' ================ RUNNER INFO ================ ',
+          " ================ RUNNER INFO ================ ",
           runnersPosition
         );
         console.log(
-          ' ================ EXP AMOUNT ================ ',
+          " ================ EXP AMOUNT ================ ",
           expAmount
         );
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
@@ -2227,7 +2309,7 @@ const placeBet = async (req, res) => {
         winningAmount: winningAmount,
         subMarketId: subMarketDetail.Id,
         betSession: currentSession ? currentSession : null,
-        runner: selectionId ? selectionId : '',
+        runner: selectionId ? selectionId : "",
         type: type,
         status: 1,
         event: eventDetail.name,
@@ -2241,10 +2323,10 @@ const placeBet = async (req, res) => {
         multipeResponse: multipeResponse,
         isManuel: isManuel,
       });
-      console.log('userAvailableBalance', user.availableBalance);
+      console.log("userAvailableBalance", user.availableBalance);
 
-      if (user.availableBalance < (expAmount - prevExpAmount)){
-        return res.status(404).send({ message: 'Insufficient balance' });
+      if (user.availableBalance < expAmount - prevExpAmount) {
+        return res.status(404).send({ message: "Insufficient balance" });
       }
 
       if (subMarketDetail.Id != config.Fancy) {
@@ -2257,8 +2339,7 @@ const placeBet = async (req, res) => {
           },
           { calculateExp: false }
         );
-      }
-      else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+      } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
         let setCalculateExpFalse = await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
@@ -2267,12 +2348,11 @@ const placeBet = async (req, res) => {
             fancyData: fancyData,
             TargetScore: TargetScore,
             betSession: currentSession,
-            status: 1
+            status: 1,
           },
           { calculateExp: false }
         );
-      }
-      else{
+      } else {
         let setCalculateExpFalse = await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
@@ -2280,7 +2360,7 @@ const placeBet = async (req, res) => {
             matchId: matchId,
             fancyData: fancyData,
             TargetScore: TargetScore,
-            status: 1
+            status: 1,
           },
           { calculateExp: false }
         );
@@ -2288,7 +2368,7 @@ const placeBet = async (req, res) => {
 
       bet.save(async (err, result) => {
         if (err) {
-          console.log('err', err);
+          console.log("err", err);
           return res.status(404).send({ message: `Error placing bet ${err}` });
         }
         try {
@@ -2303,7 +2383,8 @@ const placeBet = async (req, res) => {
           const totalExpAmount = expAmount - prevExpAmount;
           const UserExpAmountFix = user.exposure + prevExpAmount - expAmount;
           const UserExpAmount = Number(UserExpAmountFix.toFixed(2));
-          const UserAvlBalAmountAmt = user.availableBalance + prevExpAmount - expAmount;
+          const UserAvlBalAmountAmt =
+            user.availableBalance + prevExpAmount - expAmount;
           const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(2));
 
           await User.findOneAndUpdate(
@@ -2324,23 +2405,23 @@ const placeBet = async (req, res) => {
 
           return res.send({
             success: true,
-            message: 'Bet placed successfully! ',
+            message: "Bet placed successfully! ",
             results: result,
           });
         } catch (error) {
-          console.error('error', error);
+          console.error("error", error);
           return res
             .status(404)
-            .send({ message: 'Error updating user balance' });
+            .send({ message: "Error updating user balance" });
         }
-      })
+      });
       /* -------------- */
     }, delay);
   } catch (error) {
-    console.error('error', error);
+    console.error("error", error);
     return res.status(404).send({ message: `Error placing bet ${error}` });
   }
-}
+};
 
 async function calculateExposure(
   marketId,
@@ -2352,7 +2433,7 @@ async function calculateExposure(
   expoisureType,
   matchId
 ) {
-  console.log(' = marketId =', marketId);
+  console.log(" = marketId =", marketId);
   let lastBet = await Bets.find({
     marketId: marketId,
     userId: userId,
@@ -2362,11 +2443,11 @@ async function calculateExposure(
     .sort({ _id: -1 })
     .limit(1);
 
-  console.log(' ============= lastBet ', lastBet);
+  console.log(" ============= lastBet ", lastBet);
   const lastrunnersPosition = lastBet[0].runnersPosition;
   let newPosition;
   if (type == 0) {
-    console.log(' ================= Back is called  =================  ');
+    console.log(" ================= Back is called  =================  ");
     newPosition = lastrunnersPosition.map((item) => {
       if (item.runner == selectedRunner) {
         item.amount = item.amount + winningAmount;
@@ -2376,7 +2457,7 @@ async function calculateExposure(
       return item;
     });
   } else if (type == 1) {
-    console.log(' ================= Lay is called  =================  ');
+    console.log(" ================= Lay is called  =================  ");
     newPosition = lastrunnersPosition.map((item) => {
       if (item.runner == selectedRunner) {
         item.amount = item.amount + -loosingAmount;
@@ -2402,7 +2483,7 @@ async function getUserBets(req, res) {
     let query = {};
     let page = 1;
     let sort = -1;
-    let sortValue = 'createdAt';
+    let sortValue = "createdAt";
     let limit = config.pageSize;
     if (
       req.body.numRecords ||
@@ -2423,13 +2504,13 @@ async function getUserBets(req, res) {
       };
     }
     query.status = req.body.status;
-    if (req.decoded.role != '5') query.userId = req.body.userId;
-    else if (req.decoded.role == '5') query.userId = req.decoded.userId;
+    if (req.decoded.role != "5") query.userId = req.body.userId;
+    else if (req.decoded.role == "5") query.userId = req.decoded.userId;
 
     if (req.body.status) query.status = req.body.status;
     if (req.body.sportsId) query.sportsId = req.body.sportsId;
     if (req.body.searchValue)
-      query.event = { $regex: req.body.searchValue, $options: 'i' };
+      query.event = { $regex: req.body.searchValue, $options: "i" };
 
     // if (req.body.searchValue) {
     //   const searchRegex = new RegExp(req.body.searchValue, 'i');
@@ -2461,7 +2542,7 @@ async function getUserBets(req, res) {
             .send({ message: `Something went wrong  ${err} ` });
         return res.send({
           success: true,
-          message: 'bets list',
+          message: "bets list",
           results: results,
         });
       }
@@ -2469,7 +2550,7 @@ async function getUserBets(req, res) {
   } catch (error) {
     return res.send({
       success: false,
-      message: 'Something goes wrong catched',
+      message: "Something goes wrong catched",
     });
   }
 }
@@ -2480,26 +2561,26 @@ function betFunds(req, res) {
     return res.status(400).send({ errors: errors.array() });
   }
 
-  if (req.decoded.role !== '5') {
-    User.find({ createdBy: req.decoded.userId, role: '5' }, (err, users) => {
+  if (req.decoded.role !== "5") {
+    User.find({ createdBy: req.decoded.userId, role: "5" }, (err, users) => {
       if (err || !users) {
         return res
           .status(404)
-          .send({ message: 'Error occurred while querying users.' });
+          .send({ message: "Error occurred while querying users." });
       }
 
       const userIds = users.map((user) => user.userId);
 
       Bets.find({ userId: { $in: userIds } }, (err, bets) => {
         if (err || !bets) {
-          return res.status(404).send({ message: 'Error occurred in bets.' });
+          return res.status(404).send({ message: "Error occurred in bets." });
         }
 
         const activeBets = bets.filter((bet) => bet.status === 1).length;
 
         User.findOne({ userId: req.decoded.userId }, (err, user) => {
           if (err || !user) {
-            return res.status(404).send({ message: 'User Not Found' });
+            return res.status(404).send({ message: "User Not Found" });
           }
 
           const results = {
@@ -2510,19 +2591,19 @@ function betFunds(req, res) {
             activeBets: activeBets,
           };
 
-          return res.send({ message: 'Funds Record Found', results: results });
+          return res.send({ message: "Funds Record Found", results: results });
         });
       });
     });
   } else {
     Bets.find({ userId: req.decoded.userId }, (err, bets) => {
       if (err) {
-        return res.status(404).send({ message: 'Error occurred in bets.' });
+        return res.status(404).send({ message: "Error occurred in bets." });
       }
 
       User.findOne({ userId: req.decoded.userId }, (err, user) => {
         if (err || !user) {
-          return res.send({ message: 'User Not Found' });
+          return res.send({ message: "User Not Found" });
         }
 
         const activeBets = bets.filter((bet) => bet.status === 1).length;
@@ -2535,7 +2616,7 @@ function betFunds(req, res) {
           activeBets: activeBets,
         };
 
-        return res.send({ message: 'Funds Record Found', results: results });
+        return res.send({ message: "Funds Record Found", results: results });
       });
     });
   }
@@ -2552,60 +2633,60 @@ function createBetRates(req, res) {
   }
   const betRatesData = [
     {
-      match: 'PAK vs AUS',
+      match: "PAK vs AUS",
       teams: [
         {
-          name: 'Pakistan',
+          name: "Pakistan",
           back: AllbetRates,
           lay: AllbetRates,
         },
         {
-          name: 'AUS',
+          name: "AUS",
           back: AllbetRates,
           lay: AllbetRates,
         },
         {
-          name: 'draw',
+          name: "draw",
           back: AllbetRates,
           lay: AllbetRates,
         },
       ],
     },
     {
-      match: 'PAK vs IND',
+      match: "PAK vs IND",
       teams: [
         {
-          name: 'Pakistan',
+          name: "Pakistan",
           back: AllbetRates,
           lay: AllbetRates,
         },
         {
-          name: 'IND',
+          name: "IND",
           back: AllbetRates,
           lay: AllbetRates,
         },
         {
-          name: 'draw',
+          name: "draw",
           back: AllbetRates,
           lay: AllbetRates,
         },
       ],
     },
     {
-      match: 'IND vs AUS',
+      match: "IND vs AUS",
       teams: [
         {
-          name: 'IND',
+          name: "IND",
           back: AllbetRates,
           lay: AllbetRates,
         },
         {
-          name: 'AUS',
+          name: "AUS",
           back: AllbetRates,
           lay: AllbetRates,
         },
         {
-          name: 'draw',
+          name: "draw",
           back: AllbetRates,
           lay: AllbetRates,
         },
@@ -2615,10 +2696,10 @@ function createBetRates(req, res) {
   betRates
     .insertMany(betRatesData)
     .then(() => {
-      res.status(200).json({ message: 'Dummy data created successfully.' });
+      res.status(200).json({ message: "Dummy data created successfully." });
     })
     .catch((error) => {
-      res.status(500).json({ error: 'Error creating dummy data.' });
+      res.status(500).json({ error: "Error creating dummy data." });
     });
 }
 
@@ -2631,14 +2712,14 @@ async function getBetRates(req, res) {
   const matchId = req.params.id;
   const match = await betRates.findOne({ _id: matchId });
   if (!match) {
-    return res.status(404).send({ message: 'bets rate not found' });
+    return res.status(404).send({ message: "bets rate not found" });
   }
 
   const randomRates = getRandomRates(match);
 
   return res.send({
     success: true,
-    message: 'bets rate records',
+    message: "bets rate records",
     results: randomRates,
   });
 }
@@ -2706,7 +2787,7 @@ async function getMatchedBets(req, res) {
   try {
     const loginUser = await User.findOne({ userId: req.decoded.userId });
     if (!loginUser) {
-      return res.status(404).send({ message: 'User not found' });
+      return res.status(404).send({ message: "User not found" });
     }
 
     const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
@@ -2717,7 +2798,7 @@ async function getMatchedBets(req, res) {
     const userIDs = await getAllUserIDs(createdByIDs);
     const matchId = req.query.id;
 
-    if (loginUser.role == '5') {
+    if (loginUser.role == "5") {
       userIDs.push(loginUser.userId);
     }
 
@@ -2732,70 +2813,70 @@ async function getMatchedBets(req, res) {
       },
       {
         $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: 'userId',
-          as: 'userDetails',
+          from: "users",
+          localField: "userId",
+          foreignField: "userId",
+          as: "userDetails",
         },
       },
-      { $unwind: '$userDetails' },
+      { $unwind: "$userDetails" },
       {
         $lookup: {
-          from: 'users',
-          localField: 'userDetails.createdBy',
-          foreignField: 'userId',
-          as: 'masterDetails',
+          from: "users",
+          localField: "userDetails.createdBy",
+          foreignField: "userId",
+          as: "masterDetails",
         },
       },
       {
         $lookup: {
-          from: 'inplayevents',
-          localField: 'sportsId',
-          foreignField: 'sportsId',
-          as: 'eventDetails',
+          from: "inplayevents",
+          localField: "sportsId",
+          foreignField: "sportsId",
+          as: "eventDetails",
         },
       },
       {
         $project: {
           _id: 0,
-          price: '$betRate',
-          runnerId: '$runnerName',
-          createdAt: '$createdAt',
-          size: '$betAmount',
-          runner: '$runner',
-          marketId: '$marketId',
-          betRate: '$betRate',
-          type: '$type',
-          isfancyOrbookmaker: '$isfancyOrbookmaker',
-          fancyData: '$fancyData',
-          bettor: '$userDetails.userName',
-          bettorId: '$userDetails.userId',
-          fancyRate: '$fancyRate',
-          betSession: '$betSession',
+          price: "$betRate",
+          runnerId: "$runnerName",
+          createdAt: "$createdAt",
+          size: "$betAmount",
+          runner: "$runner",
+          marketId: "$marketId",
+          betRate: "$betRate",
+          type: "$type",
+          isfancyOrbookmaker: "$isfancyOrbookmaker",
+          fancyData: "$fancyData",
+          bettor: "$userDetails.userName",
+          bettorId: "$userDetails.userId",
+          fancyRate: "$fancyRate",
+          betSession: "$betSession",
 
           master: {
             $cond: [
-              { $eq: [loginUser.role, '5'] },
+              { $eq: [loginUser.role, "5"] },
               loginUser.userName,
               {
-                $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, ''],
+                $ifNull: [{ $arrayElemAt: ["$masterDetails.userName", 0] }, ""],
               },
             ],
           },
           event: {
             $cond: [
-              { $eq: [loginUser.role, '5'] },
+              { $eq: [loginUser.role, "5"] },
               {
                 $map: {
-                  input: { $slice: ['$eventDetails', 5] },
-                  as: 'event',
+                  input: { $slice: ["$eventDetails", 5] },
+                  as: "event",
                   in: {
-                    name: '$$event.name',
-                    openDate: '$$event.openDate',
+                    name: "$$event.name",
+                    openDate: "$$event.openDate",
                   },
                 },
               },
-              '$$REMOVE',
+              "$$REMOVE",
             ],
           },
         },
@@ -2831,15 +2912,15 @@ async function getMatchedBets(req, res) {
 
     return res.send({
       success: true,
-      message: 'Matched bets record found',
+      message: "Matched bets record found",
       data: matchedBets,
       events: relatedEvents,
     });
   } catch (err) {
-    console.error('Aggregation error:', err);
+    console.error("Aggregation error:", err);
     return res
       .status(500)
-      .send({ message: 'Error retrieving matched bets', error: err });
+      .send({ message: "Error retrieving matched bets", error: err });
   }
 }
 
@@ -2847,18 +2928,18 @@ async function FakeBetsList(req, res) {
   try {
     Bets.find({ isFake: 1 }, (err, result) => {
       if (err || !result) {
-        return res.status(404).send({ message: 'bets rate not found' });
+        return res.status(404).send({ message: "bets rate not found" });
       }
       return res.send({
         success: true,
-        message: 'Bets List',
+        message: "Bets List",
         results: result,
       });
     });
   } catch (error) {
     return res.send({
       success: false,
-      message: 'Some thing went wrong',
+      message: "Some thing went wrong",
       results: error,
     });
   }
@@ -2877,16 +2958,16 @@ async function updateFakeBet(req, res) {
     );
 
     if (!updateBet) {
-      return res.status(404).json({ message: 'Bet not found' });
+      return res.status(404).json({ message: "Bet not found" });
     }
 
     return res
       .status(200)
-      .send({ message: 'Bet successfully updated', success: true });
+      .send({ message: "Bet successfully updated", success: true });
   } catch (error) {
     return res.send({
       success: false,
-      message: 'Some thing went wrong',
+      message: "Some thing went wrong",
       results: error,
     });
   }
@@ -2897,16 +2978,16 @@ async function deleteFakeBet(req, res) {
     const betId = req.params.id;
     const deletedBet = await Bets.findByIdAndDelete(betId);
     if (!deletedBet) {
-      return res.status(404).json({ message: 'Bet not found' });
+      return res.status(404).json({ message: "Bet not found" });
     }
 
     return res
       .status(200)
-      .send({ message: 'Bet deleted successfully', success: true });
+      .send({ message: "Bet deleted successfully", success: true });
   } catch (error) {
     return res.send({
       success: false,
-      message: 'Some thing went wrong',
+      message: "Some thing went wrong",
       results: error,
     });
   }
@@ -2918,7 +2999,7 @@ async function countFakeBet(req, res) {
 
     return res.send({
       success: false,
-      message: 'Some thing went wrong',
+      message: "Some thing went wrong",
       results: {
         totalFakeBets: fakeCount,
       },
@@ -2926,17 +3007,17 @@ async function countFakeBet(req, res) {
   } catch (error) {
     return res.send({
       success: false,
-      message: 'Some thing went wrong',
+      message: "Some thing went wrong",
       results: error,
     });
   }
 }
 
 async function approvedFakeBet(req, res) {
-  if (req.decoded.role !== '0') {
+  if (req.decoded.role !== "0") {
     return res
       .status(403)
-      .send({ message: 'Only company can perform this operation' });
+      .send({ message: "Only company can perform this operation" });
   }
 
   try {
@@ -2944,7 +3025,7 @@ async function approvedFakeBet(req, res) {
     const fakeBet = await Bets.findOne({ _id: betId, isFake: 1 });
 
     if (!fakeBet) {
-      return res.status(404).json({ message: 'Bet not found' });
+      return res.status(404).json({ message: "Bet not found" });
     }
     const updatedUser = await User.findOneAndUpdate(
       { userId: fakeBet.userId },
@@ -2953,27 +3034,27 @@ async function approvedFakeBet(req, res) {
     );
 
     if (!updatedUser) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: "User not found" });
     }
 
     return res
       .status(200)
-      .send({ message: 'user deactivated successfully', success: true });
+      .send({ message: "user deactivated successfully", success: true });
   } catch (error) {
-    console.error('Error updating bet:', error);
+    console.error("Error updating bet:", error);
     return res.status(500).send({
       success: false,
-      message: 'Something went wrong',
+      message: "Something went wrong",
       error: error.message,
     });
   }
 }
 
 async function reviewFakeBet(req, res) {
-  if (req.decoded.role !== '0') {
+  if (req.decoded.role !== "0") {
     return res
       .status(403)
-      .send({ message: 'Only company can perform this operation' });
+      .send({ message: "Only company can perform this operation" });
   }
 
   try {
@@ -2987,7 +3068,7 @@ async function reviewFakeBet(req, res) {
     });
 
     if (!fakeBet) {
-      return res.status(404).json({ message: 'Bet not found' });
+      return res.status(404).json({ message: "Bet not found" });
     }
 
     // Find the odds before the bet's createdAt timestamp
@@ -2997,7 +3078,7 @@ async function reviewFakeBet(req, res) {
     })
       .sort({ createdAt: -1 })
       .limit(200)
-      .select('eventId updatetime runners');
+      .select("eventId updatetime runners");
 
     // Find the odds after the bet's createdAt timestamp
     const oddsAfterBet = await Odds.find({
@@ -3006,14 +3087,14 @@ async function reviewFakeBet(req, res) {
     })
       .sort({ createdAt: 1 })
       .limit(200)
-      .select('eventId updatetime runners');
+      .select("eventId updatetime runners");
 
     // Combine the runners into a single array for both oddsBeforeBet and oddsAfterBet
     const BeforeBetOdds = oddsBeforeBet.map((odds) => odds.runners).flat();
     const AfterBetOdds = oddsAfterBet.map((odds) => odds.runners).flat();
 
     return res.status(200).send({
-      message: 'Odds successfully retrieved',
+      message: "Odds successfully retrieved",
       success: true,
       eventId: fakeBet.eventId,
       updatetime: fakeBet.createdAt,
@@ -3021,10 +3102,10 @@ async function reviewFakeBet(req, res) {
       AfterBetOdds,
     });
   } catch (error) {
-    console.error('Error retrieving odds:', error);
+    console.error("Error retrieving odds:", error);
     return res.status(500).send({
       success: false,
-      message: 'Something went wrong',
+      message: "Something went wrong",
       error: error.message,
     });
   }
@@ -3037,9 +3118,9 @@ async function cricketLiveScore(id) {
       { _id: 0, matchType: 1, sportsId: 1 }
     );
     const type = event ? event.sportsId : null;
-    console.log('event', event);
+    console.log("event", event);
 
-    if (type == '4') {
+    if (type == "4") {
       const apiResponse = await axios.get(`${config.sportsLiveScore}${id}`);
       const response = {};
       const data = apiResponse.data;
@@ -3061,26 +3142,26 @@ async function cricketLiveScore(id) {
           score = scoreInfo.score2;
           played = scoreInfo.score1;
         }
-        if (type == 'TEST') {
-          score = score.split('&');
+        if (type == "TEST") {
+          score = score.split("&");
           score = score[score.length - 1].trim();
-          played = played.split('&');
+          played = played.split("&");
           played = played[played.length - 1].trim();
         }
 
         played = played
-          ?.replaceAll(/[\s-]/g, ',')
-          .replaceAll(/[())]/g, '')
-          .split(',');
+          ?.replaceAll(/[\s-]/g, ",")
+          .replaceAll(/[())]/g, "")
+          .split(",");
         played = played.filter((element) => element != 0).length;
         if (played > 0) {
           inning = 2;
         }
 
         [response.score, response.wickets, response.overs] = score
-          ?.replaceAll(/[\s-]/g, ',')
-          .replaceAll(/[())]/g, '')
-          .split(',');
+          ?.replaceAll(/[\s-]/g, ",")
+          .replaceAll(/[())]/g, "")
+          .split(",");
         response.inning = inning;
         response.balls = scoreInfo.balls;
         response.type = event.matchType;
@@ -3091,14 +3172,14 @@ async function cricketLiveScore(id) {
     } else {
       return {
         status: false,
-        message: 'Figure batting not Allowed !',
+        message: "Figure batting not Allowed !",
       };
     }
   } catch (error) {
     console.error(error);
     return {
       success: false,
-      message: 'Failed to get data',
+      message: "Failed to get data",
       error: error.message,
     };
   }
@@ -3107,34 +3188,34 @@ async function cricketLiveScore(id) {
 const sessionCalc = async (req, res) => {
   try {
     // console.log("===================== CALL START POINT =====================");
-    const eventsIds = await Events.distinct('Id', {
-      sportsId: '4',
+    const eventsIds = await Events.distinct("Id", {
+      sportsId: "4",
       inplay: true,
-      status: { $in: ['OPEN', 'open'] },
+      status: { $in: ["OPEN", "open"] },
     });
-    console.log(' eventsIds ===================== ', eventsIds);
+    console.log(" eventsIds ===================== ", eventsIds);
 
     for (let Id of eventsIds) {
-      console.log('Id ===================== ', Id);
+      console.log("Id ===================== ", Id);
       const event = await Events.findOne(
         { Id: Id },
         { _id: 0, matchType: 1, sportsId: 1 }
       );
-      console.log(' event ===================== ', event);
+      console.log(" event ===================== ", event);
       const type = event.matchType;
       // console.log(" type ===================== ", type);
       if (config.matchTypes.includes(type)) {
         // console.log(" Returnning due to invalid  ===================== ", type);
         const score = await cricketLiveScore(Id);
-        console.log('score ===================== ', score);
+        console.log("score ===================== ", score);
         if (score != 0) {
           let currentScore = Number(score.score);
-          const sessionLength = type == 'TEST' ? 10 : 5;
+          const sessionLength = type == "TEST" ? 10 : 5;
           config.balls.includes(score.balls[5])
             ? (currentScore = currentScore - Number(score.balls[5]))
-            : '';
+            : "";
           let currentOver = score.overs;
-          let ball = currentOver.split('.')[1];
+          let ball = currentOver.split(".")[1];
           let inning = score.inning;
 
           if (currentOver % sessionLength < 1 && ball == 1) {
@@ -3142,20 +3223,20 @@ const sessionCalc = async (req, res) => {
             // console.log(" conditional over ===================== ", score.overs % sessionLength);
             let sessionAddition = 0;
             if (inning == 2) {
-              if (type == 'TEST') {
+              if (type == "TEST") {
                 sessionAddition = 9;
-              } else if (type == 'ODI') {
+              } else if (type == "ODI") {
                 sessionAddition = 10;
-              } else if (type == 'T20') {
+              } else if (type == "T20") {
                 sessionAddition = 4;
-              } else if (type == 'T10') {
+              } else if (type == "T10") {
                 sessionAddition = 2;
               }
             }
             let sessionToResult =
               Math.floor(currentOver / sessionLength) + sessionAddition;
             console.log(
-              ' session To Result ===================== ',
+              " session To Result ===================== ",
               sessionToResult
             );
             const update = await Session.findOneAndUpdate(
@@ -3177,14 +3258,14 @@ const sessionCalc = async (req, res) => {
           }
         }
       } else {
-        console.log('Invalid Match Type ');
+        console.log("Invalid Match Type ");
       }
     }
     // console.log("===================== CALL END POINT =====================");
   } catch (error) {
-    console.error('Error running odds cron job:', error);
+    console.error("Error running odds cron job:", error);
   }
-}
+};
 
 async function getPercentageSharing(parent_id, child_id) {
   let currentId = child_id;
@@ -3209,55 +3290,55 @@ async function getPercentageSharing(parent_id, child_id) {
 
 const profitLose = async (req, res) => {
   if (!req.query.userId) {
-    console.log('line 2579 Something Went Wrong!');
+    console.log("line 2579 Something Went Wrong!");
     return res.status(404).send({
       success: false,
-      message: 'Something Went Wrong!',
+      message: "Something Went Wrong!",
     });
   }
   try {
     const userId = parseInt(req.query.userId);
     const currentUser = await User.findOne({ userId: userId });
     if (!currentUser) {
-      console.log('line 2 ========= Something Went Wrong!');
+      console.log("line 2 ========= Something Went Wrong!");
       return res.status(404).send({
         success: false,
-        message: 'Something Went Wrong!',
+        message: "Something Went Wrong!",
       });
     }
-    if (currentUser.role == '5') {
+    if (currentUser.role == "5") {
       const response = await Cash.aggregate([
         {
           $match: {
             userId: userId,
-            cashOrCredit: { $in: ['Bet'] },
+            cashOrCredit: { $in: ["Bet"] },
           },
         },
         {
           $addFields: {
-            betsId: { $toObjectId: '$betId' },
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
           $lookup: {
-            from: 'markettypes',
-            localField: 'sportsId',
-            foreignField: 'Id',
-            as: 'marketInfo',
+            from: "markettypes",
+            localField: "sportsId",
+            foreignField: "Id",
+            as: "marketInfo",
           },
         },
         {
           $group: {
-            _id: '$sportsId',
-            amount: { $sum: '$amount' },
-            userId: { $first: '$userId' },
-            name: { $first: { $arrayElemAt: ['$marketInfo.name', 0] } },
+            _id: "$sportsId",
+            amount: { $sum: "$amount" },
+            userId: { $first: "$userId" },
+            name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } },
           },
         },
       ]);
       return res.send({
         success: true,
-        message: 'Profit Lose reports',
+        message: "Profit Lose reports",
         results: response,
       });
     } else {
@@ -3265,46 +3346,46 @@ const profitLose = async (req, res) => {
         {
           $match: {
             userId: userId,
-            cashOrCredit: { $in: ['Bet', 'Commission', 'loosing'] },
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           },
         },
         {
           $lookup: {
-            from: 'markettypes',
-            localField: 'sportsId',
-            foreignField: 'Id',
-            as: 'marketInfo',
+            from: "markettypes",
+            localField: "sportsId",
+            foreignField: "Id",
+            as: "marketInfo",
           },
         },
         {
           $group: {
-            _id: '$sportsId',
-            amount: { $sum: '$amount' },
-            userId: { $first: '$userId' },
-            name: { $first: { $arrayElemAt: ['$marketInfo.name', 0] } },
+            _id: "$sportsId",
+            amount: { $sum: "$amount" },
+            userId: { $first: "$userId" },
+            name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } },
           },
         },
       ]);
       return res.send({
         success: true,
-        message: 'Profit Lose Reports',
+        message: "Profit Lose Reports",
         results: response,
       });
     }
   } catch (error) {
-    console.log('Catched', error);
+    console.log("Catched", error);
     return res.status(404).send({
       success: false,
-      message: 'Something Went Wrong!',
+      message: "Something Went Wrong!",
     });
   }
-}
+};
 
 const EventWiseprofitLose = async (req, res) => {
   if (!req.query.userId || !req.query.sportsId) {
     return res.status(404).send({
       success: false,
-      message: 'Invalid Request',
+      message: "Invalid Request",
     });
   }
   try {
@@ -3312,47 +3393,47 @@ const EventWiseprofitLose = async (req, res) => {
     const sportsId = req.query.sportsId;
     const currentUser = await User.findOne({ userId: userId });
     if (!currentUser) {
-      console.log('line 2682 Something Went Wrong!');
+      console.log("line 2682 Something Went Wrong!");
       return res.status(404).send({
         success: false,
-        message: 'Something Went Wrong!',
+        message: "Something Went Wrong!",
       });
     }
-    if (currentUser.role == '5') {
+    if (currentUser.role == "5") {
       const response = await Cash.aggregate([
         {
           $match: {
             userId: userId,
             sportsId: sportsId,
-            cashOrCredit: { $in: ['Bet'] },
+            cashOrCredit: { $in: ["Bet"] },
           },
         },
         {
           $addFields: {
-            betsId: { $toObjectId: '$betId' },
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
           $lookup: {
-            from: 'bets',
-            localField: 'betsId',
-            foreignField: '_id',
-            as: 'bets',
+            from: "bets",
+            localField: "betsId",
+            foreignField: "_id",
+            as: "bets",
           },
         },
         {
           $group: {
-            _id: { $arrayElemAt: ['$bets.matchId', 0] },
-            amount: { $sum: '$amount' },
-            userId: { $first: '$userId' },
-            date: { $first: '$date' },
-            name: { $first: { $arrayElemAt: ['$bets.event', 0] } },
+            _id: { $arrayElemAt: ["$bets.matchId", 0] },
+            amount: { $sum: "$amount" },
+            userId: { $first: "$userId" },
+            date: { $first: "$date" },
+            name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
           },
         },
       ]);
       return res.send({
         success: true,
-        message: 'Profit Lose reports',
+        message: "Profit Lose reports",
         results: response,
       });
     } else {
@@ -3377,53 +3458,53 @@ const EventWiseprofitLose = async (req, res) => {
           $match: {
             userId: userId,
             sportsId: sportsId,
-            cashOrCredit: { $in: ['Bet', 'Commission', 'loosing'] },
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           },
         },
         {
           $addFields: {
-            betsId: { $toObjectId: '$betId' },
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
           $lookup: {
-            from: 'bets',
-            localField: 'betsId',
-            foreignField: '_id',
-            as: 'bets',
+            from: "bets",
+            localField: "betsId",
+            foreignField: "_id",
+            as: "bets",
           },
         },
         {
           $group: {
-            _id: { $arrayElemAt: ['$bets.matchId', 0] },
-            amount: { $sum: '$amount' },
-            userId: { $first: '$userId' },
-            date: { $first: '$date' },
-            name: { $first: { $arrayElemAt: ['$bets.event', 0] } },
+            _id: { $arrayElemAt: ["$bets.matchId", 0] },
+            amount: { $sum: "$amount" },
+            userId: { $first: "$userId" },
+            date: { $first: "$date" },
+            name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
           },
         },
       ]);
       return res.send({
         success: true,
-        message: 'Profit Lose Reports',
+        message: "Profit Lose Reports",
         results: response,
       });
     }
   } catch (error) {
-    console.log('Catched', error);
-    console.log('line 2783 Something Went Wrong!');
+    console.log("Catched", error);
+    console.log("line 2783 Something Went Wrong!");
     return res.status(404).send({
       success: false,
-      message: 'Something Went Wrong!',
+      message: "Something Went Wrong!",
     });
   }
-}
+};
 
 const dailyMatchWiseprofitLose = async (req, res) => {
   if (!req.query.userId || !req.query.matchId) {
     return res.status(404).send({
       success: false,
-      message: 'Invalid Request',
+      message: "Invalid Request",
     });
   }
   try {
@@ -3432,7 +3513,7 @@ const dailyMatchWiseprofitLose = async (req, res) => {
     const currentUser = await User.findOne({ userId: userId });
     const parent = await User.findOne({ userId: currentUser.createdBy });
     const match = await Events.findById(matchId);
-    if (currentUser.role == '5') {
+    if (currentUser.role == "5") {
       const response = await Cash.aggregate([
         {
           $match: {
@@ -3444,49 +3525,53 @@ const dailyMatchWiseprofitLose = async (req, res) => {
                     userId: userId,
                   },
                   {
-                    cashOrCredit: { $in: ['Bet', 'Commission', 'loosing'] },
+                    cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
                   },
                 ],
               },
               {
-                cashOrCredit: { $in: ['Commission'] },
+                cashOrCredit: { $in: ["Commission"] },
               },
             ],
           },
         },
         {
           $addFields: {
-            betsId: { $toObjectId: '$betId' },
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
           $lookup: {
-            from: 'bets',
-            localField: 'betsId',
-            foreignField: '_id',
-            as: 'betsDetails',
+            from: "bets",
+            localField: "betsId",
+            foreignField: "_id",
+            as: "betsDetails",
           },
         },
         {
           $group: {
-            _id: '$betId',
-            pl: { $sum: '$amount' },
-            sattledAt: { $first: '$date' },
-            price: { $first: { $arrayElemAt: ['$betsDetails.betAmount', 0] } },
-            name: { $first: { $arrayElemAt: ['$betsDetails.runnerName', 0] } },
+            _id: "$betId",
+            pl: { $sum: "$amount" },
+            sattledAt: { $first: "$date" },
+            price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
+            name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
             createdAt: {
-              $first: { $arrayElemAt: ['$betsDetails.createdAt', 0] },
+              $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] },
             },
-            size: { $first: { $arrayElemAt: ['$betsDetails.betRate', 0] } },
-            type: { $first: { $arrayElemAt: ['$betsDetails.type', 0] } },
-            fancyData: { $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] } },
-            isfancyOrbookmaker: { $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] } }  
+            size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
+            type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
+            fancyData: {
+              $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] },
+            },
+            isfancyOrbookmaker: {
+              $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] },
+            },
           },
         },
       ]);
       return res.send({
         success: true,
-        message: 'Detailed reports',
+        message: "Detailed reports",
         results: response,
         dealer: parent.userName,
         currentUser: currentUser.userName,
@@ -3499,40 +3584,40 @@ const dailyMatchWiseprofitLose = async (req, res) => {
           $match: {
             matchId: matchId,
             userId: userId,
-            cashOrCredit: { $in: ['Bet', 'Commission', 'loosing'] },
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           },
         },
         {
           $addFields: {
-            betsId: { $toObjectId: '$betId' },
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
           $lookup: {
-            from: 'bets',
-            localField: 'betsId',
-            foreignField: '_id',
-            as: 'betsDetails',
+            from: "bets",
+            localField: "betsId",
+            foreignField: "_id",
+            as: "betsDetails",
           },
         },
         {
           $group: {
-            _id: '$betId',
-            pl: { $sum: '$amount' },
-            sattledAt: { $first: '$date' },
-            price: { $first: { $arrayElemAt: ['$betsDetails.betAmount', 0] } },
-            name: { $first: { $arrayElemAt: ['$betsDetails.runnerName', 0] } },
+            _id: "$betId",
+            pl: { $sum: "$amount" },
+            sattledAt: { $first: "$date" },
+            price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
+            name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
             createdAt: {
-              $first: { $arrayElemAt: ['$betsDetails.createdAt', 0] },
+              $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] },
             },
-            size: { $first: { $arrayElemAt: ['$betsDetails.betRate', 0] } },
-            type: { $first: { $arrayElemAt: ['$betsDetails.type', 0] } },
+            size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
+            type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
           },
         },
       ]);
       return res.send({
         success: true,
-        message: 'Detailed reports',
+        message: "Detailed reports",
         results: response,
         dealer: parent?.userName,
         currentUser: currentUser?.userName,
@@ -3541,56 +3626,55 @@ const dailyMatchWiseprofitLose = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log('Catched', error);
-    console.log('line 2910 Something Went Wrong!');
+    console.log("Catched", error);
+    console.log("line 2910 Something Went Wrong!");
     return res.status(404).send({
       success: false,
-      message: 'Something Went Wrong!',
+      message: "Something Went Wrong!",
     });
   }
-}
+};
 
 const postmanwork = async (req, res) => {
   try {
-
-    var axios = require('axios');
+    var axios = require("axios");
 
     var data = {
-      "partnerKey": "6yhUl8mtfTZQcyhfIY22nXVRVHGKz21XXXXXXXXXXXXXXXXXXXXXXXXXX",
-      "game": {
-        "gameCode": "TP",
-        "providerCode": "SN"    
-      },    
-      "timestamp": "1624862458",    
-      "user": {      
-        "id": "XX",      
-        "currency": "INR",      
-        "displayName":"",       
-        "backUrl":"https://1obet.com"   
-      }};
+      partnerKey: "6yhUl8mtfTZQcyhfIY22nXVRVHGKz21XXXXXXXXXXXXXXXXXXXXXXXXXX",
+      game: {
+        gameCode: "TP",
+        providerCode: "SN",
+      },
+      timestamp: "1624862458",
+      user: {
+        id: "XX",
+        currency: "INR",
+        displayName: "",
+        backUrl: "https://1obet.com",
+      },
+    };
 
     var config = {
-      method: 'post',
+      method: "post",
       maxBodyLength: Infinity,
-        url: 'https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication',
-        headers: { },
-        data : data
-      };
+      url: "https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication",
+      headers: {},
+      data: data,
+    };
 
-      axios(config)
+    axios(config)
       .then(function (response) {
         console.log(JSON.stringify(response.data));
       })
-    .catch(function (error) {
-      console.log(error);
-    });
-
+      .catch(function (error) {
+        console.log(error);
+      });
 
     const _3oattires = await axios.get(
-      'http://138.68.171.26:3003/teenpatti/t20'
+      "http://138.68.171.26:3003/teenpatti/t20"
     );
     return res.send({
-      message: 'Completed !',
+      message: "Completed !",
       _3oatti: _3oatti,
       _3oattiResult: _3oattiResult,
       teen8: teen8,
@@ -3600,23 +3684,23 @@ const postmanwork = async (req, res) => {
       message: `Error ${err} !`,
     });
   }
-}
+};
 
-loginRouter.post('/placeBet', betValidator.validate('placeBet'), placeBet);
-loginRouter.post('/getUserBets', getUserBets);
-loginRouter.get('/betFunds', betFunds);
-loginRouter.post('/createBetRates', createBetRates);
-loginRouter.get('/getBetRates/:id', getBetRates);
-loginRouter.get('/getMatchedBets', getMatchedBets);
-loginRouter.get('/FakeBetsList', FakeBetsList);
-loginRouter.delete('/deleteFakeBet/:id', deleteFakeBet);
-loginRouter.put('/updateFakeBet/:id', updateFakeBet);
-loginRouter.get('/countFakeBets', countFakeBet);
-loginRouter.post('/approvedFakeBet/:id', approvedFakeBet);
-loginRouter.get('/reviewFakeBet/:id/:sportsId', reviewFakeBet);
-loginRouter.get('/postmanwork', postmanwork);
-loginRouter.get('/profitLose', profitLose);
-loginRouter.get('/EventWiseprofitLose', EventWiseprofitLose);
-loginRouter.get('/dailyMatchWiseprofitLose', dailyMatchWiseprofitLose);
+loginRouter.post("/placeBet", betValidator.validate("placeBet"), placeBet);
+loginRouter.post("/getUserBets", getUserBets);
+loginRouter.get("/betFunds", betFunds);
+loginRouter.post("/createBetRates", createBetRates);
+loginRouter.get("/getBetRates/:id", getBetRates);
+loginRouter.get("/getMatchedBets", getMatchedBets);
+loginRouter.get("/FakeBetsList", FakeBetsList);
+loginRouter.delete("/deleteFakeBet/:id", deleteFakeBet);
+loginRouter.put("/updateFakeBet/:id", updateFakeBet);
+loginRouter.get("/countFakeBets", countFakeBet);
+loginRouter.post("/approvedFakeBet/:id", approvedFakeBet);
+loginRouter.get("/reviewFakeBet/:id/:sportsId", reviewFakeBet);
+loginRouter.get("/postmanwork", postmanwork);
+loginRouter.get("/profitLose", profitLose);
+loginRouter.get("/EventWiseprofitLose", EventWiseprofitLose);
+loginRouter.get("/dailyMatchWiseprofitLose", dailyMatchWiseprofitLose);
 
 module.exports = { sessionCalc, loginRouter, getParents };
