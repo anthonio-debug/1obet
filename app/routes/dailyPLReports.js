@@ -367,39 +367,9 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
   if(currentUser.role == 5){
     const match       = await Events.findById(matchId)
     const parent      = await User.findOne({ userId: currentUser.createdBy});
-    let response = []
-    if(match.sportsId  == "6"){
-      response = await CashDeposit.aggregate([
-        {
-          $match: {
-            matchId: matchId,
-            $or: [
-              {
-                $and: [{
-                  userId: userId,
-                },
-                {
-                  cashOrCredit: { $in: ["Bet"] }
-                }
-                ]
-              },
-              {       
-                cashOrCredit: { $in: ["Commission"] }
-              }
-            ]
-          }
-        },
-        { 
-          $group:{
-            _id: "$betId",
-            pl: { $sum: "$amount"},
-            sattledAt: { $first: "$date" },
-            sportsId:  { $first: "$sportsId" },
-            event: { $first: "$event" },
-          }
-        }
-      ]);
-    }else {
+    let response = [];
+    console.log();
+    if([1, 2, 4, 7, 4339, "1", "2", "4", "7", "4339"].includes(match.sportsId)){
       response = await CashDeposit.aggregate([
         {
           $match: {
@@ -447,6 +417,38 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
             fancyData: { $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] } },
             isfancyOrbookmaker: { $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] } }
   
+          }
+        }
+      ]);
+    }
+    else {
+      response = await CashDeposit.aggregate([
+        {
+          $match: {
+            matchId: matchId,
+            $or: [
+              {
+                $and: [{
+                  userId: userId,
+                },
+                {
+                  cashOrCredit: { $in: ["Bet"] }
+                }
+                ]
+              },
+              {       
+                cashOrCredit: { $in: ["Commission"] }
+              }
+            ]
+          }
+        },
+        { 
+          $group:{
+            _id: "$betId",
+            pl: { $sum: "$amount"},
+            sattledAt: { $first: "$date" },
+            sportsId:  { $first: "$sportsId" },
+            event: { $first: "$event" },
           }
         }
       ]);
