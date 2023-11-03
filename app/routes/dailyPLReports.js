@@ -371,6 +371,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
     let response = [];
     console.log();
     if([1, 2, 4, 7, 4339, "1", "2", "4", "7", "4339"].includes(match.sportsId)){
+    console.log(" =============================== Includes Part  =========================== ");
       response = await CashDeposit.aggregate([
         {
           $match: {

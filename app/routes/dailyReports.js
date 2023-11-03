@@ -472,6 +472,8 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
     const match       = await Events.findById(matchId);
     let response = [];
     if([1, 2, 4, 7, 4339, "1", "2", "4", "7", "4339"].includes(match.sportsId)){
+    console.log(" =============================== Includes Part  =========================== ");
+      
       response = await CashDeposit.aggregate([
         {
           $match: {
@@ -521,6 +523,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
           }
         }
       ]);
+      
     }else {
       response = await CashDeposit.aggregate([
         {
