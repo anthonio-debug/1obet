@@ -474,7 +474,6 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
     let response;
     if(match){
       console.log(" =============================== Includes Part  =========================== ");
- 
         response = await CashDeposit.aggregate([
           {
             $match: {
@@ -549,11 +548,14 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
         },
         { 
           $group:{
-            _id: "$_id",
+            _id: "$betId",
             pl: { $sum: "$amount"},
             sattledAt: { $first: "$date" },
             sportsId:  { $first: "$sportsId" },
             event: { $first: "$event" },
+            price: { $first: "$casinoBetAmount" },
+            size: 1,
+            type: 0
           }
         }
       ])

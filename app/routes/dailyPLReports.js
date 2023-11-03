@@ -450,8 +450,11 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
             _id: "$_id",
             pl: { $sum: "$amount"},
             sattledAt: { $first: "$date" },
-            sportsId:  { $first: "$sportsId" },
+            sportsId: { $first: "$sportsId" },
             event: { $first: "$event" },
+            price: { $first: "$casinoBetAmount" },
+            size: 1,
+            type: 0
           }
         }
       ]);
