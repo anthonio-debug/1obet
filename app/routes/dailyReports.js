@@ -468,7 +468,6 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
   const parent      = await User.findOne({ userId: currentUser.createdBy});
 
   if(currentUser.role == '5'){
-    console.log(" =============================== 5 =========================== ");
     let match = null
     matchId.length > 10 ? match = await Events.findOne({ _id : ObjectId(`${matchId}`) }) : '';
     let response;
@@ -525,7 +524,6 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
         ]);
   
     }else {
-      console.log(" =============================== ELSE RUNS =========================== ");
       response = await CashDeposit.aggregate([
         {
           $match: {
@@ -559,7 +557,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
           }
         }
       ])
-      console.log(" ===================== response ================= ", response);
+      console.log(" ================= Response ================= ", response);
     }
     return res.send({
       success: true,

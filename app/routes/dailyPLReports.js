@@ -424,7 +424,6 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
       ]);
     }
     else {
-      console.log(" =============================== ELSE RUNS =========================== ");
       response = await CashDeposit.aggregate([
         {
           $match: {
@@ -458,7 +457,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
           }
         }
       ]);
-      console.log(" ===================== response ================= ", response);
+      console.log(" ================= response ================= ", response);
     }
     return res.send({
       success: true,
