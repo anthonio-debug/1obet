@@ -523,7 +523,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
           }
         }
       ]);
-      
+
     }else {
       response = await CashDeposit.aggregate([
         {
@@ -547,7 +547,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
         },
         { 
           $group:{
-            _id: "$betId",
+            _id: "$_id",
             pl: { $sum: "$amount"},
             sattledAt: { $first: "$date" },
             sportsId:  { $first: "$sportsId" },
