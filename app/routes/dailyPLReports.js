@@ -424,36 +424,37 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
       ]);
     }
     else {
-      response = await CashDeposit.aggregate([
-        {
-          $match: {
-            matchId: matchId,
-            $or: [
-              {
-                $and: [{
-                  userId: userId,
-                },
-                {
-                  cashOrCredit: { $in: ["Bet"] }
-                }
-                ]
-              },
-              {       
-                cashOrCredit: { $in: ["Commission"] }
-              }
-            ]
-          }
-        },
-        { 
-          $group:{
-            _id: "$_id",
-            pl: { $sum: "$amount"},
-            sattledAt: { $first: "$date" },
-            sportsId:  { $first: "$sportsId" },
-            event: { $first: "$event" },
-          }
-        }
-      ]);
+      response = {}
+      // response = await CashDeposit.aggregate([
+      //   {
+      //     $match: {
+      //       matchId: matchId,
+      //       $or: [
+      //         {
+      //           $and: [{
+      //             userId: userId,
+      //           },
+      //           {
+      //             cashOrCredit: { $in: ["Bet"] }
+      //           }
+      //           ]
+      //         },
+      //         {       
+      //           cashOrCredit: { $in: ["Commission"] }
+      //         }
+      //       ]
+      //     }
+      //   },
+      //   { 
+      //     $group:{
+      //       _id: "$_id",
+      //       pl: { $sum: "$amount"},
+      //       sattledAt: { $first: "$date" },
+      //       sportsId:  { $first: "$sportsId" },
+      //       event: { $first: "$event" },
+      //     }
+      //   }
+      // ]);
     }
     return res.send({
       success: true,
