@@ -911,16 +911,34 @@ const debit = async (req, res) => {
             " ================================= 6 =================================== "
           );
           await session.abortTransaction();
-          return res.json({
-            partnerKey: payload?.partnerKey,
-            userId: payload?.user?.id,
-            balance: user ? user?.availableBalance / casinoMultiples : 0.0,
-            status: {
-              code: "VALIDATION_ERROR",
-              message: "Cancel transaction may not exist or already processed",
-            },
-            timestamp: timestamp,
-          });
+
+          if (transAvaiable.cancelProcessed == 1) {
+            const updatedUser = await users.findOne({
+              userId: parseInt(payload.user.id),
+            });
+            return res.json({
+              partnerKey: config.worldCasinoOnlinePartnerKey,
+              status: {
+                code: "SUCCESS",
+                message: "",
+              },
+              balance: updatedUser.availableBalance / casinoMultiples,
+              userId: updatedUser.userId.toString(),
+              timestamp: timestamp,
+            });
+          } else {
+            return res.json({
+              partnerKey: payload?.partnerKey,
+              userId: payload?.user?.id,
+              balance: user ? user?.availableBalance / casinoMultiples : 0.0,
+              status: {
+                code: "VALIDATION_ERROR",
+                message:
+                  "Cancel transaction may not exist or already processed",
+              },
+              timestamp: timestamp,
+            });
+          }
         } else {
           console.log(
             " ================================= Come into ELSE =================================== "
@@ -1204,17 +1222,34 @@ const credit = async (req, res) => {
         });
         if (!transAvaiable || transAvaiable.cancelProcessed == 1) {
           await session.abortTransaction();
-          console.log("==================== BEFORE ========================");
-          return res.json({
-            partnerKey: payload?.partnerKey,
-            userId: payload?.user?.id,
-            balance: user ? user?.availableBalance / casinoMultiples : 0.0,
-            status: {
-              code: "VALIDATION_ERROR",
-              message: "Cancel transaction may not exist or already processed",
-            },
-            timestamp: timestamp,
-          });
+          if (transAvaiable.cancelProcessed == 1) {
+            const updatedUser = await users.findOne({
+              userId: parseInt(payload.user.id),
+            });
+            return res.json({
+              partnerKey: config.worldCasinoOnlinePartnerKey,
+              status: {
+                code: "SUCCESS",
+                message: "",
+              },
+              balance: updatedUser.availableBalance / casinoMultiples,
+              userId: updatedUser.userId.toString(),
+              timestamp: new Date().getTime().toString(),
+            });
+          } else {
+            console.log("==================== BEFORE ========================");
+            return res.json({
+              partnerKey: payload?.partnerKey,
+              userId: payload?.user?.id,
+              balance: user ? user?.availableBalance / casinoMultiples : 0.0,
+              status: {
+                code: "VALIDATION_ERROR",
+                message:
+                  "Cancel transaction may not exist or already processed",
+              },
+              timestamp: timestamp,
+            });
+          }
         } else {
           const transAvaiable = await casinoCalls.findOneAndUpdate(
             { id: trans.referenceId },
