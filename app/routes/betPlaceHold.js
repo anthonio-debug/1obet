@@ -6,7 +6,7 @@ let config = require("config");
 // const Market                = require('../models/marketTypes');
 // const Events                = require('../models/events');
 // const SubMarket             = require('../models/subMarketTypes');
-const BetPlaceHold = require("../models/betPlaceHold");
+const BetPlaceHold = require("../models/betaPlaceHold");
 const loginRouter = express.Router();
 
 // async function addBetPlaceHold(req, res) {
