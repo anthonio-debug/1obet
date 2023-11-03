@@ -424,7 +424,6 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
       ]);
     }
     else {
-      console.log(" =============================== ELSE RUNS =========================== ");
       response = await CashDeposit.aggregate([
         {
           $match: {
@@ -447,14 +446,18 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
         },
         { 
           $group:{
-            _id: "$_id",
+            _id: "$betId",
             pl: { $sum: "$amount"},
             sattledAt: { $first: "$date" },
-            sportsId:  { $first: "$sportsId" },
+            sportsId: { $first: "$sportsId" },
             event: { $first: "$event" },
+            price: { $first: "$casinoBetAmount" },
+            size: 1,
+            type: 0
           }
         }
       ]);
+      console.log(" ================= response ================= ", response);
     }
     return res.send({
       success: true,
