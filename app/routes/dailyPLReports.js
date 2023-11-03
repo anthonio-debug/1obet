@@ -370,7 +370,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
     matchId.length > 10 ? match = await Events.findOne({ _id : ObjectId(`${matchId}`) }) : '';
     const parent = await User.findOne({ userId: currentUser.createdBy});
     let response;
-    if(!match){
+    if(match){
       console.log(" =============================== Includes Part  =========================== ");
       response = await CashDeposit.aggregate([
         {
