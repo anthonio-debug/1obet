@@ -30,7 +30,8 @@ let depositsSchema = new Schema({
   event: { type: String },
   betType: {type: Number},
   betDateTime: {type: Number},
-  casinoBetAmount: {type: Number, default: 0}
+  casinoBetAmount: {type: Number, default: 0},
+  betTime :  {type: Number, default: new Date().getTime()- 30}
 });
 
 depositsSchema.plugin(Global.aggregatePaginate);
