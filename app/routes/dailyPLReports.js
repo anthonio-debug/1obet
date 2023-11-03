@@ -458,6 +458,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
           }
         }
       ]);
+      console.log(" ===================== response ================= ", response);
     }
     return res.send({
       success: true,
