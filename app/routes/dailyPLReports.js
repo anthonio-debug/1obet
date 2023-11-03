@@ -365,6 +365,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
   const currentUser = await User.findOne({ userId: userId});
 
   if(currentUser.role == 5){
+    console.log(" =============================== 5 =========================== ");
     const match       = await Events.findById(matchId)
     const parent      = await User.findOne({ userId: currentUser.createdBy});
     let response = [];
@@ -464,6 +465,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
     });
   }
   else {
+    console.log(" =============================== 5 =========================== ");
     const childUsers  = await User.distinct("userId", { createdBy:  userId });
     const users       = [userId, ...childUsers];
     console.log(" users ===================  ", users);

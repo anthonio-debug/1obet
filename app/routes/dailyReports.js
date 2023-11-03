@@ -466,7 +466,9 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
   const matchId     = req.query.matchId;
   const currentUser = await User.findOne({ userId: userId});
   const parent      = await User.findOne({ userId: currentUser.createdBy});
+
   if(currentUser.role == '5'){
+    console.log(" =============================== 5 =========================== ");
     const match       = await Events.findById(matchId);
     let response = [];
     if([1, 2, 4, 7, 4339, "1", "2", "4", "7", "4339"].includes(match.sportsId)){
@@ -563,6 +565,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
     });
 
   }else {
+    console.log(" =============================== 5 =========================== ");
     const users       = [userId];
     let parents       = [userId];
     let childUsers;
