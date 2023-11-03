@@ -367,7 +367,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
   if(currentUser.role == 5){
     console.log(" =========================== -5- =========================== ");
     let match = null;
-    matchId.length > 10 ? match = await Events.findOne({ _id : ObjectId(`${matchId}`) }) : '';
+    matchId.length > 10 ? match = await Events.findOne(matchId) : '';
     const parent = await User.findOne({ userId: currentUser.createdBy});
     let response;
     if(match){

@@ -469,7 +469,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
 
   if(currentUser.role == '5'){
     let match = null
-    matchId.length > 10 ? match = await Events.findOne({ _id : ObjectId(`${matchId}`) }) : '';
+    matchId.length > 10 ? match = await Events.findById(matchId) : '';
     let response;
     if(match){
       console.log(" =============================== Includes Part  =========================== ");
