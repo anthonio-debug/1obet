@@ -445,6 +445,12 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
             ]
           }
         },
+        {
+          $addFields: {
+            "type": 0,
+            "size": 1
+          }
+        },
         { 
           $group:{
             _id: "$betId",
@@ -453,6 +459,8 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
             sportsId: { $first: "$sportsId" },
             event: { $first: "$event" },
             price: { $first: "$casinoBetAmount" },
+            type : "$type",
+            size : "$size"
           }
         }
       ]);
