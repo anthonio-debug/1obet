@@ -428,7 +428,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
       response = await CashDeposit.aggregate([
         {
           $match: {
-            matchId: matchId,
+            marketId: matchId,
             $or: [
               {
                 $and: [{
