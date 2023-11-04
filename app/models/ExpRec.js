@@ -8,7 +8,7 @@ const ExpRec = new mongoose.Schema({
     trans_from_id: { type: String, required: false },
     user_prev_balance: { type: Number },
     user_prev_availableBalance: { type: Number },
-    user_prev_exposure: { type: String, required: false },
+    user_prev_exposure: { type: Number, required: false },
     user_new_balance: { type: Number, required: false },
     user_new_availableBalance: { type: Number },
     trans_bet_status: { type: Number, default: 1 },
