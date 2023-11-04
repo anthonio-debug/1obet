@@ -1,15 +1,15 @@
 const express = require('express');
-const User = require('../models/user');
-const router = express.Router();
+const User    = require('../models/user');
+const router  = express.Router();
+const ExpRec  = require("..//models/ExpRec");
 const CasinoDebits = require('../models/casinoCalls');
 const Cash   = require("../../app/models/deposits");
 const crypto = require('crypto');
-const config = require('config')
+const config = require('config');
 const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
 const { getParents }  = require("./bets");
-const ExpRec  = require("..//models/ExpRec");
-const SelectedCasino = require("../models/selectedCasino");
+const SelectedCasino  = require("../models/selectedCasino");
 
 const transactionOptions = {
   readPreference: 'primary',
@@ -48,8 +48,6 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
       let bettor_lost_amount = 0;
     */
 
-    // console.log(" ================ credit payload ================ ", payload);
-
     const now   = new Date();
     const year  = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -59,23 +57,27 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
     if (action == 0) {
       let amount                  = Number(payload.amount) * casinoMultiples;
       let UpdatedExposure         = Number((user.exposure - amount).toFixed(2));
-      let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(2));;
-      // console.log(" ============ Handle Place Bet ============ ");
+      let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(2));
 
       /**
        * let lastMaxWithdrawRes = await Cash.find( {userId: user.userId}).sort({ _id: -1 }); 
        * let lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0]: null
        * console.log(" lastMaxWithdraw ============== ", lastMaxWithdraw);
        */
-      
-      console.log(" ============ Update user balances ============ ");
       await users.updateOne(
-        { _id: user._id }, { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure } },
+        { _id: user._id }, 
+        { 
+          $set: { 
+            availableBalance: updatedavailableBalance, 
+            exposure: UpdatedExposure 
+          }
+        },
         { session }
       );
+
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
-      console.log("allTrans created Successfully");
+      console.log(" allTrans created Successfully ");
       return 0
     }
 
@@ -83,13 +85,15 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
+
       const gamesList  = await SelectedCasino.findOne(
         { "games.id": payload.game_id },
         { "games.$": 1 }
       );
-      const game = gamesList.games[0];
+      const game = gamesList?.games[0];
 
       console.log(" ======================= CREDIT IS CAALED ======================= ");
+
       const lastDebit = await casinoCalls.findOne({
         action: 'debit',
         game_id: payload.game_id,
@@ -97,14 +101,12 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
         remote_id: Number(payload.remote_id)
       })
 
-      // console.log(" ======================= lastDebit =======================  ", lastDebit);
-
       const debit      = Number(lastDebit.amount);
       const credit     = Number(payload.amount);
       const difference = credit - debit;
       const allTrans   = [];
       // lose some Amount 
-      const betTime = rand(30, 120);
+      const betTime = Math.floor(Math.random() * 10000) *10;
       if (difference < 0) {
         console.log("   ======================= difference < 0 =======================   ");
         /**
@@ -130,7 +132,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
 
         const amount          = Number((debit *config.casinoMultiples).toFixed(2));
         const UpdatedExposure = Number((user.exposure + amount).toFixed(2));
-        const userResponseI   = await users.updateOne(
+
+        await users.updateOne(
           { _id: user?._id },
           { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure, clientPL: updatedclientPL, balance: updatedbalance } },
           { session }
@@ -139,7 +142,6 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
         const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
         const lastMaxWithdraw    = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
 
-        console.log(" ====================== ====================== ", lastMaxWithdraw);
         //divide lost money to all share holders.
 
         let BattorLostTran = {
@@ -231,7 +233,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
 
           const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
           const lastMaxWithdraw    = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
-          console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
+          // console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
 
           let betTransaction = {
             userId: user.userId,
