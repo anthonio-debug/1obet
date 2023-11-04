@@ -94,14 +94,18 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
 
       console.log(" ======================= CREDIT IS CAALED ======================= ");
 
-      const lastDebit = await casinoCalls.findOne({
+      const lastDebits = await CasinoDebits.find({
         action: 'debit',
         game_id: payload.game_id,
         round_id: payload.round_id,
         remote_id: Number(payload.remote_id)
       })
+      console.log(" ======================== lastDebits ======================== ", lastDebits.length);
+      let debit = 0; 
+      for (const lastDebit of lastDebits) {
+        debit = debit + Number(lastDebit.amount)
+      }
 
-      const debit      = Number(lastDebit.amount);
       const credit     = Number(payload.amount);
       const difference = credit - debit;
       const allTrans   = [];
