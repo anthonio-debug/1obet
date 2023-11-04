@@ -15,6 +15,7 @@
   "liveTvUrl": "https://livesportscore.xyz:3440/api",
   "liveBetTvUrl": "https://betfairoddsapi.com:3445/api",
   "liveScoreUrl": "https://livesportscore.xyz:3443/api/getScoreId",
+  "roundResultUrl": "http://103.228.112.83:8997",
   "sportsLiveScore": "https://livesportscore.xyz:3440/api/bf_scores/",
   "horseRaceUrl": "http://136.244.77.249:33333",
   "worldCasinoOnlineAuthUrl": "https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication",
