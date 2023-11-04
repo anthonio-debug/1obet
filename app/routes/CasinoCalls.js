@@ -603,6 +603,14 @@ async function debitfun(req, res){
         msg: 'INCORRECT_KEY_VALIDATION'
       });
     }
+    const user = await users.findOne(
+      { remoteId: parseInt(payload.remote_id) },
+      { session }
+    )
+    if (!user) {
+      await session.abortTransaction();
+      return res.json({ status: '500', msg: `Internal error no user` });
+    }
 
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
     if(checkMarketBlockedResponse == 1){
@@ -626,15 +634,7 @@ async function debitfun(req, res){
         },
         { session }
       );
-      const user = await users.findOne(
-        { remoteId: parseInt(payload.remote_id) },
-        { session }
-      )
-      if (!user) {
-        await session.abortTransaction();
-        return res.json({ status: '500', msg: `Internal error no user` });
-      }
-      else if (sameTransId > 0) {
+      if (sameTransId > 0) {
         await session.abortTransaction();
         return res.json({
           status: 200,
@@ -710,6 +710,15 @@ async function creditfun(req, res) {
         msg: 'INCORRECT_KEY_VALIDATION'
       });
     }
+    const user = await users.findOne(
+      { remoteId: parseInt(payload.remote_id) },
+      { session, readPreference: 'primary' }
+    );
+    if (!user) {
+      console.log(" ========================= User Not Found ============= ");
+      await session.abortTransaction();
+      return res.json({ status: '500', msg: `Internal Error no User` });
+    }
 
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
     if(checkMarketBlockedResponse == 1){
@@ -731,16 +740,8 @@ async function creditfun(req, res) {
       );
 
       // console.log('====== sameTransId', sameTransId)
-      const user = await users.findOne(
-        { remoteId: parseInt(payload.remote_id) },
-        { session, readPreference: 'primary' }
-      );
-      if (!user) {
-        console.log(" ========================= User Not Found ============= ");
-        await session.abortTransaction();
-        return res.json({ status: '500', msg: `Internal Error no User` });
-      }
-      else if (sameTransId > 0) {
+
+      if (sameTransId > 0) {
         console.log('====== same Trans already Exists ', sameTransId)
         await session.abortTransaction();
         return res.json({
