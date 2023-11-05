@@ -90,6 +90,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
         { "games.id": payload.game_id },
         { "games.$": 1 }
       );
+
       const game = gamesList?.games[0];
 
       console.log(" ======================= CREDIT IS CAALED ======================= ");
@@ -99,7 +100,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
         game_id: payload.game_id,
         round_id: payload.round_id,
         remote_id: Number(payload.remote_id)
-      })
+      });
+
       console.log(" ======================== lastDebits ======================== ", lastDebits.length);
       let debit = 0; 
       for (const lastDebit of lastDebits) {
@@ -111,7 +113,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
       const allTrans   = [];
       // lose some Amount 
       const betTime = Math.floor(Math.random() * 10000) *10;
-      if (difference < 0) {
+      if (difference < 0 &&  payload.gameplay_final != 1) {
         console.log("   ======================= difference < 0 =======================   ");
         /**
          * lose some money mean there will not be any commission only adjust the lost amount into exposure. 
@@ -274,7 +276,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
         await casinoDebits.save();
       }
       // Win some Amount 
-      else if (difference > 0){
+      else if (difference > 0 &&  payload.gameplay_final != 1){
         console.log(" ======================= difference > 0 ======================= ");
 
         /**
@@ -480,7 +482,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
         console.log(" =============end of }else if (difference > 0){=============");
       }
       // No Win lose 
-      else if(difference == 0) {
+      else if((difference == 0 && gameplay_final != 1) || payload.gameplay_final == 1) {
         const updatedavailableBalance = Number((user.availableBalance + ( debit*casinoMultiples )).toFixed(2))
         const UpdatedExposure         = Number((user.exposure + ( debit*casinoMultiples )).toFixed(2))
         await users.updateOne(
