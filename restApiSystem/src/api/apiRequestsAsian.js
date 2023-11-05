@@ -5,6 +5,7 @@ const AsianTable = require("../../../app/models/asianTable");
 const axios = require("axios");
 
 module.exports = apiRequests;
+let io;
 
 const tableNames = [
   { tableId: "teen20", tableName: "Teen Patti 2020(TP2020)" },
