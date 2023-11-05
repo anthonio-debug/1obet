@@ -11,7 +11,7 @@ const inPlayEvents = require("./app/models/events");
 const ToolForEvent = require("./restApiSystem/src/tools_for_events.js")();
 const ToolForRacing = require("./restApiSystem/src/tools_for_racing.js")();
 const ToolForFancy = require("./restApiSystem/src/tools_for_fancy.js")();
-const ToolForAsianOdd = require("./restApiSystem/src/tools_for_teen20.js")();
+const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
 
 const port = 3004;
 
@@ -54,7 +54,7 @@ async function main() {
   ToolForFancy.init(io, express);
 
   //init asian odds
-  ToolForAsianOdd.init(io, express);
+  ToolForAsian.init(io, express);
 
   httpServer.listen(port, () => {
     console.log(`Server listening on port ${port}`);

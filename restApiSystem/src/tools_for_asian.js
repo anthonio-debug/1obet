@@ -1,9 +1,9 @@
 "use strict";
-module.exports = ToolForEvent;
+module.exports = ToolForAsian;
 
 const apiRequests = require("./api/apiRequestsAsian")();
 
-function ToolForEvent() {
+function ToolForAsian() {
   return { init };
 
   async function init(_io, express) {
