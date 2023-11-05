@@ -42,8 +42,15 @@ function apiRequests() {
   function onConnet(socket) {
     console.log("Socket connect");
 
-    socket.on("join", async () => {
-      socket.join();
+    socket.on("join", async (channel) => {
+      if (!channel) {
+        return socket.emit("err", "Channel Required");
+      }
+
+      if (channel.length == 0) {
+        return socket.emit("err", "Channel Required");
+      }
+      socket.join(channel);
     });
   }
 
