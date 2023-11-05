@@ -1,7 +1,7 @@
 "use strict";
 module.exports = ToolForEvent;
 
-const apiRequests = require("./api/apiRequestsTeen20")();
+const apiRequests = require("./api/apiRequestsAsian")();
 
 function ToolForEvent() {
   return { init };
