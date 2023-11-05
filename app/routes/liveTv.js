@@ -259,64 +259,64 @@ async function liveRresultLucky7EU(req, res) {
   }
 }
 
-async function liveDrate32CardA(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/card32`;
-  try {
-    const response = await axios.get(url);
-    const liveDrate32CardAResult = response.data;
-    res.status(200).json({
-      success: true,
-      message: "Card32-A Live Tv Drate Result",
-      liveDrate32CardAResult: liveDrate32CardAResult,
-    });
-  } catch (err) {
-    res.status(200).json({
-      success: false,
-      message: "Failed to get Card32-A Live Tv Drate Result",
-      error: err.message,
-    });
-  }
-}
+// async function liveDrate32CardA(req, res) {
+//   const url = `${config.liveBetTvUrl}/d_rate/card32`;
+//   try {
+//     const response = await axios.get(url);
+//     const liveDrate32CardAResult = response.data;
+//     res.status(200).json({
+//       success: true,
+//       message: "Card32-A Live Tv Drate Result",
+//       liveDrate32CardAResult: liveDrate32CardAResult,
+//     });
+//   } catch (err) {
+//     res.status(200).json({
+//       success: false,
+//       message: "Failed to get Card32-A Live Tv Drate Result",
+//       error: err.message,
+//     });
+//   }
+// }
 
-async function liveLresult32CardA(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/card32`;
-  try {
-    const response = await axios.get(url);
-    const liveLresult32CardAResult = response.data;
-    res.status(200).json({
-      success: true,
-      message: "Card32-A Live Tv Lresult",
-      liveLresult32CardAResult: liveLresult32CardAResult,
-    });
-  } catch (err) {
-    res.status(200).json({
-      success: false,
-      message: "Failed to get Card32-A Live Tv L Result",
-      error: err.message,
-    });
-  }
-}
+// async function liveLresult32CardA(req, res) {
+//   const url = `${config.liveBetTvUrl}/l_result/card32`;
+//   try {
+//     const response = await axios.get(url);
+//     const liveLresult32CardAResult = response.data;
+//     res.status(200).json({
+//       success: true,
+//       message: "Card32-A Live Tv Lresult",
+//       liveLresult32CardAResult: liveLresult32CardAResult,
+//     });
+//   } catch (err) {
+//     res.status(200).json({
+//       success: false,
+//       message: "Failed to get Card32-A Live Tv L Result",
+//       error: err.message,
+//     });
+//   }
+// }
 
-async function liveRresult32CardA(req, res) {
-  const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/card32/${roundId}`;
-  try {
-    const response = await axios.get(url);
-    const liveRresult32CardAResult = response.data;
+// async function liveRresult32CardA(req, res) {
+//   const roundId = req.params.roundId;
+//   const url = `${config.liveBetTvUrl}/r_result/card32/${roundId}`;
+//   try {
+//     const response = await axios.get(url);
+//     const liveRresult32CardAResult = response.data;
 
-    res.status(200).json({
-      success: true,
-      message: "Card32-A Live Tv Rresult",
-      liveRresult32CardAResult: liveRresult32CardAResult,
-    });
-  } catch (err) {
-    res.status(200).json({
-      success: false,
-      message: "Failed to get Card32-A Live Tv R Result",
-      error: err.message,
-    });
-  }
-}
+//     res.status(200).json({
+//       success: true,
+//       message: "Card32-A Live Tv Rresult",
+//       liveRresult32CardAResult: liveRresult32CardAResult,
+//     });
+//   } catch (err) {
+//     res.status(200).json({
+//       success: false,
+//       message: "Failed to get Card32-A Live Tv R Result",
+//       error: err.message,
+//     });
+//   }
+// }
 
 async function liveDrate32CardB(req, res) {
   const url = `${config.liveBetTvUrl}/d_rate/card32eu`;
@@ -636,10 +636,10 @@ router.get("/liveTv/r_result/lucky7eu", liveDrateLucky7EU);
 router.get("/liveTv/l_result/lucky7eu", liveLresultLucky7EU);
 router.get("/liveTv/r_result/lucky7eu/:roundId", liveRresultLucky7EU);
 
-//32 CARD-A(32 CARD-A)
-router.get("/liveTv/d_rate/card32", liveDrate32CardA);
-router.get("/liveTv/l_result/card32", liveLresult32CardA);
-router.get("/liveTv/r_result/card32/:roundId", liveRresult32CardA);
+// //32 CARD-A(32 CARD-A)
+// router.get("/liveTv/d_rate/card32", liveDrate32CardA);
+// router.get("/liveTv/l_result/card32", liveLresult32CardA);
+// router.get("/liveTv/r_result/card32/:roundId", liveRresult32CardA);
 
 //32 CARD-B
 router.get("/liveTv/d_rate/card32eu", liveDrate32CardB);
