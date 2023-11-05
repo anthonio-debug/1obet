@@ -482,7 +482,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
         console.log(" =============end of }else if (difference > 0){=============");
       }
       // No Win lose 
-      else if((difference == 0 && gameplay_final != 1) || payload.gameplay_final == 1) {
+      else if((difference == 0 && payload.gameplay_final != 1) || payload.gameplay_final == 1) {
         const updatedavailableBalance = Number((user.availableBalance + ( debit*casinoMultiples )).toFixed(2))
         const UpdatedExposure         = Number((user.exposure + ( debit*casinoMultiples )).toFixed(2))
         await users.updateOne(
