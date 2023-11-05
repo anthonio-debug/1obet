@@ -1,16 +1,17 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 var bcrypt = require('bcrypt');
-let config = require('config'); // we load the db location from the JSON files
+let config = require('config');
 let Global = require('../global/settings');
-
 mongoose.set('debug', false);
 const saltrounds = config.saltRounds;
+
 /**
  * [UserSchema description]
  * @roles [ 0 (company) 1 (superAdmin), 2 (admin), 3 (superMaster), 4 (master), 5 (better)]
  *  @status [ 0 (in-active) 1 (active)s]
  */
+
 const userSchema = new Schema({
   userName: { type: String, required: true, unique: false },
   password: { type: String, required: true },
