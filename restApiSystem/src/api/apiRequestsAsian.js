@@ -9,15 +9,27 @@ let io;
 let apiURL = "https://betfairoddsapi.com:3445/api";
 
 const tableNames = [
-  { tableId: "teen20", tableName: "Teen Patti 2020(TP2020)" },
-  { tableId: "teen9", tableName: "TEST TEENPATTI(TEST TEENPATTI)" },
-  { tableId: "lucky7", tableName: "LUCKY 7-A" },
-  { tableId: "lucky7eu", tableName: "LUCKY 7-B" },
-  { tableId: "card32eu", tableName: "32 CARD-B" },
-  { tableId: "aaa", tableName: "AMAR AKBAR ANTHONY(AAA)" },
-  { tableId: "ab20", tableName: "ANDAR BAHAR" },
-  { tableId: "abj", tableName: "ANDAR BAHAR 2" },
-  { tableId: "worli", tableName: "WORLI MATKA" },
+  {
+    tableId: "teen20",
+    tableName: "Teen Patti 2020(TP2020)",
+    imageUrl: "Teen_Patti_2020.png",
+  },
+  {
+    tableId: "teen9",
+    tableName: "TEST TEENPATTI(TEST TEENPATTI)",
+    imageUrl: "TEST_TEENPATTI.png",
+  },
+  { tableId: "lucky7", tableName: "LUCKY 7-A", imageUrl: "LUCKY_7-A.jpg" },
+  { tableId: "lucky7eu", tableName: "LUCKY 7-B", imageUrl: "LUCKY_7-B.png" },
+  { tableId: "card32eu", tableName: "32 CARD-B", imageUrl: "32_CARD-B.png" },
+  {
+    tableId: "aaa",
+    tableName: "AMAR AKBAR ANTHONY(AAA)",
+    imageUrl: "AMAR_AKBAR_ANTHONY(AAA).png",
+  },
+  { tableId: "ab20", tableName: "ANDAR BAHAR", imageUrl: "ANDAR_BAHAR.jpg" },
+  { tableId: "abj", tableName: "ANDAR BAHAR 2", imageUrl: "ANDAR_BAHAR_2.png" },
+  { tableId: "worli", tableName: "WORLI MATKA", imageUrl: "ANDAR_BAHAR_2.png" },
 ];
 
 function apiRequests() {

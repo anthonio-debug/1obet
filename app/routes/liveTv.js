@@ -605,10 +605,10 @@ async function liveRresultWorli(req, res) {
 loginRouter.get("/liveTv/:eventId", liveTv);
 
 //Get all AsianTables
-loginRouter.get("/liveTv/getAsianTables", getAllTables);
+loginRouter.get("/getAsianTables", getAllTables);
 
 //Get specific AsianOdd with tableId
-loginRouter.get("/liveTv/getAsianOdd/:tableId", getAsianOdd);
+loginRouter.get("/getAsianOdd/:tableId", getAsianOdd);
 
 //Teen Patti 2020(TP2020)
 router.get("/liveTv/d_rate/teen20", liveDrateTp20);
