@@ -157,6 +157,7 @@ const placeBet = async (req, res) => {
     const BetTime = new Date().getTime();
     let id = 0;
     let isManuel = true;
+    let delay = 4100;
 
     /* ====================================================================== */
 
@@ -619,9 +620,9 @@ const placeBet = async (req, res) => {
         eventId: DBOddDetails.eventId,
       });
 
-      console.log( "END of code by qaiser..Secondsvalue: ", BetPlaceData.secondsValue );
+      console.log( "===================== secondsValue ====================== ", BetPlaceData.secondsValue );
       /*end of code by qaiser*/
-
+      delay = (BetPlaceData.secondsValue * 1000) + 100;
       if (selectedBetRate == betRate) {
         for (let i = 1; i < BetPlaceData.secondsValue; i++) {
           setTimeout(async () => {
@@ -1934,7 +1935,7 @@ const placeBet = async (req, res) => {
 
     /* =================================================================== */
 
-    let delay = 4100;
+    
     const delayExcludedMarkets = [
       ...config.FigureEvenOddSmallBig,
       config.Fancy,
