@@ -74,7 +74,7 @@ function apiRequests() {
       const apiResult = await Promise.all(apiArray);
 
       for (let i = 0; i < tableNames.length; i++) {
-        const roundId = apiResult[i].data.data.t1[0].mid;
+        const roundId = apiResult[i].data.t1[0].mid;
         let resultUrl = `${apiURL}/r_result/${tableNames[i].tableId}/${roundId}`;
         const rResult = await axios.get(resultUrl);
 
