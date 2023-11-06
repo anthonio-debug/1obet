@@ -175,6 +175,7 @@
   "marketShares",
   "addBetPlaceHold",
   "updateBetPlaceHold",
-  "getBetPlaceHold"
-  
+  "getBetPlaceHold",
+  "getAsianTables",
+  "getAsianOdd"
 ]
