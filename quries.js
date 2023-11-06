@@ -690,6 +690,9 @@ db.privacypolicies.insertOne(
   }
 )
 
+db.asiantable.insertMany([
+])
+
 
 
 
@@ -2950,3 +2953,15 @@ const placeBet_dev = async (req, res) => {
 }
 
 db.uers.distinct("userId", { userId: {$nin: [ 1412, 1650,1861, 1865, 1879, 1884, 1930 ]}, exposure : {$gt: 0} })
+
+
+
+
+
+
+
+
+
+
+
+db.bets.find({ sportsId: '4', marketId: '1.220562861', userId: 2619, matchId: '65420cf22521110ed7538ad3' })
