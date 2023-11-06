@@ -3,6 +3,8 @@ let config = require("config");
 const axios = require("axios");
 const loginRouter = express.Router();
 const router = express.Router();
+const AsianTable = require("../models/asianTable");
+const AsianTableOdd = require("../models/asiantableOdds");
 
 async function liveTv(req, res) {
   const eventId = req.params.eventId;
@@ -23,6 +25,51 @@ async function liveTv(req, res) {
     res.status(200).json({
       success: false,
       message: "Failed to get live tv streaming",
+      error: error.message,
+    });
+  }
+}
+
+async function getAllTables(req, res) {
+  try {
+    const allAsianTables = await AsianTable.find();
+
+    res.status(200).json({
+      success: true,
+      message: "All Asian Tables",
+      allAsianTables: allAsianTables,
+    });
+  } catch (error) {
+    res.status(200).json({
+      success: false,
+      message: "Failed to get all asian tables",
+      error: error.message,
+    });
+  }
+}
+
+async function getAsianOdd(req, res) {
+  const tableId = req.params.tableId;
+  try {
+    const asianTableOdd = await AsianTableOdd.findOne({ tableId: tableId });
+
+    if (asianTableOdd) {
+      res.status(200).json({
+        success: true,
+        message: "Asian Odd table with tableId",
+        asianTableOdd: asianTableOdd,
+      });
+    } else {
+      res.status(200).json({
+        success: true,
+        message: "There is no asian table with this tableId",
+        asianTableOdd: [],
+      });
+    }
+  } catch (error) {
+    res.status(200).json({
+      success: false,
+      message: "Failed to get all asian tables",
       error: error.message,
     });
   }
@@ -258,65 +305,6 @@ async function liveRresultLucky7EU(req, res) {
     });
   }
 }
-
-// async function liveDrate32CardA(req, res) {
-//   const url = `${config.liveBetTvUrl}/d_rate/card32`;
-//   try {
-//     const response = await axios.get(url);
-//     const liveDrate32CardAResult = response.data;
-//     res.status(200).json({
-//       success: true,
-//       message: "Card32-A Live Tv Drate Result",
-//       liveDrate32CardAResult: liveDrate32CardAResult,
-//     });
-//   } catch (err) {
-//     res.status(200).json({
-//       success: false,
-//       message: "Failed to get Card32-A Live Tv Drate Result",
-//       error: err.message,
-//     });
-//   }
-// }
-
-// async function liveLresult32CardA(req, res) {
-//   const url = `${config.liveBetTvUrl}/l_result/card32`;
-//   try {
-//     const response = await axios.get(url);
-//     const liveLresult32CardAResult = response.data;
-//     res.status(200).json({
-//       success: true,
-//       message: "Card32-A Live Tv Lresult",
-//       liveLresult32CardAResult: liveLresult32CardAResult,
-//     });
-//   } catch (err) {
-//     res.status(200).json({
-//       success: false,
-//       message: "Failed to get Card32-A Live Tv L Result",
-//       error: err.message,
-//     });
-//   }
-// }
-
-// async function liveRresult32CardA(req, res) {
-//   const roundId = req.params.roundId;
-//   const url = `${config.liveBetTvUrl}/r_result/card32/${roundId}`;
-//   try {
-//     const response = await axios.get(url);
-//     const liveRresult32CardAResult = response.data;
-
-//     res.status(200).json({
-//       success: true,
-//       message: "Card32-A Live Tv Rresult",
-//       liveRresult32CardAResult: liveRresult32CardAResult,
-//     });
-//   } catch (err) {
-//     res.status(200).json({
-//       success: false,
-//       message: "Failed to get Card32-A Live Tv R Result",
-//       error: err.message,
-//     });
-//   }
-// }
 
 async function liveDrate32CardB(req, res) {
   const url = `${config.liveBetTvUrl}/d_rate/card32eu`;
@@ -616,6 +604,12 @@ async function liveRresultWorli(req, res) {
 // Define the route for the API
 loginRouter.get("/liveTv/:eventId", liveTv);
 
+//Get all AsianTables
+loginRouter.get("/liveTv/getAsianTables", getAllTables);
+
+//Get specific AsianOdd with tableId
+loginRouter.get("/liveTv/getAsianOdd/:tableId", getAsianOdd);
+
 //Teen Patti 2020(TP2020)
 router.get("/liveTv/d_rate/teen20", liveDrateTp20);
 router.get("/liveTv/l_result/teen20", liveLresultTp20);
@@ -635,11 +629,6 @@ router.get("/liveTv/r_result/lucky7/:roundId", liveRresultLucky7);
 router.get("/liveTv/d_rate/lucky7eu", liveDrateLucky7EU);
 router.get("/liveTv/l_result/lucky7eu", liveLresultLucky7EU);
 router.get("/liveTv/r_result/lucky7eu/:roundId", liveRresultLucky7EU);
-
-// //32 CARD-A(32 CARD-A)
-// router.get("/liveTv/d_rate/card32", liveDrate32CardA);
-// router.get("/liveTv/l_result/card32", liveLresult32CardA);
-// router.get("/liveTv/r_result/card32/:roundId", liveRresult32CardA);
 
 //32 CARD-B
 router.get("/liveTv/d_rate/card32eu", liveDrate32CardB);
