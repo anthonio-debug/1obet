@@ -157,6 +157,7 @@ const placeBet = async (req, res) => {
     const BetTime = new Date().getTime();
     let id = 0;
     let isManuel = true;
+    let delay = 4100;
 
     /* ====================================================================== */
 
@@ -291,12 +292,7 @@ const placeBet = async (req, res) => {
 
     // console.log(' ================== subMarketDetail ================== ', subMarketDetail );
 
-    if (
-      marketIds.includes(marketId) ||
-      subMarketId.includes(subMarketDetail.Id) ||
-      user.betLockStatus == true ||
-      user.blockedSubMarketsByParent.includes(subMarketDetail.Id)
-    ) {
+    if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
       return res.status(404).send({ message: "Betting disabled" });
     }
     const userMaxBetSize = await userBetSizes.findOne({
@@ -598,10 +594,8 @@ const placeBet = async (req, res) => {
     }
 
     // Cricket Match Odds
-    else if (   config.sportMarkets.includes(marketId) &&  config.cricketOdds == subMarketDetail.Id ) {
-      console.log(
-        " ======================== Soccer  Match Odds ======================== "
-      );
+    else if ( config.sportMarkets.includes(marketId) &&  config.cricketOdds == subMarketDetail.Id ) {
+      console.log(" ======================== Soccer Match Odds ======================== " );
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -614,22 +608,21 @@ const placeBet = async (req, res) => {
         runner: runner.SelectionId,
         amount: 0,
       }));
+
       const OddDetailsTeam = DBOddDetails.runners.find(
         (runner) => runner.SelectionId == selectionId
       );
+
       runnerName = OddDetailsTeam?.runnerName;
-      // console.log(' ============================ ========================== ', runnerForSaveInbets );
-      /*start of code by qaiser */
+      // console.log(' ========================== ========================== ', runnerForSaveInbets );
+      /* start of code by qaiser */
       const BetPlaceData = await BetPlaceHold.findOne({
         eventId: DBOddDetails.eventId,
       });
 
-      console.log(
-        "start of code by qaiser..Secondsvalue: ",
-        BetPlaceData.secondsValue
-      );
+      console.log( "===================== secondsValue ====================== ", BetPlaceData.secondsValue );
       /*end of code by qaiser*/
-
+      delay = (BetPlaceData.secondsValue * 1000) + 100;
       if (selectedBetRate == betRate) {
         for (let i = 1; i < BetPlaceData.secondsValue; i++) {
           setTimeout(async () => {
@@ -666,17 +659,20 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * i);
         }
-      } else if (type == 1 && betRate < selectedBetRate) {
+      } 
+      else if (type == 1 && betRate < selectedBetRate) {
         // console.log(' type == 1 && betRate < selectedBetRate ');
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
-      } else if (type == 0 && betRate > selectedBetRate) {
+      } 
+      else if (type == 0 && betRate > selectedBetRate) {
         // console.log(' type == 1 && betRate < selectedBetRate ');
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
-      } else if (type == 1 && selectedBetRate != betRate) {
+      } 
+      else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
           setTimeout(async () => {
             const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -720,7 +716,8 @@ const placeBet = async (req, res) => {
         // if array has some values which are lesser than SeleectedRate then take the latest/top most index value.
         // ELSE
         // mistmatch.....
-      } else if (type == 0 && selectedBetRate != betRate) {
+      } 
+      else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
           setTimeout(async () => {
             const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -757,9 +754,9 @@ const placeBet = async (req, res) => {
         // ELSE
         // mistmatch.....
       }
-    }
+    }      
 
-    // GH HR match odds
+    // GH HR Match Odds
     else if (config.raceMarkets.includes(marketId)) {
       if (betRate > 50) {
         return res.status(404).send({
@@ -945,9 +942,9 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       }
-    }
+    }                  
 
-    // soccer over under
+    // Soccer Over Under
     else if (  config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.overUnder ) {
       _3rdPartyMarketId = overunderMarketId;
       console.log( " ======================== Soccer over under  ======================== " );
@@ -1135,7 +1132,7 @@ const placeBet = async (req, res) => {
       }
     }
 
-    // cricket Tied Match
+    // Cricket Tied Match
     else if ( config.sportMarkets.includes(marketId) &&  subMarketDetail.Id == config.tiedMatch ) {
       console.log(
         " ======================== Soccer  Match Odds ======================== "
@@ -1421,9 +1418,9 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       }
-    }
+    }                                     
 
-    // cricket Toss
+    // Cricket Toss
     else if (  config.sportMarkets.includes(marketId) &&  subMarketDetail.Id == config.Toss ) {
       console.log(
         " ======================== Soccer  Match Odds ======================== "
@@ -1501,7 +1498,7 @@ const placeBet = async (req, res) => {
       }
     }
 
-    //for fancy
+    // For Fancy
     else if (subMarketDetail.Id == config.Fancy) {
       if (
         ![
@@ -1655,7 +1652,7 @@ const placeBet = async (req, res) => {
       }
     }
 
-    // for bookmaker
+    // for Bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
       const bookMakerBetLimit = await userBetSizes
         .findOne({
@@ -1938,7 +1935,7 @@ const placeBet = async (req, res) => {
 
     /* =================================================================== */
 
-    let delay = 4100;
+    
     const delayExcludedMarkets = [
       ...config.FigureEvenOddSmallBig,
       config.Fancy,
@@ -1948,7 +1945,7 @@ const placeBet = async (req, res) => {
       delay = 1;
     }
 
-    setTimeout(async () => {
+    setTimeout( async () => {
       console.log(" Pre Bet Rate ===============  ", betRate);
       console.log(" selectedBetRate ===============  ", selectedBetRate);
 
