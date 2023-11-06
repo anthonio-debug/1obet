@@ -73,11 +73,11 @@ function apiRequests() {
       const apiResult = await Promise.all(apiArray);
 
       for (let i = 0; i < tableNames.length; i++) {
-        if (apiResult[i].data) {
+        if (apiResult[i].data.data) {
           const asiaOdd = {
             tableId: tableNames[i].tableId,
-            t1: apiResult[i].data.t1,
-            t2: apiResult[i].data.t2,
+            t1: apiResult[i].data.data.t1,
+            t2: apiResult[i].data.data.t2,
           };
           const updateOdd = AsianOdds.findOneAndUpdate(
             { tableId: asiaOdd.tableId },
