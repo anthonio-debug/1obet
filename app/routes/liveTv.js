@@ -632,7 +632,7 @@ router.get("/liveTv/l_result/lucky7", liveLresultLucky7);
 router.get("/liveTv/r_result/lucky7/:roundId", liveRresultLucky7);
 
 //LUCKY 7-B
-router.get("/liveTv/r_result/lucky7eu", liveDrateLucky7EU);
+router.get("/liveTv/d_rate/lucky7eu", liveDrateLucky7EU);
 router.get("/liveTv/l_result/lucky7eu", liveLresultLucky7EU);
 router.get("/liveTv/r_result/lucky7eu/:roundId", liveRresultLucky7EU);
 

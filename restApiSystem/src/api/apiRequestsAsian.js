@@ -61,6 +61,7 @@ function apiRequests() {
       const asianTb = await AsianTable.find();
       let apiArray = [];
       let resultArray = [];
+      let rResultArray = [];
       if (asianTb.length == 0) {
         await AsianTable.insertMany(tableNames);
       }
@@ -73,11 +74,18 @@ function apiRequests() {
       const apiResult = await Promise.all(apiArray);
 
       for (let i = 0; i < tableNames.length; i++) {
+        const roundId = apiResult[i].data.data.t1[0].mid;
+        let resultUrl = `${apiURL}/r_result/${tableNames[i].tableId}/${roundId}`;
+        const rResult = await axios.get(resultUrl);
+
         if (apiResult[i].data.data) {
           const asiaOdd = {
             tableId: tableNames[i].tableId,
             t1: apiResult[i].data.data.t1,
             t2: apiResult[i].data.data.t2,
+            gstatus: Number(apiResult[i].data.data.t2[0].gstatus),
+            result: rResult.data.data,
+            roundId: roundId,
           };
           const updateOdd = AsianOdds.findOneAndUpdate(
             { tableId: asiaOdd.tableId },
