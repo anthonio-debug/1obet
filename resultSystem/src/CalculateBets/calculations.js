@@ -105,7 +105,7 @@ async function getAllBets(Id) {
 }
 
 async function handleLosingBet(bet) {
-
+  let calculatedExp = 0;
   console.log(`Bet ${bet._id} lost.`);
   const userId = bet.userId;
   const loosingAmount = Number(bet.loosingAmount.toFixed(2));
@@ -124,10 +124,13 @@ async function handleLosingBet(bet) {
   userToUpdate.balance  -= loosingAmount;
   userToUpdate.clientPL -= loosingAmount;
   let userToUpdateAvailableBalance   = - loosingAmount;
-  if(bet.calculateExp){
-    userToUpdateAvailableBalance += Number(bet.exposureAmount)
-    userToUpdate.exposure += Number(bet.exposureAmount);
+  let addExpoisureAmount = 0;
+  if(bet.calculateExp == true){
+    userToUpdateAvailableBalance = userToUpdateAvailableBalance + Number(bet.exposureAmount)
+    addExpoisureAmount = Number(bet.exposureAmount.toFixed(2));
+    calculatedExp = 1;
   }
+  userToUpdate.exposure += addExpoisureAmount;
   userToUpdate.availableBalance += Number(userToUpdateAvailableBalance.toFixed(2));
   await userToUpdate.save();
 
@@ -255,7 +258,7 @@ async function handleLosingBet(bet) {
   }
 
   console.log(" ======================== Moving to Update  Bet Status ");
-  await Bets.findByIdAndUpdate(bet._id, { status: 0, position: bet.loosingAmount * -1 });
+  await Bets.findByIdAndUpdate(bet._id, { status: 0, position: bet.loosingAmount * -1, iscalculatedExp: calculatedExp });
 
   console.log(" betIdString =============== Starting ");
   console.log(bet._id.toString());
@@ -266,6 +269,7 @@ async function handleLosingBet(bet) {
 }
 
 async function handleWinningBet(bet) {
+  let  calculatedExp = 0;
   console.log(`Bet ${bet._id} won.`);
   const userId = bet.userId;
   const loosingAmount = Number(bet.loosingAmount.toFixed(2));
@@ -310,10 +314,15 @@ async function handleWinningBet(bet) {
   userToUpdate.balance  += remainingAmount;
   userToUpdate.clientPL += remainingAmount;
   let userToUpdateAvailableBalance   =  remainingAmount;
+  let addExpoisureAmount = 0;
   if(bet.calculateExp){
     userToUpdateAvailableBalance += Number(bet.exposureAmount.toFixed(2)) 
-    userToUpdate.exposure += Number(bet.exposureAmount.toFixed(2));
+    addExpoisureAmount = Number(bet.exposureAmount.toFixed(2));
+    calculatedExp  = 1;
   }
+  userToUpdate.exposure += addExpoisureAmount
+
+
   userToUpdate.availableBalance += Number(userToUpdateAvailableBalance.toFixed(2));
 
   await userToUpdate.save();
@@ -371,7 +380,7 @@ async function handleWinningBet(bet) {
   });
   // console.log('usercash', typeof cash);
   await cash.save();
-  console.log(" =============== Cash  Save Successfull ");
+  console.log(" =============== Cash Save Successfull ");
 
 
   const parentUserIds = await getParents(userId);
@@ -463,7 +472,7 @@ async function handleWinningBet(bet) {
     commissionFrom      = user.userId;
   }
 
-  await Bets.findByIdAndUpdate(bet._id, { status: 0, position: Number(bet.winningAmount.toFixed(2)) });
+  await Bets.findByIdAndUpdate(bet._id, { status: 0, position: Number(bet.winningAmount.toFixed(2)), iscalculatedExp: calculatedExp });
   console.log(" betIdString =============== Starting  ");
   console.log(bet._id.toString());
   const betIdString = bet._id.toString();
@@ -472,6 +481,7 @@ async function handleWinningBet(bet) {
 }
 
 const handleDrawBet = async (bet, status = 1) => {
+  let calculatedExp = 0;
   console.log(` Bet ${bet._id} Draw. `);
   const userId = bet.userId;
   const userToUpdate = await User.findOne({
@@ -492,6 +502,7 @@ const handleDrawBet = async (bet, status = 1) => {
     const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount.toFixed(2))).toFixed(2));
     userToUpdate.availableBalance = updatedUserAvlBalance;
     userToUpdate.exposure = updatedUserExp;
+    calculatedExp = 1
 
   }
   await userToUpdate.save();
@@ -546,7 +557,7 @@ const handleDrawBet = async (bet, status = 1) => {
     user.save();
   }
 
-  await Bets.findByIdAndUpdate(bet._id, { status: status });
+  await Bets.findByIdAndUpdate(bet._id, { position: 0,  status: status, iscalculatedExp: calculatedExp });
 
   console.log(" betIdString ============================== Starting ");
   console.log(bet._id.toString());
