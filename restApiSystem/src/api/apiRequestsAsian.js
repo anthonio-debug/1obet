@@ -6,6 +6,7 @@ const axios = require("axios");
 
 module.exports = apiRequests;
 let io;
+let apiURL = "https://betfairoddsapi.com:3445/api";
 
 const tableNames = [
   { tableId: "teen20", tableName: "Teen Patti 2020(TP2020)" },
@@ -65,7 +66,7 @@ function apiRequests() {
       }
 
       for (let i = 0; i < tableNames.length; i++) {
-        let url = `${sportsAPIUrl}/d_rate/${tableNames[i].tableId}`;
+        let url = `${apiURL}/d_rate/${tableNames[i].tableId}`;
         apiArray.push(axios.get(url));
       }
 
