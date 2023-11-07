@@ -17,7 +17,7 @@ const config = {
   "pageSize": 10,
   "staging_apiUrl": "https://stage.game-program.com/api/seamless/provider",
   "apiUrl":"https://em-api.thegameprovider.com/api/seamless/provider",
-  "eventListAPIUrl": "https://streamingtv.fun:3440/api",
+  "eventListAPIUrl": "tvlivestreaming.online",
   "sportsAPIUrl": "http://209.250.242.175:33332",
   "fancyUrl": "https://betfairoddsapi.com:3444/api",
   "liveTvUrl": "https://livesportscore.xyz:3440/api",
@@ -121,8 +121,9 @@ async function handleLosingBet(bet) {
   const user_prev_availableBalance = userToUpdate.availableBalance;
   const user_prev_exposure = userToUpdate.exposure;
 
-  userToUpdate.balance  -= loosingAmount;
-  userToUpdate.clientPL -= loosingAmount;
+  const updatedbalance = Number((userToUpdate.balance  - loosingAmount).toFixed(2));
+  const updatedClientPL = Number((userToUpdate.clientPL  - loosingAmount).toFixed(2));
+
   let userToUpdateAvailableBalance   = - loosingAmount;
   let addExpoisureAmount = 0;
   if(bet.calculateExp == true){
@@ -130,6 +131,9 @@ async function handleLosingBet(bet) {
     addExpoisureAmount = Number(bet.exposureAmount.toFixed(2));
     calculatedExp = 1;
   }
+
+  userToUpdate.balance  = updatedbalance;
+  userToUpdate.clientPL = updatedClientPL;
   userToUpdate.exposure += addExpoisureAmount;
   userToUpdate.availableBalance += Number(userToUpdateAvailableBalance.toFixed(2));
   await userToUpdate.save();
@@ -311,15 +315,17 @@ async function handleWinningBet(bet) {
   const user_prev_availableBalance = userToUpdate.availableBalance;
   const user_prev_exposure = userToUpdate.exposure;
 
-  userToUpdate.balance  += remainingAmount;
-  userToUpdate.clientPL += remainingAmount;
-  let userToUpdateAvailableBalance   =  remainingAmount;
+  const Updatedbalance  = Number((userToUpdate.balance + remainingAmount).toFixed(2));
+  const UpdatedclientPL = Number((userToUpdate.clientPL + remainingAmount).toFixed(2));
+  let userToUpdateAvailableBalance = remainingAmount;
   let addExpoisureAmount = 0;
   if(bet.calculateExp){
     userToUpdateAvailableBalance += Number(bet.exposureAmount.toFixed(2)) 
     addExpoisureAmount = Number(bet.exposureAmount.toFixed(2));
     calculatedExp  = 1;
   }
+  userToUpdate.balance  = Updatedbalance;
+  userToUpdate.clientPL = UpdatedclientPL;
   userToUpdate.exposure += addExpoisureAmount
 
 
@@ -497,7 +503,6 @@ const handleDrawBet = async (bet, status = 1) => {
   const user_prev_exposure = userToUpdate.exposure;
 
   if(bet.calculateExp){
-
     const updatedUserAvlBalance = Number((userToUpdate.availableBalance + Number(bet.exposureAmount.toFixed(2))).toFixed(2));
     const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount.toFixed(2))).toFixed(2));
     userToUpdate.availableBalance = updatedUserAvlBalance;

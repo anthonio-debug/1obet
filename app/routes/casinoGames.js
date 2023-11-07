@@ -10,7 +10,7 @@ const SubMarketType = require("../models/subMarketTypes");
 const loginRouter = express.Router();
 const axios = require("axios");
 let config = require("config");
-const User = require("../models/user");
+const User = require("../models/user");          
 
 const getParents = async (userId) => {
   const parentUserIds = [];
@@ -487,11 +487,10 @@ async function getAllSelectedCasinos(req, res) {
     }
   );
 
-  if (
-    marketIds.includes(marketId) ||
-    subMarketId.includes(subMarketDetail.Id) ||
-    user.betLockStatus == true
-  ) {
+  
+  if ( marketIds.includes(marketId) 
+  // || subMarketId.includes(subMarketDetail.Id) 
+  || user.betLockStatus == true ) {
     // return res.status(404).send({ message:  });
     return res.send({
       message: "Betting is disabled",

@@ -21,7 +21,7 @@ const config = {
   "language": "en",
   "play_for_fun": false,
   "currency": "PKR",
-  "eventListAPIUrl": "https://streamingtv.fun:3440/api",
+  "eventListAPIUrl": "tvlivestreaming.online",
   "sportsAPIUrl": "http://209.250.242.175:33332",
   "fancyUrl": "https://betfairoddsapi.com:3444/api",
   "liveTvUrl": "https://livesportscore.xyz:3440/api",
