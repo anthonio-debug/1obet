@@ -9,7 +9,7 @@
   "pageSize": 10,
   "staging_apiUrl": "https://stage.game-program.com/api/seamless/provider",
   "apiUrl": "https://em-api.thegameprovider.com/api/seamless/provider",
-  "eventListAPIUrl": "tvlivestreaming.online",
+  "eventListAPIUrl": "https://tvlivestreaming.online:3440/api",
   "sportsAPIUrl": "http://209.250.242.175:33332",
   "fancyUrl": "https://betfairoddsapi.com:3444/api",
   "liveTvUrl": "https://livesportscore.xyz:3440/api",
