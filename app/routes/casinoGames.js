@@ -10,7 +10,7 @@ const SubMarketType = require("../models/subMarketTypes");
 const loginRouter = express.Router();
 const axios = require("axios");
 let config = require("config");
-const User = require("../models/user");
+const User = require("../models/user");          
 
 const getParents = async (userId) => {
   const parentUserIds = [];
