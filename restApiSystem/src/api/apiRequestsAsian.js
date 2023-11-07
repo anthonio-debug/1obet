@@ -64,6 +64,13 @@ function apiRequests() {
       if (channel.length == 0) {
         return socket.emit("err", "Channel Required");
       }
+
+      const asianOdd = await AsianOdds.findOne({
+        eventId: channel,
+      });
+
+      socket.emit("asian_odd", asianOdd);
+
       socket.join(channel);
     });
   }
