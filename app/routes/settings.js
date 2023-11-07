@@ -1503,11 +1503,11 @@ async function getAllMatchSettlements(req, res) {
 
     console.log(" ======================== Result ======================== ", result);
     const organizedEvents = {
-      soccer: result.docs[0].soccer.docs, // Access the 'docs' array for the specific event type
-      tennis: result.docs[0].tennis.docs,
-      cricket: result.docs[0].cricket.docs,
-      horseRace: result.docs[0].horseRace.docs,
-      greyhound: result.docs[0].greyhound.docs,
+      soccer: result?.soccer, // Access the ' array for the specific event type
+      tennis: result?.tennis,
+      cricket: result?.cricket,
+      horseRace: result?.horseRace,
+      greyhound: result?.greyhound,
     };
 
     res.status(200).json({
