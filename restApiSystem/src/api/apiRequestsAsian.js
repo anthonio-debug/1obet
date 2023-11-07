@@ -66,7 +66,7 @@ function apiRequests() {
       }
 
       const asianOdd = await AsianOdds.findOne({
-        eventId: channel,
+        tableId: channel,
       });
 
       socket.emit("asian_odd", asianOdd);
