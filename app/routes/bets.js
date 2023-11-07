@@ -3544,6 +3544,21 @@ const dailyMatchWiseprofitLose = async (req, res) => {
   }
 };
 
+const SingleUserAllBets = async (req, res) => {
+  try {
+    const betList = await Bets.find({ userId: Number(req.query.userId) })
+    return res.send({
+      status: true,
+      message: "Bets List !",
+      results: betList,
+    });
+  } catch (err) {
+    return res.send({
+      message: `Error ${err} !`,
+    });
+  }
+};
+
 const postmanwork = async (req, res) => {
   try {
     var axios = require("axios");
@@ -3611,5 +3626,9 @@ loginRouter.get("/postmanwork", postmanwork);
 loginRouter.get("/profitLose", profitLose);
 loginRouter.get("/EventWiseprofitLose", EventWiseprofitLose);
 loginRouter.get("/dailyMatchWiseprofitLose", dailyMatchWiseprofitLose);
+
+loginRouter.get("/SingleUserAllBets", SingleUserAllBets);
+
+
 
 module.exports = { sessionCalc, loginRouter, getParents };
