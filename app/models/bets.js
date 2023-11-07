@@ -44,7 +44,7 @@ const betSchema = new mongoose.Schema({
   multipeResponse: { type: Array },
   betTime: { type: Number },
   isManuel: { type: Boolean, default: false },
-
+  iscalculatedExp: { type: Number },
 });
 
 betSchema.pre('save', function (next) {

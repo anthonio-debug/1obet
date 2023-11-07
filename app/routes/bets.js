@@ -157,7 +157,7 @@ const placeBet = async (req, res) => {
     const BetTime = new Date().getTime();
     let id = 0;
     let isManuel = true;
-    let delay = 4100;
+    let delay = 4200;
 
     /* ====================================================================== */
 
@@ -195,10 +195,7 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: "EVENT COULD NOT FOUND" });
     }
 
-    console.log(
-      "================================ (eventDetail.status.toUpperCase()",
-      eventDetail.status.toUpperCase()
-    );
+    console.log( "================================ (eventDetail.status.toUpperCase()",  eventDetail.status.toUpperCase());
 
     if (!eventDetail.betAllowed) {
       return res
@@ -442,9 +439,7 @@ const placeBet = async (req, res) => {
 
     // Tennis Match Odds
     else if (  config.sportMarkets.includes(marketId) && config.tennisOdds == subMarketDetail.Id ) {
-      console.log(
-        " ======================== Tennis Match Odds ======================== "
-      );
+      console.log( " ======================== Tennis Match Odds ======================== " );
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         return res.status(404).send({
@@ -622,7 +617,7 @@ const placeBet = async (req, res) => {
 
       console.log( "===================== secondsValue ====================== ", BetPlaceData.secondsValue );
       /*end of code by qaiser*/
-      delay = (BetPlaceData.secondsValue * 1000) + 100;
+      delay = (BetPlaceData.secondsValue * 1000) + 200;
       if (selectedBetRate == betRate) {
         for (let i = 1; i < BetPlaceData.secondsValue; i++) {
           setTimeout(async () => {
@@ -1936,11 +1931,7 @@ const placeBet = async (req, res) => {
     /* =================================================================== */
 
     
-    const delayExcludedMarkets = [
-      ...config.FigureEvenOddSmallBig,
-      config.Fancy,
-      config.BookMaker,
-    ];
+    const delayExcludedMarkets = [ ...config.FigureEvenOddSmallBig, config.Fancy,  config.BookMaker];
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
     }
