@@ -2198,10 +2198,10 @@ const cancelSingleBet = async (req, res) => {
     });
   }
   const bet = await Bets.findById(req.body.betId);
-  if (!bet) {
+  if (!bet || bet.status != 1) {
     return res.status(404).send({
       success: false,
-      message: "bet could not foud",
+      message: "Bet could not Found or Already Canceled ! ",
     });
   }
   if ([2, 3, 4].includes(bet.type)) {
