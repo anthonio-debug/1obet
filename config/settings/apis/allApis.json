@@ -177,5 +177,6 @@
   "updateBetPlaceHold",
   "getBetPlaceHold",
   "getAsianTables",
-  "getAsianOdd"
+  "getAsianOdd",
+  "SingleUserAllBets"
 ]
