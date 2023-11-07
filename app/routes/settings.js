@@ -1245,7 +1245,7 @@ async function bettorDashboardGames2(req, res) {
 async function getAllMatchSettlements(req, res) {
   try {
     const sportsIdArray = ["1", "2", "4", "7", "4339"];
-    const events = await Events.aggregate([
+    const result = await Events.aggregate([
       {
         $match: {
           sportsId: { $in: sportsIdArray },
