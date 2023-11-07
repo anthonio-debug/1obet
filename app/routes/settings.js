@@ -1501,6 +1501,7 @@ async function getAllMatchSettlements(req, res) {
       },
     ]).exec();
 
+    console.log(" ======================== Result ======================== ", result);
     const organizedEvents = {
       soccer: result.docs[0].soccer.docs, // Access the 'docs' array for the specific event type
       tennis: result.docs[0].tennis.docs,
