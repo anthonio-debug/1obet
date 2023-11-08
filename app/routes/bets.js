@@ -2213,10 +2213,7 @@ const placeBet = async (req, res) => {
       let runnersPosition = [];
       let prevExpAmount = 0;
       let expAmount = 0;
-      console.log(
-        " ================ Selection ID ================ ",
-        selectionId
-      );
+      console.log( " ================ Selection ID ================ ", selectionId);
       if (subMarketDetail.Id == config.Fancy) {
         let lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
@@ -2433,6 +2430,9 @@ const placeBet = async (req, res) => {
         );
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
       }
+
+
+      return res.status(404).send({message: `Testing ` })
       /* ------------ */
       /* Placing Bet Area  */
       const bet = new Bets({
