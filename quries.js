@@ -94,15 +94,15 @@ db.sidebarmenus.insertMany([
     link: "/all-world-casino",
   },
   {
-    name: "Asian Games",
+    name: "1obet Casino",
     lightIcon: "https://1obet.com/assets/light-icons/royal-casino.png",
     darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 0,
-    link: "/asian-games",
-  },
+    link: "/oneobet-casino",
+  }, 
   {
-    name: "Current",
+    name: "Current Position",
     lightIcon: "https://1obet.com/assets/light-icons/royal-casino.png",
     darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
     marketId: "tyv234543-432453343423-53423d332",
@@ -244,13 +244,13 @@ db.sidebarmenus.insertMany([
     link: "/all-world-casino",
   },
   {
-    name: "Asian Games",
+    name: "1obet Casino",
     lightIcon: "https://1obet.com/assets/light-icons/royal-casino.png",
     darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 1,
-    link: "/asian-games",
-  },  
+    link: "/oneobet-casino",
+  }, 
 ])
 
 db.markettypes.deleteMany({})
@@ -2965,3 +2965,17 @@ db.uers.distinct("userId", { userId: {$nin: [ 1412, 1650,1861, 1865, 1879, 1884,
 
 
 db.bets.find({ sportsId: '4', marketId: '1.220562861', userId: 2619, matchId: '65420cf22521110ed7538ad3' })
+
+
+
+
+
+
+
+
+
+
+
+
+
+
