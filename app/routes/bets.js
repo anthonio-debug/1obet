@@ -3197,7 +3197,7 @@ async function getPercentageSharing(parent_id, child_id) {
   }
 }
 
-const profitLose = async (req, res) => {
+const  profitLose= async (req, res) => {
   if (!req.query.userId) {
     console.log("line 2579 Something Went Wrong!");
     return res.status(404).send({
@@ -3546,7 +3546,7 @@ const dailyMatchWiseprofitLose = async (req, res) => {
 
 const SingleUserAllBets = async (req, res) => {
   try {
-    const betList = await Bets.find({ userId: Number(req.query.userId) })
+    const betList = await Bets.find({ calculateExp: true,  userId: Number(req.query.userId) })
     return res.send({
       status: true,
       message: "Bets List !",
