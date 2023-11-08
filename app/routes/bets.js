@@ -313,6 +313,7 @@ const placeBet = async (req, res) => {
     });
 
     if (!userMaxBetSize) {
+      console.error("userMaxBetSize not found ");
       return res.status(404).send({ message: `something went wrong !` });
     }
 
@@ -1575,6 +1576,7 @@ const placeBet = async (req, res) => {
         .findOne({ userId: userId, sportsId: marketId, subarket: config.Fancy })
         .exec();
       if (!userMaxBetSize) {
+        console.error("Fancy userMaxBetSize not found ");
         return res.status(404).send({ message: `something went wrong !` });
       }
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
@@ -1728,6 +1730,7 @@ const placeBet = async (req, res) => {
         })
         .exec();
       if (!bookMakerBetLimit) {
+        console.error("bookMakerBetLimit not found ");
         return res.status(404).send({ message: `something went wrong !` });
       }
       if (bookMakerBetLimit && betAmount > bookMakerBetLimit.amount) {
