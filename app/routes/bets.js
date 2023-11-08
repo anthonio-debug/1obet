@@ -2115,26 +2115,16 @@ const placeBet = async (req, res) => {
       delay = 1;
     }
 
-    return res.status(404).send({
-      message: `Testing Failure ! `,
-    });
-
     setTimeout(async () => {
       console.log(" Pre Bet Rate ===============  ", betRate);
       console.log(" selectedBetRate ===============  ", selectedBetRate);
 
-      if (
-        multipeResponse.length == 0 &&
-        !delayExcludedMarkets.includes(subMarketDetail.Id)
-      ) {
+      if ( multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         console.log(" multipeResponse Is Empty !");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
-      } else if (
-        multipeResponse.length > 0 &&
-        !delayExcludedMarkets.includes(subMarketDetail.Id)
-      ) {
+      } else if ( multipeResponse.length > 0 && !delayExcludedMarkets.includes(subMarketDetail.Id) ) {
         betRate = multipeResponse[multipeResponse.length - 1];
         console.log(" Inside  Bet Rate ===============  ", betRate);
       }
@@ -2183,10 +2173,7 @@ const placeBet = async (req, res) => {
       ) {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
-      } else if (
-        type == 0 &&
-        !config.ExcludedBackLay.includes(subMarketDetail.Id)
-      ) {
+      } else if ( type == 0 && !config.ExcludedBackLay.includes(subMarketDetail.Id) ) {
         winningAmount = betAmount * betRate - betAmount;
         loosingAmount = betAmount;
       } else if (type == 1 && subMarketDetail.Id == config.BookMaker) {
@@ -2216,6 +2203,13 @@ const placeBet = async (req, res) => {
           { runner: 0, amount: 0 },
         ];
       }
+      else {
+        winningAmount = betAmount;
+        loosingAmount = betAmount;
+      }
+
+
+      return res.status(404).send(message: `Testing ` )
 
       /* ------------ */
       /*  Current Position Of Runners  Calculations   */
