@@ -1,13 +1,8 @@
 const express = require("express");
-var jwt = require("jsonwebtoken");
-const userValidation = require("../validators/user");
-const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
 let config = require("config");
 const Bets = require("../models/bets");
 const User = require("../models/user");
-const CricketMatch = require("../models/cricketMatches");
-const Markets = require("../models/marketTypes");
 const SubMarketType = require("../models/subMarketTypes");
 const loginRouter = express.Router();
 const betValidator = require("../validators/bets");
@@ -18,17 +13,12 @@ const MarketType = require("../models/marketTypes");
 const Odds = require("../models/odds");
 const AsianOdds = require("../models/asiantableOdds");
 const Events = require("../models/events");
-const FancyGames = require("../models/fancyGames");
 const RaceOdds = require("../models/raceOdds");
-const RaceMarkets = require("../models/raceMarkets");
 const axios = require("axios");
-const ListMarkets = require("../models/listMarkets");
 const currentPosition = require("../models/CurrentPosition");
 const FancyOdds = require("../models/fancyOdds");
 const Session = require("../models/Session");
-const { log } = require("async");
 const Cash = require("../../app/models/deposits");
-const mongoose = require("mongoose");
 const BetPlaceHold = require("../models/betaPlaceHold");
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
@@ -251,7 +241,7 @@ const placeBet = async (req, res) => {
       }
     } else if (asianOdd) {
       subMarketDetail = await SubMarketType.findOne({
-        name: subMarketName,
+        // name: subMarketName,
         marketId: marketId,
       }).exec();
 
@@ -2262,9 +2252,9 @@ const placeBet = async (req, res) => {
           );
           const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
             if (item.runner == type) {
-              item.amount = item.amount + Number(winningAmount.toFixed(2));
+              item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
             } else {
-              item.amount = item.amount - Number(loosingAmount.toFixed(2));
+              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
             }
             return item;
           });
@@ -2273,9 +2263,9 @@ const placeBet = async (req, res) => {
         } else {
           const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
             if (item.runner == type) {
-              item.amount = item.amount + Number(winningAmount.toFixed(2));
+              item.amount =    Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
             } else {
-              item.amount = item.amount - Number(loosingAmount.toFixed(2));
+              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
             }
             return item;
           });
@@ -2306,13 +2296,13 @@ const placeBet = async (req, res) => {
           })
             .sort({ _id: -1 })
             .limit(1);
-          console.log(" ============= lastBet ", lastBet);
+          // console.log(" ============= lastBet ", lastBet);
           const lastrunnersPosition = lastBet[0].runnersPosition;
           runnersPosition = lastrunnersPosition.map((item) => {
             if (item.runner == selectionId) {
-              item.amount = item.amount + Number(winningAmount.toFixed(2));
+              item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
             } else {
-              item.amount = item.amount - Number(loosingAmount.toFixed(2));
+              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)) ;
             }
             return item;
           });
@@ -2320,9 +2310,9 @@ const placeBet = async (req, res) => {
         } else {
           runnersPosition = runnerForSaveInbets.map((item) => {
             if (item.runner == selectionId) {
-              item.amount = item.amount + Number(winningAmount.toFixed(2));
+              item.amount = Number(( item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
             } else {
-              item.amount = item.amount - Number(loosingAmount.toFixed(2));
+              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)) ;
             }
             return item;
           });
@@ -2369,9 +2359,9 @@ const placeBet = async (req, res) => {
           if (type == 0) {
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
-                item.amount = item.amount + Number(winningAmount.toFixed(2));
+                item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
               } else {
-                item.amount = item.amount - Number(loosingAmount.toFixed(2));
+                item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
               }
               return item;
             });
@@ -2387,9 +2377,9 @@ const placeBet = async (req, res) => {
           } else if (type == 1) {
             runnersPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
-                item.amount = item.amount - Number(loosingAmount.toFixed(2));
+                item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
               } else {
-                item.amount = item.amount + Number(winningAmount.toFixed(2));
+                item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
               }
               return item;
             });
@@ -2583,16 +2573,16 @@ async function calculateExposure(
     .sort({ _id: -1 })
     .limit(1);
 
-  console.log(" ============= lastBet ", lastBet);
+  // console.log(" ============= lastBet ", lastBet);
   const lastrunnersPosition = lastBet[0].runnersPosition;
   let newPosition;
   if (type == 0) {
     console.log(" ================= Back is called  =================  ");
     newPosition = lastrunnersPosition.map((item) => {
       if (item.runner == selectedRunner) {
-        item.amount = item.amount + Number(winningAmount.toFixed(2));
+        item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
       } else {
-        item.amount = item.amount - Number(loosingAmount.toFixed(2));
+        item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
       }
       return item;
     });
@@ -2600,9 +2590,9 @@ async function calculateExposure(
     console.log(" ================= Lay is called  =================  ");
     newPosition = lastrunnersPosition.map((item) => {
       if (item.runner == selectedRunner) {
-        item.amount = item.amount - Number(loosingAmount.toFixed(2));
+        item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
       } else {
-        item.amount = item.amount + Number(winningAmount.toFixed(2));
+        item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
       }
       return item;
     });
@@ -3428,7 +3418,7 @@ async function getPercentageSharing(parent_id, child_id) {
   }
 }
 
-const profitLose = async (req, res) => {
+const  profitLose= async (req, res) => {
   if (!req.query.userId) {
     console.log("line 2579 Something Went Wrong!");
     return res.status(404).send({
@@ -3777,7 +3767,7 @@ const dailyMatchWiseprofitLose = async (req, res) => {
 
 const SingleUserAllBets = async (req, res) => {
   try {
-    const betList = await Bets.find({ userId: Number(req.query.userId) });
+    const betList = await Bets.find({ calculateExp: true,  userId: Number(req.query.userId) })
     return res.send({
       status: true,
       message: "Bets List !",

@@ -178,5 +178,6 @@
   "getBetPlaceHold",
   "getAsianTables",
   "getAsianOdd",
-  "SingleUserAllBets"
+  "SingleUserAllBets",
+  "userAccountSettlement"
 ]
