@@ -242,7 +242,7 @@ const placeBet = async (req, res) => {
       }
     } else if (asianOdd) {
       subMarketDetail = await SubMarketType.findOne({
-        name: subMarketName,
+        // name: subMarketName,
         marketId: marketId,
       }).exec();
 
