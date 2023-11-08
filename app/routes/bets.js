@@ -2208,9 +2208,6 @@ const placeBet = async (req, res) => {
         loosingAmount = betAmount;
       }
 
-
-      return res.status(404).send(message: `Testing ` )
-
       /* ------------ */
       /*  Current Position Of Runners  Calculations   */
       let runnersPosition = [];
