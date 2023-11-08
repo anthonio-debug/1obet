@@ -2431,8 +2431,6 @@ const placeBet = async (req, res) => {
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
       }
 
-
-      return res.status(404).send({message: `Testing ` })
       /* ------------ */
       /* Placing Bet Area  */
       const bet = new Bets({
@@ -2469,6 +2467,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: "Insufficient balance" });
       }
 
+      return res.status(404).send({message: `Testing ` })
       if (subMarketDetail.Id != config.Fancy) {
         await Bets.updateMany(
           {
