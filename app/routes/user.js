@@ -965,7 +965,7 @@ const deleteUser = async (req, res) => {
   });
 };
 
-const userAccountSattlement = async () =>{
+const userAccountSattlement = async (req, res) =>{
 
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
