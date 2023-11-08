@@ -188,6 +188,7 @@ async function handleLosingBet(bet) {
       user_new_exposure: user_new_exposure,
       marketId: bet.marketId,
       sportsId: bet.sportsId,
+      calculatedExp: calculatedExp
     })
     await ExpTran.save();
 
@@ -362,6 +363,7 @@ async function handleWinningBet(bet) {
       user_new_exposure: user_new_exposure,
       marketId: bet.marketId,
       sportsId: bet.sportsId,
+      calculatedExp: calculatedExp
     })
     await ExpTran.save();
 
@@ -543,6 +545,7 @@ const handleDrawBet = async (bet, status = 1) => {
       user_new_exposure: user_new_exposure,
       marketId: bet.marketId,
       sportsId: bet.sportsId,
+      calculatedExp: calculatedExp
     })
     await ExpTran.save();
 

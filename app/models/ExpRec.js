@@ -16,7 +16,8 @@ const ExpRec = new mongoose.Schema({
     sportsId: { type: Number },
     marketId: { type: String },
     createdAt: { type: Number },
-    updatedAt:  { type: Number }
+    updatedAt:  { type: Number },
+    calculatedExp: { type: Number }
 });
 ExpRec.pre('save', function (next) {
     var now = new Date().getTime();
