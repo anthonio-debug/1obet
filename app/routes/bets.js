@@ -2167,10 +2167,7 @@ const placeBet = async (req, res) => {
           { runner: 9, amount: 0 },
         ];
         expoisureType = 2;
-      } else if (
-        type == 1 &&
-        !config.ExcludedBackLay.includes(subMarketDetail.Id)
-      ) {
+      } else if ( type == 1 && !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
       } else if ( type == 0 && !config.ExcludedBackLay.includes(subMarketDetail.Id) ) {
@@ -2205,7 +2202,7 @@ const placeBet = async (req, res) => {
       }
       else {
         winningAmount = betAmount;
-        loosingAmount = betAmount;
+        loosingAmount = betAmount * betRate - betAmount;
       }
 
       /* ------------ */
@@ -2431,11 +2428,9 @@ const placeBet = async (req, res) => {
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
       }
 
-
       console.log("userAvailableBalance", user.availableBalance);
       /* ------------ */
       /* Placing Bet Area  */
-
 
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
@@ -2467,9 +2462,8 @@ const placeBet = async (req, res) => {
       });
       
       if (user.availableBalance < expAmount - prevExpAmount) {
-        return res.status(404).send({ message: "Insufficient balance" });
+        return res.status(404).send({ message: " Insufficient balance " });
       }
-
       if (subMarketDetail.Id != config.Fancy) {
         await Bets.updateMany(
           {
