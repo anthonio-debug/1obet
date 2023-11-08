@@ -106,6 +106,9 @@ function apiRequests() {
             result: rResult.data.data,
             roundId: roundId,
           };
+
+          io.to(asiaOdd.tableId).emit("asian_odd", asiaOdd);
+
           const updateOdd = AsianOdds.findOneAndUpdate(
             { tableId: asiaOdd.tableId },
             asiaOdd,
