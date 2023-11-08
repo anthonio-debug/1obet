@@ -2103,11 +2103,6 @@ const placeBet = async (req, res) => {
         .status(404)
         .send({ message: `Error Placing bet (Inappropriate Request)` });
     }
-
-
-    return res.status(404).send({
-      message: `Testing Failure ! `,
-    });
     /* =================================================================== */
 
     const delayExcludedMarkets = [
@@ -2119,6 +2114,10 @@ const placeBet = async (req, res) => {
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
     }
+
+    return res.status(404).send({
+      message: `Testing Failure ! `,
+    });
 
     setTimeout(async () => {
       console.log(" Pre Bet Rate ===============  ", betRate);
