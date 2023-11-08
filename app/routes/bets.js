@@ -2253,9 +2253,9 @@ const placeBet = async (req, res) => {
           );
           const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
             if (item.runner == type) {
-              item.amount = item.amount + Number(winningAmount.toFixed(2));
+              item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
             } else {
-              item.amount = item.amount - Number(loosingAmount.toFixed(2));
+              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
             }
             return item;
           });
@@ -2264,9 +2264,9 @@ const placeBet = async (req, res) => {
         } else {
           const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
             if (item.runner == type) {
-              item.amount = item.amount + Number(winningAmount.toFixed(2));
+              item.amount =    Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
             } else {
-              item.amount = item.amount - Number(loosingAmount.toFixed(2));
+              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
             }
             return item;
           });
@@ -2301,9 +2301,9 @@ const placeBet = async (req, res) => {
           const lastrunnersPosition = lastBet[0].runnersPosition;
           runnersPosition = lastrunnersPosition.map((item) => {
             if (item.runner == selectionId) {
-              item.amount = item.amount + Number(winningAmount.toFixed(2));
+              item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
             } else {
-              item.amount = item.amount - Number(loosingAmount.toFixed(2));
+              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)) ;
             }
             return item;
           });
@@ -2311,9 +2311,9 @@ const placeBet = async (req, res) => {
         } else {
           runnersPosition = runnerForSaveInbets.map((item) => {
             if (item.runner == selectionId) {
-              item.amount = item.amount + Number(winningAmount.toFixed(2));
+              item.amount = Number(( item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
             } else {
-              item.amount = item.amount - Number(loosingAmount.toFixed(2));
+              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)) ;
             }
             return item;
           });
@@ -2360,9 +2360,9 @@ const placeBet = async (req, res) => {
           if (type == 0) {
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
-                item.amount = item.amount + Number(winningAmount.toFixed(2));
+                item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
               } else {
-                item.amount = item.amount - Number(loosingAmount.toFixed(2));
+                item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
               }
               return item;
             });
@@ -2378,9 +2378,9 @@ const placeBet = async (req, res) => {
           } else if (type == 1) {
             runnersPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
-                item.amount = item.amount - Number(loosingAmount.toFixed(2));
+                item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
               } else {
-                item.amount = item.amount + Number(winningAmount.toFixed(2));
+                item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
               }
               return item;
             });
@@ -2581,9 +2581,9 @@ async function calculateExposure(
     console.log(" ================= Back is called  =================  ");
     newPosition = lastrunnersPosition.map((item) => {
       if (item.runner == selectedRunner) {
-        item.amount = item.amount + Number(winningAmount.toFixed(2));
+        item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
       } else {
-        item.amount = item.amount - Number(loosingAmount.toFixed(2));
+        item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
       }
       return item;
     });
@@ -2591,9 +2591,9 @@ async function calculateExposure(
     console.log(" ================= Lay is called  =================  ");
     newPosition = lastrunnersPosition.map((item) => {
       if (item.runner == selectedRunner) {
-        item.amount = item.amount - Number(loosingAmount.toFixed(2));
+        item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
       } else {
-        item.amount = item.amount + Number(winningAmount.toFixed(2));
+        item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
       }
       return item;
     });
