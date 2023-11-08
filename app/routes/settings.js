@@ -1779,7 +1779,7 @@ async function setCloseEventWithCancelBet(req, res) {
 
   for (let index = 0; index < bets.length; index++) {
     const bet = bets[index];
-    await handleDrawBet(bet);
+    await handleDrawBet(bet, 2);
   }
 
   return res.send({
