@@ -2517,7 +2517,7 @@ const placeBet = async (req, res) => {
         );
       }
 
-      return res.status(404).send({message: `Testing ` })
+      // return res.status(404).send({message: `Testing ` })
       bet.save(async (err, result) => {
         if (err) {
           console.log("err", err);
