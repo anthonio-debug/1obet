@@ -15,10 +15,7 @@ module.exports.validate = (method) => {
           .exists()
           .isFloat()
           .withMessage('betRate must be float'),
-        body('matchId', 'matchId is required')
-          .exists()
-          .isString()
-          .withMessage('matchId must be string'),
+       
         body('subMarketName', 'subMarketName is required')
           .exists()
           .isString()

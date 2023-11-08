@@ -1,13 +1,8 @@
 const express = require("express");
-var jwt = require("jsonwebtoken");
-const userValidation = require("../validators/user");
-const bcrypt = require("bcrypt");
 const { validationResult } = require("express-validator");
 let config = require("config");
 const Bets = require("../models/bets");
 const User = require("../models/user");
-const CricketMatch = require("../models/cricketMatches");
-const Markets = require("../models/marketTypes");
 const SubMarketType = require("../models/subMarketTypes");
 const loginRouter = express.Router();
 const betValidator = require("../validators/bets");
@@ -18,17 +13,12 @@ const MarketType = require("../models/marketTypes");
 const Odds = require("../models/odds");
 const AsianOdds = require("../models/asiantableOdds");
 const Events = require("../models/events");
-const FancyGames = require("../models/fancyGames");
 const RaceOdds = require("../models/raceOdds");
-const RaceMarkets = require("../models/raceMarkets");
 const axios = require("axios");
-const ListMarkets = require("../models/listMarkets");
 const currentPosition = require("../models/CurrentPosition");
 const FancyOdds = require("../models/fancyOdds");
 const Session = require("../models/Session");
-const { log } = require("async");
 const Cash = require("../../app/models/deposits");
-const mongoose = require("mongoose");
 const BetPlaceHold = require("../models/betaPlaceHold");
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
