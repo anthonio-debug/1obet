@@ -2463,11 +2463,12 @@ const placeBet = async (req, res) => {
       });
       console.log("userAvailableBalance", user.availableBalance);
 
+      return res.status(404).send({message: `Testing ` })
       if (user.availableBalance < expAmount - prevExpAmount) {
         return res.status(404).send({ message: "Insufficient balance" });
       }
 
-      return res.status(404).send({message: `Testing ` })
+
       if (subMarketDetail.Id != config.Fancy) {
         await Bets.updateMany(
           {
