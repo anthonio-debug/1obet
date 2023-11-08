@@ -965,6 +965,39 @@ const deleteUser = async (req, res) => {
   });
 };
 
+const userAccountSattlement = async () =>{
+
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  try {
+    const payload = req.body; 
+    await User.findOneAndUpdate(
+      { userId: payload.userId },
+      {
+        $set: {
+          exposure: Number(payload.exposure.toFixed(2)),
+          availableBalance: Number(payload.availableBalance.toFixed(2)),
+          balance: Number(payload.balance.toFixed(2)),
+
+        }
+      }
+    )
+    return res.status(200).send({
+      success: true,
+      message: "User Updated Successfully !",
+    });
+
+  } catch (error){
+    console.log("Catched", error);
+    return res.status(404).send({
+      success: false,
+      message: "Something Went Wrong!",
+    });
+  }
+}
+
 router.post('/login', userValidation.validate('login'), login);
 loginRouter.post(
   '/register',
@@ -1024,5 +1057,7 @@ loginRouter.get('/battors-list', battorsList);
 loginRouter.get('/user-latest-ledger', userSingleLedger);
 
 loginRouter.get('/delete-user', deleteUser);
+
+loginRouter.post('/userAccountSettlement',userValidation.validate('userAccountSattlement'), userAccountSattlement);
 
 module.exports = { router, loginRouter };
