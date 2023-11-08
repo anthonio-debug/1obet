@@ -127,7 +127,6 @@ const placeBet = async (req, res) => {
     let currentSession;
     let subMarketDetail;
     let marketId;
-    let selectedOddsRate;
     let {
       selectionId,
       betAmount,
