@@ -2431,6 +2431,8 @@ const placeBet = async (req, res) => {
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
       }
 
+
+      console.log("userAvailableBalance", user.availableBalance);
       /* ------------ */
       /* Placing Bet Area  */
       const bet = new Bets({
@@ -2461,7 +2463,7 @@ const placeBet = async (req, res) => {
         multipeResponse: multipeResponse,
         isManuel: isManuel,
       });
-      console.log("userAvailableBalance", user.availableBalance);
+      
 
       return res.status(404).send({message: `Testing ` })
       if (user.availableBalance < expAmount - prevExpAmount) {
