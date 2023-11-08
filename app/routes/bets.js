@@ -2297,7 +2297,7 @@ const placeBet = async (req, res) => {
           })
             .sort({ _id: -1 })
             .limit(1);
-          console.log(" ============= lastBet ", lastBet);
+          // console.log(" ============= lastBet ", lastBet);
           const lastrunnersPosition = lastBet[0].runnersPosition;
           runnersPosition = lastrunnersPosition.map((item) => {
             if (item.runner == selectionId) {
@@ -2574,7 +2574,7 @@ async function calculateExposure(
     .sort({ _id: -1 })
     .limit(1);
 
-  console.log(" ============= lastBet ", lastBet);
+  // console.log(" ============= lastBet ", lastBet);
   const lastrunnersPosition = lastBet[0].runnersPosition;
   let newPosition;
   if (type == 0) {
