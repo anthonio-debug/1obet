@@ -2435,6 +2435,8 @@ const placeBet = async (req, res) => {
       console.log("userAvailableBalance", user.availableBalance);
       /* ------------ */
       /* Placing Bet Area  */
+
+      return res.status(404).send({message: `Testing ` })
       const bet = new Bets({
         marketId: _3rdPartyMarketId,
         sportsId: marketId,
@@ -2465,7 +2467,7 @@ const placeBet = async (req, res) => {
       });
       
 
-      return res.status(404).send({message: `Testing ` })
+
       if (user.availableBalance < expAmount - prevExpAmount) {
         return res.status(404).send({ message: "Insufficient balance" });
       }
