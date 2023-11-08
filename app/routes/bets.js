@@ -2104,6 +2104,10 @@ const placeBet = async (req, res) => {
         .send({ message: `Error Placing bet (Inappropriate Request)` });
     }
 
+
+    return res.status(404).send({
+      message: `Testing Failure ! `,
+    });
     /* =================================================================== */
 
     const delayExcludedMarkets = [
