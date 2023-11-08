@@ -147,7 +147,6 @@ const placeBet = async (req, res) => {
     const multipeResponseForSecurityCheck = [];
     const BetTime = new Date().getTime();
     let id = 0;
-    let tableId = "";
     let isManuel = true;
     let delay = 4200;
 
@@ -2001,7 +2000,7 @@ const placeBet = async (req, res) => {
       console.log(
         " ======================== AsianTable Odds ======================== "
       );
-      const DBOddDetails = await AsianOdds.findById(oddsId);
+      const DBOddDetails = await AsianOdds.findOne({ tableId: oddsId });
       if (!DBOddDetails) {
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
@@ -2020,7 +2019,7 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5; i++) {
           setTimeout(async () => {
-            const url = `${config.liveBetTvUrl}/d_rate/${tableId}`;
+            const url = `${config.liveBetTvUrl}/d_rate/${oddsId}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             // console.log( ' ================ oddsData ================ ', oddsData);
@@ -2065,7 +2064,7 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
           setTimeout(async () => {
-            const url = `${config.liveBetTvUrl}/d_rate/${tableId}`;
+            const url = `${config.liveBetTvUrl}/d_rate/${oddsId}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             const playerFromAPI = oddsData.data?.t2.find(
@@ -2081,7 +2080,7 @@ const placeBet = async (req, res) => {
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
           setTimeout(async () => {
-            const url = `${config.liveBetTvUrl}/d_rate/${tableId}`;
+            const url = `${config.liveBetTvUrl}/d_rate/${oddsId}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             const playerFromAPI = oddsData.data?.t2.find(
@@ -2252,9 +2251,13 @@ const placeBet = async (req, res) => {
           );
           const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
             if (item.runner == type) {
-              item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
+              item.amount = Number(
+                (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+              );
             } else {
-              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
+              item.amount = Number(
+                (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+              );
             }
             return item;
           });
@@ -2263,9 +2266,13 @@ const placeBet = async (req, res) => {
         } else {
           const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
             if (item.runner == type) {
-              item.amount =    Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
+              item.amount = Number(
+                (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+              );
             } else {
-              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
+              item.amount = Number(
+                (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+              );
             }
             return item;
           });
@@ -2300,9 +2307,13 @@ const placeBet = async (req, res) => {
           const lastrunnersPosition = lastBet[0].runnersPosition;
           runnersPosition = lastrunnersPosition.map((item) => {
             if (item.runner == selectionId) {
-              item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
+              item.amount = Number(
+                (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+              );
             } else {
-              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)) ;
+              item.amount = Number(
+                (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+              );
             }
             return item;
           });
@@ -2310,9 +2321,13 @@ const placeBet = async (req, res) => {
         } else {
           runnersPosition = runnerForSaveInbets.map((item) => {
             if (item.runner == selectionId) {
-              item.amount = Number(( item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
+              item.amount = Number(
+                (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+              );
             } else {
-              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)) ;
+              item.amount = Number(
+                (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+              );
             }
             return item;
           });
@@ -2359,9 +2374,13 @@ const placeBet = async (req, res) => {
           if (type == 0) {
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
-                item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
+                item.amount = Number(
+                  (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+                );
               } else {
-                item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
+                item.amount = Number(
+                  (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+                );
               }
               return item;
             });
@@ -2377,9 +2396,13 @@ const placeBet = async (req, res) => {
           } else if (type == 1) {
             runnersPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
-                item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
+                item.amount = Number(
+                  (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+                );
               } else {
-                item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
+                item.amount = Number(
+                  (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+                );
               }
               return item;
             });
@@ -2580,9 +2603,13 @@ async function calculateExposure(
     console.log(" ================= Back is called  =================  ");
     newPosition = lastrunnersPosition.map((item) => {
       if (item.runner == selectedRunner) {
-        item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2)) ;
+        item.amount = Number(
+          (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+        );
       } else {
-        item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
+        item.amount = Number(
+          (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+        );
       }
       return item;
     });
@@ -2590,9 +2617,13 @@ async function calculateExposure(
     console.log(" ================= Lay is called  =================  ");
     newPosition = lastrunnersPosition.map((item) => {
       if (item.runner == selectedRunner) {
-        item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
+        item.amount = Number(
+          (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+        );
       } else {
-        item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
+        item.amount = Number(
+          (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+        );
       }
       return item;
     });
@@ -3418,7 +3449,7 @@ async function getPercentageSharing(parent_id, child_id) {
   }
 }
 
-const  profitLose= async (req, res) => {
+const profitLose = async (req, res) => {
   if (!req.query.userId) {
     console.log("line 2579 Something Went Wrong!");
     return res.status(404).send({
@@ -3767,7 +3798,10 @@ const dailyMatchWiseprofitLose = async (req, res) => {
 
 const SingleUserAllBets = async (req, res) => {
   try {
-    const betList = await Bets.find({ calculateExp: true,  userId: Number(req.query.userId) })
+    const betList = await Bets.find({
+      calculateExp: true,
+      userId: Number(req.query.userId),
+    });
     return res.send({
       status: true,
       message: "Bets List !",
