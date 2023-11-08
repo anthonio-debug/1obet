@@ -968,18 +968,18 @@ const deleteUser = async (req, res) => {
 const userAccountSattlement = async (req, res) =>{
 
   const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
+  if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
     const payload = req.body; 
     await User.findOneAndUpdate(
-      { userId: payload.userId },
+      { userId: Number(payload.userId) },
       {
         $set: {
-          exposure: Number(payload.exposure.toFixed(2)),
-          availableBalance: Number(payload.availableBalance.toFixed(2)),
-          balance: Number(payload.balance.toFixed(2)),
+          exposure: Number(Number(payload.exposure).toFixed(2)),
+          availableBalance: Number(Number(payload.availableBalance).toFixed(2)),
+          balance: Number(Number(payload.balance).toFixed(2)),
 
         }
       }
