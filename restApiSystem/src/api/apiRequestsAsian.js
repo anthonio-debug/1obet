@@ -109,7 +109,7 @@ function apiRequests() {
           };
 
           if (rResult.data.data) {
-            io.to(asiaOdd.tableId).emit("roundStatus", true);
+            io.to(asiaOdd.tableId).emit("roundStatus", { status: 1 });
           }
           io.to(asiaOdd.tableId).emit("asian_odd", asiaOdd);
 
