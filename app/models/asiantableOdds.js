@@ -6,6 +6,7 @@ const AsianTableOddSchema = new mongoose.Schema({
   t2: { type: Array, default: [] },
   gstatus: { type: String },
   result: { type: Array, default: [] },
+  history: { type: Array, default: [] },
   roundId: { type: String },
 });
 

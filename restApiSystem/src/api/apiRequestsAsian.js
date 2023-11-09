@@ -97,6 +97,7 @@ function apiRequests() {
         if (apiResult[i].data.data) {
           const roundId = apiResult[i].data.data.t1[0].mid;
           let resultUrl = `${apiURL}/r_result/${tableNames[i].tableId}/${roundId}`;
+          let history = `${apiURL}/l_result/${tableNames[i].tableId}`;
           const rResult = await axios.get(resultUrl);
 
           const asiaOdd = {
@@ -106,6 +107,7 @@ function apiRequests() {
             gstatus: apiResult[i].data.data.t2[0].gstatus,
             result: rResult.data.data,
             roundId: roundId,
+            history: history.data.data,
           };
 
           if (rResult.data.data) {
