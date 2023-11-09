@@ -69,6 +69,7 @@ function apiRequests() {
         tableId: channel,
       });
 
+      socket.emit("matchId", asianOdd._id);
       socket.emit("asian_odd", asianOdd);
 
       socket.join(channel);
@@ -96,6 +97,7 @@ function apiRequests() {
         if (apiResult[i].data.data) {
           const roundId = apiResult[i].data.data.t1[0].mid;
           let resultUrl = `${apiURL}/r_result/${tableNames[i].tableId}/${roundId}`;
+          let history = `${apiURL}/l_result/${tableNames[i].tableId}`;
           const rResult = await axios.get(resultUrl);
 
           const asiaOdd = {
@@ -105,8 +107,12 @@ function apiRequests() {
             gstatus: apiResult[i].data.data.t2[0].gstatus,
             result: rResult.data.data,
             roundId: roundId,
+            history: history.data.data,
           };
 
+          if (rResult.data.data) {
+            io.to(asiaOdd.tableId).emit("roundStatus", { status: 1 });
+          }
           io.to(asiaOdd.tableId).emit("asian_odd", asiaOdd);
 
           const updateOdd = AsianOdds.findOneAndUpdate(

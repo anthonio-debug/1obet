@@ -2119,12 +2119,18 @@ const placeBet = async (req, res) => {
       console.log(" Pre Bet Rate ===============  ", betRate);
       console.log(" selectedBetRate ===============  ", selectedBetRate);
 
-      if ( multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
+      if (
+        multipeResponse.length == 0 &&
+        !delayExcludedMarkets.includes(subMarketDetail.Id)
+      ) {
         console.log(" multipeResponse Is Empty !");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
-      } else if ( multipeResponse.length > 0 && !delayExcludedMarkets.includes(subMarketDetail.Id) ) {
+      } else if (
+        multipeResponse.length > 0 &&
+        !delayExcludedMarkets.includes(subMarketDetail.Id)
+      ) {
         betRate = multipeResponse[multipeResponse.length - 1];
         console.log(" Inside  Bet Rate ===============  ", betRate);
       }
@@ -2167,10 +2173,16 @@ const placeBet = async (req, res) => {
           { runner: 9, amount: 0 },
         ];
         expoisureType = 2;
-      } else if ( type == 1 && !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
+      } else if (
+        type == 1 &&
+        !config.ExcludedBackLay.includes(subMarketDetail.Id)
+      ) {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
-      } else if ( type == 0 && !config.ExcludedBackLay.includes(subMarketDetail.Id) ) {
+      } else if (
+        type == 0 &&
+        !config.ExcludedBackLay.includes(subMarketDetail.Id)
+      ) {
         winningAmount = betAmount * betRate - betAmount;
         loosingAmount = betAmount;
       } else if (type == 1 && subMarketDetail.Id == config.BookMaker) {
@@ -2199,8 +2211,7 @@ const placeBet = async (req, res) => {
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 },
         ];
-      }
-      else {
+      } else {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
       }
@@ -2210,7 +2221,10 @@ const placeBet = async (req, res) => {
       let runnersPosition = [];
       let prevExpAmount = 0;
       let expAmount = 0;
-      console.log( " ================ Selection ID ================ ", selectionId);
+      console.log(
+        " ================ Selection ID ================ ",
+        selectionId
+      );
       if (subMarketDetail.Id == config.Fancy) {
         let lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
@@ -2442,8 +2456,8 @@ const placeBet = async (req, res) => {
         selectedBetRate: selectedBetRate || 0,
         TargetScore: TargetScore || 0,
         matchId: matchId || null,
-        loosingAmount: loosingAmount ?  Number(loosingAmount.toFixed(2)): 0,
-        winningAmount:  winningAmount ? Number(winningAmount.toFixed(2)) : 0,
+        loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(2)) : 0,
+        winningAmount: winningAmount ? Number(winningAmount.toFixed(2)) : 0,
         subMarketId: subMarketDetail ? subMarketDetail.Id : 0,
         betSession: currentSession ? currentSession : null,
         runner: selectionId ? selectionId : "",
@@ -2454,13 +2468,15 @@ const placeBet = async (req, res) => {
         fancyData: fancyData,
         fancyRate: fancyRate,
         exposureAmount: expAmount ? Number(expAmount.toFixed(2)) : 0,
-        runnersPosition: runnersPosition ? runnersPosition: [],
-        ratesRecord: multipeResponseForSecurityCheck ? multipeResponseForSecurityCheck : [],
+        runnersPosition: runnersPosition ? runnersPosition : [],
+        ratesRecord: multipeResponseForSecurityCheck
+          ? multipeResponseForSecurityCheck
+          : [],
         betTime: BetTime,
-        multipeResponse: multipeResponse ?  multipeResponse: [],
+        multipeResponse: multipeResponse ? multipeResponse : [],
         isManuel: isManuel,
       });
-      
+
       if (user.availableBalance < expAmount - prevExpAmount) {
         return res.status(404).send({ message: " Insufficient balance " });
       }
@@ -2934,6 +2950,7 @@ async function getAllUserIDs(createdByIDs, processedIDs = new Set()) {
 
 async function getMatchedBets(req, res) {
   const errors = validationResult(req);
+  let relatedEvents = [];
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.array() });
   }
@@ -3043,12 +3060,14 @@ async function getMatchedBets(req, res) {
     // }
 
     const eventId = await Events.findById(matchId);
-    const relatedEvents = await Events.find({
-      sportsId: eventId.sportsId,
-      openDate: {
-        $gt: eventId.openDate,
-      },
-    }).limit(5);
+    if (eventId) {
+      relatedEvents = await Events.find({
+        sportsId: eventId.sportsId,
+        openDate: {
+          $gt: eventId.openDate,
+        },
+      }).limit(5);
+    }
 
     if (matchedBets.length > 0) {
       const promises = matchedBets.map(async (item) => {
