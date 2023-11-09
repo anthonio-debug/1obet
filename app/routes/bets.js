@@ -2950,6 +2950,7 @@ async function getAllUserIDs(createdByIDs, processedIDs = new Set()) {
 
 async function getMatchedBets(req, res) {
   const errors = validationResult(req);
+  let relatedEvents = [];
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.array() });
   }
@@ -3059,12 +3060,14 @@ async function getMatchedBets(req, res) {
     // }
 
     const eventId = await Events.findById(matchId);
-    const relatedEvents = await Events.find({
-      sportsId: eventId.sportsId,
-      openDate: {
-        $gt: eventId.openDate,
-      },
-    }).limit(5);
+    if (eventId) {
+      relatedEvents = await Events.find({
+        sportsId: eventId.sportsId,
+        openDate: {
+          $gt: eventId.openDate,
+        },
+      }).limit(5);
+    }
 
     if (matchedBets.length > 0) {
       const promises = matchedBets.map(async (item) => {
