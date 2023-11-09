@@ -108,6 +108,9 @@ function apiRequests() {
             roundId: roundId,
           };
 
+          if (rResult.data.data) {
+            io.to(asiaOdd.tableId).emit("roundStatus", true);
+          }
           io.to(asiaOdd.tableId).emit("asian_odd", asiaOdd);
 
           const updateOdd = AsianOdds.findOneAndUpdate(
