@@ -173,7 +173,7 @@ async function liveLresultTp9(req, res) {
 
 async function tpRoundResult(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.roundResultUrl}/r_result/teen9/${roundId}`;
+  const url = `${config.liveBetTvUrl}/r_result/teen9/${roundId}`;
   try {
     const response = await axios.get(url);
     const tp2020RoundResult = response.data;
