@@ -97,9 +97,9 @@ function apiRequests() {
         if (apiResult[i].data.data) {
           const roundId = apiResult[i].data.data.t1[0].mid;
           let resultUrl = `${apiURL}/r_result/${tableNames[i].tableId}/${roundId}`;
-          let history = `${apiURL}/l_result/${tableNames[i].tableId}`;
+          let historyUrl = `${apiURL}/l_result/${tableNames[i].tableId}`;
           const rResult = await axios.get(resultUrl);
-
+          const history = await axios.get(historyUrl);
           const asiaOdd = {
             tableId: tableNames[i].tableId,
             t1: apiResult[i].data.data.t1,
@@ -107,7 +107,7 @@ function apiRequests() {
             gstatus: apiResult[i].data.data.t2[0].gstatus,
             result: rResult.data.data,
             roundId: roundId,
-            history: history.data,
+            history: history.data.data,
           };
 
           if (rResult.data.data) {
