@@ -2121,6 +2121,7 @@ const getWaitingBetsForManuel = async (req, res) => {
       results: groups,
     });
   } catch (error) {
+    console.error(" ============== Error ", error);
     return res.status(404).send({
       success: false,
       message: "Something went wrong!",

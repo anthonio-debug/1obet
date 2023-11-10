@@ -224,10 +224,18 @@ async function handleLosingBet(bet) {
       let upMovingAmount = TotalLoosingAmount;
 
       for (const user of parentUser) {
-        user.exposure += Number(((user.commission / 100) * remainingAmount).toFixed(2));
-        user.availableBalance += Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(2));
-        user.balance += Number(((user.commission / 100) * TotalLoosingAmount).toFixed(2));
-        user.clientPL -= user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount).toFixed(2)) : 0;
+        const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount).toFixed(2))).toFixed(2))
+        user.exposure = totalExpoisure;
+
+        const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(2))).toFixed(2))
+        user.availableBalance = totalavailableBalance;
+
+        const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount).toFixed(2))).toFixed(2))
+        user.balance = totalBalance;
+
+        const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount).toFixed(2)) : 0
+        const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(2))
+        user.clientPL = totalClientPL;
         user.save();
         console.log(" ======================== Parent User Updating Sucessfully ");
 
@@ -420,10 +428,20 @@ async function handleWinningBet(bet) {
 
       let commissionFrom = userToUpdate.userId;
       for (const user of parentUser) {
-        user.exposure += Number(((user.commission / 100) * totalRemainingAmount).toFixed(2));
-        user.balance  -= Number(((user.commission / 100) * remainingAmount).toFixed(2));
-        user.availableBalance += Number(((user.commission / 100) * commissionAmount).toFixed(2));
-        user.clientPL         += user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(2)) : 0;
+
+        const totalExpoisure =  Number((user.exposure  + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2))
+        user.exposure = totalExpoisure;
+
+        const totalBalance = (( user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(2))).toFixed(2))
+        user.balance = totalBalance;
+
+        const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(2))).toFixed(2))
+        user.availableBalance = totalavailableBalance;
+
+        const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(2)) : 0
+        const totalClientPL = Number(( user.clientPL  + totalClientPLAmount  ).toFixed(2))
+        user.clientPL = totalClientPL;
+        
         await user.save();
 
         let lastTrans       = await Cash.find({  userId: user.userId }).sort({ _id: -1 }).limit(1);
