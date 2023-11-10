@@ -107,7 +107,7 @@ function apiRequests() {
             gstatus: apiResult[i].data.data.t2[0].gstatus,
             result: rResult.data.data,
             roundId: roundId,
-            history: history.data.data,
+            history: history.data,
           };
 
           if (rResult.data.data) {
