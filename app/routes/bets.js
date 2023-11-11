@@ -129,6 +129,7 @@ const placeBet = async (req, res) => {
       overunderMarketId,
       selectedAmount,
       asianOdd,
+      roundId,
     } = req.body;
     console.log(" =============== betRate ===============  ", betRate);
     const selectedBetRate = selectedAmount;
@@ -2475,6 +2476,7 @@ const placeBet = async (req, res) => {
         betTime: BetTime,
         multipeResponse: multipeResponse ? multipeResponse : [],
         isManuel: isManuel,
+        eventId: roundId || 0,
       });
 
       if (user.availableBalance < expAmount - prevExpAmount) {
@@ -2509,6 +2511,7 @@ const placeBet = async (req, res) => {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
+            eventId: roundId,
             status: 1,
           },
           { calculateExp: false }

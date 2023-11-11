@@ -3,6 +3,8 @@
 const AsianOdds = require("../../../app/models/asiantableOdds");
 const AsianTable = require("../../../app/models/asianTable");
 const axios = require("axios");
+const Bets = require("../../../app/models/bets");
+const resultRecords = require("../../../app/models/resultRecords");
 
 module.exports = apiRequests;
 let io;
@@ -104,6 +106,7 @@ function apiRequests() {
             tableId: tableNames[i].tableId,
             t1: apiResult[i].data.data.t1,
             t2: apiResult[i].data.data.t2,
+            t3: apiResult[i].data.data.t3,
             gstatus: apiResult[i].data.data.t2[0].gstatus,
             result: rResult.data.data,
             roundId: roundId,
@@ -112,6 +115,24 @@ function apiRequests() {
 
           if (rResult.data.data) {
             io.to(asiaOdd.tableId).emit("roundStatus", { status: 1 });
+            if (asiaOdd.tableId === "lucky7eu") {
+              let newRecord = {
+                tableId: asiaOdd.tableId,
+                marketData: "8",
+                resultData: rResult.data.data[0].win,
+                description: rResult.data.data[0].desc,
+                eventId: rResult.data.data[0].mid,
+              };
+
+              await resultRecords.findOneAndUpdate(
+                {
+                  marketData: newRecord.marketData,
+                  eventId: newRecord.eventId,
+                },
+                newRecord,
+                { upsert: true }
+              );
+            }
           }
           io.to(asiaOdd.tableId).emit("asian_odd", asiaOdd);
 
