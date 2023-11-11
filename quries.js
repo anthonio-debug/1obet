@@ -664,9 +664,6 @@ db.users.insertOne(
   }
 )
 
-
-db.bets.deleteMany({ sportsId: {$nin  : [1, 2, 4, 7, 4339, "1", "2", "4", "7", "4339" ]}})
-
 db.asianproviders.deleteMany({})
 db.asianproviders.insertMany([
   { 
@@ -699,6 +696,7 @@ db.asiantable.insertMany([
 
 
 
+db.bets.deleteMany({ sportsId: {$nin  : [1, 2, 4, 7, 4339, "1", "2", "4", "7", "4339" ]}})
 db.inplayevents.deleteMany({})
 db.fancygames.deleteMany({})
 db.racemarkets.deleteMany({})

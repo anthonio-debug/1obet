@@ -85,5 +85,14 @@ module.exports.validate = (method) => {
           .withMessage('_id must be a string'),
       ];
     }
+    case "SetAsianDashboard": {
+      return [
+        body('tableId', 'tableId is required'),
+        body('isDashboard', 'isDashboard is required'),
+      ];
+    }
+    default:{
+
+    }
   }
 };
