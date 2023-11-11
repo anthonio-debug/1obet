@@ -172,7 +172,8 @@ async function liveLresultTp9(req, res) {
 }
 
 async function tpRoundResult(req, res) {
-  const url = `${config.roundResultUrl}/?r=tp2020`;
+  const roundId = req.params.roundId;
+  const url = `${config.liveBetTvUrl}/r_result/teen9/${roundId}`;
   try {
     const response = await axios.get(url);
     const tp2020RoundResult = response.data;
@@ -618,7 +619,7 @@ router.get("/liveTv/r_result/teen20/:roundId", liveRresultTp20);
 //TEST TEENPATTI(TEST TEENPATTI)
 router.get("/liveTv/d_rate/teen9", liveDrateTp9);
 router.get("/liveTv/l_result/teen9", liveLresultTp9);
-router.get("/round/result/tp2020", tpRoundResult);
+router.get("/liveTv/r_result/teen9/:roundId", tpRoundResult);
 
 //LUCKY 7-A
 router.get("/liveTv/d_rate/lucky7", liveDrateLucky7);
