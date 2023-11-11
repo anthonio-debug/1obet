@@ -524,11 +524,10 @@ function scoreChecker() {
 
   async function asianResult(betData) {
     console.log("Result checking event");
-    var url = `${sportsAPIUrl}/results/?ids=${betData.marketId}`;
     try {
       for (let i = 0; i < betData.length; i++) {
         const checkResult = await resultRecords.findOne({
-          eventId: betData[i].eventId,
+          eventId: betData[i].roundId,
         });
         let tableId = betData[i].marketId; //id in SubmarketType collection
 
@@ -573,110 +572,6 @@ function scoreChecker() {
           { eventId: betData[i].eventId },
           { $set: { resultId: checkResult._id } }
         );
-      }
-      var results;
-      const manuelRecord = await MarketIDs.findOne({
-        marketId: betData.marketId,
-        winnerRunnerData: { $ne: null },
-      });
-
-      if (manuelRecord) {
-        if (typeof manuelRecord.manuelClose !== undefined)
-          results = [
-            {
-              winnerSelectionId: manuelRecord.winnerRunnerData,
-              manuelClose: manuelRecord.manuelClose,
-            },
-          ];
-        else
-          results = [
-            {
-              winnerSelectionId: manuelRecord.winnerRunnerData,
-              manuelClose: false,
-            },
-          ];
-      } else {
-        const response = await axios.get(url);
-        results = response.data;
-      }
-
-      if (results.length > 0) {
-        const result = results[0];
-        var newRecord = new resultRecords({
-          eventId: betData.matchId,
-          marketData: betData.marketId,
-          resultData: result.winnerSelectionId,
-        });
-
-        const bets = await Bets.find({
-          marketId: betData.marketId,
-          sportsId: betData.sportsId,
-          status: 1,
-        });
-
-        await newRecord.save();
-        await Bets.updateMany(
-          { marketId: betData.marketId, sportsId: betData.sportsId },
-          { $set: { resultId: newRecord._id } }
-        );
-
-        if (result.winnerSelectionId == -1) {
-          for (const bet of bets) {
-            if (
-              typeof bet.isManuel !== "undefined" &&
-              bet.isManuel == true &&
-              result.manuelClose == false
-            ) {
-              continue;
-            }
-            if (
-              typeof result.manuelClose === "undefined" &&
-              bet.isManuel == true
-            )
-              continue;
-            await handleDrawBet(bet);
-          }
-        } else {
-          for (const bet of bets) {
-            if (
-              typeof bet.isManuel !== "undefined" &&
-              bet.isManuel == true &&
-              result.manuelClose == false
-            ) {
-              continue;
-            }
-            if (
-              typeof result.manuelClose === "undefined" &&
-              bet.isManuel == true
-            )
-              continue;
-            if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
-              console.log("0 ----- winner ");
-              await handleWinningBet(bet);
-            } else if (
-              bet.type == 0 &&
-              bet.runner != result.winnerSelectionId
-            ) {
-              console.log("0 ----- looser ");
-              await handleLosingBet(bet);
-            } else if (
-              bet.type == 1 &&
-              bet.runner != result.winnerSelectionId
-            ) {
-              console.log("1 ----- winner ");
-              await handleWinningBet(bet);
-            } else if (
-              bet.type == 1 &&
-              bet.runner == result.winnerSelectionId
-            ) {
-              console.log("1 ----- looser ");
-              await handleLosingBet(bet);
-            } else {
-              console.log("-----  Draw ");
-              await handleDrawBet(bet);
-            }
-          }
-        }
       }
     } catch (error) {
       console.error(error);

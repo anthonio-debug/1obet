@@ -1,5 +1,5 @@
-const mongoose = require('mongoose');
-let Global = require('../global/settings');
+const mongoose = require("mongoose");
+let Global = require("../global/settings");
 /**
  * [betSchema description]
  *  @status [ 1 active), 0 (settled), 2 (cancelled), 3 (voided)]
@@ -11,22 +11,22 @@ const betSchema = new mongoose.Schema({
   userId: { type: Number, required: true },
   betAmount: { type: Number, required: true },
   betRate: { type: Number, required: true }, // bet rate chosen by user
-  selectedBetRate: { type: Number,  default: 0 },
+  selectedBetRate: { type: Number, default: 0 },
   returnAmount: { type: Number, default: 0 },
   createdAt: { type: Number },
   updatedAt: { type: Number },
-  betSession:{ type: Number },
+  betSession: { type: Number },
   resultId: { type: String, default: null },
   fancyData: { type: String, default: null },
-  isfancyOrbookmaker: {type: Boolean, default: false},
+  isfancyOrbookmaker: { type: Boolean, default: false },
   TargetScore: { type: Number },
   status: { type: Number, default: 1 },
   matchId: { type: String },
   winningAmount: { type: Number },
   loosingAmount: { type: Number },
   subMarketId: { type: String },
-  event: { type: String, default: '' },
-  runner: { type: String, default: '' },
+  event: { type: String, default: "" },
+  runner: { type: String, default: "" },
   position: { type: Number, default: 0 },
   name: { type: String },
   matchStatus: { type: String },
@@ -37,7 +37,7 @@ const betSchema = new mongoose.Schema({
   runnerName: { type: String },
   fancyRate: { type: Number, default: 0 },
   lastCheckResult: { type: Number, default: 0 },
-  calculateExp: { type: Boolean, default: true},
+  calculateExp: { type: Boolean, default: true },
   exposureAmount: { type: Number, default: 0 },
   runnersPosition: { type: Array },
   ratesRecord: { type: Array },
@@ -45,9 +45,10 @@ const betSchema = new mongoose.Schema({
   betTime: { type: Number },
   isManuel: { type: Boolean, default: false },
   iscalculatedExp: { type: Number },
+  roundId: { type: String },
 });
 
-betSchema.pre('save', function (next) {
+betSchema.pre("save", function (next) {
   var now = new Date().getTime();
   if (!this.createdAt) {
     this.createdAt = now;
@@ -59,6 +60,6 @@ betSchema.pre('save', function (next) {
 
 betSchema.plugin(Global.aggregatePaginate);
 betSchema.plugin(Global.paginate);
-const Bets = mongoose.model('bet', betSchema);
+const Bets = mongoose.model("bet", betSchema);
 //   Bets.createIndexes();
 module.exports = Bets;

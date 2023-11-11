@@ -2476,7 +2476,7 @@ const placeBet = async (req, res) => {
         betTime: BetTime,
         multipeResponse: multipeResponse ? multipeResponse : [],
         isManuel: isManuel,
-        eventId: roundId || 0,
+        roundId: roundId || 0,
       });
 
       if (user.availableBalance < expAmount - prevExpAmount) {
