@@ -5,6 +5,7 @@ const AsianTable = require("../../../app/models/asianTable");
 const axios = require("axios");
 const Bets = require("../../../app/models/bets");
 const resultRecords = require("../../../app/models/resultRecords");
+const AsianResult = require("../../../app/models/asianTablesResultsHistory");
 
 module.exports = apiRequests;
 let io;
@@ -115,24 +116,36 @@ function apiRequests() {
 
           if (rResult.data.data) {
             io.to(asiaOdd.tableId).emit("roundStatus", { status: 1 });
-            if (asiaOdd.tableId === "lucky7eu") {
-              let newRecord = {
-                tableId: asiaOdd.tableId,
-                marketData: "8",
-                resultData: rResult.data.data[0].win,
-                description: rResult.data.data[0].desc,
-                eventId: rResult.data.data[0].mid,
-              };
+            let newRecord = {
+              tableId: asiaOdd.tableId,
+              marketData: "8",
+              resultData: rResult.data.data[0].win,
+              description: rResult.data.data[0].desc,
+              eventId: rResult.data.data[0].mid,
+            };
 
-              await resultRecords.findOneAndUpdate(
-                {
-                  marketData: newRecord.marketData,
-                  eventId: newRecord.eventId,
-                },
-                newRecord,
-                { upsert: true }
-              );
-            }
+            let asianResult = {
+              tableId: asiaOdd.tableId,
+              roundId: rResult.data.data[0].mid,
+              result: rResult.data.data,
+            };
+
+            await AsianResult.findOneAndUpdate(
+              {
+                roundId: asianResult.roundId,
+              },
+              asianResult,
+              { upsert: true }
+            );
+
+            await resultRecords.findOneAndUpdate(
+              {
+                marketData: newRecord.marketData,
+                eventId: newRecord.eventId,
+              },
+              newRecord,
+              { upsert: true }
+            );
           }
           io.to(asiaOdd.tableId).emit("asian_odd", asiaOdd);
 

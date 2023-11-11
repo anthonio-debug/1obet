@@ -2511,7 +2511,7 @@ const placeBet = async (req, res) => {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
-            eventId: roundId,
+            roundId: roundId,
             status: 1,
           },
           { calculateExp: false }
