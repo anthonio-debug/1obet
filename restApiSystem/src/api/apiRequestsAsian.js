@@ -19,7 +19,7 @@ const tableNames = [
     tableName: "TEST TEENPATTI(TEST TEENPATTI)",
     imageUrl: "TEST_TEENPATTI.png",
   },
-  { tableId: "lucky7", tableName: "LUCKY 7-A", imageUrl: "LUCKY_7-A.jpg" },
+  // { tableId: "lucky7", tableName: "LUCKY 7-A", imageUrl: "LUCKY_7-A.jpg" },
   { tableId: "lucky7eu", tableName: "LUCKY 7-B", imageUrl: "LUCKY_7-B.png" },
   { tableId: "card32eu", tableName: "32 CARD-B", imageUrl: "32_CARD-B.png" },
   {
@@ -28,7 +28,7 @@ const tableNames = [
     imageUrl: "AMAR_AKBAR_ANTHONY(AAA).png",
   },
   { tableId: "ab20", tableName: "ANDAR BAHAR", imageUrl: "ANDAR_BAHAR.jpg" },
-  { tableId: "abj", tableName: "ANDAR BAHAR 2", imageUrl: "ANDAR_BAHAR_2.png" },
+  // { tableId: "abj", tableName: "ANDAR BAHAR 2", imageUrl: "ANDAR_BAHAR_2.png" },
   { tableId: "worli", tableName: "WORLI MATKA", imageUrl: "ANDAR_BAHAR_2.png" },
 ];
 
@@ -97,9 +97,9 @@ function apiRequests() {
         if (apiResult[i].data.data) {
           const roundId = apiResult[i].data.data.t1[0].mid;
           let resultUrl = `${apiURL}/r_result/${tableNames[i].tableId}/${roundId}`;
-          let history = `${apiURL}/l_result/${tableNames[i].tableId}`;
+          let historyUrl = `${apiURL}/l_result/${tableNames[i].tableId}`;
           const rResult = await axios.get(resultUrl);
-
+          const history = await axios.get(historyUrl);
           const asiaOdd = {
             tableId: tableNames[i].tableId,
             t1: apiResult[i].data.data.t1,
