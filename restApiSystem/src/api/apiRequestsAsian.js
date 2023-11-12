@@ -144,10 +144,6 @@ function apiRequests() {
                   result: lastHistory.data.data,
                 };
 
-                io.to(asiaOdd.tableId).emit("latestresult", {
-                  result: asianResult,
-                });
-
                 await AsianResult.findOneAndUpdate(
                   {
                     roundId: asianResult.roundId,
@@ -155,6 +151,14 @@ function apiRequests() {
                   asianResult,
                   { upsert: true }
                 );
+
+                const last10Result = await AsianResult.find()
+                  .sort({ _id: -1 })
+                  .limit(10);
+
+                io.to(asiaOdd.tableId).emit("latestresult", {
+                  result: last10Result,
+                });
               }
             }
           }
