@@ -4,6 +4,7 @@ const AsianOdds = require("../../../app/models/asiantableOdds");
 const AsianTable = require("../../../app/models/asianTable");
 const axios = require("axios");
 const Bets = require("../../../app/models/bets");
+const ResultRecord = require("../../../app/models/resultRecords");
 const AsianResult = require("../../../app/models/asianTablesResultsHistory");
 
 module.exports = apiRequests;
@@ -112,6 +113,34 @@ function apiRequests() {
             roundId: roundId,
             history: history.data.data,
           };
+
+          for (let i = 0; i < 10; i++) {
+            const existedRecord = await ResultRecord.findOne({
+              eventId: asiaOdd.history[i].mid,
+            });
+            let lastResultUrl = `${apiURL}/r_result/${tableNames[i].tableId}/${asiaOdd.history[i].mid}`;
+
+            if (existedRecord) {
+              continue;
+            } else {
+              const lastHistory = await axios.get(lastResultUrl);
+              const newRecord = {
+                tableId: tableNames[i].tableId,
+                marketData: "8",
+                resultData: lastHistory.data.data[0].win,
+                description: lastHistory.data.data[0].desc,
+                eventId: asiaOdd.history[i].mid,
+              };
+              await ResultRecord.findOneAndUpdate(
+                {
+                  marketData: newRecord.marketData,
+                  eventId: newRecord.eventId,
+                },
+                newRecord,
+                { upsert: true }
+              );
+            }
+          }
 
           if (rResult.data.data) {
             io.to(asiaOdd.tableId).emit("roundStatus", { status: 1 });
