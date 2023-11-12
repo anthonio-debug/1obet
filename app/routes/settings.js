@@ -1069,12 +1069,17 @@ async function bettorDashboardGames(req, res) {
     ).sort({
       openDate: -1,
     });
+    
+    const asianCasino = await AsianTable.find(
+      { isDashboard : true }
+    );
 
     const organizedEvents = {
       horseRace: horseRace,
       greyhound: greyHound,
       inPlay: inPlay,
       casinoData: selectedCasinoData,
+      asianCasino: asianCasino
     };
 
     res.status(200).json({
