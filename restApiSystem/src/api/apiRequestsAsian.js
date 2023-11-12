@@ -114,11 +114,11 @@ function apiRequests() {
             history: history.data.data,
           };
 
-          for (let i = 0; i < 10; i++) {
+          for (let j = 0; j < 10; j++) {
             const existedRecord = await ResultRecord.findOne({
-              eventId: asiaOdd.history[i].mid,
+              eventId: asiaOdd.history[j].mid,
             });
-            let lastResultUrl = `${apiURL}/r_result/${tableNames[i].tableId}/${asiaOdd.history[i].mid}`;
+            let lastResultUrl = `${apiURL}/r_result/${tableNames[i].tableId}/${asiaOdd.history[j].mid}`;
 
             if (existedRecord) {
               continue;
@@ -129,7 +129,7 @@ function apiRequests() {
                 marketData: "8",
                 resultData: lastHistory.data.data[0].win,
                 description: lastHistory.data.data[0].desc,
-                eventId: asiaOdd.history[i].mid,
+                eventId: asiaOdd.history[j].mid,
               };
               await ResultRecord.findOneAndUpdate(
                 {
