@@ -18,6 +18,18 @@ const {
   handleDrawBet,
 } = require("../CalculateBets/calculations");
 
+const tableInfo = [
+  { id: "36", tId: "teen20" },
+  { id: "37", tId: "teen9" },
+  { id: "38", tId: "lucky7" },
+  { id: "39", tId: "lucky7eu" },
+  { id: "40", tId: "card32eu" },
+  { id: "41", tId: "aaa" },
+  { id: "42", tId: "ab20" },
+  { id: "43", tId: "abj" },
+  { id: "44", tId: "worli" },
+];
+
 function scoreChecker() {
   return {
     eventsResult,
@@ -524,19 +536,22 @@ function scoreChecker() {
 
   async function asianResult(betData) {
     console.log("Result checking event");
+
     try {
       for (let i = 0; i < betData.length; i++) {
-        const checkResult = await resultRecords.findOne({
-          eventId: betData[i].roundId,
-        });
+        const tId = tableInfo.find((e) => e.id === betData[i].marketId);
+
+        let resultUrl = `${apiURL}/r_result/${tId}/${betData[i].roundId}`;
+        const result = await axios.get(resultUrl);
+
         let tableId = betData[i].marketId; //id in SubmarketType collection
-        if (checkResult) {
+        if (result.data.data) {
           //Lucky7eu
           if (tableId === "39") {
-            if (checkResult.resultData === "-1") {
+            if (result.data.data[0].win === "0") {
               handleDrawBet(betData);
             } else {
-              if (betData[i].runner == checkResult.resultData) {
+              if (betData[i].runner == result.data.data[0].win) {
                 handleWinningBet(betData);
               } else {
                 handleLosingBet(betData);
@@ -545,10 +560,10 @@ function scoreChecker() {
           }
           // Teen20
           else if (tableId === "36") {
-            if (checkResult.resultData === "-1") {
+            if (result.data.data[0].win === "0") {
               handleDrawBet(betData);
             } else {
-              if (betData[i].runner == checkResult.resultData) {
+              if (betData[i].runner == result.data.data[0].win) {
                 handleWinningBet(betData);
               } else {
                 handleLosingBet(betData);
@@ -557,12 +572,14 @@ function scoreChecker() {
           }
           // Card32eu
           else if (tableId === "40") {
-            if (checkResult.resultData === "-1") {
+            if (result.data.data[0].win === "0") {
               handleDrawBet(betData);
             } else {
-              if (betData[i].runner == checkResult.resultData) {
+              if (betData[i].runner == result.data.data[0].win) {
                 handleWinningBet(betData);
               } else {
+                const description = result.data.data[0].desc;
+                const generalResult = description.split("|");
                 handleLosingBet(betData);
               }
             }
@@ -571,6 +588,23 @@ function scoreChecker() {
           await Bets.updateMany(
             { eventId: betData[i].eventId },
             { $set: { resultId: checkResult._id } }
+          );
+
+          let newRecord = {
+            tableId: tId,
+            marketData: "8",
+            resultData: result.data.data[0].win,
+            description: result.data.data[0].desc,
+            eventId: result.data.data[0].mid,
+          };
+
+          await resultRecords.findOneAndUpdate(
+            {
+              marketData: newRecord.marketData,
+              eventId: newRecord.eventId,
+            },
+            newRecord,
+            { upsert: true }
           );
         }
       }

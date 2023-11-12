@@ -4,7 +4,6 @@ const AsianOdds = require("../../../app/models/asiantableOdds");
 const AsianTable = require("../../../app/models/asianTable");
 const axios = require("axios");
 const Bets = require("../../../app/models/bets");
-const resultRecords = require("../../../app/models/resultRecords");
 const AsianResult = require("../../../app/models/asianTablesResultsHistory");
 
 module.exports = apiRequests;
@@ -116,13 +115,6 @@ function apiRequests() {
 
           if (rResult.data.data) {
             io.to(asiaOdd.tableId).emit("roundStatus", { status: 1 });
-            let newRecord = {
-              tableId: asiaOdd.tableId,
-              marketData: "8",
-              resultData: rResult.data.data[0].win,
-              description: rResult.data.data[0].desc,
-              eventId: rResult.data.data[0].mid,
-            };
 
             let asianResult = {
               tableId: asiaOdd.tableId,
@@ -135,15 +127,6 @@ function apiRequests() {
                 roundId: asianResult.roundId,
               },
               asianResult,
-              { upsert: true }
-            );
-
-            await resultRecords.findOneAndUpdate(
-              {
-                marketData: newRecord.marketData,
-                eventId: newRecord.eventId,
-              },
-              newRecord,
               { upsert: true }
             );
           }
