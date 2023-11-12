@@ -587,7 +587,7 @@ function scoreChecker() {
 
           await Bets.updateMany(
             { eventId: betData[i].eventId },
-            { $set: { resultId: checkResult._id } }
+            { $set: { resultId: result.data.data[0].mid } }
           );
 
           let newRecord = {
