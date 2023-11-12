@@ -1752,38 +1752,40 @@ async function setCloseEventWithCancelBet(req, res) {
     return res.status(404).send({ message: "Events not exist ... " });
   }
 
-  if (req.query.reason) {
-    await Events.findOneAndUpdate(
-      { _id: currentEv._id },
-      { status: "CLOSED-" + req.query.reason, isCanceled: true }
-    );
-  } else {
-    await Events.findOneAndUpdate(
-      { _id: currentEv._id },
-      { status: "CLOSED-COMPANY", isCanceled: true }
-    );
-  }
+  // if (req.query.reason) {
+  //   await Events.findOneAndUpdate(
+  //     { _id: currentEv._id },
+  //     { status: "CLOSED-" + req.query.reason, isCanceled: true }
+  //   );
+  // } else {
+  //   await Events.findOneAndUpdate(
+  //     { _id: currentEv._id },
+  //     { status: "CLOSED-COMPANY", isCanceled: true }
+  //   );
+  // }
 
-  var updateField = { status: "CLOSED-COMPANY" };
-  const base64data = Buffer.from(JSON.stringify(updateField)).toString(
-    "base64"
-  );
-  axios.get(
-    "http://localhost:3004/updateField?id=" + _id + "&data=" + base64data
-  );
+  // var updateField = { status: "CLOSED-COMPANY" };
+  // const base64data = Buffer.from(JSON.stringify(updateField)).toString(
+  //   "base64"
+  // );
+  // axios.get("http://localhost:3004/updateField?id=" + _id + "&data=" + base64data);
 
-  await MarketIDS.updateMany(
-    { eventId: req.query.eventId },
-    { inplay: false, status: "CLOSED" }
-  );
+  // await MarketIDS.updateMany(
+  //   { eventId: req.query.eventId },
+  //   { inplay: false, status: "CLOSED" }
+  // );
 
   const bets = await Bets.find({
     status: 1,
     matchId: currentEv._id.toString(),
   });
 
-  for (let index = 0; index < bets.length; index++) {
-    const bet = bets[index];
+  // for (let index = 0; index < bets.length; index++) {
+  //   const bet = bets[index];
+  //   await handleDrawBet(bet, 2);
+  // }
+
+  for (const bet of bets) {
     await handleDrawBet(bet, 2);
   }
 

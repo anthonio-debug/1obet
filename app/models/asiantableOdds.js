@@ -4,6 +4,7 @@ const AsianTableOddSchema = new mongoose.Schema({
   tableId: { type: String },
   t1: { type: Array, default: [] },
   t2: { type: Array, default: [] },
+  t3: { type: Array, default: [] },
   gstatus: { type: String },
   result: { type: Array, default: [] },
   history: { type: Array, default: [] },

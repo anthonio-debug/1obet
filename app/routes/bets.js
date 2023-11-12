@@ -12,6 +12,7 @@ const betRates = require("../models/betRate");
 const MarketType = require("../models/marketTypes");
 const Odds = require("../models/odds");
 const AsianOdds = require("../models/asiantableOdds");
+const AsianTable = require("../models/asianTable");
 const Events = require("../models/events");
 const RaceOdds = require("../models/raceOdds");
 const axios = require("axios");
@@ -129,6 +130,7 @@ const placeBet = async (req, res) => {
       overunderMarketId,
       selectedAmount,
       asianOdd,
+      roundId,
     } = req.body;
     console.log(" =============== betRate ===============  ", betRate);
     const selectedBetRate = selectedAmount;
@@ -149,7 +151,7 @@ const placeBet = async (req, res) => {
     let id = 0;
     let isManuel = true;
     let delay = 4200;
-
+    let asianTableName = "";
     /* ====================================================================== */
 
     /* ============================== Innitial Checks  ============================== */
@@ -240,7 +242,7 @@ const placeBet = async (req, res) => {
       }
     } else if (asianOdd) {
       subMarketDetail = await SubMarketType.findOne({
-        // name: subMarketName,
+        name: subMarketName,
         marketId: marketId,
       }).exec();
 
@@ -2004,6 +2006,8 @@ const placeBet = async (req, res) => {
         " ======================== AsianTable Odds ======================== "
       );
       const DBOddDetails = await AsianOdds.findOne({ tableId: oddsId });
+      const asianTableDetail = await AsianTable.findOne({ tableId: oddsId });
+      asianTableName = asianTableDetail.tableName;
       if (!DBOddDetails) {
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
@@ -2427,10 +2431,10 @@ const placeBet = async (req, res) => {
           expAmount
         );
 
-        expAmount = runnersPosition.reduce((min, current) => {
+        let expAmountObject = runnersPosition.reduce((min, current) => {
           return current.amount < min.amount ? current : min;
         }, runnersPosition[0]);
-        expAmount = expAmount.amount;
+        expAmount = expAmountObject.amount;
         console.log(
           " ================ RUNNER INFO ================ ",
           runnersPosition
@@ -2475,6 +2479,9 @@ const placeBet = async (req, res) => {
         betTime: BetTime,
         multipeResponse: multipeResponse ? multipeResponse : [],
         isManuel: isManuel,
+        roundId: roundId,
+        asianTableName: asianTableName,
+        asianTableId: oddsId,
       });
 
       if (user.availableBalance < expAmount - prevExpAmount) {
@@ -2509,6 +2516,7 @@ const placeBet = async (req, res) => {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
+            roundId: roundId,
             status: 1,
           },
           { calculateExp: false }

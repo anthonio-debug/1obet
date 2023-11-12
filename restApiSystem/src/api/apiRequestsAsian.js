@@ -3,6 +3,8 @@
 const AsianOdds = require("../../../app/models/asiantableOdds");
 const AsianTable = require("../../../app/models/asianTable");
 const axios = require("axios");
+const Bets = require("../../../app/models/bets");
+const AsianResult = require("../../../app/models/asianTablesResultsHistory");
 
 module.exports = apiRequests;
 let io;
@@ -27,8 +29,8 @@ const tableNames = [
     tableName: "AMAR AKBAR ANTHONY(AAA)",
     imageUrl: "AMAR_AKBAR_ANTHONY(AAA).png",
   },
-  { tableId: "ab20", tableName: "ANDAR BAHAR", imageUrl: "ANDAR_BAHAR.jpg" },
-  // { tableId: "abj", tableName: "ANDAR BAHAR 2", imageUrl: "ANDAR_BAHAR_2.png" },
+  // { tableId: "ab20", tableName: "ANDAR BAHAR", imageUrl: "ANDAR_BAHAR.jpg" },
+  { tableId: "abj", tableName: "ANDAR BAHAR 2", imageUrl: "ANDAR_BAHAR_2.png" },
   { tableId: "worli", tableName: "WORLI MATKA", imageUrl: "ANDAR_BAHAR_2.png" },
 ];
 
@@ -104,6 +106,7 @@ function apiRequests() {
             tableId: tableNames[i].tableId,
             t1: apiResult[i].data.data.t1,
             t2: apiResult[i].data.data.t2,
+            t3: apiResult[i].data.data.t3,
             gstatus: apiResult[i].data.data.t2[0].gstatus,
             result: rResult.data.data,
             roundId: roundId,
@@ -112,6 +115,20 @@ function apiRequests() {
 
           if (rResult.data.data) {
             io.to(asiaOdd.tableId).emit("roundStatus", { status: 1 });
+
+            let asianResult = {
+              tableId: asiaOdd.tableId,
+              roundId: rResult.data.data[0].mid,
+              result: rResult.data.data,
+            };
+
+            await AsianResult.findOneAndUpdate(
+              {
+                roundId: asianResult.roundId,
+              },
+              asianResult,
+              { upsert: true }
+            );
           }
           io.to(asiaOdd.tableId).emit("asian_odd", asiaOdd);
 

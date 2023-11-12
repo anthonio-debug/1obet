@@ -4,6 +4,7 @@ const axios = require("axios");
 const loginRouter = express.Router();
 const router = express.Router();
 const AsianTable = require("../models/asianTable");
+const AsianResult = require("../models/asianTablesResultsHistory");
 const AsianTableOdd = require("../models/asiantableOdds");
 
 async function liveTv(req, res) {
@@ -70,6 +71,27 @@ async function getAsianOdd(req, res) {
     res.status(200).json({
       success: false,
       message: "Failed to get all asian tables",
+      error: error.message,
+    });
+  }
+}
+
+async function getLastResult(req, res) {
+  try {
+    const roundId = req.params.roundId;
+    const lastAsianResult = await AsianResult.findOne({
+      roundId: roundId,
+    });
+
+    res.status(200).json({
+      success: true,
+      message: "Get last asian result",
+      lastAsianResult: lastAsianResult,
+    });
+  } catch (error) {
+    res.status(200).json({
+      success: false,
+      message: "Failed to Get last asian result",
       error: error.message,
     });
   }
@@ -610,6 +632,9 @@ loginRouter.get("/getAsianTables", getAllTables);
 
 //Get specific AsianOdd with tableId
 loginRouter.get("/getAsianOdd/:tableId", getAsianOdd);
+
+//Get Last Asian Result with roundId
+loginRouter.get("/liveTv/lastresult/:roundId", getLastResult);
 
 //Teen Patti 2020(TP2020)
 router.get("/liveTv/d_rate/teen20", liveDrateTp20);
