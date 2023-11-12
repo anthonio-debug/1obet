@@ -530,48 +530,49 @@ function scoreChecker() {
           eventId: betData[i].roundId,
         });
         let tableId = betData[i].marketId; //id in SubmarketType collection
+        if (checkResult) {
+          //Lucky7eu
+          if (tableId === "39") {
+            if (checkResult.resultData === "-1") {
+              handleDrawBet(betData);
+            } else {
+              if (betData[i].runner == checkResult.resultData) {
+                handleWinningBet(betData);
+              } else {
+                handleLosingBet(betData);
+              }
+            }
+          }
+          // Teen20
+          else if (tableId === "36") {
+            if (checkResult.resultData === "-1") {
+              handleDrawBet(betData);
+            } else {
+              if (betData[i].runner == checkResult.resultData) {
+                handleWinningBet(betData);
+              } else {
+                handleLosingBet(betData);
+              }
+            }
+          }
+          // Card32eu
+          else if (tableId === "40") {
+            if (checkResult.resultData === "-1") {
+              handleDrawBet(betData);
+            } else {
+              if (betData[i].runner == checkResult.resultData) {
+                handleWinningBet(betData);
+              } else {
+                handleLosingBet(betData);
+              }
+            }
+          }
 
-        //Lucky7eu
-        if (tableId === "39") {
-          if (checkResult.resultData === "-1") {
-            handleDrawBet(betData);
-          } else {
-            if (betData[i].runner == checkResult.resultData) {
-              handleWinningBet(betData);
-            } else {
-              handleLosingBet(betData);
-            }
-          }
+          await Bets.updateMany(
+            { eventId: betData[i].eventId },
+            { $set: { resultId: checkResult._id } }
+          );
         }
-        // Teen20
-        else if (tableId === "36") {
-          if (checkResult.resultData === "-1") {
-            handleDrawBet(betData);
-          } else {
-            if (betData[i].runner == checkResult.resultData) {
-              handleWinningBet(betData);
-            } else {
-              handleLosingBet(betData);
-            }
-          }
-        }
-        // Card32eu
-        else if (tableId === "40") {
-          if (checkResult.resultData === "-1") {
-            handleDrawBet(betData);
-          } else {
-            if (betData[i].runner == checkResult.resultData) {
-              handleWinningBet(betData);
-            } else {
-              handleLosingBet(betData);
-            }
-          }
-        }
-
-        await Bets.updateMany(
-          { eventId: betData[i].eventId },
-          { $set: { resultId: checkResult._id } }
-        );
       }
     } catch (error) {
       console.error(error);
