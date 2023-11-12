@@ -137,23 +137,25 @@ function apiRequests() {
               //   newRecord,
               //   { upsert: true }
               // );
-              let asianResult = {
-                tableId: tableNames[i].tableId,
-                roundId: asiaOdd.history[j].mid,
-                result: lastHistory.data.data,
-              };
+              if (lastHistory.data.data) {
+                let asianResult = {
+                  tableId: tableNames[i].tableId,
+                  roundId: asiaOdd.history[j].mid,
+                  result: lastHistory.data.data,
+                };
 
-              io.to(asiaOdd.tableId).emit("latestresult", {
-                result: asianResult,
-              });
+                io.to(asiaOdd.tableId).emit("latestresult", {
+                  result: asianResult,
+                });
 
-              await AsianResult.findOneAndUpdate(
-                {
-                  roundId: asianResult.roundId,
-                },
-                asianResult,
-                { upsert: true }
-              );
+                await AsianResult.findOneAndUpdate(
+                  {
+                    roundId: asianResult.roundId,
+                  },
+                  asianResult,
+                  { upsert: true }
+                );
+              }
             }
           }
 
