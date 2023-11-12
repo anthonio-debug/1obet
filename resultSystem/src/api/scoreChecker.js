@@ -554,7 +554,49 @@ function scoreChecker() {
               if (betData[i].runner == result.data.data[0].win) {
                 handleWinningBet(betData[i]);
               } else {
-                handleLosingBet(betData[i]);
+                const description = result.data.data[0].desc;
+                const generalResult = description.split(" || ");
+                let wid = "0";
+                if (generalResult[1] === "Red") {
+                  wid = "5";
+                } else if (generalResult[1] === "Black") {
+                  wid = "6";
+                } else if (generalResult[2] === "Even") {
+                  wid = "3";
+                } else if (generalResult[2] === "Odd") {
+                  wid = "4";
+                } else if (generalResult[3] === "Card 1") {
+                  wid = "7";
+                } else if (generalResult[3] === "Card 2") {
+                  wid = "8";
+                } else if (generalResult[3] === "Card 3") {
+                  wid = "9";
+                } else if (generalResult[3] === "Card 4") {
+                  wid = "10";
+                } else if (generalResult[3] === "Card 5") {
+                  wid = "11";
+                } else if (generalResult[3] === "Card 6") {
+                  wid = "12";
+                } else if (generalResult[3] === "Card 7") {
+                  wid = "13";
+                } else if (generalResult[3] === "Card 8") {
+                  wid = "14";
+                } else if (generalResult[3] === "Card 9") {
+                  wid = "15";
+                } else if (generalResult[3] === "Card 10") {
+                  wid = "16";
+                } else if (generalResult[3] === "Card J") {
+                  wid = "17";
+                } else if (generalResult[3] === "Card Q") {
+                  wid = "18";
+                } else if (generalResult[3] === "Card K") {
+                  wid = "19";
+                }
+                if (betData[i].runner == wid) {
+                  handleWinningBet(betData[i]);
+                } else {
+                  handleLosingBet(betData[i]);
+                }
               }
             }
           }
