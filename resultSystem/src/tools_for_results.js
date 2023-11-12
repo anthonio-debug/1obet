@@ -135,7 +135,7 @@ function ToolForResults() {
     const currentTime = new Date().getTime();
     try {
       const results = await Bets.find({
-        marketId: "8",
+        sportsId: "8",
         status: 1,
       }).exec();
 
