@@ -2431,7 +2431,7 @@ const placeBet = async (req, res) => {
         expAmount = runnersPosition.reduce((min, current) => {
           return current.amount < min.amount ? current : min;
         }, runnersPosition[0]);
-        expAmount = expAmount.amount;
+        expAmount = expAmount ? expAmount.amount : 0;
         console.log(
           " ================ RUNNER INFO ================ ",
           runnersPosition
