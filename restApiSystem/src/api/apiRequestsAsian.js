@@ -143,6 +143,10 @@ function apiRequests() {
                 result: lastHistory.data.data,
               };
 
+              io.to(asiaOdd.tableId).emit("latestresult", {
+                result: asianResult,
+              });
+
               await AsianResult.findOneAndUpdate(
                 {
                   roundId: asianResult.roundId,
