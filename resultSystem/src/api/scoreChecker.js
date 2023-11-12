@@ -620,9 +620,123 @@ function scoreChecker() {
               if (betData[i].runner == result.data.data[0].win) {
                 handleWinningBet(betData[i]);
               } else {
+                let wid = "0";
                 const description = result.data.data[0].desc;
                 const generalResult = description.split("|");
-                handleLosingBet(betData[i]);
+                const oddResult = generalResult[1].split(",");
+                const colorResult = generalResult[2].split(",");
+                if (oddResult[0].split(":")[1] === "Odd") {
+                  wid = "5";
+                } else if (oddResult[0].split(":")[1] === "Even") {
+                  wid = "6";
+                } else if (oddResult[1].split(":")[1] === "Odd") {
+                  wid = "7";
+                } else if (oddResult[1].split(":")[1] === "Even") {
+                  wid = "8";
+                } else if (oddResult[2].split(":")[1] === "Odd") {
+                  wid = "9";
+                } else if (oddResult[2].split(":")[1] === "Even") {
+                  wid = "10";
+                } else if (oddResult[3].split(":")[1] === "Odd") {
+                  wid = "11";
+                } else if (oddResult[3].split(":")[1] === "Even") {
+                  wid = "12";
+                } else if (colorResult[0].split(":")[1] === "Yes") {
+                  wid = "13";
+                } else if (colorResult[1].split(":")[1] === "Yes") {
+                  wid = "14";
+                } else if (colorResult[2].split(":")[1] === "Yes") {
+                  wid = "27";
+                } else if (generalResult[3] === "1") {
+                  wid = "15";
+                } else if (generalResult[3] === "2") {
+                  wid = "16";
+                } else if (generalResult[3] === "3") {
+                  wid = "17";
+                } else if (generalResult[3] === "4") {
+                  wid = "18";
+                } else if (generalResult[3] === "5") {
+                  wid = "19";
+                } else if (generalResult[3] === "6") {
+                  wid = "20";
+                } else if (generalResult[3] === "7") {
+                  wid = "21";
+                } else if (generalResult[3] === "8") {
+                  wid = "22";
+                } else if (generalResult[3] === "9") {
+                  wid = "23";
+                } else if (generalResult[3] === "0") {
+                  wid = "24";
+                } else if (generalResult[4] === "8-9") {
+                  wid = "25";
+                } else if (generalResult[4] === "10-11") {
+                  wid = "26";
+                }
+
+                if (betData[i].runner == wid) {
+                  handleWinningBet(betData[i]);
+                } else {
+                  handleLosingBet(betData[i]);
+                }
+              }
+            }
+          }
+          // AAA
+          else if (tableId === "41") {
+            if (result.data.data[0].win === "0") {
+              handleDrawBet(betData[i]);
+            } else {
+              if (betData[i].runner == result.data.data[0].win) {
+                handleWinningBet(betData[i]);
+              } else {
+                let wid = "";
+                const description = result.data.data[0].desc.split(" | ");
+
+                if (description[1] === "Red") {
+                  wid = "6";
+                } else if (description[1] === "Black") {
+                  wid = "7";
+                } else if (description[2] === "Even") {
+                  wid = "4";
+                } else if (description[2] === "Odd") {
+                  wid = "5";
+                } else if (description[3] === "Under 7") {
+                  wid = "21";
+                } else if (description[3] === "Over 7") {
+                  wid = "22";
+                } else if (description[4] === "Card A") {
+                  wid = "8";
+                } else if (description[4] === "Card 2") {
+                  wid = "9";
+                } else if (description[4] === "Card 3") {
+                  wid = "10";
+                } else if (description[4] === "Card 4") {
+                  wid = "11";
+                } else if (description[4] === "Card 5") {
+                  wid = "12";
+                } else if (description[4] === "Card 6") {
+                  wid = "13";
+                } else if (description[4] === "Card 7") {
+                  wid = "14";
+                } else if (description[4] === "Card 8") {
+                  wid = "15";
+                } else if (description[4] === "Card 9") {
+                  wid = "16";
+                } else if (description[4] === "Card 10") {
+                  wid = "17";
+                } else if (description[4] === "Card J") {
+                  wid = "18";
+                } else if (description[4] === "Card Q") {
+                  wid = "19";
+                } else if (description[4] === "Card K") {
+                  wid = "20";
+                }
+
+                if (betData[i].runner == wid) {
+                  handleWinningBet(betData[i]);
+                } else {
+                  handleLosingBet(betData[i]);
+                }
               }
             }
           }
