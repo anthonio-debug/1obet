@@ -549,38 +549,38 @@ function scoreChecker() {
           //Lucky7eu
           if (tableId === "39") {
             if (result.data.data[0].win === "0") {
-              handleDrawBet(betData);
+              handleDrawBet(betData[i]);
             } else {
               if (betData[i].runner == result.data.data[0].win) {
-                handleWinningBet(betData);
+                handleWinningBet(betData[i]);
               } else {
-                handleLosingBet(betData);
+                handleLosingBet(betData[i]);
               }
             }
           }
           // Teen20
           else if (tableId === "36") {
             if (result.data.data[0].win === "0") {
-              handleDrawBet(betData);
+              handleDrawBet(betData[i]);
             } else {
               if (betData[i].runner == result.data.data[0].win) {
-                handleWinningBet(betData);
+                handleWinningBet(betData[i]);
               } else {
-                handleLosingBet(betData);
+                handleLosingBet(betData[i]);
               }
             }
           }
           // Card32eu
           else if (tableId === "40") {
             if (result.data.data[0].win === "0") {
-              handleDrawBet(betData);
+              handleDrawBet(betData[i]);
             } else {
               if (betData[i].runner == result.data.data[0].win) {
-                handleWinningBet(betData);
+                handleWinningBet(betData[i]);
               } else {
                 const description = result.data.data[0].desc;
                 const generalResult = description.split("|");
-                handleLosingBet(betData);
+                handleLosingBet(betData[i]);
               }
             }
           }
