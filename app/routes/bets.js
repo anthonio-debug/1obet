@@ -150,7 +150,7 @@ const placeBet = async (req, res) => {
     let id = 0;
     let isManuel = true;
     let delay = 4200;
-
+    type = 1;
     /* ====================================================================== */
 
     /* ============================== Innitial Checks  ============================== */
@@ -2428,10 +2428,10 @@ const placeBet = async (req, res) => {
           expAmount
         );
 
-        expAmount = runnersPosition.reduce((min, current) => {
+        let expAmountObject = runnersPosition.reduce((min, current) => {
           return current.amount < min.amount ? current : min;
         }, runnersPosition[0]);
-        expAmount = expAmount ? expAmount.amount : 0;
+        expAmount = expAmountObject.amount;
         console.log(
           " ================ RUNNER INFO ================ ",
           runnersPosition
