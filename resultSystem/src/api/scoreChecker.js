@@ -541,7 +541,7 @@ function scoreChecker() {
       for (let i = 0; i < betData.length; i++) {
         const tId = tableInfo.find((e) => e.id === betData[i].marketId);
         const apiURL = "https://betfairoddsapi.com:3445/api";
-        let resultUrl = `${apiURL}/r_result/${tId}/${betData[i].roundId}`;
+        let resultUrl = `${apiURL}/r_result/${tId.tId}/${betData[i].roundId}`;
         const result = await axios.get(resultUrl);
 
         let tableId = betData[i].marketId; //id in SubmarketType collection
@@ -591,7 +591,7 @@ function scoreChecker() {
           );
 
           let newRecord = {
-            tableId: tId,
+            tableId: tId.tId,
             marketData: "8",
             resultData: result.data.data[0].win,
             description: result.data.data[0].desc,
