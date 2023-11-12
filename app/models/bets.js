@@ -46,6 +46,8 @@ const betSchema = new mongoose.Schema({
   isManuel: { type: Boolean, default: false },
   iscalculatedExp: { type: Number },
   roundId: { type: String },
+  asianTableName: { type: String },
+  asianTableId: { type: String },
 });
 
 betSchema.pre("save", function (next) {
