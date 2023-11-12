@@ -3,8 +3,6 @@
 const AsianOdds = require("../../../app/models/asiantableOdds");
 const AsianTable = require("../../../app/models/asianTable");
 const axios = require("axios");
-const Bets = require("../../../app/models/bets");
-const ResultRecord = require("../../../app/models/resultRecords");
 const AsianResult = require("../../../app/models/asianTablesResultsHistory");
 
 module.exports = apiRequests;
@@ -115,8 +113,8 @@ function apiRequests() {
           };
 
           for (let j = 0; j < 10; j++) {
-            const existedRecord = await ResultRecord.findOne({
-              eventId: asiaOdd.history[j].mid,
+            const existedRecord = await AsianResult.findOne({
+              roundId: asiaOdd.history[j].mid,
             });
             let lastResultUrl = `${apiURL}/r_result/${tableNames[i].tableId}/${asiaOdd.history[j].mid}`;
 
@@ -124,19 +122,32 @@ function apiRequests() {
               continue;
             } else {
               const lastHistory = await axios.get(lastResultUrl);
-              const newRecord = {
+              // const newRecord = {
+              //   tableId: tableNames[i].tableId,
+              //   marketData: "8",
+              //   resultData: lastHistory.data.data[0].win,
+              //   description: lastHistory.data.data[0].desc,
+              //   eventId: asiaOdd.history[j].mid,
+              // };
+              // await ResultRecord.findOneAndUpdate(
+              //   {
+              //     marketData: newRecord.marketData,
+              //     eventId: newRecord.eventId,
+              //   },
+              //   newRecord,
+              //   { upsert: true }
+              // );
+              let asianResult = {
                 tableId: tableNames[i].tableId,
-                marketData: "8",
-                resultData: lastHistory.data.data[0].win,
-                description: lastHistory.data.data[0].desc,
-                eventId: asiaOdd.history[j].mid,
+                roundId: asiaOdd.history[j].mid,
+                result: lastHistory.data.data,
               };
-              await ResultRecord.findOneAndUpdate(
+
+              await AsianResult.findOneAndUpdate(
                 {
-                  marketData: newRecord.marketData,
-                  eventId: newRecord.eventId,
+                  roundId: asianResult.roundId,
                 },
-                newRecord,
+                asianResult,
                 { upsert: true }
               );
             }
