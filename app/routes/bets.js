@@ -3032,7 +3032,7 @@ async function getMatchedBets(req, res) {
           bettorId: "$userDetails.userId",
           fancyRate: "$fancyRate",
           betSession: "$betSession",
-
+          roundId: "$roundId",
           master: {
             $cond: [
               { $eq: [loginUser.role, "5"] },

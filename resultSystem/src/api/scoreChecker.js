@@ -749,6 +749,18 @@ function scoreChecker() {
               if (betData[i].runner == result.data.data[0].win) {
                 handleWinningBet(betData[i]);
               } else {
+                let wid = "";
+
+                const resultCards = result.data.data[0].cards;
+                const splitedCards = resultCards.split(",");
+                const finalCards = splitedCards.filter(function (n) {
+                  return n !== "1";
+                });
+
+                const jokerCardNumber = finalCards[0][0];
+                const jokerCardColor = finalCards[0].slice(1);
+                if (jokerCardNumber == "A") {
+                }
                 handleLosingBet(betData[i]);
               }
             }
