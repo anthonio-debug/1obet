@@ -11,26 +11,54 @@ let apiURL = "https://betfairoddsapi.com:3445/api";
 
 const tableNames = [
   {
-    tableId: "teen20",
-    tableName: "Teen Patti 2020(TP2020)",
-    imageUrl: "Teen_Patti_2020.png",
+    _id: ObjectId("654910c6b247d8ad88ec0d2b"),
+    tableId: 'teen20',
+    tableName: 'Teen Patti 2020(TP2020)',
+    imageUrl: 'Teen_Patti_2020.png',
+    __v: 0
   },
   {
-    tableId: "teen9",
-    tableName: "TEST TEENPATTI(TEST TEENPATTI)",
-    imageUrl: "TEST_TEENPATTI.png",
+    _id: ObjectId("654910c6b247d8ad88ec0d2c"),
+    tableId: 'teen9',
+    tableName: 'TEST TEENPATTI(TEST TEENPATTI)',
+    imageUrl: 'TEST_TEENPATTI.png',
+    __v: 0
   },
-  // { tableId: "lucky7", tableName: "LUCKY 7-A", imageUrl: "LUCKY_7-A.jpg" },
-  { tableId: "lucky7eu", tableName: "LUCKY 7-B", imageUrl: "LUCKY_7-B.png" },
-  { tableId: "card32eu", tableName: "32 CARD-B", imageUrl: "32_CARD-B.png" },
   {
-    tableId: "aaa",
-    tableName: "AMAR AKBAR ANTHONY(AAA)",
-    imageUrl: "AMAR_AKBAR_ANTHONY(AAA).png",
+    _id: ObjectId("654910c6b247d8ad88ec0d2e"),
+    tableId: 'lucky7eu',
+    tableName: 'LUCKY 7-B',
+    imageUrl: 'LUCKY_7-B.png',
+    __v: 0
   },
-  // { tableId: "ab20", tableName: "ANDAR BAHAR", imageUrl: "ANDAR_BAHAR.jpg" },
-  { tableId: "abj", tableName: "ANDAR BAHAR 2", imageUrl: "ANDAR_BAHAR_2.png" },
-  { tableId: "worli", tableName: "WORLI MATKA", imageUrl: "ANDAR_BAHAR_2.png" },
+  {
+    _id: ObjectId("654910c6b247d8ad88ec0d2f"),
+    tableId: 'card32eu',
+    tableName: '32 CARD-B',
+    imageUrl: '32_CARD-B.png',
+    __v: 0
+  },
+  {
+    _id: ObjectId("654910c6b247d8ad88ec0d30"),
+    tableId: 'aaa',
+    tableName: 'AMAR AKBAR ANTHONY(AAA)',
+    imageUrl: 'AMAR_AKBAR_ANTHONY(AAA).png',
+    __v: 0
+  },
+  {
+    _id: ObjectId("654910c6b247d8ad88ec0d31"),
+    tableId: 'abj',
+    tableName: 'ANDAR BAHAR 2',
+    imageUrl: 'ANDAR_BAHAR_2.png',
+    __v: 0
+  },
+  {
+    _id: ObjectId("654910c6b247d8ad88ec0d33"),
+    tableId: 'worli',
+    tableName: 'WORLI MATKA',
+    imageUrl: 'worli_matka.png',
+    __v: 0
+  }
 ];
 
 function apiRequests() {
