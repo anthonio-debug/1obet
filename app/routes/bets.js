@@ -2467,7 +2467,7 @@ const placeBet = async (req, res) => {
         runner: selectionId ? selectionId : "",
         type: type || 0,
         status: 1,
-        event: eventDetail ? eventDetail.name : "",
+        event: eventDetail ? eventDetail.name : oddsId,
         isfancyOrbookmaker: isFancyOrBookMaker,
         fancyData: fancyData,
         fancyRate: fancyRate,
