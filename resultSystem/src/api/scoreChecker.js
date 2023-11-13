@@ -741,6 +741,32 @@ function scoreChecker() {
             }
           }
 
+          // ABJ
+          else if (tableId === "43") {
+            if (result.data.data[0].win === "0") {
+              handleDrawBet(betData[i]);
+            } else {
+              if (betData[i].runner == result.data.data[0].win) {
+                handleWinningBet(betData[i]);
+              } else {
+                handleLosingBet(betData[i]);
+              }
+            }
+          }
+
+          // Worli
+          else if (tableId === "44") {
+            if (result.data.data[0].win === "0") {
+              handleDrawBet(betData[i]);
+            } else {
+              if (betData[i].runner == result.data.data[0].win) {
+                handleWinningBet(betData[i]);
+              } else {
+                handleLosingBet(betData[i]);
+              }
+            }
+          }
+
           await Bets.updateMany(
             { eventId: betData[i].eventId },
             { $set: { resultId: result.data.data[0].mid } }
