@@ -746,7 +746,12 @@ function scoreChecker() {
             if (result.data.data[0].win === "0") {
               handleDrawBet(betData[i]);
             } else {
-              if (betData[i].runner == result.data.data[0].win) {
+              if (betData[i].runner == "1" && result.data.data[0].win == "1") {
+                handleWinningBet(betData[i]);
+              } else if (
+                betData[i].runner == "4" &&
+                result.data.data[0].win == "2"
+              ) {
                 handleWinningBet(betData[i]);
               } else {
                 let wid = "";
@@ -759,9 +764,67 @@ function scoreChecker() {
 
                 const jokerCardNumber = finalCards[0][0];
                 const jokerCardColor = finalCards[0].slice(1);
+                const oddOrEvenNumber = parseInt(jokerCardNumber) % 2;
                 if (jokerCardNumber == "A") {
+                  wid = "7";
+                } else if (jokerCardNumber == "2") {
+                  wid = "8";
+                } else if (jokerCardNumber == "3") {
+                  wid = "9";
+                } else if (jokerCardNumber == "4") {
+                  wid = "10";
+                } else if (jokerCardNumber == "5") {
+                  wid = "11";
+                } else if (jokerCardNumber == "6") {
+                  wid = "12";
+                } else if (jokerCardNumber == "7") {
+                  wid = "13";
+                } else if (jokerCardNumber == "8") {
+                  wid = "14";
+                } else if (jokerCardNumber == "9") {
+                  wid = "15";
+                } else if (jokerCardNumber == "10") {
+                  wid = "16";
+                } else if (jokerCardNumber == "J") {
+                  wid = "17";
+                } else if (jokerCardNumber == "Q") {
+                  wid = "18";
+                } else if (jokerCardNumber == "K") {
+                  wid = "19";
+                } else if (jokerCardColor == "SS") {
+                  wid = "20";
+                } else if (jokerCardColor == "CC") {
+                  wid = "21";
+                } else if (jokerCardColor == "HH") {
+                  wid = "22";
+                } else if (jokerCardColor == "DD") {
+                  wid = "23";
+                } else if (jokerCardColor == "DD") {
+                  wid = "23";
+                } else if (oddOrEvenNumber == 0) {
+                  wid = "24";
+                } else if (oddOrEvenNumber == 1) {
+                  wid = "25";
                 }
-                handleLosingBet(betData[i]);
+
+                if (betData[i].runner == "2" && finalCards.length == 2) {
+                  handleWinningBet(betData[i]);
+                }
+                if (betData[i].runner == "3" && finalCards.length == 4) {
+                  handleWinningBet(betData[i]);
+                }
+                if (betData[i].runner == "5" && finalCards.length == 3) {
+                  handleWinningBet(betData[i]);
+                }
+                if (betData[i].runner == "6" && finalCards.length == 5) {
+                  handleWinningBet(betData[i]);
+                }
+
+                if (betData[i].runner == wid) {
+                  handleWinningBet(betData[i]);
+                } else {
+                  handleLosingBet(betData[i]);
+                }
               }
             }
           }
