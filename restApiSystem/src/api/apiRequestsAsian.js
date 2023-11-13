@@ -11,47 +11,47 @@ let apiURL = "https://betfairoddsapi.com:3445/api";
 
 const tableNames = [
   {
-    tableId: 'teen20',
-    tableName: 'Teen Patti 2020(TP2020)',
-    imageUrl: 'Teen_Patti_2020.png',
-    __v: 0
+    tableId: "teen20",
+    tableName: "Teen Patti 2020(TP2020)",
+    imageUrl: "Teen_Patti_2020.png",
+    __v: 0,
   },
   {
-    tableId: 'teen9',
-    tableName: 'TEST TEENPATTI(TEST TEENPATTI)',
-    imageUrl: 'TEST_TEENPATTI.png',
-    __v: 0
+    tableId: "teen9",
+    tableName: "TEST TEENPATTI(TEST TEENPATTI)",
+    imageUrl: "TEST_TEENPATTI.png",
+    __v: 0,
   },
   {
-    tableId: 'lucky7eu',
-    tableName: 'LUCKY 7-B',
-    imageUrl: 'LUCKY_7-B.png',
-    __v: 0
+    tableId: "lucky7eu",
+    tableName: "LUCKY 7-B",
+    imageUrl: "LUCKY_7-B.png",
+    __v: 0,
   },
   {
-    tableId: 'card32eu',
-    tableName: '32 CARD-B',
-    imageUrl: '32_CARD-B.png',
-    __v: 0
+    tableId: "card32eu",
+    tableName: "32 CARD-B",
+    imageUrl: "32_CARD-B.png",
+    __v: 0,
   },
   {
-    tableId: 'aaa',
-    tableName: 'AMAR AKBAR ANTHONY(AAA)',
-    imageUrl: 'AMAR_AKBAR_ANTHONY(AAA).png',
-    __v: 0
+    tableId: "aaa",
+    tableName: "AMAR AKBAR ANTHONY(AAA)",
+    imageUrl: "AMAR_AKBAR_ANTHONY(AAA).png",
+    __v: 0,
   },
   {
-    tableId: 'abj',
-    tableName: 'ANDAR BAHAR 2',
-    imageUrl: 'ANDAR_BAHAR_2.png',
-    __v: 0
+    tableId: "abj",
+    tableName: "ANDAR BAHAR 2",
+    imageUrl: "ANDAR_BAHAR_2.png",
+    __v: 0,
   },
   {
-    tableId: 'worli',
-    tableName: 'WORLI MATKA',
-    imageUrl: 'worli_matka.png',
-    __v: 0
-  }
+    tableId: "worli",
+    tableName: "WORLI MATKA",
+    imageUrl: "worli_matka.png",
+    __v: 0,
+  },
 ];
 
 function apiRequests() {
@@ -130,7 +130,7 @@ function apiRequests() {
             gstatus: apiResult[i].data.data.t2[0].gstatus,
             result: rResult.data.data,
             roundId: roundId,
-            history: history.data.data,
+            history: history.data.data.reverse(),
           };
 
           for (let j = 0; j < 10; j++) {
