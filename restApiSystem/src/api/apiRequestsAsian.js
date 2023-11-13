@@ -173,7 +173,9 @@ function apiRequests() {
             );
           }
 
-          const last10Result = await AsianResult.find()
+          const last10Result = await AsianResult.find({
+            tableId: asiaOdd.tableId,
+          })
             .sort({ _id: -1 })
             .limit(10);
 
