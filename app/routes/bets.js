@@ -2431,10 +2431,10 @@ const placeBet = async (req, res) => {
           expAmount
         );
 
-        let expAmountObject = runnersPosition.reduce((min, current) => {
+        expAmount = runnersPosition.reduce((min, current) => {
           return current.amount < min.amount ? current : min;
         }, runnersPosition[0]);
-        expAmount = expAmountObject.amount;
+        expAmount = expAmount.amount;
         console.log(
           " ================ RUNNER INFO ================ ",
           runnersPosition
@@ -2467,7 +2467,7 @@ const placeBet = async (req, res) => {
         runner: selectionId ? selectionId : "",
         type: type || 0,
         status: 1,
-        event: eventDetail ? eventDetail.name : "",
+        event: eventDetail ? eventDetail.name : oddsId,
         isfancyOrbookmaker: isFancyOrBookMaker,
         fancyData: fancyData,
         fancyRate: fancyRate,

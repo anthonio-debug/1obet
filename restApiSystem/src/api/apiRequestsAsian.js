@@ -181,13 +181,6 @@ function apiRequests() {
                 );
               }
             }
-            const last10Result = await AsianResult.find()
-              .sort({ _id: -1 })
-              .limit(10);
-
-            io.to(asiaOdd.tableId).emit("latestresult", {
-              result: last10Result,
-            });
           }
 
           if (rResult.data.data) {
@@ -207,6 +200,15 @@ function apiRequests() {
               { upsert: true }
             );
           }
+
+          const last10Result = await AsianResult.find()
+            .sort({ _id: -1 })
+            .limit(10);
+
+          io.to(asiaOdd.tableId).emit("latestresult", {
+            result: last10Result,
+          });
+
           io.to(asiaOdd.tableId).emit("asian_odd", asiaOdd);
 
           const updateOdd = AsianOdds.findOneAndUpdate(
