@@ -20,7 +20,7 @@ const {
 
 const tableInfo = [
   { id: "36", tId: "teen20" },
-  { id: "37", tId: "teen8" },
+  { id: "37", tId: "teen9" },
   { id: "38", tId: "lucky7" },
   { id: "39", tId: "lucky7eu" },
   { id: "40", tId: "card32eu" },
