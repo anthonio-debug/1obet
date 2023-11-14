@@ -1,31 +1,30 @@
-const express = require('express');
-var jwt = require('jsonwebtoken');
-const userValidation = require('../validators/user');
-const bcrypt = require('bcrypt');
-const { validationResult } = require('express-validator');
-let config = require('config');
-const User = require('../models/user');
-const Deposits = require('../models/deposits');
+const express = require("express");
+var jwt = require("jsonwebtoken");
+const userValidation = require("../validators/user");
+const bcrypt = require("bcrypt");
+const { validationResult } = require("express-validator");
+let config = require("config");
+const User = require("../models/user");
+const Deposits = require("../models/deposits");
 // const Bets = require('../models/bets');
 
 //ip location
-const { IP2Location } = require('ip2location-nodejs');
+const { IP2Location } = require("ip2location-nodejs");
 let ip2location = new IP2Location();
-ip2location.open('/var/www/html/one-o-bet-backend/IP2LOCATION-LITE-DB11.BIN');
+ip2location.open("/var/www/html/one-o-bet-backend/IP2LOCATION-LITE-DB11.BIN");
 //
 
-const LoginActivity = require('../models/loginActivity');
-const Settings = require('../models/settings');
-const BetLimits = require('../models/betLimits');
-const UserBetSizes = require('../models/userBetSizes');
-const loginRecord = require('../models/loginRecord');
-const axios = require('axios');
-const userBetSizes = require('../models/userBetSizes');
-const Bets = require('../models/bets');
+const LoginActivity = require("../models/loginActivity");
+const Settings = require("../models/settings");
+const BetLimits = require("../models/betLimits");
+const UserBetSizes = require("../models/userBetSizes");
+const loginRecord = require("../models/loginRecord");
+const axios = require("axios");
+const Bets = require("../models/bets");
 
-const { tryEach } = require('async');
+const { tryEach } = require("async");
 
-var getIP = require('ipware')().get_ip;
+var getIP = require("ipware")().get_ip;
 
 const router = express.Router();
 const loginRouter = express.Router();
@@ -37,15 +36,15 @@ async function registerUser(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  console.log(' User Is creatting   ');
+  console.log(" User Is creatting   ");
 
-  if (req.decoded.role == '5') {
-    return res.status(404).send({ message: 'you are not allowed to do this ' });
+  if (req.decoded.role == "5") {
+    return res.status(404).send({ message: "you are not allowed to do this " });
   }
 
-  if (req.body.role != '5') {
+  if (req.body.role != "5") {
     if (!req.body.downLineShare) {
-      return res.status(404).send({ message: 'downLineShare is required' });
+      return res.status(404).send({ message: "downLineShare is required" });
     }
   }
 
@@ -53,17 +52,17 @@ async function registerUser(req, res) {
   if (userToDelete && userToDelete.createdBy != req.decoded.userId) {
     return res
       .status(404)
-      .send({ message: 'username not available', status: 2 });
+      .send({ message: "username not available", status: 2 });
   }
 
   User.findOne()
     .sort({ userId: -1 })
     .exec(async (err, data) => {
-      if (err) return res.status(404).send({ message: 'user not found', err });
+      if (err) return res.status(404).send({ message: "user not found", err });
 
       const user = new User(req.body);
       // Check if the user's role is 5, and if so, set downLineShare to null Ignore downLineShare field if role is 5
-      if (req.body.role == '5') {
+      if (req.body.role == "5") {
         req.body.downLineShare = 0;
       }
       // Check if the downline share is greater than the parent's downline share
@@ -117,7 +116,7 @@ async function registerUser(req, res) {
           if (err || !user) {
             return res
               .status(404)
-              .send({ message: 'user not registered', err });
+              .send({ message: "user not registered", err });
           }
 
           const userbetSizesData = betLimits.map((betLimit) => ({
@@ -136,22 +135,22 @@ async function registerUser(req, res) {
             async (err, insertedDocs) => {
               if (err) return res.send({ message: err });
               // console.log(' insertedDocs =========== ', insertedDocs);
-              let user_username = 'user_' + user.userId;
+              let user_username = "user_" + user.userId;
 
-              console.log('user_username', user_username);
-              if (req.body.role == '5') {
-                console.log('in casino bettor user');
+              console.log("user_username", user_username);
+              if (req.body.role == "5") {
+                console.log("in casino bettor user");
                 try {
                   const response = await axios.post(config.apiUrl, {
                     api_password: config.api_password,
                     api_login: config.api_username,
-                    method: 'createPlayer',
+                    method: "createPlayer",
                     user_username,
                     user_password: user_username,
                     user_nickname: user_username,
                     currency: req.body.baseCurrency,
                   });
-                  let data = response.data.response;
+                  let data = response.data;
                   // console.log('API Response:', response.data);
                   user.remoteId = data.id;
                   user.save();
@@ -159,13 +158,13 @@ async function registerUser(req, res) {
                   console.error(error);
                   res.status(404).send({
                     success: false,
-                    message: 'Failed to create player',
+                    message: "Failed to create player",
                     results: error,
                   });
                 }
               }
               return res.send({
-                message: 'Register Success',
+                message: "Register Success",
                 success: true,
                 results: user,
               });
@@ -179,7 +178,7 @@ async function registerUser(req, res) {
           if (err || !user) {
             return res
               .status(404)
-              .send({ message: 'user not registered', err });
+              .send({ message: "user not registered", err });
           }
 
           const userbetSizesData = betLimits.map((betLimit) => ({
@@ -196,22 +195,22 @@ async function registerUser(req, res) {
             async (err, insertedDocs) => {
               if (err) return res.send({ message: err });
 
-              let user_username = 'user_' + user.userId;
-              console.log('user_username', user_username);
+              let user_username = "user_" + user.userId;
+              console.log("user_username", user_username);
 
-              if (req.body.role == '5') {
-                console.log('in casino bettor user');
+              if (req.body.role == "5") {
+                console.log("in casino bettor user");
                 try {
                   const response = await axios.post(config.apiUrl, {
                     api_password: config.api_password,
                     api_login: config.api_username,
-                    method: 'createPlayer',
+                    method: "createPlayer",
                     user_username,
                     user_password: user_username,
                     user_nickname: user_username,
                     currency: req.body.baseCurrency,
                   });
-                  let data = response.data.response;
+                  let data = response.data;
                   // console.log('API Response:', response.data);
                   user.remoteId = data.id;
                   user.save();
@@ -219,14 +218,14 @@ async function registerUser(req, res) {
                   console.error(error);
                   res.status(404).send({
                     success: false,
-                    message: 'Failed to create player',
+                    message: "Failed to create player",
                     results: error,
                   });
                 }
               }
 
               return res.send({
-                message: 'Register Success',
+                message: "Register Success",
                 success: true,
                 results: user,
               });
@@ -251,30 +250,30 @@ function login(req, res) {
       if (err || !user)
         return res
           .status(404)
-          .send({ message: 'Invalid username or password' });
+          .send({ message: "Invalid username or password" });
       // check if user password is matched or not.
       bcrypt.compare(req.body.password, user.password, function (err, result) {
         if (err)
           return res
             .status(404)
-            .send({ message: 'Invalid username or password ' });
+            .send({ message: "Invalid username or password " });
         if (!result)
           return res
             .status(404)
-            .send({ message: 'Invalid username or password' });
+            .send({ message: "Invalid username or password" });
         if (user.isActive == false || user.status == 0)
-          return res.status(404).send({ message: 'Your account is inactive' });
+          return res.status(404).send({ message: "Your account is inactive" });
         if (
           (req.body.isAdmin && user.role == 5) ||
           (!req.body.isAdmin && user.role != 5)
         )
           return res
             .status(404)
-            .send({ message: 'Invalid username or password' });
+            .send({ message: "Invalid username or password" });
 
         if (!user.token) {
           console.log(
-            ' =========================  Missing token =====================  '
+            " =========================  Missing token =====================  "
           );
           var token = getNonExpiringToken(
             user.userId,
@@ -287,7 +286,7 @@ function login(req, res) {
           jwt.verify(user.token, config.secret, function (err, decoded) {
             if (err || decoded.expr < new Date().getTime()) {
               console.log(
-                ' =========================  Expired token =====================  '
+                " =========================  Expired token =====================  "
               );
               // console.log(' ================== decoded ', decoded);
               // console.log(' ================== err ', err);
@@ -303,13 +302,13 @@ function login(req, res) {
           });
         }
 
-        var ipInfo = req.headers['x-real-ip'] || req.connection.remoteAddress;
+        var ipInfo = req.headers["x-real-ip"] || req.connection.remoteAddress;
 
         // Retrieve the user's default theme from the database
         Settings.find({}, (err, setting) => {
           // console.log('setting', setting[1]);
           if (err || !setting) {
-            return res.status(404).send({ message: 'setting not found' });
+            return res.status(404).send({ message: "setting not found" });
           }
 
           var geo = {
@@ -365,10 +364,10 @@ function login(req, res) {
             if (err)
               return res
                 .status(404)
-                .send({ message: 'login activity not saved' });
+                .send({ message: "login activity not saved" });
             return res.send({
               success: true,
-              message: 'User Login Successfully',
+              message: "User Login Successfully",
               userName: user.userName,
               token: user.token,
               role: user.role,
@@ -392,10 +391,10 @@ function saveLoginActivity(detailsForLoginActivity, _callback) {
     detailsForLoginActivity,
     { upsert: true, new: true },
     (err, user) => {
-      if (err) return _callback({ message: 'login activity not saved' });
+      if (err) return _callback({ message: "login activity not saved" });
       return _callback(null, {
         success: true,
-        message: 'Login Successfully',
+        message: "Login Successfully",
         userName: user.userName,
         token: user.token,
         role: user.role,
@@ -420,17 +419,17 @@ function getNonExpiringToken(userId, createdBy, role, isActive) {
 
 function getAllUsers(req, res) {
   // Initialize variables with default values
-  if (req.decoded.role == '5') {
-    return res.status(404).send({ message: 'you are not allowed to do this' });
+  if (req.decoded.role == "5") {
+    return res.status(404).send({ message: "you are not allowed to do this" });
   }
   // console.log('role', req.decoded.role);
   // console.log('role2', req.decoded.login.role);
   let query = {};
   let page = 1;
   let sort = -1;
-  let sortValue = 'createdAt';
+  let sortValue = "createdAt";
   var limit = config.pageSize;
-  query.role = { $ne: '0' };
+  query.role = { $ne: "0" };
   if (
     req.query.numRecords &&
     !isNaN(req.query.numRecords) &&
@@ -444,14 +443,14 @@ function getAllUsers(req, res) {
   if (req.query.userId) {
     const userId = parseInt(req.query.userId);
     query.createdBy = userId;
-  } else if (req.decoded.login.role != '0') {
+  } else if (req.decoded.login.role != "0") {
     query.createdBy = req.decoded.userId;
-  } else if (req.decoded.login.role == '5') {
+  } else if (req.decoded.login.role == "5") {
     query.userId = null;
-  } else if (req.decoded.login.role == '0') {
+  } else if (req.decoded.login.role == "0") {
   }
   if (req.query.username)
-    query.userName = { $regex: req.query.username, $options: 'i' };
+    query.userName = { $regex: req.query.username, $options: "i" };
 
   query.isDeleted = false;
   // Exclude the currently logged-in user from the results
@@ -461,17 +460,17 @@ function getAllUsers(req, res) {
 
     { page: page, sort: { [sortValue]: sort }, limit: limit },
     (err, results) => {
-      if (err) return res.status(404).send({ message: 'Something went wrong' });
+      if (err) return res.status(404).send({ message: "Something went wrong" });
       return res.send({
         success: true,
-        message: 'Users list',
+        message: "Users list",
         total: results.total,
         results: results,
       });
     }
   );
 }
-app.set('secret', config.secret);
+app.set("secret", config.secret);
 
 function changePassword(req, res) {
   const errors = validationResult(req);
@@ -480,18 +479,18 @@ function changePassword(req, res) {
   }
   User.findOne({ userId: req.decoded.userId }, (err, user) => {
     if (err || !user)
-      return res.status(404).send({ message: 'User not found' });
+      return res.status(404).send({ message: "User not found" });
     user.password = req.body.password;
     user.passwordChanged = true;
     user.hashPass(function (err) {
-      if (err) return res.status(404).send({ message: 'NEW_PASS_HASH_FAIL' });
+      if (err) return res.status(404).send({ message: "NEW_PASS_HASH_FAIL" });
       user.save((err, results) => {
         if (err) {
-          return res.status(404).send({ message: 'USER_NOT_FOUND' });
+          return res.status(404).send({ message: "USER_NOT_FOUND" });
         }
         return res.send({
           success: true,
-          message: 'USER_PASSWORD_UPDATED',
+          message: "USER_PASSWORD_UPDATED",
           results: results,
         });
       });
@@ -507,7 +506,7 @@ function updateUser(req, res) {
   // console.log('req.body:', req.body);
   User.findOne({ userId: req.body.id }, (err, user) => {
     if (err || !user) {
-      return res.status(404).send({ message: 'User not found' });
+      return res.status(404).send({ message: "User not found" });
     }
 
     const token = getNonExpiringToken(
@@ -527,7 +526,7 @@ function updateUser(req, res) {
       updatedBy: req.decoded.userId,
       password: user.password,
     };
-    const status = req.body.isActive == 'true' ? 1 : 0;
+    const status = req.body.isActive == "true" ? 1 : 0;
     // console.log('status:', status);
     var userDetailsForLoginActivity = {
       userName: user.userName,
@@ -541,15 +540,15 @@ function updateUser(req, res) {
       createdBy: user.createdBy,
       updatedAt: new Date().getTime(),
     };
-    if (req.body.isActive == 'true') {
+    if (req.body.isActive == "true") {
       updateData.status = 1;
-    } else if (req.body.isActive == 'false') {
+    } else if (req.body.isActive == "false") {
       updateData.status = 0;
     }
-    if (req.body.password && req.body.password !== '') {
+    if (req.body.password && req.body.password !== "") {
       bcrypt.hash(req.body.password, config.saltRounds, (err, hash) => {
         if (err) {
-          return res.status(404).send({ message: 'NEW_PASS_HASH_FAIL' });
+          return res.status(404).send({ message: "NEW_PASS_HASH_FAIL" });
         }
         updateData.password = hash;
 
@@ -559,7 +558,7 @@ function updateUser(req, res) {
           { new: true },
           (err, updatedUser) => {
             if (err) {
-              return res.status(404).send({ message: 'User not updated' });
+              return res.status(404).send({ message: "User not updated" });
             }
             LoginActivity.findOneAndUpdate(
               {
@@ -569,10 +568,10 @@ function updateUser(req, res) {
               { upsert: true, new: true },
               (err, user) => {
                 if (err)
-                  return res.send({ message: 'login activity not updated' });
+                  return res.send({ message: "login activity not updated" });
                 return res.send({
                   success: true,
-                  message: 'User updated successfully',
+                  message: "User updated successfully",
                   results: null,
                 });
               }
@@ -582,7 +581,7 @@ function updateUser(req, res) {
       });
     } else if (
       req.body.password == null ||
-      req.body.password == '' ||
+      req.body.password == "" ||
       req.body.password == undefined
     ) {
       User.updateOne(
@@ -591,7 +590,7 @@ function updateUser(req, res) {
         { new: true },
         (err, updatedUser) => {
           if (err) {
-            return res.status(404).send({ message: 'User not updated' });
+            return res.status(404).send({ message: "User not updated" });
           }
           LoginActivity.findOneAndUpdate(
             {
@@ -601,10 +600,10 @@ function updateUser(req, res) {
             { upsert: true, new: true },
             (err, user) => {
               if (err)
-                return res.send({ message: 'login activity not updated' });
+                return res.send({ message: "login activity not updated" });
               return res.send({
                 success: true,
-                message: 'User updated successfully',
+                message: "User updated successfully",
                 results: null,
               });
             }
@@ -623,18 +622,18 @@ function searchUsers(req, res) {
 
   let page = 1;
   let sort = -1;
-  const sortValue = 'createdAt';
+  const sortValue = "createdAt";
   let limit = config.pageSize;
 
   if (req.body.numRecords) {
     if (isNaN(req.body.numRecords))
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+      return res.status(404).send({ message: "NUMBER_RECORDS_IS_NOT_PROPER" });
     if (req.body.numRecords < 0)
-      return res.status(404).send({ message: 'NUMBER_RECORDS_IS_NOT_PROPER' });
+      return res.status(404).send({ message: "NUMBER_RECORDS_IS_NOT_PROPER" });
     if (req.body.numRecords > 100)
       return res
         .status(404)
-        .send({ message: 'NUMBER_RECORDS_NEED_TO_LESS_THAN_100' });
+        .send({ message: "NUMBER_RECORDS_NEED_TO_LESS_THAN_100" });
     limit = Number(req.body.numRecords);
   }
 
@@ -643,7 +642,7 @@ function searchUsers(req, res) {
   }
 
   const query = {};
-  query.userName = { $regex: req.body.userName, $options: 'i' };
+  query.userName = { $regex: req.body.userName, $options: "i" };
 
   User.aggregate([
     { $match: query },
@@ -652,10 +651,10 @@ function searchUsers(req, res) {
     { $limit: limit },
     {
       $lookup: {
-        from: 'users',
-        localField: 'createdBy',
-        foreignField: 'userId',
-        as: 'masterDetails',
+        from: "users",
+        localField: "createdBy",
+        foreignField: "userId",
+        as: "masterDetails",
       },
     },
     {
@@ -666,20 +665,20 @@ function searchUsers(req, res) {
         baseCurrency: 1,
         master: {
           $cond: [
-            { $eq: [{ $size: '$masterDetails' }, 0] },
-            'Unknown', // If masterDetails array is empty, set the master name as 'Unknown'
-            { $arrayElemAt: ['$masterDetails.userName', 0] }, // Get the first element from the masterDetails array
+            { $eq: [{ $size: "$masterDetails" }, 0] },
+            "Unknown", // If masterDetails array is empty, set the master name as 'Unknown'
+            { $arrayElemAt: ["$masterDetails.userName", 0] }, // Get the first element from the masterDetails array
           ],
         },
       },
     },
   ]).exec((err, results) => {
     if (err || !results || results.length === 0) {
-      return res.status(404).send({ message: 'No records found' });
+      return res.status(404).send({ message: "No records found" });
     }
     return res.send({
       success: true,
-      message: 'Users record found',
+      message: "Users record found",
       results: {
         docs: results,
         total: results.length,
@@ -699,11 +698,11 @@ function getCurrentUser(req, res) {
   }
   User.findOne({ userId: req.decoded.userId }, async (err, user) => {
     if (err || !user)
-      return res.status(404).send({ message: 'user not found' });
+      return res.status(404).send({ message: "user not found" });
 
     return res.send({
       success: true,
-      message: 'users record found',
+      message: "users record found",
       results: user,
       correctExposure: [],
     });
@@ -717,10 +716,10 @@ function getSingleUser(req, res) {
   }
   User.findOne({ _id: req.body.id }, { password: 0 }, (err, result) => {
     if (err || !result)
-      return res.status(404).send({ message: 'user not found' });
+      return res.status(404).send({ message: "user not found" });
     return res.send({
       success: true,
-      message: 'users record found',
+      message: "users record found",
       results: result,
     });
   });
@@ -734,18 +733,18 @@ function activeUser(req, res) {
 
   User.findOne({ _id: req.body.id }, (err, result) => {
     if (err || !result)
-      return res.status(404).send({ message: 'user not found' });
+      return res.status(404).send({ message: "user not found" });
     if (result.isActive == true) {
-      return res.status(404).send({ message: 'user is already active' });
+      return res.status(404).send({ message: "user is already active" });
     }
     result.isActive = true;
     result.status = 1;
     result.save((err, user) => {
       if (err || !user)
-        return res.status(404).send({ message: 'user not saved' });
+        return res.status(404).send({ message: "user not saved" });
       return res.send({
         success: true,
-        message: 'user activated successfully',
+        message: "user activated successfully",
         results: user,
       });
     });
@@ -759,17 +758,17 @@ function deactiveUser(req, res) {
   }
   User.findOne({ _id: req.body.id }, (err, user) => {
     if (err || !user)
-      return res.status(404).send({ message: 'user not found' });
+      return res.status(404).send({ message: "user not found" });
     if (user.isActive == false)
-      return res.status(404).send({ message: 'user is already deactivated' });
+      return res.status(404).send({ message: "user is already deactivated" });
     user.isActive = false;
     user.status = 0;
     user.save((err, user) => {
       if (err || !user)
-        return res.status(404).send({ message: 'user not saved' });
+        return res.status(404).send({ message: "user not saved" });
       return res.send({
         success: true,
-        message: 'user deactivated successfully',
+        message: "user deactivated successfully",
         results: user,
       });
     });
@@ -787,7 +786,7 @@ function settlePLAccount(req, res) {
     },
     (err, result) => {
       if (err || !result)
-        return res.status(404).send({ message: 'user not found' });
+        return res.status(404).send({ message: "user not found" });
       if (req.body.amount > result.availableBalance) {
         return res
           .status(404)
@@ -798,7 +797,7 @@ function settlePLAccount(req, res) {
       result.save();
       return res.send({
         success: true,
-        message: 'user account settled successfully',
+        message: "user account settled successfully",
         results: result,
       });
     }
@@ -812,10 +811,10 @@ function getSettlement(req, res) {
   }
   User.findOne({ _id: req.query.id }, (err, result) => {
     if (err || !result)
-      return res.status(404).send({ message: 'user not found' });
+      return res.status(404).send({ message: "user not found" });
     return res.send({
       success: true,
-      message: 'user settlement getting successfully',
+      message: "user settlement getting successfully",
       results: result.availableBalance,
     });
   });
@@ -841,10 +840,10 @@ function searchSingleUser(req, res) {
     { $match: query },
     {
       $lookup: {
-        from: 'users',
-        localField: 'createdBy',
-        foreignField: 'userId',
-        as: 'masterDetails',
+        from: "users",
+        localField: "createdBy",
+        foreignField: "userId",
+        as: "masterDetails",
       },
     },
     {
@@ -855,21 +854,21 @@ function searchSingleUser(req, res) {
         baseCurrency: 1,
         master: {
           $cond: [
-            { $eq: [{ $size: '$masterDetails' }, 0] },
-            '', // If masterDetails array is empty, set the master name as ''
-            { $arrayElemAt: ['$masterDetails.userName', 0] },
+            { $eq: [{ $size: "$masterDetails" }, 0] },
+            "", // If masterDetails array is empty, set the master name as ''
+            { $arrayElemAt: ["$masterDetails.userName", 0] },
           ],
         },
       },
     },
   ]).exec((err, results) => {
     if (err || !results || results.length === 0) {
-      return res.status(404).send({ message: 'No records found' });
+      return res.status(404).send({ message: "No records found" });
     }
 
     return res.send({
       success: true,
-      message: 'User record found',
+      message: "User record found",
       user: results,
     });
   });
@@ -877,12 +876,12 @@ function searchSingleUser(req, res) {
 
 const battorsList = async (req, res) => {
   if (req.decoded.role != 0) {
-    return res.status(404).send({ message: '-----' });
+    return res.status(404).send({ message: "-----" });
   }
   let usersQuery = {};
   let page = 1;
   let sort = -1;
-  let sortValue = '_id';
+  let sortValue = "_id";
   var limit = config.pageSize;
   usersQuery.role = 5;
   if (
@@ -896,16 +895,16 @@ const battorsList = async (req, res) => {
   if (req.query.page) page = Number(req.query.page);
 
   if (req.query.username)
-    usersQuery.userName = { $regex: req.query.username, $options: 'i' };
+    usersQuery.userName = { $regex: req.query.username, $options: "i" };
   usersQuery.isDeleted = false;
   User.paginate(
     usersQuery,
     { page: page, sort: { [sortValue]: sort }, limit: limit },
     (err, results) => {
-      if (err) return res.status(404).send({ message: 'Something went wrong' });
+      if (err) return res.status(404).send({ message: "Something went wrong" });
       return res.send({
         success: true,
-        message: 'Users list',
+        message: "Users list",
         total: results.total,
         results: results,
       });
@@ -915,33 +914,33 @@ const battorsList = async (req, res) => {
 
 const userSingleLedger = async (req, res) => {
   if (req.decoded.role != 0) {
-    return res.status(404).send({ message: '-----' });
+    return res.status(404).send({ message: "-----" });
   }
   const lastDeposit = await Deposits.find({ userId: req.query.userId })
     .sort({ _id: -1 })
     .limit(10);
   return res.send({
     success: true,
-    message: 'user ledger last record',
+    message: "user ledger last record",
     result: lastDeposit,
   });
 };
 
 const deleteUser = async (req, res) => {
   if (req.decoded.role != 0) {
-    return res.status(404).send({ message: '-----' });
+    return res.status(404).send({ message: "-----" });
   }
   const userId = req.query.id;
   let userIds = [userId];
   const finalUsers = [userId];
   do {
-    const dealers = await User.distinct('userId', {
+    const dealers = await User.distinct("userId", {
       createdBy: { $in: userIds },
-      role: { $ne: '5' },
+      role: { $ne: "5" },
     });
-    const battors = await User.distinct('userId', {
+    const battors = await User.distinct("userId", {
       createdBy: { $in: userIds },
-      role: '5',
+      role: "5",
     });
     finalUsers.push(...dealers, ...battors);
     // console.log('dealers list ========== ', dealers);
@@ -960,19 +959,18 @@ const deleteUser = async (req, res) => {
 
   return res.send({
     success: true,
-    message: 'user deleted succesfully !',
+    message: "user deleted succesfully !",
     results: null,
   });
 };
 
-const userAccountSattlement = async (req, res) =>{
-
+const userAccountSattlement = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const payload = req.body; 
+    const payload = req.body;
     await User.findOneAndUpdate(
       { userId: Number(payload.userId) },
       {
@@ -980,84 +978,86 @@ const userAccountSattlement = async (req, res) =>{
           exposure: Number(Number(payload.exposure).toFixed(2)),
           availableBalance: Number(Number(payload.availableBalance).toFixed(2)),
           balance: Number(Number(payload.balance).toFixed(2)),
-
-        }
+        },
       }
-    )
+    );
     return res.status(200).send({
       success: true,
       message: "User Updated Successfully !",
     });
-
-  } catch (error){
+  } catch (error) {
     console.log("Catched", error);
     return res.status(404).send({
       success: false,
       message: "Something Went Wrong!",
     });
   }
-}
+};
 
-router.post('/login', userValidation.validate('login'), login);
+router.post("/login", userValidation.validate("login"), login);
 loginRouter.post(
-  '/register',
-  userValidation.validate('registerUser'),
+  "/register",
+  userValidation.validate("registerUser"),
   registerUser
 );
 
-loginRouter.get('/getAllUsers', getAllUsers);
+loginRouter.get("/getAllUsers", getAllUsers);
 loginRouter.post(
-  '/changePassword',
-  userValidation.validate('changePassword'),
+  "/changePassword",
+  userValidation.validate("changePassword"),
   changePassword
 );
 loginRouter.post(
-  '/updateUser',
-  userValidation.validate('updateUser'),
+  "/updateUser",
+  userValidation.validate("updateUser"),
   updateUser
 );
 
 loginRouter.post(
-  '/searchUsers',
-  userValidation.validate('searchUsers'),
+  "/searchUsers",
+  userValidation.validate("searchUsers"),
   searchUsers
 );
 
-loginRouter.get('/getCurrentUser', getCurrentUser);
+loginRouter.get("/getCurrentUser", getCurrentUser);
 router.post(
-  '/getSingleUser',
-  userValidation.validate('getSingleUser'),
+  "/getSingleUser",
+  userValidation.validate("getSingleUser"),
   getSingleUser
 );
 loginRouter.post(
-  '/activeUser',
-  userValidation.validate('activeUser'),
+  "/activeUser",
+  userValidation.validate("activeUser"),
   activeUser
 );
 loginRouter.post(
-  '/deactiveUser',
-  userValidation.validate('deactiveUser'),
+  "/deactiveUser",
+  userValidation.validate("deactiveUser"),
   deactiveUser
 );
 loginRouter.post(
-  '/checkValidation',
-  userValidation.validate('checkValidation'),
+  "/checkValidation",
+  userValidation.validate("checkValidation"),
   checkValidation
 );
 
-loginRouter.get('/getSettlement', getSettlement);
+loginRouter.get("/getSettlement", getSettlement);
 loginRouter.post(
-  '/settlePLAccount',
-  userValidation.validate('settlePLAccount'),
+  "/settlePLAccount",
+  userValidation.validate("settlePLAccount"),
   settlePLAccount
 );
 
-loginRouter.post('/searchSingleUser', searchSingleUser);
-loginRouter.get('/battors-list', battorsList);
-loginRouter.get('/user-latest-ledger', userSingleLedger);
+loginRouter.post("/searchSingleUser", searchSingleUser);
+loginRouter.get("/battors-list", battorsList);
+loginRouter.get("/user-latest-ledger", userSingleLedger);
 
-loginRouter.get('/delete-user', deleteUser);
+loginRouter.get("/delete-user", deleteUser);
 
-loginRouter.post('/userAccountSettlement',userValidation.validate('userAccountSattlement'), userAccountSattlement);
+loginRouter.post(
+  "/userAccountSettlement",
+  userValidation.validate("userAccountSattlement"),
+  userAccountSattlement
+);
 
 module.exports = { router, loginRouter };
