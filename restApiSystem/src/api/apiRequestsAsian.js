@@ -17,8 +17,8 @@ const tableNames = [
     __v: 0,
   },
   {
-    tableId: "teen9",
-    tableName: "TEST TEENPATTI(TEST TEENPATTI)",
+    tableId: "teen8",
+    tableName: "TEENPATTI OPEN",
     imageUrl: "TEST_TEENPATTI.png",
     __v: 0,
   },
