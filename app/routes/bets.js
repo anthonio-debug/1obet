@@ -169,6 +169,12 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: "Bet not allowed" });
     }
     let parentUserIds = await getParents(user.userId);
+
+    const blockedUsersCount = await User.countDocuments({ userId: {$in: parentUserIds}, bettingAllowed: false })
+    if (blockedUsersCount > 0) {
+      return res.status(404).send({ message: "Bet not allowed" });
+    }
+
     const marketIds = await User.distinct("blockedMarketPlaces", {
       userId: { $in: parentUserIds },
       isDeleted: false,
@@ -192,10 +198,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: "EVENT COULD NOT FOUND" });
       }
 
-      console.log(
-        "================================ (eventDetail.status.toUpperCase()",
-        eventDetail.status.toUpperCase()
-      );
+      console.log( "================================ (eventDetail.status.toUpperCase()", eventDetail.status.toUpperCase());
 
       if (!eventDetail.betAllowed) {
         return res
