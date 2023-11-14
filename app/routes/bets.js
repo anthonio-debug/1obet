@@ -172,7 +172,7 @@ const placeBet = async (req, res) => {
 
     const blockedUsersCount = await User.countDocuments({ userId: {$in: parentUserIds}, bettingAllowed: false })
     if (blockedUsersCount > 0) {
-      return res.status(404).send({ message: "Bet disbaled ..." });
+      return res.status(404).send({ message: "Beting disbaled" });
     }
 
     const marketIds = await User.distinct("blockedMarketPlaces", {
