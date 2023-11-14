@@ -10,7 +10,7 @@ let options = {
 mongoose.set('strictQuery', false);
 mongoose.set({ debug: false });
 mongoose
-  .connect(`mongodb://127.0.0.1/${config.database_name}`, options)
+  .connect("mongodb://127.0.0.1/Bet99", options)
   .then(() => {
     console.log('Database connected');
   })
