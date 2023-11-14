@@ -150,7 +150,7 @@ async function registerUser(req, res) {
                     user_nickname: user_username,
                     currency: req.body.baseCurrency,
                   });
-                  let data = response.data;
+                  let data = response.data.respone;
                   // console.log('API Response:', response.data);
                   user.remoteId = data.id;
                   user.save();
@@ -173,7 +173,7 @@ async function registerUser(req, res) {
         });
       } else {
         // For other users, run the userBetSizes query
-        let betLimits = await userBetSizes.find({ userId: parentUser.userId });
+        let betLimits = await UserBetSizes.find({ userId: parentUser.userId });
         user.save((err, user) => {
           if (err || !user) {
             return res
@@ -210,7 +210,7 @@ async function registerUser(req, res) {
                     user_nickname: user_username,
                     currency: req.body.baseCurrency,
                   });
-                  let data = response.data;
+                  let data = response.data.respone;
                   // console.log('API Response:', response.data);
                   user.remoteId = data.id;
                   user.save();
