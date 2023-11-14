@@ -10,6 +10,9 @@ const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
 const { getParents }  = require("./bets");
 const SelectedCasino  = require("../models/selectedCasino");
+const DBNAME = process.env.DB_NAME;
+const DBHost = process.env.DBHost;
+const saltKey = process.env.saltKey;
 
 const transactionOptions = {
   readPreference: 'primary',
@@ -32,11 +35,11 @@ const checkMarketBlocked  = async (user) => {
 
 const WinLoseTransManagement = async (balance, payload, users123, action) => {
   try{
-    const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+    const client = new MongoClient(DBHost, { useUnifiedTopology: true });
     await client.connect();
     const session = client.startSession();
-    const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
-    const users = client.db(`${config.DBNAME}`).collection('users');
+    const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
+    const users = client.db(`${DBNAME}`).collection('users');
     const user  = await users.findOne({remoteId: Number(payload.remote_id)});
 
     /*
@@ -538,7 +541,7 @@ function createHashKey(salt, queryString) {
 
 async function balancefun(req, res) {
   const payload = req.query;
-  const salt = config.saltKey;
+  const salt = saltKey;
   const key = payload.key;
   delete payload.key;
 
@@ -587,15 +590,15 @@ async function balancefun(req, res) {
 }
 
 async function debitfun(req, res){
-  const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+  const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
-  const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
-  const users = client.db(`${config.DBNAME}`).collection('users');
+  const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
+  const users = client.db(`${DBNAME}`).collection('users');
   try {
     console.log(" debt req.query ============== ", req.query);
     const payload = req.query;
-    const salt = config.saltKey;
+    const salt = saltKey;
     const key = payload.key;
     delete payload.key;
 
@@ -691,15 +694,15 @@ async function debitfun(req, res){
 }
 
 async function creditfun(req, res) {
-  const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+  const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
   try {
     console.log(" credit req.query ======= ", req.query);
-    const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
-    const users       = client.db(`${config.DBNAME}`).collection('users');
+    const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
+    const users       = client.db(`${DBNAME}`).collection('users');
     const payload     = req.query;
-    const salt        = config.saltKey;
+    const salt        = saltKey;
     const key         = payload.key;
     delete payload.key;
 
@@ -788,15 +791,15 @@ async function creditfun(req, res) {
 }
 
 async function rollbackfun(req, res) {
-  const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+  const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
   try {
     console.log(" rollback req.query ======= ", req.query);
-    const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
-    const users = client.db(`${config.DBNAME}`).collection('users');
+    const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
+    const users = client.db(`${DBNAME}`).collection('users');
     const payload = req.query;
-    const salt = config.saltKey;
+    const salt = saltKey;
     const key = payload.key;
     delete payload.key;
     const queryString = Object.keys(payload)

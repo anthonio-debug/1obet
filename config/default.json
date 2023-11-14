@@ -1,5 +1,4 @@
 {
-
   "apisFileName": "config/settings/apis/allApis.json",
   "saltRounds": 10,
   "pageSize": 10,
@@ -18,19 +17,6 @@
   "worldCasinoOnlineApiUrl": "https://stageapi.worldcasinoonline.com/api",
   "oldSaltKey": "Loa0192Jua",
   "betMinimumAmount": 100,
-
-
-  "secret": "CACDC71392128377936E8EAAF8E77",
-  "api_username": "1obet_mc_s",
-  "api_password": "1oB3tTjFg97gEWasCx",
-  "staging_api_password": "6w9GNrsxZsHBeC795N",
-  "staging_api_login": "1obet_mc_s",
-  "saltKey": "sl1obt3GF",
-  "worldCasinoOnlineUserId": "1obet",
-  "worldCasinoOnlinePartnerKey": "2fazKPGm1UPqF+8Au+vyzvGFhRy7YbQr+AhtWxtj1YO3Kbr4qkiEOic+4j8/Nesf",
-  "worldCasinoOnlineDisplayName": "1obet_admin",
-  "worldCasinoOnlineRedirectionUrl": "https://1obet.com/",
-  "AsianCasinopartnerKey": "2fazKPGm1UPqF+8Au+vyzvGFhRy7YbQr+AhtWxtj1YO3Kbr4qkiEOic+4j8/Nesf",
 
 
   "language": "en",

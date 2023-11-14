@@ -9,7 +9,7 @@ const { MongoClient }     = require('mongodb');
 const casinoMultiples     = config.casinoMultiples;
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
-const PORT = process.env.SERVERPORT;
+const saltKey = process.env.saltKey;
 
 const transactionOptions  = {
   readPreference: 'primary',
@@ -79,9 +79,7 @@ if(difference < 0){
         console.log(" parentUser  ============ ", parentUserIds);
         const parentUser = await users.find(
           { userId: { $in: parentUserIds }, isDeleted: false }
-        ).sort({ role: -1 }).toArray(); 
-
-        console.log(" parentUser  ============ ", parentUser);
+        ).sort({ role: -1 }).tsaltRoundser  ============ ", parentUser);
 
         if (!parentUser) {
           console.log(" ============ Parent User Not Found ============ ");
@@ -356,7 +354,7 @@ function createHashKey(salt, queryString) {
 
 async function balance(req, res) {
   const payload = req.query;
-  const salt = config.saltKey;
+  const salt = saltKey;
   const key = payload.key;
   delete payload.key;
 
@@ -409,7 +407,7 @@ async function debit(req, res) {
     // const Cash = client.db(`${DBNAME}`).collection('deposits');
 
     const payload = req.query;
-    const salt = config.saltKey;
+    const salt = saltKey;
     const key = payload.key;
     delete payload.key;
     
@@ -649,7 +647,7 @@ async function credit(req, res) {
     const users = client.db(`${DBNAME}`).collection('users');
 
     const payload = req.query;
-    const salt = config.saltKey;
+    const salt = saltKey;
     const key = payload.key;
     delete payload.key;
 
@@ -908,7 +906,7 @@ async function rollback(req, res) {
     const users = client.db(`${DBNAME}`).collection('users');
     // session.startTransaction();
     const payload = req.query;
-    const salt = config.saltKey;
+    const salt = saltKey;
     const key = payload.key;
     delete payload.key;
     const queryString = Object.keys(payload)
