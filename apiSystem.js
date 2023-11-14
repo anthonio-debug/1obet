@@ -13,7 +13,7 @@ const ToolForRacing = require("./restApiSystem/src/tools_for_racing.js")();
 const ToolForFancy = require("./restApiSystem/src/tools_for_fancy.js")();
 const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
 
-const port = 3004;
+const port = 5000;
 
 const httpServer = https.createServer(express);
 const io = socketIo(httpServer, {
