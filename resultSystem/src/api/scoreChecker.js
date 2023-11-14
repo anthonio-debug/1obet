@@ -557,14 +557,16 @@ function scoreChecker() {
                 const description = result.data.data[0].desc;
                 const generalResult = description.split(" || ");
                 let wid = "0";
+                let widColor = "0";
+                let widOdd = "0";
                 if (generalResult[1] === "Red") {
-                  wid = "5";
+                  widColor = "5";
                 } else if (generalResult[1] === "Black") {
-                  wid = "6";
+                  widColor = "6";
                 } else if (generalResult[2] === "Even") {
-                  wid = "3";
+                  widOdd = "3";
                 } else if (generalResult[2] === "Odd") {
-                  wid = "4";
+                  widOdd = "4";
                 } else if (generalResult[3] === "Card 1") {
                   wid = "7";
                 } else if (generalResult[3] === "Card 2") {
@@ -592,7 +594,11 @@ function scoreChecker() {
                 } else if (generalResult[3] === "Card K") {
                   wid = "19";
                 }
-                if (betData[i].runner == wid) {
+                if (
+                  betData[i].runner == wid ||
+                  betData[i].runner == widColor ||
+                  betData[i].runner == widOdd
+                ) {
                   handleWinningBet(betData[i]);
                 } else {
                   handleLosingBet(betData[i]);
