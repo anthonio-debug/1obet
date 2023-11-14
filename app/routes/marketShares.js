@@ -17,7 +17,7 @@ const marketGainWithDuplicates = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
   const userId = Number(req.query.userId);
-  const betId = req.query.betId;
+  // const betId = req.query.betId;
   const marketId = req.query.marketId;
 
   // const condition = { marketId: marketId }
@@ -31,7 +31,7 @@ const marketGainWithDuplicates = async (req, res) => {
 
     const depositRes = await CashDeposit.findOne({
       marketId: marketId,
-      betId: betId,
+      // betId: betId,
       $or: [
         {
           $and: [
