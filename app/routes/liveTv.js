@@ -156,38 +156,38 @@ async function liveRresultTp20(req, res) {
 }
 
 async function liveDrateTp9(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/teen9`;
+  const url = `${config.liveBetTvUrl}/d_rate/teen8`;
   try {
     const response = await axios.get(url);
     const liveTp9dRateData = response.data;
     res.status(200).json({
       success: true,
-      message: "Live Tv Streaming for teen9 dRate",
+      message: "Live Tv Streaming for teen8 dRate",
       liveTp9dRateData: liveTp9dRateData,
     });
   } catch (err) {
     res.status(200).json({
       success: false,
-      message: "Failed to get live Tv Streaming for teen9 dRate",
+      message: "Failed to get live Tv Streaming for teen8 dRate",
       error: err.message,
     });
   }
 }
 
 async function liveLresultTp9(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/teen9`;
+  const url = `${config.liveBetTvUrl}/l_result/teen8`;
   try {
     const response = await axios.get(url);
     const liveTp9lResultData = response.data;
     res.status(200).json({
       success: true,
-      message: "Live Tv Streaming for teen9 lResult",
+      message: "Live Tv Streaming for teen8 lResult",
       liveTp9lResultData: liveTp9lResultData,
     });
   } catch (err) {
     res.status(200).json({
       success: false,
-      message: "Failed to get live Tv Streaming for teen9 lResult",
+      message: "Failed to get live Tv Streaming for teen8 lResult",
       error: err.message,
     });
   }
@@ -195,19 +195,19 @@ async function liveLresultTp9(req, res) {
 
 async function tpRoundResult(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/teen9/${roundId}`;
+  const url = `${config.liveBetTvUrl}/r_result/teen8/${roundId}`;
   try {
     const response = await axios.get(url);
     const tp2020RoundResult = response.data;
     res.status(200).json({
       success: true,
-      message: "Round Result in TP2020",
+      message: "Round Result in Teen8",
       tp2020RoundResult: tp2020RoundResult,
     });
   } catch (err) {
     res.status(200).json({
       success: false,
-      message: "Failed to get tp2020 Round Result",
+      message: "Failed to get Teen9 Round Result",
       error: err.message,
     });
   }
@@ -642,9 +642,9 @@ router.get("/liveTv/l_result/teen20", liveLresultTp20);
 router.get("/liveTv/r_result/teen20/:roundId", liveRresultTp20);
 
 //TEST TEENPATTI(TEST TEENPATTI)
-router.get("/liveTv/d_rate/teen9", liveDrateTp9);
-router.get("/liveTv/l_result/teen9", liveLresultTp9);
-router.get("/liveTv/r_result/teen9/:roundId", tpRoundResult);
+router.get("/liveTv/d_rate/teen8", liveDrateTp9);
+router.get("/liveTv/l_result/teen8", liveLresultTp9);
+router.get("/liveTv/r_result/teen8/:roundId", tpRoundResult);
 
 //LUCKY 7-A
 router.get("/liveTv/d_rate/lucky7", liveDrateLucky7);
