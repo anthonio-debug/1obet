@@ -17,7 +17,7 @@ const marketGainWithDuplicates = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
   const userId = Number(req.query.userId);
-
+  const betId = req.query.betId;
   const marketId = req.query.marketId;
 
   // const condition = { marketId: marketId }
@@ -31,6 +31,7 @@ const marketGainWithDuplicates = async (req, res) => {
 
     const depositRes = await CashDeposit.findOne({
       marketId: marketId,
+      betId: betId,
       $or: [
         {
           $and: [
@@ -48,14 +49,15 @@ const marketGainWithDuplicates = async (req, res) => {
       ],
     });
 
-    if (!depositRes) return res.status(404).send({ message: "Cannot find desposit" });
+    if (!depositRes)
+      return res.status(404).send({ message: "Cannot find desposit" });
 
     let response = {
       _id: depositRes.betId,
       pl: depositRes.amount,
       sattledAt: depositRes.date,
-      sportsId: depositRes.sportsId
-    }
+      sportsId: depositRes.sportsId,
+    };
 
     if (depositRes.sportsId != "6") {
       const betRes = await Bets.findOne({ _id: depositRes.betId });
@@ -66,7 +68,6 @@ const marketGainWithDuplicates = async (req, res) => {
       response.type = betRes.type;
       response.isfancyOrbookmaker = betRes.isfancyOrbookmaker;
       response.fancyData = betRes.fancyData;
-      
     }
 
     return res.send({
