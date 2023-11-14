@@ -156,38 +156,38 @@ async function liveRresultTp20(req, res) {
 }
 
 async function liveDrateTp9(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/teen8`;
+  const url = `${config.liveBetTvUrl}/d_rate/teen9`;
   try {
     const response = await axios.get(url);
     const liveTp9dRateData = response.data;
     res.status(200).json({
       success: true,
-      message: "Live Tv Streaming for teen8 dRate",
+      message: "Live Tv Streaming for teen9 dRate",
       liveTp9dRateData: liveTp9dRateData,
     });
   } catch (err) {
     res.status(200).json({
       success: false,
-      message: "Failed to get live Tv Streaming for teen8 dRate",
+      message: "Failed to get live Tv Streaming for teen9 dRate",
       error: err.message,
     });
   }
 }
 
 async function liveLresultTp9(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/teen8`;
+  const url = `${config.liveBetTvUrl}/l_result/teen9`;
   try {
     const response = await axios.get(url);
     const liveTp9lResultData = response.data;
     res.status(200).json({
       success: true,
-      message: "Live Tv Streaming for teen8 lResult",
+      message: "Live Tv Streaming for teen9 lResult",
       liveTp9lResultData: liveTp9lResultData,
     });
   } catch (err) {
     res.status(200).json({
       success: false,
-      message: "Failed to get live Tv Streaming for teen8 lResult",
+      message: "Failed to get live Tv Streaming for teen9 lResult",
       error: err.message,
     });
   }
@@ -195,13 +195,13 @@ async function liveLresultTp9(req, res) {
 
 async function tpRoundResult(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/teen8/${roundId}`;
+  const url = `${config.liveBetTvUrl}/r_result/teen9/${roundId}`;
   try {
     const response = await axios.get(url);
     const tp2020RoundResult = response.data;
     res.status(200).json({
       success: true,
-      message: "Round Result in Teen8",
+      message: "Round Result in Teen9",
       tp2020RoundResult: tp2020RoundResult,
     });
   } catch (err) {
