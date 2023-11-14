@@ -3,7 +3,9 @@ const mongoose = require("mongoose");
 const express = require("express")();
 const https = require("http");
 const socketIo = require("socket.io");
-
+require('dotenv').config();
+const port = process.env.APISYSTEMPORT;
+const DBNAME = process.env.DB_NAME;
 //Mongoose models
 const inPlayEvents = require("./app/models/events");
 
@@ -12,9 +14,6 @@ const ToolForEvent = require("./restApiSystem/src/tools_for_events.js")();
 const ToolForRacing = require("./restApiSystem/src/tools_for_racing.js")();
 const ToolForFancy = require("./restApiSystem/src/tools_for_fancy.js")();
 const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
-
-const port = 5000;
-
 const httpServer = https.createServer(express);
 const io = socketIo(httpServer, {
   path: "/websocket",
@@ -33,7 +32,7 @@ const mongooseOptions = {
 mongoose.set("strictQuery", false);
 mongoose.set({ debug: false });
 mongoose
-  .connect("mongodb://127.0.0.1/Bet99", mongooseOptions)
+  .connect(`mongodb://127.0.0.1/${DBNAME}`, mongooseOptions)
   .then(() => {
     console.log("Database connected");
   })

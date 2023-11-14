@@ -1,8 +1,8 @@
 
 const mongoose = require('mongoose');
-
+require('dotenv').config();
 const ToolForResults = require('./result-saver-src/toolStart.js')();
-
+const DBNAME = process.env.DB_NAME;
 const mongooseOptions = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -12,7 +12,7 @@ const mongooseOptions = {
 mongoose.set('strictQuery', false);
 mongoose.set({ debug: false });
 mongoose
-  .connect('mongodb://127.0.0.1/Bet99', mongooseOptions)
+  .connect(`mongodb://127.0.0.1/${DBNAME}`, mongooseOptions)
   .then(async () => {
     console.log('Database connected');
     await ToolForResults.init();

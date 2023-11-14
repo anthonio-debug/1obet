@@ -7,8 +7,9 @@ const crypto              = require('crypto');
 const config              = require('config')
 const { MongoClient }     = require('mongodb');
 const casinoMultiples     = config.casinoMultiples;
-const { getParents } = require("../../app/routes/bets");
-const { log } = require('async');
+const DBNAME = process.env.DB_NAME;
+const DBHost = process.env.DBHost;
+const PORT = process.env.SERVERPORT;
 
 const transactionOptions  = {
   readPreference: 'primary',
@@ -281,7 +282,7 @@ const amount             = bettor_winning_amount * config.casinoMultiples;
              amount: -(user.commission / 100) * amount,
              balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
              availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
-             maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * amount : -(user.commission / 100) * amount * 0,  max withdraw cant be negative 
+             maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * amount : -(user.commission / 100) * amount * 0, //  max withdraw cant be negative 
              cash: lastMaxWithdraw ? lastMaxWithdraw.cash - (user.commission / 100) * amount : -(user.commission / 100) * amount,
              cashOrCredit: "Bet",
              betId: payload.transaction_id,
@@ -399,13 +400,13 @@ async function balance(req, res) {
 }
 
 async function debit(req, res) {
-  const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+  const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
   try {
     console.log(" debt req.query ============== ", req.query);
     
-    // const Cash = client.db(`${config.DBNAME}`).collection('deposits');
+    // const Cash = client.db(`${DBNAME}`).collection('deposits');
 
     const payload = req.query;
     const salt = config.saltKey;
@@ -429,8 +430,8 @@ async function debit(req, res) {
 
 
     await session.withTransaction(async () => {
-      const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
-      const users = client.db(`${config.DBNAME}`).collection('users');
+      const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
+      const users = client.db(`${DBNAME}`).collection('users');
 
       // console.log(`>>>>>>>>>>>>>>>>>>>>>>>>>>> remote_id ${payload.remote_id}`)
       const sameTransId = await casinoCalls.countDocuments(
@@ -638,14 +639,14 @@ async function debit(req, res) {
 }
 
 async function credit(req, res) {
-  const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+  const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
   try {
     console.log(" credit req.query ======= ", req.query);
     // console.log('======', session.emit())
-    const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
-    const users = client.db(`${config.DBNAME}`).collection('users');
+    const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
+    const users = client.db(`${DBNAME}`).collection('users');
 
     const payload = req.query;
     const salt = config.saltKey;
@@ -897,14 +898,14 @@ async function credit(req, res) {
 }
 
 async function rollback(req, res) {
-  const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+  const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
   try {
     console.log(" rollback req.query ======= ", req.query);
     // console.log('======', session.emit())
-    const casinoCalls = client.db(`${config.DBNAME}`).collection('casinocalls');
-    const users = client.db(`${config.DBNAME}`).collection('users');
+    const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
+    const users = client.db(`${DBNAME}`).collection('users');
     // session.startTransaction();
     const payload = req.query;
     const salt = config.saltKey;

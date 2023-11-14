@@ -7,6 +7,11 @@ let fs = require("fs");
 let cors = require("cors");
 var morgan = require("morgan");
 const http = require("http");
+require('dotenv').config();
+const DBNAME = process.env.DB_NAME;
+const DBHost = process.env.DBHost;
+const PORT = process.env.SERVERPORT;
+
 const apisMiddleware = require("./app/middlewares/apisMiddleware");
 const loginMiddleWare = require("./app/middlewares/loginMiddleware");
 const checkRoleMiddleware = require("./app/middlewares/checkRoleMiddleware");
@@ -22,7 +27,7 @@ let options = {
 mongoose.set("strictQuery", false);
 mongoose.set({ debug: false });
 mongoose
-  .connect(config.DBHost, options)
+  .connect(DBHost, options)
   .then(() => {
     console.log("Database connected");
   })
@@ -116,7 +121,7 @@ app.use("/api", require("./app/routes/betPlaceHold").loginRouter);
 // LISTEN HERE
 // Create HTTPs server.
 var server = http.createServer(app);
-server.listen(config.PORT, (err) => {
+server.listen(PORT, (err) => {
   if (err) throw new Error(err);
-  console.log(`Server is listening on port ${config.PORT}`);
+  console.log(`Server is listening on port ${PORT}`);
 });

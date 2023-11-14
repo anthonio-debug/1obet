@@ -1,6 +1,10 @@
 const LoginActivity = require('../models/loginActivity');
 const jwt = require('jsonwebtoken');
 const config = require('config');
+
+require('dotenv').config();
+const secret = process.env.secret;
+
 // const geoHash = require('ngeohash')
 
 function verifySecureLogin(req, res, next) {
@@ -40,7 +44,7 @@ function check(req, res, next, token) {
           message: 'Invalid or expired authorization token or inactive token',
         }); //when the testing, comment
 
-      jwt.verify(token, config.secret, function (err, decoded) {
+      jwt.verify(token, secret, function (err, decoded) {
         // console.log('decoded:', decoded);
         if (err)
           return res

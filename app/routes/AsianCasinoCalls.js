@@ -8,6 +8,9 @@ const casinoMultiples = 1;
 const partnerKey = config.AsianCasinopartnerKey;
 const { getParents } = require("../routes/bets");
 const router = express.Router();
+const DBNAME = process.env.DB_NAME;
+const DBHost = process.env.DBHost;
+const PORT = process.env.SERVERPORT;
 
 const transactionOptions = {
   readPreference: "primary",
@@ -32,11 +35,11 @@ const checkMarketBlocked = async (user) => {
 
 const WinLoseTransManagement = async (payload, action) => {
   return 1;
-  const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+  const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
-  const casinoCalls = client.db(`${config.DBNAME}`).collection("casinocalls");
-  const users = client.db(`${config.DBNAME}`).collection("users");
+  const casinoCalls = client.db(`${DBNAME}`).collection("casinocalls");
+  const users = client.db(`${DBNAME}`).collection("users");
   const user = await users.findOne({ remoteId: Number(payload.remote_id) });
 
   /*
@@ -705,14 +708,14 @@ const debit = async (req, res) => {
   console.log(
     " ================================================================= "
   );
-  const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+  const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
   try {
     const casinoCalls = client
-      .db(`${config.DBNAME}`)
+      .db(`${DBNAME}`)
       .collection("asiancasinocalls");
-    const users = client.db(`${config.DBNAME}`).collection("users");
+    const users = client.db(`${DBNAME}`).collection("users");
     const payload = req.body;
     const timestamp = new Date().getTime() / 1000;
 
@@ -1019,15 +1022,15 @@ const credit = async (req, res) => {
   console.log(
     " ================================================================= "
   );
-  const client = new MongoClient(config.DBHost, { useUnifiedTopology: true });
+  const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
   const timestamp = new Date().getTime() / 1000;
   try {
     const casinoCalls = client
-      .db(`${config.DBNAME}`)
+      .db(`${DBNAME}`)
       .collection("asiancasinocalls");
-    const users = client.db(`${config.DBNAME}`).collection("users");
+    const users = client.db(`${DBNAME}`).collection("users");
     const payload = req.body;
     const game = payload.gameData;
     const trans = payload.transactionData;

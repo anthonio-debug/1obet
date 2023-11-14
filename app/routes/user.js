@@ -6,6 +6,12 @@ const { validationResult } = require('express-validator');
 let config = require('config');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
+
+require('dotenv').config();
+const secret = process.env.secret;
+const api_username = process.env.api_username;
+const api_password = process.env.api_password;
+
 // const Bets = require('../models/bets');
 
 //ip location
@@ -143,8 +149,8 @@ async function registerUser(req, res) {
                 console.log('in casino bettor user');
                 try {
                   const response = await axios.post(config.apiUrl, {
-                    api_password: config.api_password,
-                    api_login: config.api_username,
+                    api_password: api_password,
+                    api_login: api_username,
                     method: 'createPlayer',
                     user_username,
                     user_password: user_username,
@@ -203,8 +209,8 @@ async function registerUser(req, res) {
                 console.log('in casino bettor user');
                 try {
                   const response = await axios.post(config.apiUrl, {
-                    api_password: config.api_password,
-                    api_login: config.api_username,
+                    api_password: api_password,
+                    api_login: api_username,
                     method: 'createPlayer',
                     user_username,
                     user_password: user_username,
@@ -284,7 +290,7 @@ function login(req, res) {
           user.token = token;
           user.save();
         } else if (user.token) {
-          jwt.verify(user.token, config.secret, function (err, decoded) {
+          jwt.verify(user.token, secret, function (err, decoded) {
             if (err || decoded.expr < new Date().getTime()) {
               console.log(
                 ' =========================  Expired token =====================  '
@@ -412,7 +418,7 @@ function getNonExpiringToken(userId, createdBy, role, isActive) {
     isActive: isActive,
     expr: new Date().getTime() + 12 * 60 * 60 * 1000,
   };
-  var token = jwt.sign(payload, config.secret, {
+  var token = jwt.sign(payload, secret, {
     expiresIn: new Date().getTime() + 12 * 60 * 60 * 1000,
   });
   return token;
@@ -471,7 +477,7 @@ function getAllUsers(req, res) {
     }
   );
 }
-app.set('secret', config.secret);
+app.set('secret', secret);
 
 function changePassword(req, res) {
   const errors = validationResult(req);

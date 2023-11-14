@@ -1,4 +1,6 @@
 let config = require('config');
+require('dotenv').config();
+const DBNAME = process.env.DB_NAME;
 const mongoose = require('mongoose');
 
 let options = {
@@ -10,7 +12,7 @@ let options = {
 mongoose.set('strictQuery', false);
 mongoose.set({ debug: false });
 mongoose
-  .connect("mongodb://127.0.0.1/Bet99", options)
+  .connect(`mongodb://127.0.0.1/${DBNAME}`, options)
   .then(() => {
     console.log('Database connected');
   })

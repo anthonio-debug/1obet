@@ -10,7 +10,14 @@ const SubMarketType = require("../models/subMarketTypes");
 const loginRouter = express.Router();
 const axios = require("axios");
 let config = require("config");
-const User = require("../models/user");          
+const User = require("../models/user");         
+
+require('dotenv').config();
+const api_username = process.env.api_username;
+const api_password = process.env.api_password;
+
+
+
 
 const getParents = async (userId) => {
   const parentUserIds = [];
@@ -133,8 +140,8 @@ async function addEuCasinoGameDetails(req, res) {
   }
   try {
     const response = await axios.post(config.apiUrl, {
-      api_password: config.api_password,
-      api_login: config.api_username,
+      api_password: api_password,
+      api_login: api_username,
       method: 'getGameList',
       show_additional: true,
       show_systems: 1,
@@ -664,8 +671,8 @@ async function getGame(req, res) {
     // console.log(" Get Game user ======= ", user);
 
     const payload = {
-      api_password: config.api_password,
-      api_login: config.api_username,
+      api_password: api_password,
+      api_login: api_username,
       method: "getGame",
       lang: config.language,
       user_username: "user_" + user.userId,
@@ -871,8 +878,8 @@ async function getGameDirect(req, res) {
     const user = await User.findOne({ userId: req.decoded.userId });
 
     const payload = {
-      api_password: config.api_password,
-      api_login: config.api_username,
+      api_password: api_password,
+      api_login: api_username,
       method: "getGameDirect",
       lang: config.language,
       user_username: "user_" + user.userId,

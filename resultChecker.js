@@ -1,6 +1,7 @@
 
 const mongoose = require('mongoose');
-
+require('dotenv').config();
+const DBNAME = process.env.DB_NAME;
 const ToolForResults = require('./resultSystem/src/tools_for_results.js')();
 
 
@@ -15,7 +16,7 @@ const mongooseOptions = {
 mongoose.set('strictQuery', false);
 mongoose.set({ debug: false });
 mongoose
-  .connect('mongodb://127.0.0.1/Bet99', mongooseOptions)
+  .connect(`mongodb://127.0.0.1/${DBNAME}`, mongooseOptions)
   .then(() => {
     console.log('Database connected');
   })

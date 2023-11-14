@@ -5,13 +5,15 @@ const Events = require("../../../app/models/events");
 const Cash = require("../../../app/models/deposits");
 const CurrentPosition = require("../../../app/models/CurrentPosition");
 const ExpRec = require("../../../app/models/ExpRec");
-
+require('dotenv').config();
+const DBNAME = process.env.DB_NAME;
+const port = process.env.SERVERPORT;
 const config = {
-  "PORT": 3003,
-  "DBNAME": "Bet99",
-  "DBHost": "mongodb://127.0.0.1/Bet99",
+  "PORT": port,
+  "DBNAME": DBNAME,
+  "DBHost": `mongodb://127.0.0.1/${DBNAME}`,
   "DBHostLive": "mongodb+srv://umar:ahmad123@cluster0.dillplp.mongodb.net/Bet99?retryWrites=true&w=majority",
-  "secret": "umarIsLove",
+  "secret": "CACDC71392128377936E8EAAF8E77",
   "apisFileName": "config/settings/apis/allApis.json",
   "saltRounds": 10,
   "pageSize": 10,
@@ -46,22 +48,6 @@ const config = {
   "balls": ["1", "2", "3", "4", "5", "6"],
   "matchTypes" : ["T10", "T20", "ODI", "TEST"],
   "ExcludedBackLay": [7, 8],
-  "figureRunners": [
-    { "runner": 0, "amount": 0 },
-    { "runner": 1, "amount": 0 },
-    { "runner": 2, "amount": 0 },
-    { "runner": 3, "amount": 0 },
-    { "runner": 4, "amount": 0 },
-    { "runner": 5, "amount": 0 },
-    { "runner": 6, "amount": 0 },
-    { "runner": 7, "amount": 0 },
-    { "runner": 8, "amount": 0 },
-    { "runner": 9, "amount": 0 }
-  ],
-  "FancyKaliJotaChottaBara":[
-    { "runner": 1, "amount": 0 },
-    { "runner": 0, "amount": 0 }
-  ],
   "soccerOdds": 13,
   "tennisOdds": 15,
   "cricketOdds": 6,
