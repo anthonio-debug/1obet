@@ -563,11 +563,15 @@ function scoreChecker() {
                   widColor = "5";
                 } else if (generalResult[1] === "Black") {
                   widColor = "6";
-                } else if (generalResult[2] === "Even") {
+                }
+
+                if (generalResult[2] === "Even") {
                   widOdd = "3";
                 } else if (generalResult[2] === "Odd") {
                   widOdd = "4";
-                } else if (generalResult[3] === "Card 1") {
+                }
+
+                if (generalResult[3] === "Card 1") {
                   wid = "7";
                 } else if (generalResult[3] === "Card 2") {
                   wid = "8";
@@ -594,6 +598,7 @@ function scoreChecker() {
                 } else if (generalResult[3] === "Card K") {
                   wid = "19";
                 }
+
                 if (
                   betData[i].runner == wid ||
                   betData[i].runner == widColor ||
