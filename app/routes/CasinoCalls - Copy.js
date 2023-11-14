@@ -79,7 +79,9 @@ if(difference < 0){
         console.log(" parentUser  ============ ", parentUserIds);
         const parentUser = await users.find(
           { userId: { $in: parentUserIds }, isDeleted: false }
-        ).sort({ role: -1 }).tsaltRoundser  ============ ", parentUser);
+        ).sort({ role: -1 }).toArray(); 
+
+        console.log(" parentUser  ============ ", parentUser);
 
         if (!parentUser) {
           console.log(" ============ Parent User Not Found ============ ");
