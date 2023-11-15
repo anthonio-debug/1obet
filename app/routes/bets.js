@@ -150,7 +150,7 @@ const placeBet = async (req, res) => {
     const BetTime = new Date().getTime();
     let id = 0;
     let isManuel = true;
-    let delay = 4200;
+    let delay = 6200;
     let asianTableName = "";
     /* ====================================================================== */
 
