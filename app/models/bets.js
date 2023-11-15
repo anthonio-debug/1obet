@@ -48,6 +48,9 @@ const betSchema = new mongoose.Schema({
   roundId: { type: String },
   asianTableName: { type: String },
   asianTableId: { type: String },
+  matchType:{ type: String, default: 0 },
+  winnerRunnerData:{ type: String, default: 0 },
+  SessionScore : { type: Number, default: 0 },
 });
 
 betSchema.pre("save", function (next) {

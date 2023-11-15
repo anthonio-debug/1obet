@@ -5,6 +5,8 @@ const Events = require("../../../app/models/events");
 const Cash = require("../../../app/models/deposits");
 const CurrentPosition = require("../../../app/models/CurrentPosition");
 const ExpRec = require("../../../app/models/ExpRec");
+const MarketIDS = require("../../../app/models/marketIds");
+const cricketSession = require("../../../app/models/Session");
 require('dotenv').config();
 const DBNAME = process.env.DB_NAME;
 const port = process.env.SERVERPORT;
@@ -257,7 +259,24 @@ async function handleLosingBet(bet) {
       }
 
       console.log(" ======================== Moving to Update  Bet Status ");
-      await Bets.findByIdAndUpdate(bet._id, { status: 0, position: bet.loosingAmount * -1, iscalculatedExp: calculatedExp });
+
+      let winnerRunnerData = 0;
+      let SessionScore = 0;
+      if(bet.isfancyOrbookmaker && bet.fancyData != null){
+        const marketInfo = await MarketIDS.findOne({ sportID: bet.sportsId,  marketId: bet.marketId });
+        winnerRunnerData = MarketIDS.winnerRunnerData
+      }else if(config.FigureEvenOddSmallBig.includes(bet.subMarketId)){
+        const match = await Events.findById(bet.matchId)
+        const marketInfo = await cricketSession.findOne({ marketId: match.Id });
+        SessionScore = marketInfo.score
+      }
+      await Bets.findByIdAndUpdate(bet._id, { 
+        status: 0, 
+        position: bet.loosingAmount * -1, 
+        iscalculatedExp: calculatedExp,
+        winnerRunnerData:winnerRunnerData,
+        SessionScore:SessionScore
+      });
 
       console.log(" betIdString =============== Starting ");
       console.log(bet._id.toString());
@@ -488,7 +507,26 @@ async function handleWinningBet(bet) {
         commissionFrom      = user.userId;
       }
 
-      await Bets.findByIdAndUpdate(bet._id, { status: 0, position: Number(bet.winningAmount.toFixed(2)), iscalculatedExp: calculatedExp });
+
+      let winnerRunnerData = 0;
+      let SessionScore = 0;
+      if(bet.isfancyOrbookmaker && bet.fancyData != null){
+        const marketInfo = await MarketIDS.findOne({ sportID: bet.sportsId,  marketId: bet.marketId });
+        winnerRunnerData = MarketIDS.winnerRunnerData
+      }else if(config.FigureEvenOddSmallBig.includes(bet.subMarketId)){
+        const match = await Events.findById(bet.matchId)
+        const marketInfo = await cricketSession.findOne({ marketId: match.Id });
+        SessionScore = marketInfo.score
+      }
+
+      await Bets.findByIdAndUpdate(bet._id, { 
+        status: 0, 
+        position: Number(bet.winningAmount.toFixed(2)), 
+        iscalculatedExp: calculatedExp,
+        winnerRunnerData:winnerRunnerData,
+        SessionScore:SessionScore 
+      });
+      
       console.log(" betIdString =============== Starting  ");
       console.log(bet._id.toString());
       const betIdString = bet._id.toString();
