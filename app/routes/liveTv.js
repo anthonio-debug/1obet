@@ -33,7 +33,7 @@ async function liveTv(req, res) {
 
 async function getAllTables(req, res) {
   try {
-    const allAsianTables = await AsianTable.find();
+    const allAsianTables = await AsianTable.find({ status: "1" });
 
     res.status(200).json({
       success: true,
