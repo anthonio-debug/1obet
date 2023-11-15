@@ -797,6 +797,11 @@ const placeBet = async (req, res) => {
         " ============================ GH & HR ============================ "
       );
       const DBOddDetails = await RaceOdds.findById(oddsId);
+      if(!DBOddDetails){
+        return res.status(404).send({
+          message: `Bet Miss Matched `,
+        });
+      }
       console.log(" ============================ ", DBOddDetails);
       const OddDetailsTeam = DBOddDetails?.runners.find(
         (runner) => runner.selectionId == selectionId
