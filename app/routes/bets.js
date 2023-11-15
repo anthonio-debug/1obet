@@ -797,7 +797,8 @@ const placeBet = async (req, res) => {
         " ============================ GH & HR ============================ "
       );
       const DBOddDetails = await RaceOdds.findById(oddsId);
-      const OddDetailsTeam = DBOddDetails.runners.find(
+      console.log(" ============================ ", DBOddDetails);
+      const OddDetailsTeam = DBOddDetails?.runners.find(
         (runner) => runner.selectionId == selectionId
       );
       let runners = DBOddDetails?.runners;
