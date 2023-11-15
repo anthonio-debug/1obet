@@ -156,7 +156,7 @@ const placeBet = async (req, res) => {
 
     /* ============================== Innitial Checks  ============================== */
 
-    if(subMarketName.toUpperCase() == "ZA"){
+    if(subMarketName.toUpperCase() == "ZA" || subMarketName.toUpperCase() == "RSA"){
       return res.status(404).send({ message: "Betting disabled" });
     }
 
