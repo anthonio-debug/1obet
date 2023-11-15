@@ -5,6 +5,7 @@ const AsianTableSchema = new mongoose.Schema({
   tableName: { type: String, required: true },
   imageUrl: { type: String },
   isDashboard: { type: Boolean, default: false },
+  status: { type: String },
 });
 
 const AsianTable = mongoose.model("asiantable", AsianTableSchema);
