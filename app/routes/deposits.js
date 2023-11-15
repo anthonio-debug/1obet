@@ -666,6 +666,9 @@ function getLedgerDetails(req, res) {
       {
         $addFields: {
           betSession: { $arrayElemAt: ['$betsDetails.betSession', 0] },
+          matchType: { $arrayElemAt: ['$betsDetails.matchType', 0] },
+          SessionScore: { $arrayElemAt: ['$betsDetails.SessionScore', 0] },
+          winnerRunnerData: { $arrayElemAt: ['$betsDetails.winnerRunnerData', 0] }
         },
       },
       {
