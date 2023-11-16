@@ -291,17 +291,19 @@ async function handleLosingBet(bet) {
               const marketInfo = await sessions.findOne({ eventId: match.Id, sessionNo:  bet.betSession  });
               SessionScore = marketInfo?.score;
             }
-            // await bets.updateOne(
-            //   {
-            //     _id: bet._id
-            //   }, 
-            //   {
-            //     status: 0,
-            //     position: bet.loosingAmount * -1,
-            //     iscalculatedExp: calculatedExp,
-            //     winnerRunnerData: winnerRunnerData,
-            //     SessionScore: SessionScore,
-            //   });
+            await bets.updateOne(
+              {
+                _id: bet._id
+              }, 
+              {
+                $set: {
+                  // status: 0,
+                  position: bet.loosingAmount * -1,
+                  iscalculatedExp: calculatedExp,
+                  winnerRunnerData: winnerRunnerData,
+                  SessionScore: SessionScore
+                }
+              });
 
             console.log(bet._id.toString());
             const betIdString = bet._id.toString();
