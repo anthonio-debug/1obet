@@ -237,38 +237,38 @@ async function handleLosingBet(bet) {
               let lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
               let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
     
-              // let newCash = deposits.insertOne({
-              //   userId: user.userId,
-              //   description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
-              //   createdBy: 0,
-              //   amount: (user.commission / 100) * TotalLoosingAmount,
-              //   balance: lastMaxWithdraw
-              //     ? lastMaxWithdraw.balance +
-              //       (user.commission / 100) * TotalLoosingAmount
-              //     : (user.commission / 100) * TotalLoosingAmount,
-              //   availableBalance: lastMaxWithdraw
-              //     ? lastMaxWithdraw.availableBalance +
-              //       (user.commission / 100) * TotalLoosingAmount
-              //     : (user.commission / 100) * TotalLoosingAmount,
-              //   maxWithdraw: lastMaxWithdraw
-              //     ? lastMaxWithdraw.maxWithdraw +
-              //       (user.commission / 100) * TotalLoosingAmount
-              //     : (user.commission / 100) * TotalLoosingAmount,
-              //   commissionFrom: commissionFrom,
-              //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-              //   credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-              //   creditRemaining: lastMaxWithdraw
-              //     ? lastMaxWithdraw.creditRemaining
-              //     : 0,
-              //   cashOrCredit: "loosing",
-              //   marketId: bet.marketId,
-              //   sportsId: bet.sportsId,
-              //   upLineAmount: upMovingAmount,
-              //   betId: bet._id,
-              //   matchId: bet.matchId,
-              //   betType: bet.type,
-              //   betDateTime: bet.betTime,
-              // })
+              let newCash = deposits.insertOne({
+                userId: user.userId,
+                description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
+                createdBy: 0,
+                amount: (user.commission / 100) * TotalLoosingAmount,
+                balance: lastMaxWithdraw
+                  ? lastMaxWithdraw.balance +
+                    (user.commission / 100) * TotalLoosingAmount
+                  : (user.commission / 100) * TotalLoosingAmount,
+                availableBalance: lastMaxWithdraw
+                  ? lastMaxWithdraw.availableBalance +
+                    (user.commission / 100) * TotalLoosingAmount
+                  : (user.commission / 100) * TotalLoosingAmount,
+                maxWithdraw: lastMaxWithdraw
+                  ? lastMaxWithdraw.maxWithdraw +
+                    (user.commission / 100) * TotalLoosingAmount
+                  : (user.commission / 100) * TotalLoosingAmount,
+                commissionFrom: commissionFrom,
+                cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+                credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+                creditRemaining: lastMaxWithdraw
+                  ? lastMaxWithdraw.creditRemaining
+                  : 0,
+                cashOrCredit: "loosing",
+                marketId: bet.marketId,
+                sportsId: bet.sportsId,
+                upLineAmount: upMovingAmount,
+                betId: bet._id,
+                matchId: bet.matchId,
+                betType: bet.type,
+                betDateTime: bet.betTime,
+              })
       
               console.log( " ======================== Parent User Cash Updating Sucessfully ");
 
