@@ -103,15 +103,15 @@ async function handleLosingBet(bet) {
   const marketIds = client.db(`${DBNAME}`).collection("marketids");
   const events = client.db(`${DBNAME}`).collection("inplayevents");
   const sessions = client.db(`${DBNAME}`).collection("sessions");
+  const exposures = client.db(`${DBNAME}`).collection("exposures");
 
   const currentPositions = client
     .db(`${DBNAME}`)
     .collection("currentpositions");
 
   try {
-    session.startTransaction();
-
     if (bet.status == 1) {
+      session.startTransaction();
       let calculatedExp = 0;
       console.log(`Bet ${bet._id} lost.`);
       const userId = bet.userId;
@@ -150,16 +150,33 @@ async function handleLosingBet(bet) {
         calculatedExp = 1;
       }
 
-      userToUpdate.balance = updatedbalance;
-      userToUpdate.clientPL = updatedClientPL;
-      userToUpdate.exposure = Number(
-        (userToUpdate.exposure + addExpoisureAmount).toFixed(2)
+      // userToUpdate.balance = updatedbalance;
+      // userToUpdate.clientPL = updatedClientPL;
+      // userToUpdate.exposure = Number(
+      //   (userToUpdate.exposure + addExpoisureAmount).toFixed(2)
+      // );
+      // userToUpdate.availableBalance = Number(
+      //   userToUpdate.availableBalance +
+      //     Number(userToUpdateAvailableBalance.toFixed(2))
+      // );
+
+      await users.findOneAndUpdate(
+        {
+          userId: userId,
+          isDeleted: false,
+        },
+        {
+          balance: updatedbalance,
+          clientPL: updatedClientPL,
+          exposure: Number(
+            (userToUpdate.exposure + addExpoisureAmount).toFixed(2)
+          ),
+          availableBalance: Number(
+            userToUpdate.availableBalance +
+              Number(userToUpdateAvailableBalance.toFixed(2))
+          ),
+        }
       );
-      userToUpdate.availableBalance = Number(
-        userToUpdate.availableBalance +
-          Number(userToUpdateAvailableBalance.toFixed(2))
-      );
-      await userToUpdate.save();
 
       const updatedUser = await users.findOne({
         userId: userId,
@@ -173,11 +190,12 @@ async function handleLosingBet(bet) {
 
       let lastTrans = await deposits
         .find({ userId: userToUpdate.userId })
+        .session(session)
         .sort({ _id: -1 })
         .limit(1);
 
       let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
-      let cash = new Cash({
+      let newCash = {
         userId: userToUpdate.userId,
         description: `Event (${bet.event}) Runner (${bet.runnerName})`,
         amount: -loosingAmount,
@@ -201,15 +219,16 @@ async function handleLosingBet(bet) {
         betId: bet._id,
         betType: bet.type,
         betDateTime: bet.betTime,
-      });
-      await cash.save();
+      };
+      await deposits.insertOne(newCash);
 
       lastTrans = await deposits
         .find({ userId: userToUpdate.userId })
+        .session(session)
         .sort({ _id: -1 })
         .limit(1);
 
-      const ExpTran = new ExpRec({
+      const ExpTran = {
         userId: updatedUser.userId,
         trans_from: "BetLose",
         trans_from_id: bet._id,
@@ -223,8 +242,8 @@ async function handleLosingBet(bet) {
         marketId: bet.marketId,
         sportsId: bet.sportsId,
         calculatedExp: calculatedExp,
-      });
-      await ExpTran.save();
+      };
+      await exposures.insertOne(ExpTran);
 
       console.log(" ======================== Cash Updating Sucessfully ");
 
@@ -237,6 +256,7 @@ async function handleLosingBet(bet) {
           },
           isDeleted: false,
         })
+        .session(session)
         .sort({ userId: -1 });
 
       if (!parentUser) {
@@ -311,11 +331,12 @@ async function handleLosingBet(bet) {
 
         let lastTrans = await deposits
           .find({ userId: user.userId })
+          .session(session)
           .sort({ _id: -1 })
           .limit(1);
         let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
 
-        let cash = new Cash({
+        let newCash = {
           userId: user.userId,
           description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
           createdBy: 0,
@@ -346,8 +367,10 @@ async function handleLosingBet(bet) {
           matchId: bet.matchId,
           betType: bet.type,
           betDateTime: bet.betTime,
-        });
-        cash.save();
+        };
+
+        await deposits.insertOne(newCash);
+        // cash.save();
 
         console.log(
           " ======================== Parent User Cash Updating Sucessfully "
@@ -736,12 +759,24 @@ async function handleWinningBet(bet) {
 }
 
 const handleDrawBet = async (bet, status = 2) => {
+  const client = new MongoClient(DBHost, { useUnifiedTopology: true });
+  await client.connect();
+  const session = client.startSession();
+  const users = client.db(`${DBNAME}`).collection("users");
+  const exposures = client.db(`${DBNAME}`).collection("exposures");
+  const bets = client.db(`${DBNAME}`).collection("bets");
+  const currentPositions = client
+    .db(`${DBNAME}`)
+    .collection("currentpositions");
+
   try {
     if (bet.status == 1) {
+      session.startTransaction();
+
       let calculatedExp = 0;
       console.log(` Bet ${bet._id} Draw. `);
       const userId = bet.userId;
-      const userToUpdate = await User.findOne({
+      const userToUpdate = await users.findOne({
         userId: userId,
         isDeleted: false,
       });
@@ -765,13 +800,23 @@ const handleDrawBet = async (bet, status = 2) => {
             userToUpdate.exposure + Number(bet.exposureAmount.toFixed(2))
           ).toFixed(2)
         );
-        userToUpdate.availableBalance = updatedUserAvlBalance;
-        userToUpdate.exposure = updatedUserExp;
+        // userToUpdate.availableBalance = updatedUserAvlBalance;
+        // userToUpdate.exposure = updatedUserExp;
         calculatedExp = 1;
+        await users.findOneAndUpdate(
+          {
+            userId: userId,
+            isDeleted: false,
+          },
+          {
+            availableBalance: updatedUserAvlBalance,
+            exposure: updatedUserExp,
+          }
+        );
       }
-      await userToUpdate.save();
+      // await userToUpdate.save();
 
-      const updatedUser = await User.findOne({
+      const updatedUser = await users.findOne({
         userId: userId,
         isDeleted: false,
       });
@@ -780,7 +825,7 @@ const handleDrawBet = async (bet, status = 2) => {
       const user_new_availableBalance = updatedUser.availableBalance;
       const user_new_exposure = updatedUser.exposure;
 
-      const ExpTran = new ExpRec({
+      const ExpTran = {
         userId: updatedUser.userId,
         trans_from: "BetDrawOrCanceled",
         trans_from_id: bet._id,
@@ -794,18 +839,23 @@ const handleDrawBet = async (bet, status = 2) => {
         marketId: bet.marketId,
         sportsId: bet.sportsId,
         calculatedExp: calculatedExp,
-      });
-      await ExpTran.save();
+      };
+
+      await exposures.insertOne(ExpTran);
+      // await ExpTran.save();
 
       const totalRemainingAmount = Number(bet.winningAmount.toFixed(2));
 
       const parentUserIds = await getParents(userId);
-      const parentUser = await User.find({
-        userId: {
-          $in: [...parentUserIds],
-        },
-        isDeleted: false,
-      }).sort({ role: -1 });
+      const parentUser = await users
+        .find({
+          userId: {
+            $in: [...parentUserIds],
+          },
+          isDeleted: false,
+        })
+        .session(session)
+        .sort({ role: -1 });
 
       if (!parentUser) {
         return res.status(404).send({ message: "user not found !" });
@@ -835,7 +885,7 @@ const handleDrawBet = async (bet, status = 2) => {
         user.save();
       }
 
-      await Bets.findByIdAndUpdate(bet._id, {
+      await bets.findByIdAndUpdate(bet._id, {
         position: 0,
         status: status,
         iscalculatedExp: calculatedExp,
@@ -845,10 +895,14 @@ const handleDrawBet = async (bet, status = 2) => {
       console.log(bet._id.toString());
       const betIdString = bet._id.toString();
       console.log(" betIdString ============================== ", betIdString);
-      await CurrentPosition.deleteMany({ betId: betIdString });
+      await currentPositions.deleteMany({ betId: betIdString });
     }
+    await session.commitTransaction();
   } catch (error) {
     console.error("error", error);
+    await session.abortTransaction();
+  } finally {
+    await session.endSession();
   }
 };
 
