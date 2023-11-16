@@ -97,8 +97,9 @@ async function getAllBets(Id) {
     return [];
   }
 }
-async function handleLosingBet(bet) {}
-async function _handleLosingBet(bet) {
+async function _handleLosingBet(bet) {}
+async function handleLosingBet(bet) {
+  console.log(" ====================== Draw is called ================ ");
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -213,20 +214,20 @@ async function _handleLosingBet(bet) {
               const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount ).toFixed(2)) : 0;
               const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(2));
               
-              await users.updateOne(
-                {
-                  userId: user.userId,
-                  isDeleted: false
-                },
-                { 
-                  balance: totalBalance,
-                  clientPL: totalClientPL,
-                  exposure: totalExpoisure,
-                  availableBalance: totalavailableBalance            
-                },
-                { session }
-              )
-              
+              // await users.updateOne(
+              //   {
+              //     userId: user.userId,
+              //     isDeleted: false
+              //   },
+              //   { 
+              //     balance: totalBalance,
+              //     clientPL: totalClientPL,
+              //     exposure: totalExpoisure,
+              //     availableBalance: totalavailableBalance            
+              //   },
+              //   { session }
+              // )
+
               console.log(" ======================== Parent User Updating Sucessfully ");
       
               // let lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).session(session)
@@ -339,8 +340,12 @@ async function _handleLosingBet(bet) {
   }
 }
 
-async function handleWinningBet(bet) {}
-async function handleDrawBet(bet) {}
+async function handleWinningBet(bet) {
+  console.log(" ====================== Winning is called ================ ");
+}
+async function handleDrawBet(bet) {
+  console.log(" ====================== Draw is called ================ ");
+}
 async function _handleWinningBet(bet) {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
