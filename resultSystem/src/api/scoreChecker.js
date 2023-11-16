@@ -450,7 +450,12 @@ function scoreChecker() {
             isfancyOrbookmaker: true,
             fancyData: fancyName,
           },
-          { $set: { resultId: newRecord._id } }
+          {
+            $set: {
+              resultId: newRecord._id,
+              winnerRunnerData: result.result,
+            },
+          }
         );
 
         const bets = await Bets.find({
