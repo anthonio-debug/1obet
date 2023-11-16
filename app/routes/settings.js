@@ -408,7 +408,7 @@ async function listEventsBySport(req, res) {
       } else {
         events = await Events.find({
           sportsId: sportId,
-          status: "OPEN",
+          $or: [{ status: "OPEN" }, { status: "SUSPENDED" }, { winner: 0 }],
         }).sort({ openDate: 1 });
       }
     }
@@ -1069,17 +1069,15 @@ async function bettorDashboardGames(req, res) {
     ).sort({
       openDate: -1,
     });
-    
-    const asianCasino = await AsianTable.find(
-      { isDashboard : true }
-    );
+
+    const asianCasino = await AsianTable.find({ isDashboard: true });
 
     const organizedEvents = {
       horseRace: horseRace,
       greyhound: greyHound,
       inPlay: inPlay,
       casinoData: selectedCasinoData,
-      asianCasino: asianCasino
+      asianCasino: asianCasino,
     };
 
     res.status(200).json({
@@ -1506,7 +1504,10 @@ async function getAllMatchSettlements(req, res) {
       },
     ]).exec();
 
-    console.log(" ======================== Result ======================== ", result);
+    console.log(
+      " ======================== Result ======================== ",
+      result
+    );
     const organizedEvents = {
       soccer: result?.soccer, // Access the ' array for the specific event type
       tennis: result?.tennis,
@@ -2419,7 +2420,7 @@ async function SetAsianDashboard(req, res) {
   }
   try {
     const response = await AsianTable.findOneAndUpdate(
-      { tableId : req.body.tableId }, 
+      { tableId: req.body.tableId },
       { $set: { isDashboard: req.body.isDashboard } }
     );
 
@@ -2466,8 +2467,11 @@ loginRouter.post(
 
 router.get("/GetRule", GetRule);
 loginRouter.post("/addRules", addRules);
-loginRouter.post("/SetAsianDashboard",   settingsValidation.validate("SetAsianDashboard"), SetAsianDashboard);
-
+loginRouter.post(
+  "/SetAsianDashboard",
+  settingsValidation.validate("SetAsianDashboard"),
+  SetAsianDashboard
+);
 
 loginRouter.post(
   "/updateDefaultBetSizes",
