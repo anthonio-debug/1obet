@@ -307,26 +307,26 @@ async function handleLosingBet(bet) {
             const betIdString = bet._id.toString();
             await currentPositions.deleteMany({ betId: betIdString });
 
-            // const updatedUser = await users.findOne({ userId: userId, isDeleted: false });
-            // const user_new_balance = updatedUser.balance;
-            // const user_new_availableBalance = updatedUser.availableBalance;
-            // const user_new_exposure = updatedUser.exposure;
+            const updatedUser = await users.findOne({ userId: userId, isDeleted: false });
+            const user_new_balance = updatedUser.balance;
+            const user_new_availableBalance = updatedUser.availableBalance;
+            const user_new_exposure = updatedUser.exposure;
 
-            // const ExpTran =  exposures.insertOne({
-            //   userId: updatedUser.userId,
-            //   trans_from: "BetLose",
-            //   trans_from_id: bet._id,
-            //   trans_bet_status: 0,
-            //   user_prev_balance: user_prev_balance,
-            //   user_prev_availableBalance: user_prev_availableBalance,
-            //   user_prev_exposure: user_prev_exposure,
-            //   user_new_balance: user_new_balance,
-            //   user_new_availableBalance: user_new_availableBalance,
-            //   user_new_exposure: user_new_exposure,
-            //   marketId: bet.marketId,
-            //   sportsId: bet.sportsId,
-            //   calculatedExp: calculatedExp,
-            // });
+            const ExpTran =  exposures.insertOne({
+              userId: updatedUser.userId,
+              trans_from: "BetLose",
+              trans_from_id: bet._id,
+              trans_bet_status: 0,
+              user_prev_balance: user_prev_balance,
+              user_prev_availableBalance: user_prev_availableBalance,
+              user_prev_exposure: user_prev_exposure,
+              user_new_balance: user_new_balance,
+              user_new_availableBalance: user_new_availableBalance,
+              user_new_exposure: user_new_exposure,
+              marketId: bet.marketId,
+              sportsId: bet.sportsId,
+              calculatedExp: calculatedExp,
+            });
             await session.commitTransaction();
           }
           console.log("  =============== All losing Part Working ...");
