@@ -99,7 +99,7 @@ async function getAllBets(Id) {
 }
 async function _handleLosingBet(bet) {}
 async function handleLosingBet(bet) {
-  console.log(" ====================== Draw is called ================ ");
+  console.log(" ====================== Lose is called ================ ");
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -112,232 +112,232 @@ async function handleLosingBet(bet) {
   const exposures = client.db(`${DBNAME}`).collection("exposures");
   const currentPositions = client.db(`${DBNAME}`).collection("currentpositions");
 
-  try {
-    if (bet.status == 1) {
-      let calculatedExp = 0;
-      console.log(`Bet ${bet._id} lost.`);
-      await session.withTransaction(async () => {
+  // try {
+  //   if (bet.status == 1) {
+  //     let calculatedExp = 0;
+  //     console.log(`Bet ${bet._id} lost.`);
+  //     await session.withTransaction(async () => {
 
-        const userId = bet.userId;
-        const loosingAmount = Number(bet.loosingAmount.toFixed(2));
-        const userToUpdate = await users.findOne({ userId: userId, isDeleted: false});
+  //       const userId = bet.userId;
+  //       const loosingAmount = Number(bet.loosingAmount.toFixed(2));
+  //       const userToUpdate = await users.findOne({ userId: userId, isDeleted: false});
 
-        if (!userToUpdate) {
-          console.error("Error: User Not Found Location:(_handle losing bet)");
-        }else {
-          const user_prev_balance = userToUpdate.balance;
-          const user_prev_availableBalance = userToUpdate.availableBalance;
-          const user_prev_exposure = userToUpdate.exposure;
+  //       if (!userToUpdate) {
+  //         console.error("Error: User Not Found Location:(_handle losing bet)");
+  //       }else {
+  //         const user_prev_balance = userToUpdate.balance;
+  //         const user_prev_availableBalance = userToUpdate.availableBalance;
+  //         const user_prev_exposure = userToUpdate.exposure;
 
-          const updatedbalance  = Number((userToUpdate.balance - loosingAmount).toFixed(2));
-          const updatedClientPL = Number((userToUpdate.clientPL - loosingAmount).toFixed(2));
-          let userToUpdateAvailableBalance = -loosingAmount;
-          let addExpoisureAmount = 0;
-          if(bet.calculateExp == true){
-            userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount.toFixed(2))).toFixed(2));
-            addExpoisureAmount = Number(bet.exposureAmount.toFixed(2));
-            calculatedExp = 1;
-          }
+  //         const updatedbalance  = Number((userToUpdate.balance - loosingAmount).toFixed(2));
+  //         const updatedClientPL = Number((userToUpdate.clientPL - loosingAmount).toFixed(2));
+  //         let userToUpdateAvailableBalance = -loosingAmount;
+  //         let addExpoisureAmount = 0;
+  //         if(bet.calculateExp == true){
+  //           userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount.toFixed(2))).toFixed(2));
+  //           addExpoisureAmount = Number(bet.exposureAmount.toFixed(2));
+  //           calculatedExp = 1;
+  //         }
 
-          await users.updateOne(
-            {
-              userId: userId,
-              isDeleted: false,
-            },
-            {
-              balance: updatedbalance,
-              clientPL: updatedClientPL,
-              exposure: Number((userToUpdate.exposure + addExpoisureAmount).toFixed(2)),
-              availableBalance: Number(userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(2))),
-            },
-            { session }
-          );
+  //         await users.updateOne(
+  //           {
+  //             userId: userId,
+  //             isDeleted: false,
+  //           },
+  //           {
+  //             balance: updatedbalance,
+  //             clientPL: updatedClientPL,
+  //             exposure: Number((userToUpdate.exposure + addExpoisureAmount).toFixed(2)),
+  //             availableBalance: Number(userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(2))),
+  //           },
+  //           { session }
+  //         );
 
-          console.log(" ======================== User Updating Sucessfully ");
+  //         console.log(" ======================== User Updating Sucessfully ");
 
-          // let lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).session(session);
-          // let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
-          // let newCash = deposits.insertOne({
-          //   userId: userToUpdate.userId,
-          //   description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-          //   amount: -loosingAmount,
-          //   balance: lastMaxWithdraw
-          //     ? lastMaxWithdraw.balance - loosingAmount
-          //     : -loosingAmount,
-          //   availableBalance: lastMaxWithdraw
-          //     ? lastMaxWithdraw.availableBalance - loosingAmount
-          //     : -loosingAmount,
-          //   maxWithdraw: lastMaxWithdraw
-          //     ? lastMaxWithdraw.maxWithdraw - loosingAmount
-          //     : loosingAmount,
-          //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-          //   credit: lastMaxWithdraw?.credit || 0,
-          //   creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-          //   createdBy: 0,
-          //   cashOrCredit: "Bet",
-          //   marketId: bet.marketId,
-          //   sportsId: bet.sportsId,
-          //   matchId: bet.matchId,
-          //   betId: bet._id,
-          //   betType: bet.type,
-          //   betDateTime: bet.betTime,
-          // });
+  //         // let lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).session(session);
+  //         // let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
+  //         // let newCash = deposits.insertOne({
+  //         //   userId: userToUpdate.userId,
+  //         //   description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+  //         //   amount: -loosingAmount,
+  //         //   balance: lastMaxWithdraw
+  //         //     ? lastMaxWithdraw.balance - loosingAmount
+  //         //     : -loosingAmount,
+  //         //   availableBalance: lastMaxWithdraw
+  //         //     ? lastMaxWithdraw.availableBalance - loosingAmount
+  //         //     : -loosingAmount,
+  //         //   maxWithdraw: lastMaxWithdraw
+  //         //     ? lastMaxWithdraw.maxWithdraw - loosingAmount
+  //         //     : loosingAmount,
+  //         //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+  //         //   credit: lastMaxWithdraw?.credit || 0,
+  //         //   creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+  //         //   createdBy: 0,
+  //         //   cashOrCredit: "Bet",
+  //         //   marketId: bet.marketId,
+  //         //   sportsId: bet.sportsId,
+  //         //   matchId: bet.matchId,
+  //         //   betId: bet._id,
+  //         //   betType: bet.type,
+  //         //   betDateTime: bet.betTime,
+  //         // });
 
-          console.log(" ======================== Cash Updating Sucessfully ");
-          const parentUserIds = await getParents(userId);
-          const parentUser = await users.find({userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).toArray();
+  //         console.log(" ======================== Cash Updating Sucessfully ");
+  //         const parentUserIds = await getParents(userId);
+  //         const parentUser = await users.find({userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).toArray();
     
-          if (!parentUser) {
-            console.error(" Error: Parent Users Not Found Location:(_handle losing bet) ");
-            // return res.status(404).send({ message: "user not found" });
-          }
-          else {
-            const remainingAmount = Number(bet.winningAmount.toFixed(2));
-            const TotalLoosingAmount = Number(bet.loosingAmount.toFixed(2));
-            let prev = 0;
-            for (const user of parentUser) {
-              let current = user.downLineShare;
-              user["commission"] = current - prev;
-              prev = current;
-            }
-            console.log( " ======================== Commitions Calculated  Sucessfully " );
+  //         if (!parentUser) {
+  //           console.error(" Error: Parent Users Not Found Location:(_handle losing bet) ");
+  //           // return res.status(404).send({ message: "user not found" });
+  //         }
+  //         else {
+  //           const remainingAmount = Number(bet.winningAmount.toFixed(2));
+  //           const TotalLoosingAmount = Number(bet.loosingAmount.toFixed(2));
+  //           let prev = 0;
+  //           for (const user of parentUser) {
+  //             let current = user.downLineShare;
+  //             user["commission"] = current - prev;
+  //             prev = current;
+  //           }
+  //           console.log( " ======================== Commitions Calculated  Sucessfully " );
 
 
-            let commissionFrom = userToUpdate.userId;
-            let upMovingAmount = TotalLoosingAmount;
+  //           let commissionFrom = userToUpdate.userId;
+  //           let upMovingAmount = TotalLoosingAmount;
 
-            for (const user of parentUser) {
+  //           for (const user of parentUser) {
 
-              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount).toFixed(2))).toFixed(2));
-              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(2))).toFixed(2));
-              const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount).toFixed(2))).toFixed(2));
-              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount ).toFixed(2)) : 0;
-              const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(2));
+  //             const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount).toFixed(2))).toFixed(2));
+  //             const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(2))).toFixed(2));
+  //             const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount).toFixed(2))).toFixed(2));
+  //             const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount ).toFixed(2)) : 0;
+  //             const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(2));
               
-              // await users.updateOne(
-              //   {
-              //     userId: user.userId,
-              //     isDeleted: false
-              //   },
-              //   { 
-              //     balance: totalBalance,
-              //     clientPL: totalClientPL,
-              //     exposure: totalExpoisure,
-              //     availableBalance: totalavailableBalance            
-              //   },
-              //   { session }
-              // )
+  //             // await users.updateOne(
+  //             //   {
+  //             //     userId: user.userId,
+  //             //     isDeleted: false
+  //             //   },
+  //             //   { 
+  //             //     balance: totalBalance,
+  //             //     clientPL: totalClientPL,
+  //             //     exposure: totalExpoisure,
+  //             //     availableBalance: totalavailableBalance            
+  //             //   },
+  //             //   { session }
+  //             // )
 
-              console.log(" ======================== Parent User Updating Sucessfully ");
+  //             console.log(" ======================== Parent User Updating Sucessfully ");
       
-              // let lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).session(session)
-              // let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
+  //             // let lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).session(session)
+  //             // let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
     
-              // let newCash = deposits.insertOne({
-              //   userId: user.userId,
-              //   description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
-              //   createdBy: 0,
-              //   amount: (user.commission / 100) * TotalLoosingAmount,
-              //   balance: lastMaxWithdraw
-              //     ? lastMaxWithdraw.balance +
-              //       (user.commission / 100) * TotalLoosingAmount
-              //     : (user.commission / 100) * TotalLoosingAmount,
-              //   availableBalance: lastMaxWithdraw
-              //     ? lastMaxWithdraw.availableBalance +
-              //       (user.commission / 100) * TotalLoosingAmount
-              //     : (user.commission / 100) * TotalLoosingAmount,
-              //   maxWithdraw: lastMaxWithdraw
-              //     ? lastMaxWithdraw.maxWithdraw +
-              //       (user.commission / 100) * TotalLoosingAmount
-              //     : (user.commission / 100) * TotalLoosingAmount,
-              //   commissionFrom: commissionFrom,
-              //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-              //   credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-              //   creditRemaining: lastMaxWithdraw
-              //     ? lastMaxWithdraw.creditRemaining
-              //     : 0,
-              //   cashOrCredit: "loosing",
-              //   marketId: bet.marketId,
-              //   sportsId: bet.sportsId,
-              //   upLineAmount: upMovingAmount,
-              //   betId: bet._id,
-              //   matchId: bet.matchId,
-              //   betType: bet.type,
-              //   betDateTime: bet.betTime,
-              // })
+  //             // let newCash = deposits.insertOne({
+  //             //   userId: user.userId,
+  //             //   description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
+  //             //   createdBy: 0,
+  //             //   amount: (user.commission / 100) * TotalLoosingAmount,
+  //             //   balance: lastMaxWithdraw
+  //             //     ? lastMaxWithdraw.balance +
+  //             //       (user.commission / 100) * TotalLoosingAmount
+  //             //     : (user.commission / 100) * TotalLoosingAmount,
+  //             //   availableBalance: lastMaxWithdraw
+  //             //     ? lastMaxWithdraw.availableBalance +
+  //             //       (user.commission / 100) * TotalLoosingAmount
+  //             //     : (user.commission / 100) * TotalLoosingAmount,
+  //             //   maxWithdraw: lastMaxWithdraw
+  //             //     ? lastMaxWithdraw.maxWithdraw +
+  //             //       (user.commission / 100) * TotalLoosingAmount
+  //             //     : (user.commission / 100) * TotalLoosingAmount,
+  //             //   commissionFrom: commissionFrom,
+  //             //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+  //             //   credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+  //             //   creditRemaining: lastMaxWithdraw
+  //             //     ? lastMaxWithdraw.creditRemaining
+  //             //     : 0,
+  //             //   cashOrCredit: "loosing",
+  //             //   marketId: bet.marketId,
+  //             //   sportsId: bet.sportsId,
+  //             //   upLineAmount: upMovingAmount,
+  //             //   betId: bet._id,
+  //             //   matchId: bet.matchId,
+  //             //   betType: bet.type,
+  //             //   betDateTime: bet.betTime,
+  //             // })
       
-              console.log( " ======================== Parent User Cash Updating Sucessfully ");
+  //             console.log( " ======================== Parent User Cash Updating Sucessfully ");
 
-              // upMovingAmount = Number((upMovingAmount - Number(((user.commission / 100) * TotalLoosingAmount).toFixed(2)) ).toFixed(2));
-              // commissionFrom = user.userId;
+  //             // upMovingAmount = Number((upMovingAmount - Number(((user.commission / 100) * TotalLoosingAmount).toFixed(2)) ).toFixed(2));
+  //             // commissionFrom = user.userId;
 
-            }
+  //           }
 
-            let winnerRunnerData = 0;
-            let SessionScore = 0;
+  //           let winnerRunnerData = 0;
+  //           let SessionScore = 0;
 
-            if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-              const marketInfo = await marketIds.findOne({
-                sportID: bet.sportsId,
-                marketId: bet.marketId,
-              });
-              winnerRunnerData = marketInfo?.winnerRunnerData;
-            } else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
-              const match = await events.findById(bet.matchId);
-              const marketInfo = await sessions.findOne({ eventId: match.Id, sessionNo:  bet.betSession  });
-              SessionScore = marketInfo?.score;
-            }
-            // await bets.updateOne(
-            //   {
-            //     _id: bet._id
-            //   }, 
-            //   {
-            //     status: 0,
-            //     position: bet.loosingAmount * -1,
-            //     iscalculatedExp: calculatedExp,
-            //     winnerRunnerData: winnerRunnerData,
-            //     SessionScore: SessionScore,
-            //   });
+  //           if (bet.isfancyOrbookmaker && bet.fancyData != null) {
+  //             const marketInfo = await marketIds.findOne({
+  //               sportID: bet.sportsId,
+  //               marketId: bet.marketId,
+  //             });
+  //             winnerRunnerData = marketInfo?.winnerRunnerData;
+  //           } else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
+  //             const match = await events.findById(bet.matchId);
+  //             const marketInfo = await sessions.findOne({ eventId: match.Id, sessionNo:  bet.betSession  });
+  //             SessionScore = marketInfo?.score;
+  //           }
+  //           // await bets.updateOne(
+  //           //   {
+  //           //     _id: bet._id
+  //           //   }, 
+  //           //   {
+  //           //     status: 0,
+  //           //     position: bet.loosingAmount * -1,
+  //           //     iscalculatedExp: calculatedExp,
+  //           //     winnerRunnerData: winnerRunnerData,
+  //           //     SessionScore: SessionScore,
+  //           //   });
 
-            console.log(bet._id.toString());
-            const betIdString = bet._id.toString();
-            await currentPositions.deleteMany({ betId: betIdString });
+  //           console.log(bet._id.toString());
+  //           const betIdString = bet._id.toString();
+  //           await currentPositions.deleteMany({ betId: betIdString });
 
-            // const updatedUser = await users.findOne({ userId: userId, isDeleted: false });
-            // const user_new_balance = updatedUser.balance;
-            // const user_new_availableBalance = updatedUser.availableBalance;
-            // const user_new_exposure = updatedUser.exposure;
+  //           // const updatedUser = await users.findOne({ userId: userId, isDeleted: false });
+  //           // const user_new_balance = updatedUser.balance;
+  //           // const user_new_availableBalance = updatedUser.availableBalance;
+  //           // const user_new_exposure = updatedUser.exposure;
 
-            // const ExpTran =  exposures.insertOne({
-            //   userId: updatedUser.userId,
-            //   trans_from: "BetLose",
-            //   trans_from_id: bet._id,
-            //   trans_bet_status: 0,
-            //   user_prev_balance: user_prev_balance,
-            //   user_prev_availableBalance: user_prev_availableBalance,
-            //   user_prev_exposure: user_prev_exposure,
-            //   user_new_balance: user_new_balance,
-            //   user_new_availableBalance: user_new_availableBalance,
-            //   user_new_exposure: user_new_exposure,
-            //   marketId: bet.marketId,
-            //   sportsId: bet.sportsId,
-            //   calculatedExp: calculatedExp,
-            // });
-            await session.commitTransaction();
-          }
-          console.log("  =============== All losing Part Working ...");
-        }
+  //           // const ExpTran =  exposures.insertOne({
+  //           //   userId: updatedUser.userId,
+  //           //   trans_from: "BetLose",
+  //           //   trans_from_id: bet._id,
+  //           //   trans_bet_status: 0,
+  //           //   user_prev_balance: user_prev_balance,
+  //           //   user_prev_availableBalance: user_prev_availableBalance,
+  //           //   user_prev_exposure: user_prev_exposure,
+  //           //   user_new_balance: user_new_balance,
+  //           //   user_new_availableBalance: user_new_availableBalance,
+  //           //   user_new_exposure: user_new_exposure,
+  //           //   marketId: bet.marketId,
+  //           //   sportsId: bet.sportsId,
+  //           //   calculatedExp: calculatedExp,
+  //           // });
+  //           await session.commitTransaction();
+  //         }
+  //         console.log("  =============== All losing Part Working ...");
+  //       }
 
 
-      }, transactionOptions)
+  //     }, transactionOptions)
 
-    }
-  } catch (error) {
-    console.error("Error: Handle Losing Bet ", error);
-    await session.abortTransaction();
-  } finally {
-    session.endSession();
-  }
+  //   }
+  // } catch (error) {
+  //   console.error("Error: Handle Losing Bet ", error);
+  //   await session.abortTransaction();
+  // } finally {
+  //   session.endSession();
+  // }
 }
 
 async function handleWinningBet(bet) {
