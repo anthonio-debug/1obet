@@ -190,12 +190,13 @@ async function handleLosingBet(bet) {
           const parentUserIds = await getParents(userId);
           const parentUser = await users.find({userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).toArray();
     
-          if (!parentUser) {
+          if (!parentUser){
             console.error(" Error: Parent Users Not Found Location:(_handle losing bet) ");
+            await session.abortTransaction();
             // return res.status(404).send({ message: "user not found" });
           }
           else {
-            const remainingAmount = Number(bet.winningAmount.toFixed(2));
+            const remainingAmount    = Number(bet.winningAmount.toFixed(2));
             const TotalLoosingAmount = Number(bet.loosingAmount.toFixed(2));
             let prev = 0;
             for (const user of parentUser) {
@@ -286,8 +287,9 @@ async function handleLosingBet(bet) {
               });
               winnerRunnerData = marketInfo?.winnerRunnerData;
             } else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
-              const match = await events.findById(bet.matchId);
-              const marketInfo = await sessions.findOne({ eventId: match.Id, sessionNo:  bet.betSession  });
+              const match = await Events.findById(bet.matchId);
+              console.log("  ============ match =================  ", match);
+              const marketInfo = await sessions.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
               SessionScore = marketInfo?.score;
             }
             await bets.updateOne(
@@ -302,7 +304,9 @@ async function handleLosingBet(bet) {
                   winnerRunnerData: winnerRunnerData,
                   SessionScore: SessionScore
                 }
-              });
+              }, 
+              { session }
+            );
 
             console.log(bet._id.toString());
             const betIdString = bet._id.toString();
@@ -346,12 +350,6 @@ async function handleLosingBet(bet) {
 }
 
 async function handleWinningBet(bet) {
-  console.log(" ====================== Winning is called ================ ");
-}
-async function handleDrawBet(bet) {
-  console.log(" ====================== Draw is called ================ ");
-}
-async function handleWinningBet(bet) {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -375,7 +373,8 @@ async function handleWinningBet(bet) {
         if (!userToUpdate){
           console.error("Error: user not found Location:(_handle winning bet)");
           // return res.status(404).send({ message: "user not found" });
-          return;
+          console.error("Error: Handle Winning Bet ", error);
+          await session.abortTransaction();
         }else {
           const loosingAmount = Number(bet.loosingAmount.toFixed(2));
           let remainingAmount;
@@ -468,14 +467,15 @@ async function handleWinningBet(bet) {
           const parentUserIds = await getParents(userId);
           const parentUser = await users.find({
             userId: {
-              $in: [...parentUserIds],
+              $in: [...parentUserIds]
             },
             isDeleted: false
           }).sort({ userId: -1 }).toArray();
 
           if (!parentUser) {
             console.error(" Error: Parent Users Not Found Location:(_handle Winning  bet) ");
-            return; 
+            console.error("Error: Handle Winning Bet ", error);
+            await session.abortTransaction(); 
             // res.status(404).send({ message: "user not found" });
           } else {
             let prev = 0;
@@ -590,12 +590,14 @@ async function handleWinningBet(bet) {
             if (bet.isfancyOrbookmaker && bet.fancyData != null) {
               const marketInfo = await MarketIDS.findOne({
                 sportID: bet.sportsId,
-                marketId: bet.marketId,
+                marketId: bet.marketId
               });
               winnerRunnerData = marketInfo?.winnerRunnerData;
-            } else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
+            } 
+            else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
               const match = await Events.findById(bet.matchId);
-              const marketInfo = await cricketSession.findOne({ eventId: match.Id, sessionNo:  bet.betSession  });
+              console.log("  ============ match =================  ", match);
+              const marketInfo = await cricketSession.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
               SessionScore = marketInfo?.score;
             }
             await Bets.updateOne(
@@ -617,7 +619,6 @@ async function handleWinningBet(bet) {
             const betIdString = bet._id.toString();
             console.log(" betIdString =============== ", betIdString);
             await CurrentPosition.deleteMany({ betId: betIdString });
-            await session.commitTransaction();
 
             const updatedUser = await users.findOne({
               userId: userId,
@@ -650,13 +651,13 @@ async function handleWinningBet(bet) {
 
     }
   } catch (error) {
-    console.error("Error: Handle Winning Bet ", error);
+    console.error(" Error: Handle Winning Bet ", error );
     await session.abortTransaction();
   } finally {
-    session.endSession();
+    await session.endSession();
   }
 }
-const _handleDrawBet = async (bet, status = 2) => {
+const handleDrawBet = async (bet, status = 2) => {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
