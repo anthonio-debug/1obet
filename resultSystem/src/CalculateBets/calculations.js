@@ -217,18 +217,20 @@ async function handleLosingBet(bet) {
               const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount ).toFixed(2)) : 0;
               const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(2));
               
-              // await users.updateOne(
-              //   {
-              //     _id: user?._id 
-              //   },
-              //   { 
-              //     balance: totalBalance,
-              //     clientPL: totalClientPL,
-              //     exposure: totalExpoisure,
-              //     availableBalance: totalavailableBalance            
-              //   },
-              //   { session }
-              // )
+              await users.updateOne(
+                {
+                  _id: user?._id 
+                },
+                { 
+                  $set : {
+                    balance: totalBalance,
+                    clientPL: totalClientPL,
+                    exposure: totalExpoisure,
+                    availableBalance: totalavailableBalance 
+                  }           
+                },
+                { session }
+              )
 
               console.log(" ======================== Parent User Updating Sucessfully ");
       
