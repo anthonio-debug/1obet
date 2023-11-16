@@ -549,7 +549,7 @@ async function handleWinningBet(bet) {
               console.log(" =============== Parent bet Transaction  Successfull ");
       
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker) {
-                let lastMaxWithdraw = await deposits.findOne({ userId: user.userId,}).sort({ _id: -1 });
+                let lastMaxWithdraw = await deposits.find({ userId: user.userId,}).sort({ _id: -1 }).toArray();
                 let commissionTransaction =  await deposits.insertOne({
                   userId: user.userId,
                   description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
