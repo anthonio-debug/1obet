@@ -770,7 +770,7 @@ const handleDrawBet = async (bet, status = 2) => {
       console.log(" betIdString ============================== ", betIdString);
       await currentPositions.deleteMany({ betId: betIdString });
     }
-    await session.commitTransaction();
+
   } catch (error) {
     console.error("error", error);
     await session.abortTransaction();
