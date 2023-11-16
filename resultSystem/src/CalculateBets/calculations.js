@@ -100,6 +100,10 @@ async function handleLosingBet(bet) {
   const users = client.db(`${DBNAME}`).collection("users");
   const deposits = client.db(`${DBNAME}`).collection("deposits");
   const bets = client.db(`${DBNAME}`).collection("bets");
+  const marketIds = client.db(`${DBNAME}`).collection("marketids");
+  const events = client.db(`${DBNAME}`).collection("inplayevents");
+  const sessions = client.db(`${DBNAME}`).collection("sessions");
+
   const currentPositions = client
     .db(`${DBNAME}`)
     .collection("currentpositions");
@@ -167,9 +171,11 @@ async function handleLosingBet(bet) {
       const user_new_exposure = updatedUser.exposure;
       console.log(" ======================== User Updating Sucessfully ");
 
-      let lastTrans = await Cash.find({ userId: userToUpdate.userId })
+      let lastTrans = await deposits
+        .find({ userId: userToUpdate.userId })
         .sort({ _id: -1 })
         .limit(1);
+
       let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
       let cash = new Cash({
         userId: userToUpdate.userId,
@@ -361,17 +367,17 @@ async function handleLosingBet(bet) {
       let winnerRunnerData = 0;
       let SessionScore = 0;
       if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-        const marketInfo = await MarketIDS.findOne({
+        const marketInfo = await marketIds.findOne({
           sportID: bet.sportsId,
           marketId: bet.marketId,
         });
         winnerRunnerData = marketInfo?.winnerRunnerData;
       } else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
-        const match = await Events.findById(bet.matchId);
-        const marketInfo = await cricketSession.findOne({ marketId: match.Id });
+        const match = await events.findById(bet.matchId);
+        const marketInfo = await sessions.findOne({ marketId: match.Id });
         SessionScore = marketInfo?.score;
       }
-      await Bets.findByIdAndUpdate(bet._id, {
+      await bets.findByIdAndUpdate(bet._id, {
         status: 0,
         position: bet.loosingAmount * -1,
         iscalculatedExp: calculatedExp,
