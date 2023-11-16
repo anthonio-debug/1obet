@@ -140,7 +140,7 @@ async function handleLosingBet(bet) {
             calculatedExp = 1;
           }
 
-          await users.updateOne(
+          await User.updateOne(
             {
               userId: userId,
               isDeleted: false,
