@@ -264,11 +264,11 @@ async function handleLosingBet(bet) {
       let SessionScore = 0;
       if(bet.isfancyOrbookmaker && bet.fancyData != null){
         const marketInfo = await MarketIDS.findOne({ sportID: bet.sportsId,  marketId: bet.marketId });
-        winnerRunnerData = marketInfo.winnerRunnerData
+        winnerRunnerData = marketInfo?.winnerRunnerData
       }else if(config.FigureEvenOddSmallBig.includes(bet.subMarketId)){
         const match = await Events.findById(bet.matchId)
         const marketInfo = await cricketSession.findOne({ marketId: match.Id });
-        SessionScore = marketInfo.score
+        SessionScore = marketInfo?.score
       }
       await Bets.findByIdAndUpdate(bet._id, { 
         status: 0, 
@@ -512,11 +512,11 @@ async function handleWinningBet(bet) {
       let SessionScore = 0;
       if(bet.isfancyOrbookmaker && bet.fancyData != null){
         const marketInfo = await MarketIDS.findOne({ sportID: bet.sportsId,  marketId: bet.marketId });
-        winnerRunnerData = marketInfo.winnerRunnerData
+        winnerRunnerData = marketInfo?.winnerRunnerData
       }else if(config.FigureEvenOddSmallBig.includes(bet.subMarketId)){
         const match = await Events.findById(bet.matchId)
         const marketInfo = await cricketSession.findOne({ marketId: match.Id });
-        SessionScore = marketInfo.score
+        SessionScore = marketInfo?.score
       }
 
       await Bets.findByIdAndUpdate(bet._id, { 
