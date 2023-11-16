@@ -139,18 +139,22 @@ async function handleLosingBet(bet) {
             addExpoisureAmount = Number(bet.exposureAmount.toFixed(2));
             calculatedExp = 1;
           }
-
-          await User.updateOne(
+          const expAmount = Number((userToUpdate.exposure + addExpoisureAmount).toFixed(2))
+          const updatedAvailableBalance = Number(userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(2)))
+          await users.updateOne(
             {
               userId: userId,
-              isDeleted: false,
+              isDeleted: false
             },
             {
-              balance: updatedbalance,
-              clientPL: updatedClientPL,
-              exposure: Number((userToUpdate.exposure + addExpoisureAmount).toFixed(2)),
-              availableBalance: Number(userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(2))),
+              $set: {
+                balance: updatedbalance,
+                clientPL: updatedClientPL,
+                exposure: expAmount,
+                availableBalance: updatedAvailableBalance
+              }
             },
+            { session }
           );
 
           console.log(" ======================== User Updating Sucessfully ");
@@ -213,18 +217,18 @@ async function handleLosingBet(bet) {
               const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount ).toFixed(2)) : 0;
               const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(2));
               
-              await users.updateOne(
-                {
-                  _id: user?._id 
-                },
-                { 
-                  balance: totalBalance,
-                  clientPL: totalClientPL,
-                  exposure: totalExpoisure,
-                  availableBalance: totalavailableBalance            
-                },
-                { session }
-              )
+              // await users.updateOne(
+              //   {
+              //     _id: user?._id 
+              //   },
+              //   { 
+              //     balance: totalBalance,
+              //     clientPL: totalClientPL,
+              //     exposure: totalExpoisure,
+              //     availableBalance: totalavailableBalance            
+              //   },
+              //   { session }
+              // )
 
               console.log(" ======================== Parent User Updating Sucessfully ");
       
