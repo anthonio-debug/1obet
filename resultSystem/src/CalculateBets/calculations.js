@@ -157,7 +157,7 @@ async function handleLosingBet(bet) {
 
           let lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
           let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
-          let newCash = Cash.insertOne({
+          let newCash = deposits.insertOne({
             userId: userToUpdate.userId,
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
             amount: -loosingAmount,
