@@ -13,6 +13,11 @@ require("dotenv").config();
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const port = process.env.SERVERPORT;
+const transactionOptions = {
+  readPreference: 'primary',
+  readConcern: { level: 'local' },
+  writeConcern: { w: 'majority' }
+}
 const config = {
   apisFileName: "config/settings/apis/allApis.json",
   saltRounds: 10,
@@ -573,7 +578,7 @@ async function handleWinningBet(bet) {
               winnerRunnerData = marketInfo?.winnerRunnerData;
             } else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
               const match = await Events.findById(bet.matchId);
-              const marketInfo = await cricketSession.findOne({ eventId: match.Id });
+              const marketInfo = await cricketSession.findOne({ eventId: match.Id, sessionNo:  bet.betSession  });
               SessionScore = marketInfo?.score;
             }
             await Bets.findByIdAndUpdate(bet._id, {
