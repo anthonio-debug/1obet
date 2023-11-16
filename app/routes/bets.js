@@ -155,6 +155,12 @@ const placeBet = async (req, res) => {
     /* ====================================================================== */
 
     /* ============================== Innitial Checks  ============================== */
+
+    if(subMarketName.toUpperCase() == "ZA" || subMarketName.toUpperCase() == "RSA"){
+      return res.status(404).send({ message: "Betting disabled" });
+    }
+
+
     if (betAmount < config.betMinimumAmount) {
       return res
         .status(404)
@@ -797,7 +803,13 @@ const placeBet = async (req, res) => {
         " ============================ GH & HR ============================ "
       );
       const DBOddDetails = await RaceOdds.findById(oddsId);
-      const OddDetailsTeam = DBOddDetails.runners.find(
+      if(!DBOddDetails){
+        return res.status(404).send({
+          message: `Bet Miss Matched `,
+        });
+      }
+      console.log(" ============================ ", DBOddDetails);
+      const OddDetailsTeam = DBOddDetails?.runners.find(
         (runner) => runner.selectionId == selectionId
       );
       let runners = DBOddDetails?.runners;
@@ -2460,6 +2472,7 @@ const placeBet = async (req, res) => {
         userId,
         betAmount: betAmount || 0,
         betRate: Number(betRate) || 0,
+        matchType: eventDetail?.matchType,
         selectedBetRate: selectedBetRate || 0,
         TargetScore: TargetScore || 0,
         matchId: matchId || null,

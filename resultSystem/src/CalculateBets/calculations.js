@@ -7,6 +7,8 @@ const CurrentPosition = require("../../../app/models/CurrentPosition");
 const ExpRec = require("../../../app/models/ExpRec");
 const { MongoClient } = require("mongodb");
 
+const MarketIDS = require("../../../app/models/marketIds");
+const cricketSession = require("../../../app/models/Session");
 require("dotenv").config();
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
@@ -355,10 +357,26 @@ async function handleLosingBet(bet) {
       }
 
       console.log(" ======================== Moving to Update  Bet Status ");
-      await bets.findByIdAndUpdate(bet._id, {
+
+      let winnerRunnerData = 0;
+      let SessionScore = 0;
+      if (bet.isfancyOrbookmaker && bet.fancyData != null) {
+        const marketInfo = await MarketIDS.findOne({
+          sportID: bet.sportsId,
+          marketId: bet.marketId,
+        });
+        winnerRunnerData = marketInfo?.winnerRunnerData;
+      } else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
+        const match = await Events.findById(bet.matchId);
+        const marketInfo = await cricketSession.findOne({ marketId: match.Id });
+        SessionScore = marketInfo?.score;
+      }
+      await Bets.findByIdAndUpdate(bet._id, {
         status: 0,
         position: bet.loosingAmount * -1,
         iscalculatedExp: calculatedExp,
+        winnerRunnerData: winnerRunnerData,
+        SessionScore: SessionScore,
       });
 
       console.log(" betIdString =============== Starting ");
@@ -678,11 +696,28 @@ async function handleWinningBet(bet) {
         commissionFrom = user.userId;
       }
 
+      let winnerRunnerData = 0;
+      let SessionScore = 0;
+      if (bet.isfancyOrbookmaker && bet.fancyData != null) {
+        const marketInfo = await MarketIDS.findOne({
+          sportID: bet.sportsId,
+          marketId: bet.marketId,
+        });
+        winnerRunnerData = marketInfo?.winnerRunnerData;
+      } else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
+        const match = await Events.findById(bet.matchId);
+        const marketInfo = await cricketSession.findOne({ marketId: match.Id });
+        SessionScore = marketInfo?.score;
+      }
+
       await Bets.findByIdAndUpdate(bet._id, {
         status: 0,
         position: Number(bet.winningAmount.toFixed(2)),
         iscalculatedExp: calculatedExp,
+        winnerRunnerData: winnerRunnerData,
+        SessionScore: SessionScore,
       });
+
       console.log(" betIdString =============== Starting  ");
       console.log(bet._id.toString());
       const betIdString = bet._id.toString();

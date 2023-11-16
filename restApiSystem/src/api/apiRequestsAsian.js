@@ -91,7 +91,10 @@ function apiRequests() {
         tableId: channel,
       });
 
-      socket.emit("matchId", asianOdd._id);
+      if (asianOdd) {
+        socket.emit("matchId", asianOdd._id);
+      }
+
       socket.emit("asian_odd", asianOdd);
 
       socket.join(channel);

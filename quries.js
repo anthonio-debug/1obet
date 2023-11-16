@@ -103,11 +103,11 @@ db.sidebarmenus.insertMany([
   }, 
   {
     name: "Current Position",
-    lightIcon: "https://1obet.com/assets/light-icons/royal-casino.png",
-    darkIcon: "https://1obet.com/assets/dark-icons/royal-casino.png",
+    lightIcon: "https://1obet.com/assets/light-icons/current-position.png",
+    darkIcon: "https://1obet.com/assets/dark-icons/current-position.png",
     marketId: "tyv234543-432453343423-53423d332",
     type: 0,
-    link: "/asian-games",
+    link: "/current-position",
   },
   {
     name: "Result",
@@ -279,6 +279,41 @@ db.markettypes.insertMany([
     Id: '6',
     name: 'All Casino',
   },
+  {
+    "Id": 36,
+    "marketId": "8",
+    "name": "Teen Patti 2020(TP2020)"
+  },
+  {
+    "Id": 37,
+    "marketId": "8",
+    "name": "TEST TEENPATTI(TEST TEENPATTI)"
+  },
+  {
+    "Id": 39,
+    "marketId": "8",
+    "name": "LUCKY 7-B"
+  },
+  {
+    "Id": 40,
+    "marketId": "8",
+    "name": "32 CARD-B"
+  },
+  {
+    "Id": 41,
+    "marketId": "8",
+    "name": "AMAR AKBAR ANTHONY(AAA)"
+  },
+  {
+    "Id": 43,
+    "marketId": "8",
+    "name": "ANDAR BAHAR 2"
+  },
+  {
+    "Id": 44,
+    "marketId": "8",
+    "name": "WORLI MATKA"
+  }
 ])
 
 db.submarkettypes.deleteMany({})
@@ -640,8 +675,8 @@ db.exchanges.insertMany([
   }
 ])
 
-db.asiantables.deleteMany({})
-db.asiantables.insertMany([
+db.asiantable.deleteMany({})
+db.asiantable.insertMany([
   {
     tableId: 'teen20',
     tableName: 'Teen Patti 2020(TP2020)',
