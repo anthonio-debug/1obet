@@ -119,7 +119,6 @@ async function handleLosingBet(bet) {
 
         const userId = bet.userId;
         const loosingAmount = Number(bet.loosingAmount.toFixed(2));
-
         const userToUpdate = await users.findOne({ userId: userId, isDeleted: false});
 
         if (!userToUpdate) {
@@ -133,7 +132,7 @@ async function handleLosingBet(bet) {
           const updatedClientPL = Number((userToUpdate.clientPL - loosingAmount).toFixed(2));
           let userToUpdateAvailableBalance = -loosingAmount;
           let addExpoisureAmount = 0;
-          if (bet.calculateExp == true) {
+          if(bet.calculateExp == true){
             userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount.toFixed(2))).toFixed(2));
             addExpoisureAmount = Number(bet.exposureAmount.toFixed(2));
             calculatedExp = 1;
@@ -196,7 +195,6 @@ async function handleLosingBet(bet) {
             const remainingAmount = Number(bet.winningAmount.toFixed(2));
             const TotalLoosingAmount = Number(bet.loosingAmount.toFixed(2));
             let prev = 0;
-
             for (const user of parentUser) {
               let current = user.downLineShare;
               user["commission"] = current - prev;
@@ -319,9 +317,9 @@ async function handleLosingBet(bet) {
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
             });
+            await session.commitTransaction();
           }
           console.log("  =============== All losing Part Working ...");
-          await session.commitTransaction();
         }
 
 
@@ -329,7 +327,7 @@ async function handleLosingBet(bet) {
 
     }
   } catch (error) {
-    console.error("error", error);
+    console.error("Error: Handle Losing Bet ", error);
     await session.abortTransaction();
   } finally {
     session.endSession();
@@ -602,6 +600,7 @@ async function handleWinningBet(bet) {
             const user_new_balance = updatedUser.balance;
             const user_new_exposure = updatedUser.exposure;
             const user_new_availableBalance = updatedUser.availableBalance;
+
             await exposuresTrans.insertOne({
               userId: updatedUser.userId,
               trans_from: "BetWin",
@@ -617,6 +616,7 @@ async function handleWinningBet(bet) {
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
             });
+            await session.commitTransaction();
           }
         }
 
@@ -624,7 +624,7 @@ async function handleWinningBet(bet) {
 
     }
   } catch (error) {
-    console.error("error", error);
+    console.error("Error: Handle Winning Bet ", error);
     await session.abortTransaction();
   } finally {
     session.endSession();
@@ -770,7 +770,7 @@ const handleDrawBet = async (bet, status = 2) => {
       console.log(" betIdString ============================== ", betIdString);
       await currentPositions.deleteMany({ betId: betIdString });
     }
-
+    await session.commitTransaction();
   } catch (error) {
     console.error("error", error);
     await session.abortTransaction();
