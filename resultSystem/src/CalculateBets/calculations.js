@@ -234,7 +234,7 @@ async function handleLosingBet(bet) {
 
               console.log(" ======================== Parent User Updating Sucessfully ");
       
-              let lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).session(session)
+              let lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
               let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
     
               // let newCash = deposits.insertOne({
