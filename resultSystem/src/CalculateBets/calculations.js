@@ -140,19 +140,19 @@ async function handleLosingBet(bet) {
             calculatedExp = 1;
           }
 
-          await users.updateOne(
-            {
-              userId: userId,
-              isDeleted: false,
-            },
-            {
-              balance: updatedbalance,
-              clientPL: updatedClientPL,
-              exposure: Number((userToUpdate.exposure + addExpoisureAmount).toFixed(2)),
-              availableBalance: Number(userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(2))),
-            },
-            { session }
-          );
+          // await users.updateOne(
+          //   {
+          //     userId: userId,
+          //     isDeleted: false,
+          //   },
+          //   {
+          //     balance: updatedbalance,
+          //     clientPL: updatedClientPL,
+          //     exposure: Number((userToUpdate.exposure + addExpoisureAmount).toFixed(2)),
+          //     availableBalance: Number(userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(2))),
+          //   },
+          //   { session }
+          // );
 
           // console.log(" ======================== User Updating Sucessfully ");
 
