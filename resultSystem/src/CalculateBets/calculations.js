@@ -138,7 +138,7 @@ async function handleLosingBet(bet) {
             calculatedExp = 1;
           }
 
-          await users.findOneAndUpdate(
+          await users.updateOne(
             {
               userId: userId,
               isDeleted: false,
@@ -214,7 +214,7 @@ async function handleLosingBet(bet) {
               const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount ).toFixed(2)) : 0;
               const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(2));
               
-              await User.findOneAndUpdate(
+              await users.updateOne(
                 {
                   userId: user.userId,
                   isDeleted: false
