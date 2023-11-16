@@ -214,7 +214,7 @@ async function handleLosingBet(bet) {
               const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount ).toFixed(2)) : 0;
               const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(2));
               
-              const user = await users.findOneAndUpdate(
+              await User.findOneAndUpdate(
                 {
                   userId: user.userId,
                   isDeleted: false
@@ -333,7 +333,6 @@ async function handleLosingBet(bet) {
     session.endSession();
   }
 }
-
 
 async function handleWinningBet(bet) {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
