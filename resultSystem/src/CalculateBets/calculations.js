@@ -129,7 +129,6 @@ async function handleLosingBet(bet) {
           const user_prev_availableBalance = userToUpdate.availableBalance;
           const user_prev_exposure = userToUpdate.exposure;
 
-
           const updatedbalance  = Number((userToUpdate.balance - loosingAmount).toFixed(2));
           const updatedClientPL = Number((userToUpdate.clientPL - loosingAmount).toFixed(2));
           let userToUpdateAvailableBalance = -loosingAmount;
@@ -156,31 +155,31 @@ async function handleLosingBet(bet) {
 
           let lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).session(session);
           let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
-          let newCash = deposits.insertOne({
-            userId: userToUpdate.userId,
-            description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-            amount: -loosingAmount,
-            balance: lastMaxWithdraw
-              ? lastMaxWithdraw.balance - loosingAmount
-              : -loosingAmount,
-            availableBalance: lastMaxWithdraw
-              ? lastMaxWithdraw.availableBalance - loosingAmount
-              : -loosingAmount,
-            maxWithdraw: lastMaxWithdraw
-              ? lastMaxWithdraw.maxWithdraw - loosingAmount
-              : loosingAmount,
-            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-            credit: lastMaxWithdraw?.credit || 0,
-            creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-            createdBy: 0,
-            cashOrCredit: "Bet",
-            marketId: bet.marketId,
-            sportsId: bet.sportsId,
-            matchId: bet.matchId,
-            betId: bet._id,
-            betType: bet.type,
-            betDateTime: bet.betTime,
-          });
+          // let newCash = deposits.insertOne({
+          //   userId: userToUpdate.userId,
+          //   description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+          //   amount: -loosingAmount,
+          //   balance: lastMaxWithdraw
+          //     ? lastMaxWithdraw.balance - loosingAmount
+          //     : -loosingAmount,
+          //   availableBalance: lastMaxWithdraw
+          //     ? lastMaxWithdraw.availableBalance - loosingAmount
+          //     : -loosingAmount,
+          //   maxWithdraw: lastMaxWithdraw
+          //     ? lastMaxWithdraw.maxWithdraw - loosingAmount
+          //     : loosingAmount,
+          //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+          //   credit: lastMaxWithdraw?.credit || 0,
+          //   creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+          //   createdBy: 0,
+          //   cashOrCredit: "Bet",
+          //   marketId: bet.marketId,
+          //   sportsId: bet.sportsId,
+          //   matchId: bet.matchId,
+          //   betId: bet._id,
+          //   betType: bet.type,
+          //   betDateTime: bet.betTime,
+          // });
 
           console.log(" ======================== Cash Updating Sucessfully ");
 
@@ -234,38 +233,38 @@ async function handleLosingBet(bet) {
               let lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).session(session)
               let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
     
-              let newCash = deposits.insertOne({
-                userId: user.userId,
-                description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
-                createdBy: 0,
-                amount: (user.commission / 100) * TotalLoosingAmount,
-                balance: lastMaxWithdraw
-                  ? lastMaxWithdraw.balance +
-                    (user.commission / 100) * TotalLoosingAmount
-                  : (user.commission / 100) * TotalLoosingAmount,
-                availableBalance: lastMaxWithdraw
-                  ? lastMaxWithdraw.availableBalance +
-                    (user.commission / 100) * TotalLoosingAmount
-                  : (user.commission / 100) * TotalLoosingAmount,
-                maxWithdraw: lastMaxWithdraw
-                  ? lastMaxWithdraw.maxWithdraw +
-                    (user.commission / 100) * TotalLoosingAmount
-                  : (user.commission / 100) * TotalLoosingAmount,
-                commissionFrom: commissionFrom,
-                cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-                creditRemaining: lastMaxWithdraw
-                  ? lastMaxWithdraw.creditRemaining
-                  : 0,
-                cashOrCredit: "loosing",
-                marketId: bet.marketId,
-                sportsId: bet.sportsId,
-                upLineAmount: upMovingAmount,
-                betId: bet._id,
-                matchId: bet.matchId,
-                betType: bet.type,
-                betDateTime: bet.betTime,
-              })
+              // let newCash = deposits.insertOne({
+              //   userId: user.userId,
+              //   description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
+              //   createdBy: 0,
+              //   amount: (user.commission / 100) * TotalLoosingAmount,
+              //   balance: lastMaxWithdraw
+              //     ? lastMaxWithdraw.balance +
+              //       (user.commission / 100) * TotalLoosingAmount
+              //     : (user.commission / 100) * TotalLoosingAmount,
+              //   availableBalance: lastMaxWithdraw
+              //     ? lastMaxWithdraw.availableBalance +
+              //       (user.commission / 100) * TotalLoosingAmount
+              //     : (user.commission / 100) * TotalLoosingAmount,
+              //   maxWithdraw: lastMaxWithdraw
+              //     ? lastMaxWithdraw.maxWithdraw +
+              //       (user.commission / 100) * TotalLoosingAmount
+              //     : (user.commission / 100) * TotalLoosingAmount,
+              //   commissionFrom: commissionFrom,
+              //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+              //   credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+              //   creditRemaining: lastMaxWithdraw
+              //     ? lastMaxWithdraw.creditRemaining
+              //     : 0,
+              //   cashOrCredit: "loosing",
+              //   marketId: bet.marketId,
+              //   sportsId: bet.sportsId,
+              //   upLineAmount: upMovingAmount,
+              //   betId: bet._id,
+              //   matchId: bet.matchId,
+              //   betType: bet.type,
+              //   betDateTime: bet.betTime,
+              // })
       
               console.log( " ======================== Parent User Cash Updating Sucessfully ");
 
@@ -350,7 +349,7 @@ async function handleWinningBet(bet) {
   const cricketSession = client.db(`${DBNAME}`).collection("sessions");
   const exposuresTrans = client.db(`${DBNAME}`).collection("exposures");
   try {
-    if (bet.status == 1) {
+    if (bet.status == 1){
       let calculatedExp = 0;
       console.log(`Bet ${bet._id} won.`);
       await session.withTransaction(async () => {
@@ -422,31 +421,31 @@ async function handleWinningBet(bet) {
           let lastTrans = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
           let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
 
-          let cash = await deposits.insertOne({
-            userId: userToUpdate.userId,
-            description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-            betId: bet._id,
-            createdBy: 0,
-            amount: remainingAmount,
-            balance: lastMaxWithdraw
-              ? lastMaxWithdraw.balance + remainingAmount
-              : remainingAmount,
-            availableBalance: lastMaxWithdraw
-              ? lastMaxWithdraw.availableBalance + remainingAmount
-              : remainingAmount,
-            maxWithdraw: lastMaxWithdraw
-              ? lastMaxWithdraw.maxWithdraw + remainingAmount
-              : remainingAmount,
-            cashOrCredit: "Bet",
-            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-            credit: lastMaxWithdraw?.credit || 0,
-            creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-            marketId: bet.marketId,
-            sportsId: bet.sportsId,
-            matchId: bet.matchId,
-            betType: bet.type,
-            betDateTime: bet.betTime,
-          });
+          // let cash = await deposits.insertOne({
+          //   userId: userToUpdate.userId,
+          //   description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+          //   betId: bet._id,
+          //   createdBy: 0,
+          //   amount: remainingAmount,
+          //   balance: lastMaxWithdraw
+          //     ? lastMaxWithdraw.balance + remainingAmount
+          //     : remainingAmount,
+          //   availableBalance: lastMaxWithdraw
+          //     ? lastMaxWithdraw.availableBalance + remainingAmount
+          //     : remainingAmount,
+          //   maxWithdraw: lastMaxWithdraw
+          //     ? lastMaxWithdraw.maxWithdraw + remainingAmount
+          //     : remainingAmount,
+          //   cashOrCredit: "Bet",
+          //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+          //   credit: lastMaxWithdraw?.credit || 0,
+          //   creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+          //   marketId: bet.marketId,
+          //   sportsId: bet.sportsId,
+          //   matchId: bet.matchId,
+          //   betType: bet.type,
+          //   betDateTime: bet.betTime,
+          // });
           console.log(" =============== Cash Save Successfully! ");
 
 
@@ -498,71 +497,71 @@ async function handleWinningBet(bet) {
               let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
               console.log(" =============== Parent User Successfull ");
       
-              let betTransaction = Cash.insertOne({
-                userId: user.userId,
-                description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-                createdBy: 0,
-                amount: -(user.commission / 100) * totalRemainingAmount,
-                balance: lastMaxWithdraw
-                  ? lastMaxWithdraw.balance -
-                    (user.commission / 100) * totalRemainingAmount
-                  : -(user.commission / 100) * totalRemainingAmount,
-                availableBalance: lastMaxWithdraw
-                  ? lastMaxWithdraw.availableBalance -
-                    (user.commission / 100) * totalRemainingAmount
-                  : -(user.commission / 100) * totalRemainingAmount,
-                maxWithdraw: lastMaxWithdraw
-                  ? lastMaxWithdraw.maxWithdraw -
-                    (user.commission / 100) * totalRemainingAmount
-                  : -(user.commission / 100) * totalRemainingAmount,
-                cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                marketId: bet.marketId,
-                credit: lastMaxWithdraw?.credit || 0,
-                creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-                cashOrCredit: "Bet",
-                commissionFrom: commissionFrom,
-                sportsId: bet.sportsId,
-                upLineAmount: -upMovingAmount,
-                betId: bet._id,
-                matchId: bet.matchId,
-                betType: bet.type,
-                betDateTime: bet.betTime,
-              })
+              // let betTransaction = Cash.insertOne({
+              //   userId: user.userId,
+              //   description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+              //   createdBy: 0,
+              //   amount: -(user.commission / 100) * totalRemainingAmount,
+              //   balance: lastMaxWithdraw
+              //     ? lastMaxWithdraw.balance -
+              //       (user.commission / 100) * totalRemainingAmount
+              //     : -(user.commission / 100) * totalRemainingAmount,
+              //   availableBalance: lastMaxWithdraw
+              //     ? lastMaxWithdraw.availableBalance -
+              //       (user.commission / 100) * totalRemainingAmount
+              //     : -(user.commission / 100) * totalRemainingAmount,
+              //   maxWithdraw: lastMaxWithdraw
+              //     ? lastMaxWithdraw.maxWithdraw -
+              //       (user.commission / 100) * totalRemainingAmount
+              //     : -(user.commission / 100) * totalRemainingAmount,
+              //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+              //   marketId: bet.marketId,
+              //   credit: lastMaxWithdraw?.credit || 0,
+              //   creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+              //   cashOrCredit: "Bet",
+              //   commissionFrom: commissionFrom,
+              //   sportsId: bet.sportsId,
+              //   upLineAmount: -upMovingAmount,
+              //   betId: bet._id,
+              //   matchId: bet.matchId,
+              //   betType: bet.type,
+              //   betDateTime: bet.betTime,
+              // })
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(2));
               console.log(" =============== Parent bet Transaction  Successfull ");
       
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker) {
                 let lastMaxWithdraw = await Cash.findOne({ userId: user.userId,}).sort({ _id: -1 });
-                let commissionTransaction =  await deposits.insertOne({
-                  userId: user.userId,
-                  description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
-                  createdBy: 0,
-                  commissionFrom: commissionFrom,
-                  amount: (user.commission / 100) * commissionAmount,
-                  balance: lastMaxWithdraw
-                    ? lastMaxWithdraw.balance +
-                      (user.commission / 100) * commissionAmount
-                    : (user.commission / 100) * commissionAmount,
-                  availableBalance: lastMaxWithdraw
-                    ? lastMaxWithdraw.availableBalance +
-                      (user.commission / 100) * commissionAmount
-                    : (user.commission / 100) * commissionAmount,
-                  maxWithdraw: lastMaxWithdraw
-                    ? lastMaxWithdraw.maxWithdraw +
-                      (user.commission / 100) * commissionAmount
-                    : (user.commission / 100) * commissionAmount,
-                  cashOrCredit: "Commission",
-                  betId: bet._id,
-                  cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                  marketId: bet.marketId,
-                  sportsId: bet.sportsId,
-                  credit: lastMaxWithdraw?.credit || 0,
-                  creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-                  upLineAmount: upMovingCommAmount,
-                  matchId: bet.matchId,
-                  betType: bet.type,
-                  betDateTime: bet.betTime,
-                });
+                // let commissionTransaction =  await deposits.insertOne({
+                //   userId: user.userId,
+                //   description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
+                //   createdBy: 0,
+                //   commissionFrom: commissionFrom,
+                //   amount: (user.commission / 100) * commissionAmount,
+                //   balance: lastMaxWithdraw
+                //     ? lastMaxWithdraw.balance +
+                //       (user.commission / 100) * commissionAmount
+                //     : (user.commission / 100) * commissionAmount,
+                //   availableBalance: lastMaxWithdraw
+                //     ? lastMaxWithdraw.availableBalance +
+                //       (user.commission / 100) * commissionAmount
+                //     : (user.commission / 100) * commissionAmount,
+                //   maxWithdraw: lastMaxWithdraw
+                //     ? lastMaxWithdraw.maxWithdraw +
+                //       (user.commission / 100) * commissionAmount
+                //     : (user.commission / 100) * commissionAmount,
+                //   cashOrCredit: "Commission",
+                //   betId: bet._id,
+                //   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+                //   marketId: bet.marketId,
+                //   sportsId: bet.sportsId,
+                //   credit: lastMaxWithdraw?.credit || 0,
+                //   creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+                //   upLineAmount: upMovingCommAmount,
+                //   matchId: bet.matchId,
+                //   betType: bet.type,
+                //   betDateTime: bet.betTime,
+                // });
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(2));
               }
               commissionFrom = user.userId;
