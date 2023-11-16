@@ -439,7 +439,7 @@ function scoreChecker() {
 
         var newRecord = new resultRecords({
           eventId: betData.matchId,
-          marketData: fancyName,
+          marketData: fancyName + "----MANUAL",
           resultData: result.result,
         });
 
