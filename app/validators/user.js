@@ -178,7 +178,8 @@ module.exports.validate = (method) => {
         body('userId', 'userId is required'),
         body('exposure', 'exposure is required'),
         body('availableBalance', 'availableBalance is required'),
-        body('balance', 'balance is required')
+        body('balance', 'balance is required'),
+        body('clientPL', 'clientPL is required')
       ];
     } 
   }
