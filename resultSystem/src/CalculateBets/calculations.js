@@ -151,12 +151,11 @@ async function handleLosingBet(bet) {
               exposure: Number((userToUpdate.exposure + addExpoisureAmount).toFixed(2)),
               availableBalance: Number(userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(2))),
             },
-            { session }
           );
 
           console.log(" ======================== User Updating Sucessfully ");
 
-          let lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).session(session);
+          let lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
           let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
           let newCash = Cash.insertOne({
             userId: userToUpdate.userId,
