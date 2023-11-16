@@ -120,7 +120,7 @@ async function handleLosingBet(bet) {
 
         const userId = bet.userId;
         const loosingAmount = Number(bet.loosingAmount.toFixed(2));
-        const userToUpdate = await users.findOne({ userId: userId, isDeleted: false});
+        const userToUpdate = await User.findOne({ userId: userId, isDeleted: false});
 
         if (!userToUpdate) {
           console.error("Error: User Not Found Location:(_handle losing bet)");
@@ -140,19 +140,19 @@ async function handleLosingBet(bet) {
             calculatedExp = 1;
           }
 
-          // await users.updateOne(
-          //   {
-          //     userId: userId,
-          //     isDeleted: false,
-          //   },
-          //   {
-          //     balance: updatedbalance,
-          //     clientPL: updatedClientPL,
-          //     exposure: Number((userToUpdate.exposure + addExpoisureAmount).toFixed(2)),
-          //     availableBalance: Number(userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(2))),
-          //   },
-          //   { session }
-          // );
+          await users.updateOne(
+            {
+              userId: userId,
+              isDeleted: false,
+            },
+            {
+              balance: updatedbalance,
+              clientPL: updatedClientPL,
+              exposure: Number((userToUpdate.exposure + addExpoisureAmount).toFixed(2)),
+              availableBalance: Number(userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(2))),
+            },
+            { session }
+          );
 
           // console.log(" ======================== User Updating Sucessfully ");
 
