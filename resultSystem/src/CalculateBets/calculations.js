@@ -97,8 +97,8 @@ async function getAllBets(Id) {
     return [];
   }
 }
+
 async function handleLosingBet(bet) {
-  console.log(" ====================== Lose is called ================ ");
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -115,7 +115,7 @@ async function handleLosingBet(bet) {
     if (bet.status == 1) {
       let calculatedExp = 0;
       console.log(` ============= Bet ${bet._id} LOSE ============= `);
-      await session.withTransaction( async () => {
+      await session.withTransaction(async () => {
 
         const userId = bet.userId;
         const loosingAmount = Number(bet.loosingAmount.toFixed(2));
@@ -156,7 +156,7 @@ async function handleLosingBet(bet) {
             { session }
           );
 
-          console.log(" ======================== User Updating Sucessfully ");
+          // console.log(" ======================== User Updating Sucessfully ");
 
           const lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
           const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
@@ -186,7 +186,7 @@ async function handleLosingBet(bet) {
             betDateTime: bet.betTime,
           });
 
-          console.log(" ======================== Cash Updating Sucessfully ");
+          // console.log(" ======================== Cash Updating Sucessfully ");
           const parentUserIds = await getParents(userId);
           const parentUser = await users.find({userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).toArray();
     
@@ -204,7 +204,7 @@ async function handleLosingBet(bet) {
               user["commission"] = current - prev;
               prev = current;
             }
-            console.log( " ======================== Commitions Calculated  Sucessfully " );
+            // console.log( " ======================== Commitions Calculated  Sucessfully " );
 
 
             let commissionFrom = userToUpdate.userId;
@@ -232,9 +232,9 @@ async function handleLosingBet(bet) {
                 { session }
               )
 
-              console.log(" ======================== Parent User Updating Sucessfully ");
+              // console.log(" ======================== Parent User Updating Sucessfully ");
       
-              const lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
+              const lastTrans       = await Cash.find({ userId: user.userId }).sort({ _id: -1 }).limit(1);
               const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
     
               let newCash = deposits.insertOne({
@@ -288,7 +288,7 @@ async function handleLosingBet(bet) {
               winnerRunnerData = marketInfo?.winnerRunnerData;
             } else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
               const match = await Events.findById(bet.matchId);
-              console.log("  ============ match =================  ", match);
+              // console.log("  ============ match =================  ", match);
               const marketInfo = await sessions.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
               SessionScore = marketInfo?.score;
             }
@@ -430,7 +430,7 @@ async function handleWinningBet(bet) {
             },
             { session }
           )
-          console.log(" =============== User Updated Successfully ");
+          // console.log(" =============== User Updated Successfully ");
 
           const lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
           const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
@@ -461,7 +461,7 @@ async function handleWinningBet(bet) {
             betDateTime: bet.betTime,
           });
           
-          console.log(" =============== Cash Save Successfully! ");
+          // console.log(" =============== Cash Save Successfully! ");
 
 
           const parentUserIds = await getParents(userId);
@@ -485,7 +485,7 @@ async function handleWinningBet(bet) {
               prev = current;
             }
 
-            console.log(" =============== Parent Commition Successfull ");
+            // console.log(" =============== Parent Commition Successfull ");
 
 
             let commissionFrom = userToUpdate.userId;
@@ -511,7 +511,7 @@ async function handleWinningBet(bet) {
                 { session }
               )
       
-              const ParentlastTrans = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
+              const ParentlastTrans = await Cash.find({ userId: user.userId }).sort({ _id: -1 }).limit(1);
               const lastMaxWithdraw = ParentlastTrans.length > 0 ? lastTrans[0] : null;
               console.log(" =============== Parent User Successfull ", lastMaxWithdraw);
       
@@ -546,7 +546,7 @@ async function handleWinningBet(bet) {
                 betDateTime: bet.betTime,
               })
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(2));
-              console.log(" =============== Parent bet Transaction  Successfull ");
+              // console.log(" =============== Parent bet Transaction  Successfull ");
       
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker) {
                 let lastMaxWithdraw = await deposits.find({ userId: user.userId,}).sort({ _id: -1 }).toArray();
@@ -596,7 +596,7 @@ async function handleWinningBet(bet) {
             } 
             else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
               const match = await Events.findById(bet.matchId);
-              console.log("  ============ match =================  ", match);
+              // console.log("  ============ match =================  ", match);
               const marketInfo = await cricketSession.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
               SessionScore = marketInfo?.score;
             }
@@ -614,10 +614,10 @@ async function handleWinningBet(bet) {
               { session }
             );
 
-            console.log(" betIdString =============== Starting  ");
+            // console.log(" betIdString =============== Starting  ");
             console.log(bet._id.toString());
             const betIdString = bet._id.toString();
-            console.log(" betIdString =============== ", betIdString);
+            // console.log(" betIdString =============== ", betIdString);
             await CurrentPosition.deleteMany({ betId: betIdString });
 
             const updatedUser = await users.findOne({
@@ -742,10 +742,10 @@ const handleDrawBet = async (bet, status = 0) => {
               },
               { session }
             );
-            console.log(" betIdString ============================== Starting");
+            // console.log(" betIdString ============================== Starting");
             console.log(bet._id.toString());
             const betIdString = bet._id.toString();
-            console.log(" betIdString ============================== ", betIdString);
+            // console.log(" betIdString ============================== ", betIdString);
             await currentPositions.deleteMany({ betId: betIdString });
 
             // const updatedUser = await users.findOne({ userId: userId, isDeleted: false });
