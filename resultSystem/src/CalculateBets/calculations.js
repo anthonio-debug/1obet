@@ -98,7 +98,7 @@ async function getAllBets(Id) {
   }
 }
 
-async function handleLosingBet(bet) {
+async function _handleLosingBet(bet) {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -234,7 +234,7 @@ async function handleLosingBet(bet) {
 
               // console.log(" ======================== Parent User Updating Sucessfully ");
       
-              const lastTrans       = await Cash.find({ userId: user.userId }).sort({ _id: -1 }).limit(1);
+              const lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
               const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
     
               let newCash = deposits.insertOne({
@@ -348,6 +348,9 @@ async function handleLosingBet(bet) {
     session.endSession();
   }
 }
+
+async function handleLosingBet(bet) {}
+async function handleDrawBet(bet) {}
 
 async function handleWinningBet(bet) {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
@@ -657,7 +660,7 @@ async function handleWinningBet(bet) {
     await session.endSession();
   }
 }
-const handleDrawBet = async (bet, status = 0) => {
+const _handleDrawBet = async (bet, status = 0) => {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
