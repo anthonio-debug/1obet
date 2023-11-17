@@ -664,141 +664,119 @@ const handleDrawBet = async (bet, status = 2) => {
   const users = client.db(`${DBNAME}`).collection("users");
   const exposures = client.db(`${DBNAME}`).collection("exposures");
   const bets = client.db(`${DBNAME}`).collection("bets");
-  const currentPositions = client
-    .db(`${DBNAME}`)
-    .collection("currentpositions");
+  const currentPositions = client.db(`${DBNAME}`).collection("currentpositions");
 
   try {
     if (bet.status == 1) {
-      session.startTransaction();
-
       let calculatedExp = 0;
       console.log(` Bet ${bet._id} Draw. `);
-      const userId = bet.userId;
-      const userToUpdate = await users.findOne({
-        userId: userId,
-        isDeleted: false,
-      });
+      await session.withTransaction( async () => {
 
-      if (!userToUpdate) {
-        return res.status(404).send({ message: "user not found" });
-      }
-      const user_prev_balance = userToUpdate.balance;
-      const user_prev_availableBalance = userToUpdate.availableBalance;
-      const user_prev_exposure = userToUpdate.exposure;
+        const userId = bet.userId;
+        const userToUpdate = await users.findOne({ userId: userId, isDeleted: false });
+        if (!userToUpdate){
+          console.error("Error: User Not Found Location:(_handle draw bet)");
+          await session.abortTransaction();
+        }else{
+          const user_prev_balance = userToUpdate.balance;
+          const user_prev_availableBalance = userToUpdate.availableBalance;
+          const user_prev_exposure = userToUpdate.exposure;
 
-      if (bet.calculateExp) {
-        const updatedUserAvlBalance = Number(
-          (
-            userToUpdate.availableBalance +
-            Number(bet.exposureAmount.toFixed(2))
-          ).toFixed(2)
-        );
-        const updatedUserExp = Number(
-          (
-            userToUpdate.exposure + Number(bet.exposureAmount.toFixed(2))
-          ).toFixed(2)
-        );
-        // userToUpdate.availableBalance = updatedUserAvlBalance;
-        // userToUpdate.exposure = updatedUserExp;
-        calculatedExp = 1;
-        await users.findOneAndUpdate(
-          {
-            userId: userId,
-            isDeleted: false,
-          },
-          {
-            availableBalance: updatedUserAvlBalance,
-            exposure: updatedUserExp,
+          if (bet.calculateExp == true) {
+            const updatedUserAvlBalance = Number(( userToUpdate.availableBalance + Number(bet.exposureAmount.toFixed(2))).toFixed(2));
+            const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount.toFixed(2))).toFixed(2));
+            // userToUpdate.availableBalance = updatedUserAvlBalance;
+            // userToUpdate.exposure = updatedUserExp;
+            calculatedExp = 1;
+            await users.updateOne(
+              {
+                userId: userId,
+                isDeleted: false,
+              },
+              {
+                $set: {
+                  availableBalance: updatedUserAvlBalance,
+                  exposure: updatedUserExp
+                }
+              },
+              { session }
+            );
           }
-        );
-      }
-      // await userToUpdate.save();
 
-      const updatedUser = await users.findOne({
-        userId: userId,
-        isDeleted: false,
-      });
+          const parentUserIds = await getParents(userId);
+          const parentUser  = await users.find({ userId: { $in: [...parentUserIds] }, isDeleted: false }).sort({ role: -1 }).toArray();
 
-      const user_new_balance = updatedUser.balance;
-      const user_new_availableBalance = updatedUser.availableBalance;
-      const user_new_exposure = updatedUser.exposure;
+          if (!parentUser){
+            console.error(" Error : Parent User Not Found Location:(_handle Draw bet ) ");
+            await session.abortTransaction();
+          }else {
+            let prev = 0;
+            for (const user of parentUser) {
+              let current = user.downLineShare;
+              user["commission"] = current - prev;
+              prev = current;
+            }
+            for (const user of parentUser) {
+              const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
+              const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
+              const parent = await users.updateOne(
+                {
+                  _id: user,_id
+                },
+                { 
+                  exposure: amountToBeAddedExp,
+                  availableBalance: amountToBeAddedAvlBalance
+                 },
+                { session }
+              )
 
-      const ExpTran = {
-        userId: updatedUser.userId,
-        trans_from: "BetDrawOrCanceled",
-        trans_from_id: bet._id,
-        trans_bet_status: status,
-        user_prev_balance: user_prev_balance,
-        user_prev_availableBalance: user_prev_availableBalance,
-        user_prev_exposure: user_prev_exposure,
-        user_new_balance: user_new_balance,
-        user_new_availableBalance: user_new_availableBalance,
-        user_new_exposure: user_new_exposure,
-        marketId: bet.marketId,
-        sportsId: bet.sportsId,
-        calculatedExp: calculatedExp,
-      };
+            }
+            const updateBet = await bets.updateOne( 
+              {_id: bet._id},
+              {
+                $set : {
+                  position: 0,
+                  status: status,
+                  iscalculatedExp: calculatedExp
+                }
+              },
+              { session }
+            );
+            console.log(" betIdString ============================== Starting");
+            console.log(bet._id.toString());
+            const betIdString = bet._id.toString();
+            console.log(" betIdString ============================== ", betIdString);
+            await currentPositions.deleteMany({ betId: betIdString });
 
-      await exposures.insertOne(ExpTran);
-      // await ExpTran.save();
+            const updatedUser = await users.findOne({ userId: userId, isDeleted: false });
+            const user_new_balance = updatedUser.balance;
+            const user_new_availableBalance = updatedUser.availableBalance;
+            const user_new_exposure = updatedUser.exposure;
+            const ExpTran = await  exposures.insertOne({
+              userId: updatedUser.userId,
+              trans_from: "BetDrawOrCanceled",
+              trans_from_id: bet._id,
+              trans_bet_status: status,
+              user_prev_balance: user_prev_balance,
+              user_prev_availableBalance: user_prev_availableBalance,
+              user_prev_exposure: user_prev_exposure,
+              user_new_balance: user_new_balance,
+              user_new_availableBalance: user_new_availableBalance,
+              user_new_exposure: user_new_exposure,
+              marketId: bet.marketId,
+              sportsId: bet.sportsId,
+              calculatedExp: calculatedExp,
+            });
 
-      const totalRemainingAmount = Number(bet.winningAmount.toFixed(2));
+            await session.commitTransaction();
+          }
+        }
+      }, transactionOptions)
 
-      const parentUserIds = await getParents(userId);
-      const parentUser = await users
-        .find({
-          userId: {
-            $in: [...parentUserIds],
-          },
-          isDeleted: false,
-        })
-        .session(session)
-        .sort({ role: -1 });
 
-      if (!parentUser) {
-        return res.status(404).send({ message: "user not found !" });
-      }
-      let prev = 0;
-      for (const user of parentUser) {
-        let current = user.downLineShare;
-        user["commission"] = current - prev;
-        prev = current;
-      }
-
-      for (const user of parentUser) {
-        const amountToBeAddedExp = Number(
-          (
-            user.exposure +
-            Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))
-          ).toFixed(2)
-        );
-        const amountToBeAddedAvlBalance = Number(
-          (
-            user.availableBalance +
-            Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))
-          ).toFixed(2)
-        );
-        user.exposure = amountToBeAddedExp;
-        user.availableBalance = amountToBeAddedAvlBalance;
-        user.save();
-      }
-
-      await bets.findByIdAndUpdate(bet._id, {
-        position: 0,
-        status: status,
-        iscalculatedExp: calculatedExp,
-      });
-
-      console.log(" betIdString ============================== Starting ");
-      console.log(bet._id.toString());
-      const betIdString = bet._id.toString();
-      console.log(" betIdString ============================== ", betIdString);
-      await currentPositions.deleteMany({ betId: betIdString });
     }
-    await session.commitTransaction();
   } catch (error) {
-    console.error("error", error);
+    console.error("Error: Draw Bet_", error);
     await session.abortTransaction();
   } finally {
     await session.endSession();
