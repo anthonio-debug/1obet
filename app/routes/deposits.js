@@ -48,7 +48,6 @@ async function addCashDeposit(req, res) {
         });
       }
     }
-    return res.status(404).send({ message: 'Testing Error ' });
 
     const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const lastMaxWithdraw = cUserRes.length > 0 ? cUserRes[0] : null;
