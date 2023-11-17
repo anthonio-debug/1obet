@@ -728,16 +728,18 @@ const handleDrawBet = async (bet, status = 0) => {
             for (const user of parentUser) {
               const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
               const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
-              // const parent = await users.updateOne(
-              //   {
-              //     _id: user._id
-              //   },
-              //   { 
-              //     exposure: amountToBeAddedExp,
-              //     availableBalance: amountToBeAddedAvlBalance
-              //    },
-              //   { session }
-              // )
+              const parent = await users.updateOne(
+                {
+                  _id: user._id
+                },
+                { 
+                  $set:{
+                    exposure: amountToBeAddedExp,
+                    availableBalance: amountToBeAddedAvlBalance
+                  }
+                 },
+                { session }
+              )
 
             }
             const updateBet = await bets.updateOne( 
