@@ -186,7 +186,7 @@ async function handleLosingBet(bet) {
             betDateTime: bet.betTime,
           });
 
-          console.log(" ======================== Cash Updating Sucessfully ", lastMaxWithdraw);
+          console.log(" ======================== Cash Updating Sucessfully ");
           const parentUserIds = await getParents(userId);
           const parentUser = await users.find({userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).toArray();
     
@@ -232,7 +232,7 @@ async function handleLosingBet(bet) {
                 { session }
               )
 
-              console.log(" ======================== Parent User Updating Sucessfully ");
+              console.log(" ======================== Parent User Updating Sucessfully ", lastMaxWithdraw);
       
               const lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
               const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
