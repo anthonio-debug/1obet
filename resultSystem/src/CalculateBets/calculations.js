@@ -98,7 +98,7 @@ async function getAllBets(Id) {
   }
 }
 
-async function handleLosingBet(bet) {
+async function _handleLosingBet(bet) {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -349,9 +349,10 @@ async function handleLosingBet(bet) {
   }
 }
 
-async function handleWinningBet(bet) {}
-async function _handleDrawBet(bet) {}
-async function _handleWinningBet(bet) {
+async function handleLosingBet(bet) {}
+async function handleDrawBet(bet) {}
+
+async function handleWinningBet(bet) {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
