@@ -288,9 +288,12 @@ async function handleLosingBet(bet) {
               winnerRunnerData = marketInfo?.winnerRunnerData;
             } else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
               const match = await Events.findById(bet.matchId);
-              // console.log("  ============ match =================  ", match);
+              console.log("  ============ match =================  ", match);
               const marketInfo = await sessions.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
+              console.log("  ============ marketInfo =================  ", marketInfo);
               SessionScore = marketInfo?.score;
+              console.log("  ============ SessionScore =================  ", SessionScore);
+
             }
             await bets.updateOne(
               {
@@ -598,9 +601,11 @@ async function handleWinningBet(bet) {
             } 
             else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
               const match = await Events.findById(bet.matchId);
-              // console.log("  ============ match =================  ", match);
-              const marketInfo = await cricketSession.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
+              console.log("  ============ match =================  ", match);
+              const marketInfo = await sessions.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
+              console.log("  ============ marketInfo =================  ", marketInfo);
               SessionScore = marketInfo?.score;
+              console.log("  ============ SessionScore =================  ", SessionScore);
             }
             await bets.updateOne(
               { _id: bet._id  },
@@ -739,7 +744,7 @@ const handleDrawBet = async (bet, status = 0) => {
               {
                 $set : {
                   position: 0,
-                  // status: status,
+                  status: status,
                   iscalculatedExp: calculatedExp
                 }
               },
