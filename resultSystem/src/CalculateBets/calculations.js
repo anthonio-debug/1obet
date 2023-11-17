@@ -349,9 +349,7 @@ async function handleLosingBet(bet) {
   }
 }
 
-async function handleWinningBet(bet) {}
-
-async function _handleWinningBet(bet) {
+async function handleWinningBet(bet) {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -551,7 +549,9 @@ async function _handleWinningBet(bet) {
               // console.log(" =============== Parent bet Transaction  Successfull ");
       
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker) {
-                let lastMaxWithdraw = await deposits.find({ userId: user.userId,}).sort({ _id: -1 }).toArray();
+                const ParentlastTrans = await Cash.find({ userId: user.userId }).sort({ _id: -1 }).limit(1);
+                const lastMaxWithdraw = ParentlastTrans.length > 0 ? lastTrans[0] : null;
+
                 let commissionTransaction =  await deposits.insertOne({
                   userId: user.userId,
                   description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -659,6 +659,7 @@ async function _handleWinningBet(bet) {
     await session.endSession();
   }
 }
+
 const handleDrawBet = async (bet, status = 0) => {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
