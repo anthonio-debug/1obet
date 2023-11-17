@@ -158,8 +158,8 @@ async function handleLosingBet(bet) {
 
           console.log(" ======================== User Updating Sucessfully ");
 
-          let lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
-          let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
+          const lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
+          const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
           let newCash = deposits.insertOne({
             userId: userToUpdate.userId,
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -234,8 +234,8 @@ async function handleLosingBet(bet) {
 
               console.log(" ======================== Parent User Updating Sucessfully ");
       
-              let lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
-              let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
+              const lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
+              const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
     
               let newCash = deposits.insertOne({
                 userId: user.userId,
@@ -432,8 +432,8 @@ async function handleWinningBet(bet) {
           )
           console.log(" =============== User Updated Successfully ");
 
-          let lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
-          let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
+          const lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
+          const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
 
           let cash = await deposits.insertOne({
             userId: userToUpdate.userId,
@@ -511,8 +511,8 @@ async function handleWinningBet(bet) {
                 { session }
               )
       
-              let ParentlastTrans = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
-              let lastMaxWithdraw = ParentlastTrans.length > 0 ? lastTrans[0] : null;
+              const ParentlastTrans = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
+              const lastMaxWithdraw = ParentlastTrans.length > 0 ? lastTrans[0] : null;
               console.log(" =============== Parent User Successfull ", lastMaxWithdraw);
       
               let betTransaction = await deposits.insertOne({
