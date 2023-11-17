@@ -114,7 +114,7 @@ async function handleLosingBet(bet) {
   try {
     if (bet.status == 1) {
       let calculatedExp = 0;
-      console.log(`Bet ${bet._id} lost.`);
+      console.log(` ============= Bet ${bet._id} LOSE ============= `);
       await session.withTransaction( async () => {
 
         const userId = bet.userId;
@@ -363,7 +363,7 @@ async function handleWinningBet(bet) {
   try {
     if (bet.status == 1){
       let calculatedExp = 0;
-      console.log(`Bet ${bet._id} won.`);
+      console.log(` ============= Bet ${bet._id} WIN ============= `);
       await session.withTransaction(async () => {
         const userId = bet.userId;
         const userToUpdate = await users.findOne({
@@ -384,7 +384,7 @@ async function handleWinningBet(bet) {
           let upMovingAmount;
           let upMovingCommAmount;
     
-          if ( !config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker ) {
+          if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker ) {
             remainingAmount = Number(((Number(bet.winningAmount.toFixed(2)) / 100) * 98).toFixed(2));
             commissionAmount = Number(((Number(bet.winningAmount.toFixed(2)) / 100) * 2).toFixed(2));
             totalRemainingAmount = Number(bet.winningAmount.toFixed(2));
@@ -511,8 +511,8 @@ async function handleWinningBet(bet) {
                 { session }
               )
       
-              let lastTrans = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
-              let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
+              let ParentlastTrans = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
+              let lastMaxWithdraw = ParentlastTrans.length > 0 ? lastTrans[0] : null;
               console.log(" =============== Parent User Successfull ", lastMaxWithdraw);
       
               let betTransaction = await deposits.insertOne({
@@ -669,7 +669,7 @@ const handleDrawBet = async (bet, status = 0) => {
   try {
     if (bet.status == 1) {
       let calculatedExp = 0;
-      console.log(` Bet ${bet._id} Draw. `);
+      console.log(` ============= Bet ${bet._id} DRAW ============= `);
       await session.withTransaction( async () => {
         const totalRemainingAmount = Number(bet.winningAmount.toFixed(2));
         const userId = bet.userId;
@@ -716,27 +716,27 @@ const handleDrawBet = async (bet, status = 0) => {
               user["commission"] = current - prev;
               prev = current;
             }
-            // for (const user of parentUser) {
-            //   const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
-            //   const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
-            //   const parent = await users.updateOne(
-            //     {
-            //       _id: user._id
-            //     },
-            //     { 
-            //       exposure: amountToBeAddedExp,
-            //       availableBalance: amountToBeAddedAvlBalance
-            //      },
-            //     { session }
-            //   )
+            for (const user of parentUser) {
+              const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
+              const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
+              const parent = await users.updateOne(
+                {
+                  _id: user._id
+                },
+                { 
+                  exposure: amountToBeAddedExp,
+                  availableBalance: amountToBeAddedAvlBalance
+                 },
+                { session }
+              )
 
-            // }
+            }
             const updateBet = await bets.updateOne( 
               {_id: bet._id},
               {
                 $set : {
                   position: 0,
-                  status: status,
+                  // status: status,
                   iscalculatedExp: calculatedExp
                 }
               },
