@@ -721,7 +721,7 @@ const handleDrawBet = async (bet, status = 0) => {
               const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
               const parent = await users.updateOne(
                 {
-                  _id: user,_id
+                  _id: user._id
                 },
                 { 
                   exposure: amountToBeAddedExp,
