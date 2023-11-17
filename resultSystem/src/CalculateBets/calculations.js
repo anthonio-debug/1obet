@@ -599,7 +599,7 @@ async function handleWinningBet(bet) {
               });
               winnerRunnerData = marketInfo?.winnerRunnerData;
             } 
-            else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
+            else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
               const match = await Events.findById(bet.matchId);
               console.log("  ============ match =================  ", match);
               const marketInfo = await sessions.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
