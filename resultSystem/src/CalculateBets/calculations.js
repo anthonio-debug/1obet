@@ -706,70 +706,70 @@ const handleDrawBet = async (bet, status = 0) => {
           const parentUserIds = await getParents(userId);
           const parentUser  = await users.find({ userId: { $in: [...parentUserIds] }, isDeleted: false }).sort({ role: -1 }).toArray();
 
-          if (!parentUser){
-            console.error(" Error : Parent User Not Found Location:(_handle Draw bet ) ");
-            await session.abortTransaction();
-          }else {
-            let prev = 0;
-            for (const user of parentUser) {
-              let current = user.downLineShare;
-              user["commission"] = current - prev;
-              prev = current;
-            }
-            for (const user of parentUser) {
-              const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
-              const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
-              const parent = await users.updateOne(
-                {
-                  _id: user._id
-                },
-                { 
-                  exposure: amountToBeAddedExp,
-                  availableBalance: amountToBeAddedAvlBalance
-                 },
-                { session }
-              )
+          // if (!parentUser){
+          //   console.error(" Error : Parent User Not Found Location:(_handle Draw bet ) ");
+          //   await session.abortTransaction();
+          // }else {
+          //   let prev = 0;
+          //   for (const user of parentUser) {
+          //     let current = user.downLineShare;
+          //     user["commission"] = current - prev;
+          //     prev = current;
+          //   }
+          //   for (const user of parentUser) {
+          //     const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
+          //     const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))).toFixed(2));
+          //     const parent = await users.updateOne(
+          //       {
+          //         _id: user._id
+          //       },
+          //       { 
+          //         exposure: amountToBeAddedExp,
+          //         availableBalance: amountToBeAddedAvlBalance
+          //        },
+          //       { session }
+          //     )
 
-            }
-            const updateBet = await bets.updateOne( 
-              {_id: bet._id},
-              {
-                $set : {
-                  position: 0,
-                  status: status,
-                  iscalculatedExp: calculatedExp
-                }
-              },
-              { session }
-            );
-            console.log(" betIdString ============================== Starting");
-            console.log(bet._id.toString());
-            const betIdString = bet._id.toString();
-            console.log(" betIdString ============================== ", betIdString);
-            await currentPositions.deleteMany({ betId: betIdString });
+          //   }
+          //   const updateBet = await bets.updateOne( 
+          //     {_id: bet._id},
+          //     {
+          //       $set : {
+          //         position: 0,
+          //         status: status,
+          //         iscalculatedExp: calculatedExp
+          //       }
+          //     },
+          //     { session }
+          //   );
+          //   console.log(" betIdString ============================== Starting");
+          //   console.log(bet._id.toString());
+          //   const betIdString = bet._id.toString();
+          //   console.log(" betIdString ============================== ", betIdString);
+          //   await currentPositions.deleteMany({ betId: betIdString });
 
-            // const updatedUser = await users.findOne({ userId: userId, isDeleted: false });
-            // const user_new_balance = updatedUser.balance;
-            // const user_new_availableBalance = updatedUser.availableBalance;
-            // const user_new_exposure = updatedUser.exposure;
-            // const ExpTran = await  exposures.insertOne({
-            //   userId: updatedUser.userId,
-            //   trans_from: "BetDrawOrCanceled",
-            //   trans_from_id: bet._id,
-            //   trans_bet_status: status,
-            //   user_prev_balance: user_prev_balance,
-            //   user_prev_availableBalance: user_prev_availableBalance,
-            //   user_prev_exposure: user_prev_exposure,
-            //   user_new_balance: user_new_balance,
-            //   user_new_availableBalance: user_new_availableBalance,
-            //   user_new_exposure: user_new_exposure,
-            //   marketId: bet.marketId,
-            //   sportsId: bet.sportsId,
-            //   calculatedExp: calculatedExp,
-            // });
+          //   // const updatedUser = await users.findOne({ userId: userId, isDeleted: false });
+          //   // const user_new_balance = updatedUser.balance;
+          //   // const user_new_availableBalance = updatedUser.availableBalance;
+          //   // const user_new_exposure = updatedUser.exposure;
+          //   // const ExpTran = await  exposures.insertOne({
+          //   //   userId: updatedUser.userId,
+          //   //   trans_from: "BetDrawOrCanceled",
+          //   //   trans_from_id: bet._id,
+          //   //   trans_bet_status: status,
+          //   //   user_prev_balance: user_prev_balance,
+          //   //   user_prev_availableBalance: user_prev_availableBalance,
+          //   //   user_prev_exposure: user_prev_exposure,
+          //   //   user_new_balance: user_new_balance,
+          //   //   user_new_availableBalance: user_new_availableBalance,
+          //   //   user_new_exposure: user_new_exposure,
+          //   //   marketId: bet.marketId,
+          //   //   sportsId: bet.sportsId,
+          //   //   calculatedExp: calculatedExp,
+          //   // });
 
-            await session.commitTransaction();
-          }
+          //   await session.commitTransaction();
+          // }
         }
       }, transactionOptions)
 
