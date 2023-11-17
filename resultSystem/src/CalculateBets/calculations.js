@@ -602,7 +602,7 @@ async function handleWinningBet(bet) {
             else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
               const match = await Events.findById(bet.matchId);
               console.log("  ============ match =================  ", match);
-              const marketInfo = await sessions.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
+              const marketInfo = await cricketSession.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
               console.log("  ============ marketInfo =================  ", marketInfo);
               SessionScore = marketInfo?.score;
               console.log("  ============ SessionScore =================  ", SessionScore);
