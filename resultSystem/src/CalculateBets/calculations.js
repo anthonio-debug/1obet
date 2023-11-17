@@ -513,7 +513,7 @@ async function handleWinningBet(bet) {
       
               let lastTrans = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
               let lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
-              console.log(" =============== Parent User Successfull ");
+              console.log(" =============== Parent User Successfull ", lastMaxWithdraw);
       
               let betTransaction = await deposits.insertOne({
                 userId: user.userId,
@@ -671,7 +671,7 @@ const handleDrawBet = async (bet, status = 0) => {
       let calculatedExp = 0;
       console.log(` Bet ${bet._id} Draw. `);
       await session.withTransaction( async () => {
-
+        const totalRemainingAmount = Number(bet.winningAmount.toFixed(2));
         const userId = bet.userId;
         const userToUpdate = await users.findOne({ userId: userId, isDeleted: false });
         if (!userToUpdate){
