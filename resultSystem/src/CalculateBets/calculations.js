@@ -232,7 +232,7 @@ async function handleLosingBet(bet) {
                 { session }
               )
 
-              console.log(" ======================== Parent User Updating Sucessfully ", lastMaxWithdraw);
+              console.log(" ======================== Parent User Updating Sucessfully ");
       
               const lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
               const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
@@ -270,7 +270,7 @@ async function handleLosingBet(bet) {
                 betDateTime: bet.betTime,
               })
       
-              console.log( " ======================== Parent User Cash Updating Sucessfully ");
+              console.log( " ======================== Parent User Cash Updating Sucessfully ", lastMaxWithdraw);
 
               upMovingAmount = Number((upMovingAmount - Number(((user.commission / 100) * TotalLoosingAmount).toFixed(2)) ).toFixed(2));
               commissionFrom = user.userId;
