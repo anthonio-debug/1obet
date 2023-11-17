@@ -298,7 +298,7 @@ async function handleLosingBet(bet) {
               }, 
               {
                 $set: {
-                  // status: 0,
+                  status: 0,
                   position: bet.loosingAmount * -1,
                   iscalculatedExp: calculatedExp,
                   winnerRunnerData: winnerRunnerData,
@@ -600,11 +600,11 @@ async function handleWinningBet(bet) {
               const marketInfo = await cricketSession.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
               SessionScore = marketInfo?.score;
             }
-            await Bets.updateOne(
+            await bets.updateOne(
               { _id: bet._id  },
               {
                 $set: {
-                  // status: 0,
+                  status: 0,
                   position: Number(bet.winningAmount.toFixed(2)),
                   iscalculatedExp: calculatedExp,
                   winnerRunnerData: winnerRunnerData,
