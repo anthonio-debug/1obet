@@ -17,7 +17,7 @@ const ExpRec = new mongoose.Schema({
     marketId: { type: String },
     createdAt: { type: Number },
     updatedAt:  { type: Number },
-    calculatedExp: { type: Number },
+    calculatedExp: { type: String },
     calculateExp: { type: Boolean },
     position: { type: Number},
     exposureAmount: { type: Number },
