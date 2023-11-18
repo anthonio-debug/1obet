@@ -2425,7 +2425,7 @@ const placeBet = async (req, res) => {
         betAmount: betAmount || 0,
         betRate: Number(betRate) || 0,
         matchType: eventDetail?.matchType,
-        eventId: '323232',
+        eventId: eventDetail?.Id,
         selectedBetRate: selectedBetRate || 0,
         TargetScore: TargetScore || 0,
         matchId: matchId || null,
