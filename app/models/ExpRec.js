@@ -17,7 +17,11 @@ const ExpRec = new mongoose.Schema({
     marketId: { type: String },
     createdAt: { type: Number },
     updatedAt:  { type: Number },
-    calculatedExp: { type: Number }
+    calculatedExp: { type: Number },
+    calculateExp: { type: Boolean },
+    position: { type: Number},
+    exposureAmount: { type: Number },
+    DateTime: {type: String, default: new Date()} 
 });
 ExpRec.pre('save', function (next) {
     var now = new Date().getTime();
