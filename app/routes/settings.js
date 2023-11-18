@@ -2195,15 +2195,7 @@ const setSessionScore = async (req, res) => {
     { $set: { score: parseInt(req.body.score), manuelSave: true } }
   );
 
-  await Bets.findOneAndUpdate(
-    {
-      eventId: req.body.eventId,
-    },
-    {
-      sessionNo: req.body.sessionNo,
-      score: req.body.score,
-    }
-  );
+ 
 
   return res.status(200).send({
     success: true,
