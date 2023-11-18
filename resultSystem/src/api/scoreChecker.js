@@ -454,6 +454,7 @@ function scoreChecker() {
             $set: {
               resultId: newRecord._id,
               winnerRunnerData: result.result,
+              exposureTrack: "Q Tracking"
             },
           }
         );
