@@ -309,12 +309,7 @@ const placeBet = async (req, res) => {
 
     // console.log(' ================== subMarketDetail ================== ', subMarketDetail );
 
-    if (
-      marketIds.includes(marketId) ||
-      subMarketId.includes(subMarketDetail.Id) ||
-      user.betLockStatus == true ||
-      user.blockedSubMarketsByParent.includes(subMarketDetail.Id)
-    ) {
+    if ( marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id) ) {
       return res.status(404).send({ message: "Betting disabled" });
     }
 
@@ -2218,7 +2213,7 @@ const placeBet = async (req, res) => {
           matchId: matchId,
           status: 1,
           fancyData: fancyData,
-          // TargetScore: TargetScore,
+          TargetScore: TargetScore,
         });
         console.log(
           " ================== lastBetsCount ================  ",
@@ -2232,23 +2227,16 @@ const placeBet = async (req, res) => {
             matchId: matchId,
             status: 1,
             fancyData: fancyData,
-            // TargetScore: TargetScore,
+            TargetScore: TargetScore,
           })
             .sort({ _id: -1 })
             .limit(1);
-          console.log(
-            " =================== lastBet ====================  ",
-            lastBet[0].runnersPosition
-          );
+          console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
           const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
             if (item.runner == type) {
-              item.amount = Number(
-                (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
-              );
+              item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
             } else {
-              item.amount = Number(
-                (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
-              );
+              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
             }
             return item;
           });
@@ -2484,7 +2472,7 @@ const placeBet = async (req, res) => {
             userId: req.decoded.userId,
             matchId: matchId,
             fancyData: fancyData,
-            // TargetScore: TargetScore,
+            TargetScore: TargetScore,
             betSession: currentSession,
             status: 1,
           },
@@ -2508,7 +2496,7 @@ const placeBet = async (req, res) => {
             userId: req.decoded.userId,
             matchId: matchId,
             fancyData: fancyData,
-            // TargetScore: TargetScore,
+            TargetScore: TargetScore,
             status: 1,
           },
           { calculateExp: false }
