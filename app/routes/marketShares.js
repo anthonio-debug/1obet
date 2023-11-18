@@ -17,37 +17,47 @@ const marketGainWithDuplicates = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
   const userId = Number(req.query.userId);
-  const betId = mongoose.Types.ObjectId(req.query.betId);
   const marketId = req.query.marketId;
+  const depositId = mongoose.Types.ObjectId(req.query.depositId);
 
   // const condition = { marketId: marketId }
   // "" + marketId == "null" ? [{ sportsId: "6" }, { sportID: 6 }] : { marketId: marketId };
 
   const currentUser = await User.findOne({ userId: userId });
+  let depositRes;
+  
   if (currentUser?.role == 5) {
     const marketData = await MarketIDS.findOne({ marketId: marketId });
 
     const parent = await User.findOne({ userId: currentUser.createdBy });
 
-    const depositRes = await CashDeposit.findOne({
-      marketId: marketId,
-      betId: betId,
-      $or: [
-        {
-          $and: [
-            {
-              userId: userId,
-            },
-            {
-              cashOrCredit: { $in: ["Bet"] },
-            },
-          ],
-        },
-        {
-          cashOrCredit: { $in: ["Commission"] },
-        },
-      ],
-    });
+    if (marketId !== "null") {
+
+      depositRes = await CashDeposit.findOne({
+        marketId: marketId,
+        // betId: betId,
+        _id: depositId,
+        $or: [
+          {
+            $and: [
+              {
+                userId: userId,
+              },
+              {
+                cashOrCredit: { $in: ["Bet"] },
+              },
+            ],
+          },
+          {
+            cashOrCredit: { $in: ["Commission"] },
+          },
+        ],
+      });
+    } else {
+      depositRes = await CashDeposit.findOne({
+        _id: depositId
+      });
+    }
 
     if (!depositRes)
       return res.status(404).send({ message: "Cannot find desposit" });

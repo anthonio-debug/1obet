@@ -51,6 +51,7 @@ const betSchema = new mongoose.Schema({
   matchType:{ type: String, default: 0 },
   winnerRunnerData:{ type: String, default: 0 },
   SessionScore : { type: Number, default: 0 },
+  exposureTrack:{ type: String, default: 'Q'}
 });
 
 betSchema.pre("save", function (next) {
