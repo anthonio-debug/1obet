@@ -67,7 +67,7 @@ const config = {
   Cup: 12,
   tiedMatch: 35,
   overUnder: 14,
-  raceOpenBefore: 120000,
+  raceOpenBefore: 180000,
   sportsOpenBefore: 600000,
   tossCloseTime: 2700000,
 };
@@ -286,7 +286,7 @@ async function handleLosingBet(bet) {
                 marketId: bet.marketId,
               });
               winnerRunnerData = marketInfo?.winnerRunnerData;
-            } else if (config.FigureEvenOddSmallBig.includes(bet.subMarketId)) {
+            } else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
               const match = await Events.findById(bet.matchId);
               console.log("  ============ match =================  ", match);
               const marketInfo = await sessions.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
@@ -603,7 +603,7 @@ async function handleWinningBet(bet) {
               });
               winnerRunnerData = marketInfo?.winnerRunnerData;
             } 
-            else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
+            else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))){
               const match = await Events.findById(bet.matchId);
               console.log("  ============ match =================  ", match);
               const marketInfo = await cricketSession.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
