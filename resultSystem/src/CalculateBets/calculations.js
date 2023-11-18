@@ -763,7 +763,8 @@ const handleDrawBet = async (bet, status = 0) => {
             const user_new_balance = updatedUser.balance;
             const user_new_availableBalance = updatedUser.availableBalance;
             const user_new_exposure = updatedUser.exposure;
-            const ExpTran = await  exposures.insertOne({
+              
+            
               userId: updatedUser.userId,
               trans_from: "BetDrawOrCanceled",
               trans_from_id: bet._id,
