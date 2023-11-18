@@ -2,6 +2,7 @@ const express = require('express');
 const { validationResult } = require('express-validator');
 let config = require('config');
 const Cash = require('../models/deposits');
+const Bet = require('../models/bets')
 const User = require('../models/user');
 const cashValidator = require('../validators/deposits');
 const loginRouter = express.Router();
@@ -612,38 +613,38 @@ function getLedgerDetails(req, res) {
     }
 
     cashPipeline.push(
-      {
-        $addFields: {
-          betsId: {
-            $cond: {
-              if: {
-                $regexMatch: {
-                  input: '$betId',
-                  regex: /^[0-9a-fA-F]{24}$/,
-                },
-              },
-              then: { $toObjectId: '$betId' },
-              else: null,
-            },
-          },
-        },
-      },
-      {
-        $lookup: {
-          from: 'bets',
-          localField: 'betsId',
-          foreignField: '_id',
-          as: 'betsDetails',
-        },
-      },
-      {
-        $addFields: {
-          betSession: { $arrayElemAt: ['$betsDetails.betSession', 0] },
-          matchType: { $arrayElemAt: ['$betsDetails.matchType', 0] },
-          SessionScore: { $arrayElemAt: ['$betsDetails.SessionScore', 0] },
-          winnerRunnerData: { $arrayElemAt: ['$betsDetails.winnerRunnerData', 0] }
-        },
-      },
+      // {
+      //   $addFields: {
+      //     betsId: {
+      //       $cond: {
+      //         if: {
+      //           $regexMatch: {
+      //             input: '$betId',
+      //             regex: /^[0-9a-fA-F]{24}$/,
+      //           },
+      //         },
+      //         then: { $toObjectId: '$betId' },
+      //         else: null,
+      //       },
+      //     },
+      //   },
+      // },
+      // {
+      //   $lookup: {
+      //     from: 'bets',
+      //     localField: 'betsId',
+      //     foreignField: '_id',
+      //     as: 'betsDetails',
+      //   },
+      // },
+      // {
+      //   $addFields: {
+      //     betSession: { $arrayElemAt: ['$betsDetails.betSession', 0] },
+      //     matchType: { $arrayElemAt: ['$betsDetails.matchType', 0] },
+      //     SessionScore: { $arrayElemAt: ['$betsDetails.SessionScore', 0] },
+      //     winnerRunnerData: { $arrayElemAt: ['$betsDetails.winnerRunnerData', 0] }
+      //   },
+      // },
       {
         $sort: { _id: -1 },
       },
@@ -655,7 +656,20 @@ function getLedgerDetails(req, res) {
       }
     );
     console.log('cashPipeline:', cashPipeline);
-    Cash.aggregate(cashPipeline, (err, result) => {
+    Cash.aggregate(cashPipeline, async (err, result) => {
+      if(result[0].results&&result[0].results.length>0){
+       for(let i=0;i<result[0].results.length;i++){
+        if(result[0].results[i].betId){
+          const betInfo = await Bet.findOne({
+            _id: result[0].results[i].betId
+          })
+          result[0].results[i].betSession = betInfo?.betSession;
+          result[0].results[i].matchType = betInfo?.matchType;
+          result[0].results[i].SessionScore = betInfo?.SessionScore;
+          result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
+        }
+       }
+      }
       console.log('result:', result);
       if (
         err ||
