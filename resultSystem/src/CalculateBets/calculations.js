@@ -334,6 +334,10 @@ async function handleLosingBet(bet) {
               marketId: bet.marketId,
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
+              
+              calculateExp: true,
+              position: '99',
+              exposureAmount: '199',
             });
             await session.commitTransaction();
           }
@@ -649,6 +653,10 @@ async function handleWinningBet(bet) {
               marketId: bet.marketId,
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
+              
+              calculateExp: true,
+              position: '99',
+              exposureAmount: '199',
             });
             await session.commitTransaction();
           }
@@ -763,8 +771,7 @@ const handleDrawBet = async (bet, status = 0) => {
             const user_new_balance = updatedUser.balance;
             const user_new_availableBalance = updatedUser.availableBalance;
             const user_new_exposure = updatedUser.exposure;
-              
-            
+            const ExpTran = await  exposures.insertOne({
               userId: updatedUser.userId,
               trans_from: "BetDrawOrCanceled",
               trans_from_id: bet._id,
@@ -778,6 +785,10 @@ const handleDrawBet = async (bet, status = 0) => {
               marketId: bet.marketId,
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
+              
+              calculateExp: true,
+              position: '99',
+              exposureAmount: '199',
             });
 
             await session.commitTransaction();
