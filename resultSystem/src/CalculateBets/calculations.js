@@ -335,9 +335,9 @@ async function handleLosingBet(bet) {
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
               DateTime: new Date(),
-              calculateExp: true,
-              position: '99',
-              exposureAmount: '199',
+              calculateExp: calculatedExp,
+              position: bet.position,
+              exposureAmount: bet.exposureAmount,
             });
             await session.commitTransaction();
           }
@@ -654,9 +654,9 @@ async function handleWinningBet(bet) {
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
               DateTime: new Date(),
-              calculateExp: true,
-              position: '99',
-              exposureAmount: '199',
+              calculateExp: calculatedExp,
+              position: bet.position,
+              exposureAmount: bet.exposureAmount,
             });
             await session.commitTransaction();
           }
@@ -786,9 +786,9 @@ const handleDrawBet = async (bet, status = 0) => {
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
               DateTime: new Date(),
-              calculateExp: true,
-              position: '99',
-              exposureAmount: '199',
+              calculateExp: calculatedExp,
+              position: bet.position,
+              exposureAmount: bet.exposureAmount,
             });
 
             await session.commitTransaction();
