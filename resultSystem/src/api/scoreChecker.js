@@ -454,11 +454,12 @@ function scoreChecker() {
             $set: {
               resultId: newRecord._id,
               winnerRunnerData: result.result,
+              resultData:result.result,
               exposureTrack: "Q Tracking ."
             },
           }
         );
-        
+
 
         const bets = await Bets.find({
           matchId: event._id.toString(),
