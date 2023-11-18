@@ -334,6 +334,10 @@ async function handleLosingBet(bet) {
               marketId: bet.marketId,
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
+              DateTime: new Date(),
+              calculateExp: calculatedExp,
+              position: bet.position,
+              exposureAmount: bet.exposureAmount,
             });
             await session.commitTransaction();
           }
@@ -649,6 +653,10 @@ async function handleWinningBet(bet) {
               marketId: bet.marketId,
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
+              DateTime: new Date(),
+              calculateExp: calculatedExp,
+              position: bet.position,
+              exposureAmount: bet.exposureAmount,
             });
             await session.commitTransaction();
           }
@@ -777,6 +785,10 @@ const handleDrawBet = async (bet, status = 0) => {
               marketId: bet.marketId,
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
+              DateTime: new Date(),
+              calculateExp: calculatedExp,
+              position: bet.position,
+              exposureAmount: bet.exposureAmount,
             });
 
             await session.commitTransaction();

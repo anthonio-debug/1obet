@@ -50,8 +50,9 @@ const betSchema = new mongoose.Schema({
   asianTableId: { type: String },
   matchType:{ type: String, default: 0 },
   winnerRunnerData:{ type: String, default: 0 },
-  SessionScore : { type: Number, default: 0 },
-  exposureTrack:{ type: String, default: 'Q'}
+  resultData:{ type: String, default: '.' },
+  SessionScore : { type: Number, default: 0 }
+  
 });
 
 betSchema.pre("save", function (next) {
