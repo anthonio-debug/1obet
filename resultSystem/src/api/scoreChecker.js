@@ -12,7 +12,6 @@ const Bets = require("../../../app/models/bets");
 const inPlayEvents = require("../../../app/models/events");
 const MarketIDs = require("../../../app/models/marketIds");
 
-
 const {
   handleLosingBet,
   handleWinningBet,
