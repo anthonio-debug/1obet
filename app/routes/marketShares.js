@@ -25,13 +25,13 @@ const marketGainWithDuplicates = async (req, res) => {
 
   const currentUser = await User.findOne({ userId: userId });
   let depositRes;
-  
+
   if (currentUser?.role == 5) {
     const marketData = await MarketIDS.findOne({ marketId: marketId });
 
     const parent = await User.findOne({ userId: currentUser.createdBy });
 
-    if (marketId !== "null") {
+    if (marketId != "none") {
 
       depositRes = await CashDeposit.findOne({
         marketId: marketId,
@@ -69,7 +69,7 @@ const marketGainWithDuplicates = async (req, res) => {
       sportsId: depositRes.sportsId,
     };
 
-    if (depositRes.sportsId != "6") {
+    if (marketId != "none" && depositRes.sportsId != "6") {
       const betRes = await Bets.findOne({ _id: depositRes.betId });
       response.price = betRes.betAmount;
       response.name = betRes.runnerName;
