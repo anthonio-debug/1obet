@@ -334,7 +334,7 @@ async function handleLosingBet(bet) {
               marketId: bet.marketId,
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
-              
+              DateTime: new Date(),
               calculateExp: true,
               position: '99',
               exposureAmount: '199',
@@ -653,7 +653,7 @@ async function handleWinningBet(bet) {
               marketId: bet.marketId,
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
-              
+              DateTime: new Date(),
               calculateExp: true,
               position: '99',
               exposureAmount: '199',
@@ -785,7 +785,7 @@ const handleDrawBet = async (bet, status = 0) => {
               marketId: bet.marketId,
               sportsId: bet.sportsId,
               calculatedExp: calculatedExp,
-              
+              DateTime: new Date(),
               calculateExp: true,
               position: '99',
               exposureAmount: '199',
