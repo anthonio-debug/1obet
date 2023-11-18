@@ -986,7 +986,7 @@ const userAccountSattlement = async (req, res) =>{
           exposure: Number(Number(payload.exposure).toFixed(2)),
           availableBalance: Number(Number(payload.availableBalance).toFixed(2)),
           balance: Number(Number(payload.balance).toFixed(2)),
-
+          clientPL: Number(Number(payload.clientPL).toFixed(2)),
         }
       }
     )
