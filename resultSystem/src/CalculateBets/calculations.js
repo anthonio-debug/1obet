@@ -67,7 +67,7 @@ const config = {
   Cup: 12,
   tiedMatch: 35,
   overUnder: 14,
-  raceOpenBefore: 120000,
+  raceOpenBefore: 180000,
   sportsOpenBefore: 600000,
   tossCloseTime: 2700000,
 };
