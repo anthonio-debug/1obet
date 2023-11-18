@@ -458,6 +458,7 @@ function scoreChecker() {
             },
           }
         );
+        
 
         const bets = await Bets.find({
           matchId: event._id.toString(),
