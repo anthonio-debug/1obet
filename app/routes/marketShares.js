@@ -3,7 +3,7 @@ const { validationResult } = require("express-validator");
 let config = require("config");
 const CashDeposit = require("../models/deposits");
 const User = require("../models/user");
-
+let mongoose = require('mongoose');
 const reportValidator = require("../validators/reports");
 const Deposits = require("../models/deposits");
 const Events = require("../models/events");
@@ -17,7 +17,7 @@ const marketGainWithDuplicates = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
   const userId = Number(req.query.userId);
-  const betId = req.query.betId;
+  const betId = mongoose.Types.ObjectId(req.query.betId);
   const marketId = req.query.marketId;
 
   // const condition = { marketId: marketId }

@@ -309,12 +309,7 @@ const placeBet = async (req, res) => {
 
     // console.log(' ================== subMarketDetail ================== ', subMarketDetail );
 
-    if (
-      marketIds.includes(marketId) ||
-      subMarketId.includes(subMarketDetail.Id) ||
-      user.betLockStatus == true ||
-      user.blockedSubMarketsByParent.includes(subMarketDetail.Id)
-    ) {
+    if ( marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id) ) {
       return res.status(404).send({ message: "Betting disabled" });
     }
 
@@ -338,10 +333,7 @@ const placeBet = async (req, res) => {
     /* ================================== Market Specific Checks ================================== */
 
     // Socer Match Odds
-    if (
-      config.sportMarkets.includes(marketId) &&
-      config.soccerOdds == subMarketDetail.Id
-    ) {
+    if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
       // console.log(' ======================== Soccer  Match Odds ======================== ');
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -468,10 +460,7 @@ const placeBet = async (req, res) => {
     }
 
     // Tennis Match Odds
-    else if (
-      config.sportMarkets.includes(marketId) &&
-      config.tennisOdds == subMarketDetail.Id
-    ) {
+    else if ( config.sportMarkets.includes(marketId) && config.tennisOdds == subMarketDetail.Id ) {
       console.log(
         " ======================== Tennis Match Odds ======================== "
       );
@@ -624,10 +613,7 @@ const placeBet = async (req, res) => {
     }
 
     // Cricket Match Odds
-    else if (
-      config.sportMarkets.includes(marketId) &&
-      config.cricketOdds == subMarketDetail.Id
-    ) {
+    else if ( config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id ) {
       console.log(
         " ======================== Soccer Match Odds ======================== "
       );
@@ -985,10 +971,7 @@ const placeBet = async (req, res) => {
     }
 
     // Soccer Over Under
-    else if (
-      config.sportMarkets.includes(marketId) &&
-      subMarketDetail.Id == config.overUnder
-    ) {
+    else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.overUnder ) {
       _3rdPartyMarketId = overunderMarketId;
       console.log(
         " ======================== Soccer over under  ======================== "
@@ -1203,10 +1186,7 @@ const placeBet = async (req, res) => {
     }
 
     // Cricket Tied Match
-    else if (
-      config.sportMarkets.includes(marketId) &&
-      subMarketDetail.Id == config.tiedMatch
-    ) {
+    else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.tiedMatch ) {
       console.log(
         " ======================== Soccer  Match Odds ======================== "
       );
@@ -1352,10 +1332,7 @@ const placeBet = async (req, res) => {
     }
 
     // Cricket Cup Winner
-    else if (
-      config.sportMarkets.includes(marketId) &&
-      subMarketDetail.Id == config.Cup
-    ) {
+    else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.Cup ) {
       console.log(
         " ======================== Soccer  Match Odds ======================== "
       );
@@ -1497,10 +1474,7 @@ const placeBet = async (req, res) => {
     }
 
     // Cricket Toss
-    else if (
-      config.sportMarkets.includes(marketId) &&
-      subMarketDetail.Id == config.Toss
-    ) {
+    else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.Toss ) {
       console.log(
         " ======================== Soccer  Match Odds ======================== "
       );
@@ -2146,10 +2120,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
-      } else if (
-        multipeResponse.length > 0 &&
-        !delayExcludedMarkets.includes(subMarketDetail.Id)
-      ) {
+      } else if (  multipeResponse.length > 0 && !delayExcludedMarkets.includes(subMarketDetail.Id) ) {
         betRate = multipeResponse[multipeResponse.length - 1];
         console.log(" Inside  Bet Rate ===============  ", betRate);
       }
@@ -2192,16 +2163,10 @@ const placeBet = async (req, res) => {
           { runner: 9, amount: 0 },
         ];
         expoisureType = 2;
-      } else if (
-        type == 1 &&
-        !config.ExcludedBackLay.includes(subMarketDetail.Id)
-      ) {
+      } else if ( type == 1 && !config.ExcludedBackLay.includes(subMarketDetail.Id) ) {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
-      } else if (
-        type == 0 &&
-        !config.ExcludedBackLay.includes(subMarketDetail.Id)
-      ) {
+      } else if ( type == 0 && !config.ExcludedBackLay.includes(subMarketDetail.Id) ) {
         winningAmount = betAmount * betRate - betAmount;
         loosingAmount = betAmount;
       } else if (type == 1 && subMarketDetail.Id == config.BookMaker) {
@@ -2230,7 +2195,7 @@ const placeBet = async (req, res) => {
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 },
         ];
-      } else {
+      } else if(marketId == 8) {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
       }
@@ -2240,10 +2205,7 @@ const placeBet = async (req, res) => {
       let runnersPosition = [];
       let prevExpAmount = 0;
       let expAmount = 0;
-      console.log(
-        " ================ Selection ID ================ ",
-        selectionId
-      );
+      console.log( " ================ Selection ID ================ ", selectionId );
       if (subMarketDetail.Id == config.Fancy) {
         let lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
@@ -2269,19 +2231,12 @@ const placeBet = async (req, res) => {
           })
             .sort({ _id: -1 })
             .limit(1);
-          console.log(
-            " =================== lastBet ====================  ",
-            lastBet[0].runnersPosition
-          );
+          console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
           const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
             if (item.runner == type) {
-              item.amount = Number(
-                (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
-              );
+              item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
             } else {
-              item.amount = Number(
-                (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
-              );
+              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
             }
             return item;
           });
@@ -2377,10 +2332,7 @@ const placeBet = async (req, res) => {
           matchId: matchId,
           status: 1,
         });
-        console.log(
-          " ======================= Total Count of Prev Bets ",
-          lastBetsCount
-        );
+        console.log(" ======================= Total Count of Prev Bets ", lastBetsCount);
         if (lastBetsCount) {
           const resp = await calculateExposure(
             _3rdPartyMarketId,

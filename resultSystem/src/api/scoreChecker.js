@@ -12,7 +12,6 @@ const Bets = require("../../../app/models/bets");
 const inPlayEvents = require("../../../app/models/events");
 const MarketIDs = require("../../../app/models/marketIds");
 
-
 const {
   handleLosingBet,
   handleWinningBet,
@@ -451,7 +450,12 @@ function scoreChecker() {
             isfancyOrbookmaker: true,
             fancyData: fancyName,
           },
-          { $set: { resultId: newRecord._id } }
+          {
+            $set: {
+              resultId: newRecord._id,
+              winnerRunnerData: result.result,
+            },
+          }
         );
 
         const bets = await Bets.find({
