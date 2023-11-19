@@ -2614,7 +2614,7 @@ const placeBet = async (req, res) => {
               trans_from: "Bet Place",
               trans_from_id: randomStr,
               
-              user_prev_balance: user.balance,,
+              user_prev_balance: user.balance,
               user_prev_availableBalance: user.availableBalance,
               user_prev_exposure: user.exposure,
               user_new_balance: user.balance,
