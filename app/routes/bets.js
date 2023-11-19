@@ -21,6 +21,10 @@ const FancyOdds = require("../models/fancyOdds");
 const Session = require("../models/Session");
 const Cash = require("../../app/models/deposits");
 const BetPlaceHold = require("../models/betaPlaceHold");
+
+const exposures = require("../models/exposures");
+
+
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
     return 6;
@@ -152,8 +156,8 @@ const placeBet = async (req, res) => {
     let isManuel = true;
     let delay = 4500;
     let asianTableName = "";
-    let backFancyRate = 0;
-    let layFancyRate  = 0;
+    // let backFancyRate = 0;
+    // let layFancyRate  = 0;
     /* ====================================================================== */
 
     /* ============================== Innitial Checks  ============================== */
@@ -1655,8 +1659,8 @@ const placeBet = async (req, res) => {
             .status(400)
             .send({ message: "Invalid type value. Type should be 0 or 1." });
         }
-        layFancyRate = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3][0]; 
-        backFancyRate  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3][0];
+        // layFancyRate = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3][0]; 
+        // backFancyRate  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3][0];
         console.log(" =================== isFancyOrBookMaker ========================== ", isFancyOrBookMaker);
       } else {
         console.log(`Odds not available for the selected team ${req.body.selectionId}`);
@@ -2148,10 +2152,10 @@ const placeBet = async (req, res) => {
       } else if ( type == 1 && marketId == 8 ) {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
-    } else if ( type == 0 && marketId == 8) {
+      } else if ( type == 0 && marketId == 8) {
         winningAmount = betAmount * betRate - betAmount;
         loosingAmount = betAmount;
-    }
+      }
 
       /* ------------ */
       /* Current Position Of Runners Calculations */
@@ -2161,6 +2165,63 @@ const placeBet = async (req, res) => {
       let expAmount = 0;
       console.log( " ================ Selection ID ================ ", selectionId );
 
+      // if (subMarketDetail.Id == config.Fancy) {
+      //   let lastBetsCount = await Bets.countDocuments({
+      //     marketId: _3rdPartyMarketId,
+      //     userId: req.decoded.userId,
+      //     matchId: matchId,
+      //     fancyData: fancyData,
+      //     status: 1,
+      //     // backFancyRate: backFancyRate,
+      //     // layFancyRate: layFancyRate
+      //   });
+      //   console.log(" ================== lastBetsCount ==================  ", lastBetsCount);
+
+      //   if (lastBetsCount > 0) {
+      //     const lastBet = await Bets.find({
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       fancyData: fancyData,
+      //       status: 1,
+      //       // backFancyRate: backFancyRate,
+      //       // layFancyRate: layFancyRate
+      //     }).sort({ _id: -1 }).limit(1);
+
+      //     console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
+      //     const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
+      //       if (item.runner == type) {
+      //         item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
+      //       } else {
+      //         item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
+      //       }
+      //       return item;
+      //     });
+      //     runnersPosition = fancyNewPosition;
+      //     prevExpAmount = lastBet[0].exposureAmount;
+      //   } else {
+      //     const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
+      //       if (item.runner == type) {
+      //         item.amount = Number(
+      //           (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+      //         );
+      //       } else {
+      //         item.amount = Number(
+      //           (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+      //         );
+      //       }
+      //       return item;
+      //     });
+      //     runnersPosition = runnerCurrentPosition;
+      //   }
+
+      //   expAmount = runnersPosition.reduce((min, current) => {
+      //     return current.amount < min.amount ? current : min;
+      //   }, runnersPosition[0]);
+      //   expAmount = expAmount.amount;
+      //   expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
+      // } 
+      
       if (subMarketDetail.Id == config.Fancy) {
         let lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
@@ -2185,36 +2246,65 @@ const placeBet = async (req, res) => {
           }).sort({ _id: -1 }).limit(1);
 
           console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
-          const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
-            if (item.runner == type) {
-              item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
-            } else {
-              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
-            }
+          const runners = [
+            { runner: Number(TargetScore) - 1, position: 0 },
+            { runner: Number(TargetScore), position: 0 },
+            { runner: Number(TargetScore) + 1, position: 0 }
+          ]
+          const AllRunners = lastBet[0].runnersPosition;
+
+          newRecords  =  [
+            { runner: 11, position: 0 },
+            { runner: 12, position:0 },
+            { runner: 13, position:0 }
+          ]
+
+          AllRunners =  [
+            { runner: 16, position: -100 },
+            { runner: 17, position: 100 },
+            { runner: 18, position: 100 },
+            { runner: 19, position: -100 },
+            { runner: 20, position: 100 },
+            { runner: 12, position: 100 }
+          ]
+
+          const newRunners = [];
+          const uniqueVals = newRecords.map((item)=>{
+              const index = AllRunners.findIndex((e)=> e.runner == item.runner );
+              if(index == -1) newRunners.push(item)
+          })
+          AllRunners.push(...newRunners)
+
+          const fancyNewPosition = AllRunners.map((item) => {
+            if(type == 1 && item.runner <  TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(2))).toFixed(2));
+            if(type == 1 && item.runner >= TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(2))).toFixed(2));
+            if(type == 0 && item.runner <  TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(2))).toFixed(2));
+            if(type == 0 && item.runner >= TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(2))).toFixed(2));
             return item;
           });
           runnersPosition = fancyNewPosition;
           prevExpAmount = lastBet[0].exposureAmount;
-        } else {
-          const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
-            if (item.runner == type) {
-              item.amount = Number(
-                (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
-              );
-            } else {
-              item.amount = Number(
-                (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
-              );
-            }
+        } 
+        else {
+          const runners = [
+            { runner: Number(TargetScore) - 1, position: 0 },
+            { runner: Number(TargetScore), position: 0 },
+            { runner: Number(TargetScore) + 1, position: 0 }
+          ]
+          const runnerCurrentPosition = runners.map((item) => {
+            if(type == 1 && item.runner <  TargetScore) item.position  = -Number(loosingAmount.toFixed(2));
+            if(type == 1 && item.runner >= TargetScore) item.position  =  Number(winningAmount.toFixed(2));
+            if(type == 0 && item.runner <  TargetScore) item.position  =  Number(winningAmount.toFixed(2));
+            if(type == 0 && item.runner >= TargetScore) item.position  = -Number(loosingAmount.toFixed(2));
             return item;
           });
           runnersPosition = runnerCurrentPosition;
         }
 
         expAmount = runnersPosition.reduce((min, current) => {
-          return current.amount < min.amount ? current : min;
+          return current.position < min.position ? current : min;
         }, runnersPosition[0]);
-        expAmount = expAmount.amount;
+        expAmount = expAmount.position;
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
       } 
       else if (expoisureType == 2) {
@@ -2371,7 +2461,7 @@ const placeBet = async (req, res) => {
       console.log("userAvailableBalance", user.availableBalance);
       /* ------------ */
       /* Placing Bet Area  */
-
+      const randomStr = Date.now();
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
         sportsId: marketId || 0,
@@ -2391,6 +2481,7 @@ const placeBet = async (req, res) => {
         runner: selectionId ? selectionId : "",
         type: type || 0,
         status: 1,
+        randomStr:randomStr,
         event: eventDetail ? eventDetail.name : oddsId,
         isfancyOrbookmaker: isFancyOrBookMaker,
         fancyData: fancyData,
@@ -2404,8 +2495,8 @@ const placeBet = async (req, res) => {
         roundId: roundId,
         asianTableName: asianTableName,
         asianTableId: oddsId,
-        backFancyRate,
-        layFancyRate 
+        // backFancyRate,
+        // layFancyRate 
       });
 
       if (user.availableBalance < expAmount - prevExpAmount) {
@@ -2490,6 +2581,56 @@ const placeBet = async (req, res) => {
               availableBalance: UserAvlBalAmount,
             }
           );
+
+
+            /** Start of Qaiser added tracking values in deposits */
+            let cash = await Cash.insertOne({
+              userId: userId,
+              description: `Bet Place`,
+              betId:randomStr,
+              addedExpoisureAmount:expAmount ? Number(expAmount.toFixed(2)) : 0,
+              UserPrevexposure:user.exposure,
+              UpdatedExposure:UserExpAmount,
+              sourceCodeBlock:'Bet Place',
+              loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(2)) : 0,
+              winningAmount: winningAmount ? Number(winningAmount.toFixed(2)) : 0,
+              
+              amount: betAmount || 0,
+              balance: user.balance,
+              availableBalance: UserAvlBalAmount,
+              
+              cashOrCredit: "Bet",
+             
+              
+              marketId: _3rdPartyMarketId || 0,
+              sportsId: marketId || 0,
+              matchId: matchId || null,
+              betType: type || 0,
+              betDateTime: BetTime,
+            });
+
+            const ExpTran = await  exposures.insertOne({
+              userId: userId,
+              trans_from: "Bet Place",
+              trans_from_id: randomStr,
+              
+              user_prev_balance: user.balance,,
+              user_prev_availableBalance: user.availableBalance,
+              user_prev_exposure: user.exposure,
+              user_new_balance: user.balance,
+              user_new_availableBalance: UserAvlBalAmount,
+              user_new_exposure: UserExpAmount,
+              marketId: _3rdPartyMarketId || 0,
+              sportsId: marketId || 0,
+              calculatedExp: expAmount ? Number(expAmount.toFixed(2)) : 0,
+              DateTime: new Date(),
+              calculateExp: false,
+              exposureAmount: expAmount ? Number(expAmount.toFixed(2)) : 0,
+            });
+            /** End of Qaiser added tracking values in deposits */
+
+
+
           await updateParentUserBalance(
             parentUserIds,
             winningAmount,
