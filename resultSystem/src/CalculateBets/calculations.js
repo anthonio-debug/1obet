@@ -166,7 +166,7 @@ async function handleLosingBet(bet) {
             addedExpoisureAmount:addExpoisureAmount,
             UserPrevexposure:userToUpdate.exposure,
             UpdatedExposure:expAmount,
-
+            sourceCodeBlock:'handleLosingBet',
 
 
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -256,7 +256,7 @@ async function handleLosingBet(bet) {
                 UserPrevexposure:user.exposure,
                 UpdatedExposure:totalExpoisure,
                 exposure: 'Number(((user.commission / 100) * remainingAmount).toFixed(2))',
-                
+                sourceCodeBlock:'handleLosingBet',
 
 
 
@@ -468,7 +468,7 @@ async function handleWinningBet(bet) {
             addedExpoisureAmount:addExpoisureAmount,
             UserPrevexposure:userToUpdate.exposure,
             UpdatedExposure:UpdatedExposure,
-
+            sourceCodeBlock:'handleWinningBet',
             createdBy: 0,
             amount: remainingAmount,
             balance: lastMaxWithdraw
@@ -554,6 +554,8 @@ async function handleWinningBet(bet) {
             UserPrevexposure:user.exposure,
             UpdatedExposure:totalExpoisure,
             exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))',
+            sourceCodeBlock:'handleWinningBet',
+            
                 amount: -(user.commission / 100) * totalRemainingAmount,
                 balance: lastMaxWithdraw
                   ? lastMaxWithdraw.balance -
