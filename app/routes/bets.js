@@ -2236,7 +2236,7 @@ const placeBet = async (req, res) => {
               }
             ]
           }).sort({ _id: -1 }).limit(1);
-          
+
           console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
           const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
             if (item.runner == type) {
@@ -2505,9 +2505,18 @@ const placeBet = async (req, res) => {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
-            fancyData: fancyData,
-            TargetScore: TargetScore,
             status: 1,
+            $or:[
+              {
+                fancyData: fancyData,
+                TargetScore: TargetScore,
+                type: type
+              },
+              {
+                fancyData: fancyData
+              }
+            ]
+
           },
           { calculateExp: false }
         );
