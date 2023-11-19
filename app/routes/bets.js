@@ -616,9 +616,7 @@ const placeBet = async (req, res) => {
 
     // Cricket Match Odds
     else if ( config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id ) {
-      console.log(
-        " ======================== Soccer Match Odds ======================== "
-      );
+      console.log( " ======================== Soccer Match Odds ======================== " );
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -643,10 +641,7 @@ const placeBet = async (req, res) => {
         eventId: DBOddDetails.eventId,
       });
 
-      console.log(
-        "===================== secondsValue ====================== ",
-        BetPlaceData.secondsValue
-      );
+      console.log("===================== secondsValue ====================== ", BetPlaceData.secondsValue);
       /*end of code by qaiser*/
       delay = BetPlaceData.secondsValue * 1000 + 200;
       if (selectedBetRate == betRate) {
@@ -1660,8 +1655,8 @@ const placeBet = async (req, res) => {
             .status(400)
             .send({ message: "Invalid type value. Type should be 0 or 1." });
         }
-        backFancyRate = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3][oddsInsex]; 
-        layFancyRate  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3][oddsInsex];
+        backFancyRate = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3][0]; 
+        layFancyRate  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3][0];
         console.log(" =================== isFancyOrBookMaker ========================== ", isFancyOrBookMaker);
       } else {
         console.log(`Odds not available for the selected team ${req.body.selectionId}`);
