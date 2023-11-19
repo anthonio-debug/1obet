@@ -2162,16 +2162,8 @@ const placeBet = async (req, res) => {
           matchId: matchId,
           fancyData: fancyData,
           status: 1,
-          $or:[
-            {
-              backFancyRate: backFancyRate,
-              type: 1
-            },
-            {
-              layFancyRate: layFancyRate,
-              type: 1
-            }
-          ]
+          backFancyRate: backFancyRate,
+          layFancyRate: layFancyRate
         });
         console.log(" ================== lastBetsCount ==================  ", lastBetsCount);
 
@@ -2180,17 +2172,10 @@ const placeBet = async (req, res) => {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
+            fancyData: fancyData,
             status: 1,
-            $or:[
-              {
-                fancyData: fancyData,
-                TargetScore: TargetScore,
-                type: type
-              },
-              {
-                fancyData: fancyData
-              }
-            ]
+            backFancyRate: backFancyRate,
+            layFancyRate: layFancyRate
           }).sort({ _id: -1 }).limit(1);
 
           console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
@@ -2461,18 +2446,10 @@ const placeBet = async (req, res) => {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
+            fancyData: fancyData,
             status: 1,
-            $or:[
-              {
-                fancyData: fancyData,
-                TargetScore: TargetScore,
-                type: type
-              },
-              {
-                fancyData: fancyData
-              }
-            ]
-
+            backFancyRate: backFancyRate,
+            layFancyRate: layFancyRate
           },
           { calculateExp: false }
         );
