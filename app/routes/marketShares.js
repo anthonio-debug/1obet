@@ -81,6 +81,7 @@ const marketGainWithDuplicates = async (req, res) => {
       response.matchType = betRes?.matchType;
       response.SessionScore = betRes?.SessionScore;
       response.winnerRunnerData = betRes?.winnerRunnerData;
+      response.resultData = betRes?.resultData
     }
 
 
