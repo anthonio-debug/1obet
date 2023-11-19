@@ -39,6 +39,7 @@ const betSchema = new mongoose.Schema({
   lastCheckResult: { type: Number, default: 0 },
   calculateExp: { type: Boolean, default: true },
   exposureAmount: { type: Number, default: 0 },
+  randomStr:{ type: String, default: '.' },
   runnersPosition: { type: Array },
   ratesRecord: { type: Array },
   multipeResponse: { type: Array },
