@@ -2145,13 +2145,13 @@ const placeBet = async (req, res) => {
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 },
         ];
-      } else if(type == 1 && marketId == "8") {
-        winningAmount = (betAmount * betRate) / 100;
-        loosingAmount = betAmount;
-      } else if(type == 0 && marketId == "8") {
+      } else if ( type == 1 && marketId == 8 ) {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
-      }
+    } else if ( type == 0 && marketId == 8) {
+        winningAmount = betAmount * betRate - betAmount;
+        loosingAmount = betAmount;
+    }
 
       /* ------------ */
       /* Current Position Of Runners Calculations */
