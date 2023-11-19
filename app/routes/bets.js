@@ -19,7 +19,7 @@ const axios = require("axios");
 const currentPosition = require("../models/CurrentPosition");
 const FancyOdds = require("../models/fancyOdds");
 const Session = require("../models/Session");
-const Cash = require("../../app/models/deposits");
+const Deposits = require("../../app/models/deposits");
 const BetPlaceHold = require("../models/betaPlaceHold");
 
 const exposures = require("../models/ExpRec");
@@ -2585,7 +2585,7 @@ const placeBet = async (req, res) => {
 
 
             /** Start of Qaiser added tracking values in deposits */
-            let cash = await Cash.insertOne({
+            let cash = await Deposits.insertOne({
               userId: userId,
               description: `Bet Place`,
               betId:randomStr,
