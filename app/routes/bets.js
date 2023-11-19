@@ -152,6 +152,8 @@ const placeBet = async (req, res) => {
     let isManuel = true;
     let delay = 4500;
     let asianTableName = "";
+    let backFancyRate = 0;
+    let layFancyRate  = 0;
     /* ====================================================================== */
 
     /* ============================== Innitial Checks  ============================== */
@@ -1553,27 +1555,18 @@ const placeBet = async (req, res) => {
 
     // For Fancy
     else if (subMarketDetail.Id == config.Fancy) {
-      if (
-        ![
-          1960, 1968, 1971, 1974, 1973, 1975, 1978, 1979, 1980, 1981, 1982,
-          1983, 1984, 1985,
-        ].includes(req.decoded.userId)
-      ) {
-        console.log(" 1453 Not Allowed CALLED By Market ");
-        //return res.status(404).send({ message: 'Betting disabled' });
-      }
+      // if (![ 1960, 1968, 1971, 1974, 1973, 1975, 1978, 1979, 1980, 1981, 1982,1983, 1984, 1985].includes(req.decoded.userId)) {
+      //   console.log(" 1453 Not Allowed CALLED By Market ");
+      //   //return res.status(404).send({ message: 'Betting disabled' });
+      // }
       isManuel = false;
-      const fancyBetLimit = await userBetSizes
-        .findOne({ userId: userId, sportsId: marketId, subarket: config.Fancy })
-        .exec();
+      const fancyBetLimit = await userBetSizes.findOne({ userId: userId, sportsId: marketId, subarket: config.Fancy }).exec();
       if (!userMaxBetSize) {
         console.error("Fancy userMaxBetSize not found ");
         return res.status(404).send({ message: `something went wrong !` });
       }
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
-        return res
-          .status(404)
-          .send({ message: `max bet size is : ${fancyBetLimit.amount}` });
+        return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
       }
 
       console.log(" fancyBetLimit ========== ", fancyBetLimit);
@@ -1582,16 +1575,13 @@ const placeBet = async (req, res) => {
       const eventId = eventDetail.Id;
       const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
       const response = await axios.get(url);
-      console.log(
-        " ================== API response ================== ",
-        response
-      );
+      console.log(" ================== API response ================== ",response);
       const apiFancyOdds = response?.data?.data?.t3;
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
       console.log(" apiFancyOdds ====== ", apiFancyOdds);
       console.log(" dbFancyOdds  ====== ", dbFancyOdds);
-      if (apiFancyOdds?.length && dbFancyOdds?.length) {
+      if (apiFancyOdds?.length && dbFancyOdds?.length){
         const apiSelectedOdds = apiFancyOdds.find(
           (runner) => runner.sid == selectionId
         );
@@ -1613,30 +1603,15 @@ const placeBet = async (req, res) => {
         console.log(" apiSelectedOdds ====== ", apiSelectedOdds);
         console.log(" dbSelectedOdds ====== ", dbSelectedOdds);
         // Get the runner name from the 'nat' field
-        fancyData = dbSelectedOdds.nat;
+        fancyData  = dbSelectedOdds.nat;
         runnerName = dbSelectedOdds.nat;
         _3rdPartyMarketId = dbSelectedOdds.nat;
-
         if (req.body.type == 0) {
-          const apiBackOdds2 = [
-            apiSelectedOdds.l1,
-            apiSelectedOdds.l2,
-            apiSelectedOdds.l3,
-          ];
+          const apiBackOdds2 = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3,];
           const apiBackOdds = apiBackOdds2.map((item) => Number(item));
-
-          const DbBackOdds2 = [
-            dbSelectedOdds.l1,
-            dbSelectedOdds.l2,
-            dbSelectedOdds.l3,
-          ];
+          const DbBackOdds2 = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
           const DbBackOdds = DbBackOdds2.map((item) => Number(item));
-
-          const DbBackScores2 = [
-            dbSelectedOdds.ls1,
-            dbSelectedOdds.ls2,
-            dbSelectedOdds.ls3,
-          ];
+          const DbBackScores2 = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
           const DbBackScores = DbBackScores2.map((item) => Number(item));
           console.log(" DbBackOdds ============ ", DbBackOdds);
           const index = DbBackOdds.indexOf(betRate);
@@ -1654,25 +1629,11 @@ const placeBet = async (req, res) => {
             return res.status(404).send({ message: `Bet miss matched ` });
           }
         } else if (req.body.type == 1) {
-          const apiBackOdds2 = [
-            apiSelectedOdds.b1,
-            apiSelectedOdds.b2,
-            apiSelectedOdds.b3,
-          ];
+          const apiBackOdds2 = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3];
           const apiBackOdds = apiBackOdds2.map((item) => Number(item));
-
-          const DbBackOdds2 = [
-            dbSelectedOdds.b1,
-            dbSelectedOdds.b2,
-            dbSelectedOdds.b3,
-          ];
+          const DbBackOdds2 = [ dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
           const DbBackOdds = DbBackOdds2.map((item) => Number(item));
-
-          const DbBackScores2 = [
-            dbSelectedOdds.bs1,
-            dbSelectedOdds.bs2,
-            dbSelectedOdds.bs3,
-          ];
+          const DbBackScores2 = [dbSelectedOdds.bs1,dbSelectedOdds.bs2, dbSelectedOdds.bs3];
           const DbBackScores = DbBackScores2.map((item) => Number(item));
 
           console.log(" DbBackOdds ============ ", DbBackOdds);
@@ -1697,14 +1658,11 @@ const placeBet = async (req, res) => {
             .status(400)
             .send({ message: "Invalid type value. Type should be 0 or 1." });
         }
-        console.log(
-          " =================== isFancyOrBookMaker ========================== ",
-          isFancyOrBookMaker
-        );
+        backFancyRate = 
+        layFancyRate  = 
+        console.log(" =================== isFancyOrBookMaker ========================== ", isFancyOrBookMaker);
       } else {
-        console.log(
-          `Odds not available for the selected team ${req.body.selectionId}`
-        );
+        console.log(`Odds not available for the selected team ${req.body.selectionId}`);
         return res.status(404).send({
           message: `Odds not available for the selected team ${req.body.selectionId}`,
         });
@@ -2217,7 +2175,7 @@ const placeBet = async (req, res) => {
             }
           ]
         });
-        console.log(" ================== lastBetsCount ================  ", lastBetsCount);
+        console.log(" ================== lastBetsCount ==================  ", lastBetsCount);
 
         if (lastBetsCount > 0) {
           const lastBet = await Bets.find({
@@ -2450,15 +2408,15 @@ const placeBet = async (req, res) => {
         fancyRate: fancyRate,
         exposureAmount: expAmount ? Number(expAmount.toFixed(2)) : 0,
         runnersPosition: runnersPosition ? runnersPosition : [],
-        ratesRecord: multipeResponseForSecurityCheck
-          ? multipeResponseForSecurityCheck
-          : [],
+        ratesRecord: multipeResponseForSecurityCheck ? multipeResponseForSecurityCheck : [],
         betTime: BetTime,
         multipeResponse: multipeResponse ? multipeResponse : [],
         isManuel: isManuel,
         roundId: roundId,
         asianTableName: asianTableName,
         asianTableId: oddsId,
+        backFancyRate,
+        layFancyRate 
       });
 
       if (user.availableBalance < expAmount - prevExpAmount) {
