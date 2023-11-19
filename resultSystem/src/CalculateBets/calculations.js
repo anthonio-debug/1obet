@@ -255,7 +255,7 @@ async function handleLosingBet(bet) {
                 addedExpoisureAmount:Number(((user.commission / 100) * remainingAmount).toFixed(2)),
                 UserPrevexposure:user.exposure,
                 UpdatedExposure:totalExpoisure,
-
+                exposure: 'Number(((user.commission / 100) * remainingAmount).toFixed(2))',
                 
 
 
@@ -553,7 +553,7 @@ async function handleWinningBet(bet) {
                 addedExpoisureAmount:Number(((user.commission / 100) * totalRemainingAmount).toFixed(2)),
             UserPrevexposure:user.exposure,
             UpdatedExposure:totalExpoisure,
-
+            exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))',
                 amount: -(user.commission / 100) * totalRemainingAmount,
                 balance: lastMaxWithdraw
                   ? lastMaxWithdraw.balance -
