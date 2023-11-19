@@ -162,6 +162,13 @@ async function handleLosingBet(bet) {
           const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
           let newCash = deposits.insertOne({
             userId: userToUpdate.userId,
+
+            addedExpoisureAmount:addExpoisureAmount,
+            UserPrevexposure:userToUpdate.exposure,
+            UpdatedExposure:expAmount,
+
+
+
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
             amount: -loosingAmount,
             balance: lastMaxWithdraw
@@ -237,10 +244,22 @@ async function handleLosingBet(bet) {
               const lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
               const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
     
+              
+
+
               let newCash = deposits.insertOne({
                 userId: user.userId,
                 description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
+
+                addedExpoisureAmount:Number(((user.commission / 100) * remainingAmount).toFixed(2)),
+                UserPrevexposure:user.exposure,
+                UpdatedExposure:totalExpoisure,
+
+                
+
+
+
                 amount: (user.commission / 100) * TotalLoosingAmount,
                 balance: lastMaxWithdraw
                   ? lastMaxWithdraw.balance +
@@ -446,6 +465,10 @@ async function handleWinningBet(bet) {
             userId: userToUpdate.userId,
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
             betId: bet._id,
+            addedExpoisureAmount:addExpoisureAmount,
+            UserPrevexposure:userToUpdate.exposure,
+            UpdatedExposure:UpdatedExposure,
+
             createdBy: 0,
             amount: remainingAmount,
             balance: lastMaxWithdraw
@@ -526,6 +549,11 @@ async function handleWinningBet(bet) {
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
+
+                addedExpoisureAmount:Number(((user.commission / 100) * totalRemainingAmount).toFixed(2)),
+            UserPrevexposure:user.exposure,
+            UpdatedExposure:totalExpoisure,
+
                 amount: -(user.commission / 100) * totalRemainingAmount,
                 balance: lastMaxWithdraw
                   ? lastMaxWithdraw.balance -
