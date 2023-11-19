@@ -2242,17 +2242,46 @@ const placeBet = async (req, res) => {
           }).sort({ _id: -1 }).limit(1);
 
           console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
-          const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
-            if (item.runner == type) {
-              item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
-            } else {
-              item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
-            }
+          const runners = [
+            { runner: Number(TargetScore) - 1, position: 0 },
+            { runner: Number(TargetScore), position: 0 },
+            { runner: Number(TargetScore) + 1, position: 0 }
+          ]
+          const AllRunners = lastBet[0].runnersPosition;
+
+          newRecords  =  [
+            { runner: 11, position: 0 },
+            { runner: 12, position:0 },
+            { runner: 13, position:0 }
+          ]
+
+          AllRunners =  [
+            { runner: 16, position: -100 },
+            { runner: 17, position: 100 },
+            { runner: 18, position: 100 },
+            { runner: 19, position: -100 },
+            { runner: 20, position: 100 },
+            { runner: 12, position: 100 }
+          ]
+
+          const newRunners = [];
+          const uniqueVals = newRecords.map((item)=>{
+              const index = AllRunners.findIndex((e)=> e.runner == item.runner );
+              if(index == -1) newRunners.push(item)
+          })
+          AllRunners.push(...newRunners)
+
+          const fancyNewPosition = AllRunners.map((item) => {
+            if(type == 1 && item.runner <  TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(2))).toFixed(2));
+            if(type == 1 && item.runner >= TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(2))).toFixed(2));
+            if(type == 0 && item.runner <  TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(2))).toFixed(2));
+            if(type == 0 && item.runner >= TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(2))).toFixed(2));
             return item;
           });
           runnersPosition = fancyNewPosition;
           prevExpAmount = lastBet[0].exposureAmount;
-        } else {
+        } 
+        else {
           const runners = [
             { runner: Number(TargetScore) - 1, position: 0 },
             { runner: Number(TargetScore), position: 0 },
