@@ -2168,8 +2168,8 @@ const placeBet = async (req, res) => {
           matchId: matchId,
           fancyData: fancyData,
           status: 1,
-          backFancyRate: backFancyRate,
-          layFancyRate: layFancyRate
+          // backFancyRate: backFancyRate,
+          // layFancyRate: layFancyRate
         });
         console.log(" ================== lastBetsCount ==================  ", lastBetsCount);
 
@@ -2180,8 +2180,8 @@ const placeBet = async (req, res) => {
             matchId: matchId,
             fancyData: fancyData,
             status: 1,
-            backFancyRate: backFancyRate,
-            layFancyRate: layFancyRate
+            // backFancyRate: backFancyRate,
+            // layFancyRate: layFancyRate
           }).sort({ _id: -1 }).limit(1);
 
           console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
@@ -2454,8 +2454,8 @@ const placeBet = async (req, res) => {
             matchId: matchId,
             fancyData: fancyData,
             status: 1,
-            backFancyRate: backFancyRate,
-            layFancyRate: layFancyRate
+            // backFancyRate: backFancyRate,
+            // layFancyRate: layFancyRate
           },
           { calculateExp: false }
         );
