@@ -2249,21 +2249,6 @@ const placeBet = async (req, res) => {
           ]
           const AllRunners = lastBet[0].runnersPosition;
 
-          newRecords  =  [
-            { runner: 11, position: 0 },
-            { runner: 12, position:0 },
-            { runner: 13, position:0 }
-          ]
-
-          AllRunners =  [
-            { runner: 16, position: -100 },
-            { runner: 17, position: 100 },
-            { runner: 18, position: 100 },
-            { runner: 19, position: -100 },
-            { runner: 20, position: 100 },
-            { runner: 12, position: 100 }
-          ]
-
           const newRunners = [];
           const uniqueVals = newRecords.map((item)=>{
               const index = AllRunners.findIndex((e)=> e.runner == item.runner );
@@ -2279,7 +2264,7 @@ const placeBet = async (req, res) => {
             return item;
           });
           runnersPosition = fancyNewPosition;
-          prevExpAmount = lastBet[0].exposureAmount;
+          prevExpAmount   = lastBet[0].exposureAmount;
         } 
         else {
           const runners = [
