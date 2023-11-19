@@ -1606,15 +1606,17 @@ const placeBet = async (req, res) => {
         fancyData  = dbSelectedOdds.nat;
         runnerName = dbSelectedOdds.nat;
         _3rdPartyMarketId = dbSelectedOdds.nat;
+        let oddsInsex = 0; 
         if (req.body.type == 0) {
-          const apiBackOdds2 = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3,];
-          const apiBackOdds = apiBackOdds2.map((item) => Number(item));
-          const DbBackOdds2 = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
-          const DbBackOdds = DbBackOdds2.map((item) => Number(item));
+          const apiBackOdds2  = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
+          const apiBackOdds   = apiBackOdds2.map((item) => Number(item));
+          const DbBackOdds2   = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
+          const DbBackOdds    = DbBackOdds2.map((item) => Number(item));
           const DbBackScores2 = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
-          const DbBackScores = DbBackScores2.map((item) => Number(item));
+          const DbBackScores  = DbBackScores2.map((item) => Number(item));
           console.log(" DbBackOdds ============ ", DbBackOdds);
           const index = DbBackOdds.indexOf(betRate);
+          oddsInsex   = index;
           TargetScore = betRate;
 
           if (index == -1) {
@@ -1629,16 +1631,16 @@ const placeBet = async (req, res) => {
             return res.status(404).send({ message: `Bet miss matched ` });
           }
         } else if (req.body.type == 1) {
-          const apiBackOdds2 = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3];
-          const apiBackOdds = apiBackOdds2.map((item) => Number(item));
-          const DbBackOdds2 = [ dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
-          const DbBackOdds = DbBackOdds2.map((item) => Number(item));
+          const apiBackOdds2  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3];
+          const apiBackOdds   = apiBackOdds2.map((item) => Number(item));
+          const DbBackOdds2   = [ dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
+          const DbBackOdds    = DbBackOdds2.map((item) => Number(item));
           const DbBackScores2 = [dbSelectedOdds.bs1,dbSelectedOdds.bs2, dbSelectedOdds.bs3];
-          const DbBackScores = DbBackScores2.map((item) => Number(item));
+          const DbBackScores  = DbBackScores2.map((item) => Number(item));
 
           console.log(" DbBackOdds ============ ", DbBackOdds);
-
           const index = DbBackOdds.indexOf(betRate);
+          oddsInsex = index;
           TargetScore = betRate;
 
           if (index == -1) {
@@ -1658,8 +1660,8 @@ const placeBet = async (req, res) => {
             .status(400)
             .send({ message: "Invalid type value. Type should be 0 or 1." });
         }
-        backFancyRate = 
-        layFancyRate  = 
+        backFancyRate = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3][oddsInsex]; 
+        layFancyRate  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3][oddsInsex];
         console.log(" =================== isFancyOrBookMaker ========================== ", isFancyOrBookMaker);
       } else {
         console.log(`Odds not available for the selected team ${req.body.selectionId}`);
