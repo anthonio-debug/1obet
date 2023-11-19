@@ -2242,7 +2242,7 @@ const placeBet = async (req, res) => {
           }).sort({ _id: -1 }).limit(1);
 
           console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
-          const runners = [
+          const newRecords = [
             { runner: Number(TargetScore) - 1, position: 0 },
             { runner: Number(TargetScore), position: 0 },
             { runner: Number(TargetScore) + 1, position: 0 }
@@ -3881,10 +3881,6 @@ const postmanwork = async (req, res) => {
     });
   }
 };
-
-
-
-
 
 loginRouter.post("/placeBet", betValidator.validate("placeBet"), placeBet);
 loginRouter.post("/getUserBets", getUserBets);
