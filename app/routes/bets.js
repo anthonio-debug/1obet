@@ -2191,7 +2191,12 @@ const placeBet = async (req, res) => {
             { runner: Number(TargetScore), position: 0 },
             { runner: Number(TargetScore) + 1, position: 0 }
           ])
-          let selectedAllRunners = AllRunners.map((item) => item.position= 0)
+          let selectedAllRunners = AllRunners.map((item) => {
+            return {
+              runner: item.runner,
+              position: 0
+            }
+          })
 
           const AllPreviousBets = await Bets.find({
             marketId: _3rdPartyMarketId,
