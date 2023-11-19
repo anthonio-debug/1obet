@@ -19,13 +19,8 @@ const axios = require("axios");
 const currentPosition = require("../models/CurrentPosition");
 const FancyOdds = require("../models/fancyOdds");
 const Session = require("../models/Session");
-const Deposits = require("../../app/models/deposits");
+const Cash = require("../../app/models/deposits");
 const BetPlaceHold = require("../models/betaPlaceHold");
-
-const exposures = require("../models/ExpRec");
-
-
-
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
     return 6;
@@ -2447,7 +2442,7 @@ const placeBet = async (req, res) => {
       console.log("userAvailableBalance", user.availableBalance);
       /* ------------ */
       /* Placing Bet Area  */
-      const randomStr = Date.now();
+
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
         sportsId: marketId || 0,
@@ -2467,7 +2462,6 @@ const placeBet = async (req, res) => {
         runner: selectionId ? selectionId : "",
         type: type || 0,
         status: 1,
-        randomStr:randomStr,
         event: eventDetail ? eventDetail.name : oddsId,
         isfancyOrbookmaker: isFancyOrBookMaker,
         fancyData: fancyData,
@@ -2567,12 +2561,6 @@ const placeBet = async (req, res) => {
               availableBalance: UserAvlBalAmount,
             }
           );
-
-
-           
-
-
-
           await updateParentUserBalance(
             parentUserIds,
             winningAmount,
@@ -3893,6 +3881,10 @@ const postmanwork = async (req, res) => {
     });
   }
 };
+
+
+
+
 
 loginRouter.post("/placeBet", betValidator.validate("placeBet"), placeBet);
 loginRouter.post("/getUserBets", getUserBets);
