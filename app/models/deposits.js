@@ -22,6 +22,9 @@ let depositsSchema = new Schema({
   UpdatedExposure:{ type: String , default: '-'},
   exposure:{ type: String , default: '.'},
   sourceCodeBlock:{ type: String , default: '.'},
+  loosingAmount:{ type: String , default: '.'},
+  winningAmount:{ type: String , default: '.'},
+
   matchId: { type: String, index: true },
   marketId : { type : String },
   commissionFrom: { type: Number },
