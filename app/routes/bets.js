@@ -2259,10 +2259,10 @@ const placeBet = async (req, res) => {
             { runner: Number(TargetScore) + 1, position: 0 }
           ]
           const runnerCurrentPosition = runners.map((item) => {
-            if(type == 1 && item.runner <  TargetScore) item.amount  = -Number(loosingAmount.toFixed(2)).toFixed(2);
-            if(type == 1 && item.runner >= TargetScore) item.amount  =  Number(winningAmount.toFixed(2)).toFixed(2);
-            if(type == 0 && item.runner <  TargetScore) item.amount  =  Number(winningAmount.toFixed(2)).toFixed(2);
-            if(type == 0 && item.runner >= TargetScore) item.amount  = -Number(loosingAmount.toFixed(2)).toFixed(2);
+            if(type == 1 && item.runner <  TargetScore) item.position  = -Number(loosingAmount.toFixed(2));
+            if(type == 1 && item.runner >= TargetScore) item.position  =  Number(winningAmount.toFixed(2));
+            if(type == 0 && item.runner <  TargetScore) item.position  =  Number(winningAmount.toFixed(2));
+            if(type == 0 && item.runner >= TargetScore) item.position  = -Number(loosingAmount.toFixed(2));
             return item;
           });
           runnersPosition = runnerCurrentPosition;
