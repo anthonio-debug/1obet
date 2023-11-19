@@ -17,7 +17,10 @@ let depositsSchema = new Schema({
   cashOrCredit: { type: String },
   calledArea: { type: String },
   createdBy: { type: String },
-
+  addedExpoisureAmount:{ type: String , default: '-'},
+  UserPrevexposure:{ type: String , default: '-'},
+  UpdatedExposure:{ type: String , default: '-'},
+  exposure:{ type: String , default: '.'},
   matchId: { type: String, index: true },
   marketId : { type : String },
   commissionFrom: { type: Number },
