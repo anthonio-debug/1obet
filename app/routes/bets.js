@@ -1990,7 +1990,7 @@ const placeBet = async (req, res) => {
     }
 
     // for Asian Odd
-    else if (marketId === "8") {
+    else if (marketId == "8") {
       console.log(
         " ======================== AsianTable Odds ======================== "
       );
@@ -2096,31 +2096,23 @@ const placeBet = async (req, res) => {
         .status(404)
         .send({ message: `Error Placing bet (Inappropriate Request)` });
     }
-    /* =================================================================== */
+    /* ============================================================ =============== */
 
-    const delayExcludedMarkets = [
-      ...config.FigureEvenOddSmallBig,
-      ...config.asianSubMarket,
-      config.Fancy,
-      config.BookMaker,
-    ];
+    const delayExcludedMarkets = [ ...config.FigureEvenOddSmallBig, ...config.asianSubMarket,  config.Fancy, config.BookMaker ];
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
     }
 
-    setTimeout(async () => {
+    setTimeout( async () => {
       console.log(" Pre Bet Rate ===============  ", betRate);
       console.log(" selectedBetRate ===============  ", selectedBetRate);
 
-      if (
-        multipeResponse.length == 0 &&
-        !delayExcludedMarkets.includes(subMarketDetail.Id)
-      ) {
+      if (multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         console.log(" multipeResponse Is Empty !");
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
-      } else if (  multipeResponse.length > 0 && !delayExcludedMarkets.includes(subMarketDetail.Id) ) {
+      } else if (multipeResponse.length > 0 && !delayExcludedMarkets.includes(subMarketDetail.Id) ) {
         betRate = multipeResponse[multipeResponse.length - 1];
         console.log(" Inside  Bet Rate ===============  ", betRate);
       }
@@ -2201,24 +2193,31 @@ const placeBet = async (req, res) => {
       }
 
       /* ------------ */
-      /*  Current Position Of Runners  Calculations   */
+      /* Current Position Of Runners Calculations */
+
       let runnersPosition = [];
       let prevExpAmount = 0;
       let expAmount = 0;
       console.log( " ================ Selection ID ================ ", selectionId );
+
       if (subMarketDetail.Id == config.Fancy) {
         let lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
           matchId: matchId,
           status: 1,
-          fancyData: fancyData,
-          TargetScore: TargetScore,
+          $or:[
+            {
+              fancyData: fancyData,
+              TargetScore: TargetScore,
+              type: type
+            },
+            {
+              fancyData: fancyData
+            }
+          ]
         });
-        console.log(
-          " ================== lastBetsCount ================  ",
-          lastBetsCount
-        );
+        console.log(" ================== lastBetsCount ================  ", lastBetsCount);
 
         if (lastBetsCount > 0) {
           const lastBet = await Bets.find({
@@ -2226,11 +2225,18 @@ const placeBet = async (req, res) => {
             userId: req.decoded.userId,
             matchId: matchId,
             status: 1,
-            fancyData: fancyData,
-            TargetScore: TargetScore,
-          })
-            .sort({ _id: -1 })
-            .limit(1);
+            $or:[
+              {
+                fancyData: fancyData,
+                TargetScore: TargetScore,
+                type: type
+              },
+              {
+                fancyData: fancyData
+              }
+            ]
+          }).sort({ _id: -1 }).limit(1);
+          
           console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
           const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
             if (item.runner == type) {
@@ -2263,7 +2269,8 @@ const placeBet = async (req, res) => {
         }, runnersPosition[0]);
         expAmount = expAmount.amount;
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
-      } else if (expoisureType == 2) {
+      } 
+      else if (expoisureType == 2) {
         let lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
@@ -2325,7 +2332,8 @@ const placeBet = async (req, res) => {
         );
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
         /* ============================= */
-      } else {
+      } 
+      else {
         let lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
@@ -2456,6 +2464,7 @@ const placeBet = async (req, res) => {
       if (user.availableBalance < expAmount - prevExpAmount) {
         return res.status(404).send({ message: " Insufficient balance " });
       }
+
       if (subMarketDetail.Id != config.Fancy) {
         await Bets.updateMany(
           {
