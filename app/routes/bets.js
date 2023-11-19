@@ -2205,7 +2205,8 @@ const placeBet = async (req, res) => {
             fancyData: fancyData,
             status: 1,
           })
-
+          
+          console.log(` =================== selectedAllRunners ================ ${selectedAllRunners}`);
 
           for (const bet of AllPreviousBets) {
             const fancyNewPosition = selectedAllRunners.map((item) => {
@@ -2219,6 +2220,9 @@ const placeBet = async (req, res) => {
           }
           runnersPosition = selectedAllRunners;
           prevExpAmount   = lastBet[0].exposureAmount;
+                    
+          console.log(` =================== selectedAllRunners ================ ${selectedAllRunners}`);
+
         } 
         else {
           const runners = [
