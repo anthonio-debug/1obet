@@ -1655,8 +1655,8 @@ const placeBet = async (req, res) => {
             .status(400)
             .send({ message: "Invalid type value. Type should be 0 or 1." });
         }
-        backFancyRate = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3][0]; 
-        layFancyRate  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3][0];
+        layFancyRate = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3][0]; 
+        backFancyRate  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3][0];
         console.log(" =================== isFancyOrBookMaker ========================== ", isFancyOrBookMaker);
       } else {
         console.log(`Odds not available for the selected team ${req.body.selectionId}`);
@@ -2160,15 +2160,16 @@ const placeBet = async (req, res) => {
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
           matchId: matchId,
+          fancyData: fancyData,
           status: 1,
           $or:[
             {
-              fancyData: fancyData,
-              TargetScore: TargetScore,
-              type: type
+              backFancyRate: backFancyRate,
+              type: 1
             },
             {
-              fancyData: fancyData
+              layFancyRate: layFancyRate,
+              type: 1
             }
           ]
         });
