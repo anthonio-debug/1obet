@@ -21,6 +21,7 @@ let depositsSchema = new Schema({
   UserPrevexposure:{ type: String , default: '-'},
   UpdatedExposure:{ type: String , default: '-'},
   exposure:{ type: String , default: '.'},
+  sourceCodeBlock:{ type: String , default: '.'},
   matchId: { type: String, index: true },
   marketId : { type : String },
   commissionFrom: { type: Number },
