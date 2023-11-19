@@ -22,7 +22,8 @@ const Session = require("../models/Session");
 const Cash = require("../../app/models/deposits");
 const BetPlaceHold = require("../models/betaPlaceHold");
 
-const exposures = require("../models/exposures");
+const exposures = require("../models/ExpRec");
+
 
 
 const handleLimitValue = async (selectedRate, marketId) => {
