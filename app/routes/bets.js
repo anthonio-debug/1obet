@@ -1995,23 +1995,26 @@ const placeBet = async (req, res) => {
         " ======================== AsianTable Odds ======================== "
       );
       const DBOddDetails = await AsianOdds.findOne({ tableId: oddsId });
-      const asianTableDetail = await AsianTable.findOne({ tableId: oddsId });
-      asianTableName = asianTableDetail.tableName;
       if (!DBOddDetails) {
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
       }
-      let t2 = DBOddDetails?.t2;
-      runnerForSaveInbets = t2.map((t) => ({
-        runner: t.sid,
+
+      let runners = DBOddDetails?.t2
+      runnerForSaveInbets = runners.map((runner) => ({
+        runner: runner.sid,
         amount: 0,
       }));
+
       const OddDetailsTeam = DBOddDetails.t2.find(
-        (player) => player.sid == selectionId
+        (runner) => runner.sid == selectionId
       );
       runnerName = OddDetailsTeam?.nation;
 
+      const asianTableDetail = await AsianTable.findOne({ tableId: oddsId });
+      asianTableName = asianTableDetail.tableName;
+    
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5; i++) {
           setTimeout(async () => {
@@ -2195,7 +2198,10 @@ const placeBet = async (req, res) => {
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 },
         ];
-      } else if(marketId == 8) {
+      } else if(type == 1 && marketId == "8") {
+        winningAmount = (betAmount * betRate) / 100;
+        loosingAmount = betAmount;
+      } else if(type == 0 && marketId == "8") {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
       }
