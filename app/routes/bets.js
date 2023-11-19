@@ -2218,7 +2218,15 @@ const placeBet = async (req, res) => {
             });
             selectedAllRunners = fancyNewPosition
           }
-          runnersPosition = selectedAllRunners;
+
+          const runnerCurrentPosition = selectedAllRunners.map((item) => {
+            if(type == 1 && item.runner <  TargetScore) item.position  = -Number(loosingAmount.toFixed(2));
+            if(type == 1 && item.runner >= TargetScore) item.position  =  Number(winningAmount.toFixed(2));
+            if(type == 0 && item.runner <  TargetScore) item.position  =  Number(winningAmount.toFixed(2));
+            if(type == 0 && item.runner >= TargetScore) item.position  = -Number(loosingAmount.toFixed(2));
+            return item;
+          });
+          runnersPosition = runnerCurrentPosition;
           prevExpAmount   = lastBet[0].exposureAmount;
                     
           console.log(` =================== selectedAllRunners ================ ${selectedAllRunners}`);
