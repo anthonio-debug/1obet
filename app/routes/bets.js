@@ -21,6 +21,10 @@ const FancyOdds = require("../models/fancyOdds");
 const Session = require("../models/Session");
 const Cash = require("../../app/models/deposits");
 const BetPlaceHold = require("../models/betaPlaceHold");
+
+const exposures = require("../models/exposures");
+
+
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
     return 6;
@@ -2457,7 +2461,7 @@ const placeBet = async (req, res) => {
       console.log("userAvailableBalance", user.availableBalance);
       /* ------------ */
       /* Placing Bet Area  */
-
+      const randomStr = Date.now();
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
         sportsId: marketId || 0,
@@ -2477,6 +2481,7 @@ const placeBet = async (req, res) => {
         runner: selectionId ? selectionId : "",
         type: type || 0,
         status: 1,
+        randomStr:randomStr,
         event: eventDetail ? eventDetail.name : oddsId,
         isfancyOrbookmaker: isFancyOrBookMaker,
         fancyData: fancyData,
@@ -2576,6 +2581,56 @@ const placeBet = async (req, res) => {
               availableBalance: UserAvlBalAmount,
             }
           );
+
+
+            /** Start of Qaiser added tracking values in deposits */
+            let cash = await Cash.insertOne({
+              userId: userId,
+              description: `Bet Place`,
+              betId:randomStr,
+              addedExpoisureAmount:expAmount ? Number(expAmount.toFixed(2)) : 0,
+              UserPrevexposure:user.exposure,
+              UpdatedExposure:UserExpAmount,
+              sourceCodeBlock:'Bet Place',
+              loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(2)) : 0,
+              winningAmount: winningAmount ? Number(winningAmount.toFixed(2)) : 0,
+              
+              amount: betAmount || 0,
+              balance: user.balance,
+              availableBalance: UserAvlBalAmount,
+              
+              cashOrCredit: "Bet",
+             
+              
+              marketId: _3rdPartyMarketId || 0,
+              sportsId: marketId || 0,
+              matchId: matchId || null,
+              betType: type || 0,
+              betDateTime: BetTime,
+            });
+
+            const ExpTran = await  exposures.insertOne({
+              userId: userId,
+              trans_from: "Bet Place",
+              trans_from_id: randomStr,
+              
+              user_prev_balance: user.balance,,
+              user_prev_availableBalance: user.availableBalance,
+              user_prev_exposure: user.exposure,
+              user_new_balance: user.balance,
+              user_new_availableBalance: UserAvlBalAmount,
+              user_new_exposure: UserExpAmount,
+              marketId: _3rdPartyMarketId || 0,
+              sportsId: marketId || 0,
+              calculatedExp: expAmount ? Number(expAmount.toFixed(2)) : 0,
+              DateTime: new Date(),
+              calculateExp: false,
+              exposureAmount: expAmount ? Number(expAmount.toFixed(2)) : 0,
+            });
+            /** End of Qaiser added tracking values in deposits */
+
+
+
           await updateParentUserBalance(
             parentUserIds,
             winningAmount,
