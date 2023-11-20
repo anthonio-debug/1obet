@@ -111,6 +111,15 @@ async function handleLosingBet(bet) {
   const exposures = client.db(`${DBNAME}`).collection("exposures");
   const currentPositions = client.db(`${DBNAME}`).collection("currentpositions");
 
+
+  const now   = new Date();
+  const year  = now.getFullYear().toString();
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day   = now.getDate().toString().padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+
+
+
   try {
     if (bet.status == 1) {
       let calculatedExp = 0;
@@ -180,6 +189,7 @@ async function handleLosingBet(bet) {
             betId: bet._id,
             betType: bet.type,
             betDateTime: bet.betTime,
+            createdAt: formattedDate
           });
           // console.log(" ======================== Cash Updating Sucessfully ");
 
@@ -255,6 +265,7 @@ async function handleLosingBet(bet) {
                 matchId: bet.matchId,
                 betType: bet.type,
                 betDateTime: bet.betTime,
+                createdAt: formattedDate
               })
       
               console.log( " ======================== Parent User Cash Updating Sucessfully ", lastMaxWithdraw);
@@ -448,6 +459,7 @@ async function handleWinningBet(bet) {
             matchId: bet.matchId,
             betType: bet.type,
             betDateTime: bet.betTime,
+            createdAt: formattedDate
           });
           
           // console.log(" =============== Cash Save Successfully! ");
@@ -527,6 +539,7 @@ async function handleWinningBet(bet) {
                 matchId: bet.matchId,
                 betType: bet.type,
                 betDateTime: bet.betTime,
+                createdAt: formattedDate
               })
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(2));
               // console.log(" =============== Parent bet Transaction  Successfull ");
@@ -555,6 +568,7 @@ async function handleWinningBet(bet) {
                   matchId: bet.matchId,
                   betType: bet.type,
                   betDateTime: bet.betTime,
+                  createdAt: formattedDate
                 });
 
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(2));

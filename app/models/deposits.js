@@ -52,12 +52,10 @@ depositsSchema.pre('save', function (next) {
   var formattedDate = `${year}-${month}-${day}`;
   this. date = now.getTime();
   if (!this.createdAt) {
-    
-    this.createdAt =formattedDate ;
+    this.createdAt = formattedDate ;
   } else {
     this.updatedAt = formattedDate;
   }
-
   next();
 });
 
