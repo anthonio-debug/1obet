@@ -22,6 +22,7 @@ const Session = require("../models/Session");
 const Cash = require("../../app/models/deposits");
 const BetPlaceHold = require("../models/betaPlaceHold");
 const Exposure = require("../models/ExpRec")
+const AsianMarketOdd = require("../models/asianOdds")
 const { v4: uuidv4 } = require('uuid');
 
 const handleLimitValue = async (selectedRate, marketId) => {
@@ -134,6 +135,7 @@ const placeBet = async (req, res) => {
       selectedAmount,
       asianOdd,
       roundId,
+      asianMarketId
     } = req.body;
     console.log(" =============== betRate ===============  ", betRate);
     let randomStr = uuidv4();
@@ -1954,20 +1956,21 @@ const placeBet = async (req, res) => {
       console.log(
         " ======================== AsianTable Odds ======================== "
       );
-      const DBOddDetails = await AsianOdds.findOne({ tableId: oddsId });
+      const DBOddDetails = await AsianMarketOdd.findOne({ roundId: roundId, marketId: asianMarketId });
       if (!DBOddDetails) {
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
       }
 
-      let runners = DBOddDetails?.t2
+      let runners = DBOddDetails?.runners
+
       runnerForSaveInbets = runners.map((runner) => ({
         runner: runner.sid,
         amount: 0,
       }));
 
-      const OddDetailsTeam = DBOddDetails.t2.find(
+      const OddDetailsTeam = DBOddDetails.runners.find(
         (runner) => runner.sid == selectionId
       );
       runnerName = OddDetailsTeam?.nation;
@@ -2053,7 +2056,8 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       }
-      _3rdPartyMarketId = subMarketDetail.Id;
+      _3rdPartyMarketId = asianMarketId;
+      // _3rdPartyMarketId = subMarketDetail.Id;
     } else {
       return res
         .status(404)
