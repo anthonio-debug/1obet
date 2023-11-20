@@ -378,7 +378,60 @@ function apiRequests() {
   
               updateOddArray.push(updateOdd);
             }
+            await Promise.all(updateOddArray);
 
+          } else if(asiaOdd.tableId == "aaa"){
+            let updateOddArray = [];
+            let runnerAmar = [];
+            let runnerOdd = [];
+            let runnerColor = [];
+            let runnerOver = [];
+            let runnerFigure = [];
+            let runnersArray = [];
+            for(let j=0; j<odds.length; j++){
+              if(odds[j].sid == "1" || odds[j].sid == "2" || odds[j].sid == "3" ){
+                runnerAmar.push(odds[j])
+              } else if(odds[j].sid == "4" || odds[j].sid == "5"){
+                runnerOdd.push(odds[j])
+              } else if(odds[j].sid == "6" || odds[j].sid == "7"){
+                runnerColor.push(odds[j])
+              } else if(odds[j].sid == "21" || odds[j].sid == "22"){
+                runnerOver.push(odds[j])
+              } else {
+                runnerFigure.push(odds[j])
+              }
+            }
+
+            runnersArray.push(runnerAmar);
+            runnersArray.push(runnerOdd);
+            runnersArray.push(runnerColor);
+            runnersArray.push(runnerOver);
+            runnersArray.push(runnerFigure);
+
+            for(let j=0; j<5; j++){
+              const newMarketId = generateMarketId(runnersArray[j])
+              const newMarket = {
+                roundId: asiaOdd.roundId,
+                marketId: newMarketId,
+                marketName: runnersArray[j][0].nation,
+                status: runnersArray[j][0].gstatus,
+                numberOfRunners: runnersArray[j].length,
+                tableId: asiaOdd.tableId,
+                runners: runnersArray[j],
+              }
+
+              const updateOdd = AsianMarketOdd.findOneAndUpdate(
+                {
+                  roundId: newMarket.roundId,
+                  marketId: newMarket.marketId,
+                },
+                newMarket,
+                { upsert: true }
+              );
+  
+              updateOddArray.push(updateOdd);
+            }
+            await Promise.all(updateOddArray);            
           }
         }
       }
