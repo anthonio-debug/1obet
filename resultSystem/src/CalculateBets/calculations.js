@@ -362,6 +362,14 @@ async function handleWinningBet(bet) {
   const events = client.db(`${DBNAME}`).collection("inplayevents");
   const cricketSession = client.db(`${DBNAME}`).collection("sessions");
   const exposuresTrans = client.db(`${DBNAME}`).collection("exposures");
+
+
+  const now   = new Date();
+  const year  = now.getFullYear().toString();
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day   = now.getDate().toString().padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+  
   try {
     if (bet.status == 1){
       let calculatedExp = 0;
