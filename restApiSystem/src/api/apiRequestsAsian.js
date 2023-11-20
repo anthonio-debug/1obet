@@ -2,6 +2,7 @@
 
 const AsianOdds = require("../../../app/models/asiantableOdds");
 const AsianTable = require("../../../app/models/asianTable");
+const AsianMarketOdd = require("../../../app/models/asianOdds");
 const axios = require("axios");
 const AsianResult = require("../../../app/models/asianTablesResultsHistory");
 
@@ -53,6 +54,12 @@ const tableNames = [
     __v: 0,
   },
 ];
+
+function generateMarketId(data) {
+  let mid = "";
+  data.map((e) => (mid += e.sid));
+  return mid;
+}
 
 function apiRequests() {
   return { init, getOddsFromProvider };
@@ -215,6 +222,51 @@ function apiRequests() {
             { upsert: true }
           );
           resultArray.push(updateOdd);
+
+          const odds = asiaOdd.t2;
+
+          if (asiaOdd.tableId == "teen20") {
+            let updateOddArray = [];
+            let runnersA = [];
+            let runnersPair = [];
+            let runnersArray = [];
+            for (let j = 0; j < odds.length; j++) {
+              if (odds[j].sid == "1" || odds[j].sid == "3") {
+                runnersA.push(odds[j]);
+              } else {
+                runnersPair.push(odds[j]);
+              }
+            }
+
+            runnersArray.push(runnersA);
+            runnersArray.push(runnersPair);
+
+            for (let j = 0; j < 2; j++) {
+              const newMarketId = generateMarketId(runnersArray[j]);
+              const newMarket = {
+                roundId: asiaOdd.roundId,
+                marketId: newMarketId,
+                marketName: runnersArray[j][0].nation,
+                status: runnersArray[j][0].gstatus,
+                numberOfRunners: runnersArray[j].length,
+                tableId: asiaOdd.tableId,
+                runners: runnersArray[j],
+              };
+
+              const updateOdd = AsianMarketOdd.findOneAndUpdate(
+                {
+                  roundId: newMarket.roundId,
+                  marketId: newMarket.marketId,
+                },
+                newMarket,
+                { upsert: true }
+              );
+
+              updateOddArray.push(updateOdd);
+            }
+
+            await Promise.all(updateOddArray);
+          }
         }
       }
 
