@@ -21,6 +21,7 @@ const FancyOdds = require("../models/fancyOdds");
 const Session = require("../models/Session");
 const Cash = require("../../app/models/deposits");
 const BetPlaceHold = require("../models/betaPlaceHold");
+const Exposure = require("../models/ExpRec")
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
     return 6;
@@ -2525,8 +2526,7 @@ const placeBet = async (req, res) => {
 
 
            /** Start of Qaiser added tracking values in deposits */
-        /*
-           let ddesposits = await Deposits.insertOne({
+           let newDeposit = new Cash({
             userId: userId,
             description: `Bet Place`,
             betId:randomStr,
@@ -2542,8 +2542,6 @@ const placeBet = async (req, res) => {
             availableBalance: UserAvlBalAmount,
             
             cashOrCredit: "Bet",
-           
-            
             marketId: _3rdPartyMarketId || 0,
             sportsId: marketId || 0,
             matchId: matchId || null,
@@ -2551,7 +2549,9 @@ const placeBet = async (req, res) => {
             betDateTime: BetTime,
           });
 
-          const ExpTran = await  exposures.insertOne({
+          await newDeposit.save()
+
+          const ExpTran = new Exposure({
             userId: userId,
             trans_from: "Bet Place",
             trans_from_id: randomStr,
@@ -2569,7 +2569,8 @@ const placeBet = async (req, res) => {
             calculateExp: false,
             exposureAmount: expAmount ? Number(expAmount.toFixed(2)) : 0,
           });
-          */
+          
+          await ExpTran.save()
           /** End of Qaiser added tracking values in deposits */
 
 
