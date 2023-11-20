@@ -3036,6 +3036,7 @@ async function getMatchedBets(req, res) {
           _id: 0,
           price: "$betRate",
           runnersPosition: "$runnersPosition",
+          calculateExp: "$calculateExp",
           runnerId: "$runnerName",
           createdAt: "$createdAt",
           size: "$betAmount",
