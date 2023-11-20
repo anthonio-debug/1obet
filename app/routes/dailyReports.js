@@ -291,14 +291,14 @@ const getDailyReport = async(req, res) => {
         userId: currentUser.createdBy ,
         commissionFrom: currentUser.userId,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
+        // $and: [
+        //   {
+        //     createdAt: {$gte: req.query.startDate}
+        //   },
+        //   {
+        //     createdAt: {$lte: req.query.endDate}
+        //   }
+        // ]
       }
     },
     {
