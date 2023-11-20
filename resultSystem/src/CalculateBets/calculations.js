@@ -434,7 +434,7 @@ async function handleWinningBet(bet) {
           )
           // console.log(" =============== User Updated Successfully ");
 
-          const lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
+          const lastTrans       = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
           const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
 
           let cash = await deposits.insertOne({
