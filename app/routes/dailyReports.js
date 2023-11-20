@@ -256,16 +256,16 @@ const getDailyReport = async(req, res) => {
     {
       $match: {
         userId: { $in: users },
-        // sportsId: sportsIdQuery,
+        sportsId: sportsIdQuery,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
-        ]
+        // $and: [
+        //   {
+        //     createdAt: {$gte: req.query.startDate}
+        //   },
+        //   {
+        //     createdAt: {$lte: req.query.endDate}
+        //   }
+        // ]
       }
     },
     {
