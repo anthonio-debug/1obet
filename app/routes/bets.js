@@ -2549,7 +2549,7 @@ const placeBet = async (req, res) => {
           //   betDateTime: BetTime,
           // });
 
-          await newDeposit.save()
+          // await newDeposit.save()
 
           // const ExpTran = new Exposure({
           //   userId: userId,
