@@ -2191,12 +2191,7 @@ const placeBet = async (req, res) => {
             { runner: Number(TargetScore), position: 0 },
             { runner: Number(TargetScore) + 1, position: 0 }
           ])
-          let selectedAllRunners = AllRunners.map((item) => {
-            return {
-              runner: item.runner,
-              position: 0
-            }
-          })
+          let selectedAllRunners = AllRunners.map((item) => {return { runner: item.runner, position: 0 }})
 
           const AllPreviousBets = await Bets.find({
             marketId: _3rdPartyMarketId,
@@ -2210,20 +2205,19 @@ const placeBet = async (req, res) => {
 
           for (const bet of AllPreviousBets) {
             const fancyNewPosition = selectedAllRunners.map((item) => {
-              if(type == 1 && item.runner <  TargetScore) item.position  =  Number((item.position - Number(bet.loosingAmount.toFixed(2))).toFixed(2));
-              if(type == 1 && item.runner >= TargetScore) item.position  =  Number((item.position + Number(bet.winningAmount.toFixed(2))).toFixed(2));
-              if(type == 0 && item.runner <  TargetScore) item.position  =  Number((item.position + Number(bet.winningAmount.toFixed(2))).toFixed(2));
-              if(type == 0 && item.runner >= TargetScore) item.position  =  Number((item.position - Number(bet.loosingAmount.toFixed(2))).toFixed(2));
-              return item;
+                if(bet.type == 1 && item.runner <  bet.TargetScore) item.position  =  Number((item.position - Number(bet.loosingAmount.toFixed(2))).toFixed(2));
+                if(bet.type == 1 && item.runner >= bet.TargetScore) item.position  =  Number((item.position + Number(bet.winningAmount.toFixed(2))).toFixed(2));
+                if(bet.type == 0 && item.runner <  bet.TargetScore) item.position  =  Number((item.position + Number(bet.winningAmount.toFixed(2))).toFixed(2));
+                if(bet.type == 0 && item.runner >= bet.TargetScore) item.position  =  Number((item.position - Number(bet.loosingAmount.toFixed(2))).toFixed(2));
+                return item;
             });
             selectedAllRunners = fancyNewPosition
           }
-
           const runnerCurrentPosition = selectedAllRunners.map((item) => {
-            if(type == 1 && item.runner <  TargetScore) item.position  = -Number(loosingAmount.toFixed(2));
-            if(type == 1 && item.runner >= TargetScore) item.position  =  Number(winningAmount.toFixed(2));
-            if(type == 0 && item.runner <  TargetScore) item.position  =  Number(winningAmount.toFixed(2));
-            if(type == 0 && item.runner >= TargetScore) item.position  = -Number(loosingAmount.toFixed(2));
+            if(type == 1 && item.runner <  TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(2))).toFixed(2));
+            if(type == 1 && item.runner >= TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(2))).toFixed(2));
+            if(type == 0 && item.runner <  TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(2))).toFixed(2));
+            if(type == 0 && item.runner >= TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(2))).toFixed(2));            
             return item;
           });
           runnersPosition = runnerCurrentPosition;
