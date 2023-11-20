@@ -2535,7 +2535,7 @@ const placeBet = async (req, res) => {
             userId: userId,
             description: `Bet Place`,
             betId:randomStr,
-            addedExpoisureAmount:expAmount ? Number(expAmount.toFixed(2)) : 0,
+            addedExpoisureAmount:expAmount ? expAmount.toFixed(2) : 0,
             UserPrevexposure:user.exposure,
             UpdatedExposure:UserExpAmount,
             sourceCodeBlock:'Bet Place',
