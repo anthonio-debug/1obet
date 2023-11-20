@@ -111,16 +111,23 @@ async function handleLosingBet(bet) {
   const exposures = client.db(`${DBNAME}`).collection("exposures");
   const currentPositions = client.db(`${DBNAME}`).collection("currentpositions");
 
+
+  const now   = new Date();
+  const year  = now.getFullYear().toString();
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day   = now.getDate().toString().padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+
+
+
   try {
     if (bet.status == 1) {
       let calculatedExp = 0;
       console.log(` ============= Bet ${bet._id} LOSE ============= `);
       await session.withTransaction(async () => {
-
         const userId = bet.userId;
         const loosingAmount = Number(bet.loosingAmount.toFixed(2));
         const userToUpdate = await User.findOne({ userId: userId, isDeleted: false});
-
         if (!userToUpdate) {
           console.error("Error: User Not Found Location:(_handle losing bet)");
           await session.abortTransaction();
@@ -129,7 +136,7 @@ async function handleLosingBet(bet) {
           const user_prev_availableBalance = userToUpdate.availableBalance;
           const user_prev_exposure = userToUpdate.exposure;
 
-          const updatedbalance  = Number((userToUpdate.balance - loosingAmount).toFixed(2));
+          const updatedbalance  = Number((userToUpdate.balance  - loosingAmount).toFixed(2));
           const updatedClientPL = Number((userToUpdate.clientPL - loosingAmount).toFixed(2));
           let userToUpdateAvailableBalance = -loosingAmount;
           let addExpoisureAmount = 0;
@@ -162,24 +169,15 @@ async function handleLosingBet(bet) {
           const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
           let newCash = deposits.insertOne({
             userId: userToUpdate.userId,
-
             addedExpoisureAmount:addExpoisureAmount,
             UserPrevexposure:userToUpdate.exposure,
             UpdatedExposure:expAmount,
             sourceCodeBlock:'handleLosingBet',
-
-
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
             amount: -loosingAmount,
-            balance: lastMaxWithdraw
-              ? lastMaxWithdraw.balance - loosingAmount
-              : -loosingAmount,
-            availableBalance: lastMaxWithdraw
-              ? lastMaxWithdraw.availableBalance - loosingAmount
-              : -loosingAmount,
-            maxWithdraw: lastMaxWithdraw
-              ? lastMaxWithdraw.maxWithdraw - loosingAmount
-              : loosingAmount,
+            balance: lastMaxWithdraw ? lastMaxWithdraw.balance - loosingAmount : -loosingAmount,
+            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - loosingAmount : -loosingAmount,
+            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - loosingAmount : loosingAmount,
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
             credit: lastMaxWithdraw?.credit || 0,
             creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
@@ -191,9 +189,10 @@ async function handleLosingBet(bet) {
             betId: bet._id,
             betType: bet.type,
             betDateTime: bet.betTime,
+            createdAt: formattedDate
           });
-
           // console.log(" ======================== Cash Updating Sucessfully ");
+
           const parentUserIds = await getParents(userId);
           const parentUser = await users.find({userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).toArray();
     
@@ -212,11 +211,8 @@ async function handleLosingBet(bet) {
               prev = current;
             }
             // console.log( " ======================== Commitions Calculated  Sucessfully " );
-
-
             let commissionFrom = userToUpdate.userId;
             let upMovingAmount = TotalLoosingAmount;
-
             for (const user of parentUser) {
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount).toFixed(2))).toFixed(2));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(2))).toFixed(2));
@@ -243,42 +239,24 @@ async function handleLosingBet(bet) {
       
               const lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
               const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
-    
-              
-
 
               let newCash = deposits.insertOne({
                 userId: user.userId,
                 description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
-
                 addedExpoisureAmount:Number(((user.commission / 100) * remainingAmount).toFixed(2)),
                 UserPrevexposure:user.exposure,
                 UpdatedExposure:totalExpoisure,
-                exposure: 'Number(((user.commission / 100) * remainingAmount).toFixed(2))',
+                exposure : 'Number(((user.commission / 100) * remainingAmount).toFixed(2))',
                 sourceCodeBlock:'handleLosingBet',
-
-
-
                 amount: (user.commission / 100) * TotalLoosingAmount,
-                balance: lastMaxWithdraw
-                  ? lastMaxWithdraw.balance +
-                    (user.commission / 100) * TotalLoosingAmount
-                  : (user.commission / 100) * TotalLoosingAmount,
-                availableBalance: lastMaxWithdraw
-                  ? lastMaxWithdraw.availableBalance +
-                    (user.commission / 100) * TotalLoosingAmount
-                  : (user.commission / 100) * TotalLoosingAmount,
-                maxWithdraw: lastMaxWithdraw
-                  ? lastMaxWithdraw.maxWithdraw +
-                    (user.commission / 100) * TotalLoosingAmount
-                  : (user.commission / 100) * TotalLoosingAmount,
+                balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
+                availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
+                maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
                 commissionFrom: commissionFrom,
                 cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
                 credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-                creditRemaining: lastMaxWithdraw
-                  ? lastMaxWithdraw.creditRemaining
-                  : 0,
+                creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
                 cashOrCredit: "loosing",
                 marketId: bet.marketId,
                 sportsId: bet.sportsId,
@@ -287,6 +265,7 @@ async function handleLosingBet(bet) {
                 matchId: bet.matchId,
                 betType: bet.type,
                 betDateTime: bet.betTime,
+                createdAt: formattedDate
               })
       
               console.log( " ======================== Parent User Cash Updating Sucessfully ", lastMaxWithdraw);
@@ -362,10 +341,7 @@ async function handleLosingBet(bet) {
           }
           console.log("  =============== All losing Part Working ...");
         }
-
-
       }, transactionOptions)
-
     }
   } catch (error) {
     console.error("Error: Handle Losing Bet ", error);
@@ -386,6 +362,14 @@ async function handleWinningBet(bet) {
   const events = client.db(`${DBNAME}`).collection("inplayevents");
   const cricketSession = client.db(`${DBNAME}`).collection("sessions");
   const exposuresTrans = client.db(`${DBNAME}`).collection("exposures");
+
+
+  const now   = new Date();
+  const year  = now.getFullYear().toString();
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day   = now.getDate().toString().padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+  
   try {
     if (bet.status == 1){
       let calculatedExp = 0;
@@ -458,7 +442,7 @@ async function handleWinningBet(bet) {
           )
           // console.log(" =============== User Updated Successfully ");
 
-          const lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
+          const lastTrans       = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
           const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
 
           let cash = await deposits.insertOne({
@@ -471,15 +455,9 @@ async function handleWinningBet(bet) {
             sourceCodeBlock:'handleWinningBet',
             createdBy: 0,
             amount: remainingAmount,
-            balance: lastMaxWithdraw
-              ? lastMaxWithdraw.balance + remainingAmount
-              : remainingAmount,
-            availableBalance: lastMaxWithdraw
-              ? lastMaxWithdraw.availableBalance + remainingAmount
-              : remainingAmount,
-            maxWithdraw: lastMaxWithdraw
-              ? lastMaxWithdraw.maxWithdraw + remainingAmount
-              : remainingAmount,
+            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
+            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
+            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
             cashOrCredit: "Bet",
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
             credit: lastMaxWithdraw?.credit || 0,
@@ -489,10 +467,10 @@ async function handleWinningBet(bet) {
             matchId: bet.matchId,
             betType: bet.type,
             betDateTime: bet.betTime,
+            createdAt: formattedDate
           });
           
           // console.log(" =============== Cash Save Successfully! ");
-
 
           const parentUserIds = await getParents(userId);
           const parentUser = await users.find({
@@ -504,7 +482,6 @@ async function handleWinningBet(bet) {
 
           if (!parentUser) {
             console.error(" Error: Parent Users Not Found Location:(_handle Winning  bet) ");
-            console.error("Error: Handle Winning Bet ", error);
             await session.abortTransaction(); 
             // res.status(404).send({ message: "user not found" });
           } else {
@@ -549,26 +526,15 @@ async function handleWinningBet(bet) {
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                 createdBy: 0,
-
                 addedExpoisureAmount:Number(((user.commission / 100) * totalRemainingAmount).toFixed(2)),
-            UserPrevexposure:user.exposure,
-            UpdatedExposure:totalExpoisure,
-            exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))',
-            sourceCodeBlock:'handleWinningBet',
-            
+                UserPrevexposure:user.exposure,
+                UpdatedExposure:totalExpoisure,
+                exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(2))',
+                sourceCodeBlock:'handleWinningBet',
                 amount: -(user.commission / 100) * totalRemainingAmount,
-                balance: lastMaxWithdraw
-                  ? lastMaxWithdraw.balance -
-                    (user.commission / 100) * totalRemainingAmount
-                  : -(user.commission / 100) * totalRemainingAmount,
-                availableBalance: lastMaxWithdraw
-                  ? lastMaxWithdraw.availableBalance -
-                    (user.commission / 100) * totalRemainingAmount
-                  : -(user.commission / 100) * totalRemainingAmount,
-                maxWithdraw: lastMaxWithdraw
-                  ? lastMaxWithdraw.maxWithdraw -
-                    (user.commission / 100) * totalRemainingAmount
-                  : -(user.commission / 100) * totalRemainingAmount,
+                balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
                 cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
                 marketId: bet.marketId,
                 credit: lastMaxWithdraw?.credit || 0,
@@ -581,6 +547,7 @@ async function handleWinningBet(bet) {
                 matchId: bet.matchId,
                 betType: bet.type,
                 betDateTime: bet.betTime,
+                createdAt: formattedDate
               })
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(2));
               // console.log(" =============== Parent bet Transaction  Successfull ");
@@ -595,18 +562,9 @@ async function handleWinningBet(bet) {
                   createdBy: 0,
                   commissionFrom: commissionFrom,
                   amount: (user.commission / 100) * commissionAmount,
-                  balance: lastMaxWithdraw
-                    ? lastMaxWithdraw.balance +
-                      (user.commission / 100) * commissionAmount
-                    : (user.commission / 100) * commissionAmount,
-                  availableBalance: lastMaxWithdraw
-                    ? lastMaxWithdraw.availableBalance +
-                      (user.commission / 100) * commissionAmount
-                    : (user.commission / 100) * commissionAmount,
-                  maxWithdraw: lastMaxWithdraw
-                    ? lastMaxWithdraw.maxWithdraw +
-                      (user.commission / 100) * commissionAmount
-                    : (user.commission / 100) * commissionAmount,
+                  balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+                  availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+                  maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                   cashOrCredit: "Commission",
                   betId: bet._id,
                   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
@@ -618,7 +576,9 @@ async function handleWinningBet(bet) {
                   matchId: bet.matchId,
                   betType: bet.type,
                   betDateTime: bet.betTime,
+                  createdAt: formattedDate
                 });
+
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(2));
               }
               commissionFrom = user.userId;
@@ -691,7 +651,6 @@ async function handleWinningBet(bet) {
             await session.commitTransaction();
           }
         }
-
       }, transactionOptions);
 
     }
