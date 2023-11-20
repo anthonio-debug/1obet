@@ -314,8 +314,71 @@ function apiRequests() {
   
               updateOddArray.push(updateOdd);
             }
-            
+
             await Promise.all(updateOddArray);
+          } else if(asiaOdd.tableId == "card32eu"){
+            let updateOddArray = [];
+            let runnerPlayers = [];
+            let runnerColor = [];
+            let runnerPlayer8 = [];
+            let runnerPlayer9 = [];
+            let runnerPlayer10 = [];
+            let runnerPlayer11 = [];
+            let runnerTotal = [];
+            let runnerFigure = [];
+            let runnerArray = []
+            let playersSid = ["1","2","3","4"]
+            for(let j=0;j<odds.length; j++){
+              if(playersSid.includes(odds[j].sid)){
+                runnerPlayers.push(odds[j])
+              } else if(odds[j].sid == "5" || odds[j].sid == "6"){
+                runnerPlayer8.push(odds[j])
+              } else if(odds[j].sid == "7" || odds[j].sid == "8"){
+                runnerPlayer9.push(odds[j])
+              } else if(odds[j].sid == "9" || odds[j].sid == "10"){
+                runnerPlayer10.push(odds[j])
+              } else if(odds[j].sid == "11" || odds[j].sid == "12"){
+                runnerPlayer11.push(odds[j])
+              } else if(odds[j].sid == "13" || odds[j].sid == "14"|| odds[j].sid == "27"){
+                runnerColor.push(odds[j])
+              } else if(odds[j].sid == "25" || odds[j].sid == "26"){
+                runnerTotal.push(odds[j])
+              } else {
+                runnerFigure.push(odds[j])
+              }
+            }
+            runnerArray.push(runnerColor)
+            runnerArray.push(runnerFigure)
+            runnerArray.push(runnerPlayer10)
+            runnerArray.push(runnerPlayer11)
+            runnerArray.push(runnerPlayer8)
+            runnerArray.push(runnerPlayer9)
+            runnerArray.push(runnerPlayers)
+            runnerArray.push(runnerTotal)
+
+            for(let j=0; j<8; j++){
+              const newMarketId = generateMarketId(runnerArray[j])
+              const newMarket = {
+                roundId: asiaOdd.roundId,
+                marketId: newMarketId,
+                marketName: runnerArray[j][0].nation,
+                status: runnerArray[j][0].gstatus,
+                numberOfRunners: runnerArray[j].length,
+                tableId: asiaOdd.tableId,
+                runners: runnerArray[j],
+              }
+              const updateOdd = AsianMarketOdd.findOneAndUpdate(
+                {
+                  roundId: newMarket.roundId,
+                  marketId: newMarket.marketId,
+                },
+                newMarket,
+                { upsert: true }
+              );
+  
+              updateOddArray.push(updateOdd);
+            }
+
           }
         }
       }
