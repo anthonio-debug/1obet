@@ -256,7 +256,7 @@ const getDailyReport = async(req, res) => {
     {
       $match: {
         userId: { $in: users },
-        sportsId: sportsIdQuery,
+        // sportsId: sportsIdQuery,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
