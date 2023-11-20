@@ -22,6 +22,8 @@ const Session = require("../models/Session");
 const Cash = require("../../app/models/deposits");
 const BetPlaceHold = require("../models/betaPlaceHold");
 const Exposure = require("../models/ExpRec")
+const { v4: uuidv4 } = require('uuid');
+
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
     return 6;
@@ -134,6 +136,8 @@ const placeBet = async (req, res) => {
       roundId,
     } = req.body;
     console.log(" =============== betRate ===============  ", betRate);
+    let randomStr = uuidv4();
+
     const selectedBetRate = selectedAmount;
     const userId = req.decoded.userId;
     let ApiResponseOdds;
@@ -2436,6 +2440,7 @@ const placeBet = async (req, res) => {
         roundId: roundId,
         asianTableName: asianTableName,
         asianTableId: oddsId,
+        randomStr: randomStr
         // backFancyRate,
         // layFancyRate 
       });
