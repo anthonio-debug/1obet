@@ -2539,7 +2539,7 @@ const placeBet = async (req, res) => {
             userId: userId,
             description: `Bet Place`,
             betId:randomStr,
-            addedExpoisureAmount:expAmount ? Number(expAmount.toFixed(2)) : 0,
+            addedExpoisureAmount:expAmount ? expAmount.toFixed(2) : 0,
             UserPrevexposure:user.exposure,
             UpdatedExposure:UserExpAmount,
             sourceCodeBlock:'Bet Place',
@@ -3039,6 +3039,8 @@ async function getMatchedBets(req, res) {
         $project: {
           _id: 0,
           price: "$betRate",
+          runnersPosition: "$runnersPosition",
+          calculateExp: "$calculateExp",
           runnerId: "$runnerName",
           createdAt: "$createdAt",
           size: "$betAmount",
