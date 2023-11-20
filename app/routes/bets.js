@@ -19,13 +19,8 @@ const axios = require("axios");
 const currentPosition = require("../models/CurrentPosition");
 const FancyOdds = require("../models/fancyOdds");
 const Session = require("../models/Session");
-const Deposits = require("../../app/models/deposits");
+const Cash = require("../../app/models/deposits");
 const BetPlaceHold = require("../models/betaPlaceHold");
-
-const exposures = require("../models/ExpRec");
-
-
-
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
     return 6;
@@ -2165,63 +2160,6 @@ const placeBet = async (req, res) => {
       let prevExpAmount = 0;
       let expAmount = 0;
       console.log( " ================ Selection ID ================ ", selectionId );
-
-      // if (subMarketDetail.Id == config.Fancy) {
-      //   let lastBetsCount = await Bets.countDocuments({
-      //     marketId: _3rdPartyMarketId,
-      //     userId: req.decoded.userId,
-      //     matchId: matchId,
-      //     fancyData: fancyData,
-      //     status: 1,
-      //     // backFancyRate: backFancyRate,
-      //     // layFancyRate: layFancyRate
-      //   });
-      //   console.log(" ================== lastBetsCount ==================  ", lastBetsCount);
-
-      //   if (lastBetsCount > 0) {
-      //     const lastBet = await Bets.find({
-      //       marketId: _3rdPartyMarketId,
-      //       userId: req.decoded.userId,
-      //       matchId: matchId,
-      //       fancyData: fancyData,
-      //       status: 1,
-      //       // backFancyRate: backFancyRate,
-      //       // layFancyRate: layFancyRate
-      //     }).sort({ _id: -1 }).limit(1);
-
-      //     console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
-      //     const fancyNewPosition = lastBet[0].runnersPosition.map((item) => {
-      //       if (item.runner == type) {
-      //         item.amount = Number((item.amount + Number(winningAmount.toFixed(2))).toFixed(2));
-      //       } else {
-      //         item.amount = Number((item.amount - Number(loosingAmount.toFixed(2))).toFixed(2));
-      //       }
-      //       return item;
-      //     });
-      //     runnersPosition = fancyNewPosition;
-      //     prevExpAmount = lastBet[0].exposureAmount;
-      //   } else {
-      //     const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
-      //       if (item.runner == type) {
-      //         item.amount = Number(
-      //           (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
-      //         );
-      //       } else {
-      //         item.amount = Number(
-      //           (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
-      //         );
-      //       }
-      //       return item;
-      //     });
-      //     runnersPosition = runnerCurrentPosition;
-      //   }
-
-      //   expAmount = runnersPosition.reduce((min, current) => {
-      //     return current.amount < min.amount ? current : min;
-      //   }, runnersPosition[0]);
-      //   expAmount = expAmount.amount;
-      //   expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
-      // } 
       
       if (subMarketDetail.Id == config.Fancy) {
         let lastBetsCount = await Bets.countDocuments({
@@ -2247,29 +2185,46 @@ const placeBet = async (req, res) => {
           }).sort({ _id: -1 }).limit(1);
 
           console.log( " =================== lastBet ====================  ", lastBet[0].runnersPosition );
-          const runners = [
+          const AllRunners = lastBet[0].runnersPosition;
+          AllRunners.push(...[
             { runner: Number(TargetScore) - 1, position: 0 },
             { runner: Number(TargetScore), position: 0 },
             { runner: Number(TargetScore) + 1, position: 0 }
-          ]
-          const AllRunners = lastBet[0].runnersPosition;
+          ])
+          let selectedAllRunners = AllRunners.map((item) => {return { runner: item.runner, position: 0 }})
 
-          const newRunners = [];
-          const uniqueVals = newRecords.map((item)=>{
-              const index = AllRunners.findIndex((e)=> e.runner == item.runner );
-              if(index == -1) newRunners.push(item)
+          const AllPreviousBets = await Bets.find({
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            fancyData: fancyData,
+            status: 1,
           })
-          AllRunners.push(...newRunners)
+          
+          console.log(` =================== selectedAllRunners ================ ${selectedAllRunners}`);
 
-          const fancyNewPosition = AllRunners.map((item) => {
+          for (const bet of AllPreviousBets) {
+            const fancyNewPosition = selectedAllRunners.map((item) => {
+                if(bet.type == 1 && item.runner <  bet.TargetScore) item.position  =  Number((item.position - Number(bet.loosingAmount.toFixed(2))).toFixed(2));
+                if(bet.type == 1 && item.runner >= bet.TargetScore) item.position  =  Number((item.position + Number(bet.winningAmount.toFixed(2))).toFixed(2));
+                if(bet.type == 0 && item.runner <  bet.TargetScore) item.position  =  Number((item.position + Number(bet.winningAmount.toFixed(2))).toFixed(2));
+                if(bet.type == 0 && item.runner >= bet.TargetScore) item.position  =  Number((item.position - Number(bet.loosingAmount.toFixed(2))).toFixed(2));
+                return item;
+            });
+            selectedAllRunners = fancyNewPosition
+          }
+          const runnerCurrentPosition = selectedAllRunners.map((item) => {
             if(type == 1 && item.runner <  TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(2))).toFixed(2));
             if(type == 1 && item.runner >= TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(2))).toFixed(2));
             if(type == 0 && item.runner <  TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(2))).toFixed(2));
-            if(type == 0 && item.runner >= TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(2))).toFixed(2));
+            if(type == 0 && item.runner >= TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(2))).toFixed(2));            
             return item;
           });
-          runnersPosition = fancyNewPosition;
+          runnersPosition = runnerCurrentPosition;
           prevExpAmount   = lastBet[0].exposureAmount;
+                    
+          console.log(` =================== selectedAllRunners ================ ${selectedAllRunners}`);
+
         } 
         else {
           const runners = [
@@ -2447,7 +2402,7 @@ const placeBet = async (req, res) => {
       console.log("userAvailableBalance", user.availableBalance);
       /* ------------ */
       /* Placing Bet Area  */
-      const randomStr = Date.now();
+
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
         sportsId: marketId || 0,
@@ -2467,7 +2422,6 @@ const placeBet = async (req, res) => {
         runner: selectionId ? selectionId : "",
         type: type || 0,
         status: 1,
-        randomStr:randomStr,
         event: eventDetail ? eventDetail.name : oddsId,
         isfancyOrbookmaker: isFancyOrBookMaker,
         fancyData: fancyData,
@@ -2569,7 +2523,52 @@ const placeBet = async (req, res) => {
           );
 
 
+
+           /** Start of Qaiser added tracking values in deposits */
+           let ddesposits = await Deposits.insertOne({
+            userId: userId,
+            description: `Bet Place`,
+            betId:randomStr,
+            addedExpoisureAmount:expAmount ? Number(expAmount.toFixed(2)) : 0,
+            UserPrevexposure:user.exposure,
+            UpdatedExposure:UserExpAmount,
+            sourceCodeBlock:'Bet Place',
+            loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(2)) : 0,
+            winningAmount: winningAmount ? Number(winningAmount.toFixed(2)) : 0,
+            
+            amount: betAmount || 0,
+            balance: user.balance,
+            availableBalance: UserAvlBalAmount,
+            
+            cashOrCredit: "Bet",
            
+            
+            marketId: _3rdPartyMarketId || 0,
+            sportsId: marketId || 0,
+            matchId: matchId || null,
+            betType: type || 0,
+            betDateTime: BetTime,
+          });
+
+          const ExpTran = await  exposures.insertOne({
+            userId: userId,
+            trans_from: "Bet Place",
+            trans_from_id: randomStr,
+            
+            user_prev_balance: user.balance,
+            user_prev_availableBalance: user.availableBalance,
+            user_prev_exposure: user.exposure,
+            user_new_balance: user.balance,
+            user_new_availableBalance: UserAvlBalAmount,
+            user_new_exposure: UserExpAmount,
+            marketId: _3rdPartyMarketId || 0,
+            sportsId: marketId || 0,
+            calculatedExp: expAmount ? Number(expAmount.toFixed(2)) : 0,
+            DateTime: new Date(),
+            calculateExp: false,
+            exposureAmount: expAmount ? Number(expAmount.toFixed(2)) : 0,
+          });
+          /** End of Qaiser added tracking values in deposits */
 
 
 
@@ -3914,3 +3913,12 @@ loginRouter.get("/dailyMatchWiseprofitLose", dailyMatchWiseprofitLose);
 loginRouter.get("/SingleUserAllBets", SingleUserAllBets);
 
 module.exports = { sessionCalc, loginRouter, getParents };
+
+
+
+
+  // const newRunners = [];
+  // const uniqueVals = newRecords.map((item)=>{
+  //     const index = AllRunners.findIndex((e)=> e.runner == item.runner );
+  //     if(index == -1) newRunners.push(item)
+  // })
