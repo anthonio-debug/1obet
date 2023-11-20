@@ -111,6 +111,15 @@ async function handleLosingBet(bet) {
   const exposures = client.db(`${DBNAME}`).collection("exposures");
   const currentPositions = client.db(`${DBNAME}`).collection("currentpositions");
 
+
+  const now   = new Date();
+  const year  = now.getFullYear().toString();
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day   = now.getDate().toString().padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+
+
+
   try {
     if (bet.status == 1) {
       let calculatedExp = 0;
@@ -180,6 +189,7 @@ async function handleLosingBet(bet) {
             betId: bet._id,
             betType: bet.type,
             betDateTime: bet.betTime,
+            createdAt: formattedDate
           });
           // console.log(" ======================== Cash Updating Sucessfully ");
 
@@ -237,7 +247,7 @@ async function handleLosingBet(bet) {
                 addedExpoisureAmount:Number(((user.commission / 100) * remainingAmount).toFixed(2)),
                 UserPrevexposure:user.exposure,
                 UpdatedExposure:totalExpoisure,
-                exposure: 'Number(((user.commission / 100) * remainingAmount).toFixed(2))',
+                exposure : 'Number(((user.commission / 100) * remainingAmount).toFixed(2))',
                 sourceCodeBlock:'handleLosingBet',
                 amount: (user.commission / 100) * TotalLoosingAmount,
                 balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
@@ -255,6 +265,7 @@ async function handleLosingBet(bet) {
                 matchId: bet.matchId,
                 betType: bet.type,
                 betDateTime: bet.betTime,
+                createdAt: formattedDate
               })
       
               console.log( " ======================== Parent User Cash Updating Sucessfully ", lastMaxWithdraw);
@@ -351,6 +362,14 @@ async function handleWinningBet(bet) {
   const events = client.db(`${DBNAME}`).collection("inplayevents");
   const cricketSession = client.db(`${DBNAME}`).collection("sessions");
   const exposuresTrans = client.db(`${DBNAME}`).collection("exposures");
+
+
+  const now   = new Date();
+  const year  = now.getFullYear().toString();
+  const month = (now.getMonth() + 1).toString().padStart(2, '0');
+  const day   = now.getDate().toString().padStart(2, '0');
+  const formattedDate = `${year}-${month}-${day}`;
+  
   try {
     if (bet.status == 1){
       let calculatedExp = 0;
@@ -423,7 +442,7 @@ async function handleWinningBet(bet) {
           )
           // console.log(" =============== User Updated Successfully ");
 
-          const lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
+          const lastTrans       = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
           const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
 
           let cash = await deposits.insertOne({
@@ -448,6 +467,7 @@ async function handleWinningBet(bet) {
             matchId: bet.matchId,
             betType: bet.type,
             betDateTime: bet.betTime,
+            createdAt: formattedDate
           });
           
           // console.log(" =============== Cash Save Successfully! ");
@@ -527,6 +547,7 @@ async function handleWinningBet(bet) {
                 matchId: bet.matchId,
                 betType: bet.type,
                 betDateTime: bet.betTime,
+                createdAt: formattedDate
               })
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(2));
               // console.log(" =============== Parent bet Transaction  Successfull ");
@@ -555,6 +576,7 @@ async function handleWinningBet(bet) {
                   matchId: bet.matchId,
                   betType: bet.type,
                   betDateTime: bet.betTime,
+                  createdAt: formattedDate
                 });
 
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(2));
