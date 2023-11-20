@@ -2525,6 +2525,7 @@ const placeBet = async (req, res) => {
 
 
            /** Start of Qaiser added tracking values in deposits */
+        /*
            let ddesposits = await Deposits.insertOne({
             userId: userId,
             description: `Bet Place`,
@@ -2550,7 +2551,25 @@ const placeBet = async (req, res) => {
             betDateTime: BetTime,
           });
 
-          
+          const ExpTran = await  exposures.insertOne({
+            userId: userId,
+            trans_from: "Bet Place",
+            trans_from_id: randomStr,
+            
+            user_prev_balance: user.balance,
+            user_prev_availableBalance: user.availableBalance,
+            user_prev_exposure: user.exposure,
+            user_new_balance: user.balance,
+            user_new_availableBalance: UserAvlBalAmount,
+            user_new_exposure: UserExpAmount,
+            marketId: _3rdPartyMarketId || 0,
+            sportsId: marketId || 0,
+            calculatedExp: expAmount ? Number(expAmount.toFixed(2)) : 0,
+            DateTime: new Date(),
+            calculateExp: false,
+            exposureAmount: expAmount ? Number(expAmount.toFixed(2)) : 0,
+          });
+          */
           /** End of Qaiser added tracking values in deposits */
 
 
