@@ -983,10 +983,10 @@ const userAccountSattlement = async (req, res) =>{
       { userId: Number(payload.userId) },
       {
         $set: {
-          exposure: Number(Number(payload.exposure).toFixed(2)),
-          availableBalance: Number(Number(payload.availableBalance).toFixed(2)),
-          balance: Number(Number(payload.balance).toFixed(2)),
-          clientPL: Number(Number(payload.clientPL).toFixed(2)),
+          exposure: Number(Number(payload.exposure).toFixed(3)),
+          availableBalance: Number(Number(payload.availableBalance).toFixed(3)),
+          balance: Number(Number(payload.balance).toFixed(3)),
+          clientPL: Number(Number(payload.clientPL).toFixed(3)),
         }
       }
     )
