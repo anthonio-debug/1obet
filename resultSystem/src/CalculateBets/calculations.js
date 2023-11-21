@@ -363,7 +363,6 @@ async function handleWinningBet(bet) {
   const cricketSession = client.db(`${DBNAME}`).collection("sessions");
   const exposuresTrans = client.db(`${DBNAME}`).collection("exposures");
 
-
   const now   = new Date();
   const year  = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -372,9 +371,9 @@ async function handleWinningBet(bet) {
   
   try {
     if (bet.status == 1){
-      let calculatedExp = 0;
       console.log(` ============= Bet ${bet._id} WIN ============= `);
       await session.withTransaction(async () => {
+        let calculatedExp = 0;
         const userId = bet.userId;
         const userToUpdate = await users.findOne({
           userId: userId,
@@ -382,8 +381,6 @@ async function handleWinningBet(bet) {
         });
         if (!userToUpdate){
           console.error("Error: user not found Location:(_handle winning bet)");
-          // return res.status(404).send({ message: "user not found" });
-          console.error("Error: Handle Winning Bet ", error);
           await session.abortTransaction();
         }else {
           const loosingAmount = Number(bet.loosingAmount.toFixed(3));
@@ -602,7 +599,7 @@ async function handleWinningBet(bet) {
               console.log("  ============ SessionScore =================  ", SessionScore);
             }
             await bets.updateOne(
-              { _id: bet._id  },
+              { _id: bet._id },
               {
                 $set: {
                   status: 0,
