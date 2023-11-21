@@ -2548,29 +2548,28 @@ const placeBet = async (req, res) => {
           //   betType: type || 0,
           //   betDateTime: BetTime,
           // });
-
           // await newDeposit.save()
 
-          // const ExpTran = new Exposure({
-          //   userId: userId,
-          //   trans_from: "Bet Place",
-          //   trans_from_id: randomStr,
+          const ExpTran = new Exposure({
+            userId: userId,
+            trans_from: "Bet Place",
+            trans_from_id: randomStr,
             
-          //   user_prev_balance: user.balance,
-          //   user_prev_availableBalance: user.availableBalance,
-          //   user_prev_exposure: user.exposure,
-          //   user_new_balance: user.balance,
-          //   user_new_availableBalance: UserAvlBalAmount,
-          //   user_new_exposure: UserExpAmount,
-          //   marketId: _3rdPartyMarketId || 0,
-          //   sportsId: marketId || 0,
-          //   calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
-          //   DateTime: new Date(),
-          //   calculateExp: false,
-          //   exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
-          // });
+            user_prev_balance: user.balance,
+            user_prev_availableBalance: user.availableBalance,
+            user_prev_exposure: user.exposure,
+            user_new_balance: user.balance,
+            user_new_availableBalance: UserAvlBalAmount,
+            user_new_exposure: UserExpAmount,
+            marketId: _3rdPartyMarketId || 0,
+            sportsId: marketId || 0,
+            calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
+            DateTime: new Date(),
+            calculateExp: false,
+            exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
+          });
           
-          // await ExpTran.save()
+          await ExpTran.save()
           /** End of Qaiser added tracking values in deposits */
 
 
