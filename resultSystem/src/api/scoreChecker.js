@@ -863,9 +863,21 @@ function scoreChecker() {
                   betData[i].runner == widOdd ||
                   betData[i].runner == widSeven
                 ) {
-                  handleWinningBet(betData[i]);
+                  if(betData[i].type == 1){
+                    handleLosingBet(betData[i]);
+                  } else if(betData[i].type == 0){
+                    handleWinningBet(betData[i]);
+                  } else {
+                    handleDrawBet(betData[i], 0)
+                  }
                 } else {
-                  handleLosingBet(betData[i]);
+                  if(betData[i].type == 0){
+                    handleLosingBet(betData[i]);
+                  } else if(betData[i].type == 1){
+                    handleWinningBet(betData[i]);
+                  } else {
+                    handleDrawBet(betData[i], 0)
+                  }
                 }
               }
             }
