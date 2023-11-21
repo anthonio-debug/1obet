@@ -59,8 +59,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
   
     if (action == 0) {
       let amount                  = Number(payload.amount) * casinoMultiples;
-      let UpdatedExposure         = Number((user.exposure - amount).toFixed(2));
-      let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(2));
+      let UpdatedExposure         = Number((user.exposure - amount).toFixed(3));
+      let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
 
       /**
        * let lastMaxWithdrawRes = await Cash.find( {userId: user.userId}).sort({ _id: -1 }); 
@@ -132,15 +132,15 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
          * 
          */
         const updatedavailableBalance = user.availableBalance + (credit * casinoMultiples);
-        const updatedclientPL = Number((user.clientPL + (difference * casinoMultiples)).toFixed(2));
-        const updatedbalance  = Number((user.balance + (difference * casinoMultiples)).toFixed(2));
-        const bettor_lost_amount = Number(((debit - credit) * casinoMultiples).toFixed(2));
+        const updatedclientPL = Number((user.clientPL + (difference * casinoMultiples)).toFixed(3));
+        const updatedbalance  = Number((user.balance + (difference * casinoMultiples)).toFixed(3));
+        const bettor_lost_amount = Number(((debit - credit) * casinoMultiples).toFixed(3));
         const allTrans = [];
 
         // remove all exposure equal to total debit money of 1500
 
-        const amount          = Number((debit *config.casinoMultiples).toFixed(2));
-        const UpdatedExposure = Number((user.exposure + amount).toFixed(2));
+        const amount          = Number((debit *config.casinoMultiples).toFixed(3));
+        const UpdatedExposure = Number((user.exposure + amount).toFixed(3));
 
         await users.updateOne(
           { _id: user?._id },
@@ -226,9 +226,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
            * 0 Battor 
           */
 
-          const availableBalance = Number((user.availableBalance + (user.commission / 100) * bettor_lost_amount).toFixed(2));
-          const balance = Number((user.balance + (user.commission / 100) * bettor_lost_amount).toFixed(2));
-          const clientPL = user.clientPL - user.downLineShare != 100 ?  Number((user.clientPL - ((100 - user.downLineShare) / 100) * bettor_lost_amount).toFixed(2)) : 0;
+          const availableBalance = Number((user.availableBalance + (user.commission / 100) * bettor_lost_amount).toFixed(3));
+          const balance = Number((user.balance + (user.commission / 100) * bettor_lost_amount).toFixed(3));
+          const clientPL = user.clientPL - user.downLineShare != 100 ?  Number((user.clientPL - ((100 - user.downLineShare) / 100) * bettor_lost_amount).toFixed(3)) : 0;
           const userResponse = await users.updateOne(
             { _id: user?._id }, 
             {
@@ -272,7 +272,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
 
           allTrans.push(betTransaction);
 
-          upMovingAmount = Number((upMovingAmount - (user.commission / 100) * bettor_lost_amount).toFixed(2));
+          upMovingAmount = Number((upMovingAmount - (user.commission / 100) * bettor_lost_amount).toFixed(3));
           commissionFrom = user.userId;
         }
         await Cash.insertMany(allTrans);
@@ -305,16 +305,16 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
         //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
         
         const amount = bettor_won_amount * casinoMultiples;
-        const remainingAmount  = Number(((amount / 100) * ( 100 - config.commission  )).toFixed(2));
-        const commissionAmount = Number(((amount / 100) * config.commission).toFixed(2));
-        let upMovingAmount     = Number(amount.toFixed(2));
+        const remainingAmount  = Number(((amount / 100) * ( 100 - config.commission  )).toFixed(3));
+        const commissionAmount = Number(((amount / 100) * config.commission).toFixed(3));
+        let upMovingAmount     = Number(amount.toFixed(3));
         let commissionFrom     = user.userId;
-        let upMovingCommAmount = Number(commissionAmount.toFixed(2));
+        let upMovingCommAmount = Number(commissionAmount.toFixed(3));
 
-        const updatedavailableBalance = Number((user.availableBalance + (remainingAmount) + debit*config.casinoMultiples).toFixed(2));
-        const updatedclientPL = Number((user.clientPL + (remainingAmount)).toFixed(2));
-        const updatedbalance  = Number((user.balance + (remainingAmount)).toFixed(2));
-        const UpdatedExposure = Number(((user.exposure) + (debit * config.casinoMultiples)).toFixed(2));
+        const updatedavailableBalance = Number((user.availableBalance + (remainingAmount) + debit*config.casinoMultiples).toFixed(3));
+        const updatedclientPL = Number((user.clientPL + (remainingAmount)).toFixed(3));
+        const updatedbalance  = Number((user.balance + (remainingAmount)).toFixed(3));
+        const UpdatedExposure = Number(((user.exposure) + (debit * config.casinoMultiples)).toFixed(3));
 
         const userResponse = await users.updateOne(
           { _id: user?._id },
@@ -402,9 +402,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
           const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
           console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
 
-          let availableBalance = Number((user.balance - (user.commission / 100) * remainingAmount).toFixed(2));
-          let Balancebalance   = Number((user.balance - (user.commission / 100) * remainingAmount).toFixed(2));
-          let clientPL         =  user.downLineShare != 100 ? Number((user.clientPL + ((100 - user.downLineShare) / 100) * remainingAmount).toFixed(2)) : 0;
+          let availableBalance = Number((user.balance - (user.commission / 100) * remainingAmount).toFixed(3));
+          let Balancebalance   = Number((user.balance - (user.commission / 100) * remainingAmount).toFixed(3));
+          let clientPL         =  user.downLineShare != 100 ? Number((user.clientPL + ((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
 
           let userResponse = await users.updateOne(
             { _id: user?._id }, {
@@ -476,8 +476,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
 
           allTrans.push(commissionTransaction);
 
-          upMovingAmount     = Number((upMovingAmount - (user.commission / 100) * amount).toFixed(2));
-          upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(2));
+          upMovingAmount     = Number((upMovingAmount - (user.commission / 100) * amount).toFixed(3));
+          upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
           commissionFrom     = user.userId;
         }
 
@@ -490,8 +490,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
       }
       // No Win lose 
       else if((difference == 0)) {
-        const updatedavailableBalance = Number((user.availableBalance + ( debit*casinoMultiples )).toFixed(2))
-        const UpdatedExposure         = Number((user.exposure + ( debit*casinoMultiples )).toFixed(2))
+        const updatedavailableBalance = Number((user.availableBalance + ( debit*casinoMultiples )).toFixed(3))
+        const UpdatedExposure         = Number((user.exposure + ( debit*casinoMultiples )).toFixed(3))
         await users.updateOne(
           { _id: user?._id },
           { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure } },
