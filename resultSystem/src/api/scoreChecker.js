@@ -640,6 +640,8 @@ function scoreChecker() {
                       ) {
                         betData[i].winningAmount = betData[i].betAmount;
                         handleWinningBet(betData[i]);
+                      } else {
+                        handleLosingBet(betData[i]);
                       }
                     } else if (sid[j] == "13" || sid[j] == "23") {
                       if (
@@ -648,6 +650,8 @@ function scoreChecker() {
                       ) {
                         betData[i].winningAmount = betData[i].betAmount * 4;
                         handleWinningBet(betData[i]);
+                      } else {
+                        handleLosingBet(betData[i]);
                       }
                     } else if (sid[j] == "14" || sid[j] == "24") {
                       if (
@@ -656,6 +660,8 @@ function scoreChecker() {
                       ) {
                         betData[i].winningAmount = betData[i].betAmount * 6;
                         handleWinningBet(betData[i]);
+                      } else {
+                        handleLosingBet(betData[i]);
                       }
                     } else if (sid[j] == "15" || sid[j] == "25") {
                       if (
@@ -664,6 +670,8 @@ function scoreChecker() {
                       ) {
                         betData[i].winningAmount = betData[i].betAmount * 35;
                         handleWinningBet(betData[i]);
+                      } else {
+                        handleLosingBet(betData[i]);
                       }
                     } else if (sid[j] == "16" || sid[j] == "26") {
                       if (
@@ -672,6 +680,8 @@ function scoreChecker() {
                       ) {
                         betData[i].winningAmount = betData[i].betAmount * 45;
                         handleWinningBet(betData[i]);
+                      } else {
+                        handleLosingBet(betData[i]);
                       }
                     } else {
                       handleLosingBet(betData[i]);
