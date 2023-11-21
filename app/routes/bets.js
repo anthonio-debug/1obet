@@ -89,7 +89,7 @@ const updateParentUserBalance = async (
   for (const user of parentUser) {
     console.log(`user id ${user.userId} =====`, user.commission);
     const amountToBeSub = (user.commission / 100) * winningAmount;
-    const finalAmount = Number(amountToBeSub.toFixed(2));
+    const finalAmount = Number(amountToBeSub.toFixed(3));
     user.exposure -= finalAmount;
     user.availableBalance -= finalAmount;
     await user.save();
@@ -2214,19 +2214,19 @@ const placeBet = async (req, res) => {
 
           for (const bet of AllPreviousBets) {
             const fancyNewPosition = selectedAllRunners.map((item) => {
-                if(bet.type == 1 && item.runner <  bet.TargetScore) item.position  =  Number((item.position - Number(bet.loosingAmount.toFixed(2))).toFixed(2));
-                if(bet.type == 1 && item.runner >= bet.TargetScore) item.position  =  Number((item.position + Number(bet.winningAmount.toFixed(2))).toFixed(2));
-                if(bet.type == 0 && item.runner <  bet.TargetScore) item.position  =  Number((item.position + Number(bet.winningAmount.toFixed(2))).toFixed(2));
-                if(bet.type == 0 && item.runner >= bet.TargetScore) item.position  =  Number((item.position - Number(bet.loosingAmount.toFixed(2))).toFixed(2));
+                if(bet.type == 1 && item.runner <  bet.TargetScore) item.position  =  Number((item.position - Number(bet.loosingAmount.toFixed(3))).toFixed(3));
+                if(bet.type == 1 && item.runner >= bet.TargetScore) item.position  =  Number((item.position + Number(bet.winningAmount.toFixed(3))).toFixed(3));
+                if(bet.type == 0 && item.runner <  bet.TargetScore) item.position  =  Number((item.position + Number(bet.winningAmount.toFixed(3))).toFixed(3));
+                if(bet.type == 0 && item.runner >= bet.TargetScore) item.position  =  Number((item.position - Number(bet.loosingAmount.toFixed(3))).toFixed(3));
                 return item;
             });
             selectedAllRunners = fancyNewPosition
           }
           const runnerCurrentPosition = selectedAllRunners.map((item) => {
-            if(type == 1 && item.runner <  TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(2))).toFixed(2));
-            if(type == 1 && item.runner >= TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(2))).toFixed(2));
-            if(type == 0 && item.runner <  TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(2))).toFixed(2));
-            if(type == 0 && item.runner >= TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(2))).toFixed(2));            
+            if(type == 1 && item.runner <  TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(3))).toFixed(3));
+            if(type == 1 && item.runner >= TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(3))).toFixed(3));
+            if(type == 0 && item.runner <  TargetScore) item.position  =  Number((item.position + Number(winningAmount.toFixed(3))).toFixed(3));
+            if(type == 0 && item.runner >= TargetScore) item.position  =  Number((item.position - Number(loosingAmount.toFixed(3))).toFixed(3));            
             return item;
           });
           runnersPosition = runnerCurrentPosition;
@@ -2242,10 +2242,10 @@ const placeBet = async (req, res) => {
             { runner: Number(TargetScore) + 1, position: 0 }
           ]
           const runnerCurrentPosition = runners.map((item) => {
-            if(type == 1 && item.runner <  TargetScore) item.position  = -Number(loosingAmount.toFixed(2));
-            if(type == 1 && item.runner >= TargetScore) item.position  =  Number(winningAmount.toFixed(2));
-            if(type == 0 && item.runner <  TargetScore) item.position  =  Number(winningAmount.toFixed(2));
-            if(type == 0 && item.runner >= TargetScore) item.position  = -Number(loosingAmount.toFixed(2));
+            if(type == 1 && item.runner <  TargetScore) item.position  = -Number(loosingAmount.toFixed(3));
+            if(type == 1 && item.runner >= TargetScore) item.position  =  Number(winningAmount.toFixed(3));
+            if(type == 0 && item.runner <  TargetScore) item.position  =  Number(winningAmount.toFixed(3));
+            if(type == 0 && item.runner >= TargetScore) item.position  = -Number(loosingAmount.toFixed(3));
             return item;
           });
           runnersPosition = runnerCurrentPosition;
@@ -2281,11 +2281,11 @@ const placeBet = async (req, res) => {
           runnersPosition = lastrunnersPosition.map((item) => {
             if (item.runner == selectionId) {
               item.amount = Number(
-                (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+                (item.amount + Number(winningAmount.toFixed(3))).toFixed(3)
               );
             } else {
               item.amount = Number(
-                (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+                (item.amount - Number(loosingAmount.toFixed(3))).toFixed(3)
               );
             }
             return item;
@@ -2295,11 +2295,11 @@ const placeBet = async (req, res) => {
           runnersPosition = runnerForSaveInbets.map((item) => {
             if (item.runner == selectionId) {
               item.amount = Number(
-                (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+                (item.amount + Number(winningAmount.toFixed(3))).toFixed(3)
               );
             } else {
               item.amount = Number(
-                (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+                (item.amount - Number(loosingAmount.toFixed(3))).toFixed(3)
               );
             }
             return item;
@@ -2346,11 +2346,11 @@ const placeBet = async (req, res) => {
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
                 item.amount = Number(
-                  (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+                  (item.amount + Number(winningAmount.toFixed(3))).toFixed(3)
                 );
               } else {
                 item.amount = Number(
-                  (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+                  (item.amount - Number(loosingAmount.toFixed(3))).toFixed(3)
                 );
               }
               return item;
@@ -2368,11 +2368,11 @@ const placeBet = async (req, res) => {
             runnersPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
                 item.amount = Number(
-                  (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+                  (item.amount - Number(loosingAmount.toFixed(3))).toFixed(3)
                 );
               } else {
                 item.amount = Number(
-                  (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+                  (item.amount + Number(winningAmount.toFixed(3))).toFixed(3)
                 );
               }
               return item;
@@ -2415,8 +2415,8 @@ const placeBet = async (req, res) => {
         selectedBetRate: selectedBetRate || 0,
         TargetScore: TargetScore || 0,
         matchId: matchId || null,
-        loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(2)) : 0,
-        winningAmount: winningAmount ? Number(winningAmount.toFixed(2)) : 0,
+        loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
+        winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
         subMarketId: subMarketDetail ? subMarketDetail.Id : 0,
         betSession: currentSession ? currentSession : null,
         runner: selectionId ? selectionId : "",
@@ -2426,7 +2426,7 @@ const placeBet = async (req, res) => {
         isfancyOrbookmaker: isFancyOrBookMaker,
         fancyData: fancyData,
         fancyRate: fancyRate,
-        exposureAmount: expAmount ? Number(expAmount.toFixed(2)) : 0,
+        exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
         runnersPosition: runnersPosition ? runnersPosition : [],
         ratesRecord: multipeResponseForSecurityCheck ? multipeResponseForSecurityCheck : [],
         betTime: BetTime,
@@ -2502,7 +2502,7 @@ const placeBet = async (req, res) => {
         try {
           const position = new currentPosition({
             userId: userId,
-            amount: -Number(loosingAmount.toFixed(2)),
+            amount: -Number(loosingAmount.toFixed(3)),
             matchsId: matchId,
             betId: result._id,
           });
@@ -2510,10 +2510,10 @@ const placeBet = async (req, res) => {
 
           const totalExpAmount = expAmount - prevExpAmount;
           const UserExpAmountFix = user.exposure + prevExpAmount - expAmount;
-          const UserExpAmount = Number(UserExpAmountFix.toFixed(2));
+          const UserExpAmount = Number(UserExpAmountFix.toFixed(3));
           const UserAvlBalAmountAmt =
             user.availableBalance + prevExpAmount - expAmount;
-          const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(2));
+          const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(3));
 
           await User.findOneAndUpdate(
             { userId: userId },
@@ -2530,12 +2530,12 @@ const placeBet = async (req, res) => {
           //   userId: userId,
           //   description: `Bet Place`,
           //   betId:randomStr,
-          //   addedExpoisureAmount:expAmount ? expAmount.toFixed(2) : 0,
+          //   addedExpoisureAmount:expAmount ? expAmount.toFixed(3) : 0,
           //   UserPrevexposure:user.exposure,
           //   UpdatedExposure:UserExpAmount,
           //   sourceCodeBlock:'Bet Place',
-          //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(2)) : 0,
-          //   winningAmount: winningAmount ? Number(winningAmount.toFixed(2)) : 0,
+          //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
+          //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
             
           //   amount: betAmount || 0,
           //   balance: user.balance,
@@ -2548,29 +2548,28 @@ const placeBet = async (req, res) => {
           //   betType: type || 0,
           //   betDateTime: BetTime,
           // });
-
           // await newDeposit.save()
 
-          // const ExpTran = new Exposure({
-          //   userId: userId,
-          //   trans_from: "Bet Place",
-          //   trans_from_id: randomStr,
+          const ExpTran = new Exposure({
+            userId: userId,
+            trans_from: "Bet Place",
+            trans_from_id: randomStr,
             
-          //   user_prev_balance: user.balance,
-          //   user_prev_availableBalance: user.availableBalance,
-          //   user_prev_exposure: user.exposure,
-          //   user_new_balance: user.balance,
-          //   user_new_availableBalance: UserAvlBalAmount,
-          //   user_new_exposure: UserExpAmount,
-          //   marketId: _3rdPartyMarketId || 0,
-          //   sportsId: marketId || 0,
-          //   calculatedExp: expAmount ? Number(expAmount.toFixed(2)) : 0,
-          //   DateTime: new Date(),
-          //   calculateExp: false,
-          //   exposureAmount: expAmount ? Number(expAmount.toFixed(2)) : 0,
-          // });
+            user_prev_balance: user.balance,
+            user_prev_availableBalance: user.availableBalance,
+            user_prev_exposure: user.exposure,
+            user_new_balance: user.balance,
+            user_new_availableBalance: UserAvlBalAmount,
+            user_new_exposure: UserExpAmount,
+            marketId: _3rdPartyMarketId || 0,
+            sportsId: marketId || 0,
+            calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
+            DateTime: new Date(),
+            calculateExp: false,
+            exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
+          });
           
-          // await ExpTran.save()
+          await ExpTran.save()
           /** End of Qaiser added tracking values in deposits */
 
 
@@ -2632,11 +2631,11 @@ async function calculateExposure(
     newPosition = lastrunnersPosition.map((item) => {
       if (item.runner == selectedRunner) {
         item.amount = Number(
-          (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+          (item.amount + Number(winningAmount.toFixed(3))).toFixed(3)
         );
       } else {
         item.amount = Number(
-          (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+          (item.amount - Number(loosingAmount.toFixed(3))).toFixed(3)
         );
       }
       return item;
@@ -2646,11 +2645,11 @@ async function calculateExposure(
     newPosition = lastrunnersPosition.map((item) => {
       if (item.runner == selectedRunner) {
         item.amount = Number(
-          (item.amount - Number(loosingAmount.toFixed(2))).toFixed(2)
+          (item.amount - Number(loosingAmount.toFixed(3))).toFixed(3)
         );
       } else {
         item.amount = Number(
-          (item.amount + Number(winningAmount.toFixed(2))).toFixed(2)
+          (item.amount + Number(winningAmount.toFixed(3))).toFixed(3)
         );
       }
       return item;
