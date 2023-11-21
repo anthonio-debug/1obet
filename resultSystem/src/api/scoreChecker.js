@@ -673,10 +673,13 @@ function scoreChecker() {
                         betData[i].winningAmount = betData[i].betAmount * 45;
                         handleWinningBet(betData[i]);
                       }
+                    } else {
+                      handleLosingBet(betData[i]);
                     }
                   }
+                } else {
+                  handleLosingBet(betData[i]);
                 }
-                handleLosingBet(betData[i]);
               }
             }
           }
