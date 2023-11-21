@@ -115,18 +115,12 @@ function scoreChecker() {
             ) {
               continue;
             }
-            if (
-              typeof result.manuelClose === "undefined" &&
-              bet.isManuel == true
-            )
+            if ( typeof result.manuelClose === "undefined" && bet.isManuel == true )
               continue;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               console.log("0 ----- winner ");
               await handleWinningBet(bet);
-            } else if (
-              bet.type == 0 &&
-              bet.runner != result.winnerSelectionId
-            ) {
+            } else if ( bet.type == 0 &&  bet.runner != result.winnerSelectionId ) {
               console.log("0 ----- looser ");
               await handleLosingBet(bet);
             } else if (
@@ -556,7 +550,7 @@ function scoreChecker() {
         if (result.data.data) {
           //Lucky7eu
           if (tableId === "39") {
-            if (result.data.data[0].win === "0") {
+            if (result.data.data[0].win == "0") {
               handleDrawBet(betData[i]);
             } else {
               if (betData[i].runner == result.data.data[0].win) {
@@ -620,18 +614,24 @@ function scoreChecker() {
             }
           }
           // Teen20
-          else if (tableId === "36") {
-            if (result.data.data[0].win === "0") {
+          else if (tableId == "36") {
+            console.log(" ===================== result", result.data.data[0]);
+            console.log(" ===================== winner", result.data.data[0].win);
+            if (result.data.data[0].win == "0") {
               handleDrawBet(betData[i]);
-            } else {
-              if (
-                (betData[i].runner == "1" && result.data.data[0].win == "1") ||
-                (betData[i].runner == "3" && result.data.data[0].win == "3")
-              ) {
+              console.log(" ===================== commining from Line 620");
+            } 
+            else {
+              if ((betData[i].runner == "1" && result.data.data[0].win == "1") 
+
+                  || (betData[i].runner == "3" && result.data.data[0].win == "3")) {
+
                 handleWinningBet(betData[i]);
+                
               } else {
                 let sid = result.data.data[0].sid.split(",");
-                if (sid.length > 1) {
+                
+                if (sid.length > 0) {
                   for (let j = 1; j < sid.length; j++) {
                     if (sid[j] == "12" || sid[j] == "22") {
                       if (
