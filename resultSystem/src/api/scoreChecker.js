@@ -631,7 +631,7 @@ function scoreChecker() {
               } else {
                 let sid = result.data.data[0].sid.split(",");
                 
-                if (sid.length > 0) {
+                if (sid.length > 1) {
                   for (let j = 1; j < sid.length; j++) {
                     if (sid[j] == "12" || sid[j] == "22") {
                       if (
