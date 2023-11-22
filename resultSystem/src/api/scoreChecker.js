@@ -551,7 +551,60 @@ function scoreChecker() {
           //Lucky7eu
           if (tableId === "39") {
             if (result.data.data[0].win == "0") {
-              handleDrawBet(betData[i]);
+              const description = result.data.data[0].desc;
+                const generalResult = description.split(" || ");
+                let wid = "0";
+                let widColor = "0";
+                let widOdd = "0";
+                if (generalResult[1] === "Red") {
+                  widColor = "5";
+                } else if (generalResult[1] === "Black") {
+                  widColor = "6";
+                }
+
+                if (generalResult[2] === "Even") {
+                  widOdd = "3";
+                } else if (generalResult[2] === "Odd") {
+                  widOdd = "4";
+                }
+
+                if (generalResult[3] === "Card 1") {
+                  wid = "7";
+                } else if (generalResult[3] === "Card 2") {
+                  wid = "8";
+                } else if (generalResult[3] === "Card 3") {
+                  wid = "9";
+                } else if (generalResult[3] === "Card 4") {
+                  wid = "10";
+                } else if (generalResult[3] === "Card 5") {
+                  wid = "11";
+                } else if (generalResult[3] === "Card 6") {
+                  wid = "12";
+                } else if (generalResult[3] === "Card 7") {
+                  wid = "13";
+                } else if (generalResult[3] === "Card 8") {
+                  wid = "14";
+                } else if (generalResult[3] === "Card 9") {
+                  wid = "15";
+                } else if (generalResult[3] === "Card 10") {
+                  wid = "16";
+                } else if (generalResult[3] === "Card J") {
+                  wid = "17";
+                } else if (generalResult[3] === "Card Q") {
+                  wid = "18";
+                } else if (generalResult[3] === "Card K") {
+                  wid = "19";
+                }
+
+                if (
+                  betData[i].runner == wid ||
+                  betData[i].runner == widColor ||
+                  betData[i].runner == widOdd
+                ) {
+                  handleWinningBet(betData[i]);
+                } else {
+                  handleDrawBet(betData[i]);
+                }
             } else {
               if (betData[i].runner == result.data.data[0].win) {
                 handleWinningBet(betData[i]);
