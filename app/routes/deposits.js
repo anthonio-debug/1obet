@@ -548,202 +548,207 @@ async function withDrawCashDeposit(req, res) {
 }
 
 function getLedgerDetails(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).send({ errors: errors.errors });
-  }
-
-  const query = { userId: req.body.userId };
-  let page = 1;
-  let sort = 1;
-  let sortValue = '_id';
-  let limit = config.pageSize;
-  console.log('limit:', limit);
-  if ( req.body.numRecords &&  req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
-  if (req.body.sortValue) sortValue = req.body.sortValue;
-  if (req.body.sort) sort = Number(req.body.sort);
-  if (req.body.page) page = Number(req.body.page);
-
-  User.findOne(query, (err, user) => {
-    if (err || !user) {
-      return res.status(404).send({ message: 'User not found' });
+  try{
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).send({ errors: errors.errors });
     }
-    let cashPipeline = [{ $match: { userId: Number(req.body.userId) } }];
-
-    const userRole = user.role;
-
-    if (userRole !== '5' && req.body.type ){
-      cashPipeline.push({ $match: { cashOrCredit: req.body.type }, });
-    }
-
-    // Add support for startDate and endDate search
-    // if (req.body.startDate && req.body.endDate) {
-    //   cashPipeline.push({
-    //     $match: {
-    //       createdAt: { $gte: req.body.startDate, $lte: req.body.endDate }
-    //     }
-    //   });
-    // }
-
-    if (req.body.searchValue) {
-      const searchRegex = new RegExp(req.body.searchValue, 'i');
-      cashPipeline.push({
-        $match: {
-          $or: [
-            { description: { $regex: searchRegex } },
-            {
-              $expr: {
-                $regexMatch: {
-                  input: { $toString: '$amount' },
-                  regex: searchRegex,
+  
+    const query = { userId: req.body.userId };
+    let page = 1;
+    let sort = 1;
+    let sortValue = '_id';
+    let limit = config.pageSize;
+    console.log('limit:', limit);
+    if ( req.body.numRecords &&  req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
+    if (req.body.sortValue) sortValue = req.body.sortValue;
+    if (req.body.sort) sort = Number(req.body.sort);
+    if (req.body.page) page = Number(req.body.page);
+  
+    User.findOne(query, (err, user) => {
+      if (err || !user) {
+        return res.status(404).send({ message: 'User not found' });
+      }
+      let cashPipeline = [{ $match: { userId: Number(req.body.userId) } }];
+  
+      const userRole = user.role;
+  
+      if (userRole !== '5' && req.body.type ){
+        cashPipeline.push({ $match: { cashOrCredit: req.body.type }, });
+      }
+  
+      // Add support for startDate and endDate search
+      // if (req.body.startDate && req.body.endDate) {
+      //   cashPipeline.push({
+      //     $match: {
+      //       createdAt: { $gte: req.body.startDate, $lte: req.body.endDate }
+      //     }
+      //   });
+      // }
+  
+      if (req.body.searchValue) {
+        const searchRegex = new RegExp(req.body.searchValue, 'i');
+        cashPipeline.push({
+          $match: {
+            $or: [
+              { description: { $regex: searchRegex } },
+              {
+                $expr: {
+                  $regexMatch: {
+                    input: { $toString: '$amount' },
+                    regex: searchRegex,
+                  },
                 },
               },
-            },
-            {
-              $expr: {
-                $regexMatch: {
-                  input: { $toString: '$maxWithdraw' },
-                  regex: searchRegex,
+              {
+                $expr: {
+                  $regexMatch: {
+                    input: { $toString: '$maxWithdraw' },
+                    regex: searchRegex,
+                  },
                 },
               },
-            },
-          ],
+            ],
+          },
+        });
+      }
+  
+      cashPipeline.push(
+        // {
+        //   $addFields: {
+        //     betsId: {
+        //       $cond: {
+        //         if: {
+        //           $regexMatch: {
+        //             input: '$betId',
+        //             regex: /^[0-9a-fA-F]{24}$/,
+        //           },
+        //         },
+        //         then: { $toObjectId: '$betId' },
+        //         else: null,
+        //       },
+        //     },
+        //   },
+        // },
+        // {
+        //   $lookup: {
+        //     from: 'bets',
+        //     localField: 'betsId',
+        //     foreignField: '_id',
+        //     as: 'betsDetails',
+        //   },
+        // },
+        // {
+        //   $addFields: {
+        //     betSession: { $arrayElemAt: ['$betsDetails.betSession', 0] },
+        //     matchType: { $arrayElemAt: ['$betsDetails.matchType', 0] },
+        //     SessionScore: { $arrayElemAt: ['$betsDetails.SessionScore', 0] },
+        //     winnerRunnerData: { $arrayElemAt: ['$betsDetails.winnerRunnerData', 0] }
+        //   },
+        // },
+        {
+          $sort: { _id: -1 },
         },
+        {
+          $facet: {
+            metadata: [{ $count: 'total' }],
+            results: [{ $skip: (page - 1) * limit }, { $limit: limit }],
+          },
+        }
+      );
+      console.log('cashPipeline:', cashPipeline);
+      Cash.aggregate(cashPipeline, async (err, result) => {
+        if(result[0].results&&result[0].results.length>0){
+         for(let i=0;i<result[0].results.length;i++){
+          if(result[0].results[i].sportsId !="6" && result[0].results[i].betId){
+            const betInfo = await Bet.findOne({
+              _id: result[0].results[i].betId
+            })
+            result[0].results[i].betSession = betInfo?.betSession;
+            result[0].results[i].matchType = betInfo?.matchType;
+            result[0].results[i].SessionScore = betInfo?.SessionScore;
+            result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
+          }
+         }
+        }
+        console.log('result:', result);
+        if (
+          err ||
+          !result ||
+          result.length === 0 ||
+          result[0].results.length === 0
+        ) {
+          return res.status(404).send({ message: 'Deposit record not found' });
+        }
+  
+        const responseData = {
+          message: 'Deposit Records',
+  
+          results: {
+            docs: result[0].results,
+            total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
+            limit: limit ? limit : 0,
+            page: page ? page : 0,
+            pages:
+              limit && result[0].metadata[0].total
+                ? Number((result[0].metadata[0].total / limit).toFixed(0))
+                : 0,
+          },
+        };
+  
+        return res.send(responseData);
       });
-    }
-
-    cashPipeline.push(
-      // {
-      //   $addFields: {
-      //     betsId: {
-      //       $cond: {
-      //         if: {
-      //           $regexMatch: {
-      //             input: '$betId',
-      //             regex: /^[0-9a-fA-F]{24}$/,
-      //           },
+  
+      // let cashQuery = { userId: req.body.userId };
+  
+      // if (user.role != '5' && req.body.type) {
+      //   cashQuery.cashOrCredit = req.body.type;
+      // }
+  
+      // // Add support for startDate and endDate search
+      // // if (req.body.startDate && req.body.endDate) {
+      // //   cashQuery.createdAt = { $gte: req.body.startDate, $lte: req.body.endDate };
+      // // }
+      // if (req.body.searchValue) {
+      //   const searchRegex = new RegExp(req.body.searchValue, 'i');
+      //   cashQuery.$or = [
+      //     { description: { $regex: searchRegex } },
+      //     {
+      //       $expr: {
+      //         $regexMatch: {
+      //           input: { $toString: '$amount' },
+      //           regex: searchRegex,
       //         },
-      //         then: { $toObjectId: '$betId' },
-      //         else: null,
       //       },
       //     },
-      //   },
-      // },
-      // {
-      //   $lookup: {
-      //     from: 'bets',
-      //     localField: 'betsId',
-      //     foreignField: '_id',
-      //     as: 'betsDetails',
-      //   },
-      // },
-      // {
-      //   $addFields: {
-      //     betSession: { $arrayElemAt: ['$betsDetails.betSession', 0] },
-      //     matchType: { $arrayElemAt: ['$betsDetails.matchType', 0] },
-      //     SessionScore: { $arrayElemAt: ['$betsDetails.SessionScore', 0] },
-      //     winnerRunnerData: { $arrayElemAt: ['$betsDetails.winnerRunnerData', 0] }
-      //   },
-      // },
-      {
-        $sort: { _id: -1 },
-      },
-      {
-        $facet: {
-          metadata: [{ $count: 'total' }],
-          results: [{ $skip: (page - 1) * limit }, { $limit: limit }],
-        },
-      }
-    );
-    console.log('cashPipeline:', cashPipeline);
-    Cash.aggregate(cashPipeline, async (err, result) => {
-      if(result[0].results&&result[0].results.length>0){
-       for(let i=0;i<result[0].results.length;i++){
-        if(result[0].results[i].sportsId !="6" && result[0].results[i].betId){
-          const betInfo = await Bet.findOne({
-            _id: result[0].results[i].betId
-          })
-          result[0].results[i].betSession = betInfo?.betSession;
-          result[0].results[i].matchType = betInfo?.matchType;
-          result[0].results[i].SessionScore = betInfo?.SessionScore;
-          result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
-        }
-       }
-      }
-      console.log('result:', result);
-      if (
-        err ||
-        !result ||
-        result.length === 0 ||
-        result[0].results.length === 0
-      ) {
-        return res.status(404).send({ message: 'Deposit record not found' });
-      }
-
-      const responseData = {
-        message: 'Deposit Records',
-
-        results: {
-          docs: result[0].results,
-          total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
-          limit: limit ? limit : 0,
-          page: page ? page : 0,
-          pages:
-            limit && result[0].metadata[0].total
-              ? Number((result[0].metadata[0].total / limit).toFixed(0))
-              : 0,
-        },
-      };
-
-      return res.send(responseData);
+      //     {
+      //       $expr: {
+      //         $regexMatch: {
+      //           input: { $toString: '$maxWithdraw' },
+      //           regex: searchRegex,
+      //         },
+      //       },
+      //     },
+      //   ];
+      // }
+      // Cash.paginate(
+      //   cashQuery,
+      //   { page: page, sort: { _id: -1 }, limit: limit },
+      //   (err, results) => {
+      //     if (err || !results || results.length == 0) {
+      //       return res.status(404).send({ message: 'Deposit record not found' });
+      //     }
+      //     return res.send({
+      //       message: 'Deposit Records',
+      //       results,
+      //     });
+      //   }
+      // );
     });
+  } catch (err) {
 
-    // let cashQuery = { userId: req.body.userId };
-
-    // if (user.role != '5' && req.body.type) {
-    //   cashQuery.cashOrCredit = req.body.type;
-    // }
-
-    // // Add support for startDate and endDate search
-    // // if (req.body.startDate && req.body.endDate) {
-    // //   cashQuery.createdAt = { $gte: req.body.startDate, $lte: req.body.endDate };
-    // // }
-    // if (req.body.searchValue) {
-    //   const searchRegex = new RegExp(req.body.searchValue, 'i');
-    //   cashQuery.$or = [
-    //     { description: { $regex: searchRegex } },
-    //     {
-    //       $expr: {
-    //         $regexMatch: {
-    //           input: { $toString: '$amount' },
-    //           regex: searchRegex,
-    //         },
-    //       },
-    //     },
-    //     {
-    //       $expr: {
-    //         $regexMatch: {
-    //           input: { $toString: '$maxWithdraw' },
-    //           regex: searchRegex,
-    //         },
-    //       },
-    //     },
-    //   ];
-    // }
-    // Cash.paginate(
-    //   cashQuery,
-    //   { page: page, sort: { _id: -1 }, limit: limit },
-    //   (err, results) => {
-    //     if (err || !results || results.length == 0) {
-    //       return res.status(404).send({ message: 'Deposit record not found' });
-    //     }
-    //     return res.send({
-    //       message: 'Deposit Records',
-    //       results,
-    //     });
-    //   }
-    // );
-  });
+  }
+  
 }
 
 // function getLedgerDetails(req, res) {
