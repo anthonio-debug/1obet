@@ -661,13 +661,17 @@ function getLedgerDetails(req, res) {
         if(result[0].results&&result[0].results.length>0){
          for(let i=0;i<result[0].results.length;i++){
           if(result[0].results[i].sportsId !="6" && result[0].results[i].betId){
-            const betInfo = await Bet.findOne({
-              _id: result[0].results[i].betId
-            })
-            result[0].results[i].betSession = betInfo?.betSession;
-            result[0].results[i].matchType = betInfo?.matchType;
-            result[0].results[i].SessionScore = betInfo?.SessionScore;
-            result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
+            try{
+              const betInfo = await Bet.findOne({
+                _id: result[0].results[i].betId
+              })
+              result[0].results[i].betSession = betInfo?.betSession;
+              result[0].results[i].matchType = betInfo?.matchType;
+              result[0].results[i].SessionScore = betInfo?.SessionScore;
+              result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
+            } catch (err) {
+              continue;
+            }
           }
          }
         }
