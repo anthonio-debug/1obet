@@ -6,7 +6,7 @@ const { validationResult } = require('express-validator');
 let config = require('config');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
-const Markets = require('../models/mark')
+const Markets = require('../models/marketTypes')
 
 require('dotenv').config();
 const secret = process.env.secret;
