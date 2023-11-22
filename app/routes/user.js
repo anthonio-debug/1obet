@@ -935,10 +935,10 @@ const battorsList = async (req, res) => {
             
             if(totalExp && totalExp.length > 0){
               for(let j=0; j < totalExp.length; j++) {
-                const sportName = await Markets.findOne({Id: Number(results.docs[i].sportsId)})
+                const sportName = await Markets.findOne({Id: Number(totalExp[j]._id)})
 
                 const newSettlement = {
-                  sportName: sportName,
+                  sportName: sportName?.name,
                   totalExposure: totalExp[j]?.sum
                 }
 
