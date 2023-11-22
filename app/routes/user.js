@@ -6,6 +6,7 @@ const { validationResult } = require('express-validator');
 let config = require('config');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
+const Markets = require('../models/mark')
 
 require('dotenv').config();
 const secret = process.env.secret;
@@ -882,41 +883,82 @@ function searchSingleUser(req, res) {
 }
 
 const battorsList = async (req, res) => {
-  if (req.decoded.role != 0) {
-    return res.status(404).send({ message: '-----' });
-  }
-  let usersQuery = {};
-  let page = 1;
-  let sort = -1;
-  let sortValue = '_id';
-  var limit = config.pageSize;
-  usersQuery.role = 5;
-  if (
-    req.query.numRecords &&
-    !isNaN(req.query.numRecords) &&
-    req.query.numRecords > 0
-  )
-    limit = Number(req.query.numRecords);
-  if (req.query.sortValue) sortValue = req.query.sortValue;
-  if (req.query.sort) sort = Number(req.query.sort);
-  if (req.query.page) page = Number(req.query.page);
+  try{
 
-  if (req.query.username)
-    usersQuery.userName = { $regex: req.query.username, $options: 'i' };
-  usersQuery.isDeleted = false;
-  User.paginate(
-    usersQuery,
-    { page: page, sort: { [sortValue]: sort }, limit: limit },
-    (err, results) => {
-      if (err) return res.status(404).send({ message: 'Something went wrong' });
-      return res.send({
-        success: true,
-        message: 'Users list',
-        total: results.total,
-        results: results,
-      });
+    if (req.decoded.role != 0) {
+      return res.status(404).send({ message: '-----' });
     }
-  );
+    let usersQuery = {};
+    let page = 1;
+    let sort = -1;
+    let sortValue = '_id';
+    var limit = config.pageSize;
+    usersQuery.role = 5;
+    if (
+      req.query.numRecords &&
+      !isNaN(req.query.numRecords) &&
+      req.query.numRecords > 0
+    )
+      limit = Number(req.query.numRecords);
+    if (req.query.sortValue) sortValue = req.query.sortValue;
+    if (req.query.sort) sort = Number(req.query.sort);
+    if (req.query.page) page = Number(req.query.page);
+  
+    if (req.query.username)
+      usersQuery.userName = { $regex: req.query.username, $options: 'i' };
+    usersQuery.isDeleted = false;
+    User.paginate(
+      usersQuery,
+      { page: page, sort: { [sortValue]: sort }, limit: limit },
+      async (err, results) => {
+        if (err) return res.status(404).send({ message: 'Something went wrong' });
+        if(results && results.docs.length > 0){
+          for(let i = 0; i<results.docs.length; i++){
+            const totalExp = await Bets.aggregate([
+              {
+                $match:{
+                  $and: [
+                    {userId: results.docs[i].userId},
+                    {calculateExp: true}
+                  ]
+                }
+              },
+              {
+                $group:{
+                  _id: '$sportsId',
+                  sum: {$sum: '$exposureAmount'}
+                }
+              }
+            ])
+
+            let settlementArray = [];
+            
+            if(sportName && totalExp && totalExp.length > 0){
+              for(let j=0; j < totalExp.length; j++) {
+                const sportName = await Markets.findOne({Id: results.docs[i].sportsId})
+
+                const newSettlement = {
+                  sportName: sportName,
+                  totalExposure: totalExp[j]?.sum
+                }
+
+                settlementArray.push(newSettlement);
+              }
+            }
+            results.docs[i].settlements = settlementArray;
+          }
+        }
+        return res.send({
+          success: true,
+          message: 'Users list',
+          total: results.total,
+          results: results,
+        });
+      }
+    );
+  } catch (err) {
+    res.status(500).json({success: false, msg:'Failed to get bettors list'})
+  }
 };
 
 const userSingleLedger = async (req, res) => {

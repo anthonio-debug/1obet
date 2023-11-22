@@ -13,6 +13,7 @@
   "roundResultUrl": "http://103.228.112.83:8997",
   "sportsLiveScore": "https://livesportscore.xyz:3440/api/bf_scores/",
   "horseRaceUrl": "http://136.244.77.249:33333",
+  "marketPriceUrl": "http://185.58.225.212:8080/api",
   "worldCasinoOnlineAuthUrl": "https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication",
   "worldCasinoOnlineApiUrl": "https://stageapi.worldcasinoonline.com/api",
   "oldSaltKey": "Loa0192Jua",
