@@ -736,8 +736,6 @@ function scoreChecker() {
                       } else {
                         handleLosingBet(betData[i]);
                       }
-                    } else {
-                      handleLosingBet(betData[i]);
                     }
                   }
                 } else {
