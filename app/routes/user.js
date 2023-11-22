@@ -933,9 +933,9 @@ const battorsList = async (req, res) => {
 
             let settlementArray = [];
             
-            if(sportName && totalExp && totalExp.length > 0){
+            if(totalExp && totalExp.length > 0){
               for(let j=0; j < totalExp.length; j++) {
-                const sportName = await Markets.findOne({Id: results.docs[i].sportsId})
+                const sportName = await Markets.findOne({Id: Number(results.docs[i].sportsId)})
 
                 const newSettlement = {
                   sportName: sportName,
