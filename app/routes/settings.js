@@ -2439,6 +2439,26 @@ async function SetAsianDashboard(req, res) {
   }
 }
 
+async function removeOdds(req, res) {
+ try{
+  const Id = req.params.id;
+  const lastDayTime = 3600 * 24 * 1000;
+  const currentTime = (new Date()).getTime() - lastDayTime;
+
+  if (Id == "race") {
+    await RaceOdds.deleteMany({createdAt: {$lt: currentTime}})
+  } else {
+    await Odds.deleteMany({createdAt: {$lt: currentTime}})
+  }
+
+  res.status(200).json({success: true, msg:"Removed Odds Data older than a day"})
+ } catch(err){
+  console.log(err)
+  res.status(500).json({success: false, msg:"Failed to remove odds"})
+ }
+}
+
+
 loginRouter.post(
   "/updateDefaultTheme",
   settingsValidation.validate("updateDefaultTheme"),
@@ -2519,4 +2539,5 @@ loginRouter.get("/getWaitingBetsForManuel", getWaitingBetsForManuel);
 loginRouter.get("/getSessionScore", getSessionScore);
 loginRouter.post("/setSessionScore", setSessionScore);
 loginRouter.post("/cancelSingleBet", cancelSingleBet);
+router.get("/removeOdds/:id", removeOdds);
 module.exports = { loginRouter, router, listOddsAPI };
