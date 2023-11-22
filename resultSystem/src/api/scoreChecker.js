@@ -753,7 +753,11 @@ function scoreChecker() {
               handleDrawBet(betData[i]);
             } else {
               if (betData[i].runner == result.data.data[0].win) {
-                handleWinningBet(betData[i]);
+                if(betData[i].type == 1){
+                  handleLosingBet(betData[i]);
+                } else if(betData[i].type == 0){
+                  handleWinningBet(betData[i]);
+                }
               } else {
                 let wid = "0";
                 let widOddFirst = "0";
@@ -832,7 +836,7 @@ function scoreChecker() {
                 } else if (generalResult[4] === "10-11") {
                   widPair = "26";
                 }
-
+                
                 if (
                   betData[i].runner == wid ||
                   betData[i].runner == widOddFirst ||
