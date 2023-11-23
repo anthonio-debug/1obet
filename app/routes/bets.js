@@ -2972,12 +2972,13 @@ async function getMatchedBets(req, res) {
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.array() });
   }
+
   try {
     const loginUser = await User.findOne({ userId: req.decoded.userId });
     if (!loginUser) {
       return res.status(404).send({ message: "User not found" });
     }
-     
+
     const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
     const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
     const createdByIDs = userOfLoginUser.map((user) => user.userId);
@@ -3007,6 +3008,7 @@ async function getMatchedBets(req, res) {
           as: "userDetails",
         },
       },
+      { $unwind: "$userDetails" },
       {
         $lookup: {
           from: "users",
@@ -3024,50 +3026,59 @@ async function getMatchedBets(req, res) {
         },
       },
       {
-        $group: {
-          _id: "$_id",
-          price:  { $first: "$betRate" },
-          runnersPosition:  { $first: "$runnersPosition" },
-          calculateExp:  { $first: "$calculateExp" },
-          runnerId:  { $first: "$runnerName" },
-          createdAt:  { $first: "$createdAt" },
-          size:  { $first: "$betAmount" }, 
-          runner: { $first: "$runner" },
-          marketId:  { $first: "$marketId" },
-          betRate:  { $first: "$betRate" },
-          type:  { $first: "$type" },
-          isfancyOrbookmaker:  { $first: "$isfancyOrbookmaker" },
-          fancyData:  { $first: "$fancyData" },
-          testingBattor: { $first: "$userDetails" },
-          fancyRate:  { $first: "$fancyRate" },
-          betSession:  { $first: "$betSession" },
-          roundId:  { $first: "$roundId" },
-          testingMaster: { $first: "$masterDetails" },
-          event: { $first: "$eventDetails" },
-        },
-      },
-      {
-        $addFields: {
-          bettorId: { $arrayElemAt: ["$testingBattor.userId", 0] },
-          bettor: { $arrayElemAt: ["$testingBattor.userName", 0] },
+        $project: {
+          _id: 0,
+          price: "$betRate",
+          runnersPosition: "$runnersPosition",
+          calculateExp: "$calculateExp",
+          runnerId: "$runnerName",
+          createdAt: "$createdAt",
+          size: "$betAmount",
+          runner: "$runner",
+          marketId: "$marketId",
+          betRate: "$betRate",
+          type: "$type",
+          isfancyOrbookmaker: "$isfancyOrbookmaker",
+          fancyData: "$fancyData",
+          bettor: "$userDetails.userName",
+          bettorId: "$userDetails.userId",
+          fancyRate: "$fancyRate",
+          betSession: "$betSession",
+          roundId: "$roundId",
           master: {
             $cond: [
               { $eq: [loginUser.role, "5"] },
               loginUser.userName,
               {
-                $ifNull: [{ $arrayElemAt: ["$testingMaster.userName", 0] }, ""],
+                $ifNull: [{ $arrayElemAt: ["$masterDetails.userName", 0] }, ""],
               },
-            ]
+            ],
           },
-        }
+          event: {
+            $cond: [
+              { $eq: [loginUser.role, "5"] },
+              {
+                $map: {
+                  input: { $slice: ["$eventDetails", 5] },
+                  as: "event",
+                  in: {
+                    name: "$$event.name",
+                    openDate: "$$event.openDate",
+                  },
+                },
+              },
+              "$$REMOVE",
+            ],
+          },
+        },
       },
-      {
-        $unset: ["testingBattor", "testingMaster"]
-      },
-      { 
-        $sort: { _id: -1 } 
-      }
+      { $sort: { _id: -1 } },
     ]).exec();
+
+    // if (!matchedBets || matchedBets.length == 0) {
+    //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
+    // }
+
     const eventId = await Events.findById(matchId);
     if (eventId) {
       relatedEvents = await Events.find({
@@ -3099,13 +3110,12 @@ async function getMatchedBets(req, res) {
       events: relatedEvents,
     });
   } catch (err) {
-    console.error("Aggregation error ======= :", err);
+    console.error("Aggregation error:", err);
     return res
       .status(500)
       .send({ message: "Error retrieving matched bets", error: err });
   }
 }
-
 
 async function FakeBetsList(req, res) {
   try {
