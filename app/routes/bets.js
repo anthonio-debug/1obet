@@ -3888,9 +3888,6 @@ const postmanwork = async (req, res) => {
           as: "userDetails",
         },
       },
-      { 
-        $unwind: "$userDetails" 
-      },
       {
         $lookup: {
           from: "users",
@@ -3954,8 +3951,10 @@ const postmanwork = async (req, res) => {
           },
         },
       },
-      { $sort: { _id: -1 } },
-    ]);
+      { 
+        $sort: { _id: -1 } 
+      }
+    ]).exec();
     const eventId = await Events.findById(matchId);
     if (eventId) {
       relatedEvents = await Events.find({
