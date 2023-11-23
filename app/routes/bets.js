@@ -3919,8 +3919,7 @@ const postmanwork = async (req, res) => {
           type:  { $first: "$type" },
           isfancyOrbookmaker:  { $first: "$isfancyOrbookmaker" },
           fancyData:  { $first: "$fancyData" },
-          bettor :  { $first: "$userDetails.0.userName" },
-          bettorId:  { $first: "$userDetails.0.userId" },
+          testingBattor: { $first: "$userDetails" },
           fancyRate:  { $first: "$fancyRate" },
           betSession:  { $first: "$betSession" },
           roundId:  { $first: "$roundId" },
@@ -3930,6 +3929,8 @@ const postmanwork = async (req, res) => {
       },
       {
         $addFields: {
+          bettorId: { $arrayElemAt: ["$testingBattor.userId", 0] },
+          bettor: { $arrayElemAt: ["$testingBattor.userName", 0] },
           master: {
             $cond: [
               { $eq: [loginUser.role, "5"] },
