@@ -551,7 +551,10 @@ function scoreChecker() {
           //Lucky7eu
           if (tableId === "39") {
             if (result.data.data[0].win == "0") {
-              const description = result.data.data[0].desc;
+              if(betData[i].runner =="1" || betData[i].runner =="2"){
+                handleDrawBet(betData[i])
+              } else {
+                const description = result.data.data[0].desc;
                 const generalResult = description.split(" || ");
                 let wid = "0";
                 let widColor = "0";
@@ -603,8 +606,10 @@ function scoreChecker() {
                 ) {
                   handleWinningBet(betData[i]);
                 } else {
-                  handleDrawBet(betData[i]);
+                  handleLosingBet(betData[i])
                 }
+              }
+              
             } else {
               if (betData[i].runner == result.data.data[0].win) {
                 handleWinningBet(betData[i]);
