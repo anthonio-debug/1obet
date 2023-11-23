@@ -3924,12 +3924,13 @@ const postmanwork = async (req, res) => {
           fancyRate:  { $first: "$fancyRate" },
           betSession:  { $first: "$betSession" },
           roundId:  { $first: "$roundId" },
+          testingMaster: { $first: "$masterDetails" },
           master: {
             $cond: [
               { $eq: [loginUser.role, "5"] },
               loginUser.userName,
               {
-                $ifNull: [{ $arrayElemAt: ["$masterDetails.userName", 0] }, ""],
+                $ifNull: [{ $arrayElemAt: ["$$masterDetails.userName", 0] }, ""],
               },
             ],
           },
