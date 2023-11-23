@@ -3925,15 +3925,20 @@ const postmanwork = async (req, res) => {
           betSession:  { $first: "$betSession" },
           roundId:  { $first: "$roundId" },
           testingMaster: { $first: "$masterDetails" },
-          // master: {
-          //   $cond: [
-          //     { $eq: [loginUser.role, "5"] },
-          //     loginUser.userName,
-          //     {
-          //       $ifNull: [{ $arrayElemAt: ["$$masterDetails.userName", 0] }, ""],
-          //     },
-          //   ],
-          // },
+          master: {
+            $cond: {
+              if: { $eq: [loginUser.role, "5"] },
+              then: loginUser.userName,
+              else: { $ifNull: [{ $arrayElemAt: ["$masterDetails.userName", 0] }, ""] },
+            }
+            // $cond: [
+            //   { $eq: [loginUser.role, "5"] },
+            //   loginUser.userName,
+            //   {
+            //     $ifNull: [{ $arrayElemAt: ["$masterDetails.userName", 0] }, ""],
+            //   },
+            // ],
+          },
           // event: {
           //   $cond: [
           //     { $eq: [loginUser.role, "5"] },
