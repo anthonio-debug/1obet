@@ -3929,26 +3929,26 @@ const postmanwork = async (req, res) => {
               { $eq: [loginUser.role, "5"] },
               loginUser.userName,
               {
-                $ifNull: [{ $arrayElemAt: ["$$masterDetails.userName", 0] }, ""],
+                $ifNull: [{ $arrayElemAt: ["$masterDetails.userName", 0] }, ""],
               },
             ],
           },
-          event: {
-            $cond: [
-              { $eq: [loginUser.role, "5"] },
-              {
-                $map: {
-                  input: { $slice: ["$eventDetails", 5] },
-                  as: "event",
-                  in: {
-                    name: "$$event.name",
-                    openDate: "$$event.openDate",
-                  },
-                },
-              },
-              "$$REMOVE",
-            ],
-          },
+          // event: {
+          //   $cond: [
+          //     { $eq: [loginUser.role, "5"] },
+          //     {
+          //       $map: {
+          //         input: { $slice: ["$eventDetails", 5] },
+          //         as: "event",
+          //         in: {
+          //           name: "$$event.name",
+          //           openDate: "$$event.openDate",
+          //         },
+          //       },
+          //     },
+          //     "$$REMOVE",
+          //   ],
+          // },
         },
       },
       { 
