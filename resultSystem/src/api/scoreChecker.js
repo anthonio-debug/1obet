@@ -626,7 +626,7 @@ function scoreChecker() {
                   widOdd = "4";
                 }
 
-                if (generalResult[3] === "Card 1") {
+                if (generalResult[3] === "Card A") {
                   wid = "7";
                 } else if (generalResult[3] === "Card 2") {
                   wid = "8";
