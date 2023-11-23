@@ -3925,6 +3925,7 @@ const postmanwork = async (req, res) => {
           betSession:  { $first: "$betSession" },
           roundId:  { $first: "$roundId" },
           testingMaster: { $first: "$masterDetails" },
+          testingEvent: { $first: "$eventDetails" },
         },
       },
       {
@@ -3943,7 +3944,7 @@ const postmanwork = async (req, res) => {
               { $eq: [loginUser.role, "5"] },
               {
                 $map: {
-                  input: { $slice: ["$eventDetails", 5] },
+                  input: { $slice: ["$testingEvent", 5] },
                   as: "event",
                   in: {
                     name: "$$event.name",
