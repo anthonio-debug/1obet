@@ -3929,7 +3929,13 @@ const postmanwork = async (req, res) => {
             $cond: [
               { $eq: [loginUser.role, "5"] },
                 loginUser.userName,
-              { $ifNull: ["$masterDetails.userName", ""] },
+              
+             { 
+              $ifNull: [
+                { $arrayElemAt: ["$masterDetails.userName", 0] },
+                { $literal: "" }
+              ]
+             }
               // {
               //   $ifNull: [{ $arrayElemAt: ["$masterDetails.userName", 0] }, ""],
               // },
