@@ -3846,7 +3846,7 @@ const SingleUserAllBets = async (req, res) => {
   }
 };
 
-const postmanwork = async (req, res) => {
+const postmanwork = async (req, res) => const postmanwork = async (req, res) => {
   const errors = validationResult(req);
   let relatedEvents = [];
   if (!errors.isEmpty()) {
@@ -3943,10 +3943,7 @@ const postmanwork = async (req, res) => {
         }
       },
       {
-        $unset: {
-          testingBattor: "",
-          testingMaster: ""
-        }
+        $unset: ["testingBattor", "testingMaster"]
       },
       { 
         $sort: { _id: -1 } 
