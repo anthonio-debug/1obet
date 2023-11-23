@@ -3942,6 +3942,12 @@ const postmanwork = async (req, res) => {
           },
         }
       },
+      {
+        $unset: {
+          testingBattor: "",
+          testingMaster: ""
+        }
+      },
       { 
         $sort: { _id: -1 } 
       }
