@@ -9,6 +9,7 @@ const Deposits = require("../models/deposits");
 const Events = require("../models/events");
 const Bets = require("../models/bets");
 const MarketIDS = require("../models/marketIds");
+const AsianResult = require("../models/asianTablesResultsHistory")
 const loginRouter = express.Router();
 
 const marketGainWithDuplicates = async (req, res) => {
@@ -19,6 +20,7 @@ const marketGainWithDuplicates = async (req, res) => {
   const userId = Number(req.query.userId);
   const marketId = req.query.marketId;
   const depositId = mongoose.Types.ObjectId(req.query.depositId);
+  let asianWinner = ''
 
   // const condition = { marketId: marketId }
   // "" + marketId == "null" ? [{ sportsId: "6" }, { sportID: 6 }] : { marketId: marketId };
@@ -83,6 +85,11 @@ const marketGainWithDuplicates = async (req, res) => {
       response.winnerRunnerData = betRes?.winnerRunnerData;
       response.resultData = betRes?.resultData
       response.roundId = betRes?.roundId
+
+      if(!marketData?.winnerInfo){
+        const resultInfo = await AsianResult.findOne({ roundId: betRes?.roundId })
+        asianWinner = resultInfo?.result[0]?.win
+      }
     }
 
 
@@ -93,7 +100,7 @@ const marketGainWithDuplicates = async (req, res) => {
       isDetailed: true,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      Winner: marketData?.winnerInfo,
+      Winner: marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner,
     });
 
   } else {
