@@ -3919,7 +3919,7 @@ const postmanwork = async (req, res) => {
           type:  { $first: "$type" },
           isfancyOrbookmaker:  { $first: "$isfancyOrbookmaker" },
           fancyData:  { $first: "$fancyData" },
-          bettor :  { $first: "$$userDetails.userName" },
+          bettor :  { $first: "$userDetails.userName" },
           bettorId:  { $first: "$userDetails.userId" },
           fancyRate:  { $first: "$fancyRate" },
           betSession:  { $first: "$betSession" },
