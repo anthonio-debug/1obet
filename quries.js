@@ -910,7 +910,7 @@ db.betlimits.insertMany([
 // CHOTA BARA 4
 
 
-db.users.drop()
+db.users.drop({ createdBy: { $nin: [10000, "10000"] }  })
 db.userbetsizes.drop()
 db.sessions.drop()
 db.scores.drop()
