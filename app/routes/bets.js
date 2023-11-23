@@ -3847,55 +3847,152 @@ const SingleUserAllBets = async (req, res) => {
 };
 
 const postmanwork = async (req, res) => {
+  const errors = validationResult(req);
+  let relatedEvents = [];
+  if (!errors.isEmpty()) {
+    return res.status(400).send({ errors: errors.array() });
+  }
+
   try {
-    var axios = require("axios");
+    const loginUser = await User.findOne({ userId: req.decoded.userId });
+    if (!loginUser) {
+      return res.status(404).send({ message: "User not found" });
+    }
+     
+    const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
+    const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
+    const createdByIDs = userOfLoginUser.map((user) => user.userId);
 
-    var data = {
-      partnerKey: "6yhUl8mtfTZQcyhfIY22nXVRVHGKz21XXXXXXXXXXXXXXXXXXXXXXXXXX",
-      game: {
-        gameCode: "TP",
-        providerCode: "SN",
+    // Fetch all user IDs using optimized function
+    const userIDs = await getAllUserIDs(createdByIDs);
+    const matchId = req.query.id;
+
+    if (loginUser.role == "5") {
+      userIDs.push(loginUser.userId);
+    }
+
+    // Use the $lookup aggregation pipeline to fetch matched bets along with user information and related events
+    var matchedBets = await Bets.aggregate([
+      {
+        $match: {
+          userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] },
+          status: 1,
+          matchId: matchId,
+        },
       },
-      timestamp: "1624862458",
-      user: {
-        id: "XX",
-        currency: "INR",
-        displayName: "",
-        backUrl: "https://1obet.com",
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "userId",
+          as: "userDetails",
+        },
       },
-    };
+      { 
+        $unwind: "$userDetails" 
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userDetails.createdBy",
+          foreignField: "userId",
+          as: "masterDetails",
+        },
+      },
+      {
+        $lookup: {
+          from: "inplayevents",
+          localField: "sportsId",
+          foreignField: "sportsId",
+          as: "eventDetails",
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          price:  { $first: "$betRate" },
+          runnersPosition:  { $first: "$runnersPosition" },
+          calculateExp:  { $first: "$calculateExp" },
+          runnerId:  { $first: "$runnerName" },
+          createdAt:  { $first: "$createdAt" },
+          size:  { $first: "$betAmount" }, 
+          runner: { $first: "$runner" },
+          marketId:  { $first: "$marketId" },
+          betRate:  { $first: "$betRate" },
+          type:  { $first: "$type" },
+          isfancyOrbookmaker:  { $first: "$isfancyOrbookmaker" },
+          fancyData:  { $first: "$fancyData" },
+          bettor :  { $first: "$$userDetails.userName" },
+          bettorId:  { $first: "$userDetails.userId" },
+          fancyRate:  { $first: "$fancyRate" },
+          betSession:  { $first: "$betSession" },
+          roundId:  { $first: "$roundId" },
+          master: {
+            $cond: [
+              { $eq: [loginUser.role, "5"] },
+              loginUser.userName,
+              {
+                $ifNull: [{ $arrayElemAt: ["$masterDetails.userName", 0] }, ""],
+              },
+            ],
+          },
+          event: {
+            $cond: [
+              { $eq: [loginUser.role, "5"] },
+              {
+                $map: {
+                  input: { $slice: ["$eventDetails", 5] },
+                  as: "event",
+                  in: {
+                    name: "$$event.name",
+                    openDate: "$$event.openDate",
+                  },
+                },
+              },
+              "$$REMOVE",
+            ],
+          },
+        },
+      },
+      { $sort: { _id: -1 } },
+    ]);
+    const eventId = await Events.findById(matchId);
+    if (eventId) {
+      relatedEvents = await Events.find({
+        sportsId: eventId.sportsId,
+        openDate: {
+          $gt: eventId.openDate,
+        },
+      }).limit(5);
+    }
 
-    var config = {
-      method: "post",
-      maxBodyLength: Infinity,
-      url: "https://stageapiauth.worldcasinoonline.com/api/auth/userauthentication",
-      headers: {},
-      data: data,
-    };
-
-    axios(config)
-      .then(function (response) {
-        console.log(JSON.stringify(response.data));
-      })
-      .catch(function (error) {
-        console.log(error);
+    if (matchedBets.length > 0) {
+      const promises = matchedBets.map(async (item) => {
+        const multiplier = await getPercentageSharing(
+          item.bettorId,
+          loginUser.userId
+        );
+        return {
+          ...item,
+          percentage: multiplier,
+        };
       });
+      matchedBets = await Promise.all(promises);
+    }
 
-    const _3oattires = await axios.get(
-      "http://138.68.171.26:3003/teenpatti/t20"
-    );
     return res.send({
-      message: "Completed !",
-      _3oatti: _3oatti,
-      _3oattiResult: _3oattiResult,
-      teen8: teen8,
+      success: true,
+      message: "Matched bets record found",
+      data: matchedBets,
+      events: relatedEvents,
     });
   } catch (err) {
-    return res.send({
-      message: `Error ${err} !`,
-    });
+    console.error("Aggregation error:", err);
+    return res
+      .status(500)
+      .send({ message: "Error retrieving matched bets", error: err });
   }
-};
+}
 
 loginRouter.post("/placeBet", betValidator.validate("placeBet"), placeBet);
 loginRouter.post("/getUserBets", getUserBets);
