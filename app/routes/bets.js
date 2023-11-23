@@ -3925,7 +3925,7 @@ const postmanwork = async (req, res) => {
           betSession:  { $first: "$betSession" },
           roundId:  { $first: "$roundId" },
           testingMaster: { $first: "$masterDetails" },
-          testingEvent: { $first: "$eventDetails" },
+          event: { $first: "$eventDetails" },
         },
       },
       {
@@ -3939,24 +3939,9 @@ const postmanwork = async (req, res) => {
               },
             ]
           },
-          event: {
-            $cond: [
-              { $eq: [loginUser.role, "5"] },
-              {
-                $map: {
-                  input: { $slice: ["$testingEvent", 5] },
-                  as: "event",
-                  in: {
-                    name: "$$event.name",
-                    openDate: "$$event.openDate"
-                  }
-                }
-              },
-              "$$REMOVE"
-            ]
-          }
         }
       },
+      { $unwind: "$testingMaster" },
       { 
         $sort: { _id: -1 } 
       }
