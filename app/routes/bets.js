@@ -3986,7 +3986,7 @@ const postmanwork = async (req, res) => {
       events: relatedEvents,
     });
   } catch (err) {
-    console.error("Aggregation error:", err);
+    console.error("Aggregation error ======= :", err);
     return res
       .status(500)
       .send({ message: "Error retrieving matched bets", error: err });
