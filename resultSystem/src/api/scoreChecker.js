@@ -877,7 +877,13 @@ function scoreChecker() {
               handleDrawBet(betData[i]);
             } else {
               if (betData[i].runner == result.data.data[0].win) {
-                handleWinningBet(betData[i]);
+                if(betData[i].type == 1){
+                  handleLosingBet(betData[i]);
+                } else if(betData[i].type == 0){
+                  handleWinningBet(betData[i]);
+                } else {
+                  handleDrawBet(betData[i], 0)
+                }
               } else {
                 let wid = "";
                 let widColor = "0";
