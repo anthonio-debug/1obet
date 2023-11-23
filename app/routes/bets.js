@@ -3925,22 +3925,22 @@ const postmanwork = async (req, res) => {
           betSession:  { $first: "$betSession" },
           roundId:  { $first: "$roundId" },
           testingMaster: { $first: "$masterDetails" },
-          master: {
-            $cond: [
-              { $eq: [loginUser.role, "5"] },
-                loginUser.userName,
+          // master: {
+          //   $cond: [
+          //     { $eq: [loginUser.role, "5"] },
+          //       loginUser.userName,
               
-             { 
-              $ifNull: [
-                { $arrayElemAt: ["$masterDetails.userName", 0] },
-                { $literal: "" }
-              ]
-             }
-              // {
-              //   $ifNull: [{ $arrayElemAt: ["$masterDetails.userName", 0] }, ""],
-              // },
-            ],
-          },
+          //    { 
+          //     $ifNull: [
+          //       { $arrayElemAt: ["$masterDetails.userName", 0] },
+          //       { $literal: "" }
+          //     ]
+          //    }
+          //     // {
+          //     //   $ifNull: [{ $arrayElemAt: ["$masterDetails.userName", 0] }, ""],
+          //     // },
+          //   ],
+          // },
           // event: {
           //   $cond: [
           //     { $eq: [loginUser.role, "5"] },
@@ -3958,6 +3958,19 @@ const postmanwork = async (req, res) => {
           //   ],
           // },
         },
+      },
+      {
+        $addFields: {
+          master: {
+            $cond: [
+              { $eq: [loginUser.role, "5"] },
+              loginUser.userName,
+              {
+                $ifNull: [{ $arrayElemAt: ["$testingMaster.userName", 0] }, ""],
+              },
+            ]
+          }
+        }
       },
       { 
         $sort: { _id: -1 } 
