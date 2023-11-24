@@ -8,6 +8,7 @@ let currentPositionSchema = new Schema({
   description: { type: String, required: false },
   amount: { type: Number, default: 0 },
   matchsId: { type: String },
+  marketId: { type: String },
   betId: { type: String },
   share: { type: Number },
   updatedAt: { type: String },
