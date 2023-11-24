@@ -63,14 +63,7 @@ const getParents = async (userId) => {
   return parentUserIds;
 };
 
-const updateParentUserBalance = async (
-  parentUsersIds,
-  winningAmount,
-  matchId = 0,
-  Id = 0,
-  selectionId = 0,
-  marketId = ""
-) => {
+const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = "0") => {
   const parentUser = await User.find({
     userId: {
       $in: [...parentUsersIds],
@@ -101,6 +94,7 @@ const updateParentUserBalance = async (
         amount: -finalAmount,
         betId: Id,
         matchsId: matchId,
+        marketId: marketId,
         share: user.commission,
       });
       await position.save();
