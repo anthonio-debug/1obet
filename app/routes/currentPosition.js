@@ -105,7 +105,7 @@ function getCurrentPosition2(req, res) {
       },
       {
         $group: {
-          _id: "$matches._id",
+          _id: "$marketId",
           "name": {
             "$first": "$matches.name"
           },
