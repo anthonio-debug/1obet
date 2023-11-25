@@ -374,11 +374,22 @@ async function handleWinningBet(bet) {
     if(bet.status == 1){
       const betStatus  = await Bets.findById(bet._id)
       if (betStatus.status == 1){
-        
         console.log(` ============= Bet ${bet._id} WIN ============= `);
         await session.withTransaction(async () => {
           let calculatedExp = 0;
           const userId = bet.userId;
+
+          let TotalWin = 0;
+          const winnings = await bets.distinct("winningAmount", { sportsId: bet.sportsId, marketId: bet.marketId,  matchId: bet.matchId, userId: bet.userId, runner: bet.runner })
+          winnings.forEach( (singleWin) => {
+            TotalWin = Number(( TotalWin + singleWin).toFixed(3));
+          })
+          let TotalLose = 0;
+          const loosings = await bets.distinct("loosingAmount", { sportsId: bet.sportsId, marketId: bet.marketId, matchId: bet.matchId, userId: bet.userId, runner: {$ne: bet.runner} })
+          loosings.forEach( (singleLose) => {
+            TotalLose = Number(( TotalLose + singleLose).toFixed(3));
+          })
+
           const userToUpdate = await users.findOne({
             userId: userId,
             isDeleted: false
@@ -395,20 +406,24 @@ async function handleWinningBet(bet) {
             let upMovingAmount;
             let upMovingCommAmount;
       
-            if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker ) {
-              remainingAmount = Number(((Number(bet.winningAmount.toFixed(3)) / 100) * 98).toFixed(3));
-              commissionAmount = Number(((Number(bet.winningAmount.toFixed(3)) / 100) * 2).toFixed(3));
+            if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose){
+              
+              const abouteWin      = Number((TotalWin - TotalLose).toFixed(3));
+              const totalCooission = Number((abouteWin * 0.02).toFixed(3));
+              commissionAmount     = Number(( ( totalCooission / TotalWin ) * bet.winningAmount ).toFixed(3));
+              remainingAmount      = Number((bet.winningAmount - commissionAmount).toFixed(3))
               totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
-              TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
-              upMovingAmount = totalRemainingAmount;
-              upMovingCommAmount = commissionAmount;
+              TotalLoosingAmount   = Number(bet.loosingAmount.toFixed(3));
+              upMovingAmount       = totalRemainingAmount;
+              upMovingCommAmount   = commissionAmount;
+
             } else {
-              remainingAmount = Number(bet.winningAmount.toFixed(3));
+              remainingAmount  = Number(bet.winningAmount.toFixed(3));
               commissionAmount = Number(((Number(bet.winningAmount.toFixed(3)) / 100) * 2).toFixed(3));
               totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
-              TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
-              upMovingAmount = totalRemainingAmount;
-              upMovingCommAmount = commissionAmount;
+              TotalLoosingAmount   = Number(bet.loosingAmount.toFixed(3));
+              upMovingAmount       = totalRemainingAmount;
+              upMovingCommAmount   = commissionAmount;
             }
 
             const user_prev_balance = userToUpdate.balance;
