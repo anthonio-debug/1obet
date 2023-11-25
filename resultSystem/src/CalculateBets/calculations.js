@@ -9,6 +9,7 @@ const { MongoClient } = require("mongodb");
 
 const MarketIDS = require("../../../app/models/marketIds");
 const cricketSession = require("../../../app/models/Session");
+const { log } = require("async");
 require("dotenv").config();
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
@@ -407,7 +408,7 @@ async function handleWinningBet(bet) {
             let upMovingCommAmount;
       
             if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose){
-              
+
               const abouteWin      = Number((TotalWin - TotalLose).toFixed(3));
               const totalCooission = Number((abouteWin * 0.02).toFixed(3));
               commissionAmount     = Number(( ( totalCooission / TotalWin ) * bet.winningAmount ).toFixed(3));
@@ -417,13 +418,16 @@ async function handleWinningBet(bet) {
               upMovingAmount       = totalRemainingAmount;
               upMovingCommAmount   = commissionAmount;
 
+              console.log(" ====================== Commission should be calculated  ");
+
             } else {
               remainingAmount  = Number(bet.winningAmount.toFixed(3));
-              commissionAmount = Number(((Number(bet.winningAmount.toFixed(3)) / 100) * 2).toFixed(3));
+              commissionAmount = 0
               totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
               TotalLoosingAmount   = Number(bet.loosingAmount.toFixed(3));
               upMovingAmount       = totalRemainingAmount;
               upMovingCommAmount   = commissionAmount;
+              console.log(" ====================== Commission should not be calculated  ");
             }
 
             const user_prev_balance = userToUpdate.balance;
