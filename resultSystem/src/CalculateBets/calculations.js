@@ -574,7 +574,7 @@ async function handleWinningBet(bet) {
                 upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
                 // console.log(" =============== Parent bet Transaction  Successfull ");
         
-                if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker) {
+                if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker  && TotalWin > TotalLose){
                   const ParentlastTrans = await Cash.find({ userId: user.userId }).sort({ _id: -1 }).limit(1);
                   const lastMaxWithdraw = ParentlastTrans.length > 0 ? lastTrans[0] : null;
 
