@@ -382,14 +382,15 @@ async function handleWinningBet(bet) {
 
           let TotalWin = 0;
           const winnings = await bets.distinct("winningAmount", { sportsId: bet.sportsId, marketId: bet.marketId,  matchId: bet.matchId, userId: bet.userId, runner: bet.runner })
-          winnings.forEach( (singleWin) => {
+          for (const singleWin of winnings) {
             TotalWin = Number(( TotalWin + singleWin).toFixed(3));
-          })
+          }
+          
           let TotalLose = 0;
           const loosings = await bets.distinct("loosingAmount", { sportsId: bet.sportsId, marketId: bet.marketId, matchId: bet.matchId, userId: bet.userId, runner: {$ne: bet.runner} })
-          loosings.forEach( (singleLose) => {
+          for (const singleLose of loosings) {
             TotalLose = Number(( TotalLose + singleLose).toFixed(3));
-          })
+          }
           console.log(` ===================== TotalWin ${TotalWin} TotalLose ${TotalLose} `);
 
           const userToUpdate = await users.findOne({
