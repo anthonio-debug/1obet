@@ -390,6 +390,7 @@ async function handleWinningBet(bet) {
           loosings.forEach( (singleLose) => {
             TotalLose = Number(( TotalLose + singleLose).toFixed(3));
           })
+          console.log(` ===================== TotalWin ${TotalWin} TotalLose ${TotalLose} `);
 
           const userToUpdate = await users.findOne({
             userId: userId,
