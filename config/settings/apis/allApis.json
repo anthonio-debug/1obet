@@ -101,6 +101,7 @@
   "settlePLAccount",
   "getSettlement",
   "getCurrentPosition",
+  "getCurrentPosition2",
   "currentPositionDetails",
   "battorcurrentPosition",
   "updateFakeBet",
