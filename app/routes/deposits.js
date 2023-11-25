@@ -669,6 +669,8 @@ function getLedgerDetails(req, res) {
               result[0].results[i].matchType = betInfo?.matchType;
               result[0].results[i].SessionScore = betInfo?.SessionScore;
               result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
+              result[0].results[i].fancyData = betInfo?.fancyData;
+              result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
             } catch (err) {
               continue;
             }

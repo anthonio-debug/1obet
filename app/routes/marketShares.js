@@ -85,6 +85,8 @@ const marketGainWithDuplicates = async (req, res) => {
       response.winnerRunnerData = betRes?.winnerRunnerData;
       response.resultData = betRes?.resultData
       response.roundId = betRes?.roundId
+      response.fancyData = betRes?.fancyData
+      response.isfancyOrbookmaker = betRes?.isfancyOrbookmaker
 
       if(!marketData?.winnerInfo){
         const resultInfo = await AsianResult.findOne({ roundId: betRes?.roundId })
