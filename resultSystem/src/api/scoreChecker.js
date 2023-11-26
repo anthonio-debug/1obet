@@ -710,19 +710,19 @@ function scoreChecker() {
                       handleWinningBet(betData[i]);
                     }
                   } else if(betData[i].runner == "4"){
-                    if(sid[1] == "22") {
+                    if(sid[2] == "22") {
                       betData[i].winningAmount = betData[i].betAmount;
                       handleWinningBet(betData[i]);
-                    } else if(sid[1] == "23") {
+                    } else if(sid[2] == "23") {
                       betData[i].winningAmount = betData[i].betAmount * 4;
                       handleWinningBet(betData[i]);
-                    } else if(sid[1] == "24") {
+                    } else if(sid[2] == "24") {
                       betData[i].winningAmount = betData[i].betAmount * 6;
                       handleWinningBet(betData[i]);
-                    } else if(sid[1] == "25") {
+                    } else if(sid[2] == "25") {
                       betData[i].winningAmount = betData[i].betAmount * 35;
                       handleWinningBet(betData[i]);
-                    } else if(sid[1] == "26") {
+                    } else if(sid[2] == "26") {
                       betData[i].winningAmount = betData[i].betAmount * 45;
                       handleWinningBet(betData[i]);
                     }
