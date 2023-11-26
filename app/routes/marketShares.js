@@ -90,7 +90,20 @@ const marketGainWithDuplicates = async (req, res) => {
 
       if(!marketData?.winnerInfo){
         const resultInfo = await AsianResult.findOne({ roundId: betRes?.roundId })
-        asianWinner = resultInfo?.result[0]?.win
+        if (resultInfo?.tableId == "teen20"){
+          if (resultInfo?.result[0]?.win == "1") {
+            asianWinner = "Player A Cards"
+          } else {
+            asianWinner = "Player B Cards"
+          }
+        } else if (resultInfo?.tableId == "lucky7eu"){
+            asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
+        } else if (resultInfo?.tableId == "aaa"){
+          asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
+        } else if (resultInfo?.tableId == "card32eu"){
+          const generalResult = description.split("|");
+          asianWinner = generalResult[0]
+        } 
       }
     }
 
