@@ -151,7 +151,7 @@ const placeBet = async (req, res) => {
     const BetTime = new Date().getTime();
     let id = 0;
     let isManuel = true;
-    let delay = 4500;
+    let delay = 5200;
     let asianTableName = "";
     // let backFancyRate = 0;
     // let layFancyRate  = 0;
@@ -230,6 +230,7 @@ const placeBet = async (req, res) => {
 
     const Digitaddition = await handleLimitValue(betRate, marketId);
     console.log(" marketId ======== ", marketId);
+    console.log(" subMarketName ======================= ", subMarketName);
     // Checks for Market Places & Sub Markets
     if (config.raceMarkets.includes(marketId)) {
       const requiredTime = new Date().getTime() + config.raceOpenBefore;
@@ -245,34 +246,27 @@ const placeBet = async (req, res) => {
 
       id = eventDetail.marketIds[0];
       _3rdPartyMarketId = id;
-      subMarketDetail = await SubMarketType.findOne({
-        countryCode: subMarketName,
-        marketId: marketId,
-      }).exec();
-      if (!subMarketDetail) {
+      subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
+      if (!subMarketDetail){
         return res.status(404).send({ message: "Bet not allowed" });
       }
     } else if (asianOdd) {
-      subMarketDetail = await SubMarketType.findOne({
-        name: subMarketName,
-        marketId: marketId,
-      }).exec();
-
+      subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
       if (!subMarketDetail) {
         return res.status(404).send({ message: "you cannot place bet" });
       }
     } else {
       let thirdPartyMarketName = subMarketName;
+      subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
       const requiredTime = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime;
 
       if (subMarketName == "Toss") {
+        remainingTimeFromEventStart =  eventDetail.openDate - new Date().getTime();
         thirdPartyMarketName = "To Win the Toss";
         const requiredTime = new Date().getTime() - config.tossCloseTime;
-        if (
-          subMarketDetail.Id == config.Toss &&
-          requiredTime >= remainingTimeFromEventStart
-        ) {
+        console.log(" ================== subMarketDetail ", subMarketDetail);
+        if ( subMarketDetail.Id == config.Toss && config.tossCloseTime >= remainingTimeFromEventStart ) {
           return res.status(404).send({
             status: true,
             message: `Bets are not Allowed Now In this market`,
@@ -307,10 +301,6 @@ const placeBet = async (req, res) => {
         });
       }
     }
-
-    // console.log(' ================== top id ================== ', id);
-
-    // console.log(' ================== subMarketDetail ================== ', subMarketDetail );
 
     if ( marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id) ) {
       return res.status(404).send({ message: "Betting disabled" });
@@ -2592,8 +2582,8 @@ const placeBet = async (req, res) => {
       /* -------------- */
     }, delay);
   } catch (error) {
-    console.error("error", error);
-    return res.status(404).send({ message: `Error placing bet ${error}` });
+    console.error("Error placing bet Catched ", error);
+    return res.status(404).send({ message: `Something went wrong !` });
   }
 };
 

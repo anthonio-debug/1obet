@@ -29,9 +29,7 @@ const loginRecord = require('../models/loginRecord');
 const axios = require('axios');
 const userBetSizes = require('../models/userBetSizes');
 const Bets = require('../models/bets');
-
 const { tryEach } = require('async');
-
 var getIP = require('ipware')().get_ip;
 
 const router = express.Router();
@@ -134,6 +132,8 @@ async function registerUser(req, res) {
             name: betLimit.name,
             sportsId: betLimit.sportsId,
             subarket: betLimit.subarket,
+            minAmount: betLimit.minAmount,
+            ExpAmount: betLimit.ExpAmount,
           }));
 
           // console.log(' userbetSizesData ============ ', userbetSizesData);
