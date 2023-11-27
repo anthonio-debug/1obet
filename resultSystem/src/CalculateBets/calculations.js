@@ -380,17 +380,89 @@ async function handleWinningBet(bet) {
           let calculatedExp = 0;
           const userId = bet.userId;
 
-          let TotalWin = 0;
-          const winnings = await bets.distinct("winningAmount", { sportsId: bet.sportsId, marketId: bet.marketId,  matchId: bet.matchId, userId: bet.userId, runner: bet.runner })
+          let TotalWin = 0;  let TotalLose = 0;
+          const winnings = await Bets.distinct("winningAmount", { 
+            sportsId: bet.sportsId, 
+            marketId: bet.marketId,  
+            matchId:  bet.matchId, 
+            userId:   bet.userId,
+            $or: [
+              {
+                subMarketId: '7',
+                $or: [
+                  {
+                    type: 1,
+                    runner: bet.runner 
+                  },
+                  {
+                    type: 0,
+                    runner: {$ne: bet.runner} 
+                  }
+                ]
+              },
+              {
+                subMarketId: {$ne: '7'},
+                $or: [
+                  {
+                    type: 0,
+                    runner: bet.runner 
+                  },
+                  {
+                    type: 1,
+                    runner: {$ne: bet.runner} 
+                  }
+                ]
+              }
+            ]
+          })
+
+          const loosings = await Bets.distinct("loosingAmount", { 
+            sportsId: bet.sportsId, 
+            marketId: bet.marketId, 
+            matchId: bet.matchId, 
+            userId: bet.userId, 
+            $or: [
+              {
+                subMarketId: '7',
+                $or: [
+                  {
+                    type: 0,
+                    runner: bet.runner 
+                  },
+                  {
+                    type: 1,
+                    runner: { 
+                      $ne: bet.runner 
+                    } 
+                  }
+                ]
+              },
+              {
+                subMarketId: {$ne: '7'},
+                $or: [
+                  {
+                    type: 1,
+                    runner: bet.runner 
+                  },
+                  {
+                    type: 0,
+                    runner: {
+                      $ne: bet.runner
+                    } 
+                  }
+                ]
+              }
+            ] 
+          })
+
           for (const singleWin of winnings) {
             TotalWin = Number(( TotalWin + singleWin).toFixed(3));
           }
-          
-          let TotalLose = 0;
-          const loosings = await bets.distinct("loosingAmount", { sportsId: bet.sportsId, marketId: bet.marketId, matchId: bet.matchId, userId: bet.userId, runner: {$ne: bet.runner} })
+
           for (const singleLose of loosings) {
             TotalLose = Number(( TotalLose + singleLose).toFixed(3));
           }
+
           console.log(` ===================== TotalWin ${TotalWin} TotalLose ${TotalLose} `);
 
           const userToUpdate = await users.findOne({
