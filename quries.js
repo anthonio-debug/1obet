@@ -587,77 +587,103 @@ db.settings.insertMany([
 db.betlimits.deleteMany({})
 db.betlimits.insertMany([
   {
-  "name" : "Soccer",
-  "sportsId": "1",
-  "maxAmount" : 250000
+    name: 'Soccer',
+    sportsId: '1',
+    maxAmount: 250000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
-    "name" : "Tennis",
-    "sportsId": "2",
-    "maxAmount" : 250000
+    name: 'Tennis',
+    sportsId: '2',
+    maxAmount: 250000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
-    "name" : "Cricket",
-    "sportsId":"4",
-    "maxAmount" : 5000000
+    name: 'Cricket',
+    sportsId: '4',
+    maxAmount: 5000000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
-    "name" : "Fancy",
-    "sportsId":"4",
-    "subarket": 7,
-    "maxAmount" : 200000
+    name: 'Fancy',
+    sportsId: '4',
+    subarket: 7,
+    maxAmount: 200000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
     name: 'Tied match',
-    "sportsId": "4",
-    "subarket": 35,
-    maxAmount: 200000
+    sportsId: '4',
+    subarket: 35,
+    maxAmount: 200000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
-    "name" : "bookMaker",
-    "sportsId":"4",
-    "subarket": 8,
-    "maxAmount" : 200000
+    name: 'bookMaker',
+    sportsId: '4',
+    subarket: 8,
+    maxAmount: 200000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
     name: 'Even Odd',
-    "sportsId": "4",
-    "subarket": 10,
-    maxAmount: 200000
+    sportsId: '4',
+    subarket: 10,
+    maxAmount: 200000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
     name: 'Chotta Bara',
-    "sportsId": "4",
-    "subarket": 34,
-    maxAmount: 200000
+    sportsId: '4',
+    subarket: 34,
+    maxAmount: 200000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
     name: 'Figure',
-    "sportsId": "4",
-    "subarket": 9,
-    maxAmount: 200000
+    sportsId: '4',
+    subarket: 9,
+    maxAmount: 200000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
-    "name" : "Horse races",
-    "sportsId":"7",
-    "maxAmount" : 200000
+    name: 'Horse races',
+    sportsId: '7',
+    maxAmount: 200000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
-    "name" : "GreyHound",
-    "sportsId": "4339",
-    "maxAmount" : 100000
+    name: 'GreyHound',
+    sportsId: '4339',
+    maxAmount: 100000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
-    "name" : "casino",
-    "sportsId": "6",
-    "maxAmount" : 50000
+    name: 'casino',
+    sportsId: '6',
+    maxAmount: 50000,
+    ExpAmount: 200000,
+    minAmount: 1000
   },
   {
-    "name" : "AsianBet",
-    "sportsId": "8",
-    "maxAmount" : 50000
+    name: 'AsianBet',
+    sportsId: '8',
+    maxAmount: 50000,
+    ExpAmount: 200000,
+    minAmount: 1000
   }
-])
+])     
 
 db.exchanges.deleteMany({})
 db.exchanges.insertMany([
@@ -934,4 +960,5 @@ db.cricketmatches.drop()
 db.competitions.drop()
 db.casinocalls.drop()
 db.bets.drop()
+
 
