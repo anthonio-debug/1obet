@@ -8,7 +8,7 @@ async function listBet(req, res) {
     const betList = await Bets.aggregate([
       {
         $match: {
-          userId: userId,
+          userId: parseInt(userId),
         },
       },
       {
