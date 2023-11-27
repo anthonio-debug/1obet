@@ -246,6 +246,7 @@ const placeBet = async (req, res) => {
       id = eventDetail.marketIds[0];
       _3rdPartyMarketId = id;
       console.log(" ======================= subMarketName ", subMarketName);
+      
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
       if (!subMarketDetail){
         return res.status(404).send({ message: "Bet not allowed" });
