@@ -164,7 +164,11 @@ function updateDefaultBetSizes(req, res) {
   const updatePromises = betLimits.map((betLimit) => {
     return MaxBetSize.findOneAndUpdate(
       { _id: betLimit._id },
-      { $set: { maxAmount: betLimit.maxAmount } },
+      { $set: { 
+        maxAmount: betLimit.maxAmount, 
+        minAmount: betLimit.minAmount, 
+        ExpAmount: betLimit.ExpAmount 
+      }},
       { new: true, upsert: true }
     );
   });
@@ -198,7 +202,7 @@ function getDefaultBetSizes(req, res) {
     }
     return res.json({
       success: true,
-      message: "Max bet sizes Found successfully",
+      message: "Max bet sizes Found successfully ",
       results: results,
     });
   });
