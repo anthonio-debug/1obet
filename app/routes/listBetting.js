@@ -4,14 +4,15 @@ const Bets = require("../models/bets");
 
 async function listBet(req, res) {
   try {
-    const userId = req.params.userId;
+    // const userId = req.params.userId;
+    
+    const userId = 11053;
     const limit = req.body.numRecords;
     const page = req.body.page;
     const betList = await Bets.aggregate([
       {
         $match: {
           userId: parseInt(userId),
-          sportsId: "8",
         },
       },
       {
@@ -81,7 +82,7 @@ async function listBet(req, res) {
       },
     ]);
 
-    const total = await Bets.countDocuments({userId: parseInt(userId), sportsId: "8",})
+    const total = await Bets.countDocuments({userId: parseInt(userId)})
 
     res.status(200).json({ success: true, data: betList, total: total });
   } catch (err) {
