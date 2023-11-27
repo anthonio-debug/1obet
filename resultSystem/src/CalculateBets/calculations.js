@@ -381,7 +381,7 @@ async function handleWinningBet(bet, winner) {
           const userId = bet.userId;
 
           let TotalWin = 0;  let TotalLose = 0;
-          const winnings = await bets.find({ 
+          const winnings = await Bets.find({ 
             sportsId: bet.sportsId, 
             marketId: bet.marketId,  
             matchId:  bet.matchId, 
@@ -414,7 +414,7 @@ async function handleWinningBet(bet, winner) {
 
           console.log(" winnings =================  ", winnings );
 
-          const loosings = await bets.find({ 
+          const loosings = await Bets.find({ 
             sportsId: bet.sportsId, 
             marketId: bet.marketId, 
             matchId: bet.matchId, 
