@@ -410,7 +410,7 @@ async function handleWinningBet(bet, winner) {
                 ]
               }
             ]
-          }, {winningAmount: 1, _id: 0 })
+          }, {winningAmount: 1, _id: 0 }).toArray()
 
           console.log(" winnings =================  ", winnings );
 
@@ -441,7 +441,7 @@ async function handleWinningBet(bet, winner) {
                 ]
               }
             ] 
-          }, {loosingAmount: 1, _id: 0 })
+          }, {loosingAmount: 1, _id: 0 }).toArray()
           console.log(" loosings =================  ", loosings );
 
           for (const singleWin of winnings) {
