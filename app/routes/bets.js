@@ -302,10 +302,6 @@ const placeBet = async (req, res) => {
       }
     }
 
-    // console.log(' ================== top id ================== ', id);
-
-    // console.log(' ================== subMarketDetail ================== ', subMarketDetail );
-
     if ( marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id) ) {
       return res.status(404).send({ message: "Betting disabled" });
     }
@@ -2586,8 +2582,8 @@ const placeBet = async (req, res) => {
       /* -------------- */
     }, delay);
   } catch (error) {
-    console.error("error", error);
-    return res.status(404).send({ message: `Error placing bet Catched ${error}` });
+    console.error("Error placing bet Catched ", error);
+    return res.status(404).send({ message: `Something went wrong !` });
   }
 };
 
