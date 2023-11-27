@@ -262,10 +262,11 @@ const placeBet = async (req, res) => {
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime;
 
       if (subMarketName == "Toss") {
+        remainingTimeFromEventStart =  eventDetail.openDate - new Date().getTime();
         thirdPartyMarketName = "To Win the Toss";
         const requiredTime = new Date().getTime() - config.tossCloseTime;
         console.log(" ================== subMarketDetail ", subMarketDetail);
-        if ( subMarketDetail.Id == config.Toss && requiredTime >= remainingTimeFromEvent ) {
+        if ( subMarketDetail.Id == config.Toss && config.tossCloseTime >= remainingTimeFromEventStart ) {
           return res.status(404).send({
             status: true,
             message: `Bets are not Allowed Now In this market`,
