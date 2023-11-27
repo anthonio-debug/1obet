@@ -353,7 +353,7 @@ async function handleLosingBet(bet) {
   }
 }
 
-async function handleWinningBet(bet) {
+async function handleWinningBet(bet, winner) {
   const client = new MongoClient(DBHost, { useUnifiedTopology: true });
   await client.connect();
   const session = client.startSession();
@@ -381,41 +381,31 @@ async function handleWinningBet(bet) {
           const userId = bet.userId;
 
           let TotalWin = 0;  let TotalLose = 0;
-          const winnings = await Bets.distinct("winningAmount", { 
+          const winnings = await bets.distinct("winningAmount", { 
             sportsId: bet.sportsId, 
             marketId: bet.marketId,  
             matchId:  bet.matchId, 
             userId:   bet.userId,
             $or: [
               {
-                $and: [ 
-                  {subMarketId: {$ne: '7'}},
-                  {  $or: [
-                      {
-                        type: 0,
-                        runner: bet.runner 
-                      },
-                      {
-                        type: 1,
-                        runner: {$ne: bet.runner} 
-                      }
+                $and: [
+                  { subMarketId: { $ne: '7' } },
+                  {
+                    $or: [
+                      { type: 0, runner: winner },
+                      { type: 1, runner: { $ne: winner } }
                     ]
                   }
                 ]
               },
               {
                 $and: [
-                  { subMarketId: '7'},
-                  { $or: [
-                    {
-                      type: 1,
-                      runner: bet.runner 
-                    },
-                    {
-                      type: 0,
-                      runner: {$ne: bet.runner} 
-                    }
-                  ]
+                  { subMarketId: '7' },
+                  {
+                    $or: [
+                      { type: 1, runner: bet.runner },
+                      { type: 0, runner: { $ne: bet.runner } }
+                    ]
                   }
                 ]
               }
@@ -424,7 +414,7 @@ async function handleWinningBet(bet) {
 
           console.log(" winnings =================  ", winnings );
 
-          const loosings = await Bets.distinct("loosingAmount", { 
+          const loosings = await bets.distinct("loosingAmount", { 
             sportsId: bet.sportsId, 
             marketId: bet.marketId, 
             matchId: bet.matchId, 
@@ -432,18 +422,11 @@ async function handleWinningBet(bet) {
             $or: [
               {
                 $and: [
-                  {subMarketId: '7'},
-                  { $or: [
-                      {
-                        type: 0,
-                        runner: bet.runner 
-                      },
-                      {
-                        type: 1,
-                        runner: { 
-                          $ne: bet.runner 
-                        } 
-                      }
+                  { subMarketId: '7' },
+                  { 
+                    $or: [
+                      { type: 0, runner: bet.runner },
+                      { type: 1, runner: { $ne: bet.runner }}
                     ]
                   }
                 ]
@@ -452,16 +435,8 @@ async function handleWinningBet(bet) {
                 $and: [
                   {subMarketId: {$ne: '7'}},
                   { $or: [
-                    {
-                      type: 1,
-                      runner: bet.runner 
-                    },
-                    {
-                      type: 0,
-                      runner: {
-                        $ne: bet.runner
-                      } 
-                    }
+                    { type: 1,  runner: winner   },
+                    { type: 0,  runner: { $ne: winner }}
                   ]}
                 ]
               }

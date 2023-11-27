@@ -119,7 +119,7 @@ function scoreChecker() {
               continue;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               console.log("0 ----- winner ");
-              await handleWinningBet(bet);
+              await handleWinningBet(bet, result.winnerSelectionId);
             } else if ( bet.type == 0 &&  bet.runner != result.winnerSelectionId ) {
               console.log("0 ----- looser ");
               await handleLosingBet(bet);
@@ -128,7 +128,7 @@ function scoreChecker() {
               bet.runner != result.winnerSelectionId
             ) {
               console.log("1 ----- winner ");
-              await handleWinningBet(bet);
+              await handleWinningBet(bet, result.winnerSelectionId);
             } else if (
               bet.type == 1 &&
               bet.runner == result.winnerSelectionId
@@ -229,7 +229,7 @@ function scoreChecker() {
               continue;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               console.log("0 ----- winner ");
-              await handleWinningBet(bet);
+              await handleWinningBet(bet, result.winnerSelectionId);
             } else if (
               bet.type == 0 &&
               bet.runner != result.winnerSelectionId
@@ -241,7 +241,7 @@ function scoreChecker() {
               bet.runner != result.winnerSelectionId
             ) {
               console.log("1 ----- winner ");
-              await handleWinningBet(bet);
+              await handleWinningBet(bet, result.winnerSelectionId);
             } else if (
               bet.type == 1 &&
               bet.runner == result.winnerSelectionId
@@ -371,13 +371,13 @@ function scoreChecker() {
               continue;
             if (bet.type == 0 && bet.runner == result.winnerSelId) {
               console.log("0 ----- winner ");
-              await handleWinningBet(bet);
+              await handleWinningBet(bet, result.winnerSelId);
             } else if (bet.type == 0 && bet.runner != result.winnerSelId) {
               console.log("0 ----- looser ");
               await handleLosingBet(bet);
             } else if (bet.type == 1 && bet.runner != result.winnerSelId) {
               console.log("1 ----- winner ");
-              await handleWinningBet(bet);
+              await handleWinningBet(bet, result.winnerSelId);
             } else if (bet.type == 1 && bet.runner == result.winnerSelId) {
               console.log("1 ----- looser ");
               await handleLosingBet(bet);
@@ -519,11 +519,11 @@ function scoreChecker() {
             //for type 0
             if (bet.type == 0) {
               if (parseInt(bet.TargetScore) > parseInt(result.result))
-                await handleWinningBet(bet);
+                await handleWinningBet(bet,  parseInt(result.result));
               else await handleLosingBet(bet);
             } else if (bet.type == 1) {
               if (parseInt(bet.TargetScore) <= parseInt(result.result))
-                await handleWinningBet(bet);
+                await handleWinningBet(bet,  parseInt(result.result));
               else await handleLosingBet(bet);
             } else {
               await handleDrawBet(bet);
