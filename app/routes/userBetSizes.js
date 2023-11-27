@@ -22,7 +22,12 @@ function updateBetSizes(req, res) {
   const updatedBetSizes = betSizes.map((betSize) => ({
     updateOne: {
       filter: { betLimitId: betSize._id, userId: req.body.userId },
-      update: { $set: { amount: betSize.amount, userId:req.body.userId } },
+      update: { $set: { 
+        amount: betSize.amount,           
+        minAmount: betSize?.minAmount,      
+        ExpAmount: betSize?.ExpAmount,      
+        userId: req.body.userId          
+      }},  
       upsert: true,
     },
   }));
