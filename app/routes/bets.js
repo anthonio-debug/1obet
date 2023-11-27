@@ -2593,7 +2593,7 @@ const placeBet = async (req, res) => {
     }, delay);
   } catch (error) {
     console.error("error", error);
-    return res.status(404).send({ message: `Error placing bet ${error}` });
+    return res.status(404).send({ message: `Error placing bet Catched ${error}` });
   }
 };
 
