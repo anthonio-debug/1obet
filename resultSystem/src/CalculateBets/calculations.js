@@ -381,7 +381,7 @@ async function handleWinningBet(bet, winner) {
           const userId = bet.userId;
 
           let TotalWin = 0;  let TotalLose = 0;
-          const winnings = await bets.distinct("winningAmount", { 
+          const winnings = await bets.find({ 
             sportsId: bet.sportsId, 
             marketId: bet.marketId,  
             matchId:  bet.matchId, 
@@ -410,11 +410,11 @@ async function handleWinningBet(bet, winner) {
                 ]
               }
             ]
-          })
+          }, {winningAmount: 1, _id: 0 })
 
           console.log(" winnings =================  ", winnings );
 
-          const loosings = await bets.distinct("loosingAmount", { 
+          const loosings = await bets.find({ 
             sportsId: bet.sportsId, 
             marketId: bet.marketId, 
             matchId: bet.matchId, 
@@ -441,7 +441,7 @@ async function handleWinningBet(bet, winner) {
                 ]
               }
             ] 
-          })
+          }, {loosingAmount: 1, _id: 0 })
           console.log(" loosings =================  ", loosings );
 
           for (const singleWin of winnings) {
