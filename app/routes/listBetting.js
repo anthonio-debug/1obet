@@ -5,12 +5,22 @@ const Bets = require("../models/bets");
 async function listBet(req, res) {
   try {
     const userId = req.params.userId;
+    const limit = req.body.numRecords;
+    const page = req.body.page;
     const betList = await Bets.aggregate([
       {
         $match: {
           userId: parseInt(userId),
+          sportsId: "8",
         },
       },
+      {
+        $sort: { _id: -1 },
+      },
+      {
+        $skip: (page - 1) * limit,
+      },
+      { $limit: 10 },
       {
         $lookup: {
           from: "deposits",
@@ -30,6 +40,7 @@ async function listBet(req, res) {
       {
         $project: {
           _id: 0,
+          betId: "$_id",
           price: "$betRate",
           runnersPosition: "$runnersPosition",
           calculateExp: "$calculateExp",
@@ -42,8 +53,8 @@ async function listBet(req, res) {
           type: "$type",
           isfancyOrbookmaker: "$isfancyOrbookmaker",
           fancyData: "$fancyData",
-          bettor: "$userDetails.userName",
-          bettorId: "$userDetails.userId",
+          // bettor: "$userDetails.userName",
+          // bettorId: "$userDetails.userId",
           fancyRate: "$fancyRate",
           betSession: "$betSession",
           roundId: "$roundId",
