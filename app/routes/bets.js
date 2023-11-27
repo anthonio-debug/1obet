@@ -246,23 +246,18 @@ const placeBet = async (req, res) => {
 
       id = eventDetail.marketIds[0];
       _3rdPartyMarketId = id;
-      
-
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
       if (!subMarketDetail){
         return res.status(404).send({ message: "Bet not allowed" });
       }
     } else if (asianOdd) {
-      subMarketDetail = await SubMarketType.findOne({
-        name: subMarketName,
-        marketId: marketId,
-      }).exec();
-
+      subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
       if (!subMarketDetail) {
         return res.status(404).send({ message: "you cannot place bet" });
       }
     } else {
       let thirdPartyMarketName = subMarketName;
+      subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
       const requiredTime = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime;
 
