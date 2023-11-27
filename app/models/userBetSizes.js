@@ -7,6 +7,8 @@ mongoose.set('debug', false);
 let userBetSizesSchema = new Schema({
   userId:     { type: Number },
   amount:     { type: Number },
+  minAmount:  { type: Number, default: 100 },
+  ExpAmount:  { type: Number, default: 200000 },
   betLimitId: { type: String },
   name:       { type: String },
   subarket:   { type: Number },

@@ -9,6 +9,7 @@ const { MongoClient } = require("mongodb");
 
 const MarketIDS = require("../../../app/models/marketIds");
 const cricketSession = require("../../../app/models/Session");
+const { log } = require("async");
 require("dotenv").config();
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
@@ -374,11 +375,24 @@ async function handleWinningBet(bet) {
     if(bet.status == 1){
       const betStatus  = await Bets.findById(bet._id)
       if (betStatus.status == 1){
-        
         console.log(` ============= Bet ${bet._id} WIN ============= `);
         await session.withTransaction(async () => {
           let calculatedExp = 0;
           const userId = bet.userId;
+
+          let TotalWin = 0;
+          const winnings = await bets.distinct("winningAmount", { sportsId: bet.sportsId, marketId: bet.marketId,  matchId: bet.matchId, userId: bet.userId, runner: bet.runner })
+          for (const singleWin of winnings) {
+            TotalWin = Number(( TotalWin + singleWin).toFixed(3));
+          }
+          
+          let TotalLose = 0;
+          const loosings = await bets.distinct("loosingAmount", { sportsId: bet.sportsId, marketId: bet.marketId, matchId: bet.matchId, userId: bet.userId, runner: {$ne: bet.runner} })
+          for (const singleLose of loosings) {
+            TotalLose = Number(( TotalLose + singleLose).toFixed(3));
+          }
+          console.log(` ===================== TotalWin ${TotalWin} TotalLose ${TotalLose} `);
+
           const userToUpdate = await users.findOne({
             userId: userId,
             isDeleted: false
@@ -395,20 +409,27 @@ async function handleWinningBet(bet) {
             let upMovingAmount;
             let upMovingCommAmount;
       
-            if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker ) {
-              remainingAmount = Number(((Number(bet.winningAmount.toFixed(3)) / 100) * 98).toFixed(3));
-              commissionAmount = Number(((Number(bet.winningAmount.toFixed(3)) / 100) * 2).toFixed(3));
+            if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose){
+
+              const abouteWin      = Number((TotalWin - TotalLose).toFixed(3));
+              const totalCooission = Number((abouteWin * 0.02).toFixed(3));
+              commissionAmount     = Number(( ( totalCooission / TotalWin ) * bet.winningAmount ).toFixed(3));
+              remainingAmount      = Number((bet.winningAmount - commissionAmount).toFixed(3))
               totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
-              TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
-              upMovingAmount = totalRemainingAmount;
-              upMovingCommAmount = commissionAmount;
+              TotalLoosingAmount   = Number(bet.loosingAmount.toFixed(3));
+              upMovingAmount       = totalRemainingAmount;
+              upMovingCommAmount   = commissionAmount;
+
+              console.log(" ====================== Commission should be calculated  ");
+
             } else {
-              remainingAmount = Number(bet.winningAmount.toFixed(3));
-              commissionAmount = Number(((Number(bet.winningAmount.toFixed(3)) / 100) * 2).toFixed(3));
+              remainingAmount  = Number(bet.winningAmount.toFixed(3));
+              commissionAmount = 0
               totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
-              TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
-              upMovingAmount = totalRemainingAmount;
-              upMovingCommAmount = commissionAmount;
+              TotalLoosingAmount   = Number(bet.loosingAmount.toFixed(3));
+              upMovingAmount       = totalRemainingAmount;
+              upMovingCommAmount   = commissionAmount;
+              console.log(" ====================== Commission should not be calculated  ");
             }
 
             const user_prev_balance = userToUpdate.balance;
@@ -553,7 +574,7 @@ async function handleWinningBet(bet) {
                 upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
                 // console.log(" =============== Parent bet Transaction  Successfull ");
         
-                if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker) {
+                if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker  && TotalWin > TotalLose){
                   const ParentlastTrans = await Cash.find({ userId: user.userId }).sort({ _id: -1 }).limit(1);
                   const lastMaxWithdraw = ParentlastTrans.length > 0 ? lastTrans[0] : null;
 
