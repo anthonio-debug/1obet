@@ -388,33 +388,41 @@ async function handleWinningBet(bet) {
             userId:   bet.userId,
             $or: [
               {
-                subMarketId: '7',
-                $or: [
-                  {
-                    type: 1,
-                    runner: bet.runner 
-                  },
-                  {
-                    type: 0,
-                    runner: {$ne: bet.runner} 
+                $and: [ 
+                  {subMarketId: {$ne: '7'}},
+                  {  $or: [
+                      {
+                        type: 0,
+                        runner: bet.runner 
+                      },
+                      {
+                        type: 1,
+                        runner: {$ne: bet.runner} 
+                      }
+                    ]
                   }
                 ]
               },
               {
-                subMarketId: {$ne: '7'},
-                $or: [
-                  {
-                    type: 0,
-                    runner: bet.runner 
-                  },
-                  {
-                    type: 1,
-                    runner: {$ne: bet.runner} 
+                $and: [
+                  { subMarketId: '7'},
+                  { $or: [
+                    {
+                      type: 1,
+                      runner: bet.runner 
+                    },
+                    {
+                      type: 0,
+                      runner: {$ne: bet.runner} 
+                    }
+                  ]
                   }
                 ]
               }
             ]
           })
+
+          console.log(" winnings =================  ", winnings );
 
           const loosings = await Bets.distinct("loosingAmount", { 
             sportsId: bet.sportsId, 
@@ -423,37 +431,43 @@ async function handleWinningBet(bet) {
             userId: bet.userId, 
             $or: [
               {
-                subMarketId: '7',
-                $or: [
-                  {
-                    type: 0,
-                    runner: bet.runner 
-                  },
-                  {
-                    type: 1,
-                    runner: { 
-                      $ne: bet.runner 
-                    } 
+                $and: [
+                  {subMarketId: '7'},
+                  { $or: [
+                      {
+                        type: 0,
+                        runner: bet.runner 
+                      },
+                      {
+                        type: 1,
+                        runner: { 
+                          $ne: bet.runner 
+                        } 
+                      }
+                    ]
                   }
                 ]
               },
               {
-                subMarketId: {$ne: '7'},
-                $or: [
-                  {
-                    type: 1,
-                    runner: bet.runner 
-                  },
-                  {
-                    type: 0,
-                    runner: {
-                      $ne: bet.runner
-                    } 
-                  }
+                $and: [
+                  {subMarketId: {$ne: '7'}},
+                  { $or: [
+                    {
+                      type: 1,
+                      runner: bet.runner 
+                    },
+                    {
+                      type: 0,
+                      runner: {
+                        $ne: bet.runner
+                      } 
+                    }
+                  ]}
                 ]
               }
             ] 
           })
+          console.log(" loosings =================  ", loosings );
 
           for (const singleWin of winnings) {
             TotalWin = Number(( TotalWin + singleWin).toFixed(3));
