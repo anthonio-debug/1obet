@@ -183,5 +183,6 @@
   "userAccountSettlement",
   "round",
   "SetAsianDashboard",
-  "removeOdds"
+  "removeOdds",
+  "listBet"
 ]
