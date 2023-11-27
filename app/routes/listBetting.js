@@ -21,7 +21,7 @@ async function listBet(req, res) {
       {
         $skip: (page - 1) * limit,
       },
-      { $limit: 10 },
+      { $limit: limit },
       {
         $lookup: {
           from: "deposits",
