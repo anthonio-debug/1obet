@@ -71,6 +71,7 @@ app.use("/api", require("./app/routes/settings").router);
 app.use("/api", require("./app/routes/CasinoCalls").router);
 // app.use("/api", require("./app/routes/AsianCasinoCalls").router);
 app.use("/api", require("./app/routes/liveTv").router);
+app.use("/api", require("./app/routes/listBetting").router);
 
 // Login middleware
 app.use(function (req, res, next) {
