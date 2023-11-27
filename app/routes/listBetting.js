@@ -81,7 +81,9 @@ async function listBet(req, res) {
       },
     ]);
 
-    res.status(200).json({ success: true, data: betList });
+    const total = await Bets.countDocuments({userId: parseInt(userId), sportsId: "8",})
+
+    res.status(200).json({ success: true, data: betList, total: total });
   } catch (err) {
     res.status(500).json({ success: false, msg: "Failed to get bet list" });
   }
