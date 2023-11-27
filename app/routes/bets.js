@@ -230,6 +230,7 @@ const placeBet = async (req, res) => {
 
     const Digitaddition = await handleLimitValue(betRate, marketId);
     console.log(" marketId ======== ", marketId);
+    console.log(" subMarketName ======================= ", subMarketName);
     // Checks for Market Places & Sub Markets
     if (config.raceMarkets.includes(marketId)) {
       const requiredTime = new Date().getTime() + config.raceOpenBefore;
@@ -245,7 +246,7 @@ const placeBet = async (req, res) => {
 
       id = eventDetail.marketIds[0];
       _3rdPartyMarketId = id;
-      console.log(" subMarketName ======================= ", subMarketName);
+      
 
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
       if (!subMarketDetail){
