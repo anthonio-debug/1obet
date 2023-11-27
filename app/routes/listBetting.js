@@ -47,8 +47,25 @@ async function listBet(req, res) {
           fancyRate: "$fancyRate",
           betSession: "$betSession",
           roundId: "$roundId",
-          depositDetail: "$depositDetail",
-          exsposureDetail: "$exposureDetail",
+          asianTableId: "$asianTableId",
+          marketId: "$marketId",
+          betAmount: "$betAmount",
+          depositDetail: {
+            $filter: {
+              input: "$depositDetail",
+              cond: {
+                $eq: ["$$this.userId", parseInt(userId)],
+              },
+            },
+          },
+          exposureDetail: {
+            $filter: {
+              input: "$exposureDetail",
+              cond: {
+                $eq: ["$$this.userId", parseInt(userId)],
+              },
+            },
+          },
         },
       },
     ]);
