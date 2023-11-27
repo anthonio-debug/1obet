@@ -60,3 +60,5 @@ async function listBet(req, res) {
 }
 
 router.get("/listBet/:userId", listBet);
+
+module.exports = { router };
