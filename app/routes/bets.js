@@ -1811,23 +1811,11 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
-      if (
-        ![
-          1991, 1968, 1971, 1974, 1973, 1975, 1978, 1979, 1980, 1981, 1982,
-          1983, 1984, 1985, 2005,
-        ].includes(req.decoded.userId)
-      ) {
-        console.log(" 1766 Not Allowed CALLED By Market  ");
-        //return res.status(404).send({ message: 'Betting disabled' });
-      }
-
-      const FigureEvenOddSmallBig = await userBetSizes
-        .findOne({
-          userId: userId,
-          sportsId: marketId,
-          subarket: subMarketDetail.Id,
-        })
-        .exec();
+      const FigureEvenOddSmallBig = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+        subarket: subMarketDetail.Id,
+      }).exec();
       if (FigureEvenOddSmallBig && betAmount > FigureEvenOddSmallBig.amount) {
         return res.status(404).send({
           message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
@@ -1858,35 +1846,23 @@ const placeBet = async (req, res) => {
       }
       let totalSessions = 0;
       TargetScore = currentOver;
-      if (type == "TEST" && currentOver % 10 == 0) {
+      if (type == "TEST" && currentOver % 10 == 0){
         return res.status(404).send({
           success: false,
-          message: "betting not allowed !",
-          currentSession: currentSession,
-          totalSessions: totalSessions,
-          currentSessionOver: currentSessionOver,
+          message: "betting not allowed !"
         });
-      } else if (type != "TEST" && currentOver % 5 == 0) {
+      } 
+      else if (type != "TEST" && currentOver % 5 == 0) {
         return res.status(404).send({
           success: false,
-          message: "betting not allowed !",
-          currentSession: currentSession,
-          totalSessions: totalSessions,
-          currentSessionOver: currentSessionOver,
+          message: "betting not allowed !"
         });
       }
       let currentSessionOver = Math.ceil(currentOver % 5);
-      currentSession = Math.ceil(currentOver / 5) + sessionAddition;
-      console.log(
-        " currentSession = ",
-        currentSession,
-        " currentSessionOver =",
-        currentSessionOver,
-        " currentOver =",
-        currentOver
-      );
 
-      switch (eventDetail.matchType) {
+      currentSession = Math.ceil(currentOver / 5) + sessionAddition;
+
+      switch (eventDetail.matchType){
         case "T10":
           totalSessions = 2;
           break;
@@ -1898,8 +1874,8 @@ const placeBet = async (req, res) => {
           break;
         case "TEST":
           totalSessions = 9;
-          currentSessionOver = Math.ceil(currentOver % 10);
-          currentSession = Math.ceil(currentOver / 10);
+          currentSessionOver = Math.ceil( currentOver % 10 );
+          currentSession = Math.ceil( currentOver / 10 );
           break;
         default:
           return res.json(404, {
@@ -1909,7 +1885,7 @@ const placeBet = async (req, res) => {
           break;
       }
 
-      if (inning == 2 && currentSession == totalSessions + sessionAddition) {
+      if (inning == 2 && currentSession == (totalSessions + sessionAddition)) {
         return res.status(404).send({
           success: false,
           message: "betting not allowed !",
@@ -1917,23 +1893,18 @@ const placeBet = async (req, res) => {
           totalSessions: totalSessions,
           currentSessionOver: currentSessionOver,
         });
-      } else if (currentSessionOver > 3) {
-        console.log(
-          " ================ currentSessionOver ================ ",
-          currentSessionOver
-        );
-
+      } 
+      else if ((type == "TEST" && currentSessionOver > 8 ) || (type != "TEST" && currentSessionOver > 3 )){
+        console.log( " ================ currentSessionOver ================ ", currentSessionOver);
         return res.status(404).send({
           success: false,
-          message: `betting not Allowed in ${Math.ceil(currentOver % 5)} over`,
-          currentSession: currentSession,
-          totalSessions: totalSessions,
-          over: currentOver,
-        });
+          message: `betting not Allowed in ${type == "TEST" ? Math.ceil(currentOver % 10) : Math.ceil(currentOver % 5)} over`
+        })
+
       }
       _3rdPartyMarketId = subMarketDetail.Id;
-      console.log("Bets are Allowed");
-      console.log(" currentSession ========= ", currentSession);
+      console.log(" ================== Bets are Allowed ");
+      console.log(" ================== currentSession  ", currentSession);
     }
 
     // for Asian Odd
