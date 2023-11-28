@@ -403,8 +403,8 @@ async function handleWinningBet(bet, winner) {
                   { subMarketId: '7' },
                   {
                     $or: [
-                      { type: 1, runner: bet.runner },
-                      { type: 0, runner: { $ne: bet.runner } }
+                      { type: 0, TargetScore:  { $gt:  winner }},
+                      { type: 1, TargetScore:  { $lte:  winner }}
                     ]
                   }
                 ]
@@ -422,22 +422,22 @@ async function handleWinningBet(bet, winner) {
             $or: [
               {
                 $and: [
-                  { subMarketId: '7' },
-                  { 
-                    $or: [
-                      { type: 0, runner: bet.runner },
-                      { type: 1, runner: { $ne: bet.runner }}
-                    ]
-                  }
-                ]
-              },
-              {
-                $and: [
                   {subMarketId: {$ne: '7'}},
                   { $or: [
                     { type: 1,  runner: winner   },
                     { type: 0,  runner: { $ne: winner }}
                   ]}
+                ]
+              },
+              {
+                $and: [
+                  { subMarketId: '7' },
+                  { 
+                    $or: [
+                      { type: 1, TargetScore:  { $gt:  winner }},
+                      { type: 0, TargetScore:  { $lte:  winner }}
+                    ]
+                  }
                 ]
               }
             ] 
