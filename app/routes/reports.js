@@ -7,7 +7,6 @@ const loginRecord = require('../models/loginRecord');
 
 const reportValidator = require('../validators/reports');
 const Deposits = require('../models/deposits');
-const MarketType = require('../models/marketTypes');
 const Bets = require('../models/bets');
 const loginRouter = express.Router();
 const { getParents } = require("./bets");

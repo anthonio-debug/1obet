@@ -201,29 +201,6 @@ Get data for these sports
 */
 async function racesMarketOdds(marketId) {
   try {
-    // const projectionRacesMarketsData = {
-    //   'eventNodes.marketNodes.state': 1,
-    //   'eventNodes.marketNodes.description.marketName': 1,
-    //   'eventNodes.marketNodes.description.marketTime': 1,
-    //   'eventNodes.marketNodes.description.suspendTime': 1,
-    //   'eventNodes.marketNodes.description.turnInPlayEnabled': 1,
-    //   'eventNodes.marketNodes.description.marketType': 1,
-    //   'eventNodes.marketNodes.description.raceNumber': 1,
-    //   'eventNodes.marketNodes.description.raceType': 1,
-    //   'eventNodes.marketNodes.description.bettingType': 1,
-    //   'eventNodes.marketNodes.runners.selectionId': 1,
-    //   'eventNodes.marketNodes.runners.description.runnerName': 1,
-    //   'eventNodes.marketNodes.runners.description.metadata.SIRE_NAME': 1,
-    //   'eventNodes.marketNodes.runners.description.metadata.CLOTH_NUMBER_ALPHA': 1,
-    //   'eventNodes.marketNodes.runners.description.metadata.COLOURS_DESCRIPTION': 1,
-    //   'eventNodes.marketNodes.runners.description.metadata."COLOURS_FILENAME': 1,
-    //   'eventNodes.marketNodes.runners.description.metadata.OWNER_NAME': 1,
-    //   'eventNodes.marketNodes.runners.description.metadata.JOCKEY_NAME': 1,
-    //   'eventNodes.marketNodes.runners.description.metadata.CLOTH_NUMBER': 1,
-    //   'eventNodes.marketNodes.runners.description.metadata.TRAINER_NAME': 1,
-    //   'eventNodes.event.eventName': 1
-    // };
-
     const projectionRaceOddsData = {
       marketId: 1,
       isMarketDataDelayed: 1,

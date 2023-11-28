@@ -153,21 +153,7 @@ function apiRequests() {
               continue;
             } else {
               const lastHistory = await axios.get(lastResultUrl);
-              // const newRecord = {
-              //   tableId: tableNames[i].tableId,
-              //   marketData: "8",
-              //   resultData: lastHistory.data.data[0].win,
-              //   description: lastHistory.data.data[0].desc,
-              //   eventId: asiaOdd.history[j].mid,
-              // };
-              // await ResultRecord.findOneAndUpdate(
-              //   {
-              //     marketData: newRecord.marketData,
-              //     eventId: newRecord.eventId,
-              //   },
-              //   newRecord,
-              //   { upsert: true }
-              // );
+            
               if (lastHistory.data.data) {
                 let asianResult = {
                   tableId: tableNames[i].tableId,

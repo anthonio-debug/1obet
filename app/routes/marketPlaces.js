@@ -1,9 +1,5 @@
 const express = require('express');
-var jwt = require('jsonwebtoken');
-const userValidation = require('../validators/user');
-const bcrypt = require('bcrypt');
 const { validationResult } = require('express-validator');
-let config = require('config');
 const MarketType = require('../models/marketTypes');
 const SubMarketType = require('../models/subMarketTypes');
 const User = require('../models/user');

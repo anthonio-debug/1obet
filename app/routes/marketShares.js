@@ -1,12 +1,8 @@
 const express = require("express");
 const { validationResult } = require("express-validator");
-let config = require("config");
 const CashDeposit = require("../models/deposits");
 const User = require("../models/user");
 let mongoose = require('mongoose');
-const reportValidator = require("../validators/reports");
-const Deposits = require("../models/deposits");
-const Events = require("../models/events");
 const Bets = require("../models/bets");
 const MarketIDS = require("../models/marketIds");
 const AsianResult = require("../models/asianTablesResultsHistory")

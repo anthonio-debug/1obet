@@ -16,9 +16,7 @@ async function racesTodayMeetings(req, res) {
 
     const horseRacesData = response.data;
     console.log('horseRacesData', horseRacesData);
-    // console.log('meetings', horseRacesData.meetings);
-    // console.log('countryCodes', horseRacesData.countryCodes);
-
+    
     const bulkOperations = [];
     for (const data of horseRacesData.meetings) {
       data.countryCodes = horseRacesData.countryCodes;

@@ -29,8 +29,6 @@ const loginRecord = require('../models/loginRecord');
 const axios = require('axios');
 const userBetSizes = require('../models/userBetSizes');
 const Bets = require('../models/bets');
-const { tryEach } = require('async');
-var getIP = require('ipware')().get_ip;
 
 const router = express.Router();
 const loginRouter = express.Router();

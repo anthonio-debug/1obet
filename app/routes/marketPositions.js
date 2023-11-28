@@ -1,10 +1,6 @@
 const express = require("express");
 const { validationResult } = require("express-validator");
-let config = require("config");
 const User = require("../models/user");
-
-const reportValidator = require("../validators/reports");
-const Bets = require("../models/bets");
 const loginRouter = express.Router();
 
 const getMarketPositions = async (req, res) => {

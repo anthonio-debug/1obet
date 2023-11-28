@@ -1,5 +1,4 @@
 const express = require("express");
-var jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 const Settings = require("../models/settings");
 const moment = require("moment");
@@ -16,7 +15,6 @@ const EventBySports = require("../models/eventsBySport");
 const config = require("config");
 const axios = require("axios");
 const FancyGames = require("../models/fancyGames");
-const Racing = require("../models/racing");
 const RaceMarkets = require("../models/raceMarkets");
 const RaceOdds = require("../models/raceOdds");
 const loginRouter = express.Router();
@@ -225,58 +223,6 @@ function getDefaultSettings(req, res) {
     });
   });
 }
-
-// async function updateMatchType(req, res) {
-//   const errors = validationResult(req);
-//   if (!errors.isEmpty()) {
-//     return res.status(400).send({ errors: errors.errors });
-//   }
-//   try {
-//     const { _id, matchType, iconStatus,eventId } = req.body;
-//    const EventData = await Events.findByIdAndUpdate(
-//       _id,
-//       { $set: { matchType: matchType, iconStatus: iconStatus } },
-//       (err, updatedMatch) => {
-//         if (err) {
-//           console.log('Error updating figure:', err);
-//         } else {
-//           console.log('Updated match:', updatedMatch);
-//         }
-//       }
-//     );
-
-//       //coded by qaiser started on event with bet delayed time
-// // console.log("I am here with event Id---------------------------------:",eventId);
-// // const BetSecondsVal = await BetPlaceHold
-// //         .findOne({
-
-// //           eventId: eventId
-// //         })
-// //         .exec();
-// //       if (!BetSecondsVal) {
-// // 		const betseconds = new BetSecondsVal({
-// //        sportsId:6,
-// //          secondsValue: 4,
-// //          eventId: eventId
-// //     });
-// //     betseconds.save();
-// // 	  }
-// //end of code for qaiser on event with bet delayed time
-
-//     res.status(200).json({
-//       success: true,
-//       message: 'Updated Successfully',
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     res.status(500).json({
-//       success: false,
-//       message: 'Failed to save fancy data',
-//       error: error.message,
-//     });
-//   }
-
-// }
 
 async function updateMatchType(req, res) {
   const errors = validationResult(req);

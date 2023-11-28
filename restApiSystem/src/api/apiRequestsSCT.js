@@ -69,16 +69,6 @@ function apiRequests() {
               eventId: channel.substring(1),
             });
             socket.emit("fancy_event_list", fancyEvents);
-            /*
-            const lastFancyOdds = await FancyOdds.find({ eventId: channel.substring(1) }).sort({created: -1}).limit(2);
-
-            if (lastFancyOdds.length > 1) {
-              setTimeout(() => {
-                socket.emit('fancy_odds', lastFancyOdds[1]);
-              }, 2000);
-              
-            }
-            */
           }
 
           const lastScore = await Score.find({ eventId: channel.substring(1) })
