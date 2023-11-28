@@ -440,9 +440,11 @@ async function handleWinningBet(bet, winner) {
       
             if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && (TotalWin > TotalLose || Number(bet.sportsId) == 8)){
 
-              const abouteWin      = Number((TotalWin - TotalLose).toFixed(3));
-              const totalCooission = Number((abouteWin * 0.02).toFixed(3));
+              const absouteWin     = Number((TotalWin - TotalLose).toFixed(3));
+              const totalCooission = Number((absouteWin * 0.02).toFixed(3));
               commissionAmount     = Number(( ( totalCooission / TotalWin ) * bet.winningAmount ).toFixed(3));
+              if( Number(bet.sportsId) == 8) 
+                commissionAmount   = Number((bet.winningAmount*0.02).toFixed(3));
               remainingAmount      = Number((bet.winningAmount - commissionAmount).toFixed(3))
               totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
               TotalLoosingAmount   = Number(bet.loosingAmount.toFixed(3));
