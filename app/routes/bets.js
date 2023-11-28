@@ -2559,13 +2559,12 @@ const placeBet = async (req, res) => {
 
 
 
-          await updateParentUserBalance(
-            parentUserIds,
-            winningAmount,
+          await updateParentUserBalance( parentUserIds,  winningAmount,
             matchId,
             result._id,
             selectionId,
-            _3rdPartyMarketId
+            _3rdPartyMarketId,
+            subMarketDetail?.Id
           );
 
           return res.send({
