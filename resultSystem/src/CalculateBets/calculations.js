@@ -445,11 +445,11 @@ async function handleWinningBet(bet, winner) {
           console.log(" loosings =================  ", loosings );
 
           for (const singleWin of winnings) {
-            TotalWin = Number(( TotalWin + singleWin).toFixed(3));
+            TotalWin = Number(( TotalWin + singleWin.winningAmount).toFixed(3));
           }
 
           for (const singleLose of loosings) {
-            TotalLose = Number(( TotalLose + singleLose).toFixed(3));
+            TotalLose = Number(( TotalLose + singleLose.loosingAmount).toFixed(3));
           }
 
           console.log(` ===================== TotalWin ${TotalWin} TotalLose ${TotalLose} `);
