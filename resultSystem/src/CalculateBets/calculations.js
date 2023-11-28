@@ -379,89 +379,57 @@ async function handleWinningBet(bet, winner) {
         await session.withTransaction(async () => {
           let calculatedExp = 0;
           const userId = bet.userId;
-
           let TotalWin = 0;  let TotalLose = 0;
-          const winnings = await Bets.find({ 
-            sportsId: bet.sportsId, 
-            marketId: bet.marketId,  
-            matchId:  bet.matchId, 
-            userId:   bet.userId,
-            $or: [
-              {
-                $and: [
-                  { subMarketId: { $ne: '7' } },
-                  {
-                    $or: [
-                      { type: 0, runner: winner },
-                      { type: 1, runner: { $ne: winner } }
-                    ]
-                  }
-                ]
-              },
-              {
-                $and: [
-                  { subMarketId: '7' },
-                  {
-                    $or: [
-                      { type: 0, TargetScore:  { $gt:  winner }},
-                      { type: 1, TargetScore:  { $lte:  winner }}
-                    ]
-                  }
-                ]
-              }
-            ]
-          }, {winningAmount: 1, _id: 0 })
+          if(Number(bet.sportsId) != 8){
+            const winnings = await Bets.find({ 
+              sportsId: bet.sportsId, 
+              marketId: bet.marketId,  
+              matchId:  bet.matchId, 
+              userId:   bet.userId,
+              subMarketId: { $ne: '7' },
+              $or: [
+                { type: 0, runner: winner },
+                { type: 1, runner: { $ne: winner } }
+              ]
+            }, {winningAmount: 1, _id: 0 })
 
-          console.log(" winnings =================  ", winnings );
+            console.log(" winnings =================  ", winnings );
 
-          const loosings = await Bets.find({ 
-            sportsId: bet.sportsId, 
-            marketId: bet.marketId, 
-            matchId: bet.matchId, 
-            userId: bet.userId, 
-            $or: [
-              {
-                $and: [
-                  {subMarketId: {$ne: '7'}},
-                  { $or: [
-                    { type: 1,  runner: winner   },
-                    { type: 0,  runner: { $ne: winner }}
-                  ]}
-                ]
-              },
-              {
-                $and: [
-                  { subMarketId: '7' },
-                  { 
-                    $or: [
-                      { type: 1, TargetScore:  { $gt:  winner }},
-                      { type: 0, TargetScore:  { $lte:  winner }}
-                    ]
-                  }
-                ]
-              }
-            ] 
-          }, {loosingAmount: 1, _id: 0 })
-          console.log(" loosings =================  ", loosings );
+            const loosings = await Bets.find({ 
+              sportsId: bet.sportsId, 
+              marketId: bet.marketId, 
+              matchId: bet.matchId, 
+              userId: bet.userId, 
+              subMarketId: {$ne: '7'},
+              $or: [
+                { type: 1,  runner: winner },
+                { type: 0,  runner: { $ne: winner }}
+              ]
+            }, {loosingAmount: 1, _id: 0 })
 
-          for (const singleWin of winnings) {
-            TotalWin = Number(( TotalWin + singleWin.winningAmount).toFixed(3));
+            console.log(" loosings =================  ", loosings );
+
+            for (const singleWin of winnings) {
+              TotalWin = Number(( TotalWin + singleWin.winningAmount).toFixed(3));
+            }
+
+            for (const singleLose of loosings) {
+              TotalLose = Number(( TotalLose + singleLose.loosingAmount).toFixed(3));
+            }
+
+            console.log(` ===================== TotalWin ${TotalWin} TotalLose ${TotalLose} `);
           }
-
-          for (const singleLose of loosings) {
-            TotalLose = Number(( TotalLose + singleLose.loosingAmount).toFixed(3));
-          }
-
-          console.log(` ===================== TotalWin ${TotalWin} TotalLose ${TotalLose} `);
 
           const userToUpdate = await users.findOne({
             userId: userId,
             isDeleted: false
           });
+
           if (!userToUpdate){
             console.error("Error: user not found Location:(_handle winning bet)");
             await session.abortTransaction();
-          }else {
+          }
+          else {
             const loosingAmount = Number(bet.loosingAmount.toFixed(3));
             let remainingAmount;
             let commissionAmount;
@@ -470,7 +438,7 @@ async function handleWinningBet(bet, winner) {
             let upMovingAmount;
             let upMovingCommAmount;
       
-            if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose){
+            if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && (TotalWin > TotalLose || Number(bet.sportsId) == 8)){
 
               const abouteWin      = Number((TotalWin - TotalLose).toFixed(3));
               const totalCooission = Number((abouteWin * 0.02).toFixed(3));
