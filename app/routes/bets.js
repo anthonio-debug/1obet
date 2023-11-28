@@ -2050,7 +2050,7 @@ const placeBet = async (req, res) => {
     }
     /* ============================================================ =============== */
 
-    const delayExcludedMarkets = [ ...config.FigureEvenOddSmallBig, ...config.asianSubMarket,  config.Fancy, config.BookMaker ];
+    const delayExcludedMarkets = [ ...config.FigureEvenOddSmallBig, ...config.asianSubMarket,  config.Fancy, config.BookMaker, config.Toss ];
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
     }
@@ -2490,7 +2490,6 @@ const placeBet = async (req, res) => {
             amount: -Number(loosingAmount.toFixed(3)),
             matchsId: matchId,
             betId: result._id,
-            subMarketId: subMarketDetail.Id
           });
           await position.save();
 
@@ -2558,14 +2557,14 @@ const placeBet = async (req, res) => {
           await ExpTran.save()
           /** End of Qaiser added tracking values in deposits */
 
-          await updateParentUserBalance(
-            parentUserIds,
-            winningAmount,
+
+
+          await updateParentUserBalance( parentUserIds,  winningAmount,
             matchId,
             result._id,
             selectionId,
             _3rdPartyMarketId,
-            subMarketDetail.Id
+            subMarketDetail?.Id
           );
 
           return res.send({
