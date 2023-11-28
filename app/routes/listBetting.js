@@ -4,11 +4,7 @@ const Bets = require("../models/bets");
 
 async function listBet(req, res) {
   try {
-    // const userId = req.params.userId;
-    
     const userId = 11053;
-    const limit = req.body.numRecords;
-    const page = req.body.page;
     const betList = await Bets.aggregate([
       {
         $match: {
@@ -16,12 +12,8 @@ async function listBet(req, res) {
         },
       },
       {
-        $sort: { _id: -1 },
+        $sort: { _id: 1 },
       },
-      {
-        $skip: (page - 1) * limit,
-      },
-      { $limit: limit },
       {
         $lookup: {
           from: "deposits",
@@ -54,8 +46,6 @@ async function listBet(req, res) {
           type: "$type",
           isfancyOrbookmaker: "$isfancyOrbookmaker",
           fancyData: "$fancyData",
-          // bettor: "$userDetails.userName",
-          // bettorId: "$userDetails.userId",
           fancyRate: "$fancyRate",
           betSession: "$betSession",
           roundId: "$roundId",
