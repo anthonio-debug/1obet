@@ -63,7 +63,7 @@ const getParents = async (userId) => {
   return parentUserIds;
 };
 
-const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = "0") => {
+const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = "0", subMarketId= "0") => {
   const parentUser = await User.find({
     userId: {
       $in: [...parentUsersIds],
@@ -95,6 +95,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
         betId: Id,
         matchsId: matchId,
         marketId: marketId,
+        subMarketId: subMarketId,
         share: user.commission,
       });
       await position.save();
@@ -2556,15 +2557,14 @@ const placeBet = async (req, res) => {
           await ExpTran.save()
           /** End of Qaiser added tracking values in deposits */
 
-
-
           await updateParentUserBalance(
             parentUserIds,
             winningAmount,
             matchId,
             result._id,
             selectionId,
-            _3rdPartyMarketId
+            _3rdPartyMarketId,
+            subMarketDetail?.Id
           );
 
           return res.send({
