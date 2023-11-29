@@ -20,14 +20,14 @@ const {
 
 const tableInfo = [
   { id: "36", tId: "teen20" },
-  { id: "37", tId: "teen9" },
-  { id: "38", tId: "lucky7" },
+  // { id: "37", tId: "teen9" },
+  // { id: "38", tId: "lucky7" },
   { id: "39", tId: "lucky7eu" },
   { id: "40", tId: "card32eu" },
   { id: "41", tId: "aaa" },
-  { id: "42", tId: "ab20" },
-  { id: "43", tId: "abj" },
-  { id: "44", tId: "worli" },
+  // { id: "42", tId: "ab20" },
+  // { id: "43", tId: "abj" },
+  // { id: "44", tId: "worli" },
 ];
 
 function scoreChecker() {
@@ -552,7 +552,7 @@ function scoreChecker() {
           if (tableId === "39") {
             if (result.data.data[0].win == "0") {
               if(betData[i].runner =="1" || betData[i].runner =="2"){
-                handleDrawBet(betData[i])
+                await handleDrawBet(betData[i])
               } else {
                 const description = result.data.data[0].desc;
                 const generalResult = description.split(" || ");
@@ -604,15 +604,15 @@ function scoreChecker() {
                   betData[i].runner == widColor ||
                   betData[i].runner == widOdd
                 ) {
-                  handleWinningBet(betData[i]);
+                  await handleWinningBet(betData[i]);
                 } else {
-                  handleLosingBet(betData[i])
+                  await handleLosingBet(betData[i])
                 }
               }
               
             } else {
               if (betData[i].runner == result.data.data[0].win) {
-                handleWinningBet(betData[i]);
+                await handleWinningBet(betData[i]);
               } else {
                 const description = result.data.data[0].desc;
                 const generalResult = description.split(" || ");
@@ -664,9 +664,9 @@ function scoreChecker() {
                   betData[i].runner == widColor ||
                   betData[i].runner == widOdd
                 ) {
-                  handleWinningBet(betData[i]);
+                  await handleWinningBet(betData[i]);
                 } else {
-                  handleLosingBet(betData[i]);
+                  await handleLosingBet(betData[i]);
                 }
               }
             }
@@ -676,12 +676,12 @@ function scoreChecker() {
             console.log(" ===================== result", result.data.data[0]);
             console.log(" ===================== winner", result.data.data[0].win);
             if (result.data.data[0].win == "0") {
-              handleDrawBet(betData[i]);
+              await handleDrawBet(betData[i]);
               console.log(" ===================== commining from Line 620");
             } 
             else {
               if ((betData[i].runner == "1" && result.data.data[0].win == "1") || (betData[i].runner == "3" && result.data.data[0].win == "3")) {
-                handleWinningBet(betData[i]);                
+                await handleWinningBet(betData[i]);                
               } else {
                 let sid = result.data.data[0].sid.split(",");
                 
@@ -695,76 +695,76 @@ function scoreChecker() {
                   if(betData[i].runner == "2"){
                     if(sid[1] == "12") {
                       betData[i].winningAmount = betData[i].betAmount;
-                      handleWinningBet(betData[i]);
+                      await handleWinningBet(betData[i]);
                     } else if(sid[1] == "13") {
                       betData[i].winningAmount = betData[i].betAmount * 4;
-                      handleWinningBet(betData[i]);
+                      await handleWinningBet(betData[i]);
                     } else if(sid[1] == "14") {
                       betData[i].winningAmount = betData[i].betAmount * 6;
-                      handleWinningBet(betData[i]);
+                      await handleWinningBet(betData[i]);
                     } else if(sid[1] == "15") {
                       betData[i].winningAmount = betData[i].betAmount * 35;
-                      handleWinningBet(betData[i]);
+                      await handleWinningBet(betData[i]);
                     } else if(sid[1] == "16") {
                       betData[i].winningAmount = betData[i].betAmount * 45;
-                      handleWinningBet(betData[i]);
+                      await handleWinningBet(betData[i]);
                     }
                   } else if(betData[i].runner == "4"){
                     if(sid[2] == "22") {
                       betData[i].winningAmount = betData[i].betAmount;
-                      handleWinningBet(betData[i]);
+                      await handleWinningBet(betData[i]);
                     } else if(sid[2] == "23") {
                       betData[i].winningAmount = betData[i].betAmount * 4;
-                      handleWinningBet(betData[i]);
+                      await handleWinningBet(betData[i]);
                     } else if(sid[2] == "24") {
                       betData[i].winningAmount = betData[i].betAmount * 6;
-                      handleWinningBet(betData[i]);
+                      await handleWinningBet(betData[i]);
                     } else if(sid[2] == "25") {
                       betData[i].winningAmount = betData[i].betAmount * 35;
-                      handleWinningBet(betData[i]);
+                      await handleWinningBet(betData[i]);
                     } else if(sid[2] == "26") {
                       betData[i].winningAmount = betData[i].betAmount * 45;
-                      handleWinningBet(betData[i]);
+                      await handleWinningBet(betData[i]);
                     }
                   } else {
-                    handleLosingBet(betData[i]);
+                    await handleLosingBet(betData[i]);
                   }
                 } else if(sid.length == 2 && sid[1][0] == "1" && betData[i].runner == "2") {
                   if(sid[1] == "12") {
                     betData[i].winningAmount = betData[i].betAmount;
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else if(sid[1] == "13") {
                     betData[i].winningAmount = betData[i].betAmount * 4;
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else if(sid[1] == "14") {
                     betData[i].winningAmount = betData[i].betAmount * 6;
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else if(sid[1] == "15") {
                     betData[i].winningAmount = betData[i].betAmount * 35;
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else if(sid[1] == "16") {
                     betData[i].winningAmount = betData[i].betAmount * 45;
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   }
                 } else if(sid.length == 2 && sid[1][0] == "2" && betData[i].runner == "4") {
                   if(sid[1] == "22") {
                     betData[i].winningAmount = betData[i].betAmount;
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else if(sid[1] == "23") {
                     betData[i].winningAmount = betData[i].betAmount * 4;
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else if(sid[1] == "24") {
                     betData[i].winningAmount = betData[i].betAmount * 6;
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else if(sid[1] == "25") {
                     betData[i].winningAmount = betData[i].betAmount * 35;
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else if(sid[1] == "26") {
                     betData[i].winningAmount = betData[i].betAmount * 45;
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   }
                 } else {
-                  handleLosingBet(betData[i]);
+                  await handleLosingBet(betData[i]);
                 }               
               }
             }
@@ -773,13 +773,13 @@ function scoreChecker() {
           // Card32eu
           else if (tableId === "40") {
             if (result.data.data[0].win === "0") {
-              handleDrawBet(betData[i]);
+              await handleDrawBet(betData[i]);
             } else {
               if (betData[i].runner == result.data.data[0].win) {
                 if(betData[i].type == 1){
-                  handleLosingBet(betData[i]);
+                  await handleLosingBet(betData[i]);
                 } else if(betData[i].type == 0){
-                  handleWinningBet(betData[i]);
+                  await handleWinningBet(betData[i]);
                 }
               } else {
                 let wid = "0";
@@ -872,20 +872,20 @@ function scoreChecker() {
                   betData[i].runner == widPair
                 ) {
                   if(betData[i].type == 1){
-                    handleLosingBet(betData[i]);
+                    await handleLosingBet(betData[i]);
                   } else if(betData[i].type == 0){
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else {
-                    handleDrawBet(betData[i], 0)
+                    await handleDrawBet(betData[i], 0)
                   }
                   
                 } else {
                   if(betData[i].type == 0){
-                    handleLosingBet(betData[i]);
+                    await handleLosingBet(betData[i]);
                   } else if(betData[i].type == 1){
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else {
-                    handleDrawBet(betData[i], 0)
+                    await handleDrawBet(betData[i], 0)
                   }
                 }
               }
@@ -894,15 +894,15 @@ function scoreChecker() {
           // AAA
           else if (tableId === "41") {
             if (result.data.data[0].win === "0") {
-              handleDrawBet(betData[i]);
+              await handleDrawBet(betData[i]);
             } else {
               if (betData[i].runner == result.data.data[0].win) {
                 if(betData[i].type == 1){
-                  handleLosingBet(betData[i]);
+                  await handleLosingBet(betData[i]);
                 } else if(betData[i].type == 0){
-                  handleWinningBet(betData[i]);
+                  await handleWinningBet(betData[i]);
                 } else {
-                  handleDrawBet(betData[i], 0)
+                  await handleDrawBet(betData[i], 0)
                 }
               } else {
                 let wid = "";
@@ -964,19 +964,19 @@ function scoreChecker() {
                   betData[i].runner == widSeven
                 ) {
                   if(betData[i].type == 1){
-                    handleLosingBet(betData[i]);
+                    await handleLosingBet(betData[i]);
                   } else if(betData[i].type == 0){
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else {
-                    handleDrawBet(betData[i], 0)
+                    await handleDrawBet(betData[i], 0)
                   }
                 } else {
                   if(betData[i].type == 0){
-                    handleLosingBet(betData[i]);
+                    await handleLosingBet(betData[i]);
                   } else if(betData[i].type == 1){
-                    handleWinningBet(betData[i]);
+                    await handleWinningBet(betData[i]);
                   } else {
-                    handleDrawBet(betData[i], 0)
+                    await handleDrawBet(betData[i], 0)
                   }
                 }
               }
