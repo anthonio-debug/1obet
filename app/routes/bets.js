@@ -1834,7 +1834,7 @@ const placeBet = async (req, res) => {
       let inning = score.inning;
       console.log(" =========================================================== inning ", inning);
       let sessionAddition = 0;
-      if (inning == 2) {
+      if (inning == 2){
         if (type == "TEST") {
           sessionAddition = 9;
         } else if (type == "ODI") {
@@ -1859,6 +1859,7 @@ const placeBet = async (req, res) => {
           message: "betting not allowed !"
         });
       }
+
       let currentSessionOver = Math.ceil(currentOver % 5);
 
       currentSession = Math.ceil(currentOver / 5) + sessionAddition;
@@ -1876,7 +1877,7 @@ const placeBet = async (req, res) => {
         case "TEST":
           totalSessions = 9;
           currentSessionOver = Math.ceil( currentOver % 10 );
-          currentSession = Math.ceil( currentOver / 10 );
+          currentSession = Math.ceil( currentOver / 10 ) + sessionAddition;
           console.log(" Callllllllllllllllllleeeeeeeeeeeeeeeed ");
           break;
         default:
@@ -1890,10 +1891,7 @@ const placeBet = async (req, res) => {
       if (inning == 2 && currentSession == (totalSessions + sessionAddition)) {
         return res.status(404).send({
           success: false,
-          message: "betting not allowed !",
-          currentSession: currentSession,
-          totalSessions: totalSessions,
-          currentSessionOver: currentSessionOver,
+          message: "betting not allowed !"
         });
       } 
       else if ((type == "TEST" && currentSessionOver > 8 ) || (type != "TEST" && currentSessionOver > 3 )){
@@ -1905,7 +1903,6 @@ const placeBet = async (req, res) => {
 
       }
       _3rdPartyMarketId = subMarketDetail.Id;
-      currentSession = currentSession + sessionAddition
       console.log(" ================== Bets are Allowed ");
       console.log(" ================== currentSession  ", currentSession);
     }
