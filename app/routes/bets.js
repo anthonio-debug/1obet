@@ -1862,7 +1862,7 @@ const placeBet = async (req, res) => {
 
       currentSession = Math.ceil(currentOver / 5) + sessionAddition;
 
-      switch (eventDetail.matchType){
+      switch (type){
         case "T10":
           totalSessions = 2;
           break;
@@ -1876,6 +1876,7 @@ const placeBet = async (req, res) => {
           totalSessions = 9;
           currentSessionOver = Math.ceil( currentOver % 10 );
           currentSession = Math.ceil( currentOver / 10 );
+          console.log(" Callllllllllllllllllleeeeeeeeeeeeeeeed ");
           break;
         default:
           return res.json(404, {
