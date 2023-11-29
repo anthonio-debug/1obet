@@ -1832,6 +1832,7 @@ const placeBet = async (req, res) => {
       let currentOver = Number(score.overs);
       let type = score.type;
       let inning = score.inning;
+      console.log(" =========================================================== inning ", inning);
       let sessionAddition = 0;
       if (inning == 2) {
         if (type == "TEST") {
