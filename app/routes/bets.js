@@ -1905,6 +1905,7 @@ const placeBet = async (req, res) => {
 
       }
       _3rdPartyMarketId = subMarketDetail.Id;
+      currentSession = currentSession + sessionAddition
       console.log(" ================== Bets are Allowed ");
       console.log(" ================== currentSession  ", currentSession);
     }
