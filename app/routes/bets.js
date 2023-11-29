@@ -1899,7 +1899,7 @@ const placeBet = async (req, res) => {
         console.log( " ================ currentSessionOver ================ ", currentSessionOver);
         return res.status(404).send({
           success: false,
-          message: `betting not Allowed in ${type == "TEST" ? Math.ceil(currentOver % 10) : Math.ceil(currentOver % 5)} over`
+          message: `Betting not Allowed in ${type == "TEST" ? Math.ceil(currentOver % 10) : Math.ceil(currentOver % 5)} over`
         })
 
       }
