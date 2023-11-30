@@ -3284,10 +3284,8 @@ async function cricketLiveScore(id) {
         const type = event ? event?.matchType : null;
         // const scoreInfo     = JSON.parse(data).score
         const scoreInfo = data[0].score;
-
+        let day = 1;
         let score = 0;
-        const testDay  = score.split("&");
-        let day        = testDay.length;
         let inning = 1;
         if (scoreInfo.activenation1 == 1) {
           score = scoreInfo.score1;
@@ -3298,6 +3296,7 @@ async function cricketLiveScore(id) {
         }
         if (type == "TEST") {
           score = score.split("&");
+          day   = score.length;
           score = score[score.length - 1].trim();
           played = played.split("&");
           played = played[played.length - 1].trim();
