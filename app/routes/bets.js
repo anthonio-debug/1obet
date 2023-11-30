@@ -1903,8 +1903,8 @@ const placeBet = async (req, res) => {
         })
 
       }
-      if(type == "TEST" && score.day >1){
-        currentSession = currentSession + 18 * (score.day-1)
+      if(type == "TEST" && score?.day >1){
+        currentSession = currentSession + 18
       }
       _3rdPartyMarketId = subMarketDetail.Id;
       console.log(" ================== Bets are Allowed ");
