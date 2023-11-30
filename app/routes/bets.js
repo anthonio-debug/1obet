@@ -2507,12 +2507,13 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: " Insufficient balance " });
       }
 
-      if (subMarketDetail.Id != config.Fancy) {
-        await Bets.updateMany(
+      if (subMarketDetail.Id == config.Fancy) {
+        let setCalculateExpFalse = await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
+            fancyData: fancyData,
             status: 1,
           },
           { calculateExp: false }
@@ -2538,19 +2539,17 @@ const placeBet = async (req, res) => {
             matchId: matchId,
             roundId: roundId,
             status: 1,
+            runner: selectionId
           },
           { calculateExp: false }
         );
       } else {
-        let setCalculateExpFalse = await Bets.updateMany(
+        await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
-            fancyData: fancyData,
             status: 1,
-            // backFancyRate: backFancyRate,
-            // layFancyRate: layFancyRate
           },
           { calculateExp: false }
         );
