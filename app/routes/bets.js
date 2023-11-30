@@ -1903,6 +1903,9 @@ const placeBet = async (req, res) => {
         })
 
       }
+      if(type == "TEST" && score.day >1){
+        currentSession = currentSession + 18 * (score.day-1)
+      }
       _3rdPartyMarketId = subMarketDetail.Id;
       console.log(" ================== Bets are Allowed ");
       console.log(" ================== currentSession  ", currentSession);
@@ -3283,6 +3286,8 @@ async function cricketLiveScore(id) {
         const scoreInfo = data[0].score;
 
         let score = 0;
+        const testDay  = score.split("&");
+        let day        = testDay.length;
         let inning = 1;
         if (scoreInfo.activenation1 == 1) {
           score = scoreInfo.score1;
@@ -3314,6 +3319,7 @@ async function cricketLiveScore(id) {
         response.inning = inning;
         response.balls = scoreInfo.balls;
         response.type = event.matchType;
+        response.day = day;
         return response;
       } else {
         return 0;
