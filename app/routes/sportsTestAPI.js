@@ -45,7 +45,7 @@ async function listEvents(req, res) {
     }
 }
 
-async function listEvents(req, res) {
+async function listMarketBook(req, res) {
     try {
         const marketIds = "1.221889053,1.221889055"
         const response = await axios.post(`${apiURL}listMarketBook/testqms/${marketIds}`)
@@ -57,7 +57,8 @@ async function listEvents(req, res) {
 
 
 router.get('/testSports/events', listEvents);
+router.get('/testSports/marketbooks', listMarketBook);
 
-module.exports = { router, listEvents };
+module.exports = { router, listEvents, listMarketBook };
 
 
