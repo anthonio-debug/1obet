@@ -2304,8 +2304,86 @@ const placeBet = async (req, res) => {
         );
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
         /* ============================= */
-      } 
-      else {
+      } else if(marketId == "8") {       
+        let lastBetsCount = await Bets.countDocuments({
+          marketId: _3rdPartyMarketId,
+          userId: req.decoded.userId,
+          matchId: matchId,
+          runner: selectionId,
+          status: 1,
+        });
+        console.log(" ======================= Total Count of Prev Bets ", lastBetsCount);
+        if (lastBetsCount) {
+          const resp = await asainCalculateExposure(
+            _3rdPartyMarketId,
+            req.decoded.userId,
+            type,
+            selectionId,
+            loosingAmount,
+            winningAmount,
+            expoisureType,
+            matchId
+          );
+          runnersPosition = resp.runnersPosition;
+          prevExpAmount = resp.prevExpAmount;
+        } else {
+          if (type == 0) {
+            const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
+              if (item.runner == selectionId) {
+                item.amount = Number(
+                  (item.amount + Number(winningAmount.toFixed(3))).toFixed(3)
+                );
+              } else {
+                item.amount = Number(
+                  (item.amount - Number(loosingAmount.toFixed(3))).toFixed(3)
+                );
+              }
+              return item;
+            });
+            console.log(
+              " ================== runnerCurrentPosition ================== ",
+              runnerCurrentPosition
+            );
+            runnersPosition = runnerCurrentPosition;
+            console.log(
+              " ================== runnersPosition ================== ",
+              runnersPosition
+            );
+          } else if (type == 1) {
+            runnersPosition = runnerForSaveInbets.map((item) => {
+              if (item.runner == selectionId) {
+                item.amount = Number(
+                  (item.amount - Number(loosingAmount.toFixed(3))).toFixed(3)
+                );
+              } else {
+                item.amount = Number(
+                  (item.amount + Number(winningAmount.toFixed(3))).toFixed(3)
+                );
+              }
+              return item;
+            });
+          }
+        }
+
+        console.log(" ================ runner For SaveIn bets INFO ================ ", runnerForSaveInbets);
+        console.log(" ================ RUNNER INFO ================ ",runnersPosition);
+        console.log(" ================ EXP AMOUNT ================ ",expAmount);
+
+        expAmount = runnersPosition.reduce((min, current) => {
+          return current.amount < min.amount ? current : min;
+        }, runnersPosition[0]);
+        expAmount = expAmount.amount;
+        console.log(
+          " ================ RUNNER INFO ================ ",
+          runnersPosition
+        );
+        console.log(
+          " ================ EXP AMOUNT ================ ",
+          expAmount
+        );
+        expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
+      
+      } else {
         let lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
@@ -2586,6 +2664,64 @@ const placeBet = async (req, res) => {
     return res.status(404).send({ message: `Something went wrong !` });
   }
 };
+async function asainCalculateExposure(
+  marketId,
+  userId,
+  type,
+  selectedRunner,
+  loosingAmount,
+  winningAmount,
+  expoisureType,
+  matchId
+) {
+  console.log(" = marketId =", marketId);
+  let lastBet = await Bets.find({
+    marketId: marketId,
+    userId: userId,
+    matchId: matchId,
+    status: 1,
+    runner: selectedRunner
+  })
+    .sort({ _id: -1 })
+    .limit(1);
+
+  // console.log(" ============= lastBet ", lastBet);
+  const lastrunnersPosition = lastBet[0].runnersPosition;
+  let newPosition;
+  if (type == 0) {
+    console.log(" ================= Back is called  =================  ");
+    newPosition = lastrunnersPosition.map((item) => {
+      if (item.runner == selectedRunner) {
+        item.amount = Number(
+          (item.amount + Number(winningAmount.toFixed(3))).toFixed(3)
+        );
+      } else {
+        item.amount = Number(
+          (item.amount - Number(loosingAmount.toFixed(3))).toFixed(3)
+        );
+      }
+      return item;
+    });
+  } else if (type == 1) {
+    console.log(" ================= Lay is called  =================  ");
+    newPosition = lastrunnersPosition.map((item) => {
+      if (item.runner == selectedRunner) {
+        item.amount = Number(
+          (item.amount - Number(loosingAmount.toFixed(3))).toFixed(3)
+        );
+      } else {
+        item.amount = Number(
+          (item.amount + Number(winningAmount.toFixed(3))).toFixed(3)
+        );
+      }
+      return item;
+    });
+  }
+  return {
+    runnersPosition: newPosition,
+    prevExpAmount: lastBet[0].exposureAmount,
+  };
+}
 
 async function calculateExposure(
   marketId,
