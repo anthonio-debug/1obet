@@ -1830,7 +1830,7 @@ const placeBet = async (req, res) => {
         });
       }
       let currentOver = Number(score.overs);
-      let type = score.type;
+      let type = eventDetail.matchType;
       let inning = score.inning;
       console.log(" =========================================================== inning ", inning);
       let sessionAddition = 0;
@@ -1864,7 +1864,7 @@ const placeBet = async (req, res) => {
 
       currentSession = Math.ceil(currentOver / 5) + sessionAddition;
 
-      switch (type){
+      switch (eventDetail.matchType){
         case "T10":
           totalSessions = 2;
           break;
