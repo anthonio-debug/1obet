@@ -690,79 +690,13 @@ function scoreChecker() {
                 //"sid": "3,12"
                 //"sid": "3,22"
                 // runner: 1, 2, 3, 4
+                const rateArray = [1, 4, 6, 35, 45]
+                const res = sid.find((a) => a.length === 2 && parseInt(runner) % 2 == 0 && a[0] == parseInt(betData[i].runner) / 2)
 
-                if(sid.length == 3){
-                  if(betData[i].runner == "2"){
-                    if(sid[1] == "12") {
-                      betData[i].winningAmount = betData[i].betAmount;
-                      await handleWinningBet(betData[i]);
-                    } else if(sid[1] == "13") {
-                      betData[i].winningAmount = betData[i].betAmount * 4;
-                      await handleWinningBet(betData[i]);
-                    } else if(sid[1] == "14") {
-                      betData[i].winningAmount = betData[i].betAmount * 6;
-                      await handleWinningBet(betData[i]);
-                    } else if(sid[1] == "15") {
-                      betData[i].winningAmount = betData[i].betAmount * 35;
-                      await handleWinningBet(betData[i]);
-                    } else if(sid[1] == "16") {
-                      betData[i].winningAmount = betData[i].betAmount * 45;
-                      await handleWinningBet(betData[i]);
-                    }
-                  } else if(betData[i].runner == "4"){
-                    if(sid[2] == "22") {
-                      betData[i].winningAmount = betData[i].betAmount;
-                      await handleWinningBet(betData[i]);
-                    } else if(sid[2] == "23") {
-                      betData[i].winningAmount = betData[i].betAmount * 4;
-                      await handleWinningBet(betData[i]);
-                    } else if(sid[2] == "24") {
-                      betData[i].winningAmount = betData[i].betAmount * 6;
-                      await handleWinningBet(betData[i]);
-                    } else if(sid[2] == "25") {
-                      betData[i].winningAmount = betData[i].betAmount * 35;
-                      await handleWinningBet(betData[i]);
-                    } else if(sid[2] == "26") {
-                      betData[i].winningAmount = betData[i].betAmount * 45;
-                      await handleWinningBet(betData[i]);
-                    }
-                  } else {
-                    await handleLosingBet(betData[i]);
-                  }
-                } else if(sid.length == 2 && sid[1][0] == "1" && betData[i].runner == "2") {
-                  if(sid[1] == "12") {
-                    betData[i].winningAmount = betData[i].betAmount;
-                    await handleWinningBet(betData[i]);
-                  } else if(sid[1] == "13") {
-                    betData[i].winningAmount = betData[i].betAmount * 4;
-                    await handleWinningBet(betData[i]);
-                  } else if(sid[1] == "14") {
-                    betData[i].winningAmount = betData[i].betAmount * 6;
-                    await handleWinningBet(betData[i]);
-                  } else if(sid[1] == "15") {
-                    betData[i].winningAmount = betData[i].betAmount * 35;
-                    await handleWinningBet(betData[i]);
-                  } else if(sid[1] == "16") {
-                    betData[i].winningAmount = betData[i].betAmount * 45;
-                    await handleWinningBet(betData[i]);
-                  }
-                } else if(sid.length == 2 && sid[1][0] == "2" && betData[i].runner == "4") {
-                  if(sid[1] == "22") {
-                    betData[i].winningAmount = betData[i].betAmount;
-                    await handleWinningBet(betData[i]);
-                  } else if(sid[1] == "23") {
-                    betData[i].winningAmount = betData[i].betAmount * 4;
-                    await handleWinningBet(betData[i]);
-                  } else if(sid[1] == "24") {
-                    betData[i].winningAmount = betData[i].betAmount * 6;
-                    await handleWinningBet(betData[i]);
-                  } else if(sid[1] == "25") {
-                    betData[i].winningAmount = betData[i].betAmount * 35;
-                    await handleWinningBet(betData[i]);
-                  } else if(sid[1] == "26") {
-                    betData[i].winningAmount = betData[i].betAmount * 45;
-                    await handleWinningBet(betData[i]);
-                  }
+                if (res) {
+                  const rate = rateArray[parseInt(res[1])-2]
+                  betData[i].winningAmount = betData[i].betAmount * rate;
+                  await handleWinningBet(betData[i]);
                 } else {
                   await handleLosingBet(betData[i]);
                 }               
