@@ -691,7 +691,7 @@ function scoreChecker() {
                 //"sid": "3,22"
                 // runner: 1, 2, 3, 4
                 const rateArray = [1, 4, 6, 35, 45]
-                const res = sid.find((a) => a.length === 2 && parseInt(runner) % 2 == 0 && a[0] == parseInt(betData[i].runner) / 2)
+                const res = sid.find((a) => a.length === 2 && parseInt(betData[i].runner) % 2 == 0 && a[0] == parseInt(betData[i].runner) / 2)
 
                 if (res) {
                   const rate = rateArray[parseInt(res[1])-2]
