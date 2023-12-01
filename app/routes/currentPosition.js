@@ -77,7 +77,7 @@ function getCurrentPosition(req, res) {
   }
 }
 
-function getCurrentPosition2(req, res) {
+function getCurrentPosition_old(req, res) {
   try{
     const userId = req.decoded.userId;
     console.log("userId ======= ", userId);
@@ -158,15 +158,93 @@ const currentPositionDetails = async (req, res) => {
   try{
     const userId = req.decoded.userId;
     const matchId = req.query.matchId;
-    const query = {
-      userId: userId
-    }
-    if (matchId) {
-      matchsId: matchId
-    }
+
     currentPosition.aggregate([
       {
-        $match: {query}
+        $match: {
+          userId: userId,
+          matchsId: matchId
+        }
+      },
+      {
+        $addFields: {
+          'betsId': { $toObjectId: "$betId" }
+        }
+      },
+      {
+        "$lookup": {
+          "from": "bets",
+          "localField": "betsId",
+          "foreignField": "_id",
+          "as": "bets"
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
+          matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } },
+          loosingAmount: { $first: "$amount" },
+          maxWinningAmount: {
+            $first: {
+              $multiply: [
+                { $arrayElemAt: ["$bets.loosingAmount", 0] },
+                { $divide: ["$share", 100] }
+              ]
+            }
+          },
+          runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
+          TargetScore: { $first: { $arrayElemAt: ["$bets.TargetScore", 0] } },
+          betRate: { $first: { $arrayElemAt: ["$bets.betRate", 0] } },
+          betSession: { $first: { $arrayElemAt: ["$bets.betSession", 0] } },
+          resultId: { $first: { $arrayElemAt: ["$bets.resultId", 0] } },
+          fancyData: { $first: { $arrayElemAt: ["$bets.fancyData", 0] } },
+          isfancyOrbookmaker: { $first: { $arrayElemAt: ["$bets.isfancyOrbookmaker", 0] } },
+          subMarketId: { $first: { $arrayElemAt: ["$bets.subMarketId", 0] } },
+          fancyRate: { $first: { $arrayElemAt: ["$bets.fancyRate", 0] } },
+          runnerId: { $first: { $arrayElemAt: ["$bets.runnerName", 0] } },
+          type: { $first: { $arrayElemAt: ["$bets.type", 0] } },
+          share: { $first: "$share" }
+        }
+      }
+    ], (err, currentPositionData) => {
+      if (err) {
+        const response = {
+          success: false,
+          message: 'Failed to get data',
+          error: err,
+        };
+        res.send(response);
+      } else {
+        const response = {
+          success: true,
+          message: 'current position records',
+          results: currentPositionData
+        };
+        res.send(response);
+      }
+    });
+  }catch(err){
+    // console.log("current positiion Error ============= ", err);
+    const response = {
+      success: true,
+      message: `current position error ${err}`,
+    }
+    res.send(response);
+  }
+}
+
+const getCurrentPosition2 = async (req, res) => {
+  try{
+    const userId = req.decoded.userId;
+    const matchId = req.query.matchId;
+
+    currentPosition.aggregate([
+      {
+        $match: {
+          userId: userId,
+          matchsId: matchId
+        }
       },
       {
         $addFields: {
