@@ -158,13 +158,15 @@ const currentPositionDetails = async (req, res) => {
   try{
     const userId = req.decoded.userId;
     const matchId = req.query.matchId;
-
+    const query = {
+      userId: userId
+    }
+    if (matchId) {
+      matchsId: matchId
+    }
     currentPosition.aggregate([
       {
-        $match: {
-          userId: userId,
-          matchsId: matchId
-        }
+        $match: {query}
       },
       {
         $addFields: {
