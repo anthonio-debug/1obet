@@ -14,6 +14,7 @@ const ToolForEvent = require("./restApiSystem/src/tools_for_events.js")();
 const ToolForRacing = require("./restApiSystem/src/tools_for_racing.js")();
 const ToolForFancy = require("./restApiSystem/src/tools_for_fancy.js")();
 const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
+const ToolForTestSport = require("./restApiSystem/src/tools_for_test_sport.js")();
 const httpServer = https.createServer(express);
 const io = socketIo(httpServer, {
   path: "/websocket",
@@ -55,6 +56,9 @@ async function main() {
   //init asian odds
   ToolForAsian.init(io, express);
 
+  //init test sports odd
+  ToolForTestSport.init(io, express);
+  
   httpServer.listen(port, () => {
     console.log(`Server listening on port ${port}`);
   });
