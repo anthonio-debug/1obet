@@ -51,11 +51,11 @@ async function listMarketBook(req, res) {
         const response = await axios.get(`${apiURL}listMarketBook/testqms/${marketIds}`)
         let resultArray = [];
 
-        if(response.data.lengh > 0) {
-            for (let i = 0; i < response.data.lengh; i++) {
+        if(response.data.result.lengh > 0) {
+            for (let i = 0; i < response.result.lengh; i++) {
                 const odd = {
-                    marketId: response.data[i].marketId,
-                    runners: response.data[i].runners
+                    marketId: response.data.result[i].marketId,
+                    runners: response.data.result[i].runners
                 }
                 resultArray.push(odd)
             }
