@@ -49,7 +49,18 @@ async function listMarketBook(req, res) {
     try {
         const marketIds = req.params.ids
         const response = await axios.get(`${apiURL}listMarketBook/testqms/${marketIds}`)
-        res.status(200).json({success: true, data: response.data})
+        let resultArray = [];
+
+        if(response.data.lengh > 0) {
+            for (let i = 0; i < response.data.lengh; i++) {
+                const odd = {
+                    marketId: response.data[i].marketId,
+                    runners: response.data[i].runners
+                }
+                resultArray.push(odd)
+            }
+        }
+        res.status(200).json({success: true, data: resultArray})
     } catch (err) {
         res.status(500).json({success: false, msg: "Failed to get "})
     }
