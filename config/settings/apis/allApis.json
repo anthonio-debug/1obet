@@ -185,5 +185,6 @@
   "SetAsianDashboard",
   "removeOdds",
   "listBet",
-  "testSports"
+  "testSports",
+  "trackstuck"
 ]
