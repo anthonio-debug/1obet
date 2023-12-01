@@ -1,5 +1,8 @@
 const express = require('express');
+const Bets = require("../models/bets")
+const Users = require("../models/user")
 const axios = require('axios');
+const User = require('../models/user');
 const router = express.Router();
 const apiURL= "http://185.58.225.212:8080/api/"
 
@@ -66,10 +69,47 @@ async function listMarketBook(req, res) {
     }
 }
 
+async function inActiveUserExposure(req, res) {
+    try {
+        const stuckUsers = await User.find({exposure: {$lt: 0}})
+        if(stuckUsers.length > 0) {
+            for(let i = 0; i < stuckUsers.length; i++) {
+                const activeBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 1})
+                if(activeBetCount > 0) {
+                    stuckUsers.pop(e => e.userId == stuckUsers[i].userId)    
+                } else {
+                    const inActiveBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 0})
+                    stuckUsers[i].betCount = inActiveBetCount;
+                }
+            }
+        }
+        res.status(200).json({success: true, data: stuckUsers})
+    } catch (err) {
+        res.status(500).json({success: false, msg: "Failed to get "})
+    }
+}
+
+async function activeUserExposure(req, res) {
+    try {
+        const stuckUsers = await User.find({exposure: {$gte: 0}})
+        if(stuckUsers.length > 0) {
+            for(let i = 0; i < stuckUsers.length; i++) {
+                const activeBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 1})
+                stuckUsers[i].activeBetCount = activeBetCount;
+            }
+        }
+        res.status(200).json({success: true, data: stuckUsers})
+    } catch (err) {
+        res.status(500).json({success: false, msg: "Failed to get "})
+    }
+}
 
 router.get('/testSports/events', listEvents);
 router.get('/testSports/marketbooks/:ids', listMarketBook);
 
-module.exports = { router, listEvents, listMarketBook };
+router.get('/trackstuck/activeusers', activeUserExposure);
+router.get('/trackstuck/inactiveusers', inActiveUserExposure);
+
+module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure };
 
 

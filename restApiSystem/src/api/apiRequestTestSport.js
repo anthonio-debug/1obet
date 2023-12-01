@@ -2,6 +2,7 @@
 
 const axios = require("axios");
 const TestSportOdd = require("../../../app/models/TestSport");
+const MarketId = require("../../../app/models/marketIds");
 
 module.exports = apiRequests;
 let io;
@@ -52,20 +53,24 @@ function apiRequests() {
     async function getOddsFromProvider() {
       try {
         let resultArray = [];
-        const marketIds = "1.221964395,1.221964397"
+        const marketIds = "1.221196029,1.221196013,1.221196016,1.221196034,1.221196077"
         const response = await axios.get(`${apiURL}/${marketIds}`)
         if(response.data.result.length > 0) {
             for (let i = 0; i < response.data.result.length; i++) {
-                const odd = {
-                    eventId: "32843849",
-                    marketId: response.data.result[i].marketId,
-                    runners: response.data.result[i].runners
-                }
+              const marketId = await MarketId.findOne({eventId: "32796791", marketId: response.data.result[i].marketId})
+              const odd = {
+                eventId: "32796791",
+                marketId: response.data.result[i].marketId,
+                runners: response.data.result[i].runners,
+                marketName: marketId?.marketName
+              }
+
+
                 const addNewSport = await TestSportOdd.findOneAndUpdate({marketId: response.data.result[i].marketId}, odd, {upsert: true})
                 resultArray.push(addNewSport)
             }
             
-            const oddsData = await TestSportOdd.find()
+            const oddsData = await TestSportOdd.find({$or:[{marketId:"1.221196034"},{marketId:"1.221196077"},{marketId:"1.221196029"},{marketId:"1.221196013"},{marketId:"1.221196016"}]})
             io.emit("testSports", oddsData)
         }
       } catch (err) {
