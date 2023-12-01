@@ -300,6 +300,7 @@ const getCurrentPosition2 = async (req, res) => {
           sportsId: { $first: { $arrayElemAt: ["$bets.sportsId", 0] } },
           event: { $first: { $arrayElemAt: ["$bets.event", 0] } },
           mId: { $first: { $arrayElemAt: ["$matches.Id", 0] } },
+          matchId: { $first: { $arrayElemAt: ["$matches._id", 0] } },
           share: { $first: "$share" }
         }
       }
