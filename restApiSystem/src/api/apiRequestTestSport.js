@@ -68,8 +68,6 @@ function apiRequests() {
             const oddsData = await TestSportOdd.find()
             io.emit("testSports", oddsData)
         }
-        
-        await Promise.all(resultArray);
       } catch (err) {
         console.log(err);
       }
