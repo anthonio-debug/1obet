@@ -795,13 +795,19 @@ function settlePLAccount(req, res) {
     (err, result) => {
       if (err || !result)
         return res.status(404).send({ message: 'user not found' });
-      if (req.body.amount > result.availableBalance) {
+      if (req.body.amount > Math.abs(result.availableBalance)) {
         return res
           .status(404)
           .send(`Max amount to transfer: ${result.availableBalance}`);
       }
-      result.availableBalance -= req.body.amount;
-      result.balance -= req.body.amount;
+      if(result.availableBalance < 0){
+        result.availableBalance += req.body.amount;
+        result.balance += req.body.amount;
+      }else {
+        result.availableBalance -= req.body.amount;
+        result.balance -= req.body.amount;
+      }
+
       result.save();
       return res.send({
         success: true,

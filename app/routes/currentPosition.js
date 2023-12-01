@@ -242,8 +242,7 @@ const getCurrentPosition2 = async (req, res) => {
     currentPosition.aggregate([
       {
         $match: {
-          userId: userId,
-          // '$bets.calculateExp': true
+          userId: userId
         }
       },
       {
@@ -263,7 +262,7 @@ const getCurrentPosition2 = async (req, res) => {
         $group: {
           _id: "$_id",
           marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
-          matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } },
+          matchId:  { $first: { $arrayElemAt: ["$bets.matchId", 0] } },
           loosingAmount: { $first: "$amount" },
           maxWinningAmount: {
             $first: {
