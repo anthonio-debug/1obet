@@ -259,6 +259,19 @@ const getCurrentPosition2 = async (req, res) => {
         }
       },
       {
+        $addFields: {
+          'inPlayEventId': { $toObjectId: "$matchsId" }
+        }
+      },
+      {
+        "$lookup": {
+          "from": "inplayevents",
+          "localField": "inPlayEventId",
+          "foreignField": "_id",
+          "as": "matches"
+        }
+      },
+      {
         $group: {
           _id: "$_id",
           marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
@@ -286,6 +299,7 @@ const getCurrentPosition2 = async (req, res) => {
           type: { $first: { $arrayElemAt: ["$bets.type", 0] } },
           sportsId: { $first: { $arrayElemAt: ["$bets.sportsId", 0] } },
           event: { $first: { $arrayElemAt: ["$bets.event", 0] } },
+          mId: { $first: { $arrayElemAt: ["$matches.Id", 0] } },
           share: { $first: "$share" }
         }
       }
