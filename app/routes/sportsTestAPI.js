@@ -47,9 +47,9 @@ async function listEvents(req, res) {
 
 async function listMarketBook(req, res) {
     try {
-        const marketIds = "1.221889053,1.221889055"
+        const marketIds = req.params.ids
         const response = await axios.post(`${apiURL}listMarketBook/testqms/${marketIds}`)
-        res.status(200).json({success: true, data: response})
+        res.status(200).json({success: true, data: response.data})
     } catch (err) {
         res.status(500).json({success: false, msg: "Failed to get "})
     }
@@ -57,7 +57,7 @@ async function listMarketBook(req, res) {
 
 
 router.get('/testSports/events', listEvents);
-router.get('/testSports/marketbooks', listMarketBook);
+router.get('/testSports/marketbooks/:ids', listMarketBook);
 
 module.exports = { router, listEvents, listMarketBook };
 
