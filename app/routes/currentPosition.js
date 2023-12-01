@@ -303,7 +303,10 @@ const getCurrentPosition2 = async (req, res) => {
           matchId: { $first: { $arrayElemAt: ["$matches._id", 0] } },
           share: { $first: "$share" }
         }
-      }
+      },
+      { 
+        $sort: { _id: -1 } 
+      },
     ], (err, currentPositionData) => {
       if (err) {
         const response = {
