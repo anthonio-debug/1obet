@@ -48,7 +48,7 @@ async function listEvents(req, res) {
 async function listMarketBook(req, res) {
     try {
         const marketIds = req.params.ids
-        const response = await axios.post(`${apiURL}listMarketBook/testqms/${marketIds}`)
+        const response = await axios.get(`${apiURL}listMarketBook/testqms/${marketIds}`)
         res.status(200).json({success: true, data: response.data})
     } catch (err) {
         res.status(500).json({success: false, msg: "Failed to get "})
