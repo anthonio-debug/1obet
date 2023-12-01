@@ -165,7 +165,6 @@ module.exports.validate = (method) => {
           .withMessage('id must be string '),
         body('amount', 'amount is required')
           .exists()
-          .isInt()
           .withMessage('amount must be number '),
         body('description', 'description is required')
           .exists()
