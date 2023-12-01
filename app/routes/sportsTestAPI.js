@@ -52,7 +52,7 @@ async function listMarketBook(req, res) {
         let resultArray = [];
 
         if(response.data.result.lengh > 0) {
-            for (let i = 0; i < response.result.lengh; i++) {
+            for (let i = 0; i < response.data.result.lengh; i++) {
                 const odd = {
                     marketId: response.data.result[i].marketId,
                     runners: response.data.result[i].runners
