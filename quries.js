@@ -961,4 +961,28 @@ db.competitions.drop()
 db.casinocalls.drop()
 db.bets.drop()
 
-
+db.deposits.insertOne(
+  {
+    userId: 11400,
+    description: 'Cash deposite in 24za for Adjustment ',
+    amount: 250,
+    balance: 1050,
+    availableBalance: 1050,
+    maxWithdraw: 1050,
+    cash: 3000,
+    credit: 0,
+    creditRemaining: 0,
+    cashOrCredit: 'Cash',
+    createdBy: '11000',
+    addedExpoisureAmount: '-',
+    UserPrevexposure: '-',
+    UpdatedExposure: '-',
+    exposure: '.',
+    sourceCodeBlock: '.',
+    loosingAmount: '.',
+    winningAmount: '.',
+    casinoBetAmount: 0,
+    createdAt: '2023-11-30',
+  }
+  
+)

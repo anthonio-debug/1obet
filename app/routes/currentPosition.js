@@ -243,7 +243,7 @@ const getCurrentPosition2 = async (req, res) => {
       {
         $match: {
           userId: userId,
-          "bets.calculateExp": true
+          // '$bets.calculateExp': true
         }
       },
       {
