@@ -61,13 +61,12 @@ function apiRequests() {
                     marketId: response.data.result[i].marketId,
                     runners: response.data.result[i].runners
                 }
-                const addNewSport = TestSportOdd.findOneAndUpdate({marketId: response.data.result[i].marketId}, odd, {upsert: true})
+                const addNewSport = await TestSportOdd.findOneAndUpdate({marketId: response.data.result[i].marketId}, odd, {upsert: true})
                 resultArray.push(addNewSport)
             }
             
             const oddsData = await TestSportOdd.find()
             io.emit("testSports", oddsData)
-            await Promise.all(resultArray)
         }
         
         await Promise.all(resultArray);
