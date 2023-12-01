@@ -97,7 +97,7 @@ const marketGainWithDuplicates = async (req, res) => {
         } else if (resultInfo?.tableId == "aaa"){
           asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
         } else if (resultInfo?.tableId == "card32eu"){
-          const generalResult = description.split("|");
+          const generalResult = resultInfo?.result[0]?.desc.split("|");
           asianWinner = generalResult[0]
         } 
       }
