@@ -4,7 +4,7 @@ const Bets = require("../models/bets");
 
 async function listBet(req, res) {
   try {
-    const userId = 11053;
+    const userId = 11530;
     const betList = await Bets.aggregate([
       {
         $match: {
