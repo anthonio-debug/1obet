@@ -54,6 +54,7 @@ async function listBet(req, res) {
           marketId: "$marketId",
           betAmount: "$betAmount",
           exposureAmount: "$exposureAmount",
+          sportsId: "$sportsId",
           depositDetail: {
             $filter: {
               input: "$depositDetail",
