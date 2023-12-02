@@ -2404,13 +2404,61 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: " Insufficient balance " });
       }
 
-      if (subMarketDetail.Id == config.Fancy) {
-        let setCalculateExpFalse = await Bets.updateMany(
+      // if (subMarketDetail.Id == config.Fancy) {
+      //   let setCalculateExpFalse = await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       fancyData: fancyData,
+      //       status: 1,
+      //     },
+      //     { calculateExp: false }
+      //   );
+      // } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+      //   let setCalculateExpFalse = await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       fancyData: fancyData,
+      //       TargetScore: TargetScore,
+      //       betSession: currentSession,
+      //       status: 1,
+      //     },
+      //     { calculateExp: false }
+      //   );
+      // } else if (config.asianSubMarket.includes(subMarketDetail.Id)) {
+      //   await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       roundId: roundId,
+      //       status: 1,
+      //     },
+      //     { calculateExp: false }
+      //   );
+      // } else {
+      //   await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       status: 1,
+      //     },
+      //     { calculateExp: false }
+      //   );
+      // }
+
+      // return res.status(404).send({message: `Testing ` })
+
+      if (subMarketDetail.Id != config.Fancy) {
+        await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
-            fancyData: fancyData,
             status: 1,
           },
           { calculateExp: false }
@@ -2440,18 +2488,21 @@ const placeBet = async (req, res) => {
           { calculateExp: false }
         );
       } else {
-        await Bets.updateMany(
+        let setCalculateExpFalse = await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
+            fancyData: fancyData,
             status: 1,
+            // backFancyRate: backFancyRate,
+            // layFancyRate: layFancyRate
           },
           { calculateExp: false }
         );
       }
 
-      // return res.status(404).send({message: `Testing ` })
+
       bet.save(async (err, result) => {
         if (err) {
           console.log("err", err);
