@@ -67,6 +67,13 @@ const marketGainWithDuplicates = async (req, res) => {
       sportsId: depositRes.sportsId,
     };
 
+    if(depositRes.sportsId == "6"){
+      response.Commission = depositRes?.amount > 0 ? depositRes?.amount * 0.02 : 0;
+      response.netPl   = depositRes?.amount > 0 ? depositRes?.amount *  ( 100/98 ) : depositRes?.amount;
+      response.result  = depositRes?.amount > 0 ? "WON" : "LOSS";
+      
+    }
+
     if (marketId != "none" && depositRes.sportsId != "6") {
       const betRes = await Bets.findOne({ _id: depositRes.betId });
       response.price = betRes.betAmount;

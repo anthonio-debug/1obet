@@ -1837,7 +1837,7 @@ const createNewSession = async (matchId) => {
       totalSession = 20;
       break;
     case "TEST":
-      totalSession = 18;
+      totalSession = 18*2;
       break;
     default:
       break;

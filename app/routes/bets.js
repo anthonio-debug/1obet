@@ -63,7 +63,7 @@ const getParents = async (userId) => {
   return parentUserIds;
 };
 
-const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = "0", subMarketId = "0") => {
+const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = "0", subMarketId= "0") => {
   const parentUser = await User.find({
     userId: {
       $in: [...parentUsersIds],
@@ -1811,23 +1811,11 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
-      if (
-        ![
-          1991, 1968, 1971, 1974, 1973, 1975, 1978, 1979, 1980, 1981, 1982,
-          1983, 1984, 1985, 2005,
-        ].includes(req.decoded.userId)
-      ) {
-        console.log(" 1766 Not Allowed CALLED By Market  ");
-        //return res.status(404).send({ message: 'Betting disabled' });
-      }
-
-      const FigureEvenOddSmallBig = await userBetSizes
-        .findOne({
-          userId: userId,
-          sportsId: marketId,
-          subarket: subMarketDetail.Id,
-        })
-        .exec();
+      const FigureEvenOddSmallBig = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+        subarket: subMarketDetail.Id,
+      }).exec();
       if (FigureEvenOddSmallBig && betAmount > FigureEvenOddSmallBig.amount) {
         return res.status(404).send({
           message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
@@ -1842,10 +1830,11 @@ const placeBet = async (req, res) => {
         });
       }
       let currentOver = Number(score.overs);
-      let type = score.type;
+      let type = eventDetail.matchType;
       let inning = score.inning;
+      console.log(" =========================================================== inning ", inning);
       let sessionAddition = 0;
-      if (inning == 2) {
+      if (inning == 2){
         if (type == "TEST") {
           sessionAddition = 9;
         } else if (type == "ODI") {
@@ -1858,35 +1847,24 @@ const placeBet = async (req, res) => {
       }
       let totalSessions = 0;
       TargetScore = currentOver;
-      if (type == "TEST" && currentOver % 10 == 0) {
+      if (type == "TEST" && currentOver % 10 == 0){
         return res.status(404).send({
           success: false,
-          message: "betting not allowed !",
-          currentSession: currentSession,
-          totalSessions: totalSessions,
-          currentSessionOver: currentSessionOver,
+          message: "betting not allowed !"
         });
-      } else if (type != "TEST" && currentOver % 5 == 0) {
+      } 
+      else if (type != "TEST" && currentOver % 5 == 0) {
         return res.status(404).send({
           success: false,
-          message: "betting not allowed !",
-          currentSession: currentSession,
-          totalSessions: totalSessions,
-          currentSessionOver: currentSessionOver,
+          message: "betting not allowed !"
         });
       }
-      let currentSessionOver = Math.ceil(currentOver % 5);
-      currentSession = Math.ceil(currentOver / 5) + sessionAddition;
-      console.log(
-        " currentSession = ",
-        currentSession,
-        " currentSessionOver =",
-        currentSessionOver,
-        " currentOver =",
-        currentOver
-      );
 
-      switch (eventDetail.matchType) {
+      let currentSessionOver = Math.ceil(currentOver % 5);
+
+      currentSession = Math.ceil(currentOver / 5) + sessionAddition;
+
+      switch (eventDetail.matchType){
         case "T10":
           totalSessions = 2;
           break;
@@ -1898,8 +1876,9 @@ const placeBet = async (req, res) => {
           break;
         case "TEST":
           totalSessions = 9;
-          currentSessionOver = Math.ceil(currentOver % 10);
-          currentSession = Math.ceil(currentOver / 10);
+          currentSessionOver = Math.ceil( currentOver % 10 );
+          currentSession = Math.ceil( currentOver / 10 ) + sessionAddition;
+          console.log(" Callllllllllllllllllleeeeeeeeeeeeeeeed ");
           break;
         default:
           return res.json(404, {
@@ -1909,31 +1888,27 @@ const placeBet = async (req, res) => {
           break;
       }
 
-      if (inning == 2 && currentSession == totalSessions + sessionAddition) {
+      console.log(" =========================================================== inning ", inning);
+      if (inning == 2 && currentSession >= (totalSessions + sessionAddition)) {
         return res.status(404).send({
           success: false,
-          message: "betting not allowed !",
-          currentSession: currentSession,
-          totalSessions: totalSessions,
-          currentSessionOver: currentSessionOver,
+          message: "betting not allowed !"
         });
-      } else if (currentSessionOver > 3) {
-        console.log(
-          " ================ currentSessionOver ================ ",
-          currentSessionOver
-        );
+      } 
+      else if ((type == "TEST" && currentSessionOver > 8 ) || (type != "TEST" && currentSessionOver > 3 )){
+        console.log( " ================ currentSessionOver ================ ", currentSessionOver);
+        return res.status(404).send({
+          success: false,
+          message: `Betting not Allowed in ${type == "TEST" ? Math.ceil(currentOver % 10) : Math.ceil(currentOver % 5)} over`
+        })
 
-        return res.status(404).send({
-          success: false,
-          message: `betting not Allowed in ${Math.ceil(currentOver % 5)} over`,
-          currentSession: currentSession,
-          totalSessions: totalSessions,
-          over: currentOver,
-        });
+      }
+      if(type == "TEST" && score?.day >1){
+        currentSession = currentSession + 18
       }
       _3rdPartyMarketId = subMarketDetail.Id;
-      console.log("Bets are Allowed");
-      console.log(" currentSession ========= ", currentSession);
+      console.log(" ================== Bets are Allowed ");
+      console.log(" ================== currentSession  ", currentSession);
     }
 
     // for Asian Odd
@@ -2507,8 +2482,57 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: " Insufficient balance " });
       }
 
-      if (subMarketDetail.Id == config.Fancy) {
-        let setCalculateExpFalse = await Bets.updateMany(
+      // if (subMarketDetail.Id == config.Fancy) {
+      //   let setCalculateExpFalse = await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       fancyData: fancyData,
+      //       status: 1,
+      //     },
+      //     { calculateExp: false }
+      //   );
+      // } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+      //   let setCalculateExpFalse = await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       fancyData: fancyData,
+      //       TargetScore: TargetScore,
+      //       betSession: currentSession,
+      //       status: 1,
+      //     },
+      //     { calculateExp: false }
+      //   );
+      // } else if (config.asianSubMarket.includes(subMarketDetail.Id)) {
+      //   await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       roundId: roundId,
+      //       status: 1,
+      //     },
+      //     { calculateExp: false }
+      //   );
+      // } else {
+      //   await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       status: 1,
+      //     },
+      //     { calculateExp: false }
+      //   );
+      // }
+
+      // return res.status(404).send({message: `Testing ` })
+
+      if (subMarketDetail.Id != config.Fancy) {
+        await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
@@ -2555,7 +2579,7 @@ const placeBet = async (req, res) => {
         );
       }
 
-      // return res.status(404).send({message: `Testing ` })
+
       bet.save(async (err, result) => {
         if (err) {
           console.log("err", err);
@@ -2615,7 +2639,7 @@ const placeBet = async (req, res) => {
           const ExpTran = new Exposure({
             userId: userId,
             trans_from: "Bet Place",
-            trans_from_id: randomStr,
+            trans_from_id: result._id,
             
             user_prev_balance: user.balance,
             user_prev_availableBalance: user.availableBalance,
@@ -2634,9 +2658,9 @@ const placeBet = async (req, res) => {
           await ExpTran.save()
           /** End of Qaiser added tracking values in deposits */
 
-
-
-          await updateParentUserBalance( parentUserIds,  winningAmount,
+          await updateParentUserBalance(
+            parentUserIds,
+            winningAmount,
             matchId,
             result._id,
             selectionId,
@@ -3444,7 +3468,7 @@ async function cricketLiveScore(id) {
         const type = event ? event?.matchType : null;
         // const scoreInfo     = JSON.parse(data).score
         const scoreInfo = data[0].score;
-
+        let day = 1;
         let score = 0;
         let inning = 1;
         if (scoreInfo.activenation1 == 1) {
@@ -3456,6 +3480,7 @@ async function cricketLiveScore(id) {
         }
         if (type == "TEST") {
           score = score.split("&");
+          day   = score.length;
           score = score[score.length - 1].trim();
           played = played.split("&");
           played = played[played.length - 1].trim();
@@ -3477,6 +3502,7 @@ async function cricketLiveScore(id) {
         response.inning = inning;
         response.balls = scoreInfo.balls;
         response.type = event.matchType;
+        response.day = day;
         return response;
       } else {
         return 0;
