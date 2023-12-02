@@ -52,6 +52,7 @@ async function listBet(req, res) {
           asianTableId: "$asianTableId",
           marketId: "$marketId",
           betAmount: "$betAmount",
+          calculateExp: "$calculateExp",
           depositDetail: {
             $filter: {
               input: "$depositDetail",
