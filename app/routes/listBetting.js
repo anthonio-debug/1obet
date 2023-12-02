@@ -26,8 +26,20 @@ async function listBet(req, res) {
       {
         $lookup: {
           from: "exposures",
-          localField: "_id",
-          foreignField: "trans_from_id",
+          let: { randomStr: "$randomStr" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$userId", parseInt(userId)] },
+                    { $eq: ["$trans_from_id", "$$randomStr"] },
+                    { $eq: ["$calculatedExp", "1"] },
+                  ],
+                },
+              },
+            },
+          ],
           as: "exposureDetail",
         },
       },
