@@ -186,5 +186,6 @@
   "removeOdds",
   "listBet",
   "testSports",
-  "trackstuck"
+  "trackstuck",
+  "track-bet"
 ]

@@ -130,11 +130,36 @@ async function activeUserExposure(req, res) {
     }
 }
 
+async function betStatisticsByUserId(req, res) {
+  const userId = req.params.userId;
+
+  try {
+    const userStats = await Bets.aggregate([
+      {
+        $match: { userId: parseInt(userId) } // Match bets for the specific user
+      },
+      {
+        $group: {
+          _id: '$marketId',
+          totalDifference: { $sum: { $subtract: ['$winningAmount', '$loosingAmount'] } },
+          totalExposure: { $sum: { $cond: { if: '$calculateExp', then: '$exposureAmount', else: 0 } } }
+        }
+      }
+    ]);
+
+    res.status(200).json({success: true, data: userStats});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get "})
+  }
+}
+
 router.get('/testSports/events', listEvents);
 router.get('/testSports/marketbooks/:ids', listMarketBook);
 
 router.get('/trackstuck/activeusers', activeUserExposure);
 router.get('/trackstuck/inactiveusers', inActiveUserExposure);
+
+router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
 
 module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure };
 
