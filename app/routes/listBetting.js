@@ -26,7 +26,7 @@ async function listBet(req, res) {
       {
         $lookup: {
           from: "exposures",
-          localField: "randomStr",
+          localField: "_id",
           foreignField: "trans_from_id",
           as: "exposureDetail",
         },
