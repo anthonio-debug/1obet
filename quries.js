@@ -986,3 +986,14 @@ db.deposits.insertOne(
   }
   
 )
+
+db.deposits.updateOne(
+  { _id: ObjectId("656a28735937336a27d67800")},
+  {
+    $set: {   
+      balance: 0,
+      availableBalance: 0,
+      maxWithdraw: 0,
+    }
+  }
+)
