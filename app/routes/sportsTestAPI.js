@@ -72,18 +72,32 @@ async function listMarketBook(req, res) {
 async function inActiveUserExposure(req, res) {
     try {
         const stuckUsers = await User.find({exposure: {$lt: 0}})
+        let newResultArray = [];
         if(stuckUsers.length > 0) {
             for(let i = 0; i < stuckUsers.length; i++) {
                 const activeBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 1})
                 if(activeBetCount > 0) {
-                    stuckUsers.pop(e => e.userId == stuckUsers[i].userId)    
+                    // stuckUsers.pop(e => e.userId == stuckUsers[i].userId)    
+                    continue;
                 } else {
                     const inActiveBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 0})
-                    stuckUsers[i].betCount = inActiveBetCount;
+                    // console.log(inActiveBetCount)
+                    if(inActiveBetCount > 0) {
+                      console.log({inActiveBetCount})
+                      const newData = {
+                        name: stuckUsers[i].userName,
+                        userId: stuckUsers[i].userId,
+                        exposure: stuckUsers[i].exposure,
+                        betCount: inActiveBetCount
+                      }
+                      newResultArray.push(newData)
+                    } else {
+                      continue;
+                    }
                 }
             }
         }
-        res.status(200).json({success: true, data: stuckUsers})
+        res.status(200).json({success: true, data: newResultArray})
     } catch (err) {
         res.status(500).json({success: false, msg: "Failed to get "})
     }
@@ -91,14 +105,26 @@ async function inActiveUserExposure(req, res) {
 
 async function activeUserExposure(req, res) {
     try {
-        const stuckUsers = await User.find({exposure: {$gte: 0}})
+        const stuckUsers = await User.find({exposure: {$gte: 0.1}})
+        let newResultArray = []
         if(stuckUsers.length > 0) {
             for(let i = 0; i < stuckUsers.length; i++) {
                 const activeBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 1})
-                stuckUsers[i].activeBetCount = activeBetCount;
+                if(activeBetCount > 0){
+                  stuckUsers[i].BetCount = activeBetCount;
+                  const newData = {
+                    name: stuckUsers[i].userName,
+                    userId: stuckUsers[i].userId,
+                    exposure: stuckUsers[i].exposure,
+                    betCount: activeBetCount
+                  }
+                  newResultArray.push(newData)
+                } else {                  
+                  continue;
+                }
             }
         }
-        res.status(200).json({success: true, data: stuckUsers})
+        res.status(200).json({success: true, data: newResultArray})
     } catch (err) {
         res.status(500).json({success: false, msg: "Failed to get "})
     }
