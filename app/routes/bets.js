@@ -2639,7 +2639,7 @@ const placeBet = async (req, res) => {
           const ExpTran = new Exposure({
             userId: userId,
             trans_from: "Bet Place",
-            trans_from_id: randomStr,
+            trans_from_id: result._id,
             
             user_prev_balance: user.balance,
             user_prev_availableBalance: user.availableBalance,
