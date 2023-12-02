@@ -9,6 +9,7 @@ async function listBet(req, res) {
       {
         $match: {
           userId: parseInt(userId),
+          calculateExp: true
         },
       },
       {
@@ -52,7 +53,7 @@ async function listBet(req, res) {
           asianTableId: "$asianTableId",
           marketId: "$marketId",
           betAmount: "$betAmount",
-          calculateExp: "$calculateExp",
+          exposureAmount: "$exposureAmount",
           depositDetail: {
             $filter: {
               input: "$depositDetail",
