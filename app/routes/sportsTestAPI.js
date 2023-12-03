@@ -140,7 +140,8 @@ async function betStatisticsByUserId(req, res) {
       },
       {
         $group: {
-          _id: "$marketId",
+          _id: "$_id",
+          marketId: "$marketId",
           betIds: { $addToSet: "$_id" },
           totalDifference: { $sum: { $subtract: ["$winningAmount", "$loosingAmount"] } },
           totalExposure: { $sum: { $cond: { if: "$calculateExp", then: "$exposureAmount", else: 0 } } },
@@ -155,7 +156,7 @@ async function betStatisticsByUserId(req, res) {
 
     res.status(200).json({success: true, data: userStats});
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get "})
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
   }
 }
 
