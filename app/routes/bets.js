@@ -2691,7 +2691,7 @@ const placeBet = async (req, res) => {
             sportsId: marketId || 0,
             calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
             DateTime: new Date(),
-            calculateExp: false,
+            calculateExp: 1,
             exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
           });
           
