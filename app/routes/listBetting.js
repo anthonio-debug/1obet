@@ -4,7 +4,7 @@ const Bets = require("../models/bets");
 
 async function listBet(req, res) {
   try {
-    const userId = 11530;
+    const userId = parseInt(req.params.userId);
     const betList = await Bets.aggregate([
       {
         $match: {
@@ -23,25 +23,33 @@ async function listBet(req, res) {
           as: "depositDetail",
         },
       },
-      {
+      // {
+      //   $lookup: {
+      //     from: "exposures",
+      //     let: { randomStr: "$randomStr" },
+      //     pipeline: [
+      //       {
+      //         $match: {
+      //           $expr: {
+      //             $and: [
+      //               { $eq: ["$userId", parseInt(userId)] },
+      //               { $eq: ["$trans_from_id", "$$randomStr"] },
+      //               { $eq: ["$calculatedExp", "1"] },
+      //             ],
+      //           },
+      //         },
+      //       },
+      //     ],
+      //     as: "exposureDetail",
+      //   },
+      // },
+      {      
         $lookup: {
           from: "exposures",
-          let: { randomStr: "$randomStr" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$userId", parseInt(userId)] },
-                    { $eq: ["$trans_from_id", "$$randomStr"] },
-                    { $eq: ["$calculatedExp", "1"] },
-                  ],
-                },
-              },
-            },
-          ],
+          localField: "_id",
+          foreignField: "trans_from_id",
           as: "exposureDetail",
-        },
+        }
       },
       {
         $project: {
