@@ -304,7 +304,8 @@ async function handleLosingBet(bet) {
                     position: bet.loosingAmount * -1,
                     iscalculatedExp: calculatedExp,
                     winnerRunnerData: winnerRunnerData,
-                    SessionScore: SessionScore
+                    SessionScore: SessionScore,
+                    updatedAt: new Date().getTime()
                   }
                 }, 
                 { session }
@@ -319,25 +320,27 @@ async function handleLosingBet(bet) {
               const user_new_availableBalance = updatedUser.availableBalance;
               const user_new_exposure = updatedUser.exposure;
 
-              const ExpTran =  exposures.insertOne({
-                userId: updatedUser.userId,
-                trans_from: "BetLose",
-                trans_from_id: bet._id,
-                trans_bet_status: 0,
-                user_prev_balance: user_prev_balance,
-                user_prev_availableBalance: user_prev_availableBalance,
-                user_prev_exposure: user_prev_exposure,
-                user_new_balance: user_new_balance,
-                user_new_availableBalance: user_new_availableBalance,
-                user_new_exposure: user_new_exposure,
-                marketId: bet.marketId,
-                sportsId: bet.sportsId,
-                calculatedExp: calculatedExp,
-                DateTime: new Date(),
-                calculateExp: calculatedExp,
-                position: bet.position,
-                exposureAmount: bet.exposureAmount,
-              });
+              if(bet.calculateExp){
+                const ExpTran =  exposures.insertOne({
+                  userId: updatedUser.userId,
+                  trans_from: "BetLose",
+                  trans_from_id: bet._id,
+                  trans_bet_status: 0,
+                  user_prev_balance: user_prev_balance,
+                  user_prev_availableBalance: user_prev_availableBalance,
+                  user_prev_exposure: user_prev_exposure,
+                  user_new_balance: user_new_balance,
+                  user_new_availableBalance: user_new_availableBalance,
+                  user_new_exposure: user_new_exposure,
+                  marketId: bet.marketId,
+                  sportsId: bet.sportsId,
+                  calculatedExp: calculatedExp,
+                  DateTime: new Date(),
+                  calculateExp: calculatedExp,
+                  position: bet.position,
+                  exposureAmount: bet.exposureAmount,
+                })
+              }
               await session.commitTransaction();
             }
             console.log("  =============== All losing Part Working ...");
@@ -662,7 +665,8 @@ async function handleWinningBet(bet, winner) {
                     position: Number(bet.winningAmount.toFixed(3)),
                     iscalculatedExp: calculatedExp,
                     winnerRunnerData: winnerRunnerData,
-                    SessionScore: SessionScore
+                    SessionScore: SessionScore,
+                    updatedAt: new Date().getTime()
                   }
                 },
                 { session }
@@ -682,25 +686,27 @@ async function handleWinningBet(bet, winner) {
               const user_new_exposure = updatedUser.exposure;
               const user_new_availableBalance = updatedUser.availableBalance;
 
-              await exposuresTrans.insertOne({
-                userId: updatedUser.userId,
-                trans_from: "BetWin",
-                trans_from_id: bet._id,
-                trans_bet_status: 0,
-                user_prev_balance: user_prev_balance,
-                user_prev_availableBalance: user_prev_availableBalance,
-                user_prev_exposure: user_prev_exposure,
-                user_new_balance: user_new_balance,
-                user_new_availableBalance: user_new_availableBalance,
-                user_new_exposure: user_new_exposure,
-                marketId: bet.marketId,
-                sportsId: bet.sportsId,
-                calculatedExp: calculatedExp,
-                DateTime: new Date(),
-                calculateExp: calculatedExp,
-                position: bet.position,
-                exposureAmount: bet.exposureAmount,
-              });
+              if(bet.calculateExp){
+                await exposuresTrans.insertOne({
+                  userId: updatedUser.userId,
+                  trans_from: "BetWin",
+                  trans_from_id: bet._id,
+                  trans_bet_status: 0,
+                  user_prev_balance: user_prev_balance,
+                  user_prev_availableBalance: user_prev_availableBalance,
+                  user_prev_exposure: user_prev_exposure,
+                  user_new_balance: user_new_balance,
+                  user_new_availableBalance: user_new_availableBalance,
+                  user_new_exposure: user_new_exposure,
+                  marketId: bet.marketId,
+                  sportsId: bet.sportsId,
+                  calculatedExp: calculatedExp,
+                  DateTime: new Date(),
+                  calculateExp: calculatedExp,
+                  position: bet.position,
+                  exposureAmount: bet.exposureAmount,
+                });
+              }
               await session.commitTransaction();
             }
           }
@@ -724,6 +730,7 @@ const handleDrawBet = async (bet, status = 0) => {
   const exposures = client.db(`${DBNAME}`).collection("exposures");
   const bets = client.db(`${DBNAME}`).collection("bets");
   const currentPositions = client.db(`${DBNAME}`).collection("currentpositions");
+  
   try {
     if(bet.status == 1){
       const betStatus  = await Bets.findById(bet._id)
@@ -800,7 +807,8 @@ const handleDrawBet = async (bet, status = 0) => {
                   $set : {
                     position: 0,
                     status: status,
-                    iscalculatedExp: calculatedExp
+                    iscalculatedExp: calculatedExp,
+                    updatedAt: new Date().getTime()
                   }
                 },
                 { session }
@@ -815,25 +823,27 @@ const handleDrawBet = async (bet, status = 0) => {
               const user_new_balance = updatedUser.balance;
               const user_new_availableBalance = updatedUser.availableBalance;
               const user_new_exposure = updatedUser.exposure;
-              const ExpTran = await  exposures.insertOne({
-                userId: updatedUser.userId,
-                trans_from: "BetDrawOrCanceled",
-                trans_from_id: bet._id,
-                trans_bet_status: status,
-                user_prev_balance: user_prev_balance,
-                user_prev_availableBalance: user_prev_availableBalance,
-                user_prev_exposure: user_prev_exposure,
-                user_new_balance: user_new_balance,
-                user_new_availableBalance: user_new_availableBalance,
-                user_new_exposure: user_new_exposure,
-                marketId: bet.marketId,
-                sportsId: bet.sportsId,
-                calculatedExp: calculatedExp,
-                DateTime: new Date(),
-                calculateExp: calculatedExp,
-                position: bet.position,
-                exposureAmount: bet.exposureAmount,
-              });
+              if(bet.calculateExp){
+                const ExpTran = await  exposures.insertOne({
+                  userId: updatedUser.userId,
+                  trans_from: "BetDrawOrCanceled",
+                  trans_from_id: bet._id,
+                  trans_bet_status: status,
+                  user_prev_balance: user_prev_balance,
+                  user_prev_availableBalance: user_prev_availableBalance,
+                  user_prev_exposure: user_prev_exposure,
+                  user_new_balance: user_new_balance,
+                  user_new_availableBalance: user_new_availableBalance,
+                  user_new_exposure: user_new_exposure,
+                  marketId: bet.marketId,
+                  sportsId: bet.sportsId,
+                  calculatedExp: calculatedExp,
+                  DateTime: new Date(),
+                  calculateExp: calculatedExp,
+                  position: bet.position,
+                  exposureAmount: bet.exposureAmount,
+                });
+              }
 
               await session.commitTransaction();
             }
