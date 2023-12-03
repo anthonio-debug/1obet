@@ -141,7 +141,6 @@ async function betStatisticsByUserId(req, res) {
       {
         $group: {
           _id: "$marketId",
-          marketId: "$marketId",
           betIds: { $addToSet: "$_id" },
           totalDifference: { $sum: { $subtract: ["$winningAmount", "$loosingAmount"] } },
           totalExposure: { $sum: { $cond: { if: "$calculateExp", then: "$exposureAmount", else: 0 } } },
