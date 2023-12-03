@@ -146,8 +146,8 @@ async function betStatisticsByUserId(req, res) {
           totalWinningAmount: { $sum: { $cond: { if: '$calculateExp', then: '$winningAmount', else: 0 } } },
           totalLoosingAmount: { $sum: { $cond: { if: '$calculateExp', then: '$loosingAmount', else: 0 } } },
           totalPosition: { $sum: { $cond: { if: '$calculateExp', then: '$position', else: 0 } } },
-          events: { $addToSet: { $cond: { if: '$calculateExp', then: '$event' } } },
-          runnerNames: { $addToSet: { $cond: { if: '$calculateExp', then: '$runnerName' } } },
+          events: { $addToSet: "$event" },
+          runnerNames: { $addToSet: "$runnerName" },
         }
       }
     ]);
