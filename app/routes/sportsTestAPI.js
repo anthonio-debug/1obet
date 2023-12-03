@@ -140,11 +140,12 @@ async function betStatisticsByUserId(req, res) {
       },
       {
         $group: {
-          _id: '$marketId',
+          betId: { $addToSet: "$_id" },
+          marketId: '$marketId',
           totalDifference: { $sum: { $subtract: ['$winningAmount', '$loosingAmount'] } },
           totalExposure: { $sum: { $cond: { if: '$calculateExp', then: '$exposureAmount', else: 0 } } },
-          totalWinningAmount: { $sum: { $cond: { if: '$calculateExp', then: '$winningAmount', else: 0 } } },
-          totalLoosingAmount: { $sum: { $cond: { if: '$calculateExp', then: '$loosingAmount', else: 0 } } },
+          winningAmounts: { $addToSet: { $cond: { if: '$calculateExp', then: '$winningAmount', else: 0 } } },
+          loosingAmounts: { $addToSet: { $cond: { if: '$calculateExp', then: '$loosingAmount', else: 0 } } },
           totalPosition: { $sum: { $cond: { if: '$calculateExp', then: '$position', else: 0 } } },
           events: { $addToSet: "$event" },
           runnerNames: { $addToSet: "$runnerName" },
