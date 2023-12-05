@@ -956,7 +956,7 @@ const battorsList = async (req, res) => {
             
             const lastBet = await Bet.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
             const lastDeposit = await Deposits.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
-            results.docs[i].lastBetTime = lastBet[0].betTime;
+            results.docs[i].lastBetTime = lastBet[0]?.betTime;
             results.docs[i].lastDeposit = lastDeposit[0];
           }
         }
