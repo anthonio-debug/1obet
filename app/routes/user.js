@@ -892,6 +892,8 @@ function searchSingleUser(req, res) {
 const battorsList = async (req, res) => {
   try{
 
+
+    console.log(" lastBet ======= ", lastBet);
     if (req.decoded.role != 0) {
       return res.status(404).send({ message: '-----' });
     }
