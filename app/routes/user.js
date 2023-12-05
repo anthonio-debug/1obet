@@ -965,7 +965,7 @@ const battorsList = async (req, res) => {
 
             const data  = {
               lastBetTime : lastBet[0]?.betTime || 0,
-              lastDeposit : lastDeposit[0],
+              availableBalance : lastDeposit[0]?.availableBalance || 0,
               activeBets  : activeBets,
               canceledBets: canceledBets
             }
