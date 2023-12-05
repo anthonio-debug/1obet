@@ -963,12 +963,13 @@ const battorsList = async (req, res) => {
             console.log("activeBets ======= ", activeBets);
             console.log("canceledBets ======= ", canceledBets);
 
-            results.docs[i].reference = {
+            const data  = {
               lastBetTime : lastBet[0]?.betTime || 0,
               lastDeposit : lastDeposit[0],
               activeBets  : activeBets,
               canceledBets: canceledBets
             }
+            results.docs[i].data = data
           }
         }
         return res.send({
