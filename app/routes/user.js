@@ -963,12 +963,12 @@ const battorsList = async (req, res) => {
             console.log("activeBets ======= ", activeBets);
             console.log("canceledBets ======= ", canceledBets);
 
-            results.docs[i].blockedMarketPlaces.push({
+            results.docs[i].blockedMarketPlaces = {
               lastBetTime : lastBet[0]?.betTime || 0,
               lastDeposit : lastDeposit[0],
               activeBets  : activeBets,
               canceledBets: canceledBets
-            })
+            }
           }
         }
         return res.send({
