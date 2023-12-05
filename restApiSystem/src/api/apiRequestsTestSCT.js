@@ -408,19 +408,19 @@ function apiRequests() {
             for (let index = 0; index < oddsData.length; index++) {
               const element = oddsData[index];
 
-              if (typeof element.Runners !== undefined) {
+              if (typeof element.runners !== undefined) {
                 if (
-                  element.Runners[0]?.ex.availableToLay.length >
+                  element.runners[0]?.ex.availableToLay.length >
                     0 ||
-                  element.Runners[0]?.ex.availableToBack.length >
+                  element.runners[0]?.ex.availableToBack.length >
                     0 ||
-                  element.Runners[1]?.ex.availableToLay.length >
+                  element.runners[1]?.ex.availableToLay.length >
                     0 ||
-                  element.Runners[1]?.ex.availableToBack.length >
+                  element.runners[1]?.ex.availableToBack.length >
                     0 ||
-                  element.Runners[2]?.ex.availableToLay.length >
+                  element.runners[2]?.ex.availableToLay.length >
                     0 ||
-                  element.Runners[2]?.ex.availableToBack.length > 0
+                  element.runners[2]?.ex.availableToBack.length > 0
                 ) {
                   checkedMarkets.push(element.marketId);
 
