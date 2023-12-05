@@ -21,6 +21,7 @@ function ToolForEvent() {
         setInterval(fetchEvents, 2 * 60 * 1000);
         setInterval(fetchMarkets, 10 * 1000);
         setInterval(apiRequests.takeScores, 5 * 1000);
+        setInterval(handleSetInplay, 10 * 1000);
 
         setInterval(() => {
             for (const sportsId of sportsIds) {
@@ -123,4 +124,24 @@ function ToolForEvent() {
         }
     }
 
+    async function handleSetInplay() {
+        const documents = await inPlayEvents.find({ isShowed: true })
+        .limit(20)
+            .exec();
+        
+        if (documents.length > 0) {
+            documents.forEach(async element => {
+                await inPlayEvents.updateOne(
+                    {
+                        Id: element.Id
+                    },
+                    {
+                        $set: {
+                            inplay: true
+                        }
+                    }
+                 )
+            });
+        }
+    }
 }
