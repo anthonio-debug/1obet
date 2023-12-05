@@ -959,12 +959,16 @@ const battorsList = async (req, res) => {
             const activeBets   = await Bets.countDocuments({ userId: results.docs[i].userId, status: 1  });
             const canceledBets = await Bets.countDocuments({ userId: results.docs[i].userId, status: 2  });
             console.log("lastBet ======= ", lastBet);
-            results.docs[i].__v = {
+            console.log("lastDeposit ======= ", lastDeposit);
+            console.log("activeBets ======= ", activeBets);
+            console.log("canceledBets ======= ", canceledBets);
+
+            results.docs[i].blockedMarketPlaces.push({
               lastBetTime : lastBet[0]?.betTime || 0,
               lastDeposit : lastDeposit[0],
               activeBets  : activeBets,
               canceledBets: canceledBets
-            }
+            })
           }
         }
         return res.send({
