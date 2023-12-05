@@ -1174,9 +1174,7 @@ const placeBet = async (req, res) => {
 
     // Cricket Tied Match
     else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.tiedMatch ) {
-      console.log(
-        " ======================== Soccer  Match Odds ======================== "
-      );
+      console.log(  " ======================== Soccer  Match Odds ======================== " );
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -1201,6 +1199,7 @@ const placeBet = async (req, res) => {
       const BetPlaceData = await BetPlaceHold.findOne({
         eventId: DBOddDetails.eventId,
       });
+      delay = BetPlaceData.secondsValue * 1000 + 200;
 
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5; i++) {
