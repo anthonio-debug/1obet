@@ -154,8 +154,6 @@ const placeBet = async (req, res) => {
     let isManuel = true;
     let delay = 5200;
     let asianTableName = "";
-    // let backFancyRate = 0;
-    // let layFancyRate  = 0;
     /* ====================================================================== */
 
     /* ============================== Innitial Checks  ============================== */
@@ -2537,24 +2535,43 @@ const placeBet = async (req, res) => {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
-            fancyData: fancyData,
             status: 1,
           },
           { calculateExp: false }
         );
+
+        const latestPreviousbet = await Bets.find(
+          {
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            status: 1
+          }
+        ).sort({ _id: -1 }).limit(1);
+        await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
+
+
       } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
         let setCalculateExpFalse = await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
-            fancyData: fancyData,
-            TargetScore: TargetScore,
             betSession: currentSession,
             status: 1,
           },
           { calculateExp: false }
         );
+        const latestPreviousbet = await Bets.find(
+          {
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            betSession: currentSession,
+            status: 1,
+          }
+        ).sort({ _id: -1 }).limit(1);
+        await Exposure.deleteOne({trans_from_id: latestPreviousbet._id})
       } else if (config.asianSubMarket.includes(subMarketDetail.Id)) {
         await Bets.updateMany(
           {
@@ -2567,16 +2584,37 @@ const placeBet = async (req, res) => {
           },
           { calculateExp: false }
         );
+        const latestPreviousbet = await Bets.find(
+          {
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            roundId: roundId,
+            status: 1,
+            runner: selectionId
+          }
+        ).sort({ _id: -1 }).limit(1);
       } else {
         await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
             userId: req.decoded.userId,
             matchId: matchId,
+            fancyData: fancyData,
             status: 1,
           },
           { calculateExp: false }
         );
+        const latestPreviousbet = await Bets.find(
+          {
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            fancyData: fancyData,
+            status: 1,
+          }
+        ).sort({ _id: -1 }).limit(1);
+        await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
       }
 
 
@@ -2594,11 +2632,14 @@ const placeBet = async (req, res) => {
           });
           await position.save();
 
+          const user_prev_balance = user.balance;
+          const user_prev_availableBalance = user.availableBalance;
+          const user_prev_exposure = user.exposure;
+
           const totalExpAmount = expAmount - prevExpAmount;
           const UserExpAmountFix = user.exposure + prevExpAmount - expAmount;
           const UserExpAmount = Number(UserExpAmountFix.toFixed(3));
-          const UserAvlBalAmountAmt =
-            user.availableBalance + prevExpAmount - expAmount;
+          const UserAvlBalAmountAmt =  user.availableBalance + prevExpAmount - expAmount;
           const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(3));
 
           await User.findOneAndUpdate(
@@ -2639,11 +2680,10 @@ const placeBet = async (req, res) => {
           const ExpTran = new Exposure({
             userId: userId,
             trans_from: "Bet Place",
-            trans_from_id: result._id,
-            
-            user_prev_balance: user.balance,
-            user_prev_availableBalance: user.availableBalance,
-            user_prev_exposure: user.exposure,
+            trans_from_id: randomStr,
+            user_prev_balance: user_prev_balance,
+            user_prev_availableBalance: user_prev_availableBalance,
+            user_prev_exposure: user_prev_exposure,
             user_new_balance: user.balance,
             user_new_availableBalance: UserAvlBalAmount,
             user_new_exposure: UserExpAmount,
@@ -2651,7 +2691,7 @@ const placeBet = async (req, res) => {
             sportsId: marketId || 0,
             calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
             DateTime: new Date(),
-            calculateExp: false,
+            calculateExp: 1,
             exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
           });
           
