@@ -8,7 +8,7 @@ const MarketIDs = require('../../app/models/marketIds');
 const Odds = require('../../app/models/odds');
 
 
-const apiRequests = require('./api/apiRequestsSCT.js')();
+const apiRequests = require('./api/apiRequestsTestSCT.js')();
 
 let lastType = 0;
 

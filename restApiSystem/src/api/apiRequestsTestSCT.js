@@ -175,7 +175,6 @@ function apiRequests() {
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
-        "inPlayOnly": true,
       }
     }
 
@@ -293,7 +292,7 @@ function apiRequests() {
       }
     } catch (error) {
       console.log("Problem on taking event list");
-      console.error(error);
+      // console.error(error);
       return {
         success: false,
         message: "Failed to get or save events",
@@ -305,9 +304,9 @@ function apiRequests() {
   async function listMarketsByCronJob(eventId, sportID) {
     const requestData = {
       "filter": {
-        "eventIds": [eventId],
-        "inPlayOnly": true,
-      }
+        "eventIds": [`${eventId}`],
+      },
+      "maxResults": 10
     }
 
     var url = `${sportsAPIUrl}/listMarketCatalogue`;
@@ -319,7 +318,7 @@ function apiRequests() {
         header
       );
 
-      const marketsData = response.data;
+      const marketsData = response.data.result;
       let marketStatus = 'OPEN';
 
       if (config.activeProvider == 'old') {
@@ -367,7 +366,12 @@ function apiRequests() {
         );
       }
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      return {
+        success: false,
+        message: "Failed to get listMarketsByCronJob",
+        error: error.message,
+      };
     }
   }
 
@@ -386,9 +390,7 @@ function apiRequests() {
     }
 
     const requestData = {
-      "marketIds": [
-        tempArryForIDs
-      ]
+      "marketIds": tempArryForIDs
     }
 
     var url = `${sportsAPIUrl}/listMarketBook`;
@@ -613,11 +615,21 @@ function apiRequests() {
           }
         },
         (error) => {
-          console.log(error);
+          // console.log(error);
+          return {
+            success: false,
+            message: "Failed to get checkInPlay",
+            error: error.message,
+          };
         }
       );
     } catch (error) {
-      console.error(error);
+      // console.error(error);
+      return {
+        success: false,
+        message: "Failed to get checkInPlay",
+        error: error.message,
+      };
     }
   }
 
@@ -750,6 +762,11 @@ function apiRequests() {
       }
     } catch (error) {
       console.error(error);
+      return {
+        success: false,
+        message: "Failed to get setInplay",
+        error: error.message,
+      };
     }
   }
 }
