@@ -959,10 +959,12 @@ const battorsList = async (req, res) => {
             const activeBets   = await Bets.countDocuments({ userId: results.docs[i].userId, status: 1  });
             const canceledBets = await Bets.countDocuments({ userId: results.docs[i].userId, status: 2  });
             console.log("lastBet ======= ", lastBet);
-            results.docs[i].lastBetTime  = lastBet[0]?.betTime || 0;
-            results.docs[i].lastDeposit  = lastDeposit[0];
-            results.docs[i].activeBets   = activeBets;
-            results.docs[i].canceledBets = canceledBets;
+            results.docs[i].__v = {
+              lastBetTime : lastBet[0]?.betTime || 0,
+              lastDeposit : lastDeposit[0],
+              activeBets  : activeBets,
+              canceledBets: canceledBets
+            }
           }
         }
         return res.send({
