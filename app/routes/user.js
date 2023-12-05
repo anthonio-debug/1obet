@@ -7,6 +7,7 @@ let config = require('config');
 const User = require('../models/user');
 const Deposits = require('../models/deposits');
 const Markets = require('../models/marketTypes')
+const Bet = require("../models/bets")
 
 require('dotenv').config();
 const secret = process.env.secret;
@@ -952,6 +953,16 @@ const battorsList = async (req, res) => {
               }
             }
             results.docs[i].settlements = settlementArray;
+            
+            const lastBet      = await Bet.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
+            const lastDeposit  = await Deposits.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
+            const activeBets   = await Bets.countDocuments({ userId: results.docs[i].userId, status: 1  });
+            const canceledBets = await Bets.countDocuments({ userId: results.docs[i].userId, status: 2  });
+            console.log("lastBet ======= ", lastBet);
+            results.docs[i].lastBetTime  = lastBet[0]?.betTime || 0;
+            results.docs[i].lastDeposit  = lastDeposit[0];
+            results.docs[i].activeBets   = activeBets;
+            results.docs[i].canceledBets = canceledBets;
           }
         }
         return res.send({
