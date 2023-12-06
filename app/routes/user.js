@@ -891,7 +891,7 @@ function searchSingleUser(req, res) {
 
 const battorsList = async (req, res) => {
   try{
-
+    console.log(" lastBet ================================================= ");
     if (req.decoded.role != 0) {
       return res.status(404).send({ message: '-----' });
     }
@@ -954,10 +954,22 @@ const battorsList = async (req, res) => {
             }
             results.docs[i].settlements = settlementArray;
             
-            const lastBet = await Bet.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
-            const lastDeposit = await Deposits.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
-            results.docs[i].lastBetTime = lastBet[0].betTime;
-            results.docs[i].lastDeposit = lastDeposit[0];
+            const lastBet      = await Bet.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
+            const lastDeposit  = await Deposits.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
+            const activeBets   = await Bets.countDocuments({ userId: results.docs[i].userId, status: 1  });
+            const canceledBets = await Bets.countDocuments({ userId: results.docs[i].userId, status: 2  });
+            console.log("lastBet ======= ", lastBet);
+            console.log("lastDeposit ======= ", lastDeposit);
+            console.log("activeBets ======= ", activeBets);
+            console.log("canceledBets ======= ", canceledBets);
+
+            const data  = {
+              lastBetTime : lastBet[0]?.betTime || 0,
+              availableBalance : lastDeposit[0]?.availableBalance || 0,
+              activeBets  : activeBets,
+              canceledBets: canceledBets
+            }
+            results.docs[i].data = data
           }
         }
         return res.send({

@@ -47,6 +47,7 @@ const userSchema = new Schema({
   creditRemaining: { type: Number, default: 0 },
   cash: { type: Number, default: 0 },
   remoteId: { type: Number },
+  data: { type: Object, default: {} }
 });
 
 userSchema.methods.hashPass = function (next) {

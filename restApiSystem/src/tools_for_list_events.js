@@ -23,7 +23,7 @@ function ToolForEvent() {
         function startIntervals() {
             intervalIds.push(setInterval(fetchEvents, 2 * 60 * 1000))
             intervalIds.push(setInterval(fetchMarkets, 10 * 1000))
-            intervalIds.push(setInterval(apiRequests.takeScores, 5 * 1000))
+            // intervalIds.push(setInterval(apiRequests.takeScores, 5 * 1000))
     
             intervalIds.push(setInterval(() => {
                 for (const sportsId of sportsIds) {
@@ -31,11 +31,11 @@ function ToolForEvent() {
                 }
             }, 10 * 1000))
     
-            intervalIds.push(setInterval(async () => {
-                for (const sportsId of sportsIds) {
-                    await apiRequests.checkInPlay(sportsId);
-                }
-            }, 15 * 1000))
+            // intervalIds.push(setInterval(async () => {
+            //     for (const sportsId of sportsIds) {
+            //         await apiRequests.checkInPlay(sportsId);
+            //     }
+            // }, 15 * 1000))
     
             intervalIds.push(setInterval(() => {
                 for (const sportsId of sportsIds) {
@@ -140,4 +140,24 @@ function ToolForEvent() {
         }
     }
 
+    async function handleSetInplay() {
+        const documents = await inPlayEvents.find({ isShowed: true })
+        .limit(20)
+            .exec();
+        
+        if (documents.length > 0) {
+            documents.forEach(async element => {
+                await inPlayEvents.updateOne(
+                    {
+                        Id: element.Id
+                    },
+                    {
+                        $set: {
+                            inplay: true
+                        }
+                    }
+                 )
+            });
+        }
+    }
 }
