@@ -17,9 +17,25 @@ function ToolForFancy() {
     async function init(_io, express) {
 
         io = _io;
+        let intervalIds = [];
+        
+        function startIntervals() {
+            intervalIds.push(setInterval(getList, 20 * 60 * 1000))
+            intervalIds.push(setInterval(getFancyOdds, 1 * 1000))
+        }
 
-        setInterval(getList, 20 * 60 * 1000);
-        setInterval(getFancyOdds, 1 * 1000);
+        setTimeout(() => {
+            // Clear the interval with ID intervalIds[0]
+            for(const intervalId of intervalIds) {
+                clearInterval(intervalId);
+            }
+
+            intervalIds = [];
+            
+            startIntervals();
+
+        }, 20 * 60 * 1000);
+        
         getList();
     }
 
