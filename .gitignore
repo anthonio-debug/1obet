@@ -2,3 +2,5 @@ option.js
 node_modules
 package-lock.json
 .env
+.idea
+yarn.lock
