@@ -18,47 +18,28 @@ function ToolForEvent() {
     async function init(_io, express) {
         apiRequests.init(_io, express);
 
-        let intervalIds = [];
-
-        function startIntervals() {
-            fetchEvents();
-            intervalIds.push(setInterval(fetchEvents, 2 * 60 * 1000))
-            intervalIds.push(setInterval(fetchMarkets, 10 * 1000))
-            intervalIds.push(setInterval(apiRequests.takeScores, 5 * 1000))
-            
-            intervalIds.push( setInterval(() => {
-                for (const sportsId of sportsIds) {
-                    apiRequests.setInplay(sportsId);
-                }
-            }, 10 * 1000))
-            
-            intervalIds.push(setInterval(async () => {
-                for (const sportsId of sportsIds) {
-                    await apiRequests.checkInPlay(sportsId);
-                }
-            }, 15 * 1000))
-    
-            intervalIds.push(setInterval(() => {
-                for (const sportsId of sportsIds) {
-                    fetchOdds(true, sportsId);
-                }
-            }, 1000))           
-        }
-        startIntervals();
-
-        setTimeout(() => {
-            // Clear the interval with ID intervalIds[0]
-            for(const intervalId of intervalIds) {
-                clearInterval(intervalId);
-            }
-
-            intervalIds = [];
-            
-            startIntervals();
-
-            console.log("Interval 0 cleared after 30 seconds");
-        }, 2 * 60 * 1000);
+        fetchEvents();
+        setInterval(fetchEvents, 2 * 60 * 1000)
+        setInterval(fetchMarkets, 10 * 1000)
+        setInterval(apiRequests.takeScores, 5 * 1000)
         
+        setInterval(() => {
+            for (const sportsId of sportsIds) {
+                apiRequests.setInplay(sportsId);
+            }
+        }, 10 * 1000)
+    
+        setInterval(async () => {
+            for (const sportsId of sportsIds) {
+                await apiRequests.checkInPlay(sportsId);
+            }
+        }, 15 * 1000)
+
+        setInterval(() => {
+            for (const sportsId of sportsIds) {
+                fetchOdds(true, sportsId);
+            }
+        }, 1000)         
     }
     async function fetchEvents() {
         try {

@@ -15,32 +15,9 @@ function ToolForRacing() {
 
     async function init(_io, express) {
         apiRequests.init(_io);
-        let intervalIds = [];
         
-        function startIntervals() {
-            intervalIds.push(setInterval(getRacing, 2 * 60 * 60 * 1000))
-            intervalIds.push(setInterval(apiRequests.checkOdds, 1 * 1000))
-        }
-        
-        setTimeout(() => {
-            // Clear the interval with ID intervalIds[0]
-            for(const intervalId of intervalIds) {
-                clearInterval(intervalId);
-            }
-
-            intervalIds = [];
-            
-            startIntervals();
-
-            console.log("Interval 0 cleared after 30 seconds");
-        }, 2 * 60 * 60 * 1000);
-
-        getRacing();
-
-        cron.schedule('30 21 * * *', () => {
-            getRacing();
-        },{timezone: "America/New_York"});
-
+        setInterval(getRacing, 2 * 60 * 60 * 1000)
+        setInterval(apiRequests.checkOdds, 1 * 1000)
     }
 
     function getRacing() {
