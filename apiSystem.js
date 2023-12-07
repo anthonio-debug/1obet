@@ -20,7 +20,7 @@ const httpServer = https.createServer(express);
 const io = socketIo(httpServer, {
   path: "/websocket",
   cors: {
-    origin: "*",
+    origin:  ["https://1obet.com", "https://1obet.com/admin"],
     methods: ["GET", "POST"],
   },
 });
