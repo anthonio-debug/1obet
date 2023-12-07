@@ -2,6 +2,7 @@
 module.exports = toolStart;
 const apiRequest = require('./apiRequest')();
 const MarketIDs = require('../app/models/marketIds');
+const inplayevents = require('../app/models/events');
 
 function toolStart() {
     return { init };
@@ -29,6 +30,35 @@ function toolStart() {
             const element = checkOldRecordWithoutReady[index];
             await MarketIDs.updateOne({ _id: element._id }, { $set: { readyForScore: true } });
         }
+
+        /*
+        const results = await MarketIDs.aggregate([
+            {
+                $lookup: {
+                    from: "inplayevents",         
+                    localField: "eventId",   
+                    foreignField: "Id",     
+                    as: "eventData"          
+                }
+            },
+            {
+                $match: {
+                    //readyForScore: { $ne: true },
+                    winnerInfo: null,
+                    //runners: { $ne: null },
+                    sportID:{ $in: [1,2,4] },
+                    status: 'OPEN',
+                    "eventData.isShowed": true,
+                    "eventData.status": { $ne: 'OPEN' }
+                }
+            },
+            {
+                $project: {
+                    marketids: 1        
+                }
+            }
+        ]);
+         */
     }
 
     async function getWaitingResultEvent() {

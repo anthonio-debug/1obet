@@ -190,6 +190,7 @@ async function handleLosingBet(bet) {
               betId: bet._id,
               betType: bet.type,
               betDateTime: bet.betTime,
+              date: new Date().getTime(),
               createdAt: formattedDate
             });
             // console.log(" ======================== Cash Updating Sucessfully ");
@@ -266,6 +267,7 @@ async function handleLosingBet(bet) {
                   matchId: bet.matchId,
                   betType: bet.type,
                   betDateTime: bet.betTime,
+                  date: new Date().getTime(),
                   createdAt: formattedDate
                 })
         
@@ -523,6 +525,7 @@ async function handleWinningBet(bet, winner) {
               matchId: bet.matchId,
               betType: bet.type,
               betDateTime: bet.betTime,
+              date: new Date().getTime(),
               createdAt: formattedDate
             });
             
@@ -603,6 +606,7 @@ async function handleWinningBet(bet, winner) {
                   matchId: bet.matchId,
                   betType: bet.type,
                   betDateTime: bet.betTime,
+                  date: new Date().getTime(),
                   createdAt: formattedDate
                 })
                 upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
@@ -632,6 +636,7 @@ async function handleWinningBet(bet, winner) {
                     matchId: bet.matchId,
                     betType: bet.type,
                     betDateTime: bet.betTime,
+                    date: new Date().getTime(),
                     createdAt: formattedDate
                   });
 

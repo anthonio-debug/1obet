@@ -69,6 +69,16 @@ function apiRequests() {
               eventId: channel.substring(1),
             });
             socket.emit("fancy_event_list", fancyEvents);
+            /*
+            const lastFancyOdds = await FancyOdds.find({ eventId: channel.substring(1) }).sort({created: -1}).limit(2);
+
+            if (lastFancyOdds.length > 1) {
+              setTimeout(() => {
+                socket.emit('fancy_odds', lastFancyOdds[1]);
+              }, 2000);
+              
+            }
+            */
           }
 
           const lastScore = await Score.find({ eventId: channel.substring(1) })
@@ -83,7 +93,6 @@ function apiRequests() {
               msg: "Score record is not exist for this event.",
             });
           }
-
           for (
             let index = 0;
             index < event_information.marketIds.length;
@@ -97,6 +106,7 @@ function apiRequests() {
             if (lOdds.length > 0)
               event_information.marketIds[index].last_odds = lOdds[0];
           }
+
           socket.emit("event_info", event_information);
         } else {
           socket.emit("err", "Event Not Exist");

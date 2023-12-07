@@ -18,7 +18,7 @@
   "worldCasinoOnlineApiUrl": "https://stageapi.worldcasinoonline.com/api",
   "oldSaltKey": "Loa0192Jua",
   "betMinimumAmount": 100,
-  "activeProvider": "new", 
+
 
   "language": "en",
   "play_for_fun": false,

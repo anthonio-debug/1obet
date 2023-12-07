@@ -556,7 +556,7 @@ function getLedgerDetails(req, res) {
   
     const query = { userId: req.body.userId };
     let page = 1;
-    let sort = 1;
+    let sort = -1;
     let sortValue = '_id';
     let limit = config.pageSize;
     console.log('limit:', limit);
@@ -606,7 +606,7 @@ function getLedgerDetails(req, res) {
   
       cashPipeline.push(
         {
-          $sort: { createdAt: -1 },
+          $sort: { date: -1 },
         },
         {
           $facet: {
