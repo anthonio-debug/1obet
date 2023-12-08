@@ -574,10 +574,10 @@ function getLedgerDetails(req, res) {
           userId: Number(req.body.userId),
           $and: [
             {
-              createdAt: {$gte: req.query.startDate}
+              createdAt: {$gte: req.body.startDate}
             },
             {
-              createdAt: {$lte: req.query.endDate}
+              createdAt: {$lte: req.body.endDate}
             }
           ]
         } 
