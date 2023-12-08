@@ -2025,6 +2025,9 @@ const placeBet = async (req, res) => {
     const delayExcludedMarkets = [ ...config.FigureEvenOddSmallBig, ...config.asianSubMarket,  config.Fancy, config.BookMaker, config.Toss ];
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
+      if(subMarketDetail.Id ==  config.Fancy){
+        delay = 2000;
+      }
     }
 
     setTimeout( async () => {
