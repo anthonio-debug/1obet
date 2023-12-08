@@ -61,7 +61,7 @@ async function main() {
   ToolForTestSport.init(io, express);
 
   //init events list
-  // ToolForListEvent.init(io, express);
+  ToolForListEvent.init(io, express);
     
   httpServer.listen(port, () => {
     console.log(`Server listening on port ${port}`);
