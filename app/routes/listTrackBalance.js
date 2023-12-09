@@ -8,96 +8,78 @@ async function listTrackBalance(req, res) {
     const betList = await Bets.aggregate([
       {
         $match: {
-          userId: parseInt(userId),
-          calculateExp: true
+          userId: userId,
+          calculateExp: true,
         },
-      },
-      {
-        $sort: { _id: 1 },
       },
       {
         $lookup: {
           from: "deposits",
-          localField: "_id",
-          foreignField: "betId",
+          localField: "userId",
+          foreignField: userId,
           as: "depositDetail",
         },
       },
-      // {
-      //   $lookup: {
-      //     from: "exposures",
-      //     let: { randomStr: "$randomStr" },
-      //     pipeline: [
-      //       {
-      //         $match: {
-      //           $expr: {
-      //             $and: [
-      //               { $eq: ["$userId", parseInt(userId)] },
-      //               { $eq: ["$trans_from_id", "$$randomStr"] },
-      //               { $eq: ["$calculatedExp", "1"] },
-      //             ],
-      //           },
-      //         },
-      //       },
-      //     ],
-      //     as: "exposureDetail",
-      //   },
-      // },
-      {      
+      {
+        $unwind: "$depositDetail",
+      },
+      {
         $lookup: {
-          from: "exposures",
-          localField: "_id",
-          foreignField: "trans_from_id",
-          as: "exposureDetail",
-        }
+          from: "Events",
+          localField: "depositDetail.matchId",
+          foreignField: "_id",
+          as: "eventDetail",
+        },
+      },
+      {
+        $match: {
+          "depositDetail.userId": userId,
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          position: { $first: "$position" }, // Assuming position is the field that represents exposure in the bets collection
+          totalDeposit: { $sum: "$depositDetail.amount" },
+          data: { $first: "$$ROOT" },
+        },
       },
       {
         $project: {
           _id: 0,
-          betId: "$_id",
-          price: "$betRate",
-          runnersPosition: "$runnersPosition",
-          calculateExp: "$calculateExp",
-          runnerId: "$runnerName",
-          createdAt: "$createdAt",
-          size: "$betAmount",
-          runner: "$runner",
-          marketId: "$marketId",
-          betRate: "$betRate",
-          type: "$type",
-          isfancyOrbookmaker: "$isfancyOrbookmaker",
-          fancyData: "$fancyData",
-          fancyRate: "$fancyRate",
-          betSession: "$betSession",
-          roundId: "$roundId",
-          asianTableId: "$asianTableId",
-          marketId: "$marketId",
-          betAmount: "$betAmount",
-          exposureAmount: "$exposureAmount",
-          sportsId: "$sportsId",
-          depositDetail: {
-            $filter: {
-              input: "$depositDetail",
-              cond: {
-                $eq: ["$$this.userId", parseInt(userId)],
-              },
-            },
-          },
-          exposureDetail: {
-            $filter: {
-              input: "$exposureDetail",
-              cond: {
-                $eq: ["$$this.userId", parseInt(userId)],
-              },
-            },
-          },
+          betId: "$data._id",
+          price: "$data.betRate",
+          runnersPosition: "$data.runnersPosition",
+          calculateExp: "$data.calculateExp",
+          runnerId: "$data.runnerName",
+          createdAt: "$data.createdAt",
+          size: "$data.betAmount",
+          runner: "$data.runner",
+          marketId: "$data.marketId",
+          betRate: "$data.betRate",
+          type: "$data.type",
+          isfancyOrbookmaker: "$data.isfancyOrbookmaker",
+          fancyData: "$data.fancyData",
+          fancyRate: "$data.fancyRate",
+          betSession: "$data.betSession",
+          roundId: "$data.roundId",
+          asianTableId: "$data.asianTableId",
+          marketId: "$data.marketId",
+          betAmount: "$data.betAmount",
+          exposureAmount: "$data.exposureAmount",
+          sportsId: "$data.sportsId",
+          totalDeposit: 1,
+          position: 1,
         },
       },
     ]);
 
-    const total = await Bets.countDocuments({userId: parseInt(userId)})
+    const total = await Bets.countDocuments({ userId: userId, calculateExp: true });
 
-    res.status(200).json({ success: true, data: betList, total: total });
+    // Check if totalDeposit is equal to the position for each bet
+    const isBalanceMatching = betList.every((bet) => bet.totalDeposit === bet.position);
+
+    res.status(200).json({ success: true, data: betList, total: total, isBalanceMatching: isBalanceMatching });
   } catch (err) {
     res.status(500).json({ success: false, msg: "Failed to get bet list" });
   }
