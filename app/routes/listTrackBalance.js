@@ -51,7 +51,7 @@ async function listTrackBalance(req, res) {
       }
     ]);
     
-    res.status(200).json({ success: true, data: betList, total: total, isBalanceMatching: isBalanceMatching });
+    res.status(200).json({ success: true, data: betList });
   } catch (err) {
     res.status(500).json({ success: false, msg: `Failed to get bet list:  ${err.message}` });
   }
