@@ -556,7 +556,7 @@ function getLedgerDetails(req, res) {
   
     const query = { userId: req.body.userId };
     let page = 1;
-    let sort = 1;
+    let sort = -1;
     let sortValue = '_id';
     let limit = config.pageSize;
     console.log('limit:', limit);
@@ -569,7 +569,19 @@ function getLedgerDetails(req, res) {
       if (err || !user) {
         return res.status(404).send({ message: 'User not found' });
       }
-      let cashPipeline = [{ $match: { userId: Number(req.body.userId) } }];
+      let cashPipeline = [{ 
+        $match: { 
+          userId: Number(req.body.userId),
+          $and: [
+            {
+              createdAt: {$gte: req.body.startDate}
+            },
+            {
+              createdAt: {$lte: req.body.endDate}
+            }
+          ]
+        } 
+      }];
   
       const userRole = user.role;
   
@@ -606,7 +618,7 @@ function getLedgerDetails(req, res) {
   
       cashPipeline.push(
         {
-          $sort: { createdAt: -1 },
+          $sort: { date: -1 },
         },
         {
           $facet: {
