@@ -60,6 +60,8 @@ app.get("/", (req, res) => {
   );
 });
 
+app.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRouter);
+
 // Allowed Apis on this server
 app.use(function (req, res, next) {
   apisMiddleware(req, res, next, jsonApis);
