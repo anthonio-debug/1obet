@@ -190,7 +190,9 @@ async function handleLosingBet(bet) {
               betId: bet._id,
               betType: bet.type,
               betDateTime: bet.betTime,
-              createdAt: formattedDate
+              createdAt: formattedDate,
+              betSession: bet.betSession ,
+              roundId: bet.roundId
             });
             // console.log(" ======================== Cash Updating Sucessfully ");
 
@@ -266,7 +268,9 @@ async function handleLosingBet(bet) {
                   matchId: bet.matchId,
                   betType: bet.type,
                   betDateTime: bet.betTime,
-                  createdAt: formattedDate
+                  createdAt: formattedDate,
+                  betSession: bet.betSession ,
+                  roundId: bet.roundId
                 })
         
                 console.log( " ======================== Parent User Cash Updating Sucessfully ", lastMaxWithdraw);
@@ -523,7 +527,9 @@ async function handleWinningBet(bet, winner) {
               matchId: bet.matchId,
               betType: bet.type,
               betDateTime: bet.betTime,
-              createdAt: formattedDate
+              createdAt: formattedDate,
+              betSession: bet.betSession,
+              roundId: bet.roundId
             });
             
             // console.log(" =============== Cash Save Successfully! ");
@@ -603,7 +609,9 @@ async function handleWinningBet(bet, winner) {
                   matchId: bet.matchId,
                   betType: bet.type,
                   betDateTime: bet.betTime,
-                  createdAt: formattedDate
+                  createdAt: formattedDate,
+                  betSession: bet.betSession ,
+                  roundId: bet.roundId
                 })
                 upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
                 // console.log(" =============== Parent bet Transaction  Successfull ");
@@ -632,7 +640,9 @@ async function handleWinningBet(bet, winner) {
                     matchId: bet.matchId,
                     betType: bet.type,
                     betDateTime: bet.betTime,
-                    createdAt: formattedDate
+                    createdAt: formattedDate,
+                    betSession: bet.betSession ,
+                    roundId: bet.roundId
                   });
 
                   upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
