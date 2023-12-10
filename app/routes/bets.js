@@ -2288,6 +2288,7 @@ const placeBet = async (req, res) => {
       }
 
       if(Number(user.createdBy) === 11733){
+        console.log(" ========================== Number(user.createdBy) === 11733 ", user.createdBy,  user?.userId);
         if (subMarketDetail.Id == config.Fancy) {
           await Bets.updateMany(
             {
