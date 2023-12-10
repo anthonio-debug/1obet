@@ -6,7 +6,7 @@ const sportsIds = ["1", "7522", "2", "4", "7", "27454571", "468328"];
 const inPlayEvents = require('../../app/models/events');
 const MarketIDs = require('../../app/models/marketIds');
 const Odds = require('../../app/models/odds');
-
+const config = require("../../config/default.json")
 
 const apiRequests = require('./api/apiRequestsTestSCT.js')();
 
@@ -17,30 +17,26 @@ function ToolForEvent() {
 
     async function init(_io, express) {
         apiRequests.init(_io, express);
-        fetchEvents();
+        
+        if (config.activeProvider == 'NEW') {
+            fetchEvents();
 
-        setInterval(fetchEvents, 2 * 60 * 1000);
-        setInterval(fetchMarkets, 10 * 1000);
-        // setInterval(apiRequests.takeScores, 5 * 1000);
-        setInterval(handleSetInplay, 10 * 1000);
+            setInterval(fetchEvents, 2 * 60 * 1000);
+            setInterval(fetchMarkets, 10 * 1000);
+            setInterval(handleSetInplay, 10 * 1000);
 
-        setInterval(() => {
-            for (const sportsId of sportsIds) {
-                apiRequests.setInplay(sportsId);
-            }
-        }, 10 * 1000);
+            setInterval(() => {
+                for (const sportsId of sportsIds) {
+                    apiRequests.setInplay(sportsId);
+                }
+            }, 10 * 1000);
 
-        // setInterval(async () => {
-        //     for (const sportsId of sportsIds) {
-        //         await apiRequests.checkInPlay(sportsId);
-        //     }
-        // }, 15 * 1000);
-
-        setInterval(() => {
-            for (const sportsId of sportsIds) {
-                fetchOdds(true, sportsId);
-            }
-        }, 1000);
+            setInterval(() => {
+                for (const sportsId of sportsIds) {
+                    fetchOdds(true, sportsId);
+                }
+            }, 1000);
+        }
     }
     async function fetchEvents() {
         try {
@@ -54,13 +50,13 @@ function ToolForEvent() {
 
     async function fetchMarkets() {
         try {
-            const documents = await inPlayEvents.findOne({ status: 'OPEN', isShowed: true })
+            const documents = await inPlayEvents.findOne({ status: 'OPEN', sportsId: "1" })
                 .sort({ lastCheckMarket: 1 })
                 .limit(1)
                 .exec();
 
             if (documents) {
-                await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId);
+                await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
                 await inPlayEvents.updateMany(
                     { Id: documents.Id },
                     { $set: { lastCheckMarket: Date.now() } }

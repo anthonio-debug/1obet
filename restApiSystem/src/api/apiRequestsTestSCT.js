@@ -200,9 +200,27 @@ function apiRequests() {
           }
 
           if (existingDoc && existingDoc.inplayFromServer != event.event.inplay) {
-            console.log(existingDoc);
-            console.log(event.inplay);
+            // console.log(existingDoc);
+            // console.log(event.inplay);
           }
+
+          const competitionRequest = {
+            "filter": {
+              "eventTypeIds": [sportsId],
+              "eventIds": [event.event.id],
+              "countryCodes": [event.event.countryCode]
+            }
+          }
+
+          const getCompetitionUrl = `${sportsAPIUrl}/listCompetitions`;
+
+          const responseCompetition = await axios.post(
+            getCompetitionUrl,
+            competitionRequest,
+            header
+          );
+
+          var competitions = responseCompetition.data.result;
 
           await inPlayEvents.findOneAndUpdate(
             { Id: event.event.id },
@@ -214,6 +232,8 @@ function apiRequests() {
                 countryCode: event.event.countryCode,
                 timezone: event.event.timezone,
                 openDate: Date.parse(event.event.openDate),
+                competitionId: competitions[0].competition.id,
+                competitionName: competitions[0].competition.name,
                 inplayFromServer: false,
                 hasFancy: false,
                 status: 'OPEN',
@@ -306,7 +326,8 @@ function apiRequests() {
       "filter": {
         "eventIds": [`${eventId}`],
       },
-      "maxResults": 10
+      "maxResults": 10,
+      "marketProjection": ["RUNNER_DESCRIPTION", "RUNNER_METADATA"]
     }
 
     var url = `${sportsAPIUrl}/listMarketCatalogue`;
@@ -332,6 +353,7 @@ function apiRequests() {
             id: element.marketId,
             marketName: element.marketName,
             status: marketStatus,
+            runners: element.runners
           });
         });
 
@@ -349,6 +371,7 @@ function apiRequests() {
               sportID: sportID,
               status: marketIds[index].status,
               index: index,
+              runners: marketIds[index].runners
             });
             await newMarket.save();
           } else {
@@ -394,7 +417,6 @@ function apiRequests() {
     }
 
     var url = `${sportsAPIUrl}/listMarketBook`;
-
     axios.post(
       url,
       requestData,
@@ -410,17 +432,12 @@ function apiRequests() {
 
               if (typeof element.runners !== undefined) {
                 if (
-                  element.runners[0]?.ex.availableToLay.length >
-                    0 ||
-                  element.runners[0]?.ex.availableToBack.length >
-                    0 ||
-                  element.runners[1]?.ex.availableToLay.length >
-                    0 ||
-                  element.runners[1]?.ex.availableToBack.length >
-                    0 ||
-                  element.runners[2]?.ex.availableToLay.length >
-                    0 ||
-                  element.runners[2]?.ex.availableToBack.length > 0
+                  element.runners[0]?.ex.availableToLay.length > 0
+                  || element.runners[0]?.ex.availableToBack.length > 0
+                  || element.runners[1]?.ex.availableToLay.length > 0
+                  || element.runners[1]?.ex.availableToBack.length > 0
+                  || element.runners[2]?.ex.availableToLay.length > 0
+                  || element.runners[2]?.ex.availableToBack.length > 0
                 ) {
                   checkedMarkets.push(element.marketId);
 
@@ -442,9 +459,52 @@ function apiRequests() {
                     isMarketDataDelayed = element.isMarketDataDelayed
                   } 
 
+                  var tempRunners = [];
+                  for (let n = 0; n < element.runners?.length; n++) {
+                    var tempElement = {
+                      SelectionId: element.runners[n]?.selectionId,
+                      runnerName: marketData?.runners[n]?.runnerName,
+                      Status: element.runners[n]?.status,
+                      LastPriceTraded: element.runners[n]?.lastPriceTraded,
+                      TotalMatched: element.runners[n]?.totalMatched,
+                      ExchangePrices: {
+                        AvailableToBack: [
+                          {
+                            price: element.runners[n]?.ex.availableToBack[0]?.price,
+                            size: element.runners[n]?.ex.availableToBack[0]?.size
+                          },
+                          {
+                            price: element.runners[n]?.ex.availableToBack[1]?.price,
+                            size: element.runners[n]?.ex.availableToBack[1]?.size
+                          },
+                          {
+                            price: element.runners[n]?.ex.availableToBack[2]?.price,
+                            size: element.runners[n]?.ex.availableToBack[2]?.size
+                          },
+                        ],
+                        AvailableToLay: [
+                          {
+                            price: element.runners[n]?.ex.availableToLay[0]?.price,
+                            size: element.runners[n]?.ex.availableToLay[0]?.size
+                          },
+                          {
+                            price: element.runners[n]?.ex.availableToLay[1]?.price,
+                            size: element.runners[n]?.ex.availableToLay[1]?.size
+                          },
+                          {
+                            price: element.runners[n]?.ex.availableToLay[2]?.price,
+                            size: element.runners[n]?.ex.availableToLay[2]?.size
+                          },
+                        ]
+                      }
+                    }
+
+                    tempRunners.push(tempElement)
+                  }
+
                   var json = {
                     sportsId: marketData.sportID,
-                    runners: element.runners,
+                    runners: tempRunners,
                     marketId: element.marketId,
                     isMarketDataDelayed: isMarketDataDelayed,
                     status: element.status,

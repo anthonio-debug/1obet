@@ -6,7 +6,7 @@ const sportsIds = [4, 2, 1];
 const inPlayEvents = require('../../app/models/events');
 const MarketIDs = require('../../app/models/marketIds');
 const Odds = require('../../app/models/odds');
-
+const config = require("../../config/default.json")
 
 const apiRequests = require('./api/apiRequestsSCT.js')();
 
@@ -18,28 +18,30 @@ function ToolForEvent() {
     async function init(_io, express) {
         apiRequests.init(_io, express);
 
-        fetchEvents();
-        setInterval(fetchEvents, 2 * 60 * 1000)
-        setInterval(fetchMarkets, 10 * 1000)
-        setInterval(apiRequests.takeScores, 5 * 1000)
+        if (config.activeProvider == 'OLD') {
+            fetchEvents();
+            setInterval(fetchEvents, 2 * 60 * 1000)
+            setInterval(fetchMarkets, 10 * 1000)
+            setInterval(apiRequests.takeScores, 5 * 1000)
+            
+            setInterval(() => {
+                for (const sportsId of sportsIds) {
+                    apiRequests.setInplay(sportsId);
+                }
+            }, 10 * 1000)
         
-        setInterval(() => {
-            for (const sportsId of sportsIds) {
-                apiRequests.setInplay(sportsId);
-            }
-        }, 10 * 1000)
+            setInterval(async () => {
+                for (const sportsId of sportsIds) {
+                    await apiRequests.checkInPlay(sportsId);
+                }
+            }, 15 * 1000)
     
-        setInterval(async () => {
-            for (const sportsId of sportsIds) {
-                await apiRequests.checkInPlay(sportsId);
-            }
-        }, 15 * 1000)
-
-        setInterval(() => {
-            for (const sportsId of sportsIds) {
-                fetchOdds(true, sportsId);
-            }
-        }, 1000)         
+            setInterval(() => {
+                for (const sportsId of sportsIds) {
+                    fetchOdds(true, sportsId);
+                }
+            }, 1000)
+        }
     }
     async function fetchEvents() {
         try {

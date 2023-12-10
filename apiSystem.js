@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const express = require("express")();
 const https = require("http");
 const socketIo = require("socket.io");
-const config = require("../../../config/default.json")
 require('dotenv').config();
 const port = process.env.APISYSTEMPORT;
 const DBNAME = process.env.DB_NAME;
@@ -58,15 +57,11 @@ async function main() {
   //init asian odds
   ToolForAsian.init(io, express);
 
-  if (config.activeProvider == 'OLD') {
-    //init test sports odd
-    ToolForTestSport.init(io, express);
-  }
+  //init test sports odd
+  ToolForTestSport.init(io, express);
 
-  if (config.activeProvider == 'NEW') {
-    //init events list
-    ToolForListEvent.init(io, express);
-  }
+  //init events list
+  ToolForListEvent.init(io, express);
   
   httpServer.listen(port, () => {
     console.log(`Server listening on port ${port}`);
