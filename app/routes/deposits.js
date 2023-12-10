@@ -569,7 +569,19 @@ function getLedgerDetails(req, res) {
       if (err || !user) {
         return res.status(404).send({ message: 'User not found' });
       }
-      let cashPipeline = [{ $match: { userId: Number(req.body.userId) } }];
+      let cashPipeline = [{ 
+        $match: { 
+          userId: Number(req.body.userId),
+          $and: [
+            {
+              createdAt: {$gte: req.body.startDate}
+            },
+            {
+              createdAt: {$lte: req.body.endDate}
+            }
+          ]
+        }
+      }];
   
       const userRole = user.role;
   
