@@ -2382,7 +2382,6 @@ const placeBet = async (req, res) => {
               marketId: _3rdPartyMarketId,
               userId: req.decoded.userId,
               matchId: matchId,
-              fancyData: fancyData,
               status: 1,
             },
             { calculateExp: false }
@@ -2458,6 +2457,7 @@ const placeBet = async (req, res) => {
               marketId: _3rdPartyMarketId,
               userId: req.decoded.userId,
               matchId: matchId,
+              fancyData: fancyData,
               status: 1,
             }
           ).sort({ _id: -1 }).limit(1);
