@@ -1554,7 +1554,7 @@ const placeBet = async (req, res) => {
       const eventId = eventDetail.Id;
       const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
       // console.log(" url ===== ", url);
-      // const response = await axios.get(url);
+      const response = await axios.get(url);
       // console.log("bookmaker response ========", response.data);
 
       if (!response?.data?.data?.t2?.length) {
