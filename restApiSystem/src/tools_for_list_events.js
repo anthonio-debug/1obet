@@ -50,7 +50,7 @@ function ToolForEvent() {
 
     async function fetchMarkets() {
         try {
-            const documents = await inPlayEvents.findOne({ status: 'OPEN', sportsId: "1" })
+            const documents = await inPlayEvents.findOne({ status: 'OPEN' })
                 .sort({ lastCheckMarket: 1 })
                 .limit(1)
                 .exec();

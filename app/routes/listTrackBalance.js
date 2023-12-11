@@ -1,10 +1,45 @@
 const express = require("express");
 const router = express.Router();
 const Bets = require("../models/bets");
+const Deposits = require("../models/deposits")
+const Events = require("../models/events")
 
 async function listTrackBalance(req, res) {
   try {
     const userId = parseInt(req.params.userId);
+
+    const testBetList = await Bets.find({
+      userId: userId,
+      calculateExp: true,      
+    })
+
+    for (let i = 0; i < testBetList?.length; i++) {
+
+      // const depositList = await Deposits.aggregate([
+      //   {
+      //     $match: {
+      //       userId: userId,
+      //       marketId: testBetList[i].marketId
+      //     }
+      //   },
+      //   {
+      //     $lookup: {
+      //       from: 'inplayevents',
+      //       localField: 'matchId',
+      //       foreignField: '_id',
+      //       as: 'inplayevent'
+      //     }
+      //   }
+      // ])
+      console.log("2222222222222", testBetList[i].matchId, i)
+
+      const depositList = await Deposits.find(
+        {
+            userId: userId,
+            marketId: testBetList[i].marketId
+          })
+          
+    }
 
     const betList = await Bets.aggregate([
       {
