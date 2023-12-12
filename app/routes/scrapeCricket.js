@@ -5,20 +5,64 @@ const Crickets = require('../models/Crickets')
 const inPlayEvents = require("../models/events");
 
 async function updateCricketData(req, res) {
-  const body = req.body;
-  console.info('body: ', body.length)
+  const {type, entities} = req.body;
+  // console.log('update', entities)
   try {
-    for (const item of body) {
+    if (type === 'matches') {
+      for (const item of entities) {
+        await Crickets.findOneAndUpdate(
+          {seriesKey: item.seriesKey},
+          item,
+          {upsert: true, new: false, setDefaultsOnInsert: true}
+        );
+      }
+      res.status(200).json({
+        success: true,
+        message: 'updated matches ',
+      });
+    } else if (type === 'live') {
+      const entities = {
+        seriesKey: 'key',
+        overs: [{key: 1, value: 234}, {key: 2, value: 2324}, {key: 3, value: 2314}]
+      }
+      const overs = JSON.parse(JSON.stringify(entities)).overs
+      delete entities.overs
       await Crickets.findOneAndUpdate(
-        { seriesKey: item.seriesKey },
-        item,
-        { upsert: true, new: true, setDefaultsOnInsert: true }
+        {seriesKey: entities.seriesKey},
+        entities,
+        {upsert: true, new: true, setDefaultsOnInsert: true}
       );
+      async function updateOrAppendOvers(seriesKey, newOver) {
+        const doc = await Crickets.findOne({ seriesKey: seriesKey });
+        if (doc) {
+          const overIndex = doc.overs.findIndex(over => {return (over.team === newOver.team && over.over === newOver.over)});
+
+          if (overIndex > -1) {
+            // Order exists, update it
+            const update = { [`overs.${overIndex}`]: newOver };
+            return Crickets.findOneAndUpdate(
+              { seriesKey: seriesKey, [`overs.${overIndex}.team`]: newOver.team, [`overs.${overIndex}.over`]: newOver.over },
+              { $set: update },
+              { new: true }
+            );
+          } else {
+            // Order doesn't exist, append it
+            return Crickets.findOneAndUpdate(
+              { seriesKey: seriesKey },
+              { $push: { overs: newOver } },
+              { new: true }
+            );
+          }
+        }
+      }
+      for (const over of overs) {
+        await updateOrAppendOvers(entities.seriesKey, over)
+      }
+      res.status(200).json({
+        success: true,
+        message: 'updated matches ',
+      });
     }
-    res.status(200).json({
-      success: true,
-      message: 'updated cricket data ',
-    });
 
   } catch (error) {
     console.error(error);
@@ -32,4 +76,4 @@ async function updateCricketData(req, res) {
 
 cricketRouter.post('/update_cricket', updateCricketData);
 
-module.exports = { cricketRouter };
+module.exports = {cricketRouter};
