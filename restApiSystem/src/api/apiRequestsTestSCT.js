@@ -177,7 +177,6 @@ function apiRequests() {
         "eventTypeIds": [sportsId],
       }
     }
-
     var url = `${sportsAPIUrl}/listEvents`;
     try {
       const response = await axios.post(
@@ -185,7 +184,7 @@ function apiRequests() {
         requestData,
         header
       );
-
+      
       var events = response.data.result;
       if (events.length > 0) {
         events = events.filter(function (item) {
@@ -219,7 +218,7 @@ function apiRequests() {
             competitionRequest,
             header
           );
-
+          
           var competitions = responseCompetition.data.result;
 
           await inPlayEvents.findOneAndUpdate(
@@ -324,21 +323,20 @@ function apiRequests() {
   async function listMarketsByCronJob(eventId, sportID) {
     const requestData = {
       "filter": {
-        "eventIds": [`${eventId}`],
+        "eventIds": [eventId],
       },
       "maxResults": 10,
       "marketProjection": ["RUNNER_DESCRIPTION", "RUNNER_METADATA"]
     }
 
     var url = `${sportsAPIUrl}/listMarketCatalogue`;
-    
     try {
       const response = await axios.post(
         url,
         requestData,
         header
       );
-
+      
       const marketsData = response.data.result;
       let marketStatus = 'OPEN';
 
@@ -359,26 +357,37 @@ function apiRequests() {
 
         for (let index = 0; index < marketIds.length; index++) {
           var ev = parseInt(eventId);
-          const marketID = await MarketIDS.findOne({
-            eventId: ev,
-            marketId: marketIds[index].id + "",
-          });
-          if (!marketID) {
-            const newMarket = new MarketIDS({
-              eventId: eventId,
+          if (
+            marketIds[index].marketName !== "Most Sixes"
+            && marketIds[index].marketName !== "Super Over"
+            && marketIds[index].marketName !== "Top South Africa Batter"
+            && marketIds[index].marketName !== "2nd Innings 10 Overs Line"
+            && marketIds[index].marketName !== "Match Odds Including Tie"
+            && marketIds[index].marketName !== "2nd Innings 15 Overs Line"
+            && marketIds[index].marketName !== "2nd Innings 12 Overs Line"
+          ) {
+            const marketID = await MarketIDS.findOne({
+              eventId: ev,
               marketId: marketIds[index].id + "",
-              marketName: marketIds[index].marketName,
-              sportID: sportID,
-              status: marketIds[index].status,
-              index: index,
-              runners: marketIds[index].runners
             });
-            await newMarket.save();
-          } else {
-            await MarketIDS.findOneAndUpdate(
-              { eventId: ev, marketId: marketIds[index].id + "" },
-              { status: marketIds[index].status }
-            );
+            if (!marketID) {
+              const newMarket = new MarketIDS({
+                eventId: eventId,
+                marketId: marketIds[index].id + "",
+                marketName: marketIds[index].marketName,
+                sportID: sportID,
+                status: marketIds[index].status,
+                index: index,
+                runners: marketIds[index].runners
+              });
+              console.log("111111111111111", eventId)
+              await newMarket.save();
+            } else {
+              await MarketIDS.findOneAndUpdate(
+                { eventId: ev, marketId: marketIds[index].id + "" },
+                { status: marketIds[index].status }
+              );
+            }
           }
         }
 
@@ -424,6 +433,7 @@ function apiRequests() {
     ).then(
       async (response) => {
         const oddsData = response.data.result;
+
         var checkedMarkets = [];
         if (oddsData.length > 0) {
           try {
