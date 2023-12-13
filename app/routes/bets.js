@@ -4022,7 +4022,7 @@ const SingleUserAllBets = async (req, res) => {
       bet.multipeResponse = deposit;
     }
 
-    console.log("betList ============== ", betList);
+    // console.log("betList ============== ", betList);
 
     return res.send({
       status: true,
