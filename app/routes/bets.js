@@ -4021,8 +4021,9 @@ const SingleUserAllBets = async (req, res) => {
     }).sort({ marketId: -1});
 
 
-    for (const bet of betList) {
+    for (const bet of betList){
       bet.returnAmount = await Cash.find({ betId: bet._id, userId: bet.userId  })
+      console.log(" bet ================ ", bet);
     }
 
     console.log("betList ============== ", betList);
