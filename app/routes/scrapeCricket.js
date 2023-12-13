@@ -64,6 +64,11 @@ async function updateCricketData(req, res) {
         success: true,
         message: 'updated matches ',
       });
+    } else {
+      res.status(200).json({
+        success: false,
+        message: 'incorrect filed',
+      });
     }
 
   } catch (error) {
