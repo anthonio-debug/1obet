@@ -4027,7 +4027,7 @@ const SingleUserAllBets = async (req, res) => {
       bet.deposit = deposit;
     }
 
-    // console.log("betList ============== ", betList);
+    console.log("betList ============== ", betList);
 
     return res.send({
       status: true,
