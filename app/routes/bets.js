@@ -4023,8 +4023,8 @@ const SingleUserAllBets = async (req, res) => {
 
 
     for (const bet of betList){
-      const deposit = await Cash.findOne({ userId: Number(req.query.userId) })
-      bet.deposit = deposit;
+      const deposit = await Cash.find({ userId: Number(req.query.userId) })
+      bet.multipeResponse = deposit;
     }
 
     console.log("betList ============== ", betList);
