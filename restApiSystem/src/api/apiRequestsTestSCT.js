@@ -186,6 +186,7 @@ function apiRequests() {
       );
       
       var events = response.data.result;
+      console.log("22222222222222222",events)
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
@@ -220,7 +221,6 @@ function apiRequests() {
           );
           
           var competitions = responseCompetition.data.result;
-
           await inPlayEvents.findOneAndUpdate(
             { Id: event.event.id },
             {
@@ -231,8 +231,8 @@ function apiRequests() {
                 countryCode: event.event.countryCode,
                 timezone: event.event.timezone,
                 openDate: Date.parse(event.event.openDate),
-                competitionId: competitions[0].competition.id,
-                competitionName: competitions[0].competition.name,
+                competitionId: competitions[0]?.competition?.id ? competitions[0]?.competition?.id : null,
+                competitionName: competitions[0]?.competition?.name ? competitions[0]?.competition?.name : null,
                 inplayFromServer: false,
                 hasFancy: false,
                 status: 'OPEN',
