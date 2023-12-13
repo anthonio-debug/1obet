@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+let Global = require('../global/settings');
 
 const CricketSchema = new mongoose.Schema({
   seriesKey: { type: String, required: false },
@@ -32,6 +33,10 @@ const CricketSchema = new mongoose.Schema({
   venueName: { type: String, required: false },
   timestamp: { type:Number, default: new Date().getTime() / 1000}
 }, {strict: false});
+
+
+CricketSchema.plugin(Global.paginate);
+CricketSchema.plugin(Global.aggregatePaginate);
 
 const Crickets = mongoose.model('crickets', CricketSchema);
 module.exports = Crickets;
