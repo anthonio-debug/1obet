@@ -4015,9 +4015,15 @@ const dailyMatchWiseprofitLose = async (req, res) => {
 const SingleUserAllBets = async (req, res) => {
   try {
     const betList = await Bets.find({
-      calculateExp: true,
+      // calculateExp: true,
       userId: Number(req.query.userId),
-    });
+    }).sort({ marketId: -1});
+
+
+    for (const bet of betList) {
+      bet.deposit = await Cash.find({ betId: bet._id, userId: bet.userId  })
+    }
+
     return res.send({
       status: true,
       message: "Bets List !",
