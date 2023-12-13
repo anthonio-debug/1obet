@@ -4018,12 +4018,12 @@ const SingleUserAllBets = async (req, res) => {
     const betList = await Bets.find({
       // calculateExp: true,
       userId: Number(req.query.userId)
-    })
+    }).exec();
     // .sort({ marketId: -1});
 
 
     for (const bet of betList){
-      const deposit = await Cash.find({ userId: Number(req.query.userId) })
+      const deposit = await Cash.find({ betId:  userId: Number(req.query.userId) })
       bet.multipeResponse = deposit;
     }
 
