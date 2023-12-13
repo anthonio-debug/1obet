@@ -4022,11 +4022,11 @@ const SingleUserAllBets = async (req, res) => {
 
 
     for (const bet of betList){
-      bet.returnAmount = await Cash.find({ betId: bet._id, userId: bet.userId  })
-      console.log(" bet ================ ", bet);
+      const deposit = await Cash.findOne({ betId: bet._id, userId: bet.userId  })
+      console.log(" bet ================ ", deposit);
     }
 
-    console.log("betList ============== ", betList);
+    // console.log("betList ============== ", betList);
 
     return res.send({
       status: true,
