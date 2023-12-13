@@ -6,7 +6,7 @@ const Events = require("../models/events")
 
 async function listTrackBalance(req, res) {
   try {
-    const userId = parseInt(req.params.userId);
+    const userId = 11812 // parseInt(req.params.userId);
 
     const testBetList = await Bets.find({
       userId: userId,
