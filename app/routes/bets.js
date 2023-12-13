@@ -2287,7 +2287,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: " Insufficient balance " });
       }
 
-      if(Number(user.createdBy) === 11733){
+      if(Number(user.createdBy) === 11733 || Number(user.createdBy) === 11037){
         console.log(" ========================== Number(user.createdBy) === 11733 ", user.createdBy,  user?.userId);
         if (subMarketDetail.Id == config.Fancy) {
           await Bets.updateMany(
