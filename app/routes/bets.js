@@ -4017,8 +4017,9 @@ const SingleUserAllBets = async (req, res) => {
   try {
     const betList = await Bets.find({
       // calculateExp: true,
-      userId: Number(req.query.userId),
-    }).sort({ marketId: -1});
+      userId: Number(req.query.userId)
+    })
+    // .sort({ marketId: -1});
 
 
     for (const bet of betList){
