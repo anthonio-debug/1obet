@@ -24,6 +24,7 @@ const BetPlaceHold = require("../models/betaPlaceHold");
 const Exposure = require("../models/ExpRec")
 const AsianMarketOdd = require("../models/asianOdds")
 const { v4: uuidv4 } = require('uuid');
+const { log } = require("async");
 
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
@@ -4023,6 +4024,8 @@ const SingleUserAllBets = async (req, res) => {
     for (const bet of betList) {
       bet.returnAmount = await Cash.find({ betId: bet._id, userId: bet.userId  })
     }
+
+    console.log("betList ============== ", betList);
 
     return res.send({
       status: true,
