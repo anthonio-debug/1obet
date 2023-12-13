@@ -4021,7 +4021,7 @@ const SingleUserAllBets = async (req, res) => {
 
 
     for (const bet of betList) {
-      bet.deposit = await Cash.find({ betId: bet._id, userId: bet.userId  })
+      bet.returnAmount = await Cash.find({ betId: bet._id, userId: bet.userId  })
     }
 
     return res.send({
