@@ -4022,7 +4022,6 @@ const SingleUserAllBets = async (req, res) => {
     //   bet.multipeResponse = deposit;
     // }
 
-
     const result = await Bets.aggregate([
       {
         $match: { userId: Number(req.query.userId) }
@@ -4036,15 +4035,72 @@ const SingleUserAllBets = async (req, res) => {
         }
       },
       {
-        $match: { "deposit.userId": Number(req.query.userId) }
+        $match: {
+          "deposit": {
+            $elemMatch: { userId: Number(req.query.userId) }
+          }
+        }
       }
     ]).exec();
+
+    // const result2 = await Bets.aggregate([
+    //   {
+    //     $match: { userId: Number(req.query.userId) }
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "deposits", 
+    //       localField: "_id",
+    //       foreignField: "betId",
+    //       as: "deposit"
+    //     }
+    //   },
+    //   {
+    //     $match: { "deposit.userId": Number(req.query.userId) }
+    //   },
+    //   {
+    //     $group: {
+    //       _id: "$_id",
+    //       sportsId: { $first: "$sportsId" }, 
+    //       marketId:  { $first: "$marketId" },
+    //       userId:  { $first: "$userId" },
+    //       betAmount:  { $first: "$betAmount" },
+    //       betRate: { $first: "$betRate" },
+    //       selectedBetRate: { $first: "$selectedBetRate" },
+    //       betSession: { $first: "$betSession" },
+    //       fancyData: { $first: "$fancyData" },
+    //       TargetScore: { $first: "$TargetScore" },
+    //       matchId: { $first: "$matchId" },
+    //       winningAmount : { $first: "$winningAmount" },
+    //       loosingAmount : { $first: "$loosingAmount" },
+    //       subMarketId: { $first: "$subMarketId" },
+    //       event: { $first: "$event" },
+    //       position: { $first: "$position" },
+    //       eventId: { $first: "$eventId" },
+    //       fancyRate: { $first: "$fancyRate" },
+    //       calculateExp: { $first: "$calculateExp" },
+    //       exposureAmount: { $first: "$exposureAmount" },
+    //       betTime: { $first: "$betTime" },
+    //       iscalculatedExp: { $first: "$iscalculatedExp" },
+
+    //       deposit_id: { $first: { $arrayElemAt: ["$deposit._id", 0] } },
+    //       addedExpoisureAmount: { $first: { $arrayElemAt: ["$deposit.addedExpoisureAmount", 0] } },
+    //       UserPrevexposure: { $first: { $arrayElemAt: ["$deposit.UserPrevexposure", 0] } },
+    //       UpdatedExposure: { $first: { $arrayElemAt: ["$deposit.UpdatedExposure", 0] } },
+    //       userAvailableBalanceBFTrans: { $first: { $arrayElemAt: ["$deposit.userAvailableBalanceBFTrans", 0] } },
+    //       userAvailableBalanceAFTrans: { $first: { $arrayElemAt: ["$deposit.userAvailableBalanceAFTrans", 0] } },
+    //       UserBalanceBFTrans: { $first: { $arrayElemAt: ["$deposit.UserBalanceBFTrans", 0] } },
+    //       UserBalanceAFTrans: { $first: { $arrayElemAt: ["$deposit.UserBalanceAFTrans", 0] } }
+    //     }
+    //   }
+    // ]).exec();
 
     return res.send({
       status: true,
       message: "Bets List !",
       results: result,
     });
+    
   } catch (err) {
     return res.send({
       message: `Error ${err} !`,
