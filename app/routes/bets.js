@@ -4022,7 +4022,7 @@ const SingleUserAllBets = async (req, res) => {
     //   bet.multipeResponse = deposit;
     // }
 
-    const result2 = await Bets.aggregate([
+    const result = await Bets.aggregate([
       {
         $match: { userId: Number(req.query.userId) }
       },
