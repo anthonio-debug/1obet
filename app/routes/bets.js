@@ -4018,7 +4018,7 @@ const SingleUserAllBets = async (req, res) => {
     const betList = await Bets.find({ userId: Number(req.query.userId) }).exec();
     for (const bet of betList){
       const id = bet._id.toString();
-      const deposit = await Cash.find({ betId: new ObjectId(id),  userId: Number(req.query.userId) })
+      const deposit = await Cash.find({ betId: ObjectId(id),  userId: Number(req.query.userId) })
       bet.multipeResponse = deposit;
       console.log(" ==================== bet", bet);
     }
