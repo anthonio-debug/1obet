@@ -44,10 +44,10 @@ let depositsSchema = new Schema({
   UserPrevexposure:{ type: String , default: 0 },
   UpdatedExposure:{ type: String , default: 0 },
   exposure:{ type: String },
-  UserPreveAvaiableBalance:{ type: Number , default: 0 },
-  UserPreveBalance:{ type: Number , default: 0 },
-
-
+  userAvailableBalanceBFTrans:{ type: Number , default: 0 },
+  userAvailableBalanceAFTrans:{ type: Number , default: 0 },
+  UserBalanceBFTrans:{ type: Number , default: 0 },
+  UserBalanceAFTrans:{ type: Number , default: 0 },
 
 });
 

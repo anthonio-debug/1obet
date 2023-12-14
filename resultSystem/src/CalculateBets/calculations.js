@@ -194,8 +194,10 @@ async function handleLosingBet(bet) {
               UserPrevexposure: userToUpdate.exposure,
               UpdatedExposure: expAmount,
               sourceCodeBlock: 'handleLosingBet',
-              UserPreveAvaiableBalance: user_prev_availableBalance,
-              UserPreveBalance: user_prev_balance
+              userAvailableBalanceBFTrans: user_prev_availableBalance,
+              userAvailableBalanceAFTrans: updatedAvailableBalance,
+              UserBalanceBFTrans: user_prev_balance,
+              UserBalanceAFTrans: updatedbalance
             });
             // console.log(" ======================== Cash Updating Sucessfully ");
 
@@ -539,8 +541,10 @@ async function handleWinningBet(bet, winner) {
               UserPrevexposure:userToUpdate.exposure,
               UpdatedExposure:UpdatedExposure,
               sourceCodeBlock:'handleWinningBet',
-              UserPreveAvaiableBalance: user_prev_availableBalance,
-              UserPreveBalance: user_prev_balance
+              userAvailableBalanceBFTrans: user_prev_availableBalance,
+              userAvailableBalanceAFTrans: UpdatedAvailableBalance,
+              UserBalanceBFTrans: user_prev_balance,
+              UserBalanceAFTrans: Updatedbalance
             });
             
             // console.log(" =============== Cash Save Successfully! ");
