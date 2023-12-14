@@ -170,10 +170,6 @@ async function handleLosingBet(bet) {
             const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
             let newCash = deposits.insertOne({
               userId: userToUpdate.userId,
-              addedExpoisureAmount:addExpoisureAmount,
-              UserPrevexposure:userToUpdate.exposure,
-              UpdatedExposure:expAmount,
-              sourceCodeBlock:'handleLosingBet',
               description: `Event (${bet.event}) Runner (${bet.runnerName})`,
               amount: -loosingAmount,
               balance: lastMaxWithdraw ? lastMaxWithdraw.balance - loosingAmount : -loosingAmount,
@@ -192,7 +188,14 @@ async function handleLosingBet(bet) {
               betDateTime: bet.betTime,
               createdAt: formattedDate,
               betSession: bet.betSession ,
-              roundId: bet.roundId
+              roundId: bet.roundId,
+
+              addedExpoisureAmount: addExpoisureAmount,
+              UserPrevexposure: userToUpdate.exposure,
+              UpdatedExposure: expAmount,
+              sourceCodeBlock: 'handleLosingBet',
+              UserPreveAvaiableBalance: user_prev_availableBalance,
+              UserPreveBalance: user_prev_balance
             });
             // console.log(" ======================== Cash Updating Sucessfully ");
 
@@ -222,7 +225,9 @@ async function handleLosingBet(bet) {
                 const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
                 const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount ).toFixed(3)) : 0;
                 const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(3));
-                
+
+                const parent_prev_avl_balance = user.availableBalance;
+                const parent_prev_balance = user.balance;
                 await users.updateOne(
                   {
                     _id: user?._id 
@@ -247,11 +252,6 @@ async function handleLosingBet(bet) {
                   userId: user.userId,
                   description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
                   createdBy: 0,
-                  addedExpoisureAmount:Number(((user.commission / 100) * remainingAmount).toFixed(3)),
-                  UserPrevexposure:user.exposure,
-                  UpdatedExposure:totalExpoisure,
-                  exposure : 'Number(((user.commission / 100) * remainingAmount).toFixed(3))',
-                  sourceCodeBlock:'handleLosingBet',
                   amount: (user.commission / 100) * TotalLoosingAmount,
                   balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
                   availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
@@ -270,7 +270,15 @@ async function handleLosingBet(bet) {
                   betDateTime: bet.betTime,
                   createdAt: formattedDate,
                   betSession: bet.betSession ,
-                  roundId: bet.roundId
+                  roundId: bet.roundId,
+
+                  addedExpoisureAmount:Number(((user.commission / 100) * remainingAmount).toFixed(3)),
+                  UserPrevexposure:user.exposure,
+                  UpdatedExposure:totalExpoisure,
+                  exposure : 'Number(((user.commission / 100) * remainingAmount).toFixed(3))',
+                  sourceCodeBlock:'handleLosingBet',
+                  UserPreveAvaiableBalance: parent_prev_avl_balance,
+                  UserPreveBalance: parent_prev_balance
                 })
         
                 console.log( " ======================== Parent User Cash Updating Sucessfully ", lastMaxWithdraw);
@@ -509,10 +517,6 @@ async function handleWinningBet(bet, winner) {
               userId: userToUpdate.userId,
               description: `Event (${bet.event}) Runner (${bet.runnerName})`,
               betId: bet._id,
-              addedExpoisureAmount:addExpoisureAmount,
-              UserPrevexposure:userToUpdate.exposure,
-              UpdatedExposure:UpdatedExposure,
-              sourceCodeBlock:'handleWinningBet',
               createdBy: 0,
               amount: remainingAmount,
               balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
@@ -529,7 +533,14 @@ async function handleWinningBet(bet, winner) {
               betDateTime: bet.betTime,
               createdAt: formattedDate,
               betSession: bet.betSession,
-              roundId: bet.roundId
+              roundId: bet.roundId,
+
+              addedExpoisureAmount:addExpoisureAmount,
+              UserPrevexposure:userToUpdate.exposure,
+              UpdatedExposure:UpdatedExposure,
+              sourceCodeBlock:'handleWinningBet',
+              UserPreveAvaiableBalance: user_prev_availableBalance,
+              UserPreveBalance: user_prev_balance
             });
             
             // console.log(" =============== Cash Save Successfully! ");
@@ -565,6 +576,8 @@ async function handleWinningBet(bet, winner) {
                 const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)): 0;
                 const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
                 
+                const parent_prev_avl_balance = user.availableBalance;
+                const parent_prev_balance = user.balance;
                 await users.updateOne({
                     userId: user.userId,
                     isDeleted: false,
@@ -588,11 +601,6 @@ async function handleWinningBet(bet, winner) {
                   userId: user.userId,
                   description: `Event (${bet.event}) Runner (${bet.runnerName})`,
                   createdBy: 0,
-                  addedExpoisureAmount:Number(((user.commission / 100) * totalRemainingAmount).toFixed(3)),
-                  UserPrevexposure:user.exposure,
-                  UpdatedExposure:totalExpoisure,
-                  exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
-                  sourceCodeBlock:'handleWinningBet',
                   amount: -(user.commission / 100) * totalRemainingAmount,
                   balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
                   availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
@@ -611,7 +619,15 @@ async function handleWinningBet(bet, winner) {
                   betDateTime: bet.betTime,
                   createdAt: formattedDate,
                   betSession: bet.betSession ,
-                  roundId: bet.roundId
+                  roundId: bet.roundId,
+
+                  addedExpoisureAmount:Number(((user.commission / 100) * totalRemainingAmount).toFixed(3)),
+                  UserPrevexposure:user.exposure,
+                  UpdatedExposure:totalExpoisure,
+                  exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
+                  sourceCodeBlock:'handleWinningBet',
+                  UserPreveAvaiableBalance: parent_prev_avl_balance,
+                  UserPreveBalance: parent_prev_balance
                 })
                 upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
                 // console.log(" =============== Parent bet Transaction  Successfull ");

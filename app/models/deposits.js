@@ -17,11 +17,6 @@ let depositsSchema = new Schema({
   cashOrCredit: { type: String },
   calledArea: { type: String },
   createdBy: { type: String },
-  addedExpoisureAmount:{ type: String , default: '-'},
-  UserPrevexposure:{ type: String , default: '-'},
-  UpdatedExposure:{ type: String , default: '-'},
-  exposure:{ type: String , default: '.'},
-  sourceCodeBlock:{ type: String , default: '.'},
   loosingAmount:{ type: String , default: '.'},
   winningAmount:{ type: String , default: '.'},
 
@@ -40,7 +35,20 @@ let depositsSchema = new Schema({
   casinoBetAmount: {type: Number, default: 0},
   betTime :  {type: Number, default: new Date().getTime()- 30},
   betSession: { type: Number },
-  roundId: { type: String }
+  roundId: { type: String },
+
+
+
+  sourceCodeBlock:{ type: String , default: 0 },
+  addedExpoisureAmount:{ type: String , default: 0 },
+  UserPrevexposure:{ type: String , default: 0 },
+  UpdatedExposure:{ type: String , default: 0 },
+  exposure:{ type: String },
+  UserPreveAvaiableBalance:{ type: Number , default: 0 },
+  UserPreveBalance:{ type: Number , default: 0 },
+
+
+
 });
 
 depositsSchema.plugin(Global.aggregatePaginate);
