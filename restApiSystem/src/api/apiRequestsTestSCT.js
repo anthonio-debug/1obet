@@ -5,6 +5,7 @@ const axios = require("axios");
 
 const inPlayEvents = require("../../../app/models/events");
 const MarketIDS = require("../../../app/models/marketIds");
+const RaceOdds = require("../../../app/models/raceOdds");
 const Score = require("../../../app/models/score");
 const Odds = require("../../../app/models/odds");
 const FancyEvent = require("../../../app/models/fancyEvent");
@@ -186,7 +187,6 @@ function apiRequests() {
       );
       
       var events = response.data.result;
-      console.log("22222222222222222",events)
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
@@ -433,7 +433,6 @@ function apiRequests() {
     ).then(
       async (response) => {
         const oddsData = response.data.result;
-
         var checkedMarkets = [];
         if (oddsData.length > 0) {
           try {
@@ -512,7 +511,7 @@ function apiRequests() {
                     tempRunners.push(tempElement)
                   }
 
-                  var json = {
+                  var json1 = {
                     sportsId: marketData.sportID,
                     runners: tempRunners,
                     marketId: element.marketId,
@@ -525,6 +524,14 @@ function apiRequests() {
                     totalMatched: element.totalMatched,
                     createdAt: new Date().getTime(),
                   };
+
+                  var json2 = {
+                    marketId: element.marketId,
+                    isMarketDataDelayed: isMarketDataDelayed,
+                    state: element.status,
+                    runners: tempRunners,
+                    createdAt: new Date().getTime(),
+                  }
 
                   if (element.Status != "OPEN") {
                     await MarketIDS.updateOne(
@@ -552,8 +559,16 @@ function apiRequests() {
                     }
                   }
 
-                  var el = new Odds(json);
-                  el.save();
+                  console.log("------------------->", marketData.sportID, typeof marketData.sportID)
+                  if (marketData.sportID !== 7) {
+                    var el = new Odds(json1);
+                    el.save();
+                  } else {
+                    console.log(">>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<")
+                    var el = new RaceOdds(json2);
+                    el.save();
+                  }
+
 
                   const ix = _.findIndex(tempArry, function (o) {
                     return o.market == element.marketId;

@@ -8,6 +8,7 @@ async function listCricket(req, res) {
   let page = 1;
   let sort = -1;
   var limit = config.pageSize;
+  console.log("1111111111", req.query)
 
   if (
     req.query.numRecords &&
@@ -21,8 +22,6 @@ async function listCricket(req, res) {
     query,
     { page: page, limit: limit },
     (err, results) => {
-      console.log("err: --->", err)
-      console.log("results: --->", results)
       if (err) return res.status(404).send({ message: 'Something went wrong' });
       return res.send({
         success: true,
@@ -34,6 +33,25 @@ async function listCricket(req, res) {
   );
 }
 
+async function editCricket(req, res) {
+  const { _id, eventId } = req.body;
+
+  try {
+    const result = await Crickets.updateOne(
+      { _id: _id }, 
+      { $set: { eventId: eventId } },
+    );
+
+    // Check if the update was successful
+    res.status(200).json({ success: true, message: 'Cricket updated successfully' });
+  } catch (error) {
+    console.error('Error updating cricket:', error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+  }
+}
+
+
 router.get("/listCricket", listCricket);
+router.post("/editCricket", editCricket);
 
 module.exports = { router };
