@@ -4036,7 +4036,7 @@ const SingleUserAllBets = async (req, res) => {
         }
       },
       {
-        $match: { "Wdeposit.userId": Number(req.query.userId) }
+        $match: { "deposit.userId": Number(req.query.userId) }
       }
     ]).exec();
 
