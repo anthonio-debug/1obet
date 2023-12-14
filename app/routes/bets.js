@@ -4015,18 +4015,35 @@ const dailyMatchWiseprofitLose = async (req, res) => {
 
 const SingleUserAllBets = async (req, res) => {
   try {
-    const betList = await Bets.find({ userId: Number(req.query.userId) }).exec();
-    for (const bet of betList){
-      const id = bet._id.toString();
-      const deposit = await Cash.find({ betId: ObjectId(id),  userId: Number(req.query.userId) })
-      bet.multipeResponse = deposit;
-      console.log(" ==================== deposit", deposit);
-      console.log(" ==================== bet", ObjectId(id));
-    }
+    // const betList = await Bets.find({ userId: Number(req.query.userId) }).exec();
+    // for (const bet of betList){
+    //   const id = bet._id.toString();
+    //   const deposit = await Cash.find({ betId: ObjectId(id),  userId: Number(req.query.userId) })
+    //   bet.multipeResponse = deposit;
+    // }
+
+
+    const result = await Bets.aggregate([
+      {
+        $match: { userId: userId }
+      },
+      {
+        $lookup: {
+          from: "deposits", 
+          localField: "_id",
+          foreignField: "betId",
+          as: "deposit"
+        }
+      },
+      {
+        $match: { userId: userId }
+      }
+    ]).exec();
+
     return res.send({
       status: true,
       message: "Bets List !",
-      results: betList,
+      results: result,
     });
   } catch (err) {
     return res.send({
