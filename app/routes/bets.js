@@ -4036,9 +4036,7 @@ const SingleUserAllBets = async (req, res) => {
       },
       {
         $match: {
-          "deposit": {
-            $elemMatch: { userId: Number(req.query.userId) }
-          }
+          "deposit.userId": Number(req.query.userId)
         }
       }
     ]).exec();
@@ -4100,7 +4098,7 @@ const SingleUserAllBets = async (req, res) => {
       message: "Bets List !",
       results: result,
     });
-    
+
   } catch (err) {
     return res.send({
       message: `Error ${err} !`,
