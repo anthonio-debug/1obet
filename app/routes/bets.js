@@ -4025,7 +4025,7 @@ const SingleUserAllBets = async (req, res) => {
 
     const result = await Bets.aggregate([
       {
-        $match: { userId: userId }
+        $match: { userId: Number(req.query.userId) }
       },
       {
         $lookup: {
@@ -4036,7 +4036,7 @@ const SingleUserAllBets = async (req, res) => {
         }
       },
       {
-        $match: { userId: userId }
+        $match: { userId: Number(req.query.userId) }
       }
     ]).exec();
 
