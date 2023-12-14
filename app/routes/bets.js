@@ -24,6 +24,7 @@ const BetPlaceHold = require("../models/betaPlaceHold");
 const Exposure = require("../models/ExpRec")
 const AsianMarketOdd = require("../models/asianOdds")
 const { v4: uuidv4 } = require('uuid');
+const { ObjectId } = require('mongodb');
 
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
@@ -4014,10 +4015,14 @@ const dailyMatchWiseprofitLose = async (req, res) => {
 
 const SingleUserAllBets = async (req, res) => {
   try {
-    const betList = await Bets.find({
-      calculateExp: true,
-      userId: Number(req.query.userId),
-    });
+    const betList = await Bets.find({ userId: Number(req.query.userId) }).exec();
+    for (const bet of betList){
+      const id = bet._id.toString();
+      const deposit = await Cash.find({ betId: ObjectId(id),  userId: Number(req.query.userId) })
+      bet.multipeResponse = deposit;
+      console.log(" ==================== deposit", deposit);
+      console.log(" ==================== bet", ObjectId(id));
+    }
     return res.send({
       status: true,
       message: "Bets List !",
