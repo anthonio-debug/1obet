@@ -226,8 +226,8 @@ async function handleLosingBet(bet) {
                 const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount ).toFixed(3)) : 0;
                 const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(3));
 
-                const parent_prev_avl_balance = user.availableBalance;
-                const parent_prev_balance = user.balance;
+                // const parent_prev_avl_balance = user.availableBalance;
+                // const parent_prev_balance = user.balance;
                 await users.updateOne(
                   {
                     _id: user?._id 
@@ -277,8 +277,8 @@ async function handleLosingBet(bet) {
                   UpdatedExposure:totalExpoisure,
                   exposure : 'Number(((user.commission / 100) * remainingAmount).toFixed(3))',
                   sourceCodeBlock:'handleLosingBet',
-                  UserPreveAvaiableBalance: parent_prev_avl_balance,
-                  UserPreveBalance: parent_prev_balance
+                  // UserPreveAvaiableBalance: parent_prev_avl_balance,
+                  // UserPreveBalance: parent_prev_balance
                 })
         
                 console.log( " ======================== Parent User Cash Updating Sucessfully ", lastMaxWithdraw);
@@ -575,9 +575,9 @@ async function handleWinningBet(bet, winner) {
                 const totalavailableBalance = Number(( user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
                 const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)): 0;
                 const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-                
-                const parent_prev_avl_balance = user.availableBalance;
-                const parent_prev_balance = user.balance;
+
+                // const parent_prev_avl_balance = user.availableBalance;
+                // const parent_prev_balance = user.balance;
                 await users.updateOne({
                     userId: user.userId,
                     isDeleted: false,
@@ -626,8 +626,8 @@ async function handleWinningBet(bet, winner) {
                   UpdatedExposure:totalExpoisure,
                   exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
                   sourceCodeBlock:'handleWinningBet',
-                  UserPreveAvaiableBalance: parent_prev_avl_balance,
-                  UserPreveBalance: parent_prev_balance
+                  // UserPreveAvaiableBalance: parent_prev_avl_balance,
+                  // UserPreveBalance: parent_prev_balance
                 })
                 upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
                 // console.log(" =============== Parent bet Transaction  Successfull ");
