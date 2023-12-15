@@ -4022,8 +4022,7 @@ const SingleUserAllBets = async (req, res) => {
       // }
     });
     for (const bet of result){
-      const id = bet._id.toString();
-      const deposit = await Cash.find({ betId: ObjectId(id),  userId: Number(req.query.userId) })
+      const deposit = await Cash.find({ betId: bet._id,  userId: Number(req.query.userId) })
       bet.multipeResponse = deposit;
     }
 
