@@ -4017,9 +4017,9 @@ const SingleUserAllBets = async (req, res) => {
   try {
     const result = await Bets.find({ 
       userId: Number(req.query.userId),
-      date: {
-        $gte: new Date().getTime() - 86400000
-      }
+      // date: {
+      //   $gte: new Date().getTime() - 86400000
+      // }
     });
     for (const bet of result){
       const id = bet._id.toString();
