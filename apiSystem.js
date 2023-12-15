@@ -49,7 +49,7 @@ async function main() {
   ToolForEvent.init(io, express);
 
   //init events jobs for cricket, tennis and soccer
-  ToolForRacing.init(io, express);
+  // ToolForRacing.init(io, express);
 
   //init events jobs for fancy data for cricket
   ToolForFancy.init(io, express);
