@@ -24,7 +24,7 @@ const BetPlaceHold = require("../models/betaPlaceHold");
 const Exposure = require("../models/ExpRec")
 const AsianMarketOdd = require("../models/asianOdds")
 const { v4: uuidv4 } = require('uuid');
-const { ObjectId } = require('mongodb');
+const { MongoClient,  ObjectId } = require('mongodb');
 
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
@@ -4015,19 +4015,81 @@ const dailyMatchWiseprofitLose = async (req, res) => {
 
 const SingleUserAllBets = async (req, res) => {
   try {
-    const betList = await Bets.find({ userId: Number(req.query.userId) }).exec();
-    for (const bet of betList){
-      const id = bet._id.toString();
-      const deposit = await Cash.find({ betId: ObjectId(id),  userId: Number(req.query.userId) })
-      bet.multipeResponse = deposit;
-      console.log(" ==================== deposit", deposit);
-      console.log(" ==================== bet", ObjectId(id));
+    
+    const DBNAME = process.env.DB_NAME;
+    const DBHost = process.env.DBHost;
+    const client  = new MongoClient(DBHost, { useUnifiedTopology: true });
+    const deposit = client.db(`${DBNAME}`).collection("deposits");
+
+    const result = await Bets.find({ 
+      userId: Number(req.query.userId),
+    });
+    for (const bet of result){
+      const deposits = await deposit.find({ betId: bet._id,  userId: Number(req.query.userId) }).toArray();
+      bet.multipeResponse = deposits;
     }
+
+    // const result = await Bets.aggregate([
+
+    //   {
+    //     $match: { 
+    //       userId: Number(req.query.userId),
+    //       // date: {
+    //       //   $gte: new Date().getTime() - 86400000
+    //       // }
+    //     }
+
+    //   },
+    //   {
+    //     $lookup: {
+    //       from: "deposits", 
+    //       localField: "_id",
+    //       foreignField: "betId",
+    //       as: "deposit"
+    //     }
+    //   },
+    //   // {
+    //   //   $group: {
+    //   //     _id: "$_id",
+    //   //     sportsId: { $first: "$sportsId" }, 
+    //   //     marketId:  { $first: "$marketId" },
+    //   //     userId:  { $first: "$userId" },
+    //   //     betAmount:  { $first: "$betAmount" },
+    //   //     betRate: { $first: "$betRate" },
+    //   //     selectedBetRate: { $first: "$selectedBetRate" },
+    //   //     betSession: { $first: "$betSession" },
+    //   //     fancyData: { $first: "$fancyData" },
+    //   //     TargetScore: { $first: "$TargetScore" },
+    //   //     matchId: { $first: "$matchId" },
+    //   //     winningAmount : { $first: "$winningAmount" },
+    //   //     loosingAmount : { $first: "$loosingAmount" },
+    //   //     subMarketId: { $first: "$subMarketId" },
+    //   //     event: { $first: "$event" },
+    //   //     position: { $first: "$position" },
+    //   //     eventId: { $first: "$eventId" },
+    //   //     fancyRate: { $first: "$fancyRate" },
+    //   //     calculateExp: { $first: "$calculateExp" },
+    //   //     exposureAmount: { $first: "$exposureAmount" },
+    //   //     betTime: { $first: "$betTime" },
+    //   //     iscalculatedExp: { $first: "$iscalculatedExp" },
+    //   //     deposit_id: { $first: { $arrayElemAt: ["$deposit._id", 0] } },
+    //   //     addedExpoisureAmount: { $first: { $arrayElemAt: ["$deposit.addedExpoisureAmount", 0] } },
+    //   //     UserPrevexposure: { $first: { $arrayElemAt: ["$deposit.UserPrevexposure", 0] } },
+    //   //     UpdatedExposure: { $first: { $arrayElemAt: ["$deposit.UpdatedExposure", 0] } },
+    //   //     userAvailableBalanceBFTrans: { $first: { $arrayElemAt: ["$deposit.userAvailableBalanceBFTrans", 0] } },
+    //   //     userAvailableBalanceAFTrans: { $first: { $arrayElemAt: ["$deposit.userAvailableBalanceAFTrans", 0] } },
+    //   //     UserBalanceBFTrans: { $first: { $arrayElemAt: ["$deposit.UserBalanceBFTrans", 0] } },
+    //   //     UserBalanceAFTrans: { $first: { $arrayElemAt: ["$deposit.UserBalanceAFTrans", 0] } }
+    //   //   }
+    //   // }
+    // ]).exec();
+
     return res.send({
       status: true,
       message: "Bets List !",
-      results: betList,
+      results: result,
     });
+
   } catch (err) {
     return res.send({
       message: `Error ${err} !`,
