@@ -4031,7 +4031,7 @@ const SingleUserAllBets = async (req, res) => {
         $match: { 
           userId: Number(req.query.userId),
           date: {
-            $gte: new Date().getTime() - 86400000*4
+            $gte: new Date().getTime() - 86400000*10
           }
         }
 
