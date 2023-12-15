@@ -4030,20 +4030,20 @@ const SingleUserAllBets = async (req, res) => {
       {
         $match: { 
           userId: Number(req.query.userId),
-          date: {
-            $gte: new Date().getTime() - 86400000*10
-          }
+          // date: {
+          //   $gte: new Date().getTime() - 86400000
+          // }
         }
 
       },
-      {
-        $lookup: {
-          from: "deposits", 
-          localField: "_id",
-          foreignField: "betId",
-          as: "deposit"
-        }
-      },
+      // {
+      //   $lookup: {
+      //     from: "deposits", 
+      //     localField: "_id",
+      //     foreignField: "betId",
+      //     as: "deposit"
+      //   }
+      // },
       // {
       //   $group: {
       //     _id: "$_id",
