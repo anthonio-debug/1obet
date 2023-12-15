@@ -19,7 +19,7 @@ function ToolForEvent() {
         apiRequests.init(_io, express);
         fetchEvents();
         setInterval(fetchEvents, 2 * 60 * 1000);
-        setInterval(fetchMarkets, 10 * 1000);
+        setInterval(fetchMarkets, 60 * 1000);
         setInterval(apiRequests.takeScores, 5 * 1000);
         setInterval(handleSetInplay, 10 * 1000);
 
