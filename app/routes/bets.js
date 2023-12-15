@@ -4015,13 +4015,13 @@ const dailyMatchWiseprofitLose = async (req, res) => {
 
 const SingleUserAllBets = async (req, res) => {
   try {
-    const betList = await Bets.find({ 
+    const result = await Bets.find({ 
       userId: Number(req.query.userId),
       date: {
         $gte: new Date().getTime() - 86400000
       }
     });
-    for (const bet of betList){
+    for (const bet of result){
       const id = bet._id.toString();
       const deposit = await Cash.find({ betId: ObjectId(id),  userId: Number(req.query.userId) })
       bet.multipeResponse = deposit;
