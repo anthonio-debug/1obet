@@ -4036,14 +4036,14 @@ const SingleUserAllBets = async (req, res) => {
         }
 
       },
-      // {
-      //   $lookup: {
-      //     from: "deposits", 
-      //     localField: "_id",
-      //     foreignField: "betId",
-      //     as: "deposit"
-      //   }
-      // },
+      {
+        $lookup: {
+          from: "deposits", 
+          localField: "_id",
+          foreignField: "betId",
+          as: "deposit"
+        }
+      },
       // {
       //   $group: {
       //     _id: "$_id",
