@@ -4015,8 +4015,7 @@ const dailyMatchWiseprofitLose = async (req, res) => {
 
 const SingleUserAllBets = async (req, res) => {
   try {
-    
-
+    const DBHost = process.env.DBHost;
     const client  = new MongoClient(DBHost, { useUnifiedTopology: true });
     const deposit = client.db(`${DBNAME}`).collection("deposits");
 
