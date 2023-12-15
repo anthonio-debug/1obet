@@ -4,11 +4,11 @@ const Crickets = require("../models/Crickets");
 let config = require('config');
 
 async function listCricket(req, res) {
+  console.log("111111111111111111")
   let query = {};
   let page = 1;
   let sort = -1;
   var limit = config.pageSize;
-  console.log("1111111111", req.query)
 
   if (
     req.query.numRecords &&
@@ -20,14 +20,21 @@ async function listCricket(req, res) {
   if (req.query.page) page = Number(req.query.page);
   Crickets.paginate(
     query,
-    { page: page, limit: limit },
+    {
+      page: page,
+      limit: limit,
+      sort: {
+        state: -1, // 'live' first, 'scorecard' second
+      },
+    },
     (err, results) => {
       if (err) return res.status(404).send({ message: 'Something went wrong' });
+      console.log(results);
       return res.send({
         success: true,
         message: 'Crickets list',
         total: results.total,
-        results: results,
+        results: results.docs, // Access the documents array within results
       });
     }
   );
