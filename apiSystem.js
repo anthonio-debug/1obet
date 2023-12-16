@@ -20,6 +20,7 @@ const ToolForFancy = require("./restApiSystem/src/tools_for_fancy.js")();
 const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
 const ToolForTestSport = require("./restApiSystem/src/tools_for_test_sport.js")();
 const ToolForListEvent = require("./restApiSystem/src/tools_for_list_events.js")();
+const ToolForResult = require("./restApiSystem/src/tools_for_result")();
 
 
 express.use(require('express').json());
@@ -76,23 +77,26 @@ express.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRou
 async function main() {
   await inPlayEvents.updateMany({}, { inplay: false, inplayFromServer: false });
 
-  //init events jobs for cricket, tennis and soccer
-  ToolForEvent.init(io, express);
-
-  // init events jobs for cricket, tennis and soccer
-  ToolForRacing.init(io, express);
-
-  // init events jobs for fancy data for cricket
-  ToolForFancy.init(io, express);
-
-  // init asian odds
-  ToolForAsian.init(io, express);
-
-  // init test sports odd
-  ToolForTestSport.init(io, express);
+  // //init events jobs for cricket, tennis and soccer
+  // ToolForEvent.init(io, express);
+  //
+  // // init events jobs for cricket, tennis and soccer
+  // ToolForRacing.init(io, express);
+  //
+  // // init events jobs for fancy data for cricket
+  // ToolForFancy.init(io, express);
+  //
+  // // init asian odds
+  // ToolForAsian.init(io, express);
+  //
+  // // init test sports odd
+  // ToolForTestSport.init(io, express);
+  //
+  // // init events list
+  // ToolForListEvent.init(io, express);
 
   // init events list
-  ToolForListEvent.init(io, express);
+  ToolForResult.init(io, express);
 
   httpServer.listen(port, () => {
     console.log(`Server listening on port ${port}`);
