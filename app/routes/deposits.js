@@ -619,14 +619,14 @@ function getLedgerDetails(req, res) {
       cashPipeline.push({
         $group: {
           _id: "$marketId",
-          description:  { $first: "$description" },
-          amount:  { $sum: "$amount" },
-          balance:  { $last: "$balance" },
-          availableBalance:  { $last: "$availableBalance" },
-          maxWithdraw:  { $last: "$maxWithdraw" },
-          betTime	:  { $first: "$betTime" },
-          date	:  { $first: "$date" },
-          createdAt	:  { $first: "$createdAt" }
+          // description:  { $first: "$description" },
+          // amount:  { $sum: "$amount" },
+          // balance:  { $last: "$balance" },
+          // availableBalance:  { $last: "$availableBalance" },
+          // maxWithdraw:  { $last: "$maxWithdraw" },
+          // betTime	:  { $first: "$betTime" },
+          // date	:  { $first: "$date" },
+          // createdAt	:  { $first: "$createdAt" }
         }
       })
   
