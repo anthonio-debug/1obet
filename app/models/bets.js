@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 let Global = require("../global/settings");
+let Schema = mongoose.Schema
 /**
  * [betSchema description]
  *  @status [ 1 active), 0 (settled), 2 (cancelled), 3 (voided)]
@@ -54,7 +55,9 @@ const betSchema = new mongoose.Schema({
   resultData:{ type: String, default: '.' },
   SessionScore : { type: Number, default: 0 },
   backFancyRate: { type: Number, default: 0 },
-  layFancyRate: { type: Number, default: 0 }
+  layFancyRate: { type: Number, default: 0 },
+  locationData: { type: Schema.Types.Mixed },
+  ipAddress: { type: String },
 });
 
 betSchema.pre("save", function (next) {

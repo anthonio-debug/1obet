@@ -26,6 +26,12 @@ const AsianMarketOdd = require("../models/asianOdds")
 const { v4: uuidv4 } = require('uuid');
 const { MongoClient,  ObjectId } = require('mongodb');
 
+//ip location
+const { IP2Location } = require('ip2location-nodejs');
+let ip2location = new IP2Location();
+ip2location.open('/var/www/html/one-o-bet-backend/IP2LOCATION-LITE-DB11.BIN');
+//
+
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
     return 6;
@@ -2439,6 +2445,33 @@ const placeBet = async (req, res) => {
       /* ------------ */
       /* Placing Bet Area  */
 
+      const netInfo = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
+      const ipAddress = netInfo.match(/[^:]+$/)[0]; 
+
+      var geo = {
+        latitude: 0,
+        longitude: 0,
+        region: null,
+        city: null,
+        zipCode: null,
+        country: null,
+      };
+
+      try {
+        const geoChecking = ip2location.getAll(ipAddress);
+
+        if (geoChecking) {
+          geo.latitude = geoChecking.latitude;
+          geo.longitude = geoChecking.longitude;
+          geo.region = geoChecking.region;
+          geo.city = geoChecking.city;
+          geo.zipCode = geoChecking.zipCode;
+          geo.country = geoChecking.countryLong;
+        }
+      } catch (error) {
+        console.log(err);
+      }
+
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
         sportsId: marketId || 0,
@@ -2471,7 +2504,9 @@ const placeBet = async (req, res) => {
         roundId: roundId,
         asianTableName: asianTableName,
         asianTableId: oddsId,
-        randomStr: randomStr
+        randomStr: randomStr,
+        locationData: geo,
+        ipAddress: ipAddress
         // backFancyRate,
         // layFancyRate 
       });
