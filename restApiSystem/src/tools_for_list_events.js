@@ -35,7 +35,7 @@ function ToolForEvent() {
                 for (const sportsId of sportsIds) {
                     fetchOdds(true, sportsId);
                 }
-            }, 1000);
+            }, 3000);
         }
     }
     async function fetchEvents() {
@@ -50,7 +50,7 @@ function ToolForEvent() {
 
     async function fetchMarkets() {
         try {
-            const documents = await inPlayEvents.findOne({ status: 'OPEN', isShowed: true })
+            const documents = await inPlayEvents.findOne({ status: 'OPEN', isShowed: true, sportsId: "4" })
                 .sort({ lastCheckMarket: 1 })
                 .limit(1)
                 .exec();

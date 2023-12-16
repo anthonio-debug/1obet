@@ -168,19 +168,21 @@ async function betStatisticsByUserId(req, res) {
 
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
     const header =  {
-                  headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-App': 'testqms'
-                  },
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': 'testqms'
+      },
     }
     const requestData = {
       "filter": {
-        "eventIds": ['32877346.2258'],
+        // "eventIds": ['32869878'],
+        // "competitionIds": ["12199513"]
       },
-      "maxResults": 100,
+      // "maxResults": 100,
+      // "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
     }
-    var url = `${sportsAPIUrl}/listMarketCatalogue`;
+    var url = `${sportsAPIUrl}/listEventTypes`;
 
     const response = await axios.post(
       url,

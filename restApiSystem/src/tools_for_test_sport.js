@@ -8,16 +8,21 @@ function ToolForTestSport() {
 
   async function init(_io, express) {
     apiRequests.init(_io, express);
-
-    setInterval(() => {
-      fetchOdds();
-    }, 1000);
+ 
+    fetchOdds();
   }
-  async function fetchOdds() {
-    try {
-      apiRequests.getOddsFromProvider();
-    } catch (error) {
-      console.error("Error fetching odds:", error);
-    }
+ 
+  function fetchOdds() {
+    console.log("running fetch odds")
+    // apiRequests.getOddsFromProvider()
+    //   .then(() => {
+    //     setTimeout(fetchOdds, 10)
+    //   })
+    //   .catch(err => {
+    //     console.log(err);
+    //     // Schedule the next call even if there's an error
+    //     setTimeout(fetchOdds, 30);
+    //   });
   }
 }
+ 

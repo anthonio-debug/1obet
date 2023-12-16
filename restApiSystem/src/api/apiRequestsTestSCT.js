@@ -14,12 +14,12 @@ const config = require("../../../config/default.json")
 
 const sportsAPIUrl = "http://185.58.225.212:8080/api";
 const header =  {
-                  headers: {
-                    'accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'X-App': 'testqms'
-                  },
-                }
+  headers: {
+    'accept': 'application/json',
+    'Content-Type': 'application/json',
+    'X-App': 'testqms'
+  },
+}
 let io;
 
 let runnerCheckerArray = [];
@@ -347,6 +347,11 @@ function apiRequests() {
       if (marketsData.length > 0) {
         let marketIds = [];
         marketsData.forEach((element) => {
+          if (
+            element.marketName === "Match Odds" 
+            || element.marketName === "Tied Match" 
+            || element.marketName === "To Win the Toss"   
+          )
           marketIds.push({
             id: element.marketId,
             marketName: element.marketName,
@@ -559,16 +564,13 @@ function apiRequests() {
                     }
                   }
 
-                  console.log("------------------->", marketData.sportID, typeof marketData.sportID)
                   if (marketData.sportID !== 7) {
                     var el = new Odds(json1);
                     el.save();
                   } else {
-                    console.log(">>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<")
                     var el = new RaceOdds(json2);
                     el.save();
                   }
-
 
                   const ix = _.findIndex(tempArry, function (o) {
                     return o.market == element.marketId;

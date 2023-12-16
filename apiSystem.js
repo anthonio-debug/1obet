@@ -14,7 +14,8 @@ const cors = require("cors");
 
 //Tool
 const ToolForEvent = require("./restApiSystem/src/tools_for_events.js")();
-const ToolForRacing = require("./restApiSystem/src/tools_for_racing.js")();
+// const ToolForRacing = require("./restApiSystem/src/tools_for_racing.js")();
+const ToolForRacing = require("./restApiSystem/src/tools_for_updated_racing.js")();
 const ToolForFancy = require("./restApiSystem/src/tools_for_fancy.js")();
 const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
 const ToolForTestSport = require("./restApiSystem/src/tools_for_test_sport.js")();
@@ -79,7 +80,7 @@ async function main() {
   ToolForEvent.init(io, express);
 
   // init events jobs for cricket, tennis and soccer
-  // ToolForRacing.init(io, express);
+  ToolForRacing.init(io, express);
 
   // init events jobs for fancy data for cricket
   ToolForFancy.init(io, express);

@@ -428,7 +428,7 @@ function apiRequests() {
     var tempArry = [];
     var tempArryForIDs = [];
 
-    for (let index = 0; index < marketIdsArray.length; index++) {
+    for (let index = 0; index < marketIdsArray?.length; index++) {
       const el = marketIdsArray[index];
       tempArry.push({
         market: el.marketId,
