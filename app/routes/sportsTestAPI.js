@@ -166,7 +166,32 @@ async function betStatisticsByUserId(req, res) {
       }
     ]);
 
-    res.status(200).json({success: true, data: userStats});
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+                  headers: {
+                    'accept': 'application/json',
+                    'Content-Type': 'application/json',
+                    'X-App': 'testqms'
+                  },
+    }
+    const requestData = {
+      "filter": {
+        "eventIds": ['32877346.2258'],
+      },
+      "maxResults": 100,
+    }
+    var url = `${sportsAPIUrl}/listMarketCatalogue`;
+
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+
+    const marketsData = response.data.result;
+
+
+    res.status(200).json({success: true, data: marketsData});
   } catch (err) {
     res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
   }

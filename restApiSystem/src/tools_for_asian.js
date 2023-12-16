@@ -8,27 +8,19 @@ function ToolForAsian() {
 
   async function init(_io, express) {
     apiRequests.init(_io, express);
-
-    // setInterval(() => {
-    //   fetchOdds();
-    // }, 1000);
+ 
     fetchOdds();
   }
   function fetchOdds() {
     console.log("running fetch odds")
     apiRequests.getOddsFromProvider()
       .then(() => {
-        setTimeout(fetchOdds, 300)
+        setTimeout(fetchOdds, 10)
       })
       .catch(err => {
         console.log(err);
         // Schedule the next call even if there's an error
-        setTimeout(fetchOdds, 1000);
+        setTimeout(fetchOdds, 30);
       });
-    // try {
-    //   await apiRequests.getOddsFromProvider();
-    // } catch (error) {
-    //   console.error("Error fetching odds:", error);
-    // }
   }
 }
