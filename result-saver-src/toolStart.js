@@ -45,10 +45,11 @@ function toolStart() {
 
     } catch (error) {
       console.log(error);
+    } finally {
+      setTimeout(() => {
+        getWaitingResultEvent();
+      }, 3000);
     }
-    setTimeout(() => {
-      getWaitingResultEvent();
-    }, 3000);
   }
 
   async function getWaitingResultRacing() {
@@ -64,9 +65,10 @@ function toolStart() {
 
     } catch (error) {
       console.log(error);
+    } finally {
+      setTimeout(() => {
+        getWaitingResultRacing();
+      }, 2000);
     }
-    setTimeout(() => {
-      getWaitingResultRacing();
-    }, 2000);
   }
 }
