@@ -3843,21 +3843,27 @@ const dailyMatchWiseprofitLose = async (req, res) => {
 
 const SingleUserAllBets = async (req, res) => {
   try {
-    const betList = await Bets.find({
-      calculateExp: true,
-      userId: Number(req.query.userId),
-    });
+    const DBNAME = process.env.DB_NAME;
+    const DBHost = process.env.DBHost;
+    const client  = new MongoClient(DBHost, { useUnifiedTopology: true });
+    const deposit = client.db(`${DBNAME}`).collection("deposits");
+
+    const result = await Bets.find({  userId: Number(req.query.userId) });
+    for (const bet of result){
+      const deposits = await deposit.find({ betId: bet._id,  userId: Number(req.query.userId) }).toArray();
+      bet.multipeResponse = deposits;
+    }
     return res.send({
       status: true,
       message: "Bets List !",
-      results: betList,
+      results: result,
     });
   } catch (err) {
     return res.send({
       message: `Error ${err} !`,
     });
   }
-};
+}
 
 const postmanwork = async (req, res) => {
   const errors = validationResult(req);
