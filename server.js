@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 let config = require("config");
 let fs = require("fs");
 let cors = require("cors");
-var morgan = require("morgan");
+const morgan = require("morgan");
 const http = require("http");
 require('dotenv').config();
 const DBNAME = process.env.DB_NAME;
@@ -16,8 +16,8 @@ const apisMiddleware = require("./app/middlewares/apisMiddleware");
 const loginMiddleWare = require("./app/middlewares/loginMiddleware");
 const checkRoleMiddleware = require("./app/middlewares/checkRoleMiddleware");
 
-var apisContent = fs.readFileSync(config.apisFileName);
-var jsonApis = JSON.parse(apisContent);
+const apisContent = fs.readFileSync(config.apisFileName);
+const jsonApis = JSON.parse(apisContent);
 let options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -25,7 +25,7 @@ let options = {
 };
 
 mongoose.set("strictQuery", false);
-mongoose.set({ debug: false });
+mongoose.set({debug: false});
 mongoose
   .connect(DBHost, options)
   .then(() => {
@@ -44,23 +44,22 @@ app.use(express.json());
 app.use(morgan("dev"));
 
 // READ FORM DATA
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({extended: false}));
 
-app.use(bodyParser.urlencoded({ extended: false })); //support encoded bodies
-app.use(bodyParser.json({ strict: false }));
-var corsOptions = {
+app.use(bodyParser.urlencoded({extended: false})); //support encoded bodies
+app.use(bodyParser.json({strict: false}));
+const corsOptions = {
   origin: true,
   credentials: true,
   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
 };
+
 app.use(cors(corsOptions));
 app.get("/", (req, res) => {
   res.send(
     '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.net </h2></body>'
   );
 });
-
-app.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRouter);
 
 // Allowed Apis on this server
 app.use(function (req, res, next) {

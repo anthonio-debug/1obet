@@ -6,7 +6,9 @@ const inPlayEvents = require("../models/events");
 
 async function updateCricketData(req, res) {
   const {type, entities} = req.body;
-  // console.log('update', entities)
+  const io = req.io
+  io.emit('cricket_live', entities)
+  io.on('connected', () => {console.log('connected')})
   try {
     if (type === 'matches') {
       for (const item of entities) {

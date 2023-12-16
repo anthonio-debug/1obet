@@ -18,7 +18,7 @@ function ToolForAsian() {
     console.log("running fetch odds")
     apiRequests.getOddsFromProvider()
       .then(() => {
-        setTimeout(fetchOdds, 100)
+        setTimeout(fetchOdds, 300)
       })
       .catch(err => {
         console.log(err);
