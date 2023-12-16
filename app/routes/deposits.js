@@ -616,9 +616,9 @@ function getLedgerDetails(req, res) {
         });
       }
 
-      cashPipeline.push({
-        $group: {
-          _id: "$marketId",
+      // cashPipeline.push({
+      //   $group: {
+      //     _id: "$marketId",
           // description:  { $first: "$description" },
           // amount:  { $sum: "$amount" },
           // balance:  { $last: "$balance" },
@@ -627,8 +627,8 @@ function getLedgerDetails(req, res) {
           // betTime	:  { $first: "$betTime" },
           // date	:  { $first: "$date" },
           // createdAt	:  { $first: "$createdAt" }
-        }
-      })
+      //   }
+      // })
   
       cashPipeline.push(
         {
