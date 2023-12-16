@@ -618,7 +618,13 @@ function getLedgerDetails(req, res) {
 
       cashPipeline.push({
         $group: {
-          _id: "$marketId",
+          _id: {
+            $cond: {
+              if: { $in: ["$cashOrCredit", ['Cash', 'Credit']] }, 
+              then: "$_id", 
+              else: "$marketId"
+            }
+          },
           description:  { $first: "$description" },
           amount:  { $sum: "$amount" },
           balance:  { $last: "$balance" },
