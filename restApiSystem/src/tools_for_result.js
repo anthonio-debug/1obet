@@ -28,9 +28,9 @@ function ToolForResult() {
     } catch (error) {
       console.log(error);
     } finally {
-      // setTimeout(() => {
-      //   fetchResults();
-      // }, 3000);
+      setTimeout(() => {
+        fetchResults();
+      }, 3000);
     }
   }
 }

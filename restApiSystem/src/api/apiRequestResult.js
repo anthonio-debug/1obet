@@ -30,9 +30,9 @@ function apiRequestResult() {
   async function getEventResult(markets) {
     const currentTime = new Date().getTime();
     let marketIdList = [];
-    for (let index = 0; index < markets.length; index++) {
-      marketIdList.push(markets[index].marketId);
-      await MarketIDs.findOneAndUpdate({_id: markets[index]._id}, {lastResultCheckTime: currentTime})
+    for (const market of markets) {
+      marketIdList.push(market.marketId);
+      await MarketIDs.findOneAndUpdate({_id: market._id}, {lastResultCheckTime: currentTime})
     }
 
     const requestData = {
@@ -48,47 +48,41 @@ function apiRequestResult() {
       .then(
         async (response) => {
           const results = response.data.result;
-          for (let index = 0; index < results.length; index++) {
-            const result = results[index];
-            const marketIndex = _.findIndex(markets, function (o) {
-              return o.marketId == result.marketId;
-            });
-            if (marketIndex != -1) {
-              if (result.winnerSelectionId == '-1') {
-                await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id}, {$set: {winnerInfo: 'Canceled'}});
+          for (const result of results) {
+            const marketIndex = _.findIndex(markets, (o) => o.marketId === result.marketId);
 
-                if (markets[marketIndex].marketName == 'Match Odds') {
-                  await Events.findOneAndUpdate({Id: markets[marketIndex].eventId}, {$set: {winner: 'Canceled'}});
-                }
-
-                continue;
-              }
-              if (typeof markets[marketIndex].runners !== 'undefined') {
-                const runnerIndex = _.findIndex(markets[marketIndex].runners, function (o) {
-                  return o.SelectionId == result.winnerSelectionId;
-                });
-                if (runnerIndex != -1) {
-                  await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id}, {$set: {winnerInfo: markets[marketIndex].runners[runnerIndex].runnerName}});
-                  if (markets[marketIndex].marketName == 'Match Odds') {
-                    await Events.findOneAndUpdate({Id: markets[marketIndex].eventId}, {$set: {winner: markets[marketIndex].runners[runnerIndex].runnerName}});
-                  }
-                } else {
-                  await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id}, {$set: {winnerInfo: result.winnerSelectionId}});
-                  if (markets[marketIndex].marketName == 'Match Odds') {
-                    await Events.findOneAndUpdate({Id: markets[marketIndex].eventId}, {$set: {winner: result.winnerSelectionId}});
-                  }
-                }
-              } else {
-                await MarketIDs.findOneAndUpdate({_id: markets[marketIndex]._id}, {$set: {winnerInfo: result.winnerSelectionId}});
-                if (markets[marketIndex].marketName == 'Match Odds') {
-                  await Events.findOneAndUpdate({Id: markets[marketIndex].eventId}, {$set: {winner: result.winnerSelectionId}});
-                }
-              }
-
-              await Events.findOneAndUpdate({Id: markets[marketIndex].eventId}, {$set: {isResultSaved: true}});
-
-            } else {
+            if (marketIndex === -1) {
               console.log('Record not found');
+              return;
+            }
+
+            const market = markets[marketIndex];
+
+            if (result.status !== 'CLOSED') return;
+
+            let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.selectionId;
+
+            if (!market.runners || !winnerSelectionId) {
+              await updateMarketAndEvent(market, winnerSelectionId);
+              return;
+            }
+
+            const runnerIndex = _.findIndex(market.runners, (o) => o.SelectionId === winnerSelectionId);
+
+            if (runnerIndex !== -1) {
+              winnerSelectionId = market.runners[runnerIndex].runnerName;
+            }
+
+            await updateMarketAndEvent(market, winnerSelectionId);
+          }
+
+          async function updateMarketAndEvent(market, winnerInfo) {
+            await MarketIDs.findOneAndUpdate({_id: market._id}, {$set: {winnerInfo}});
+
+            if (market.marketName === 'Match Odds') {
+              await Events.findOneAndUpdate({Id: market.eventId}, {$set: {winner: winnerInfo, isResultSaved: true}});
+            } else {
+              await Events.findOneAndUpdate({Id: market.eventId}, {$set: {isResultSaved: true}});
             }
           }
         }
@@ -97,7 +91,6 @@ function apiRequestResult() {
         console.log(error);
       });
   }
-
 }
 
 module.exports = apiRequestResult;

@@ -77,23 +77,23 @@ express.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRou
 async function main() {
   await inPlayEvents.updateMany({}, { inplay: false, inplayFromServer: false });
 
-  // //init events jobs for cricket, tennis and soccer
-  // ToolForEvent.init(io, express);
-  //
-  // // init events jobs for cricket, tennis and soccer
-  // ToolForRacing.init(io, express);
-  //
-  // // init events jobs for fancy data for cricket
-  // ToolForFancy.init(io, express);
-  //
-  // // init asian odds
-  // ToolForAsian.init(io, express);
-  //
-  // // init test sports odd
-  // ToolForTestSport.init(io, express);
-  //
-  // // init events list
-  // ToolForListEvent.init(io, express);
+  //init events jobs for cricket, tennis and soccer
+  ToolForEvent.init(io, express);
+
+  // init events jobs for cricket, tennis and soccer
+  ToolForRacing.init(io, express);
+
+  // init events jobs for fancy data for cricket
+  ToolForFancy.init(io, express);
+
+  // init asian odds
+  ToolForAsian.init(io, express);
+
+  // init test sports odd
+  ToolForTestSport.init(io, express);
+
+  // init events list
+  ToolForListEvent.init(io, express);
 
   // init events list
   ToolForResult.init(io, express);
