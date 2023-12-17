@@ -632,7 +632,8 @@ function getLedgerDetails(req, res) {
           maxWithdraw:  { $last: "$maxWithdraw" },
           betTime	:  { $first: "$betTime" },
           date	:  { $first: "$date" },
-          createdAt	:  { $first: "$createdAt" }
+          createdAt	:  { $first: "$createdAt" },
+          sportsId: { $first: "$sportsId" },
         }
       })
   
