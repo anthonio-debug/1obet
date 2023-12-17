@@ -615,6 +615,26 @@ function getLedgerDetails(req, res) {
           },
         });
       }
+
+      cashPipeline.push({
+        $group: {
+          _id: {
+            $cond: {
+              if: { $in: ["$cashOrCredit", ['Cash', 'Credit']] }, 
+              then: "$_id", 
+              else: "$marketId"
+            }
+          },
+          description:  { $first: "$description" },
+          amount:  { $sum: "$amount" },
+          balance:  { $last: "$balance" },
+          availableBalance:  { $last: "$availableBalance" },
+          maxWithdraw:  { $last: "$maxWithdraw" },
+          betTime	:  { $first: "$betTime" },
+          date	:  { $first: "$date" },
+          createdAt	:  { $first: "$createdAt" }
+        }
+      })
   
       cashPipeline.push(
         {
@@ -628,7 +648,9 @@ function getLedgerDetails(req, res) {
         }
       );
       console.log('cashPipeline:', cashPipeline);
+
       Cash.aggregate(cashPipeline, async (err, result) => {
+
         if(result[0].results&&result[0].results.length>0){
          for(let i=0;i<result[0].results.length;i++){
           if(result[0].results[i].sportsId !="6" && result[0].results[i].betId){
