@@ -5,7 +5,7 @@ const config = require("../../config/default.json")
 const inPlayEvents = require('../../app/models/events');
 const apiRequests = require('./api/apiRequestsUpdatedRacing.js')();
 
-const sportsIds = [4339, 7];
+const sportsIds = ['4339', '7'];
 const HORSE_RACE_SPORTS_ID = '7';
 
 function ToolForUpdatedRacing() {
@@ -16,8 +16,10 @@ function ToolForUpdatedRacing() {
 
         if (config.activeProvider == 'NEW') {
             setInterval(fetchMarkets, 10 * 1000);
-            setInterval(getRacing, 2 * 60 * 60 * 1000)
-            setInterval(apiRequests.checkOdds, 1 * 1000)
+            // setInterval(getRacing, 2 * 60 * 60 * 1000)
+            setInterval(getRacing, 20 * 1000)
+            // setInterval(apiRequests.checkOdds, 1 * 1000)
+            setInterval(apiRequests.checkOdds, 30 * 1000)
         }
     }
 
@@ -34,7 +36,7 @@ function ToolForUpdatedRacing() {
                     { Id: documents.Id },
                     { $set: { lastCheckMarket: Date.now() } }
                 );
-                // fetchOddsForEvent(documents.Id);
+                // fetchOddsForEvent(documents.Id);           
             }
         } catch (error) {
             console.error('Error fetching markets:', error);

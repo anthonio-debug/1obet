@@ -26,7 +26,7 @@ let io;
 
 function apiRequests() {
 
-  return { init, racesTodayMeetings, checkOdds, listMarketsByCronJob, eventsBySupportJobs, raceOddsJob };
+  return { init, checkOdds, listMarketsByCronJob, eventsBySupportJobs, raceOddsJob };
 
   function init(_io, express) {
     io = _io
@@ -85,7 +85,7 @@ function apiRequests() {
       }
     }
 
-    var url = `${sportsAPIUrl}/listEvents`;
+    var url = `${horseRaceUrl}/listEvents`;
 
     try {
       const response = await axios.post(
@@ -111,7 +111,7 @@ function apiRequests() {
             // console.log(existingDoc);
             // console.log(event.inplay);
           }
-
+ 
           await InPlayEvents.findOneAndUpdate(
             { Id: event.event.id },
             {
@@ -157,12 +157,10 @@ function apiRequests() {
         }
 
         var diff = allIDS.filter((item) => !eventIDs.includes(item));
-        // if inplayFromServer is true on old records and not available on last list.
-        // update event status with 'CLOSED-INPLAYLIST'
-        // Also update MarketIDs
+ 
         for (let i = 0; i < diff.length; i++) {
           console.log(
-            "InPlayEvents is closed because it not exists on listEventsBySport: " +
+            "Event is closed because it not exists on listEventsBySport: " +
               diff[i]
           );
           await MarketIDS.updateMany(
@@ -316,7 +314,7 @@ function apiRequests() {
         }
         await MarketIDS.updateOne({ marketId: eventsData[j].marketId, sportID: eventsData[j].eventType.id }, { $set: {runners: runners} });
       }
-      await InPlayEvents.findOneAndUpdate({ Id: eventsData[j].event.id }, { $set: {marketIds: marketIds} }, { upsert: true, new: true } );
+      await InPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: {marketIds: marketIds} }, { upsert: true, new: true } );
     } catch (error) {
       console.log('Market data Problem');
       console.error(error);
@@ -324,41 +322,46 @@ function apiRequests() {
   }
 
   /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
-  async function raceOddsJob(data) {
+  async function raceOddsJob(events) {
     try {  
-      const requestData = {
-        "marketIds": data.marketIds
-      }
-  
-      var url = `${sportsAPIUrl}/listMarketBook`;
+      let marketIds = [];
 
-      const oddsData = await axios.post( url, requestData, header );
+      for (let i = 0; i < events?.length; i++ ) {
+        marketIds.push(events[i].marketId);
+      }
+
+      const requestData = {
+        "marketIds": marketIds
+      }
+      var url = `${horseRaceUrl}/listMarketBook`;
+      const response = await axios.post( url, requestData, header );
+      const oddsData = response.data.result
 
       var responsedMarketIDs = [];
       if (oddsData.length > 0) {
         for (const odds of oddsData) {
-          if (odds && odds.update) {
+          if (odds) {
             responsedMarketIDs.push(odds.marketId);
-            if (typeof odds.state === 'undefined' || odds.state.status !== 'OPEN') {
-              const ix = _.findIndex(array, function (o) { return o.marketId == odds.marketId; });
+            if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
+              const ix = _.findIndex(events, function (o) { return o.marketId == odds.marketId; });
               if (ix != -1) {
-                await InPlayEvents.findOneAndUpdate({ Id: array[ix].eventId }, { status: odds.status, marketID: array[ix].marketId });
+                await InPlayEvents.findOneAndUpdate({ Id: events[ix].eventId }, { status: odds.status, marketID: events[ix].marketId });
               }
 
               await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: {readyForScore: true} });
 
               io.emit('racing_status', { status: odds.status, marketId: odds.marketId });
 
-              io.to('$' + array[ix].marketId).emit('odds', odds);
+              io.to('$' + events[ix].marketId).emit('odds', odds);
             } else {
-              const ix = _.findIndex(array, function (o) { return o.marketId == odds.marketId; });
+              const ix = _.findIndex(events, function (o) { return o.marketId == odds.marketId; });
               odds.createdAt = new Date().getTime()
 
               var tempRunners = [];
               for (let n = 0; n < odds.runners?.length; n++) {
                 var tempElement = {
-                  SelectionId: odds.runners[n]?.selectionId,
-                  runnerName: marketData?.runners[n]?.runnerName,
+                  SelectionId: odds?.runners[n]?.selectionId,
+                  runnerName: odds?.runners[n]?.runnerName,
                   Status: odds.runners[n]?.status,
                   LastPriceTraded: odds.runners[n]?.lastPriceTraded,
                   TotalMatched: odds.runners[n]?.totalMatched,
@@ -396,6 +399,7 @@ function apiRequests() {
 
                 tempRunners.push(tempElement)
               }
+              let isMarketDataDelayed = false;
 
               var json = {
                 marketId: odds.marketId,
@@ -405,14 +409,15 @@ function apiRequests() {
                 createdAt: new Date().getTime(),
               }
               const result = await RaceOdds.collection.insertOne(json);
+              console.log("OK---------------->", result)
               odds._id = result.insertedId;
 
-              io.to('$' + array[ix].marketId).emit('odds', json);
+              io.to('$' + events[ix].marketId).emit('odds', json);
             }
           }
         }
 
-        const filteredArray = array.filter((item) => !responsedMarketIDs.includes(item.marketId));
+        const filteredArray = events.filter((item) => !responsedMarketIDs.includes(item.marketId));
 
         for (let index = 0; index < filteredArray.length; index++) {
           await InPlayEvents.findOneAndUpdate({ Id: filteredArray[index].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
@@ -422,12 +427,11 @@ function apiRequests() {
         }
 
       } else {
-        for (let i = 0; i < array.length; i++) {
-          console.log(array[i].eventId, 'CLOSED 2');
-          await InPlayEvents.findOneAndUpdate({ Id: array[i].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
-          await MarketIDS.updateOne({ eventId: array[i].eventId }, { $set: {readyForScore: true} });
+        for (let i = 0; i < events.length; i++) {
+          console.log(events[i].eventId, 'CLOSED 2');
+          await InPlayEvents.findOneAndUpdate({ Id: events[i].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
+          await MarketIDS.updateOne({ eventId: events[i].eventId }, { $set: {readyForScore: true} });
         }
-        console.log(oddsData);
       }
       return ({
         success: true,
@@ -446,8 +450,6 @@ function apiRequests() {
     const sportsIds = [4339, 7];
 
     for (let index = 0; index < sportsIds.length; index++) {
-      var myArray = [];
-
       var events = await InPlayEvents.find({
         sportsId: sportsIds[index] + '',
         status: 'OPEN'
@@ -479,11 +481,49 @@ function apiRequests() {
       if (events.length == 0) {
         continue;
       }
+
+      var myArray = [];
+
       for (let index = 0; index < events.length; index++) {
         const event = events[index];
+        // myArray.push({ eventId: event.Id, marketId: event.marketIds[0] });
         myArray.push({ eventId: event.Id, marketId: event.marketIds[0] });
       }
       raceOddsJob(myArray);
     }
+  }
+}
+
+function getMatchType(
+  // competitionName,
+  name,
+  sportsId
+) {
+  const keywords =
+    /(T20|twenty20|Twenty20|twenty 20|Twenty 20|ODI|One Day|one day|T10|Ten10||ten 10|Ten 10|Test|TEST)/i;
+  if (sportsId == "4") {
+    const nameMatch = name.match(keywords);
+    // const competitionNameMatch =
+    //   competitionName && competitionName.match(keywords);
+    let returnMatch = "";
+    if (nameMatch) {
+      returnMatch = nameMatch[0];
+    }
+    // else if (competitionNameMatch) {
+    //   returnMatch = competitionNameMatch[0];
+    // }
+
+    if (["ODI", "One Day", "one day"].includes(returnMatch)) {
+      returnMatch = "ODI";
+    } else if (["Test", "test"].includes(returnMatch)) {
+      returnMatch = "TEST";
+    } else if (
+      ["twenty20", "Twenty20", "Twenty 20", "twenty 20"].includes(returnMatch)
+    ) {
+      returnMatch = "T20";
+    } else if (["T10", "Ten10", "ten 10", "Ten 10"].includes(returnMatch)) {
+      returnMatch = "T10";
+    }
+    return returnMatch;
   }
 }
