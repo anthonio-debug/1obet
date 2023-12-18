@@ -58,6 +58,7 @@ async function updateCricketData(req, res) {
   if (type === 'live') {
     const socketData = convertSchema(entities)
     if (socketData) {
+      console.log('cricket live socket', socketData)
       io.emit('score', socketData)
     }
   }
