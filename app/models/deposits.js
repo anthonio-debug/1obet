@@ -37,8 +37,6 @@ let depositsSchema = new Schema({
   betSession: { type: Number },
   roundId: { type: String },
 
-
-
   sourceCodeBlock:{ type: String , default: 0 },
   addedExpoisureAmount:{ type: String , default: 0 },
   UserPrevexposure:{ type: String , default: 0 },

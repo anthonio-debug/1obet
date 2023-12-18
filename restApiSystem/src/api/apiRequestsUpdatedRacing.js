@@ -5,10 +5,10 @@ module.exports = apiRequests;
 const axios = require('axios');
 
 const Racing = require('../../../app/models/racing');
-const Event = require('../../../app/models/events');
 const raceMarkets = require('../../../app/models/raceMarkets');
 const RaceOdds = require('../../../app/models/raceOdds')
 const MarketIDS = require('../../../app/models/marketIds');
+const InPlayEvents = require("../../../app/models/events");
 
 var _ = require('lodash');
 
@@ -26,7 +26,7 @@ let io;
 
 function apiRequests() {
 
-  return { init, racesTodayMeetings, checkOdds, listMarketsByCronJob };
+  return { init, racesTodayMeetings, checkOdds, listMarketsByCronJob, eventsBySupportJobs, raceOddsJob };
 
   function init(_io, express) {
     io = _io
@@ -35,7 +35,7 @@ function apiRequests() {
 
   function onConnet(socket) {
     socket.on("get_id", async (id) => {
-      const eventInfo = await Event.findOne({ Id: id + '' }, { _id: 1 });
+      const eventInfo = await InPlayEvents.findOne({ Id: id + '' }, { _id: 1 });
 
       if (eventInfo) {
         socket.emit('event_id_db', eventInfo);
@@ -67,121 +67,161 @@ function apiRequests() {
 
           socket.emit('race_event_info', event_information);
         } else {
-          socket.emit('race_err', 'Event Not Exist');
+          socket.emit('race_err', 'InPlayEvents Not Exist');
         }
       }
     });
   }
 
+  /**++++++++++++++++++ new added code ( Inplayevents ) +++++++++++++++++++++++++**/
+  async function eventsBySupportJobs(sportsId) {
+    function isValidDate(d) {
+      return new Date(d).toString() !== "Invalid Date";
+    }
 
-  async function racesTodayMeetings(sportsId, day) {
+    const requestData = {
+      "filter": {
+        "eventTypeIds": [sportsId],
+      }
+    }
+
+    var url = `${sportsAPIUrl}/listEvents`;
+
     try {
-      const url = `${horseRaceUrl}/meetings/${day}/${sportsId}`;
-      const response = await axios.get(url);
-
-      const horseRacesData = response.data;
-      const bulkOperations = [];
-
-
-      const options = { upsert: true, new: true };
-
-      //start event record
-
-      if (!response.data.meetings) {
-        return console.log('meetings empty. ' + url);
-      } else {
-        console.log('Racing Market Taken for '+sportsId + ' '+ day );
-      }
-
-      for (const meeting of response.data.meetings) {
-        for (const race of meeting.races) {
-          var statusDef = 'CLOSED';
-          if (Date.parse(race.startTime) > Date.now()) {
-            statusDef = 'WAITING';
-          }
-          var obj = {
-            name: race.marketName,
-            Id: race.raceId,
-            marketIds: [race.marketId],
-            openDate: Date.parse(race.startTime),
-            meetingId: meeting.meetingId,
-            meetingName: meeting.name,
-            countryCode: meeting.countryCode,
-            meetingOpenDate: meeting.openDate,
-            venue: meeting.venue,
-            meetingGoing: meeting.meetingGoing,
-            sportsId: sportsId,
-            status: statusDef
-          }
-          await Event.findOneAndUpdate({ Id: race.raceId }, obj, options);
-
-          const marketID = await MarketIDS.findOne({ eventId: race.raceId, marketId: race.marketId + '' });
-
-          if (!marketID) {
-            const newMarket = new MarketIDS({
-              eventId: race.raceId,
-              marketId: race.marketId + '',
-              marketName: meeting.name,
-              sportID: sportsId,
-              status: 'Race Market',
-              index: 0
-            });
-           const r1 = await newMarket.save();
-          } 
-        };
-
-      };
-      //end events
-
-      //record Racing
-      for (const data of horseRacesData.meetings) {
-        var temp = data;
-        temp.countryCodes = horseRacesData.countryCodes;
-        temp.sportsId = sportsId;
-        bulkOperations.push({
-          updateOne: {
-            filter: { meetingId: temp.meetingId },
-            update: { $setOnInsert: temp },
-            upsert: true,
-          },
+      const response = await axios.post(
+        url,
+        requestData,
+        header
+      );
+      
+      var events = response.data.result;
+      if (events.length > 0) {
+        events = events.filter(function (item) {
+          return isValidDate(item.event.openDate);
         });
-      }
 
-      const r = await Racing.bulkWrite(bulkOperations, { ordered: false });
-      //end racing
+        for (const event of events) {
+          const existingDoc = await InPlayEvents.findOne({ Id: event.event.id });
 
-
-      //start check description//
-      for (const data of horseRacesData.meetings) {
-        for (const race of data.races) {
-          if (!race || typeof race.marketId === 'undefined' || !race.marketId) {
+          if (existingDoc && existingDoc.isCanceled === true) {
             continue;
           }
-          listMarketsByCronJob(race.marketId);
+
+          if (existingDoc && existingDoc.inplayFromServer != event.event.inplay) {
+            // console.log(existingDoc);
+            // console.log(event.inplay);
+          }
+
+          await InPlayEvents.findOneAndUpdate(
+            { Id: event.event.id },
+            {
+              $set: {
+                sportsId: sportsId,
+                Id: event.event.id,
+                name: event.event.name,
+                countryCode: event.event.countryCode,
+                timezone: event.event.timezone,
+                openDate: Date.parse(event.event.openDate),
+                inplayFromServer: false,
+                hasFancy: false,
+                status: 'OPEN',
+                isPremium: false,
+                type: event.event.type,
+                matchTypeProvider: getMatchType(
+                  // event.event.competitionName,
+                  event.event.name,
+                  sportsId
+                ),
+              },
+            },
+            {
+              upsert: true,
+            }
+          );
         }
+
+        var eventIDs = [];
+
+        for (let index = 0; index < events.length; index++) {
+          eventIDs.push(events[index].event.id);
+        }
+
+        var allIDS = [];
+        const currentEvents = await InPlayEvents.find(
+          { status: 'OPEN', sportsId: sportsId + "" },
+          { Id: 1 }
+        );
+
+        for (let i = 0; i < currentEvents.length; i++) {
+          allIDS.push(currentEvents[i].Id);
+        }
+
+        var diff = allIDS.filter((item) => !eventIDs.includes(item));
+        // if inplayFromServer is true on old records and not available on last list.
+        // update event status with 'CLOSED-INPLAYLIST'
+        // Also update MarketIDs
+        for (let i = 0; i < diff.length; i++) {
+          console.log(
+            "InPlayEvents is closed because it not exists on listEventsBySport: " +
+              diff[i]
+          );
+          await MarketIDS.updateMany(
+            { eventId: diff[i] },
+            { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } }
+          );
+          await InPlayEvents.updateOne(
+            { Id: diff[i] },
+            {
+              $set: {
+                status: 'CLOSED-EVENTLIST',
+                inplay: false,
+                inplayFromServer: false,
+                readyForScore: true,
+              },
+            }
+          );
+          io.emit("inplay", { eventID: diff[i], inplay: false });
+          io.to("eventStatusChange").emit("event_status", {
+            eventId: diff[i],
+            status: 'CLOSED-EVENTLIST',
+          });
+        }
+
+        return {
+          success: true,
+          message: "Events retrieved and saved successfully",
+          events: events,
+        };
+      } else {
+        return {
+          success: false,
+          message: "Events empty",
+        };
       }
-      //end check description
-
-
     } catch (error) {
-      console.log('Event Racing Problem');
-
-      console.error(error);
+      console.log("Problem on taking event list");
+      // console.error(error);
+      return {
+        success: false,
+        message: "Failed to get or save events",
+        error: error.message,
+      };
     }
   }
 
-
+  /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
   async function listMarketsByCronJob(eventId, sportsId, competitionId) {
     try {
       const requestData = {
         "filter": {
           "eventIds": [eventId],
+          "eventTypeIds": [sportsId],
+          "marketTypes": ['WIN'],
         },
-        "maxResults": 10,
-        "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "RUNNER_DESCRIPTION"]
+        "maxResults": 100,
+        "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
   
-      // var url = `${sportsAPIUrl}/listMarketCatalogue`;
       const url = `${horseRaceUrl}/listMarketCatalogue`;
       let response = await axios.post(
         url,
@@ -189,194 +229,111 @@ function apiRequests() {
         header
       );
 
-      const eventsData = response.data;
+      const eventsData = response.data.result;
 
-      
-      // const response = await axios.get(url);
-      // const marketListsData = response.data;
-
-      // Extract relevant data from raceMarkets
-      // const eventTypeData = marketListsData.eventTypes;
-      // const eventNodeData = eventTypeData.eventNodes;
-      // const eventData = eventNodeData.event;
-      // const marketNodeData = eventNodeData.marketNodes;
-
+      let marketIds = [];
       // Create an instance of the raceMarkets model
-      // const eventType = new raceMarkets({
-      //   marketId: marketNodeData.marketId, => 0.marketId ***
-      //   eventTypeId: eventTypeData.eventTypeId, => 0.eventType.id ***
-      //   eventNodes: {
-      //     eventId: eventNodeData.eventId, => 0.event.id ***
-      //     event: {
-      //       eventName: eventData.eventName, => 0.event.name ***
-      //       countryCode: eventData.countryCode, => 0.event.countryCode ***
-      //       timezone: eventData.timezone, => 0.event.timezone ***
-      //       venue: eventData.venue, xxxx
-      //       openDate: new Date(eventData.openDate), => 0.event.openDate ***
-      //     },
-      //     marketNodes: {
-      //       marketId: marketNodeData.marketId, => 0.marketId ***
-      //       isMarketDataDelayed: marketNodeData.isMarketDataDelayed,  xxxxx
-      //       state: {
-      //         betDelay: marketNodeData.state.betDelay,   xxxxx
-      //         startTime: new Date(marketNodeData.state.startTime), => 0.marketStartTime ***
-      //         remainingTime: marketNodeData.state.remainingTime, xxxx
-      //         bspReconciled: marketNodeData.state.bspReconciled, xxx
-      //         complete: marketNodeData.state.complete, xxx
-      //         inplay: marketNodeData.state.inplay, xxx
-      //         numberOfWinners: marketNodeData.state.numberOfWinners, xxxx
-      //         numberOfRunners: marketNodeData.state.numberOfRunners, xxxx
-      //         numberOfActiveRunners: marketNodeData.state.numberOfActiveRunners, xxxx
-      //         lastMatchTime: new Date(marketNodeData.state.lastMatchTime), xxxx
-      //         totalMatched: marketNodeData.state.totalMatched, => 0.totalMatched ***
-      //         totalAvailable: marketNodeData.state.totalAvailable, xxxx
-      //         crossMatching: marketNodeData.state.crossMatching, xxxx
-      //         runnersVoidable: marketNodeData.state.runnersVoidable, xxxxx
-      //         status: marketNodeData.state.status, xxxxx
-      //       },
-      //       description: {
-      //         persistenceEnabled: marketNodeData.description.persistenceEnabled, => 0.description.persistenceEnabled  ***
-      //         bspMarket: marketNodeData.description.bspMarket, => 0.description.bspMarket  ***
-      //         marketName: marketNodeData.description.marketName, => 0.marketname  ***
-      //         marketTime: new Date(marketNodeData.description.marketTime), => 0.description.marketTime  ***
-      //         suspendTime: new Date(marketNodeData.description.suspendTime), => 0.description.suspendTime  *** 
-      //         turnInPlayEnabled: marketNodeData.description.turnInPlayEnabled, => 0.description.turnInPlayEnabled  ***
-      //         marketType: marketNodeData.description.marketType, => 0.description.marketType  ***
-      //         raceNumber: marketNodeData.description.raceNumber, xxxx
-      //         raceType: marketNodeData.description.raceType, xxxxx
-      //         bettingType: marketNodeData.description.bettingType, => 0.description.bettingType  ***
-      //       },
-      //       rates: {
-      //         marketBaseRate: marketNodeData.rates.marketBaseRate, => 0.description.marketBaseRate ***
-      //         discountAllowed: marketNodeData.rates.discountAllowed, => 0.description.discountAllowed ***
-      //       },
-      //       runners: marketNodeData.runners.map(runner => ({
-      //         selectionId: runner.selectionId, => 0.runners.0.selectionId ***
-      //         handicap: runner.handicap, =>  0.runners.0.handicap ***
-      //         description: {
-      //           runnerName: runner.description.runnerName, =>  0.runners.0.runnerName ***
-      //           metadata: {
-      //             SIRE_NAME: runner.description.metadata.SIRE_NAME,
-      //             CLOTH_NUMBER_ALPHA: runner.description.metadata.CLOTH_NUMBER_ALPHA,
-      //             OFFICIAL_RATING: runner.description.metadata.OFFICIAL_RATING,
-      //             COLOURS_DESCRIPTION: runner.description.metadata.COLOURS_DESCRIPTION,
-      //             COLOURS_FILENAME: runner.description.metadata.COLOURS_FILENAME,
-      //             FORECASTPRICE_DENOMINATOR: runner.description.metadata.FORECASTPRICE_DENOMINATOR,
-      //             DAMSIRE_NAME: runner.description.metadata.DAMSIRE_NAME,
-      //             WEIGHT_VALUE: runner.description.metadata.WEIGHT_VALUE,
-      //             SEX_TYPE: runner.description.metadata.SEX_TYPE,
-      //             DAYS_SINCE_LAST_RUN: runner.description.metadata.DAYS_SINCE_LAST_RUN,
-      //             WEARING: runner.description.metadata.WEARING,
-      //             OWNER_NAME: runner.description.metadata.OWNER_NAME,
-      //             DAM_YEAR_BORN: runner.description.metadata.DAM_YEAR_BORN,
-      //             SIRE_BRED: runner.description.metadata.SIRE_BRED,
-      //             JOCKEY_NAME: runner.description.metadata.JOCKEY_NAME,
-      //             DAM_BRED: runner.description.metadata.DAM_BRED,
-      //             ADJUSTED_RATING: runner.description.metadata.ADJUSTED_RATING,
-      //             runnerId: runner.description.metadata.runnerId,
-      //             CLOTH_NUMBER: runner.description.metadata.CLOTH_NUMBER,
-      //             SIRE_YEAR_BORN: runner.description.metadata.SIRE_YEAR_BORN,
-      //             TRAINER_NAME: runner.description.metadata.TRAINER_NAME,
-      //             COLOUR_TYPE: runner.description.metadata.COLOUR_TYPE,
-      //             AGE: runner.description.metadata.AGE,
-      //             DAMSIRE_BRED: runner.description.metadata.DAMSIRE_BRED,
-      //             JOCKEY_CLAIM: runner.description.metadata.JOCKEY_CLAIM,
-      //             FORM: runner.description.metadata.FORM,
-      //             FORECASTPRICE_NUMERATOR: runner.description.metadata.FORECASTPRICE_NUMERATOR,
-      //             BRED: runner.description.metadata.BRED,
-      //             DAM_NAME: runner.description.metadata.DAM_NAME,
-      //             DAMSIRE_YEAR_BORN: runner.description.metadata.DAMSIRE_YEAR_BORN,
-      //             STALL_DRAW: runner.description.metadata.STALL_DRAW,
-      //             WEIGHT_UNITS: runner.description.metadata.WEIGHT_UNITS,
-      //           },
-      //         },
-      //         state: {
-      //           adjustmentFactor: runner.state.adjustmentFactor,
-      //           sortPriority: runner.state.sortPriority, => 0.runners.0.sortPriority ***
-      //           lastPriceTraded: runner.state.lastPriceTraded, ***
-      //           totalMatched: runner.state.totalMatched, ***
-      //           status: runner.state.status, ***
-      //         },
-      //       })),
-      //     },
-      //   },
-      //   isMarketDataVirtual: marketListsData.isMarketDataVirtual,
-      // });
-      // Save the EventType instance to the database
-      // await eventType.save();
-
-      // var runners = [];
-
-      // for (let ix1 = 0; ix1 < marketNodeData.runners.length; ix1++) {
-      //   const runner = marketNodeData.runners[ix1];
-      //   runners.push({SelectionId: runner.selectionId, runnerName: runner.description.runnerName});
-      // }
-
-      // await MarketIDS.updateOne({ marketId: marketId, sportID: eventTypeData.eventTypeId }, { $set: {runners: runners} });
-
+      for (let j = 0; j < eventsData.length; j ++) {
+        marketIds.push(eventsData[j].marketId);
+        const eventType = new raceMarkets({
+          marketId: eventsData[j].marketId,
+          eventTypeId: eventsData[j].eventType.id,
+          eventNodes: {
+            eventId: eventsData[j].event.id,
+            event: {
+              eventName: eventsData[j].event.name,
+              countryCode: eventsData[j].event.countryCode,
+              timezone: eventsData[j].event.timezone,
+              venue: eventsData[j].event.venue,
+              openDate: new Date(eventsData[j].event.openDate)
+            },
+            marketNodes: {
+              marketId: eventsData[j].marketId,
+              state: {
+                startTime: new Date(eventsData[j].marketStartTime),
+                numberOfRunners: eventsData[j].runners?.length,
+                totalMatched: eventsData[j].totalMatched,
+                status: "OPEN"
+              },
+              description: {
+                marketName: eventsData[j].marketName,
+              },
+              runners: eventsData[j].runners.map(runner => ({
+                selectionId: runner.selectionId,
+                handicap: runner.handicap,
+                description: {
+                  runnerName: runner.runnerName,
+                  metadata: {
+                    SIRE_NAME: runner.metadata.SIRE_NAME,
+                    CLOTH_NUMBER_ALPHA: runner.metadata.CLOTH_NUMBER_ALPHA,
+                    OFFICIAL_RATING: runner.metadata.OFFICIAL_RATING,
+                    COLOURS_DESCRIPTION: runner.metadata.COLOURS_DESCRIPTION,
+                    COLOURS_FILENAME: runner.metadata.COLOURS_FILENAME,
+                    FORECASTPRICE_DENOMINATOR: runner.metadata.FORECASTPRICE_DENOMINATOR,
+                    DAMSIRE_NAME: runner.metadata.DAMSIRE_NAME,
+                    WEIGHT_VALUE: runner.metadata.WEIGHT_VALUE,
+                    SEX_TYPE: runner.metadata.SEX_TYPE,
+                    DAYS_SINCE_LAST_RUN: runner.metadata.DAYS_SINCE_LAST_RUN,
+                    WEARING: runner.metadata.WEARING,
+                    OWNER_NAME: runner.metadata.OWNER_NAME,
+                    DAM_YEAR_BORN: runner.metadata.DAM_YEAR_BORN,
+                    SIRE_BRED: runner.metadata.SIRE_BRED,
+                    JOCKEY_NAME: runner.metadata.JOCKEY_NAME,
+                    DAM_BRED: runner.metadata.DAM_BRED,
+                    ADJUSTED_RATING: runner.metadata.ADJUSTED_RATING,
+                    runnerId: runner.metadata.runnerId,
+                    CLOTH_NUMBER: runner.metadata.CLOTH_NUMBER,
+                    SIRE_YEAR_BORN: runner.metadata.SIRE_YEAR_BORN,
+                    TRAINER_NAME: runner.metadata.TRAINER_NAME,
+                    COLOUR_TYPE: runner.metadata.COLOUR_TYPE,
+                    AGE: runner.metadata.AGE,
+                    DAMSIRE_BRED: runner.metadata.DAMSIRE_BRED,
+                    JOCKEY_CLAIM: runner.metadata.JOCKEY_CLAIM,
+                    FORM: runner.metadata.FORM,
+                    FORECASTPRICE_NUMERATOR: runner.metadata.FORECASTPRICE_NUMERATOR,
+                    BRED: runner.metadata.BRED,
+                    DAM_NAME: runner.metadata.DAM_NAME,
+                    DAMSIRE_YEAR_BORN: runner.metadata.DAMSIRE_YEAR_BORN,
+                    STALL_DRAW: runner.metadata.STALL_DRAW,
+                    WEIGHT_UNITS: runner.metadata.WEIGHT_UNITS,
+                  },
+                },
+                state: {
+                  sortPriority: runner.sortPriority,
+                },
+              })),
+            },
+          },
+          
+        });
+        // Save the EventType instance to the database
+        await eventType.save();
+        
+        var runners = [];
+        for (let ix1 = 0; ix1 < eventsData[j].runners.length; ix1++) {
+          const runner = eventsData[j].runners[ix1];
+          runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
+        }
+        await MarketIDS.updateOne({ marketId: eventsData[j].marketId, sportID: eventsData[j].eventType.id }, { $set: {runners: runners} });
+      }
+      await InPlayEvents.findOneAndUpdate({ Id: eventsData[j].event.id }, { $set: {marketIds: marketIds} }, { upsert: true, new: true } );
     } catch (error) {
       console.log('Market data Problem');
       console.error(error);
     }
   }
 
-  async function checkOdds() {
-    const sportsIds = [4339, 7];
-
-    for (let index = 0; index < sportsIds.length; index++) {
-      var myArray = [];
-
-      var events = await Event.find({
-        sportsId: sportsIds[index] + '',
-        status: 'OPEN'
-      }).sort({ openDate: 1 }).limit(20).exec();
-
-      if (events.length) {
-        const checkOther = await Event.findOne({ status: 'WAITING', sportsId: sportsIds[index] + '' }).sort({ openDate: 1 });
-        if (checkOther && checkOther.openDate < events[0].openDate) {
-          await Event.updateMany({ status: 'OPEN', sportsId: sportsIds[index] + '' }, { status: 'WAITING' });
-          console.log('Old event found. All OPEN events status changed with WAITING');
-          return checkOdds();
-        }
+  /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
+  async function raceOddsJob(data) {
+    try {  
+      const requestData = {
+        "marketIds": data.marketIds
       }
+  
+      var url = `${sportsAPIUrl}/listMarketBook`;
 
-      if (events.length != 20) {
-        const documents = await Event.find({ status: 'WAITING', sportsId: sportsIds[index] + '' })
-          .sort({ openDate: 1 })
-          .limit(20 - events.length)
-          .select('_id');
+      const oddsData = await axios.post( url, requestData, header );
 
-        const documentIds = documents.map(doc => doc._id);
-        await Event.updateMany({ _id: { $in: documentIds } }, { status: 'OPEN' });
-        events = await Event.find({
-          sportsId: sportsIds[index] + '',
-          status: 'OPEN'
-        }).sort({ openDate: 1 }).limit(20).exec();
-      }
-
-      if (events.length == 0) {
-        continue;
-      }
-      for (let index = 0; index < events.length; index++) {
-        const event = events[index];
-        myArray.push({ eventId: event.Id, marketId: event.marketIds[0] });
-      }
-      raceOddsJob(myArray);
-    }
-
-
-
-  }
-
-  async function raceOddsJob(array) {
-    try {
-      var ids = [];
-      for (let index = 0; index < array.length; index++) {
-        ids.push(array[index].marketId);
-      }
-      const url = `${horseRaceUrl}/odds/?ids=` + ids.join(',');
-      const response = await axios.get(url);
-      const oddsData = response.data;
       var responsedMarketIDs = [];
       if (oddsData.length > 0) {
         for (const odds of oddsData) {
@@ -385,22 +342,72 @@ function apiRequests() {
             if (typeof odds.state === 'undefined' || odds.state.status !== 'OPEN') {
               const ix = _.findIndex(array, function (o) { return o.marketId == odds.marketId; });
               if (ix != -1) {
-                await Event.findOneAndUpdate({ Id: array[ix].eventId }, { status: odds.state.status, marketID: array[ix].marketId });
+                await InPlayEvents.findOneAndUpdate({ Id: array[ix].eventId }, { status: odds.status, marketID: array[ix].marketId });
               }
 
               await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: {readyForScore: true} });
 
-              io.emit('racing_status', { status: odds.state.status, marketId: odds.marketId });
+              io.emit('racing_status', { status: odds.status, marketId: odds.marketId });
 
               io.to('$' + array[ix].marketId).emit('odds', odds);
-
-
             } else {
               const ix = _.findIndex(array, function (o) { return o.marketId == odds.marketId; });
               odds.createdAt = new Date().getTime()
-              const result = await RaceOdds.collection.insertOne(odds);
+
+              var tempRunners = [];
+              for (let n = 0; n < odds.runners?.length; n++) {
+                var tempElement = {
+                  SelectionId: odds.runners[n]?.selectionId,
+                  runnerName: marketData?.runners[n]?.runnerName,
+                  Status: odds.runners[n]?.status,
+                  LastPriceTraded: odds.runners[n]?.lastPriceTraded,
+                  TotalMatched: odds.runners[n]?.totalMatched,
+                  ExchangePrices: {
+                    AvailableToBack: [
+                      {
+                        price: odds.runners[n]?.ex.availableToBack[0]?.price,
+                        size: odds.runners[n]?.ex.availableToBack[0]?.size
+                      },
+                      {
+                        price: odds.runners[n]?.ex.availableToBack[1]?.price,
+                        size: odds.runners[n]?.ex.availableToBack[1]?.size
+                      },
+                      {
+                        price: odds.runners[n]?.ex.availableToBack[2]?.price,
+                        size: odds.runners[n]?.ex.availableToBack[2]?.size
+                      },
+                    ],
+                    AvailableToLay: [
+                      {
+                        price: odds.runners[n]?.ex.availableToLay[0]?.price,
+                        size: odds.runners[n]?.ex.availableToLay[0]?.size
+                      },
+                      {
+                        price: odds.runners[n]?.ex.availableToLay[1]?.price,
+                        size: odds.runners[n]?.ex.availableToLay[1]?.size
+                      },
+                      {
+                        price: odds.runners[n]?.ex.availableToLay[2]?.price,
+                        size: odds.runners[n]?.ex.availableToLay[2]?.size
+                      },
+                    ]
+                  }
+                }
+
+                tempRunners.push(tempElement)
+              }
+
+              var json = {
+                marketId: odds.marketId,
+                isMarketDataDelayed: isMarketDataDelayed,
+                state: odds.status,
+                runners: tempRunners,
+                createdAt: new Date().getTime(),
+              }
+              const result = await RaceOdds.collection.insertOne(json);
               odds._id = result.insertedId;
-              io.to('$' + array[ix].marketId).emit('odds', odds);
+
+              io.to('$' + array[ix].marketId).emit('odds', json);
             }
           }
         }
@@ -408,7 +415,7 @@ function apiRequests() {
         const filteredArray = array.filter((item) => !responsedMarketIDs.includes(item.marketId));
 
         for (let index = 0; index < filteredArray.length; index++) {
-          await Event.findOneAndUpdate({ Id: filteredArray[index].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
+          await InPlayEvents.findOneAndUpdate({ Id: filteredArray[index].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
           console.log(filteredArray[index].eventId, 'CLOSED 1');
           await MarketIDS.updateOne({ eventId: filteredArray[index].eventId }, { $set: {readyForScore: true} });
           io.emit('racing_status', { status: 'CLOSED', marketId: filteredArray[index].marketId });
@@ -417,7 +424,7 @@ function apiRequests() {
       } else {
         for (let i = 0; i < array.length; i++) {
           console.log(array[i].eventId, 'CLOSED 2');
-          await Event.findOneAndUpdate({ Id: array[i].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
+          await InPlayEvents.findOneAndUpdate({ Id: array[i].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
           await MarketIDS.updateOne({ eventId: array[i].eventId }, { $set: {readyForScore: true} });
         }
         console.log(oddsData);
@@ -432,6 +439,51 @@ function apiRequests() {
         success: false,
         message: 'Error retrieving Records',
       });
+    }
+  }
+
+  async function checkOdds() {
+    const sportsIds = [4339, 7];
+
+    for (let index = 0; index < sportsIds.length; index++) {
+      var myArray = [];
+
+      var events = await InPlayEvents.find({
+        sportsId: sportsIds[index] + '',
+        status: 'OPEN'
+      }).sort({ openDate: 1 }).limit(20).exec();
+
+      if (events.length) {
+        const checkOther = await InPlayEvents.findOne({ status: 'WAITING', sportsId: sportsIds[index] + '' }).sort({ openDate: 1 });
+        if (checkOther && checkOther.openDate < events[0].openDate) {
+          await InPlayEvents.updateMany({ status: 'OPEN', sportsId: sportsIds[index] + '' }, { status: 'WAITING' });
+          console.log('Old event found. All OPEN events status changed with WAITING');
+          return checkOdds();
+        }
+      }
+
+      if (events.length != 20) {
+        const documents = await InPlayEvents.find({ status: 'WAITING', sportsId: sportsIds[index] + '' })
+          .sort({ openDate: 1 })
+          .limit(20 - events.length)
+          .select('_id');
+
+        const documentIds = documents.map(doc => doc._id);
+        await InPlayEvents.updateMany({ _id: { $in: documentIds } }, { status: 'OPEN' });
+        events = await InPlayEvents.find({
+          sportsId: sportsIds[index] + '',
+          status: 'OPEN'
+        }).sort({ openDate: 1 }).limit(20).exec();
+      }
+
+      if (events.length == 0) {
+        continue;
+      }
+      for (let index = 0; index < events.length; index++) {
+        const event = events[index];
+        myArray.push({ eventId: event.Id, marketId: event.marketIds[0] });
+      }
+      raceOddsJob(myArray);
     }
   }
 }

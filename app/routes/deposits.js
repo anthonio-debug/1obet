@@ -632,7 +632,8 @@ function getLedgerDetails(req, res) {
           maxWithdraw:  { $last: "$maxWithdraw" },
           betTime	:  { $first: "$betTime" },
           date	:  { $first: "$date" },
-          createdAt	:  { $first: "$createdAt" }
+          createdAt	:  { $first: "$createdAt" },
+          sportsId: { $first: "$sportsId" },
         }
       })
   
@@ -677,7 +678,7 @@ function getLedgerDetails(req, res) {
           result.length === 0 ||
           result[0].results.length === 0
         ) {
-          return res.status(404).send({ message: 'Deposit record not found' });
+          return res.status(200).send({ message: 'Deposit record not found' });
         }
   
         const responseData = {

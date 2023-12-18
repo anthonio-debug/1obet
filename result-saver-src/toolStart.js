@@ -2,6 +2,7 @@
 module.exports = toolStart;
 const apiRequest = require('./apiRequest')();
 const MarketIDs = require('../app/models/marketIds');
+const inplayevents = require('../app/models/events');
 
 function toolStart() {
   return {init};
@@ -71,4 +72,19 @@ function toolStart() {
       }, 2000);
     }
   }
+
+    async function getWaitingResultRacing() {
+        try {
+            const racingMarkets = await MarketIDs.find({readyForScore: true, sportID: {$nin: [1, 2, 4]},winnerInfo: null }).sort({lastResultCheckTime: 1}).limit(1).exec();
+            if (racingMarkets.length> 0)
+            await apiRequest.getRacingResult(racingMarkets);
+
+        } catch (error) {
+            console.log(error);
+        }
+        setTimeout(() => {
+            getWaitingResultRacing();
+        }, 2000);
+    }
+
 }

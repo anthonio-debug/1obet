@@ -16,8 +16,8 @@ function ToolForUpdatedRacing() {
 
         if (config.activeProvider == 'NEW') {
             setInterval(fetchMarkets, 10 * 1000);
-            // setInterval(getRacing, 2 * 60 * 60 * 1000)
-            // setInterval(apiRequests.checkOdds, 1 * 1000)
+            setInterval(getRacing, 2 * 60 * 60 * 1000)
+            setInterval(apiRequests.checkOdds, 1 * 1000)
         }
     }
 
@@ -43,8 +43,7 @@ function ToolForUpdatedRacing() {
 
     function getRacing() {
         sportsIds.forEach(id => {
-            apiRequests.racesTodayMeetings(id,'today');
-            apiRequests.racesTodayMeetings(id,'tomorrow');
+            apiRequests.eventsBySupportJobs(id);
         });
     }
 }
