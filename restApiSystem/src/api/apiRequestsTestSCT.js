@@ -413,6 +413,7 @@ function apiRequests() {
   }
 
   async function getOddsFromProvider(marketIdsArray) {
+    console.log('getOddsFromProvider', marketIdsArray)
     var tempArry = [];
     var tempArryForIDs = [];
 

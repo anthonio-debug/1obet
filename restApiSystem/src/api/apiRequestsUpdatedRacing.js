@@ -40,7 +40,7 @@ function apiRequests() {
       if (eventInfo) {
         socket.emit('event_id_db', eventInfo);
       } else {
-        console.log(eventInfo, id);
+        // console.log(eventInfo, id);
       }
     });
 
