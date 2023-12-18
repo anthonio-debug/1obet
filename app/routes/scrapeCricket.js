@@ -4,11 +4,64 @@ const cricketRouter = express.Router();
 const Crickets = require('../models/Crickets')
 const inPlayEvents = require("../models/events");
 
+const convertSchema = (entity) => {
+  const overs = entity.overs || [];
+  const lastOver = overs.at(-1);
+  if (!lastOver) return undefined;
+
+  const getTeamRate = (rateType, activeTeamNo) => {
+    const activeTeam = activeTeamNo === 1 ? entity.team1Sname : entity.team2Sname;
+    return lastOver.team === activeTeam ? `${rateType} ${entity[rateType]}` : "";
+  };
+
+  const checkActive = (activeTeamNo) => {
+    const activeTeam = activeTeamNo === 1 ? entity.team1Sname : entity.team2Sname;
+    return lastOver.team === activeTeam ? 1 : 0;
+  };
+
+  const getScore = (score) => {
+    const regex = /-?\d+(\.\d+)?/g;
+    const matches = score.match(regex) || [0, 0, '0.0'];
+    return `${matches[0]}-${matches[1]} (${matches[2]})`;
+  };
+
+  return {
+    eventId: 0,
+    seriesKey: entity.seriesKey,
+    score: {
+      activenation1: checkActive(1),
+      activenation2: checkActive(2),
+      balls: lastOver.info,
+      dayno: "",
+      isfinished: "0",
+      score1: getScore(entity.team1Score),
+      score2: getScore(entity.team2Score),
+      spnballrunningstatus: entity.result,
+      spnmessage: "",
+      spnnation1: entity.team1Sname,
+      spnnation2: entity.team2SName,
+      spnreqrate1: getTeamRate("RRR", 1),
+      spnreqrate2: getTeamRate("RRR", 2),
+      spnrunrate1: getTeamRate("CRR", 1),
+      spnrunrate2: getTeamRate("CRR", 2),
+    }
+  };
+}
+
 async function updateCricketData(req, res) {
   const {type, entities} = req.body;
   const io = req.io
-  io.emit('cricket_live', entities)
-  io.on('connected', () => {console.log('connected')})
+  io.on('connected', () => {
+    console.log('connected')
+  })
+
+  if (type === 'live') {
+    const socketData = convertSchema(entities)
+    if (socketData) {
+      io.emit('score', socketData)
+    }
+  }
+
   try {
     if (type === 'matches') {
       for (const item of entities) {
