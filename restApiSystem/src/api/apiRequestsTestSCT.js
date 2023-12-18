@@ -564,13 +564,15 @@ function apiRequests() {
                     }
                   }
 
+                  let el = null
                   if (marketData.sportID !== 7) {
-                    let el = new Odds(json1);
-                    el.save();
+                    el = new Odds(json1);
+                    await el.save();
                   } else {
-                    let el = new RaceOdds(json2);
-                    el.save();
+                    el = new RaceOdds(json2);
+                    await el.save();
                   }
+                  console.log('odd', el)
 
                   const ix = _.findIndex(tempArry, function (o) {
                     return o.market == element.marketId;

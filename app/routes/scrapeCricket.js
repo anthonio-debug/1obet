@@ -58,7 +58,7 @@ async function updateCricketData(req, res) {
   if (type === 'live') {
     const socketData = convertSchema(JSON.parse(JSON.stringify(entities)))
     if (socketData) {
-      console.log('cricket live socket', socketData)
+      // console.log('cricket live socket', socketData)
       io.emit('score', socketData)
     }
   }
