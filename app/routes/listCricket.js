@@ -23,7 +23,8 @@ async function listCricket(req, res) {
       page: page,
       limit: limit,
       sort: {
-        state: 1, // 'live' first, 'scorecard' second
+        state: 1,
+        timestamp: -1
       },
     },
     (err, results) => {
