@@ -573,7 +573,7 @@ function apiRequests() {
                     el = new RaceOdds(json2);
                     await el.save();
                   }
-                  console.log('odd', el)
+                  // console.log('odd', el)
 
                   const ix = _.findIndex(tempArry, function (o) {
                     return o.market == element.marketId;
