@@ -360,13 +360,15 @@ function apiRequests() {
               var tempRunners = [];
               for (let n = 0; n < odds.runners?.length; n++) {
                 var tempElement = {
-                  SelectionId: odds?.runners[n]?.selectionId,
-                  runnerName: odds?.runners[n]?.runnerName,
-                  Status: odds.runners[n]?.status,
-                  LastPriceTraded: odds.runners[n]?.lastPriceTraded,
-                  TotalMatched: odds.runners[n]?.totalMatched,
-                  ExchangePrices: {
-                    AvailableToBack: [
+                  selectionId: odds?.runners[n]?.selectionId,
+                  handicap: odds?.runners[n]?.handicap,
+                  state: {
+                    status: odds.runners[n]?.status,
+                    lastPriceTraded: odds.runners[n]?.lastPriceTraded,
+                    totalMatched: odds.runners[n]?.totalMatched,
+                  },
+                  exchange: {
+                    availableToBack: [
                       {
                         price: odds.runners[n]?.ex.availableToBack[0]?.price,
                         size: odds.runners[n]?.ex.availableToBack[0]?.size
@@ -380,7 +382,7 @@ function apiRequests() {
                         size: odds.runners[n]?.ex.availableToBack[2]?.size
                       },
                     ],
-                    AvailableToLay: [
+                    availableToLay: [
                       {
                         price: odds.runners[n]?.ex.availableToLay[0]?.price,
                         size: odds.runners[n]?.ex.availableToLay[0]?.size
@@ -404,12 +406,16 @@ function apiRequests() {
               var json = {
                 marketId: odds.marketId,
                 isMarketDataDelayed: isMarketDataDelayed,
-                state: odds.status,
+                state: {
+                  numberOfRunners: tempRunners?.length,
+                  totalMatched: odds?.totalMatched,
+                  inplay: odds?.inplay,
+                  status: odds?.status
+                },
                 runners: tempRunners,
                 createdAt: new Date().getTime(),
               }
               const result = await RaceOdds.collection.insertOne(json);
-              console.log("OK---------------->", result)
               odds._id = result.insertedId;
 
               io.to('$' + events[ix].marketId).emit('odds', json);
