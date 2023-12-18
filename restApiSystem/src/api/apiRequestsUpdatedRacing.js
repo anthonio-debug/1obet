@@ -219,14 +219,14 @@ function apiRequests() {
         "maxResults": 100,
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
-  
+      
       const url = `${horseRaceUrl}/listMarketCatalogue`;
       let response = await axios.post(
         url,
         requestData,
         header
-      );
-
+        );
+        
       const eventsData = response.data.result;
 
       let marketIds = [];
@@ -255,6 +255,7 @@ function apiRequests() {
               },
               description: {
                 marketName: eventsData[j].marketName,
+                marketTime: new Date(eventsData[j].marketStartTime),
               },
               runners: eventsData[j].runners.map(runner => ({
                 selectionId: runner.selectionId,
@@ -302,8 +303,9 @@ function apiRequests() {
               })),
             },
           },
-          
         });
+        
+        console.log("Race Market Save is Okay");
         // Save the EventType instance to the database
         await eventType.save();
         

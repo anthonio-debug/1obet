@@ -15,9 +15,7 @@ function ToolForUpdatedRacing() {
         apiRequests.init(_io);
 
         if (config.activeProvider == 'NEW') {
-            sportsIds.forEach(id => {
-                setInterval(fetchMarkets(id), 10 * 1000);
-            })    
+            setInterval(fetchMarkets, 10 * 1000);
             setInterval(getRacing, 2 * 60 * 1000)
             setInterval(apiRequests.checkOdds, 1 * 1000)
         }
@@ -25,7 +23,7 @@ function ToolForUpdatedRacing() {
 
     async function fetchMarkets(id) {
         try {
-            const documents = await inPlayEvents.findOne({ status: 'OPEN', sportsId: id })
+            const documents = await inPlayEvents.findOne({ status: 'OPEN', sportsId: '7' })
                 .sort({ lastCheckMarket: 1 })
                 .limit(1)
                 .exec();
