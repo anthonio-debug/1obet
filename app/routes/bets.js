@@ -25,7 +25,7 @@ const Exposure = require("../models/ExpRec")
 const AsianMarketOdd = require("../models/asianOdds")
 const { v4: uuidv4 } = require('uuid');
 const { MongoClient,  ObjectId } = require('mongodb');
-
+const Crickets = require('../models/Crickets')
 //ip location
 const { IP2Location } = require('ip2location-nodejs');
 let ip2location = new IP2Location();
@@ -1692,17 +1692,17 @@ const placeBet = async (req, res) => {
         });
       }
 
-      let score = await cricketLiveScore(eventDetail.Id);
-      if (!score) {
+      const scores = await Crickets.find({ eventId: eventDetail.Id })
+      if (!scores) {
         return res.status(404).json({
           status: false,
           message: `Bet Not Allowed`,
         });
       }
-      let currentOver = Number(score.overs);
       let type = eventDetail.matchType;
-      let inning = score.inning;
-      // console.log(" =========================================================== inning ", inning);
+      let inning = scores.inning;
+      let currentOver = inning === 1 ? scores.over1 : scores.over2
+      let score = inning === 1 ? scores.score1 : scores.score2
       let sessionAddition = 0;
       if (inning == 2){
         if (type == "TEST") {
