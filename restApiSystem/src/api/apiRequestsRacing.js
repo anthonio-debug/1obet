@@ -39,7 +39,7 @@ function apiRequests() {
       if (eventInfo) {
         socket.emit('event_id_db', eventInfo);
       } else {
-        console.log(eventInfo, id);
+        // console.log(eventInfo, id);
         //process.exit(1);
       }
     });
@@ -94,9 +94,9 @@ function apiRequests() {
       //start event record
 
       if (!response.data.meetings) {
-        return console.log('meetings empty. ' + url);
+        // return console.log('meetings empty. ' + url);
       } else {
-        console.log('Racing Market Taken for '+sportsId + ' '+ day );
+        // console.log('Racing Market Taken for '+sportsId + ' '+ day );
       }
 
       for (const meeting of response.data.meetings) {
@@ -172,7 +172,7 @@ function apiRequests() {
 
 
     } catch (error) {
-      console.log('Event Racing Problem');
+      // console.log('Event Racing Problem');
 
       console.error(error);
     }
@@ -334,7 +334,7 @@ function apiRequests() {
         const checkOther = await Event.findOne({ status: 'WAITING', sportsId: sportsIds[index] + '' }).sort({ openDate: 1 });
         if (checkOther && checkOther.openDate < events[0].openDate) {
           await Event.updateMany({ status: 'OPEN', sportsId: sportsIds[index] + '' }, { status: 'WAITING' });
-          console.log('Old event found. All OPEN events status changed with WAITING');
+          // console.log('Old event found. All OPEN events status changed with WAITING');
           return checkOdds();
         }
       }
@@ -425,19 +425,19 @@ function apiRequests() {
 
         for (let index = 0; index < filteredArray.length; index++) {
           await Event.findOneAndUpdate({ Id: filteredArray[index].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
-          console.log(filteredArray[index].eventId, 'CLOSED 1');
+          // console.log(filteredArray[index].eventId, 'CLOSED 1');
           await MarketIDS.updateOne({ eventId: filteredArray[index].eventId }, { $set: {readyForScore: true} });
           io.emit('racing_status', { status: 'CLOSED', marketId: filteredArray[index].marketId });
         }
 
       } else {
         for (let i = 0; i < array.length; i++) {
-          console.log(array[i].eventId, 'CLOSED 2');
+          // console.log(array[i].eventId, 'CLOSED 2');
           await Event.findOneAndUpdate({ Id: array[i].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
           await MarketIDS.updateOne({ eventId: array[i].eventId }, { $set: {readyForScore: true} });
 
         }
-        console.log(oddsData);
+        // console.log(oddsData);
       }
       return ({
         success: true,
