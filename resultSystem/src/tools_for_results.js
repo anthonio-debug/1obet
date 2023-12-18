@@ -138,18 +138,18 @@ function ToolForResults() {
         sportsId: "8",
         status: 1,
       }).exec();
-      
+
+      for (const result of results) {
+        await Bets.updateMany(
+          {
+            _id: { $in: result.documentIds },
+          },
+          {
+            $set: { lastCheckResult: currentTime },
+          }
+        ).catch((e) => console.error(e));
+      }
       if (results.length > 0) {
-        for (const result of results) {
-          await Bets.updateMany(
-            {
-              _id: { $in: result.documentIds },
-            },
-            {
-              $set: { lastCheckResult: currentTime },
-            }
-          ).catch((e) => console.error(e));
-        }
         await scoreChecker.asianResult(results);
       }
     } catch (error) {
