@@ -4,7 +4,6 @@ const Crickets = require("../models/Crickets");
 let config = require('config');
 
 async function listCricket(req, res) {
-  console.log("111111111111111111")
   let query = {};
   let page = 1;
   let sort = -1;
@@ -24,7 +23,7 @@ async function listCricket(req, res) {
       page: page,
       limit: limit,
       sort: {
-        state: -1, // 'live' first, 'scorecard' second
+        state: 1, // 'live' first, 'scorecard' second
       },
     },
     (err, results) => {
