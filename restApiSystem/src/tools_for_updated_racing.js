@@ -15,17 +15,17 @@ function ToolForUpdatedRacing() {
         apiRequests.init(_io);
 
         if (config.activeProvider == 'NEW') {
-            setInterval(fetchMarkets, 10 * 1000);
-            // setInterval(getRacing, 2 * 60 * 60 * 1000)
-            setInterval(getRacing, 20 * 1000)
-            // setInterval(apiRequests.checkOdds, 1 * 1000)
-            setInterval(apiRequests.checkOdds, 30 * 1000)
+            sportsIds.forEach(id => {
+                setInterval(fetchMarkets(id), 10 * 1000);
+            })    
+            setInterval(getRacing, 2 * 60 * 1000)
+            setInterval(apiRequests.checkOdds, 1 * 1000)
         }
     }
 
-    async function fetchMarkets() {
+    async function fetchMarkets(id) {
         try {
-            const documents = await inPlayEvents.findOne({ status: 'OPEN', sportsId: HORSE_RACE_SPORTS_ID })
+            const documents = await inPlayEvents.findOne({ status: 'OPEN', sportsId: id })
                 .sort({ lastCheckMarket: 1 })
                 .limit(1)
                 .exec();
