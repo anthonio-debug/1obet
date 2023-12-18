@@ -8,7 +8,6 @@ async function listCricket(req, res) {
   let page = 1;
   let sort = -1;
   var limit = config.pageSize;
-
   if (
     req.query.numRecords &&
     !isNaN(req.query.numRecords) &&
@@ -23,18 +22,27 @@ async function listCricket(req, res) {
       page: page,
       limit: limit,
       sort: {
-        state: 1,
         timestamp: -1
       },
     },
     (err, results) => {
       if (err) return res.status(404).send({ message: 'Something went wrong' });
-      console.log(results);
+      
+      const resposne = results.docs.sort((a, b) => {
+        if (a.state === 'live' && b.state !== 'live') {
+          return -1;
+        } else if (a.state !== 'live' && b.state === 'live') {
+          return 1;
+        } else {
+          return 0;
+        }
+      });
+
       return res.send({
         success: true,
         message: 'Crickets list',
         total: results.total,
-        results: results.docs, // Access the documents array within results
+        results: resposne, // Access the documents array within results
       });
     }
   );
