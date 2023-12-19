@@ -1681,7 +1681,6 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
-      console.log(`Figure Even Odd & Small Big -----`);
       const FigureEvenOddSmallBig = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -1692,7 +1691,6 @@ const placeBet = async (req, res) => {
           message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
         });
       }
-      console.log(`before  Query Correct -----`);
 
       const scores = await Crickets.find({ eventId: eventDetail.Id })
       if (!scores) {
@@ -1701,7 +1699,6 @@ const placeBet = async (req, res) => {
           message: `Bet Not Allowed`,
         });
       }
-      console.log(`Query Correct -----`);
       let type = eventDetail.matchType;
       let inning = scores.inning;
       let currentOver = inning === 1 ? scores.over1 : scores.over2
@@ -1781,7 +1778,7 @@ const placeBet = async (req, res) => {
       }
       _3rdPartyMarketId = subMarketDetail.Id;
       // console.log(" ================== Bets are Allowed ");
-      // console.log(" ================== currentSession  ", currentSession);
+      console.log(" ================== currentSession  ", currentSession);
     }
 
     // for Asian Odd
