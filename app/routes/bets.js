@@ -112,7 +112,7 @@ const apiCallForOdds = async (marketId) =>{
   // dev 
   const url = `${config.sportsAPIUrl}/listMarketBook`;
   const data = { marketIds: [  marketId ] }
-  const headers =  {
+  const header =  {
     headers: {
       'accept': 'application/json',
       'Content-Type': 'application/json',
