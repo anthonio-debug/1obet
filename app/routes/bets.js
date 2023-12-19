@@ -1691,9 +1691,7 @@ const placeBet = async (req, res) => {
           message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
         });
       }
-
-      console.log(` eventDetail.Id =====  `, typeof(eventDetail.Id));
-      const scores = await Crickets.find({ eventId: eventDetail.Id })
+      const scores = await Crickets.findOne({ eventId: eventDetail.Id })
       if (!scores) {
         return res.status(404).json({
           status: false,
