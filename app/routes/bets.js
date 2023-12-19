@@ -345,6 +345,8 @@ const placeBet = async (req, res) => {
 
     /* ================================== Market Specific Checks ================================== */
 
+
+    console.log("id ===================== ", id);
     // Socer Match Odds
     if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
       // console.log(' ======================== Soccer  Match Odds ======================== ');
