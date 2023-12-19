@@ -629,7 +629,6 @@ const placeBet = async (req, res) => {
 
     // Cricket Match Odds
     else if ( config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id ) {
-      console.log( " ======================== Soccer Match Odds ======================== " );
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -660,9 +659,12 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate) {
         for (let i = 1; i < BetPlaceData.secondsValue; i++) {
           setTimeout(async () => {
-            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-            const response = await axios.get(url);
-            const oddsData = response.data;
+            // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            // const response = await axios.get(url);
+            // const oddsData = response.data;
+            const oddsData = await apiCallForOdds(id);
+            console.log(" ==============================  oddsData", oddsData);
+            return ;
             // console.log(' ================ oddsData ================ ', oddsData);
             const runnerFromAPI = oddsData[0]?.Runners.find(
               (runner) => runner.SelectionId == selectionId
