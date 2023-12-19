@@ -559,7 +559,7 @@ function apiRequests() {
                     createdAt: new Date().getTime(),
                   }
 
-                  if (element.Status != "OPEN") {
+                  if (element.status != "OPEN") {
                     await MarketIDS.updateOne(
                       {marketId: element.marketId},
                       {inPlay: false, status: element.status}
