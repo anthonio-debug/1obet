@@ -1,7 +1,8 @@
 'use strict';
 module.exports = ToolForEvent;
 
-const sportsIds = ["1", "7522", "2", "4", "27454571", "468328"];
+// const sportsIds = ["1", "7522", "2", "4", "27454571", "468328"];
+const sportsIds = ["1", "2", "4"];
 
 const inPlayEvents = require('../../app/models/events');
 const MarketIDs = require('../../app/models/marketIds');
