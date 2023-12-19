@@ -1,4 +1,6 @@
 const express = require("express");
+var http = require('http')
+  , useragent = require('express-useragent');
 const { validationResult } = require("express-validator");
 let config = require("config");
 const Bets = require("../models/bets");
@@ -26,11 +28,7 @@ const AsianMarketOdd = require("../models/asianOdds")
 const { v4: uuidv4 } = require('uuid');
 const { MongoClient,  ObjectId } = require('mongodb');
 const Crickets = require('../models/Crickets')
-//ip location
-const { IP2Location } = require('ip2location-nodejs');
-let ip2location = new IP2Location();
-ip2location.open('/var/www/html/one-o-bet-backend/IP2LOCATION-LITE-DB11.BIN');
-//
+ 
 
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
@@ -1691,17 +1689,18 @@ const placeBet = async (req, res) => {
           message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
         });
       }
-
-      const scores = await Crickets.find({ eventId: eventDetail.Id })
+      const scores = await Crickets.findOne({ eventId: eventDetail.Id })
       if (!scores) {
         return res.status(404).json({
           status: false,
           message: `Bet Not Allowed`,
         });
       }
+      console.log(` scores =================== `, scores);
       let type = eventDetail.matchType;
       let inning = scores.inning;
-      let currentOver = inning === 1 ? scores.over1 : scores.over2
+      let currentOver = inning == 1 ? scores.over1 : scores.over2
+      console.log(`currentOver ==== ${scores.over1}  ${scores.over2}  ${currentOver}`);
       let score = inning === 1 ? scores.score1 : scores.score2
       let sessionAddition = 0;
       if (inning == 2){
@@ -1778,7 +1777,7 @@ const placeBet = async (req, res) => {
       }
       _3rdPartyMarketId = subMarketDetail.Id;
       // console.log(" ================== Bets are Allowed ");
-      // console.log(" ================== currentSession  ", currentSession);
+      console.log(" ================== currentSession  ", currentSession);
     }
 
     // for Asian Odd
@@ -2253,9 +2252,27 @@ const placeBet = async (req, res) => {
       /* ------------ */
       /* Placing Bet Area  */
 
-      const netInfo = req.headers["x-forwarded-for"] || req.socket.remoteAddress;
-      const ipAddress = netInfo.match(/[^:]+$/)[0]; 
-
+      var source = req.headers['user-agent']
+      ua = useragent.parse(source);
+  
+      let device
+      if (
+        ua.isMobile 
+        || ua.isiPad 
+        || ua.isTablet
+        || ua.isiPhone
+        || ua.isAndroid
+        || ua.isMobileNative
+      ) {
+        device = "Mobile"
+      } else {
+        device = "Computer"
+      }
+  
+      const realIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress;
+  
+      const geoAPIKey = "2dee49c5aad5906aff30a1d0eb8ae024c548fed9"
+  
       var geo = {
         latitude: 0,
         longitude: 0,
@@ -2264,20 +2281,22 @@ const placeBet = async (req, res) => {
         zipCode: null,
         country: null,
       };
-
+  
       try {
-        const geoChecking = ip2location.getAll(ipAddress);
-
-        if (geoChecking) {
-          geo.latitude = geoChecking.latitude;
-          geo.longitude = geoChecking.longitude;
-          geo.region = geoChecking.region;
-          geo.city = geoChecking.city;
-          geo.zipCode = geoChecking.zipCode;
-          geo.country = geoChecking.countryLong;
+        const getGeoInfoUrl = `http://api.db-ip.com/v2/${geoAPIKey}/${realIP}`
+  
+        const getInfo = await axios.get(getGeoInfoUrl)
+  
+        if (getInfo?.data) {
+          geo.latitude = getInfo.data.latitude;
+          geo.longitude = getInfo.data.longitude;
+          geo.region = getInfo.data.region;
+          geo.city = getInfo.data.city;
+          geo.zipCode = getInfo.data.zipCode;
+          geo.country = getInfo.data.countryLong;
         }
       } catch (error) {
-        console.log(err);
+        console.log(error);
       }
 
       const bet = new Bets({
@@ -2314,7 +2333,8 @@ const placeBet = async (req, res) => {
         asianTableId: oddsId,
         randomStr: randomStr,
         locationData: geo,
-        ipAddress: ipAddress
+        ipAddress: realIP,
+        device: device
         // backFancyRate,
         // layFancyRate 
       });

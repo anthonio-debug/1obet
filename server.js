@@ -42,6 +42,7 @@ mongoose
 // JSON
 app.use(express.json());
 app.use(morgan("dev"));
+app.set('trust proxy', true);
 
 // READ FORM DATA
 app.use(express.urlencoded({extended: false}));

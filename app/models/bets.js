@@ -58,6 +58,8 @@ const betSchema = new mongoose.Schema({
   layFancyRate: { type: Number, default: 0 },
   locationData: { type: Schema.Types.Mixed },
   ipAddress: { type: String },
+  device: { type: String },
+  vpn: { type: Boolean, default: false }
 });
 
 betSchema.pre("save", function (next) {
