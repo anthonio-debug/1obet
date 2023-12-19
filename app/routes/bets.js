@@ -124,7 +124,7 @@ const apiCallForOdds = async (marketId) =>{
     data,
     header
   );
-  return response.data;
+  return response?.data?.result;
 }
 
 const placeBet = async (req, res) => {
@@ -372,7 +372,6 @@ const placeBet = async (req, res) => {
             // dev
             const oddsData = await apiCallForOdds(id);
             console.log(" ==============================  oddsData", oddsData);
-            return ;
             // const response = await axios.get(url);
             // const oddsData = response.data;
             // console.log( ' ================ oddsData ================ ', oddsData );
