@@ -661,10 +661,7 @@ const placeBet = async (req, res) => {
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
 
-            console.log(" ==============================  oddsData[0]?.runners", oddsData[0]?.runners?.ex);
-            return res.semd({
-              runners: oddsData
-            })
+            console.log(" ==============================  oddsData[0]?.runners", oddsData[0]?.runners);
             const runnerFromAPI = oddsData[0]?.runners?.ex?.find(
               (runner) => runner.SelectionId == selectionId
             );
