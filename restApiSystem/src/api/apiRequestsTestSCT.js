@@ -607,10 +607,10 @@ function apiRequests() {
                       status: "NewOddsHomepage",
                     });
                   }
-                  io.to("#" + element.eventId).emit("odds", {
+                  io.to("#" + marketData.eventId).emit("odds", {
                     marketId: element.marketId,
                     data: el,
-                    eventId: element.eventId,
+                    eventId: marketData.eventId,
                     status: "NewOdds",
                   });
                 }
