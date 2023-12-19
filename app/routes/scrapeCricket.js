@@ -14,10 +14,10 @@ const convertSchema = (entity) => {
     return lastOver.team === activeTeam ? `${rateType} ${entity[rateType]}` : "";
   };
 
-  const getScore = (score) => {
+  const getScore = (score, over) => {
     const regex = /-?\d+(\.\d+)?/g;
     const matches = score.match(regex) || [0, 0, '0.0'];
-    return `${matches[0]}-${matches[1]} (${matches[2]})`;
+    return `${matches[0]}-${matches[1]} (${over})`;
   };
 
   return {
@@ -32,8 +32,8 @@ const convertSchema = (entity) => {
       team2Flag: entity.team2Flag,
       dayno: "",
       isfinished: "0",
-      score1: getScore(entity.score1),
-      score2: getScore(entity.score2),
+      score1: getScore(entity.score1, entity.over1),
+      score2: getScore(entity.score2, entity.over2),
       spnballrunningstatus: entity.result,
       spnmessage: "",
       spnnation1: entity.team1SName,
