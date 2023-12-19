@@ -885,8 +885,8 @@ const placeBet = async (req, res) => {
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(overunderMarketId);
 
-            const runnerFromAPI = oddsData[0]?.Runners.find(
-              (runner) => runner.SelectionId == selectionId
+            const runnerFromAPI = oddsData[0]?.runners.find(
+              (runner) => runner.selectionId == selectionId
             );
             let selectedOddsValue = 0;
             if (type == 0) {
@@ -944,7 +944,7 @@ const placeBet = async (req, res) => {
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(overunderMarketId);
 
-            const runnerFromAPI = oddsData[0]?.Runners.find(
+            const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
             ApiResponseOdds = runnerFromAPI?.ex?.availableToLay;
@@ -987,8 +987,8 @@ const placeBet = async (req, res) => {
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(overunderMarketId);
 
-            const runnerFromAPI = oddsData[0]?.Runners.find(
-              (runner) => runner.SelectionId == selectionId
+            const runnerFromAPI = oddsData[0]?.runners.find(
+              (runner) => runner.selectionId == selectionId
             );
             ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
             let selectedOddsValue = ApiResponseOdds[0]?.price;
