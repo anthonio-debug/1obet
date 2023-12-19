@@ -1700,7 +1700,6 @@ const placeBet = async (req, res) => {
       let type = eventDetail.matchType;
       let inning = scores.inning;
       let currentOver = inning == 1 ? scores.over1 : scores.over2
-      console.log(`currentOver ==== ${scores.over1}  ${scores.over2}  ${currentOver}`);
       let score = inning === 1 ? scores.score1 : scores.score2
       let sessionAddition = 0;
       if (inning == 2){
