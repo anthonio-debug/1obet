@@ -109,7 +109,6 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
 };
 
 const apiCallForOdds = async (marketId) =>{
-  // dev 
   const url = `${config.sportsAPIUrl}/listMarketBook`;
   const data = { marketIds: [  marketId ] }
   const header =  {
@@ -369,7 +368,6 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5; i++) {
           setTimeout(async () => {
-            // dev
             const oddsData = await apiCallForOdds(id);
             console.log(" ==============================  oddsData", oddsData);
             // const response = await axios.get(url);
@@ -662,9 +660,7 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
-            console.log(" ==============================  oddsData", oddsData);
-            return ;
-            // console.log(' ================ oddsData ================ ', oddsData);
+            console.log(" ==============================  oddsData[0]?.Runners", oddsData[0]?.Runners);
             const runnerFromAPI = oddsData[0]?.Runners.find(
               (runner) => runner.SelectionId == selectionId
             );
