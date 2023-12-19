@@ -405,7 +405,8 @@ function apiRequests() {
               sportID: sportID,
               status: marketIds[index].status,
               index: index,
-              runners: marketIds[index].runners
+              runners: marketIds[index].runners,
+              inPlay: true
             });
             await newMarket.save();
           } else {
@@ -567,14 +568,15 @@ function apiRequests() {
 
                   if (runnerCheckerArray.indexOf(element.marketId) === -1) {
                     var runners = [];
+                    
                     for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
                       const runner = element.runners[ix1];
                       runners.push({
-                        SelectionId: runner.SelectionId,
+                        SelectionId: runner.selectionId,
                         runnerName: runner.runnerName,
                       });
                     }
-
+                    
                     if (runners.length > 0) {
                       await MarketIDS.updateOne(
                         {marketId: element.marketId, runners: null},
@@ -592,7 +594,6 @@ function apiRequests() {
                     el = new RaceOdds(json2);
                     await el.save();
                   }
-                  // console.log('odd', el)
 
                   const ix = _.findIndex(tempArry, function (o) {
                     return o.market == element.marketId;
