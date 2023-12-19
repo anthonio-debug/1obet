@@ -14,11 +14,6 @@ const convertSchema = (entity) => {
     return lastOver.team === activeTeam ? `${rateType} ${entity[rateType]}` : "";
   };
 
-  const checkActive = (activeTeamNo) => {
-    const activeTeam = (activeTeamNo === 1) ? entity.team1SName : entity.team2SName;
-    return lastOver.team === activeTeam ? 1 : 0;
-  };
-
   const getScore = (score) => {
     const regex = /-?\d+(\.\d+)?/g;
     const matches = score.match(regex) || [0, 0, '0.0'];
@@ -29,16 +24,16 @@ const convertSchema = (entity) => {
     eventId: 0,
     seriesKey: entity.seriesKey,
     score: {
-      activenation1: checkActive(1),
-      activenation2: checkActive(2),
+      activenation1: 1,
+      activenation2: 0,
       balls: lastOver.info,
       overScore: lastOver.total,
       team1Flag: entity.team1Flag,
       team2Flag: entity.team2Flag,
       dayno: "",
       isfinished: "0",
-      score1: getScore(entity.team1Score),
-      score2: getScore(entity.team2Score),
+      score1: getScore(entity.score1),
+      score2: getScore(entity.score2),
       spnballrunningstatus: entity.result,
       spnmessage: "",
       spnnation1: entity.team1SName,
@@ -59,7 +54,7 @@ async function updateCricketData(req, res) {
   })
 
   if (type === 'live') {
-    const socketData = convertSchema(JSON.parse(JSON.stringify(entities)))
+    const socketData = convertSchema(entities)
     if (socketData) {
       // console.log('cricket live socket', socketData)
       io.emit('score', socketData)
