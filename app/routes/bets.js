@@ -4006,7 +4006,7 @@ const SingleUserAllBets = async (req, res) => {
 const postmanwork = async (req, res) => {
 
   try{
-    const resp = apiCallForOdds(req.query.id)
+    const resp = await apiCallForOdds(req.query.id)
     return res
       .status(200)
       .send({
