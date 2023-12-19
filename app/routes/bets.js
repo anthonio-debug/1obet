@@ -635,7 +635,7 @@ const placeBet = async (req, res) => {
       }
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.SelectionId,
+        runner: runner.selectionId,
         amount: 0,
       }));
 
@@ -4002,139 +4002,16 @@ const SingleUserAllBets = async (req, res) => {
 }
 
 const postmanwork = async (req, res) => {
-  const errors = validationResult(req);
-  let relatedEvents = [];
-  if (!errors.isEmpty()) {
-    return res.status(400).send({ errors: errors.array() });
-  }
 
-  try {
-    const loginUser = await User.findOne({ userId: req.decoded.userId });
-    if (!loginUser) {
-      return res.status(404).send({ message: "User not found" });
-    }
-     
-    const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
-    const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
-    const createdByIDs = userOfLoginUser.map((user) => user.userId);
-
-    // Fetch all user IDs using optimized function
-    const userIDs = await getAllUserIDs(createdByIDs);
-    const matchId = req.query.id;
-
-    if (loginUser.role == "5") {
-      userIDs.push(loginUser.userId);
-    }
-
-    // Use the $lookup aggregation pipeline to fetch matched bets along with user information and related events
-    var matchedBets = await Bets.aggregate([
-      {
-        $match: {
-          userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] },
-          status: 1,
-          matchId: matchId,
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "userId",
-          as: "userDetails",
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "userDetails.createdBy",
-          foreignField: "userId",
-          as: "masterDetails",
-        },
-      },
-      {
-        $lookup: {
-          from: "inplayevents",
-          localField: "sportsId",
-          foreignField: "sportsId",
-          as: "eventDetails",
-        },
-      },
-      {
-        $group: {
-          _id: "$_id",
-          price:  { $first: "$betRate" },
-          runnersPosition:  { $first: "$runnersPosition" },
-          calculateExp:  { $first: "$calculateExp" },
-          runnerId:  { $first: "$runnerName" },
-          createdAt:  { $first: "$createdAt" },
-          size:  { $first: "$betAmount" }, 
-          runner: { $first: "$runner" },
-          marketId:  { $first: "$marketId" },
-          betRate:  { $first: "$betRate" },
-          type:  { $first: "$type" },
-          isfancyOrbookmaker:  { $first: "$isfancyOrbookmaker" },
-          fancyData:  { $first: "$fancyData" },
-          testingBattor: { $first: "$userDetails" },
-          fancyRate:  { $first: "$fancyRate" },
-          betSession:  { $first: "$betSession" },
-          roundId:  { $first: "$roundId" },
-          testingMaster: { $first: "$masterDetails" },
-          event: { $first: "$eventDetails" },
-        },
-      },
-      {
-        $addFields: {
-          bettorId: { $arrayElemAt: ["$testingBattor.userId", 0] },
-          bettor: { $arrayElemAt: ["$testingBattor.userName", 0] },
-          master: {
-            $cond: [
-              { $eq: [loginUser.role, "5"] },
-              loginUser.userName,
-              {
-                $ifNull: [{ $arrayElemAt: ["$testingMaster.userName", 0] }, ""],
-              },
-            ]
-          },
-        }
-      },
-      {
-        $unset: ["testingBattor", "testingMaster"]
-      },
-      { 
-        $sort: { _id: -1 } 
-      }
-    ]).exec();
-    const eventId = await Events.findById(matchId);
-    if (eventId) {
-      relatedEvents = await Events.find({
-        sportsId: eventId.sportsId,
-        openDate: {
-          $gt: eventId.openDate,
-        },
-      }).limit(5);
-    }
-
-    if (matchedBets.length > 0) {
-      const promises = matchedBets.map(async (item) => {
-        const multiplier = await getPercentageSharing(
-          item.bettorId,
-          loginUser.userId
-        );
-        return {
-          ...item,
-          percentage: multiplier,
-        };
+  try{
+    const resp = apiCallForOdds(req.id)
+    return res
+      .status(200)
+      .send({
+        resp: resp
       });
-      matchedBets = await Promise.all(promises);
-    }
-
-    return res.send({
-      success: true,
-      message: "Matched bets record found",
-      data: matchedBets,
-      events: relatedEvents,
-    });
-  } catch (err) {
+  }
+   catch (err) {
     console.error("Aggregation error ======= :", err);
     return res
       .status(500)
