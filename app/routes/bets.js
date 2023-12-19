@@ -2295,6 +2295,7 @@ const placeBet = async (req, res) => {
         city: null,
         zipCode: null,
         country: null,
+        address: null
       };
   
       try {
@@ -2309,6 +2310,7 @@ const placeBet = async (req, res) => {
           geo.city = getInfo.data.city;
           geo.zipCode = getInfo.data.zipCode;
           geo.country = getInfo.data.countryLong;
+          geo.address = `${getInfo.data?.district} ${getInfo.data?.city}, ${getInfo.data?.stateProv} ${getInfo.data?.zipCode}, ${getInfo.data?.countryName}`
         }
       } catch (error) {
         console.log(error);

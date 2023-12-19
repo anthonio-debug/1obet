@@ -17,36 +17,36 @@ async function listCricket(req, res) {
     limit = Number(req.query.numRecords);
   if (req.query.sort) sort = Number(req.query.sort);
   if (req.query.page) page = Number(req.query.page);
-  Crickets.paginate(
-    query,
-    {
-      page: page,
-      limit: limit,
-      sort: {
-        timestamp: -1
-      },
-    },
-    (err, results) => {
-      if (err) return res.status(404).send({ message: 'Something went wrong' });
-      
-      const resposne = results.docs.sort((a, b) => {
-        if (a.state === 'live' && b.state !== 'live') {
-          return -1;
-        } else if (a.state !== 'live' && b.state === 'live') {
-          return 1;
-        } else {
-          return 0;
-        }
-      });
 
-      return res.send({
-        success: true,
-        message: 'Crickets list',
-        total: results.total,
-        results: resposne, // Access the documents array within results
-      });
-    }
-  );
+  Crickets.find(query)
+  .sort({ timestamp: -1 })
+  .exec((err, allRecords) => {
+    if (err) return res.status(404).send({ message: 'Something went wrong' });
+
+    // Apply custom sorting logic
+    const sortedRecords = allRecords.sort((a, b) => {
+      if (a.state === 'live' && b.state !== 'live') {
+        return -1;
+      } else if (a.state !== 'live' && b.state === 'live') {
+        return 1;
+      } else {
+        // If states are the same or both not 'live', sort by timestamp
+        return b.timestamp - a.timestamp;
+      }
+    });
+
+    // Implement your own pagination logic
+    const startIndex = (page - 1) * limit;
+    const endIndex = page * limit;
+    const paginatedRecords = sortedRecords.slice(startIndex, endIndex);
+
+    return res.send({
+      success: true,
+      message: 'Paginated and sorted Crickets list',
+      total: allRecords.length,
+      results: paginatedRecords,
+    });
+  });
 }
 
 async function editCricket(req, res) {
