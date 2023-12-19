@@ -1692,7 +1692,7 @@ const placeBet = async (req, res) => {
         });
       }
 
-      console.log(` eventDetail.Id =====  `, eventDetail.Id);
+      console.log(` eventDetail.Id =====  `, typeof(eventDetail.Id));
       const scores = await Crickets.find({ eventId: eventDetail.Id })
       if (!scores) {
         return res.status(404).json({
