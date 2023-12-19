@@ -5,7 +5,11 @@
   "staging_apiUrl": "https://stage.game-program.com/api/seamless/provider",
   "apiUrl": "https://em-api.thegameprovider.com/api/seamless/provider",
   "eventListAPIUrl": "https://tvlivestreaming.online:3440/api",
-  "sportsAPIUrl": "http://209.250.242.175:33332",
+  "sportsAPIUrl": "http://185.58.225.212:8080/api",
+  "old_sportsAPIUrl": "http://209.250.242.175:33332",
+
+  
+
   "fancyUrl": "https://betfairoddsapi.com:3444/api",
   "liveTvUrl": "https://livesportscore.xyz:3440/api",
   "liveBetTvUrl": "https://betfairoddsapi.com:3445/api",
