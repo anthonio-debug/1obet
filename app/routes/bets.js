@@ -1698,11 +1698,9 @@ const placeBet = async (req, res) => {
           message: `Bet Not Allowed`,
         });
       }
-      console.log(` scores =================== `, scores);
       let type = eventDetail.matchType;
       let inning = scores.inning;
       let currentOver = inning == 1 ? scores.over1 : scores.over2
-      console.log(`currentOver ==== ${scores.over1}  ${scores.over2}  ${currentOver}`);
       let score = inning === 1 ? scores.score1 : scores.score2
       let sessionAddition = 0;
       if (inning == 2){
@@ -1779,7 +1777,7 @@ const placeBet = async (req, res) => {
       }
       _3rdPartyMarketId = subMarketDetail.Id;
       // console.log(" ================== Bets are Allowed ");
-      console.log(" ================== currentSession  ", currentSession);
+      // console.log(" ================== currentSession  ", currentSession);
     }
 
     // for Asian Odd
