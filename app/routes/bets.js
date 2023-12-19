@@ -302,14 +302,14 @@ const placeBet = async (req, res) => {
       if (!subMarketDetail) {
         return res.status(404).send({ message: "you cannot place bet" });
       }
-      // if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
-      //   return res.status(404).send({
-      //     status: true,
-      //     message: `Bets will Allow in : ${Math.ceil(
-      //       remainingTimeFromEvent / 60000
-      //     )} min`,
-      //   });
-      // }
+      if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
+        return res.status(404).send({
+          status: true,
+          message: `Bets will Allow in : ${Math.ceil(
+            remainingTimeFromEvent / 60000
+          )} min`,
+        });
+      }
     }
 
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id) ) {
