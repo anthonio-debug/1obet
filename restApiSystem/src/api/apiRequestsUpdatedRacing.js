@@ -350,10 +350,11 @@ function apiRequests() {
               }
 
               await MarketIDS.updateOne({ marketId: odds.marketId }, { $set: {readyForScore: true} });
+              if (odds.marketId) {
+                io.emit('racing_status', { status: odds.status, marketId: odds.marketId });
 
-              io.emit('racing_status', { status: odds.status, marketId: odds.marketId });
-
-              io.to('$' + events[ix].marketId).emit('odds', odds);
+                io.to('$' + events[ix].marketId).emit('odds', odds);
+              }
             } else {
               const ix = _.findIndex(events, function (o) { return o.marketId == odds.marketId; });
               odds.createdAt = new Date().getTime()
@@ -430,7 +431,9 @@ function apiRequests() {
           await InPlayEvents.findOneAndUpdate({ Id: filteredArray[index].eventId }, { $set: {status: 'CLOSED',readyForScore: true }});
           // console.log(filteredArray[index].eventId, 'CLOSED 1');
           await MarketIDS.updateOne({ eventId: filteredArray[index].eventId }, { $set: {readyForScore: true} });
-          io.emit('racing_status', { status: 'CLOSED', marketId: filteredArray[index].marketId });
+          if (filteredArray[index].marketId) {
+            io.emit('racing_status', { status: 'CLOSED', marketId: filteredArray[index].marketId });
+          }
         }
 
       } else {
