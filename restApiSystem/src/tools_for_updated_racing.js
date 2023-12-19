@@ -7,6 +7,7 @@ const apiRequests = require('./api/apiRequestsUpdatedRacing.js')();
 
 const sportsIds = ['4339', '7'];
 const HORSE_RACE_SPORTS_ID = '7';
+const GREY_HOUND_ID = '4339'
 
 function ToolForUpdatedRacing() {
     return { init };
@@ -15,26 +16,29 @@ function ToolForUpdatedRacing() {
         apiRequests.init(_io);
 
         if (config.activeProvider == 'NEW') {
-            setInterval(fetchMarkets, 10 * 1000);
-            setInterval(getRacing, 2 * 60 * 1000)
-            setInterval(apiRequests.checkOdds, 1 * 1000)
+            setInterval(getRacing, 10 * 1000)
+            setInterval(() => fetchMarkets(HORSE_RACE_SPORTS_ID), 10 * 1000);
+            setInterval(() => fetchMarkets(GREY_HOUND_ID), 15 * 1000);
+            setInterval(apiRequests.checkOdds, 20 * 1000)
         }
     }
 
     async function fetchMarkets(id) {
         try {
-            const documents = await inPlayEvents.findOne({ status: 'OPEN', sportsId: '7' })
+            const documents = await inPlayEvents.find({ status: 'OPEN', sportsId: id })
                 .sort({ lastCheckMarket: 1 })
-                .limit(1)
+                .limit(20)
                 .exec();
 
-            if (documents) {
-                await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
-                await inPlayEvents.updateMany(
-                    { Id: documents.Id },
-                    { $set: { lastCheckMarket: Date.now() } }
-                );
-                // fetchOddsForEvent(documents.Id);           
+            for (let i = 0; i < documents?.length; i ++) {
+                if (documents[i]) {
+                    await apiRequests.listMarketsByCronJob(documents[i].Id, documents[i].sportsId, documents[i].competitionId);
+                    await inPlayEvents.updateMany(
+                        { Id: documents.Id },
+                        { $set: { lastCheckMarket: Date.now() } }
+                    );
+                    // fetchOddsForEvent(documents.Id);           
+                }
             }
         } catch (error) {
             console.error('Error fetching markets:', error);

@@ -325,7 +325,7 @@ function apiRequests() {
       "filter": {
         "eventIds": [eventId],
       },
-      "maxResults": 10,
+      "maxResults": 100,
       "marketProjection": ["RUNNER_DESCRIPTION", "RUNNER_METADATA"]
     }
 
@@ -346,53 +346,73 @@ function apiRequests() {
 
       if (marketsData.length > 0) {
         let marketIds = [];
+        
         marketsData.forEach((element) => {
-          if (
-            element.marketName === "Match Odds"
-            || element.marketName === "Tied Match"
-            || element.marketName === "To Win the Toss"
-          )
-            marketIds.push({
-              id: element.marketId,
-              marketName: element.marketName,
-              status: marketStatus,
-              runners: element.runners
-            });
+          if (sportID == "4") {
+            if (
+              element.marketName === "Match Odds"
+              || element.marketName === "Tied Match"
+              || element.marketName === "To Win the Toss"
+            )
+              marketIds.push({
+                id: element.marketId,
+                marketName: element.marketName,
+                status: marketStatus,
+                runners: element.runners
+              });
+          } else if (sportID == "2") {
+            if (
+              element.marketName === "Match Odds"
+            )
+              marketIds.push({
+                id: element.marketId,
+                marketName: element.marketName,
+                status: marketStatus,
+                runners: element.runners
+              });
+          } else if (sportID == "1") {
+
+            if (
+              element.marketName === "Match Odds"
+              || element.marketName === "Over/Under 0.5 Goals"
+              || element.marketName === "Over/Under 1.5 Goals"
+              || element.marketName === "Over/Under 2.5 Goals"
+              || element.marketName === "Over/Under 3.5 Goals"
+              || element.marketName === "Over/Under 4.5 Goals"
+              || element.marketName === "Over/Under 5.5 Goals"
+            )
+              marketIds.push({
+                id: element.marketId,
+                marketName: element.marketName,
+                status: marketStatus,
+                runners: element.runners
+              });
+          }
         });
 
         for (let index = 0; index < marketIds.length; index++) {
           var ev = parseInt(eventId);
-          if (
-            marketIds[index].marketName !== "Most Sixes"
-            && marketIds[index].marketName !== "Super Over"
-            && marketIds[index].marketName !== "Top South Africa Batter"
-            && marketIds[index].marketName !== "2nd Innings 10 Overs Line"
-            && marketIds[index].marketName !== "Match Odds Including Tie"
-            && marketIds[index].marketName !== "2nd Innings 15 Overs Line"
-            && marketIds[index].marketName !== "2nd Innings 12 Overs Line"
-          ) {
-            const marketID = await MarketIDS.findOne({
-              eventId: ev,
+ 
+          const marketID = await MarketIDS.findOne({
+            eventId: ev,
+            marketId: marketIds[index].id + "",
+          });
+          if (!marketID) {
+            const newMarket = new MarketIDS({
+              eventId: eventId,
               marketId: marketIds[index].id + "",
+              marketName: marketIds[index].marketName,
+              sportID: sportID,
+              status: marketIds[index].status,
+              index: index,
+              runners: marketIds[index].runners
             });
-            if (!marketID) {
-              const newMarket = new MarketIDS({
-                eventId: eventId,
-                marketId: marketIds[index].id + "",
-                marketName: marketIds[index].marketName,
-                sportID: sportID,
-                status: marketIds[index].status,
-                index: index,
-                runners: marketIds[index].runners
-              });
-              console.log("111111111111111", eventId)
-              await newMarket.save();
-            } else {
-              await MarketIDS.findOneAndUpdate(
-                {eventId: ev, marketId: marketIds[index].id + ""},
-                {status: marketIds[index].status}
-              );
-            }
+            await newMarket.save();
+          } else {
+            await MarketIDS.findOneAndUpdate(
+              {eventId: ev, marketId: marketIds[index].id + ""},
+              {status: marketIds[index].status}
+            );
           }
         }
 
@@ -413,7 +433,6 @@ function apiRequests() {
   }
 
   async function getOddsFromProvider(marketIdsArray) {
-    console.log('getOddsFromProvider', marketIdsArray)
     var tempArry = [];
     var tempArryForIDs = [];
 
