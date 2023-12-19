@@ -656,30 +656,29 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate) {
         for (let i = 1; i < BetPlaceData.secondsValue; i++) {
           setTimeout(async () => {
-            // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-            // const response = await axios.get(url);
-            // const oddsData = response.data;
-            const oddsData = await apiCallForOdds(id);
 
+            const oddsData = await apiCallForOdds(id);
             console.log(" ==============================  oddsData[0]?.runners", oddsData[0]?.runners);
-            const runnerFromAPI = oddsData[0]?.runners?.ex?.find(
-              (runner) => runner.SelectionId == selectionId
+            const runnerFromAPI = oddsData[0]?.runners?.find(
+              (runner) => runner.selectionId == selectionId
             );
             let selectedOddsValue = 0;
             if (type == 0) {
-              const ApiResponseOdds =
-                runnerFromAPI?.ExchangePrices?.AvailableToBack;
-              // console.log(' =============== ApiResponseOdds ============ ',ApiResponseOdds);
+              
+              const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0].price;
               }
+
               if (selectedOddsValue != 0 && betRate <= selectedOddsValue) {
                 multipeResponse.push(selectedOddsValue);
               }
+
               multipeResponseForSecurityCheck.push(selectedOddsValue);
-            } else if (type == 1) {
+            } 
+            else if (type == 1) {
               const ApiResponseOdds =
-                runnerFromAPI.ExchangePrices?.AvailableToLay;
+                runnerFromAPI.ex?.availableToLay;
               // console.log( ' =============== ApiResponseOdds ============ ', ApiResponseOdds );
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0]?.price;
@@ -689,6 +688,7 @@ const placeBet = async (req, res) => {
               }
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             }
+
           }, 1000 * i);
         }
       } else if (type == 1 && betRate < selectedBetRate) {
@@ -704,14 +704,15 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
           setTimeout(async () => {
-            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-            const response = await axios.get(url);
-            const oddsData = response.data;
+            // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            // const response = await axios.get(url);
+            // const oddsData = response.data;
             // console.log( ' ================ oddsData ================ ', oddsData);
-            const runnerFromAPI = oddsData[0]?.Runners.find(
-              (runner) => runner.SelectionId == selectionId
+            const oddsData = await apiCallForOdds(id);
+            const runnerFromAPI = oddsData[0]?.runners.find(
+              (runner) => runner.selectionId == selectionId
             );
-            ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToLay;
+            ApiResponseOdds = runnerFromAPI?.ex?.availableToLay;
             // console.log( ' ================ ApiResponseOdds ================ ', ApiResponseOdds );
             /**
              *
@@ -748,14 +749,15 @@ const placeBet = async (req, res) => {
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
           setTimeout(async () => {
-            const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-            const response = await axios.get(url);
-            const oddsData = response.data;
+            // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            // const response = await axios.get(url);
+            // const oddsData = response.data;
             // console.log(' ================ oddsData ================ ', oddsData);
-            const runnerFromAPI = oddsData[0]?.Runners.find(
+            const oddsData = await apiCallForOdds(id);
+            const runnerFromAPI = oddsData[0]?.randomunners.find(
               (runner) => runner.SelectionId == selectionId
             );
-            ApiResponseOdds = runnerFromAPI?.ExchangePrices?.AvailableToBack;
+            ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
             // console.log( ' ================ ApiResponseOdds ================ ', ApiResponseOdds );
             let selectedOddsValue = ApiResponseOdds[0]?.price;
             // console.log(' =================== selectedOddsValue =============== ', selectedOddsValue );
