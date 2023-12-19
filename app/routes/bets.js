@@ -121,7 +121,7 @@ const apiCallForOdds = async (marketId) =>{
   }
   const response = await axios.post(
     url,
-    requestData,
+    data,
     header
   );
   return response.data;
