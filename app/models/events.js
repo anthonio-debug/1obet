@@ -47,6 +47,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   readyForScore: { type: Boolean, default: false },
   betAllowed: { type: Boolean, default: true },
   isResultSaved: { type: Boolean, default: false },
+  seriesKey:  { type: String },
 
 });
 

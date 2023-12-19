@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const Crickets = require("../models/Crickets");
+const InPlayEvents = require("../models/events")
 let config = require('config');
 
 async function listCricket(req, res) {
@@ -52,9 +53,18 @@ async function editCricket(req, res) {
   const { _id, eventId } = req.body;
 
   try {
-    const result = await Crickets.updateOne(
+    await Crickets.updateOne(
       { _id: _id }, 
       { $set: { eventId: eventId } },
+    );
+
+    const cricketInfo = await Crickets.findOne({ _id: _id })
+
+    const seriesKey = cricketInfo.seriesKey;
+
+    await InPlayEvents.updateOne(
+      { Id: eventId }, 
+      { $set: { seriesKey: seriesKey } },
     );
 
     // Check if the update was successful
