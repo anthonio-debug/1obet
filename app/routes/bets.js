@@ -1681,6 +1681,7 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+      console.log(`Figure Even Odd & Small Big -----`);
       const FigureEvenOddSmallBig = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -1691,6 +1692,7 @@ const placeBet = async (req, res) => {
           message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
         });
       }
+      console.log(`before  Query Correct -----`);
 
       const scores = await Crickets.find({ eventId: eventDetail.Id })
       if (!scores) {
