@@ -8,6 +8,7 @@ const MarketIDS = require("../../../app/models/marketIds");
 const RaceOdds = require("../../../app/models/raceOdds");
 const Score = require("../../../app/models/score");
 const Odds = require("../../../app/models/odds");
+const Crickets = require("../../../app/models/Crickets");
 const FancyEvent = require("../../../app/models/fancyEvent");
 var _ = require("lodash");
 const config = require("../../../config/default.json")
@@ -73,6 +74,12 @@ function apiRequests() {
         });
 
         if (event_information) {
+          if (event_information.seriesKey) {
+            const cricket = Crickets.findOne({
+              seriesKey: event_information.seriesKey
+            })
+            event_information.cricket = cricket
+          }
           if (event_information.sportsId == 4) {
             const fancyEvents = await FancyEvent.findOne({
               eventId: channel.substring(1),
