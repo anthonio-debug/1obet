@@ -330,6 +330,11 @@ async function listEventsBySport(req, res) {
     let start;
     let end;
     let events;
+
+    var now = new Date();  // Get the current date and time
+    var startOfDay = new Date(now - now % 864e5); 
+    var endOfDay = new Date(now - now % 864e5 + 864e5 - 1); 
+
     if (sportId == "4" || sportId == "2" || sportId == "1") {
       start = new Date().getTime();
       end = new Date().getTime() + 24 * 60 * 60 * 1000;
@@ -337,9 +342,6 @@ async function listEventsBySport(req, res) {
       start = new Date().getTime();
       end = new Date().getTime() + 6 * 60 * 60 * 1000;
     }
-    console.log("start == ", start);
-    console.log("end == ", end);
-    console.log("sportId == ", sportId);
 
     if (sportId == "4") {
       events = await Events.find({
@@ -354,6 +356,12 @@ async function listEventsBySport(req, res) {
           sportsId: sportId,
           status: "OPEN",
           isShowed: true,
+        }).sort({ openDate: 1 });
+      } else if (sportId == "7" || sportId == "4339") {
+        events = await Events.find({
+          sportsId: sportId,
+          status: "OPEN",
+          openDate: { $gte: startOfDay, $lt: endOfDay }
         }).sort({ openDate: 1 });
       } else {
         events = await Events.find({
@@ -958,10 +966,15 @@ async function bettorDashboardGames(req, res) {
       },
     ]);
 
+    var now = new Date();  // Get the current date and time
+    var startOfDay = new Date(now - now % 864e5); 
+    var endOfDay = new Date(now - now % 864e5 + 864e5 - 1);  
+
     const greyHound = await Events.find(
       {
         sportsId: "4339",
         status: "OPEN",
+        openDate: { $gte: startOfDay, $lt: endOfDay }
       },
       {
         _id: 1,
@@ -982,6 +995,7 @@ async function bettorDashboardGames(req, res) {
       {
         sportsId: "7",
         status: "OPEN",
+        openDate: { $gte: startOfDay, $lt: endOfDay }
       },
       {
         _id: 1,
