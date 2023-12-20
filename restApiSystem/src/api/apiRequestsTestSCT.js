@@ -340,23 +340,20 @@ function apiRequests() {
       const marketsData = response.data.result;
       let marketStatus = 'OPEN';
 
-      if (config.activeProvider == 'old') {
-        marketStatus = element.status
-      }
-
       if (marketsData.length > 0) {
         let marketIds = [];
 
-        let tempRunners = [];
-
-        for (let k = 0; k < element?.runners?.length; k ++) {
-          tempRunners.push({
-            SelectionId: element?.runners[k]?.selectionId,
-            runnerName: element?.runners[k]?.runnerName,
-          })
-        }
-        
         marketsData.forEach((element) => {
+          let tempRunners = [];
+          if (config.activeProvider == 'old') {
+            marketStatus = element.status
+          }
+          for (let k = 0; k < element?.runners?.length; k ++) {
+            tempRunners.push({
+              SelectionId: element?.runners[k]?.selectionId,
+              runnerName: element?.runners[k]?.runnerName,
+            })
+          }
           if (sportID == "4") {
             if (
               element.marketName === "Match Odds"
@@ -434,7 +431,7 @@ function apiRequests() {
         );
       }
     } catch (error) {
-      // console.error(error);
+      console.error(error);
       return {
         success: false,
         message: "Failed to get listMarketsByCronJob",
