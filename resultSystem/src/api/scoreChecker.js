@@ -17,6 +17,7 @@ const {
   handleWinningBet,
   handleDrawBet,
 } = require("../CalculateBets/calculations");
+const {API_DOMAIN} = require("../../../app/global/constants");
 
 const tableInfo = [
   { id: "36", tId: "teen20" },
@@ -288,7 +289,7 @@ function scoreChecker() {
             { winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false },
           ];
       } else {
-        var url = ` https://betfairoddsapi.com:3443/api/bookmaker_result/${event.Id}`;
+        let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
         const response = await axios.get(url);
         results = response.data;
       }
@@ -421,7 +422,7 @@ function scoreChecker() {
             { result: manuelRecord.winnerRunnerData, manuelClose: false },
           ];
       } else {
-        var url = ` https://betfairoddsapi.com:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
+        let url = `https://${API_DOMAIN}:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
         const response = await axios.get(url);
         results = response.data;
       }
@@ -542,7 +543,7 @@ function scoreChecker() {
     try {
       for (let i = 0; i < betData.length; i++) {
         const tId = tableInfo.find((e) => e.id === betData[i].subMarketId);
-        const apiURL = "https://betfairoddsapi.com:3445/api";
+        const apiURL = `https://${API_DOMAIN}:3445/api`;
         let resultUrl = `${apiURL}/r_result/${tId.tId}/${betData[i].roundId}`;
         const result = await axios.get(resultUrl);
 

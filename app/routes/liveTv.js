@@ -6,6 +6,7 @@ const router = express.Router();
 const AsianTable = require("../models/asianTable");
 const AsianResult = require("../models/asianTablesResultsHistory");
 const AsianTableOdd = require("../models/asiantableOdds");
+const {LIVE_BET_TV_URL} = require("../global/constants");
 
 async function liveTv(req, res) {
   const eventId = req.params.eventId;
@@ -98,7 +99,7 @@ async function getLastResult(req, res) {
 }
 
 async function liveDrateTp20(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/teen20`;
+  const url = `${LIVE_BET_TV_URL}/d_rate/teen20`;
   try {
     const response = await axios.get(url);
     const liveTp20Data = response.data;
@@ -117,7 +118,7 @@ async function liveDrateTp20(req, res) {
 }
 
 async function liveLresultTp20(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/teen20`;
+  const url = `${LIVE_BET_TV_URL}/l_result/teen20`;
   try {
     const response = await axios.get(url);
     const liveTp20lResultData = response.data;
@@ -137,7 +138,7 @@ async function liveLresultTp20(req, res) {
 
 async function liveRresultTp20(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/teen20/${roundId}`;
+  const url = `${LIVE_BET_TV_URL}/r_result/teen20/${roundId}`;
   try {
     const response = await axios.get(url);
     const liveTp20lResultData = response.data;
@@ -156,7 +157,7 @@ async function liveRresultTp20(req, res) {
 }
 
 async function liveDrateTp9(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/teen9`;
+  const url = `${LIVE_BET_TV_URL}/d_rate/teen9`;
   try {
     const response = await axios.get(url);
     const liveTp9dRateData = response.data;
@@ -175,7 +176,7 @@ async function liveDrateTp9(req, res) {
 }
 
 async function liveLresultTp9(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/teen9`;
+  const url = `${LIVE_BET_TV_URL}/l_result/teen9`;
   try {
     const response = await axios.get(url);
     const liveTp9lResultData = response.data;
@@ -195,7 +196,7 @@ async function liveLresultTp9(req, res) {
 
 async function tpRoundResult(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/teen9/${roundId}`;
+  const url = `${LIVE_BET_TV_URL}/r_result/teen9/${roundId}`;
   try {
     const response = await axios.get(url);
     const tp2020RoundResult = response.data;
@@ -214,7 +215,7 @@ async function tpRoundResult(req, res) {
 }
 
 async function liveDrateLucky7(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/lucky7`;
+  const url = `${LIVE_BET_TV_URL}/d_rate/lucky7`;
   try {
     const response = await axios.get(url);
     const liveDrateLucky7Result = response.data;
@@ -233,7 +234,7 @@ async function liveDrateLucky7(req, res) {
 }
 
 async function liveLresultLucky7(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/lucky7`;
+  const url = `${LIVE_BET_TV_URL}/l_result/lucky7`;
   try {
     const response = await axios.get(url);
     const liveLresultLucky7Result = response.data;
@@ -253,7 +254,7 @@ async function liveLresultLucky7(req, res) {
 
 async function liveRresultLucky7(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/lucky7/${roundId}`;
+  const url = `${LIVE_BET_TV_URL}/r_result/lucky7/${roundId}`;
   try {
     const response = await axios.get(url);
     const liveRresultLucky7Result = response.data;
@@ -272,7 +273,7 @@ async function liveRresultLucky7(req, res) {
 }
 
 async function liveDrateLucky7EU(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/lucky7eu`;
+  const url = `${LIVE_BET_TV_URL}/d_rate/lucky7eu`;
   try {
     const response = await axios.get(url);
     const liveDrateLucky7EUResult = response.data;
@@ -291,7 +292,7 @@ async function liveDrateLucky7EU(req, res) {
 }
 
 async function liveLresultLucky7EU(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/lucky7eu`;
+  const url = `${LIVE_BET_TV_URL}/l_result/lucky7eu`;
   try {
     const response = await axios.get(url);
     const liveLresultLucky7EUResult = response.data;
@@ -311,7 +312,7 @@ async function liveLresultLucky7EU(req, res) {
 
 async function liveRresultLucky7EU(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/lucky7eu/${roundId}`;
+  const url = `${LIVE_BET_TV_URL}/r_result/lucky7eu/${roundId}`;
   try {
     const response = await axios.get(url);
     const liveRresultLucky7EUResult = response.data;
@@ -330,7 +331,7 @@ async function liveRresultLucky7EU(req, res) {
 }
 
 async function liveDrate32CardB(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/card32eu`;
+  const url = `${LIVE_BET_TV_URL}/d_rate/card32eu`;
   try {
     const response = await axios.get(url);
     const liveDrate32CardBResult = response.data;
@@ -349,7 +350,7 @@ async function liveDrate32CardB(req, res) {
 }
 
 async function liveLresult32CardB(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/card32eu`;
+  const url = `${LIVE_BET_TV_URL}/l_result/card32eu`;
   try {
     const response = await axios.get(url);
     const liveLresult32CardBResult = response.data;
@@ -369,7 +370,7 @@ async function liveLresult32CardB(req, res) {
 
 async function liveRresult32CardB(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/card32eu/${roundId}`;
+  const url = `${LIVE_BET_TV_URL}/r_result/card32eu/${roundId}`;
   try {
     const response = await axios.get(url);
     const liveRresult32CardBResult = response.data;
@@ -389,7 +390,7 @@ async function liveRresult32CardB(req, res) {
 }
 
 async function liveDrateAAA(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/aaa`;
+  const url = `${LIVE_BET_TV_URL}/d_rate/aaa`;
   try {
     const response = await axios.get(url);
     const liveDrateAAAResult = response.data;
@@ -408,7 +409,7 @@ async function liveDrateAAA(req, res) {
 }
 
 async function liveLresultAAA(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/aaa`;
+  const url = `${LIVE_BET_TV_URL}/l_result/aaa`;
   try {
     const response = await axios.get(url);
     const liveLresultAAAResult = response.data;
@@ -428,7 +429,7 @@ async function liveLresultAAA(req, res) {
 
 async function liveRresultAAA(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/aaa/${roundId}`;
+  const url = `${LIVE_BET_TV_URL}/r_result/aaa/${roundId}`;
   try {
     const response = await axios.get(url);
     const liveRresultAAAResult = response.data;
@@ -448,7 +449,7 @@ async function liveRresultAAA(req, res) {
 }
 
 async function liveDrateAB20(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/ab20`;
+  const url = `${LIVE_BET_TV_URL}/d_rate/ab20`;
   try {
     const response = await axios.get(url);
     const liveDrateAB20Result = response.data;
@@ -467,7 +468,7 @@ async function liveDrateAB20(req, res) {
 }
 
 async function liveLresultAB20(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/ab20`;
+  const url = `${LIVE_BET_TV_URL}/l_result/ab20`;
   try {
     const response = await axios.get(url);
     const liveLresultAB20Result = response.data;
@@ -487,7 +488,7 @@ async function liveLresultAB20(req, res) {
 
 async function liveRresultAB20(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/ab20/${roundId}`;
+  const url = `${LIVE_BET_TV_URL}/r_result/ab20/${roundId}`;
   try {
     const response = await axios.get(url);
     const liveRresultAB20Result = response.data;
@@ -507,7 +508,7 @@ async function liveRresultAB20(req, res) {
 }
 
 async function liveDrateABJ(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/abj`;
+  const url = `${LIVE_BET_TV_URL}/d_rate/abj`;
   try {
     const response = await axios.get(url);
     const liveDrateABJResult = response.data;
@@ -526,7 +527,7 @@ async function liveDrateABJ(req, res) {
 }
 
 async function liveLresultABJ(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/abj`;
+  const url = `${LIVE_BET_TV_URL}/l_result/abj`;
   try {
     const response = await axios.get(url);
     const liveLresultABJResult = response.data;
@@ -546,7 +547,7 @@ async function liveLresultABJ(req, res) {
 
 async function liveRresultABJ(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/abj/${roundId}`;
+  const url = `${LIVE_BET_TV_URL}/r_result/abj/${roundId}`;
   try {
     const response = await axios.get(url);
     const liveRresultABJResult = response.data;
@@ -566,7 +567,7 @@ async function liveRresultABJ(req, res) {
 }
 
 async function liveDrateWorli(req, res) {
-  const url = `${config.liveBetTvUrl}/d_rate/worli`;
+  const url = `${LIVE_BET_TV_URL}/d_rate/worli`;
   try {
     const response = await axios.get(url);
     const liveDrateWorliResult = response.data;
@@ -585,7 +586,7 @@ async function liveDrateWorli(req, res) {
 }
 
 async function liveLresultWorli(req, res) {
-  const url = `${config.liveBetTvUrl}/l_result/worli`;
+  const url = `${LIVE_BET_TV_URL}/l_result/worli`;
   try {
     const response = await axios.get(url);
     const liveLresultWorliResult = response.data;
@@ -605,7 +606,7 @@ async function liveLresultWorli(req, res) {
 
 async function liveRresultWorli(req, res) {
   const roundId = req.params.roundId;
-  const url = `${config.liveBetTvUrl}/r_result/worli/${roundId}`;
+  const url = `${LIVE_BET_TV_URL}/r_result/worli/${roundId}`;
   try {
     const response = await axios.get(url);
     const liveRresultWorliResult = response.data;

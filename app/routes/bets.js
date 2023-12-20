@@ -28,6 +28,7 @@ const AsianMarketOdd = require("../models/asianOdds")
 const { v4: uuidv4 } = require('uuid');
 const { MongoClient,  ObjectId } = require('mongodb');
 const Crickets = require('../models/Crickets')
+const {FANCY_URL, LIVE_BET_TV_URL} = require("../global/constants");
  
 
 const handleLimitValue = async (selectedRate, marketId) => {
@@ -1297,7 +1298,7 @@ const placeBet = async (req, res) => {
 
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id;
-      const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
+      const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       const response = await axios.get(url);
       const apiFancyOdds = response?.data?.data?.t3;
       const DBOddDetails = await FancyOdds.findById(oddsId);
@@ -1390,7 +1391,7 @@ const placeBet = async (req, res) => {
 
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id;
-      const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
+      const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       const response = await axios.get(url);
 
       if (!response?.data?.data?.t2?.length) {
@@ -1619,7 +1620,7 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5; i++) {
           setTimeout(async () => {
-            const url = `${config.liveBetTvUrl}/d_rate/${oddsId}`;
+            const url = `${LIVE_BET_TV_URL}/d_rate/${oddsId}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             const playerFromAPI = oddsData.data?.t2.find(
@@ -1659,7 +1660,7 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
           setTimeout(async () => {
-            const url = `${config.liveBetTvUrl}/d_rate/${oddsId}`;
+            const url = `${LIVE_BET_TV_URL}/d_rate/${oddsId}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             const playerFromAPI = oddsData.data?.t2.find(
@@ -1675,7 +1676,7 @@ const placeBet = async (req, res) => {
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
           setTimeout(async () => {
-            const url = `${config.liveBetTvUrl}/d_rate/${oddsId}`;
+            const url = `${LIVE_BET_TV_URL}/d_rate/${oddsId}`;
             const response = await axios.get(url);
             const oddsData = response.data;
             const playerFromAPI = oddsData.data?.t2.find(
