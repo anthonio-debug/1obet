@@ -74,11 +74,11 @@ function apiRequests() {
         });
 
         if (event_information) {
+          let cricket = null
           if (event_information.seriesKey) {
-            const cricket = Crickets.findOne({
+            cricket = await Crickets.findOne({
               seriesKey: event_information.seriesKey
             })
-            event_information.cricket = cricket
           }
           if (event_information.sportsId == 4) {
             const fancyEvents = await FancyEvent.findOne({
@@ -113,7 +113,7 @@ function apiRequests() {
             if (lOdds.length > 0)
               event_information.marketIds[index].last_odds = lOdds[0];
           }
-          socket.emit("event_info", event_information);
+          socket.emit("event_info", {...event_information, cricket});
         } else {
           socket.emit("err", "Event Not Exist");
         }
