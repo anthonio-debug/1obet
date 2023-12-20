@@ -78,7 +78,7 @@ async function main() {
   await inPlayEvents.updateMany({}, { inplay: false, inplayFromServer: false });
 
   //init events jobs for cricket, tennis and soccer
-  ToolForEvent.init(io, express);
+  // ToolForEvent.init(io, express);
 
   // init events jobs for cricket, tennis and soccer
   ToolForRacing.init(io, express);
