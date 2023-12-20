@@ -767,7 +767,7 @@ const placeBet = async (req, res) => {
               }
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             } else if (type == 1) {
-              const ApiResponseOdds = runnerFromAPI.exchange?.availableToLay;
+              const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0].price;
               }
@@ -839,7 +839,7 @@ const placeBet = async (req, res) => {
             // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
             // const oddsData = response.data;
-            const oddsData = await apiCallForOdds(id);
+            const oddsData    = await apiCallForOdds(id);
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
