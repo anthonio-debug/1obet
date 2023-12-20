@@ -84,8 +84,31 @@ async function getFancyResult(req, res) {
   }
 }
 
+async function getFancyMultiResult(req, res) {
+  const eventId = req.params.eventId;
+  const fancyId = req.params.fancyId;
+
+  const url = ` https://betfairoddsapi.com:3443/api/fancy_result_multi/${eventId}/${fancyId}`;
+
+  try {
+    const response = await axios.get(url);
+    res.status(200).json({
+      success: true,
+      message: 'Fancy data result found',
+      fancyData: response.data,
+    });
+  } catch (error) {
+    res.status(200).json({
+      success: false,
+      message: 'Failed to get fancy data',
+      error: error.message,
+    });
+  }
+}
+
 // Define the route for the API
 loginRouter.get('/getFancyData/:eventId', getFancyData);
 loginRouter.get('/getFancyResult/:eventId/:fancyName', getFancyResult);
+loginRouter.get('/custom_fancy_result_checker/:eventId/:fancyId', getFancyMultiResult);
 
 module.exports = { loginRouter };

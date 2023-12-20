@@ -346,6 +346,15 @@ function apiRequests() {
 
       if (marketsData.length > 0) {
         let marketIds = [];
+
+        let tempRunners = [];
+
+        for (let k = 0; k < element?.runners?.length; k ++) {
+          tempRunners.push({
+            SelectionId: element?.runners[k]?.selectionId,
+            runnerName: element?.runners[k]?.runnerName,
+          })
+        }
         
         marketsData.forEach((element) => {
           if (sportID == "4") {
@@ -353,13 +362,14 @@ function apiRequests() {
               element.marketName === "Match Odds"
               || element.marketName === "Tied Match"
               || element.marketName === "To Win the Toss"
-            )
+            ) {
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
                 status: marketStatus,
-                runners: element.runners
+                runners: tempRunners
               });
+            }
           } else if (sportID == "2") {
             if (
               element.marketName === "Match Odds"
@@ -368,7 +378,7 @@ function apiRequests() {
                 id: element.marketId,
                 marketName: element.marketName,
                 status: marketStatus,
-                runners: element.runners
+                runners: tempRunners
               });
           } else if (sportID == "1") {
 
@@ -385,7 +395,7 @@ function apiRequests() {
                 id: element.marketId,
                 marketName: element.marketName,
                 status: marketStatus,
-                runners: element.runners
+                runners: tempRunners
               });
           }
         });
