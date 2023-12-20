@@ -113,7 +113,7 @@ function apiRequests() {
             if (lOdds.length > 0)
               event_information.marketIds[index].last_odds = lOdds[0];
           }
-          socket.emit("event_info", {...event_information, cricket});
+          socket.emit("event_info", {...JSON.parse(JSON.stringify(event_information)), cricket});
         } else {
           socket.emit("err", "Event Not Exist");
         }
@@ -406,7 +406,7 @@ function apiRequests() {
 
         for (let index = 0; index < marketIds.length; index++) {
           var ev = parseInt(eventId);
- 
+
           const marketID = await MarketIDS.findOne({
             eventId: ev,
             marketId: marketIds[index].id + "",
@@ -582,7 +582,7 @@ function apiRequests() {
 
                   if (runnerCheckerArray.indexOf(element.marketId) === -1) {
                     var runners = [];
-                    
+
                     for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
                       const runner = element.runners[ix1];
                       runners.push({
@@ -590,7 +590,7 @@ function apiRequests() {
                         runnerName: runner.runnerName,
                       });
                     }
-                    
+
                     if (runners.length > 0) {
                       await MarketIDS.updateOne(
                         {marketId: element.marketId, runners: null},
