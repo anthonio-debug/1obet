@@ -10,6 +10,7 @@ const { MongoClient } = require("mongodb");
 const MarketIDS = require("../../../app/models/marketIds");
 const cricketSession = require("../../../app/models/Session");
 const { log } = require("async");
+const {CALC_FANCY_URI, CALC_LIVE_BET_TV_URI} = require("../../../app/global/constants");
 require("dotenv").config();
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
@@ -27,9 +28,9 @@ const config = {
   apiUrl: "https://em-api.thegameprovider.com/api/seamless/provider",
   eventListAPIUrl: "https://tvlivestreaming.online:3440/api",
   sportsAPIUrl: "http://209.250.242.175:33332",
-  fancyUrl: "https://betfairoddsapi.com:3444/api",
+  fancyUrl: CALC_FANCY_URI,
   liveTvUrl: "https://livesportscore.xyz:3440/api",
-  liveBetTvUrl: "https://betfairoddsapi.com:3445/api",
+  liveBetTvUrl: CALC_LIVE_BET_TV_URI,
   liveScoreUrl: "https://livesportscore.xyz:3443/api/getScoreId",
   roundResultUrl: "http://103.228.112.83:8997",
   sportsLiveScore: "https://livesportscore.xyz:3440/api/bf_scores/",

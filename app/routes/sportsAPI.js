@@ -8,6 +8,7 @@ const Odds = require('../models/odds');
 const inPlayEvents = require('../models/events');
 const rateLimit = require('express-rate-limit');
 const fancyGames = require('../models/fancyGames')
+const {FANCY_URL} = require("../global/constants");
 
 
 const loginRouter = express.Router();
@@ -462,7 +463,7 @@ async function listMarketsByCronJob(eventId,sport) {
 }
 
 async function fancyDataByCronjob(eventId) {
-  const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
+  const url = `${FANCY_URL}/bm_fancy/${eventId}`;
   console.log('url', url);
   try {
     const response = await axios.get(url);

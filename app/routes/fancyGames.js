@@ -3,11 +3,12 @@ let config = require('config');
 const fancyGames = require('../models/fancyGames');
 const axios = require('axios');
 const inPlayEvents = require('../models/events');
+const {FANCY_URL} = require("../global/constants");
 const loginRouter = express.Router();
 
 async function getFancyData(req, res) {
   const eventId = req.params.eventId;
-  const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
+  const url = `${FANCY_URL}/bm_fancy/${eventId}`;
   console.log('url', url);
   try {
     const response = await axios.get(url);
@@ -63,7 +64,7 @@ async function getFancyResult(req, res) {
   const fancyName = req.params.fancyName;
   const encodedFancyName = encodeURIComponent(fancyName);
 
-  const url = `${config.fancyUrl}/fancy_result/${eventId}/${encodedFancyName}`;
+  const url = `${FANCY_URL}/fancy_result/${eventId}/${encodedFancyName}`;
 
   try {
     const response = await axios.get(url);

@@ -5,10 +5,10 @@ const AsianTable = require("../../../app/models/asianTable");
 const AsianMarketOdd = require("../../../app/models/asianOdds");
 const axios = require("axios");
 const AsianResult = require("../../../app/models/asianTablesResultsHistory");
-
+const {ASIAN_URI} = require("../../../app/global/constants");
 module.exports = apiRequests;
 let io;
-let apiURL = "https://betfairoddsapi.com:3445/api";
+let apiURL = ASIAN_URI;
 
 const tableNames = [
   {

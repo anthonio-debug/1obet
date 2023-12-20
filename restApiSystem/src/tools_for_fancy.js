@@ -8,9 +8,10 @@ const inPlayEvents = require('../../app/models/events');
 const FancyEvent = require('../../app/models/fancyEvent');
 const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
+const {FANCY_URI} = require("../../app/global/constants");
 
 let io;
-const fancyUrl = 'https://betfairoddsapi.com:3443/api';
+const fancyUrl = FANCY_URI;
 function ToolForFancy() {
     return { init };
 
