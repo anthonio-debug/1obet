@@ -1,8 +1,8 @@
 // export const API_DOMAIN = `betfairoddsapi.com`
 const API_DOMAIN = `bfoddsapi.in`
 
-const FANCY_URL = `https://betfairoddsapi.com:3444/api`
-const LIVE_BET_TV_URL = `https://betfairoddsapi.com:3445/api`
+const FANCY_URL = `https://${API_DOMAIN}:3444/api`
+const LIVE_BET_TV_URL = `https://${API_DOMAIN}:3445/api`
 const ASIAN_URI = `https://${API_DOMAIN}:3445/api`
 const CALC_FANCY_URI = `https://${API_DOMAIN}:3444/api`
 const CALC_LIVE_BET_TV_URI = `https://${API_DOMAIN}:3445/api`
