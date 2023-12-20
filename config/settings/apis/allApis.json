@@ -122,6 +122,7 @@
   "listInplayEvents",
   "listOddsAPI",
   "getFancyResult",
+  "custom_fancy_result_checker",
   "racesAPI",
   "racesTodayMeetings",
   "getBettingFigures",
