@@ -75,7 +75,7 @@ function apiRequests() {
 
         if (event_information) {
           if (event_information.seriesKey) {
-            const cricket = Crickets.findOne({
+            const cricket = await Crickets.findOne({
               seriesKey: event_information.seriesKey
             })
             event_information.cricket = cricket
