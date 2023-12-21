@@ -166,6 +166,16 @@ async function betStatisticsByUserId(req, res) {
       }
     ]);
 
+    res.status(200).json({success: true, data: userStats});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
+async function testAPI(req, res) {
+  const marketId = req.params.marketId;
+
+  try { 
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
     const header =  {
       headers: {
@@ -175,23 +185,20 @@ async function betStatisticsByUserId(req, res) {
       },
     }
     const requestData = {
-      "filter": {
-        // "eventIds": ['32869878'],
-        // "competitionIds": ["12199513"]
-      },
+      "marketIds": [marketId]
+      // "maxResults": 100,
       // "maxResults": 100,
       // "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
-    }
-    var url = `${sportsAPIUrl}/listEventTypes`;
-
+    } 
+    var url = `${sportsAPIUrl}/listMarketBook`;
+    
     const response = await axios.post(
       url,
       requestData,
       header
-    );
-
-    const marketsData = response.data.result;
-
+      );
+      
+      const marketsData = response.data;
 
     res.status(200).json({success: true, data: marketsData});
   } catch (err) {
@@ -206,6 +213,7 @@ router.get('/trackstuck/activeusers', activeUserExposure);
 router.get('/trackstuck/inactiveusers', inActiveUserExposure);
 
 router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
+router.get('/track-bet/testAPI/:marketId', testAPI)
 
 module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure };
 

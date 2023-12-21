@@ -3,7 +3,7 @@ let config = require('config');
 const fancyGames = require('../models/fancyGames');
 const axios = require('axios');
 const inPlayEvents = require('../models/events');
-const {FANCY_URL} = require("../global/constants");
+const {FANCY_URL, API_DOMAIN} = require("../global/constants");
 const loginRouter = express.Router();
 
 async function getFancyData(req, res) {
@@ -88,7 +88,7 @@ async function getFancyMultiResult(req, res) {
   const eventId = req.params.eventId;
   const fancyId = req.params.fancyId;
 
-  const url = ` https://betfairoddsapi.com:3443/api/fancy_result_multi/${eventId}/${fancyId}`;
+  const url = `https://${API_DOMAIN}:3443/api/fancy_result_multi/${eventId}/${fancyId}`;
 
   try {
     const response = await axios.get(url);
