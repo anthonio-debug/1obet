@@ -64,7 +64,7 @@ async function editCricket(req, res) {
 
     await InPlayEvents.updateOne(
       { Id: eventId }, 
-      { $set: { seriesKey: seriesKey } },
+      { $set: { seriesKey: seriesKey, matchType:type } },
     );
 
     // Check if the update was successful
