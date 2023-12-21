@@ -625,6 +625,7 @@ function getLedgerDetails(req, res) {
               else: "$marketId"
             }
           },
+          originalId: { $first: "$_id" },
           description:  { $first: "$description" },
           amount:  { $sum: "$amount" },
           balance:  { $last: "$balance" },
@@ -634,7 +635,10 @@ function getLedgerDetails(req, res) {
           date	:  { $first: "$date" },
           createdAt	:  { $first: "$createdAt" },
           sportsId: { $first: "$sportsId" },
-        }
+          marketId: { $first: "$marketId" },
+          betId: { $first: "$betId" },
+          userId: { $first: "$userId" },
+        },
       })
   
       cashPipeline.push(
@@ -648,6 +652,7 @@ function getLedgerDetails(req, res) {
           },
         }
       );
+
       console.log('cashPipeline:', cashPipeline);
 
       Cash.aggregate(cashPipeline, async (err, result) => {
@@ -659,6 +664,7 @@ function getLedgerDetails(req, res) {
               const betInfo = await Bet.findOne({
                 _id: result[0].results[i].betId
               })
+
               result[0].results[i].betSession = betInfo?.betSession;
               result[0].results[i].matchType = betInfo?.matchType;
               result[0].results[i].SessionScore = betInfo?.SessionScore;
@@ -671,7 +677,6 @@ function getLedgerDetails(req, res) {
           }
          }
         }
-        console.log('result:', result);
         if (
           err ||
           !result ||
@@ -681,6 +686,7 @@ function getLedgerDetails(req, res) {
           return res.status(200).send({ message: 'Deposit record not found' });
         }
   
+        console.log("11111111111111111", result[0].results)
         const responseData = {
           message: 'Deposit Records',
   

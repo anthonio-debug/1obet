@@ -60,56 +60,66 @@ const marketGainWithDuplicates = async (req, res) => {
     if (!depositRes)
       return res.status(404).send({ message: "Cannot find desposit" });
 
-    let response = {
+    let response = {}
+
+    let depositInfo = {
       _id: depositRes.betId,
       pl: depositRes.amount,
       sattledAt: depositRes.date,
       sportsId: depositRes.sportsId,
-    };
-
-    if(depositRes.sportsId == "6"){
-      response.Commission = depositRes?.amount > 0 ? depositRes?.amount * 0.02 : 0;
-      response.netPl   = depositRes?.amount > 0 ? depositRes?.amount *  ( 100/98 ) : depositRes?.amount;
-      response.result  = depositRes?.amount > 0 ? "WON" : "LOSS";
-      
     }
+
+    if (depositRes.sportsId == "6"){
+      depositInfo.Commission = depositRes?.amount > 0 ? depositRes?.amount * 0.02 : 0;
+      depositInfo.netPl = depositRes?.amount > 0 ? depositRes?.amount *  ( 100/98 ) : depositRes?.amount;
+      depositInfo.result = depositRes?.amount > 0 ? "WON" : "LOSS";
+    }
+
+    response.depositInfo = depositInfo
 
     if (marketId != "none" && depositRes.sportsId != "6") {
-      const betRes = await Bets.findOne({ _id: depositRes.betId });
-      response.price = betRes.betAmount;
-      response.name = betRes.runnerName;
-      response.createdAt = betRes.createdAt;
-      response.size = betRes.betRate;
-      response.type = betRes.type;
-      response.isfancyOrbookmaker = betRes.isfancyOrbookmaker;
-      response.fancyData = betRes.fancyData;
-      response.matchType = betRes?.matchType;
-      response.SessionScore = betRes?.SessionScore;
-      response.winnerRunnerData = betRes?.winnerRunnerData;
-      response.resultData = betRes?.resultData
-      response.roundId = betRes?.roundId
-      response.fancyData = betRes?.fancyData
-      response.isfancyOrbookmaker = betRes?.isfancyOrbookmaker
+      const betRes = await Bets.find({ userId: userId, marketId: marketId });
 
-      if(!marketData?.winnerInfo){
-        const resultInfo = await AsianResult.findOne({ roundId: betRes?.roundId })
-        if (resultInfo?.tableId == "teen20"){
-          if (resultInfo?.result[0]?.win == "1") {
-            asianWinner = "Player A Cards"
-          } else {
-            asianWinner = "Player B Cards"
-          }
-        } else if (resultInfo?.tableId == "lucky7eu"){
+      let betsInfo = []
+      for (let k = 0; k < betRes?.length; k++) {
+        if (!marketData?.winnerInfo){
+          const resultInfo = await AsianResult.findOne({ roundId: betRes[k]?.roundId })
+          if (resultInfo?.tableId == "teen20"){
+            if (resultInfo?.result[0]?.win == "1") {
+              asianWinner = "Player A Cards"
+            } else {
+              asianWinner = "Player B Cards"
+            }
+          } else if (resultInfo?.tableId == "lucky7eu"){
+              asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
+          } else if (resultInfo?.tableId == "aaa"){
             asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
-        } else if (resultInfo?.tableId == "aaa"){
-          asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
-        } else if (resultInfo?.tableId == "card32eu"){
-          const generalResult = resultInfo?.result[0]?.desc.split("|");
-          asianWinner = generalResult[0]
-        } 
-      }
-    }
+          } else if (resultInfo?.tableId == "card32eu"){
+            const generalResult = resultInfo?.result[0]?.desc.split("|");
+            asianWinner = generalResult[0]
+          } 
+        }
+        const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
 
+        let tempBet = {
+          price: betRes[k].betAmount,
+          name: betRes[k].runnerName,
+          createdAt: betRes[k].createdAt,
+          size: betRes[k].betRate,
+          type: betRes[k].type,
+          isfancyOrbookmaker: betRes[k].isfancyOrbookmaker,
+          fancyData: betRes[k].fancyData,
+          matchType: betRes[k]?.matchType,
+          SessionScore: betRes[k]?.SessionScore,
+          winnerRunnerData: betRes[k]?.winnerRunnerData,
+          resultData: betRes[k]?.resultData,
+          roundId: betRes[k]?.roundId, 
+          winner: Winner  
+        }
+        betsInfo.push(tempBet)
+      }
+      response.betsInfo = betsInfo 
+    }
 
     return res.send({
       success: true,
@@ -118,7 +128,7 @@ const marketGainWithDuplicates = async (req, res) => {
       isDetailed: true,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      Winner: marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner,
+      // Winner: marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner,
     });
 
   } else {
