@@ -122,7 +122,6 @@ function apiRequests() {
                 countryCode: event.event.countryCode,
                 timezone: event.event.timezone,
                 openDate: Date.parse((event.event.openDate)),
-                competitionId: event.event.openDate,
                 inplayFromServer: false,
                 hasFancy: false,
                 status: 'OPEN',
