@@ -162,7 +162,7 @@ function apiRequestResult() {
   }
   async function getRacingResult(markets) {
 
-    console.log('getWaitingResult for Racings ');
+    console.log('=========== getWaitingResult for Racings');
 
     const currentTime = new Date().getTime();
     let marketIds = [];

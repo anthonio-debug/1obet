@@ -68,7 +68,7 @@ function ToolForResult() {
     try {
       const racingMarkets = await MarketIDs.find({
         readyForScore: true,
-        sportID: {$nin: sportsIds},
+        sportID: {$nin: [4339, 7]},
         winnerInfo: null
       }).sort({lastResultCheckTime: 1}).limit(10).exec();
       if (racingMarkets.length > 0)
