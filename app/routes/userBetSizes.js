@@ -102,18 +102,17 @@ async function getAllBetSizes(req, res) {
     // userbetsizes
     let queryResult;
     if(parent.role == 0){
-      console.log("comming inside ------");
-      queryResult = await betLimits.aggregate([
+      queryResult = await UserBetSizes.aggregate([
         {
           $match:{
-            userId: user.userId
+            userId: userId
           }
         },
-        {
-          $addFields: {
-            betSizeId: { $toObjectId: "$betLimitId" },
-          }
-        },
+        // {
+        //   $addFields: {
+        //     betSizeId: { $toObjectId: "$betLimitId" },
+        //   }
+        // },
         // {
         //   $lookup: {
         //     from: "betlimits",
