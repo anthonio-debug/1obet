@@ -121,7 +121,7 @@ function apiRequestResult() {
         header
       );
       const results = response.data.result;
-      const markets = MarketIDs.find({eventId: eventId})
+      const markets = await MarketIDs.find({eventId: eventId}).exec()
       // console.log(results);
       for (let index = 0; index < results.length; index++) {
         const result = results[index];

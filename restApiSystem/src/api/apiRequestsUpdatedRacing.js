@@ -316,7 +316,8 @@ function apiRequests() {
         await MarketIDS.findOneAndUpdate(
           {
             marketId: eventsData[j].marketId,
-            sportID: eventsData[j].eventType.id
+            sportID: eventsData[j].eventType.id,
+            eventId: eventId,
           },
           {$set: {runners: runners}}, {upsert: true, new: true});
       }
