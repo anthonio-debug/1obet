@@ -19,7 +19,7 @@ function ToolForEvent() {
   async function init(_io, express) {
     apiRequests.init(_io, express);
 
-    if (config.activeProvider == 'NEW') {
+    if (config.activeProvider === 'NEW') {
       fetchEvents();
 
       setInterval(fetchEvents, 2 * 60 * 1000);
@@ -130,12 +130,11 @@ function ToolForEvent() {
       .exec();
 
     if (documents.length > 0) {
-      documents.forEach(async element => {
+      for (const document of documents) {
         await inPlayEvents.updateOne(
-          {Id: element.Id},
-          {$set: {inplay: true}}
+          {Id: document.Id}, {$set: {inplay: true}}
         )
-      });
+      }
     }
   }
 }
