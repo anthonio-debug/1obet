@@ -113,14 +113,14 @@ async function getAllBetSizes(req, res) {
             betSizeId: { $toObjectId: "$betLimitId" },
           }
         },
-        {
-          $lookup: {
-            from: "betlimits",
-            localField: "_id",
-            foreignField: "betSizeId",
-            as: "limits",
-          },
-        },
+        // {
+        //   $lookup: {
+        //     from: "betlimits",
+        //     localField: "_id",
+        //     foreignField: "betSizeId",
+        //     as: "limits",
+        //   },
+        // },
         // {
         //   $group: {
         //     _id: '$_id',
