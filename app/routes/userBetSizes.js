@@ -102,6 +102,7 @@ async function getAllBetSizes(req, res) {
     // userbetsizes
     let queryResult;
     if(parent.role == 0){
+      console.log("comming inside ------");
       queryResult = await betLimits.aggregate([
         {
           $match:{
