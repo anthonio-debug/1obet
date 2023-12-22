@@ -124,9 +124,11 @@ async function getAllBetSizes(req, res) {
         {
           $group: {
             _id: '$_id',
-            name: "$name",
-            maxAmount: "$maxAmount",
-            amount: "$amount",
+            name: { $first: "$name" },
+            minAmount:{ $first: "$minAmount" },
+            ExpAmount:{ $first: "$ExpAmount" },
+            amount: { $first: "$amount" },
+            
           }
         }
       ])
