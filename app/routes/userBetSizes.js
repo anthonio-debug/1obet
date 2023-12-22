@@ -6,37 +6,62 @@ const betLimits = require('../models/betLimits');
 const UserBetSizes = require('../models/userBetSizes');
 const loginRouter = express.Router();
 
-function updateBetSizes(req, res) {
-  const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
-  }
-
-  const betSizes = req.body.betSizes;
-
-  const updatedBetSizes = betSizes.map((betSize) => ({
-    updateOne: {
-      filter: { betLimitId: betSize._id, userId: req.body.userId },
-      update: { $set: { 
-        amount: betSize.amount,           
-        minAmount: betSize?.minAmount,      
-        ExpAmount: betSize?.ExpAmount,      
-        userId: req.body.userId          
-      }},  
-      upsert: true,
-    },
-  }));
-
-  UserBetSizes.bulkWrite(updatedBetSizes, { ordered: false }, (err, result) => {
-    if (err) {
-      return res.status(404).send({ message: 'Error updating bet sizes' });
+const updateBetSizes = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+    if (errors.errors.length !== 0) {
+      return res.status(400).send({ errors: errors.errors });
     }
-
+    const betSizes = req.body.betSizes;
+    for (const size of betSizes) {
+      await UserBetSizes.updateOne(
+        { _id: size._id },
+        {
+          amount: size.amount,           
+          minAmount: size?.minAmount,      
+          ExpAmount: size?.ExpAmount,  
+        }
+      )
+    }
     return res.send({
       success: true,
       message: 'Bet sizes updated successfully',
     });
-  });
+    
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Something went wrong',
+    });
+  }
+
+
+
+  // const updatedBetSizes = betSizes.map((betSize) => ({
+  //   updateOne: {
+  //     filter: { betLimitId: betSize._id, userId: req.body.userId },
+  //     update: { $set: { 
+  //       amount: betSize.amount,           
+  //       minAmount: betSize?.minAmount,      
+  //       ExpAmount: betSize?.ExpAmount,      
+  //       userId: req.body.userId                
+  //     }},  
+  //     upsert: true,
+  //   },
+  // }));
+
+
+
+  // UserBetSizes.bulkWrite(updatedBetSizes, { ordered: false }, (err, result) => {
+  //   if (err) {
+  //     return res.status(404).send({ message: 'Error updating bet sizes' });
+  //   }
+
+  //   return res.send({
+  //     success: true,
+  //     message: 'Bet sizes updated successfully',
+  //   });
+  // });
 }
 
 function betsNews(req, res) {
