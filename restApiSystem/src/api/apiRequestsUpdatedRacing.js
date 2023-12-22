@@ -313,10 +313,12 @@ function apiRequests() {
           const runner = eventsData[j].runners[ix1];
           runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
         }
-        await MarketIDS.findOneAndUpdate({
-          marketId: eventsData[j].marketId,
-          sportID: eventsData[j].eventType.id
-        }, {$set: {runners: runners}}, {upsert: true, new: true});
+        await MarketIDS.findOneAndUpdate(
+          {
+            marketId: eventsData[j].marketId,
+            sportID: eventsData[j].eventType.id
+          },
+          {$set: {runners: runners}}, {upsert: true, new: true});
       }
       await InPlayEvents.findOneAndUpdate(
         {Id: eventId},
