@@ -19,6 +19,7 @@ function ToolForResults() {
   }
 
   async function getBetForEvents(targetArray) {
+    console.log("targetArray: ",targetArray);
     const currentTime = new Date().getTime();
     try {
       const results = await Bets.aggregate([
