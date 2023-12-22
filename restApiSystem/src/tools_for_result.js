@@ -41,10 +41,10 @@ function ToolForResult() {
     }
   }
 
-  async function fetchRacingResult() {
+  async function fetchRacingResult_old() {
     try {
       for (const id of sportsIds) {
-        const documents = await inPlayEvents.find({status: 'OPEN', sportsId: id})
+        const documents = await inPlayEvents.find({status: 'CLOSED', sportsId: id})
           .sort({lastCheckMarket: 1})
           .limit(10)
           .exec();
@@ -55,6 +55,24 @@ function ToolForResult() {
           }
         }
       }
+    } catch (error) {
+      console.error('Error fetching markets racing result:', error);
+    } finally {
+      setTimeout(() => {
+        fetchRacingResult();
+      }, 3000);
+    }
+  }
+
+  async function fetchRacingResult() {
+    try {
+      const racingMarkets = await MarketIDs.find({
+        readyForScore: true,
+        sportID: {$nin: sportsIds},
+        winnerInfo: null
+      }).sort({lastResultCheckTime: 1}).limit(10).exec();
+      if (racingMarkets.length > 0)
+        await apiRequestResult.getRacingResult(racingMarkets);
     } catch (error) {
       console.error('Error fetching markets racing result:', error);
     } finally {
