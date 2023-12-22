@@ -19,7 +19,7 @@ function ToolForUpdatedRacing() {
             setInterval(getRacing, 10 * 1000)
             setInterval(() => fetchMarkets(HORSE_RACE_SPORTS_ID), 10 * 1000);
             setInterval(() => fetchMarkets(GREY_HOUND_ID), 15 * 1000);
-            setInterval(apiRequests.checkOdds, 20 * 1000)
+            setInterval(apiRequests.checkOdds, 2 * 1000)
         }
     }
 
