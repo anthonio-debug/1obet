@@ -283,12 +283,12 @@ async function getAllBetSizes(req, res) {
     // }));
 
     // Log the modified results
-    console.log('Modified Results:', modifiedResults);
+    console.log('Modified Results:', queryResult);
 
     return res.send({
       success: true,
       message: 'BET_SIZES_FETCHED_SUCCESSFULLY',
-      results: modifiedResults,
+      results: queryResult,
     });
   } catch (error) {
     // Log the error
