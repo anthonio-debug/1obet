@@ -42,7 +42,7 @@ function scoreChecker() {
   };
 
   async function eventsResult(betData) {
-    console.log("Result checking event");
+    console.log("Result checking event for " , betData.marketId);
     var url = `${sportsAPIUrl}/results/?ids=${betData.marketId}`;
     try {
       var results;
@@ -51,7 +51,9 @@ function scoreChecker() {
         winnerRunnerData: { $ne: null },
       });
 
-      if (manuelRecord) {
+      if (manuelRecord) { 
+        console.log("Inside manual");
+
         if (typeof manuelRecord.manuelClose !== undefined)
           results = [
             {
@@ -70,7 +72,7 @@ function scoreChecker() {
         const response = await axios.get(url);
         results = response.data;
       }
-
+      console.log("results.length -> "+results.length)
       if (results.length > 0) {
         const result = results[0];
         var newRecord = new resultRecords({
@@ -92,6 +94,7 @@ function scoreChecker() {
         );
 
         if (result.winnerSelectionId == -1) {
+          console.log("result.winnerSelectionId == -1 -->",betData.marketId);
           for (const bet of bets) {
             if (
               typeof bet.isManuel !== "undefined" &&
@@ -108,6 +111,7 @@ function scoreChecker() {
             await handleDrawBet(bet);
           }
         } else {
+          console.log("ELSE result.winnerSelectionId == -1 -->",betData.marketId);
           for (const bet of bets) {
             if (
               typeof bet.isManuel !== "undefined" &&
