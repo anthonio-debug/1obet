@@ -163,7 +163,7 @@ async function getAllBetSizes(req, res) {
             amount: { $first: "$amount" },
             limit_minAmount :  { $first: { $arrayElemAt: ["$limits.minAmount", 0] } },
             limit_ExpAmount :  { $first: { $arrayElemAt: ["$limits.ExpAmount", 0] } },
-            limit_max_amount : { $first: { $arrayElemAt: ["$limits.maxAmount", 0] } }
+            limit_max_amount : { $first: { $arrayElemAt: ["$limits.amount", 0] } }
           }
         }
       ])
