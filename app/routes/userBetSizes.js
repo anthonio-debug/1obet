@@ -99,7 +99,7 @@ async function getAllBetSizes(req, res) {
       return res.status(404).send({ message: 'PARENT_USER_NOT_FOUND' });
     }
 
-    // userbetsizes
+    // 
     let queryResult;
     if(parent.role == 0){
       queryResult = await UserBetSizes.aggregate([
@@ -116,6 +116,39 @@ async function getAllBetSizes(req, res) {
         {
           $lookup: {
             from: "betlimits",
+            localField: "betSizeId",
+            foreignField: "_id",
+            as: "limits",
+          },
+        },
+        {
+          $group: {
+            _id: '$_id',
+            name: { $first: "$name" },
+            minAmount:{ $first: "$minAmount" },
+            ExpAmount:{ $first: "$ExpAmount" },
+            amount: { $first: "$amount" },
+            limit_minAmount :  { $first: { $arrayElemAt: ["$limits.minAmount", 0] } },
+            limit_ExpAmount :  { $first: { $arrayElemAt: ["$limits.ExpAmount", 0] } },
+            limit_max_amount : { $first: { $arrayElemAt: ["$limits.maxAmount", 0] } }
+          }
+        }
+      ])
+    }else {
+      queryResult = await UserBetSizes.aggregate([
+        {
+          $match:{
+            userId: userId
+          }
+        },
+        {
+          $addFields: {
+            betSizeId: { $toObjectId: "$betLimitId" },
+          }
+        },
+        {
+          $lookup: {
+            from: "userbetsizes",
             localField: "betSizeId",
             foreignField: "_id",
             as: "limits",
@@ -276,7 +309,7 @@ async function getAllBetSizes(req, res) {
     // }
 
     // Log the query result
-    console.log('Query Result:', queryResult);
+    // console.log('Query Result:', queryResult);
 
     // const modifiedResults = queryResult.map((result) => ({
     //   _id: result._id,
@@ -287,7 +320,7 @@ async function getAllBetSizes(req, res) {
     // }));
 
     // Log the modified results
-    console.log('Modified Results:', queryResult);
+    // console.log('Modified Results:', queryResult);
 
     return res.send({
       success: true,
