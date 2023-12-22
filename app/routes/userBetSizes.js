@@ -116,8 +116,8 @@ async function getAllBetSizes(req, res) {
         {
           $lookup: {
             from: "betlimits",
-            localField: "_id",
-            foreignField: "betSizeId",
+            localField: "betSizeId",
+            foreignField: "_id",
             as: "limits",
           },
         },
