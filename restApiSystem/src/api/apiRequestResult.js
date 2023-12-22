@@ -160,6 +160,7 @@ function apiRequestResult() {
       console.error("getRacingResult", error);
     }
   }
+
   async function getRacingResult(markets) {
 
     console.log('=========== getWaitingResult for Racings');
@@ -175,17 +176,21 @@ function apiRequestResult() {
 
     try {
       const requestData = {
-        "filter": {
-          // "eventIds": [eventId],
-          // "eventTypeIds": [sportsId],
-          "marketIds": marketIds,
-          "marketTypes": ["WIN", "PLACE"],
-        },
-        "maxResults": 50,
-        "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "RUNNER_DESCRIPTION", "RUNNER_METADATA", "COMPETITION"]
+        "marketIds": marketIds
       }
+      // const requestData = {
+      //   "filter": {
+      //     // "eventIds": [eventId],
+      //     // "eventTypeIds": [sportsId],
+      //     "marketIds": marketIds,
+      //     "marketTypes": ["WIN", "PLACE"],
+      //   },
+      //   "maxResults": 50,
+      //   "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "RUNNER_DESCRIPTION", "RUNNER_METADATA", "COMPETITION"]
+      // }
 
-      const url = `${horseRaceUrl}/listMarketCatalogue`;
+      // const url = `${horseRaceUrl}/listMarketCatalogue`;
+      const url = `${sportsAPIUrl}/listMarketBook`;
       let response = await axios.post(
         url,
         requestData,
