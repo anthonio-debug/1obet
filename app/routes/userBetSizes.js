@@ -108,27 +108,27 @@ async function getAllBetSizes(req, res) {
             userId: userId
           }
         },
-        // {
-        //   $addFields: {
-        //     betSizeId: { $toObjectId: "$betLimitId" },
-        //   }
-        // },
-        // {
-        //   $lookup: {
-        //     from: "betlimits",
-        //     localField: "_id",
-        //     foreignField: "betSizeId",
-        //     as: "limits",
-        //   },
-        // },
-        // {
-        //   $group: {
-        //     _id: '$_id',
-        //     name: result.name,
-        //     maxAmount: result.maxAmount,
-        //     amount: result.amount,
-        //   }
-        // }
+        {
+          $addFields: {
+            betSizeId: { $toObjectId: "$betLimitId" },
+          }
+        },
+        {
+          $lookup: {
+            from: "betlimits",
+            localField: "_id",
+            foreignField: "betSizeId",
+            as: "limits",
+          },
+        },
+        {
+          $group: {
+            _id: '$_id',
+            name: result.name,
+            maxAmount: result.maxAmount,
+            amount: result.amount,
+          }
+        }
       ])
     }
 
