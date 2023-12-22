@@ -124,7 +124,7 @@ function ToolForEvent() {
 
     async function handleSetInplay() {
         const documents = await inPlayEvents.find({ isShowed: true })
-        .limit(20)
+        // .limit(20)
             .exec();
         
         if (documents.length > 0) {
