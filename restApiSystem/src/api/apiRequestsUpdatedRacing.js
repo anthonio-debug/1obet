@@ -123,7 +123,7 @@ function apiRequests() {
                 openDate: Date.parse((event.event.openDate)),
                 inplayFromServer: false,
                 hasFancy: false,
-                isShowed: true,
+                // isShowed: true,
                 status: 'OPEN',
                 isPremium: false,
                 type: event.event.type,
