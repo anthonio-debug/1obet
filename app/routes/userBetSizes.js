@@ -125,8 +125,8 @@ async function getAllBetSizes(req, res) {
           $group: {
             _id: '$_id',
             name: "$name",
-            maxAmount: maxAmount,
-            amount: amount,
+            maxAmount: "$maxAmount",
+            amount: "$amount",
           }
         }
       ])
