@@ -121,14 +121,14 @@ async function getAllBetSizes(req, res) {
             as: "limits",
           },
         },
-        {
-          $group: {
-            _id: '$_id',
-            name: result.name,
-            maxAmount: result.maxAmount,
-            amount: result.amount,
-          }
-        }
+        // {
+        //   $group: {
+        //     _id: '$_id',
+        //     name: result.name,
+        //     maxAmount: result.maxAmount,
+        //     amount: result.amount,
+        //   }
+        // }
       ])
     }
 
