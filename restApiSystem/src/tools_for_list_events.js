@@ -14,132 +14,128 @@ const apiRequests = require('./api/apiRequestsTestSCT.js')();
 let lastType = 0;
 
 function ToolForEvent() {
-    return { init };
+  return {init};
 
-    async function init(_io, express) {
-        apiRequests.init(_io, express);
-        
-        if (config.activeProvider == 'NEW') {
-            fetchEvents();
+  async function init(_io, express) {
+    apiRequests.init(_io, express);
 
-            setInterval(fetchEvents, 2 * 60 * 1000);
-            setInterval(fetchMarkets, 10 * 1000);
-            setInterval(handleSetInplay, 10 * 1000);
+    if (config.activeProvider == 'NEW') {
+      fetchEvents();
 
-            setInterval(() => {
-                for (const sportsId of sportsIds) {
-                    apiRequests.setInplay(sportsId);
-                }
-            }, 10 * 1000);
+      setInterval(fetchEvents, 2 * 60 * 1000);
+      setInterval(fetchMarkets, 10 * 1000);
+      setInterval(handleSetInplay, 10 * 1000);
 
-            setInterval(() => {
-                for (const sportsId of sportsIds) {
-                    fetchOdds(true, sportsId);
-                }
-            }, 3000);
+      setInterval(() => {
+        for (const sportsId of sportsIds) {
+          apiRequests.setInplay(sportsId);
         }
-    }
-    async function fetchEvents() {
-        try {
-            for (const sportsId of sportsIds) {
-                await apiRequests.eventsBySupportJobs(sportsId);
-            }
-        } catch (error) {
-            console.error('Error fetching events:', error);
+      }, 10 * 1000);
+
+      setInterval(() => {
+        for (const sportsId of sportsIds) {
+          fetchOdds(true, sportsId);
         }
+      }, 3000);
     }
+  }
 
-    async function fetchMarkets() {
-        try {
-            const documents = await inPlayEvents.findOne({ status: 'OPEN', isShowed: true })
-                .sort({ lastCheckMarket: 1 })
-                .limit(1)
-                .exec();
-
-            if (documents) {
-                await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
-                await inPlayEvents.updateMany(
-                    { Id: documents.Id },
-                    { $set: { lastCheckMarket: Date.now() } }
-                );
-                fetchOddsForEvent(documents.Id);
-            }
-        } catch (error) {
-            console.error('Error fetching markets:', error);
-        }
+  async function fetchEvents() {
+    try {
+      for (const sportsId of sportsIds) {
+        await apiRequests.eventsBySupportJobs(sportsId);
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error);
     }
-    async function fetchOddsForEvent(eventId) {
-        try {
-            const documents = await MarketIDs.find({ inPlay: false, eventId: eventId })
-                .sort({ lastCheck: 1 })
-                .limit(20)
-                .exec();
-            let marketIds = [];
+  }
 
-            if (documents.length > 0) {
-                documents.forEach(element => {
-                    marketIds.push(element.marketId);
-                });
-            }
+  async function fetchMarkets() {
+    try {
+      const documents = await inPlayEvents.findOne({status: 'OPEN', isShowed: true})
+        .sort({lastCheckMarket: 1})
+        .limit(1)
+        .exec();
 
-            await MarketIDs.updateMany(
-                { marketId: { $in: marketIds } },
-                { $set: { lastCheck: Date.now() } }
-            );
-
-            if (marketIds.length > 0) {
-                apiRequests.getOddsFromProvider(documents, eventId);
-            }
-        } catch (error) {
-            console.error('Error fetching odds for event:', error);
-        }
+      if (documents) {
+        await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
+        await inPlayEvents.updateMany(
+          {Id: documents.Id},
+          {$set: {lastCheckMarket: Date.now()}}
+        );
+        fetchOddsForEvent(documents.Id);
+      }
+    } catch (error) {
+      console.error('Error fetching markets:', error);
     }
+  }
 
-    async function fetchOdds(inPlay, sportId) {
-        try {
-            const documents = await MarketIDs.find({ inPlay: inPlay, sportID: sportId })
-                .sort({ lastCheck: 1 })
-                .limit(20)
-                .exec();
-            let marketIds = [];
+  async function fetchOddsForEvent(eventId) {
+    try {
+      const documents = await MarketIDs.find({inPlay: false, eventId: eventId})
+        .sort({lastCheck: 1})
+        .limit(20)
+        .exec();
+      let marketIds = [];
 
-            if (documents.length > 0) {
-                documents.forEach(element => {
-                    marketIds.push(element.marketId);
-                });
-            }
+      if (documents.length > 0) {
+        documents.forEach(element => {
+          marketIds.push(element.marketId);
+        });
+      }
 
-            await MarketIDs.updateMany(
-                { marketId: { $in: marketIds } },
-                { $set: { lastCheck: Date.now() } }
-            );
+      await MarketIDs.updateMany(
+        {marketId: {$in: marketIds}},
+        {$set: {lastCheck: Date.now()}}
+      );
 
-            if (marketIds.length > 0) {
-                apiRequests.getOddsFromProvider(documents, sportId);
-            }
-        } catch (error) {
-            console.error('Error fetching odds:', error);
-        }
+      if (marketIds.length > 0) {
+        apiRequests.getOddsFromProvider(documents, eventId);
+      }
+    } catch (error) {
+      console.error('Error fetching odds for event:', error);
     }
+  }
 
-    async function handleSetInplay() {
-        const documents = await inPlayEvents.find({ isShowed: true })
-        // .limit(20)
-            .exec();
-        
-        if (documents.length > 0) {
-            documents.forEach(async element => {
-                await inPlayEvents.updateOne(
-                    {
-                        Id: element.Id
-                    },
-                    {
-                        $set: {
-                            inplay: true
-                        }
-                    }
-                 )
-            });
-        }
+  async function fetchOdds(inPlay, sportId) {
+    try {
+      const documents = await MarketIDs.find({inPlay: inPlay, sportID: sportId})
+        .sort({lastCheck: 1})
+        .limit(20)
+        .exec();
+      let marketIds = [];
+
+      if (documents.length > 0) {
+        documents.forEach(element => {
+          marketIds.push(element.marketId);
+        });
+      }
+
+      await MarketIDs.updateMany(
+        {marketId: {$in: marketIds}},
+        {$set: {lastCheck: Date.now()}}
+      );
+
+      if (marketIds.length > 0) {
+        apiRequests.getOddsFromProvider(documents, sportId);
+      }
+    } catch (error) {
+      console.error('Error fetching odds:', error);
     }
+  }
+
+  async function handleSetInplay() {
+    const documents = await inPlayEvents.find({isShowed: true, inplay: false})
+      .limit(20)
+      .exec();
+
+    if (documents.length > 0) {
+      documents.forEach(async element => {
+        await inPlayEvents.updateOne(
+          {Id: element.Id},
+          {$set: {inplay: true}}
+        )
+      });
+    }
+  }
 }
