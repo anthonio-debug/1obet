@@ -29,6 +29,7 @@ const { v4: uuidv4 } = require('uuid');
 const { MongoClient,  ObjectId } = require('mongodb');
 const Crickets = require('../models/Crickets')
 const {FANCY_URL, LIVE_BET_TV_URL} = require("../global/constants");
+const message_result = "cannot place bet due to result check";
  
 
 const handleLimitValue = async (selectedRate, marketId) => {
@@ -121,6 +122,23 @@ const apiCallForOdds = async (marketId) =>{
     header
   );
   return response?.data?.result;
+}
+
+const stopbetStatusChecker = async (id) => {
+  try {
+    const scores = await Crickets.find({ eventId: id}).sort({ _id: -1 }).limit(1);
+    const result = scores?.result?.length ? scores?.result : 0;
+    if(scores && scores?.result &&  scores?.result?.length){
+      const stopbetStatus =  ["no ball", "noball", "free hit","freehit", "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed", "rain", "suspend", "delay", "pitch", "plood", "bowled","injured"];
+      if(stopbetStatus.includes(result)){
+        return 400
+      }
+    }
+    return 200;
+  } catch (error){
+    console.warn(`Error: ${error}`);    
+    return 200;
+  }
 }
 
 const placeBet = async (req, res) => {
@@ -234,6 +252,12 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({ message: "Batting Not Allowd on this Match" });
       }
+      if (eventDetail.matchStopStatus) {
+        return res
+          .status(404)
+          .send({ message: "Batting Not Allowd on this Match" });
+      }
+
       if (eventDetail.matchStopStatus) {
         return res
           .status(404)
@@ -574,6 +598,13 @@ const placeBet = async (req, res) => {
 
     // Cricket Match Odds
     else if ( config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id ) {
+
+      const resultcheck = await  stopbetStatusChecker(eventDetail.Id);
+      if(resultcheck === 400 ){
+        return res.status(404).send({
+          message: `${message_result}`,
+        });
+      }
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -1016,7 +1047,12 @@ const placeBet = async (req, res) => {
 
     // Cricket Tied Match
     else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.tiedMatch ) {
-
+      const resultcheck = await  stopbetStatusChecker(eventDetail.Id);
+      if(resultcheck === 400){
+        return res.status(404).send({
+          message: `${message_result}`,
+        });
+      }
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         return res.status(404).send({
@@ -1123,6 +1159,12 @@ const placeBet = async (req, res) => {
     // Cricket Cup Winner
     else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.Cup ) {
 
+      const resultcheck = await  stopbetStatusChecker(eventDetail.Id);
+      if(resultcheck === 400){
+        return res.status(404).send({
+          message: `${message_result}`,
+        });
+      }
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         return res.status(404).send({
@@ -1222,7 +1264,12 @@ const placeBet = async (req, res) => {
 
     // Cricket Toss
     else if ( config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.Toss ) {
-
+      const resultcheck = await  stopbetStatusChecker(eventDetail.Id);
+      if(resultcheck === 400){
+        return res.status(404).send({
+          message: `${message_result}`,
+        });
+      }
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         return res.status(404).send({
@@ -1287,6 +1334,12 @@ const placeBet = async (req, res) => {
       if (!userMaxBetSize) {
         console.warn("Fancy userMaxBetSize not found ");
         return res.status(404).send({ message: `something went wrong !` });
+      }
+      const resultcheck = await  stopbetStatusChecker(eventDetail.Id);
+      if(resultcheck === 400 ){
+        return res.status(404).send({
+          message: `${message_result}`,
+        });
       }
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
         return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
@@ -1368,6 +1421,7 @@ const placeBet = async (req, res) => {
 
     // for Bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
+
       const bookMakerBetLimit = await userBetSizes
         .findOne({
           userId: userId,
@@ -1383,6 +1437,13 @@ const placeBet = async (req, res) => {
         return res
           .status(404)
           .send({ message: `max bet size is : ${bookMakerBetLimit.amount}` });
+      }
+
+      const resultcheck = await  stopbetStatusChecker(eventDetail.Id);
+      if(resultcheck === 400 ){
+        return res.status(404).send({
+          message: `${message_result}`,
+        });
       }
 
       isFancyOrBookMaker = true;
@@ -1493,6 +1554,12 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+      const resultcheck = await  stopbetStatusChecker(eventDetail.Id);
+      if(resultcheck === 400 ){
+        return res.status(404).send({
+          message: `${message_result}`,
+        });
+      }
       const FigureEvenOddSmallBig = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -1503,7 +1570,8 @@ const placeBet = async (req, res) => {
           message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
         });
       }
-      const scores = await Crickets.findOne({ eventId: eventDetail.Id })
+      const scores = await Crickets.find({ eventId: eventDetail.Id })
+
       if (!scores) {
         return res.status(404).json({
           status: false,
