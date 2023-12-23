@@ -190,12 +190,14 @@ function apiRequests() {
       "filter": {
         "eventTypeIds": [sportsId],
         "marketStartTime": {
-          "from": "2023-12-23T00:00:00+01:00",
-          "to": "2023-12-24T00:00:00+01:00"
+          // "from": "2023-12-23T00:00:00+01:00",
+          // "to": "2023-12-24T00:00:00+01:00",
+          "from": formattedFrom,
+          "to": formattedTo
         },
         "timeRange": {
-          "from": "2023-12-23T00:00:00+01:00",
-          "to": "2023-12-24T00:00:00+01:00"
+          // "from": "2023-12-23T00:00:00+01:00",
+          // "to": "2023-12-24T00:00:00+01:00"
           // "from": formattedFrom,
           // "to": formattedTo,
         }
