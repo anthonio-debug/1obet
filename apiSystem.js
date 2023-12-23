@@ -75,6 +75,7 @@ mongoose
 express.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRouter);
 
 async function main() {
+  console.log("code understanding log ---");
   await inPlayEvents.updateMany({}, { inplay: false, inplayFromServer: false });
 
   //init events jobs for cricket, tennis and soccer
