@@ -66,7 +66,7 @@ mongoose.set({ debug: false });
 mongoose
   .connect(`mongodb://127.0.0.1/${DBNAME}`, mongooseOptions)
   .then(() => {
-    console.log("Database connected");
+    console.log("MongoDB connected");
   })
   .catch((err) => {
     console.error(`Failed to connect to the database: ${err}`);
