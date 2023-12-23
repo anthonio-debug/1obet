@@ -50,6 +50,7 @@ function scoreChecker() {
   }
 
   function getWinnerSelectionId(listMarketBookResult) {
+    if (!listMarketBookResult) return null
     let winnerSelectionId = null
     const runners = listMarketBookResult.runners || []
     for (const runner of runners) {
@@ -107,6 +108,7 @@ function scoreChecker() {
       console.log("results.length -> " + results.length)
       if (results.length > 0) {
         const result = results[0]
+        if (!result.winnerSelectionId) return
         let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: betData.marketId,
@@ -227,7 +229,8 @@ function scoreChecker() {
       }
       if (results.length > 0) {
         const result = results[0];
-        var newRecord = new resultRecords({
+        if (!result.winnerSelectionId) return
+        let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: betData.marketId,
           resultData: result.winnerSelectionId,
