@@ -229,6 +229,7 @@ function apiRequests() {
       );
 
       const eventsData = response.data.result;
+      if (!eventsData) return
 
       let marketIds = [];
       // Create an instance of the raceMarkets model
