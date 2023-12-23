@@ -178,8 +178,9 @@ function scoreChecker() {
             },
           ];
       } else {
-        const response = await axios.get(url);
-        results = response.data;
+        // const response = await axios.get(url);
+        // results = response.data;
+        return
       }
       if (results.length > 0) {
         const result = results[0];
