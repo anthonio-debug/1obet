@@ -180,6 +180,7 @@ function apiRequests() {
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
     }
+
     let from = new Date();
     let to = new Date(from);
     to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
@@ -188,9 +189,15 @@ function apiRequests() {
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
+        "marketStartTime": {
+          "from": "2023-12-23T00:00:00+01:00",
+          "to": "2023-12-24T00:00:00+01:00"
+        },
         "timeRange": {
-          "from": formattedFrom,
-          "to": formattedTo,
+          "from": "2023-12-23T00:00:00+01:00",
+          "to": "2023-12-24T00:00:00+01:00"
+          // "from": formattedFrom,
+          // "to": formattedTo,
         }
         // "turnInPlayEnabled": true,
       }
@@ -365,7 +372,7 @@ function apiRequests() {
           if (config.activeProvider == 'old') {
             marketStatus = element.status
           }
-          for (let k = 0; k < element?.runners?.length; k ++) {
+          for (let k = 0; k < element?.runners?.length; k++) {
             tempRunners.push({
               SelectionId: element?.runners[k]?.selectionId,
               runnerName: element?.runners[k]?.runnerName,
