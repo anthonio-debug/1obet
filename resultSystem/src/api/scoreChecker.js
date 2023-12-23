@@ -5,12 +5,20 @@ var mongoose = require("mongoose");
 const axios = require("axios");
 
 const horseRaceUrl = "http://136.244.77.249:33333";
-const sportsAPIUrl = "http://209.250.242.175:33332";
+// const sportsAPIUrl = "http://209.250.242.175:33332";
+const sportsAPIUrl = "http://185.58.225.212:8080/api";
 
 const resultRecords = require("../../../app/models/resultRecords");
 const Bets = require("../../../app/models/bets");
 const inPlayEvents = require("../../../app/models/events");
 const MarketIDs = require("../../../app/models/marketIds");
+const header = {
+  headers: {
+    'accept': 'application/json',
+    'Content-Type': 'application/json',
+    'X-App': 'testqms'
+  },
+}
 
 const {
   handleLosingBet,
@@ -20,12 +28,12 @@ const {
 const {API_DOMAIN} = require("../../../app/global/constants");
 
 const tableInfo = [
-  { id: "36", tId: "teen20" },
+  {id: "36", tId: "teen20"},
   // { id: "37", tId: "teen9" },
   // { id: "38", tId: "lucky7" },
-  { id: "39", tId: "lucky7eu" },
-  { id: "40", tId: "card32eu" },
-  { id: "41", tId: "aaa" },
+  {id: "39", tId: "lucky7eu"},
+  {id: "40", tId: "card32eu"},
+  {id: "41", tId: "aaa"},
   // { id: "42", tId: "ab20" },
   // { id: "43", tId: "abj" },
   // { id: "44", tId: "worli" },
@@ -39,43 +47,67 @@ function scoreChecker() {
     bookMakerResult,
     asianResult,
     manuel,
-  };
+  }
+
+  function getWinnerSelectionId(listMarketBookResult) {
+    let winnerSelectionId = null
+    const runners = listMarketBookResult.runners || []
+    for (const runner of runners) {
+      if (runner.status === 'WINNER') {
+        winnerSelectionId = runner.selectionId
+        break
+      }
+    }
+    return winnerSelectionId
+  }
 
   async function eventsResult(betData) {
-    console.log("Result checking event for " , betData.marketId);
-    var url = `${sportsAPIUrl}/results/?ids=${betData.marketId}`;
+    console.log("Result checking event for ", betData.marketId);
     try {
-      var results;
+      let results;
       const manuelRecord = await MarketIDs.findOne({
         marketId: betData.marketId,
-        winnerRunnerData: { $ne: null },
+        winnerRunnerData: {$ne: null},
       });
 
-      if (manuelRecord) { 
+      if (manuelRecord) {
         console.log("Inside manual");
 
-        if (typeof manuelRecord.manuelClose !== undefined)
+        if (typeof manuelRecord.manuelClose !== undefined) {
           results = [
             {
               winnerSelectionId: manuelRecord.winnerRunnerData,
               manuelClose: manuelRecord.manuelClose,
             },
           ];
-        else
+        } else {
           results = [
             {
               winnerSelectionId: manuelRecord.winnerRunnerData,
               manuelClose: false,
             },
           ];
+        }
       } else {
-        const response = await axios.get(url);
-        results = response.data;
+        const url = `${sportsAPIUrl}/listMarketBook`;
+        const requestData = {
+          "marketIds": [betData.marketId]
+        }
+        const response = await axios.post(
+          url,
+          requestData,
+          header
+        )
+        const resData = response.data.result;
+        results = [{
+          winnerSelectionId: getWinnerSelectionId(resData),
+          manuelClose: false,
+        }]
       }
-      console.log("results.length -> "+results.length)
+      console.log("results.length -> " + results.length)
       if (results.length > 0) {
-        const result = results[0];
-        var newRecord = new resultRecords({
+        const result = results[0]
+        let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: betData.marketId,
           resultData: result.winnerSelectionId,
@@ -89,12 +121,12 @@ function scoreChecker() {
 
         await newRecord.save();
         await Bets.updateMany(
-          { marketId: betData.marketId, sportsId: betData.sportsId },
-          { $set: { resultId: newRecord._id } }
+          {marketId: betData.marketId, sportsId: betData.sportsId},
+          {$set: {resultId: newRecord._id}}
         );
 
         if (result.winnerSelectionId == -1) {
-          console.log("result.winnerSelectionId == -1 -->",betData.marketId);
+          console.log("result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
             if (
               typeof bet.isManuel !== "undefined" &&
@@ -111,7 +143,7 @@ function scoreChecker() {
             await handleDrawBet(bet);
           }
         } else {
-          console.log("ELSE result.winnerSelectionId == -1 -->",betData.marketId);
+          console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
             if (
               typeof bet.isManuel !== "undefined" &&
@@ -120,12 +152,12 @@ function scoreChecker() {
             ) {
               continue;
             }
-            if ( typeof result.manuelClose === "undefined" && bet.isManuel == true )
+            if (typeof result.manuelClose === "undefined" && bet.isManuel == true)
               continue;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
-            } else if ( bet.type == 0 &&  bet.runner != result.winnerSelectionId ) {
+            } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
               console.log("0 ----- looser ");
               await handleLosingBet(bet);
             } else if (
@@ -151,15 +183,15 @@ function scoreChecker() {
       console.error(error);
     }
   }
+
   async function racingResult(betData) {
     console.log("Result checking racing with " + betData.marketId);
 
-    var url = `${horseRaceUrl}/results/?ids=${betData.marketId}`;
     try {
-      var results;
+      let results;
       const manuelRecord = await MarketIDs.findOne({
         marketId: betData.marketId,
-        winnerRunnerData: { $ne: null },
+        winnerRunnerData: {$ne: null},
       });
 
       if (manuelRecord) {
@@ -178,8 +210,20 @@ function scoreChecker() {
             },
           ];
       } else {
-        const response = await axios.get(url);
-        results = response.data;
+        const url = `${sportsAPIUrl}/listMarketBook`;
+        const requestData = {
+          "marketIds": [betData.marketId]
+        }
+        const response = await axios.post(
+          url,
+          requestData,
+          header
+        )
+        const resData = response.data.result;
+        results = [{
+          winnerSelectionId: getWinnerSelectionId(resData),
+          manuelClose: false,
+        }]
       }
       if (results.length > 0) {
         const result = results[0];
@@ -197,8 +241,8 @@ function scoreChecker() {
 
         await newRecord.save();
         await Bets.updateMany(
-          { marketId: betData.marketId, sportsId: betData.sportsId },
-          { $set: { resultId: newRecord._id } }
+          {marketId: betData.marketId, sportsId: betData.sportsId},
+          {$set: {resultId: newRecord._id}}
         );
 
         if (result.winnerSelectionId == -1) {
@@ -264,20 +308,21 @@ function scoreChecker() {
       console.error(error);
     }
   }
+
   async function bookMakerResult(betData) {
     try {
       const event = await inPlayEvents.findOne(
-        { _id: mongoose.Types.ObjectId(betData.matchId) },
-        { Id: 1 }
+        {_id: mongoose.Types.ObjectId(betData.matchId)},
+        {Id: 1}
       );
 
       if (!event) return;
 
-      var results;
+      let results;
       const manuelRecord = await MarketIDs.findOne({
         marketId: "Bookmaker",
         eventId: event.Id,
-        winnerRunnerData: { $ne: null },
+        winnerRunnerData: {$ne: null},
       });
 
       if (manuelRecord) {
@@ -290,7 +335,7 @@ function scoreChecker() {
           ];
         else
           results = [
-            { winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false },
+            {winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false},
           ];
       } else {
         let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
@@ -313,7 +358,7 @@ function scoreChecker() {
             isfancyOrbookmaker: true,
             fancyData: null,
           },
-          { $set: { resultId: newRecord._id } }
+          {$set: {resultId: newRecord._id}}
         );
 
         const bets = await Bets.find({
@@ -397,11 +442,12 @@ function scoreChecker() {
       console.error(error);
     }
   }
+
   async function fancyResult(betData, fancyName) {
     try {
       const event = await inPlayEvents.findOne(
-        { _id: mongoose.Types.ObjectId(betData.matchId) },
-        { Id: 1 }
+        {_id: mongoose.Types.ObjectId(betData.matchId)},
+        {Id: 1}
       );
 
       if (!event) return;
@@ -410,7 +456,7 @@ function scoreChecker() {
       const manuelRecord = await MarketIDs.findOne({
         marketId: fancyName,
         eventId: event.Id,
-        winnerRunnerData: { $ne: null },
+        winnerRunnerData: {$ne: null},
       });
 
       if (manuelRecord) {
@@ -423,7 +469,7 @@ function scoreChecker() {
           ];
         else
           results = [
-            { result: manuelRecord.winnerRunnerData, manuelClose: false },
+            {result: manuelRecord.winnerRunnerData, manuelClose: false},
           ];
       } else {
         let url = `https://${API_DOMAIN}:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
@@ -452,9 +498,9 @@ function scoreChecker() {
           {
             $set: {
               resultId: newRecord._id,
-             
-              resultData:result.result,
-              
+
+              resultData: result.result,
+
             },
           }
         );
@@ -524,11 +570,11 @@ function scoreChecker() {
             //for type 0
             if (bet.type == 0) {
               if (parseInt(bet.TargetScore) > parseInt(result.result))
-                await handleWinningBet(bet,  parseInt(result.result));
+                await handleWinningBet(bet, parseInt(result.result));
               else await handleLosingBet(bet);
             } else if (bet.type == 1) {
               if (parseInt(bet.TargetScore) <= parseInt(result.result))
-                await handleWinningBet(bet,  parseInt(result.result));
+                await handleWinningBet(bet, parseInt(result.result));
               else await handleLosingBet(bet);
             } else {
               await handleDrawBet(bet);
@@ -556,7 +602,7 @@ function scoreChecker() {
           //Lucky7eu
           if (tableId === "39") {
             if (result.data.data[0].win == "0") {
-              if(betData[i].runner =="1" || betData[i].runner =="2"){
+              if (betData[i].runner == "1" || betData[i].runner == "2") {
                 await handleDrawBet(betData[i])
               } else {
                 const description = result.data.data[0].desc;
@@ -614,7 +660,7 @@ function scoreChecker() {
                   await handleLosingBet(betData[i])
                 }
               }
-              
+
             } else {
               if (betData[i].runner == result.data.data[0].win) {
                 await handleWinningBet(betData[i]);
@@ -683,13 +729,12 @@ function scoreChecker() {
             if (result.data.data[0].win == "0") {
               await handleDrawBet(betData[i]);
               console.log(" ===================== commining from Line 620");
-            } 
-            else {
+            } else {
               if ((betData[i].runner == "1" && result.data.data[0].win == "1") || (betData[i].runner == "3" && result.data.data[0].win == "3")) {
-                await handleWinningBet(betData[i]);                
+                await handleWinningBet(betData[i]);
               } else {
                 let sid = result.data.data[0].sid.split(",");
-                
+
                 //Teen2020 Result Cases
                 //"sid": "3,12,22"
                 //"sid": "3,12"
@@ -699,25 +744,25 @@ function scoreChecker() {
                 const res = sid.find((a) => a.length === 2 && parseInt(betData[i].runner) % 2 == 0 && a[0] == parseInt(betData[i].runner) / 2)
 
                 if (res) {
-                  const rate = rateArray[parseInt(res[1])-2]
+                  const rate = rateArray[parseInt(res[1]) - 2]
                   betData[i].winningAmount = betData[i].betAmount * rate;
                   await handleWinningBet(betData[i]);
                 } else {
                   await handleLosingBet(betData[i]);
-                }               
+                }
               }
             }
           }
-          
+
           // Card32eu
           else if (tableId === "40") {
             if (result.data.data[0].win === "0") {
               await handleDrawBet(betData[i]);
             } else {
               if (betData[i].runner == result.data.data[0].win) {
-                if(betData[i].type == 1){
+                if (betData[i].type == 1) {
                   await handleLosingBet(betData[i]);
-                } else if(betData[i].type == 0){
+                } else if (betData[i].type == 0) {
                   await handleWinningBet(betData[i]);
                 }
               } else {
@@ -798,7 +843,7 @@ function scoreChecker() {
                 } else if (generalResult[4] === "10-11") {
                   widPair = "26";
                 }
-                
+
                 if (
                   betData[i].runner == wid ||
                   betData[i].runner == widOddFirst ||
@@ -810,18 +855,18 @@ function scoreChecker() {
                   betData[i].runner == widColor3 ||
                   betData[i].runner == widPair
                 ) {
-                  if(betData[i].type == 1){
+                  if (betData[i].type == 1) {
                     await handleLosingBet(betData[i]);
-                  } else if(betData[i].type == 0){
+                  } else if (betData[i].type == 0) {
                     await handleWinningBet(betData[i]);
                   } else {
                     await handleDrawBet(betData[i], 0)
                   }
-                  
+
                 } else {
-                  if(betData[i].type == 0){
+                  if (betData[i].type == 0) {
                     await handleLosingBet(betData[i]);
-                  } else if(betData[i].type == 1){
+                  } else if (betData[i].type == 1) {
                     await handleWinningBet(betData[i]);
                   } else {
                     await handleDrawBet(betData[i], 0)
@@ -836,9 +881,9 @@ function scoreChecker() {
               await handleDrawBet(betData[i]);
             } else {
               if (betData[i].runner == result.data.data[0].win) {
-                if(betData[i].type == 1){
+                if (betData[i].type == 1) {
                   await handleLosingBet(betData[i]);
-                } else if(betData[i].type == 0){
+                } else if (betData[i].type == 0) {
                   await handleWinningBet(betData[i]);
                 } else {
                   await handleDrawBet(betData[i], 0)
@@ -902,17 +947,17 @@ function scoreChecker() {
                   betData[i].runner == widOdd ||
                   betData[i].runner == widSeven
                 ) {
-                  if(betData[i].type == 1){
+                  if (betData[i].type == 1) {
                     await handleLosingBet(betData[i]);
-                  } else if(betData[i].type == 0){
+                  } else if (betData[i].type == 0) {
                     await handleWinningBet(betData[i]);
                   } else {
                     await handleDrawBet(betData[i], 0)
                   }
                 } else {
-                  if(betData[i].type == 0){
+                  if (betData[i].type == 0) {
                     await handleLosingBet(betData[i]);
-                  } else if(betData[i].type == 1){
+                  } else if (betData[i].type == 1) {
                     await handleWinningBet(betData[i]);
                   } else {
                     await handleDrawBet(betData[i], 0)
@@ -1031,8 +1076,8 @@ function scoreChecker() {
           }
 
           await Bets.updateMany(
-            { eventId: betData[i].eventId },
-            { $set: { resultId: result.data.data[0].mid } }
+            {eventId: betData[i].eventId},
+            {$set: {resultId: result.data.data[0].mid}}
           );
 
           let newRecord = {
@@ -1049,7 +1094,7 @@ function scoreChecker() {
               eventId: newRecord.eventId,
             },
             newRecord,
-            { upsert: true }
+            {upsert: true}
           );
         }
       }
@@ -1064,8 +1109,8 @@ function scoreChecker() {
       //figure bets
 
       const event = await inPlayEvents.findOne(
-        { _id: mongoose.Types.ObjectId(bet.betData.matchId) },
-        { Id: 1 }
+        {_id: mongoose.Types.ObjectId(bet.betData.matchId)},
+        {Id: 1}
       );
 
       if (bet.betData.type == 2) {
