@@ -199,8 +199,8 @@ function apiRequests() {
         "timeRange": {
           // "from": "2023-12-23T00:00:00+01:00",
           // "to": "2023-12-24T00:00:00+01:00"
-          "from": formattedFrom,
-          "to": formattedTo,
+          // "from": formattedFrom,
+          // "to": formattedTo,
         }
         // "turnInPlayEnabled": true,
       }
