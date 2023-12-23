@@ -11,6 +11,7 @@ const Odds = require("../../../app/models/odds");
 const Crickets = require("../../../app/models/Crickets");
 const FancyEvent = require("../../../app/models/fancyEvent");
 var _ = require("lodash");
+require('dotenv').config();
 const config = require("../../../config/default.json")
 
 const sportsAPIUrl = "http://185.58.225.212:8080/api";
@@ -18,7 +19,7 @@ const header = {
   headers: {
     'accept': 'application/json',
     'Content-Type': 'application/json',
-    'X-App': 'testqms'
+    'X-App': process.env.XAPP_NAME,
   },
 }
 let io;

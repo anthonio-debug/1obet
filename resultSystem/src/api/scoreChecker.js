@@ -3,6 +3,7 @@ module.exports = scoreChecker;
 
 var mongoose = require("mongoose");
 const axios = require("axios");
+require('dotenv').config()
 
 const horseRaceUrl = "http://136.244.77.249:33333";
 // const sportsAPIUrl = "http://209.250.242.175:33332";
@@ -16,7 +17,7 @@ const header = {
   headers: {
     'accept': 'application/json',
     'Content-Type': 'application/json',
-    'X-App': 'testqms'
+    'X-App': process.env.XAPP_NAME
   },
 }
 

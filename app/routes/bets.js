@@ -30,7 +30,7 @@ const { MongoClient,  ObjectId } = require('mongodb');
 const Crickets = require('../models/Crickets')
 const {FANCY_URL, LIVE_BET_TV_URL} = require("../global/constants");
 const message_result = "cannot place bet due to result check";
- 
+require('dotenv').config()
 
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
@@ -113,7 +113,7 @@ const apiCallForOdds = async (marketId) =>{
     headers: {
       'accept': 'application/json',
       'Content-Type': 'application/json',
-      'X-App': 'testqms'
+      'X-App': process.env.XAPP_NAME,
     },
   }
   const response = await axios.post(

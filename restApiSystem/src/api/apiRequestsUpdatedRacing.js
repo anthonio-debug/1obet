@@ -10,6 +10,7 @@ const MarketIDS = require('../../../app/models/marketIds');
 const InPlayEvents = require("../../../app/models/events");
 
 var _ = require('lodash');
+require('dotenv').config()
 
 const horseRaceUrl = "http://185.58.225.212:8080/api";
 
@@ -17,7 +18,7 @@ const header = {
   headers: {
     'accept': 'application/json',
     'Content-Type': 'application/json',
-    'X-App': 'testqms'
+    'X-App': process.env.XAPP_NAME
   },
 }
 
