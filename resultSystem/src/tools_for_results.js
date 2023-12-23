@@ -65,7 +65,8 @@ function ToolForResults() {
       }
 
       for (const result of results) {
-        console.log("result.betDocument.length:-->", result.betDocument.length);
+        // console.log("result.betDocument.length:-->", result.betDocument.length);
+        console.log("result.betDocument.length:-->", result.betDocument.length, "--- result--> " , result);
         console.log("result.betDocument.sportsId:-->", result.betDocument.sportsId);
         if (result.betDocument.length == 0) continue;
 
