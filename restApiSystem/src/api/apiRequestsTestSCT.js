@@ -180,10 +180,18 @@ function apiRequests() {
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
     }
-
+    let from = new Date();
+    let to = new Date(from);
+    to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
+    let formattedFrom = from.toISOString();
+    let formattedTo = to.toISOString();
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
+        "timeRange": {
+          "from": formattedFrom,
+          "to": formattedTo,
+        }
         // "turnInPlayEnabled": true,
       }
     }
