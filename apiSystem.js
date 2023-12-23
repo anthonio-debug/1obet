@@ -100,7 +100,7 @@ async function main() {
   ToolForResult.init(io, express);
 
   httpServer.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+    console.log(`Api System Server listening on port ${port}`);
   });
 }
 
