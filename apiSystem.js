@@ -66,7 +66,7 @@ mongoose.set({ debug: false });
 mongoose
   .connect(`mongodb://127.0.0.1/${DBNAME}`, mongooseOptions)
   .then(() => {
-    console.log("Database connected");
+    console.log("MongoDB connected");
   })
   .catch((err) => {
     console.error(`Failed to connect to the database: ${err}`);
@@ -75,6 +75,7 @@ mongoose
 express.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRouter);
 
 async function main() {
+  console.log("code understanding log ---");
   await inPlayEvents.updateMany({}, { inplay: false, inplayFromServer: false });
 
   //init events jobs for cricket, tennis and soccer
@@ -99,7 +100,7 @@ async function main() {
   ToolForResult.init(io, express);
 
   httpServer.listen(port, () => {
-    console.log(`Server listening on port ${port}`);
+    console.log(`Api System Server listening on port ${port}`);
   });
 }
 
