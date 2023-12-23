@@ -189,7 +189,7 @@ function apiRequests() {
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
-        "maxResults": 40,
+        // "maxResults": 40,
         // "marketStartTime": {
         //   // "from": "2023-12-23T00:00:00+01:00",
         //   // "to": "2023-12-24T00:00:00+01:00",
@@ -213,13 +213,16 @@ function apiRequests() {
         header
       );
 
-      var events = response.data.result;
+      let events = response.data.result;
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
         });
 
+        let limitation = 0
         for (const event of events) {
+          if (limitation > 40) break
+          limitation++
           const existingDoc = await inPlayEvents.findOne({Id: event.event.id});
 
           if (existingDoc && existingDoc.isCanceled === true) {
