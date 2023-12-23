@@ -11,8 +11,10 @@ function ToolForResults() {
   return {init};
 
   async function init() {
-    getBetForEvents(sportsIds);
-    getBetForEvents(sportsIdsforRacing);
+    getBetForEvents(sportsIds)
+    setTimeout(() => {
+      getBetForEvents(sportsIdsforRacing);
+    }, 2000)
     getBetForFancy();
     getBetForAsianOdd();
     manuelBetChecker();
