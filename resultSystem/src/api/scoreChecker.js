@@ -69,8 +69,9 @@ function scoreChecker() {
             },
           ];
       } else {
-        const response = await axios.get(url);
-        results = response.data;
+        // const response = await axios.get(url);
+        // results = response.data;
+        return
       }
       console.log("results.length -> "+results.length)
       if (results.length > 0) {
