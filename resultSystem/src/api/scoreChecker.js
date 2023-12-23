@@ -69,9 +69,8 @@ function scoreChecker() {
             },
           ];
       } else {
-        // const response = await axios.get(url);
-        // results = response.data;
-        return
+        const response = await axios.get(url);
+        results = response.data;
       }
       console.log("results.length -> "+results.length)
       if (results.length > 0) {
@@ -179,9 +178,8 @@ function scoreChecker() {
             },
           ];
       } else {
-        // const response = await axios.get(url);
-        // results = response.data;
-        return
+        const response = await axios.get(url);
+        results = response.data;
       }
       if (results.length > 0) {
         const result = results[0];
