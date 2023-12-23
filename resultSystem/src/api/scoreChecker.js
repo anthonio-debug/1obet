@@ -100,7 +100,7 @@ function scoreChecker() {
         )
         const resData = response.data.result;
         results = [{
-          winnerSelectionId: getWinnerSelectionId(resData),
+          winnerSelectionId: getWinnerSelectionId(resData[0]),
           manuelClose: false,
         }]
       }
@@ -221,7 +221,7 @@ function scoreChecker() {
         )
         const resData = response.data.result;
         results = [{
-          winnerSelectionId: getWinnerSelectionId(resData),
+          winnerSelectionId: getWinnerSelectionId(resData[0]),
           manuelClose: false,
         }]
       }
