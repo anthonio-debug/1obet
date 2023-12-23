@@ -183,7 +183,7 @@ function apiRequests() {
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
-        "turnInPlayEnabled": true,
+        // "turnInPlayEnabled": true,
       }
     }
     var url = `${sportsAPIUrl}/listEvents`;
