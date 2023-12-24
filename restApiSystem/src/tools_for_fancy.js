@@ -21,7 +21,7 @@ function ToolForFancy() {
 
     io = _io;
 
-    setInterval(fancyEventsBySupportJobs, 20 * 60 * 1000)
+    setInterval(fancyEventsBySupportJobs, 10 * 1000)
     setInterval(getList, 20 * 60 * 1000)
     setInterval(getFancyOdds, 1 * 1000)
 
@@ -154,7 +154,6 @@ function ToolForFancy() {
   }
 
   async function fancyEventsBySupportJobs() {
-    const sportsId = '4'
     const oldSportsAPIUrl = "http://209.250.242.175:33332";
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
@@ -164,6 +163,7 @@ function ToolForFancy() {
     try {
       const response = await axios.get(url);
       let events = response.data;
+      console.log('cricket event list', events.length)
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.openDate);
@@ -171,6 +171,7 @@ function ToolForFancy() {
 
         for (const event of events) {
           if (event.hasFancy) {
+            console.log('================= fancy found ===================')
             await inPlayEvents.findOneAndUpdate(
               { Id: event.Id },
               {
@@ -192,7 +193,7 @@ function ToolForFancy() {
         };
       }
     } catch (error) {
-      console.log("Problem on taking fancy event list");
+      console.error("Problem on taking fancy event list");
       console.error(error);
       return {
         success: false,
