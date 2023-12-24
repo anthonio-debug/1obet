@@ -12,156 +12,141 @@ const {FANCY_URI} = require("../../app/global/constants");
 
 let io;
 const fancyUrl = FANCY_URI;
+
 function ToolForFancy() {
-    return { init };
+  return {init};
 
-    async function init(_io, express) {
+  async function init(_io, express) {
 
-        io = _io;
-        
-        setInterval(getList, 20 * 60 * 1000)
-        setInterval(getFancyOdds, 1 * 1000)
-        
-        getList();
+    io = _io;
+
+    setInterval(getList, 20 * 60 * 1000)
+    setInterval(getFancyOdds, 1 * 1000)
+
+    getList();
+  }
+
+  async function getList() {
+    const url = `${fancyUrl}/highlights_bf_matches/4`;
+
+    try {
+      const response = await axios.get(url);
+      const facyData = response.data;
+      if (facyData.length == 0) {
+        return;
+      }
+      for (let index = 0; index < facyData.length; index++) {
+        var object = {
+          eventId: facyData[index].gameId,
+          marketId: facyData[index].marketId,
+          data: facyData[index]
+        };
+        addOrUpdateEvent(object);
+      }
+    } catch (error) {
+      console.error("Error getting fancy event list:", error);
     }
+  }
 
-    async function getList() {
+  async function getFancyOdds() {
 
+    try {
+      let marketIds = [];
+      let processArray = [];
+      let events = await inPlayEvents.find({sportsId: '4', inplay: true, hasFancy: true}, {Id: 1}).exec();
 
-        const url = `${fancyUrl}/highlights_bf_matches/4`;
+      for (let index = 0; index < events.length; index++) {
+        const event = events[index];
+        marketIds.push(event.Id);
+        processArray.push(event.Id);
+      }
 
-        try {
-            const response = await axios.get(url);
-            const facyData = response.data;
-            if (facyData.length == 0) {
-                return;
-            }
-            for (let index = 0; index < facyData.length; index++) {
-                var object = {
-                    eventId: facyData[index].gameId,
-                    marketId: facyData[index].marketId,
-                    data: facyData[index]
-                };
-                addOrUpdateEvent(object);
-            }
-        } catch (error) {
-            console.error("Error getting fancy event list:", error);
-        }
-    }
+      //console.log(processArray.join(','));
 
+      if (processArray.length > 0) {
+        const url = `${fancyUrl}/bm_fancy_multi/` + processArray.join(',');
+        const response = await axios.get(url);
+        const facyOdds = response.data;
+        let index = 0;
+        if (facyOdds) {
+          for (var key in facyOdds) {
 
+            // console.log(facyOdds, key);
 
-    async function getFancyOdds() {
+            if (facyOdds.hasOwnProperty(key)) {
+              try {
+                var odd = facyOdds[key];
 
-        try {
-            var marketIds = [];
-            var processArray = [];
-            var events = await inPlayEvents.find({ sportsId: '4', inplay: true, hasFancy:true }, { Id: 1 }).exec();
+                if (odd && odd.data && odd.data.t3 && odd.data.t3.length > 0) {
+                  odd.data.t3 = odd.data.t3.sort((a, b) => {
+                    return a.nat.localeCompare(b.nat);
+                  });
+                }
+                if (odd.gameId) {
+                  var newFancyOdds = new FancyOdds({
+                    eventId: odd.gameId,
+                    marketId: key,
+                    data: odd,
+                  });
+                  await newFancyOdds.save();
 
-            for (let index = 0; index < events.length; index++) {
-                const event = events[index];
-                marketIds.push(event.Id);
-                processArray.push(event.Id);
-            }
+                  /* Necessary Records for result page. It's broken.
 
-            //console.log(processArray.join(','));
-
-            if (processArray.length > 0) {
-                const url = `${fancyUrl}/bm_fancy_multi/` + processArray.join(',');
-                const response = await axios.get(url);
-                const facyOdds = response.data;
-                var index = 0;
-                if (facyOdds) {
-                    for (var key in facyOdds) {
-
-                       // console.log(facyOdds, key);
-
-                        if (facyOdds.hasOwnProperty(key)) {
-                            try {
-                                var odd = facyOdds[key];
-
-                                if (odd && odd.data && odd.data.t3 &&  odd.data.t3.length > 0) {
-                                    odd.data.t3 = odd.data.t3.sort((a, b) => {
-                                        return a.nat.localeCompare(b.nat);
-                                        });
-                                }
-                                if (odd.gameId) {
-                                    var newFancyOdds = new FancyOdds({
-                                        eventId: odd.gameId,
-                                        marketId: key,
-                                        data: odd,
-                                    });
-                                    await newFancyOdds.save();
-                                    
-                                    /* Necessary Records for result page. It's broken. 
-
-                                    if (odd && odd.data && odd.data.t3 &&  odd.data.t3.length > 0) {
-                                    await MarketIDs.findOneAndUpdate(
-                                        { eventId: facyData[index].gameId,
-                                         },   
-                                        {
-                                            eventId: eventId: facyData[index].gameId,
-                                            marketId: facyData[index].marketId + '',
-                                            marketName: meeting.name,
-                                            sportID: -1,
-                                            status: 'Race Market',
-                                            index: 0
-                                        },
-                                        {
-                                          new: true,          // güncellenmiş dokümanı döndürür
-                                          upsert: true        // eğer doküman yoksa, yeni bir doküman oluşturur
-                                        }
-                                    );
-                                    }
-                                    */
-                                    io.to('#' + odd.gameId).emit('fancy_odds', newFancyOdds);
-                                }
-
-                            } catch (error) {
-
-                                console.log(processArray);
-                                console.log(marketIds);
-                                console.log(index);
-                                console.error("Error getting odds:", error);
-                            }
-
-                        }
-                        index++;
-                    }
+                  if (odd && odd.data && odd.data.t3 &&  odd.data.t3.length > 0) {
+                  await MarketIDs.findOneAndUpdate(
+                      { eventId: facyData[index].gameId,
+                       },
+                      {
+                          eventId: eventId: facyData[index].gameId,
+                          marketId: facyData[index].marketId + '',
+                          marketName: meeting.name,
+                          sportID: -1,
+                          status: 'Race Market',
+                          index: 0
+                      },
+                      {
+                        new: true,          // güncellenmiş dokümanı döndürür
+                        upsert: true        // eğer doküman yoksa, yeni bir doküman oluşturur
+                      }
+                  );
+                  }
+                  */
+                  io.to('#' + odd.gameId).emit('fancy_odds', newFancyOdds);
                 }
 
+              } catch (error) {
 
+                console.log(processArray);
+                console.log(marketIds);
+                console.log(index);
+                console.error("Error getting odds:", error);
+              }
 
             }
-
-
-        } catch (error) {
-            console.error("Error getting odds:", error);
+            index++;
+          }
         }
+      }
+    } catch (error) {
+      console.error("Error getting odds:", error);
     }
+  }
 
+  async function addOrUpdateEvent(eventData) {
+    const {marketId, ...restOfData} = eventData;
 
-    async function addOrUpdateEvent(eventData) {
-        const { marketId, ...restOfData } = eventData;
-
-        try {
-            await FancyEvent.findOneAndUpdate(
-                { marketId: marketId },
-                { ...restOfData, marketId: marketId },
-                {
-                    upsert: true,
-                    new: true
-                } 
-            );
-            console.log("Event successfully added or updated.");
-        } catch (error) {
-            console.error("Error adding or updating event:", error);
+    try {
+      await FancyEvent.findOneAndUpdate(
+        {marketId: marketId},
+        {...restOfData, marketId: marketId},
+        {
+          upsert: true,
+          new: true
         }
+      );
+      console.log("Event successfully added or updated.");
+    } catch (error) {
+      console.error("Error adding or updating event:", error);
     }
-
-
-
-
-
-
+  }
 }
