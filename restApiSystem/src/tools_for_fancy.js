@@ -83,7 +83,7 @@ function ToolForFancy() {
                   });
                 }
                 if (odd.gameId) {
-                  var newFancyOdds = new FancyOdds({
+                  let newFancyOdds = new FancyOdds({
                     eventId: odd.gameId,
                     marketId: key,
                     data: odd,
