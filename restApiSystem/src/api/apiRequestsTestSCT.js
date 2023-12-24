@@ -184,8 +184,8 @@ function apiRequests() {
     let from = new Date();
     let to = new Date(from);
     to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
-    let formattedFrom = from.toISOString();
-    let formattedTo = to.toISOString();
+    // let formattedFrom = from.toISOString();
+    // let formattedTo = to.toISOString();
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
@@ -205,7 +205,7 @@ function apiRequests() {
         // "turnInPlayEnabled": true,
       }
     }
-    var url = `${sportsAPIUrl}/listEvents`;
+    let url = `${sportsAPIUrl}/listEvents`;
     try {
       const response = await axios.post(
         url,
