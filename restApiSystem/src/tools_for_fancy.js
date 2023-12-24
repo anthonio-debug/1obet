@@ -9,6 +9,7 @@ const FancyEvent = require('../../app/models/fancyEvent');
 const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
 const {FANCY_URI} = require("../../app/global/constants");
+const MarketIDS = require("../../app/models/marketIds");
 
 let io;
 const fancyUrl = FANCY_URI;
@@ -20,10 +21,12 @@ function ToolForFancy() {
 
     io = _io;
 
+    setInterval(fancyEventsBySupportJobs, 20 * 60 * 1000)
     setInterval(getList, 20 * 60 * 1000)
     setInterval(getFancyOdds, 1 * 1000)
 
-    getList();
+    getList()
+    fancyEventsBySupportJobs()
   }
 
   async function getList() {
@@ -147,6 +150,55 @@ function ToolForFancy() {
       console.log("Event successfully added or updated.");
     } catch (error) {
       console.error("Error adding or updating event:", error);
+    }
+  }
+
+  async function fancyEventsBySupportJobs() {
+    const sportsId = '4'
+    const oldSportsAPIUrl = "http://209.250.242.175:33332";
+    function isValidDate(d) {
+      return new Date(d).toString() !== "Invalid Date";
+    }
+
+    const url = `${oldSportsAPIUrl}/listEventsBySport/4`;
+    try {
+      const response = await axios.get(url);
+      let events = response.data;
+      if (events.length > 0) {
+        events = events.filter(function (item) {
+          return isValidDate(item.openDate);
+        });
+
+        for (const event of events) {
+          if (event.hasFancy) {
+            await inPlayEvents.findOneAndUpdate(
+              { Id: event.Id },
+              {
+                $set: {
+                  hasFancy: event.hasFancy,
+                },
+              },
+              {
+                upsert: true,
+              }
+            );
+          }
+        }
+
+      } else {
+        return {
+          success: false,
+          message: "Events empty",
+        };
+      }
+    } catch (error) {
+      console.log("Problem on taking fancy event list");
+      console.error(error);
+      return {
+        success: false,
+        message: "Failed to get or save fancy events",
+        error: error.message,
+      };
     }
   }
 }
