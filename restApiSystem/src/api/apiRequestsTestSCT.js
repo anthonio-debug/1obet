@@ -800,12 +800,15 @@ function apiRequests() {
       const inPlayEventsDocs = await inPlayEvents
         .find({inplay: true, sportsId: sportsId + ""}, "Id")
         .sort({openDate: 1});
+
       const eventIds = inPlayEventsDocs.map((doc) => doc.Id);
+
       const marketIDsPlaying = await MarketIDS.find({
         eventId: {$in: eventIds},
         status: "OPEN",
         inPlay: {$ne: true},
       }).sort({index: 1});
+
       if (marketIDsPlaying.length > 0) {
         for (let x = 0; x < marketIDsPlaying.length; x++) {
           const market = marketIDsPlaying[x];
