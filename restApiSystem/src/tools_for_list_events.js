@@ -26,11 +26,11 @@ function ToolForEvent() {
       setInterval(fetchMarkets, 10 * 1000);
       setInterval(handleSetInplay, 10 * 1000);
 
-      setInterval(() => {
-        for (const sportsId of sportsIds) {
-          apiRequests.setInplay(sportsId);
-        }
-      }, 10 * 1000);
+      // setInterval(() => {
+      //   for (const sportsId of sportsIds) {
+      //     apiRequests.setInplay(sportsId);
+      //   }
+      // }, 10 * 1000);
 
       setInterval(() => {
         for (const sportsId of sportsIds) {
