@@ -5,6 +5,7 @@ const axios = require('axios');
 const User = require('../models/user');
 const router = express.Router();
 const apiURL= "http://185.58.225.212:8080/api/"
+require('dotenv').config()
 
 async function listEvents(req, res) {
     try {
@@ -181,7 +182,7 @@ async function testAPI(req, res) {
       headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
-        'X-App': 'testqms'
+        'X-App': process.env.XAPP_NAME
       },
     }
     const requestData = {

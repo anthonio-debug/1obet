@@ -11,6 +11,7 @@ const Odds = require("../../../app/models/odds");
 const Crickets = require("../../../app/models/Crickets");
 const FancyEvent = require("../../../app/models/fancyEvent");
 var _ = require("lodash");
+require('dotenv').config();
 const config = require("../../../config/default.json")
 
 const sportsAPIUrl = "http://185.58.225.212:8080/api";
@@ -18,7 +19,7 @@ const header = {
   headers: {
     'accept': 'application/json',
     'Content-Type': 'application/json',
-    'X-App': 'testqms'
+    'X-App': process.env.XAPP_NAME,
   },
 }
 let io;
@@ -180,12 +181,16 @@ function apiRequests() {
       return new Date(d).toString() !== "Invalid Date";
     }
 
+    let from = new Date();
+    let to = new Date(from);
+    to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
+
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
       }
     }
-    var url = `${sportsAPIUrl}/listEvents`;
+    let url = `${sportsAPIUrl}/listEvents`;
     try {
       const response = await axios.post(
         url,
@@ -193,13 +198,25 @@ function apiRequests() {
         header
       );
 
-      var events = response.data.result;
+      let events = response.data.result;
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
         });
 
+        let limitation = 0
         for (const event of events) {
+          if (
+            limitation > 
+              sportsId === "1" 
+              ? config.soccerEventsAllowedCount
+              : sportsId === "2"
+              ? config.tennistEventsAllowedCount
+              : sportsId === "4"
+              ? config.cricketEventsAllowedCount
+              : config.allSportsEventsAllowedCount
+          ) break
+          limitation++
           const existingDoc = await inPlayEvents.findOne({Id: event.event.id});
 
           if (existingDoc && existingDoc.isCanceled === true) {
@@ -332,7 +349,7 @@ function apiRequests() {
       "filter": {
         "eventIds": [eventId],
       },
-      "maxResults": 100,
+      "maxResults": 20,
       "marketProjection": ["RUNNER_DESCRIPTION", "RUNNER_METADATA"]
     }
 
@@ -355,7 +372,7 @@ function apiRequests() {
           if (config.activeProvider == 'old') {
             marketStatus = element.status
           }
-          for (let k = 0; k < element?.runners?.length; k ++) {
+          for (let k = 0; k < element?.runners?.length; k++) {
             tempRunners.push({
               SelectionId: element?.runners[k]?.selectionId,
               runnerName: element?.runners[k]?.runnerName,
@@ -642,12 +659,12 @@ function apiRequests() {
               );
             }
           } catch (error) {
-            console.log(error);
+            console.error('getOddsFromProvider----->', error);
           }
         }
       },
       (error) => {
-        console.log(error);
+        console.error('getOddsFromProvider-->', error);
       }
     );
   }
@@ -656,21 +673,32 @@ function apiRequests() {
   Checking In play for set inplayFromServer and close the event.
   */
   async function checkInPlay(sportID) {
-    var url = `${sportsAPIUrl}/listInplayEvents/${sportID}`;
+    const requestData = {
+      "filter": {
+        "eventTypeIds": [sportID],
+        "maxResults": 40,
+        "turnInPlayEnabled": true,
+        "inPlayOnly": true,
+      }
+    }
+    let url = `${sportsAPIUrl}/listEvents`;
     try {
-      axios.get(url).then(
+      axios.post(
+        url,
+        requestData,
+        header
+      ).then(
         async (response) => {
           // Take last inplay list for events
-
-          const marketsData = response.data;
-          var eventIDs = [];
+          const marketsData = response.data.result;
+          let eventIDs = [];
           if (marketsData.length > 0) {
             for (let i = 0; i < marketsData.length; i++) {
               const event = marketsData[i];
-              eventIDs.push(event.Id);
+              eventIDs.push(event.event.id);
 
-              var ix = _.findIndex(removedInplayList, function (o) {
-                return o.Id == event.Id;
+              let ix = _.findIndex(removedInplayList, function (o) {
+                return o.Id == event.event.id;
               });
               if (ix !== -1) {
                 console.log("Event Inplay Value Problem:");
@@ -680,8 +708,8 @@ function apiRequests() {
 
               //update this events inplay status with data that was come from data provider.
               await inPlayEvents.updateOne(
-                {Id: event.Id},
-                {inplayFromServer: true, status: event.status}
+                {Id: event.event.id},
+                {inplayFromServer: true, inplay: true}
               );
             }
           } else {
@@ -690,7 +718,7 @@ function apiRequests() {
           }
 
           // check old inplayFromServer true record. Match with new list.
-          var allIDS = [];
+          let allIDS = [];
           const currentEvents = await inPlayEvents.find(
             {inplayFromServer: true, sportsId: sportID + ""},
             {Id: 1}
@@ -700,12 +728,12 @@ function apiRequests() {
             allIDS.push(currentEvents[i].Id);
           }
 
-          var diff = allIDS.filter((item) => !eventIDs.includes(item));
+          let diff = allIDS.filter((item) => !eventIDs.includes(item));
           // if inplayFromServer is true on old records and not available on last list.
           // update event status with 'CLOSED-INPLAYLIST'
           // Also update MarketIDs
           for (let i = 0; i < diff.length; i++) {
-            var ix = _.findIndex(removedInplayList, function (o) {
+            let ix = _.findIndex(removedInplayList, function (o) {
               return o.Id == diff[i];
             });
 
@@ -731,7 +759,9 @@ function apiRequests() {
                 },
               }
             );
+
             io.emit("inplay", {eventID: diff[i], inplay: false});
+
             io.to("eventStatusChange").emit("event_status", {
               eventId: diff[i],
               status: "CLOSED-INPLAYLIST",
@@ -739,21 +769,11 @@ function apiRequests() {
           }
         },
         (error) => {
-          // console.log(error);
-          return {
-            success: false,
-            message: "Failed to get checkInPlay",
-            error: error.message,
-          };
+          console.log('checkInPlay', error)
         }
       );
     } catch (error) {
-      // console.error(error);
-      return {
-        success: false,
-        message: "Failed to get checkInPlay",
-        error: error.message,
-      };
+      console.error('checkInPlay', error)
     }
   }
 
@@ -777,12 +797,15 @@ function apiRequests() {
       const inPlayEventsDocs = await inPlayEvents
         .find({inplay: true, sportsId: sportsId + ""}, "Id")
         .sort({openDate: 1});
+
       const eventIds = inPlayEventsDocs.map((doc) => doc.Id);
+
       const marketIDsPlaying = await MarketIDS.find({
         eventId: {$in: eventIds},
         status: "OPEN",
         inPlay: {$ne: true},
       }).sort({index: 1});
+
       if (marketIDsPlaying.length > 0) {
         for (let x = 0; x < marketIDsPlaying.length; x++) {
           const market = marketIDsPlaying[x];
@@ -853,14 +876,18 @@ function apiRequests() {
           eventId: event.Id,
           status: "OPEN",
         }).sort({index: 1});
+
         if (marketIDs.length > 0) {
           console.log(
             event.Id + " -> " + event.name + " event updated with inplay"
           );
+
           await inPlayEvents
             .updateMany({Id: event.Id}, {inplay: true})
             .exec();
+
           io.emit("inplay", {eventID: event.Id, inplay: true});
+
           for (let x = 0; x < marketIDs.length; x++) {
             const market = marketIDs[x];
             await MarketIDS.updateOne(
@@ -881,16 +908,11 @@ function apiRequests() {
           //If this event not have to marketIDS, we update the status of event with CLOSED.
           //await MarketIDS.deleteMany({ eventId: event.Id }).exec();;
           console.log(event.Id + " was closed. MarketIDS is empty");
-          //await inPlayEvents.updateOne({ Id: event.Id }, { inPlay: false, status: 'CLOSED-MARKETIDS' });
+          await inPlayEvents.updateOne({Id: event.Id}, {inPlay: false, status: 'CLOSED-MARKETIDS'});
         }
       }
     } catch (error) {
-      console.error(error);
-      return {
-        success: false,
-        message: "Failed to get setInplay",
-        error: error.message,
-      };
+      console.error('setInplay', error);
     }
   }
 }

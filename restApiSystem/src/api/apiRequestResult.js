@@ -1,6 +1,7 @@
 "use strict";
 const axios = require("axios");
 const _ = require("lodash");
+require('dotenv').config()
 
 const config = require("../../../config/default.json")
 const MarketIDs = require("../../../app/models/marketIds");
@@ -13,7 +14,7 @@ const header = {
   headers: {
     'accept': 'application/json',
     'Content-Type': 'application/json',
-    'X-App': 'testqms'
+    'X-App': process.env.XAPP_NAME
   },
 }
 let io;

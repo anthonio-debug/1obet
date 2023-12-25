@@ -51,5 +51,10 @@
   "overUnder": 14,
   "raceOpenBefore": 180000,
   "sportsOpenBefore": 600000,
-  "tossCloseTime": 2700000
+  "tossCloseTime": 2700000,
+  "raceEventsAllowedCount": 20,
+  "soccerEventsAllowedCount": 35,
+  "cricketEventsAllowedCount": 10,
+  "tennistEventsAllowedCount": 10,
+  "allSportsEventsAllowedCount": 10
 }

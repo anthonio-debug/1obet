@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 
 const AsianTableOddSchema = new mongoose.Schema({
-  tableId: { type: String },
+  tableId: { type: String, index: true },
   t1: { type: Array, default: [] },
   t2: { type: Array, default: [] },
   t3: { type: Array, default: [] },

@@ -967,14 +967,19 @@ async function bettorDashboardGames(req, res) {
     ]);
 
     var now = new Date();  // Get the current date and time
-    var startOfDay = new Date(now - now % 864e5); 
-    var endOfDay = new Date(now - now % 864e5 + 864e5 - 1);  
+    var startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    var startOfDayTimestamp = startOfDay.getTime();
+
+    var endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+    var endOfDayTimestamp = endOfDay.getTime();
 
     const greyHound = await Events.find(
       {
         sportsId: "4339",
         status: "OPEN",
-        openDate: { $gte: startOfDay, $lt: endOfDay }
+        openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
       },
       {
         _id: 1,
@@ -995,7 +1000,7 @@ async function bettorDashboardGames(req, res) {
       {
         sportsId: "7",
         status: "OPEN",
-        openDate: { $gte: startOfDay, $lt: endOfDay }
+        openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
       },
       {
         _id: 1,
