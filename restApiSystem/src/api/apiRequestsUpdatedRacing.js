@@ -58,13 +58,30 @@ function apiRequests() {
         if (event_information) {
           const LastRaceOdds = await RaceOdds.findOne({marketId: channel.substring(1)});
 
+          let responseData = {
+            eventTypeId: event_information?.eventTypeId,
+            marketId: event_information?.marketId,
+            eventNodes: [
+              {
+                eventId: event_information?.eventNodes?.eventId,
+                event: event_information?.eventNodes?.event,
+                marketNodes: {
+                  marketId: event_information?.eventNodes[0]?.marketNodes?.marketId,
+                  state: event_information?.eventNodes[0]?.marketNodes?.state,
+                  description: event_information?.eventNodes[0]?.marketNodes?.description,
+                  runners: event_information?.eventNodes[0]?.marketNodes?.runners,
+                  odds: LastRaceOdds?.runners
+                }
+              }
+            ]
+          }
           if (LastRaceOdds) {
             socket.emit('race_last_odds', LastRaceOdds);
           } else {
             socket.emit('race_last_odds', {status: false, msg: 'LastRaceOdds record is not exist for this event.'});
           }
 
-          socket.emit('race_event_info', event_information);
+          socket.emit('race_event_info', responseData);
         } else {
           socket.emit('race_err', 'InPlayEvents Not Exist');
         }
