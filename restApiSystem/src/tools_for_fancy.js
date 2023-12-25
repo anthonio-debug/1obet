@@ -22,8 +22,8 @@ function ToolForFancy() {
     io = _io;
 
     setInterval(fancyEventsBySupportJobs, 10 * 1000)
-    setInterval(getList, 20 * 60 * 1000)
-    setInterval(getFancyOdds, 1 * 1000)
+    setInterval(getList, 10 * 1000)
+    setInterval(getFancyOdds, 1500)
 
     getList()
     fancyEventsBySupportJobs()
@@ -163,7 +163,7 @@ function ToolForFancy() {
     try {
       const response = await axios.get(url);
       let events = response.data;
-      console.log('cricket event list', events.length)
+      console.log('cricket event list------------------------------->', events.length)
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.openDate);
