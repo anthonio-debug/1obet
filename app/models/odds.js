@@ -4,7 +4,7 @@ const oddsSchema = new mongoose.Schema({
   updatetime: String,
   update: String,
   sport: String,
-  eventId: String,
+  eventId: {type: String, index: true},
   marketId: {type: String, index: true},
   marketName: String,
   source: Number,
