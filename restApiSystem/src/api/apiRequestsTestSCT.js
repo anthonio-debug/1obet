@@ -665,12 +665,12 @@ function apiRequests() {
               );
             }
           } catch (error) {
-            console.log(error);
+            console.error('getOddsFromProvider----->', error);
           }
         }
       },
       (error) => {
-        console.log(error);
+        console.error('getOddsFromProvider-->', error);
       }
     );
   }
