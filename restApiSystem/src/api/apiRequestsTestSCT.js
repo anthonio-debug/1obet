@@ -212,7 +212,9 @@ function apiRequests() {
               ? config.soccerEventsAllowedCount
               : sportsId === "2"
               ? config.tennistEventsAllowedCount
-              : config.cricketEventsAllowedCount
+              : sportsId === "4"
+              ? config.cricketEventsAllowedCount
+              : config.allSportsEventsAllowedCount
           ) break
           limitation++
           const existingDoc = await inPlayEvents.findOne({Id: event.event.id});
