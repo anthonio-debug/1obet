@@ -36,7 +36,7 @@ function ToolForEvent() {
         for (const sportsId of sportsIds) {
           fetchOdds(true, sportsId);
         }
-      }, 3000);
+      }, 1500);
     }
   }
 

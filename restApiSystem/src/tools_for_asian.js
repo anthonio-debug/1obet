@@ -15,12 +15,12 @@ function ToolForAsian() {
     // console.log("running fetch odds")
     apiRequests.getOddsFromProvider()
       .then(() => {
-        setTimeout(fetchOdds, 10)
+        setTimeout(fetchOdds, 100)
       })
       .catch(err => {
         console.log(err);
         // Schedule the next call even if there's an error
-        setTimeout(fetchOdds, 30);
+        setTimeout(fetchOdds, 300);
       });
   }
 }
