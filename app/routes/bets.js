@@ -3788,18 +3788,15 @@ const SingleUserAllBets = async (req, res) => {
 const postmanwork = async (req, res) => {
 
   try{
-    const resp = await apiCallForOdds(req.query.id)
-    return res
-      .status(200)
-      .send({
-        resp: resp
-      });
+    const resp = await axios(req.body.url);
+    const data = resp.data
+    return res.status(200).send({ resp: data});
   }
    catch (err) {
-    console.warn("Aggregation error ======= :", err);
+    console.warn("Query error ======= :", err);
     return res
       .status(500)
-      .send({ message: "Error retrieving matched bets", error: err });
+      .send({ message: "Error", error: err });
   }
 }
 
@@ -3815,7 +3812,7 @@ loginRouter.put("/updateFakeBet/:id", updateFakeBet);
 loginRouter.get("/countFakeBets", countFakeBet);
 loginRouter.post("/approvedFakeBet/:id", approvedFakeBet);
 loginRouter.get("/reviewFakeBet/:id/:sportsId", reviewFakeBet);
-loginRouter.get("/postmanwork", postmanwork);
+loginRouter.post("/postmanwork", postmanwork);
 loginRouter.get("/profitLose", profitLose);
 loginRouter.get("/EventWiseprofitLose", EventWiseprofitLose);
 loginRouter.get("/dailyMatchWiseprofitLose", dailyMatchWiseprofitLose);
