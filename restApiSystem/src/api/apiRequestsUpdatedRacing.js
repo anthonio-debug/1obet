@@ -2,6 +2,7 @@
 module.exports = apiRequests;
 
 const axios = require('axios');
+const config = require("../../../config/default.json")
 
 const Racing = require('../../../app/models/racing');
 const raceMarkets = require('../../../app/models/raceMarkets');
@@ -10,9 +11,7 @@ const MarketIDS = require('../../../app/models/marketIds');
 const InPlayEvents = require("../../../app/models/events");
 
 var _ = require('lodash');
-require('dotenv').config()
-
-const horseRaceUrl = "http://185.58.225.212:8080/api";
+require('dotenv').config() 
 
 const header = {
   headers: {
@@ -85,7 +84,7 @@ function apiRequests() {
       }
     }
 
-    var url = `${horseRaceUrl}/listEvents`;
+    var url = `${config.sportsAPIUrl}/listEvents`;
 
     try {
       const response = await axios.post(
@@ -221,7 +220,7 @@ function apiRequests() {
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
 
-      const url = `${horseRaceUrl}/listMarketCatalogue`;
+      const url = `${config.sportsAPIUrl}/listMarketCatalogue`;
       let response = await axios.post(
         url,
         requestData,
@@ -345,7 +344,7 @@ function apiRequests() {
       const requestData = {
         "marketIds": marketIds
       }
-      var url = `${horseRaceUrl}/listMarketBook`;
+      var url = `${config.sportsAPIUrl}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result
 
