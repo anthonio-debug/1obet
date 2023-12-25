@@ -762,21 +762,11 @@ function apiRequests() {
           }
         },
         (error) => {
-          // console.log(error);
-          return {
-            success: false,
-            message: "Failed to get checkInPlay",
-            error: error.message,
-          };
+          console.log('checkInPlay', error)
         }
       );
     } catch (error) {
-      // console.error(error);
-      return {
-        success: false,
-        message: "Failed to get checkInPlay",
-        error: error.message,
-      };
+      console.error('checkInPlay', error)
     }
   }
 
@@ -911,12 +901,7 @@ function apiRequests() {
         }
       }
     } catch (error) {
-      console.error(error);
-      return {
-        success: false,
-        message: "Failed to get setInplay",
-        error: error.message,
-      };
+      console.error('setInplay', error);
     }
   }
 }

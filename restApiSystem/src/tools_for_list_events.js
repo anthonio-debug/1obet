@@ -32,6 +32,12 @@ function ToolForEvent() {
         }
       }, 10 * 1000);
 
+      setInterval(async () => {
+        for (const sportsId of sportsIds) {
+          await apiRequests.checkInPlay(sportsId);
+        }
+      }, 15 * 1000);
+
       setInterval(() => {
         for (const sportsId of sportsIds) {
           fetchOdds(true, sportsId);
