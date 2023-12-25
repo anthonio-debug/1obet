@@ -909,9 +909,9 @@ function apiRequests() {
           }
         } else {
           //If this event not have to marketIDS, we update the status of event with CLOSED.
-          //await MarketIDS.deleteMany({ eventId: event.Id }).exec();;
+          await MarketIDS.deleteMany({ eventId: event.Id }).exec();
           console.log(event.Id + " was closed. MarketIDS is empty");
-          //await inPlayEvents.updateOne({ Id: event.Id }, { inPlay: false, status: 'CLOSED-MARKETIDS' });
+          await inPlayEvents.updateOne({ Id: event.Id }, { inPlay: false, status: 'CLOSED-MARKETIDS' });
         }
       }
     } catch (error) {
