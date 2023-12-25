@@ -202,20 +202,8 @@ function apiRequests() {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
         });
-
-        let limitation = 0
+ 
         for (const event of events) {
-          if (
-            limitation > 
-              sportsId === "1" 
-              ? config.soccerEventsAllowedCount
-              : sportsId === "2"
-              ? config.tennistEventsAllowedCount
-              : sportsId === "4"
-              ? config.cricketEventsAllowedCount
-              : config.allSportsEventsAllowedCount
-          ) break
-          limitation++
           const existingDoc = await inPlayEvents.findOne({Id: event.event.id});
 
           if (existingDoc && existingDoc.isCanceled === true) {
@@ -427,7 +415,23 @@ function apiRequests() {
             eventId: ev,
             marketId: marketIds[index].id + "",
           });
+
+          const countOfMarket = await MarketIDS.countDocuments(
+            { sportID: parseInt(sportID), status: "OPEN" }
+          );
+
           if (!marketID) {
+            if (
+              countOfMarket > 
+                sportID === "1" 
+                ? config.soccerEventsAllowedCount
+                : sportID === "2"
+                ? config.tennistEventsAllowedCount
+                : sportID === "4"
+                ? config.cricketEventsAllowedCount
+                : config.allSportsEventsAllowedCount
+            ) break 
+            
             const newMarket = new MarketIDS({
               eventId: eventId,
               marketId: marketIds[index].id + "",
