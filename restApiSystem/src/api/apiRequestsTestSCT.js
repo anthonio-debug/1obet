@@ -13,8 +13,7 @@ const FancyEvent = require("../../../app/models/fancyEvent");
 var _ = require("lodash");
 require('dotenv').config();
 const config = require("../../../config/default.json")
-
-const sportsAPIUrl = "http://185.58.225.212:8080/api";
+ 
 const header = {
   headers: {
     'accept': 'application/json',
@@ -190,7 +189,7 @@ function apiRequests() {
         "eventTypeIds": [sportsId],
       }
     }
-    let url = `${sportsAPIUrl}/listEvents`;
+    let url = `${config.newThirdURL}/listEvents`;
     try {
       const response = await axios.post(
         url,
@@ -204,7 +203,19 @@ function apiRequests() {
           return isValidDate(item.event.openDate);
         });
 
+        let limitation = 0
         for (const event of events) {
+          if (
+            limitation > 
+              sportsId === "1" 
+              ? config.soccerEventsAllowedCount
+              : sportsId === "2"
+              ? config.tennistEventsAllowedCount
+              : sportsId === "4"
+              ? config.cricketEventsAllowedCount
+              : config.allSportsEventsAllowedCount
+          ) break
+          limitation++
           const existingDoc = await inPlayEvents.findOne({Id: event.event.id});
 
           if (existingDoc && existingDoc.isCanceled === true) {
@@ -224,7 +235,7 @@ function apiRequests() {
             }
           }
 
-          const getCompetitionUrl = `${sportsAPIUrl}/listCompetitions`;
+          const getCompetitionUrl = `${config.newThirdURL}/listCompetitions`;
 
           const responseCompetition = await axios.post(
             getCompetitionUrl,
@@ -341,7 +352,7 @@ function apiRequests() {
       "marketProjection": ["RUNNER_DESCRIPTION", "RUNNER_METADATA"]
     }
 
-    const url = `${sportsAPIUrl}/listMarketCatalogue`;
+    const url = `${config.newThirdURL}/listMarketCatalogue`;
     try {
       const response = await axios.post(
         url,
@@ -417,19 +428,6 @@ function apiRequests() {
             marketId: marketIds[index].id + "",
           });
           if (!marketID) {
-            const countOfMarket = await MarketIDS.countDocuments({ sportID: sportID, status: "OPEN" });
-
-            if (
-              countOfMarket >=
-                sportID === "1" 
-                ? config.soccerEventsAllowedCount
-                : sportID === "2"
-                ? config.tennistEventsAllowedCount
-                : sportID === "4"
-                ? config.cricketEventsAllowedCount
-                : config.allSportsEventsAllowedCount
-            ) break
-
             const newMarket = new MarketIDS({
               eventId: eventId,
               marketId: marketIds[index].id + "",
@@ -483,7 +481,7 @@ function apiRequests() {
       "marketIds": tempArryForIDs
     }
 
-    const url = `${sportsAPIUrl}/listMarketBook`;
+    const url = `${config.newThirdURL}/listMarketBook`;
     axios.post(
       url,
       requestData,
@@ -682,7 +680,7 @@ function apiRequests() {
         "inPlayOnly": true,
       }
     }
-    let url = `${sportsAPIUrl}/listEvents`;
+    let url = `${config.newThirdURL}/listEvents`;
     try {
       axios.post(
         url,
