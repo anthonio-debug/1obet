@@ -184,25 +184,10 @@ function apiRequests() {
     let from = new Date();
     let to = new Date(from);
     to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
-    // let formattedFrom = from.toISOString();
-    // let formattedTo = to.toISOString();
+
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
-        // "maxResults": 40,
-        // "marketStartTime": {
-        //   // "from": "2023-12-23T00:00:00+01:00",
-        //   // "to": "2023-12-24T00:00:00+01:00",
-        //   // "from": formattedFrom,
-        //   // "to": formattedTo
-        // },
-        // "timeRange": {
-        //   // "from": "2023-12-23T00:00:00+01:00",
-        //   // "to": "2023-12-24T00:00:00+01:00"
-        //   // "from": formattedFrom,
-        //   // "to": formattedTo,
-        // }
-        // "turnInPlayEnabled": true,
       }
     }
     let url = `${sportsAPIUrl}/listEvents`;
@@ -221,7 +206,14 @@ function apiRequests() {
 
         let limitation = 0
         for (const event of events) {
-          if (limitation > 40) break
+          if (
+            limitation > 
+              sportsId === "1" 
+              ? config.soccerEventsAllowedCount
+              : sportsId === "2"
+              ? config.tennistEventsAllowedCount
+              : config.cricketEventsAllowedCount
+          ) break
           limitation++
           const existingDoc = await inPlayEvents.findOne({Id: event.event.id});
 
