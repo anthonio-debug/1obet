@@ -1,8 +1,8 @@
 const mongoose = require('mongoose');
 
 const asianOddSchema = new mongoose.Schema({
-  roundId: { type: String },
-  marketId: { type: String },
+  roundId: { type: String, index: true },
+  marketId: { type: String, index: true },
   marketName: { type: String },
   status: { type: String },
   numberOfRunners: { type: Number },
