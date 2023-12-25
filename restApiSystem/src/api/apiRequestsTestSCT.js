@@ -14,7 +14,6 @@ var _ = require("lodash");
 require('dotenv').config();
 const config = require("../../../config/default.json")
 
-const sportsAPIUrl = "http://185.58.225.212:8080/api";
 const header = {
   headers: {
     'accept': 'application/json',
@@ -217,7 +216,7 @@ function apiRequests() {
           : []
       }
     }
-    let url = `${sportsAPIUrl}/listEvents`;
+    let url = `${config.newThirdURL}/listEvents`;
     try {
       const response = await axios.post(
         url,
@@ -253,7 +252,7 @@ function apiRequests() {
             }
           }
 
-          const getCompetitionUrl = `${sportsAPIUrl}/listCompetitions`;
+          const getCompetitionUrl = `${config.newThirdURL}/listCompetitions`;
 
           const responseCompetition = await axios.post(
             getCompetitionUrl,
@@ -371,7 +370,7 @@ function apiRequests() {
       "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
     }
 
-    const url = `${sportsAPIUrl}/listMarketCatalogue`;
+    const url = `${config.newThirdURL}/listMarketCatalogue`;
     try {
       const response = await axios.post(
         url,
@@ -517,7 +516,7 @@ function apiRequests() {
       "marketIds": tempArryForIDs
     }
 
-    const url = `${sportsAPIUrl}/listMarketBook`;
+    const url = `${config.newThirdURL}/listMarketBook`;
     axios.post(
       url,
       requestData,
@@ -716,7 +715,7 @@ function apiRequests() {
         "inPlayOnly": true,
       }
     }
-    let url = `${sportsAPIUrl}/listEvents`;
+    let url = `${config.newThirdURL}/listEvents`;
     try {
       axios.post(
         url,
