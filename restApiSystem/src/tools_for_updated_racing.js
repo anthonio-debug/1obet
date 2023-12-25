@@ -30,7 +30,7 @@ function ToolForUpdatedRacing() {
             sportsIds.forEach(async id => {
                 const documents = await inPlayEvents.find({ status: 'OPEN', sportsId: id })
                     .sort({ lastCheckMarket: 1 })
-                    .limit(40)
+                    .limit(config.raceEventsAllowedCount)
                     .exec();
 
                 for (let i = 0; i < documents?.length; i ++) {
