@@ -127,10 +127,10 @@ const apiCallForOdds = async (marketId) =>{
 const stopbetStatusChecker = async (id) => {
   try {
     const scores = await Crickets.find({ eventId: id}).sort({ _id: -1 }).limit(1);
-    const result = scores?.result?.length ? scores?.result : 0;
     if(scores && scores?.result &&  scores?.result?.length){
+      const result =  scores?.result;
       const stopbetStatus =  ["no ball", "noball", "free hit","freehit", "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed", "rain", "suspend", "delay", "pitch", "plood", "bowled","injured"];
-      if(stopbetStatus.includes(result)){
+      if(stopbetStatus.includes(result.toLowerCase() )){
         return 400
       }
     }
@@ -1555,7 +1555,7 @@ const placeBet = async (req, res) => {
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
       const resultcheck = await  stopbetStatusChecker(eventDetail.Id);
-      if(resultcheck === 400 ){
+      if(resultcheck === 400){
         return res.status(404).send({
           message: `${message_result}`,
         });
@@ -1570,8 +1570,8 @@ const placeBet = async (req, res) => {
           message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
         });
       }
-      const scores = await Crickets.find({ eventId: eventDetail.Id })
-
+      const dbscore  = await Crickets.find({ eventId: eventDetail.Id }).sort({ _id: -1 }).limit(1)
+      const scores   = dbscore[0];
       if (!scores) {
         return res.status(404).json({
           status: false,
