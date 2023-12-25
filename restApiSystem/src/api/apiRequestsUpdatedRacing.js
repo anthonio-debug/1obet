@@ -348,7 +348,7 @@ function apiRequests() {
               sportID: marketData[j].eventType.id,
               eventId: eventId,
             },
-            {$set: {runners: runners}}, {upsert: true, new: true});
+            {$set: {runners: runners, status: "OPEN"}}, {upsert: true, new: true});
         }
         await InPlayEvents.findOneAndUpdate(
           {Id: eventId},
