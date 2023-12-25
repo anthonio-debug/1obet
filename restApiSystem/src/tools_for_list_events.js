@@ -36,7 +36,7 @@ function ToolForEvent() {
         for (const sportsId of sportsIds) {
           await apiRequests.checkInPlay(sportsId);
         }
-      }, 15 * 1000);
+      }, 30 * 1000);
 
       setInterval(() => {
         for (const sportsId of sportsIds) {
