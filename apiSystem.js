@@ -91,7 +91,7 @@ async function main() {
   ToolForAsian.init(io, express);
 
   // init test sports odd
-  ToolForTestSport.init(io, express);
+  // ToolForTestSport.init(io, express);
 
   // init events list
   ToolForListEvent.init(io, express);
