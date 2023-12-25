@@ -55,5 +55,6 @@
   "raceEventsAllowedCount": 20,
   "soccerEventsAllowedCount": 35,
   "cricketEventsAllowedCount": 10,
-  "tennistEventsAllowedCount": 10
+  "tennistEventsAllowedCount": 10,
+  "allSportsEventsAllowedCount": 10
 }
