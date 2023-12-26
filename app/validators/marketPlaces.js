@@ -9,5 +9,11 @@ module.exports.validate = (method) => {
           .isObject()
       ];
     }
+    case 'updateMarketStatus':{
+      return [
+        body('_id', 'market ID is required !').exists(),
+        body('status', 'Status is required !').exists()
+      ];
+    }
   }
 };
