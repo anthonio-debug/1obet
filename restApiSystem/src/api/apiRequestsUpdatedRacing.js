@@ -94,13 +94,9 @@ function apiRequests() {
       return new Date(d).toString() !== "Invalid Date";
     }
 
-    const cricketIds = ['32882829','32887411','32855231','32853025','32885122','32853028']
-    const soccerIds = ['32894202','32894255','32892987','32894267','32896673','32893031','32881639','32893005','32888356','32893030']
-
     const requestData = {
       "filter": {
-        // "eventTypeIds": [sportsId],
-        "eventIds": sportsId === "1" ? soccerIds : sportsId === "4" ?  cricketIds : []
+        "eventTypeIds": [sportsId],
       }
     }
 
