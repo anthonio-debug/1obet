@@ -3764,6 +3764,34 @@ const postmanwork = async (req, res) => {
       .send({ message: "Error", error: err });
   }
 }
+const eventsAPICalls  = async (req, res) => {
+
+  try{
+    const header = {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const url = req.body.url
+    const requestData =  req.body.requestData
+
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+    const data = response.data.result;
+    return res.status(200).send({ resp: data});
+  }
+   catch (err) {
+    console.warn("Query error ======= :", err);
+    return res
+      .status(500)
+      .send({ message: "Error", error: err });
+  }
+}
 
 loginRouter.post("/placeBet", betValidator.validate("placeBet"), placeBet);
 loginRouter.post("/getUserBets", getUserBets);
@@ -3778,6 +3806,9 @@ loginRouter.get("/countFakeBets", countFakeBet);
 loginRouter.post("/approvedFakeBet/:id", approvedFakeBet);
 loginRouter.get("/reviewFakeBet/:id/:sportsId", reviewFakeBet);
 loginRouter.post("/postmanwork", postmanwork);
+loginRouter.post("/eventsapicalls", eventsAPICalls);
+
+
 loginRouter.get("/profitLose", profitLose);
 loginRouter.get("/EventWiseprofitLose", EventWiseprofitLose);
 loginRouter.get("/dailyMatchWiseprofitLose", dailyMatchWiseprofitLose);

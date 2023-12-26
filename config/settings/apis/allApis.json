@@ -194,5 +194,6 @@
   "track-bet",
   "listCricket",
   "editCricket",
-  "updatemarketstatus"
+  "updatemarketstatus",
+  "eventsapicalls"
 ]
