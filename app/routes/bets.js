@@ -126,17 +126,22 @@ const apiCallForOdds = async (marketId) =>{
 
 const stopbetStatusChecker = async (id) => {
   try {
-    const scores = await Crickets.find({ eventId: id}).sort({ _id: -1 }).limit(1);
-    if(scores && scores?.result &&  scores?.result?.length){
-      const result =  scores?.result;
-      const stopbetStatus =  ["paused", "lowlight", "low light", "no ball", "noball", "free hit","freehit", "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed", "rain", "suspend", "delay", "pitch", "plood", "bowled","injured"];
-      if(stopbetStatus.includes(result.toLowerCase() )){
+    const scores = await Crickets.findOne({eventId: id});
+    if (scores && scores?.result && scores?.result?.length) {
+      const result = scores?.result;
+      const stopbetStatus = ["no ball", "noball", "free hit", "freehit",
+        "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed",
+        "rain", "suspend", "delay", "pitch", "plood", "bowled", "injured",
+        "rain stops play"];
+      console.log('------------checking stopped beting: ', result, 'lower case', result.toLowerCase())
+      if (stopbetStatus.includes(result.toLowerCase())) {
+        console.log('------------stopped beting: ', result, 'lower case', result.toLowerCase())
         return 400
       }
     }
     return 200;
-  } catch (error){
-    console.warn(`Error: ${error}`);    
+  } catch (error) {
+    console.warn(`Error: ${error}`);
     return 200;
   }
 }
