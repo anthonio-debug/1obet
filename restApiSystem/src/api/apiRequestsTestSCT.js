@@ -366,7 +366,7 @@ function apiRequests() {
       "filter": {
         "eventIds": [eventId],
       },
-      "maxResults": 25,
+      "maxResults": 100,
       "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
     }
 
