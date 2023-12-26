@@ -1583,6 +1583,13 @@ const placeBet = async (req, res) => {
       let inning = scores.inning;
       let currentOver = inning == 1 ? scores.over1 : scores.over2
       let score = inning === 1 ? scores.score1 : scores.score2
+      const wikets = score.split('/')[1];
+      if(Number(wikets) === 10 ){
+        return res.status(404).send({
+          success: false,
+          message: "betting not allowed !"
+        });
+      }
       let sessionAddition = 0;
       if (inning == 2){
         if (type == "TEST") {
@@ -3716,61 +3723,6 @@ const SingleUserAllBets = async (req, res) => {
       const deposits = await deposit.find({ betId: bet._id,  userId: Number(req.query.userId) }).toArray();
       bet.multipeResponse = deposits;
     }
-
-    // const result = await Bets.aggregate([
-
-    //   {
-    //     $match: { 
-    //       userId: Number(req.query.userId),
-    //       // date: {
-    //       //   $gte: new Date().getTime() - 86400000
-    //       // }
-    //     }
-
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "deposits", 
-    //       localField: "_id",
-    //       foreignField: "betId",
-    //       as: "deposit"
-    //     }
-    //   },
-    //   // {
-    //   //   $group: {
-    //   //     _id: "$_id",
-    //   //     sportsId: { $first: "$sportsId" }, 
-    //   //     marketId:  { $first: "$marketId" },
-    //   //     userId:  { $first: "$userId" },
-    //   //     betAmount:  { $first: "$betAmount" },
-    //   //     betRate: { $first: "$betRate" },
-    //   //     selectedBetRate: { $first: "$selectedBetRate" },
-    //   //     betSession: { $first: "$betSession" },
-    //   //     fancyData: { $first: "$fancyData" },
-    //   //     TargetScore: { $first: "$TargetScore" },
-    //   //     matchId: { $first: "$matchId" },
-    //   //     winningAmount : { $first: "$winningAmount" },
-    //   //     loosingAmount : { $first: "$loosingAmount" },
-    //   //     subMarketId: { $first: "$subMarketId" },
-    //   //     event: { $first: "$event" },
-    //   //     position: { $first: "$position" },
-    //   //     eventId: { $first: "$eventId" },
-    //   //     fancyRate: { $first: "$fancyRate" },
-    //   //     calculateExp: { $first: "$calculateExp" },
-    //   //     exposureAmount: { $first: "$exposureAmount" },
-    //   //     betTime: { $first: "$betTime" },
-    //   //     iscalculatedExp: { $first: "$iscalculatedExp" },
-    //   //     deposit_id: { $first: { $arrayElemAt: ["$deposit._id", 0] } },
-    //   //     addedExpoisureAmount: { $first: { $arrayElemAt: ["$deposit.addedExpoisureAmount", 0] } },
-    //   //     UserPrevexposure: { $first: { $arrayElemAt: ["$deposit.UserPrevexposure", 0] } },
-    //   //     UpdatedExposure: { $first: { $arrayElemAt: ["$deposit.UpdatedExposure", 0] } },
-    //   //     userAvailableBalanceBFTrans: { $first: { $arrayElemAt: ["$deposit.userAvailableBalanceBFTrans", 0] } },
-    //   //     userAvailableBalanceAFTrans: { $first: { $arrayElemAt: ["$deposit.userAvailableBalanceAFTrans", 0] } },
-    //   //     UserBalanceBFTrans: { $first: { $arrayElemAt: ["$deposit.UserBalanceBFTrans", 0] } },
-    //   //     UserBalanceAFTrans: { $first: { $arrayElemAt: ["$deposit.UserBalanceAFTrans", 0] } }
-    //   //   }
-    //   // }
-    // ]).exec();
 
     return res.send({
       status: true,
