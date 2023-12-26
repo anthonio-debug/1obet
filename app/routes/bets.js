@@ -133,6 +133,7 @@ const stopbetStatusChecker = async (id) => {
         "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed",
         "rain", "suspend", "delay", "pitch", "plood", "bowled", "injured",
         "rain stops play"];
+      console.log('------------checking stopped beting: ', result, 'lower case', result.toLowerCase())
       if (stopbetStatus.includes(result.toLowerCase())) {
         console.log('------------stopped beting: ', result, 'lower case', result.toLowerCase())
         return 400
