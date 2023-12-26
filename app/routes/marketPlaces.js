@@ -2,6 +2,7 @@ const express = require('express');
 const { validationResult } = require('express-validator');
 const MarketType = require('../models/marketTypes');
 const SubMarketType = require('../models/subMarketTypes');
+const MarketIDS = require('../models/marketIds');
 const User = require('../models/user');
 const { v4: uuidv4 } = require('uuid');
 const marketPlaceVlidator = require('../validators/marketPlaces');
@@ -126,6 +127,86 @@ async function getAllMarketTypes(req, res) {
   });
 }
 
+async function getMarketsBySportsId(req, res) {
+  try {
+    const sportsId = req.params.sportsId;
+    const marketData = await MarketIDS.aggregate([
+      { 
+        $match: { sportID: parseInt(sportsId, 10) } 
+      },
+      {
+        $lookup: {
+          from: 'inplayevents',
+          localField: 'eventId',
+          foreignField: 'Id',
+          as: 'eventDetails',
+        }
+      },
+      {
+        $unwind: "$eventDetails"
+      },
+      {
+        $project: {
+          _id: 1,
+          sportID: 1,
+          eventId: 1,
+          eventName: "$eventDetails.name",
+          marketId: 1,
+          marketName: 1,
+          status: 1,
+        }
+      }
+    ]);
+
+    res.status(200).json({success: true, data: marketData});
+  } catch (err) {
+    return res.status(404).send({
+      success: false,
+      message: 'Failed to update allowed market type by SportsId',
+    });
+  }
+}
+
+async function getMarketsByEventId(req, res) {
+  try {
+    const eventId = req.params.eventId;
+    const marketData = await MarketIDS.aggregate([
+      { 
+        $match: { eventId: eventId } 
+      },
+      {
+        $lookup: {
+          from: 'inplayevents',
+          localField: 'eventId',
+          foreignField: 'Id',
+          as: 'eventDetails',
+        }
+      },
+      {
+        $unwind: "$eventDetails"
+      },
+      {
+        $project: {
+          _id: 1,
+          sportID: 1,
+          eventId: 1,
+          eventName: "$eventDetails.name",
+          marketId: 1,
+          marketName: 1,
+          status: 1,
+        }
+      }
+    ]);
+
+    res.status(200).json({success: true, data: marketData});
+  } catch (err) {
+    return res.status(404).send({
+      success: false,
+      message: 'Failed to update allowed market type by EventId',
+    });
+  }
+}
+
 async function addAllowedMarketTypes(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -153,6 +234,8 @@ async function addAllowedMarketTypes(req, res) {
 }
 
 loginRouter.get('/getAllMarketTypes', getAllMarketTypes);
+loginRouter.get('/getMarketsBySportsId/:sportsId', getMarketsBySportsId);
+loginRouter.get('/getMarketsByEventId/:eventId', getMarketsByEventId);
 loginRouter.post('/addMarketType', addMarketType);
 loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
 loginRouter.post(
