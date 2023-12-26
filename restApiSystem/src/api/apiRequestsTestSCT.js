@@ -185,9 +185,37 @@ function apiRequests() {
     let to = new Date(from);
     to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
 
+    const cricketIds = [
+      '32882829',
+      '32887411',
+      '32855231',
+      '32853025',
+      '32885122',
+      '32853028'
+    ]
+
+    const soccerIds = [
+      '32894202',
+      '32894255',
+      '32892987',
+      '32894267',
+      '32896673',
+      '32893031',
+      '32881639',
+      '32893005',
+      '32888356',
+      '32893030'
+    ]
+
     const requestData = {
       "filter": {
-        "eventTypeIds": [sportsId],
+        // "eventTypeIds": [sportsId],
+        "eventIds": 
+          sportsId === "1" 
+          ? soccerIds 
+          : sportsId === "4" 
+          ? cricketIds 
+          : []
       }
     }
     let url = `${sportsAPIUrl}/listEvents`;
@@ -197,26 +225,14 @@ function apiRequests() {
         requestData,
         header
       );
-
+      
       let events = response.data.result;
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
         });
 
-        let limitation = 0
         for (const event of events) {
-          if (
-            limitation > 
-              sportsId === "1" 
-              ? config.soccerEventsAllowedCount
-              : sportsId === "2"
-              ? config.tennistEventsAllowedCount
-              : sportsId === "4"
-              ? config.cricketEventsAllowedCount
-              : config.allSportsEventsAllowedCount
-          ) break
-          limitation++
           const existingDoc = await inPlayEvents.findOne({Id: event.event.id});
 
           if (existingDoc && existingDoc.isCanceled === true) {
@@ -258,7 +274,7 @@ function apiRequests() {
                 competitionId: competitions[0]?.competition?.id ? competitions[0]?.competition?.id : null,
                 competitionName: competitions[0]?.competition?.name ? competitions[0]?.competition?.name : null,
                 inplayFromServer: false,
-                hasFancy: false,
+                hasFancy: true,
                 status: 'OPEN',
                 isPremium: false,
                 type: event.event.type,
@@ -349,7 +365,7 @@ function apiRequests() {
       "filter": {
         "eventIds": [eventId],
       },
-      "maxResults": 20,
+      "maxResults": 100,
       "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
     }
 
@@ -362,7 +378,7 @@ function apiRequests() {
       );
 
       const marketsData = response.data.result;
-      let marketStatus = 'PENDING';
+      let marketStatus = 'PENDING'; 
 
       if (marketsData.length > 0) {
         let marketIds = [];
