@@ -132,9 +132,9 @@ const stopbetStatusChecker = async (id) => {
       const stopbetStatus = ["no ball", "noball", "free hit", "freehit",
         "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed",
         "rain", "suspend", "delay", "pitch", "plood", "bowled", "injured",
-        "Rain Stops play"];
+        "rain stops play"];
       if (stopbetStatus.includes(result.toLowerCase())) {
-        console.log('------------stopped beting: ', result)
+        console.log('------------stopped beting: ', result, 'lower case', result.toLowerCase())
         return 400
       }
     }
