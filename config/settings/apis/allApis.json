@@ -193,5 +193,6 @@
   "trackstuck",
   "track-bet",
   "listCricket",
-  "editCricket"
+  "editCricket",
+  "updatemarketstatus"
 ]

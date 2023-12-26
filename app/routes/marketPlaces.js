@@ -175,22 +175,10 @@ async function getMarketsByEventId(req, res) {
         $match: { eventId: eventId } 
       },
       {
-        $lookup: {
-          from: 'inplayevents',
-          localField: 'eventId',
-          foreignField: 'Id',
-          as: 'eventDetails',
-        }
-      },
-      {
-        $unwind: "$eventDetails"
-      },
-      {
         $project: {
           _id: 1,
           sportID: 1,
           eventId: 1,
-          eventName: "$eventDetails.name",
           marketId: 1,
           marketName: 1,
           status: 1,
@@ -205,6 +193,29 @@ async function getMarketsByEventId(req, res) {
       message: 'Failed to update allowed market type by EventId',
     });
   }
+}
+async function updateMarketStatus(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ message: errors.errors });
+  }
+  try {
+    const data = req.body
+    await MarketIDS.updateOne(
+      { _id: data._id },
+      { status: data.status }
+    )
+    return res.status(200).send({
+      success: true,
+      message: 'Updated successfully !',
+    });
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Failed to update allowed market type by SportsId',
+    });
+  }
+
 }
 
 async function addAllowedMarketTypes(req, res) {
@@ -238,10 +249,7 @@ loginRouter.get('/getMarketsBySportsId/:sportsId', getMarketsBySportsId);
 loginRouter.get('/getMarketsByEventId/:eventId', getMarketsByEventId);
 loginRouter.post('/addMarketType', addMarketType);
 loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
-loginRouter.post(
-  '/addAllowedMarketTypes',
-  marketPlaceVlidator.validate('addAllowedMarketTypes'),
-  addAllowedMarketTypes
-);
+loginRouter.post('/addAllowedMarketTypes', marketPlaceVlidator.validate('addAllowedMarketTypes'), addAllowedMarketTypes);
+loginRouter.post('/updatemarketstatus', marketPlaceVlidator.validate('updateMarketStatus'), updateMarketStatus);
 // loginRouter.post('/editAllowedMarketTypes', editAllowedMarketTypes);
 module.exports = { router, loginRouter };
