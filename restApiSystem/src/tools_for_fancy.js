@@ -56,7 +56,7 @@ function ToolForFancy() {
     try {
       let marketIds = [];
       let processArray = [];
-      let events = await inPlayEvents.find({sportsId: '4', inplay: true, hasFancy: true}, {Id: 1}).exec();
+      let events = await inPlayEvents.find({sportsId: '4', isShowed: true, hasFancy: true}, {Id: 1}).exec();
 
       for (let index = 0; index < events.length; index++) {
         const event = events[index];
