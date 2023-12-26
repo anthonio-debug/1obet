@@ -8,7 +8,7 @@
   "sportsAPIUrl": "http://185.58.225.212:8080/api",
   "old_sportsAPIUrl": "http://209.250.242.175:33332",
 
-  "liveTvUrl": "https://livesportscore.xyz:3440/api",
+  "liveTvUrl": "https://livesportscore.xyz:3475/api",
   "liveScoreUrl": "https://livesportscore.xyz:3443/api/getScoreId",
   "roundResultUrl": "http://103.228.112.83:8997",
   "sportsLiveScore": "https://livesportscore.xyz:3440/api/bf_scores/",
