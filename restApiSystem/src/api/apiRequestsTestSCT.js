@@ -275,7 +275,7 @@ function apiRequests() {
                 competitionId: competitions[0]?.competition?.id ? competitions[0]?.competition?.id : null,
                 competitionName: competitions[0]?.competition?.name ? competitions[0]?.competition?.name : null,
                 inplayFromServer: false,
-                hasFancy: false,
+                hasFancy: true,
                 status: 'OPEN',
                 isPremium: false,
                 type: event.event.type,
