@@ -47,7 +47,8 @@ const userSchema = new Schema({
   creditRemaining: { type: Number, default: 0 },
   cash: { type: Number, default: 0 },
   remoteId: { type: Number },
-  data: { type: Object, default: {} }
+  data: { type: Object, default: {} },
+  activeBetPlacing: { type: Boolean, default: false },
 });
 
 userSchema.methods.hashPass = function (next) {

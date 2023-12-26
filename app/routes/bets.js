@@ -129,7 +129,7 @@ const stopbetStatusChecker = async (id) => {
     const scores = await Crickets.find({ eventId: id}).sort({ _id: -1 }).limit(1);
     if(scores && scores?.result &&  scores?.result?.length){
       const result =  scores?.result;
-      const stopbetStatus =  ["no ball", "noball", "free hit","freehit", "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed", "rain", "suspend", "delay", "pitch", "plood", "bowled","injured"];
+      const stopbetStatus =  ["paused", "lowlight", "low light", "no ball", "noball", "free hit","freehit", "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed", "rain", "suspend", "delay", "pitch", "plood", "bowled","injured"];
       if(stopbetStatus.includes(result.toLowerCase() )){
         return 400
       }
@@ -206,6 +206,13 @@ const placeBet = async (req, res) => {
     const user = await User.findOne({ userId }).exec();
     if (!user) {
       return res.status(404).send({ message: "illegal user betting" });
+    }
+
+    if(user.activeBetPlacing){
+      return res.status(404).send({ message: "Please wait few seconds " });
+    }else {
+      user.activeBetPlacing = true;
+      user.save();
     }
 
     if (user.bettingAllowed == false) {
@@ -2397,6 +2404,7 @@ const placeBet = async (req, res) => {
             {
               exposure: UserExpAmount,
               availableBalance: UserAvlBalAmount,
+              activeBetPlacing: false
             }
           );
 
