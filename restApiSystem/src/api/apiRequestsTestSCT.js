@@ -350,7 +350,7 @@ function apiRequests() {
         "eventIds": [eventId],
       },
       "maxResults": 20,
-      "marketProjection": ["RUNNER_DESCRIPTION", "RUNNER_METADATA"]
+      "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
     }
 
     const url = `${sportsAPIUrl}/listMarketCatalogue`;
@@ -362,7 +362,7 @@ function apiRequests() {
       );
 
       const marketsData = response.data.result;
-      let marketStatus = 'OPEN';
+      let marketStatus = 'PENDING';
 
       if (marketsData.length > 0) {
         let marketIds = [];
