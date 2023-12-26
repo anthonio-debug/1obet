@@ -362,7 +362,7 @@ function apiRequests() {
       );
 
       const marketsData = response.data.result;
-      let marketStatus = 'PENDING';
+      let marketStatus = 'PENDING'; 
 
       if (marketsData.length > 0) {
         let marketIds = [];
