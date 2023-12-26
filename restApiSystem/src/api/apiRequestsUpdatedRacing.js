@@ -275,7 +275,7 @@ function apiRequests() {
                   startTime: new Date(eventsData[j].marketStartTime),
                   numberOfRunners: eventsData[j].runners?.length,
                   totalMatched: eventsData[j].totalMatched,
-                  status: "OPEN"
+                  status: "PENDING"
                 },
                 description: {
                   marketName: eventsData[j].marketName,
