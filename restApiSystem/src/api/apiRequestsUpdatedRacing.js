@@ -138,7 +138,7 @@ function apiRequests() {
                 timezone: events[k].event.timezone,
                 openDate: Date.parse((events[k].event.openDate)),
                 inplayFromServer: false,
-                hasFancy: false,
+                hasFancy: true,
                 // isShowed: true,
                 status: 'OPEN',
                 isPremium: false,
@@ -232,7 +232,7 @@ function apiRequests() {
           "eventTypeIds": [sportsId],
           "marketTypes": ['WIN'],
         },
-        "maxResults": 20,
+        "maxResults": 100,
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
 
