@@ -16,6 +16,7 @@ const marketGainWithDuplicates = async (req, res) => {
   const userId = Number(req.query.userId);
   const marketId = req.query.marketId;
   const depositId = mongoose.Types.ObjectId(req.query.depositId);
+  const roundId = req.query.roundId;
   let asianWinner = ''
 
   // const condition = { marketId: marketId }
@@ -79,6 +80,48 @@ const marketGainWithDuplicates = async (req, res) => {
 
     if (marketId != "none" && depositRes.sportsId != "6") {
       const betRes = await Bets.find({ userId: userId, marketId: marketId });
+
+      let betsInfo = []
+      for (let k = 0; k < betRes?.length; k++) {
+        if (!marketData?.winnerInfo){
+          const resultInfo = await AsianResult.findOne({ roundId: betRes[k]?.roundId })
+          if (resultInfo?.tableId == "teen20"){
+            if (resultInfo?.result[0]?.win == "1") {
+              asianWinner = "Player A Cards"
+            } else {
+              asianWinner = "Player B Cards"
+            }
+          } else if (resultInfo?.tableId == "lucky7eu"){
+              asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
+          } else if (resultInfo?.tableId == "aaa"){
+            asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
+          } else if (resultInfo?.tableId == "card32eu"){
+            const generalResult = resultInfo?.result[0]?.desc.split("|");
+            asianWinner = generalResult[0]
+          } 
+        }
+        const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
+
+        let tempBet = {
+          price: betRes[k].betAmount,
+          name: betRes[k].runnerName,
+          createdAt: betRes[k].createdAt,
+          size: betRes[k].betRate,
+          type: betRes[k].type,
+          isfancyOrbookmaker: betRes[k].isfancyOrbookmaker,
+          fancyData: betRes[k].fancyData,
+          matchType: betRes[k]?.matchType,
+          SessionScore: betRes[k]?.SessionScore,
+          winnerRunnerData: betRes[k]?.winnerRunnerData,
+          resultData: betRes[k]?.resultData,
+          roundId: betRes[k]?.roundId, 
+          winner: Winner  
+        }
+        betsInfo.push(tempBet)
+      }
+      response.betsInfo = betsInfo 
+    } else if (depositRes.sportsId == "6") {
+      const betRes = await Bets.find({ userId: userId, roundId: roundId });
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
