@@ -140,7 +140,7 @@ function apiRequests() {
                 inplayFromServer: false,
                 hasFancy: true,
                 // isShowed: true,
-                status: 'OPEN',
+                status: 'PENDING',
                 isPremium: false,
                 type: events[k].event.type,
                 matchTypeProvider: getMatchType(
@@ -164,7 +164,7 @@ function apiRequests() {
 
         var allIDS = [];
         const currentEvents = await InPlayEvents.find(
-          {status: 'PENDING', sportsId: sportsId + ""},
+          {status: 'OPEN', sportsId: sportsId + ""},
           {Id: 1}
         );
 
