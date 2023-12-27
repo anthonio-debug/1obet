@@ -7,6 +7,7 @@ const Bets = require("../models/bets");
 const User = require("../models/user");
 const SubMarketType = require("../models/subMarketTypes");
 const loginRouter = express.Router();
+const router = express.Router();
 const betValidator = require("../validators/bets");
 const maxAllowedBetSizes = require("../models/betLimits");
 const userBetSizes = require("../models/userBetSizes");
