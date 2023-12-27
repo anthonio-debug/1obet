@@ -362,7 +362,7 @@ async function listEventsBySport(req, res) {
       events = await MarketIDS.aggregate([
         {
           $match: {
-            sportsId: Number(sportId)   
+            sportID: Number(sportId)   
           },
         },
         {
