@@ -140,7 +140,6 @@ function apiRequests() {
                 inplayFromServer: false,
                 hasFancy: true,
                 // isShowed: true,
-                status: 'PENDING',
                 isPremium: false,
                 type: events[k].event.type,
                 matchTypeProvider: getMatchType(
