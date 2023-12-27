@@ -377,7 +377,7 @@ async function listEventsBySport(req, res) {
           $group: {
             _id: "$_id",
             Id: { $first: "$eventId" },
-            marketIds: { $first: "$marketId" },
+            marketIds: { $push: "$marketId" },
             sportsId: { $first: "$sportID" },
             openDate: { $first: "$openDate" },
             status: { $first: "$status" },
