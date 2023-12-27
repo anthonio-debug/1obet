@@ -140,6 +140,7 @@ function apiRequests() {
                 inplayFromServer: false,
                 hasFancy: true,
                 // isShowed: true,
+                status: 'PENDING',
                 isPremium: false,
                 type: events[k].event.type,
                 matchTypeProvider: getMatchType(
@@ -379,12 +380,12 @@ function apiRequests() {
               const ix = _.findIndex(events, function (o) {
                 return o.marketId == odds.marketId;
               });
-              if (ix != -1) {
-                await InPlayEvents.findOneAndUpdate({Id: events[ix].eventId}, {
-                  status: odds.status,
-                  marketID: events[ix].marketId
-                });
-              }
+              // if (ix != -1) {
+              //   await InPlayEvents.findOneAndUpdate({Id: events[ix].eventId}, {
+              //     status: odds.status,
+              //     marketID: events[ix].marketId
+              //   });
+              // }
 
               await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {readyForScore: true}});
               if (odds.marketId) {
