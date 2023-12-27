@@ -381,13 +381,17 @@ async function listEventsBySport(req, res) {
             sportsId: { $first: "$sportID" },
             openDate: { $first: "$openDate" },
             status: { $first: "$status" },
-            inPlay: { type: Boolean, default: false },
-            lastCheck: { type: Number,default: 0 },
+            inPlay: { $first: "$inPlay" },
+            countryCode:  { $first: { $arrayElemAt: ["$event.countryCode", 0] } },
+            venue:  { $first: { $arrayElemAt: ["$event.venue", 0] } },
+            inplay2:  { $first: { $arrayElemAt: ["$event.inplay", 0] } },
 
           }
         },
         {
-          $sort:
+          $sort: {
+            openDate: 1
+          }
         }
       ])
 
