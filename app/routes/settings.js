@@ -380,12 +380,12 @@ async function listEventsBySport(req, res) {
             marketIds: { $push: "$marketId" },
             sportsId: { $first: "$sportID" },
             openDate: { $first: "$openDate" },
+            openDate2:  { $first: { $arrayElemAt: ["$event.openDate", 0] } },
             status: { $first: "$status" },
             inPlay: { $first: "$inPlay" },
             countryCode:  { $first: { $arrayElemAt: ["$event.countryCode", 0] } },
             venue:  { $first: { $arrayElemAt: ["$event.venue", 0] } },
             inplay2:  { $first: { $arrayElemAt: ["$event.inplay", 0] } },
-
           }
         },
         {
