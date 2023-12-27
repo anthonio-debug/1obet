@@ -358,11 +358,50 @@ async function listEventsBySport(req, res) {
           isShowed: true,
         }).sort({ openDate: 1 });
       } else if (sportId == "7" || sportId == "4339") {
-        events = await Events.find({
-          sportsId: sportId,
-          status: "OPEN",
-          openDate: { $gte: startOfDay, $lt: endOfDay }
-        }).sort({ openDate: 1 });
+
+      events = await MarketIDS.aggregate([
+        {
+          $match: {
+            sportID: Number(sportId)   
+          },
+        },
+        {
+          $lookup: {
+            from: "inplayevents",
+            localField: "sportsId",
+            foreignField: "sportID",
+            as: "event",
+          },
+        },
+        {
+          $group: {
+            _id: "$_id",
+            Id: { $first: "$eventId" },
+            marketIds: { $push: "$marketId" },
+            sportsId: { $first: "$sportID" },
+            openDate: { $first: "$openDate" },
+            openDate2:  { $first: { $arrayElemAt: ["$event.openDate", 0] } },
+            status: { $first: "$status" },
+            inPlay: { $first: "$inPlay" },
+            countryCode:  { $first: { $arrayElemAt: ["$event.countryCode", 0] } },
+            venue:  { $first: { $arrayElemAt: ["$event.venue", 0] } },
+            inplay2:  { $first: { $arrayElemAt: ["$event.inplay", 0] } },
+          }
+        },
+        {
+          $sort: {
+            openDate: 1
+          }
+        }
+      ])
+
+
+
+        // events = await Events.find({
+        //   sportsId: sportId,
+        //   status: "OPEN",
+        //   openDate: { $gte: startOfDay, $lt: endOfDay }
+        // }).sort({ openDate: 1 });
       } else {
         events = await Events.find({
           sportsId: sportId,
