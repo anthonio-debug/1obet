@@ -340,7 +340,10 @@ function apiRequests() {
             sportID: eventsData[j].eventType.id,
             eventId: eventId,
           },
-          {$set: {runners: runners}}, {upsert: true, new: true});
+          {$set: {
+            runners: runners, 
+            openDate: Date.parse(eventsData[j].marketStartTime)
+          }}, {upsert: true, new: true});
       }
       await InPlayEvents.findOneAndUpdate(
         {Id: eventId},

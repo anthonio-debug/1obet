@@ -659,7 +659,7 @@ function getLedgerDetails(req, res) {
 
         if(result[0].results&&result[0].results.length>0){
          for(let i=0;i<result[0].results.length;i++){
-          if(result[0].results[i].sportsId !="6" && result[0].results[i].betId){
+          if(result[0].results[i].betId){
             try{
               const betInfo = await Bet.findOne({
                 _id: result[0].results[i].betId
@@ -671,6 +671,7 @@ function getLedgerDetails(req, res) {
               result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
               result[0].results[i].fancyData = betInfo?.fancyData;
               result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
+              result[0].results[i].roundId = betInfo?.roundId;
             } catch (err) {
               continue;
             }
@@ -686,7 +687,6 @@ function getLedgerDetails(req, res) {
           return res.status(200).send({ message: 'Deposit record not found' });
         }
   
-        console.log("11111111111111111", result[0].results)
         const responseData = {
           message: 'Deposit Records',
   

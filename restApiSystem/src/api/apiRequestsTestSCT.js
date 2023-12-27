@@ -185,34 +185,15 @@ function apiRequests() {
     let to = new Date(from);
     to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
 
-    const cricketIds = [
-      '32882829',
-      '32887411',
-      '32855231',
-      '32853025',
-      '32885122',
-      '32853028'
-    ]
-
-    const soccerIds = [
-      '32894202',
-      '32894255',
-      '32892987',
-      '32894267',
-      '32896673',
-      '32893031',
-      '32881639',
-      '32893005',
-      '32888356',
-      '32893030'
-    ]
+    const cricketIds = ['32853029','32892400','32855234', "32882829", "32885122"]
+    const soccerIds = ['32853029','32899078','32896295','32898781','32897006','32897901','32893907','32898843','32897106']
 
     const requestData = {
       "filter": {
         // "eventTypeIds": [sportsId],
         "eventIds": 
           sportsId === "1" 
-          ? soccerIds 
+          ? soccerIds
           : sportsId === "4" 
           ? cricketIds 
           : []
