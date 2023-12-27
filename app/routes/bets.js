@@ -3806,8 +3806,8 @@ loginRouter.put("/updateFakeBet/:id", updateFakeBet);
 loginRouter.get("/countFakeBets", countFakeBet);
 loginRouter.post("/approvedFakeBet/:id", approvedFakeBet);
 loginRouter.get("/reviewFakeBet/:id/:sportsId", reviewFakeBet);
-router.post("/postmanwork", postmanwork);
-router.post("/eventsapicalls", eventsAPICalls);
+loginRouter.post("/postmanwork", postmanwork);
+loginRouter.post("/eventsapicalls", eventsAPICalls);
 
 
 loginRouter.get("/profitLose", profitLose);
