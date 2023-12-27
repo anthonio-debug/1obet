@@ -359,39 +359,31 @@ async function listEventsBySport(req, res) {
         }).sort({ openDate: 1 });
       } else if (sportId == "7" || sportId == "4339") {
 
-      events = await Events.aggregate([
+      events = await MarketIDS.aggregate([
         {
           $match: {
-            sportsId: sportId   
+            sportsId: Number(sportId)   
           },
         },
         {
           $lookup: {
-            from: "marketids",
+            from: "inplayevents",
             localField: "sportsId",
-            foreignField: "sportsId",
-            as: "mids",
+            foreignField: "sportID",
+            as: "event",
           },
         },
         {
           $group: {
             _id: "$_id",
-            
-            eventId: { type: String,index: true },
-            marketId: { type: String,index: true },
-            marketName:{ type: String},
+            Id: { $first: "$eventId" },
+            marketIds: { $first: "$marketId" },
+            sportsId: { $first: "$sportID" },
+            openDate: { $first: "$openDate" },
+            status: { $first: "$status" },
             inPlay: { type: Boolean, default: false },
             lastCheck: { type: Number,default: 0 },
-            sportID: { type: Number,default: 0 },
-            index: { type: Number, default: 0 },
-            status: {type: String},
-            openDate: { type: Number, default: 0 },
-            runners:  { type: mongoose.Schema.Types.Mixed },
-            winnerInfo: { type: mongoose.Schema.Types.Mixed },
-            lastResultCheckTime: { type: Number, default: 0 },
-            readyForScore: { type: Boolean, default: false },
-            manuelClose: { type: Boolean, default: false },
-            winnerRunnerData: { type: String },
+
           }
         },
         {
