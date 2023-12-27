@@ -264,10 +264,22 @@ async function getTodayEventsBySportsId(req, res) {
       {
         _id: 1,
         Id: 1,
-        name: 1
+        name: 1,
+        openDate: { $toDate: "$openDate" }
       }
     );
-    res.status(200).json({success: true, data: events});
+
+    let data = [];
+
+    for (let k = 0; k < events?.length; k ++) {
+      data.push({
+        _id: events[k]._id,
+        Id: events[k].Id,
+        name: events[k].name,
+        openDate: new Date(events[k].openDate)
+      })
+    }
+    res.status(200).json({success: true, data: data});
   } catch (err) {
     res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
   }

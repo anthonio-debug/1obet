@@ -192,16 +192,7 @@ function apiRequests() {
     ]
 
     const soccerIds = [
-      '32894202',
-      '32894255',
-      '32892987',
-      '32894267',
-      '32896673',
-      '32893031',
-      '32881639',
-      '32893005',
-      '32888356',
-      '32893030'
+      '32853029','32899078','32896295','32898781','32897006','32897901','32893907','32898843','32897106'
     ]
 
     const requestData = {
@@ -209,7 +200,7 @@ function apiRequests() {
         // "eventTypeIds": [sportsId],
         "eventIds": 
           sportsId === "1" 
-          ? soccerIds 
+          ? soccerIds
           : sportsId === "4" 
           ? cricketIds 
           : []
