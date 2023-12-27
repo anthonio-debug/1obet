@@ -164,7 +164,7 @@ function apiRequests() {
 
         var allIDS = [];
         const currentEvents = await InPlayEvents.find(
-          {status: 'OPEN', sportsId: sportsId + ""},
+          {status: 'PENDING', sportsId: sportsId + ""},
           {Id: 1}
         );
 
