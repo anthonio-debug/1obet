@@ -397,11 +397,11 @@ async function listEventsBySport(req, res) {
 
 
 
-        events = await Events.find({
-          sportsId: sportId,
-          status: "OPEN",
-          openDate: { $gte: startOfDay, $lt: endOfDay }
-        }).sort({ openDate: 1 });
+        // events = await Events.find({
+        //   sportsId: sportId,
+        //   status: "OPEN",
+        //   openDate: { $gte: startOfDay, $lt: endOfDay }
+        // }).sort({ openDate: 1 });
       } else {
         events = await Events.find({
           sportsId: sportId,
