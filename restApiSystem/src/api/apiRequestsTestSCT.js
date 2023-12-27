@@ -180,7 +180,7 @@ function apiRequests() {
       return new Date(d).toString() !== "Invalid Date";
     }
     const cricketIds = [
-      '32853029','32892400','32855234'
+      '32853029','32892400','32855234', "32882829", "32885122"
     ]
 
     const soccerIds = [
