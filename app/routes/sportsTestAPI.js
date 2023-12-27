@@ -264,6 +264,7 @@ async function getTodayEventsBySportsId(req, res) {
       {
         _id: 1,
         Id: 1,
+        name: 1
       }
     );
     res.status(200).json({success: true, data: events});
