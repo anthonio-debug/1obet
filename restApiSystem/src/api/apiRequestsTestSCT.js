@@ -179,10 +179,7 @@ function apiRequests() {
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
     }
-    const cricketIds = [
-      '32853029','32892400','32855234', "32882829", "32885122"
-    ]
-
+    const cricketIds = ['32853029','32892400','32855234', "32882829", "32885122"]
     const soccerIds = ['32853029','32899078','32896295','32898781','32897006','32897901','32893907','32898843','32897106']
 
     let from = new Date();
