@@ -17,6 +17,7 @@ const marketGainWithDuplicates = async (req, res) => {
   const marketId = req.query.marketId;
   const depositId = mongoose.Types.ObjectId(req.query.depositId);
   const roundId = req.query.roundId;
+  console.log(roundId, userId, marketId, depositId)
   let asianWinner = ''
 
   // const condition = { marketId: marketId }
@@ -171,7 +172,7 @@ const marketGainWithDuplicates = async (req, res) => {
       isDetailed: true,
       dealer: parent.userName,
       currentUser: currentUser.userName,
-      // Winner: marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner,
+      Winner: marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner,
     });
 
   } else {
