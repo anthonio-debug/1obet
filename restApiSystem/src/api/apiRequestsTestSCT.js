@@ -342,6 +342,8 @@ function apiRequests() {
   }
 
   async function listMarketsByCronJob(eventId, sportID) {
+
+    console.log("listMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJob");
     const requestData = {
       "filter": {
         "eventIds": [eventId],
