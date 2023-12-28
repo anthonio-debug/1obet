@@ -340,7 +340,7 @@ async function listEventsBySport(req, res) {
       end = new Date().getTime() + 24 * 60 * 60 * 1000;
     } else if (sportId == "7" || sportId == "4339") {
       start = new Date().getTime();
-      end = new Date().getTime() + 16 * 60 * 60 * 1000;
+      end = new Date().getTime() + 6 * 60 * 60 * 1000;
     }
 
     if (sportId == "4") {
@@ -411,14 +411,14 @@ async function listEventsBySport(req, res) {
     }
     res.status(200).json({
       success: true,
-      message: "Event By Sports Records..",
+      message: "Event By Sports Records",
       results: events,
     });
   } catch (error) {
     console.error(error);
     res.status(200).json({
       success: false,
-      message: "Failed to get events....",
+      message: "Failed to get events",
       error: error.message,
     });
   }
@@ -1090,14 +1090,14 @@ async function bettorDashboardGames(req, res) {
 
     res.status(200).json({
       success: true,
-      message: "Event By Sports Records2",
+      message: "Event By Sports Records",
       results: organizedEvents,
     });
   } catch (error) {
     console.error(error);
     res.status(200).json({
       success: false,
-      message: "Failed to get events2",
+      message: "Failed to get events",
       error: error.message,
     });
   }
@@ -1240,14 +1240,14 @@ async function bettorDashboardGames2(req, res) {
 
     res.status(200).json({
       success: true,
-      message: "Event By Sports Records3",
+      message: "Event By Sports Records",
       results: organizedEvents,
     });
   } catch (error) {
     console.error(error);
     res.status(200).json({
       success: false,
-      message: "Failed to get events3",
+      message: "Failed to get events",
       error: error.message,
     });
   }
@@ -1526,14 +1526,14 @@ async function getAllMatchSettlements(req, res) {
 
     res.status(200).json({
       success: true,
-      message: "Event By Sports Records4",
+      message: "Event By Sports Records",
       results: organizedEvents,
     });
   } catch (error) {
     console.error(error);
     res.status(200).json({
       success: false,
-      message: "Failed to get events4",
+      message: "Failed to get events",
       error: error.message,
     });
   }
