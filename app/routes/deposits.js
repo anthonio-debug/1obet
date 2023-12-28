@@ -618,20 +618,21 @@ function getLedgerDetails(req, res) {
 
       cashPipeline.push({
         $group: {
-          _id: {
-            $cond: {
-              if: { $in: ["$cashOrCredit", ['Cash', 'Credit']] }, 
-              then: "$_id", 
-              else: "$marketId"
-            }
-          },
+          _id: "$_id",
+          // {
+          //   $cond: {
+          //     if: { $in: ["$cashOrCredit", ['Cash', 'Credit']] }, 
+          //     then: "$_id", 
+          //     else: "$marketId"
+          //   }
+          // },
           originalId: { $first: "$_id" },
           description:  { $first: "$description" },
           amount:  { $sum: "$amount" },
           balance:  { $last: "$balance" },
           availableBalance:  { $last: "$availableBalance" },
           maxWithdraw:  { $last: "$maxWithdraw" },
-          betTime	:  { $first: "$betTime" },
+          betTime	:  { $first: "$betDateTime" },
           date	:  { $first: "$date" },
           createdAt	:  { $first: "$createdAt" },
           sportsId: { $first: "$sportsId" },
@@ -659,7 +660,7 @@ function getLedgerDetails(req, res) {
 
         if(result[0].results&&result[0].results.length>0){
          for(let i=0;i<result[0].results.length;i++){
-          if(result[0].results[i].sportsId !="6" && result[0].results[i].betId){
+          if(result[0].results[i].betId){
             try{
               const betInfo = await Bet.findOne({
                 _id: result[0].results[i].betId
@@ -671,6 +672,7 @@ function getLedgerDetails(req, res) {
               result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
               result[0].results[i].fancyData = betInfo?.fancyData;
               result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
+              result[0].results[i].roundId = betInfo?.roundId;
             } catch (err) {
               continue;
             }
@@ -686,7 +688,6 @@ function getLedgerDetails(req, res) {
           return res.status(200).send({ message: 'Deposit record not found' });
         }
   
-        console.log("11111111111111111", result[0].results)
         const responseData = {
           message: 'Deposit Records',
   
