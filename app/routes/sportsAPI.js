@@ -63,6 +63,8 @@ async function listCompetitions(req, res) {
 }
 
 async function listEventsBySport(req, res) {
+  /*
+  
   const sportId = req.params.sportId;
 
   try {
@@ -120,7 +122,7 @@ async function listEventsBySport(req, res) {
         error: error.message,
       });
     }
-  }
+  } */
 }
 
 
@@ -375,6 +377,8 @@ async function getnewOdds(ids) {
 }
 
 async function eventsBySupportJobs(sportsId) {
+  /*
+  
   const url = `${config.eventListAPIUrl}/listEventsBySport/${sportsId}`;
   try {
     const response = await axios.get(url);
@@ -426,9 +430,12 @@ async function eventsBySupportJobs(sportsId) {
       error: error.message,
     });
   }
+  */
+
 }
 
 async function listMarketsByCronJob(eventId,sport) {
+
   const url = `${config.sportsAPIUrl}/listMarkets/${eventId}`;
   try {
     const response = await axios.get(url);
