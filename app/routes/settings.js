@@ -1090,14 +1090,14 @@ async function bettorDashboardGames(req, res) {
 
     res.status(200).json({
       success: true,
-      message: "Event By Sports Records",
+      message: "Event By Sports Records2",
       results: organizedEvents,
     });
   } catch (error) {
     console.error(error);
     res.status(200).json({
       success: false,
-      message: "Failed to get events",
+      message: "Failed to get events2",
       error: error.message,
     });
   }
@@ -1240,14 +1240,14 @@ async function bettorDashboardGames2(req, res) {
 
     res.status(200).json({
       success: true,
-      message: "Event By Sports Records",
+      message: "Event By Sports Records3",
       results: organizedEvents,
     });
   } catch (error) {
     console.error(error);
     res.status(200).json({
       success: false,
-      message: "Failed to get events",
+      message: "Failed to get events3",
       error: error.message,
     });
   }
@@ -1526,14 +1526,14 @@ async function getAllMatchSettlements(req, res) {
 
     res.status(200).json({
       success: true,
-      message: "Event By Sports Records",
+      message: "Event By Sports Records4",
       results: organizedEvents,
     });
   } catch (error) {
     console.error(error);
     res.status(200).json({
       success: false,
-      message: "Failed to get events",
+      message: "Failed to get events4",
       error: error.message,
     });
   }
