@@ -631,7 +631,7 @@ function getLedgerDetails(req, res) {
           balance:  { $last: "$balance" },
           availableBalance:  { $last: "$availableBalance" },
           maxWithdraw:  { $last: "$maxWithdraw" },
-          betTime	:  { $first: "$betTime" },
+          betTime	:  { $first: "$betDateTime" },
           date	:  { $first: "$date" },
           createdAt	:  { $first: "$createdAt" },
           sportsId: { $first: "$sportsId" },
