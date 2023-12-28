@@ -78,8 +78,9 @@ const marketGainWithDuplicates = async (req, res) => {
     }
 
     response.depositInfo = depositInfo
+    console.log("11111111111111", depositRes.sportsId == "8", ":", roundId)
 
-    if (marketId != "none" && depositRes.sportsId != "6") {
+    if (marketId != "none" && depositRes.sportsId != "6" && depositRes.sportsId != "8") {
       const betRes = await Bets.find({ userId: userId, marketId: marketId });
 
       let betsInfo = []
@@ -121,7 +122,7 @@ const marketGainWithDuplicates = async (req, res) => {
         betsInfo.push(tempBet)
       }
       response.betsInfo = betsInfo 
-    } else if (depositRes.sportsId == "6") {
+    } else if (depositRes.sportsId == "6" || depositRes.sportsId == "8") {
       const betRes = await Bets.find({ userId: userId, roundId: roundId });
 
       let betsInfo = []
