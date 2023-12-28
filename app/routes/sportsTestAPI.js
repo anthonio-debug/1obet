@@ -243,6 +243,39 @@ async function getMarketsByEventId(req, res) {
   }
 }
 
+async function getEventsBySportsId(req, res) {
+  const sportsId = req.params.sportsId;
+
+  try { 
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const requestData = {
+      "filter": {
+        eventTypeIds: [sportsId]
+      },
+    } 
+    var url = `${sportsAPIUrl}/listEvents`;
+    
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+    
+    const marketsData = response.data;
+
+    res.status(200).json({success: true, data: marketsData});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
 async function getTodayEventsBySportsId(req, res) {
   try {
     let sportsId = req.params.sportsId
@@ -294,6 +327,7 @@ router.get('/trackstuck/inactiveusers', inActiveUserExposure);
 router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
 router.get('/track-bet/testAPI/:marketId', testAPI)
 router.get('/track-bet/get-markets/:eventId', getMarketsByEventId)
+router.get('/track-bet/get-events/:sportsId', getEventsBySportsId)
 router.get('/track-bet/get-today-events/:sportsId', getTodayEventsBySportsId)
 
 module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure };
