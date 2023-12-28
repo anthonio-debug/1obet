@@ -508,7 +508,7 @@ function apiRequests() {
       var events = await InPlayEvents.find({
         sportsId: sportsIds[index] + '',
         status: 'OPEN',
-        CompanySetStatus: 'OPEN',
+        CompanySetStatus: 'OPEN'
       }).sort({openDate: 1}).limit(20).exec();
 
       if (events.length) {
@@ -533,7 +533,8 @@ function apiRequests() {
         await InPlayEvents.updateMany({_id: {$in: documentIds}}, {status: 'OPEN'});
         events = await InPlayEvents.find({
           sportsId: sportsIds[index] + '',
-          status: 'OPEN'
+          status: 'OPEN',
+          CompanySetStatus: 'OPEN'
         }).sort({openDate: 1}).limit(20).exec();
       }
 

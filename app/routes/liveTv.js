@@ -10,7 +10,7 @@ const {LIVE_BET_TV_URL} = require("../global/constants");
 
 async function liveTv(req, res) {
   const eventId = req.params.eventId;
-  const url = `${config.liveTvUrl}/get_live_tv_url/${eventId}`;
+  const url = `${config.liveTvUrl}//${eventId}`;
   // console.log('url', url);
   try {
     const response = await axios.get(url);
