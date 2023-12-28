@@ -380,12 +380,12 @@ function apiRequests() {
               const ix = _.findIndex(events, function (o) {
                 return o.marketId == odds.marketId;
               });
-              if (ix != -1) {
-                await InPlayEvents.findOneAndUpdate({Id: events[ix].eventId}, {
-                  status: odds.status,
-                  marketID: events[ix].marketId
-                });
-              }
+              // if (ix != -1) {
+              //   await InPlayEvents.findOneAndUpdate({Id: events[ix].eventId}, {
+              //     status: odds.status,
+              //     marketID: events[ix].marketId
+              //   });
+              // }
 
               await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {readyForScore: true}});
               if (odds.marketId) {
@@ -507,7 +507,8 @@ function apiRequests() {
     for (let index = 0; index < sportsIds.length; index++) {
       var events = await InPlayEvents.find({
         sportsId: sportsIds[index] + '',
-        status: 'OPEN'
+        status: 'OPEN',
+        CompanySetStatus: 'OPEN'
       }).sort({openDate: 1}).limit(20).exec();
 
       if (events.length) {
@@ -532,7 +533,8 @@ function apiRequests() {
         await InPlayEvents.updateMany({_id: {$in: documentIds}}, {status: 'OPEN'});
         events = await InPlayEvents.find({
           sportsId: sportsIds[index] + '',
-          status: 'OPEN'
+          status: 'OPEN',
+          CompanySetStatus: 'OPEN'
         }).sort({openDate: 1}).limit(20).exec();
       }
 
