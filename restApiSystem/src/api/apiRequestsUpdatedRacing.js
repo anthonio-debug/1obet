@@ -360,11 +360,11 @@ function apiRequests() {
   async function raceOddsJob(events) {
     try {
       let marketIds = [];
-
+console.log("raceodds job.......................");
       for (let i = 0; i < events?.length; i++) {
         marketIds.push(events[i].marketId);
       }
-
+      console.log("marketIds.......................",marketIds);
       const requestData = {
         "marketIds": marketIds
       }
@@ -506,7 +506,7 @@ function apiRequests() {
     const sportsIds = [4339, 7];
 
     for (let index = 0; index < sportsIds.length; index++) {
-      console.log("sportsIds[index]-------",sportsIds[index]);
+      //console.log("sportsIds[index]-------",sportsIds[index]);
       var events = await InPlayEvents.find({
         sportsId: sportsIds[index] + '',
         status: 'OPEN',
