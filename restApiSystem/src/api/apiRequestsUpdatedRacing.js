@@ -225,6 +225,7 @@ function apiRequests() {
 
   /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
   async function listMarketsByCronJob(eventId, sportsId, competitionId) {
+    
     try {
       const requestData = {
         "filter": {
@@ -505,12 +506,14 @@ function apiRequests() {
     const sportsIds = [4339, 7];
 
     for (let index = 0; index < sportsIds.length; index++) {
+      console.log("sportsIds[index]-------",sportsIds[index]);
       var events = await InPlayEvents.find({
         sportsId: sportsIds[index] + '',
         status: 'OPEN',
         CompanySetStatus: 'OPEN'
       }).sort({openDate: 1}).limit(20).exec();
 
+console.log('Heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere: ',events.length);
       if (events.length) {
         const checkOther = await InPlayEvents.findOne({
           status: 'WAITING',
