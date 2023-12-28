@@ -140,7 +140,7 @@ function apiRequests() {
                 inplayFromServer: false,
                 hasFancy: true,
                 // isShowed: true,
-                status: 'PENDING',
+                status: 'OPEN',
                 isPremium: false,
                 type: events[k].event.type,
                 matchTypeProvider: getMatchType(
@@ -507,7 +507,8 @@ function apiRequests() {
     for (let index = 0; index < sportsIds.length; index++) {
       var events = await InPlayEvents.find({
         sportsId: sportsIds[index] + '',
-        status: 'OPEN'
+        status: 'OPEN',
+        CompanySetStatus: 'OPEN',
       }).sort({openDate: 1}).limit(20).exec();
 
       if (events.length) {
