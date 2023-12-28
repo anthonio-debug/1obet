@@ -154,6 +154,8 @@ function ToolForFancy() {
   }
 
   async function fancyEventsBySupportJobs() {
+
+/*
     const oldSportsAPIUrl = "http://209.250.242.175:33332";
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
@@ -200,6 +202,6 @@ function ToolForFancy() {
         message: "Failed to get or save fancy events",
         error: error.message,
       };
-    }
+    } */
   }
 }
