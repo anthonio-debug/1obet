@@ -411,14 +411,14 @@ async function listEventsBySport(req, res) {
     }
     res.status(200).json({
       success: true,
-      message: "Event By Sports Records",
+      message: "Event By Sports Records..",
       results: events,
     });
   } catch (error) {
     console.error(error);
     res.status(200).json({
       success: false,
-      message: "Failed to get events",
+      message: "Failed to get events....",
       error: error.message,
     });
   }
