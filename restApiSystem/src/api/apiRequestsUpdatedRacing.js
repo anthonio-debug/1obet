@@ -534,7 +534,6 @@ function apiRequests() {
         events = await InPlayEvents.find({
           sportsId: sportsIds[index] + '',
           status: 'OPEN',
-          CompanySetStatus: 'OPEN'
         }).sort({openDate: 1}).limit(20).exec();
       }
 
