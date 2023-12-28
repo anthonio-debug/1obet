@@ -371,7 +371,7 @@ console.log("raceodds job.......................");
       var url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result
-
+      console.log('oddsData==================',oddsData);
       var responsedMarketIDs = [];
       if (oddsData.length > 0) {
         for (const odds of oddsData) {
