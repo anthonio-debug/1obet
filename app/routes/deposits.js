@@ -940,7 +940,7 @@ const userWithdrawStatusCheck = async (req, res) => {
   }
   const userId = Number(req.query.id);
   const user   = await  User.findOne({ userId: userId })
-  const deposit = await Cash.find({ userId: userId }).soer({ _id: -1 }).limit(1);
+  const deposit = await Cash.find({ userId: userId }).sort({ _id: -1 }).limit(1);
   const lastDeposit = deposit[0]
   const activeBetsCount = await Bet.countDocuments({ userId: userId, status: 1 });
   const difference = lastDeposit.availableBalance - user.availableBalance - (-user.exposure)
