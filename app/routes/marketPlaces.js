@@ -203,7 +203,7 @@ async function updateMarketStatus(req, res) {
     const data = req.body
     await MarketIDS.updateOne(
       { _id: data._id },
-      { status: data.status }
+      { CompanySetStatus: data.status }
     )
     return res.status(200).send({
       success: true,
