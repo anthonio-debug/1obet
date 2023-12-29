@@ -68,6 +68,7 @@ function apiRequests() {
       if (channel.length == 0) {
         return socket.emit("err", "Channel Required");
       }
+      console.log('I am reaching here.........');
       if (channel.charAt(0) == "#") {
         var event_information = await inPlayEvents.findOne({
           Id: channel.substring(1),
