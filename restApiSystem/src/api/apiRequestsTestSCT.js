@@ -365,7 +365,7 @@ function apiRequests() {
       );
 
       const marketsData = response.data.result;
-      let marketStatus = 'PENDING'; 
+      let marketStatus = 'OPEN'; 
 
       if (marketsData.length > 0) {
         let marketIds = [];
@@ -453,6 +453,7 @@ function apiRequests() {
                 marketName: marketIds[index].marketName,
                 sportID: sportID,
                 status: marketIds[index].status,
+                totalMatched: marketIds[index].totalMatched,
                 index: index,
                 runners: marketIds[index].runners,
                 inPlay: true

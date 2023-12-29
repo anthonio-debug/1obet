@@ -286,7 +286,7 @@ function apiRequests() {
                   startTime: new Date(eventsData[j].marketStartTime),
                   numberOfRunners: eventsData[j].runners?.length,
                   totalMatched: eventsData[j].totalMatched,
-                  status: "PENDING"
+                  status: "OPEN"
                 },
                 description: {
                   marketName: eventsData[j].marketName,
@@ -348,6 +348,8 @@ function apiRequests() {
         await MarketIDS.findOneAndUpdate(
           {
             marketId: eventsData[j].marketId,
+            totalMatched: eventsData[j].totalMatched,
+            
             sportID: eventsData[j].eventType.id,
             eventId: eventId,
           },
