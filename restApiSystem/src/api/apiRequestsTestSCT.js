@@ -14,7 +14,6 @@ var _ = require("lodash");
 require('dotenv').config();
 const config = require("../../../config/default.json")
 
-const sportsAPIUrl = "http://185.58.225.212:8080/api";
 const header = {
   headers: {
     'accept': 'application/json',
@@ -180,6 +179,8 @@ function apiRequests() {
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
     }
+    // const cricketIds = ['32892406','32855238','32901594','32900001','32853035','32882829']
+    // const soccerIds = ["32895406","32901546","32901525","32901544","32895376","32901506","32895374","32899464","32901489"]
 
     let from = new Date();
     let to = new Date(from);
@@ -193,13 +194,13 @@ function apiRequests() {
         // "eventTypeIds": [sportsId],
         "eventIds": 
           sportsId === "1" 
-          ? soccerIds
+          ? soccerIds 
           : sportsId === "4" 
           ? cricketIds 
           : []
       }
     }
-    let url = `${sportsAPIUrl}/listEvents`;
+    let url = `${config.newThirdURL}/listEvents`;
     try {
       const response = await axios.post(
         url,
@@ -208,6 +209,7 @@ function apiRequests() {
       );
       
       let events = response.data.result;
+      
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
@@ -228,12 +230,13 @@ function apiRequests() {
           const competitionRequest = {
             "filter": {
               "eventTypeIds": [sportsId],
+              // "eventTypeIds": ['4'],
               "eventIds": [event.event.id],
               "countryCodes": [event.event.countryCode]
             }
           }
 
-          const getCompetitionUrl = `${sportsAPIUrl}/listCompetitions`;
+          const getCompetitionUrl = `${config.newThirdURL}/listCompetitions`;
 
           const responseCompetition = await axios.post(
             getCompetitionUrl,
@@ -247,6 +250,7 @@ function apiRequests() {
             {
               $set: {
                 sportsId: sportsId,
+                // sportsId: '4',
                 Id: event.event.id,
                 name: event.event.name,
                 countryCode: event.event.countryCode,
@@ -352,7 +356,7 @@ function apiRequests() {
       "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
     }
 
-    const url = `${sportsAPIUrl}/listMarketCatalogue`;
+    const url = `${config.newThirdURL}/listMarketCatalogue`;
     try {
       const response = await axios.post(
         url,
@@ -427,18 +431,35 @@ function apiRequests() {
             eventId: ev,
             marketId: marketIds[index].id + "",
           });
+
           if (!marketID) {
-            const newMarket = new MarketIDS({
-              eventId: eventId,
-              marketId: marketIds[index].id + "",
-              marketName: marketIds[index].marketName,
-              sportID: sportID,
-              status: marketIds[index].status,
-              index: index,
-              runners: marketIds[index].runners,
-              inPlay: true
-            });
-            await newMarket.save();
+            const countOfMarket = await MarketIDS.countDocuments({ eventId: eventId, status: "OPEN" });
+
+            if (
+              countOfMarket >
+                (sportID === "1" 
+                ? config.soccerEventsAllowedCount
+                : sportID === "2"
+                ? config.tennistEventsAllowedCount
+                : sportID === "4"
+                ? config.cricketEventsAllowedCount
+                : config.allSportsEventsAllowedCount)
+            ) {
+              return;
+            } else {
+              const newMarket = new MarketIDS({
+                eventId: eventId,
+                marketId: marketIds[index].id + "",
+                marketName: marketIds[index].marketName,
+                sportID: sportID,
+                status: marketIds[index].status,
+                index: index,
+                runners: marketIds[index].runners,
+                inPlay: true
+              });
+              await newMarket.save();
+            }
+
           } else {
             await MarketIDS.findOneAndUpdate(
               {eventId: ev, marketId: marketIds[index].id + ""},
@@ -449,8 +470,7 @@ function apiRequests() {
 
         await inPlayEvents.findOneAndUpdate(
           {Id: eventId},
-          {marketIds: marketIds},
-          {upsert: true, new: true}
+          {marketIds: marketIds}
         );
       }
     } catch (error) {
@@ -481,7 +501,7 @@ function apiRequests() {
       "marketIds": tempArryForIDs
     }
 
-    const url = `${sportsAPIUrl}/listMarketBook`;
+    const url = `${config.newThirdURL}/listMarketBook`;
     axios.post(
       url,
       requestData,
@@ -680,7 +700,7 @@ function apiRequests() {
         "inPlayOnly": true,
       }
     }
-    let url = `${sportsAPIUrl}/listEvents`;
+    let url = `${config.newThirdURL}/listEvents`;
     try {
       axios.post(
         url,

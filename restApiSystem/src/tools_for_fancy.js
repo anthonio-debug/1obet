@@ -22,8 +22,8 @@ function ToolForFancy() {
     io = _io;
 
     setInterval(fancyEventsBySupportJobs, 10 * 1000)
-    setInterval(getList, 20 * 60 * 1000)
-    setInterval(getFancyOdds, 1 * 1000)
+    setInterval(getList, 10 * 1000)
+    setInterval(getFancyOdds, 1500)
 
     getList()
     fancyEventsBySupportJobs()
@@ -56,7 +56,7 @@ function ToolForFancy() {
     try {
       let marketIds = [];
       let processArray = [];
-      let events = await inPlayEvents.find({sportsId: '4', inplay: true, hasFancy: true}, {Id: 1}).exec();
+      let events = await inPlayEvents.find({sportsId: '4', isShowed: true, hasFancy: true}, {Id: 1}).exec();
 
       for (let index = 0; index < events.length; index++) {
         const event = events[index];
@@ -165,7 +165,7 @@ function ToolForFancy() {
     try {
       const response = await axios.get(url);
       let events = response.data;
-      console.log('cricket event list', events.length)
+      console.log('cricket event list------------------------------->', events.length)
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.openDate);
