@@ -36,9 +36,8 @@ function apiRequests() {
     setInplay,
     takeScores,
   };
-console.log('111');
+
   function init(_io, express) {
-    console.log('111222');
     io = _io;
     io.on("connection", onConnet);
     console.log("Express conf loading");
@@ -59,7 +58,7 @@ console.log('111');
   }
 
   function onConnet(socket) {
-    console.log("Socket connect....");
+    console.log("Socket connect");
 
     socket.on("join", async (channel) => {
       if (!channel) {
@@ -69,7 +68,6 @@ console.log('111');
       if (channel.length == 0) {
         return socket.emit("err", "Channel Required");
       }
-      console.log('I am reaching here.........');
       if (channel.charAt(0) == "#") {
         var event_information = await inPlayEvents.findOne({
           Id: channel.substring(1),
@@ -367,7 +365,7 @@ console.log('111');
       );
 
       const marketsData = response.data.result;
-      let marketStatus = 'OPEN'; 
+      let marketStatus = 'PENDING'; 
 
       if (marketsData.length > 0) {
         let marketIds = [];
@@ -455,7 +453,6 @@ console.log('111');
                 marketName: marketIds[index].marketName,
                 sportID: sportID,
                 status: marketIds[index].status,
-                totalMatched: marketIds[index].totalMatched,
                 index: index,
                 runners: marketIds[index].runners,
                 inPlay: true
