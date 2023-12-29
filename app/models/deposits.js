@@ -33,9 +33,9 @@ let depositsSchema = new Schema({
   betType: {type: Number},
   betDateTime: {type: Number},
   casinoBetAmount: {type: Number, default: 0},
-  betTime :  {type: Number, default: new Date().getTime()- 30},
-  betSession: { type: Number },
-  roundId: { type: String },
+  betTime : {type: Number, default: new Date().getTime()- 30},
+  betSession: { type: Number, default: 0 },
+  roundId: { type: String, default: "0" },
 
   sourceCodeBlock:{ type: String , default: 0 },
   addedExpoisureAmount:{ type: String , default: 0 },
