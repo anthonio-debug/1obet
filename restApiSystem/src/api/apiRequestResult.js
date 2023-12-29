@@ -111,7 +111,7 @@ function apiRequestResult() {
           "eventTypeIds": [sportsId],
           "marketTypes": ["WIN", "PLACE"],
         },
-        "maxResults": 100,
+        "maxResults": 30,
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "RUNNER_DESCRIPTION", "RUNNER_METADATA", "COMPETITION"]
       }
 

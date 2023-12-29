@@ -348,7 +348,7 @@ async function listEventsBySport(req, res) {
         sportsId: sportId,
         iconStatus: true,
         status: "OPEN",
-        CompanySetStatus: "OPEN",
+        
         isShowed: true,
       }).sort({ openDate: 1 });
     } else {
@@ -356,7 +356,7 @@ async function listEventsBySport(req, res) {
         events = await Events.find({
           sportsId: sportId,
           status: "OPEN",
-          CompanySetStatus: "OPEN",
+          
           isShowed: true,
         }).sort({ openDate: 1 });
       } else if (sportId == "7" || sportId == "4339") {
@@ -364,7 +364,12 @@ async function listEventsBySport(req, res) {
       events = await MarketIDS.aggregate([
         {
           $match: {
-            sportID: Number(sportId)   
+            sportID: Number(sportId),
+            // CompanySetStatus: "OPEN",
+            $and: [
+              { openDate: { $gte: start } },
+              { openDate: { $lte: end } }
+            ]
           },
         },
         {
@@ -1020,6 +1025,7 @@ async function bettorDashboardGames(req, res) {
       {
         sportsId: "4339",
         status: "OPEN",
+        CompanySetStatus: "OPEN",
         openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
       },
       {
@@ -1041,6 +1047,7 @@ async function bettorDashboardGames(req, res) {
       {
         sportsId: "7",
         status: "OPEN",
+        CompanySetStatus: "OPEN",
         openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
       },
       {
