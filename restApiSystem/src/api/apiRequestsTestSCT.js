@@ -452,6 +452,7 @@ function apiRequests() {
                 marketId: marketIds[index].id + "",
                 marketName: marketIds[index].marketName,
                 sportID: sportID,
+                totalMatched: marketIds[index].totalMatched,
                 status: marketIds[index].status,
                 index: index,
                 runners: marketIds[index].runners,
