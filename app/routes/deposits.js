@@ -619,13 +619,19 @@ function getLedgerDetails(req, res) {
       cashPipeline.push({
         $group: {
           _id: "$_id",
-          //  {
-          //   $cond: {
-          //     if: { $in: ["$cashOrCredit", ['Cash', 'Credit']] }, 
-          //     then: "$_id", 
-          //     else: "$marketId"
-          //   }
-          // },
+          _id: {
+            $cond: {
+              if: 
+              { $in: ["$cashOrCredit", ['Cash', 'Credit']] }, 
+              then: "$_id", 
+              else: {
+                matchId: "$matchId",
+                marketId: "$marketId",
+                betSession: "$betSession",
+                roundId: "$roundId"
+              }
+            }
+          },
           originalId: { $first: "$_id" },
           description:  { $first: "$description" },
           amount:  { $sum: "$amount" },
