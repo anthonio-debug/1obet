@@ -932,6 +932,28 @@ function getAllDeposits(req, res) {
   });
 }
 
+const userWithdrawStatusCheck = async (req, res) => {
+  const resp = {
+    status: 200,
+    englush: "Take screenshot and contact support team",
+    urdu: "اسکرین شاٹ لیں اور سپورٹ ٹیم سے رابطہ کریں۔"
+  }
+  const userId = Number(req.query.id);
+  const user   = await  User.findOne({ userId: userId })
+  const deposit = await Cash.find({ userId: userId }).soer({ _id: -1 }).limit(1);
+  const lastDeposit = deposit[0]
+  const activeBetsCount = await Bet.countDocuments({ userId: userId, status: 1 });
+  const difference = lastDeposit.availableBalance - user.availableBalance - (-user.exposure)
+  if(user.exposure > 1 ){
+    resp.status = 400;
+  }else if(user.exposure < -1 && activeBetsCount === 0){
+    resp.status = 400;
+  }else if(user.exposure < -1 && activeBetsCount > 0 &&   ( difference < -1 || difference > 1 )){
+    resp.status = 400;
+  }
+  res.send(resp)
+}
+
 loginRouter.post(
   '/addCashDeposit',
   cashValidator.validate('addCashDeposit'),
@@ -945,4 +967,5 @@ loginRouter.post(
 loginRouter.post('/getLedgerDetails', getLedgerDetails);
 loginRouter.post('/getLedgerDetails2', getLedgerDetails2);
 loginRouter.get('/getAllDeposits', getAllDeposits);
+loginRouter.get('/userWithdrawStatusCheck', userWithdrawStatusCheck);
 module.exports = { loginRouter };
