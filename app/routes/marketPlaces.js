@@ -6,6 +6,7 @@ const MarketIDS = require('../models/marketIds');
 const User = require('../models/user');
 const { v4: uuidv4 } = require('uuid');
 const marketPlaceVlidator = require('../validators/marketPlaces');
+const inPlayEvents = require("../models/events");
 
 const router = express.Router();
 const loginRouter = express.Router();
@@ -194,14 +195,14 @@ async function getMarketsByEventId(req, res) {
     });
   }
 }
-async function updateMarketStatus(req, res) {
+async function updateCompanySetStatus(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ message: errors.errors });
   }
   try {
     const data = req.body
-    await MarketIDS.updateOne(
+    await inPlayEvents.updateOne(
       { _id: data._id },
       { CompanySetStatus: data.status }
     )
@@ -250,6 +251,6 @@ loginRouter.get('/getMarketsByEventId/:eventId', getMarketsByEventId);
 loginRouter.post('/addMarketType', addMarketType);
 loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
 loginRouter.post('/addAllowedMarketTypes', marketPlaceVlidator.validate('addAllowedMarketTypes'), addAllowedMarketTypes);
-loginRouter.post('/updatemarketstatus', marketPlaceVlidator.validate('updateMarketStatus'), updateMarketStatus);
+loginRouter.post('/updatemarketstatus', marketPlaceVlidator.validate('updateMarketStatus'), updateCompanySetStatus);
 // loginRouter.post('/editAllowedMarketTypes', editAllowedMarketTypes);
 module.exports = { router, loginRouter };
