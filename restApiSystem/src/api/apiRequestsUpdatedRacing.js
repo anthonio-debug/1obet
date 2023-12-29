@@ -2,8 +2,6 @@
 module.exports = apiRequests;
 
 const axios = require('axios');
-const moment = require('moment');
-
 const config = require("../../../config/default.json")
 
 const Racing = require('../../../app/models/racing');
@@ -229,23 +227,15 @@ function apiRequests() {
   async function listMarketsByCronJob(eventId, sportsId, competitionId) {
     
     try {
-      const now = moment();
-      const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
-      const endTime = now.add(2, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
       const requestData = {
         "filter": {
           "eventIds": [eventId],
           "eventTypeIds": [sportsId],
           "marketTypes": ['WIN'],
-          "marketStartTime": {
-            "from": startTime,
-            "to": endTime
-          }
         },
-        "maxResults": 20,
+        "maxResults": 100,
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
-      console.log('fetching race market: -request-', requestData)
 
       const url = `${config.newThirdURL}/listMarketCatalogue`;
       let response = await axios.post(
@@ -286,7 +276,7 @@ function apiRequests() {
                   startTime: new Date(eventsData[j].marketStartTime),
                   numberOfRunners: eventsData[j].runners?.length,
                   totalMatched: eventsData[j].totalMatched,
-                  status: "OPEN"
+                  status: "PENDING"
                 },
                 description: {
                   marketName: eventsData[j].marketName,
@@ -348,8 +338,6 @@ function apiRequests() {
         await MarketIDS.findOneAndUpdate(
           {
             marketId: eventsData[j].marketId,
-            totalMatched: eventsData[j].totalMatched,
-            
             sportID: eventsData[j].eventType.id,
             eventId: eventId,
           },
