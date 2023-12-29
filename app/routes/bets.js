@@ -2482,6 +2482,12 @@ const placeBet = async (req, res) => {
   } catch (error) {
     console.warn("Error placing bet Catched ", error);
     return res.status(404).send({message: `Something went wrong !`});
+  } finally {
+    const userId  = req.decoded.userId;
+    await User.findOneAndUpdate(
+      {userId: userId},
+      { activeBetPlacing: false }
+    );
   }
 };
 
