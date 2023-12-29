@@ -2483,10 +2483,10 @@ const placeBet = async (req, res) => {
     return res.status(404).send({message: `Something went wrong !`});
   } finally {
     const userId  = req.decoded.userId;
-    await User.findOneAndUpdate(
-      {userId: userId},
-      { activeBetPlacing: false }
-    );
+    // await User.findOneAndUpdate(
+    //   {userId: userId},
+    //   { activeBetPlacing: false }
+    // );
   }
 };
 
