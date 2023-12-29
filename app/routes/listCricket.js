@@ -23,10 +23,18 @@ async function listCricket(req, res) {
   Crickets.aggregate([
     {
       $addFields: {
-        isLive: {$cond: {if: {$eq: ["$state", "live"]}, then: 1, else: 0}}
+        sortField: {
+          $switch: {
+            branches: [
+              { case: { $eq: ["$state", "live"] }, then: 1 },
+              { case: { $eq: ["$state", "info"] }, then: 2 }
+            ],
+            default: 3
+          }
+        }
       }
     },
-    {$sort: {isLive: -1, timestamp: 1}}
+    { $sort: { sortField: 1, timestamp: 1 } }
   ])
     .exec((err, allRecords) => {
       if (err) return res.status(404).send({message: 'Something went wrong'});
