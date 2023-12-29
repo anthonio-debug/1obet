@@ -218,7 +218,7 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: "Please wait few seconds " });
     }else {
       user.activeBetPlacing = true;
-      user.save();
+      await user.save();
     }
 
     if (user.bettingAllowed == false) {
