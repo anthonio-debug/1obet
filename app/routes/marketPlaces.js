@@ -252,5 +252,4 @@ loginRouter.post('/addMarketType', addMarketType);
 loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
 loginRouter.post('/addAllowedMarketTypes', marketPlaceVlidator.validate('addAllowedMarketTypes'), addAllowedMarketTypes);
 loginRouter.get('/updatemarketstatus', updateCompanySetStatus);
-// loginRouter.post('/editAllowedMarketTypes', editAllowedMarketTypes);
 module.exports = { router, loginRouter };

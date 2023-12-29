@@ -297,41 +297,25 @@ async function withDrawCashDeposit(req, res) {
       return res.status(404).send({ message: 'user not found' });
     }
 
-    if (
-      userToUpdate.role != '5' &&
-      req.body.amount > userToUpdate.cash + userToUpdate.creditRemaining
-    ) {
+    if ( userToUpdate.role != '5' && req.body.amount > userToUpdate.cash + userToUpdate.creditRemaining ) {
       console.log('comming');
       return res.status(400).send({
-        message: `Max cash withdraw is ${
-          userToUpdate.cash + userToUpdate.creditRemaining
-        }`,
+        message: `Max cash withdraw is ${ userToUpdate.cash + userToUpdate.creditRemaining }`,
       });
-    } else if (
-      userToUpdate.role == '5' &&
-      req.body.amount > userToUpdate.availableBalance
-    ) {
+    } else if ( userToUpdate.role == '5' && req.body.amount > userToUpdate.availableBalance ) {
       return res.status(400).send({
         message: `Max cash withdraw is ${userToUpdate.availableBalance}`,
       });
     }
 
-    const cUserRes = await Cash.find({ userId: userToUpdate.userId })
-      .sort({ _id: -1 })
-      .limit(1);
+    const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const lastMaxWithdraw = cUserRes.length > 0 ? cUserRes[0] : null;
-    console.log(
-      ' ======================= lastMaxWithdraw =================================  ',
-      lastMaxWithdraw
-    );
+    console.log(' ======================= lastMaxWithdraw =================================  ', lastMaxWithdraw );
     const parentRes = await Cash.find({ userId: currentUserParent.userId })
       .sort({ _id: -1 })
       .limit(1);
     const parentLastMaxWithdraw = parentRes.length > 0 ? parentRes[0] : null;
-    console.log(
-      ' ======================= parentLastMaxWithdraw =================================  ',
-      parentLastMaxWithdraw
-    );
+    console.log( ' ======================= parentLastMaxWithdraw =================================  ', parentLastMaxWithdraw );
 
     let Dealers = ['1', '2', '3', '4'];
     // Company to Dealer
@@ -397,10 +381,7 @@ async function withDrawCashDeposit(req, res) {
     }
 
     //  Dealer to Dealer
-    else if (
-      Dealers.includes(currentUserParent.role) &&
-      Dealers.includes(userToUpdate.role)
-    ) {
+    else if ( Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {
       userToUpdate.clientPL -= req.body.amount;
       userToUpdate.cash -= req.body.amount;
       // currentUserParent.clientPL += req.body.amount;
@@ -449,12 +430,8 @@ async function withDrawCashDeposit(req, res) {
       });
       await parentCash.save();
     }
-
     //  Dealer to Battor
-    else if (
-      Dealers.includes(currentUserParent.role) &&
-      userToUpdate.role == '5'
-    ) {
+    else if (Dealers.includes(currentUserParent.role) && userToUpdate.role == '5') {
       userToUpdate.balance -= req.body.amount;
       userToUpdate.availableBalance -= req.body.amount;
       userToUpdate.clientPL -= req.body.amount;
@@ -519,9 +496,7 @@ async function withDrawCashDeposit(req, res) {
     const user_new_exposure = updatedUser.exposure;
     const updatedUserLastLedger = await Cash.find({
       userId: userToUpdate.userId,
-    })
-      .sort({ _id: -1 })
-      .limit(1);
+    }).sort({ _id: -1 }).limit(1);
     const ExpTran = new ExpRec({
       userId: updatedUser.userId,
       trans_from: 'cashWithDraw',
