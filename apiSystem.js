@@ -82,7 +82,7 @@ async function main() {
   // ToolForEvent.init(io, express);
 
   // init events jobs for cricket, tennis and soccer
-  ToolForRacing.init(io, express);
+  // ToolForRacing.init(io, express);
 
   // init events jobs for fancy data for cricket
   ToolForFancy.init(io, express);
@@ -94,7 +94,7 @@ async function main() {
   // ToolForTestSport.init(io, express);
 
   // init events list
-  ToolForListEvent.init(io, express);
+  // ToolForListEvent.init(io, express);
 
   // init events list
   ToolForResult.init(io, express);
