@@ -48,7 +48,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   betAllowed: { type: Boolean, default: true },
   isResultSaved: { type: Boolean, default: false },
   seriesKey:  { type: String },
-  CompanySetStatus: { type: String, default: "PENDINGG" },
+  CompanySetStatus: { type: String, default: "PENDING" },
 });
 
 inPlayEventsSchema.plugin(Global.paginate);

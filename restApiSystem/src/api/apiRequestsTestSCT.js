@@ -185,8 +185,8 @@ function apiRequests() {
     let to = new Date(from);
     to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
 
-    // const cricketIds = ['32853029','32892400','32855234', "32882829", "32885122"]
-    // const soccerIds = ['32853029','32899078','32896295','32898781','32897006','32897901','32893907','32898843','32897106']
+     const cricketIds = ['32892406','32855238','32901594','32900001','32853035','32882829']
+     const soccerIds = ["32895406","32901546","32901525","32901544","32895376","32901506","32895374","32899464","32901489"]
 
     const requestData = {
       "filter": {
@@ -342,6 +342,8 @@ function apiRequests() {
   }
 
   async function listMarketsByCronJob(eventId, sportID) {
+
+    console.log("listMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJob");
     const requestData = {
       "filter": {
         "eventIds": [eventId],
