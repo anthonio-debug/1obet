@@ -625,9 +625,9 @@ function getLedgerDetails(req, res) {
               then: "$_id", 
               else: {
                 matchId: "$matchId",
-                marketId: "$marketId",
-                betSession: "$betSession",
-                roundId: "$roundId"
+                // marketId: "$marketId",
+                // betSession: "$betSession",
+                // roundId: "$roundId"
               }
             }
           },
