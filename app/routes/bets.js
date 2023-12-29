@@ -2402,8 +2402,7 @@ const placeBet = async (req, res) => {
             {userId: userId},
             {
               exposure: UserExpAmount,
-              availableBalance: UserAvlBalAmount,
-              activeBetPlacing: false
+              availableBalance: UserAvlBalAmount
             }
           );
 
