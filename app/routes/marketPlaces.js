@@ -201,9 +201,9 @@ async function updateCompanySetStatus(req, res) {
     return res.status(400).send({ message: errors.errors });
   }
   try {
-    const data = req.body
+    const data = req.query
     await inPlayEvents.updateOne(
-      { _id: data._id },
+      { Id: data.Id },
       { CompanySetStatus: data.status }
     )
     return res.status(200).send({
@@ -251,6 +251,6 @@ loginRouter.get('/getMarketsByEventId/:eventId', getMarketsByEventId);
 loginRouter.post('/addMarketType', addMarketType);
 loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
 loginRouter.post('/addAllowedMarketTypes', marketPlaceVlidator.validate('addAllowedMarketTypes'), addAllowedMarketTypes);
-loginRouter.post('/updatemarketstatus', marketPlaceVlidator.validate('updateMarketStatus'), updateCompanySetStatus);
+loginRouter.get('/updatemarketstatus', updateCompanySetStatus);
 // loginRouter.post('/editAllowedMarketTypes', editAllowedMarketTypes);
 module.exports = { router, loginRouter };
