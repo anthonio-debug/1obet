@@ -79,7 +79,7 @@ function ToolForEvent() {
 
   async function fetchOddsForEvent(eventId) {
     try {
-      const documents = await MarketIDs.find({inPlay: false, eventId: eventId})
+      const documents = await MarketIDs.find({inPlay: true, eventId: eventId})
         .sort({lastCheck: 1})
         .limit(20)
         .exec();
@@ -106,7 +106,7 @@ function ToolForEvent() {
 
   async function fetchOdds(inPlay, sportId) {
     try {
-      const documents = await MarketIDs.find({inPlay: inPlay, sportID: sportId})
+      const documents = await MarketIDs.find({inPlay: inPlay, sportID: parseInt(sportId)})
         .sort({lastCheck: 1})
         .limit(20)
         .exec();

@@ -115,7 +115,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
       const difference = credit - debit;
       const allTrans   = [];
       // lose some Amount 
-      const betTime = Math.floor(Math.random() * 10000) *10;
+      const betTime = new Date().getTime();
       if (difference < 0 ) {
         console.log("   ======================= difference < 0 =======================   ");
         /**
@@ -169,7 +169,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
           createdBy: 0,
           casinoBetAmount: debit,
           event: game.name,
-          betTime,
+          betDateTime: betTime,
           betId: payload.transaction_id,
           marketId: payload.game_id,
           matchId:  payload.game_id,
@@ -252,7 +252,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
             createdAt: formattedDate,
             commissionFrom: commissionFrom,
             createdBy: 0,
-            betTime,
+            betDateTime: betTime,
             casinoBetAmount: debit,
             amount: (user.commission / 100) * bettor_lost_amount,
             balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * bettor_lost_amount : (user.commission / 100) * bettor_lost_amount,
@@ -339,7 +339,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
           date: now.getTime(),
           createdAt: formattedDate,
           createdBy: 0,
-          betTime,
+          betDateTime:betTime,
           casinoBetAmount: debit,
           amount: remainingAmount,
           balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
@@ -423,7 +423,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
             date: now.getTime(),
             createdAt: formattedDate,
             createdBy: 0,
-            betTime,
+            betDateTime: betTime,
             casinoBetAmount: debit,
             amount: -(user.commission / 100) * amount,
             balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
@@ -452,7 +452,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
             date: now.getTime(),
             createdAt: formattedDate,
             createdBy: 0,
-            betTime,
+            betDateTime: betTime,
             casinoBetAmount: debit,
             commissionFrom: commissionFrom,
             amount: (user.commission / 100) * commissionAmount,

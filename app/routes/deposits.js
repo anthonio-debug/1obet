@@ -619,7 +619,7 @@ function getLedgerDetails(req, res) {
       cashPipeline.push({
         $group: {
           _id: "$_id",
-          // {
+          //  {
           //   $cond: {
           //     if: { $in: ["$cashOrCredit", ['Cash', 'Credit']] }, 
           //     then: "$_id", 

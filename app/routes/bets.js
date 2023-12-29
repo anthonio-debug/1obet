@@ -7,6 +7,7 @@ const Bets = require("../models/bets");
 const User = require("../models/user");
 const SubMarketType = require("../models/subMarketTypes");
 const loginRouter = express.Router();
+const router = express.Router();
 const betValidator = require("../validators/bets");
 const maxAllowedBetSizes = require("../models/betLimits");
 const userBetSizes = require("../models/userBetSizes");
@@ -211,6 +212,13 @@ const placeBet = async (req, res) => {
     const user = await User.findOne({userId}).exec();
     if (!user) {
       return res.status(404).send({message: "illegal user betting"});
+    }
+
+    if(user.activeBetPlacing){
+      return res.status(404).send({ message: "Please wait few seconds " });
+    }else {
+      user.activeBetPlacing = true;
+      user.save();
     }
 
     if (user.bettingAllowed == false) {
@@ -1591,6 +1599,13 @@ const placeBet = async (req, res) => {
       let inning = scores.inning;
       let currentOver = inning == 1 ? scores.over1 : scores.over2
       let score = inning === 1 ? scores.score1 : scores.score2
+      const wikets = score.split('/')[1];
+      if(Number(wikets) === 10 ){
+        return res.status(404).send({
+          success: false,
+          message: "betting not allowed !"
+        });
+      }
       let sessionAddition = 0;
       if (inning == 2) {
         if (type == "TEST") {
@@ -2388,6 +2403,7 @@ const placeBet = async (req, res) => {
             {
               exposure: UserExpAmount,
               availableBalance: UserAvlBalAmount,
+              activeBetPlacing: false
             }
           );
 
@@ -3715,61 +3731,6 @@ const SingleUserAllBets = async (req, res) => {
       bet.multipeResponse = deposits;
     }
 
-    // const result = await Bets.aggregate([
-
-    //   {
-    //     $match: { 
-    //       userId: Number(req.query.userId),
-    //       // date: {
-    //       //   $gte: new Date().getTime() - 86400000
-    //       // }
-    //     }
-
-    //   },
-    //   {
-    //     $lookup: {
-    //       from: "deposits", 
-    //       localField: "_id",
-    //       foreignField: "betId",
-    //       as: "deposit"
-    //     }
-    //   },
-    //   // {
-    //   //   $group: {
-    //   //     _id: "$_id",
-    //   //     sportsId: { $first: "$sportsId" }, 
-    //   //     marketId:  { $first: "$marketId" },
-    //   //     userId:  { $first: "$userId" },
-    //   //     betAmount:  { $first: "$betAmount" },
-    //   //     betRate: { $first: "$betRate" },
-    //   //     selectedBetRate: { $first: "$selectedBetRate" },
-    //   //     betSession: { $first: "$betSession" },
-    //   //     fancyData: { $first: "$fancyData" },
-    //   //     TargetScore: { $first: "$TargetScore" },
-    //   //     matchId: { $first: "$matchId" },
-    //   //     winningAmount : { $first: "$winningAmount" },
-    //   //     loosingAmount : { $first: "$loosingAmount" },
-    //   //     subMarketId: { $first: "$subMarketId" },
-    //   //     event: { $first: "$event" },
-    //   //     position: { $first: "$position" },
-    //   //     eventId: { $first: "$eventId" },
-    //   //     fancyRate: { $first: "$fancyRate" },
-    //   //     calculateExp: { $first: "$calculateExp" },
-    //   //     exposureAmount: { $first: "$exposureAmount" },
-    //   //     betTime: { $first: "$betTime" },
-    //   //     iscalculatedExp: { $first: "$iscalculatedExp" },
-    //   //     deposit_id: { $first: { $arrayElemAt: ["$deposit._id", 0] } },
-    //   //     addedExpoisureAmount: { $first: { $arrayElemAt: ["$deposit.addedExpoisureAmount", 0] } },
-    //   //     UserPrevexposure: { $first: { $arrayElemAt: ["$deposit.UserPrevexposure", 0] } },
-    //   //     UpdatedExposure: { $first: { $arrayElemAt: ["$deposit.UpdatedExposure", 0] } },
-    //   //     userAvailableBalanceBFTrans: { $first: { $arrayElemAt: ["$deposit.userAvailableBalanceBFTrans", 0] } },
-    //   //     userAvailableBalanceAFTrans: { $first: { $arrayElemAt: ["$deposit.userAvailableBalanceAFTrans", 0] } },
-    //   //     UserBalanceBFTrans: { $first: { $arrayElemAt: ["$deposit.UserBalanceBFTrans", 0] } },
-    //   //     UserBalanceAFTrans: { $first: { $arrayElemAt: ["$deposit.UserBalanceAFTrans", 0] } }
-    //   //   }
-    //   // }
-    // ]).exec();
-
     return res.send({
       status: true,
       message: "Bets List !",
@@ -3796,6 +3757,34 @@ const postmanwork = async (req, res) => {
       .send({message: "Error", error: err});
   }
 }
+const eventsAPICalls  = async (req, res) => {
+
+  try{
+    const header = {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const url = req.body.url
+    const requestData =  req.body.requestData
+
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+    const data = response.data.result;
+    return res.status(200).send({ resp: data});
+  }
+   catch (err) {
+    console.warn("Query error ======= :", err);
+    return res
+      .status(500)
+      .send({ message: "Error", error: err });
+  }
+}
 
 loginRouter.post("/placeBet", betValidator.validate("placeBet"), placeBet);
 loginRouter.post("/getUserBets", getUserBets);
@@ -3810,6 +3799,9 @@ loginRouter.get("/countFakeBets", countFakeBet);
 loginRouter.post("/approvedFakeBet/:id", approvedFakeBet);
 loginRouter.get("/reviewFakeBet/:id/:sportsId", reviewFakeBet);
 loginRouter.post("/postmanwork", postmanwork);
+loginRouter.post("/eventsapicalls", eventsAPICalls);
+
+
 loginRouter.get("/profitLose", profitLose);
 loginRouter.get("/EventWiseprofitLose", EventWiseprofitLose);
 loginRouter.get("/dailyMatchWiseprofitLose", dailyMatchWiseprofitLose);

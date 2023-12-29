@@ -3,6 +3,7 @@ const Bets = require("../models/bets")
 const Users = require("../models/user")
 const axios = require('axios');
 const User = require('../models/user');
+const inPlayEvents = require('../models/events');
 const router = express.Router();
 const apiURL= "http://185.58.225.212:8080/api/"
 require('dotenv').config()
@@ -191,7 +192,7 @@ async function testAPI(req, res) {
       // "maxResults": 100,
       // "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
     } 
-    var url = `${sportsAPIUrl}/listMarketBook`;
+    var url = `${sportsAPIUrl}/listMarketCatalogue`;
     
     const response = await axios.post(
       url,
@@ -207,6 +208,116 @@ async function testAPI(req, res) {
   }
 }
 
+async function getMarketsByEventId(req, res) {
+  const eventId = req.params.eventId;
+
+  try { 
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const requestData = {
+      "filter": {
+        eventIds: [eventId]
+      },
+      "maxResults": 100,
+      "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
+    } 
+    var url = `${sportsAPIUrl}/listMarketCatalogue`;
+    
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+    
+    const marketsData = response.data;
+
+    res.status(200).json({success: true, data: marketsData});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
+async function getEventsBySportsId(req, res) {
+  const sportsId = req.params.sportsId;
+
+  try { 
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const requestData = {
+      "filter": {
+        eventTypeIds: [sportsId]
+      },
+    } 
+    var url = `${sportsAPIUrl}/listEvents`;
+    
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+    
+    const marketsData = response.data;
+
+    res.status(200).json({success: true, data: marketsData});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
+async function getTodayEventsBySportsId(req, res) {
+  try {
+    let sportsId = req.params.sportsId
+    var now = new Date();  // Get the current date and time
+    var startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    var startOfDayTimestamp = startOfDay.getTime();
+
+    var endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+    var endOfDayTimestamp = endOfDay.getTime();
+
+    const events = await inPlayEvents.find(
+      {
+        sportsId: sportsId,
+        status: "OPEN",
+        openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
+      },
+      {
+        _id: 1,
+        Id: 1,
+        name: 1,
+        openDate: { $toDate: "$openDate" }
+      }
+    );
+
+    let data = [];
+
+    for (let k = 0; k < events?.length; k ++) {
+      data.push({
+        _id: events[k]._id,
+        Id: events[k].Id,
+        name: events[k].name,
+        openDate: new Date(events[k].openDate)
+      })
+    }
+    res.status(200).json({success: true, data: data});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
 router.get('/testSports/events', listEvents);
 router.get('/testSports/marketbooks/:ids', listMarketBook);
 
@@ -215,7 +326,8 @@ router.get('/trackstuck/inactiveusers', inActiveUserExposure);
 
 router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
 router.get('/track-bet/testAPI/:marketId', testAPI)
+router.get('/track-bet/get-markets/:eventId', getMarketsByEventId)
+router.get('/track-bet/get-events/:sportsId', getEventsBySportsId)
+router.get('/track-bet/get-today-events/:sportsId', getTodayEventsBySportsId)
 
 module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure };
-
-
