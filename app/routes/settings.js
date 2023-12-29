@@ -1025,6 +1025,7 @@ async function bettorDashboardGames(req, res) {
       {
         sportsId: "4339",
         status: "OPEN",
+        CompanySetStatus: "OPEN",
         openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
       },
       {
@@ -1046,6 +1047,7 @@ async function bettorDashboardGames(req, res) {
       {
         sportsId: "7",
         status: "OPEN",
+        CompanySetStatus: "OPEN",
         openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
       },
       {
