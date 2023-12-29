@@ -107,6 +107,13 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
   }
 };
 
+const activeBetPlacing = async (userId) => {
+  await User.findOneAndUpdate(
+    {userId: userId},
+    { activeBetPlacing: false }
+  );
+}
+
 const apiCallForOdds = async (marketId) => {
   const url = `${config.sportsAPIUrl}/listMarketBook`;
   const data = {marketIds: [marketId]}
@@ -2483,10 +2490,10 @@ const placeBet = async (req, res) => {
     return res.status(404).send({message: `Something went wrong !`});
   } finally {
     const userId  = req.decoded.userId;
-    // await User.findOneAndUpdate(
-    //   {userId: userId},
-    //   { activeBetPlacing: false }
-    // );
+    await User.findOneAndUpdate(
+      {userId: userId},
+      { activeBetPlacing: false }
+    );
   }
 };
 
