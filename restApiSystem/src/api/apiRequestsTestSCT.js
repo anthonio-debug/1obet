@@ -58,7 +58,7 @@ function apiRequests() {
   }
 
   function onConnet(socket) {
-    console.log("Socket connect");
+    console.log("Socket connect....");
 
     socket.on("join", async (channel) => {
       if (!channel) {
