@@ -36,8 +36,9 @@ function apiRequests() {
     setInplay,
     takeScores,
   };
-
+console.log('111');
   function init(_io, express) {
+    console.log('111222');
     io = _io;
     io.on("connection", onConnet);
     console.log("Express conf loading");
