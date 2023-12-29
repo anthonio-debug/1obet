@@ -41,7 +41,8 @@ async function getAllSportsHighlight(req, res) {
           matchTypeProvider: '$matchTypeProvider',
           betAllowed : "$betAllowed",
           matchCanceledStatus: "$matchCanceledStatus",
-          matchStoppedReason: '$matchStoppedReason'
+          matchStoppedReason: '$matchStoppedReason',
+          CompanySetStatus: "$CompanySetStatus"
         },
       },
     ]);
