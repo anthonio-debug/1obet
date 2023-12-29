@@ -365,7 +365,7 @@ async function listEventsBySport(req, res) {
         {
           $match: {
             sportID: Number(sportId),
-            CompanySetStatus: "OPEN",
+            // CompanySetStatus: "OPEN",
             $and: [
               { openDate: { $gte: start } },
               { openDate: { $lte: end } }
