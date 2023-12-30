@@ -360,7 +360,6 @@ async function listEventsBySport(req, res) {
           isShowed: true,
         }).sort({ openDate: 1 });
       } else if (sportId == "7" || sportId == "4339") {
-
       events = await MarketIDS.aggregate([
         {
           $match: {
@@ -381,19 +380,37 @@ async function listEventsBySport(req, res) {
           },
         },
         {
+          $addFields: {
+            event: {
+              $cond: {
+                if: {
+                  $eq: [{ $type: "$event" }, "array"]
+                },
+                then: { $arrayElemAt: ["$event", 0] },
+                else: "$event"
+              }
+            }
+          }
+        },
+        {
+          $match: {
+            "event.CompanySetStatus": "OPEN"
+          }
+        },
+        {
           $group: {
             _id: "$_id",
             Id: { $first: "$eventId" },
             marketIds: { $push: "$marketId" },
             sportsId: { $first: "$sportID" },
             openDate: { $first: "$openDate" },
-            openDate2:  { $first: { $arrayElemAt: ["$event.openDate", 0] } },
+            openDate2: { $first: "$event.openDate" },
             status: { $first: "$status" },
             inPlay: { $first: "$inPlay" },
-            countryCode:  { $first: { $arrayElemAt: ["$event.countryCode", 0] } },
-            venue:  { $first: { $arrayElemAt: ["$event.venue", 0] } },
-            inplay2:  { $first: { $arrayElemAt: ["$event.inplay", 0] } },
-            matchId:  { $first: { $arrayElemAt: ["$event._id", 0] } },
+            countryCode: { $first: "$event.countryCode" },
+            venue: { $first: "$event.venue" },
+            inplay2: { $first: "$event.inplay" },
+            matchId: { $first: "$event._id" },
           }
         },
         {
