@@ -562,11 +562,13 @@ function apiRequests() {
         for (let index1 = 0; index1 < 10; index1++) {
           console.log('eventId: ', event.Id);
           console.log('market size: ', event.marketIds.length);
-          eventList.push({eventId: event.Id, marketId: event.marketIds[0]});
+          eventList.push({eventId: event.Id, marketIds: event.marketIds[0]});
         }
       }
       for (const event of eventList) {
-        await raceOddsJob(event);
+        if (event.marketIds) {
+          await raceOddsJob(event);
+        }
       }
     }
   }
