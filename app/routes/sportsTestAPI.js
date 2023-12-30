@@ -443,14 +443,27 @@ async function getMarketsByMarketType(req, res) {
         'X-App': process.env.XAPP_NAME
       },
     }
-    const requestData = {
-      "filter": {
-        eventIds: [eventId],
-        marketTypes: marketTypes?.length > 0 ? marketTypes : []
-      },
-      "maxResults": 100,
-      "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
-    } 
+    let requestData
+    
+    if (marketTypes?.length > 0) {
+      requestData = {
+        "filter": {
+          eventIds: [eventId],
+          marketTypes: marketTypes
+        },
+        "maxResults": 100,
+        "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
+      } 
+    } else {
+      requestData = {
+        "filter": {
+          eventIds: [eventId],
+        },
+        "maxResults": 10,
+        "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
+      }
+    }
+    
     console.log("---------------------->", requestData)
     var url = `${sportsAPIUrl}/listMarketCatalogue`;
     
@@ -459,24 +472,8 @@ async function getMarketsByMarketType(req, res) {
       requestData,
       header
     );
-
-    let marketIds = [];
-    for (let i = 0; i < marketResponse?.data?.result?.length; i ++) {
-      marketIds.push(marketResponse?.data?.result[i].marketId + "")
-    }
-
-    const oddsRequestData = {
-      "marketIds": marketIds
-    }
-    var oddsUrl = `${sportsAPIUrl}/listMarketBook`;
-
-    const oddsResponse = await axios.post(
-      oddsUrl,
-      oddsRequestData,
-      header
-    );
     
-    const marketsData = oddsResponse?.data?.result;
+    const marketsData = marketResponse?.data?.result;
 
     res.status(200).json({success: true, data: marketsData});
   } catch (err) {
