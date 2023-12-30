@@ -94,6 +94,7 @@ function apiRequests() {
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
     }
+
     const now = moment();
     const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
     const endTime = now.add(4, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
@@ -489,9 +490,9 @@ function apiRequests() {
 
       } else {
         // for (let i = 0; i < events.length; i++) {
-          // console.log(events[i].eventId, 'CLOSED 2');
-          await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED', readyForScore: true}});
-          await MarketIDS.updateOne({eventId: event.eventId}, {$set: {readyForScore: true}});
+        // console.log(events[i].eventId, 'CLOSED 2');
+        await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED', readyForScore: true}});
+        await MarketIDS.updateOne({eventId: event.eventId}, {$set: {readyForScore: true}});
         // }
       }
       return ({
@@ -532,6 +533,7 @@ function apiRequests() {
       }
 
       if (events.length != 20) {
+        console.log("!=20 lenguth.....");
         const documents = await InPlayEvents.find({status: 'WAITING', sportsId: sportsIds[index] + ''})
           .sort({openDate: 1})
           .limit(20 - events.length)
@@ -545,7 +547,7 @@ function apiRequests() {
           CompanySetStatus: 'OPEN'
         }).sort({openDate: 1}).limit(20).exec();
       }
-
+      console.log('Beore Zero length...: ', events.length);
       if (events.length == 0) {
         continue;
       }
@@ -553,9 +555,15 @@ function apiRequests() {
       let eventList = [];
 
       for (let index = 0; index < events.length; index++) {
+
         const event = events[index];
         // myArray.push({ eventId: event.Id, marketId: event.marketIds[0] });
         eventList.push({eventId: event.Id, marketIds: event.marketIds});
+        for (let index1 = 0; index1 < 10; index1++) {
+          console.log('eventId: ', event.Id);
+          console.log('market size: ', event.marketIds.length);
+          eventList.push({eventId: event.Id, marketId: event.marketIds[0]});
+        }
       }
       for (const event of eventList) {
         await raceOddsJob(event);
