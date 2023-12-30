@@ -351,88 +351,79 @@ function apiRequests() {
             }, {upsert: true, new: true}
           );
         } else {
-          await raceMarkets.insertOne(
-            {
-              marketId: eventsData[j].marketId,
-              eventTypeId: eventsData[j].eventType.id,
-              "eventNodes.eventId": eventsData[j].event.id,
-              "eventNodes.event.eventName": eventsData[j].event.name,
-              "eventNodes.event.countryCode": eventsData[j].event.countryCode,
-            },
-            {
-              $set: {
+          const newRecord = {
+            marketId: eventsData[j].marketId,
+            eventTypeId: eventsData[j].eventType.id,
+            eventNodes: {
+              eventId: eventsData[j].event.id,
+              event: {
+                eventName: eventsData[j].event.name,
+                countryCode: eventsData[j].event.countryCode,
+                timezone: eventsData[j].event.timezone,
+                venue: eventsData[j].event.venue,
+                openDate: new Date(eventsData[j].event.openDate)
+              },
+              marketNodes: {
                 marketId: eventsData[j].marketId,
-                eventTypeId: eventsData[j].eventType.id,
-                eventNodes: {
-                  eventId: eventsData[j].event.id,
-                  event: {
-                    eventName: eventsData[j].event.name,
-                    countryCode: eventsData[j].event.countryCode,
-                    timezone: eventsData[j].event.timezone,
-                    venue: eventsData[j].event.venue,
-                    openDate: new Date(eventsData[j].event.openDate)
-                  },
-                  marketNodes: {
-                    marketId: eventsData[j].marketId,
-                    state: {
-                      startTime: new Date(eventsData[j].marketStartTime),
-                      numberOfRunners: eventsData[j].runners?.length,
-                      totalMatched: eventsData[j].totalMatched,
-                      status: "PENDING"
-                    },
-                    description: {
-                      marketName: eventsData[j].marketName,
-                      marketTime: new Date(eventsData[j].marketStartTime),
-                    },
-                    runners: eventsData[j].runners.map(runner => ({
-                      selectionId: runner.selectionId,
-                      handicap: runner.handicap,
-                      description: {
-                        runnerName: runner.runnerName,
-                        metadata: {
-                          SIRE_NAME: runner.metadata.SIRE_NAME,
-                          CLOTH_NUMBER_ALPHA: runner.metadata.CLOTH_NUMBER_ALPHA,
-                          OFFICIAL_RATING: runner.metadata.OFFICIAL_RATING,
-                          COLOURS_DESCRIPTION: runner.metadata.COLOURS_DESCRIPTION,
-                          COLOURS_FILENAME: runner.metadata.COLOURS_FILENAME,
-                          FORECASTPRICE_DENOMINATOR: runner.metadata.FORECASTPRICE_DENOMINATOR,
-                          DAMSIRE_NAME: runner.metadata.DAMSIRE_NAME,
-                          WEIGHT_VALUE: runner.metadata.WEIGHT_VALUE,
-                          SEX_TYPE: runner.metadata.SEX_TYPE,
-                          DAYS_SINCE_LAST_RUN: runner.metadata.DAYS_SINCE_LAST_RUN,
-                          WEARING: runner.metadata.WEARING,
-                          OWNER_NAME: runner.metadata.OWNER_NAME,
-                          DAM_YEAR_BORN: runner.metadata.DAM_YEAR_BORN,
-                          SIRE_BRED: runner.metadata.SIRE_BRED,
-                          JOCKEY_NAME: runner.metadata.JOCKEY_NAME,
-                          DAM_BRED: runner.metadata.DAM_BRED,
-                          ADJUSTED_RATING: runner.metadata.ADJUSTED_RATING,
-                          runnerId: runner.metadata.runnerId,
-                          CLOTH_NUMBER: runner.metadata.CLOTH_NUMBER,
-                          SIRE_YEAR_BORN: runner.metadata.SIRE_YEAR_BORN,
-                          TRAINER_NAME: runner.metadata.TRAINER_NAME,
-                          COLOUR_TYPE: runner.metadata.COLOUR_TYPE,
-                          AGE: runner.metadata.AGE,
-                          DAMSIRE_BRED: runner.metadata.DAMSIRE_BRED,
-                          JOCKEY_CLAIM: runner.metadata.JOCKEY_CLAIM,
-                          FORM: runner.metadata.FORM,
-                          FORECASTPRICE_NUMERATOR: runner.metadata.FORECASTPRICE_NUMERATOR,
-                          BRED: runner.metadata.BRED,
-                          DAM_NAME: runner.metadata.DAM_NAME,
-                          DAMSIRE_YEAR_BORN: runner.metadata.DAMSIRE_YEAR_BORN,
-                          STALL_DRAW: runner.metadata.STALL_DRAW,
-                          WEIGHT_UNITS: runner.metadata.WEIGHT_UNITS,
-                        },
-                      },
-                      state: {
-                        sortPriority: runner.sortPriority,
-                      },
-                    })),
-                  },
+                state: {
+                  startTime: new Date(eventsData[j].marketStartTime),
+                  numberOfRunners: eventsData[j].runners?.length,
+                  totalMatched: eventsData[j].totalMatched,
+                  status: "PENDING"
                 },
-              }
-            }, {upsert: true, new: true}
-          );
+                description: {
+                  marketName: eventsData[j].marketName,
+                  marketTime: new Date(eventsData[j].marketStartTime),
+                },
+                runners: eventsData[j].runners.map(runner => ({
+                  selectionId: runner.selectionId,
+                  handicap: runner.handicap,
+                  description: {
+                    runnerName: runner.runnerName,
+                    metadata: {
+                      SIRE_NAME: runner.metadata.SIRE_NAME,
+                      CLOTH_NUMBER_ALPHA: runner.metadata.CLOTH_NUMBER_ALPHA,
+                      OFFICIAL_RATING: runner.metadata.OFFICIAL_RATING,
+                      COLOURS_DESCRIPTION: runner.metadata.COLOURS_DESCRIPTION,
+                      COLOURS_FILENAME: runner.metadata.COLOURS_FILENAME,
+                      FORECASTPRICE_DENOMINATOR: runner.metadata.FORECASTPRICE_DENOMINATOR,
+                      DAMSIRE_NAME: runner.metadata.DAMSIRE_NAME,
+                      WEIGHT_VALUE: runner.metadata.WEIGHT_VALUE,
+                      SEX_TYPE: runner.metadata.SEX_TYPE,
+                      DAYS_SINCE_LAST_RUN: runner.metadata.DAYS_SINCE_LAST_RUN,
+                      WEARING: runner.metadata.WEARING,
+                      OWNER_NAME: runner.metadata.OWNER_NAME,
+                      DAM_YEAR_BORN: runner.metadata.DAM_YEAR_BORN,
+                      SIRE_BRED: runner.metadata.SIRE_BRED,
+                      JOCKEY_NAME: runner.metadata.JOCKEY_NAME,
+                      DAM_BRED: runner.metadata.DAM_BRED,
+                      ADJUSTED_RATING: runner.metadata.ADJUSTED_RATING,
+                      runnerId: runner.metadata.runnerId,
+                      CLOTH_NUMBER: runner.metadata.CLOTH_NUMBER,
+                      SIRE_YEAR_BORN: runner.metadata.SIRE_YEAR_BORN,
+                      TRAINER_NAME: runner.metadata.TRAINER_NAME,
+                      COLOUR_TYPE: runner.metadata.COLOUR_TYPE,
+                      AGE: runner.metadata.AGE,
+                      DAMSIRE_BRED: runner.metadata.DAMSIRE_BRED,
+                      JOCKEY_CLAIM: runner.metadata.JOCKEY_CLAIM,
+                      FORM: runner.metadata.FORM,
+                      FORECASTPRICE_NUMERATOR: runner.metadata.FORECASTPRICE_NUMERATOR,
+                      BRED: runner.metadata.BRED,
+                      DAM_NAME: runner.metadata.DAM_NAME,
+                      DAMSIRE_YEAR_BORN: runner.metadata.DAMSIRE_YEAR_BORN,
+                      STALL_DRAW: runner.metadata.STALL_DRAW,
+                      WEIGHT_UNITS: runner.metadata.WEIGHT_UNITS,
+                    },
+                  },
+                  state: {
+                    sortPriority: runner.sortPriority,
+                  },
+                })),
+              },
+            },
+          } 
+          const raceMarketsDocument = new raceMarkets(newRecord);
+          raceMarketsDocument.save()
         }
         var runners = [];
         for (let ix1 = 0; ix1 < eventsData[j].runners.length; ix1++) {
