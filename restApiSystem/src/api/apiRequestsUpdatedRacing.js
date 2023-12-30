@@ -547,6 +547,7 @@ function apiRequests() {
       }
 
       if (events.length != 20) {
+        console.log("!=20 lenguth.....");
         const documents = await InPlayEvents.find({status: 'WAITING', sportsId: sportsIds[index] + ''})
           .sort({openDate: 1})
           .limit(20 - events.length)
@@ -560,7 +561,7 @@ function apiRequests() {
           CompanySetStatus: 'OPEN'
         }).sort({openDate: 1}).limit(20).exec();
       }
-
+      console.log('Beore Zero length...: ', events.length);
       if (events.length == 0) {
         continue;
       }
