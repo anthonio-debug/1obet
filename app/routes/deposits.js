@@ -887,7 +887,7 @@ async function getAllDeposits(req, res) {
       )
         .sort({ _id: -1 })
         .exec( async (err, results) => {
-          const resp = await userWithdrawStatusCheck(Number(req.query.userId))
+          // const resp = await userWithdrawStatusCheck(Number(req.query.userId))
           if (err) {
             console.log('Error'.err);
             return res.status(404).send({ message: 'Record not found' });
@@ -895,7 +895,7 @@ async function getAllDeposits(req, res) {
           if (!results) {
             return res.status(200).send({
               message: 'Record not found',
-              status: resp,
+              // status: resp,
               results: {
                 maxWithdraw: 0,
                 creditLimit: 0,
@@ -923,7 +923,7 @@ async function getAllDeposits(req, res) {
           } else {
             return res.send({
               message: 'Deposit Record Found',
-              status: resp,
+              // status: resp,
               results: {
                 ...results._doc,
                 creditLimit: parentUser.creditRemaining,
@@ -938,27 +938,27 @@ async function getAllDeposits(req, res) {
   });
 }
 
-const userWithdrawStatusCheck = async (userId) => {
-  const resp = {
-    status: 200,
-    englush: "Take screenshot and contact support team",
-    urdu: "اسکرین شاٹ لیں اور سپورٹ ٹیم سے رابطہ کریں۔"
-  }
-  // const userId = Number(req.query.id);
-  const user   = await  User.findOne({ userId: userId })
-  const deposit = await Cash.find({ userId: userId }).sort({ _id: -1 }).limit(1);
-  const lastDeposit = deposit[0]
-  const activeBetsCount = await Bet.countDocuments({ userId: userId, status: 1 });
-  const difference = lastDeposit.availableBalance - user.availableBalance - (-user.exposure)
-  if(user.exposure > 1 ){
-    resp.status = 400;
-  }else if(user.exposure < -1 && activeBetsCount === 0){
-    resp.status = 400;
-  }else if(user.exposure < -1 && activeBetsCount > 0 &&   ( difference < -1 || difference > 1 )){
-    resp.status = 400;
-  }
-  return resp
-}
+// const userWithdrawStatusCheck = async (userId) => {
+//   const resp = {
+//     status: 200,
+//     englush: "Take screenshot and contact support team",
+//     urdu: "اسکرین شاٹ لیں اور سپورٹ ٹیم سے رابطہ کریں۔"
+//   }
+//   // const userId = Number(req.query.id);
+//   const user   = await  User.findOne({ userId: userId })
+//   const deposit = await Cash.find({ userId: userId }).sort({ _id: -1 }).limit(1);
+//   const lastDeposit = deposit[0]
+//   const activeBetsCount = await Bet.countDocuments({ userId: userId, status: 1 });
+//   const difference = lastDeposit.availableBalance - user.availableBalance - (-user.exposure)
+//   if(user.exposure > 1 ){
+//     resp.status = 400;
+//   }else if(user.exposure < -1 && activeBetsCount === 0){
+//     resp.status = 400;
+//   }else if(user.exposure < -1 && activeBetsCount > 0 &&   ( difference < -1 || difference > 1 )){
+//     resp.status = 400;
+//   }
+//   return resp
+// }
 
 loginRouter.post(
   '/addCashDeposit',
@@ -973,5 +973,4 @@ loginRouter.post(
 loginRouter.post('/getLedgerDetails', getLedgerDetails);
 loginRouter.post('/getLedgerDetails2', getLedgerDetails2);
 loginRouter.get('/getAllDeposits', getAllDeposits);
-// loginRouter.get('/userWithdrawStatusCheck', userWithdrawStatusCheck);
 module.exports = { loginRouter };
