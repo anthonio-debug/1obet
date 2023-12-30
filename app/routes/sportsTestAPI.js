@@ -342,7 +342,6 @@ async function getOddsByMultiMarketId(req, res) {
     const oddsRequestData = {
       "marketIds": marketIds
     }
-    console.log("-------------------->", oddsRequestData)
     var oddsUrl = `${sportsAPIUrl}/listMarketBook`;
 
     const oddsResponse = await axios.post(
