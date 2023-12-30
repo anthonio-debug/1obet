@@ -335,13 +335,14 @@ async function getOddsByMultiMarketId(req, res) {
     );
 
     let marketIds = [];
-    for (let i = 0; i < marketResponse?.length; i ++) {
-      marketIds.push(marketResponse[i].marketId)
+    for (let i = 0; i < marketResponse?.data?.result?.length; i ++) {
+      marketIds.push(marketResponse?.data?.result[i].marketId + "")
     }
 
     const oddsRequestData = {
       "marketIds": marketIds
     }
+    console.log("-------------------->", oddsRequestData)
     var oddsUrl = `${sportsAPIUrl}/listMarketBook`;
 
     const oddsResponse = await axios.post(
@@ -350,7 +351,7 @@ async function getOddsByMultiMarketId(req, res) {
       header
     );
     
-    const marketsData = oddsResponse.data;
+    const marketsData = oddsResponse?.data?.result;
 
     res.status(200).json({success: true, data: marketsData});
   } catch (err) {
