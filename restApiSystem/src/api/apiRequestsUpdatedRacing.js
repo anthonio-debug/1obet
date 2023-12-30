@@ -569,9 +569,16 @@ function apiRequests() {
       var myArray = [];
 
       for (let index = 0; index < events.length; index++) {
+
         const event = events[index];
         // myArray.push({ eventId: event.Id, marketId: event.marketIds[0] });
+        console.log('eventId: ',event.Id);
+        console.log('market size: ',event.marketIds.length);
+        for (let index1 = 0; index1 < 10; index1++) {
         myArray.push({eventId: event.Id, marketId: event.marketIds[0]});
+        }
+
+
       }
       raceOddsJob(myArray);
     }
