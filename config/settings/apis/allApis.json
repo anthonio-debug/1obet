@@ -197,6 +197,5 @@
   "listCricket",
   "editCricket",
   "updatemarketstatus",
-  "eventsapicalls",
-  "userWithdrawStatusCheck"
+  "eventsapicalls"
 ]
