@@ -887,6 +887,7 @@ async function getAllDeposits(req, res) {
       )
         .sort({ _id: -1 })
         .exec( async (err, results) => {
+          const resp = await userWithdrawStatusCheck(Number(req.query.userId))
           if (err) {
             console.log('Error'.err);
             return res.status(404).send({ message: 'Record not found' });
@@ -894,6 +895,7 @@ async function getAllDeposits(req, res) {
           if (!results) {
             return res.status(200).send({
               message: 'Record not found',
+              status: resp,
               results: {
                 maxWithdraw: 0,
                 creditLimit: 0,
@@ -904,7 +906,7 @@ async function getAllDeposits(req, res) {
             });
           }
 
-          const resp = await userWithdrawStatusCheck(Number(req.query.userId))
+          
 
           if (user.role == '5') {
             return res.send({
