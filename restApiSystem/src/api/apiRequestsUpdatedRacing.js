@@ -63,8 +63,8 @@ function apiRequests() {
             marketId: event_information?.marketId,
             eventNodes: [
               {
-                eventId: event_information?.eventNodes?.eventId,
-                event: event_information?.eventNodes?.event,
+                eventId: event_information?.eventNodes[0]?.eventId,
+                event: event_information?.eventNodes[0]?.event,
                 marketNodes: {
                   marketId: event_information?.eventNodes[0]?.marketNodes?.marketId,
                   state: event_information?.eventNodes[0]?.marketNodes?.state,

@@ -375,22 +375,8 @@ async function listEventsBySport(req, res) {
         {
           $lookup: {
             from: "inplayevents",
-            // localField: "sportsId",
-            // foreignField: "sportID",
-            let: { sports_id: "$sportID" },
-            pipeline: [
-              {
-                $match: {
-                  $expr: {
-                    $and: [
-                      { $eq: ["$sportID", "$$sports_id"] },
-                      { $eq: ["$CompanySetStatus", "OPEN"] },
-                      { $eq: ["$status", "OPEN"] },
-                    ]
-                  }
-                }
-              }
-            ],
+            localField: "sportsId",
+            foreignField: "sportID",
             as: "event",
           },
         },
