@@ -307,6 +307,36 @@ async function getOddsByMarketId(req, res) {
   }
 }
 
+async function getMarketType(req, res) {
+  try { 
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const requestData = {
+      "filter": {
+        eventIds: []
+      }
+    } 
+    var url = `${sportsAPIUrl}/listMarketTypes`;
+    
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+    const marketsData = response.data;
+
+    res.status(200).json({success: true, data: marketsData});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
 async function getOddsByMultiMarketId(req, res) {
   const eventId = req.params.eventId;
 
@@ -413,5 +443,6 @@ router.get('/track-bet/get-events/:sportsId', getEventsBySportsId)
 router.get('/track-bet/get-today-events/:sportsId', getTodayEventsBySportsId)
 router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
 router.get('/track-bet/get-odds-multi-marketids/:eventId', getOddsByMultiMarketId)
+router.get('/track-bet/get-markettype', getMarketType)
 
 module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure };

@@ -430,18 +430,27 @@ function apiRequests() {
           const runner = eventsData[j].runners[ix1];
           runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
         }
-        await MarketIDS.findOneAndUpdate(
-          {
-            marketId: eventsData[j].marketId,
-            sportID: eventsData[j].eventType.id,
-            eventId: eventId,
-          },
-          {
-            $set: {
-              runners: runners,
-              openDate: Date.parse(eventsData[j].marketStartTime)
-            }
-          }, {upsert: true, new: true});
+
+        const existedMarketWithDate = await MarketIDS.findOne({
+          sportID: parseInt(eventsData[j].eventType.id),
+          eventId: eventId,
+          openDate: Date.parse(eventsData[j].marketStartTime)
+        })
+
+        if (existedMarketWithDate?.length == 0 || !existedMarketWithDate) {
+          await MarketIDS.findOneAndUpdate(
+            {
+              marketId: eventsData[j].marketId,
+              sportID: parseInt(eventsData[j].eventType.id),
+              eventId: eventId,
+            },
+            {
+              $set: {
+                runners: runners,
+                openDate: Date.parse(eventsData[j].marketStartTime)
+              }
+            }, {upsert: true, new: true});
+        }
       }
       await InPlayEvents.findOneAndUpdate(
         {Id: eventId},
@@ -596,7 +605,6 @@ function apiRequests() {
         CompanySetStatus: 'OPEN'
       }).sort({openDate: 1}).limit(20).exec();
 
-      console.log('Heeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeere: ', events.length);
       if (events.length) {
         const checkOther = await InPlayEvents.findOne({
           status: 'WAITING',
