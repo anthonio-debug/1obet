@@ -94,11 +94,18 @@ function apiRequests() {
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
     }
-
+    const now = moment();
+    const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
+    const endTime = now.add(4, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
-      }
+        "marketStartTime": {
+          "from": startTime,
+          "to": endTime
+        }
+      },
+      "maxResults": 20,
     }
 
     var url = `${config.newThirdURL}/listEvents`;
