@@ -911,7 +911,7 @@ async function getAllDeposits(req, res) {
           if (user.role == '5') {
             return res.send({
               message: 'Deposit Record Found',
-              status: resp,
+              // status: resp,
               results: {
                 maxWithdraw: user.availableBalance,
                 creditLimit: parentUser.creditRemaining,
