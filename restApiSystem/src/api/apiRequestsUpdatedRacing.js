@@ -260,6 +260,7 @@ function apiRequests() {
         header
       );
 
+      
       const eventsData = response.data.result;
 
       let marketIds = [];
