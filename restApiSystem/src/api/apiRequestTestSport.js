@@ -174,9 +174,13 @@ function apiRequests() {
       return new Date(d).toString() !== "Invalid Date";
     }
 
+    const cricketIds = ['32853038','32901645','32892409']
+    const soccerIds = ["32880557","32905041","32886273","32904657","32896485","32899492","32906029","32901990","32901973"]
+
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
+        "eventIds": sportsId == "1" ? soccerIds : sportsId == "4" ? cricketIds : ["1"]
       }
     }
     var url = `${sportsAPIUrl}/listEvents`;
