@@ -376,51 +376,36 @@ function apiRequests() {
   }
 
   /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
-  async function raceOddsJob(events) {
+  async function raceOddsJob(event) {
     try {
-      let marketIds = [];
-      console.log("raceodds job.......................");
-      for (let i = 0; i < events?.length; i++) {
-        marketIds.push(events[i].marketId);
-      }
+      let marketIds = event.marketIds;
+      console.log("raceodds job.......................")
       console.log("marketIds.......................", marketIds);
       const requestData = {
         "marketIds": marketIds
       }
-      var url = `${config.newThirdURL}/listMarketBook`;
+      const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
       console.log('odds url----------------', url);
       console.log('oddsData==================', oddsData);
-      var responsedMarketIDs = [];
+      let responsedMarketIDs = [];
       if (oddsData.length > 0) {
         for (const odds of oddsData) {
           if (odds) {
             responsedMarketIDs.push(odds.marketId);
             if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
-              const ix = _.findIndex(events, function (o) {
-                return o.marketId == odds.marketId;
-              });
-              // if (ix != -1) {
-              //   await InPlayEvents.findOneAndUpdate({Id: events[ix].eventId}, {
-              //     status: odds.status,
-              //     marketID: events[ix].marketId
-              //   });
-              // }
 
               await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {readyForScore: true}});
               if (odds.marketId) {
                 io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
 
-                io.to('$' + events[ix].marketId).emit('odds', odds);
+                io.to('$' + odds.marketId).emit('odds', odds);
               }
             } else {
-              const ix = _.findIndex(events, function (o) {
-                return o.marketId == odds.marketId;
-              });
               odds.createdAt = new Date().getTime()
 
-              var tempRunners = [];
+              let tempRunners = [];
               for (let n = 0; n < odds.runners?.length; n++) {
                 var tempElement = {
                   selectionId: odds?.runners[n]?.selectionId,
@@ -466,7 +451,7 @@ function apiRequests() {
               }
               let isMarketDataDelayed = false;
 
-              var json = {
+              let json = {
                 marketId: odds.marketId,
                 isMarketDataDelayed: isMarketDataDelayed,
                 state: {
@@ -481,33 +466,33 @@ function apiRequests() {
               const result = await RaceOdds.collection.insertOne(json);
               odds._id = result.insertedId;
 
-              io.to('$' + events[ix].marketId).emit('odds', json);
+              io.to('$' + odds.marketId).emit('odds', json);
             }
           }
         }
 
-        const filteredArray = events.filter((item) => !responsedMarketIDs.includes(item.marketId));
-
-        for (let index = 0; index < filteredArray.length; index++) {
-          await InPlayEvents.findOneAndUpdate({Id: filteredArray[index].eventId}, {
-            $set: {
-              status: 'CLOSED',
-              readyForScore: true
-            }
-          });
-          // console.log(filteredArray[index].eventId, 'CLOSED 1');
-          await MarketIDS.updateOne({eventId: filteredArray[index].eventId}, {$set: {readyForScore: true}});
-          if (filteredArray[index].marketId) {
-            io.emit('racing_status', {status: 'CLOSED', marketId: filteredArray[index].marketId});
-          }
-        }
+        // const filteredArray = events.filter((item) => !responsedMarketIDs.includes(item.marketId));
+        //
+        // for (let index = 0; index < filteredArray.length; index++) {
+        //   await InPlayEvents.findOneAndUpdate({Id: filteredArray[index].eventId}, {
+        //     $set: {
+        //       status: 'CLOSED',
+        //       readyForScore: true
+        //     }
+        //   });
+        //   // console.log(filteredArray[index].eventId, 'CLOSED 1');
+        //   await MarketIDS.updateOne({eventId: filteredArray[index].eventId}, {$set: {readyForScore: true}});
+        //   if (filteredArray[index].marketId) {
+        //     io.emit('racing_status', {status: 'CLOSED', marketId: filteredArray[index].marketId});
+        //   }
+        // }
 
       } else {
-        for (let i = 0; i < events.length; i++) {
+        // for (let i = 0; i < events.length; i++) {
           // console.log(events[i].eventId, 'CLOSED 2');
-          await InPlayEvents.findOneAndUpdate({Id: events[i].eventId}, {$set: {status: 'CLOSED', readyForScore: true}});
-          await MarketIDS.updateOne({eventId: events[i].eventId}, {$set: {readyForScore: true}});
-        }
+          await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED', readyForScore: true}});
+          await MarketIDS.updateOne({eventId: event.eventId}, {$set: {readyForScore: true}});
+        // }
       }
       return ({
         success: true,
@@ -565,14 +550,16 @@ function apiRequests() {
         continue;
       }
 
-      var myArray = [];
+      let eventList = [];
 
       for (let index = 0; index < events.length; index++) {
         const event = events[index];
         // myArray.push({ eventId: event.Id, marketId: event.marketIds[0] });
-        myArray.push({eventId: event.Id, marketId: event.marketIds[0]});
+        eventList.push({eventId: event.Id, marketIds: event.marketIds});
       }
-      raceOddsJob(myArray);
+      for (const event of eventList) {
+        await raceOddsJob(event);
+      }
     }
   }
 }
