@@ -451,6 +451,7 @@ async function getMarketsByMarketType(req, res) {
       "maxResults": 100,
       "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
     } 
+    console.log("---------------------->", requestData)
     var url = `${sportsAPIUrl}/listMarketCatalogue`;
     
     const marketResponse = await axios.post(
@@ -497,6 +498,6 @@ router.get('/track-bet/get-today-events/:sportsId', getTodayEventsBySportsId)
 router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
 router.get('/track-bet/get-odds-multi-marketids/:eventId', getOddsByMultiMarketId)
 router.get('/track-bet/get-markettype', getMarketType)
-router.get('/track-bet/get-market-by-type/:eventId/:marketTypes', getMarketsByMarketType)
+router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByMarketType)
 
 module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure };
