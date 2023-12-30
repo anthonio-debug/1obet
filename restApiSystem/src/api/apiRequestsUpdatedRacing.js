@@ -562,7 +562,9 @@ function apiRequests() {
         for (let index1 = 0; index1 < 10; index1++) {
           console.log('eventId: ', event.Id);
           console.log('market size: ', event.marketIds.length);
-          eventList.push({eventId: event.Id, marketIds: event.marketIds});
+          if (event.marketIds.length) {
+            eventList.push({eventId: event.Id, marketIds: event.marketIds});
+          }
         }
       }
       for (const event of eventList) {
