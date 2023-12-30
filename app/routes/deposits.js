@@ -868,7 +868,7 @@ function getLedgerDetails2(req, res) {
   
 }
 
-function getAllDeposits(req, res) {
+async function getAllDeposits(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.errors });
@@ -886,7 +886,7 @@ function getAllDeposits(req, res) {
         { maxWithdraw: 1 }
       )
         .sort({ _id: -1 })
-        .exec((err, results) => {
+        .exec( async (err, results) => {
           if (err) {
             console.log('Error'.err);
             return res.status(404).send({ message: 'Record not found' });
@@ -904,9 +904,12 @@ function getAllDeposits(req, res) {
             });
           }
 
+          const resp = await userWithdrawStatusCheck(Number(req.query.userId))
+
           if (user.role == '5') {
             return res.send({
               message: 'Deposit Record Found',
+              status: resp,
               results: {
                 maxWithdraw: user.availableBalance,
                 creditLimit: parentUser.creditRemaining,
@@ -918,6 +921,7 @@ function getAllDeposits(req, res) {
           } else {
             return res.send({
               message: 'Deposit Record Found',
+              status: resp,
               results: {
                 ...results._doc,
                 creditLimit: parentUser.creditRemaining,
@@ -932,13 +936,13 @@ function getAllDeposits(req, res) {
   });
 }
 
-const userWithdrawStatusCheck = async (req, res) => {
+const userWithdrawStatusCheck = async (userId) => {
   const resp = {
     status: 200,
     englush: "Take screenshot and contact support team",
     urdu: "اسکرین شاٹ لیں اور سپورٹ ٹیم سے رابطہ کریں۔"
   }
-  const userId = Number(req.query.id);
+  // const userId = Number(req.query.id);
   const user   = await  User.findOne({ userId: userId })
   const deposit = await Cash.find({ userId: userId }).sort({ _id: -1 }).limit(1);
   const lastDeposit = deposit[0]
@@ -951,7 +955,7 @@ const userWithdrawStatusCheck = async (req, res) => {
   }else if(user.exposure < -1 && activeBetsCount > 0 &&   ( difference < -1 || difference > 1 )){
     resp.status = 400;
   }
-  res.send(resp)
+  return resp
 }
 
 loginRouter.post(
@@ -967,5 +971,5 @@ loginRouter.post(
 loginRouter.post('/getLedgerDetails', getLedgerDetails);
 loginRouter.post('/getLedgerDetails2', getLedgerDetails2);
 loginRouter.get('/getAllDeposits', getAllDeposits);
-loginRouter.get('/userWithdrawStatusCheck', userWithdrawStatusCheck);
+// loginRouter.get('/userWithdrawStatusCheck', userWithdrawStatusCheck);
 module.exports = { loginRouter };
