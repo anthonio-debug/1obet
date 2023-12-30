@@ -375,8 +375,8 @@ async function listEventsBySport(req, res) {
         {
           $lookup: {
             from: "inplayevents",
-            localField: "sportsId",
-            foreignField: "sportID",
+            localField: "eventId",
+            foreignField: "Id",
             as: "event",
           },
         },
@@ -393,6 +393,7 @@ async function listEventsBySport(req, res) {
             countryCode:  { $first: { $arrayElemAt: ["$event.countryCode", 0] } },
             venue:  { $first: { $arrayElemAt: ["$event.venue", 0] } },
             inplay2:  { $first: { $arrayElemAt: ["$event.inplay", 0] } },
+            matchId:  { $first: { $arrayElemAt: ["$event._id", 0] } },
           }
         },
         {
@@ -401,8 +402,6 @@ async function listEventsBySport(req, res) {
           }
         }
       ])
-
-
 
         // events = await Events.find({
         //   sportsId: sportId,
