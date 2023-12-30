@@ -250,7 +250,7 @@ function apiRequests() {
           }
         },
         "maxResults": 20,
-        "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
+        "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
 
       const url = `${config.newThirdURL}/listMarketCatalogue`;
