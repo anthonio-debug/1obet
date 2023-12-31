@@ -556,10 +556,11 @@ function apiRequests() {
        
 
       } else {
+        console.log("I am closing marketId: ",marketIds);
         // for (let i = 0; i < events.length; i++) {
         // console.log(events[i].eventId, 'CLOSED 2');
         //await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
-        await MarketIDS.updateOne({eventId: event.eventId}, {$set: {status: 'CLOSED',readyForScore: true}});
+        await MarketIDS.updateOne({marketId: marketIds}, {$set: {status: 'CLOSED',readyForScore: true}});
         // }
       }
       return ({
