@@ -249,7 +249,7 @@ function apiRequests() {
             "to": endTime
           }
         },
-        "maxResults": 20,
+        "maxResults": 40,
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
 
