@@ -553,26 +553,12 @@ function apiRequests() {
           }
         }
 
-        // const filteredArray = events.filter((item) => !responsedMarketIDs.includes(item.marketId));
-        //
-        // for (let index = 0; index < filteredArray.length; index++) {
-        //   await InPlayEvents.findOneAndUpdate({Id: filteredArray[index].eventId}, {
-        //     $set: {
-        //       status: 'CLOSED',
-        //       readyForScore: true
-        //     }
-        //   });
-        //   // console.log(filteredArray[index].eventId, 'CLOSED 1');
-        //   await MarketIDS.updateOne({eventId: filteredArray[index].eventId}, {$set: {readyForScore: true}});
-        //   if (filteredArray[index].marketId) {
-        //     io.emit('racing_status', {status: 'CLOSED', marketId: filteredArray[index].marketId});
-        //   }
-        // }
+       
 
       } else {
         // for (let i = 0; i < events.length; i++) {
         // console.log(events[i].eventId, 'CLOSED 2');
-        await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED', readyForScore: true}});
+        await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
         await MarketIDS.updateOne({eventId: event.eventId}, {$set: {readyForScore: true}});
         // }
       }
