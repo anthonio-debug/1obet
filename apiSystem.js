@@ -94,7 +94,7 @@ async function main() {
   // ToolForTestSport.init(io, express);
 
   // init events list
-  // ToolForListEvent.init(io, express);
+  ToolForListEvent.init(io, express);
 
   // init events list
   ToolForResult.init(io, express);
