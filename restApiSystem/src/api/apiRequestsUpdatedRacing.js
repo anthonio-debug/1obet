@@ -558,8 +558,8 @@ function apiRequests() {
       } else {
         // for (let i = 0; i < events.length; i++) {
         // console.log(events[i].eventId, 'CLOSED 2');
-        await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
-        await MarketIDS.updateOne({eventId: event.eventId}, {$set: {readyForScore: true}});
+        //await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
+        await MarketIDS.updateOne({eventId: event.eventId}, {$set: {status: 'CLOSED',readyForScore: true}});
         // }
       }
       return ({
