@@ -238,11 +238,12 @@ function apiRequests() {
     try {
       const now = moment();
       const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
-      const endTime = now.add(3, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+      const endTime = now.add(10, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
       const requestData = {
         "filter": {
           "eventIds": [eventId],
           "eventTypeIds": [sportsId],
+          "marketTypes": ['WIN'],
           "marketStartTime": {
             "from": startTime,
             "to": endTime
