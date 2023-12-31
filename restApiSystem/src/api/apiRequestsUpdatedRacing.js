@@ -238,7 +238,7 @@ function apiRequests() {
     try {
       const now = moment();
       const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
-      const endTime = now.add(1, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+      const endTime = now.add(3, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
       const requestData = {
         "filter": {
           "eventIds": [eventId],
