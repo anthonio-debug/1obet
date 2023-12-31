@@ -238,7 +238,7 @@ function apiRequests() {
     try {
       const now = moment();
       const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
-      const endTime = now.add(1, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+      const endTime = now.add(2, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
       const requestData = {
         "filter": {
           "eventIds": [eventId],
@@ -249,7 +249,7 @@ function apiRequests() {
             "to": endTime
           }
         },
-        "maxResults": 20,
+        "maxResults": 40,
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
 
@@ -553,27 +553,13 @@ function apiRequests() {
           }
         }
 
-        // const filteredArray = events.filter((item) => !responsedMarketIDs.includes(item.marketId));
-        //
-        // for (let index = 0; index < filteredArray.length; index++) {
-        //   await InPlayEvents.findOneAndUpdate({Id: filteredArray[index].eventId}, {
-        //     $set: {
-        //       status: 'CLOSED',
-        //       readyForScore: true
-        //     }
-        //   });
-        //   // console.log(filteredArray[index].eventId, 'CLOSED 1');
-        //   await MarketIDS.updateOne({eventId: filteredArray[index].eventId}, {$set: {readyForScore: true}});
-        //   if (filteredArray[index].marketId) {
-        //     io.emit('racing_status', {status: 'CLOSED', marketId: filteredArray[index].marketId});
-        //   }
-        // }
+       
 
       } else {
         // for (let i = 0; i < events.length; i++) {
         // console.log(events[i].eventId, 'CLOSED 2');
-        await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED', readyForScore: true}});
-        await MarketIDS.updateOne({eventId: event.eventId}, {$set: {readyForScore: true}});
+        //await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
+        await MarketIDS.updateOne({eventId: event.eventId}, {$set: {status: 'CLOSED',readyForScore: true}});
         // }
       }
       return ({
