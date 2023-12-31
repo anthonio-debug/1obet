@@ -327,13 +327,14 @@ async function listCompetitions(req, res) {
 async function listEventsBySport(req, res) {
   const sportId = req.query.id;
   try {
-    let start;
-    let end;
-    let events;
-
     var now = new Date();  // Get the current date and time
-    var startOfDay = new Date(now - now % 864e5); 
-    var endOfDay = new Date(now - now % 864e5 + 864e5 - 1); 
+    var startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    var startOfDayTimestamp = startOfDay.getTime();
+
+    var endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+    var endOfDayTimestamp = endOfDay.getTime();
 
     if (sportId == "4" || sportId == "2" || sportId == "1") {
       start = new Date().getTime();
@@ -366,8 +367,8 @@ async function listEventsBySport(req, res) {
             sportID: Number(sportId),
             // CompanySetStatus: "OPEN",
             $and: [
-              { openDate: { $gte: start } },
-              { openDate: { $lte: end } }
+              { openDate: { $gte: startOfDayTimestamp } },
+              { openDate: { $lte: endOfDayTimestamp } }
             ]
           },
         },
@@ -394,7 +395,8 @@ async function listEventsBySport(req, res) {
         },
         {
           $match: {
-            "event.CompanySetStatus": "OPEN"
+            "event.CompanySetStatus": "OPEN",
+            "event.status": "OPEN",
           }
         },
         {
