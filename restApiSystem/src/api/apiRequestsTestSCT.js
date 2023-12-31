@@ -178,16 +178,14 @@ function apiRequests() {
   async function eventsBySupportJobs(sportsId) {
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
-    }
-    // const cricketIds = ['32892406','32855238','32901594','32900001','32853035','32882829']
-    // const soccerIds = ["32895406","32901546","32901525","32901544","32895376","32901506","32895374","32899464","32901489"]
+    } 
 
     let from = new Date();
     let to = new Date(from);
     to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
 
-     const cricketIds = ['32892406','32855238','32901594','32900001','32853035','32882829']
-     const soccerIds = ["32895406","32901546","32901525","32901544","32895376","32901506","32895374","32899464","32901489"]
+    const cricketIds = ['32853038','32901645','32892409']
+    const soccerIds = ["32880557","32905041","32886273","32904657","32896485","32899492","32906029","32901990","32901973"]
 
     const requestData = {
       "filter": {
