@@ -482,8 +482,7 @@ function apiRequests() {
           numberOfVisits++;
          
           if (odds) {
-            console.log(marketIds[marketIds_index], " This market has odds found");
-            responsedMarketIDs.push(odds.marketId);
+            
             
             if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
               console.log(odds.marektId," this market has no odds.....");
@@ -495,6 +494,9 @@ function apiRequests() {
                 io.to('$' + odds.marketId).emit('odds', odds);
               }
             } else {
+              console.log(marketIds[marketIds_index], " This market has odds found");
+            responsedMarketIDs.push(odds.marketId);
+
               odds.createdAt = new Date().getTime()
 
               let tempRunners = [];
@@ -571,13 +573,22 @@ function apiRequests() {
 
       } else {
         console.log("I am closing marketId: ",marketIds);
+        //let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
         // for (let i = 0; i < events.length; i++) {
         // console.log(events[i].eventId, 'CLOSED 2');
         //await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
         //await MarketIDS.updateOne({marketId: marketIds}, {$set: {status: 'CLOSED',readyForScore: true}});
-        await MarketIDS.updateMany({marketId:{$in:marketIds}},{$set:{status:'PENDING'}})
+        //await MarketIDS.updateMany({marketId:{$in:madifferencerketIds}},{$set:{status:'PENDING'}})
         // }
       }
+      let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
+        // for (let i = 0; i < events.length; i++) {
+        // console.log(events[i].eventId, 'CLOSED 2');
+        //await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
+        //await MarketIDS.updateOne({marketId: marketIds}, {$set: {status: 'CLOSED',readyForScore: true}});
+        await MarketIDS.updateMany({marketId:{$in:madifferencerketIds}},{$set:{status:'PENDING'}});
+
+
       return ({
         success: true,
         message: 'Odds Records',
