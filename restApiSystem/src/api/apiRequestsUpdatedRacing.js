@@ -459,14 +459,14 @@ function apiRequests() {
   /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
   async function raceOddsJob(event) {
     try {
-      let marketIds = event.marketIds;
-      marketIds = 1.223101395;
+      //let marketIds = event.marketIds;
+      let marketIds = array('1.223101409'); 
       console.log("marketIds.......................", marketIds);
       const requestData = {
         "marketIds": marketIds
       }
-      const url_refresh = `http://185.58.225.212:8080/api/serviceConsole/testqms/6`;
-      const Refresh = await axios.get(url_refresh);
+      //const url_refresh = `http://185.58.225.212:8080/api/serviceConsole/testqms/6`;
+      //const Refresh = await axios.get(url_refresh);
 
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
@@ -660,13 +660,12 @@ function apiRequests() {
 const eventMarkets = await MarketIDS.find({eventId: event.Id }).toArray();
 
 for (const eventMarket of eventMarkets) {
-
+    
 }
 
 
 //end of getting all OPEN markets of the event
 
-/*
 
         for (let index1 = 0; index1 < 10; index1++) {
           console.log('eventId SIZE which I am processing: ', event.Id);
@@ -675,22 +674,12 @@ for (const eventMarket of eventMarkets) {
             eventList.push({eventId: event.Id, marketIds: event.marketIds});
           }
         }
-        */
-
-
-
-
       }
-
-      /*
       for (const event of eventList) {
         if (event.marketIds) {
           await raceOddsJob(event);
         }
       }
-      */
-
-
     }
   }
 }
