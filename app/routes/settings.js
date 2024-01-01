@@ -327,13 +327,14 @@ async function listCompetitions(req, res) {
 async function listEventsBySport(req, res) {
   const sportId = req.query.id;
   try {
-    let start;
-    let end;
-    let events;
-
     var now = new Date();  // Get the current date and time
-    var startOfDay = new Date(now - now % 864e5); 
-    var endOfDay = new Date(now - now % 864e5 + 864e5 - 1); 
+    var startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    var startOfDayTimestamp = startOfDay.getTime();
+
+    var endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+    var endOfDayTimestamp = endOfDay.getTime();
 
     if (sportId == "4" || sportId == "2" || sportId == "1") {
       start = new Date().getTime();
@@ -360,25 +361,43 @@ async function listEventsBySport(req, res) {
           isShowed: true,
         }).sort({ openDate: 1 });
       } else if (sportId == "7" || sportId == "4339") {
-
       events = await MarketIDS.aggregate([
         {
           $match: {
             sportID: Number(sportId),
             // CompanySetStatus: "OPEN",
             $and: [
-              { openDate: { $gte: start } },
-              { openDate: { $lte: end } }
+              { openDate: { $gte: startOfDayTimestamp } },
+              { openDate: { $lte: endOfDayTimestamp } }
             ]
           },
         },
         {
           $lookup: {
             from: "inplayevents",
-            localField: "sportsId",
-            foreignField: "sportID",
+            localField: "eventId",
+            foreignField: "Id",
             as: "event",
           },
+        },
+        {
+          $addFields: {
+            event: {
+              $cond: {
+                if: {
+                  $eq: [{ $type: "$event" }, "array"]
+                },
+                then: { $arrayElemAt: ["$event", 0] },
+                else: "$event"
+              }
+            }
+          }
+        },
+        {
+          $match: {
+            "event.CompanySetStatus": "OPEN",
+            "event.status": "OPEN",
+          }
         },
         {
           $group: {
@@ -387,12 +406,13 @@ async function listEventsBySport(req, res) {
             marketIds: { $push: "$marketId" },
             sportsId: { $first: "$sportID" },
             openDate: { $first: "$openDate" },
-            openDate2:  { $first: { $arrayElemAt: ["$event.openDate", 0] } },
+            openDate2: { $first: "$event.openDate" },
             status: { $first: "$status" },
             inPlay: { $first: "$inPlay" },
-            countryCode:  { $first: { $arrayElemAt: ["$event.countryCode", 0] } },
-            venue:  { $first: { $arrayElemAt: ["$event.venue", 0] } },
-            inplay2:  { $first: { $arrayElemAt: ["$event.inplay", 0] } },
+            countryCode: { $first: "$event.countryCode" },
+            venue: { $first: "$event.venue" },
+            inplay2: { $first: "$event.inplay" },
+            matchId: { $first: "$event._id" },
           }
         },
         {
@@ -401,8 +421,6 @@ async function listEventsBySport(req, res) {
           }
         }
       ])
-
-
 
         // events = await Events.find({
         //   sportsId: sportId,
