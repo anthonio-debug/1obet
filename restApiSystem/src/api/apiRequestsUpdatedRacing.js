@@ -657,10 +657,10 @@ function apiRequests() {
 
 
 //getting all OPEN markets of the event
-const eventMarkets = await MarketIDS.find({eventId: event.Id }).toArray();
+const eventMarkets = await MarketIDS.find({eventId: event.Id });
 
 for (const eventMarket of eventMarkets) {
-    
+    console.log("eventMarkets=========>",eventMarkets);
 }
 
 
