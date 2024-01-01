@@ -460,7 +460,7 @@ function apiRequests() {
   async function raceOddsJob(event) {
     try {
       let marketIds = event.marketIds;
-      
+      marketIds = 1.223101395;
       console.log("marketIds.......................", marketIds);
       const requestData = {
         "marketIds": marketIds
@@ -654,6 +654,20 @@ function apiRequests() {
         eventList.push({eventId: event.Id, marketIds: event.marketIds});
         console.log("EventId which I am processing: ",event.Id);
         console.log("marketIds which I am processing: ",event.marketIds);
+
+
+//getting all OPEN markets of the event
+const eventMarkets = await MarketIDS.find({eventId: event.Id }).toArray();
+
+for (const eventMarket of eventMarkets) {
+
+}
+
+
+//end of getting all OPEN markets of the event
+
+/*
+
         for (let index1 = 0; index1 < 10; index1++) {
           console.log('eventId SIZE which I am processing: ', event.Id);
           console.log('market SIZE which I am processing: ', event.marketIds.length);
@@ -661,12 +675,22 @@ function apiRequests() {
             eventList.push({eventId: event.Id, marketIds: event.marketIds});
           }
         }
+        */
+
+
+
+
       }
+
+      /*
       for (const event of eventList) {
         if (event.marketIds) {
           await raceOddsJob(event);
         }
       }
+      */
+
+
     }
   }
 }
