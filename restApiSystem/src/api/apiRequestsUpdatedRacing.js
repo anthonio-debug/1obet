@@ -652,9 +652,11 @@ function apiRequests() {
         const event = events[index];
         // myArray.push({ eventId: event.Id, marketId: event.marketIds[0] });
         eventList.push({eventId: event.Id, marketIds: event.marketIds});
+        console.log("EventId which I am processing: ",event.Id);
+        console.log("marketIds which I am processing: ",event.marketIds);
         for (let index1 = 0; index1 < 10; index1++) {
-          console.log('eventId: ', event.Id);
-          console.log('market size: ', event.marketIds.length);
+          console.log('eventId SIZE which I am processing: ', event.Id);
+          console.log('market SIZE which I am processing: ', event.marketIds.length);
           if (event.marketIds.length) {
             eventList.push({eventId: event.Id, marketIds: event.marketIds});
           }
