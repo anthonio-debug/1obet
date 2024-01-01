@@ -473,6 +473,7 @@ function apiRequests() {
       const oddsData = response.data.result;
       
       console.log('oddsData==================', oddsData);
+      console.log("length of oddsData.length: ",oddsData.length);
       let responsedMarketIDs = [];
       let marketIds_index = 0;
       let numberOfVisits = 0;
