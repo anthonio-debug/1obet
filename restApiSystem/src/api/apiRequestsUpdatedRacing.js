@@ -97,7 +97,7 @@ function apiRequests() {
 
     const now = moment();
     const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
-    const endTime = now.add(4, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+    const endTime = now.add(10, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
@@ -431,8 +431,7 @@ function apiRequests() {
             const runner = eventsData[j].runners[ix1];
             runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
           }
-  
-          await MarketIDS.findOneAndUpdate(
+           await MarketIDS.findOneAndUpdate(
             {
               marketId: eventsData[j].marketId,
               sportID: parseInt(eventsData[j].eventType.id),
@@ -441,7 +440,7 @@ function apiRequests() {
             {
               $set: {
                 runners: runners,
-                marketType: "WIN",
+                marketType: eventsData[j]?.description?.marketType,
                 openDate: Date.parse(eventsData[j].marketStartTime)
               }
             }, {upsert: true, new: true});
@@ -461,22 +460,32 @@ function apiRequests() {
   async function raceOddsJob(event) {
     try {
       let marketIds = event.marketIds;
-      console.log("raceodds job.......................")
+      
       console.log("marketIds.......................", marketIds);
       const requestData = {
         "marketIds": marketIds
       }
+      const url_refresh = `http://185.58.225.212:8080/api/serviceConsole/testqms/6`;
+      const Refresh = await axios.get(url_refresh);
+
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
-      console.log('odds url----------------', url);
+      
       console.log('oddsData==================', oddsData);
       let responsedMarketIDs = [];
+      let marketIds_index = 0;
+      let numberOfVisits = 0;
       if (oddsData.length > 0) {
         for (const odds of oddsData) {
+          numberOfVisits++;
+         
           if (odds) {
+            console.log(marketIds[marketIds_index], " This market has odds found");
             responsedMarketIDs.push(odds.marketId);
+            
             if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
+              console.log(odds.marektId," this market has no odds.....");
 
               await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {readyForScore: true}});
               if (odds.marketId) {
@@ -550,7 +559,11 @@ function apiRequests() {
 
               io.to('$' + odds.marketId).emit('odds', json);
             }
+          }else{
+            console.log(markeIds[marketIds_index], " HAS no odds." );
           }
+          marketIds_index++;
+          console.log("VISIT NO: ",numberOfVisits);
         }
 
        
@@ -560,7 +573,8 @@ function apiRequests() {
         // for (let i = 0; i < events.length; i++) {
         // console.log(events[i].eventId, 'CLOSED 2');
         //await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
-        await MarketIDS.updateOne({marketId: marketIds}, {$set: {status: 'CLOSED',readyForScore: true}});
+        //await MarketIDS.updateOne({marketId: marketIds}, {$set: {status: 'CLOSED',readyForScore: true}});
+        await MarketIDS.updateMany({marketId:{$in:marketIds}},{$set:{status:'PENDING'}})
         // }
       }
       return ({
