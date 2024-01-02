@@ -2513,10 +2513,10 @@ const eventListByMarketIds = async (req, res)=>{
         $match: {
           sportID: Number(sportId),
           // CompanySetStatus: "OPEN",
-          $and: [
-            { openDate: { $gte: startOfDayTimestamp } },
-            { openDate: { $lte: endOfDayTimestamp } }
-          ]
+          // $and: [
+          //   { openDate: { $gte: startOfDayTimestamp } },
+          //   { openDate: { $lte: endOfDayTimestamp } }
+          // ]
         },
       },
       {
