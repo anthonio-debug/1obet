@@ -459,14 +459,14 @@ function apiRequests() {
   /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
   async function raceOddsJob(event) {
     try {
-      let marketIds = event.marketIds;
-      
+      //let marketIds = event.marketIds;
+      let marketIds = array('1.223101409'); 
       console.log("marketIds.......................", marketIds);
       const requestData = {
         "marketIds": marketIds
       }
-      const url_refresh = `http://185.58.225.212:8080/api/serviceConsole/testqms/6`;
-      const Refresh = await axios.get(url_refresh);
+      //const url_refresh = `http://185.58.225.212:8080/api/serviceConsole/testqms/6`;
+      //const Refresh = await axios.get(url_refresh);
 
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
@@ -654,19 +654,22 @@ function apiRequests() {
         eventList.push({eventId: event.Id, marketIds: event.marketIds});
         console.log("EventId which I am processing: ",event.Id);
         console.log("marketIds which I am processing: ",event.marketIds);
-        for (let index1 = 0; index1 < 10; index1++) {
-          console.log('eventId SIZE which I am processing: ', event.Id);
-          console.log('market SIZE which I am processing: ', event.marketIds.length);
-          if (event.marketIds.length) {
-            eventList.push({eventId: event.Id, marketIds: event.marketIds});
-          }
-        }
+
+
+//getting all OPEN markets of the event
+const eventMarkets = await MarketIDS.find({eventId: event.Id });
+console.log("eventMarkets=========> ",eventMarkets);
+for (const eventMarket of eventMarkets) {
+    
+}
+
+
+//end of getting all OPEN markets of the event
+
+
+       
       }
-      for (const event of eventList) {
-        if (event.marketIds) {
-          await raceOddsJob(event);
-        }
-      }
+      
     }
   }
 }
