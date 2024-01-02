@@ -9,6 +9,7 @@ const selectedCasinoSchema = new mongoose.Schema({
       id: { type: String },
       name: { type: String },
       type: { type: String },
+      allowedBetamount: { type: Number, default: 0 },
       subcategory: { type: String },
       details: { type: Object },
       new: { type: String },
