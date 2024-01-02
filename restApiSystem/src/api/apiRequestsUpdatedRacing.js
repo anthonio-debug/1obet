@@ -252,7 +252,7 @@ function apiRequests() {
         "maxResults": 20,
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
-
+      console.log("eventId to fetch markets for: ",eventId);
       const url = `${config.newThirdURL}/listMarketCatalogue`;
       let response = await axios.post(
         url,
@@ -262,7 +262,7 @@ function apiRequests() {
 
       
       const eventsData = response.data.result;
-
+      console.log("market data  for above event: ",eventsData); 
       let marketIds = [];
       // Create an instance of the raceMarkets model
       for (let j = 0; j < eventsData.length; j++) {
