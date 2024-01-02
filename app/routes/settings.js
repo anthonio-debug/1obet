@@ -2495,15 +2495,14 @@ async function removeOdds(req, res) {
  }
 }
 
-const eventListByMarketIds = async (req, res)=>{
-  
+async function  eventListByMarketIds(req, res) {
   try {
     const now = new Date();
     var startOfDay = new Date(now);
     startOfDay.setHours(0, 0, 0, 0);
     var startOfDayTimestamp = startOfDay.getTime();
 
-    const sportId = req.params.sportsId;
+    // const sportId = req.params.sportsId;
     var endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
     var endOfDayTimestamp = endOfDay.getTime();
@@ -2561,8 +2560,20 @@ const eventListByMarketIds = async (req, res)=>{
         $sort: {
           openDate: 1
         }
+      },
+      {
+        $project: {
+          marketId: { $first: "$marketIds"}
+        }
       }
     ])
+
+    let marketIdsResult = [];
+
+    for (let i = 0; i < events?.length; i ++) {
+      marketIdsResult.push(events[i].marketId)
+    }
+
     return res.send({
       status: true,
       message: "Event list",
@@ -2570,14 +2581,11 @@ const eventListByMarketIds = async (req, res)=>{
     })
   } catch (error) {
     console.log(`Error ${error}`);
-    return res.status(404).send({
-      message: "Something went wrong"
-    })
+    return res.send({ status: false, message: `Something went wrong ${error}` });
   }
 
 }
-
-
+ 
 loginRouter.post(
   "/updateDefaultTheme",
   settingsValidation.validate("updateDefaultTheme"),
@@ -2646,7 +2654,7 @@ loginRouter.get("/racesMarketList/:marketId", racesMarketList);
 loginRouter.post("/updateMatch", updateMatch);
 loginRouter.get("/bettorDashboardGames", bettorDashboardGames);
 loginRouter.get("/bettorDashboardGames2", bettorDashboardGames2);
-loginRouter.get("/getAllMatchSettlements", getAllMatchSettlements);z
+loginRouter.get("/getAllMatchSettlements", getAllMatchSettlements);
 loginRouter.post("/getAllGamesResults", getAllGamesResults);
 loginRouter.get("/setBattingDisabled", setBattingDisabled);
 loginRouter.get("/sessionList", sessionList);
