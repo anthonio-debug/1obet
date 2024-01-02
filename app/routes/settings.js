@@ -2495,6 +2495,82 @@ async function removeOdds(req, res) {
  }
 }
 
+const eventListByMarketIds = async (req, res)=>{
+  
+  try {
+    const events = await MarketIDS.aggregate([
+      {
+        $match: {
+          sportID: Number(sportId),
+          // CompanySetStatus: "OPEN",
+          $and: [
+            { openDate: { $gte: startOfDayTimestamp } },
+            { openDate: { $lte: endOfDayTimestamp } }
+          ]
+        },
+      },
+      {
+        $lookup: {
+          from: "inplayevents",
+          localField: "eventId",
+          foreignField: "Id",
+          as: "event",
+        },
+      },
+      {
+        $addFields: {
+          event: {
+            $cond: {
+              if: {
+                $eq: [{ $type: "$event" }, "array"]
+              },
+              then: { $arrayElemAt: ["$event", 0] },
+              else: "$event"
+            }
+          }
+        }
+      },
+      {
+        $match: {
+          "event.CompanySetStatus": "OPEN",
+          "event.status": "OPEN",
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          Id: { $first: "$eventId" },
+          marketIds: { $push: "$marketId" },
+          sportsId: { $first: "$sportID" },
+          openDate: { $first: "$openDate" },
+          openDate2: { $first: "$event.openDate" },
+          status: { $first: "$status" },
+          inPlay: { $first: "$inPlay" },
+          countryCode: { $first: "$event.countryCode" },
+          venue: { $first: "$event.venue" },
+          inplay2: { $first: "$event.inplay" },
+          matchId: { $first: "$event._id" },
+        }
+      },
+      {
+        $sort: {
+          openDate: 1
+        }
+      }
+    ])
+    return res.send({
+      status: true,
+      message: "Event list",
+      data: events
+    })
+  } catch (error) {
+    return res.status(404).send({
+      message: "Something went wrong"
+    })
+  }
+
+}
+
 
 loginRouter.post(
   "/updateDefaultTheme",
@@ -2577,4 +2653,8 @@ loginRouter.get("/getSessionScore", getSessionScore);
 loginRouter.post("/setSessionScore", setSessionScore);
 loginRouter.post("/cancelSingleBet", cancelSingleBet);
 router.get("/removeOdds/:id", removeOdds);
+router.get("/eventListByMarketIds", eventListByMarketIds);
+
+
+
 module.exports = { loginRouter, router, listOddsAPI };
