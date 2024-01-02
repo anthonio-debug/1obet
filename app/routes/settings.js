@@ -2574,6 +2574,7 @@ const eventListByMarketIds = async (req, res)=>{
       data: events
     })
   } catch (error) {
+    console.log(`Error ${error}`);
     return res.status(404).send({
       message: "Something went wrong"
     })
