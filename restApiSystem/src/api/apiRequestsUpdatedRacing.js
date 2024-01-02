@@ -100,7 +100,6 @@ const eventListByMarketIds = async (sportId) => {
       marketIdsResult.push(events[i].marketId)
     }
 
-    console.log("111111111111111111111", marketIdsResult)
     return marketIdsResult
     // res.send({
     //   status: true,
@@ -549,13 +548,10 @@ function apiRequests() {
 
   /**++++++++++++++++++ new added code ( racemarkets collection ) +++++++++++++++++++++++++**/
   async function raceOddsJob(marketIds) {
-    try {
-      //let marketIds = event.marketIds;
+    try { 
       const requestData = {
         "marketIds": marketIds
-      }
-      //const url_refresh = `http://185.58.225.212:8080/api/serviceConsole/testqms/6`;
-      //const Refresh = await axios.get(url_refresh);
+      } 
 
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
@@ -570,8 +566,6 @@ function apiRequests() {
           numberOfVisits++;
          
           if (odds) {
-            
-            
             if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
               console.log(odds.marektId," this market has no odds.....");
 
@@ -583,7 +577,7 @@ function apiRequests() {
               }
             } else {
               console.log(marketIds[marketIds_index], " This market has odds found");
-            responsedMarketIDs.push(odds.marketId);
+              responsedMarketIDs.push(odds.marketId);
 
               odds.createdAt = new Date().getTime()
 
@@ -669,13 +663,9 @@ function apiRequests() {
         //await MarketIDS.updateMany({marketId:{$in:madifferencerketIds}},{$set:{status:'PENDING'}})
         // }
       }
-      let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
-        // for (let i = 0; i < events.length; i++) {
-        // console.log(events[i].eventId, 'CLOSED 2');
-        //await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
-        //await MarketIDS.updateOne({marketId: marketIds}, {$set: {status: 'CLOSED',readyForScore: true}});
-        await MarketIDS.updateMany({marketId:{$in:madifferencerketIds}},{$set:{status:'PENDING'}});
 
+      let difference = marketIds.filter(x => !responsedMarketIDs.includes(x)); 
+      await MarketIDS.updateMany({marketId:{$in:difference}},{$set:{status:'PENDING'}});
 
       return ({
         success: true,
