@@ -2503,6 +2503,7 @@ const eventListByMarketIds = async (req, res)=>{
     startOfDay.setHours(0, 0, 0, 0);
     var startOfDayTimestamp = startOfDay.getTime();
 
+    const sportId = req.query.id;
     var endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
     var endOfDayTimestamp = endOfDay.getTime();
