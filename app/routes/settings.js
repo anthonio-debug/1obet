@@ -2498,7 +2498,7 @@ async function removeOdds(req, res) {
 const eventListByMarketIds = async (req, res)=>{
   
   try {
-
+    const now = new Date();
     var startOfDay = new Date(now);
     startOfDay.setHours(0, 0, 0, 0);
     var startOfDayTimestamp = startOfDay.getTime();
