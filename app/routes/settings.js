@@ -2503,7 +2503,7 @@ const eventListByMarketIds = async (req, res)=>{
     startOfDay.setHours(0, 0, 0, 0);
     var startOfDayTimestamp = startOfDay.getTime();
 
-    const sportId = req.query.id;
+    const sportId = req.params.sportsId;
     var endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
     var endOfDayTimestamp = endOfDay.getTime();
@@ -2512,11 +2512,6 @@ const eventListByMarketIds = async (req, res)=>{
       {
         $match: {
           sportID: Number(sportId),
-          // CompanySetStatus: "OPEN",
-          // $and: [
-          //   { openDate: { $gte: startOfDayTimestamp } },
-          //   { openDate: { $lte: endOfDayTimestamp } }
-          // ]
         },
       },
       {
@@ -2651,7 +2646,7 @@ loginRouter.get("/racesMarketList/:marketId", racesMarketList);
 loginRouter.post("/updateMatch", updateMatch);
 loginRouter.get("/bettorDashboardGames", bettorDashboardGames);
 loginRouter.get("/bettorDashboardGames2", bettorDashboardGames2);
-loginRouter.get("/getAllMatchSettlements", getAllMatchSettlements);
+loginRouter.get("/getAllMatchSettlements", getAllMatchSettlements);z
 loginRouter.post("/getAllGamesResults", getAllGamesResults);
 loginRouter.get("/setBattingDisabled", setBattingDisabled);
 loginRouter.get("/sessionList", sessionList);
@@ -2664,7 +2659,7 @@ loginRouter.get("/getSessionScore", getSessionScore);
 loginRouter.post("/setSessionScore", setSessionScore);
 loginRouter.post("/cancelSingleBet", cancelSingleBet);
 router.get("/removeOdds/:id", removeOdds);
-router.get("/eventListByMarketIds", eventListByMarketIds);
+router.get("/eventListByMarketIds/:sportsId", eventListByMarketIds);
 
 
 
