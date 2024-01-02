@@ -31,6 +31,7 @@ const {MongoClient, ObjectId} = require('mongodb');
 const Crickets = require('../models/Crickets')
 const {FANCY_URL, LIVE_BET_TV_URL} = require("../global/constants");
 const message_result = "cannot place bet due to result check";
+const MarketIDS = require("../models/marketIds") 
 require('dotenv').config()
 
 const handleLimitValue = async (selectedRate, marketId) => {
@@ -153,6 +154,14 @@ const stopbetStatusChecker = async (id) => {
     return 200;
   }
 }
+const checkMarketActiveForBets = async (marketId) => {
+  const marketStatus = await  MarketIDS({ marketId: marketId });
+  if(marketStatus.status === "OPEN"){
+    return 200
+  }else{
+    return 400
+  }
+}
 
 const placeBet = async (req, res) => {
   const errors = validationResult(req);
@@ -242,10 +251,12 @@ const placeBet = async (req, res) => {
       userId: {$in: parentUserIds},
       isDeleted: false,
     });
+
     const subMarketId1 = await User.distinct("blockedSubMarkets", {
       userId: {$in: parentUserIds},
       isDeleted: false,
     });
+
     const subMarketId2 = await User.distinct("blockedSubMarketsByParent", {
       userId: {$in: parentUserIds},
       isDeleted: false,
@@ -356,6 +367,11 @@ const placeBet = async (req, res) => {
         });
       }
     }
+    
+    const res = await checkMarketActiveForBets(id);
+    if(rep === 400){
+      return res.status(404).send({message: "Betting disabled"});
+    }
 
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
       return res.status(404).send({message: "Betting disabled"});
@@ -379,7 +395,6 @@ const placeBet = async (req, res) => {
     /* ==================================================================== */
 
     /* ================================== Market Specific Checks ================================== */
-
 
     // Socer Match Odds
     if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
