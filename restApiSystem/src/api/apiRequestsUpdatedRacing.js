@@ -658,28 +658,18 @@ function apiRequests() {
 
 //getting all OPEN markets of the event
 const eventMarkets = await MarketIDS.find({eventId: event.Id });
-
+console.log("eventMarkets=========> ",eventMarkets);
 for (const eventMarket of eventMarkets) {
-    console.log("eventMarkets=========>",eventMarkets);
+    
 }
 
 
 //end of getting all OPEN markets of the event
 
 
-        for (let index1 = 0; index1 < 10; index1++) {
-          console.log('eventId SIZE which I am processing: ', event.Id);
-          console.log('market SIZE which I am processing: ', event.marketIds.length);
-          if (event.marketIds.length) {
-            eventList.push({eventId: event.Id, marketIds: event.marketIds});
-          }
-        }
+       
       }
-      for (const event of eventList) {
-        if (event.marketIds) {
-          await raceOddsJob(event);
-        }
-      }
+      
     }
   }
 }
