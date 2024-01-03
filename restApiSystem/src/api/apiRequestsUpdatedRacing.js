@@ -329,7 +329,7 @@ function apiRequests() {
     try {
       const now = moment();
       const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
-      const endTime = now.add(4, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+      const endTime = now.add(2, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
       const requestData = {
         "filter": {
           "eventIds": [eventId],
@@ -340,7 +340,7 @@ function apiRequests() {
             "to": endTime
           }
         },
-        "maxResults": 20,
+        "maxResults": 30,
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
       console.log("eventId to fetch markets for: ",eventId);
