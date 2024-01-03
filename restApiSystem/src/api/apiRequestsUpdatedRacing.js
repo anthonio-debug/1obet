@@ -479,7 +479,6 @@ function apiRequests() {
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
-      
       console.log('oddsData==================', oddsData?.length);
       let responsedMarketIDs = [];
       let marketIds_index = 0;
@@ -564,7 +563,7 @@ function apiRequests() {
               }
               const result = await RaceOdds.collection.insertOne(json);
               odds._id = result.insertedId;
-
+ 
               io.to('$' + odds.marketId).emit('odds', json);
             }
           }else{
@@ -573,9 +572,6 @@ function apiRequests() {
           marketIds_index++;
           console.log("VISIT NO: ",numberOfVisits);
         }
-
-       
-
       } else {
         console.log("I am closing marketId: ",marketIds);
         //let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
@@ -589,6 +585,9 @@ function apiRequests() {
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x)); 
       await MarketIDS.updateMany({marketId:{$in:difference}},{$set:{status:'PENDING'}});
+      for (let k = 0; k < difference?.length; k ++) {
+        io.emit('racing_status', {status: "PENDING", marketId: difference[k]});
+      }
 
       return ({
         success: true,
@@ -647,8 +646,7 @@ function apiRequests() {
       }
       const marketIds = await eventListByMarketIds(sportsIds[index]);
       if (marketIds) {
-        console.log(marketIds, "marketIds in checkOdds")
-        // raceOddsJob(marketIds)
+        raceOddsJob(marketIds)
       }
     }
   }
