@@ -341,7 +341,7 @@ async function listEventsBySport(req, res) {
       end = new Date().getTime() + 24 * 60 * 60 * 1000;
     } else if (sportId == "7" || sportId == "4339") {
       start = new Date().getTime();
-      end = new Date().getTime() + 6 * 60 * 60 * 1000;
+      end = new Date().getTime() + 5 * 60 * 60 * 1000;
     }
 
     if (sportId == "4") {
