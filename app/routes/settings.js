@@ -1025,6 +1025,7 @@ async function bettorDashboardGames(req, res) {
           id_hash: "$games.id_hash",
           image_filled: "$games.image_filled",
           isDashboard: "$games.isDashboard",
+          allowedBetamount: "$games.allowedBetamount",
           mobile: "$games.mobile",
         },
       },
