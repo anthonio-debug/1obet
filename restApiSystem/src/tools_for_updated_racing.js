@@ -19,16 +19,16 @@ function ToolForUpdatedRacing() {
         if (config.activeProvider == 'NEW') {
             setInterval(getRacing, 10 * 1000)
             setInterval(() => fetchMarkets(), 10 * 1000);
-            // setTimeout(() => {
-            //     setInterval(apiRequests.checkOdds, 2 * 1000);
-            // }, 1000 * 60); // Delayed by 1 second
+            setTimeout(() => {
+                setInterval(apiRequests.checkOdds, 2 * 1000);
+            }, 1000 * 60); // Delayed by 1 second
         }
     }
 
     async function fetchMarkets() {
         try {
             sportsIds.forEach(async id => {
-                const documents = await inPlayEvents.find({ status: 'OPEN', sportsId: id })
+                const documents = await inPlayEvents.find({ status: 'OPEN', CompanySetStatus: "OPEN", sportsId: id })
                     .sort({ lastCheckMarket: 1 })
                     .limit(config.raceEventsAllowedCount)
                     .exec();
