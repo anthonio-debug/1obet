@@ -647,7 +647,8 @@ function apiRequests() {
       }
       const marketIds = await eventListByMarketIds(sportsIds[index]);
       if (marketIds) {
-        raceOddsJob(marketIds)
+        console.log(marketIds, "marketIds in checkOdds")
+        // raceOddsJob(marketIds)
       }
     }
   }
