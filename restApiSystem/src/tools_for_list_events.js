@@ -59,7 +59,7 @@ function ToolForEvent() {
 
   async function fetchMarkets() {
     try {
-      const documents = await inPlayEvents.findOne({status: 'OPEN', isShowed: true})
+      const documents = await inPlayEvents.findOne({status: 'OPEN', CompanySetStatus: "OPEN", isShowed: true})
         .sort({lastCheckMarket: 1})
         .limit(1)
         .exec();
