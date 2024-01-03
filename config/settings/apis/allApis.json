@@ -58,6 +58,7 @@
   "getAllBetSizes",
   "getDefaultSettings",
   "getLedgerDetails",
+  "getLedgerDetails2",
   "getAllDeposits",
   "addCasinoGameDetails",
   "addEuCasinoGameDetails",
@@ -177,6 +178,7 @@
   "delete-user",
   "marketPositions",
   "marketShares",
+  "marketShares2",
   "addBetPlaceHold",
   "updateBetPlaceHold",
   "getBetPlaceHold",
@@ -195,5 +197,6 @@
   "listCricket",
   "editCricket",
   "updatemarketstatus",
-  "eventsapicalls"
+  "eventsapicalls",
+  "eventListByMarketIds"
 ]
