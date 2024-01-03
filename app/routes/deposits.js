@@ -593,20 +593,20 @@ function getLedgerDetails(req, res) {
 
       cashPipeline.push({
         $group: {
-          _id: "$_id",
-          //  {
-          //   $cond: {
-          //     if: 
-          //     { $in: ["$cashOrCredit", ['Cash', 'Credit']] }, 
-          //     then: "$_id", 
-          //     else: {
-          //       matchId: "$matchId",
-          //       // marketId: "$marketId",
-          //       // betSession: "$betSession",
-          //       // roundId: "$roundId"
-          //     }
-          //   }
-          // },
+          // _id: "$_id",
+          _id: {
+            $cond: {
+              if: 
+              { $in: ["$cashOrCredit", ['Cash', 'Credit']] }, 
+              then: "$_id", 
+              else: {
+                matchId: "$matchId",
+                marketId: "$marketId",
+                betSession: "$betSession",
+                roundId: "$roundId"
+              }
+            }
+          },
           originalId: { $first: "$_id" },
           description:  { $first: "$description" },
           amount:  { $sum: "$amount" },
@@ -614,6 +614,7 @@ function getLedgerDetails(req, res) {
           availableBalance:  { $last: "$availableBalance" },
           maxWithdraw:  { $last: "$maxWithdraw" },
           betTime	:  { $first: "$betDateTime" },
+          cashOrCredit : { $first: "$cashOrCredit" },
           date	:  { $first: "$date" },
           createdAt	:  { $first: "$createdAt" },
           sportsId: { $first: "$sportsId" },
@@ -789,6 +790,7 @@ function getLedgerDetails2(req, res) {
           betTime	:  { $first: "$betDateTime" },
           date	:  { $first: "$date" },
           createdAt	:  { $first: "$createdAt" },
+          cashOrCredit : { $first: "$cashOrCredit" },
           sportsId: { $first: "$sportsId" },
           marketId: { $first: "$marketId" },
           betId: { $first: "$betId" },
@@ -868,7 +870,7 @@ function getLedgerDetails2(req, res) {
   
 }
 
-function getAllDeposits(req, res) {
+async function getAllDeposits(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.errors });
@@ -886,7 +888,8 @@ function getAllDeposits(req, res) {
         { maxWithdraw: 1 }
       )
         .sort({ _id: -1 })
-        .exec((err, results) => {
+        .exec( async (err, results) => {
+          // const resp = await userWithdrawStatusCheck(Number(req.query.userId))
           if (err) {
             console.log('Error'.err);
             return res.status(404).send({ message: 'Record not found' });
@@ -894,6 +897,7 @@ function getAllDeposits(req, res) {
           if (!results) {
             return res.status(200).send({
               message: 'Record not found',
+              // status: resp,
               results: {
                 maxWithdraw: 0,
                 creditLimit: 0,
@@ -904,9 +908,12 @@ function getAllDeposits(req, res) {
             });
           }
 
+          
+
           if (user.role == '5') {
             return res.send({
               message: 'Deposit Record Found',
+              // status: resp,
               results: {
                 maxWithdraw: user.availableBalance,
                 creditLimit: parentUser.creditRemaining,
@@ -918,6 +925,7 @@ function getAllDeposits(req, res) {
           } else {
             return res.send({
               message: 'Deposit Record Found',
+              // status: resp,
               results: {
                 ...results._doc,
                 creditLimit: parentUser.creditRemaining,
@@ -932,27 +940,27 @@ function getAllDeposits(req, res) {
   });
 }
 
-const userWithdrawStatusCheck = async (req, res) => {
-  const resp = {
-    status: 200,
-    englush: "Take screenshot and contact support team",
-    urdu: "اسکرین شاٹ لیں اور سپورٹ ٹیم سے رابطہ کریں۔"
-  }
-  const userId = Number(req.query.id);
-  const user   = await  User.findOne({ userId: userId })
-  const deposit = await Cash.find({ userId: userId }).sort({ _id: -1 }).limit(1);
-  const lastDeposit = deposit[0]
-  const activeBetsCount = await Bet.countDocuments({ userId: userId, status: 1 });
-  const difference = lastDeposit.availableBalance - user.availableBalance - (-user.exposure)
-  if(user.exposure > 1 ){
-    resp.status = 400;
-  }else if(user.exposure < -1 && activeBetsCount === 0){
-    resp.status = 400;
-  }else if(user.exposure < -1 && activeBetsCount > 0 &&   ( difference < -1 || difference > 1 )){
-    resp.status = 400;
-  }
-  res.send(resp)
-}
+// const userWithdrawStatusCheck = async (userId) => {
+//   const resp = {
+//     status: 200,
+//     englush: "Take screenshot and contact support team",
+//     urdu: "اسکرین شاٹ لیں اور سپورٹ ٹیم سے رابطہ کریں۔"
+//   }
+//   // const userId = Number(req.query.id);
+//   const user   = await  User.findOne({ userId: userId })
+//   const deposit = await Cash.find({ userId: userId }).sort({ _id: -1 }).limit(1);
+//   const lastDeposit = deposit[0]
+//   const activeBetsCount = await Bet.countDocuments({ userId: userId, status: 1 });
+//   const difference = lastDeposit.availableBalance - user.availableBalance - (-user.exposure)
+//   if(user.exposure > 1 ){
+//     resp.status = 400;
+//   }else if(user.exposure < -1 && activeBetsCount === 0){
+//     resp.status = 400;
+//   }else if(user.exposure < -1 && activeBetsCount > 0 &&   ( difference < -1 || difference > 1 )){
+//     resp.status = 400;
+//   }
+//   return resp
+// }
 
 loginRouter.post(
   '/addCashDeposit',
@@ -967,5 +975,4 @@ loginRouter.post(
 loginRouter.post('/getLedgerDetails', getLedgerDetails);
 loginRouter.post('/getLedgerDetails2', getLedgerDetails2);
 loginRouter.get('/getAllDeposits', getAllDeposits);
-loginRouter.get('/userWithdrawStatusCheck', userWithdrawStatusCheck);
 module.exports = { loginRouter };

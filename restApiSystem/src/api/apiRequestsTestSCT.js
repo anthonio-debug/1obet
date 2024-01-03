@@ -184,18 +184,17 @@ function apiRequests() {
     let to = new Date(from);
     to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
 
-    const cricketIds = ['32853038','32901645','32892409']
-    const soccerIds = ["32880557","32905041","32886273","32904657","32896485","32899492","32906029","32901990","32901973"]
-
+    // const cricketIds = ['32905875','32902867','32853042','32899939','32908257'];
+    // const soccerIds = ["32904591","32909572","32895049","32895050","32883731","32900256","32899150","32906665","32873132","32910146"];
     const requestData = {
       "filter": {
-        // "eventTypeIds": [sportsId],
-        "eventIds": 
-          sportsId === "1" 
-          ? soccerIds 
-          : sportsId === "4" 
-          ? cricketIds 
-          : []
+        "eventTypeIds": [sportsId],
+        // "eventIds": 
+        //   sportsId === "1" 
+        //   ? soccerIds 
+        //   : sportsId === "4" 
+        //   ? cricketIds 
+        //   : []
       }
     }
     let url = `${config.newThirdURL}/listEvents`;

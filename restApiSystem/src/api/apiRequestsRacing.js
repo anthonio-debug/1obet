@@ -357,7 +357,7 @@ function apiRequests() {
       }
 
 
-
+console.log("events.length=================>",events.length);
       if (events.length == 0) {
         //console.log('We not events for racing');
         continue;

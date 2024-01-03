@@ -28,7 +28,7 @@ function ToolForUpdatedRacing() {
     async function fetchMarkets() {
         try {
             sportsIds.forEach(async id => {
-                const documents = await inPlayEvents.find({ status: 'OPEN', sportsId: id })
+                const documents = await inPlayEvents.find({ status: 'OPEN', CompanySetStatus: "OPEN", sportsId: id })
                     .sort({ lastCheckMarket: 1 })
                     .limit(config.raceEventsAllowedCount)
                     .exec();
