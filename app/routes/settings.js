@@ -1103,7 +1103,7 @@ async function bettorDashboardGames(req, res) {
     const horseRace = await MarketIDS.aggregate([
       {
         $match: {
-          sportID: Number('4339'),
+          sportID: Number('7'),
           $and: [
             { openDate: { $gte: startOfDayTimestamp } },
             { openDate: { $lte: endOfDayTimestamp } }
