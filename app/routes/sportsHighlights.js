@@ -13,9 +13,10 @@ async function getAllSportsHighlight(req, res) {
     startOfDay.setHours(0, 0, 0, 0);
     let startOfDayTimestamp = startOfDay.getTime();
 
-    let endOfDay = new Date(now);
-    endOfDay.setHours(23, 59, 59, 999);
-    let endOfDayTimestamp = endOfDay.getTime();
+    // let endOfDay = new Date(now);
+    // endOfDay.setHours(23, 59, 59, 999);
+    // let endOfDayTimestamp = endOfDay.getTime();
+    let endOfDayTimestamp = new Date(startOfDayTimestamp + (2 * 24 * 60 * 60 * 1000)).getTime(); // 2days
 
     const sportId = req.query.sport;
     const sportsHighlights = await inPlayEvents.aggregate([
