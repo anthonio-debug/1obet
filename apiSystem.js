@@ -88,7 +88,7 @@ async function main() {
   ToolForFancy.init(io, express);
 
   // init asian odds
-  // ToolForAsian.init(io, express);
+  ToolForAsian.init(io, express);
 
   // init test sports odd
   // ToolForTestSport.init(io, express);
