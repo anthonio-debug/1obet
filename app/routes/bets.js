@@ -369,7 +369,7 @@ const placeBet = async (req, res) => {
     }
     
     const res = await checkMarketActiveForBets(id);
-    if(rep === 400){
+    if(res === 400){
       return res.status(404).send({message: "Betting disabled"});
     }
 
