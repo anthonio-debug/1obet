@@ -329,7 +329,7 @@ function apiRequests() {
     try {
       const now = moment();
       const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
-      const endTime = now.add(2, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+      const endTime = now.add(5, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
       const requestData = {
         "filter": {
           "eventIds": [eventId],
@@ -456,9 +456,6 @@ function apiRequests() {
         }
       }
 
-      // Console to check marketIds 
-      console.log("--------------------------------->>", marketIds)
-
       await InPlayEvents.findOneAndUpdate(
         {Id: eventId},
         {$set: {marketIds: marketIds}},
@@ -479,7 +476,8 @@ function apiRequests() {
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
-      console.log('oddsData==================', oddsData?.length);
+      console.log("Odds Data ----------->", oddsData?.length)
+
       let responsedMarketIDs = [];
       let marketIds_index = 0;
       let numberOfVisits = 0;
@@ -488,79 +486,80 @@ function apiRequests() {
           numberOfVisits++;
          
           if (odds) {
-            if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
-              console.log(odds.marektId," this market has no odds.....");
+            odds.createdAt = new Date().getTime()
 
-              await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {readyForScore: true}});
+            let tempRunners = [];
+            for (let n = 0; n < odds.runners?.length; n++) {
+              var tempElement = {
+                selectionId: odds?.runners[n]?.selectionId,
+                handicap: odds?.runners[n]?.handicap,
+                state: {
+                  status: odds.runners[n]?.status,
+                  lastPriceTraded: odds.runners[n]?.lastPriceTraded,
+                  totalMatched: odds.runners[n]?.totalMatched,
+                },
+                exchange: {
+                  availableToBack: [
+                    {
+                      price: odds.runners[n]?.ex.availableToBack[0]?.price,
+                      size: odds.runners[n]?.ex.availableToBack[0]?.size
+                    },
+                    {
+                      price: odds.runners[n]?.ex.availableToBack[1]?.price,
+                      size: odds.runners[n]?.ex.availableToBack[1]?.size
+                    },
+                    {
+                      price: odds.runners[n]?.ex.availableToBack[2]?.price,
+                      size: odds.runners[n]?.ex.availableToBack[2]?.size
+                    },
+                  ],
+                  availableToLay: [
+                    {
+                      price: odds.runners[n]?.ex.availableToLay[0]?.price,
+                      size: odds.runners[n]?.ex.availableToLay[0]?.size
+                    },
+                    {
+                      price: odds.runners[n]?.ex.availableToLay[1]?.price,
+                      size: odds.runners[n]?.ex.availableToLay[1]?.size
+                    },
+                    {
+                      price: odds.runners[n]?.ex.availableToLay[2]?.price,
+                      size: odds.runners[n]?.ex.availableToLay[2]?.size
+                    },
+                  ]
+                }
+              }
+
+              tempRunners.push(tempElement)
+            }
+            let isMarketDataDelayed = false;
+
+            let json = {
+              marketId: odds.marketId,
+              isMarketDataDelayed: isMarketDataDelayed,
+              state: {
+                numberOfRunners: tempRunners?.length,
+                totalMatched: odds?.totalMatched,
+                inplay: odds?.inplay,
+                status: odds?.status
+              },
+              runners: tempRunners,
+              createdAt: new Date().getTime(),
+            }
+
+            if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
+              console.log(odds.marketId," this market has no odds.....");
+
+              await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
               if (odds.marketId) {
                 io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
 
-                io.to('$' + odds.marketId).emit('odds', odds);
+                io.to('$' + odds.marketId).emit('odds', json);
               }
             } else {
-              console.log(marketIds[marketIds_index], " This market has odds found");
+              console.log(odds.marketId, " This market has odds found");
               responsedMarketIDs.push(odds.marketId);
 
-              odds.createdAt = new Date().getTime()
-
-              let tempRunners = [];
-              for (let n = 0; n < odds.runners?.length; n++) {
-                var tempElement = {
-                  selectionId: odds?.runners[n]?.selectionId,
-                  handicap: odds?.runners[n]?.handicap,
-                  state: {
-                    status: odds.runners[n]?.status,
-                    lastPriceTraded: odds.runners[n]?.lastPriceTraded,
-                    totalMatched: odds.runners[n]?.totalMatched,
-                  },
-                  exchange: {
-                    availableToBack: [
-                      {
-                        price: odds.runners[n]?.ex.availableToBack[0]?.price,
-                        size: odds.runners[n]?.ex.availableToBack[0]?.size
-                      },
-                      {
-                        price: odds.runners[n]?.ex.availableToBack[1]?.price,
-                        size: odds.runners[n]?.ex.availableToBack[1]?.size
-                      },
-                      {
-                        price: odds.runners[n]?.ex.availableToBack[2]?.price,
-                        size: odds.runners[n]?.ex.availableToBack[2]?.size
-                      },
-                    ],
-                    availableToLay: [
-                      {
-                        price: odds.runners[n]?.ex.availableToLay[0]?.price,
-                        size: odds.runners[n]?.ex.availableToLay[0]?.size
-                      },
-                      {
-                        price: odds.runners[n]?.ex.availableToLay[1]?.price,
-                        size: odds.runners[n]?.ex.availableToLay[1]?.size
-                      },
-                      {
-                        price: odds.runners[n]?.ex.availableToLay[2]?.price,
-                        size: odds.runners[n]?.ex.availableToLay[2]?.size
-                      },
-                    ]
-                  }
-                }
-
-                tempRunners.push(tempElement)
-              }
-              let isMarketDataDelayed = false;
-
-              let json = {
-                marketId: odds.marketId,
-                isMarketDataDelayed: isMarketDataDelayed,
-                state: {
-                  numberOfRunners: tempRunners?.length,
-                  totalMatched: odds?.totalMatched,
-                  inplay: odds?.inplay,
-                  status: odds?.status
-                },
-                runners: tempRunners,
-                createdAt: new Date().getTime(),
-              }
               const result = await RaceOdds.collection.insertOne(json);
               odds._id = result.insertedId;
  
