@@ -8,13 +8,29 @@ const { default: mongoose } = require('mongoose');
 
 async function getAllSportsHighlight(req, res) {
   try {
+    let now = new Date();  // Get the current date and time
+    let startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    let startOfDayTimestamp = startOfDay.getTime();
+
+    let endOfDayTimestamp
+
     const sportId = req.query.sport;
+
+    if (sportId == '1') {
+      let endOfDay = new Date(now);
+      endOfDay.setHours(23, 59, 59, 999);
+      endOfDayTimestamp = endOfDay.getTime();
+    } else {
+      endOfDayTimestamp = new Date(startOfDayTimestamp + (2 * 24 * 60 * 60 * 1000)).getTime(); // 2days
+    }
     const sportsHighlights = await inPlayEvents.aggregate([
       {
         $match: {
           sportsId: sportId,
           openDate: {
-            $gte: new Date().getTime() - 12 * 60 * 60 * 1000
+            $gte: startOfDayTimestamp,
+            $lt: endOfDayTimestamp
           }
         }
       },

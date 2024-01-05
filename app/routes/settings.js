@@ -1040,49 +1040,125 @@ async function bettorDashboardGames(req, res) {
     endOfDay.setHours(23, 59, 59, 999);
     var endOfDayTimestamp = endOfDay.getTime();
 
-    const greyHound = await Events.find(
+    const greyHound = await MarketIDS.aggregate([
       {
-        sportsId: "4339",
-        status: "OPEN",
-        CompanySetStatus: "OPEN",
-        openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
+        $match: {
+          sportID: Number('4339'),
+          $and: [
+            { openDate: { $gte: startOfDayTimestamp } },
+            { openDate: { $lte: endOfDayTimestamp } }
+          ]
+        },
       },
       {
-        _id: 1,
-        Id: 1,
-        openDate: 1,
-        name: 1,
-        competitionName: 1,
-        inplay: 1,
-        countryCode: 1,
-        marketIds: 1,
+        $lookup: {
+          from: "inplayevents",
+          localField: "eventId",
+          foreignField: "Id",
+          as: "event",
+        },
+      },
+      {
+        $addFields: {
+          event: {
+            $cond: {
+              if: {
+                $eq: [{ $type: "$event" }, "array"]
+              },
+              then: { $arrayElemAt: ["$event", 0] },
+              else: "$event"
+            }
+          }
+        }
+      },
+      {
+        $match: {
+          "event.CompanySetStatus": "OPEN",
+          "event.status": "OPEN",
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          Id: { $first: "$eventId" },
+          marketIds: { $push: "$marketId" },
+          sportsId: { $first: "$sportID" },
+          openDate: { $first: "$openDate" },
+          openDate2: { $first: "$event.openDate" },
+          status: { $first: "$status" },
+          inPlay: { $first: "$inPlay" },
+          countryCode: { $first: "$event.countryCode" },
+          venue: { $first: "$event.venue" },
+          inplay2: { $first: "$event.inplay" },
+          matchId: { $first: "$event._id" },
+        }
+      },
+      {
+        $sort: {
+          openDate: 1
+        }
       }
-    ).sort({
-      inplay: -1,
-      openDate: -1,
-    });
+    ])
 
-    const horseRace = await Events.find(
+    const horseRace = await MarketIDS.aggregate([
       {
-        sportsId: "7",
-        status: "OPEN",
-        CompanySetStatus: "OPEN",
-        openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
+        $match: {
+          sportID: Number('7'),
+          $and: [
+            { openDate: { $gte: startOfDayTimestamp } },
+            { openDate: { $lte: endOfDayTimestamp } }
+          ]
+        },
       },
       {
-        _id: 1,
-        Id: 1,
-        openDate: 1,
-        name: 1,
-        competitionName: 1,
-        inplay: 1,
-        countryCode: 1,
-        marketIds: 1,
+        $lookup: {
+          from: "inplayevents",
+          localField: "eventId",
+          foreignField: "Id",
+          as: "event",
+        },
+      },
+      {
+        $addFields: {
+          event: {
+            $cond: {
+              if: {
+                $eq: [{ $type: "$event" }, "array"]
+              },
+              then: { $arrayElemAt: ["$event", 0] },
+              else: "$event"
+            }
+          }
+        }
+      },
+      {
+        $match: {
+          "event.CompanySetStatus": "OPEN",
+          "event.status": "OPEN",
+        }
+      },
+      {
+        $group: {
+          _id: "$_id",
+          Id: { $first: "$eventId" },
+          marketIds: { $push: "$marketId" },
+          sportsId: { $first: "$sportID" },
+          openDate: { $first: "$openDate" },
+          openDate2: { $first: "$event.openDate" },
+          status: { $first: "$status" },
+          inPlay: { $first: "$inPlay" },
+          countryCode: { $first: "$event.countryCode" },
+          venue: { $first: "$event.venue" },
+          inplay2: { $first: "$event.inplay" },
+          matchId: { $first: "$event._id" },
+        }
+      },
+      {
+        $sort: {
+          openDate: 1
+        }
       }
-    ).sort({
-      inplay: -1,
-      openDate: -1,
-    });
+    ])
 
     const inPlay = await Events.find(
       {
