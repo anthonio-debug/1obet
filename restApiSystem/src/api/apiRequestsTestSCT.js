@@ -607,10 +607,15 @@ function apiRequests() {
                     createdAt: new Date().getTime(),
                   }
 
-                  if (element.status != "OPEN") {
+                  if (element.status == "CLOSED") {
                     await MarketIDS.updateOne(
                       {marketId: element.marketId},
                       {inPlay: false, status: element.status}
+                    );
+                  } else {
+                    await MarketIDS.updateOne(
+                      {marketId: element.marketId},
+                      {status: element.status}
                     );
                   }
 
