@@ -224,7 +224,7 @@ async function getMarketsByEventId(req, res) {
       "filter": {
         eventIds: [eventId]
       },
-      "maxResults": 100,
+      "maxResults": 200,
       "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
     } 
     var url = `${sportsAPIUrl}/listMarketCatalogue`;
