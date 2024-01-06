@@ -13,11 +13,10 @@ const marketGainWithDuplicates = async (req, res) => {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const userId = Number(req.query.userId);
+  const userId = req.query.userId;
   const marketId = req.query.marketId;
   const depositId = mongoose.Types.ObjectId(req.query.depositId);
-  const roundId = req.query.roundId;
-  console.log(roundId, userId, marketId, depositId)
+  const roundId = req.query.roundId == "null" ? null : req.query.roundId;
   let asianWinner = ''
 
   // const condition = { marketId: marketId }
@@ -31,24 +30,15 @@ const marketGainWithDuplicates = async (req, res) => {
 
     const parent = await User.findOne({ userId: currentUser.createdBy });
 
-    if (marketId != "none") {
-
+    if (marketId) {
       depositRes = await CashDeposit.find({
         marketId: marketId,
-        userId: userId,
-        roundId: roundId,
+        userId: Number(userId),
         // betId: betId,
-        _id: depositId,
+        roundId: roundId,
         $or: [
           {
-            $and: [
-              {
-                userId: userId,
-              },
-              {
-                cashOrCredit: { $in: ["Bet"] },
-              },
-            ],
+            cashOrCredit: { $in: ["Bet"] },
           },
           {
             cashOrCredit: { $in: ["Commission"] },
@@ -66,20 +56,20 @@ const marketGainWithDuplicates = async (req, res) => {
 
     let response = {}
 
-    let pl;
+    let pl = 0;
 
     for (let k = 0; k < depositRes?.length; k++) {
-      parseFloat(pl) += parseFloat(depositRes[k].amount)
+      pl += parseFloat(depositRes[k].amount)
     }
 
     let depositInfo = {
-      _id: depositRes[0].betId,
+      _id: depositRes[0]?.betId,
       pl: pl,
-      sattledAt: depositRes[0].date,
-      sportsId: depositRes[0].sportsId,
+      sattledAt: depositRes[0]?.date,
+      sportsId: depositRes[0]?.sportsId,
     }
 
-    if (depositRes[0].sportsId == "6"){
+    if (depositRes[0]?.sportsId == "6"){
       depositInfo.Commission = pl > 0 ? pl * 0.02 : 0;
       depositInfo.netPl = pl > 0 ? pl *  ( 100/98 ) : pl;
       depositInfo.result = pl > 0 ? "WON" : "LOSS";
@@ -87,7 +77,7 @@ const marketGainWithDuplicates = async (req, res) => {
 
     response.depositInfo = depositInfo
 
-    if (marketId != "none" && depositRes[0].sportsId != "6" && depositRes[0].sportsId != "8") {
+    if (marketId != "none" && depositRes[0]?.sportsId != "6" && depositRes[0]?.sportsId != "8") {
       const betRes = await Bets.find({ userId: userId, marketId: marketId });
 
       let betsInfo = []
@@ -129,7 +119,8 @@ const marketGainWithDuplicates = async (req, res) => {
         betsInfo.push(tempBet)
       }
       response.betsInfo = betsInfo 
-    } else if (depositRes[0].sportsId == "6" || depositRes[0].sportsId == "8") {
+
+    } else if (depositRes[0]?.sportsId == "6" || depositRes[0]?.sportsId == "8") {
       const betRes = await Bets.find({ userId: userId, roundId: roundId });
 
       let betsInfo = []
