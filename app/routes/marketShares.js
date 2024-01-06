@@ -78,7 +78,7 @@ const marketGainWithDuplicates = async (req, res) => {
       depositInfo.push(tempdepositInfo)
     }
 
-    response.totalDespoitInfo = depositInfo
+    response.depositInfo = depositInfo
 
     let totalDespoitInfo = {}
 
