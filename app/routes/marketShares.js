@@ -65,13 +65,19 @@ const marketGainWithDuplicates = async (req, res) => {
 
     for (let k = 0; k < depositRes?.length; k ++) {
       let tempdepositInfo;
+      const betInfo = await Bets.findOne({
+        _id: depositRes[k]?.betId
+      });
       
       tempdepositInfo = {
         _id: depositRes[k]?.betId,
         pl: depositRes[k]?.amount,
         sattledAt: depositRes[k]?.date,
         sportsId: depositRes[k]?.sportsId,
-        createdAt: depositRes[k]?.createdAt
+        createdAt: depositRes[k]?.createdAt,
+        runnerName: betInfo?.runnerName,
+        price: betInfo?.betAmount,
+        size: betInfo?.betRate,
       }
   
       if (depositRes[k]?.sportsId == "6"){
@@ -102,10 +108,9 @@ const marketGainWithDuplicates = async (req, res) => {
       }
     }
 
-    response.totalDespoitInfo = totalDespoitInfo
-
     if (marketId != "none" && depositRes[0]?.sportsId != "6" && depositRes[0]?.sportsId != "8") {
       const betRes = await Bets.find({ userId: userId, marketId: marketId });
+
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
@@ -190,6 +195,8 @@ const marketGainWithDuplicates = async (req, res) => {
       }
       response.betsInfo = betsInfo 
     }
+
+    response.totalDespoitInfo = totalDespoitInfo
 
     return res.send({
       success: true,
