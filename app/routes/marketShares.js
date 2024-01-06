@@ -26,7 +26,12 @@ const marketGainWithDuplicates = async (req, res) => {
   let depositRes;
 
   if (currentUser?.role == 5) {
-    const marketData = await MarketIDS.findOne({ marketId: marketId });
+    const marketData = await MarketIDS.findOne({ 
+      $or: [
+        { marketId: marketId },
+        { marketName: marketId },
+      ]
+    });
 
     const parent = await User.findOne({ userId: currentUser.createdBy });
 
