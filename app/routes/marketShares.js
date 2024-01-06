@@ -55,24 +55,26 @@ const marketGainWithDuplicates = async (req, res) => {
       return res.status(404).send({ message: "Cannot find desposit" });
 
     let response = {}
+ 
+    let depositInfo = [];
 
-    let pl = 0;
+    for (let k = 0; k < depositRes?.length; k ++) {
+      let tempdepositInfo;
+      
+      tempdepositInfo = {
+        _id: depositRes[k]?.betId,
+        pl: depositRes[k]?.amount,
+        sattledAt: depositRes[k]?.date,
+        sportsId: depositRes[k]?.sportsId,
+      }
+  
+      if (depositRes[k]?.sportsId == "6"){
+        tempdepositInfo.Commission = depositRes[k]?.amount > 0 ? depositRes[k]?.amount * 0.02 : 0;
+        tempdepositInfo.netPl = depositRes[k]?.amount > 0 ? depositRes[k]?.amount *  ( 100/98 ) : depositRes[k]?.amount;
+        tempdepositInfo.result = depositRes[k]?.amount > 0 ? "WON" : "LOSS";
+      }
 
-    for (let k = 0; k < depositRes?.length; k++) {
-      pl += parseFloat(depositRes[k].amount)
-    }
-
-    let depositInfo = {
-      _id: depositRes[0]?.betId,
-      pl: pl,
-      sattledAt: depositRes[0]?.date,
-      sportsId: depositRes[0]?.sportsId,
-    }
-
-    if (depositRes[0]?.sportsId == "6"){
-      depositInfo.Commission = pl > 0 ? pl * 0.02 : 0;
-      depositInfo.netPl = pl > 0 ? pl *  ( 100/98 ) : pl;
-      depositInfo.result = pl > 0 ? "WON" : "LOSS";
+      depositInfo.push(tempdepositInfo)
     }
 
     response.depositInfo = depositInfo
