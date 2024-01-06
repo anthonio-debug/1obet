@@ -66,6 +66,7 @@ const marketGainWithDuplicates = async (req, res) => {
         pl: depositRes[k]?.amount,
         sattledAt: depositRes[k]?.date,
         sportsId: depositRes[k]?.sportsId,
+        createdAt: depositRes[k]?.createdAt
       }
   
       if (depositRes[k]?.sportsId == "6"){
