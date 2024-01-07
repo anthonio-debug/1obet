@@ -15,6 +15,7 @@ const marketGainWithDuplicates = async (req, res) => {
   }
   const userId = req.query.userId;
   const marketId = req.query.marketId;
+  const sportsId = req.query.sportsId;
   const depositId = mongoose.Types.ObjectId(req.query.depositId);
   const roundId = req.query.roundId == "null" ? null : req.query.roundId;
   let asianWinner = ''
@@ -36,20 +37,36 @@ const marketGainWithDuplicates = async (req, res) => {
     const parent = await User.findOne({ userId: currentUser.createdBy });
 
     if (marketId) {
-      depositRes = await CashDeposit.find({
-        marketId: marketId,
-        userId: Number(userId),
-        // betId: betId,
-        roundId: roundId,
-        $or: [
-          {
-            cashOrCredit: { $in: ["Bet"] },
-          },
-          {
-            cashOrCredit: { $in: ["Commission"] },
-          },
-        ],
-      });
+      if (sportsId == "6") {
+        depositRes = await CashDeposit.find({
+          userId: Number(userId),
+          // betId: betId,
+          roundId: roundId,
+          $or: [
+            {
+              cashOrCredit: { $in: ["Bet"] },
+            },
+            {
+              cashOrCredit: { $in: ["Commission"] },
+            },
+          ],
+        });
+      } else {
+        depositRes = await CashDeposit.find({
+          marketId: marketId,
+          userId: Number(userId),
+          // betId: betId,
+          roundId: roundId,
+          $or: [
+            {
+              cashOrCredit: { $in: ["Bet"] },
+            },
+            {
+              cashOrCredit: { $in: ["Commission"] },
+            },
+          ],
+        });
+      }
     } else {
       depositRes = await CashDeposit.find({
         _id: depositId
