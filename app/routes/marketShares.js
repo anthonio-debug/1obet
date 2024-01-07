@@ -109,10 +109,12 @@ const marketGainWithDuplicates = async (req, res) => {
         tempdepositInfo.runnerName = betInfo?.username;
         tempdepositInfo.price = null;
         tempdepositInfo.size = null;
+        tempdepositInfo.type = betInfo?.type;
       } else {
         tempdepositInfo.runnerName = betInfo?.runnerName;
         tempdepositInfo.price = betInfo?.betAmount;
         tempdepositInfo.size = betInfo?.betRate;
+        tempdepositInfo.type = betInfo?.type;
       }
 
       depositInfo.push(tempdepositInfo)
