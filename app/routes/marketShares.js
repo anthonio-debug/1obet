@@ -6,6 +6,7 @@ let mongoose = require('mongoose');
 const Bets = require("../models/bets");
 const MarketIDS = require("../models/marketIds");
 const AsianResult = require("../models/asianTablesResultsHistory")
+const CasinoCalls = require("../models/casinoCalls")
 const loginRouter = express.Router();
 
 const marketGainWithDuplicates = async (req, res) => {
@@ -82,9 +83,16 @@ const marketGainWithDuplicates = async (req, res) => {
 
     for (let k = 0; k < depositRes?.length; k ++) {
       let tempdepositInfo;
-      const betInfo = await Bets.findOne({
-        _id: depositRes[k]?.betId
-      });
+      let betInfo
+      if (sportsId == "6") { 
+        betInfo = await CasinoCalls.findOne({
+          transaction_id: depositRes[k]?.betId
+        });
+      } else {
+        betInfo = await Bets.findOne({
+          _id: depositRes[k]?.betId
+        });
+      }
       
       tempdepositInfo = {
         _id: depositRes[k]?.betId,
@@ -92,15 +100,19 @@ const marketGainWithDuplicates = async (req, res) => {
         sattledAt: depositRes[k]?.date,
         sportsId: depositRes[k]?.sportsId,
         createdAt: depositRes[k]?.createdAt,
-        runnerName: betInfo?.runnerName,
-        price: betInfo?.betAmount,
-        size: betInfo?.betRate,
       }
   
       if (depositRes[k]?.sportsId == "6"){
         tempdepositInfo.Commission = depositRes[k]?.amount > 0 ? depositRes[k]?.amount * 0.02 : 0;
         tempdepositInfo.netPl = depositRes[k]?.amount > 0 ? depositRes[k]?.amount *  ( 100/98 ) : depositRes[k]?.amount;
         tempdepositInfo.result = depositRes[k]?.amount > 0 ? "WON" : "LOSS";
+        tempdepositInfo.runnerName = betInfo?.username;
+        tempdepositInfo.price = null;
+        tempdepositInfo.size = null;
+      } else {
+        tempdepositInfo.runnerName = betInfo?.runnerName;
+        tempdepositInfo.price = betInfo?.betAmount;
+        tempdepositInfo.size = betInfo?.betRate;
       }
 
       depositInfo.push(tempdepositInfo)
