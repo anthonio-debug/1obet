@@ -39,9 +39,7 @@ function ToolForEvent() {
       }, 30 * 1000);
 
       setInterval(() => {
-        for (const sportsId of sportsIds) {
-          fetchOdds(true, sportsId);
-        }
+        fetchOdds(true);
       }, 1500);
     }
   }
@@ -107,9 +105,9 @@ function ToolForEvent() {
 
   async function fetchOdds(inPlay, sportId) {
     try {
-      const documents = await MarketIDs.find({inPlay: inPlay, sportID: parseInt(sportId)})
+      const documents = await MarketIDs.find({inPlay: inPlay})
         .sort({lastCheck: 1})
-        .limit(20)
+        .limit(30)
         .exec();
       let marketIds = [];
 
