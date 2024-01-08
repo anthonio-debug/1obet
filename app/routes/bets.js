@@ -3920,7 +3920,7 @@ const postmanwork = async (req, res) => {
   try {
     const bets = await Bets.find({});
     for (const bet of bets){
-      const resp = Cash.updateMany(
+      const resp = await  Cash.updateMany(
         {betId: bet._id},
         {
           betSession: bet.betSession,
@@ -3931,7 +3931,7 @@ const postmanwork = async (req, res) => {
     console.log(" ---- postmanwork Bets completed ---- ");
     const casinocallsRecords = await CasinoCalls.find({ action: "debit" });
     for (const casinocall of casinocallsRecords){
-      const resp = Cash.updateMany(
+      const resp = await Cash.updateMany(
         { betId: casinocall.transaction_id },
         {
           betSession: casinocall.game_id,
