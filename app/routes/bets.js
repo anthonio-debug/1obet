@@ -3950,7 +3950,7 @@ const postmanwork = async (req, res) => {
     //   }
     // }
 
-    for (let i = Number(req.body.start); i < 25050; i = i + 50) {
+    for (let i = Number(req.body.start); i < Number(req.body.end); i = i + 50) {
       const casinocallsRecords = await CasinoCalls
                                     .find({}).sort({ _id : 1 })
                                     .skip(Number(i))
