@@ -3918,7 +3918,7 @@ const eventsAPICalls  = async (req, res) => {
 const postmanwork = async (req, res) => {
 
   try {
-    const _30dayAgo = new Date(new Date().setDate(new Date().getDate() - 30)).getTime();
+    const _30dayAgo = new Date(new Date().setDate(new Date().getDate() + req.body.days)).getTime();
     if(Number(req.body.type) === 2){
       const bets = await Bets.find({ createdAt:  _30dayAgo });
       for (const bet of bets){
