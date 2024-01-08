@@ -368,10 +368,10 @@ const placeBet = async (req, res) => {
       }
     }
     
-    const res = await checkMarketActiveForBets(id);
-    if(res === 400){
-      return res.status(404).send({message: "Betting disabled"});
-    }
+    // const resStatus = await checkMarketActiveForBets(id);
+    // if(resStatus === 400){
+    //   return res.status(404).send({message: "Betting disabled"});
+    // }
 
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
       return res.status(404).send({message: "Betting disabled"});
@@ -3554,7 +3554,7 @@ const profitLose = async (req, res) => {
         success: true,
         message: "Profit Lose reports",
         results: response,
-        Sure      });
+      });
     } else {
       const response = await Cash.aggregate([
         {
@@ -3661,7 +3661,7 @@ const EventWiseprofitLose = async (req, res) => {
       //   });
       //   if(childUsers.length) users.push(...childUsers)
       //   parents = childUsers
-      Sure      // }while (childUsers.length > 0)
+      // }while (childUsers.length > 0)
 
 
       const response = await Cash.aggregate([
@@ -3918,54 +3918,36 @@ const eventsAPICalls  = async (req, res) => {
 const postmanwork = async (req, res) => {
 
   try {
-    // const dt = new Date().getTime();
-    // const subTime = Number(req.body.days) * 24 * 60 * 60 * 1000;
-    // const daysBefore = dt + subTime;
-    // if(Number(req.body.type) === 2){
-    //   const bets = await Bets.find({ createdAt:  daysBefore });
-    //   for (const bet of bets){
-    //     const resp = await  Cash.updateMany(
-    //       {betId: bet._id},
-    //       {
-    //         betSession: bet.betSession,
-    //         roundId: bet.roundId
-    //       }
-    //     )
-    //   }
-    // }
-    // else if(Number(req.body.type) === 1){
-    //   const casinocallsRecords = await CasinoCalls
-    //                                     .find({}).sort({ _id : 1 })
-    //                                     .skip(Number(req.body.skip))
-    //                                     .limit(Number(req.body.limit));
-    //   for (const casinocall of casinocallsRecords){
-    //     console.log(" ======================== casinocall data", casinocall);
-    //     const resp = await Cash.updateMany(
-    //       { betId: casinocall.transaction_id },
-    //       {
-    //         betSession: casinocall.game_id,
-    //         roundId: casinocall.round_id
-    //       }
-    //     )
-    //   }
-    // }
-
-    for (let i = Number(req.body.start); i < Number(req.body.end); i = i + 50) {
+    const dt = new Date().getTime();
+    const subTime = Number(req.body.days) * 24 * 60 * 60 * 1000;
+    const daysBefore = dt + subTime;
+    if(Number(req.body.type) === 2){
+      const bets = await Bets.find({ createdAt:  daysBefore });
+      for (const bet of bets){
+        const resp = await  Cash.updateMany(
+          {betId: bet._id},
+          {
+            betSession: bet.betSession,
+            roundId: bet.roundId
+          }
+        )
+      }
+    }
+    else if(Number(req.body.type) === 1){
       const casinocallsRecords = await CasinoCalls
-                                    .find({}).sort({ _id : 1 })
-                                    .skip(Number(i))
-                                    .limit(Number(50));
+                                        .find({}).sort({ _id : 1 })
+                                        .skip(Number(req.body.skip))
+                                        .limit(Number(req.body.limit));
       for (const casinocall of casinocallsRecords){
         console.log(" ======================== casinocall data", casinocall);
         const resp = await Cash.updateMany(
           { betId: casinocall.transaction_id },
           {
-            // betSession: casinocall.game_id,
+            betSession: casinocall.game_id,
             roundId: casinocall.round_id
           }
         )
       }
-      
     }
 
     console.log(" ---- postmanwork Bets completed ---- ");
