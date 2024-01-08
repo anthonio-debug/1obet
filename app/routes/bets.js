@@ -3918,8 +3918,11 @@ const eventsAPICalls  = async (req, res) => {
 const postmanwork = async (req, res) => {
 
   try {
+    const dt = new Date().getTime();
+    const subTime = Number(req.body.days) * 24 * 60 * 60 * 1000;
+    const daysBefore = dt + subTime;
     if(Number(req.body.type) === 2){
-      const bets = await Bets.find({});
+      const bets = await Bets.find({ createdAt:  daysBefore });
       for (const bet of bets){
         const resp = await  Cash.updateMany(
           {betId: bet._id},
@@ -3929,7 +3932,8 @@ const postmanwork = async (req, res) => {
           }
         )
       }
-    }else if(Number(req.body.type) === 1){
+    }
+    else if(Number(req.body.type) === 1){
       const casinocallsRecords = await CasinoCalls.find({ action: "debit" });
       for (const casinocall of casinocallsRecords){
         const resp = await Cash.updateMany(
