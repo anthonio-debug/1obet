@@ -23,20 +23,11 @@ const header = {
 
 const eventListByMarketIds = async (sportId) => {
   try {
-    const now = new Date();
-    var startOfDay = new Date(now);
-    startOfDay.setHours(0, 0, 0, 0);
-    var startOfDayTimestamp = startOfDay.getTime();
-
-    // const sportId = req.params.sportsId;
-    var endOfDay = new Date(now);
-    endOfDay.setHours(23, 59, 59, 999);
-    var endOfDayTimestamp = endOfDay.getTime();
-
     const events = await MarketIDS.aggregate([
       {
         $match: {
           sportID: Number(sportId),
+          inplay: true
         },
       },
       {
