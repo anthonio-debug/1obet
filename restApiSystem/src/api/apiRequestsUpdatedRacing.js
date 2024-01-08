@@ -131,7 +131,7 @@ const getRaceMarketIds = async (sportsId) => {
   const documents = await MarketIDS.aggregate([
     {
       $match: {
-        inPlay: inPlay,
+        inPlay: true,
         sportID: Number(sportsId),
       },
     },
