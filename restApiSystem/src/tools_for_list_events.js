@@ -63,7 +63,9 @@ function ToolForEvent() {
         .limit(1)
         .exec();
 
-      if (documents) {
+      const existedMarkets = await MarketIDs.findOne({eventId: documents.Id})
+
+      if (documents && !existedMarkets?._id) {
         await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
         await inPlayEvents.updateMany(
           {Id: documents.Id},
