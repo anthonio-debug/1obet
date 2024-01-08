@@ -105,10 +105,25 @@ function ToolForEvent() {
 
   async function fetchOdds(inPlay, sportId) {
     try {
-      const documents = await MarketIDs.find({inPlay: inPlay})
-        .sort({lastCheck: 1})
-        .limit(30)
-        .exec();
+      const documents = await MarketIDs.aggregate([
+        {
+          $match: {
+            inPlay: inPlay,
+            $or: [
+              { sportsId: 1 },
+              { sportsId: 2 },
+              { sportsId: 4 },
+            ],
+          },
+        },
+        {
+          $sort: { lastCheck: 1 },
+        },
+        {
+          $limit: 30,
+        },
+      ]).exec();
+      
       let marketIds = [];
 
       if (documents.length > 0) {
