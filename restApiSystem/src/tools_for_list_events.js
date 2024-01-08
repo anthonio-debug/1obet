@@ -22,7 +22,7 @@ function ToolForEvent() {
     if (config.activeProvider === 'NEW') {
       fetchEvents();
 
-      setInterval(fetchEvents, 2 * 60 * 1000);
+      setInterval(fetchEvents, 12 * 60 * 60 * 1000);
       setInterval(fetchMarkets, 10 * 1000);
       // setInterval(handleSetInplay, 10 * 1000);
 
@@ -63,7 +63,9 @@ function ToolForEvent() {
         .limit(1)
         .exec();
 
-      if (documents) {
+      const existedMarkets = await MarketIDs.findOne({eventId: documents.Id})
+
+      if (documents && !existedMarkets?._id) {
         await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
         await inPlayEvents.updateMany(
           {Id: documents.Id},

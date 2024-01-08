@@ -356,6 +356,8 @@ async function handleLosingBet(bet) {
                   calculateExp: calculatedExp,
                   position: bet.position,
                   exposureAmount: bet.exposureAmount,
+                  betSession: bet.betSession ,
+                  roundId: bet.roundId,
                 })
               }
               await session.commitTransaction();
