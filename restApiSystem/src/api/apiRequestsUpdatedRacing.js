@@ -127,6 +127,60 @@ const eventListByMarketIds = async (sportId) => {
 
 let io;
 
+const getRaceMarketIds = async (sportsId) => {
+  const documents = await MarketIDS.aggregate([
+    {
+      $match: {
+        inPlay: inPlay,
+        sportID: Number(sportsId),
+      },
+    },
+    {
+      $lookup: {
+        from: "inplayevents",
+        localField: "eventId",
+        foreignField: "Id",
+        as: "event",
+      },
+    },
+    {
+      $addFields: {
+        event: {
+          $cond: {
+            if: {
+              $eq: [{ $type: "$event" }, "array"]
+            },
+            then: { $arrayElemAt: ["$event", 0] },
+            else: "$event"
+          }
+        }
+      }
+    },
+    {
+      $match: {
+        "event.CompanySetStatus": "OPEN",
+        "event.status": "OPEN",
+      }
+    },
+    {
+      $sort: { lastCheck: 1 },
+    },
+    {
+      $limit: 30,
+    }
+  ]).exec();
+
+  let marketIds = [];
+
+  if (documents.length > 0) {
+    documents.forEach(element => {
+      marketIds.push(element.marketId);
+    });
+  }
+
+  return marketIds;
+}
+
 function apiRequests() {
 
   return {init, checkOdds, listMarketsByCronJob, eventsBySupportJobs, raceOddsJob};
@@ -656,7 +710,8 @@ function apiRequests() {
       if (events.length == 0) {
         continue;
       }
-      const marketIds = await eventListByMarketIds(sportsIds[index]);
+
+      const marketIds = await getRaceMarketIds(sportsIds[index]);
       if (marketIds) {
         raceOddsJob(marketIds)
       }
