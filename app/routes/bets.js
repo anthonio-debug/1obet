@@ -3554,7 +3554,7 @@ const profitLose = async (req, res) => {
         success: true,
         message: "Profit Lose reports",
         results: response,
-      });
+        Sure      });
     } else {
       const response = await Cash.aggregate([
         {
@@ -3661,7 +3661,7 @@ const EventWiseprofitLose = async (req, res) => {
       //   });
       //   if(childUsers.length) users.push(...childUsers)
       //   parents = childUsers
-      // }while (childUsers.length > 0)
+      Sure      // }while (childUsers.length > 0)
 
 
       const response = await Cash.aggregate([
@@ -3918,36 +3918,54 @@ const eventsAPICalls  = async (req, res) => {
 const postmanwork = async (req, res) => {
 
   try {
-    const dt = new Date().getTime();
-    const subTime = Number(req.body.days) * 24 * 60 * 60 * 1000;
-    const daysBefore = dt + subTime;
-    if(Number(req.body.type) === 2){
-      const bets = await Bets.find({ createdAt:  daysBefore });
-      for (const bet of bets){
-        const resp = await  Cash.updateMany(
-          {betId: bet._id},
-          {
-            betSession: bet.betSession,
-            roundId: bet.roundId
-          }
-        )
-      }
-    }
-    else if(Number(req.body.type) === 1){
+    // const dt = new Date().getTime();
+    // const subTime = Number(req.body.days) * 24 * 60 * 60 * 1000;
+    // const daysBefore = dt + subTime;
+    // if(Number(req.body.type) === 2){
+    //   const bets = await Bets.find({ createdAt:  daysBefore });
+    //   for (const bet of bets){
+    //     const resp = await  Cash.updateMany(
+    //       {betId: bet._id},
+    //       {
+    //         betSession: bet.betSession,
+    //         roundId: bet.roundId
+    //       }
+    //     )
+    //   }
+    // }
+    // else if(Number(req.body.type) === 1){
+    //   const casinocallsRecords = await CasinoCalls
+    //                                     .find({}).sort({ _id : 1 })
+    //                                     .skip(Number(req.body.skip))
+    //                                     .limit(Number(req.body.limit));
+    //   for (const casinocall of casinocallsRecords){
+    //     console.log(" ======================== casinocall data", casinocall);
+    //     const resp = await Cash.updateMany(
+    //       { betId: casinocall.transaction_id },
+    //       {
+    //         betSession: casinocall.game_id,
+    //         roundId: casinocall.round_id
+    //       }
+    //     )
+    //   }
+    // }
+
+    for (let i = 2300; i < 25050; i = i + 50) {
       const casinocallsRecords = await CasinoCalls
-                                        .find({}).sort({ _id : 1 })
-                                        .skip(Number(req.body.skip))
-                                        .limit(Number(req.body.limit));
+                                    .find({}).sort({ _id : 1 })
+                                    .skip(Number(i))
+                                    .limit(Number(50));
       for (const casinocall of casinocallsRecords){
         console.log(" ======================== casinocall data", casinocall);
         const resp = await Cash.updateMany(
           { betId: casinocall.transaction_id },
           {
-            betSession: casinocall.game_id,
+            // betSession: casinocall.game_id,
             roundId: casinocall.round_id
           }
         )
       }
+      
     }
 
     console.log(" ---- postmanwork Bets completed ---- ");
