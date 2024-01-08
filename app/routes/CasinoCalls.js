@@ -172,6 +172,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
           betDateTime: betTime,
           betId: payload.transaction_id,
           marketId: payload.game_id,
+          roundId: payload.round_id,
           matchId:  payload.game_id,
           cashOrCredit: "Bet",
 
@@ -265,6 +266,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
             cashOrCredit: "Bet",
             sportsId: "6",
             event: game.name, 
+            roundId: payload.round_id,
             marketId: payload.game_id,
             matchId:  payload.game_id,
             upLineAmount: upMovingAmount
@@ -350,6 +352,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
           credit: lastMaxWithdraw?.credit || 0,
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
           betId: payload.transaction_id,
+          roundId: payload.round_id,
           calledArea: "difference > 0",
           event: game.name,
           sportsId: "6",
@@ -436,6 +439,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
             sportsId: "6",
             event: game.name,
             marketId: payload.game_id,
+            roundId: payload.round_id,
             betId: payload.transaction_id,
             matchId:  payload.game_id,
             upLineAmount: upMovingCommAmount
@@ -467,6 +471,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
             creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
             cashOrCredit: "Commission",
             betId: payload.transaction_id,
+            roundId: payload.round_id,
             sportsId: "6",
             event: game.name,
             marketId: payload.game_id,

@@ -379,24 +379,53 @@ const placeBet = async (req, res) => {
     const userMaxBetSize = await userBetSizes.findOne({
       userId: userId,
       sportsId: marketId,
+      subarket: subMarketDetail.Id
     });
-
     if (!userMaxBetSize) {
       console.warn("userMaxBetSize not found ");
-      return res.status(404).send({message: `something went wrong !`});
+      return res.status(404).send({
+        block: "Main block",
+        message: `Something went wrong!`
+      });
     }
-
-    if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
-      return res
-        .status(404)
-        .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+    if (userMaxBetSize && betAmount > userMaxBetSize.amount){
+      return res.status(404).send({
+        block: "Main block",
+        message: `max bet size is : ${userMaxBetSize.amount}`
+      });
+    }
+    if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      return res.status(404).send({
+        block: "Main block",
+        message: `min bet size is : ${userMaxBetSize.minAmount}`
+      });
     }
     /* ==================================================================== */
 
     /* ================================== Market Specific Checks ================================== */
 
-    // Socer Match Odds
-    if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
+    // Soccer Match Odds
+    if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id){
+
+      const SoccerBetLimit = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: '1'
+      });
+  
+      if (!SoccerBetLimit) {
+        console.warn("userMaxBetSize not found ");
+        return res.status(404).send({message: `Something went wrong !`});
+      }
+  
+      if (SoccerBetLimit && betAmount > SoccerBetLimit.amount){
+        return res.status(404).send({message: `max bet size is : ${SoccerBetLimit.amount}`});
+      }
+  
+      if (SoccerBetLimit && betAmount < SoccerBetLimit.minAmount){
+        return res.status(404).send({message: `min bet size is : ${SoccerBetLimit.minAmount}`});
+      }
+
+
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         return res.status(404).send({
@@ -501,6 +530,25 @@ const placeBet = async (req, res) => {
 
     // Tennis Match Odds
     else if (config.sportMarkets.includes(marketId) && config.tennisOdds == subMarketDetail.Id) {
+
+      const tennisBetLimit = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: '2'
+      });
+  
+      if (!tennisBetLimit) {
+        console.warn("tennisBetLimit not found ");
+        return res.status(404).send({message: `Something went wrong !`});
+      }
+  
+      if (tennisBetLimit && betAmount > tennisBetLimit.amount){
+        return res.status(404).send({message: `max bet size is : ${tennisBetLimit.amount}`});
+      }
+  
+      if (tennisBetLimit && betAmount < tennisBetLimit.minAmount){
+        return res.status(404).send({message: `min bet size is : ${tennisBetLimit.minAmount}`});
+      }
+
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         return res.status(404).send({
@@ -631,7 +679,7 @@ const placeBet = async (req, res) => {
     }
 
     // Cricket Match Odds
-    else if (config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id) {
+    else if (config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id){
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
@@ -639,6 +687,23 @@ const placeBet = async (req, res) => {
           message: `${message_result}`,
         });
       }
+
+      const crickOddsBetLimit = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: '4',
+        subarket: subMarketDetail.Id
+      });
+      if (!crickOddsBetLimit) {
+        console.warn("tennisBetLimit not found ");
+        return res.status(404).send({message: `Something went wrong !`});
+      }
+      if (crickOddsBetLimit && betAmount > crickOddsBetLimit.amount){
+        return res.status(404).send({message: `max bet size is : ${crickOddsBetLimit.amount}`});
+      }
+      if (crickOddsBetLimit && betAmount < crickOddsBetLimit.minAmount){
+        return res.status(404).send({message: `min bet size is : ${crickOddsBetLimit.minAmount}`});
+      }
+
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -788,6 +853,23 @@ const placeBet = async (req, res) => {
 
     // GH HR Match Odds
     else if (config.raceMarkets.includes(marketId)) {
+      const raceOddsBetLimit = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+        // subarket: subMarketDetail.Id
+      });
+      if (!raceOddsBetLimit) {
+        console.warn("tennisBetLimit not found ");
+        return res.status(404).send({message: `Something went wrong !`});
+      }
+      if (raceOddsBetLimit && betAmount > raceOddsBetLimit.amount){
+        return res.status(404).send({message: `max bet size is : ${raceOddsBetLimit.amount}`});
+      }
+      if (raceOddsBetLimit && betAmount < raceOddsBetLimit.minAmount){
+        return res.status(404).send({message: `min bet size is : ${raceOddsBetLimit.minAmount}`});
+      }
+
+
       if (betRate > 50) {
         return res.status(404).send({
           message: `Bet Miss Matched `,
@@ -1382,6 +1464,10 @@ const placeBet = async (req, res) => {
         return res.status(404).send({message: `max bet size is : ${fancyBetLimit.amount}`});
       }
 
+      if (fancyBetLimit && betAmount < fancyBetLimit.minAmount){
+        return res.status(404).send({message: `min bet size is : ${fancyBetLimit.minAmount}`});
+      }
+
       isFancyOrBookMaker = true;
       const eventId = eventDetail.Id;
       const url = `${FANCY_URL}/bm_fancy/${eventId}`;
@@ -1474,6 +1560,10 @@ const placeBet = async (req, res) => {
         return res
           .status(404)
           .send({message: `max bet size is : ${bookMakerBetLimit.amount}`});
+      }
+
+      if (bookMakerBetLimit && betAmount < bookMakerBetLimit.minAmount){
+        return res.status(404).send({message: `min bet size is : ${bookMakerBetLimit.minAmount}`});
       }
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
@@ -1607,6 +1697,11 @@ const placeBet = async (req, res) => {
           message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
         });
       }
+
+      if (FigureEvenOddSmallBig && betAmount < FigureEvenOddSmallBig.minAmount){
+        return res.status(404).send({message: `min bet size is : ${FigureEvenOddSmallBig.minAmount}`});
+      }
+
       const dbscore = await Crickets.find({eventId: eventDetail.Id}).sort({_id: -1}).limit(1)
       const scores = dbscore[0];
       if (!scores) {
@@ -2129,6 +2224,12 @@ const placeBet = async (req, res) => {
 
       /* ------------ */
       /* Placing Bet Area  */
+
+      const finalExpAmount = expAmount - prevExpAmount
+
+      if(finalExpAmount > userMaxBetSize.ExpAmount){
+        return res.status(404).send({message: `max expoure size is : ${userMaxBetSize.ExpAmount}`});
+      }
 
       var source = req.headers['user-agent']
       ua = useragent.parse(source);
