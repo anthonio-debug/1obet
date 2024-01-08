@@ -107,61 +107,51 @@ function ToolForEvent() {
 
   async function fetchOdds(inPlay, sportId) {
     try {
-      // const documents = await MarketIDs.aggregate([
-      //   {
-      //     $match: {
-      //       inPlay: inPlay,
-      //       $or: [
-      //         { sportsId: 1 },
-      //         { sportsId: 2 },
-      //         { sportsId: 4 },
-      //       ],
-      //     },
-      //   },
-      //   {
-      //     $lookup: {
-      //       from: "inplayevents",
-      //       localField: "eventId",
-      //       foreignField: "Id",
-      //       as: "event",
-      //     },
-      //   },
-      //   {
-      //     $addFields: {
-      //       event: {
-      //         $cond: {
-      //           if: {
-      //             $eq: [{ $type: "$event" }, "array"]
-      //           },
-      //           then: { $arrayElemAt: ["$event", 0] },
-      //           else: "$event"
-      //         }
-      //       }
-      //     }
-      //   },
-      //   {
-      //     $match: {
-      //       "event.CompanySetStatus": "OPEN",
-      //       "event.status": "OPEN",
-      //     }
-      //   },
-      //   {
-      //     $group: {
-      //       marketId: "$marketId",
-      //     }
-      //   },
-      //   {
-      //     $sort: { lastCheck: 1 },
-      //   },
-      //   {
-      //     $limit: 30,
-      //   },
-      // ]).exec();
-
-      const documents = await MarketIDs.find({inPlay: inPlay, sportID: parseInt(sportId)})
-      .sort({lastCheck: 1})
-      .limit(20)
-      .exec();
+      const documents = await MarketIDs.aggregate([
+        {
+          $match: {
+            inPlay: inPlay,
+            $or: [
+              { sportID: 1 },
+              { sportID: 2 },
+              { sportID: 4 },
+            ],
+          },
+        },
+        {
+          $lookup: {
+            from: "inplayevents",
+            localField: "eventId",
+            foreignField: "Id",
+            as: "event",
+          },
+        },
+        {
+          $addFields: {
+            event: {
+              $cond: {
+                if: {
+                  $eq: [{ $type: "$event" }, "array"]
+                },
+                then: { $arrayElemAt: ["$event", 0] },
+                else: "$event"
+              }
+            }
+          }
+        },
+        {
+          $match: {
+            "event.CompanySetStatus": "OPEN",
+            "event.status": "OPEN",
+          }
+        },
+        {
+          $sort: { lastCheck: 1 },
+        },
+        {
+          $limit: 30,
+        }
+      ]).exec();
       
       let marketIds = [];
 
@@ -170,6 +160,7 @@ function ToolForEvent() {
           marketIds.push(element.marketId);
         });
       }
+      console.log("------------------>", marketIds)
 
       await MarketIDs.updateMany(
         {marketId: {$in: marketIds}},

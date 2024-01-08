@@ -368,10 +368,10 @@ const placeBet = async (req, res) => {
       }
     }
     
-    const res = await checkMarketActiveForBets(id);
-    if(res === 400){
-      return res.status(404).send({message: "Betting disabled"});
-    }
+    // const resStatus = await checkMarketActiveForBets(id);
+    // if(resStatus === 400){
+    //   return res.status(404).send({message: "Betting disabled"});
+    // }
 
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
       return res.status(404).send({message: "Betting disabled"});
