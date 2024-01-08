@@ -3871,7 +3871,8 @@ const SingleUserAllBets = async (req, res) => {
   }
 }
 
-const postmanwork = async (req, res) => {
+// for api call 
+const postmanwork_2 = async (req, res) => {
 
   try {
     const resp = await axios(req.body.url);
@@ -3910,6 +3911,39 @@ const eventsAPICalls  = async (req, res) => {
     return res
       .status(500)
       .send({ message: "Error", error: err });
+  }
+}
+
+const postmanwork = async (req, res) => {
+
+  try {
+    const bets = await Bets.find({});
+    for (const bet of bets){
+      const resp = Cash.updateMany(
+        {betId: bet._id},
+        {
+          betSession: bet.betSession,
+          roundId: bet.roundId
+        }
+      )
+    }
+    const casinocalls = CasinoCalls.find({ action: "debit" });
+    for (const casinocall of casinocalls){
+      const resp = Cash.updateMany(
+        { betId: casinocall.transaction_id },
+        {
+          betSession: casinocall.game_id,
+          roundId: casinocall.round_id
+        }
+      )
+    }
+    return res.send({
+      status: 200,
+      message: "Successed !"
+    })
+  } catch (err) {
+    console.warn("Query error ======= :", err);
+    return res.status(500).send({message: "Error", error: err});
   }
 }
 
