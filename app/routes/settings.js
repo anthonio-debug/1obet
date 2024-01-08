@@ -1151,7 +1151,6 @@ async function bettorDashboardGames(req, res) {
           venue: { $first: "$event.venue" },
           inplay2: { $first: "$event.inplay" },
           matchId: { $first: "$event._id" },
-          name: { $first: "$event.name" },
         }
       },
       {
