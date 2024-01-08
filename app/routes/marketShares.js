@@ -6,6 +6,7 @@ let mongoose = require('mongoose');
 const Bets = require("../models/bets");
 const MarketIDS = require("../models/marketIds");
 const AsianResult = require("../models/asianTablesResultsHistory")
+const CasinoCalls = require("../models/casinoCalls")
 const loginRouter = express.Router();
 
 const marketGainWithDuplicates = async (req, res) => {
@@ -13,11 +14,11 @@ const marketGainWithDuplicates = async (req, res) => {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const userId = Number(req.query.userId);
+  const userId = req.query.userId;
   const marketId = req.query.marketId;
+  const sportsId = req.query.sportsId;
   const depositId = mongoose.Types.ObjectId(req.query.depositId);
-  const roundId = req.query.roundId;
-  console.log(roundId, userId, marketId, depositId)
+  const roundId = req.query.roundId == "null" ? null : req.query.roundId;
   let asianWinner = ''
 
   // const condition = { marketId: marketId }
@@ -27,34 +28,48 @@ const marketGainWithDuplicates = async (req, res) => {
   let depositRes;
 
   if (currentUser?.role == 5) {
-    const marketData = await MarketIDS.findOne({ marketId: marketId });
+    const marketData = await MarketIDS.findOne({ 
+      $or: [
+        { marketId: marketId },
+        { marketName: marketId },
+      ]
+    });
 
     const parent = await User.findOne({ userId: currentUser.createdBy });
 
-    if (marketId != "none") {
-
-      depositRes = await CashDeposit.findOne({
-        marketId: marketId,
-        // betId: betId,
-        _id: depositId,
-        $or: [
-          {
-            $and: [
-              {
-                userId: userId,
-              },
-              {
-                cashOrCredit: { $in: ["Bet"] },
-              },
-            ],
-          },
-          {
-            cashOrCredit: { $in: ["Commission"] },
-          },
-        ],
-      });
+    if (marketId) {
+      if (sportsId == "6") {
+        depositRes = await CashDeposit.find({
+          userId: Number(userId),
+          // betId: betId,
+          roundId: roundId ? roundId : "0",
+          $or: [
+            {
+              cashOrCredit: { $in: ["Bet"] },
+            },
+            {
+              cashOrCredit: { $in: ["Commission"] },
+            },
+          ],
+        });
+      } else {
+        depositRes = await CashDeposit.find({
+          marketId: marketId,
+          userId: Number(userId),
+          // betId: betId,
+          roundId: roundId,
+          $or: [
+            {
+              cashOrCredit: { $in: ["Bet"] },
+            },
+            {
+              cashOrCredit: { $in: ["Commission"] },
+            },
+          ],
+        });
+      }
     } else {
-      depositRes = await CashDeposit.findOne({
+      depositRes = await CashDeposit.find({
         _id: depositId
       });
     }
@@ -63,25 +78,70 @@ const marketGainWithDuplicates = async (req, res) => {
       return res.status(404).send({ message: "Cannot find desposit" });
 
     let response = {}
+ 
+    let depositInfo = [];
 
-    let depositInfo = {
-      _id: depositRes.betId,
-      pl: depositRes.amount,
-      sattledAt: depositRes.date,
-      sportsId: depositRes.sportsId,
-    }
+    for (let k = 0; k < depositRes?.length; k ++) {
+      let tempdepositInfo;
+      let betInfo
+      if (sportsId == "6") { 
+        betInfo = await CasinoCalls.findOne({
+          transaction_id: depositRes[k]?.betId
+        });
+      } else {
+        betInfo = await Bets.findOne({
+          _id: depositRes[k]?.betId
+        });
+      }
+      
+      tempdepositInfo = {
+        _id: depositRes[k]?.betId,
+        pl: depositRes[k]?.amount,
+        sattledAt: depositRes[k]?.date,
+        sportsId: depositRes[k]?.sportsId,
+        createdAt: depositRes[k]?.createdAt,
+      }
+  
+      if (depositRes[k]?.sportsId == "6"){
+        tempdepositInfo.Commission = depositRes[k]?.amount > 0 ? depositRes[k]?.amount * 0.02 : 0;
+        tempdepositInfo.netPl = depositRes[k]?.amount > 0 ? depositRes[k]?.amount *  ( 100/98 ) : depositRes[k]?.amount;
+        tempdepositInfo.result = depositRes[k]?.amount > 0 ? "WON" : "LOSS";
+        tempdepositInfo.runnerName = betInfo?.username;
+        tempdepositInfo.price = null;
+        tempdepositInfo.size = null;
+        tempdepositInfo.type = betInfo?.type;
+      } else {
+        tempdepositInfo.runnerName = betInfo?.runnerName;
+        tempdepositInfo.price = betInfo?.betAmount;
+        tempdepositInfo.size = betInfo?.betRate;
+        tempdepositInfo.type = betInfo?.type;
+      }
 
-    if (depositRes.sportsId == "6"){
-      depositInfo.Commission = depositRes?.amount > 0 ? depositRes?.amount * 0.02 : 0;
-      depositInfo.netPl = depositRes?.amount > 0 ? depositRes?.amount *  ( 100/98 ) : depositRes?.amount;
-      depositInfo.result = depositRes?.amount > 0 ? "WON" : "LOSS";
+      depositInfo.push(tempdepositInfo)
     }
 
     response.depositInfo = depositInfo
 
-    console.log("11111111111111", depositRes.sportsId == "8", ":", roundId)
-    if (marketId != "none" && depositRes.sportsId != "6" && depositRes.sportsId != "8") {
+    let totalDespoitInfo = {}
+
+    if (depositRes) {
+      let tempTotalPL = 0;
+      for (let k = 0; k < depositRes?.length; k ++) {
+        tempTotalPL += depositRes[k]?.amount;
+      }
+
+      totalDespoitInfo = {
+        _id: depositRes[0]?.betId,
+        totalPL: tempTotalPL,
+        sattledAt: depositRes[0]?.date,
+        sportsId: depositRes[0]?.sportsId,
+        createdAt: depositRes[0]?.createdAt
+      }
+    }
+
+    if (marketId != "none" && depositRes[0]?.sportsId != "6" && depositRes[0]?.sportsId != "8") {
       const betRes = await Bets.find({ userId: userId, marketId: marketId });
+
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
@@ -122,7 +182,8 @@ const marketGainWithDuplicates = async (req, res) => {
         betsInfo.push(tempBet)
       }
       response.betsInfo = betsInfo 
-    } else if (depositRes.sportsId == "6" || depositRes.sportsId == "8") {
+
+    } else if (depositRes[0]?.sportsId == "6" || depositRes[0]?.sportsId == "8") {
       const betRes = await Bets.find({ userId: userId, roundId: roundId });
 
       let betsInfo = []
@@ -165,6 +226,8 @@ const marketGainWithDuplicates = async (req, res) => {
       }
       response.betsInfo = betsInfo 
     }
+
+    response.totalDespoitInfo = totalDespoitInfo
 
     return res.send({
       success: true,
