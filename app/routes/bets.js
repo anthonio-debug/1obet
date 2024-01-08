@@ -3927,6 +3927,7 @@ const postmanwork = async (req, res) => {
         }
       )
     }
+    console.log(" ---- postmanwork Bets completed ---- ");
     const casinocalls = CasinoCalls.find({ action: "debit" });
     for (const casinocall of casinocalls){
       const resp = Cash.updateMany(
@@ -3937,6 +3938,7 @@ const postmanwork = async (req, res) => {
         }
       )
     }
+    console.log(" ---- postmanwork Bets completed ---- ");
     return res.send({
       status: 200,
       message: "Successed !"
