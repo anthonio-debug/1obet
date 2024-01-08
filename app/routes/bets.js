@@ -30,8 +30,9 @@ const {v4: uuidv4} = require('uuid');
 const {MongoClient, ObjectId} = require('mongodb');
 const Crickets = require('../models/Crickets')
 const {FANCY_URL, LIVE_BET_TV_URL} = require("../global/constants");
-const message_result = "cannot place bet due to result check";
-const MarketIDS = require("../models/marketIds") 
+const message_result = "cannot place bet due to result check"; 
+const MarketIDS = require("../models/marketIds"); 
+const CasinoCalls = require('../models/casinoCalls'); 
 require('dotenv').config()
 
 const handleLimitValue = async (selectedRate, marketId) => {
