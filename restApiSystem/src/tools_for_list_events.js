@@ -22,7 +22,7 @@ function ToolForEvent() {
     if (config.activeProvider === 'NEW') {
       fetchEvents();
 
-      setInterval(fetchEvents, 2 * 60 * 60 * 1000);
+      setInterval(fetchEvents, 12 * 60 * 60 * 1000);
       setInterval(fetchMarkets, 10 * 1000);
       // setInterval(handleSetInplay, 10 * 1000);
 
