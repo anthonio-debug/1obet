@@ -92,11 +92,33 @@ const eventListByMarketIds = async (sportId) => {
     }
 
     return marketIdsResult
-    // res.send({
-    //   status: true,
-    //   message: "Event list",
-    //   data: events
-    // })
+    // const documents = await MarketIDS.aggregate([
+    //   {
+    //     $match: {
+    //       inPlay: inPlay,
+    //       $or: [
+    //         { sportsId: 7 },
+    //         { sportsId: 4339 },
+    //       ],
+    //     },
+    //   },
+    //   {
+    //     $sort: { lastCheck: 1 },
+    //   },
+    //   {
+    //     $limit: 30,
+    //   },
+    // ]).exec();
+    
+    // let marketIds = [];
+
+    // if (documents.length > 0) {
+    //   documents.forEach(element => {
+    //     marketIds.push(element.marketId);
+    //   });
+    // }
+
+    // return marketIds
   } catch (error) {
     console.log(`Error ${error}`);
     return { error: `Something went wrong ${error}` };
