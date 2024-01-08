@@ -39,9 +39,7 @@ function ToolForEvent() {
       }, 30 * 1000);
 
       setInterval(() => {
-        for (const sportsId of sportsIds) {
-          fetchOdds(true, sportsId);
-        }
+        fetchOdds(true);
       }, 1500);
     }
   }
@@ -105,7 +103,7 @@ function ToolForEvent() {
     }
   }
 
-  async function fetchOdds(inPlay, sportId) {
+  async function fetchOdds(inPlay) {
     try {
       const documents = await MarketIDs.aggregate([
         {
@@ -160,7 +158,6 @@ function ToolForEvent() {
           marketIds.push(element.marketId);
         });
       }
-      console.log("------------------>", marketIds)
 
       await MarketIDs.updateMany(
         {marketId: {$in: marketIds}},
@@ -168,7 +165,7 @@ function ToolForEvent() {
       );
 
       if (marketIds.length > 0) {
-        apiRequests.getOddsFromProvider(documents, sportId);
+        apiRequests.getOddsFromProvider(documents);
       }
     } catch (error) {
       console.error('Error fetching odds:', error);
