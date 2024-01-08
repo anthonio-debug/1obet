@@ -3929,8 +3929,8 @@ const postmanwork = async (req, res) => {
       )
     }
     console.log(" ---- postmanwork Bets completed ---- ");
-    const casinocalls = CasinoCalls.find({ action: "debit" });
-    for (const casinocall of casinocalls){
+    const casinocallsRecords = CasinoCalls.find({ action: "debit" });
+    for (const casinocall of casinocallsRecords){
       const resp = Cash.updateMany(
         { betId: casinocall.transaction_id },
         {
