@@ -3934,8 +3934,12 @@ const postmanwork = async (req, res) => {
       }
     }
     else if(Number(req.body.type) === 1){
-      const casinocallsRecords = await CasinoCalls.find({ action: "debit" });
+      const casinocallsRecords = await CasinoCalls
+                                        .find({}).sort({ _id : 1 })
+                                        .skip(Number(req.body.skip))
+                                        .limit(Number(req.body.limit));
       for (const casinocall of casinocallsRecords){
+        console.log(" ======================== casinocall data", casinocall);
         const resp = await Cash.updateMany(
           { betId: casinocall.transaction_id },
           {
