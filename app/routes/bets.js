@@ -3918,27 +3918,30 @@ const eventsAPICalls  = async (req, res) => {
 const postmanwork = async (req, res) => {
 
   try {
-    const bets = await Bets.find({});
-    for (const bet of bets){
-      const resp = await  Cash.updateMany(
-        {betId: bet._id},
-        {
-          betSession: bet.betSession,
-          roundId: bet.roundId
-        }
-      )
+    if(Number(req.body.type) === 2){
+      const bets = await Bets.find({});
+      for (const bet of bets){
+        const resp = await  Cash.updateMany(
+          {betId: bet._id},
+          {
+            betSession: bet.betSession,
+            roundId: bet.roundId
+          }
+        )
+      }
+    }else if(Number(req.body.type) === 1){
+      const casinocallsRecords = await CasinoCalls.find({ action: "debit" });
+      for (const casinocall of casinocallsRecords){
+        const resp = await Cash.updateMany(
+          { betId: casinocall.transaction_id },
+          {
+            betSession: casinocall.game_id,
+            roundId: casinocall.round_id
+          }
+        )
+      }
     }
-    console.log(" ---- postmanwork Bets completed ---- ");
-    const casinocallsRecords = await CasinoCalls.find({ action: "debit" });
-    for (const casinocall of casinocallsRecords){
-      const resp = await Cash.updateMany(
-        { betId: casinocall.transaction_id },
-        {
-          betSession: casinocall.game_id,
-          roundId: casinocall.round_id
-        }
-      )
-    }
+
     console.log(" ---- postmanwork Bets completed ---- ");
     return res.send({
       status: 200,
