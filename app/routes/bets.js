@@ -30,9 +30,8 @@ const {v4: uuidv4} = require('uuid');
 const {MongoClient, ObjectId} = require('mongodb');
 const Crickets = require('../models/Crickets')
 const {FANCY_URL, LIVE_BET_TV_URL} = require("../global/constants");
-const message_result = "cannot place bet due to result check"; 
-const MarketIDS = require("../models/marketIds"); 
-const CasinoCalls = require('../models/casinoCalls'); 
+const message_result = "cannot place bet due to result check";
+const MarketIDS = require("../models/marketIds") 
 require('dotenv').config()
 
 const handleLimitValue = async (selectedRate, marketId) => {
@@ -368,10 +367,10 @@ const placeBet = async (req, res) => {
       }
     }
     
-    // const resStatus = await checkMarketActiveForBets(id);
-    // if(resStatus === 400){
-    //   return res.status(404).send({message: "Betting disabled"});
-    // }
+    const res = await checkMarketActiveForBets(id);
+    if(rep === 400){
+      return res.status(404).send({message: "Betting disabled"});
+    }
 
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
       return res.status(404).send({message: "Betting disabled"});
@@ -3872,8 +3871,7 @@ const SingleUserAllBets = async (req, res) => {
   }
 }
 
-// for api call 
-const postmanwork_2 = async (req, res) => {
+const postmanwork = async (req, res) => {
 
   try {
     const resp = await axios(req.body.url);
@@ -3912,52 +3910,6 @@ const eventsAPICalls  = async (req, res) => {
     return res
       .status(500)
       .send({ message: "Error", error: err });
-  }
-}
-
-const postmanwork = async (req, res) => {
-
-  try {
-    const dt = new Date().getTime();
-    const subTime = Number(req.body.days) * 24 * 60 * 60 * 1000;
-    const daysBefore = dt + subTime;
-    if(Number(req.body.type) === 2){
-      const bets = await Bets.find({ createdAt:  daysBefore });
-      for (const bet of bets){
-        const resp = await  Cash.updateMany(
-          {betId: bet._id},
-          {
-            betSession: bet.betSession,
-            roundId: bet.roundId
-          }
-        )
-      }
-    }
-    else if(Number(req.body.type) === 1){
-      const casinocallsRecords = await CasinoCalls
-                                        .find({}).sort({ _id : 1 })
-                                        .skip(Number(req.body.skip))
-                                        .limit(Number(req.body.limit));
-      for (const casinocall of casinocallsRecords){
-        console.log(" ======================== casinocall data", casinocall);
-        const resp = await Cash.updateMany(
-          { betId: casinocall.transaction_id },
-          {
-            betSession: casinocall.game_id,
-            roundId: casinocall.round_id
-          }
-        )
-      }
-    }
-
-    console.log(" ---- postmanwork Bets completed ---- ");
-    return res.send({
-      status: 200,
-      message: "Successed !"
-    })
-  } catch (err) {
-    console.warn("Query error ======= :", err);
-    return res.status(500).send({message: "Error", error: err});
   }
 }
 
