@@ -32,7 +32,7 @@ const Crickets = require('../models/Crickets')
 const CasinoCalls = require('../models/casinoCalls')
 const {FANCY_URL, LIVE_BET_TV_URL} = require("../global/constants");
 const message_result = "cannot place bet due to result check";
-const MarketIDS = require("../models/marketIds") 
+const MarketIDS = require("../models/marketIds")
 require('dotenv').config()
 
 const handleLimitValue = async (selectedRate, marketId) => {
@@ -299,17 +299,36 @@ const placeBet = async (req, res) => {
     }
 
     const Digitaddition = await handleLimitValue(betRate, marketId);
-    // Checks for Market Places & Sub Markets
+
+    /** 
+     * checks for market 
+     * checks for Open Time 
+     * checks For 
+     */ 
     if (config.raceMarkets.includes(marketId)) {
+      const DBOddDetails = await RaceOdds.findById(oddsId);
+      if (!DBOddDetails) {
+        console.warn(`Error : Odds not found !` );
+        return res.status(404).send({
+          message: `Bet Miss Matched `,
+        });
+      }
+      const idDetails = await MarketIDS.findOne({ marketId: DBOddDetails.marketId, eventId: eventDetail.Id })
+      if (!idDetails) {
+        console.warn(`Error : Market details Not found !` );
+        return res.status(404).send({
+          message: `Bet Miss Matched `,
+        });
+      }
       const requiredTime = new Date().getTime() + config.raceOpenBefore;
-      const remainingTimeFromEvent = eventDetail.openDate - requiredTime;
+      const remainingTimeFromEvent = idDetails.openDate - requiredTime;
       if (remainingTimeFromEvent > 0) {
         return res.status(404).send({
           status: true,
           message: `Bets will Allow in : ${Math.ceil( remainingTimeFromEvent / 60000 )} min`,
         });
       }
-      id = eventDetail.marketIds[0];
+      id = idDetails.marketId;
       _3rdPartyMarketId = id;
       subMarketDetail = await SubMarketType.findOne({countryCode: subMarketName, marketId: marketId}).exec();
       if (!subMarketDetail) {
@@ -3844,23 +3863,46 @@ const postmanwork     = async (req, res) => {
     //   }
     // }
 
-    for (let i = Number(req.body.start); i < Number(req.body.end); i = i + 50) {
-      const casinocallsRecords = await CasinoCalls
-                                    .find({}).sort({ _id : 1 })
-                                    .skip(Number(i))
-                                    .limit(Number(50));
+
+    /** 
+     * to Update All records in 2 limits 
+    */ 
+    if(Number(req.body.type) === 1){
+      for (let i = Number(req.body.start); i < Number(req.body.end); i = i + 50) {
+        const casinocallsRecords = await CasinoCalls
+                                      .find({}).sort({ _id : 1 })
+                                      .skip(Number(i))
+                                      .limit(Number(50));
+        for (const casinocall of casinocallsRecords){
+          console.log(" ======================== casinocall data", casinocall);
+          const resp = await Cash.updateMany(
+            { betId: casinocall.transaction_id },
+            {
+              // betSession: casinocall.game_id,
+              roundId: casinocall.round_id
+            }
+          )
+        }
+        
+      }
+    }
+
+    /** 
+     * to Update All records of a user
+     * 
+    */ 
+    else if(Number(req.body.type) === 2){
+      const casinocallsRecords = await CasinoCalls.find({ remote_id: Number(req.body.userId) }).sort({ _id : 1 });
       for (const casinocall of casinocallsRecords){
-        console.log(" ======================== casinocall data", casinocall);
         const resp = await Cash.updateMany(
           { betId: casinocall.transaction_id },
           {
-            // betSession: casinocall.game_id,
             roundId: casinocall.round_id
           }
         )
       }
-      
     }
+
 
     console.log(" ---- postmanwork Bets completed ---- ");
     return res.send({
