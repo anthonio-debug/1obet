@@ -643,6 +643,7 @@ function getLedgerDetails(req, res) {
 
         if(result[0].results&&result[0].results.length>0){
          for(let i=0;i<result[0].results.length;i++){
+          console.log()
           if(result[0].results[i].betId){
             try{
               const betInfo = await Bet.findOne({
@@ -651,6 +652,7 @@ function getLedgerDetails(req, res) {
 
               result[0].results[i].betSession = betInfo?.betSession;
               result[0].results[i].matchType = betInfo?.matchType;
+              result[0].results[i].matchId = betInfo?.matchId;
               result[0].results[i].SessionScore = betInfo?.SessionScore;
               result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
               result[0].results[i].fancyData = betInfo?.fancyData;
