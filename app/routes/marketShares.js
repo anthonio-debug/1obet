@@ -17,7 +17,7 @@ const marketGainWithDuplicates = async (req, res) => {
   const userId = req.query.userId;
   const marketId = req.query.marketId;
   const sportsId = req.query.sportsId;
-  const betSession = req.query.betSession;
+  const betSession = req.query.betSession == "null" ? null : req.query.betSession;
   const depositId = mongoose.Types.ObjectId(req.query.depositId);
   const roundId = req.query.roundId == "null" ? null : req.query.roundId;
   const matchId = req.query.matchId;
@@ -42,13 +42,9 @@ const marketGainWithDuplicates = async (req, res) => {
     if (marketId) {
       if (sportsId == "6") {
         depositRes = await CashDeposit.find({
-          // userId: Number(userId),
-          // roundId: roundId ? roundId : "0",
           marketId: marketId,
           userId: Number(userId),
-          // betSession: betSession,
           roundId: roundId,
-          // matchId: matchId,
           $or: [
             {
               cashOrCredit: { $in: ["Bet"] },
@@ -62,7 +58,6 @@ const marketGainWithDuplicates = async (req, res) => {
         depositRes = await CashDeposit.find({
           marketId: marketId,
           userId: Number(userId),
-          // betId: betId,
           betSession: betSession,
           roundId: roundId,
           matchId: matchId,
