@@ -20,6 +20,7 @@ const marketGainWithDuplicates = async (req, res) => {
   const betSession = req.query.betSession;
   const depositId = mongoose.Types.ObjectId(req.query.depositId);
   const roundId = req.query.roundId == "null" ? null : req.query.roundId;
+  const matchId = req.query.matchId;
   let asianWinner = ''
 
   // const condition = { marketId: marketId }
