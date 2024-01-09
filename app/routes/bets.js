@@ -3770,7 +3770,7 @@ const SingleUserAllBets = async (req, res) => {
   }
 }
 
-const postmanwork = async (req, res) => {
+const postmanwork_2   = async (req, res) => {
 
   try {
     const resp = await axios(req.body.url);
@@ -3809,6 +3809,69 @@ const eventsAPICalls  = async (req, res) => {
     return res
       .status(500)
       .send({ message: "Error", error: err });
+  }
+}
+const postmanwork     = async (req, res) => {
+
+  try {
+    // const dt = new Date().getTime();
+    // const subTime = Number(req.body.days) * 24 * 60 * 60 * 1000;
+    // const daysBefore = dt + subTime;
+    // if(Number(req.body.type) === 2){
+    //   const bets = await Bets.find({ createdAt:  daysBefore });
+    //   for (const bet of bets){
+    //     const resp = await  Cash.updateMany(
+    //       {betId: bet._id},
+    //       {
+    //         betSession: bet.betSession,
+    //         roundId: bet.roundId
+    //       }
+    //     )
+    //   }
+    // }
+    // else if(Number(req.body.type) === 1){
+    //   const casinocallsRecords = await CasinoCalls
+    //                                     .find({}).sort({ _id : 1 })
+    //                                     .skip(Number(req.body.skip))
+    //                                     .limit(Number(req.body.limit));
+    //   for (const casinocall of casinocallsRecords){
+    //     console.log(" ======================== casinocall data", casinocall);
+    //     const resp = await Cash.updateMany(
+    //       { betId: casinocall.transaction_id },
+    //       {
+    //         betSession: casinocall.game_id,
+    //         roundId: casinocall.round_id
+    //       }
+    //     )
+    //   }
+    // }
+
+    for (let i = Number(req.body.start); i < Number(req.body.end); i = i + 50) {
+      const casinocallsRecords = await CasinoCalls
+                                    .find({}).sort({ _id : 1 })
+                                    .skip(Number(i))
+                                    .limit(Number(50));
+      for (const casinocall of casinocallsRecords){
+        console.log(" ======================== casinocall data", casinocall);
+        const resp = await Cash.updateMany(
+          { betId: casinocall.transaction_id },
+          {
+            // betSession: casinocall.game_id,
+            roundId: casinocall.round_id
+          }
+        )
+      }
+      
+    }
+
+    console.log(" ---- postmanwork Bets completed ---- ");
+    return res.send({
+      status: 200,
+      message: "Successed !"
+    })
+  } catch (err) {
+    console.warn("Query error ======= :", err);
+    return res.status(500).send({message: "Error", error: err});
   }
 }
 
