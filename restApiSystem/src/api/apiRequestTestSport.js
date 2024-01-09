@@ -209,23 +209,23 @@ function apiRequests() {
             // console.log(event.inplay);
           }
 
-          const competitionRequest = {
-            "filter": {
-              "eventTypeIds": [sportsId],
-              "eventIds": [event.event.id],
-              "countryCodes": [event.event.countryCode]
-            }
-          }
+          // const competitionRequest = {
+          //   "filter": {
+          //     "eventTypeIds": [sportsId],
+          //     "eventIds": [event.event.id],
+          //     "countryCodes": [event.event.countryCode]
+          //   }
+          // }
 
-          const getCompetitionUrl = `${sportsAPIUrl}/listCompetitions`;
+          // const getCompetitionUrl = `${sportsAPIUrl}/listCompetitions`;
 
-          const responseCompetition = await axios.post(
-            getCompetitionUrl,
-            competitionRequest,
-            header
-          );
+          // const responseCompetition = await axios.post(
+          //   getCompetitionUrl,
+          //   competitionRequest,
+          //   header
+          // );
 
-          var competitions = responseCompetition.data.result;
+          // var competitions = responseCompetition.data.result;
           await inPlayEvents.findOneAndUpdate(
             {Id: event.event.id},
             {
@@ -236,8 +236,8 @@ function apiRequests() {
                 countryCode: event.event.countryCode,
                 timezone: event.event.timezone,
                 openDate: Date.parse(event.event.openDate),
-                competitionId: competitions[0]?.competition?.id ? competitions[0]?.competition?.id : null,
-                competitionName: competitions[0]?.competition?.name ? competitions[0]?.competition?.name : null,
+                // competitionId: competitions[0]?.competition?.id ? competitions[0]?.competition?.id : null,
+                // competitionName: competitions[0]?.competition?.name ? competitions[0]?.competition?.name : null,
                 inplayFromServer: false,
                 hasFancy: false,
                 status: 'OPEN',

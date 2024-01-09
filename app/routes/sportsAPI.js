@@ -62,68 +62,7 @@ async function listCompetitions(req, res) {
   }
 }
 
-async function listEventsBySport(req, res) {
-  /*
-  
-  const sportId = req.params.sportId;
-
-  try {
-    const response = await axios.get(
-      `${config.sportsAPIUrl}/listEventsBySport/${sportId}`
-    );
-    console.log('response', response.data);
-    const eventsData = response.data;
-    const events = [];
-
-    for (const eventData of eventsData) {
-      const filter = { Id: eventData.Id, sportsId: sportId,  type: 2 };
-      const update = {
-        $setOnInsert: {
-          sport: eventData.sport,
-          competitionId: eventData.competitionId,
-          competitionName: eventData.competitionName,
-          Id: eventData.Id,
-          name: eventData.name,
-          countryCode: eventData.countryCode,
-          timezone: eventData.timezone,
-          openDate: new Date(eventData.openDate),
-          inplay: eventData.inplay,
-          hasFancy: eventData.hasFancy,
-          status: eventData.status,
-          isPremium: eventData.isPremium,
-          sportsId: sportId,
-          type: 2
-        },
-      };
-
-      const options = { upsert: true, new: true };
-
-      const updatedEvent = await inPlayEvents.findOneAndUpdate(
-        filter,
-        update,
-        options
-      );
-      events.push(updatedEvent);
-    }
-
-    if (res) {
-      res.json({
-        success: true,
-        message: 'Events retrieved successfully',
-        events: events,
-      });
-    }
-  } catch (error) {
-    console.error(error);
-    if (res) {
-      res.json({
-        success: false,
-        message: 'Failed to get events',
-        error: error.message,
-      });
-    }
-  } */
-}
+async function listEventsBySport(req, res) {}
 
 
 //Id is eventId
@@ -376,63 +315,7 @@ async function getnewOdds(ids) {
   // });
 }
 
-async function eventsBySupportJobs(sportsId) {
-  /*
-  
-  const url = `${config.eventListAPIUrl}/listEventsBySport/${sportsId}`;
-  try {
-    const response = await axios.get(url);
-    const events = response.data;
-
- 
-    if(events.length > 0){
-      var sportsEventData = events.map((element) => ({
-        updateOne: {
-          filter: { Id: element.Id },
-          update: {
-            $set: {
-              sportsId: sportsId,
-              sport: element.sport,
-              competitionId: element.competitionId,
-              competitionName: element.competitionName,
-              Id: element.Id,
-              name: element.name,
-              countryCode: element.countryCode,
-              timezone: element.timezone,
-              openDate: Date.parse(element.openDate),
-              inplay: element.inplay,
-              hasFancy: element.hasFancy,
-              status: element.status,
-              isPremium: element.isPremium,
-              type: element.type,
-              matchType: getMatchType(element.competitionName, element.name, sportsId)
-            },
-          },
-          upsert: true,
-        },
-      }));
-    }
-
-    // 1"obet.com/*"
-    const savedEvents = await inPlayEvents.bulkWrite(sportsEventData);
-    // console.log('===== Saved Events bulkWrite logs ', savedEvents?.result?.upserted)
-    return({
-      success: true,
-      message: 'Events retrieved and saved successfully',
-      events: events,
-      newInsertedIds: savedEvents?.result?.upserted
-    });
-  } catch (error) {
-    console.error(error);
-    return({
-      success: false,
-      message: 'Failed to get or save events',
-      error: error.message,
-    });
-  }
-  */
-
-}
+async function eventsBySupportJobs(sportsId) {}
 
 async function listMarketsByCronJob(eventId,sport) {
 
