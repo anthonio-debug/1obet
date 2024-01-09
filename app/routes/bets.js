@@ -29,6 +29,7 @@ const AsianMarketOdd = require("../models/asianOdds")
 const {v4: uuidv4} = require('uuid');
 const {MongoClient, ObjectId} = require('mongodb');
 const Crickets = require('../models/Crickets')
+const CasinoCalls = require('../models/casinoCalls')
 const {FANCY_URL, LIVE_BET_TV_URL} = require("../global/constants");
 const message_result = "cannot place bet due to result check";
 const MarketIDS = require("../models/marketIds") 
@@ -229,12 +230,12 @@ const placeBet = async (req, res) => {
       return res.status(404).send({message: "illegal user betting"});
     }
 
-    if(user.activeBetPlacing){
-      return res.status(404).send({ message: "Please wait few seconds " });
-    }else {
-      user.activeBetPlacing = true;
-      await user.save();
-    }
+    // if(user.activeBetPlacing){
+    //   return res.status(404).send({ message: "Please wait few seconds " });
+    // }else {
+    //   user.activeBetPlacing = true;
+    //   await user.save();
+    // }
 
     if (user.bettingAllowed == false) {
       return res.status(404).send({message: "Bet not allowed"});
@@ -305,12 +306,9 @@ const placeBet = async (req, res) => {
       if (remainingTimeFromEvent > 0) {
         return res.status(404).send({
           status: true,
-          message: `Bets will Allow in : ${Math.ceil(
-            remainingTimeFromEvent / 60000
-          )} min`,
+          message: `Bets will Allow in : ${Math.ceil( remainingTimeFromEvent / 60000 )} min`,
         });
       }
-
       id = eventDetail.marketIds[0];
       _3rdPartyMarketId = id;
       subMarketDetail = await SubMarketType.findOne({countryCode: subMarketName, marketId: marketId}).exec();
