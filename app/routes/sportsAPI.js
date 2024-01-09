@@ -14,38 +14,38 @@ const {FANCY_URL} = require("../global/constants");
 const loginRouter = express.Router();
 
 async function listCompetitions(req, res) {
-  const sportId = req.params.sportId;
-  const url = `${config.sportsAPIUrl}/listCompetitions/${sportId}`;
+  // const sportId = req.params.sportId;
+  // const url = `${config.sportsAPIUrl}/listCompetitions/${sportId}`;
 
   try {
-    const response = await axios.get(url);
-    const competitionData = response.data;
+    // const response = await axios.get(url);
+    // const competitionData = response.data;
 
     // Create an array to store the created Competition documents
     const competitions = [];
 
     // Iterate over the competitionData array and create a new Competition document for each competition
-    for (const data of competitionData) {
-      const existingCompetition = await ListCompetitions.findOne({
-        Id: data.Id,
-        sportsId: sportId,
-      });
+    // for (const data of competitionData) {
+    //   const existingCompetition = await ListCompetitions.findOne({
+    //     Id: data.Id,
+    //     sportsId: sportId,
+    //   });
 
-      if (existingCompetition) {
-        competitions.push(existingCompetition);
-      } else {
-        const competition = new ListCompetitions({
-          Id: data.Id,
-          Name: data.Name,
-          sportsId: sportId,
-        });
+    //   if (existingCompetition) {
+    //     competitions.push(existingCompetition);
+    //   } else {
+    //     const competition = new ListCompetitions({
+    //       Id: data.Id,
+    //       Name: data.Name,
+    //       sportsId: sportId,
+    //     });
 
-        // Save the document to the database
-        await competition.save();
+    //     // Save the document to the database
+    //     await competition.save();
 
-        competitions.push(competition);
-      }
-    }
+    //     competitions.push(competition);
+    //   }
+    // }
 
     res.status(200).json({
       success: true,
