@@ -45,9 +45,9 @@ const marketGainWithDuplicates = async (req, res) => {
           // roundId: roundId ? roundId : "0",
           marketId: marketId,
           userId: Number(userId),
-          betSession: betSession,
+          // betSession: betSession,
           roundId: roundId,
-          matchId: matchId,
+          // matchId: matchId,
           $or: [
             {
               cashOrCredit: { $in: ["Bet"] },
