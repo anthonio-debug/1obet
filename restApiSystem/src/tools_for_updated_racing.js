@@ -18,7 +18,7 @@ function ToolForUpdatedRacing() {
         apiRequests.init(_io);
 
         if (config.activeProvider == 'NEW') {
-            setInterval(getRacing, 60 * 1000)
+            setInterval(getRacing, 12 * 60 * 60 * 1000)
             setInterval(() => fetchMarkets(), 10 * 1000);
             setTimeout(() => {
                 setInterval(apiRequests.checkOdds, 2 * 1000);
