@@ -619,6 +619,7 @@ function getLedgerDetails(req, res) {
           createdAt	:  { $first: "$createdAt" },
           sportsId: { $first: "$sportsId" },
           marketId: { $first: "$marketId" },
+          roundId: { $first: "$roundId" },
           betId: { $first: "$betId" },
           userId: { $first: "$userId" },
           matchId: { $first: "$matchId" },
