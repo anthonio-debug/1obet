@@ -621,6 +621,7 @@ function getLedgerDetails(req, res) {
           marketId: { $first: "$marketId" },
           betId: { $first: "$betId" },
           userId: { $first: "$userId" },
+          matchId: { $first: "$matchId" },
         },
       })
   
