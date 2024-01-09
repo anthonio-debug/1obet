@@ -14,6 +14,14 @@ const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const saltKey = process.env.saltKey;
 
+/**
+ * 
+ * Latest tasks 
+ * 1 > Description include game name in it
+ * 2 > roundId in Deposits 
+ * 
+ */
+
 const transactionOptions = {
   readPreference: 'primary',
   readConcern: { level: 'local' },
@@ -155,7 +163,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
 
         let BattorLostTran = {
           userId: user.userId,
-          description: `Casino (${payload.game_id})`,
+          description: `Casino (${game.name})`,
           date: now.getTime(),
           createdAt: formattedDate,
           amount: - bettor_lost_amount,
@@ -175,7 +183,6 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
           roundId: payload.round_id,
           matchId:  payload.game_id,
           cashOrCredit: "Bet",
-
           sportsId: "6",
         }
         allTrans.push(BattorLostTran)
@@ -248,7 +255,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
 
           let betTransaction = {
             userId: user.userId,
-            description: `Casino (${payload.game_id})`,
+            description: `Casino (${game.name})`,
             date: now.getTime(),
             createdAt: formattedDate,
             commissionFrom: commissionFrom,
@@ -337,7 +344,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
         console.log(" ================ lastMaxWithdraw ================ ", lastMaxWithdraw);
         let UserWinBetTrans = {
           userId: user.userId,
-          description: `Casino (${payload.game_id})`,
+          description: `Casino (${game.name})`,
           date: now.getTime(),
           createdAt: formattedDate,
           createdBy: 0,
@@ -422,7 +429,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
 
           let betTransaction = {
             userId: user.userId,
-            description: `Casino (${payload.game_id})`,
+            description: `Casino (${game.name})`,
             date: now.getTime(),
             createdAt: formattedDate,
             createdBy: 0,
@@ -452,7 +459,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action) => {
 
           let commissionTransaction = {
             userId: user.userId,
-            description: `Casino (${payload.game_id})`,
+            description: `Casino (${game.name})`,
             date: now.getTime(),
             createdAt: formattedDate,
             createdBy: 0,
