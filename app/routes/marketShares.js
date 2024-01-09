@@ -41,9 +41,13 @@ const marketGainWithDuplicates = async (req, res) => {
     if (marketId) {
       if (sportsId == "6") {
         depositRes = await CashDeposit.find({
+          // userId: Number(userId),
+          // roundId: roundId ? roundId : "0",
+          marketId: marketId,
           userId: Number(userId),
-          // betId: betId,
-          roundId: roundId ? roundId : "0",
+          betSession: betSession,
+          roundId: roundId,
+          matchId: matchId,
           $or: [
             {
               cashOrCredit: { $in: ["Bet"] },
