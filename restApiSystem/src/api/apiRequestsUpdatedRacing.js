@@ -649,9 +649,12 @@ function apiRequests() {
       }
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x)); 
-      await MarketIDS.updateMany({marketId:{$in:difference}},{$set:{status:'PENDING'}});
-      for (let k = 0; k < difference?.length; k ++) {
-        io.emit('racing_status', {status: "PENDING", marketId: difference[k]});
+      for (let j = 0; j < difference?.length; j++) {
+        const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"}) 
+        if (!existedMarket?._id) {
+          io.emit('racing_status', {status: "PENDING", marketId: difference[j]});
+          await MarketIDS.updateOne({marketId: difference[j]},{$set:{status:'PENDING'}})
+        } 
       }
 
       return ({
