@@ -327,16 +327,9 @@ async function listCompetitions(req, res) {
 async function listEventsBySport(req, res) {
   const sportId = req.query.id;
   try {
-    var now = new Date();  // Get the current date and time
-    var startOfDay = new Date(now);
-    startOfDay.setHours(0, 0, 0, 0);
-    var startOfDayTimestamp = startOfDay.getTime();
-
-    console.log("startOfDayTimestamp", startOfDayTimestamp);
-
-    var endOfDay = new Date(now);
-    endOfDay.setHours(23, 59, 59, 999);
-    var endOfDayTimestamp = endOfDay.getTime();
+    let events
+    let start
+    let end
 
     console.log("endOfDayTimestamp", endOfDayTimestamp);
 
@@ -344,8 +337,11 @@ async function listEventsBySport(req, res) {
       start = new Date().getTime();
       end = new Date().getTime() + 24 * 60 * 60 * 1000;
     } else if (sportId == "7" || sportId == "4339") {
-      start = new Date().getTime();
-      end = new Date().getTime() + 5 * 60 * 60 * 1000;
+      let startOfDay = new Date(now);
+      start = startOfDay.getTime() - 30 * 60 * 1000;
+  
+      let endOfDay = new Date(now);
+      end = endOfDay.getTime() + 23.5 * 60 * 60 * 1000 
     }
 
     if (sportId == "4") {
@@ -371,8 +367,8 @@ async function listEventsBySport(req, res) {
             sportID: Number(sportId),
             // CompanySetStatus: "OPEN",
             $and: [
-              { openDate: { $gte: startOfDayTimestamp } },
-              { openDate: { $lte: endOfDayTimestamp } }
+              { openDate: { $gte: start } },
+              { openDate: { $lte: end } }
             ]
           },
         },
@@ -1034,15 +1030,12 @@ async function bettorDashboardGames(req, res) {
         },
       },
     ]);
-
-    var now = new Date();  // Get the current date and time
+ 
     var startOfDay = new Date(now);
-    startOfDay.setHours(0, 0, 0, 0);
-    var startOfDayTimestamp = startOfDay.getTime();
+    var startOfDayTimestamp = startOfDay.getTime() - 30 * 60 * 1000;
 
     var endOfDay = new Date(now);
-    endOfDay.setHours(23, 59, 59, 999);
-    var endOfDayTimestamp = endOfDay.getTime();
+    var endOfDayTimestamp = endOfDay.getTime() + 23.5 * 60 * 60 * 1000 
 
     const greyHound = await MarketIDS.aggregate([
       {
