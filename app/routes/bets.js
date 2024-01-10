@@ -424,7 +424,6 @@ const placeBet = async (req, res) => {
     // Socer Match Odds
     if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
 
-
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -447,7 +446,6 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
       }
-
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
@@ -974,6 +972,31 @@ const placeBet = async (req, res) => {
 
     // Soccer Over Under
     else if (config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.overUnder) {
+
+      const userMaxBetSize = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+      });
+      console.log("Soccer Over Under Max BetSize =============", userMaxBetSize);
+  
+      if (!userMaxBetSize) {
+        console.warn("userMaxBetSize not found ");
+        return res.status(404).send({message: `something went wrong !`});
+      }
+  
+      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        return res
+          .status(404)
+          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      }
+  
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        return res
+          .status(404)
+          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      }
+
+
       _3rdPartyMarketId = overunderMarketId;
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
