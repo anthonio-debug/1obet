@@ -301,7 +301,7 @@ const placeBet = async (req, res) => {
     const Digitaddition = await handleLimitValue(betRate, marketId);
 
     /** 
-     * checks for market 
+     * checks for Market Sub Market
      * checks for Open Time 
      * checks For 
      */ 
@@ -322,12 +322,12 @@ const placeBet = async (req, res) => {
       }
       const requiredTime = new Date().getTime() + config.raceOpenBefore;
       const remainingTimeFromEvent = idDetails.openDate - requiredTime;
-      if (remainingTimeFromEvent > 0) {
-        return res.status(404).send({
-          status: true,
-          message: `Bets will Allow in : ${Math.ceil( remainingTimeFromEvent / 60000 )} min`,
-        });
-      }
+      // if (remainingTimeFromEvent > 0) {
+      //   return res.status(404).send({
+      //     status: true,
+      //     message: `Bets will Allow in : ${Math.ceil( remainingTimeFromEvent / 60000 )} min`,
+      //   });
+      // }
       id = idDetails.marketId;
       _3rdPartyMarketId = id;
       subMarketDetail = await SubMarketType.findOne({countryCode: subMarketName, marketId: marketId}).exec();
@@ -374,14 +374,12 @@ const placeBet = async (req, res) => {
       if (!subMarketDetail) {
         return res.status(404).send({message: "you cannot place bet"});
       }
-      if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
-        return res.status(404).send({
-          status: true,
-          message: `Bets will Allow in : ${Math.ceil(
-            remainingTimeFromEvent / 60000
-          )} min`,
-        });
-      }
+      // if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
+      //   return res.status(404).send({
+      //     status: true,
+      //     message: `Bets will Allow in : ${Math.ceil( remainingTimeFromEvent / 60000 )} min`,
+      //   });
+      // }
     }
     // const resStatus = await checkMarketActiveForBets(id);
     // if(resStatus === 400){
