@@ -383,7 +383,6 @@ const placeBet = async (req, res) => {
         });
       }
     }
-    console.log("subMarketDetail=============", subMarketDetail);
     // const resStatus = await checkMarketActiveForBets(id);
     // if(resStatus === 400){
     //   return res.status(404).send({message: "Betting disabled"});
@@ -393,11 +392,16 @@ const placeBet = async (req, res) => {
       return res.status(404).send({message: "Betting disabled"});
     }
 
+
+    console.log("subMarketDetail=============", subMarketDetail);
+    console.log("marketId=============", marketId);
+
     const userMaxBetSize = await userBetSizes.findOne({
       userId: userId,
       sportsId: marketId,
       // subarket: subMarketDetail.Id
     });
+    console.log("userMaxBetSize=============", userMaxBetSize);
 
     if (!userMaxBetSize) {
       console.warn("userMaxBetSize not found ");
