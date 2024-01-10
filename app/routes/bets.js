@@ -551,6 +551,30 @@ const placeBet = async (req, res) => {
 
     // Tennis Match Odds
     else if (config.sportMarkets.includes(marketId) && config.tennisOdds == subMarketDetail.Id) {
+
+      const userMaxBetSize = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+      });
+      console.log("Tennis Match Odds Max BetSize =============", userMaxBetSize);
+  
+      if (!userMaxBetSize) {
+        console.warn("userMaxBetSize not found ");
+        return res.status(404).send({message: `something went wrong !`});
+      }
+  
+      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        return res
+          .status(404)
+          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      }
+  
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        return res
+          .status(404)
+          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      }
+
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         return res.status(404).send({
@@ -682,6 +706,31 @@ const placeBet = async (req, res) => {
 
     // Cricket Match Odds
     else if (config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id) {
+
+      const userMaxBetSize = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+      });
+
+      console.log("Cricket Match Odds Max BetSize =============", userMaxBetSize);
+  
+      if (!userMaxBetSize) {
+        console.warn("userMaxBetSize not found ");
+        return res.status(404).send({message: `something went wrong !`});
+      }
+  
+      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        return res
+          .status(404)
+          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      }
+  
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        return res
+          .status(404)
+          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      }
+
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
@@ -844,6 +893,31 @@ const placeBet = async (req, res) => {
         });
       }
       //isManuel = false;
+
+
+      const userMaxBetSize = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+      });
+      console.log(" GH HR Match Odds Max BetSize ============= ", userMaxBetSize);
+  
+      if (!userMaxBetSize) {
+        console.warn("userMaxBetSize not found ");
+        return res.status(404).send({message: `something went wrong !`});
+      }
+  
+      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        return res
+          .status(404)
+          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      }
+  
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        return res
+          .status(404)
+          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      }
+
       runnerName = req.body.runnerName;
       const DBOddDetails = await RaceOdds.findById(oddsId);
       if (!DBOddDetails) {
@@ -1776,6 +1850,32 @@ const placeBet = async (req, res) => {
 
     // for Asian Odd
     else if (marketId == "8") {
+
+
+      const userMaxBetSize = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+      });
+      console.log(" Asian Casino Max BetSize ============= ", userMaxBetSize);
+  
+      if (!userMaxBetSize) {
+        console.warn("userMaxBetSize not found ");
+        return res.status(404).send({message: `something went wrong !`});
+      }
+  
+      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        return res
+          .status(404)
+          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      }
+  
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        return res
+          .status(404)
+          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      }
+      
+
       const DBOddDetails = await AsianMarketOdd.findOne({roundId: roundId, marketId: asianMarketId});
       if (!DBOddDetails) {
         return res.status(404).send({
