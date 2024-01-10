@@ -390,25 +390,21 @@ const placeBet = async (req, res) => {
       return res.status(404).send({message: "Betting disabled"});
     }
 
-    console.log("subMarketDetail=============", subMarketDetail);
-    console.log("marketId=============", marketId);
-
     const userMaxBetSize = await userBetSizes.findOne({
       userId: userId,
       sportsId: marketId,
     });
-    console.log("userMaxBetSize=============", userMaxBetSize);
 
-    if (!userMaxBetSize) {
-      console.warn("userMaxBetSize not found ");
-      return res.status(404).send({message: `something went wrong !`});
-    }
+    // if (!userMaxBetSize) {
+    //   console.warn("userMaxBetSize not found ");
+    //   return res.status(404).send({message: `something went wrong !`});
+    // }
 
-    if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
-      return res
-        .status(404)
-        .send({message: `max bet size is : ${userMaxBetSize.amount}`});
-    }
+    // if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+    //   return res
+    //     .status(404)
+    //     .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+    // }
 
     // if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
     //   return res
@@ -554,7 +550,6 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId,
       });
-      console.log("Tennis Match Odds Max BetSize =============", userMaxBetSize);
   
       if (!userMaxBetSize) {
         console.warn("userMaxBetSize not found ");
@@ -709,26 +704,20 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId,
       });
-
-      console.log("Cricket Match Odds Max BetSize =============", userMaxBetSize);
-  
       if (!userMaxBetSize) {
         console.warn("userMaxBetSize not found ");
         return res.status(404).send({message: `something went wrong !`});
       }
-  
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-  
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
       }
-
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
@@ -891,25 +880,19 @@ const placeBet = async (req, res) => {
         });
       }
       //isManuel = false;
-
-
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
       });
-      console.log(" GH HR Match Odds Max BetSize ============= ", userMaxBetSize);
-  
       if (!userMaxBetSize) {
         console.warn("userMaxBetSize not found ");
         return res.status(404).send({message: `something went wrong !`});
       }
-  
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-  
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
         return res
           .status(404)
@@ -1049,25 +1032,20 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId,
       });
-      console.log("Soccer Over Under Max BetSize =============", userMaxBetSize);
-  
       if (!userMaxBetSize) {
         console.warn("userMaxBetSize not found ");
         return res.status(404).send({message: `something went wrong !`});
       }
-  
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-  
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
       }
-
 
       _3rdPartyMarketId = overunderMarketId;
       const DBOddDetails = await Odds.findById(oddsId);
@@ -1227,6 +1205,29 @@ const placeBet = async (req, res) => {
 
     // Cricket Tied Match
     else if (config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.tiedMatch) {
+
+      const userMaxBetSize = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+        subarket: subMarketDetail.Id
+      });
+      console.log("Cricket Tied Match Max BetSize =============", userMaxBetSize);
+      if (!userMaxBetSize) {
+        console.warn("userMaxBetSize not found ");
+        return res.status(404).send({message: `something went wrong !`});
+      }
+      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        return res
+          .status(404)
+          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      }
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        return res
+          .status(404)
+          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      }
+
+
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
         return res.status(404).send({
@@ -1339,6 +1340,26 @@ const placeBet = async (req, res) => {
     // Cricket Cup Winner
     else if (config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.Cup) {
 
+      const userMaxBetSize = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+      });
+      if (!userMaxBetSize) {
+        console.warn("userMaxBetSize not found ");
+        return res.status(404).send({message: `something went wrong !`});
+      }
+      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        return res
+          .status(404)
+          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      }
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        return res
+          .status(404)
+          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      }
+
+
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
         return res.status(404).send({
@@ -1444,6 +1465,26 @@ const placeBet = async (req, res) => {
 
     // Cricket Toss
     else if (config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.Toss) {
+
+      const userMaxBetSize = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+      });
+      if (!userMaxBetSize) {
+        console.warn("userMaxBetSize not found ");
+        return res.status(404).send({message: `something went wrong !`});
+      }
+      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        return res
+          .status(404)
+          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      }
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        return res
+          .status(404)
+          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      }
+
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
         return res.status(404).send({
@@ -1509,6 +1550,28 @@ const placeBet = async (req, res) => {
 
     // For Fancy
     else if (subMarketDetail.Id == config.Fancy) {
+
+      // const userMaxBetSize = await userBetSizes.findOne({
+      //   userId: userId,
+      //   sportsId: marketId,
+      //   subarket: subMarketDetail.Id
+      // });
+      // console.log("Fancy  Max BetSize =============", userMaxBetSize);
+      // if (!userMaxBetSize) {
+      //   console.warn("userMaxBetSize not found ");
+      //   return res.status(404).send({message: `something went wrong !`});
+      // }
+      // if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+      //   return res
+      //     .status(404)
+      //     .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      // }
+      // if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      //   return res
+      //     .status(404)
+      //     .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      // }
+
       isManuel = false;
       const fancyBetLimit = await userBetSizes.findOne({
         userId: userId,
@@ -1603,25 +1666,28 @@ const placeBet = async (req, res) => {
       }
     }
 
-    // for Bookmaker
+    // For Bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
-
-      const bookMakerBetLimit = await userBetSizes
-        .findOne({
-          userId: userId,
-          sportsId: marketId,
-          subarket: config.BookMaker,
-        })
-        .exec();
-      if (!bookMakerBetLimit) {
-        console.warn("bookMakerBetLimit not found ");
-        return res.status(404).send({message: `something went wrong !`});
-      }
-      if (bookMakerBetLimit && betAmount > bookMakerBetLimit.amount) {
-        return res
-          .status(404)
-          .send({message: `max bet size is : ${bookMakerBetLimit.amount}`});
-      }
+      // const userMaxBetSize = await userBetSizes.findOne({
+      //   userId: userId,
+      //   sportsId: marketId,
+      //   subarket: subMarketDetail.Id
+      // });
+      // console.log("Bookmaker  Max BetSize =============", userMaxBetSize);
+      // if (!userMaxBetSize) {
+      //   console.warn("userMaxBetSize not found ");
+      //   return res.status(404).send({message: `something went wrong !`});
+      // }
+      // if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+      //   return res
+      //     .status(404)
+      //     .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      // }
+      // if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      //   return res
+      //     .status(404)
+      //     .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      // }
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
@@ -1738,6 +1804,29 @@ const placeBet = async (req, res) => {
 
     // Figure Even Odd & Small Big
     else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+
+      // const userMaxBetSize = await userBetSizes.findOne({
+      //   userId: userId,
+      //   sportsId: marketId,
+      //   subarket: subMarketDetail.Id
+      // });
+      // console.log("Figure Even Odd & Small Big Max BetSize =============", userMaxBetSize);
+      // if (!userMaxBetSize) {
+      //   console.warn("userMaxBetSize not found ");
+      //   return res.status(404).send({message: `something went wrong !`});
+      // }
+      // if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+      //   return res
+      //     .status(404)
+      //     .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      // }
+      // if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      //   return res
+      //     .status(404)
+      //     .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      // }
+
+
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
         return res.status(404).send({
@@ -1848,8 +1937,6 @@ const placeBet = async (req, res) => {
 
     // for Asian Odd
     else if (marketId == "8") {
-
-
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
