@@ -330,6 +330,7 @@ async function listEventsBySport(req, res) {
     let events
     let start
     let end
+    const now = new Date();
 
     if (sportId == "4" || sportId == "2" || sportId == "1") {
       start = new Date().getTime();
