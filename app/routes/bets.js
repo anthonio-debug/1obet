@@ -396,7 +396,7 @@ const placeBet = async (req, res) => {
     const userMaxBetSize = await userBetSizes.findOne({
       userId: userId,
       sportsId: marketId,
-      subarket: subMarketDetail.Id
+      // subarket: subMarketDetail.Id
     });
 
     if (!userMaxBetSize) {
@@ -410,11 +410,11 @@ const placeBet = async (req, res) => {
         .send({message: `max bet size is : ${userMaxBetSize.amount}`});
     }
 
-    if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
-      return res
-        .status(404)
-        .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
-    }
+    // if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+    //   return res
+    //     .status(404)
+    //     .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+    // }
     /* ==================================================================== */
 
     /* ================================== Market Specific Checks ================================== */
@@ -2203,9 +2203,9 @@ const placeBet = async (req, res) => {
         console.warn(error);
       }
 
-      if(finalExpAmount > userMaxBetSize.ExpAmount){
-        return res.status(404).send({message: `max expoure size is : ${userMaxBetSize.ExpAmount}`});
-      }
+      // if(finalExpAmount > userMaxBetSize.ExpAmount){
+      //   return res.status(404).send({message: `max expoure size is : ${userMaxBetSize.ExpAmount}`});
+      // }
 
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
