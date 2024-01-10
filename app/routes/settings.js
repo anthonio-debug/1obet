@@ -332,9 +332,13 @@ async function listEventsBySport(req, res) {
     startOfDay.setHours(0, 0, 0, 0);
     var startOfDayTimestamp = startOfDay.getTime();
 
+    console.log("startOfDayTimestamp", startOfDayTimestamp);
+
     var endOfDay = new Date(now);
     endOfDay.setHours(23, 59, 59, 999);
     var endOfDayTimestamp = endOfDay.getTime();
+
+    console.log("endOfDayTimestamp", endOfDayTimestamp);
 
     if (sportId == "4" || sportId == "2" || sportId == "1") {
       start = new Date().getTime();
