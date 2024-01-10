@@ -254,7 +254,7 @@ function apiRequests() {
 
     const now = moment();
     const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
-    const endTime = now.add(10, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+    const endTime = now.add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
@@ -263,7 +263,6 @@ function apiRequests() {
           "to": endTime
         }
       },
-      "maxResults": 20,
     }
 
     var url = `${config.newThirdURL}/listEvents`;
