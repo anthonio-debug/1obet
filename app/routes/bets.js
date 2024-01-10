@@ -392,14 +392,12 @@ const placeBet = async (req, res) => {
       return res.status(404).send({message: "Betting disabled"});
     }
 
-
     console.log("subMarketDetail=============", subMarketDetail);
     console.log("marketId=============", marketId);
 
     const userMaxBetSize = await userBetSizes.findOne({
       userId: userId,
       sportsId: marketId,
-      // subarket: subMarketDetail.Id
     });
     console.log("userMaxBetSize=============", userMaxBetSize);
 
@@ -425,6 +423,32 @@ const placeBet = async (req, res) => {
 
     // Socer Match Odds
     if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
+
+
+      const userMaxBetSize = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+      });
+      console.log("Soccer user Max BetSize =============", userMaxBetSize);
+  
+      if (!userMaxBetSize) {
+        console.warn("userMaxBetSize not found ");
+        return res.status(404).send({message: `something went wrong !`});
+      }
+  
+      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        return res
+          .status(404)
+          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+      }
+  
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        return res
+          .status(404)
+          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+      }
+
+
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         return res.status(404).send({
