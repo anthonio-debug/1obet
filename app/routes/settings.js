@@ -331,6 +331,8 @@ async function listEventsBySport(req, res) {
     let start
     let end
 
+    console.log("endOfDayTimestamp", endOfDayTimestamp);
+
     if (sportId == "4" || sportId == "2" || sportId == "1") {
       start = new Date().getTime();
       end = new Date().getTime() + 24 * 60 * 60 * 1000;
