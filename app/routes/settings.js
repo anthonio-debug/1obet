@@ -1030,7 +1030,7 @@ async function bettorDashboardGames(req, res) {
         },
       },
     ]);
- 
+    const now = new Date();
     var startOfDay = new Date(now);
     var startOfDayTimestamp = startOfDay.getTime() - 30 * 60 * 1000;
 
