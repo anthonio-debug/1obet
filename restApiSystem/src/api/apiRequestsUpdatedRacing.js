@@ -516,6 +516,7 @@ function apiRequests() {
             },
             {$set: {
               runners: runners, 
+              marketName: eventsData[j].marketName,
               openDate: Date.parse(eventsData[j].marketStartTime)
             }}, {upsert: true, new: true});
         }
