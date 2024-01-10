@@ -331,8 +331,6 @@ async function listEventsBySport(req, res) {
     let start
     let end
 
-    console.log("endOfDayTimestamp", endOfDayTimestamp);
-
     if (sportId == "4" || sportId == "2" || sportId == "1") {
       start = new Date().getTime();
       end = new Date().getTime() + 24 * 60 * 60 * 1000;
@@ -1031,11 +1029,11 @@ async function bettorDashboardGames(req, res) {
       },
     ]);
     const now = new Date();
-    var startOfDay = new Date(now);
-    var startOfDayTimestamp = startOfDay.getTime() - 30 * 60 * 1000;
+    let startOfDay = new Date(now);
+    let startOfDayTimestamp = startOfDay.getTime() - 30 * 60 * 1000;
 
-    var endOfDay = new Date(now);
-    var endOfDayTimestamp = endOfDay.getTime() + 23.5 * 60 * 60 * 1000 
+    let endOfDay = new Date(now);
+    let endOfDayTimestamp = endOfDay.getTime() + 23.5 * 60 * 60 * 1000 
 
     const greyHound = await MarketIDS.aggregate([
       {
