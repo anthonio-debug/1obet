@@ -383,7 +383,7 @@ const placeBet = async (req, res) => {
         });
       }
     }
-    
+    console.log("subMarketDetail=============", subMarketDetail);
     // const resStatus = await checkMarketActiveForBets(id);
     // if(resStatus === 400){
     //   return res.status(404).send({message: "Betting disabled"});
