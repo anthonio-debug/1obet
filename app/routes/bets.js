@@ -396,6 +396,7 @@ const placeBet = async (req, res) => {
     const userMaxBetSize = await userBetSizes.findOne({
       userId: userId,
       sportsId: marketId,
+      subarket: subMarketDetail.Id
     });
 
     if (!userMaxBetSize) {
@@ -407,6 +408,12 @@ const placeBet = async (req, res) => {
       return res
         .status(404)
         .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+    }
+
+    if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      return res
+        .status(404)
+        .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
     }
     /* ==================================================================== */
 
@@ -2194,6 +2201,10 @@ const placeBet = async (req, res) => {
         }
       } catch (error) {
         console.warn(error);
+      }
+
+      if(finalExpAmount > userMaxBetSize.ExpAmount){
+        return res.status(404).send({message: `max expoure size is : ${userMaxBetSize.ExpAmount}`});
       }
 
       const bet = new Bets({
