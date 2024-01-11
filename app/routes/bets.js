@@ -35,6 +35,8 @@ const message_result = "cannot place bet due to result check";
 const MarketIDS = require("../models/marketIds")
 require('dotenv').config()
 
+const activeBettors = new Map()
+
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)
     return 6;
@@ -154,6 +156,7 @@ const stopbetStatusChecker = async (id) => {
     return 200;
   }
 }
+
 const checkMarketActiveForBets = async (marketId) => {
   const marketStatus = await  MarketIDS({ marketId: marketId });
   if(marketStatus.status === "OPEN"){
@@ -230,6 +233,12 @@ const placeBet = async (req, res) => {
       return res.status(404).send({message: "illegal user betting"});
     }
 
+    if (activeBettors.has(userId)) {
+      return res.status(404).send({ message: "Please wait few seconds " });
+    } else {
+      activeBettors.set(userId, {status: true})
+    }
+
     // if(user.activeBetPlacing){
     //   return res.status(404).send({ message: "Please wait few seconds " });
     // }else {
@@ -238,12 +247,14 @@ const placeBet = async (req, res) => {
     // }
 
     if (user.bettingAllowed == false) {
+      activeBettors.delete(userId)
       return res.status(404).send({message: "Bet not allowed"});
     }
     let parentUserIds = await getParents(user.userId);
 
     const blockedUsersCount = await User.countDocuments({userId: {$in: parentUserIds}, bettingAllowed: false})
     if (blockedUsersCount > 0) {
+      activeBettors.delete(userId)
       return res.status(404).send({message: "Beting disbaled"});
     }
 
@@ -269,27 +280,32 @@ const placeBet = async (req, res) => {
     } else {
       eventDetail = await Events.findById(matchId);
       if (!eventDetail) {
+        activeBettors.delete(userId)
         return res.status(404).send({message: "EVENT COULD NOT FOUND"});
       }
 
 
       if (!eventDetail.betAllowed) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: "Batting Not Allowd on this Match1", data: eventDetail.betAllowed});
       }
       if (eventDetail.status.toUpperCase() != "OPEN") {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: "Batting Not Allowd on this Match2", data: eventDetail.status.toUpperCase()});
       }
       if (eventDetail.matchStopStatus) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: "Batting Not Allowd on this Match3", data: eventDetail.matchStopStatus});
       }
 
       if (eventDetail.matchStopStatus) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: "Batting Not Allowd on this Match"});
@@ -307,14 +323,16 @@ const placeBet = async (req, res) => {
     if (config.raceMarkets.includes(marketId)) {
       const DBOddDetails = await RaceOdds.findById(oddsId);
       if (!DBOddDetails) {
-        console.warn(`Error : Odds not found !` );
+        console.warn(`Error : Odds not found !` )
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       }
       const idDetails = await MarketIDS.findOne({ marketId: DBOddDetails.marketId, eventId: eventDetail.Id })
       if (!idDetails) {
-        console.warn(`Error : Market details Not found !` );
+        console.warn(`Error : Market details Not found !` )
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -322,6 +340,7 @@ const placeBet = async (req, res) => {
       const requiredTime = new Date().getTime() + config.raceOpenBefore;
       const remainingTimeFromEvent = idDetails.openDate - requiredTime;
       if (remainingTimeFromEvent > 0) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           status: true,
           message: `Bets will Allow in : ${Math.ceil( remainingTimeFromEvent / 60000 )} min`,
@@ -331,11 +350,13 @@ const placeBet = async (req, res) => {
       _3rdPartyMarketId = id;
       subMarketDetail = await SubMarketType.findOne({countryCode: subMarketName, marketId: marketId}).exec();
       if (!subMarketDetail) {
+        activeBettors.delete(userId)
         return res.status(404).send({message: "Bet not allowed"});
       }
     } else if (asianOdd) {
       subMarketDetail = await SubMarketType.findOne({name: subMarketName, marketId: marketId}).exec();
       if (!subMarketDetail) {
+        activeBettors.delete(userId)
         return res.status(404).send({message: "you cannot place bet"});
       }
     } else {
@@ -349,6 +370,7 @@ const placeBet = async (req, res) => {
         thirdPartyMarketName = "To Win the Toss";
         const requiredTime = new Date().getTime() - config.tossCloseTime;
         if (subMarketDetail.Id == config.Toss && config.tossCloseTime >= remainingTimeFromEventStart) {
+          activeBettors.delete(userId)
           return res.status(404).send({
             status: true,
             message: `Bets are not Allowed Now In this market`,
@@ -371,9 +393,11 @@ const placeBet = async (req, res) => {
       }).exec();
 
       if (!subMarketDetail) {
+        activeBettors.delete(userId)
         return res.status(404).send({message: "you cannot place bet"});
       }
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           status: true,
           message: `Bets will Allow in : ${Math.ceil( remainingTimeFromEvent / 60000 )} min`,
@@ -390,6 +414,7 @@ const placeBet = async (req, res) => {
      * Is market Blocked from any Flow  
      */ 
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
+      activeBettors.delete(userId)
       return res.status(404).send({message: "Betting disabled"});
     }
     
@@ -407,6 +432,7 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
       });
       if (!userMaxBetSize) {
+        activeBettors.delete(userId)
         return res.status(404).send({ 
           error: "User Max Bet Size Not Found", 
           message: `something went wrong !`
@@ -414,14 +440,17 @@ const placeBet = async (req, res) => {
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res.status(404).send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res.status(404).send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
       }
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
@@ -468,18 +497,22 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && betRate < selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -531,6 +564,7 @@ const placeBet = async (req, res) => {
       });
   
       if (!userMaxBetSize) {
+        activeBettors.delete(userId)
         return res.status(404).send({ 
           error: "User Max Bet Size Not Found", 
           message: `something went wrong !`
@@ -538,15 +572,18 @@ const placeBet = async (req, res) => {
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res.status(404).send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
   
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res.status(404).send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
       }
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
@@ -596,18 +633,22 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && betRate < selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -682,6 +723,7 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
       });
       if (!userMaxBetSize) {
+        activeBettors.delete(userId)
         return res.status(404).send({ 
           error: "User Max Bet Size Not Found", 
           message: `something went wrong !`
@@ -689,11 +731,13 @@ const placeBet = async (req, res) => {
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
@@ -701,6 +745,7 @@ const placeBet = async (req, res) => {
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `${message_result}`,
         });
@@ -708,6 +753,7 @@ const placeBet = async (req, res) => {
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
@@ -766,10 +812,12 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       } else if (type == 1 && betRate < selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -855,6 +903,7 @@ const placeBet = async (req, res) => {
     // GH HR Match Odds
     else if (config.raceMarkets.includes(marketId)) {
       if (betRate > 50) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -865,6 +914,7 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
       });
       if (!userMaxBetSize) {
+        activeBettors.delete(userId)
         return res.status(404).send({ 
           error: "User Max Bet Size Not Found", 
           message: `something went wrong !`
@@ -872,11 +922,13 @@ const placeBet = async (req, res) => {
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
@@ -885,6 +937,7 @@ const placeBet = async (req, res) => {
       runnerName = req.body.runnerName;
       const DBOddDetails = await RaceOdds.findById(oddsId);
       if (!DBOddDetails) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -931,18 +984,22 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && betRate < selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -1016,6 +1073,7 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
       });
       if (!userMaxBetSize) {
+        activeBettors.delete(userId)
         return res.status(404).send({ 
           error: "User Max Bet Size Not Found", 
           message: `something went wrong !`
@@ -1023,11 +1081,13 @@ const placeBet = async (req, res) => {
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
@@ -1036,6 +1096,7 @@ const placeBet = async (req, res) => {
       _3rdPartyMarketId = overunderMarketId;
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
@@ -1093,18 +1154,22 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && betRate < selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -1198,6 +1263,7 @@ const placeBet = async (req, res) => {
         subarket: subMarketDetail.Id
       });
       if (!userMaxBetSize) {
+        activeBettors.delete(userId)
         return res.status(404).send({ 
           error: "User Max Bet Size Not Found", 
           message: `something went wrong !`
@@ -1205,11 +1271,13 @@ const placeBet = async (req, res) => {
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
@@ -1217,12 +1285,14 @@ const placeBet = async (req, res) => {
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `${message_result}`,
         });
       }
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
@@ -1278,10 +1348,12 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       } else if (type == 1 && betRate < selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -1332,6 +1404,7 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
       });
       if (!userMaxBetSize) {
+        activeBettors.delete(userId)
         return res.status(404).send({ 
           error: "User Max Bet Size Not Found", 
           message: `something went wrong !`
@@ -1339,11 +1412,13 @@ const placeBet = async (req, res) => {
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
@@ -1352,12 +1427,14 @@ const placeBet = async (req, res) => {
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `${message_result}`,
         });
       }
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
@@ -1407,10 +1484,12 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       } else if (type == 1 && betRate < selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -1461,6 +1540,7 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
       });
       if (!userMaxBetSize) {
+        activeBettors.delete(userId)
         return res.status(404).send({ 
           error: "User Max Bet Size Not Found", 
           message: `something went wrong !`
@@ -1468,11 +1548,13 @@ const placeBet = async (req, res) => {
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
@@ -1480,12 +1562,14 @@ const placeBet = async (req, res) => {
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `${message_result}`,
         });
       }
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
@@ -1535,6 +1619,7 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       } else {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet miss matched`,
         });
@@ -1551,6 +1636,7 @@ const placeBet = async (req, res) => {
       });
       console.log("Fancy  Max BetSize =============", userMaxBetSize);
       if (!userMaxBetSize) {
+        activeBettors.delete(userId)
         return res.status(404).send({ 
           error: "User Max Bet Size Not Found", 
           message: `something went wrong !`
@@ -1558,11 +1644,13 @@ const placeBet = async (req, res) => {
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
@@ -1576,15 +1664,18 @@ const placeBet = async (req, res) => {
       }).exec();
       if (!userMaxBetSize) {
         console.warn("Fancy userMaxBetSize not found ");
+        activeBettors.delete(userId)
         return res.status(404).send({message: `something went wrong !`});
       }
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `${message_result}`,
         });
       }
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
+        activeBettors.delete(userId)
         return res.status(404).send({message: `max bet size is : ${fancyBetLimit.amount}`});
       }
 
@@ -1604,6 +1695,7 @@ const placeBet = async (req, res) => {
         );
 
         if (!apiSelectedOdds || !dbSelectedOdds) {
+          activeBettors.delete(userId)
           return res.status(404).send({
             message: `Odds not available for the selected team ${selectionId}`,
           });
@@ -1625,9 +1717,11 @@ const placeBet = async (req, res) => {
           TargetScore = betRate;
 
           if (index == -1) {
+            activeBettors.delete(userId)
             return res.status(404).send({message: `Bet miss matched`});
           }
           if (apiBackOdds[index] < betRate) {
+            activeBettors.delete(userId)
             return res.status(404).send({message: `Bet miss matched `});
           }
         } else if (req.body.type == 1) {
@@ -1643,12 +1737,15 @@ const placeBet = async (req, res) => {
           TargetScore = betRate;
 
           if (index == -1) {
+            activeBettors.delete(userId)
             return res.status(404).send({message: `Index miss matched`});
           }
           if (apiBackOdds[index] < betRate) {
+            activeBettors.delete(userId)
             return res.status(404).send({message: `Bet miss matched`});
           }
         } else {
+          activeBettors.delete(userId)
           return res
             .status(400)
             .send({message: "Invalid type value. Type should be 0 or 1."});
@@ -1656,6 +1753,7 @@ const placeBet = async (req, res) => {
         // layFancyRate = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3][0]; 
         // backFancyRate  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3][0];
       } else {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Odds not available for the selected team ${req.body.selectionId}`,
         });
@@ -1671,6 +1769,7 @@ const placeBet = async (req, res) => {
       });
       console.log("Bookmaker  Max BetSize =============", userMaxBetSize);
       if (!userMaxBetSize) {
+        activeBettors.delete(userId)
         return res.status(404).send({ 
           error: "User Max Bet Size Not Found", 
           message: `something went wrong !`
@@ -1678,11 +1777,13 @@ const placeBet = async (req, res) => {
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
@@ -1690,6 +1791,7 @@ const placeBet = async (req, res) => {
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `${message_result}`,
         });
@@ -1701,6 +1803,7 @@ const placeBet = async (req, res) => {
       const response = await axios.get(url);
 
       if (!response?.data?.data?.t2?.length) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Odds not available for the selected team ${req.body.selectionId}`,
         });
@@ -1726,6 +1829,7 @@ const placeBet = async (req, res) => {
         );
 
         if (!apiSelectedOdds || !dbSelectedOdds) {
+          activeBettors.delete(userId)
           return res.status(404).send({
             message: `Odds not available for the selected team ${req.body.selectionId}`,
           });
@@ -1757,9 +1861,11 @@ const placeBet = async (req, res) => {
           const index = DbBackOdds.indexOf(betRate);
           TargetScore = DbBackScores[index];
           if (index == -1) {
+            activeBettors.delete(userId)
             return res.status(404).send({message: `Index didn't Match`});
           }
           if (apiBackOdds[index] < betRate) {
+            activeBettors.delete(userId)
             return res.status(404).send({message: `Bet miss matched`});
           }
         } else if (req.body.type == 1) {
@@ -1788,9 +1894,11 @@ const placeBet = async (req, res) => {
           TargetScore = DbBackScores[index];
 
           if (index == -1) {
+            activeBettors.delete(userId)
             return res.status(404).send({message: `Index miss matched`});
           }
           if (apiBackOdds[index] < betRate) {
+            activeBettors.delete(userId)
             return res.status(404).send({message: `Bet miss matched`});
           }
         } else {
@@ -1809,6 +1917,7 @@ const placeBet = async (req, res) => {
         subarket: subMarketDetail.Id
       });
       if (!userMaxBetSize) {
+        activeBettors.delete(userId)
         return res.status(404).send({ 
           error: "User Max Bet Size Not Found", 
           message: `something went wrong !`
@@ -1816,11 +1925,13 @@ const placeBet = async (req, res) => {
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
@@ -1828,6 +1939,7 @@ const placeBet = async (req, res) => {
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `${message_result}`,
         });
@@ -1838,6 +1950,7 @@ const placeBet = async (req, res) => {
         subarket: subMarketDetail.Id,
       }).exec();
       if (FigureEvenOddSmallBig && betAmount > FigureEvenOddSmallBig.amount) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
         });
@@ -1845,6 +1958,7 @@ const placeBet = async (req, res) => {
       const dbscore = await Crickets.find({eventId: eventDetail.Id}).sort({_id: -1}).limit(1)
       const scores = dbscore[0];
       if (!scores) {
+        activeBettors.delete(userId)
         return res.status(404).json({
           status: false,
           message: `Bet Not Allowed`,
@@ -1857,6 +1971,7 @@ const placeBet = async (req, res) => {
       let score = inning === 1 ? scores.score1 : scores.score2
       const wikets = score.split('/')[1];
       if(Number(wikets) === 10 ){
+        activeBettors.delete(userId)
         return res.status(404).send({
           success: false,
           message: "betting not allowed !"
@@ -1877,11 +1992,13 @@ const placeBet = async (req, res) => {
       let totalSessions = 0;
       TargetScore = currentOver;
       if (type == "TEST" && currentOver % 10 == 0) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           success: false,
           message: "betting not allowed !"
         });
       } else if (type != "TEST" && currentOver % 5 == 0) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           success: false,
           message: "betting not allowed !"
@@ -1908,6 +2025,7 @@ const placeBet = async (req, res) => {
           currentSession = Math.ceil(currentOver / 10) + sessionAddition;
           break;
         default:
+          activeBettors.delete(userId)
           return res.json(404, {
             success: false,
             message: `Match Type is not defined : ${eventDetail.matchType}`,
@@ -1916,11 +2034,13 @@ const placeBet = async (req, res) => {
       }
 
       if (inning == 2 && currentSession >= (totalSessions + sessionAddition)) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           success: false,
           message: "betting not allowed !"
         });
       } else if ((type == "TEST" && currentSessionOver > 8) || (type != "TEST" && currentSessionOver > 3)) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           success: false,
           message: `Betting not Allowed in ${type == "TEST" ? Math.ceil(currentOver % 10) : Math.ceil(currentOver % 5)} over`
@@ -1944,16 +2064,19 @@ const placeBet = async (req, res) => {
   
       if (!userMaxBetSize) {
         console.warn("userMaxBetSize not found ");
+        activeBettors.delete(userId)
         return res.status(404).send({message: `something went wrong !`});
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
   
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+        activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
@@ -1962,6 +2085,7 @@ const placeBet = async (req, res) => {
 
       const DBOddDetails = await AsianMarketOdd.findOne({roundId: roundId, marketId: asianMarketId});
       if (!DBOddDetails) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
@@ -2003,6 +2127,7 @@ const placeBet = async (req, res) => {
         betRate > selectedBetRate &&
         betRate - Digitaddition > selectedBetRate
       ) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -2011,14 +2136,17 @@ const placeBet = async (req, res) => {
         selectedBetRate < betRate &&
         selectedBetRate - Digitaddition > betRate
       ) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && betRate < selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       } else if (type == 0 && betRate > selectedBetRate) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -2060,6 +2188,7 @@ const placeBet = async (req, res) => {
     } 
 
     else {
+      activeBettors.delete(userId)
       return res
         .status(404)
         .send({message: `Error Placing bet (Inappropriate Request)`});
@@ -2077,6 +2206,7 @@ const placeBet = async (req, res) => {
     setTimeout(async () => {
 
       if (multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
+        activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
@@ -2439,6 +2569,7 @@ const placeBet = async (req, res) => {
        */
       const finalExpAmount = expAmount - prevExpAmount;
       if(finalExpAmount > maxExp){
+        activeBettors.delete(userId)
         return res.status(404).send({message: `Max Expoure Amount : ${maxExp}`});
       }
 
@@ -2483,6 +2614,7 @@ const placeBet = async (req, res) => {
       });
 
       if (user.availableBalance < expAmount - prevExpAmount) {
+        activeBettors.delete(userId)
         return res.status(404).send({message: " Insufficient balance "});
       }
 
@@ -2661,6 +2793,7 @@ const placeBet = async (req, res) => {
       bet.save(async (err, result) => {
         if (err) {
           console.warn("Error : ", err);
+          activeBettors.delete(userId)
           return res.status(404).send({message: `Something went wrong !`});
         }
         try {
@@ -2747,6 +2880,8 @@ const placeBet = async (req, res) => {
             subMarketDetail?.Id
           );
 
+          activeBettors.delete(userId)
+
           return res.send({
             success: true,
             message: "Bet placed successfully! ",
@@ -2754,6 +2889,7 @@ const placeBet = async (req, res) => {
           });
         } catch (error) {
           console.warn("error", error);
+          activeBettors.delete(userId)
           return res
             .status(404)
             .send({message: "Error updating user balance"});
@@ -2764,15 +2900,18 @@ const placeBet = async (req, res) => {
     }, delay);
   } catch (error) {
     console.warn("Error placing bet Catched ", error);
+    const userId  = req.decoded.userId;
+    activeBettors.delete(userId)
     return res.status(404).send({message: `Something went wrong !`});
   } finally {
     const userId  = req.decoded.userId;
+    activeBettors.delete(userId)
     await User.findOneAndUpdate(
       {userId: userId},
       { activeBetPlacing: false }
     );
   }
-};
+}
 
 async function asainCalculateExposure(
   marketId,
