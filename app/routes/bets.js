@@ -1975,7 +1975,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res.status(404).send({
           success: false,
-          message: "betting not allowed !"
+          message: "betting not allowed on 10 wikets !"
         });
       }
       let sessionAddition = 0;
@@ -1997,14 +1997,14 @@ const placeBet = async (req, res) => {
         console.warn("Error : Overs are 10");
         return res.status(404).send({
           success: false,
-          message: "betting not allowed !"
+          message: "betting not allowed in Session 10th over !"
         });
       } else if (type != "TEST" && currentOver % 5 == 0) {
         activeBettors.delete(userId)
         console.warn("Error : Overs are 5");
         return res.status(404).send({
           success: false,
-          message: "betting not allowed !"
+          message: "betting not allowed in Session 5th over !"
         });
       }
 
@@ -2041,7 +2041,7 @@ const placeBet = async (req, res) => {
         console.warn("Error : Sessions  are going Over");
         return res.status(404).send({
           success: false,
-          message: "betting not allowed !"
+          message: "betting not allowed in last session !"
         });
       } else if ((type == "TEST" && currentSessionOver > 8) || (type != "TEST" && currentSessionOver > 3)) {
         activeBettors.delete(userId)
