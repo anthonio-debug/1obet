@@ -1971,6 +1971,7 @@ const placeBet = async (req, res) => {
       let score = inning === 1 ? scores.score1 : scores.score2
       const wikets = score.split('/')[1];
       if(Number(wikets) === 10 ){
+        console.warn("Error : Wikets are 10");
         activeBettors.delete(userId)
         return res.status(404).send({
           success: false,
@@ -1993,12 +1994,14 @@ const placeBet = async (req, res) => {
       TargetScore = currentOver;
       if (type == "TEST" && currentOver % 10 == 0) {
         activeBettors.delete(userId)
+        console.warn("Error : Overs are 10");
         return res.status(404).send({
           success: false,
           message: "betting not allowed !"
         });
       } else if (type != "TEST" && currentOver % 5 == 0) {
         activeBettors.delete(userId)
+        console.warn("Error : Overs are 5");
         return res.status(404).send({
           success: false,
           message: "betting not allowed !"
@@ -2035,6 +2038,7 @@ const placeBet = async (req, res) => {
 
       if (inning == 2 && currentSession >= (totalSessions + sessionAddition)) {
         activeBettors.delete(userId)
+        console.warn("Error : Sessions  are going Over");
         return res.status(404).send({
           success: false,
           message: "betting not allowed !"
