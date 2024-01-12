@@ -72,7 +72,8 @@ async function getAllSportsHighlight(req, res) {
         $lt: endOfDayTimestamp
       }
     })
-    const totalOpenMarkets = marketIds.countDocuments({ status: "OPEN", eventId :{ $in : ids }})
+    const totalOpenMarkets = 0
+    // = marketIds.countDocuments({ status: "OPEN", eventId :{ $in : ids }})
 
     return res.send({
       success: true,
@@ -84,7 +85,7 @@ async function getAllSportsHighlight(req, res) {
     console.log(err);
     return res.status(404).send({
       success: false,
-      message: 'Internal server error',
+      message: 'Something went WRONG ',
     });
   }
 }
