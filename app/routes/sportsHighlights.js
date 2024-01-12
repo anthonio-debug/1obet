@@ -5,6 +5,7 @@ const loginRouter = express.Router();
 const inPlayEvents = require('../models/events');
 const Odds = require('../models/odds');
 const { default: mongoose } = require('mongoose');
+const marketIds = require('../models/marketIds');
 
 async function getAllSportsHighlight(req, res) {
   try {
@@ -63,10 +64,21 @@ async function getAllSportsHighlight(req, res) {
       },
     ]);
 
+
+    const ids = await inPlayEvents.distinct("Id", {
+      sportsId: sportId,
+      openDate: {
+        $gte: startOfDayTimestamp,
+        $lt: endOfDayTimestamp
+      }
+    })
+    const totalOpenMarkets = marketIds.countDocuments({ status: "OPEN", eventId :{ $in : ids }})
+
     return res.send({
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
       results: sportsHighlights,
+      totalOpenMarkets: totalOpenMarkets
     });
   } catch (err) {
     console.log(err);
