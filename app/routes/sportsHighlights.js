@@ -74,6 +74,8 @@ async function getAllSportsHighlight(req, res) {
     })
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId :{ $in : ids }})
 
+    console.log(" ======== ids ", ids);
+
     return res.send({
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
