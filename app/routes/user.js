@@ -1056,6 +1056,21 @@ const userAccountSattlement = async (req, res) =>{
         }
       }
     )
+
+    const lastDeposit = await Deposits.find({ userId: Number(payload.userId) }).sort({ _id: -1 }).limit(1);
+    
+    if(lastDeposit.length){
+      await Deposits.updateOne(
+        { _id: lastDeposit[0]?._id },
+        {
+          // exposure: Number(Number(payload.exposure).toFixed(3)),
+          availableBalance: Number(Number(payload.availableBalance).toFixed(3)),
+          balance: Number(Number(payload.balance).toFixed(3)),
+          // clientPL: Number(Number(payload.clientPL).toFixed(3)),
+        }
+      )
+    }
+
     return res.status(200).send({
       success: true,
       message: "User Updated Successfully !",
