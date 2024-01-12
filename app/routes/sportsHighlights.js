@@ -72,8 +72,7 @@ async function getAllSportsHighlight(req, res) {
         $lt: endOfDayTimestamp
       }
     })
-    const totalOpenMarkets = 0
-    // = marketIds.countDocuments({ status: "OPEN", eventId :{ $in : ids }})
+    const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId :{ $in : ids }})
 
     return res.send({
       success: true,
