@@ -12,52 +12,62 @@ const HORSE_RACE_SPORTS_ID = '7';
 const GREY_HOUND_ID = '4339'
 
 function ToolForUpdatedRacing() {
-    return { init };
+  return {init};
 
-    async function init(_io, express) {
-        apiRequests.init(_io);
+  async function init(_io, express) {
+    apiRequests.init(_io);
 
-        if (config.activeProvider == 'NEW') {
-            getRacing()
-            setInterval(getRacing, 12 * 60 * 60 * 1000)
-            setInterval(() => fetchMarkets(), 10 * 1000);
-            setTimeout(() => {
-                setInterval(apiRequests.checkOdds, 2 * 1000);
-            }, 1000 * 60); // Delayed by 1 second
+    if (config.activeProvider == 'NEW') {
+      getRacing()
+      setInterval(getRacing, 12 * 60 * 60 * 1000)
+      setInterval(() => fetchMarkets(), 10 * 1000);
+      setTimeout(() => {
+        setInterval(apiRequests.checkOdds, 2 * 1000);
+      }, 1000 * 60); // Delayed by 1 second
+    }
+  }
+
+  async function fetchMarkets() {
+    try {
+      for (const id of sportsIds) {
+        const now = new Date()
+        const from = now.getTime()
+        const fiveHoursLater = new Date(now.getTime() + 5 * 60 * 60 * 1000)
+        const to = fiveHoursLater.getTime()
+
+        const documents = await inPlayEvents.find({
+          status: 'OPEN',
+          CompanySetStatus: "OPEN",
+          openDate: { $gte: from, $lte: to },
+          sportsId: id
+        })
+          .sort({lastCheckMarket: 1, openDate: -1})
+          .limit(config.raceEventsMarketAllowedCount)
+          .exec();
+
+        for (let i = 0; i < documents?.length; i++) {
+          const existedMarkets = await RaceMarkets.findOne({"eventNodes.eventId": documents[i]?.Id})
+
+          if (documents[i] && !existedMarkets?._id) {
+            await apiRequests.listMarketsByCronJob(documents[i].Id, documents[i].sportsId, documents[i].competitionId);
+            await inPlayEvents.updateMany(
+              {Id: documents.Id},
+              {$set: {lastCheckMarket: Date.now()}}
+            );
+            // fetchOddsForEvent(documents.Id);
+          }
         }
+      }
+    } catch (error) {
+      console.error('Error fetching markets:', error);
     }
+  }
 
-    async function fetchMarkets() {
-        try {
-            sportsIds.forEach(async id => {
-                const documents = await inPlayEvents.find({ status: 'OPEN', CompanySetStatus: "OPEN", sportsId: id })
-                    .sort({ lastCheckMarket: 1 })
-                    .limit(config.raceEventsAllowedCount)
-                    .exec();
-
-                for (let i = 0; i < documents?.length; i ++) {
-                    const existedMarkets = await RaceMarkets.findOne({"eventNodes.eventId": documents[i]?.Id})
-
-                    if (documents[i] && !existedMarkets?._id) {
-                        await apiRequests.listMarketsByCronJob(documents[i].Id, documents[i].sportsId, documents[i].competitionId);
-                        await inPlayEvents.updateMany(
-                            { Id: documents.Id },
-                            { $set: { lastCheckMarket: Date.now() } }
-                        );
-                        // fetchOddsForEvent(documents.Id);           
-                    }
-                }
-            });
-        } catch (error) {
-            console.error('Error fetching markets:', error);
-        }
-    }
-
-    function getRacing() {
-        sportsIds.forEach(id => {
-            apiRequests.eventsBySupportJobs(id);
-        });
-    }
+  function getRacing() {
+    sportsIds.forEach(id => {
+      apiRequests.eventsBySupportJobs(id);
+    });
+  }
 }
 
 module.exports = ToolForUpdatedRacing;
