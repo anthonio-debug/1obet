@@ -481,6 +481,18 @@ async function getMarketsByMarketType(req, res) {
   }
 }
 
+async function getFanciesByEventId(req, res) {
+  const eventId = req.params.eventId;
+  try {
+    const url = `http://142.93.36.1/api/v1/listMarketBookSession?event_id=${eventId}`
+    const response = await axios.get(url);
+
+    res.status(200).json({success: true, data: response?.data?.result});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
 router.get('/testSports/events', listEvents);
 router.get('/testSports/marketbooks/:ids', listMarketBook);
 
@@ -496,5 +508,7 @@ router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
 router.get('/track-bet/get-odds-multi-marketids/:eventId', getOddsByMultiMarketId)
 router.get('/track-bet/get-markettype', getMarketType)
 router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByMarketType)
+router.get('/track-bet/get-market-bet-session/:eventId', getFanciesByEventId)
+
 
 module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure };
