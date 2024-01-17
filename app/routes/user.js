@@ -1045,9 +1045,6 @@ const userAccountSattlement = async (req, res) =>{
   }
   try {
     const payload = req.body; 
-
-    const currentUser = await User.findOne({userId: Number(payload.userId)})
-
     await User.findOneAndUpdate(
       { userId: Number(payload.userId) },
       {
@@ -1061,7 +1058,6 @@ const userAccountSattlement = async (req, res) =>{
     )
 
     const lastDeposit = await Deposits.find({ userId: Number(payload.userId) }).sort({ _id: -1 }).limit(1);
-    
     if(lastDeposit.length){
       await Deposits.updateOne(
         { _id: lastDeposit[0]?._id },
