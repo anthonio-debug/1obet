@@ -24,7 +24,7 @@ const ExpRec = new mongoose.Schema({
     DateTime: {type: String, default: new Date()} 
 });
 ExpRec.pre('save', function (next) {
-    var now = new Date().getTime();
+    let now = new Date().getTime();
     if (!this.createdAt) {
       this.createdAt = now;
     } else {
