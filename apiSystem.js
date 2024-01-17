@@ -16,7 +16,8 @@ const cors = require("cors");
 //const ToolForEvent = require("./restApiSystem/src/tools_for_events.js")();
 // const ToolForRacing = require("./restApiSystem/src/tools_for_racing.js")();
 const ToolForRacing = require("./restApiSystem/src/tools_for_updated_racing.js")();
-const ToolForFancy = require("./restApiSystem/src/tools_for_fancy.js")();
+// const ToolForFancy = require("./restApiSystem/src/tools_for_fancy.js")();
+const ToolForHybridFancy = require("./restApiSystem/src/tools_for_hybrid_fancy.js")();
 const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
 const ToolForTestSport = require("./restApiSystem/src/tools_for_test_sport.js")();
 const ToolForListEvent = require("./restApiSystem/src/tools_for_list_events.js")();
@@ -86,7 +87,7 @@ async function main() {
   ToolForRacing.init(io, express);
 
   /* init events jobs for fancy data for cricket */
-  ToolForFancy.init(io, express);
+  ToolForHybridFancy.init(io, express);
 
   /*init asian odds*/
   ToolForAsian.init(io, express);
