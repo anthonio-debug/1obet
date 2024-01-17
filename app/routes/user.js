@@ -1058,7 +1058,6 @@ const userAccountSattlement = async (req, res) =>{
     )
 
     const lastDeposit = await Deposits.find({ userId: Number(payload.userId) }).sort({ _id: -1 }).limit(1);
-    
     if(lastDeposit.length){
       await Deposits.updateOne(
         { _id: lastDeposit[0]?._id },
@@ -1067,6 +1066,7 @@ const userAccountSattlement = async (req, res) =>{
           availableBalance: Number(Number(payload.availableBalance).toFixed(3)),
           balance: Number(Number(payload.balance).toFixed(3)),
           // clientPL: Number(Number(payload.clientPL).toFixed(3)),
+          description: `${lastDeposit.description} ...`,
         }
       )
     }
