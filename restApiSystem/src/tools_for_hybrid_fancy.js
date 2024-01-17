@@ -93,7 +93,7 @@ function ToolForHybridFancy() {
           if (index > 25) continue
           marketIds.push(market?.market?.id)
         }
-        let fancyOdds = getFancyOdds(marketIds)
+        let fancyOdds = await getFancyOdds(marketIds)
         const fancyData = buildFancyStructure(marketList, fancyOdds, eventId)
         let newFancyOdds = new FancyOdds({
           eventId: eventId,
