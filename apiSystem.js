@@ -73,6 +73,7 @@ mongoose
   });
 
 express.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRouter);
+express.post("/update_soccer", require("./app/routes/scrapeSoccer").soccerRouter);
 
 async function main() {
   console.log("code understanding log ---");
