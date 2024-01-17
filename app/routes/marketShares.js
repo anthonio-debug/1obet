@@ -165,6 +165,10 @@ const marketGainWithDuplicates = async (req, res) => {
             asianWinner = generalResult[0]
           } 
         }
+
+        if (marketId == "9" || marketId == "34" || marketId == "34" ) {
+          asianWinner = betRes[k]?.SessionScore
+        }
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
 
         let tempBet = {
