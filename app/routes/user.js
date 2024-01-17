@@ -1045,6 +1045,9 @@ const userAccountSattlement = async (req, res) =>{
   }
   try {
     const payload = req.body; 
+
+    const currentUser = await User.findOne({userId: Number(payload.userId)})
+
     await User.findOneAndUpdate(
       { userId: Number(payload.userId) },
       {
@@ -1067,6 +1070,7 @@ const userAccountSattlement = async (req, res) =>{
           availableBalance: Number(Number(payload.availableBalance).toFixed(3)),
           balance: Number(Number(payload.balance).toFixed(3)),
           // clientPL: Number(Number(payload.clientPL).toFixed(3)),
+          description: `${lastDeposit.description} ...`,
         }
       )
     }
