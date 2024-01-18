@@ -141,7 +141,7 @@ function ToolForHybridFancy() {
           bookmakerMarketIds.push(market?.market?.id)
         }
         let fancyOdds = await getFancyOdds(fancyMarketIds)
-        let bookmakerOdds = await getFancyOdds(bookmakerMarketIds)
+        let bookmakerOdds = await getBookmakerOdds(bookmakerMarketIds)
         const fancyData = buildFancyStructure(bookmakerMarketList, fancyMarketList, bookmakerOdds, fancyOdds, eventId)
         let newFancyOdds = new FancyOdds({
           eventId: eventId,
