@@ -47,7 +47,7 @@ function ToolForHybridFancy() {
 
   function buildFancyStructure(marketList, fancyOdds, eventId) {
     let t3 = []
-    let bm1 = null
+    let bm1 = []
     for (const odd of fancyOdds) {
       const market = marketList.find(market => market?.market?.id === odd.marketId)
       t3.push({
@@ -67,6 +67,7 @@ function ToolForHybridFancy() {
         gstatus: odd.status,
         sid: odd.marketId,
       })
+      bm1.push({s: odd.status})
     }
     let fancyData = {
       data: {
