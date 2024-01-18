@@ -1719,7 +1719,7 @@ const placeBet = async (req, res) => {
       // const eventId = eventDetail.Id;
       // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       // const response = await axios.get(url);
-      const apiFancyOddsRes = await getFancyOdds(selectionId)
+      const apiFancyOddsRes = await getFancyOdds([selectionId])
       // const apiFancyOdds = response?.data?.data?.t3;
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes)
       const DBOddDetails = await FancyOdds.findById(oddsId);
@@ -1852,7 +1852,7 @@ const placeBet = async (req, res) => {
       // const eventId = eventDetail.Id;
       // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       // const response = await axios.get(url);
-      const bookmakerOddsRes = await getBookmakerOdds(selectionId)
+      const bookmakerOddsRes = await getBookmakerOdds([selectionId])
 
       if (bookmakerOddsRes.length === 0) {
         activeBettors.delete(userId)
