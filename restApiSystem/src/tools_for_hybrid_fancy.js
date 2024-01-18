@@ -139,7 +139,7 @@ function ToolForHybridFancy() {
         let fancyMarketIds = []
         let bookmakerMarketIds = []
         for (const [index, market] of fancyMarketList.entries()) {
-          if (index > 100) continue
+          // if (index > 100) continue
           fancyMarketIds.push(market?.market?.id)
         }
         for (const [index, market] of bookmakerMarketList.entries()) {
