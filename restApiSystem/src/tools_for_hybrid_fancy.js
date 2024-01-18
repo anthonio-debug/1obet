@@ -20,6 +20,18 @@ function ToolForHybridFancy() {
     getHybridFancyOdds()
   }
 
+  async function getBookmakerMarketList(eventId) {
+    const url = `${HYBRID_URI}/event/bookmaker?eventid=${eventId}&provider=pys`
+    try {
+      const res = await axios.get(url)
+      // console.log('hybrid fancy event list: ', JSON.stringify(res.data))
+      return res.data || []
+    } catch (error) {
+      console.error('An error occurred in hybrid bookmaker market list:', error?.data || error.message || error)
+      return []
+    }
+  }
+
   async function getFancyMarketList(eventId) {
     const url = `${HYBRID_URI}/event/fancy?provider=pys&eventid=${eventId}`
     try {
@@ -45,11 +57,24 @@ function ToolForHybridFancy() {
     }
   }
 
-  function buildFancyStructure(marketList, fancyOdds, eventId) {
+  async function getBookmakerOdds(marketIds) {
+    const mids = marketIds.join(',')
+    const url = `${HYBRID_URI}/runners/bookmaker?mids=${mids}&provider=pys`
+    try {
+      const res = await axios.get(url)
+      // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))
+      return res.data || []
+    } catch (error) {
+      console.error('An error occurred in hybrid bookmaker odds:', error?.data || error.message || error);
+      return []
+    }
+  }
+
+  function buildFancyStructure(bookmakerMarketList, fancyMarketList, bookmakerOdds, fancyOdds, eventId) {
     let t3 = []
     let bm1 = []
     for (const odd of fancyOdds) {
-      const market = marketList.find(market => market?.market?.id === odd.marketId)
+      const market = fancyMarketList.find(market => market?.market?.id === odd.marketId)
       t3.push({
         b1: odd.back[0].price,
         b2: odd.back[1].price,
@@ -67,9 +92,25 @@ function ToolForHybridFancy() {
         gstatus: odd.status,
         sid: odd.marketId,
       })
-      bm1.push({s: odd.status})
     }
-    let fancyData = {
+    for (const odd of bookmakerOdds) {
+      let bm = []
+      for (const runner of odd.runners) {
+        bm.push({
+          b1: runner.back[0].price,
+          b2: runner.back[1].price,
+          b3: runner.back[2].price,
+          l1: runner.lay[0].price,
+          l2: runner.lay[0].price,
+          l3: runner.lay[0].price,
+          s: runner.runnerStatus,
+          sid: runner.selectionId,
+          nat: runner.name,
+        })
+      }
+      bm1.push(bm)
+    }
+    return  {
       data: {
         t1: null,
         t2: [{bm1}],
@@ -80,7 +121,6 @@ function ToolForHybridFancy() {
       "eventTypeName": "cricket",
       "gameId": eventId
     }
-    return fancyData
   }
 
   async function getHybridFancyOdds() {
@@ -88,14 +128,21 @@ function ToolForHybridFancy() {
       let fancyEvents = await inPlayEvents.find({sportsId: '4', isShowed: true, hasFancy: true}, {Id: 1}).exec();
       for (const event of fancyEvents) {
         const eventId = event.Id
-        let marketList = await getFancyMarketList(eventId)
-        let marketIds = []
-        for (const [index, market] of marketList.entries()) {
-          if (index > 25) continue
-          marketIds.push(market?.market?.id)
+        let fancyMarketList = await getFancyMarketList(eventId)
+        let bookmakerMarketList = await getBookmakerMarketList(eventId)
+        let fancyMarketIds = []
+        let bookmakerMarketIds = []
+        for (const [index, market] of fancyMarketList.entries()) {
+          if (index > 100) continue
+          fancyMarketIds.push(market?.market?.id)
         }
-        let fancyOdds = await getFancyOdds(marketIds)
-        const fancyData = buildFancyStructure(marketList, fancyOdds, eventId)
+        for (const [index, market] of bookmakerMarketList.entries()) {
+          if (index > 10) continue
+          bookmakerMarketIds.push(market?.market?.id)
+        }
+        let fancyOdds = await getFancyOdds(fancyMarketIds)
+        let bookmakerOdds = await getFancyOdds(bookmakerMarketIds)
+        const fancyData = buildFancyStructure(bookmakerMarketList, fancyMarketList, bookmakerOdds, fancyOdds, eventId)
         let newFancyOdds = new FancyOdds({
           eventId: eventId,
           marketId: eventId,
