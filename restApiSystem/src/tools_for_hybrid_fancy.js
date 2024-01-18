@@ -72,7 +72,7 @@ function ToolForHybridFancy() {
 
   function buildFancyStructure(bookmakerMarketList, fancyMarketList, bookmakerOdds, fancyOdds, eventId) {
     let t3 = []
-    let bm1 = []
+    let bm = {}
     for (const odd of fancyOdds) {
       const market = fancyMarketList.find(market => market?.market?.id === odd.marketId)
       t3.push({
@@ -93,10 +93,10 @@ function ToolForHybridFancy() {
         sid: odd.marketId,
       })
     }
-    for (const odd of bookmakerOdds) {
-      let bm = []
+    for (const [index, odd] of bookmakerOdds.entries()) {
+      let bms = []
       for (const runner of odd.runners) {
-        bm.push({
+        bms.push({
           b1: runner.back[0].price,
           b2: runner.back[1].price,
           b3: runner.back[2].price,
@@ -108,12 +108,12 @@ function ToolForHybridFancy() {
           nat: runner.name,
         })
       }
-      bm1.push(bm)
+      bm[`bm${index+1}`] = bms
     }
     return  {
       data: {
         t1: null,
-        t2: [{bm1}],
+        t2: [{...bm}],
         t3,
         t4: null,
       },
