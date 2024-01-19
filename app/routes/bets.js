@@ -33,6 +33,7 @@ const CasinoCalls = require('../models/casinoCalls')
 const {FANCY_URL, LIVE_BET_TV_URL, HYBRID_URI} = require("../global/constants");
 const message_result = "cannot place bet due to result check";
 const MarketIDS = require("../models/marketIds")
+const {getFancyOdds} = require("../../helper/hybridApiHelper");
 require('dotenv').config()
 
 const activeBettors = new Map()
@@ -1681,18 +1682,6 @@ const placeBet = async (req, res) => {
 
       isFancyOrBookMaker = true;
 
-      async function getFancyOdds(marketIds) {
-        const mids = marketIds.join(',')
-        const url = `${HYBRID_URI}/runners/fancy?mids=${mids}&provider=pys`
-        try {
-          const res = await axios.get(url)
-          // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))
-          return res.data || []
-        } catch (error) {
-          console.error('An error occurred:', error?.data || error.message || error);
-          return []
-        }
-      }
       const buildFancyOdd = (apiFancyOddsRes) => {
         let odds = []
         for (const odd of apiFancyOddsRes) {
@@ -1720,6 +1709,14 @@ const placeBet = async (req, res) => {
       // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       // const response = await axios.get(url);
       const apiFancyOddsRes = await getFancyOdds([selectionId])
+      if (apiFancyOddsRes[0]?.status === 'ACTIVE') {
+        console.log('fancy is active')
+      } else {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Odds not available for the selected team ${selectionId}`,
+        })
+      }
       // const apiFancyOdds = response?.data?.data?.t3;
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes)
       const DBOddDetails = await FancyOdds.findById(oddsId);

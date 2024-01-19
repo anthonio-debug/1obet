@@ -141,7 +141,9 @@ function ToolForHybridFancy() {
           let bookmakerMarketIds = []
           for (const [index, market] of fancyMarketList.entries()) {
             // if (index > 100) continue
-            fancyMarketIds.push(market?.market?.id)
+            if (market?.market?.status !== 'CLOSED') {
+              fancyMarketIds.push(market?.market?.id)
+            }
           }
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (index > 10) continue
