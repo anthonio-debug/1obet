@@ -27,7 +27,7 @@ const {
   handleDrawBet,
 } = require("../CalculateBets/calculations");
 const {API_DOMAIN} = require("../../../app/global/constants");
-const {getFancyOdds} = require("../../../helper/hybridApiHelper");
+const {getFancyOdds, getBookmakerOdds} = require("../../../helper/hybridApiHelper");
 
 const tableInfo = [
   {id: "36", tId: "teen20"},
@@ -343,14 +343,26 @@ function scoreChecker() {
             {winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false},
           ];
       } else {
-        let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
-        const response = await axios.get(url);
-        results = response.data;
+        const bookmakerRes = await getBookmakerOdds([betData.runner])
+        // let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
+        // const response = await axios.get(url);
+        // results = response.data;
+        let result = null
+        if (bookmakerRes[0]?.winner) {
+          result = {
+            winnerSelId: bookmakerRes[0]?.winner,
+          }
+        } else {
+          return false
+        }
+        results = [
+          {winnerSelId: result, manuelClose: false},
+        ];
       }
 
       if (results.length > 0) {
         const result = results[0];
-        var newRecord = new resultRecords({
+        let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: "Bookmaker",
           resultData: result,
