@@ -257,6 +257,13 @@ async function updateEventMarketstatus(req, res) {
   }
   try {
     const data = req.body;
+
+    const market = await MarketIDS.countDocuments({ marketId: data.marketId })
+    if(!market){
+      console.warn(`Error: market not found for ${data.marketId}`);
+      return res.status(400).send({ message: `market not found ` });
+    }
+
     await MarketIDS.updateOne(
       { marketId: data.marketId },
       { status: data.status }
