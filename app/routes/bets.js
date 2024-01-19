@@ -1714,7 +1714,7 @@ const placeBet = async (req, res) => {
       } else {
         activeBettors.delete(userId)
         return res.status(404).send({
-          message: `Odds not available for the selected team ${selectionId}`,
+          message: `Status not available for selected team ${selectionId}`,
         })
       }
       // const apiFancyOdds = response?.data?.data?.t3;
