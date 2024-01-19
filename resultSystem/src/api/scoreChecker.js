@@ -456,7 +456,7 @@ function scoreChecker() {
 
       if (!event) return;
 
-      var results;
+      let results;
       const manuelRecord = await MarketIDs.findOne({
         marketId: fancyName,
         eventId: event.Id,
@@ -486,7 +486,7 @@ function scoreChecker() {
 
         if (result.result == null) return;
 
-        var newRecord = new resultRecords({
+        let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: fancyName,
           resultData: result.result,
@@ -502,13 +502,10 @@ function scoreChecker() {
           {
             $set: {
               resultId: newRecord._id,
-
               resultData: result.result,
-
             },
           }
         );
-
 
         const bets = await Bets.find({
           matchId: event._id.toString(),
@@ -530,7 +527,6 @@ function scoreChecker() {
             status: "Fancy Result",
             winnerInfo: result.result,
             winnerRunnerData: result.result,
-
             index: 0,
           },
           {
@@ -543,14 +539,14 @@ function scoreChecker() {
           for (const bet of bets) {
             if (
               typeof bet.isManuel !== "undefined" &&
-              bet.isManuel == true &&
-              result.manuelClose == false
+              bet.isManuel === true &&
+              result.manuelClose === false
             ) {
               continue;
             }
             if (
               typeof result.manuelClose === "undefined" &&
-              bet.isManuel == true
+              bet.isManuel === true
             )
               continue;
             await handleDrawBet(bet);
@@ -559,14 +555,14 @@ function scoreChecker() {
           for (const bet of bets) {
             if (
               typeof bet.isManuel !== "undefined" &&
-              bet.isManuel == true &&
-              result.manuelClose == false
+              bet.isManuel === true &&
+              result.manuelClose === false
             ) {
               continue;
             }
             if (
               typeof result.manuelClose === "undefined" &&
-              bet.isManuel == true
+              bet.isManuel === true
             )
               continue;
 
@@ -587,7 +583,7 @@ function scoreChecker() {
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error('fancyResult:', error)
     }
   }
 
