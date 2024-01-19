@@ -27,6 +27,7 @@ const {
   handleDrawBet,
 } = require("../CalculateBets/calculations");
 const {API_DOMAIN} = require("../../../app/global/constants");
+const {getFancyOdds} = require("../../../helper/hybridApiHelper");
 
 const tableInfo = [
   {id: "36", tId: "teen20"},
@@ -476,9 +477,12 @@ function scoreChecker() {
             {result: manuelRecord.winnerRunnerData, manuelClose: false},
           ];
       } else {
-        let url = `https://${API_DOMAIN}:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
-        const response = await axios.get(url);
-        results = response.data;
+        const fancyOdds = await getFancyOdds([betData.runner])
+        // let url = `https://${API_DOMAIN}:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
+        // const response = await axios.get(url);
+        // results = response.data;
+        let result = fancyOdds[0]?.winner
+        results = [{manuelClose: false, result: result}]
       }
 
       if (results.length > 0) {
