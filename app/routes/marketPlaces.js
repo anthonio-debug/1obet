@@ -226,7 +226,7 @@ async function updateEventStatus(req, res) {
     return res.status(400).send({ message: errors.errors });
   }
   try {
-    const data = req.query
+    const data = req.body
     await inPlayEvents.updateOne(
       { Id: data.Id },
       { status: data.status }
@@ -250,7 +250,7 @@ async function updateEventMarketstatus(req, res) {
     return res.status(400).send({ message: errors.errors });
   }
   try {
-    const data = req.query;
+    const data = req.body;
     await inPlayEvents.updateOne(
       { marketId: data.marketId },
       { status: data.status }
@@ -301,6 +301,6 @@ loginRouter.post('/addMarketType', addMarketType);
 loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
 loginRouter.post('/addAllowedMarketTypes', marketPlaceVlidator.validate('addAllowedMarketTypes'), addAllowedMarketTypes);
 loginRouter.get('/updatemarketstatus', updateCompanySetStatus);
-loginRouter.get('/updateEventMarketstatus', updateEventMarketstatus);
-loginRouter.get('/updateEventStatus', updateEventStatus);
+loginRouter.post('/updateEventMarketstatus', updateEventMarketstatus);
+loginRouter.post('/updateEventStatus', updateEventStatus);
 module.exports = { router, loginRouter };
