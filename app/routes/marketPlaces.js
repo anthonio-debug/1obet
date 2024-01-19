@@ -226,15 +226,21 @@ async function updateEventStatus(req, res) {
     return res.status(400).send({ message: errors.errors });
   }
   try {
-    const data = req.query
-    await inPlayEvents.updateOne(
-      { Id: data.Id },
-      { status: data.status }
-    )
-    return res.status(200).send({
-      success: true,
-      message: 'Updated successfully !',
-    });
+    const data = req.body;
+    const event = await inPlayEvents.countDocuments({ Id: data.Id })
+    if(!event){
+      console.warn(`Error: Event not found for ${req.body.Id}`);
+      return res.status(400).send({ message: `Event not found ` });
+    }else {
+      await inPlayEvents.updateOne(
+        { Id: data.Id },
+        { status: data.status }
+      )
+      return res.status(200).send({
+        success: true,
+        message: 'Updated successfully !',
+      });
+    }
   } catch (error) {
     return res.status(404).send({
       success: false,
@@ -250,8 +256,15 @@ async function updateEventMarketstatus(req, res) {
     return res.status(400).send({ message: errors.errors });
   }
   try {
-    const data = req.query;
-    await inPlayEvents.updateOne(
+    const data = req.body;
+
+    const market = await MarketIDS.countDocuments({ marketId: data.marketId })
+    if(!market){
+      console.warn(`Error: market not found for ${data.marketId}`);
+      return res.status(400).send({ message: `market not found ` });
+    }
+
+    await MarketIDS.updateOne(
       { marketId: data.marketId },
       { status: data.status }
     )
@@ -301,6 +314,6 @@ loginRouter.post('/addMarketType', addMarketType);
 loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
 loginRouter.post('/addAllowedMarketTypes', marketPlaceVlidator.validate('addAllowedMarketTypes'), addAllowedMarketTypes);
 loginRouter.get('/updatemarketstatus', updateCompanySetStatus);
-loginRouter.get('/updateEventMarketstatus', updateEventMarketstatus);
-loginRouter.get('/updateEventStatus', updateEventStatus);
+loginRouter.post('/updateEventMarketstatus', updateEventMarketstatus);
+loginRouter.post('/updateEventStatus', updateEventStatus);
 module.exports = { router, loginRouter };
