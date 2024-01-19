@@ -1,5 +1,6 @@
 // export const API_DOMAIN = `betfairoddsapi.com`
 const API_DOMAIN = `bfoddsapi.in`
+const HYBRID_URI = `https://hsports.sportsinfo247.com/hybrid`
 
 const FANCY_URL = `https://${API_DOMAIN}:3444/api`
 const LIVE_BET_TV_URL = `https://${API_DOMAIN}:3445/api`
@@ -16,4 +17,5 @@ module.exports = {
   CALC_FANCY_URI,
   CALC_LIVE_BET_TV_URI,
   FANCY_URI,
+  HYBRID_URI,
 }

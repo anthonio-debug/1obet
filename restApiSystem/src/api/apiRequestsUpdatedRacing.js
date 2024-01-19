@@ -210,7 +210,7 @@ function apiRequests() {
         return socket.emit('err', 'Channel Required');
       }
       if (channel.charAt(0) == '$') {
-        var event_information = await raceMarkets.findOne({marketId: channel.substring(1)});
+        let event_information = await raceMarkets.findOne({marketId: channel.substring(1)});
 
         if (event_information) {
           const LastRaceOdds = await RaceOdds.findOne({marketId: channel.substring(1)});
@@ -265,7 +265,7 @@ function apiRequests() {
       },
     }
 
-    var url = `${config.newThirdURL}/listEvents`;
+    let url = `${config.newThirdURL}/listEvents`;
 
     try {
       const response = await axios.post(
@@ -274,7 +274,7 @@ function apiRequests() {
         header
       );
 
-      var events = response.data.result;
+      let events = response.data.result;
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
@@ -321,13 +321,13 @@ function apiRequests() {
           );
         }
 
-        var eventIDs = [];
+        let eventIDs = [];
 
         for (let index = 0; index < events.length; index++) {
           eventIDs.push(events[index].event.id);
         }
 
-        var allIDS = [];
+        let allIDS = [];
         const currentEvents = await InPlayEvents.find(
           {status: 'OPEN', sportsId: sportsId + ""},
           {Id: 1}
@@ -337,7 +337,7 @@ function apiRequests() {
           allIDS.push(currentEvents[i].Id);
         }
 
-        var diff = allIDS.filter((item) => !eventIDs.includes(item));
+        let diff = allIDS.filter((item) => !eventIDs.includes(item));
 
         for (let i = 0; i < diff.length; i++) {
           console.log(
@@ -416,7 +416,6 @@ function apiRequests() {
         header
       );
 
-      
       const eventsData = response.data.result;
       let marketIds = [];
       // Create an instance of the raceMarkets model
@@ -503,7 +502,7 @@ function apiRequests() {
               },
             }}, {upsert: true, new: true}
           );
-          var runners = [];
+          let runners = [];
           for (let ix1 = 0; ix1 < eventsData[j].runners.length; ix1++) {
             const runner = eventsData[j].runners[ix1];
             runners.push({SelectionId: runner.selectionId, runnerName: runner.runnerName});
@@ -556,7 +555,7 @@ function apiRequests() {
 
             let tempRunners = [];
             for (let n = 0; n < odds.runners?.length; n++) {
-              var tempElement = {
+              let tempElement = {
                 selectionId: odds?.runners[n]?.selectionId,
                 handicap: odds?.runners[n]?.handicap,
                 state: {
