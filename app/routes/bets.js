@@ -1967,8 +1967,8 @@ const placeBet = async (req, res) => {
       console.log(` scores =================== `, scores);
       let type = eventDetail.matchType;
       let inning = scores.inning;
-      let currentOver = inning == 1 ? scores.over1 : scores.over2
-      let score = inning === 1 ? scores.score1 : scores.score2
+      let currentOver = scores.over1
+      let score = scores.score1
       const wikets = score.split('/')[1];
       if(Number(wikets) === 10 ){
         console.warn("Error : Wikets are 10");

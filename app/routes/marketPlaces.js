@@ -195,6 +195,7 @@ async function getMarketsByEventId(req, res) {
     });
   }
 }
+
 async function updateCompanySetStatus(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -205,6 +206,54 @@ async function updateCompanySetStatus(req, res) {
     await inPlayEvents.updateOne(
       { Id: data.Id },
       { CompanySetStatus: data.status }
+    )
+    return res.status(200).send({
+      success: true,
+      message: 'Updated successfully !',
+    });
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Failed to update allowed market type by SportsId',
+    });
+  }
+
+}
+
+async function updateEventStatus(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ message: errors.errors });
+  }
+  try {
+    const data = req.query
+    await inPlayEvents.updateOne(
+      { Id: data.Id },
+      { status: data.status }
+    )
+    return res.status(200).send({
+      success: true,
+      message: 'Updated successfully !',
+    });
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Failed to update allowed market type by SportsId',
+    });
+  }
+
+}
+
+async function updateEventMarketstatus(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ message: errors.errors });
+  }
+  try {
+    const data = req.query;
+    await inPlayEvents.updateOne(
+      { marketId: data.marketId },
+      { status: data.status }
     )
     return res.status(200).send({
       success: true,
@@ -252,4 +301,6 @@ loginRouter.post('/addMarketType', addMarketType);
 loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
 loginRouter.post('/addAllowedMarketTypes', marketPlaceVlidator.validate('addAllowedMarketTypes'), addAllowedMarketTypes);
 loginRouter.get('/updatemarketstatus', updateCompanySetStatus);
+loginRouter.get('/updateEventMarketstatus', updateEventMarketstatus);
+loginRouter.get('/updateEventStatus', updateEventStatus);
 module.exports = { router, loginRouter };
