@@ -34,6 +34,31 @@ function addMarketType(req, res) {
   });
 }
 
+async function updateMarketStatusInPlay(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ errors: errors.errors });
+  }
+  try {
+    const {checked, eventId, marketId} = req.body
+    const status = checked ? 'OPEN' : 'CLOSED'
+    const inPlay = !!checked
+    await MarketIDS.updateOne(
+      { eventId: eventId, marketId: marketId },
+      { inPlay: inPlay, status: status}
+    )
+    return res.status(200).send({
+      success: true,
+      message: 'Updated successfully !',
+    });
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Failed to update allowed market type by MarketId',
+    });
+  }
+}
+
 function addSubMarketTypes(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -252,4 +277,5 @@ loginRouter.post('/addMarketType', addMarketType);
 loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
 loginRouter.post('/addAllowedMarketTypes', marketPlaceVlidator.validate('addAllowedMarketTypes'), addAllowedMarketTypes);
 loginRouter.get('/updatemarketstatus', updateCompanySetStatus);
+loginRouter.post('/update-market-status-in-play', updateMarketStatusInPlay);
 module.exports = { router, loginRouter };
