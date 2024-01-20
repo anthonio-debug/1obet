@@ -57,15 +57,34 @@ function ToolForEvent() {
   async function fetchMarkets() {
     try {
       for (const id of sportsIds) {
-        const documents = await inPlayEvents.findOne({
-          status: 'OPEN',
-          CompanySetStatus: "OPEN",
-          isShowed: true,
-          sportsId: id
-        })
-          .sort({lastCheckMarket: 1})
-          .limit(1)
-          .exec();
+        let documents = null
+        if (id === "4") {
+          documents = await inPlayEvents.findOne({
+            status: 'OPEN',
+            CompanySetStatus: "OPEN",
+            isShowed: true,
+            sportsId: id
+          })
+            .sort({lastCheckMarket: 1})
+            .limit(1)
+            .exec();
+        } else {
+          const now = new Date()
+          const from = now.getTime()
+          const fiveHoursLater = new Date(now.getTime() + 5 * 60 * 60 * 1000)
+          const to = fiveHoursLater.getTime()
+          documents = await inPlayEvents.findOne({
+            status: 'OPEN',
+            CompanySetStatus: "OPEN",
+            isShowed: true,
+            openDate: {$gte: from, $lte: to},
+            sportsId: id
+          })
+            .sort({lastCheckMarket: 1})
+            .limit(1)
+            .exec();
+        }
+
         if (documents && documents.Id) {
           const existedMarkets = await MarketIDs.findOne({eventId: documents.Id})
 
