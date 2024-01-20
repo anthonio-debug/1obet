@@ -66,17 +66,19 @@ function ToolForEvent() {
           .sort({lastCheckMarket: 1})
           .limit(1)
           .exec();
+        if (documents && documents.Id) {
+          const existedMarkets = await MarketIDs.findOne({eventId: documents.Id})
 
-        const existedMarkets = await MarketIDs.findOne({eventId: documents.Id})
-
-        if (documents && !existedMarkets?._id) {
-          await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
-          await inPlayEvents.updateMany(
-            {Id: documents.Id},
-            {$set: {lastCheckMarket: Date.now()}}
-          );
-          fetchOddsForEvent(documents.Id);
+          if (documents && !existedMarkets?._id) {
+            await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
+            await inPlayEvents.updateMany(
+              {Id: documents.Id},
+              {$set: {lastCheckMarket: Date.now()}}
+            );
+            fetchOddsForEvent(documents.Id);
+          }
         }
+
       }
     } catch (error) {
       console.error('Error fetching markets:', error);
