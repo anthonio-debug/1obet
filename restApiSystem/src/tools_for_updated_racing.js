@@ -49,11 +49,11 @@ function ToolForUpdatedRacing() {
           const existedMarkets = await RaceMarkets.findOne({"eventNodes.eventId": documents[i]?.Id})
 
           if (documents[i] && !existedMarkets?._id) {
-            await apiRequests.listMarketsByCronJob(documents[i].Id, documents[i].sportsId, documents[i].competitionId);
             await inPlayEvents.updateMany(
               {Id: documents.Id},
               {$set: {lastCheckMarket: Date.now()}}
             );
+            await apiRequests.listMarketsByCronJob(documents[i].Id, documents[i].sportsId, documents[i].competitionId);
             // fetchOddsForEvent(documents.Id);
           }
         }
