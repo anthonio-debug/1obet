@@ -400,12 +400,13 @@ function apiRequests() {
           "eventIds": [eventId],
           "eventTypeIds": [sportsId],
           "marketTypes": ['WIN'],
-          "marketStartTime": {
-            "from": startTime,
-            "to": endTime
-          }
+          // "marketStartTime": {
+          //   "from": startTime,
+          //   "to": endTime
+          // }
         },
-        "maxResults": 30,
+        // "maxResults": 30,
+        "maxResults": 200,
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
       console.log("eventId to fetch markets for: ",eventId);
