@@ -134,7 +134,11 @@ function ToolForHybridFancy() {
 
   async function getHybridFancyOdds() {
     try {
-      let fancyEvents = await inPlayEvents.find({sportsId: '4', isShowed: true, hasFancy: true}, {Id: 1}).exec();
+      let fancyEvents = await inPlayEvents.find({
+        sportsId: '4', isShowed: true,
+        hasFancy: true,
+        CompanySetStatus: "OPEN",
+        status: 'OPEN'}, {Id: 1}).exec();
       for (const event of fancyEvents) {
         const eventId = event.Id
         let fancyMarketList = await getFancyMarketList(eventId)
