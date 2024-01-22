@@ -199,5 +199,7 @@
   "updatemarketstatus",
   "eventsapicalls",
   "update-market-status-in-play",
-  "eventListByMarketIds"
+  "eventListByMarketIds",
+  "updateEventMarketstatus",
+  "updateEventStatus"
 ]

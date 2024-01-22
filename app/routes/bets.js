@@ -30,9 +30,10 @@ const {v4: uuidv4} = require('uuid');
 const {MongoClient, ObjectId} = require('mongodb');
 const Crickets = require('../models/Crickets')
 const CasinoCalls = require('../models/casinoCalls')
-const {FANCY_URL, LIVE_BET_TV_URL} = require("../global/constants");
+const {FANCY_URL, LIVE_BET_TV_URL, HYBRID_URI} = require("../global/constants");
 const message_result = "cannot place bet due to result check";
 const MarketIDS = require("../models/marketIds")
+const {getFancyOdds} = require("../../helper/hybridApiHelper");
 require('dotenv').config()
 
 const activeBettors = new Map()
@@ -1680,10 +1681,44 @@ const placeBet = async (req, res) => {
       }
 
       isFancyOrBookMaker = true;
-      const eventId = eventDetail.Id;
-      const url = `${FANCY_URL}/bm_fancy/${eventId}`;
-      const response = await axios.get(url);
-      const apiFancyOdds = response?.data?.data?.t3;
+
+      const buildFancyOdd = (apiFancyOddsRes) => {
+        let odds = []
+        for (const odd of apiFancyOddsRes) {
+          odds.push({
+            b1: odd.back[0].price,
+            b2: odd.back[1].price,
+            b3: odd.back[2].price,
+            bs1: odd.back[0].size,
+            bs2: odd.back[1].size,
+            bs3: odd.back[2].size,
+            l1: odd.lay[0].price,
+            l2: odd.lay[1].price,
+            l3: odd.lay[2].price,
+            ls1: odd.lay[0].size,
+            ls2: odd.lay[1].size,
+            ls3: odd.lay[2].size,
+            gstatus: odd.status,
+            sid: odd.marketId,
+          })
+        }
+        return odds
+      }
+
+      // const eventId = eventDetail.Id;
+      // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
+      // const response = await axios.get(url);
+      const apiFancyOddsRes = await getFancyOdds([selectionId])
+      if (apiFancyOddsRes[0]?.status === 'ACTIVE') {
+        console.log('fancy is active')
+      } else {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Status not available for selected team ${selectionId}`,
+        })
+      }
+      // const apiFancyOdds = response?.data?.data?.t3;
+      const apiFancyOdds = buildFancyOdd(apiFancyOddsRes)
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
@@ -1797,31 +1832,67 @@ const placeBet = async (req, res) => {
         });
       }
 
-      isFancyOrBookMaker = true;
-      const eventId = eventDetail.Id;
-      const url = `${FANCY_URL}/bm_fancy/${eventId}`;
-      const response = await axios.get(url);
+      async function getBookmakerOdds(marketIds) {
+        const mids = marketIds.join(',')
+        const url = `${HYBRID_URI}/runners/bookmaker?mids=${mids}&provider=pys`
+        try {
+          const res = await axios.get(url)
+          // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))
+          return res.data || []
+        } catch (error) {
+          console.error('An error occurred in hybrid bookmaker odds:', error?.data || error.message || error);
+          return []
+        }
+      }
 
-      if (!response?.data?.data?.t2?.length) {
+      isFancyOrBookMaker = true;
+      // const eventId = eventDetail.Id;
+      // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
+      // const response = await axios.get(url);
+      const bookmakerOddsRes = await getBookmakerOdds([selectionId])
+
+      if (bookmakerOddsRes.length === 0) {
         activeBettors.delete(userId)
         return res.status(404).send({
-          message: `Odds not available for the selected team ${req.body.selectionId}`,
+          message: `Odds not available for the selected team ${selectionId}`,
         });
       }
-      const apiFancyOdds = response?.data?.data?.t2?.length
-        ? response?.data?.data?.t2[0]?.bm1
-        : [];
+      const buildBookmakerOdd = (bookmakerOddsRes) => {
+        let odds = []
+        const bookmakerOdd = bookmakerOddsRes[0]
+        for (const runner of bookmakerOdd.runners) {
+          odds.push({
+            b1: runner.back[0].price,
+            b2: runner.back[1].price,
+            b3: runner.back[2].price,
+            bs1: runner.back[0].size,
+            bs2: runner.back[1].size,
+            bs3: runner.back[2].size,
+            l1: runner.lay[0].price,
+            l2: runner.lay[0].price,
+            l3: runner.lay[0].price,
+            ls1: runner.lay[0].size,
+            ls2: runner.lay[0].size,
+            ls3: runner.lay[0].size,
+            s: runner.runnerStatus,
+            sid: runner.selectionId,
+            nat: runner.name,
+          })
+        }
+        return odds
+      }
+      const apiBookmakerOdds = buildBookmakerOdd(bookmakerOddsRes)
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
-      runners = dbFancyOdds;
+      let runners = dbFancyOdds;
       _3rdPartyMarketId = "Bookmaker";
       runnerForSaveInbets = runners.map((runner) => ({
         runner: runner.sid,
         amount: 0,
       }));
 
-      if (apiFancyOdds.length && dbFancyOdds.length) {
-        const apiSelectedOdds = apiFancyOdds.find(
+      if (apiBookmakerOdds.length && dbFancyOdds.length) {
+        const apiSelectedOdds = apiBookmakerOdds.find(
           (runner) => runner.sid == req.body.selectionId
         );
         const dbSelectedOdds = dbFancyOdds.find(

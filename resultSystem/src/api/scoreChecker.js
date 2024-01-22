@@ -27,6 +27,7 @@ const {
   handleDrawBet,
 } = require("../CalculateBets/calculations");
 const {API_DOMAIN} = require("../../../app/global/constants");
+const {getFancyOdds, getBookmakerOdds} = require("../../../helper/hybridApiHelper");
 
 const tableInfo = [
   {id: "36", tId: "teen20"},
@@ -342,14 +343,26 @@ function scoreChecker() {
             {winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false},
           ];
       } else {
-        let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
-        const response = await axios.get(url);
-        results = response.data;
+        const bookmakerRes = await getBookmakerOdds([betData.runner])
+        // let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
+        // const response = await axios.get(url);
+        // results = response.data;
+        let result = null
+        if (bookmakerRes[0]?.winner) {
+          result = {
+            winnerSelId: bookmakerRes[0]?.winner,
+          }
+        } else {
+          return false
+        }
+        results = [
+          {winnerSelId: result, manuelClose: false},
+        ];
       }
 
       if (results.length > 0) {
         const result = results[0];
-        var newRecord = new resultRecords({
+        let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: "Bookmaker",
           resultData: result,
@@ -456,7 +469,7 @@ function scoreChecker() {
 
       if (!event) return;
 
-      var results;
+      let results;
       const manuelRecord = await MarketIDs.findOne({
         marketId: fancyName,
         eventId: event.Id,
@@ -476,9 +489,12 @@ function scoreChecker() {
             {result: manuelRecord.winnerRunnerData, manuelClose: false},
           ];
       } else {
-        let url = `https://${API_DOMAIN}:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
-        const response = await axios.get(url);
-        results = response.data;
+        const fancyOdds = await getFancyOdds([betData.runner])
+        // let url = `https://${API_DOMAIN}:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
+        // const response = await axios.get(url);
+        // results = response.data;
+        let result = fancyOdds[0]?.winner
+        results = [{manuelClose: false, result: result}]
       }
 
       if (results.length > 0) {
@@ -486,7 +502,7 @@ function scoreChecker() {
 
         if (result.result == null) return;
 
-        var newRecord = new resultRecords({
+        let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: fancyName,
           resultData: result.result,
@@ -502,13 +518,10 @@ function scoreChecker() {
           {
             $set: {
               resultId: newRecord._id,
-
               resultData: result.result,
-
             },
           }
         );
-
 
         const bets = await Bets.find({
           matchId: event._id.toString(),
@@ -530,7 +543,6 @@ function scoreChecker() {
             status: "Fancy Result",
             winnerInfo: result.result,
             winnerRunnerData: result.result,
-
             index: 0,
           },
           {
@@ -543,14 +555,14 @@ function scoreChecker() {
           for (const bet of bets) {
             if (
               typeof bet.isManuel !== "undefined" &&
-              bet.isManuel == true &&
-              result.manuelClose == false
+              bet.isManuel === true &&
+              result.manuelClose === false
             ) {
               continue;
             }
             if (
               typeof result.manuelClose === "undefined" &&
-              bet.isManuel == true
+              bet.isManuel === true
             )
               continue;
             await handleDrawBet(bet);
@@ -559,14 +571,14 @@ function scoreChecker() {
           for (const bet of bets) {
             if (
               typeof bet.isManuel !== "undefined" &&
-              bet.isManuel == true &&
-              result.manuelClose == false
+              bet.isManuel === true &&
+              result.manuelClose === false
             ) {
               continue;
             }
             if (
               typeof result.manuelClose === "undefined" &&
-              bet.isManuel == true
+              bet.isManuel === true
             )
               continue;
 
@@ -587,7 +599,7 @@ function scoreChecker() {
         }
       }
     } catch (error) {
-      console.error(error);
+      console.error('fancyResult:', error)
     }
   }
 

@@ -220,6 +220,7 @@ async function getMarketsByEventId(req, res) {
     });
   }
 }
+
 async function updateCompanySetStatus(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -230,6 +231,67 @@ async function updateCompanySetStatus(req, res) {
     await inPlayEvents.updateOne(
       { Id: data.Id },
       { CompanySetStatus: data.status }
+    )
+    return res.status(200).send({
+      success: true,
+      message: 'Updated successfully !',
+    });
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Failed to update allowed market type by SportsId',
+    });
+  }
+
+}
+
+async function updateEventStatus(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ message: errors.errors });
+  }
+  try {
+    const data = req.body;
+    const event = await inPlayEvents.countDocuments({ Id: data.Id })
+    if(!event){
+      console.warn(`Error: Event not found for ${req.body.Id}`);
+      return res.status(400).send({ message: `Event not found ` });
+    }else {
+      await inPlayEvents.updateOne(
+        { Id: data.Id },
+        { status: data.status }
+      )
+      return res.status(200).send({
+        success: true,
+        message: 'Updated successfully !',
+      });
+    }
+  } catch (error) {
+    return res.status(404).send({
+      success: false,
+      message: 'Failed to update allowed market type by SportsId',
+    });
+  }
+
+}
+
+async function updateEventMarketstatus(req, res) {
+  const errors = validationResult(req);
+  if (errors.errors.length !== 0) {
+    return res.status(400).send({ message: errors.errors });
+  }
+  try {
+    const data = req.body;
+
+    const market = await MarketIDS.countDocuments({ marketId: data.marketId })
+    if(!market){
+      console.warn(`Error: market not found for ${data.marketId}`);
+      return res.status(400).send({ message: `market not found ` });
+    }
+
+    await MarketIDS.updateOne(
+      { marketId: data.marketId },
+      { status: data.status }
     )
     return res.status(200).send({
       success: true,
@@ -278,4 +340,6 @@ loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
 loginRouter.post('/addAllowedMarketTypes', marketPlaceVlidator.validate('addAllowedMarketTypes'), addAllowedMarketTypes);
 loginRouter.get('/updatemarketstatus', updateCompanySetStatus);
 loginRouter.post('/update-market-status-in-play', updateMarketStatusInPlay);
+loginRouter.post('/updateEventMarketstatus', updateEventMarketstatus);
+loginRouter.post('/updateEventStatus', updateEventStatus);
 module.exports = { router, loginRouter };
