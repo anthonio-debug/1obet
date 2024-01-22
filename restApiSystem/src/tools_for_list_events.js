@@ -71,8 +71,8 @@ function ToolForEvent() {
         } else {
           const now = new Date()
           const from = now.getTime()
-          const fiveHoursLater = new Date(now.getTime() + 5 * 60 * 60 * 1000)
-          const to = fiveHoursLater.getTime()
+          const tenHoursLater = new Date(now.getTime() + 10 * 60 * 60 * 1000)
+          const to = tenHoursLater.getTime()
           documents = await inPlayEvents.findOne({
             status: 'OPEN',
             CompanySetStatus: "OPEN",
