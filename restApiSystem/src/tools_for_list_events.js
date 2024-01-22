@@ -86,7 +86,7 @@ function ToolForEvent() {
         }
 
         if (documents && documents.Id) {
-          const existedMarkets = await MarketIDs.findOne({eventId: documents.Id})
+          const existedMarkets = await MarketIDs.findOne({eventId: documents.Id, status: "OPEN", inPlay: true})
 
           if (documents && !existedMarkets?._id) {
             await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
