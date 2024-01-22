@@ -36,6 +36,8 @@ const MarketIDS = require("../models/marketIds")
 const {getFancyOdds} = require("../../helper/hybridApiHelper");
 require('dotenv').config()
 
+const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
+
 const activeBettors = new Map()
 
 const handleLimitValue = async (selectedRate, marketId) => {
@@ -1834,7 +1836,7 @@ const placeBet = async (req, res) => {
 
       async function getBookmakerOdds(marketIds) {
         const mids = marketIds.join(',')
-        const url = `${HYBRID_URI}/runners/bookmaker?mids=${mids}&provider=pys`
+        const url = `${HYBRID_URI}/runners/bookmaker?mids=${mids}&provider=${HYBRID_PROVIDER}`
         try {
           const res = await axios.get(url)
           // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))

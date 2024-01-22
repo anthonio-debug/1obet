@@ -8,6 +8,9 @@ const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
 const {HYBRID_URI} = require("../../app/global/constants");
 const MarketIDS = require("../../app/models/marketIds");
+require('dotenv').config()
+
+const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
 
 let io;
 
@@ -21,7 +24,7 @@ function ToolForHybridFancy() {
   }
 
   async function getBookmakerMarketList(eventId) {
-    const url = `${HYBRID_URI}/event/bookmaker?eventid=${eventId}&provider=pys`
+    const url = `${HYBRID_URI}/event/bookmaker?eventid=${eventId}&provider=${HYBRID_PROVIDER}`
     try {
       const res = await axios.get(url)
       // console.log('hybrid fancy event list: ', JSON.stringify(res.data))
@@ -33,7 +36,7 @@ function ToolForHybridFancy() {
   }
 
   async function getFancyMarketList(eventId) {
-    const url = `${HYBRID_URI}/event/fancy?provider=pys&eventid=${eventId}`
+    const url = `${HYBRID_URI}/event/fancy?provider=${HYBRID_PROVIDER}&eventid=${eventId}`
     try {
       const res = await axios.get(url)
       // console.log('hybrid fancy event list: ', JSON.stringify(res.data))
@@ -46,7 +49,7 @@ function ToolForHybridFancy() {
 
   async function getFancyOdds(marketIds) {
     const mids = marketIds.join(',')
-    const url = `${HYBRID_URI}/runners/fancy?mids=${mids}&provider=pys`
+    const url = `${HYBRID_URI}/runners/fancy?mids=${mids}&provider=${HYBRID_PROVIDER}`
     try {
       const res = await axios.get(url)
       // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))
@@ -59,7 +62,7 @@ function ToolForHybridFancy() {
 
   async function getBookmakerOdds(marketIds) {
     const mids = marketIds.join(',')
-    const url = `${HYBRID_URI}/runners/bookmaker?mids=${mids}&provider=pys`
+    const url = `${HYBRID_URI}/runners/bookmaker?mids=${mids}&provider=${HYBRID_PROVIDER}`
     try {
       const res = await axios.get(url)
       // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))
