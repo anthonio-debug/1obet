@@ -38,7 +38,6 @@ function ToolForUpdatedRacing() {
         const documents = await inPlayEvents.find({
           status: 'OPEN',
           CompanySetStatus: "OPEN",
-          isShowed: true,
           openDate: { $gte: from, $lte: to },
           sportsId: id
         })
