@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 let Global = require('../global/settings');
 
 const CricketSchema = new mongoose.Schema({
-  seriesKey: { type: String, required: false },
+  seriesKey: { type: String, required: false, index: true },
   eventId: { type: String },
   Title: { type: String, required: false },
   __v: { type: Number, required: false },
@@ -15,6 +15,7 @@ const CricketSchema = new mongoose.Schema({
   over2: { type: String, required: false },
   rateTeam: { type: String, required: false },
   res: { type: String, required: false },
+  result: { type: String, required: false },
   score1: { type: String, required: false },
   score2: { type: String, required: false },
   seriesFullName: { type: String, required: false },
@@ -28,7 +29,6 @@ const CricketSchema = new mongoose.Schema({
   team2Flag: { type: String, required: false },
   team2Name: { type: String, required: false },
   time: { type: String, required: false },
-  timestamp: { type: String, required: false },
   type: { type: String, required: false },
   venueName: { type: String, required: false },
   timestamp: { type:Number, default: new Date().getTime() / 1000}
