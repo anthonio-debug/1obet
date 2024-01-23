@@ -353,7 +353,7 @@ loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
 loginRouter.post('/addAllowedMarketTypes', marketPlaceVlidator.validate('addAllowedMarketTypes'), addAllowedMarketTypes);
 loginRouter.get('/updatemarketstatus', updateCompanySetStatus);
 loginRouter.post('/update-market-status-in-play', updateMarketStatusInPlay);
-loginRouter.get('/activate-event', activateEvent);
+loginRouter.get('/activate-event/:eventId', activateEvent);
 loginRouter.post('/updateEventMarketstatus', updateEventMarketstatus);
 loginRouter.post('/updateEventStatus', updateEventStatus);
 module.exports = { router, loginRouter };
