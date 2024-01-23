@@ -1,0 +1,7 @@
+const SPORT_CRICKET = "4"
+const SPORT_TENNIS = "2"
+const SPORT_SOCCER = "1"
+
+module.exports = {
+  SPORT_CRICKET, SPORT_TENNIS, SPORT_SOCCER
+}

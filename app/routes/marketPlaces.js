@@ -7,6 +7,7 @@ const User = require('../models/user');
 const { v4: uuidv4 } = require('uuid');
 const marketPlaceVlidator = require('../validators/marketPlaces');
 const inPlayEvents = require("../models/events");
+const {fetchMarket} = require("../../helper/eventHelper");
 
 const router = express.Router();
 const loginRouter = express.Router();
@@ -224,8 +225,15 @@ async function getMarketsByEventId(req, res) {
 async function activateEvent(req, res) {
   try {
     const eventId = req.params.eventId;
+    const event = await inPlayEvents.findOne({Id: eventId})
+    event.status = 'OPEN'
+    event.CompanySetStatus = 'OPEN'
+    event.isShowed = true
+    event.lastCheckMarket = Date.now()
+    await event.save()
+    await fetchMarket(eventId)
 
-    res.status(200).json({success: true, data: eventId});
+    res.status(200).json({success: true, message: 'Event updated successfully'});
   } catch (err) {
     return res.status(404).send({
       success: false,
