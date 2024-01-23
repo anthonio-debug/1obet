@@ -32,7 +32,7 @@ function ToolForUpdatedRacing() {
       for (const id of sportsIds) {
         const now = new Date()
         const from = new Date(now.getTime() - (30 * 60 * 1000))
-        const fiveHoursLater = new Date(now.getTime() + 5.5 * 60 * 60 * 1000)
+        const fiveHoursLater = new Date(now.getTime() + 10.5 * 60 * 60 * 1000)
         const to = fiveHoursLater.getTime()
 
         const documents = await inPlayEvents.find({
@@ -46,16 +46,23 @@ function ToolForUpdatedRacing() {
           .exec();
 
         for (let i = 0; i < documents?.length; i++) {
-          const existedMarkets = await RaceMarkets.findOne({"eventNodes.eventId": documents[i]?.Id})
-
-          if (documents[i] && !existedMarkets?._id) {
-            await inPlayEvents.updateMany(
-              {Id: documents.Id},
-              {$set: {lastCheckMarket: Date.now()}}
-            );
-            await apiRequests.listMarketsByCronJob(documents[i].Id, documents[i].sportsId, documents[i].competitionId);
-            // fetchOddsForEvent(documents.Id);
-          }
+          /*removed the check to know if system already fetch market*/
+          await inPlayEvents.updateMany(
+            {Id: documents.Id},
+            {$set: {lastCheckMarket: Date.now()}}
+          );
+          await apiRequests.listMarketsByCronJob(documents[i].Id, documents[i].sportsId, documents[i].competitionId);
+          /*old revision*/
+          // const existedMarkets = await RaceMarkets.findOne({"eventNodes.eventId": documents[i]?.Id})
+          //
+          // if (documents[i] && !existedMarkets?._id) {
+          //   await inPlayEvents.updateMany(
+          //     {Id: documents.Id},
+          //     {$set: {lastCheckMarket: Date.now()}}
+          //   );
+          //   await apiRequests.listMarketsByCronJob(documents[i].Id, documents[i].sportsId, documents[i].competitionId);
+          //   // fetchOddsForEvent(documents.Id);
+          // }
         }
       }
     } catch (error) {

@@ -538,8 +538,7 @@ function apiRequests() {
         {$set: {marketIds: marketIds}},
         {upsert: true, new: true});
     } catch (error) {
-      console.log('Market data Problem');
-      console.error(error);
+      console.error('Market data Problem', error);
     }
   }
 
