@@ -747,9 +747,9 @@ function apiRequests() {
         }
       }
 
-      if (openEvents.length !== 20) {
-        await fillEventsToLimit(sportsId, openEvents.length);
-      }
+      // if (openEvents.length !== 20) {
+      //   await fillEventsToLimit(sportsId, openEvents.length);
+      // }
 
       if (openEvents.length === 0) continue;
 
