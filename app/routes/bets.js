@@ -142,6 +142,7 @@ const apiCallForOdds = async (marketId) => {
 const stopbetStatusChecker = async (id) => {
   try {
     const scores = await Crickets.findOne({eventId: id});
+    console.log(`Score details ====================== `, scores);
     if (scores && scores?.result && scores?.result?.length){
       const result = scores?.result.toLowerCase();
       const stopbetStatus = ["no ball", "noball", "free hit", "freehit",
