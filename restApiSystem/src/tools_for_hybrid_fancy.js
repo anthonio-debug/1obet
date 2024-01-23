@@ -8,6 +8,7 @@ const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
 const {HYBRID_URI} = require("../../app/global/constants");
 const MarketIDS = require("../../app/models/marketIds");
+const {isIterable} = require("../../helper/common");
 require('dotenv').config()
 
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
@@ -98,24 +99,26 @@ function ToolForHybridFancy() {
     }
     for (const [index, odd] of bookmakerOdds.entries()) {
       let bms = []
-      for (const runner of odd.runners) {
-        bms.push({
-          b1: runner.back[0].price,
-          b2: runner.back[1].price,
-          b3: runner.back[2].price,
-          bs1: runner.back[0].size,
-          bs2: runner.back[1].size,
-          bs3: runner.back[2].size,
-          l1: runner.lay[0].price,
-          l2: runner.lay[0].price,
-          l3: runner.lay[0].price,
-          ls1: runner.lay[0].size,
-          ls2: runner.lay[0].size,
-          ls3: runner.lay[0].size,
-          s: runner.runnerStatus,
-          sid: runner.selectionId,
-          nat: runner.name,
-        })
+      if (isIterable(odd.runners)) {
+        for (const runner of odd.runners) {
+          bms.push({
+            b1: runner.back[0].price,
+            b2: runner.back[1].price,
+            b3: runner.back[2].price,
+            bs1: runner.back[0].size,
+            bs2: runner.back[1].size,
+            bs3: runner.back[2].size,
+            l1: runner.lay[0].price,
+            l2: runner.lay[0].price,
+            l3: runner.lay[0].price,
+            ls1: runner.lay[0].size,
+            ls2: runner.lay[0].size,
+            ls3: runner.lay[0].size,
+            s: runner.runnerStatus,
+            sid: runner.selectionId,
+            nat: runner.name,
+          })
+        }
       }
       bm[`bm${index + 1}`] = bms
     }
@@ -138,7 +141,8 @@ function ToolForHybridFancy() {
         sportsId: '4', isShowed: true,
         hasFancy: true,
         CompanySetStatus: "OPEN",
-        status: 'OPEN'}, {Id: 1}).exec();
+        status: 'OPEN'
+      }, {Id: 1}).exec();
       for (const event of fancyEvents) {
         const eventId = event.Id
         let fancyMarketList = await getFancyMarketList(eventId)
