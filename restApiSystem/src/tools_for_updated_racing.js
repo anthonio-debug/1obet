@@ -31,8 +31,8 @@ function ToolForUpdatedRacing() {
     try {
       for (const id of sportsIds) {
         const now = new Date()
-        const from = new Date(now.getTime() - (60 * 60 * 1000))
-        const fiveHoursLater = new Date(now.getTime() + 5 * 60 * 60 * 1000)
+        const from = new Date(now.getTime() - (30 * 60 * 1000))
+        const fiveHoursLater = new Date(now.getTime() + 5.5 * 60 * 60 * 1000)
         const to = fiveHoursLater.getTime()
 
         const documents = await inPlayEvents.find({
