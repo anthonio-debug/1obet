@@ -393,7 +393,7 @@ function apiRequests() {
 
     try {
       const now = moment();
-      const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
+      const startTime = now.subtract(1, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
       const endTime = now.add(5, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
       const requestData = {
         "filter": {
