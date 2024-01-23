@@ -221,6 +221,19 @@ async function getMarketsByEventId(req, res) {
   }
 }
 
+async function activateEvent(req, res) {
+  try {
+    const eventId = req.params.eventId;
+
+    res.status(200).json({success: true, data: eventId});
+  } catch (err) {
+    return res.status(404).send({
+      success: false,
+      message: 'Failed to update allowed market type by EventId',
+    });
+  }
+}
+
 async function updateCompanySetStatus(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -340,6 +353,7 @@ loginRouter.post('/addSubMarketTypes', addSubMarketTypes);
 loginRouter.post('/addAllowedMarketTypes', marketPlaceVlidator.validate('addAllowedMarketTypes'), addAllowedMarketTypes);
 loginRouter.get('/updatemarketstatus', updateCompanySetStatus);
 loginRouter.post('/update-market-status-in-play', updateMarketStatusInPlay);
+loginRouter.get('/activate-event', activateEvent);
 loginRouter.post('/updateEventMarketstatus', updateEventMarketstatus);
 loginRouter.post('/updateEventStatus', updateEventStatus);
 module.exports = { router, loginRouter };
