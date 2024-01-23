@@ -56,20 +56,48 @@ function ToolForEvent() {
 
   async function fetchMarkets() {
     try {
-      const documents = await inPlayEvents.findOne({status: 'OPEN', CompanySetStatus: "OPEN", isShowed: true})
-        .sort({lastCheckMarket: 1})
-        .limit(1)
-        .exec();
+      for (const id of sportsIds) {
+        let documents = null
+        if (id === "4") {
+          documents = await inPlayEvents.findOne({
+            status: 'OPEN',
+            CompanySetStatus: "OPEN",
+            isShowed: true,
+            sportsId: id
+          })
+            .sort({lastCheckMarket: 1})
+            .limit(1)
+            .exec();
+        } else {
+          const now = new Date()
+          const from = now.getTime()
+          const tenHoursLater = new Date(now.getTime() + 10 * 60 * 60 * 1000)
+          const to = tenHoursLater.getTime()
+          documents = await inPlayEvents.findOne({
+            status: 'OPEN',
+            CompanySetStatus: "OPEN",
+            isShowed: true,
+            openDate: {$gte: from, $lte: to},
+            sportsId: id
+          })
+            .sort({lastCheckMarket: 1})
+            .limit(1)
+            .exec();
+        }
 
-      const existedMarkets = await MarketIDs.findOne({eventId: documents.Id})
+        if (documents && documents.Id) {
+          const existedMarkets = await MarketIDs.findOne({eventId: documents.Id, status: "OPEN", inPlay: true})
 
-      if (documents && !existedMarkets?._id) {
-        await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
-        await inPlayEvents.updateMany(
-          {Id: documents.Id},
-          {$set: {lastCheckMarket: Date.now()}}
-        );
-        fetchOddsForEvent(documents.Id);
+          if (documents && !existedMarkets?._id) {
+            await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
+            await inPlayEvents.updateMany(
+              {Id: documents.Id},
+              {$set: {lastCheckMarket: Date.now()}}
+            );
+            fetchOddsForEvent(documents.Id);
+          }
+        }
+
       }
     } catch (error) {
       console.error('Error fetching markets:', error);
@@ -110,9 +138,9 @@ function ToolForEvent() {
           $match: {
             inPlay: inPlay,
             $or: [
-              { sportID: 1 },
-              { sportID: 2 },
-              { sportID: 4 },
+              {sportID: 1},
+              {sportID: 2},
+              {sportID: 4},
             ],
           },
         },
@@ -129,9 +157,9 @@ function ToolForEvent() {
             event: {
               $cond: {
                 if: {
-                  $eq: [{ $type: "$event" }, "array"]
+                  $eq: [{$type: "$event"}, "array"]
                 },
-                then: { $arrayElemAt: ["$event", 0] },
+                then: {$arrayElemAt: ["$event", 0]},
                 else: "$event"
               }
             }
@@ -144,13 +172,13 @@ function ToolForEvent() {
           }
         },
         {
-          $sort: { lastCheck: 1 },
+          $sort: {lastCheck: 1},
         },
         {
           $limit: 30,
         }
       ]).exec();
-      
+
       let marketIds = [];
 
       if (documents.length > 0) {

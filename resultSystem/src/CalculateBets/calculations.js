@@ -138,16 +138,16 @@ async function handleLosingBet(bet) {
             const user_prev_availableBalance = userToUpdate.availableBalance;
             const user_prev_exposure = userToUpdate.exposure;
 
-            const updatedbalance  = Number((userToUpdate.balance  - loosingAmount).toFixed(3));
+            const updatedBalance  = Number((userToUpdate.balance  - loosingAmount).toFixed(3));
             const updatedClientPL = Number((userToUpdate.clientPL - loosingAmount).toFixed(3));
             let userToUpdateAvailableBalance = -loosingAmount;
-            let addExpoisureAmount = 0;
-            if(bet.calculateExp == true){
+            let addExposureAmount = 0;
+            if(bet.calculateExp === true){
               userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-              addExpoisureAmount = Number(bet.exposureAmount.toFixed(3));
+              addExposureAmount = Number(bet.exposureAmount.toFixed(3));
               calculatedExp = 1;
             }
-            const expAmount = Number((userToUpdate.exposure + addExpoisureAmount).toFixed(3))
+            const expAmount = Number((userToUpdate.exposure + addExposureAmount).toFixed(3))
             const updatedAvailableBalance = Number(userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(3)))
             await users.updateOne(
               {
@@ -156,7 +156,7 @@ async function handleLosingBet(bet) {
               },
               {
                 $set: {
-                  balance: updatedbalance,
+                  balance: updatedBalance,
                   clientPL: updatedClientPL,
                   exposure: expAmount,
                   availableBalance: updatedAvailableBalance
@@ -192,14 +192,14 @@ async function handleLosingBet(bet) {
               betSession: bet.betSession,
               roundId: bet.roundId,
               
-              addedExpoisureAmount: addExpoisureAmount,
+              addedExpoisureAmount: addExposureAmount,
               UserPrevexposure: userToUpdate.exposure,
               UpdatedExposure: expAmount,
               sourceCodeBlock: 'handleLosingBet',
               userAvailableBalanceBFTrans: user_prev_availableBalance,
               userAvailableBalanceAFTrans: updatedAvailableBalance,
               UserBalanceBFTrans: user_prev_balance,
-              UserBalanceAFTrans: updatedbalance
+              UserBalanceAFTrans: updatedBalance
             });
             // console.log(" ======================== Cash Updating Sucessfully ");
 
@@ -333,12 +333,11 @@ async function handleLosingBet(bet) {
               await currentPositions.deleteMany({ betId: betIdString });
 
               const updatedUser = await users.findOne({ userId: userId, isDeleted: false });
-              const user_new_balance = updatedUser.balance;
-              const user_new_availableBalance = updatedUser.availableBalance;
-              const user_new_exposure = updatedUser.exposure;
-
+              // const user_new_balance = updatedUser.balance;
+              // const user_new_availableBalance = updatedUser.availableBalance;
+              // const user_new_exposure = updatedUser.exposure;
               if(bet.calculateExp){
-                const ExpTran =  exposures.insertOne({
+                await exposures.insertOne({
                   userId: updatedUser.userId,
                   trans_from: "BetLose",
                   trans_from_id: bet._id,
@@ -346,9 +345,9 @@ async function handleLosingBet(bet) {
                   user_prev_balance: user_prev_balance,
                   user_prev_availableBalance: user_prev_availableBalance,
                   user_prev_exposure: user_prev_exposure,
-                  user_new_balance: user_new_balance,
-                  user_new_availableBalance: user_new_availableBalance,
-                  user_new_exposure: user_new_exposure,
+                  user_new_balance: updatedBalance,
+                  user_new_availableBalance: updatedAvailableBalance,
+                  user_new_exposure: expAmount,
                   marketId: bet.marketId,
                   sportsId: bet.sportsId,
                   calculatedExp: calculatedExp,
@@ -489,16 +488,16 @@ async function handleWinningBet(bet, winner) {
             const user_prev_availableBalance = userToUpdate.availableBalance;
             const user_prev_exposure = userToUpdate.exposure;
 
-            const Updatedbalance = Number((userToUpdate.balance + remainingAmount).toFixed(3));
+            const UpdatedBalance = Number((userToUpdate.balance + remainingAmount).toFixed(3));
             const UpdatedclientPL = Number((userToUpdate.clientPL + remainingAmount).toFixed(3));
             let userToUpdateAvailableBalance = remainingAmount;
-            let addExpoisureAmount = 0;
+            let addExposureAmount = 0;
             if (bet.calculateExp) {
               userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-              addExpoisureAmount = Number(bet.exposureAmount.toFixed(3));
+              addExposureAmount = Number(bet.exposureAmount.toFixed(3));
               calculatedExp = 1;
             }
-            const UpdatedExposure = Number((userToUpdate.exposure + addExpoisureAmount).toFixed(3));
+            const UpdatedExposure = Number((userToUpdate.exposure + addExposureAmount).toFixed(3));
             const UpdatedAvailableBalance = Number((userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(3))).toFixed(3));
             await users.updateOne(
               {
@@ -507,7 +506,7 @@ async function handleWinningBet(bet, winner) {
               },
               { 
                 $set: {
-                  balance: Updatedbalance,
+                  balance: UpdatedBalance,
                   clientPL: UpdatedclientPL,
                   exposure: UpdatedExposure,
                   availableBalance: UpdatedAvailableBalance
@@ -543,14 +542,14 @@ async function handleWinningBet(bet, winner) {
               betSession: bet.betSession,
               roundId: bet.roundId,
 
-              addedExpoisureAmount:addExpoisureAmount,
+              addedExpoisureAmount:addExposureAmount,
               UserPrevexposure:userToUpdate.exposure,
               UpdatedExposure:UpdatedExposure,
               sourceCodeBlock:'handleWinningBet',
               userAvailableBalanceBFTrans: user_prev_availableBalance,
               userAvailableBalanceAFTrans: UpdatedAvailableBalance,
               UserBalanceBFTrans: user_prev_balance,
-              UserBalanceAFTrans: Updatedbalance
+              UserBalanceAFTrans: UpdatedBalance
             });
             
             // console.log(" =============== Cash Save Successfully! ");
@@ -733,9 +732,9 @@ async function handleWinningBet(bet, winner) {
                   user_prev_balance: user_prev_balance,
                   user_prev_availableBalance: user_prev_availableBalance,
                   user_prev_exposure: user_prev_exposure,
-                  user_new_balance: user_new_balance,
-                  user_new_availableBalance: user_new_availableBalance,
-                  user_new_exposure: user_new_exposure,
+                  user_new_balance: UpdatedBalance,
+                  user_new_availableBalance: UpdatedAvailableBalance,
+                  user_new_exposure: UpdatedExposure,
                   marketId: bet.marketId,
                   sportsId: bet.sportsId,
                   calculatedExp: calculatedExp,
@@ -787,9 +786,10 @@ const handleDrawBet = async (bet, status = 0) => {
             const user_prev_availableBalance = userToUpdate.availableBalance;
             const user_prev_exposure = userToUpdate.exposure;
 
-            if (bet.calculateExp == true) {
-              const updatedUserAvlBalance = Number(( userToUpdate.availableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-              const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
+            const updatedUserAvlBalance = Number(( userToUpdate.availableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
+            const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
+
+            if (bet.calculateExp === true) {
               // userToUpdate.availableBalance = updatedUserAvlBalance;
               // userToUpdate.exposure = updatedUserExp;
               calculatedExp = 1;
@@ -859,8 +859,8 @@ const handleDrawBet = async (bet, status = 0) => {
 
               const updatedUser = await users.findOne({ userId: userId, isDeleted: false });
               const user_new_balance = updatedUser.balance;
-              const user_new_availableBalance = updatedUser.availableBalance;
-              const user_new_exposure = updatedUser.exposure;
+              // const user_new_availableBalance = updatedUser.availableBalance;
+              // const user_new_exposure = updatedUser.exposure;
               if(bet.calculateExp){
                 const ExpTran = await  exposures.insertOne({
                   userId: updatedUser.userId,
@@ -871,8 +871,8 @@ const handleDrawBet = async (bet, status = 0) => {
                   user_prev_availableBalance: user_prev_availableBalance,
                   user_prev_exposure: user_prev_exposure,
                   user_new_balance: user_new_balance,
-                  user_new_availableBalance: user_new_availableBalance,
-                  user_new_exposure: user_new_exposure,
+                  user_new_availableBalance: updatedUserAvlBalance,
+                  user_new_exposure: updatedUserExp,
                   marketId: bet.marketId,
                   sportsId: bet.sportsId,
                   calculatedExp: calculatedExp,
@@ -887,8 +887,6 @@ const handleDrawBet = async (bet, status = 0) => {
             }
           }
         }, transactionOptions)
-
-
       }
     }
   } catch (error) {

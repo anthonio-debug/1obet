@@ -8,6 +8,9 @@ const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
 const {HYBRID_URI} = require("../../app/global/constants");
 const MarketIDS = require("../../app/models/marketIds");
+require('dotenv').config()
+
+const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
 
 let io;
 
@@ -21,7 +24,7 @@ function ToolForHybridFancy() {
   }
 
   async function getBookmakerMarketList(eventId) {
-    const url = `${HYBRID_URI}/event/bookmaker?eventid=${eventId}&provider=pys`
+    const url = `${HYBRID_URI}/event/bookmaker?eventid=${eventId}&provider=${HYBRID_PROVIDER}`
     try {
       const res = await axios.get(url)
       // console.log('hybrid fancy event list: ', JSON.stringify(res.data))
@@ -33,7 +36,7 @@ function ToolForHybridFancy() {
   }
 
   async function getFancyMarketList(eventId) {
-    const url = `${HYBRID_URI}/event/fancy?provider=pys&eventid=${eventId}`
+    const url = `${HYBRID_URI}/event/fancy?provider=${HYBRID_PROVIDER}&eventid=${eventId}`
     try {
       const res = await axios.get(url)
       // console.log('hybrid fancy event list: ', JSON.stringify(res.data))
@@ -46,7 +49,7 @@ function ToolForHybridFancy() {
 
   async function getFancyOdds(marketIds) {
     const mids = marketIds.join(',')
-    const url = `${HYBRID_URI}/runners/fancy?mids=${mids}&provider=pys`
+    const url = `${HYBRID_URI}/runners/fancy?mids=${mids}&provider=${HYBRID_PROVIDER}`
     try {
       const res = await axios.get(url)
       // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))
@@ -59,7 +62,7 @@ function ToolForHybridFancy() {
 
   async function getBookmakerOdds(marketIds) {
     const mids = marketIds.join(',')
-    const url = `${HYBRID_URI}/runners/bookmaker?mids=${mids}&provider=pys`
+    const url = `${HYBRID_URI}/runners/bookmaker?mids=${mids}&provider=${HYBRID_PROVIDER}`
     try {
       const res = await axios.get(url)
       // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))
@@ -114,9 +117,9 @@ function ToolForHybridFancy() {
           nat: runner.name,
         })
       }
-      bm[`bm${index+1}`] = bms
+      bm[`bm${index + 1}`] = bms
     }
-    return  {
+    return {
       data: {
         t1: null,
         t2: [{...bm}],
@@ -135,27 +138,33 @@ function ToolForHybridFancy() {
       for (const event of fancyEvents) {
         const eventId = event.Id
         let fancyMarketList = await getFancyMarketList(eventId)
-        let bookmakerMarketList = await getBookmakerMarketList(eventId)
-        let fancyMarketIds = []
-        let bookmakerMarketIds = []
-        for (const [index, market] of fancyMarketList.entries()) {
-          // if (index > 100) continue
-          fancyMarketIds.push(market?.market?.id)
+        if (fancyMarketList) {
+          let bookmakerMarketList = await getBookmakerMarketList(eventId)
+          let fancyMarketIds = []
+          let bookmakerMarketIds = []
+          for (const [index, market] of fancyMarketList.entries()) {
+            // if (index > 100) continue
+            if (market?.market?.status !== 'CLOSED') {
+              fancyMarketIds.push(market?.market?.id)
+            }
+          }
+          for (const [index, market] of bookmakerMarketList.entries()) {
+            if (index > 10) continue
+            bookmakerMarketIds.push(market?.market?.id)
+          }
+          let fancyOdds = await getFancyOdds(fancyMarketIds)
+          if (fancyOdds) {
+            let bookmakerOdds = await getBookmakerOdds(bookmakerMarketIds)
+            const fancyData = buildFancyStructure(bookmakerMarketList, fancyMarketList, bookmakerOdds, fancyOdds, eventId)
+            let newFancyOdds = new FancyOdds({
+              eventId: eventId,
+              marketId: eventId,
+              data: fancyData,
+            })
+            await newFancyOdds.save();
+            io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+          }
         }
-        for (const [index, market] of bookmakerMarketList.entries()) {
-          if (index > 10) continue
-          bookmakerMarketIds.push(market?.market?.id)
-        }
-        let fancyOdds = await getFancyOdds(fancyMarketIds)
-        let bookmakerOdds = await getBookmakerOdds(bookmakerMarketIds)
-        const fancyData = buildFancyStructure(bookmakerMarketList, fancyMarketList, bookmakerOdds, fancyOdds, eventId)
-        let newFancyOdds = new FancyOdds({
-          eventId: eventId,
-          marketId: eventId,
-          data: fancyData,
-        })
-        await newFancyOdds.save();
-        io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
       }
     } catch (error) {
       console.error("Error getting hybrid fancy odds:", error);

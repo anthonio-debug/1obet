@@ -198,6 +198,7 @@
   "editCricket",
   "updatemarketstatus",
   "eventsapicalls",
+  "update-market-status-in-play",
   "eventListByMarketIds",
   "updateEventMarketstatus",
   "updateEventStatus"
