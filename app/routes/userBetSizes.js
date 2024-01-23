@@ -75,7 +75,7 @@ function betsNews(req, res) {
 
   if (req.decoded.role == '5') {
     results = {
-      text: 'Welcome to 1obet.com - System under Maintenance - Announcement - All casino Profit Loss will be 1 to 10 Ratio - Her casino may Jeet Har 1 ka 10 ho ge - Welcome to Exchange - Zero commissions on chota bara, kalli jotta, fancies - Customer complain cell 24 hours',
+      text: 'Welcome to 1obet.com - System under Maintenance - Announcement - All casino Profit Loss will be 1 to 2 Ratio - Her casino may Jeet Har 1 ka 2 ho ge - Welcome to Exchange - Zero commissions on chota bara, kalli jotta, fancies - Customer complain cell 24 hours',
     };
   }
   return res.send({
