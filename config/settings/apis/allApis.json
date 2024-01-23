@@ -201,5 +201,6 @@
   "update-market-status-in-play",
   "eventListByMarketIds",
   "updateEventMarketstatus",
+  "activate-event",
   "updateEventStatus"
 ]
