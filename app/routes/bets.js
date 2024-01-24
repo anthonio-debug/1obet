@@ -33,7 +33,7 @@ const CasinoCalls = require('../models/casinoCalls')
 const {FANCY_URL, LIVE_BET_TV_URL, HYBRID_URI} = require("../global/constants");
 const message_result = "cannot place bet due to result check";
 const MarketIDS = require("../models/marketIds")
-const {getFancyOdds} = require("../../helper/hybridApiHelper");
+const {getFancyOdds, getBookmakerOdds} = require("../../helper/hybridApiHelper");
 require('dotenv').config()
 
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
@@ -1833,19 +1833,6 @@ const placeBet = async (req, res) => {
         return res.status(404).send({
           message: `${message_result}`,
         });
-      }
-
-      async function getBookmakerOdds(marketIds) {
-        const mids = marketIds.join(',')
-        const url = `${HYBRID_URI}/runners/bookmaker?mids=${mids}&provider=${HYBRID_PROVIDER}`
-        try {
-          const res = await axios.get(url)
-          // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))
-          return res.data || []
-        } catch (error) {
-          console.error('An error occurred in hybrid bookmaker odds:', error?.data || error.message || error);
-          return []
-        }
       }
 
       isFancyOrBookMaker = true;

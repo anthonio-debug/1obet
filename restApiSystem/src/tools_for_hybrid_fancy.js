@@ -9,6 +9,12 @@ const MarketIDs = require('../../app/models/marketIds');
 const {HYBRID_URI} = require("../../app/global/constants");
 const MarketIDS = require("../../app/models/marketIds");
 const {isIterable} = require("../../helper/common");
+const {
+  getFancyMarketList,
+  getBookmakerMarketList,
+  getFancyOdds,
+  getBookmakerOdds
+} = require("../../helper/hybridApiHelper");
 require('dotenv').config()
 
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
@@ -22,56 +28,6 @@ function ToolForHybridFancy() {
     io = _io;
 
     getHybridFancyOdds()
-  }
-
-  async function getBookmakerMarketList(eventId) {
-    const url = `${HYBRID_URI}/event/bookmaker?eventid=${eventId}&provider=${HYBRID_PROVIDER}`
-    try {
-      const res = await axios.get(url)
-      // console.log('hybrid fancy event list: ', JSON.stringify(res.data))
-      return res.data || []
-    } catch (error) {
-      console.error('An error occurred in hybrid bookmaker market list:', error?.data || error.message || error)
-      return []
-    }
-  }
-
-  async function getFancyMarketList(eventId) {
-    const url = `${HYBRID_URI}/event/fancy?provider=${HYBRID_PROVIDER}&eventid=${eventId}`
-    try {
-      const res = await axios.get(url)
-      // console.log('hybrid fancy event list: ', JSON.stringify(res.data))
-      return res.data || []
-    } catch (error) {
-      console.error('An error occurred:', error?.data || error.message || error)
-      return []
-    }
-  }
-
-  async function getFancyOdds(marketIds) {
-    const mids = marketIds.join(',')
-    const url = `${HYBRID_URI}/runners/fancy?mids=${mids}&provider=${HYBRID_PROVIDER}`
-    try {
-      const res = await axios.get(url)
-      // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))
-      return res.data || []
-    } catch (error) {
-      console.error('An error occurred:', error?.data || error.message || error);
-      return []
-    }
-  }
-
-  async function getBookmakerOdds(marketIds) {
-    const mids = marketIds.join(',')
-    const url = `${HYBRID_URI}/runners/bookmaker?mids=${mids}&provider=${HYBRID_PROVIDER}`
-    try {
-      const res = await axios.get(url)
-      // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))
-      return res.data || []
-    } catch (error) {
-      console.error('An error occurred in hybrid bookmaker odds:', error?.data || error.message || error);
-      return []
-    }
   }
 
   function buildFancyStructure(bookmakerMarketList, fancyMarketList, bookmakerOdds, fancyOdds, eventId) {
@@ -97,10 +53,31 @@ function ToolForHybridFancy() {
         sid: odd.marketId,
       })
     }
+
+    const getBookmakerMarket = (targetRunnerId) => {
+      let targetMarket = null;
+
+      for (const market of bookmakerMarketList) {
+        if (isIterable(market?.runners)) {
+          for (const runner of market.runners) {
+            if (runner.id === targetRunnerId) {
+              targetMarket = market;
+              break;
+            }
+          }
+          if (targetMarket) {
+            break;
+          }
+        }
+      }
+      return targetMarket
+    }
+
     for (const [index, odd] of bookmakerOdds.entries()) {
       let bms = []
       if (isIterable(odd.runners)) {
         for (const runner of odd.runners) {
+          const market = getBookmakerMarket(runner.selectionId)
           bms.push({
             b1: runner.back[0].price,
             b2: runner.back[1].price,
@@ -115,7 +92,8 @@ function ToolForHybridFancy() {
             ls2: runner.lay[0].size,
             ls3: runner.lay[0].size,
             s: runner.runnerStatus,
-            sid: runner.selectionId,
+            sid: market?.market?.id,
+            ssid: runner.selectionId,
             nat: runner.name,
           })
         }
