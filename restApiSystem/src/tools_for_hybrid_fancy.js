@@ -54,30 +54,10 @@ function ToolForHybridFancy() {
       })
     }
 
-    const getBookmakerMarket = (targetRunnerId) => {
-      let targetMarket = null;
-
-      for (const market of bookmakerMarketList) {
-        if (isIterable(market?.runners)) {
-          for (const runner of market.runners) {
-            if (runner.id === targetRunnerId) {
-              targetMarket = market;
-              break;
-            }
-          }
-          if (targetMarket) {
-            break;
-          }
-        }
-      }
-      return targetMarket
-    }
-
     for (const [index, odd] of bookmakerOdds.entries()) {
       let bms = []
       if (isIterable(odd.runners)) {
         for (const runner of odd.runners) {
-          const market = getBookmakerMarket(runner.selectionId)
           bms.push({
             b1: runner.back[0].price,
             b2: runner.back[1].price,
@@ -92,7 +72,7 @@ function ToolForHybridFancy() {
             ls2: runner.lay[0].size,
             ls3: runner.lay[0].size,
             s: runner.runnerStatus,
-            sid: market?.market?.id,
+            sid: odd?.marketId,
             ssid: runner.selectionId,
             nat: runner.name,
           })

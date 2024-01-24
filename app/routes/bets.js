@@ -1865,7 +1865,8 @@ const placeBet = async (req, res) => {
             ls2: runner.lay[0].size,
             ls3: runner.lay[0].size,
             s: runner.runnerStatus,
-            sid: runner.selectionId,
+            sid: bookmakerOdd?.marketId,
+            ssid: runner.selectionId,
             nat: runner.name,
           })
         }
@@ -1883,16 +1884,16 @@ const placeBet = async (req, res) => {
 
       if (apiBookmakerOdds.length && dbFancyOdds.length) {
         const apiSelectedOdds = apiBookmakerOdds.find(
-          (runner) => runner.sid == req.body.selectionId
+          (runner) => runner.sid === selectionId
         );
         const dbSelectedOdds = dbFancyOdds.find(
-          (runner) => runner.sid == req.body.selectionId
+          (runner) => runner.sid === selectionId
         );
 
         if (!apiSelectedOdds || !dbSelectedOdds) {
           activeBettors.delete(userId)
           return res.status(404).send({
-            message: `Odds not available for the selected team ${req.body.selectionId}`,
+            message: `Odds not available for the selected team ${selectionId}`,
           });
         }
         fancyData = null;
