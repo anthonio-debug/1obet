@@ -1844,7 +1844,7 @@ const placeBet = async (req, res) => {
       if (bookmakerOddsRes.length === 0) {
         activeBettors.delete(userId)
         return res.status(404).send({
-          message: `Odds not available for the selected team ${selectionId}`,
+          message: `Bookmaker Odds not available for the selected team ${selectionId}`,
         });
       }
       const buildBookmakerOdd = (bookmakerOddsRes) => {
