@@ -734,7 +734,7 @@ function apiRequests() {
     const sportsIds = [4339, 7];
 
     for (const sportsId of sportsIds) {
-      const openEvents = await getSortedEvents(sportsId, 'OPEN', 20);
+      const openEvents = await getSortedEvents(sportsId, 'OPEN', 40);
       const firstEventDate = openEvents.length > 0 ? openEvents[0].openDate : null;
 
       if (openEvents.length > 0) {
