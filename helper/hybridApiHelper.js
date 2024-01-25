@@ -5,6 +5,7 @@ require('dotenv').config()
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
 
 async function getFancyOdds(marketIds) {
+  if (marketIds.length === 0) return []
   const mids = marketIds.join(',')
   const url = `${HYBRID_URI}/runners/fancy?mids=${mids}&provider=${HYBRID_PROVIDER}`
   try {
@@ -18,6 +19,7 @@ async function getFancyOdds(marketIds) {
 }
 
 async function getBookmakerOdds(marketIds) {
+  if (marketIds.length === 0) return []
   const mids = marketIds.join(',')
   const url = `${HYBRID_URI}/runners/bookmaker?mids=${mids}&provider=${HYBRID_PROVIDER}`
   try {

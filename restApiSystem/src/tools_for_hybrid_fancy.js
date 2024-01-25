@@ -115,8 +115,9 @@ function ToolForHybridFancy() {
             }
           }
           for (const [index, market] of bookmakerMarketList.entries()) {
-            if (index > 10) continue
-            bookmakerMarketIds.push(market?.market?.id)
+            if (market?.market?.name === 'BOOKMAKER') {
+              bookmakerMarketIds.push(market?.market?.id)
+            }
           }
           let fancyOdds = await getFancyOdds(fancyMarketIds)
           if (fancyOdds) {
