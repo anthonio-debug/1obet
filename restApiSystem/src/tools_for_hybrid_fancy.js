@@ -72,8 +72,8 @@ function ToolForHybridFancy() {
             ls2: runner.lay[0].size,
             ls3: runner.lay[0].size,
             s: runner.runnerStatus,
-            sid: odd?.marketId,
-            ssid: runner.selectionId,
+            sid: runner.selectionId,
+            ssid: odd?.marketId,
             nat: runner.name,
           })
         }

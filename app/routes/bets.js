@@ -1839,7 +1839,16 @@ const placeBet = async (req, res) => {
       // const eventId = eventDetail.Id;
       // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       // const response = await axios.get(url);
-      const bookmakerOddsRes = await getBookmakerOdds([selectionId])
+      const DBOddDetails = await FancyOdds.findById(oddsId);
+      const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
+      const marketId = dbFancyOdds[0]?.ssid
+      if (!marketId) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bookmaker Odds not available for the selected team ${selectionId}`,
+        });
+      }
+      const bookmakerOddsRes = await getBookmakerOdds([marketId])
 
       if (bookmakerOddsRes.length === 0) {
         activeBettors.delete(userId)
@@ -1847,6 +1856,7 @@ const placeBet = async (req, res) => {
           message: `Bookmaker Odds not available for the selected team ${selectionId}`,
         });
       }
+
       const buildBookmakerOdd = (bookmakerOddsRes) => {
         let odds = []
         const bookmakerOdd = bookmakerOddsRes[0]
@@ -1873,8 +1883,7 @@ const placeBet = async (req, res) => {
         return odds
       }
       const apiBookmakerOdds = buildBookmakerOdd(bookmakerOddsRes)
-      const DBOddDetails = await FancyOdds.findById(oddsId);
-      const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
+
       let runners = dbFancyOdds;
       _3rdPartyMarketId = "Bookmaker";
       runnerForSaveInbets = runners.map((runner) => ({
@@ -1922,7 +1931,7 @@ const placeBet = async (req, res) => {
 
           const index = DbBackOdds.indexOf(betRate);
           TargetScore = DbBackScores[index];
-          if (index == -1) {
+          if (index === -1) {
             activeBettors.delete(userId)
             return res.status(404).send({message: `Index didn't Match`});
           }
