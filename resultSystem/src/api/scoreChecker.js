@@ -352,6 +352,7 @@ function scoreChecker() {
         // let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
         // const response = await axios.get(url);
         // results = response.data;
+        // { winnerSelId: '51511462' }
         let result = null
         if (bookmakerRes[0]?.winner) {
           result = {
@@ -360,9 +361,6 @@ function scoreChecker() {
         } else {
           return false
         }
-        results = [
-          {winnerSelId: result, manuelClose: false},
-        ];
       }
 
       if (results.length > 0) {
