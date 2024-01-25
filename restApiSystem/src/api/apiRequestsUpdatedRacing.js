@@ -129,7 +129,7 @@ let io;
 
 const getRaceMarketIds = async (sportsId) => {
   const now = moment().utc(); // Get the current time in UTC
-  const startTime = now.valueOf(); // Get the timestamp in milliseconds
+  const startTime = now.subtract(50, 'minutes').valueOf(); // Get the timestamp in milliseconds
   const endTime = now.add(3, 'hours').valueOf(); // Add 5 hours and get the timestamp in milliseconds
 
   const documents = await MarketIDS.aggregate([
