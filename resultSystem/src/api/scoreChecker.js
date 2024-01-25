@@ -28,6 +28,7 @@ const {
 } = require("../CalculateBets/calculations");
 const {API_DOMAIN} = require("../../../app/global/constants");
 const {getFancyOdds, getBookmakerOdds} = require("../../../helper/hybridApiHelper");
+const FancyOdds = require("../../../app/models/fancyOdds");
 
 const tableInfo = [
   {id: "36", tId: "teen20"},
@@ -343,7 +344,11 @@ function scoreChecker() {
             {winnerSelId: manuelRecord.winnerRunnerData, manuelClose: false},
           ];
       } else {
-        const bookmakerRes = await getBookmakerOdds([betData.runner])
+        const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
+        const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
+        const selectedMarketId = dbFancyOdds[0]?.ssid
+        if (!selectedMarketId) return false
+        const bookmakerRes = await getBookmakerOdds([selectedMarketId])
         // let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
         // const response = await axios.get(url);
         // results = response.data;
