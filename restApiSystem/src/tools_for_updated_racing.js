@@ -24,7 +24,7 @@ function ToolForUpdatedRacing() {
       setInterval(() => fetchMarkets(), 10 * 1000);
       setTimeout(() => {
         setInterval(apiRequests.checkOdds, 2 * 1000);
-      }, 1000 * 60); // Delayed by 1 second
+      }, 1000 * 10); // Delayed by 1 second
     }
   }
 
