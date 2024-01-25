@@ -17,8 +17,9 @@ function ToolForUpdatedRacing() {
   async function init(_io, express) {
     apiRequests.init(_io);
 
-    if (config.activeProvider == 'NEW') {
+    if (config.activeProvider === 'NEW') {
       getRacing()
+      fetchMarkets()
       setInterval(getRacing, 6 * 60 * 60 * 1000)
       setInterval(() => fetchMarkets(), 10 * 1000);
       setTimeout(() => {
@@ -38,20 +39,20 @@ function ToolForUpdatedRacing() {
         const documents = await inPlayEvents.find({
           status: 'OPEN',
           CompanySetStatus: "OPEN",
-          openDate: { $gte: from, $lte: to },
+          openDate: {$gte: from, $lte: to},
           sportsId: id
         })
           .sort({lastCheckMarket: 1, openDate: -1})
           .limit(config.raceEventsMarketAllowedCount)
           .exec();
 
-        for (let i = 0; i < documents?.length; i++) {
+        for (const document of documents) {
           /*removed the check to know if system already fetch market*/
           await inPlayEvents.updateMany(
-            {Id: documents.Id},
+            {Id: document.Id},
             {$set: {lastCheckMarket: Date.now()}}
-          );
-          await apiRequests.listMarketsByCronJob(documents[i].Id, documents[i].sportsId, documents[i].competitionId);
+          )
+          await apiRequests.listMarketsByCronJob(document.Id, document.sportsId, document.competitionId)
           /*old revision*/
           // const existedMarkets = await RaceMarkets.findOne({"eventNodes.eventId": documents[i]?.Id})
           //
@@ -70,10 +71,10 @@ function ToolForUpdatedRacing() {
     }
   }
 
-  function getRacing() {
-    sportsIds.forEach(id => {
-      apiRequests.eventsBySupportJobs(id);
-    });
+  async function getRacing() {
+    for (const sportsId of sportsIds) {
+      await apiRequests.eventsBySupportJobs(sportsId);
+    }
   }
 }
 
