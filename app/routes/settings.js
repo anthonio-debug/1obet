@@ -2215,6 +2215,7 @@ const getWaitingBetsForManuel = async (req, res) => {
         if (eventData) {
           groups[main_group_key].eventData.eventName = eventData.name;
           groups[main_group_key].eventData.eventId = eventData.Id;
+          groups[main_group_key].eventData.matchType = eventData.matchType;
 
           const marketData = await MarketIDS.findOne({
             eventId: eventData.Id,
