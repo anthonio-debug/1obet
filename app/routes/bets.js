@@ -1841,14 +1841,14 @@ const placeBet = async (req, res) => {
       // const response = await axios.get(url);
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
-      const marketId = dbFancyOdds[0]?.ssid
-      if (!marketId) {
+      const selectedMarketId = dbFancyOdds[0]?.ssid
+      if (!selectedMarketId) {
         activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bookmaker Odds not available for the selected team ${selectionId}`,
         });
       }
-      const bookmakerOddsRes = await getBookmakerOdds([marketId])
+      const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
 
       if (bookmakerOddsRes.length === 0) {
         activeBettors.delete(userId)
