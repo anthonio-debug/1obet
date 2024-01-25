@@ -353,11 +353,10 @@ function scoreChecker() {
         // const response = await axios.get(url);
         // results = response.data;
         // { winnerSelId: '51511462' }
-        let result = null
         if (bookmakerRes[0]?.winner) {
-          result = {
-            winnerSelId: bookmakerRes[0]?.winner,
-          }
+          results = [
+            {winnerSelId: bookmakerRes[0]?.winner, manuelClose: false},
+          ]
         } else {
           return false
         }
