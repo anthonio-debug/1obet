@@ -1875,8 +1875,8 @@ const placeBet = async (req, res) => {
             ls2: runner.lay[0].size,
             ls3: runner.lay[0].size,
             s: runner.runnerStatus,
-            sid: bookmakerOdd?.marketId,
-            ssid: runner.selectionId,
+            ssid: bookmakerOdd?.marketId,
+            sid: runner.selectionId,
             nat: runner.name,
           })
         }
@@ -1887,7 +1887,7 @@ const placeBet = async (req, res) => {
       let runners = dbFancyOdds;
       _3rdPartyMarketId = "Bookmaker";
       runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.ssid,
+        runner: runner.sid,
         amount: 0,
       }));
 
