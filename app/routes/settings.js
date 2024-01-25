@@ -2210,7 +2210,7 @@ const getWaitingBetsForManuel = async (req, res) => {
         };
         const eventData = await Events.findOne(
           { _id: mongoose.Types.ObjectId(item.matchId) },
-          { Id: 1, name: 1 }
+          { Id: 1, name: 1, matchType: 1 }
         );
         if (eventData) {
           groups[main_group_key].eventData.eventName = eventData.name;
