@@ -1878,7 +1878,7 @@ const placeBet = async (req, res) => {
       let runners = dbFancyOdds;
       _3rdPartyMarketId = "Bookmaker";
       runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.sid,
+        runner: runner.ssid,
         amount: 0,
       }));
 
@@ -1955,7 +1955,7 @@ const placeBet = async (req, res) => {
           const index = DbBackOdds.indexOf(betRate);
           TargetScore = DbBackScores[index];
 
-          if (index == -1) {
+          if (index === -1) {
             activeBettors.delete(userId)
             return res.status(404).send({message: `Index miss matched`});
           }
