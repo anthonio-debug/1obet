@@ -12,7 +12,7 @@ const HORSE_RACE_SPORTS_ID = '7';
 const GREY_HOUND_ID = '4339'
 
 function ToolForUpdatedRacing() {
-  return {init};
+  return {init, fetchRacingEvent};
 
   async function init(_io, express) {
     apiRequests.init(_io);
@@ -75,6 +75,10 @@ function ToolForUpdatedRacing() {
     for (const sportsId of sportsIds) {
       await apiRequests.eventsBySupportJobs(sportsId);
     }
+  }
+
+  async function fetchRacingEvent(sportsId) {
+    await apiRequests.eventsBySupportJobs(sportsId);
   }
 }
 

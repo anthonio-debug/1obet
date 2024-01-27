@@ -6,6 +6,7 @@ const User = require('../models/user');
 const inPlayEvents = require('../models/events');
 const router = express.Router();
 const apiURL= "http://185.58.225.212:8080/api/"
+const apiSystemRacing = require("../../restApiSystem/src/tools_for_updated_racing.js")();
 require('dotenv').config()
 
 async function listEvents(req, res) {
@@ -493,11 +494,21 @@ async function getFanciesByEventId(req, res) {
   }
 }
 
-router.get('/testSports/events', listEvents);
-router.get('/testSports/marketbooks/:ids', listMarketBook);
+async function fetchEvents(req, res) {
+  const sportsId = req.params.sportsId;
+  try {
+    await apiSystemRacing.fetchRacingEvent(sportsId)
+    res.status(200).json({success: true, message: `Fetched successfully with sportsId: ${sportsId}`});
+  } catch (err) {
+    res.status(500).json({success: false, message: "Failed to get Error: " + err})
+  }
+}
 
-router.get('/trackstuck/activeusers', activeUserExposure);
-router.get('/trackstuck/inactiveusers', inActiveUserExposure);
+router.get('/testSports/events', listEvents)
+router.get('/testSports/marketbooks/:ids', listMarketBook)
+
+router.get('/trackstuck/activeusers', activeUserExposure)
+router.get('/trackstuck/inactiveusers', inActiveUserExposure)
 
 router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
 router.get('/track-bet/testAPI/:marketId', testAPI)
@@ -510,5 +521,7 @@ router.get('/track-bet/get-markettype', getMarketType)
 router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByMarketType)
 router.get('/track-bet/get-market-bet-session/:eventId', getFanciesByEventId)
 
+/*admin dashboard*/
+router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
-module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure };
+module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure }
