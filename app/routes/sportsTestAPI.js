@@ -497,7 +497,11 @@ async function getFanciesByEventId(req, res) {
 async function fetchEvents(req, res) {
   const sportsId = req.params.sportsId;
   try {
-    await apiSystemRacing.fetchRacingEvent(sportsId)
+    if (sportsId === '4' || sportsId === '4339') {
+      await apiSystemRacing.fetchRacingEvent(sportsId)
+    } else {
+      res.status(200).json({success: false, message: `This api only work with racing`});
+    }
     res.status(200).json({success: true, message: `Fetched successfully with sportsId: ${sportsId}`});
   } catch (err) {
     res.status(500).json({success: false, message: "Failed to get Error: " + err})
