@@ -6,7 +6,6 @@ const casinoCallsSchema = new mongoose.Schema({
   callerPassword: { type: String, required: false },
   callerPrefix: { type: String, required: false },
   username: { type: String, required: false },
-  action: { type: String, required: false },
   remote_id: { type: Number, required: false },
   amount: { type: String, required: false },
   provider: { type: String, required: false },

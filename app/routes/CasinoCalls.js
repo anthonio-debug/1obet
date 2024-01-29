@@ -604,14 +604,37 @@ async function balanceFun(req, res) {
 }
 
 async function debitFun(req, res) {
-  const client = new MongoClient(DBHost, {useUnifiedTopology: true});
-  await client.connect();
-  const session = client.startSession();
-  const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
-  const users = client.db(`${DBNAME}`).collection('users');
   try {
-    console.log(" debt req.query ============== ", req.query);
     const payload = req.query;
+
+    const sameTransaction = await CasinoDebits.countDocuments({
+      transaction_id: payload.transaction_id,
+      remote_id: parseInt(payload.remote_id),
+      round_id: payload.round_id,
+      game_id: payload.game_id,
+      action: 'debit'
+    })
+    const currentUser = await User.findOne(
+      {remoteId: parseInt(payload.remote_id)}
+    )
+    if (!currentUser) {
+      console.log(" ========================= User Not Found ============= ");
+      return res.json({status: '500', msg: `Internal Error no User`});
+    }
+    if (sameTransaction > 0) {
+      console.log('====== same Trans already Exists', sameTransaction)
+      return res.json({
+        status: 200,
+        balance: currentUser.availableBalance / casinoMultiples,
+      });
+    }
+    const client = new MongoClient(DBHost, {useUnifiedTopology: true});
+    await client.connect();
+    const session = client.startSession();
+    const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
+    const users = client.db(`${DBNAME}`).collection('users');
+
+    console.log(" debt req.query ============== ", req.query);
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
@@ -647,23 +670,7 @@ async function debitFun(req, res) {
       let debitAmount = parseInt(payload.amount);
       const amount = debitAmount * casinoMultiples;
       updatedavailableBalance = user.availableBalance - (amount);
-      const sameTransId = await casinoCalls.countDocuments(
-        {
-          transaction_id: payload.transaction_id,
-          remote_id: parseInt(payload.remote_id),
-          round_id: payload.round_id,
-          game_id: payload.game_id,
-          action: 'debit'
-        },
-        {session}
-      );
-      if (sameTransId > 0) {
-        await session.abortTransaction();
-        return res.json({
-          status: 200,
-          balance: user.availableBalance / casinoMultiples,
-        });
-      } else if (debitAmount > user.availableBalance * casinoMultiples) {
+      if (debitAmount > user.availableBalance * casinoMultiples) {
         await session.abortTransaction();
         return res.json({
           status: 403,
@@ -703,14 +710,39 @@ async function debitFun(req, res) {
 }
 
 async function creditFun(req, res) {
-  const client = new MongoClient(DBHost, {useUnifiedTopology: true});
-  await client.connect();
-  const session = client.startSession();
   try {
+    const payload = req.query;
+
+    const sameTransaction = await CasinoDebits.countDocuments({
+      transaction_id: payload.transaction_id,
+      remote_id: parseInt(payload.remote_id),
+      round_id: payload.round_id,
+      game_id: payload.game_id,
+      action: "credit"
+    })
+    const currentUser = await User.findOne(
+      {remoteId: parseInt(payload.remote_id)}
+    )
+    if (!currentUser) {
+      console.log(" ========================= User Not Found ============= ");
+      return res.json({status: '500', msg: `Internal Error no User`});
+    }
+    if (sameTransaction > 0) {
+      console.log('====== same Trans already Exists', sameTransaction)
+      return res.json({
+        status: 200,
+        balance: currentUser.availableBalance / casinoMultiples,
+      });
+    }
+
+    const client = new MongoClient(DBHost, {useUnifiedTopology: true});
+    await client.connect();
+    const session = client.startSession();
+
     console.log(" credit req.query ======= ", req.query);
     const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
     const users = client.db(`${DBNAME}`).collection('users');
-    const payload = req.query;
+
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
@@ -746,27 +778,7 @@ async function creditFun(req, res) {
 
     // let updatedavailableBalance = 0
     await session.withTransaction(async () => {
-      const sameTransId = await casinoCalls.countDocuments(
-        {
-          transaction_id: payload.transaction_id,
-          remote_id: parseInt(payload.remote_id),
-          round_id: payload.round_id,
-          game_id: payload.game_id,
-          action: "credit"
-        },
-        {session, readPreference: 'primary'}
-      );
-
-      // console.log('====== sameTransId', sameTransId)
-
-      if (sameTransId > 0) {
-        console.log('====== same Trans already Exists ', sameTransId)
-        await session.abortTransaction();
-        return res.json({
-          status: 200,
-          balance: user.availableBalance / casinoMultiples,
-        });
-      } else if (parseInt(payload.amount) < 0) {
+      if (parseInt(payload.amount) < 0) {
         await session.abortTransaction();
         return res.json({
           status: 500,
