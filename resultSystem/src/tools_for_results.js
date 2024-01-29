@@ -120,7 +120,7 @@ function ToolForResults() {
           }
         ).catch((e) => console.error(e));
 
-        if (results.fancyData) {
+        if (betData.fancyData) {
           await scoreChecker.fancyResult(betData, betData.fancyData);
         } else {
           await scoreChecker.bookMakerResult(betData);
