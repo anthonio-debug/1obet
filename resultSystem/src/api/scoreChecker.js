@@ -317,6 +317,7 @@ function scoreChecker() {
 
   async function bookMakerResult(betData) {
     try {
+      let selectedMarketId = null
       const event = await inPlayEvents.findOne(
         {_id: mongoose.Types.ObjectId(betData.matchId)},
         {Id: 1}
@@ -346,7 +347,7 @@ function scoreChecker() {
       } else {
         const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
         const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
-        const selectedMarketId = dbFancyOdds[0]?.ssid
+        selectedMarketId = dbFancyOdds[0]?.ssid
         if (!selectedMarketId) return false
         const bookmakerRes = await getBookmakerOdds([selectedMarketId])
         // let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
@@ -366,7 +367,7 @@ function scoreChecker() {
         const result = results[0];
         let newRecord = new resultRecords({
           eventId: betData.matchId,
-          marketData: "Bookmaker",
+          marketData: selectedMarketId || "Bookmaker",
           resultData: result,
         });
 
@@ -390,11 +391,11 @@ function scoreChecker() {
         await MarketIDs.findOneAndUpdate(
           {
             eventId: event.Id,
-            marketId: "Bookmaker",
+            marketId: selectedMarketId || "Bookmaker",
           },
           {
             eventId: event.Id,
-            marketId: "Bookmaker",
+            marketId: selectedMarketId || "Bookmaker",
             marketName: result.eventName,
             sportID: -1,
             status: "Bookmaker Result",

@@ -98,7 +98,7 @@ function ToolForResults() {
   async function getBetForFancy() {
     const currentTime = new Date().getTime();
     try {
-      const results = await Bets.findOne({
+      const betData = await Bets.findOne({
         sportsId: "4",
         //resultId: null,
         isfancyOrbookmaker: true,
@@ -110,10 +110,10 @@ function ToolForResults() {
         .limit(1)
         .exec();
 
-      if (results) {
+      if (betData) {
         await Bets.updateOne(
           {
-            _id: results._id,
+            _id: betData._id,
           },
           {
             $set: {lastCheckResult: currentTime},
@@ -121,9 +121,9 @@ function ToolForResults() {
         ).catch((e) => console.error(e));
 
         if (results.fancyData) {
-          await scoreChecker.fancyResult(results, results.fancyData);
+          await scoreChecker.fancyResult(betData, betData.fancyData);
         } else {
-          await scoreChecker.bookMakerResult(results);
+          await scoreChecker.bookMakerResult(betData);
         }
       }
 
