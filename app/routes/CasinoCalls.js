@@ -14,6 +14,8 @@ const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const saltKey = process.env.saltKey;
 
+let transactionIdMap = new Map()
+
 /**
  *
  * Latest tasks
@@ -606,14 +608,15 @@ async function balanceFun(req, res) {
 async function debitFun(req, res) {
   try {
     const payload = req.query;
+    const transactionId = payload.transaction_id
 
-    const sameTransaction = await CasinoDebits.countDocuments({
-      transaction_id: payload.transaction_id,
-      remote_id: parseInt(payload.remote_id),
-      round_id: payload.round_id,
-      game_id: payload.game_id,
-      action: 'debit'
-    })
+    // const sameTransaction = await CasinoDebits.countDocuments({
+    //   transaction_id: payload.transaction_id,
+    //   remote_id: parseInt(payload.remote_id),
+    //   round_id: payload.round_id,
+    //   game_id: payload.game_id,
+    //   action: 'debit'
+    // })
     const currentUser = await User.findOne(
       {remoteId: parseInt(payload.remote_id)}
     )
@@ -621,13 +624,16 @@ async function debitFun(req, res) {
       console.log(" ========================= User Not Found ============= ");
       return res.json({status: '500', msg: `Internal Error no User`});
     }
-    if (sameTransaction > 0) {
-      console.log('====== same Trans already Exists', sameTransaction)
+    if (transactionIdMap.has(transactionId)) {
+      console.log('====== same Trans already Exists', transactionId)
       return res.json({
         status: 200,
         balance: currentUser.availableBalance / casinoMultiples,
       });
+    } else {
+      transactionIdMap.set(transactionId, transactionId)
     }
+
     const client = new MongoClient(DBHost, {useUnifiedTopology: true});
     await client.connect();
     const session = client.startSession();
@@ -712,14 +718,15 @@ async function debitFun(req, res) {
 async function creditFun(req, res) {
   try {
     const payload = req.query;
+    const transactionId = payload.transaction_id
 
-    const sameTransaction = await CasinoDebits.countDocuments({
-      transaction_id: payload.transaction_id,
-      remote_id: parseInt(payload.remote_id),
-      round_id: payload.round_id,
-      game_id: payload.game_id,
-      action: "credit"
-    })
+    // const sameTransaction = await CasinoDebits.countDocuments({
+    //   transaction_id: payload.transaction_id,
+    //   remote_id: parseInt(payload.remote_id),
+    //   round_id: payload.round_id,
+    //   game_id: payload.game_id,
+    //   action: "credit"
+    // })
     const currentUser = await User.findOne(
       {remoteId: parseInt(payload.remote_id)}
     )
@@ -727,12 +734,14 @@ async function creditFun(req, res) {
       console.log(" ========================= User Not Found ============= ");
       return res.json({status: '500', msg: `Internal Error no User`});
     }
-    if (sameTransaction > 0) {
-      console.log('====== same Trans already Exists', sameTransaction)
+    if (transactionIdMap.has(transactionId)) {
+      console.log('====== same Trans already Exists', transactionId)
       return res.json({
         status: 200,
         balance: currentUser.availableBalance / casinoMultiples,
       });
+    } else {
+      transactionIdMap.set(transactionId, transactionId)
     }
 
     const client = new MongoClient(DBHost, {useUnifiedTopology: true});
@@ -810,14 +819,16 @@ async function creditFun(req, res) {
 }
 
 async function rollbackFun(req, res) {
-  const client = new MongoClient(DBHost, {useUnifiedTopology: true});
-  await client.connect();
-  const session = client.startSession();
   try {
+    const payload = req.query;
+    const client = new MongoClient(DBHost, {useUnifiedTopology: true});
+    await client.connect();
+    const session = client.startSession();
+
     console.log(" rollback req.query ======= ", req.query);
     const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
     const users = client.db(`${DBNAME}`).collection('users');
-    const payload = req.query;
+
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
