@@ -54,7 +54,8 @@ async function registerUser(req, res) {
   }
 
   const userToDelete = await User.findOne({ userName: req.body.userName });
-  if (userToDelete && userToDelete.createdBy != req.decoded.userId) {
+  // if (userToDelete && userToDelete.createdBy != req.decoded.userId) {
+  if (userToDelete?.userName) {
     return res
       .status(404)
       .send({ message: 'username not available', status: 2 });
