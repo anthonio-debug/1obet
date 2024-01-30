@@ -32,8 +32,18 @@ const casinoCallsSchema = new mongoose.Schema({
   is_jackpot_win: { type: Number, required: false }, // New field: is_jackpot_win
   jackpot_win_ids: { type: Array, required: false }, // New field: jackpot_win_ids
   jackpot_win_in_amount: { type: Number, required: false }, // New field: jackpot_win_in_amount
+  createdAt: { type: Number },
+  updatedAt:  { type: Number },
 });
-
+casinoCallsSchema.pre('save', function (next) {
+  let now = new Date().getTime();
+  if (!this.createdAt) {
+    this.createdAt = now;
+  } else {
+    this.updatedAt = now;
+  }
+  next();
+});
 const CasinoCalls = mongoose.model('CasinoCalls', casinoCallsSchema);
 
 module.exports = CasinoCalls;
