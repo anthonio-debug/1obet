@@ -1725,6 +1725,7 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes)
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
+      /* bookmaker check start */
       const dbBookmakerMarketId = DBOddDetails?.data?.data?.t2[0]?.bm1[0]?.ssid;
       if (!dbBookmakerMarketId) {
         activeBettors.delete(userId)
@@ -1740,6 +1741,7 @@ const placeBet = async (req, res) => {
           message: `Bookmaker runner not available for selected team ${selectionId}`,
         })
       }
+      /* bookmaker check end */
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
         const apiSelectedOdds = apiFancyOdds.find(
           (runner) => runner.sid == selectionId
