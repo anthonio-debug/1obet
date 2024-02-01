@@ -45,6 +45,7 @@ async function getAllSportsHighlight(req, res) {
           _id: '$_id',
           match: '$name',
           openDate: '$openDate',
+          lastCheckMarket: '$lastCheckMarket',
           sportsId: '$sportsId',
           matchType: '$matchType',
           amount: '$amount',
