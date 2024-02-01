@@ -3,7 +3,7 @@ let Global = require('../global/settings');
 
 const CricketSchema = new mongoose.Schema({
   seriesKey: { type: String, required: false, index: true },
-  eventId: { type: String },
+  eventId: { type: String, required: false, index: true },
   Title: { type: String, required: false },
   __v: { type: Number, required: false },
   day: { type: String, required: false },
