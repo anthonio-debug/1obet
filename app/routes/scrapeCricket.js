@@ -2,7 +2,8 @@ const express = require('express');
 let config = require('config');
 const cricketRouter = express.Router();
 const Crickets = require('../models/Crickets')
-const Sessions = require("../models/Session");
+const Session = require("../models/Session");
+const {calculateSessionNo} = require("../../helper/cricket");
 
 const convertSchema = (entity) => {
   const overs = entity.overs || [];
@@ -76,11 +77,32 @@ async function updateCricketData(req, res) {
         message: 'updated matches ',
       });
     } else if (type === 'live') {
-      const cricket = await Crickets.findOneAndUpdate(
+      const cricketScore = await Crickets.findOneAndUpdate(
         {seriesKey: entities.seriesKey},
         entities,
         {upsert: true, new: true, setDefaultsOnInsert: true}
       );
+      const eventId = cricketScore.eventId
+      if (eventId) {
+        const type = cricketScore.type
+        const over = cricketScore.over1
+        const score = cricketScore.score1
+        const inning = parseInt(cricketScore.inning)
+        let currentOver = parseInt(over.split(".")[0])
+        let currentScore = parseInt(score.split("/")[0])
+        const sessionNo = calculateSessionNo(type, currentOver, inning)
+        await Session.findOneAndUpdate(
+          {
+            eventId: eventId,
+            sessionNo: sessionNo,
+          },
+          {
+            $set: {
+              scrap_session_score: `${currentScore}`,
+            },
+          }
+        );
+      }
 
       res.status(200).json({
         success: true,
