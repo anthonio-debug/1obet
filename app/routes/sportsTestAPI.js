@@ -192,5 +192,5 @@ router.get('/trackstuck/activeusers', activeUserExposure);
 router.get('/trackstuck/inactiveusers', inActiveUserExposure);
 router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
 
-module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure };
+module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore};
 
