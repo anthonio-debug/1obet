@@ -84,13 +84,9 @@ async function updateCricketData(req, res) {
       );
       const eventId = cricketScore.eventId
       if (eventId) {
-        const type = cricketScore.type
-        const over = cricketScore.over1
         const score = cricketScore.score1
-        const inning = parseInt(cricketScore.inning)
-        let currentOver = parseInt(over.split(".")[0])
         let currentScore = parseInt(score.split("/")[0])
-        const sessionNo = calculateSessionNo(type, currentOver, inning)
+        const sessionNo = calculateSessionNo(cricketScore)
         await Session.findOneAndUpdate(
           {
             eventId: parseInt(eventId),
