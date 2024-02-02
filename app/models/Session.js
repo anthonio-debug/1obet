@@ -8,6 +8,8 @@ let sessionSchema = new Schema({
   Id: { type: String},
   eventId: { type: Number },
   score: { type: Number, default: 0 },
+  scrap_session_score: { type: String, required: false },
+  api_session_score: { type: String, required: false },
   updatedAt: { type: Number },
   createdAt: { type: Number },
   manuelSave: { type: Boolean, default: false },
