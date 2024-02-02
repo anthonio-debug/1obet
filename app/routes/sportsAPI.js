@@ -8,44 +8,43 @@ const Odds = require('../models/odds');
 const inPlayEvents = require('../models/events');
 const rateLimit = require('express-rate-limit');
 const fancyGames = require('../models/fancyGames')
-const {FANCY_URL} = require("../global/constants");
 
 
 const loginRouter = express.Router();
 
 async function listCompetitions(req, res) {
-  // const sportId = req.params.sportId;
-  // const url = `${config.sportsAPIUrl}/listCompetitions/${sportId}`;
+  const sportId = req.params.sportId;
+  const url = `${config.sportsAPIUrl}/listCompetitions/${sportId}`;
 
   try {
-    // const response = await axios.get(url);
-    // const competitionData = response.data;
+    const response = await axios.get(url);
+    const competitionData = response.data;
 
     // Create an array to store the created Competition documents
     const competitions = [];
 
     // Iterate over the competitionData array and create a new Competition document for each competition
-    // for (const data of competitionData) {
-    //   const existingCompetition = await ListCompetitions.findOne({
-    //     Id: data.Id,
-    //     sportsId: sportId,
-    //   });
+    for (const data of competitionData) {
+      const existingCompetition = await ListCompetitions.findOne({
+        Id: data.Id,
+        sportsId: sportId,
+      });
 
-    //   if (existingCompetition) {
-    //     competitions.push(existingCompetition);
-    //   } else {
-    //     const competition = new ListCompetitions({
-    //       Id: data.Id,
-    //       Name: data.Name,
-    //       sportsId: sportId,
-    //     });
+      if (existingCompetition) {
+        competitions.push(existingCompetition);
+      } else {
+        const competition = new ListCompetitions({
+          Id: data.Id,
+          Name: data.Name,
+          sportsId: sportId,
+        });
 
-    //     // Save the document to the database
-    //     await competition.save();
+        // Save the document to the database
+        await competition.save();
 
-    //     competitions.push(competition);
-    //   }
-    // }
+        competitions.push(competition);
+      }
+    }
 
     res.status(200).json({
       success: true,
@@ -62,7 +61,66 @@ async function listCompetitions(req, res) {
   }
 }
 
-async function listEventsBySport(req, res) {}
+async function listEventsBySport(req, res) {
+  const sportId = req.params.sportId;
+
+  try {
+    const response = await axios.get(
+      `${config.sportsAPIUrl}/listEventsBySport/${sportId}`
+    );
+    console.log('response', response.data);
+    const eventsData = response.data;
+    const events = [];
+
+    for (const eventData of eventsData) {
+      const filter = { Id: eventData.Id, sportsId: sportId,  type: 2 };
+      const update = {
+        $setOnInsert: {
+          sport: eventData.sport,
+          competitionId: eventData.competitionId,
+          competitionName: eventData.competitionName,
+          Id: eventData.Id,
+          name: eventData.name,
+          countryCode: eventData.countryCode,
+          timezone: eventData.timezone,
+          openDate: new Date(eventData.openDate),
+          inplay: eventData.inplay,
+          hasFancy: eventData.hasFancy,
+          status: eventData.status,
+          isPremium: eventData.isPremium,
+          sportsId: sportId,
+          type: 2
+        },
+      };
+
+      const options = { upsert: true, new: true };
+
+      const updatedEvent = await inPlayEvents.findOneAndUpdate(
+        filter,
+        update,
+        options
+      );
+      events.push(updatedEvent);
+    }
+
+    if (res) {
+      res.json({
+        success: true,
+        message: 'Events retrieved successfully',
+        events: events,
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    if (res) {
+      res.json({
+        success: false,
+        message: 'Failed to get events',
+        error: error.message,
+      });
+    }
+  }
+}
 
 
 //Id is eventId
@@ -315,10 +373,61 @@ async function getnewOdds(ids) {
   // });
 }
 
-async function eventsBySupportJobs(sportsId) {}
+async function eventsBySupportJobs(sportsId) {
+  const url = `${config.eventListAPIUrl}/listEventsBySport/${sportsId}`;
+  try {
+    const response = await axios.get(url);
+    const events = response.data;
+
+ 
+    if(events.length > 0){
+      var sportsEventData = events.map((element) => ({
+        updateOne: {
+          filter: { Id: element.Id },
+          update: {
+            $set: {
+              sportsId: sportsId,
+              sport: element.sport,
+              competitionId: element.competitionId,
+              competitionName: element.competitionName,
+              Id: element.Id,
+              name: element.name,
+              countryCode: element.countryCode,
+              timezone: element.timezone,
+              openDate: Date.parse(element.openDate),
+              inplay: element.inplay,
+              hasFancy: element.hasFancy,
+              status: element.status,
+              isPremium: element.isPremium,
+              type: element.type,
+              matchType: getMatchType(element.competitionName, element.name, sportsId)
+            },
+          },
+          upsert: true,
+        },
+      }));
+    }
+
+    // 1"obet.com/*"
+    const savedEvents = await inPlayEvents.bulkWrite(sportsEventData);
+    // console.log('===== Saved Events bulkWrite logs ', savedEvents?.result?.upserted)
+    return({
+      success: true,
+      message: 'Events retrieved and saved successfully',
+      events: events,
+      newInsertedIds: savedEvents?.result?.upserted
+    });
+  } catch (error) {
+    console.error(error);
+    return({
+      success: false,
+      message: 'Failed to get or save events',
+      error: error.message,
+    });
+  }
+}
 
 async function listMarketsByCronJob(eventId,sport) {
-
   const url = `${config.sportsAPIUrl}/listMarkets/${eventId}`;
   try {
     const response = await axios.get(url);
@@ -353,7 +462,7 @@ async function listMarketsByCronJob(eventId,sport) {
 }
 
 async function fancyDataByCronjob(eventId) {
-  const url = `${FANCY_URL}/bm_fancy/${eventId}`;
+  const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
   console.log('url', url);
   try {
     const response = await axios.get(url);
