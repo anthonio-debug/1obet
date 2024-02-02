@@ -184,8 +184,6 @@ function apiRequests() {
     let to = new Date(from);
     to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
 
-    // const cricketIds = ['32905875','32902867','32853042','32899939','32908257'];
-    // const soccerIds = ["32904591","32909572","32895049","32895050","32883731","32900256","32899150","32906665","32873132","32910146"];
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
@@ -211,35 +209,13 @@ function apiRequests() {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
         });
-
+        let apiEventIds = [];
         for (const event of events) {
           const existingDoc = await inPlayEvents.findOne({Id: event.event.id});
 
           if (existingDoc && existingDoc.isCanceled === true) {
             continue;
           }
-
-          if (existingDoc && existingDoc.inplayFromServer != event.event.inplay) {
-            // console.log(existingDoc);
-            // console.log(event.inplay);
-          }
-
-          // const competitionRequest = {
-          //   "filter": {
-          //     "eventTypeIds": [sportsId],
-          //     // "eventTypeIds": ['4'],
-          //     "eventIds": [event.event.id],
-          //     "countryCodes": [event.event.countryCode]
-          //   }
-          // }
-
-          // const getCompetitionUrl = `${config.newThirdURL}/listCompetitions`;
-
-          // const responseCompetition = await axios.post(
-          //   getCompetitionUrl,
-          //   competitionRequest,
-          //   header
-          // );
 
           // var competitions = responseCompetition.data.result;
           await inPlayEvents.findOneAndUpdate(
@@ -271,39 +247,32 @@ function apiRequests() {
               upsert: true,
             }
           );
+
+          apiEventIds.push(event.event.id);
         }
 
-        var eventIDs = [];
-
-        for (let index = 0; index < events.length; index++) {
-          eventIDs.push(events[index].event.id);
-        }
-
-        var allIDS = [];
+        let dbEventIdS = [];
         const currentEvents = await inPlayEvents.find(
-          {status: 'OPEN', sportsId: sportsId + ""},
+          {status: 'OPEN', sportsId: `${sportsId}`},
           {Id: 1}
         );
 
-        for (let i = 0; i < currentEvents.length; i++) {
-          allIDS.push(currentEvents[i].Id);
+        for (const event of currentEvents) {
+          dbEventIdS.push(event.Id);
         }
 
-        var diff = allIDS.filter((item) => !eventIDs.includes(item));
+        let diffs = dbEventIdS.filter((item) => !apiEventIds.includes(item));
         // if inplayFromServer is true on old records and not available on last list.
         // update event status with 'CLOSED-INPLAYLIST'
         // Also update MarketIDs
-        for (let i = 0; i < diff.length; i++) {
-          console.log(
-            "Event is closed because it not exists on listEventsBySport: " +
-            diff[i]
-          );
+        for (const diff of diffs) {
+          console.log("Event is closed because it not exists on listEventsBySport: ", diff)
           await MarketIDS.updateMany(
-            {eventId: diff[i]},
+            {eventId: diff},
             {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}
           );
           await inPlayEvents.updateOne(
-            {Id: diff[i]},
+            {Id: diff},
             {
               $set: {
                 status: 'CLOSED-EVENTLIST',
@@ -313,9 +282,9 @@ function apiRequests() {
               },
             }
           );
-          io.emit("inplay", {eventID: diff[i], inplay: false});
+          io.emit("inplay", {eventID: diff, inplay: false});
           io.to("eventStatusChange").emit("event_status", {
-            eventId: diff[i],
+            eventId: diff,
             status: 'CLOSED-EVENTLIST',
           });
         }
