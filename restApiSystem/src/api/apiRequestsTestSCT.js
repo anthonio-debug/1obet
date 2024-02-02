@@ -178,7 +178,7 @@ function apiRequests() {
   async function eventsBySupportJobs(sportsId) {
     function isValidDate(d) {
       return new Date(d).toString() !== "Invalid Date";
-    } 
+    }
 
     let from = new Date();
     let to = new Date(from);
@@ -204,9 +204,9 @@ function apiRequests() {
         requestData,
         header
       );
-      
+
       let events = response.data.result;
-      
+
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
@@ -362,7 +362,7 @@ function apiRequests() {
       );
 
       const marketsData = response.data.result;
-      let marketStatus = 'PENDING'; 
+      let marketStatus = 'PENDING';
 
       if (marketsData.length > 0) {
         let marketIds = [];
@@ -430,17 +430,17 @@ function apiRequests() {
           });
 
           if (!marketID) {
-            const countOfMarket = await MarketIDS.countDocuments({ eventId: eventId, status: "OPEN" });
+            const countOfMarket = await MarketIDS.countDocuments({eventId: eventId, status: "OPEN"});
 
             if (
               countOfMarket >
-                (sportID === "1" 
+              (sportID === "1"
                 ? config.soccerEventsAllowedCount
                 : sportID === "2"
-                ? config.tennistEventsAllowedCount
-                : sportID === "4"
-                ? config.cricketEventsAllowedCount
-                : config.allSportsEventsAllowedCount)
+                  ? config.tennistEventsAllowedCount
+                  : sportID === "4"
+                    ? config.cricketEventsAllowedCount
+                    : config.allSportsEventsAllowedCount)
             ) {
               return;
             } else {
@@ -698,7 +698,7 @@ function apiRequests() {
     const requestData = {
       "filter": {
         "eventTypeIds": [sportID],
-        "maxResults": 40,
+        "maxResults": 200,
         "turnInPlayEnabled": true,
         "inPlayOnly": true,
       }
@@ -712,66 +712,67 @@ function apiRequests() {
       ).then(
         async (response) => {
           // Take last inplay list for events
-          const marketsData = response.data.result;
-          let eventIDs = [];
-          if (marketsData.length > 0) {
-            for (let i = 0; i < marketsData.length; i++) {
-              const event = marketsData[i];
-              eventIDs.push(event.event.id);
+          const events = response.data.result;
 
-              let ix = _.findIndex(removedInplayList, function (o) {
-                return o.Id == event.event.id;
-              });
-              if (ix !== -1) {
-                console.log("Event Inplay Value Problem:");
-                console.log(removedInplayList[ix]);
-                removedInplayList.splice(ix, 1);
-              }
+          if (events.length === 0) {
+            console.log('checkInPlay: api res is empty')
+            return
+          }
 
-              //update this events inplay status with data that was come from data provider.
-              await inPlayEvents.updateOne(
-                {Id: event.event.id},
-                {inplayFromServer: true, inplay: true}
-              );
+          let apiLiveEventIds = [];
+          for (const event of events) {
+            const eventId = event.event.id
+            apiLiveEventIds.push(eventId);
+
+            let ix = _.findIndex(removedInplayList, function (o) {
+              return o.id === eventId;
+            })
+            if (ix !== -1) {
+              console.log("Event InPlay Value Problem:");
+              console.log(removedInplayList[ix]);
+              removedInplayList.splice(ix, 1);
             }
-          } else {
-            console.log("List Empty");
-            return;
+
+            //update these events inplay status with data that was come from data provider.
+            await inPlayEvents.updateOne(
+              {Id: eventId},
+              {inplayFromServer: true, inplay: true}
+            );
           }
 
           // check old inplayFromServer true record. Match with new list.
-          let allIDS = [];
-          const currentEvents = await inPlayEvents.find(
-            {inplayFromServer: true, sportsId: sportID + ""},
+          let dbLiveEventIds = [];
+          const dbLiveEvents = await inPlayEvents.find(
+            {inplayFromServer: true, sportsId: `${sportID}`},
             {Id: 1}
           );
 
-          for (let i = 0; i < currentEvents.length; i++) {
-            allIDS.push(currentEvents[i].Id);
+          for (const event of dbLiveEvents) {
+            dbLiveEventIds.push(event.Id);
           }
 
-          let diff = allIDS.filter((item) => !eventIDs.includes(item));
+          let diffs = dbLiveEventIds.filter((item) => !apiLiveEventIds.includes(item));
           // if inplayFromServer is true on old records and not available on last list.
           // update event status with 'CLOSED-INPLAYLIST'
           // Also update MarketIDs
-          for (let i = 0; i < diff.length; i++) {
+          for (const diff of diffs) {
             let ix = _.findIndex(removedInplayList, function (o) {
-              return o.Id == diff[i];
+              return o.id === diff;
             });
 
             if (ix === -1) {
-              removedInplayList.push({id: diff[i], date: new Date()});
+              removedInplayList.push({id: diff, date: new Date()})
             }
 
-            console.log(
-              "Event is closed because it not exists on inplaylist: " + diff[i]
-            );
+            console.log(`Event is closed because it not exists on inplaylist: ${diff}`)
+
             await MarketIDS.updateMany(
-              {eventId: diff[i]},
+              {eventId: diff},
               {$set: {inPlay: false, status: "CLOSED", readyForScore: true}}
-            );
+            )
+
             await inPlayEvents.updateOne(
-              {Id: diff[i]},
+              {Id: diff},
               {
                 $set: {
                   status: "CLOSED-INPLAYLIST",
@@ -782,16 +783,16 @@ function apiRequests() {
               }
             );
 
-            io.emit("inplay", {eventID: diff[i], inplay: false});
+            io.emit("inplay", {eventID: diff, inplay: false});
 
             io.to("eventStatusChange").emit("event_status", {
-              eventId: diff[i],
+              eventId: diff,
               status: "CLOSED-INPLAYLIST",
             });
           }
         },
         (error) => {
-          console.log('checkInPlay', error)
+          console.error('checkInPlay', error)
         }
       );
     } catch (error) {
