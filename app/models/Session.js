@@ -19,7 +19,7 @@ let sessionSchema = new Schema({
 sessionSchema.plugin(Global.aggregatePaginate);
 sessionSchema.plugin(Global.paginate);
 sessionSchema.pre('save', function (next) {
-  var now = new Date().getTime();
+  const now = new Date().getTime();
   if (!this.createdAt) {
     this.createdAt = now;
     this.updatedAt = now;
