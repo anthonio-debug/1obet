@@ -93,7 +93,7 @@ async function updateCricketData(req, res) {
         const sessionNo = calculateSessionNo(type, currentOver, inning)
         await Session.findOneAndUpdate(
           {
-            eventId: eventId,
+            eventId: parseInt(eventId),
             sessionNo: sessionNo,
           },
           {
