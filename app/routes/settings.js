@@ -2233,6 +2233,10 @@ const getWaitingBetsForManuel = async (req, res) => {
       const parent = await User.findOne({ userId: u1?.createdBy }, { userName: 1 });
       item.userName = u1 ? u1.userName : null;
       item.parentName   = parent ? parent.userName : null;
+      if (item.betSession !== null) {
+        const session = await Session.findOne({sessionNo: Number(item.betSession), eventId: Number(item.eventId)})
+        item.session = session
+      }
       groups[main_group_key].bets.push(item);
       // }
     }
