@@ -85,7 +85,7 @@ async function updateCricketData(req, res) {
       );
       const eventId = cricketScore.eventId
       if (eventId) {
-        const over = cricketScore.score1
+        const over = cricketScore.over1
         const currentBall = parseInt(over.split(".")[1])
         if (currentBall === 0 || currentBall === '0') {
           const score = cricketScore.score1
