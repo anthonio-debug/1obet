@@ -88,7 +88,7 @@ async function updateCricketData(req, res) {
         const score = cricketScore.score1
         let currentScore = parseInt(score.split("/")[0])
         const sessionNo = calculateSessionNo(cricketScore)
-        const apiScoreRes = getCricketScore(eventId)
+        const apiScoreRes = await getCricketScore(eventId)
         const apiScore = apiScoreRes?.data?.current_score?.split('-')[0]
         await Session.findOneAndUpdate(
           {
