@@ -149,7 +149,7 @@ const stopbetStatusChecker = async (id) => {
         "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed",
         "rain", "suspend", "delay", "pitch", "plood", "bowled", "injured",
         "rain stops play", "bowling review", "stumped", "Run Out Check",
-        "Bowling Review", "Catch Check", "No Ball Check", "LBW Check", "Catch Check"];
+        "Bowling Review", "Catch Check", "No Ball Check", "LBW Check", "Catch Check", "Caught Out"];
         const regexPattern = new RegExp(stopbetStatus.map(word => `\\b${word.replace(/\s+/g, '\\s+')}\\b`).join('|'), 'i');
         if (regexPattern.test(result)){
             return 400
