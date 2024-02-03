@@ -185,12 +185,342 @@ async function getCricketScore(req, res) {
 }
 }
 
+async function testAPI(req, res) {
+  const marketId = req.params.marketId;
+
+  try {
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const requestData = {
+      "marketIds": [marketId]
+      // "maxResults": 100,
+      // "maxResults": 100,
+      // "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
+    }
+    var url = `${sportsAPIUrl}/listMarketCatalogue`;
+
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+
+    const marketsData = response.data;
+
+    res.status(200).json({success: true, data: marketsData});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
+async function getMarketsByEventId(req, res) {
+  const eventId = req.params.eventId;
+
+  try {
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const requestData = {
+      "filter": {
+        eventIds: [eventId]
+      },
+      "maxResults": 200,
+      "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
+    }
+    var url = `${sportsAPIUrl}/listMarketCatalogue`;
+
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+
+    const marketsData = response.data;
+
+    res.status(200).json({success: true, data: marketsData});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
+async function getEventsBySportsId(req, res) {
+  const sportsId = req.params.sportsId;
+
+  try {
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const requestData = {
+      "filter": {
+        eventTypeIds: [sportsId]
+      },
+    }
+    var url = `${sportsAPIUrl}/listEvents`;
+
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+
+    const marketsData = response.data;
+
+    res.status(200).json({success: true, data: marketsData});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
+async function getOddsByMarketId(req, res) {
+  const marketId = req.params.marketId;
+
+  try {
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const requestData = {
+      "marketIds": [marketId]
+    }
+    var url = `${sportsAPIUrl}/listMarketBook`;
+
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+
+    const marketsData = response.data;
+
+    res.status(200).json({success: true, data: marketsData});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
+async function getMarketType(req, res) {
+  try {
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const requestData = {
+      "filter": {
+        eventIds: []
+      }
+    }
+    var url = `${sportsAPIUrl}/listMarketTypes`;
+
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+    const marketsData = response.data;
+
+    res.status(200).json({success: true, data: marketsData});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
+async function getOddsByMultiMarketId(req, res) {
+  const eventId = req.params.eventId;
+
+  try {
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const requestData = {
+      "filter": {
+        eventIds: [eventId]
+      },
+      "maxResults": 10,
+      "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
+    }
+    var url = `${sportsAPIUrl}/listMarketCatalogue`;
+
+    const marketResponse = await axios.post(
+      url,
+      requestData,
+      header
+    );
+
+    let marketIds = [];
+    for (let i = 0; i < marketResponse?.data?.result?.length; i ++) {
+      marketIds.push(marketResponse?.data?.result[i].marketId + "")
+    }
+
+    const oddsRequestData = {
+      "marketIds": marketIds
+    }
+    var oddsUrl = `${sportsAPIUrl}/listMarketBook`;
+
+    const oddsResponse = await axios.post(
+      oddsUrl,
+      oddsRequestData,
+      header
+    );
+
+    const marketsData = oddsResponse?.data?.result;
+
+    res.status(200).json({success: true, data: marketsData});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
+async function getTodayEventsBySportsId(req, res) {
+  try {
+    let sportsId = req.params.sportsId
+    var now = new Date();  // Get the current date and time
+    var startOfDay = new Date(now);
+    startOfDay.setHours(0, 0, 0, 0);
+    var startOfDayTimestamp = startOfDay.getTime();
+
+    var endOfDay = new Date(now);
+    endOfDay.setHours(23, 59, 59, 999);
+    var endOfDayTimestamp = endOfDay.getTime();
+
+    const events = await inPlayEvents.find(
+      {
+        sportsId: sportsId,
+        status: "OPEN",
+        openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
+      },
+      {
+        _id: 1,
+        Id: 1,
+        name: 1,
+        openDate: { $toDate: "$openDate" }
+      }
+    );
+
+    let data = [];
+
+    for (let k = 0; k < events?.length; k ++) {
+      data.push({
+        _id: events[k]._id,
+        Id: events[k].Id,
+        name: events[k].name,
+        openDate: new Date(events[k].openDate)
+      })
+    }
+    res.status(200).json({success: true, data: data});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
+async function getMarketsByMarketType(req, res) {
+  const eventId = req.params.eventId;
+  const marketTypes = req.params.marketTypes?.split(",");
+
+  try {
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header =  {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    let requestData
+
+    if (marketTypes?.length > 0) {
+      requestData = {
+        "filter": {
+          eventIds: [eventId],
+          marketTypes: marketTypes
+        },
+        "maxResults": 100,
+        "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
+      }
+    } else {
+      requestData = {
+        "filter": {
+          eventIds: [eventId],
+        },
+        "maxResults": 10,
+        "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
+      }
+    }
+
+    console.log("---------------------->", requestData)
+    var url = `${sportsAPIUrl}/listMarketCatalogue`;
+
+    const marketResponse = await axios.post(
+      url,
+      requestData,
+      header
+    );
+
+    const marketsData = marketResponse?.data?.result;
+
+    res.status(200).json({success: true, data: marketsData});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
+async function getFanciesByEventId(req, res) {
+  const eventId = req.params.eventId;
+  try {
+    const url = `http://142.93.36.1/api/v1/listMarketBookSession?event_id=${eventId}`
+    const response = await axios.get(url);
+
+    res.status(200).json({success: true, data: response?.data?.result});
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+  }
+}
+
 router.get('/track-score/get-cricketscore', getCricketScore)
 router.get('/testSports/events', listEvents);
 router.get('/testSports/marketbooks/:ids', listMarketBook);
 router.get('/trackstuck/activeusers', activeUserExposure);
 router.get('/trackstuck/inactiveusers', inActiveUserExposure);
 router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
+
+router.get('/track-bet/testAPI/:marketId', testAPI)
+router.get('/track-bet/get-markets/:eventId', getMarketsByEventId)
+router.get('/track-bet/get-events/:sportsId', getEventsBySportsId)
+router.get('/track-bet/get-today-events/:sportsId', getTodayEventsBySportsId)
+router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
+router.get('/track-bet/get-odds-multi-marketids/:eventId', getOddsByMultiMarketId)
+router.get('/track-bet/get-markettype', getMarketType)
+router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByMarketType)
+router.get('/track-bet/get-market-bet-session/:eventId', getFanciesByEventId)
+
 
 module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore};
 
