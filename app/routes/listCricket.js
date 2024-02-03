@@ -182,6 +182,6 @@ async function editSoccer(req, res) {
 router.get("/listCricket", listCricket);
 router.post("/editCricket", editCricket);
 router.get("/list-soccer", listSoccer);
-router.get("/edit-soccer", editSoccer);
+router.post("/edit-soccer", editSoccer);
 
 module.exports = {router};
