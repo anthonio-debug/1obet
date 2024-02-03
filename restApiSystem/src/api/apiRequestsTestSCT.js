@@ -75,16 +75,23 @@ function apiRequests() {
 
         if (event_information) {
           let cricket = null
-          if (event_information.seriesKey) {
-            cricket = await Crickets.findOne({
-              seriesKey: event_information.seriesKey
-            })
-          }
-          if (event_information.sportsId == 4) {
+          let soccer = null
+          if (event_information.sportsId === '4') {
             const fancyEvents = await FancyEvent.findOne({
               eventId: channel.substring(1),
             });
             socket.emit("fancy_event_list", fancyEvents);
+          }
+          if (event_information.seriesKey) {
+            if (event_information.sportsId === '4') {
+              cricket = await Crickets.findOne({
+                seriesKey: event_information.seriesKey
+              })
+            } else if (event_information.sportsId === '1') {
+              soccer = await Score.findOne({
+                scoreKey: event_information.seriesKey
+              })
+            }
           }
 
           const lastScore = await Score.find({eventId: channel.substring(1)})
@@ -113,7 +120,7 @@ function apiRequests() {
             if (lOdds.length > 0)
               event_information.marketIds[index].last_odds = lOdds[0];
           }
-          socket.emit("event_info", {...JSON.parse(JSON.stringify(event_information)), cricket});
+          socket.emit("event_info", {...JSON.parse(JSON.stringify(event_information)), cricket, soccer});
         } else {
           socket.emit("err", "Event Not Exist");
         }
