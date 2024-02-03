@@ -4,6 +4,7 @@ const cricketRouter = express.Router();
 const Crickets = require('../models/Crickets')
 const Session = require("../models/Session");
 const {calculateSessionNo} = require("../../helper/cricket");
+const {getCricketScore} = require("../../helper/hybridApiHelper");
 
 const convertSchema = (entity) => {
   const overs = entity.overs || [];
@@ -87,6 +88,8 @@ async function updateCricketData(req, res) {
         const score = cricketScore.score1
         let currentScore = parseInt(score.split("/")[0])
         const sessionNo = calculateSessionNo(cricketScore)
+        const apiScoreRes = getCricketScore(eventId)
+        const apiScore = apiScoreRes?.data?.current_score?.split('-')[0]
         await Session.findOneAndUpdate(
           {
             eventId: parseInt(eventId),
@@ -95,6 +98,7 @@ async function updateCricketData(req, res) {
           {
             $set: {
               scrap_session_score: `${currentScore}`,
+              api_session_score: `${apiScore}`,
             },
           }
         );

@@ -55,4 +55,16 @@ async function getFancyMarketList(eventId) {
     return []
   }
 }
-module.exports = {getFancyOdds, getBookmakerOdds, getBookmakerMarketList, getFancyMarketList}
+
+async function getCricketScore(eventId) {
+  try {
+    // const eventId = 32980846
+    const response = await axios.get(`http://167.99.198.2/api/matches/score/${eventId}`)
+    return  response.data
+  } catch (err) {
+    console.error('getCricketScore: ', err)
+    return {}
+  }
+}
+
+module.exports = {getFancyOdds, getBookmakerOdds, getBookmakerMarketList, getFancyMarketList, getCricketScore}
