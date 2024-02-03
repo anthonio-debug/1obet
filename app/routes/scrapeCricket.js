@@ -85,23 +85,27 @@ async function updateCricketData(req, res) {
       );
       const eventId = cricketScore.eventId
       if (eventId) {
-        const score = cricketScore.score1
-        let currentScore = parseInt(score.split("/")[0])
-        const sessionNo = calculateSessionNo(cricketScore)
-        const apiScoreRes = await getCricketScore(eventId)
-        const apiScore = apiScoreRes?.data?.current_score?.split('-')[0]
-        await Session.findOneAndUpdate(
-          {
-            eventId: parseInt(eventId),
-            sessionNo: sessionNo,
-          },
-          {
-            $set: {
-              scrap_session_score: `${currentScore}`,
-              api_session_score: `${apiScore}`,
+        const over = cricketScore.score1
+        const currentBall = parseInt(over.split(".")[1])
+        if (currentBall === 0 || currentBall === '0') {
+          const score = cricketScore.score1
+          let currentScore = parseInt(score.split("/")[0])
+          const sessionNo = calculateSessionNo(cricketScore)
+          const apiScoreRes = await getCricketScore(eventId)
+          const apiScore = apiScoreRes?.data?.current_score?.split('-')[0]
+          await Session.findOneAndUpdate(
+            {
+              eventId: parseInt(eventId),
+              sessionNo: sessionNo,
             },
-          }
-        );
+            {
+              $set: {
+                scrap_session_score: `${currentScore}`,
+                api_session_score: `${apiScore}`,
+              },
+            }
+          );
+        }
       }
 
       res.status(200).json({
