@@ -12,7 +12,7 @@ async function updateSoccerScore(req, res) {
   })
 
   if (type === 'live') {
-    io.emit('score', entities)
+    io.emit('soccer_score', entities)
   }
 
   try {
@@ -20,7 +20,7 @@ async function updateSoccerScore(req, res) {
       for (const item of entities) {
         await Score.findOneAndUpdate(
           {scoreKey: item.scoreKey},
-          {$set: {data: item}},
+          {$set: {data: item, sportsId: '1'}},
           {upsert: true, new: false, setDefaultsOnInsert: true}
         );
       }
@@ -32,7 +32,7 @@ async function updateSoccerScore(req, res) {
       for (const item of entities) {
         await Score.findOneAndUpdate(
           {scoreKey: item.seriesKey},
-          {$set: {data: item}},
+          {$set: {data: item, sportsId: '1'}},
           {upsert: true, new: true, setDefaultsOnInsert: true}
         );
       }

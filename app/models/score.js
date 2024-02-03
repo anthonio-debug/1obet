@@ -12,6 +12,11 @@ const scoreSchema = new Schema({
     required: false,
     index: true,
   },
+  sportsId: {
+    type: String,
+    required: false,
+    index: true,
+  },
   data: {
     type: Schema.Types.Mixed,
     required: false,
