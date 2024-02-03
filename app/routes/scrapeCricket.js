@@ -32,6 +32,7 @@ const convertSchema = (entity) => {
       overScore: lastOver.total,
       team1Flag: entity.team1Flag,
       team2Flag: entity.team2Flag,
+      inning: entity.inning,
       dayno: "",
       isfinished: "0",
       comment: entity.comment || "",
