@@ -20,7 +20,7 @@ async function updateSoccerScore(req, res) {
       for (const item of entities) {
         await Score.findOneAndUpdate(
           {scoreKey: item.scoreKey},
-          {$set: {data: item, sportsId: '1'}},
+          {$set: {data: item, sportsId: '1', scoreKey: item.seriesKey}},
           {upsert: true, new: false, setDefaultsOnInsert: true}
         );
       }
@@ -32,7 +32,7 @@ async function updateSoccerScore(req, res) {
       for (const item of entities) {
         await Score.findOneAndUpdate(
           {scoreKey: item.seriesKey},
-          {$set: {data: item, sportsId: '1'}},
+          {$set: {data: item, sportsId: '1', scoreKey: item.seriesKey}},
           {upsert: true, new: true, setDefaultsOnInsert: true}
         );
       }
