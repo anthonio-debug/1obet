@@ -197,6 +197,8 @@
   "admin-dashboard",
   "listCricket",
   "editCricket",
+  "list-soccer",
+  "edit-soccer",
   "updatemarketstatus",
   "eventsapicalls",
   "update-market-status-in-play",
