@@ -87,7 +87,7 @@ function apiRequests() {
               cricket = await Crickets.findOne({
                 seriesKey: event_information.seriesKey
               })
-            } else if (event_information.sportsId === '1') {
+            } else if (event_information.sportsId === '1' || event_information.sportsId === '2') {
               soccer = await Score.findOne({
                 scoreKey: event_information.seriesKey
               })
