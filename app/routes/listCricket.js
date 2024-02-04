@@ -110,6 +110,9 @@ async function listSoccer(req, res) {
   // .sort({ state: 'live', timestamp: -1 })
   Score.aggregate([
     {
+      $match: { "data.openTime": {$ne: 'FT'} } // Match bets for the specific user
+    },
+    {
       $addFields: {
         sortField: {
           $switch: {
