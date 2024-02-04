@@ -86,9 +86,13 @@ async function updateCricketData(req, res) {
       );
       const eventId = cricketScore.eventId
       if (eventId) {
+        const type = cricketScore.type
+        let divider = 5
+        if (type === 'TEST') divider = 10
         const over = cricketScore.over1
+        const currentOver = parseInt(over.split(".")[0])
         const currentBall = parseInt(over.split(".")[1])
-        if (currentBall === 0 || currentBall === '0') {
+        if (((currentOver % divider) === 0) && (currentBall === 0 || currentBall === '0')) {
           const score = cricketScore.score1
           let currentScore = parseInt(score.split("/")[0])
           const sessionNo = calculateSessionNo(cricketScore)
