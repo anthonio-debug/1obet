@@ -25,6 +25,8 @@ const ToolForResult = require("./restApiSystem/src/tools_for_result")();
 const ToolForScraper = require("./restApiSystem/src/tools_for_scraper")();
 // const SocketHandler = require('./restApiSystem/src/services/socketHandler')()
 
+global.cricketScraperLastupdate = new Date().getTime()
+
 express.use(require('express').json());
 express.use(morgan("dev"));
 

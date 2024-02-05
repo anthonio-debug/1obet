@@ -62,24 +62,30 @@ function ToolForScraper() {
 
   async function fetchCricketScoreFromApi() {
     try {
-      const cricketScoreSourceSetting = await Settings.findOne({
-        settingKey: 'CRICKET_SCORECARD_SOURCE'
-      })
-      if (cricketScoreSourceSetting?.settingValue === 'API') {
-        let inPlayEventList = await inPlayEvents.find({
-          sportsId: '4', isShowed: true,
-          hasFancy: true,
-          CompanySetStatus: "OPEN",
-          status: 'OPEN',
-          inplay: true,
-        }, {Id: 1}).exec();
-        for (const event of inPlayEventList) {
-          const eventId = event.Id
-          let cricketScore = await getCricketScore(eventId)
-          const score = convertSchema(cricketScore, eventId)
-          io.to('#' + eventId).emit('cricket_score', score);
+      const nowTimeStamp = new Date().getTime()
+      const needApiScore = (nowTimeStamp - global.cricketScraperLastupdate) > 5 * 60 * 1000
+      if (!needApiScore) {
+        const cricketScoreSourceSetting = await Settings.findOne({
+          settingKey: 'CRICKET_SCORECARD_SOURCE'
+        })
+        if (cricketScoreSourceSetting?.settingValue !== 'API') {
+          return
         }
       }
+      let inPlayEventList = await inPlayEvents.find({
+        sportsId: '4', isShowed: true,
+        hasFancy: true,
+        CompanySetStatus: "OPEN",
+        status: 'OPEN',
+        inplay: true,
+      }, {Id: 1}).exec();
+      for (const event of inPlayEventList) {
+        const eventId = event.Id
+        let cricketScore = await getCricketScore(eventId)
+        const score = convertSchema(cricketScore, eventId)
+        io.to('#' + eventId).emit('cricket_score', score);
+      }
+
     } catch (error) {
       console.error("Error fetchCricketScoreFromApi:", error);
     } finally {

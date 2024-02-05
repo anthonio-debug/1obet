@@ -65,6 +65,14 @@ async function updateCricketData(req, res) {
     }
   }
 
+  if (type === 'alive') {
+    global.cricketScraperLastupdate = new Date().getTime()
+    return res.status(200).json({
+      success: true,
+      message: 'updated last update ',
+    });
+  }
+
   try {
     if (type === 'matches') {
       for (const item of entities) {
@@ -74,7 +82,7 @@ async function updateCricketData(req, res) {
           {upsert: true, new: false, setDefaultsOnInsert: true}
         );
       }
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: 'updated matches ',
       });
@@ -113,12 +121,12 @@ async function updateCricketData(req, res) {
         }
       }
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         message: 'updated matches ',
       });
     } else {
-      res.status(200).json({
+      return res.status(200).json({
         success: false,
         message: 'incorrect filed',
       });
@@ -126,7 +134,7 @@ async function updateCricketData(req, res) {
 
   } catch (error) {
     console.error(error);
-    res.status(200).json({
+    return res.status(200).json({
       success: false,
       message: 'Failed to update cricket data ',
       error: error.message,
