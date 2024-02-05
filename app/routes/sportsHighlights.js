@@ -30,7 +30,7 @@ async function getAllSportsHighlight(req, res) {
         $match: {
           $expr: {
             $or: [
-              { $eq: ["$inPlay", true] }, // If inPlay is true, this part always evaluates to true, bypassing the date filter
+              { $eq: ["$inplay", true] }, // If inPlay is true, this part always evaluates to true, bypassing the date filter
               {
                 $and: [
                   { $gte: ["$openDate", startOfDayTimestamp] },
