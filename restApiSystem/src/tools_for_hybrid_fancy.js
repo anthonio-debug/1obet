@@ -117,6 +117,13 @@ function ToolForHybridFancy() {
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.market?.name === 'BOOKMAKER') {
               bookmakerMarketIds.push(market?.market?.id)
+              let runners = []
+              for (const runner of market.runners) {
+                runners.push({
+                  SelectionId: runner.id,
+                  runnerName: runner.name,
+                })
+              }
               await MarketIDS.findOneAndUpdate(
                 {
                   eventId: eventId,
@@ -127,7 +134,7 @@ function ToolForHybridFancy() {
                   marketName: market.market.name,
                   sportID: 4,
                   status: market.market.status,
-                  runners: market.runners,
+                  runners: runners,
                   inPlay: true
                 },
                 {upsert: true, new: true, setDefaultsOnInsert: true}
