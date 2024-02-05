@@ -2696,6 +2696,7 @@ async function getSetting(req, res) {
       })
       return res.send({
         status: true,
+        kind,
         results: setting,
       })
     }
