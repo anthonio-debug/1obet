@@ -2665,7 +2665,28 @@ async function  eventListByMarketIds(req, res) {
   }
 
 }
- 
+
+async function  updateSetting(req, res) {
+  try {
+    const {kind, settingKey, settingValue} = req.body
+    if (kind === 'CRICKET_SCORECARD_SOURCE') {
+      await Settings.findOneAndUpdate({
+        settingKey,
+      }, {
+        settingKey, settingValue
+      }, {upsert: true, new: true, setDefaultsOnInsert: true})
+    }
+
+    return res.send({
+      status: true,
+      message: "Updated successfully",
+    })
+  } catch (error) {
+    console.log(`Error ${error}`);
+    return res.send({ status: false, message: `Something went wrong ${error}` });
+  }
+}
+
 loginRouter.post(
   "/updateDefaultTheme",
   settingsValidation.validate("updateDefaultTheme"),
@@ -2682,11 +2703,7 @@ loginRouter.post(
   addTermsAndConditions
 );
 router.get("/GetAllTermsAndConditions", GetAllTermsAndConditions);
-loginRouter.post(
-  "/addPrivacyPolicy",
-  settingsValidation.validate("addPrivacyPolicy"),
-  addPrivacyPolicy
-);
+loginRouter.post("/addPrivacyPolicy", settingsValidation.validate("addPrivacyPolicy"), addPrivacyPolicy);
 router.get("/GetAllPrivacyPolicy", GetAllPrivacyPolicy);
 loginRouter.post(
   "/updateDefaultExchange",
@@ -2748,7 +2765,6 @@ loginRouter.post("/setSessionScore", setSessionScore);
 loginRouter.post("/cancelSingleBet", cancelSingleBet);
 router.get("/removeOdds/:id", removeOdds);
 router.get("/eventListByMarketIds/:sportsId", eventListByMarketIds);
-
-
+loginRouter.post("/update-setting", updateSetting);
 
 module.exports = { loginRouter, router, listOddsAPI };
