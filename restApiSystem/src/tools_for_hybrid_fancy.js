@@ -117,6 +117,22 @@ function ToolForHybridFancy() {
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.market?.name === 'BOOKMAKER') {
               bookmakerMarketIds.push(market?.market?.id)
+              await MarketIDS.findOneAndUpdate(
+                {
+                  eventId: eventId,
+                  marketId: market.market.id,
+                }, {
+                  eventId: eventId,
+                  marketId: market.market.id,
+                  marketName: market.market.name,
+                  sportID: 4,
+                  status: market.market.status,
+                  runners: market.runners,
+                  inPlay: true
+                },
+                {upsert: true, new: true, setDefaultsOnInsert: true}
+              );
+
             }
           }
           let fancyOdds = await getFancyOdds(fancyMarketIds)
