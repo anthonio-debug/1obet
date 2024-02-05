@@ -7,6 +7,8 @@ let Global = require('../global/settings');
 let settingsSchema = new Schema({
   defaultThemeName: { type: String, required: false },
   defaultLoginPage: { type: String, required: false },
+  settingKey: { type: String, required: false, index: true},
+  settingValue: { type: String, required: false },
   updatedAt: { type: Number },
   createdAt: { type: Number },
 });
@@ -15,7 +17,7 @@ settingsSchema.plugin(Global.aggregatePaginate);
 settingsSchema.plugin(Global.paginate);
 
 settingsSchema.pre('save', function (next) {
-  var now = new Date().getTime();
+  const now = new Date().getTime();
   if (!this.createdAt) {
     this.createdAt = now;
     this.updatedAt = now;
