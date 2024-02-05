@@ -2666,15 +2666,38 @@ async function  eventListByMarketIds(req, res) {
 
 }
 
-async function  updateSetting(req, res) {
+async function updateSetting(req, res) {
   try {
     const {kind, settingKey, settingValue} = req.body
-    if (kind === 'CRICKET_SCORECARD_SOURCE') {
+    if (kind === 'UPDATE_CRICKET_SCORECARD') {
       await Settings.findOneAndUpdate({
         settingKey,
       }, {
         settingKey, settingValue
       }, {upsert: true, new: true, setDefaultsOnInsert: true})
+    }
+
+    return res.send({
+      status: true,
+      message: "Updated successfully",
+    })
+  } catch (error) {
+    console.log(`Error ${error}`);
+    return res.send({ status: false, message: `Something went wrong ${error}` });
+  }
+}
+
+async function getSetting(req, res) {
+  try {
+    const {kind, settingKey, settingValue} = req.body
+    if (kind === 'GET_CRICKET_SCORECARD') {
+      const setting = await Settings.findOne({
+        settingKey,
+      })
+      return res.send({
+        status: true,
+        results: setting,
+      })
     }
 
     return res.send({
@@ -2766,5 +2789,6 @@ loginRouter.post("/cancelSingleBet", cancelSingleBet);
 router.get("/removeOdds/:id", removeOdds);
 router.get("/eventListByMarketIds/:sportsId", eventListByMarketIds);
 loginRouter.post("/update-setting", updateSetting);
+loginRouter.post("/get-setting", getSetting);
 
 module.exports = { loginRouter, router, listOddsAPI };

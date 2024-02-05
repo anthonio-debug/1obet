@@ -208,5 +208,6 @@
   "updateEventMarketstatus",
   "activate-event",
   "update-setting",
+  "get-setting",
   "updateEventStatus"
 ]
