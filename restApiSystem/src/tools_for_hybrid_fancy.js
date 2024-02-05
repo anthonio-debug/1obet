@@ -108,10 +108,12 @@ function ToolForHybridFancy() {
           let bookmakerMarketList = await getBookmakerMarketList(eventId)
           let fancyMarketIds = []
           let bookmakerMarketIds = []
+          let fancyIndex = 0
           for (const [index, market] of fancyMarketList.entries()) {
-            // if (index > 100) continue
+            if (fancyIndex > 100) continue
             if (market?.market?.status !== 'CLOSED') {
               fancyMarketIds.push(market?.market?.id)
+              fancyIndex++
             }
           }
           for (const [index, market] of bookmakerMarketList.entries()) {
