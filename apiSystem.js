@@ -19,10 +19,11 @@ const ToolForRacing = require("./restApiSystem/src/tools_for_updated_racing.js")
 // const ToolForFancy = require("./restApiSystem/src/tools_for_fancy.js")();
 const ToolForHybridFancy = require("./restApiSystem/src/tools_for_hybrid_fancy.js")();
 const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
-const ToolForTestSport = require("./restApiSystem/src/tools_for_test_sport.js")();
+// const ToolForTestSport = require("./restApiSystem/src/tools_for_test_sport.js")();
 const ToolForListEvent = require("./restApiSystem/src/tools_for_list_events.js")();
 const ToolForResult = require("./restApiSystem/src/tools_for_result")();
-const SocketHandler = require('./restApiSystem/src/services/socketHandler')()
+const ToolForScraper = require("./restApiSystem/src/tools_for_scraper")();
+// const SocketHandler = require('./restApiSystem/src/services/socketHandler')()
 
 express.use(require('express').json());
 express.use(morgan("dev"));
@@ -82,7 +83,7 @@ async function main() {
   await inPlayEvents.updateMany({}, { inplay: false, inplayFromServer: false });
 
   /* socket handler */
-  SocketHandler.init(io, express)
+  // SocketHandler.init(io, express)
 
   /*init events jobs for cricket, tennis and soccer*/
   ToolForRacing.init(io, express);
@@ -98,6 +99,8 @@ async function main() {
 
   /*init events list*/
   ToolForResult.init(io, express);
+
+  ToolForScraper.init(io, express);
 
   // init test sports odd
   // ToolForTestSport.init(io, express);
