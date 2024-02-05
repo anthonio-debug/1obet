@@ -28,11 +28,18 @@ async function getAllSportsHighlight(req, res) {
     const sportsHighlights = await inPlayEvents.aggregate([
       {
         $match: {
+          $expr: {
+            $or: [
+              { $eq: ["$inPlay", true] }, // If inPlay is true, this part always evaluates to true, bypassing the date filter
+              {
+                $and: [
+                  { $gte: ["$openDate", startOfDayTimestamp] },
+                  { $lt: ["$openDate", endOfDayTimestamp] }
+                ]
+              }
+            ]
+          },
           sportsId: sportId,
-          openDate: {
-            $gte: startOfDayTimestamp,
-            $lt: endOfDayTimestamp
-          }
         }
       },
       {

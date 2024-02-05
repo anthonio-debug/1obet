@@ -83,6 +83,7 @@ async function updateCricketData(req, res) {
         {seriesKey: entities.seriesKey},
         entities,
         {upsert: true, new: true, setDefaultsOnInsert: true}
+
       );
       const eventId = cricketScore.eventId
       if (eventId) {
