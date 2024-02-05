@@ -13,7 +13,7 @@ async function getFancyOdds(marketIds) {
     // console.log('hybrid fancy odd list: ', JSON.stringify(res.data))
     return res.data || []
   } catch (error) {
-    console.error('An error occurred:', error?.data || error.message || error);
+    console.error('An error occurred getFancyOdds:', error?.data || error.message || error, marketIds);
     return []
   }
 }
@@ -51,7 +51,7 @@ async function getFancyMarketList(eventId) {
     // console.log('hybrid fancy event list: ', JSON.stringify(res.data))
     return res.data || []
   } catch (error) {
-    console.error('An error occurred:', error?.data || error.message || error)
+    console.error('An error occurred getFancyMarketList:', error?.data || error.message || error)
     return []
   }
 }
