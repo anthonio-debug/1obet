@@ -63,7 +63,8 @@ function ToolForScraper() {
   async function fetchCricketScoreFromApi() {
     try {
       const nowTimeStamp = new Date().getTime()
-      const needApiScore = (nowTimeStamp - global.cricketScraperLastupdate) > 5 * 60 * 1000
+      // const needApiScore = (nowTimeStamp - global.cricketScraperLastupdate) > 5 * 60 * 1000
+      const needApiScore = true
       if (!needApiScore) {
         const cricketScoreSourceSetting = await Settings.findOne({
           settingKey: 'CRICKET_SCORECARD_SOURCE'
