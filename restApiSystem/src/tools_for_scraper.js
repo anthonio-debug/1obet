@@ -79,6 +79,14 @@ function ToolForScraper() {
           return
         }
       }
+      /* temp code start */
+      const cricketScoreSourceSetting = await Settings.findOne({
+        settingKey: 'CRICKET_SCORECARD_SOURCE'
+      })
+      if (cricketScoreSourceSetting?.settingValue !== 'API') {
+        return
+      }
+      /* temp code end */
       let inPlayEventList = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
         CompanySetStatus: "OPEN",
@@ -90,8 +98,8 @@ function ToolForScraper() {
         const eventId = event.Id
         let cricketScore = await getCricketScore(eventId)
         const score = convertSchema(cricketScore, eventId)
-        io.to('#' + eventId).emit('cricket_score', score);
-        // io.emit('cricket_score', score);
+        // io.to('#' + eventId).emit('cricket_score', score);
+        io.emit('cricket_score', score);
       }
 
     } catch (error) {
