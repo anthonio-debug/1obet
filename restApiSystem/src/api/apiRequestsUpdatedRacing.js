@@ -295,10 +295,10 @@ function apiRequests() {
             continue;
           }
 
-          if (existingDoc && existingDoc.inplayFromServer != events[k].event.inplay) {
-            // console.log(existingDoc);
-            // console.log(event.inplay);
-          }
+          // if (existingDoc && existingDoc.inplayFromServer != events[k].event.inplay) {
+          //   // console.log(existingDoc);
+          //   // console.log(event.inplay);
+          // }
 
           await InPlayEvents.findOneAndUpdate(
             {Id: events[k].event.id},
@@ -348,10 +348,7 @@ function apiRequests() {
         let diff = allIDS.filter((item) => !eventIDs.includes(item));
 
         for (let i = 0; i < diff.length; i++) {
-          console.log(
-            "Event is closed because it not exists on listEventsBySport: " +
-            diff[i]
-          );
+          console.log(`Event is closed because it not exists on listEventsBySport: ${diff[i]}`);
           await MarketIDS.updateMany(
             {eventId: diff[i]},
             {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}

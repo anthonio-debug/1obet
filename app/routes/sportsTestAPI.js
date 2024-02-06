@@ -4,130 +4,132 @@ const Users = require("../models/user")
 const axios = require('axios');
 const User = require('../models/user');
 const router = express.Router();
-const apiURL= "http://185.58.225.212:8080/api/"
+const apiURL = "http://185.58.225.212:8080/api/"
+const apiSystemRacing = require("../../restApiSystem/src/tools_for_updated_racing.js")();
+require('dotenv').config()
 
 async function listEvents(req, res) {
-    try {
-        const body = {
-            "filter": {
-              "textQuery": "string",
-              "eventTypeIds": [
-                "string"
-              ],
-              "eventIds": [
-                "string"
-              ],
-              "competitionIds": [
-                "string"
-              ],
-              "marketIds": [
-                "string"
-              ],
-              "venues": [
-                "string"
-              ],
-              "bspOnly": true,
-              "turnInPlayEnabled": true,
-              "inPlayOnly": true,
-              "countryCodes": [
-                "string"
-              ],
-              "marketTypes": [
-                "string"
-              ],
-              "timeRange": {
-                "from": "2023-11-30T17:01:35.720Z",
-                "to": "2023-11-30T17:01:35.720Z"
-              }
-            }
-          }
-        const response = await axios.post(`${apiURL}/listEvents`, body)
-        res.status(200).json({success: true, data: response})
-    } catch (err) {
-        res.status(500).json({success:false, msg: "Failed to get events"})
+  try {
+    const body = {
+      "filter": {
+        "textQuery": "string",
+        "eventTypeIds": [
+          "string"
+        ],
+        "eventIds": [
+          "string"
+        ],
+        "competitionIds": [
+          "string"
+        ],
+        "marketIds": [
+          "string"
+        ],
+        "venues": [
+          "string"
+        ],
+        "bspOnly": true,
+        "turnInPlayEnabled": true,
+        "inPlayOnly": true,
+        "countryCodes": [
+          "string"
+        ],
+        "marketTypes": [
+          "string"
+        ],
+        "timeRange": {
+          "from": "2023-11-30T17:01:35.720Z",
+          "to": "2023-11-30T17:01:35.720Z"
+        }
+      }
     }
+    const response = await axios.post(`${apiURL}/listEvents`, body)
+    res.status(200).json({success: true, data: response})
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get events"})
+  }
 }
 
 async function listMarketBook(req, res) {
-    try {
-        const marketIds = req.params.ids
-        const response = await axios.get(`${apiURL}listMarketBook/testqms/${marketIds}`)
-        let resultArray = [];
+  try {
+    const marketIds = req.params.ids
+    const response = await axios.get(`${apiURL}listMarketBook/testqms/${marketIds}`)
+    let resultArray = [];
 
-        if(response.data.result.length > 0) {
-            for (let i = 0; i < response.data.result.length; i++) {
-                const odd = {
-                    marketId: response.data.result[i].marketId,
-                    runners: response.data.result[i].runners
-                }
-                resultArray.push(odd)
-            }
+    if (response.data.result.length > 0) {
+      for (let i = 0; i < response.data.result.length; i++) {
+        const odd = {
+          marketId: response.data.result[i].marketId,
+          runners: response.data.result[i].runners
         }
-        res.status(200).json({success: true, data: resultArray})
-    } catch (err) {
-        res.status(500).json({success: false, msg: "Failed to get "})
+        resultArray.push(odd)
+      }
     }
+    res.status(200).json({success: true, data: resultArray})
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get "})
+  }
 }
 
 async function inActiveUserExposure(req, res) {
-    try {
-        const stuckUsers = await User.find({exposure: {$lt: 0}})
-        let newResultArray = [];
-        if(stuckUsers.length > 0) {
-            for(let i = 0; i < stuckUsers.length; i++) {
-                const activeBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 1})
-                if(activeBetCount > 0) {
-                    // stuckUsers.pop(e => e.userId == stuckUsers[i].userId)    
-                    continue;
-                } else {
-                    const inActiveBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 0})
-                    // console.log(inActiveBetCount)
-                    if(inActiveBetCount > 0) {
-                      console.log({inActiveBetCount})
-                      const newData = {
-                        name: stuckUsers[i].userName,
-                        userId: stuckUsers[i].userId,
-                        exposure: stuckUsers[i].exposure,
-                        betCount: inActiveBetCount
-                      }
-                      newResultArray.push(newData)
-                    } else {
-                      continue;
-                    }
-                }
+  try {
+    const stuckUsers = await User.find({exposure: {$lt: 0}})
+    let newResultArray = [];
+    if (stuckUsers.length > 0) {
+      for (let i = 0; i < stuckUsers.length; i++) {
+        const activeBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 1})
+        if (activeBetCount > 0) {
+          // stuckUsers.pop(e => e.userId == stuckUsers[i].userId)
+          continue;
+        } else {
+          const inActiveBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 0})
+          // console.log(inActiveBetCount)
+          if (inActiveBetCount > 0) {
+            console.log({inActiveBetCount})
+            const newData = {
+              name: stuckUsers[i].userName,
+              userId: stuckUsers[i].userId,
+              exposure: stuckUsers[i].exposure,
+              betCount: inActiveBetCount
             }
+            newResultArray.push(newData)
+          } else {
+            continue;
+          }
         }
-        res.status(200).json({success: true, data: newResultArray})
-    } catch (err) {
-        res.status(500).json({success: false, msg: "Failed to get "})
+      }
     }
+    res.status(200).json({success: true, data: newResultArray})
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get "})
+  }
 }
 
 async function activeUserExposure(req, res) {
-    try {
-        const stuckUsers = await User.find({exposure: {$gte: 0.1}})
-        let newResultArray = []
-        if(stuckUsers.length > 0) {
-            for(let i = 0; i < stuckUsers.length; i++) {
-                const activeBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 1})
-                if(activeBetCount > 0){
-                  stuckUsers[i].BetCount = activeBetCount;
-                  const newData = {
-                    name: stuckUsers[i].userName,
-                    userId: stuckUsers[i].userId,
-                    exposure: stuckUsers[i].exposure,
-                    betCount: activeBetCount
-                  }
-                  newResultArray.push(newData)
-                } else {                  
-                  continue;
-                }
-            }
+  try {
+    const stuckUsers = await User.find({exposure: {$gte: 0.1}})
+    let newResultArray = []
+    if (stuckUsers.length > 0) {
+      for (let i = 0; i < stuckUsers.length; i++) {
+        const activeBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 1})
+        if (activeBetCount > 0) {
+          stuckUsers[i].BetCount = activeBetCount;
+          const newData = {
+            name: stuckUsers[i].userName,
+            userId: stuckUsers[i].userId,
+            exposure: stuckUsers[i].exposure,
+            betCount: activeBetCount
+          }
+          newResultArray.push(newData)
+        } else {
+          continue;
         }
-        res.status(200).json({success: true, data: newResultArray})
-    } catch (err) {
-        res.status(500).json({success: false, msg: "Failed to get "})
+      }
     }
+    res.status(200).json({success: true, data: newResultArray})
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get "})
+  }
 }
 
 async function betStatisticsByUserId(req, res) {
@@ -136,25 +138,25 @@ async function betStatisticsByUserId(req, res) {
   try {
     const userStats = await Bets.aggregate([
       {
-        $match: { userId: parseInt(userId) } // Match bets for the specific user
+        $match: {userId: parseInt(userId)} // Match bets for the specific user
       },
       {
         $group: {
           _id: "$marketId",
-          betIds: { $addToSet: "$_id" },
-          totalDifference: { $sum: { $subtract: ["$winningAmount", "$loosingAmount"] } },
-          totalExposure: { $sum: { $cond: { if: "$calculateExp", then: "$exposureAmount", else: 0 } } },
-          winningAmounts: { $addToSet: { $cond: { if: "$calculateExp", then: "$winningAmount", else: 0 } } },
-          loosingAmounts: { $addToSet: { $cond: { if: "$calculateExp", then: "$loosingAmount", else: 0 } } },
-          totalPosition: { $sum: { $cond: { if: "$calculateExp", then: "$position", else: 0 } } },
-          events: { $addToSet: "$event" },
-          runnerNames: { $addToSet: "$runnerName" },
-        },        
+          betIds: {$addToSet: "$_id"},
+          totalDifference: {$sum: {$subtract: ["$winningAmount", "$loosingAmount"]}},
+          totalExposure: {$sum: {$cond: {if: "$calculateExp", then: "$exposureAmount", else: 0}}},
+          winningAmounts: {$addToSet: {$cond: {if: "$calculateExp", then: "$winningAmount", else: 0}}},
+          loosingAmounts: {$addToSet: {$cond: {if: "$calculateExp", then: "$loosingAmount", else: 0}}},
+          totalPosition: {$sum: {$cond: {if: "$calculateExp", then: "$position", else: 0}}},
+          events: {$addToSet: "$event"},
+          runnerNames: {$addToSet: "$runnerName"},
+        },
       },
       {
         $project: {
           marketId: "$_id",
-          betIds: "$betIds", 
+          betIds: "$betIds",
           totalDifference: "$totalDifference",
           totalExposure: "$totalExposure",
           winningAmounts: "$winningAmounts",
@@ -172,17 +174,15 @@ async function betStatisticsByUserId(req, res) {
   }
 }
 
-
-
 async function getCricketScore(req, res) {
   try {
     // const eventId = 32981327
     const response = await axios.get('http://167.99.198.2/api/matches/score/32981327')
     let resultArray = response;
     res.status(200).json({success: true, data: resultArray})
-} catch (err) {
+  } catch (err) {
     res.status(500).json({success: false, msg: "Failed to get "})
-}
+  }
 }
 
 async function testAPI(req, res) {
@@ -190,7 +190,7 @@ async function testAPI(req, res) {
 
   try {
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
-    const header =  {
+    const header = {
       headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
@@ -224,7 +224,7 @@ async function getMarketsByEventId(req, res) {
 
   try {
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
-    const header =  {
+    const header = {
       headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
@@ -259,7 +259,7 @@ async function getEventsBySportsId(req, res) {
 
   try {
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
-    const header =  {
+    const header = {
       headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
@@ -292,7 +292,7 @@ async function getOddsByMarketId(req, res) {
 
   try {
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
-    const header =  {
+    const header = {
       headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
@@ -321,7 +321,7 @@ async function getOddsByMarketId(req, res) {
 async function getMarketType(req, res) {
   try {
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
-    const header =  {
+    const header = {
       headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
@@ -353,7 +353,7 @@ async function getOddsByMultiMarketId(req, res) {
 
   try {
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
-    const header =  {
+    const header = {
       headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
@@ -376,7 +376,7 @@ async function getOddsByMultiMarketId(req, res) {
     );
 
     let marketIds = [];
-    for (let i = 0; i < marketResponse?.data?.result?.length; i ++) {
+    for (let i = 0; i < marketResponse?.data?.result?.length; i++) {
       marketIds.push(marketResponse?.data?.result[i].marketId + "")
     }
 
@@ -415,19 +415,19 @@ async function getTodayEventsBySportsId(req, res) {
       {
         sportsId: sportsId,
         status: "OPEN",
-        openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
+        openDate: {$gte: startOfDayTimestamp, $lt: endOfDayTimestamp}
       },
       {
         _id: 1,
         Id: 1,
         name: 1,
-        openDate: { $toDate: "$openDate" }
+        openDate: {$toDate: "$openDate"}
       }
     );
 
     let data = [];
 
-    for (let k = 0; k < events?.length; k ++) {
+    for (let k = 0; k < events?.length; k++) {
       data.push({
         _id: events[k]._id,
         Id: events[k].Id,
@@ -447,7 +447,7 @@ async function getMarketsByMarketType(req, res) {
 
   try {
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
-    const header =  {
+    const header = {
       headers: {
         'accept': 'application/json',
         'Content-Type': 'application/json',
@@ -504,6 +504,17 @@ async function getFanciesByEventId(req, res) {
   }
 }
 
+async function fetchEvents(req, res) {
+  const sportsId = req.params.sportsId;
+  try {
+    await apiSystemRacing.fetchRacingEvent(sportsId)
+    res.status(200).json({success: true, message: `Fetched successfully with sportsId: ${sportsId}`});
+  } catch (err) {
+    res.status(500).json({success: false, message: `Failed to get Error: ${err}`})
+  }
+}
+
++router.get('/testSports/events', listEvents)
 router.get('/track-score/get-cricketscore', getCricketScore)
 router.get('/testSports/events', listEvents);
 router.get('/testSports/marketbooks/:ids', listMarketBook);
@@ -521,6 +532,8 @@ router.get('/track-bet/get-markettype', getMarketType)
 router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByMarketType)
 router.get('/track-bet/get-market-bet-session/:eventId', getFanciesByEventId)
 
+/*admin dashboard*/
+router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
-module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore};
+module.exports = {router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore};
 
