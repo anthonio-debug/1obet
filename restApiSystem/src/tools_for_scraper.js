@@ -85,12 +85,13 @@ function ToolForScraper() {
         status: 'OPEN',
         inplay: true,
       }, {Id: 1}).exec();
+
       for (const event of inPlayEventList) {
         const eventId = event.Id
         let cricketScore = await getCricketScore(eventId)
         const score = convertSchema(cricketScore, eventId)
-        // io.to('#' + eventId).emit('cricket_score', score);
-        io.emit('cricket_score', score);
+        io.to('#' + eventId).emit('cricket_score', score);
+        // io.emit('cricket_score', score);
       }
 
     } catch (error) {
