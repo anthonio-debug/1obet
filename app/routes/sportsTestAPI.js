@@ -519,8 +519,8 @@ async function getEventList(req, res) {
   const {sportsId, from, to} = req.body;
   try {
     const now = new Date()
-    const fromTimestamp = new Date(now.getTime() - (2 * 24 * 60 * 60 * 1000))
-    const someHoursLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+    const fromTimestamp = new Date(now.getTime() - (Number(from) * 24 * 60 * 60 * 1000))
+    const someHoursLater = new Date(now.getTime() + (Number(to) * 24 * 60 * 60 * 1000))
     const toTimeStamp = someHoursLater.getTime()
 
     const events = await InPlayEvents.find({
