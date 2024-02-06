@@ -197,6 +197,7 @@
   "admin-dashboard",
   "listCricket",
   "editCricket",
+  "delete-cricket",
   "list-soccer",
   "edit-soccer",
   "list-tennis",

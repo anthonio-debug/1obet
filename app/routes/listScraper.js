@@ -92,6 +92,19 @@ async function editCricket(req, res) {
   }
 }
 
+async function deleteCricket(req, res) {
+  const {seriesKey} = req.body;
+
+  try {
+    await Crickets.deleteOne({ seriesKey });
+
+    res.status(200).json({success: true, message: 'Cricket deleted successfully'});
+  } catch (error) {
+    console.error('Error updating cricket:', error);
+    res.status(500).json({success: false, message: 'Internal server error'});
+  }
+}
+
 async function listSoccer(req, res) {
   let query = {};
   let page = 1;
@@ -274,6 +287,7 @@ async function editTennis(req, res) {
 
 router.get("/listCricket", listScraper);
 router.post("/editCricket", editCricket);
+router.post("/delete-cricket", deleteCricket);
 
 router.get("/list-soccer", listSoccer);
 router.post("/edit-soccer", editSoccer);
