@@ -26,6 +26,12 @@ function ToolForScraper() {
 
 
   function convertSchema(entity, eventId) {
+    // 511-10 (144.0) & 17-1 (5.2)
+    const parseScore = (score) => {
+      const lastScore = score.split('&').pop().trim()
+      return lastScore
+    }
+
     const getScore = (score) => {
       const regex = /-?\d+(\.\d+)?/g;
       const matches = score.match(regex) || [0, 0, '0.0'];
@@ -46,8 +52,8 @@ function ToolForScraper() {
         inning: 1,
         dayno: "",
         isfinished: "0",
-        score1: entity?.data?.teams[0]?.score,
-        score2: entity?.data?.teams[1]?.score,
+        score1: parseScore(entity?.data?.teams[0]?.score),
+        score2: parseScore(entity?.data?.teams[1]?.score),
         spnballrunningstatus: '',
         spnmessage: "",
         spnnation1: entity?.data?.teams[0]?.team_name,
