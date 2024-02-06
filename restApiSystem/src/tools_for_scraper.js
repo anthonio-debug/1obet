@@ -69,8 +69,8 @@ function ToolForScraper() {
   async function fetchCricketScoreFromApi() {
     try {
       const nowTimeStamp = new Date().getTime()
-      // const needApiScore = (nowTimeStamp - global.cricketScraperLastupdate) > 5 * 60 * 1000
-      const needApiScore = true
+      const needApiScore = (nowTimeStamp - global.cricketScraperLastupdate) > 6 * 1000
+      // const needApiScore = true
       if (!needApiScore) {
         const cricketScoreSourceSetting = await Settings.findOne({
           settingKey: 'CRICKET_SCORECARD_SOURCE'
@@ -80,12 +80,12 @@ function ToolForScraper() {
         }
       }
       /* temp code start */
-      const cricketScoreSourceSetting = await Settings.findOne({
-        settingKey: 'CRICKET_SCORECARD_SOURCE'
-      })
-      if (cricketScoreSourceSetting?.settingValue !== 'API') {
-        return
-      }
+      // const cricketScoreSourceSetting = await Settings.findOne({
+      //   settingKey: 'CRICKET_SCORECARD_SOURCE'
+      // })
+      // if (cricketScoreSourceSetting?.settingValue !== 'API') {
+      //   return
+      // }
       /* temp code end */
       let inPlayEventList = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
