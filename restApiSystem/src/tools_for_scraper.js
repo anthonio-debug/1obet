@@ -25,7 +25,7 @@ function ToolForScraper() {
   }
 
 
-  const convertSchema = (entity, eventId) => {
+  function convertSchema(entity, eventId) {
     const getScore = (score) => {
       const regex = /-?\d+(\.\d+)?/g;
       const matches = score.match(regex) || [0, 0, '0.0'];
