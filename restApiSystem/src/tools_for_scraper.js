@@ -51,6 +51,7 @@ function ToolForScraper() {
         overScore: 0,
         inning: 1,
         dayno: "",
+        comment: entity?.data?.msg,
         isfinished: "0",
         score1: parseScore(entity?.data?.teams[0]?.score),
         score2: parseScore(entity?.data?.teams[1]?.score),
