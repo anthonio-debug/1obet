@@ -75,7 +75,6 @@ function ToolForScraper() {
       }
       let inPlayEventList = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
-        hasFancy: true,
         CompanySetStatus: "OPEN",
         status: 'OPEN',
         inplay: true,
@@ -84,7 +83,8 @@ function ToolForScraper() {
         const eventId = event.Id
         let cricketScore = await getCricketScore(eventId)
         const score = convertSchema(cricketScore, eventId)
-        io.to('#' + eventId).emit('cricket_score', score);
+        // io.to('#' + eventId).emit('cricket_score', score);
+        io.emit('cricket_score', score);
       }
 
     } catch (error) {
