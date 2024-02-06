@@ -1,6 +1,7 @@
 const express = require('express');
 const Bets = require("../models/bets")
 const Users = require("../models/user")
+const InPlayEvents = require("../models/events")
 const axios = require('axios');
 const User = require('../models/user');
 const router = express.Router();
@@ -514,6 +515,25 @@ async function fetchEvents(req, res) {
   }
 }
 
+async function getEventList(req, res) {
+  const {sportsId, from, to} = req.body;
+  try {
+    const now = new Date()
+    const fromTimestamp = new Date(now.getTime() - (2 * 24 * 60 * 60 * 1000))
+    const someHoursLater = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000)
+    const toTimeStamp = someHoursLater.getTime()
+
+    const events = await InPlayEvents.find({
+      sportsId: `${sportsId}`,
+      openDate: {$gte: fromTimestamp, $lte: toTimeStamp},
+    })
+
+    res.status(200).json({success: true, results: events});
+  } catch (err) {
+    res.status(500).json({success: false, message: `Failed to get Error: ${err}`})
+  }
+}
+
 +router.get('/testSports/events', listEvents)
 router.get('/track-score/get-cricketscore', getCricketScore)
 router.get('/testSports/events', listEvents);
@@ -534,6 +554,8 @@ router.get('/track-bet/get-market-bet-session/:eventId', getFanciesByEventId)
 
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
+
+router.post('/list-events', getEventList)
 
 module.exports = {router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore};
 
