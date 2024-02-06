@@ -47,7 +47,7 @@ function ToolForScraper() {
       score: {
         activenation1: 1,
         activenation2: 0,
-        balls: 0,
+        balls: [],
         overScore: 0,
         inning: 1,
         dayno: "",
