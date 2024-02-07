@@ -137,6 +137,8 @@ function ToolForEvent() {
         {
           $match: {
             inPlay: inPlay,
+            marketName: {$ne: 'BOOKMAKER'},
+            status: {$ne: 'Fancy Result'},
             $or: [
               {sportID: 1},
               {sportID: 2},

@@ -2069,15 +2069,16 @@ const placeBet = async (req, res) => {
         });
       }
       let sessionAddition = 0;
-      if (inning == 2) {
-        if (type == "TEST") {
-          sessionAddition = 9;
-        } else if (type == "ODI") {
-          sessionAddition = 10;
-        } else if (type == "T20") {
-          sessionAddition = 4;
-        } else if (type == "T10") {
-          sessionAddition = 2;
+      const sessionAdditionTimes = inning - 1
+      if (inning !== 1) {
+        if (type === "TEST") {
+          sessionAddition = 9 * sessionAdditionTimes;
+        } else if (type === "ODI") {
+          sessionAddition = 10 * sessionAdditionTimes;
+        } else if (type === "T20") {
+          sessionAddition = 4 * sessionAdditionTimes;
+        } else if (type === "T10") {
+          sessionAddition = 2 * sessionAdditionTimes;
         }
       }
       let totalSessions = 0;

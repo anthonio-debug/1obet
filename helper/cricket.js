@@ -8,15 +8,16 @@ const calculateSessionNo = (scores) => {
   let currentOver = scores.over1
   let score = scores.score1
   let sessionAddition = 0;
-  if (inning === 2) {
+  const sessionAdditionTimes = inning - 1
+  if (inning !== 1) {
     if (type === "TEST") {
-      sessionAddition = 9;
+      sessionAddition = 9 * sessionAdditionTimes;
     } else if (type === "ODI") {
-      sessionAddition = 10;
+      sessionAddition = 10 * sessionAdditionTimes;
     } else if (type === "T20") {
-      sessionAddition = 4;
+      sessionAddition = 4 * sessionAdditionTimes;
     } else if (type === "T10") {
-      sessionAddition = 2;
+      sessionAddition = 2 * sessionAdditionTimes;
     }
   }
 
