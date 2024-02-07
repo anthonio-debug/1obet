@@ -6,7 +6,6 @@ const sportsIds = ["1", "2", "4"];
 
 const inPlayEvents = require('../../app/models/events');
 const MarketIDs = require('../../app/models/marketIds');
-const Odds = require('../../app/models/odds');
 const config = require("../../config/default.json")
 
 const apiRequests = require('./api/apiRequestsTestSCT.js')();
@@ -59,9 +58,9 @@ function ToolForEvent() {
   async function fetchMarkets() {
     try {
       for (const id of sportsIds) {
-        let documents = null
+        let event = null
         if (id === "4") {
-          documents = await inPlayEvents.findOne({
+          event = await inPlayEvents.findOne({
             status: 'OPEN',
             CompanySetStatus: "OPEN",
             isShowed: true,
@@ -75,7 +74,7 @@ function ToolForEvent() {
           const from = new Date(now.getTime() - (30 * 60 * 1000))
           const someHoursLater = new Date(now.getTime() + 10 * 60 * 60 * 1000)
           const to = someHoursLater.getTime()
-          documents = await inPlayEvents.findOne({
+          event = await inPlayEvents.findOne({
             status: 'OPEN',
             CompanySetStatus: "OPEN",
             isShowed: true,
@@ -87,24 +86,24 @@ function ToolForEvent() {
             .exec();
         }
 
-        if (documents && documents.Id) {
+        if (event && event.Id) {
           await inPlayEvents.updateOne(
-            {Id: documents.Id},
+            {Id: event.Id},
             {$set: {lastCheckMarket: Date.now()}}
           );
-          const openDate = Number(documents.openDate)
+          const openDate = Number(event.openDate)
           const now = moment().utc().valueOf()
-          if ((documents.sportsId === '4') && (openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) {
+          if ((event.sportsId === '4') && (openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) {
             await inPlayEvents.updateOne(
-              {Id: documents.Id},
+              {Id: event.Id},
               {$set: {inplay: true}}
             );
           }
-          const existedMarkets = await MarketIDs.findOne({eventId: documents.Id, status: "OPEN", inPlay: true})
+          const existedMarkets = await MarketIDs.findOne({eventId: event.Id, status: "OPEN", inPlay: true})
 
-          if (documents && !existedMarkets?._id) {
-            await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
-            fetchOddsForEvent(documents.Id);
+          if (event && !existedMarkets?._id) {
+            await apiRequests.listMarketsByCronJob(event.Id, event.sportsId, event.competitionId);
+            await fetchOddsForEvent(event.Id);
           }
         }
       }
@@ -115,25 +114,25 @@ function ToolForEvent() {
 
   async function fetchOddsForEvent(eventId) {
     try {
-      const documents = await MarketIDs.find({inPlay: true, eventId: eventId})
+      const marketIds = await MarketIDs.find({inPlay: true, eventId: eventId})
         .sort({lastCheck: 1})
         .limit(20)
         .exec();
-      let marketIds = [];
+      let marketIdList = [];
 
-      if (documents.length > 0) {
-        documents.forEach(element => {
-          marketIds.push(element.marketId);
+      if (marketIds.length > 0) {
+        marketIds.forEach(element => {
+          marketIdList.push(element.marketId);
         });
       }
 
       await MarketIDs.updateMany(
-        {marketId: {$in: marketIds}},
+        {marketId: {$in: marketIdList}},
         {$set: {lastCheck: Date.now()}}
       );
 
-      if (marketIds.length > 0) {
-        apiRequests.getOddsFromProvider(documents, eventId);
+      if (marketIdList.length > 0) {
+        await apiRequests.getOddsFromProvider(marketIds, eventId);
       }
     } catch (error) {
       console.error('Error fetching odds for event:', error);
@@ -142,7 +141,7 @@ function ToolForEvent() {
 
   async function fetchOdds(inPlay) {
     try {
-      const documents = await MarketIDs.aggregate([
+      const marketIds = await MarketIDs.aggregate([
         {
           $match: {
             inPlay: inPlay,
@@ -188,38 +187,24 @@ function ToolForEvent() {
         }
       ]).exec();
 
-      let marketIds = [];
+      let marketIdList = [];
 
-      if (documents.length > 0) {
-        documents.forEach(element => {
-          marketIds.push(element.marketId);
+      if (marketIds.length > 0) {
+        marketIds.forEach(element => {
+          marketIdList.push(element.marketId);
         });
       }
 
       await MarketIDs.updateMany(
-        {marketId: {$in: marketIds}},
+        {marketId: {$in: marketIdList}},
         {$set: {lastCheck: Date.now()}}
       );
 
-      if (marketIds.length > 0) {
-        apiRequests.getOddsFromProvider(documents);
+      if (marketIdList.length > 0) {
+        await apiRequests.getOddsFromProvider(marketIdList);
       }
     } catch (error) {
       console.error('Error fetching odds:', error);
-    }
-  }
-
-  async function handleSetInplay() {
-    const documents = await inPlayEvents.find({isShowed: true, inplay: false})
-      .limit(20)
-      .exec();
-
-    if (documents.length > 0) {
-      for (const document of documents) {
-        await inPlayEvents.updateOne(
-          {Id: document.Id}, {$set: {inplay: true}}
-        )
-      }
     }
   }
 }
