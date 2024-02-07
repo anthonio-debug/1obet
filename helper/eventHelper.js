@@ -57,7 +57,7 @@ const processMarketIds = async (eventId, marketIds, sportsId) => {
     } else {
       await MarketIDS.findOneAndUpdate(
         { eventId: eventId, marketId: `${market.id}` },
-        { status: market.status }
+        { status: market.status, sportID: Number(sportsId), }
       );
     }
   }
@@ -79,7 +79,7 @@ const handleNewMarket = async (eventId, market, index, sportsId) => {
     eventId,
     marketId: market.id + "",
     marketName: market.marketName,
-    sportsId,
+    sportID: Number(sportsId),
     totalMatched: market.totalMatched,
     status: market.status,
     index,
