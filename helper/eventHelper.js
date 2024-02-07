@@ -4,13 +4,16 @@ const MarketIDS = require("../app/models/marketIds");
 const inPlayEvents = require("../app/models/events");
 const {SPORT_SOCCER, SPORT_TENNIS, SPORT_CRICKET} = require('./constants')
 
-const fetchMarket = async (eventId) => {
+const fetchMarket = async (event) => {
+  const eventId = event.Id
+  const sportsId = event.sportsId
   try {
     const marketsData = await listMarketCatalogue(eventId);
     if (!marketsData.length) return;
 
     let marketStatus = 'PENDING';
     let marketIds = [];
+
 
     marketsData.forEach((market) => {
       if (config.activeProvider === 'old') {
@@ -22,9 +25,9 @@ const fetchMarket = async (eventId) => {
         runnerName: runner?.runnerName,
       }));
 
-      if ((sportID === SPORT_SOCCER && ["Match Odds", "Over/Under 0.5 Goals", "Over/Under 1.5 Goals", "Over/Under 2.5 Goals", "Over/Under 3.5 Goals", "Over/Under 4.5 Goals", "Over/Under 5.5 Goals"].includes(market.marketName)) ||
-        (sportID === SPORT_TENNIS && market.marketName === "Match Odds") ||
-        (sportID === SPORT_CRICKET && ["Match Odds", "Tied Match", "To Win the Toss"].includes(market.marketName))) {
+      if ((sportsId === SPORT_SOCCER && ["Match Odds", "Over/Under 0.5 Goals", "Over/Under 1.5 Goals", "Over/Under 2.5 Goals", "Over/Under 3.5 Goals", "Over/Under 4.5 Goals", "Over/Under 5.5 Goals"].includes(market.marketName)) ||
+        (sportsId === SPORT_TENNIS && market.marketName === "Match Odds") ||
+        (sportsId === SPORT_CRICKET && ["Match Odds", "Tied Match", "To Win the Toss"].includes(market.marketName))) {
         marketIds.push({
           id: market.marketId,
           marketName: market.marketName,
@@ -34,27 +37,27 @@ const fetchMarket = async (eventId) => {
       }
     });
 
-    await processMarketIds(eventId, marketIds);
+    await processMarketIds(eventId, marketIds, sportsId);
   } catch (err) {
     return {
       success: false,
       message: "Failed to get listMarketsByCronJob",
-      error: err.message,
+      error: err?.message,
     };
   }
 };
 
-const processMarketIds = async (eventId, marketIds) => {
+const processMarketIds = async (eventId, marketIds, sportsId) => {
   for (let index = 0; index < marketIds.length; index++) {
-    let ev = parseInt(eventId);
-    const marketID = await MarketIDS.findOne({ eventId: ev, marketId: marketIds[index].id + "" });
+    const market = marketIds[index]
+    const marketID = await MarketIDS.findOne({ eventId: eventId, marketId: `${market.id}` });
 
     if (!marketID) {
-      await handleNewMarket(eventId, marketIds[index], index);
+      await handleNewMarket(eventId, market, index, sportsId);
     } else {
       await MarketIDS.findOneAndUpdate(
-        { eventId: ev, marketId: marketIds[index].id + "" },
-        { status: marketIds[index].status }
+        { eventId: eventId, marketId: `${market.id}` },
+        { status: market.status }
       );
     }
   }
@@ -62,12 +65,12 @@ const processMarketIds = async (eventId, marketIds) => {
   await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds });
 };
 
-const handleNewMarket = async (eventId, market, index) => {
+const handleNewMarket = async (eventId, market, index, sportsId) => {
   const countOfMarket = await MarketIDS.countDocuments({ eventId: eventId, status: "OPEN" });
 
-  const allowedCount = sportID === SPORT_SOCCER ? config.soccerEventsAllowedCount :
-    sportID === SPORT_TENNIS ? config.tennisEventsAllowedCount :
-      sportID === SPORT_CRICKET ? config.cricketEventsAllowedCount :
+  const allowedCount = sportsId === SPORT_SOCCER ? config.soccerEventsAllowedCount :
+    sportsId === SPORT_TENNIS ? config.tennisEventsAllowedCount :
+      sportsId === SPORT_CRICKET ? config.cricketEventsAllowedCount :
         config.allSportsEventsAllowedCount;
 
   if (countOfMarket > allowedCount) return;
@@ -76,7 +79,7 @@ const handleNewMarket = async (eventId, market, index) => {
     eventId,
     marketId: market.id + "",
     marketName: market.marketName,
-    sportID,
+    sportsId,
     totalMatched: market.totalMatched,
     status: market.status,
     index,

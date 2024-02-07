@@ -137,14 +137,11 @@ function ToolForEvent() {
         {
           $match: {
             inPlay: inPlay,
-            marketName: {$ne: 'BOOKMAKER'},
-            status: {$ne: 'Fancy Result'},
-            sportID: {$in: [1, 2, 4]},
-            // $or: [
-            //   {sportID: 1},
-            //   {sportID: 2},
-            //   {sportID: 4},
-            // ],
+            $or: [
+              {sportID: 1},
+              {sportID: 2},
+              {sportID: 4},
+            ],
           },
         },
         {

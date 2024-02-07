@@ -231,7 +231,7 @@ async function activateEvent(req, res) {
     event.isShowed = true
     event.lastCheckMarket = Date.now()
     await event.save()
-    await fetchMarket(eventId)
+    await fetchMarket(event)
 
     res.status(200).json({success: true, message: 'Event updated successfully'});
   } catch (err) {
