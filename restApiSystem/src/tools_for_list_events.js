@@ -88,26 +88,25 @@ function ToolForEvent() {
         }
 
         if (documents && documents.Id) {
-          const existedMarkets = await MarketIDs.findOne({eventId: documents.Id, status: "OPEN", inPlay: true})
-
-          if (documents && !existedMarkets?._id) {
-            await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
-            await inPlayEvents.updateMany(
-              {Id: documents.Id},
-              {$set: {lastCheckMarket: Date.now()}}
-            );
-            fetchOddsForEvent(documents.Id);
-          }
           const openDate = Number(documents.openDate)
           const now = moment().utc().valueOf()
-          if ((openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) {
+          if ((documents.sportsId === '4') && (openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) {
             await inPlayEvents.updateOne(
               {Id: documents.Id},
               {$set: {inplay: true}}
             );
           }
-        }
+          const existedMarkets = await MarketIDs.findOne({eventId: documents.Id, status: "OPEN", inPlay: true})
 
+          if (documents && !existedMarkets?._id) {
+            await inPlayEvents.updateMany(
+              {Id: documents.Id},
+              {$set: {lastCheckMarket: Date.now()}}
+            );
+            await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
+            fetchOddsForEvent(documents.Id);
+          }
+        }
       }
     } catch (error) {
       console.error('Error fetching markets:', error);
