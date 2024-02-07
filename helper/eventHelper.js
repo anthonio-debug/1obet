@@ -8,6 +8,10 @@ const fetchMarket = async (event) => {
   const eventId = event.Id
   const sportsId = event.sportsId
   try {
+    await inPlayEvents.updateMany(
+      {Id: eventId},
+      {$set: {lastCheckMarket: Date.now()}}
+    );
     const marketsData = await listMarketCatalogue(eventId);
     if (!marketsData.length) return;
 
