@@ -13,6 +13,8 @@ const FancyEvent = require("../../../app/models/fancyEvent");
 var _ = require("lodash");
 require('dotenv').config();
 const config = require("../../../config/default.json")
+const moment = require("moment");
+const {CRICKET_LIVE_SET_MIN} = require("../../../helper/constants");
 
 const header = {
   headers: {
@@ -732,6 +734,13 @@ function apiRequests() {
           // update event status with 'CLOSED-INPLAYLIST'
           // Also update MarketIDs
           for (const diff of diffs) {
+            const inPlayEvent = await inPlayEvents.findOne({Id: diff})
+            const openDate = Number(inPlayEvent.openDate)
+            const now = moment().utc().valueOf()
+            if ((openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) {
+              continue
+            }
+
             let ix = _.findIndex(removedInplayList, function (o) {
               return o.id === diff;
             });

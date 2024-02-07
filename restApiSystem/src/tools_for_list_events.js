@@ -10,6 +10,8 @@ const Odds = require('../../app/models/odds');
 const config = require("../../config/default.json")
 
 const apiRequests = require('./api/apiRequestsTestSCT.js')();
+const {CRICKET_LIVE_SET_MIN} = require('../../helper/constants')
+const moment = require("moment/moment");
 
 let lastType = 0;
 
@@ -95,6 +97,14 @@ function ToolForEvent() {
               {$set: {lastCheckMarket: Date.now()}}
             );
             fetchOddsForEvent(documents.Id);
+          }
+          const openDate = Number(documents.openDate)
+          const now = moment().utc().valueOf()
+          if ((openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) {
+            await inPlayEvents.updateOne(
+              {Id: documents.Id},
+              {$set: {inplay: true}}
+            );
           }
         }
 
