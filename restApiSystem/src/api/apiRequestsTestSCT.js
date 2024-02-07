@@ -737,7 +737,7 @@ function apiRequests() {
             const inPlayEvent = await inPlayEvents.findOne({Id: diff})
             const openDate = Number(inPlayEvent.openDate)
             const now = moment().utc().valueOf()
-            if ((openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) {
+            if ((inPlayEvent.sportsId === '4') && ((openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) && ((openDate - now) > 0)) {
               continue
             }
 
