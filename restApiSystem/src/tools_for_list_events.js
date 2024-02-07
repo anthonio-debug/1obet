@@ -94,7 +94,7 @@ function ToolForEvent() {
           );
           const openDate = Number(documents.openDate)
           const now = moment().utc().valueOf()
-          if ((documents.sportsId === '4') && (openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) {
+          if ((documents.sportsId === '4') && ((openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) && ((openDate - now) > 0)) {
             await inPlayEvents.updateOne(
               {Id: documents.Id},
               {$set: {inplay: true}}
