@@ -88,6 +88,10 @@ function ToolForEvent() {
         }
 
         if (documents && documents.Id) {
+          await inPlayEvents.updateOne(
+            {Id: documents.Id},
+            {$set: {lastCheckMarket: Date.now()}}
+          );
           const openDate = Number(documents.openDate)
           const now = moment().utc().valueOf()
           if ((documents.sportsId === '4') && (openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) {
@@ -99,10 +103,6 @@ function ToolForEvent() {
           const existedMarkets = await MarketIDs.findOne({eventId: documents.Id, status: "OPEN", inPlay: true})
 
           if (documents && !existedMarkets?._id) {
-            await inPlayEvents.updateMany(
-              {Id: documents.Id},
-              {$set: {lastCheckMarket: Date.now()}}
-            );
             await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
             fetchOddsForEvent(documents.Id);
           }
