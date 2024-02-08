@@ -96,7 +96,13 @@ function ToolForEvent() {
               {$set: {inplay: true}}
             );
           }
-          const existedMarkets = await MarketIDs.findOne({eventId: documents.Id, status: "OPEN", inPlay: true})
+          const existedMarkets = await MarketIDs.findOne({
+            eventId: documents.Id, status: "OPEN", inPlay: true,
+            $and: [
+              {marketName: {$ne: 'BOOKMAKER'}},
+              {marketName: {$ne: null}},
+            ]
+          })
 
           if (documents && !existedMarkets?._id) {
             await inPlayEvents.updateMany(
