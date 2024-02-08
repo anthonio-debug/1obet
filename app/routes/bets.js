@@ -2056,7 +2056,7 @@ const placeBet = async (req, res) => {
       }
       console.log(` scores =================== `, scores);
       let type = eventDetail.matchType;
-      let inning = scores.inning;
+      let inning = parseInt(scores.inning);
       let currentOver = scores.over1
       let score = scores.score1
       const wikets = score.split('/')[1];
