@@ -9,6 +9,7 @@ const CricketSchema = new mongoose.Schema({
   day: { type: String, required: false },
   matchEnglishTitle: { type: String, required: false },
   matchNo: { type: Number, required: false },
+  inning: { type: Number, required: false },
   matchTitle: { type: String, required: false },
   meta: { type: Object, required: false },
   over1: { type: String, required: false },
