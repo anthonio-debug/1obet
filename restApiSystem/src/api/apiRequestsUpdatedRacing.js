@@ -425,7 +425,8 @@ function apiRequests() {
       let marketIds = [];
       // Create an instance of the raceMarkets model
       for (let j = 0; j < eventsData.length; j++) {
-        if (eventsData[j]?.description?.marketType === "WIN") {
+        // if (eventsData[j]?.description?.marketType === "WIN") {
+        if (eventsData[j]?.description?.marketType) {
           marketIds.push(eventsData[j].marketId);
           await raceMarkets.findOneAndUpdate(
             {
@@ -524,6 +525,7 @@ function apiRequests() {
               $set: {
                 runners: runners,
                 marketName: eventsData[j].marketName,
+                marketType: eventsData[j]?.description?.marketType,
                 openDate: Date.parse(eventsData[j].marketStartTime)
               }
             }, {upsert: true, new: true});

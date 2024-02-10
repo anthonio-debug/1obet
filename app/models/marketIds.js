@@ -4,6 +4,7 @@ const MarketIDsSchema = new mongoose.Schema({
   eventId: { type: String,index: true },
   marketId: { type: String,index: true },
   marketName:{ type: String},
+  marketType:{ type: String, require: false},
   inPlay: { type: Boolean, default: false },
   lastCheck: { type: Number,default: 0 },
   sportID: { type: Number,default: 0 },
@@ -16,7 +17,6 @@ const MarketIDsSchema = new mongoose.Schema({
   readyForScore: { type: Boolean, default: false },
   manuelClose: { type: Boolean, default: false },
   winnerRunnerData: { type: String },
-  marketType: { type: String },
   totalMatched: { type: String, default: "0" },
 
 });
