@@ -14,7 +14,7 @@ var _ = require("lodash");
 require('dotenv').config();
 const config = require("../../../config/default.json")
 const moment = require("moment");
-const {CRICKET_LIVE_SET_MIN} = require("../../../helper/constants");
+const {CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN} = require("../../../helper/constants");
 
 const header = {
   headers: {
@@ -735,10 +735,25 @@ function apiRequests() {
           // Also update MarketIDs
           for (const diff of diffs) {
             const inPlayEvent = await inPlayEvents.findOne({Id: diff})
-            const openDate = Number(inPlayEvent.openDate)
-            const now = moment().utc().valueOf()
-            if ((inPlayEvent.sportsId === '4') && ((openDate - now) < (CRICKET_LIVE_SET_MIN * 60 * 1000)) && ((openDate - now) > 0)) {
-              continue
+            const sportsId = inPlayEvent.sportsId
+            if (['1', '2', '4'].includes(sportsId)) {
+              const openDate = Number(inPlayEvent.openDate)
+              const now = moment().utc().valueOf()
+              let limitMin = 0
+              switch (sportsId) {
+                case '1':
+                  limitMin = SOCCER_LIVE_SET_MIN
+                  break
+                case '2':
+                  limitMin = TENNIS_LIVE_SET_MIN
+                  break
+                case '4':
+                  limitMin = CRICKET_LIVE_SET_MIN
+                  break
+              }
+              if (((openDate - now) < (limitMin * 60 * 1000)) && ((openDate - now) > 0)) {
+                continue
+              }
             }
 
             let ix = _.findIndex(removedInplayList, function (o) {
