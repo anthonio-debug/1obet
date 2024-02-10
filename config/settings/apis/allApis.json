@@ -198,6 +198,8 @@
   "listCricket",
   "editCricket",
   "delete-cricket",
+  "delete-soccer",
+  "delete-tennis",
   "list-soccer",
   "edit-soccer",
   "list-tennis",
