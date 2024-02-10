@@ -105,6 +105,32 @@ async function deleteCricket(req, res) {
   }
 }
 
+async function deleteSoccer(req, res) {
+  const {seriesKey} = req.body;
+
+  try {
+    await Score.deleteOne({ scoreKey: seriesKey, sportsId: '1' });
+
+    res.status(200).json({success: true, message: 'Cricket deleted successfully'});
+  } catch (error) {
+    console.error('Error updating cricket:', error);
+    res.status(500).json({success: false, message: 'Internal server error'});
+  }
+}
+
+async function deleteTennis(req, res) {
+  const {seriesKey} = req.body;
+
+  try {
+    await Score.deleteOne({ scoreKey: seriesKey, sportsId: '2' });
+
+    res.status(200).json({success: true, message: 'Cricket deleted successfully'});
+  } catch (error) {
+    console.error('Error updating cricket:', error);
+    res.status(500).json({success: false, message: 'Internal server error'});
+  }
+}
+
 async function listSoccer(req, res) {
   let query = {};
   let page = 1;
@@ -288,6 +314,8 @@ async function editTennis(req, res) {
 router.get("/listCricket", listScraper);
 router.post("/editCricket", editCricket);
 router.post("/delete-cricket", deleteCricket);
+router.post("/delete-soccer", deleteSoccer);
+router.post("/delete-tennis", deleteTennis);
 
 router.get("/list-soccer", listSoccer);
 router.post("/edit-soccer", editSoccer);
