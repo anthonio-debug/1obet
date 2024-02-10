@@ -404,7 +404,7 @@ function apiRequests() {
         "filter": {
           "eventIds": [eventId],
           "eventTypeIds": [sportsId],
-          "marketTypes": ['WIN'],
+          // "marketTypes": ['WIN'],
           // "marketStartTime": {
           //   "from": startTime,
           //   "to": endTime
