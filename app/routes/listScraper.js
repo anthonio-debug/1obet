@@ -27,15 +27,15 @@ async function listScraper(req, res) {
         sortField: {
           $switch: {
             branches: [
-              { case: { $eq: ["$state", "live"] }, then: 1 },
-              { case: { $eq: ["$state", "info"] }, then: 2 }
+              {case: {$eq: ["$state", "live"]}, then: 1},
+              {case: {$eq: ["$state", "info"]}, then: 2}
             ],
             default: 3
           }
         }
       }
     },
-    { $sort: { sortField: 1, timestamp: 1 } }
+    {$sort: {sortField: 1, timestamp: 1}}
   ])
     .exec((err, allRecords) => {
       if (err) return res.status(404).send({message: 'Something went wrong'});
@@ -96,7 +96,7 @@ async function deleteCricket(req, res) {
   const {seriesKey} = req.body;
 
   try {
-    await Crickets.deleteOne({ seriesKey });
+    await Crickets.deleteOne({seriesKey});
 
     res.status(200).json({success: true, message: 'Cricket deleted successfully'});
   } catch (error) {
@@ -109,7 +109,7 @@ async function deleteSoccer(req, res) {
   const {seriesKey} = req.body;
 
   try {
-    await Score.deleteOne({ scoreKey: seriesKey, sportsId: '1' });
+    await Score.deleteOne({scoreKey: seriesKey, sportsId: '1'});
 
     res.status(200).json({success: true, message: 'Cricket deleted successfully'});
   } catch (error) {
@@ -122,7 +122,7 @@ async function deleteTennis(req, res) {
   const {seriesKey} = req.body;
 
   try {
-    await Score.deleteOne({ scoreKey: seriesKey, sportsId: '2' });
+    await Score.deleteOne({scoreKey: seriesKey, sportsId: '2'});
 
     res.status(200).json({success: true, message: 'Cricket deleted successfully'});
   } catch (error) {
@@ -135,6 +135,7 @@ async function listSoccer(req, res) {
   let query = {};
   let page = 1;
   let sort = -1;
+  let keyword = '';
   var limit = config.pageSize;
   if (
     req.query.numRecords &&
@@ -144,27 +145,35 @@ async function listSoccer(req, res) {
     limit = Number(req.query.numRecords);
   if (req.query.sort) sort = Number(req.query.sort);
   if (req.query.page) page = Number(req.query.page);
+  if (req.query.keyword) keyword = req.query.keyword;
 
   // Crickets.find(query)
   // .sort({ state: 'live', timestamp: -1 })
   Score.aggregate([
     {
-      $match: { "data.openTime": {$ne: 'FT'}, sportsId: '1' } // Match bets for the specific user
+      $match: {
+        "data.openTime": {$ne: 'FT'},
+        sportsId: '1',
+        $or: [
+          { "data.home": { $regex: keyword, $options: 'i' } },
+          { "data.away": { $regex: keyword, $options: 'i' } }
+        ]
+      } // Match bets for the specific user
     },
     {
       $addFields: {
         sortField: {
           $switch: {
             branches: [
-              { case: { $eq: ["$state", "live"] }, then: 1 },
-              { case: { $eq: ["$state", "info"] }, then: 2 }
+              {case: {$eq: ["$state", "live"]}, then: 1},
+              {case: {$eq: ["$state", "info"]}, then: 2}
             ],
             default: 3
           }
         }
       }
     },
-    { $sort: { sortField: 1, timestamp: 1 } }
+    {$sort: {sortField: 1, timestamp: 1}}
   ])
     .exec((err, allRecords) => {
       if (err) return res.status(404).send({message: 'Something went wrong'});
@@ -239,22 +248,22 @@ async function listTennis(req, res) {
   // .sort({ state: 'live', timestamp: -1 })
   Score.aggregate([
     {
-      $match: { "data.openTime": {$ne: 'FT'}, sportsId: '2' } // Match bets for the specific user
+      $match: {"data.openTime": {$ne: 'FT'}, sportsId: '2'} // Match bets for the specific user
     },
     {
       $addFields: {
         sortField: {
           $switch: {
             branches: [
-              { case: { $eq: ["$state", "live"] }, then: 1 },
-              { case: { $eq: ["$state", "info"] }, then: 2 }
+              {case: {$eq: ["$state", "live"]}, then: 1},
+              {case: {$eq: ["$state", "info"]}, then: 2}
             ],
             default: 3
           }
         }
       }
     },
-    { $sort: { sortField: 1, timestamp: 1 } }
+    {$sort: {sortField: 1, timestamp: 1}}
   ])
     .exec((err, allRecords) => {
       if (err) return res.status(404).send({message: 'Something went wrong'});
