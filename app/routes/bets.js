@@ -352,8 +352,8 @@ const placeBet = async (req, res) => {
         });
       }
       const now = new Date().getTime()
-      const remainingTimeFromEventStart = eventDetail.openDate - now
-      if (remainingTimeFromEventStart > 0) {
+      const remainingTimeFromMarketStart = idDetails.openDate - now
+      if (remainingTimeFromMarketStart > 0) {
         activeBettors.delete(userId)
         return res.status(404).send({message: "Bet not allowed"});
       }
