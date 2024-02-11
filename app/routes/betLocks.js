@@ -15,6 +15,7 @@ async function addBetLock(req, res) {
       return res.status(400).send({errors: errors.errors});
     }
     const {matchId, allUsers, lock, matchOdds, userIds} = req.body;
+    const userId = Number(req.decoded.userId)
     console.log("matchId ==== ", matchId);
     const event = await Events.findById(matchId)
     if (!event) {
@@ -39,14 +40,14 @@ async function addBetLock(req, res) {
 
     if (allUsers && lock) {
       console.log(" All Users && Lock ");
-      const users = await User.find({createdBy: req.query.userId})
-      users.map(async (user) => {
+      const users = await User.find({createdBy: userId})
+      for (const user of users) {
         let blockedSubMarkets = user.blockedSubMarketsByParent
         let allSubMarkets = blockedSubMarkets.concat(subMarketIds)
         const finalSubMarkets = [...new Set(allSubMarkets)];
         user.blockedSubMarketsByParent = finalSubMarkets
         await user.save();
-      });
+      }
     } else if (allUsers && !lock) {
       console.log(" Not  All Users && Lock");
       const users = await User.find({createdBy: req.query.userId})
