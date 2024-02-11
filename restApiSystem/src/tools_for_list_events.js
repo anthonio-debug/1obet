@@ -111,6 +111,10 @@ function ToolForEvent() {
               );
             }
           }
+          await inPlayEvents.updateMany(
+            { Id: documents.Id },
+            { $set: { lastCheckMarket: Date.now() } }
+          );
           const existedMarkets = await MarketIDs.findOne({
             eventId: documents.Id, status: "OPEN", inPlay: true,
             $and: [
@@ -120,10 +124,6 @@ function ToolForEvent() {
           })
 
           if (documents && !existedMarkets?._id) {
-            await inPlayEvents.updateMany(
-              { Id: documents.Id },
-              { $set: { lastCheckMarket: Date.now() } }
-            );
             await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
             fetchOddsForEvent(documents.Id);
           }
