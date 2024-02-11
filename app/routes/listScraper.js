@@ -234,6 +234,7 @@ async function listTennis(req, res) {
   let query = {};
   let page = 1;
   let sort = -1;
+  let keyword = '';
   var limit = config.pageSize;
   if (
     req.query.numRecords &&
@@ -243,12 +244,20 @@ async function listTennis(req, res) {
     limit = Number(req.query.numRecords);
   if (req.query.sort) sort = Number(req.query.sort);
   if (req.query.page) page = Number(req.query.page);
+  if (req.query.keyword) keyword = req.query.keyword;
 
   // Crickets.find(query)
   // .sort({ state: 'live', timestamp: -1 })
   Score.aggregate([
     {
-      $match: {"data.openTime": {$ne: 'FT'}, sportsId: '2'} // Match bets for the specific user
+      $match: {
+        "data.openTime": {$ne: 'FT'},
+        sportsId: '2',
+        $or: [
+          { "data.home": { $regex: keyword, $options: 'i' } },
+          { "data.away": { $regex: keyword, $options: 'i' } }
+        ]
+      }
     },
     {
       $addFields: {
