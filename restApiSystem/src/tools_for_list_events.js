@@ -120,6 +120,10 @@ function ToolForEvent() {
           })
 
           if (documents && !existedMarkets?._id) {
+            await inPlayEvents.updateMany(
+              { Id: documents.Id },
+              { $set: { lastCheckMarket: Date.now() } }
+            );
             await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
             fetchOddsForEvent(documents.Id);
           }
