@@ -351,6 +351,12 @@ const placeBet = async (req, res) => {
           message: `Bets will Allow in : ${Math.ceil( remainingTimeFromEvent / 60000 )} min`,
         });
       }
+      const now = new Date().getTime()
+      const remainingTimeFromEventStart = eventDetail.openDate - now
+      if (remainingTimeFromEventStart > 0) {
+        activeBettors.delete(userId)
+        return res.status(404).send({message: "Bet not allowed"});
+      }
       id = idDetails.marketId;
       _3rdPartyMarketId = id;
       subMarketDetail = await SubMarketType.findOne({countryCode: subMarketName, marketId: marketId}).exec();
