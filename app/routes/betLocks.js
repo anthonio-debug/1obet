@@ -50,36 +50,36 @@ async function addBetLock(req, res) {
       }
     } else if (allUsers && !lock) {
       console.log(" Not  All Users && Lock");
-      const users = await User.find({createdBy: req.query.userId})
-      users.map((user) => {
+      const users = await User.find({createdBy: userId})
+      for (const user of users) {
         let blockedSubMarkets = user.blockedSubMarketsByParent
         // let allSubMarkets = blockedSubMarkets.concat(subMarketIds)
         const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
         user.blockedSubMarketsByParent = finalSubMarkets
-        user.save();
-      });
+        await user.save();
+      }
 
     } else if (!allUsers) {
       console.log(" Not  All Users ");
 
-      const usersToUnlock = await User.find({createdBy: req.query.userId, userId: {$nin: userIds}})
-      usersToUnlock.map((user) => {
+      const usersToUnlock = await User.find({createdBy: userId, userId: {$nin: userIds}})
+      for (const user of usersToUnlock) {
         let blockedSubMarkets = user.blockedSubMarketsByParent
         const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
         user.blockedSubMarketsByParent = finalSubMarkets
-        user.save();
-      });
+        await user.save();
+      }
 
       const usersToLock = await User.find({userId: {$in: userIds}})
-      usersToLock.map((user) => {
+      for (const user of usersToLock) {
         let blockedSubMarkets = user.blockedSubMarketsByParent
         let allSubMarkets = blockedSubMarkets.concat(subMarketIds)
         const finalSubMarkets = [...new Set(allSubMarkets)];
         user.blockedSubMarketsByParent = finalSubMarkets
-        user.save();
-      });
-
+        await user.save();
+      }
     }
+
     return res.send({
       success: true,
       message: 'Betlock created successfully',
