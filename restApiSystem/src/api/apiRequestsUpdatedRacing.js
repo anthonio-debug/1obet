@@ -527,6 +527,7 @@ function apiRequests() {
                 runners: runners,
                 marketName: eventsData[j].marketName,
                 marketType: eventsData[j]?.description?.marketType,
+                status: 'OPEN',
                 openDate: Date.parse(eventsData[j].marketStartTime)
               }
             }, {upsert: true, new: true});
