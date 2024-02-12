@@ -136,6 +136,7 @@ const getRaceMarketIds = async (sportsId) => {
     {
       $match: {
         sportID: Number(sportsId),
+        status: {$ne: 'CLOSED'},
         openDate: {
           $gte: startTime,
           $lte: endTime
