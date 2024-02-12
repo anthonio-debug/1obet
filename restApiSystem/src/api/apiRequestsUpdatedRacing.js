@@ -263,7 +263,7 @@ function apiRequests() {
 
     const now = moment();
     const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
-    const endTime = now.add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+    const endTime = moment(now).add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
