@@ -117,7 +117,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
 const activeBetPlacing = async (userId) => {
   await User.findOneAndUpdate(
     {userId: userId},
-    { activeBetPlacing: false }
+    {activeBetPlacing: false}
   );
 }
 
@@ -143,17 +143,17 @@ const stopbetStatusChecker = async (id) => {
   try {
     const scores = await Crickets.findOne({eventId: id});
     console.log(`Score details ====================== `, scores);
-    if (scores && scores?.result && scores?.result?.length){
+    if (scores && scores?.result && scores?.result?.length) {
       const result = scores?.result.toLowerCase();
       const stopbetStatus = ["no ball", "noball", "free hit", "freehit",
         "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed",
         "rain", "suspend", "delay", "pitch", "plood", "bowled", "injured",
         "rain stops play", "bowling review", "stumped", "Run Out Check",
         "Bowling Review", "Catch Check", "No Ball Check", "LBW Check", "Catch Check", "Caught Out"];
-        const regexPattern = new RegExp(stopbetStatus.map(word => `\\b${word.replace(/\s+/g, '\\s+')}\\b`).join('|'), 'i');
-        if (regexPattern.test(result)){
-            return 400
-        }
+      const regexPattern = new RegExp(stopbetStatus.map(word => `\\b${word.replace(/\s+/g, '\\s+')}\\b`).join('|'), 'i');
+      if (regexPattern.test(result)) {
+        return 400
+      }
     }
     return 200;
   } catch (error) {
@@ -163,10 +163,10 @@ const stopbetStatusChecker = async (id) => {
 }
 
 const checkMarketActiveForBets = async (marketId) => {
-  const marketStatus = await  MarketIDS({ marketId: marketId });
-  if(marketStatus.status === "OPEN"){
+  const marketStatus = await MarketIDS({marketId: marketId});
+  if (marketStatus.status === "OPEN") {
     return 200
-  }else{
+  } else {
     return 400
   }
 }
@@ -239,7 +239,7 @@ const placeBet = async (req, res) => {
     }
 
     if (activeBettors.has(userId)) {
-      return res.status(404).send({ message: "Please wait few seconds " });
+      return res.status(404).send({message: "Please wait few seconds "});
     } else {
       activeBettors.set(userId, {status: true})
     }
@@ -321,22 +321,22 @@ const placeBet = async (req, res) => {
 
     const Digitaddition = await handleLimitValue(betRate, marketId);
 
-    /** 
+    /**
      * checks for Market Sub Market
      * Checks for OpenTime before Start Event
-    */ 
+     */
     if (config.raceMarkets.includes(marketId)) {
       const DBOddDetails = await RaceOdds.findById(oddsId);
       if (!DBOddDetails) {
-        console.warn(`Error : Odds not found !` )
+        console.warn(`Error : Odds not found !`)
         activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
         });
       }
-      const idDetails = await MarketIDS.findOne({ marketId: DBOddDetails.marketId, eventId: eventDetail.Id })
+      const idDetails = await MarketIDS.findOne({marketId: DBOddDetails.marketId, eventId: eventDetail.Id})
       if (!idDetails) {
-        console.warn(`Error : Market details Not found !` )
+        console.warn(`Error : Market details Not found !`)
         activeBettors.delete(userId)
         return res.status(404).send({
           message: `Bet Miss Matched `,
@@ -348,7 +348,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res.status(404).send({
           status: true,
-          message: `Bets will Allow in : ${Math.ceil( remainingTimeFromEvent / 60000 )} min`,
+          message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`,
         });
       }
       const now = new Date().getTime()
@@ -411,7 +411,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res.status(404).send({
           status: true,
-          message: `Bets will Allow in : ${Math.ceil( remainingTimeFromEvent / 60000 )} min`,
+          message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`,
         });
       }
     }
@@ -422,15 +422,15 @@ const placeBet = async (req, res) => {
     // }
 
     /**
-     * Is market Blocked from any Flow  
-     */ 
+     * Is market Blocked from any Flow
+     */
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
       activeBettors.delete(userId)
       return res.status(404).send({message: "Betting disabled"});
     }
-    
 
-    let maxExp =  0;
+
+    let maxExp = 0;
     /* ==================================================================== */
 
     /* ================================== Market Specific Checks ================================== */
@@ -444,8 +444,8 @@ const placeBet = async (req, res) => {
       });
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
-        return res.status(404).send({ 
-          error: "User Max Bet Size Not Found", 
+        return res.status(404).send({
+          error: "User Max Bet Size Not Found",
           message: `something went wrong !`
         });
       }
@@ -454,7 +454,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res.status(404).send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res.status(404).send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
       }
@@ -573,11 +573,11 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId,
       });
-  
+
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
-        return res.status(404).send({ 
-          error: "User Max Bet Size Not Found", 
+        return res.status(404).send({
+          error: "User Max Bet Size Not Found",
           message: `something went wrong !`
         });
       }
@@ -586,8 +586,8 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res.status(404).send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-  
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res.status(404).send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
       }
@@ -735,8 +735,8 @@ const placeBet = async (req, res) => {
       });
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
-        return res.status(404).send({ 
-          error: "User Max Bet Size Not Found", 
+        return res.status(404).send({
+          error: "User Max Bet Size Not Found",
           message: `something went wrong !`
         });
       }
@@ -747,7 +747,7 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
@@ -926,8 +926,8 @@ const placeBet = async (req, res) => {
       });
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
-        return res.status(404).send({ 
-          error: "User Max Bet Size Not Found", 
+        return res.status(404).send({
+          error: "User Max Bet Size Not Found",
           message: `something went wrong !`
         });
       }
@@ -938,7 +938,7 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
@@ -1085,8 +1085,8 @@ const placeBet = async (req, res) => {
       });
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
-        return res.status(404).send({ 
-          error: "User Max Bet Size Not Found", 
+        return res.status(404).send({
+          error: "User Max Bet Size Not Found",
           message: `something went wrong !`
         });
       }
@@ -1097,7 +1097,7 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
@@ -1275,8 +1275,8 @@ const placeBet = async (req, res) => {
       });
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
-        return res.status(404).send({ 
-          error: "User Max Bet Size Not Found", 
+        return res.status(404).send({
+          error: "User Max Bet Size Not Found",
           message: `something went wrong !`
         });
       }
@@ -1287,7 +1287,7 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
@@ -1416,8 +1416,8 @@ const placeBet = async (req, res) => {
       });
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
-        return res.status(404).send({ 
-          error: "User Max Bet Size Not Found", 
+        return res.status(404).send({
+          error: "User Max Bet Size Not Found",
           message: `something went wrong !`
         });
       }
@@ -1428,7 +1428,7 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
@@ -1552,8 +1552,8 @@ const placeBet = async (req, res) => {
       });
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
-        return res.status(404).send({ 
-          error: "User Max Bet Size Not Found", 
+        return res.status(404).send({
+          error: "User Max Bet Size Not Found",
           message: `something went wrong !`
         });
       }
@@ -1564,7 +1564,7 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
@@ -1648,8 +1648,8 @@ const placeBet = async (req, res) => {
       console.log("Fancy  Max BetSize =============", userMaxBetSize);
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
-        return res.status(404).send({ 
-          error: "User Max Bet Size Not Found", 
+        return res.status(404).send({
+          error: "User Max Bet Size Not Found",
           message: `something went wrong !`
         });
       }
@@ -1660,7 +1660,7 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
@@ -1832,8 +1832,8 @@ const placeBet = async (req, res) => {
       console.log("Bookmaker  Max BetSize =============", userMaxBetSize);
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
-        return res.status(404).send({ 
-          error: "User Max Bet Size Not Found", 
+        return res.status(404).send({
+          error: "User Max Bet Size Not Found",
           message: `something went wrong !`
         });
       }
@@ -1844,7 +1844,7 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
@@ -2014,8 +2014,8 @@ const placeBet = async (req, res) => {
       });
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
-        return res.status(404).send({ 
-          error: "User Max Bet Size Not Found", 
+        return res.status(404).send({
+          error: "User Max Bet Size Not Found",
           message: `something went wrong !`
         });
       }
@@ -2026,7 +2026,7 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
@@ -2066,7 +2066,7 @@ const placeBet = async (req, res) => {
       let currentOver = scores.over1
       let score = scores.score1
       const wikets = score.split('/')[1];
-      if(Number(wikets) === 10 ){
+      if (Number(wikets) === 10) {
         console.warn("Error : Wikets are 10");
         activeBettors.delete(userId)
         return res.status(404).send({
@@ -2162,7 +2162,7 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
       });
       console.log(" Asian Casino Max BetSize ============= ", userMaxBetSize);
-  
+
       if (!userMaxBetSize) {
         console.warn("userMaxBetSize not found ");
         activeBettors.delete(userId)
@@ -2175,14 +2175,14 @@ const placeBet = async (req, res) => {
           .status(404)
           .send({message: `max bet size is : ${userMaxBetSize.amount}`});
       }
-  
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount){
+
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
           .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
       }
-      
+
 
       const DBOddDetails = await AsianMarketOdd.findOne({roundId: roundId, marketId: asianMarketId});
       if (!DBOddDetails) {
@@ -2286,9 +2286,7 @@ const placeBet = async (req, res) => {
       }
       _3rdPartyMarketId = asianMarketId;
       // _3rdPartyMarketId = subMarketDetail.Id;
-    } 
-
-    else {
+    } else {
       activeBettors.delete(userId)
       return res
         .status(404)
@@ -2315,9 +2313,9 @@ const placeBet = async (req, res) => {
         betRate = multipeResponse[multipeResponse.length - 1];
       }
 
-      /** 
-       * Winning Loosing Amounts Calculations  
-      */
+      /**
+       * Winning Loosing Amounts Calculations
+       */
 
       if (type == 4) {
         winningAmount = betAmount;
@@ -2391,9 +2389,9 @@ const placeBet = async (req, res) => {
       }
 
       /* ------------ */
-      /** 
+      /**
        * Current Position Of Runners Calculations on bases of Amounts
-      */
+       */
 
       let runnersPosition = [];
       let prevExpAmount = 0;
@@ -2623,11 +2621,11 @@ const placeBet = async (req, res) => {
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
       }
 
-      var source = req.headers['user-agent']
-      ua = useragent.parse(source);
+      let source = req.headers['user-agent']
+      let ua = useragent.parse(source);
 
       let device
-      if ( ua.isMobile || ua.isiPad || ua.isTablet || ua.isiPhone || ua.isAndroid || ua.isMobileNative ) {
+      if (ua.isMobile || ua.isiPad || ua.isTablet || ua.isiPhone || ua.isAndroid || ua.isMobileNative) {
         device = "Mobile"
       } else {
         device = "Computer"
@@ -2666,12 +2664,12 @@ const placeBet = async (req, res) => {
       }
 
       /**
-       *  Check for Total calculated Exp should not greater then Allowed 
+       *  Check for Total calculated Exp should not greater then Allowed
        */
       const finalExpAmount = expAmount - prevExpAmount;
-      if(finalExpAmount > maxExp){
+      if (finalExpAmount > maxExp) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: `Max Expoure Amount : ${maxExp}`});
+        return res.status(404).send({message: `Max Exposure Amount : ${maxExp}`});
       }
 
       const bet = new Bets({
@@ -2719,177 +2717,89 @@ const placeBet = async (req, res) => {
         return res.status(404).send({message: " Insufficient balance "});
       }
 
-      if (Number(user.createdBy) === 11733 || Number(user.createdBy) === 11037) {
-        if (subMarketDetail.Id == config.Fancy) {
-          await Bets.updateMany(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              fancyData: fancyData,
-              status: 1,
-            },
-            {calculateExp: false}
-          );
+      if (subMarketDetail.Id == config.Fancy) {
+        await Bets.updateMany(
+          {
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            fancyData: fancyData,
+            status: 1,
+          },
+          {calculateExp: false}
+        );
 
-          const latestPreviousbet = await Bets.find(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              status: 1
-            }
-          ).sort({_id: -1}).limit(1);
-          await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
+        // const latestPreviousbet = await Bets.find(
+        //   {
+        //     marketId: _3rdPartyMarketId,
+        //     userId: req.decoded.userId,
+        //     matchId: matchId,
+        //     status: 1
+        //   }
+        // ).sort({_id: -1}).limit(1);
+        // await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
 
-        } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
-          let setCalculateExpFalse = await Bets.updateMany({
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              betSession: currentSession,
-              status: 1,
-            },
-            {calculateExp: false}
-          );
-          const latestPreviousbet = await Bets.find({
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              betSession: currentSession,
-              status: 1,
-            }
-          ).sort({_id: -1}).limit(1);
-          await Exposure.deleteOne({trans_from_id: latestPreviousbet._id})
-        } else if (config.asianSubMarket.includes(subMarketDetail.Id)) {
-          await Bets.updateMany(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              roundId: roundId,
-              status: 1,
-              runner: selectionId
-            },
-            {calculateExp: false}
-          );
-          const latestPreviousbet = await Bets.find(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              roundId: roundId,
-              status: 1,
-              runner: selectionId
-            }
-          ).sort({_id: -1}).limit(1);
-        } else {
-          await Bets.updateMany(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              status: 1,
-            },
-            {calculateExp: false}
-          );
-          const latestPreviousbet = await Bets.find(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              status: 1,
-            }
-          ).sort({_id: -1}).limit(1);
-          await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
-        }
+      } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+        let setCalculateExpFalse = await Bets.updateMany({
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            betSession: currentSession,
+            status: 1,
+          },
+          {calculateExp: false}
+        );
+        // const latestPreviousbet = await Bets.find({
+        //     marketId: _3rdPartyMarketId,
+        //     userId: req.decoded.userId,
+        //     matchId: matchId,
+        //     betSession: currentSession,
+        //     status: 1,
+        //   }
+        // ).sort({_id: -1}).limit(1);
+        // await Exposure.deleteOne({trans_from_id: latestPreviousbet._id})
+      } else if (config.asianSubMarket.includes(subMarketDetail.Id)) {
+        await Bets.updateMany(
+          {
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            roundId: roundId,
+            status: 1,
+            runner: selectionId
+          },
+          {calculateExp: false}
+        );
+        // const latestPreviousbet = await Bets.find(
+        //   {
+        //     marketId: _3rdPartyMarketId,
+        //     userId: req.decoded.userId,
+        //     matchId: matchId,
+        //     roundId: roundId,
+        //     status: 1,
+        //     runner: selectionId
+        //   }
+        // ).sort({_id: -1}).limit(1);
       } else {
-        if (subMarketDetail.Id != config.Fancy) {
-          await Bets.updateMany(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              status: 1,
-            },
-            {calculateExp: false}
-          );
-
-          const latestPreviousbet = await Bets.find(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              status: 1
-            }
-          ).sort({_id: -1}).limit(1);
-          await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
-
-        } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
-          let setCalculateExpFalse = await Bets.updateMany({
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              betSession: currentSession,
-              status: 1,
-            },
-            {calculateExp: false}
-          );
-          const latestPreviousbet = await Bets.find({
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              betSession: currentSession,
-              status: 1,
-            }
-          ).sort({_id: -1}).limit(1);
-          await Exposure.deleteOne({trans_from_id: latestPreviousbet._id})
-        } else if (config.asianSubMarket.includes(subMarketDetail.Id)) {
-          await Bets.updateMany(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              roundId: roundId,
-              status: 1,
-              runner: selectionId
-            },
-            {calculateExp: false}
-          );
-          const latestPreviousbet = await Bets.find(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              roundId: roundId,
-              status: 1,
-              runner: selectionId
-            }
-          ).sort({_id: -1}).limit(1);
-        } else {
-          await Bets.updateMany(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              fancyData: fancyData,
-              matchId: matchId,
-              status: 1,
-            },
-            {calculateExp: false}
-          );
-          const latestPreviousbet = await Bets.find(
-            {
-              marketId: _3rdPartyMarketId,
-              userId: req.decoded.userId,
-              matchId: matchId,
-              fancyData: fancyData,
-              status: 1,
-            }
-          ).sort({_id: -1}).limit(1);
-          await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
-        }
+        await Bets.updateMany(
+          {
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            status: 1,
+          },
+          {calculateExp: false}
+        );
+        // const latestPreviousbet = await Bets.find(
+        //   {
+        //     marketId: _3rdPartyMarketId,
+        //     userId: req.decoded.userId,
+        //     matchId: matchId,
+        //     status: 1,
+        //   }
+        // ).sort({_id: -1}).limit(1);
+        // await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
       }
-
 
       bet.save(async (err, result) => {
         if (err) {
@@ -3001,15 +2911,15 @@ const placeBet = async (req, res) => {
     }, delay);
   } catch (error) {
     console.warn("Error placing bet Catched ", error);
-    const userId  = req.decoded.userId;
+    const userId = req.decoded.userId;
     activeBettors.delete(userId)
     return res.status(404).send({message: `Something went wrong !`});
   } finally {
-    const userId  = req.decoded.userId;
+    const userId = req.decoded.userId;
     activeBettors.delete(userId)
     await User.findOneAndUpdate(
       {userId: userId},
-      { activeBetPlacing: false }
+      {activeBetPlacing: false}
     );
   }
 }
@@ -4273,7 +4183,7 @@ const SingleUserAllBets = async (req, res) => {
   }
 }
 
-const postmanwork_2   = async (req, res) => {
+const postmanwork_2 = async (req, res) => {
 
   try {
     const resp = await axios(req.body.url);
@@ -4286,9 +4196,9 @@ const postmanwork_2   = async (req, res) => {
       .send({message: "Error", error: err});
   }
 }
-const eventsAPICalls  = async (req, res) => {
+const eventsAPICalls = async (req, res) => {
 
-  try{
+  try {
     const header = {
       headers: {
         'accept': 'application/json',
@@ -4297,7 +4207,7 @@ const eventsAPICalls  = async (req, res) => {
       },
     }
     const url = req.body.url
-    const requestData =  req.body.requestData
+    const requestData = req.body.requestData
 
     const response = await axios.post(
       url,
@@ -4305,16 +4215,15 @@ const eventsAPICalls  = async (req, res) => {
       header
     );
     const data = response.data.result;
-    return res.status(200).send({ resp: data});
-  }
-   catch (err) {
+    return res.status(200).send({resp: data});
+  } catch (err) {
     console.warn("Query error ======= :", err);
     return res
       .status(500)
-      .send({ message: "Error", error: err });
+      .send({message: "Error", error: err});
   }
 }
-const postmanwork     = async (req, res) => {
+const postmanwork = async (req, res) => {
 
   try {
     // const dt = new Date().getTime();
@@ -4350,38 +4259,38 @@ const postmanwork     = async (req, res) => {
     // }
 
 
-    /** 
-     * to Update All records in 2 limits 
-    */ 
-    if(Number(req.body.type) === 1){
+    /**
+     * to Update All records in 2 limits
+     */
+    if (Number(req.body.type) === 1) {
       for (let i = Number(req.body.start); i < Number(req.body.end); i = i + 50) {
         const casinocallsRecords = await CasinoCalls
-                                      .find({}).sort({ _id : 1 })
-                                      .skip(Number(i))
-                                      .limit(Number(50));
-        for (const casinocall of casinocallsRecords){
+          .find({}).sort({_id: 1})
+          .skip(Number(i))
+          .limit(Number(50));
+        for (const casinocall of casinocallsRecords) {
           console.log(" ======================== casinocall data", casinocall);
           const resp = await Cash.updateMany(
-            { betId: casinocall.transaction_id },
+            {betId: casinocall.transaction_id},
             {
               // betSession: casinocall.game_id,
               roundId: casinocall.round_id
             }
           )
         }
-        
+
       }
     }
 
-    /** 
+    /**
      * to Update All records of a user
-     * 
-    */ 
-    else if(Number(req.body.type) === 2){
-      const casinocallsRecords = await CasinoCalls.find({ remote_id: Number(req.body.userId) }).sort({ _id : 1 });
-      for (const casinocall of casinocallsRecords){
+     *
+     */
+    else if (Number(req.body.type) === 2) {
+      const casinocallsRecords = await CasinoCalls.find({remote_id: Number(req.body.userId)}).sort({_id: 1});
+      for (const casinocall of casinocallsRecords) {
         const resp = await Cash.updateMany(
-          { betId: casinocall.transaction_id },
+          {betId: casinocall.transaction_id},
           {
             roundId: casinocall.round_id
           }
