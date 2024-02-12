@@ -585,7 +585,7 @@ function apiRequests() {
                     createdAt: new Date().getTime(),
                   }
 
-                  if (element.status == "CLOSED") {
+                  if (element.status === "CLOSED") {
                     await MarketIDS.updateOne(
                       {marketId: element.marketId},
                       {inPlay: false, status: element.status}
@@ -598,7 +598,7 @@ function apiRequests() {
                   }
 
                   if (runnerCheckerArray.indexOf(element.marketId) === -1) {
-                    var runners = [];
+                    let runners = [];
 
                     for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
                       const runner = element.runners[ix1];
