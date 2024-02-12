@@ -460,21 +460,21 @@ function apiRequests() {
   }
 
   async function getOddsFromProvider(marketIdsArray) {
-    var tempArry = [];
-    var tempArryForIDs = [];
+    let tempArray = [];
+    let tempArrayForIDs = [];
 
     for (let index = 0; index < marketIdsArray.length; index++) {
       const el = marketIdsArray[index];
-      tempArry.push({
+      tempArray.push({
         market: el.marketId,
         eventId: el.eventId,
         indexID: el.index,
       });
-      tempArryForIDs.push(`${el.marketId}`);
+      tempArrayForIDs.push(`${el.marketId}`);
     }
 
     const requestData = {
-      "marketIds": tempArryForIDs
+      "marketIds": tempArrayForIDs
     }
 
     const url = `${config.newThirdURL}/listMarketBook`;
@@ -626,11 +626,11 @@ function apiRequests() {
                     await el.save();
                   }
 
-                  const ix = _.findIndex(tempArry, function (o) {
+                  const ix = _.findIndex(tempArray, function (o) {
                     return o.market == element.marketId;
                   });
 
-                  if (ix != -1 && tempArry[ix].indexID == 0) {
+                  if (ix != -1 && tempArray[ix].indexID == 0) {
                     io.to("homepage").emit("odds", {
                       marketId: element.marketId,
                       data: el,
@@ -648,9 +648,9 @@ function apiRequests() {
               }
             }
 
-            const filteredArray = tempArry.filter(
+            const filteredArray = tempArray.filter(
               (item) => !checkedMarkets.includes(item.market)
-            );
+            )
 
             for (let index = 0; index < filteredArray.length; index++) {
               await MarketIDS.updateOne(

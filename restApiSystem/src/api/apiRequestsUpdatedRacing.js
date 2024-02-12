@@ -130,7 +130,7 @@ let io;
 const getRaceMarketIds = async (sportsId) => {
   const now = moment().utc(); // Get the current time in UTC
   const startTime = now.subtract(50, 'minutes').valueOf(); // Get the timestamp in milliseconds
-  const endTime = now.add(1, 'hours').valueOf(); // Add 5 hours and get the timestamp in milliseconds
+  const endTime = now.add(0.5, 'hours').valueOf(); // Add 5 hours and get the timestamp in milliseconds
 
   const documents = await MarketIDS.aggregate([
     {
@@ -625,8 +625,9 @@ function apiRequests() {
 
             if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
               console.log(odds.marketId, " this market has no odds.....");
-
-              await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
+              if (odds.status === 'CLOSED') {
+                await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
+              }
               if (odds.marketId) {
                 io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
 
@@ -634,15 +635,15 @@ function apiRequests() {
               }
             } else {
               console.log(odds.marketId, " This market has odds found");
-              responsedMarketIDs.push(odds.marketId);
 
               const result = await RaceOdds.collection.insertOne(json);
               odds._id = result.insertedId;
 
               io.to('$' + odds.marketId).emit('odds', json);
             }
+            responsedMarketIDs.push(odds.marketId);
           } else {
-            console.log(markeIds[marketIds_index], " HAS no odds.");
+            console.log(marketIds[marketIds_index], " HAS no odds.");
           }
           marketIds_index++;
           console.log("VISIT NO: ", numberOfVisits);
@@ -660,11 +661,12 @@ function apiRequests() {
 
       let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
       for (let j = 0; j < difference?.length; j++) {
-        const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
-        if (!existedMarket?._id) {
-          io.emit('racing_status', {status: "PENDING", marketId: difference[j]});
-          await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})
-        }
+        await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'CLOSED'}})
+        io.emit('racing_status', {status: "CLOSED", marketId: difference[j]});
+        // const existedMarket = await MarketIDS.findOne({marketId: difference[j], status: "CLOSED"})
+        // if (!existedMarket?._id) {
+        //   await MarketIDS.updateOne({marketId: difference[j]}, {$set: {status: 'PENDING'}})
+        // }
       }
 
       return ({
