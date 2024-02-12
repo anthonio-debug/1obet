@@ -6,6 +6,7 @@ require('dotenv').config()
 const config = require("../../../config/default.json")
 const MarketIDs = require("../../../app/models/marketIds");
 const Events = require("../../../app/models/events");
+const MarketIDS = require("../../../app/models/marketIds");
 
 const sportsAPIUrl = "http://185.58.225.212:8080/api";
 const horseRaceUrl = "http://185.58.225.212:8080/api";
@@ -51,23 +52,25 @@ function apiRequestResult() {
       .then(
         async (response) => {
           const results = response.data.result;
+          let responseMarketIDs = []
           for (const result of results) {
             const marketIndex = _.findIndex(markets, (o) => o.marketId === result.marketId);
 
             if (marketIndex === -1) {
               console.log('Record not found');
-              return;
+              continue;
             }
+            responseMarketIDs.push(result.marketId)
 
             const market = markets[marketIndex];
 
-            if (result.status !== 'CLOSED') return;
+            if (result.status !== 'CLOSED') continue;
 
             let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.selectionId;
 
             if (!market.runners || !winnerSelectionId) {
               await updateMarketAndEvent(market, winnerSelectionId);
-              return;
+              continue;
             }
 
             const runnerIndex = _.findIndex(market.runners, (o) => o.SelectionId === winnerSelectionId);
@@ -77,6 +80,11 @@ function apiRequestResult() {
             }
 
             await updateMarketAndEvent(market, winnerSelectionId);
+          }
+
+          let difference = marketIdList.filter(x => !responseMarketIDs.includes(x));
+          for (const diff of difference) {
+            await MarketIDS.updateOne({marketId: diff}, {$set: {readyForScore: false}})
           }
 
           async function updateMarketAndEvent(market, winnerInfo) {
@@ -173,24 +181,10 @@ function apiRequestResult() {
       await MarketIDs.findOneAndUpdate({_id: markets[index]._id}, {lastResultCheckTime: currentTime})
     }
 
-    // console.log(marketIds);
-
     try {
       const requestData = {
         "marketIds": marketIds
       }
-      // const requestData = {
-      //   "filter": {
-      //     // "eventIds": [eventId],
-      //     // "eventTypeIds": [sportsId],
-      //     "marketIds": marketIds,
-      //     "marketTypes": ["WIN", "PLACE"],
-      //   },
-      //   "maxResults": 50,
-      //   "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "RUNNER_DESCRIPTION", "RUNNER_METADATA", "COMPETITION"]
-      // }
-
-      // const url = `${horseRaceUrl}/listMarketCatalogue`;
       const url = `${horseRaceUrl}/listMarketBook`;
       let response = await axios.post(
         url,
@@ -198,25 +192,25 @@ function apiRequestResult() {
         header
       );
       const results = response.data.result;
-      // const markets = await MarketIDs.find({eventId: eventId}).exec()
-      // console.log(results);
+      let responseMarketIDs = []
       for (const result of results) {
         const marketIndex = _.findIndex(markets, (o) => o.marketId === result.marketId);
 
         if (marketIndex === -1) {
           console.log('Record not found');
-          return;
+          continue;
         }
+        responseMarketIDs.push(result.marketId)
 
         const market = markets[marketIndex];
 
-        if (result.status !== 'CLOSED') return;
+        if (result.status !== 'CLOSED') continue;
 
         let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.selectionId;
 
         if (!market.runners || !winnerSelectionId) {
           await updateMarketAndEvent(market, winnerSelectionId);
-          return;
+          continue;
         }
 
         const runnerIndex = _.findIndex(market.runners, (o) => o.SelectionId === winnerSelectionId);
@@ -226,6 +220,11 @@ function apiRequestResult() {
         }
 
         await updateMarketAndEvent(market, winnerSelectionId);
+      }
+
+      let difference = marketIds.filter(x => !responseMarketIDs.includes(x));
+      for (const diff of difference) {
+        await MarketIDS.updateOne({marketId: diff}, {$set: {readyForScore: false}})
       }
 
       async function updateMarketAndEvent(market, winnerInfo) {

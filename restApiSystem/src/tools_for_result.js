@@ -24,6 +24,7 @@ function ToolForResult() {
     try {
       const eventMarkets = await MarketIDs.find({
         readyForScore: true,
+        status: 'CLOSED',
         sportID: {$in: [1, 2, 4]},
         winnerInfo: null
       }).sort({lastResultCheckTime: 1}).limit(10).exec();
@@ -37,7 +38,7 @@ function ToolForResult() {
     } finally {
       setTimeout(() => {
         fetchResults();
-      }, 3000);
+      }, 10000);
     }
   }
 
@@ -68,6 +69,7 @@ function ToolForResult() {
     try {
       const racingMarkets = await MarketIDs.find({
         readyForScore: true,
+        status: 'CLOSED',
         sportID: {$in: [4339, 7]},
         winnerInfo: null
       }).sort({lastResultCheckTime: 1}).limit(10).exec();
