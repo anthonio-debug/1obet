@@ -167,6 +167,7 @@ function ToolForEvent() {
         {
           $match: {
             inPlay: inPlay,
+            status: {$in: ['INACTIVE', 'OPEN', 'SUSPENDED']},
             $or: [
               {sportID: 1},
               {sportID: 2},
