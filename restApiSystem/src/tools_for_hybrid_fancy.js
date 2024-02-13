@@ -34,24 +34,27 @@ function ToolForHybridFancy() {
     let t3 = []
     let bm = {}
     for (const odd of fancyOdds) {
-      const market = fancyMarketList.find(market => market?.market?.id === odd.marketId)
-      t3.push({
-        b1: odd.back[0].price,
-        b2: odd.back[1].price,
-        b3: odd.back[2].price,
-        bs1: odd.back[0].size,
-        bs2: odd.back[1].size,
-        bs3: odd.back[2].size,
-        l1: odd.lay[0].price,
-        l2: odd.lay[1].price,
-        l3: odd.lay[2].price,
-        ls1: odd.lay[0].size,
-        ls2: odd.lay[1].size,
-        ls3: odd.lay[2].size,
-        nat: market?.market?.name,
-        gstatus: odd.status,
-        sid: odd.marketId,
-      })
+      if (odd.inplay) {
+        const market = fancyMarketList.find(market => market?.market?.id === odd.marketId)
+        t3.push({
+          b1: odd.back[0].price,
+          b2: odd.back[1].price,
+          b3: odd.back[2].price,
+          bs1: odd.back[0].size,
+          bs2: odd.back[1].size,
+          bs3: odd.back[2].size,
+          l1: odd.lay[0].price,
+          l2: odd.lay[1].price,
+          l3: odd.lay[2].price,
+          ls1: odd.lay[0].size,
+          ls2: odd.lay[1].size,
+          ls3: odd.lay[2].size,
+          nat: market?.market?.name,
+          gstatus: odd.status,
+          sid: odd.marketId,
+        })
+      }
+
     }
 
     for (const [index, odd] of bookmakerOdds.entries()) {
