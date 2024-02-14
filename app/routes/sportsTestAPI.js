@@ -499,7 +499,7 @@ async function getFanciesByEventId(req, res) {
     const url = `http://142.93.36.1/api/v1/listMarketBookSession?match_id=${eventId}`
     const response = await axios.get(url);
 
-    res.status(200).json({success: true, data: response?.data?.result});
+    res.status(200).json({success: true, data: response.data});
   } catch (err) {
     res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
   }
