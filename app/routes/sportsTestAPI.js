@@ -496,7 +496,7 @@ async function getMarketsByMarketType(req, res) {
 async function getFanciesByEventId(req, res) {
   const eventId = req.params.eventId;
   try {
-    const url = `http://142.93.36.1/api/v1/listMarketBookSession?event_id=${eventId}`
+    const url = `http://142.93.36.1/api/v1/listMarketBookSession?match_id=${eventId}`
     const response = await axios.get(url);
 
     res.status(200).json({success: true, data: response?.data?.result});
