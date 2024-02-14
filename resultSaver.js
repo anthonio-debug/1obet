@@ -11,7 +11,7 @@ const mongooseOptions = {
 mongoose.set('strictQuery', false);
 mongoose.set({debug: false});
 mongoose
-  .connect(`mongodb://127.0.0.1/${DBNAME}`, mongooseOptions)
+  .connect(`mongodb://127.0.0.1/${DBNAME}?directConnection=true`, mongooseOptions)
   .then(async () => {
     console.log('Database connected');
     await ToolForResults.init();

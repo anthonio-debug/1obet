@@ -12,7 +12,7 @@ let options = {
 mongoose.set('strictQuery', false);
 mongoose.set({ debug: false });
 mongoose
-  .connect(`mongodb://127.0.0.1/${DBNAME}`, options)
+  .connect(`mongodb://127.0.0.1/${DBNAME}?directConnection=true`, options)
   .then(() => {
     console.log('Database connected');
   })

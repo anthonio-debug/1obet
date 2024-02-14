@@ -45,7 +45,7 @@ const checkMarketBlocked = async (user) => {
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res) => {
   try {
-    const client = new MongoClient(DBHost, {useUnifiedTopology: true});
+    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
     await client.connect();
     const session = client.startSession();
     const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
@@ -634,7 +634,7 @@ async function debitFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    const client = new MongoClient(DBHost, {useUnifiedTopology: true});
+    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
     await client.connect();
     const session = client.startSession();
     const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
@@ -744,7 +744,7 @@ async function creditFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    const client = new MongoClient(DBHost, {useUnifiedTopology: true});
+    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
     await client.connect();
     const session = client.startSession();
 
@@ -821,7 +821,7 @@ async function creditFun(req, res) {
 async function rollbackFun(req, res) {
   try {
     const payload = req.query;
-    const client = new MongoClient(DBHost, {useUnifiedTopology: true});
+    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
     await client.connect();
     const session = client.startSession();
 
