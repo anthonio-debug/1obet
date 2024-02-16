@@ -69,7 +69,7 @@ function apiRequest() {
   }
 
   async function getEventResult(markets) {
-    console.log('getWaitingResult for Events ');
+    console.log('getWaitingResult for Events...... ');
 
     const currentTime = new Date().getTime();
     var marketIds = [];
@@ -79,7 +79,7 @@ function apiRequest() {
     }
 
     //console.log(marketIds);
-
+    console.log("sudden blockage to results........");
     var url = `${sportsAPIUrl}/results/?ids=` + marketIds.join(',');
     try {
       const response = await axios.get(url);
