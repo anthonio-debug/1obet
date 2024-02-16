@@ -13,8 +13,9 @@ export async function getEventResult(markets) {
   }
 
   //console.log(marketIds);
-
+  console.log("How it can happen....");
   var url = `${sportsAPIUrl}/results/?ids=` + marketIds.join(',');
+  
   try {
     const response = await axios.get(url);
     const results = response.data;
