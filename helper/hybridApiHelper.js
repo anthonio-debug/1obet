@@ -5,6 +5,7 @@ require('dotenv').config()
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
 
 async function getFancyOdds(marketIds) {
+  console.log('getFancyOdds function started.........');
   if (marketIds.length === 0) return []
   const mids = marketIds.join(',')
   const url = `${HYBRID_URI}/runners/fancy?mids=${mids}&provider=${HYBRID_PROVIDER}`
