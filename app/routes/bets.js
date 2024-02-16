@@ -4183,6 +4183,72 @@ const SingleUserAllBets = async (req, res) => {
   }
 }
 
+const GetAllBets = async (req, res) => {
+  try {
+    const DBNAME = process.env.DB_NAME;
+    const DBHost = process.env.DBHost;
+    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+    const deposit = client.db(`${DBNAME}`).collection("deposits");
+
+    let result = null;
+
+    if (req.query?.eventId){
+      result = await Bets.find({
+        eventId: req.query?.eventId,
+        status: 1
+      })
+    } else {
+      result = await Bets.find({
+        status: 1,
+      });
+    }
+
+    page = req.query?.page ?? 1;
+    limit = req.query?.limit ?? 10;
+
+    return res.send({
+      status: true,
+      message: "Bets List !",
+      results: result.slice((page-1)*limit, page*limit),
+      total: result.length,
+      limit: limit,
+      page: page,
+      pages: Math.ceil(result.length * 1.0/limit)
+    });
+
+  } catch (err) {
+    return res.send({
+      message: `Error ${err} !`,
+    });
+  }
+}
+
+const GetBetsByEventId = async (req, res) => {
+  try {
+    const DBNAME = process.env.DB_NAME;
+    const DBHost = process.env.DBHost;
+    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+    const deposit = client.db(`${DBNAME}`).collection("deposits");
+
+    const result = await Bets.find({
+      eventId: Number(req.query.eventId),
+      status: 1,
+      isfancyOrbookmaker: true
+    });
+
+    return res.send({
+      status: true,
+      message: "Bets List !",
+      results: result,
+    });
+
+  } catch (err) {
+    return res.send({
+      message: `Error ${err} !`,
+    });
+  }
+}
+
 const postmanwork_2 = async (req, res) => {
 
   try {
@@ -4331,6 +4397,8 @@ loginRouter.get("/EventWiseprofitLose", EventWiseprofitLose);
 loginRouter.get("/dailyMatchWiseprofitLose", dailyMatchWiseprofitLose);
 
 loginRouter.get("/SingleUserAllBets", SingleUserAllBets);
+loginRouter.get("/GetAllBets", GetAllBets);
+loginRouter.get("/GetBetsByEventId", GetBetsByEventId);
 
 module.exports = {sessionCalc, loginRouter, getParents};
 

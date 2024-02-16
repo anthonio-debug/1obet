@@ -185,6 +185,8 @@
   "getAsianTables",
   "getAsianOdd",
   "SingleUserAllBets",
+  "GetAllBets",
+  "GetBetsByEventId",
   "userAccountSettlement",
   "round",
   "SetAsianDashboard",
