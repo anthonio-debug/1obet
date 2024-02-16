@@ -1,6 +1,6 @@
 'use strict';
 module.exports = toolStart;
-//const apiRequest = require('./apiRequest')();
+const apiRequest = require('./apiRequest')();
 const MarketIDs = require('../app/models/marketIds');
 const inplayevents = require('../app/models/events');
 
