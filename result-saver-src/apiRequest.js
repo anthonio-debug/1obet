@@ -80,7 +80,7 @@ function apiRequest() {
     }
 
     //console.log(marketIds);
-    console.log("sudden blockage to results........");
+    console.log("sudden blockage to results here.........");
     var url = `${sportsAPIUrl}/results/?ids=` + marketIds.join(',');
     try {
       const response = await axios.get(url);
