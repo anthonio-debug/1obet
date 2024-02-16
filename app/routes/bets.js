@@ -4206,9 +4206,9 @@ const GetAllBets = async (req, res) => {
     page = req.query?.page ?? 1;
     limit = req.query?.limit ?? 10;
 
-    result = result.slice((page - 1) * limit, page * limit);
+    const results = result.slice((page - 1) * limit, page * limit);
 
-    for (const bet of result){
+    for (const bet of results){
       const user = await User.findOne({ _id: bet.userId })
       bet.userName = user.userName
     }
@@ -4216,11 +4216,11 @@ const GetAllBets = async (req, res) => {
     return res.send({
       status: true,
       message: "Bets List !",
-      results: result,
-      total: result.length,
+      results: results,
+      total: results.length,
       limit: limit,
       page: page,
-      pages: Math.ceil(result.length * 1.0 / limit)
+      pages: Math.ceil(results.length * 1.0 / limit)
     });
 
   } catch (err) {
