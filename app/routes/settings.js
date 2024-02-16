@@ -2361,6 +2361,7 @@ const setFancyScore = async (req, res) => {
     {
       new: true,
       upsert: true,
+      setDefaultsOnInsert: true
     }
   );
 
