@@ -36,27 +36,26 @@ function ToolForSessionFancy() {
     let t3 = []
     let bm = {}
     for (const odd of fancyOdds) {
-      if (odd.inplay) {
-        const market = fancyMarketList.find(market => market?.market?.id === odd.marketId)
+      if (odd.gtype === 'fancy1') {
         t3.push({
-          b1: odd.back[0].price,
-          b2: odd.back[1].price,
-          b3: odd.back[2].price,
-          bs1: odd.back[0].size,
-          bs2: odd.back[1].size,
-          bs3: odd.back[2].size,
-          l1: odd.lay[0].price,
-          l2: odd.lay[1].price,
-          l3: odd.lay[2].price,
-          ls1: odd.lay[0].size,
-          ls2: odd.lay[1].size,
-          ls3: odd.lay[2].size,
-          nat: market?.market?.name,
-          gstatus: odd.status,
-          sid: odd.marketId,
+          b1: odd.BackPrice1,
+          b2: odd.BackPrice2,
+          b3: odd.BackPrice3,
+          bs1: odd.BackSize1,
+          bs2: odd.BackSize2,
+          bs3: odd.BackSize3,
+          l1: odd.LayPrice1,
+          l2: odd.LayPrice2,
+          l3: odd.LayPrice3,
+          ls1: odd.LaySize1,
+          ls2: odd.LaySize2,
+          ls3: odd.LaySize3,
+          nat: odd.RunnerName,
+          gstatus: odd.GameStatus,
+          sid: odd.SelectionId,
+          ssid: `${eventId}_${odd.SelectionId}`,
         })
       }
-
     }
 
     for (const [index, odd] of bookmakerOdds.entries()) {
@@ -76,10 +75,10 @@ function ToolForSessionFancy() {
             ls1: runner.lay[0].size,
             ls2: runner.lay[0].size,
             ls3: runner.lay[0].size,
-            s: runner.runnerStatus,
+            s: runner.status,
             sid: runner.selectionId,
             ssid: odd?.marketId,
-            nat: runner.name,
+            nat: runner.runnerName,
           })
         }
       }
