@@ -2355,7 +2355,6 @@ const setFancyScore = async (req, res) => {
         sportID: 4,
         status: 'OPEN',
         totalMatched: '0',
-        winnerRunnerData: resultData
       }
     },
     {
