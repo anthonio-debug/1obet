@@ -4208,10 +4208,10 @@ const GetAllBets = async (req, res) => {
 
     const results = result.slice((page - 1) * limit, page * limit);
 
-    for (const bet of results){
-      const user = await User.findOne({ _id: bet.userId })
-      bet.userName = user.userName
-    }
+    // for (const bet of results){
+    //   const user = await User.findOne({ _id: bet.userId })
+    //   bet.userName = user.userName
+    // }
 
     return res.send({
       status: true,
