@@ -24,7 +24,7 @@ function apiRequest() {
     }
 
     console.log(marketIds);
-
+    console.log("How it can happen....2222");
     var url = `${horseRaceUrl}/results/?ids=` + marketIds.join(',');
     try {
       const response = await axios.get(url);
