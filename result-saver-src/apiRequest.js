@@ -3,8 +3,7 @@ module.exports = apiRequest;
 
 const axios = require('axios');
 const horseRaceUrl = "http://136.244.77.249:33333";
-//const sportsAPIUrl = 'http://209.250.242.175:33332';
-const sportsAPIUrl = 'http://185.58.225.212:8080/api';
+const sportsAPIUrl = 'http://209.250.242.175:33332';
 const MarketIDs = require('../app/models/marketIds');
 const Events = require('../app/models/events');
 
@@ -81,6 +80,7 @@ function apiRequest() {
 
     //console.log(marketIds);
     console.log("sudden blockage to results........");
+    const sportsAPIUrl = 'http://185.58.225.212:8080/api';
     var url = `${sportsAPIUrl}/results/?ids=` + marketIds.join(',');
     try {
       const response = await axios.get(url);
