@@ -4193,58 +4193,14 @@ const GetAllBets = async (req, res) => {
     let result = null;
 
     if (req.query?.eventId) {
-      result = await Bets.aggregate([
-        {
-            $match: { 
-              status: 1,
-              eventId: req.query?.eventId
-            }  // Filter to only include bets with status 1
-        },
-        {
-            $lookup: {
-                from: "user",  // Name of the collection to join with
-                localField: "userId",
-                foreignField: "_id",
-                as: "userName"
-            }
-        },
-        {
-            $unwind: "$user"  // Unwind the array created by the lookup
-        },
-        {
-            $project: {
-                _id: 1,  // Include the fields you want to keep from the Bets collection
-                status: 1,
-                userName: { $arrayElemAt: ["$user.userName", 0] }  // Get the user name from the user array
-                // Add more fields as needed
-            }
-        }
-    ]);
+      result = await Bets.find({
+        eventId: req.query?.eventId,
+        status: 1
+      }).populate('userId').exec()
     } else {
-      result = await Bets.aggregate([
-        {
-          $match: { status: 1 }  // Filter to only include bets with status 1
-        },
-        {
-          $lookup: {
-            from: "user",  // Name of the collection to join with
-            localField: "userId",
-            foreignField: "_id",
-            as: "userName"
-          }
-        },
-        {
-          $unwind: "$user"  // Unwind the array created by the lookup
-        },
-        {
-          $project: {
-            _id: 1,  // Include the fields you want to keep from the Bets collection
-            status: 1,
-            userName: { $arrayElemAt: ["$user.userName", 0] }  // Get the user name from the user array
-            // Add more fields as needed
-          }
-        }
-      ]);
+      result = await Bets.find({
+        status: 1
+      }).populate('userId').exec()
     }
 
     page = req.query?.page ?? 1;
