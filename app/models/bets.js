@@ -9,7 +9,7 @@ let Schema = mongoose.Schema
 const betSchema = new mongoose.Schema({
   sportsId: { type: String, required: false },
   marketId: { type: String, required: false },
-  userId: { type: mongoose.Schema.ObjectId, ref: 'users', required: true },
+  userId: { type: Number, required: true },
   betAmount: { type: Number, required: true },
   betRate: { type: Number, required: true }, // bet rate chosen by user
   selectedBetRate: { type: Number, default: 0 },
