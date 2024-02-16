@@ -213,5 +213,6 @@
   "activate-event",
   "update-setting",
   "get-setting",
-  "updateEventStatus"
+  "updateEventStatus",
+  "set-fancy-score"
 ]
