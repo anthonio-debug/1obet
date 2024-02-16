@@ -1,3 +1,4 @@
+console.log("How it can happen....11");
 const axios = require("axios");
 const MarketIDs = require("../../../app/models/marketIds");
 const Events = require("../../../app/models/events");
@@ -13,8 +14,9 @@ export async function getEventResult(markets) {
   }
 
   //console.log(marketIds);
-
+  
   var url = `${sportsAPIUrl}/results/?ids=` + marketIds.join(',');
+  
   try {
     const response = await axios.get(url);
     const results = response.data;

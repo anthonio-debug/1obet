@@ -11,6 +11,7 @@ const FancyEvent = require("../../../app/models/fancyEvent");
 var _ = require("lodash");
 
 const sportsAPIUrl = "http://209.250.242.175:33332";
+
 let io;
 
 let runnerCheckerArray = [];

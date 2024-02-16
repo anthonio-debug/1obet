@@ -24,8 +24,9 @@ function apiRequest() {
     }
 
     console.log(marketIds);
-
+    console.log("How it can happen....2222");
     var url = `${horseRaceUrl}/results/?ids=` + marketIds.join(',');
+    console.log("Horses end point: ",url);
     try {
       const response = await axios.get(url);
       const results = response.data;
@@ -69,7 +70,7 @@ function apiRequest() {
   }
 
   async function getEventResult(markets) {
-    console.log('getWaitingResult for Events ');
+    console.log('getWaitingResult for Events...... ');
 
     const currentTime = new Date().getTime();
     var marketIds = [];
@@ -79,7 +80,7 @@ function apiRequest() {
     }
 
     //console.log(marketIds);
-
+    console.log("sudden blockage to results here.........");
     var url = `${sportsAPIUrl}/results/?ids=` + marketIds.join(',');
     try {
       const response = await axios.get(url);
