@@ -80,7 +80,6 @@ function apiRequest() {
 
     //console.log(marketIds);
     console.log("sudden blockage to results........");
-    const sportsAPIUrl = 'http://185.58.225.212:8080/api';
     var url = `${sportsAPIUrl}/results/?ids=` + marketIds.join(',');
     try {
       const response = await axios.get(url);
