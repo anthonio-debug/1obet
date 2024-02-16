@@ -4202,7 +4202,7 @@ const GetAllBets = async (req, res) => {
         },
         {
             $lookup: {
-                from: "users",  // Name of the collection to join with
+                from: "user",  // Name of the collection to join with
                 localField: "userId",
                 foreignField: "_id",
                 as: "userName"
@@ -4227,7 +4227,7 @@ const GetAllBets = async (req, res) => {
         },
         {
           $lookup: {
-            from: "users",  // Name of the collection to join with
+            from: "user",  // Name of the collection to join with
             localField: "userId",
             foreignField: "_id",
             as: "userName"
