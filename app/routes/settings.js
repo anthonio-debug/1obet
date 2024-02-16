@@ -2349,7 +2349,6 @@ const setFancyScore = async (req, res) => {
         index: 0,
         lastCheck: 0,
         lastResultCheckTime: 0,
-        manuelClose: true,
         openDate: 0,
         readyForScore: true,
         sportID: 4,
