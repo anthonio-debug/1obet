@@ -1,7 +1,7 @@
 const express = require("express");
 var http = require('http')
   , useragent = require('express-useragent');
-const {validationResult} = require("express-validator");
+const { validationResult } = require("express-validator");
 let config = require("config");
 const Bets = require("../models/bets");
 const User = require("../models/user");
@@ -26,14 +26,14 @@ const Cash = require("../../app/models/deposits");
 const BetPlaceHold = require("../models/betaPlaceHold");
 const Exposure = require("../models/ExpRec")
 const AsianMarketOdd = require("../models/asianOdds")
-const {v4: uuidv4} = require('uuid');
-const {MongoClient, ObjectId} = require('mongodb');
+const { v4: uuidv4 } = require('uuid');
+const { MongoClient, ObjectId } = require('mongodb');
 const Crickets = require('../models/Crickets')
 const CasinoCalls = require('../models/casinoCalls')
-const {FANCY_URL, LIVE_BET_TV_URL, HYBRID_URI} = require("../global/constants");
+const { FANCY_URL, LIVE_BET_TV_URL, HYBRID_URI } = require("../global/constants");
 const message_result = "cannot place bet due to result check";
 const MarketIDS = require("../models/marketIds")
-const {getFancyOdds, getBookmakerOdds} = require("../../helper/hybridApiHelper");
+const { getFancyOdds, getBookmakerOdds } = require("../../helper/hybridApiHelper");
 require('dotenv').config()
 
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
@@ -61,7 +61,7 @@ const getParents = async (userId) => {
   let currentUserId = userId;
 
   while (currentUserId) {
-    const parentUser = await User.findOne({userId: currentUserId});
+    const parentUser = await User.findOne({ userId: currentUserId });
 
     if (
       !parentUser ||
@@ -82,7 +82,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
       $in: [...parentUsersIds],
     },
     isDeleted: false,
-  }).sort({userId: -1});
+  }).sort({ userId: -1 });
   let prev = 0;
 
   for (const user of parentUser) {
@@ -116,14 +116,14 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
 
 const activeBetPlacing = async (userId) => {
   await User.findOneAndUpdate(
-    {userId: userId},
-    {activeBetPlacing: false}
+    { userId: userId },
+    { activeBetPlacing: false }
   );
 }
 
 const apiCallForOdds = async (marketId) => {
   const url = `${config.sportsAPIUrl}/listMarketBook`;
-  const data = {marketIds: [marketId]}
+  const data = { marketIds: [marketId] }
   const header = {
     headers: {
       'accept': 'application/json',
@@ -141,7 +141,7 @@ const apiCallForOdds = async (marketId) => {
 
 const stopbetStatusChecker = async (id) => {
   try {
-    const scores = await Crickets.findOne({eventId: id});
+    const scores = await Crickets.findOne({ eventId: id });
     console.log(`Score details ====================== `, scores);
     if (scores && scores?.result && scores?.result?.length) {
       const result = scores?.result.toLowerCase();
@@ -163,7 +163,7 @@ const stopbetStatusChecker = async (id) => {
 }
 
 const checkMarketActiveForBets = async (marketId) => {
-  const marketStatus = await MarketIDS({marketId: marketId});
+  const marketStatus = await MarketIDS({ marketId: marketId });
   if (marketStatus.status === "OPEN") {
     return 200
   } else {
@@ -174,11 +174,11 @@ const checkMarketActiveForBets = async (marketId) => {
 const placeBet = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length != 0) {
-    return res.status(400).send({errors: errors.errors});
+    return res.status(400).send({ errors: errors.errors });
   }
   try {
     if (req.decoded.login.role != "5") {
-      return res.status(401).send({message: "You are not allowed to bet"});
+      return res.status(401).send({ message: "You are not allowed to bet" });
     }
     /* =============================  Base Settings   ============================== */
     let runnerName;
@@ -226,22 +226,22 @@ const placeBet = async (req, res) => {
     /* ============================== Innitial Checks  ============================== */
 
     if (subMarketName.toUpperCase() == "ZA" || subMarketName.toUpperCase() == "RSA") {
-      return res.status(404).send({message: "Betting disabled"});
+      return res.status(404).send({ message: "Betting disabled" });
     }
     if (betAmount < config.betMinimumAmount) {
       return res
         .status(404)
-        .send({message: `minimum bet should be ${config.betMinimumAmount}`});
+        .send({ message: `minimum bet should be ${config.betMinimumAmount}` });
     }
-    const user = await User.findOne({userId}).exec();
+    const user = await User.findOne({ userId }).exec();
     if (!user) {
-      return res.status(404).send({message: "illegal user betting"});
+      return res.status(404).send({ message: "illegal user betting" });
     }
 
     if (activeBettors.has(userId)) {
-      return res.status(404).send({message: "Please wait few seconds "});
+      return res.status(404).send({ message: "Please wait few seconds " });
     } else {
-      activeBettors.set(userId, {status: true})
+      activeBettors.set(userId, { status: true })
     }
 
     // if(user.activeBetPlacing){
@@ -253,28 +253,28 @@ const placeBet = async (req, res) => {
 
     if (user.bettingAllowed == false) {
       activeBettors.delete(userId)
-      return res.status(404).send({message: "Bet not allowed"});
+      return res.status(404).send({ message: "Bet not allowed" });
     }
     let parentUserIds = await getParents(user.userId);
 
-    const blockedUsersCount = await User.countDocuments({userId: {$in: parentUserIds}, bettingAllowed: false})
+    const blockedUsersCount = await User.countDocuments({ userId: { $in: parentUserIds }, bettingAllowed: false })
     if (blockedUsersCount > 0) {
       activeBettors.delete(userId)
-      return res.status(404).send({message: "Beting disbaled"});
+      return res.status(404).send({ message: "Beting disbaled" });
     }
 
     const marketIds = await User.distinct("blockedMarketPlaces", {
-      userId: {$in: parentUserIds},
+      userId: { $in: parentUserIds },
       isDeleted: false,
     });
 
     const subMarketId1 = await User.distinct("blockedSubMarkets", {
-      userId: {$in: parentUserIds},
+      userId: { $in: parentUserIds },
       isDeleted: false,
     });
 
     const subMarketId2 = await User.distinct("blockedSubMarketsByParent", {
-      userId: {$in: parentUserIds},
+      userId: { $in: parentUserIds },
       isDeleted: false,
     });
     const subMarketId = subMarketId1.concat(subMarketId2);
@@ -286,7 +286,7 @@ const placeBet = async (req, res) => {
       eventDetail = await Events.findById(matchId);
       if (!eventDetail) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: "EVENT COULD NOT FOUND"});
+        return res.status(404).send({ message: "EVENT COULD NOT FOUND" });
       }
 
 
@@ -294,26 +294,26 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: "Batting Not Allowd on this Match1", data: eventDetail.betAllowed});
+          .send({ message: "Batting Not Allowd on this Match1", data: eventDetail.betAllowed });
       }
       if (eventDetail.status.toUpperCase() != "OPEN") {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: "Batting Not Allowd on this Match2", data: eventDetail.status.toUpperCase()});
+          .send({ message: "Batting Not Allowd on this Match2", data: eventDetail.status.toUpperCase() });
       }
       if (eventDetail.matchStopStatus) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: "Batting Not Allowd on this Match3", data: eventDetail.matchStopStatus});
+          .send({ message: "Batting Not Allowd on this Match3", data: eventDetail.matchStopStatus });
       }
 
       if (eventDetail.matchStopStatus) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: "Batting Not Allowd on this Match"});
+          .send({ message: "Batting Not Allowd on this Match" });
       }
 
       marketId = eventDetail?.sportsId;
@@ -334,7 +334,7 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `,
         });
       }
-      const idDetails = await MarketIDS.findOne({marketId: DBOddDetails.marketId, eventId: eventDetail.Id})
+      const idDetails = await MarketIDS.findOne({ marketId: DBOddDetails.marketId, eventId: eventDetail.Id })
       if (!idDetails) {
         console.warn(`Error : Market details Not found !`)
         activeBettors.delete(userId)
@@ -355,24 +355,24 @@ const placeBet = async (req, res) => {
       const remainingTimeFromMarketStart = idDetails.openDate - now
       if (remainingTimeFromMarketStart < 0) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: "Bet not allowed"});
+        return res.status(404).send({ message: "Bet not allowed" });
       }
       id = idDetails.marketId;
       _3rdPartyMarketId = id;
-      subMarketDetail = await SubMarketType.findOne({countryCode: subMarketName, marketId: marketId}).exec();
+      subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
       if (!subMarketDetail) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: "Bet not allowed"});
+        return res.status(404).send({ message: "Bet not allowed" });
       }
     } else if (asianOdd) {
-      subMarketDetail = await SubMarketType.findOne({name: subMarketName, marketId: marketId}).exec();
+      subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
       if (!subMarketDetail) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: "you cannot place bet"});
+        return res.status(404).send({ message: "you cannot place bet" });
       }
     } else {
       let thirdPartyMarketName = subMarketName;
-      subMarketDetail = await SubMarketType.findOne({name: subMarketName, marketId: marketId}).exec();
+      subMarketDetail = await SubMarketType.findOne({ name: subMarketName, marketId: marketId }).exec();
       const requiredTime = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime;
 
@@ -405,7 +405,7 @@ const placeBet = async (req, res) => {
 
       if (!subMarketDetail) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: "you cannot place bet"});
+        return res.status(404).send({ message: "you cannot place bet" });
       }
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
         activeBettors.delete(userId)
@@ -426,7 +426,7 @@ const placeBet = async (req, res) => {
      */
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || user.blockedSubMarketsByParent.includes(subMarketDetail.Id)) {
       activeBettors.delete(userId)
-      return res.status(404).send({message: "Betting disabled"});
+      return res.status(404).send({ message: "Betting disabled" });
     }
 
 
@@ -452,11 +452,11 @@ const placeBet = async (req, res) => {
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: `max bet size is : ${userMaxBetSize.amount}`});
+        return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+        return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
       const DBOddDetails = await Odds.findById(oddsId);
@@ -584,12 +584,12 @@ const placeBet = async (req, res) => {
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: `max bet size is : ${userMaxBetSize.amount}`});
+        return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
 
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+        return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
       const DBOddDetails = await Odds.findById(oddsId);
@@ -745,13 +745,13 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+          .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
       // const resultcheck = await stopbetStatusChecker(eventDetail.Id);
@@ -936,13 +936,13 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+          .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
       runnerName = req.body.runnerName;
@@ -1095,13 +1095,13 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+          .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
       _3rdPartyMarketId = overunderMarketId;
@@ -1285,13 +1285,13 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+          .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
@@ -1426,13 +1426,13 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+          .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
 
@@ -1562,13 +1562,13 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+          .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
@@ -1658,13 +1658,13 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+          .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
       isManuel = false;
@@ -1676,7 +1676,7 @@ const placeBet = async (req, res) => {
       if (!userMaxBetSize) {
         console.warn("Fancy userMaxBetSize not found ");
         activeBettors.delete(userId)
-        return res.status(404).send({message: `something went wrong !`});
+        return res.status(404).send({ message: `something went wrong !` });
       }
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
@@ -1687,7 +1687,7 @@ const placeBet = async (req, res) => {
       }
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: `max bet size is : ${fancyBetLimit.amount}`});
+        return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
       }
 
       isFancyOrBookMaker = true;
@@ -1780,11 +1780,11 @@ const placeBet = async (req, res) => {
 
           if (index == -1) {
             activeBettors.delete(userId)
-            return res.status(404).send({message: `Bet miss matched`});
+            return res.status(404).send({ message: `Bet miss matched` });
           }
           if (apiBackOdds[index] < betRate) {
             activeBettors.delete(userId)
-            return res.status(404).send({message: `Bet miss matched `});
+            return res.status(404).send({ message: `Bet miss matched ` });
           }
         } else if (req.body.type == 1) {
           const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
@@ -1800,17 +1800,17 @@ const placeBet = async (req, res) => {
 
           if (index == -1) {
             activeBettors.delete(userId)
-            return res.status(404).send({message: `Index miss matched`});
+            return res.status(404).send({ message: `Index miss matched` });
           }
           if (apiBackOdds[index] < betRate) {
             activeBettors.delete(userId)
-            return res.status(404).send({message: `Bet miss matched`});
+            return res.status(404).send({ message: `Bet miss matched` });
           }
         } else {
           activeBettors.delete(userId)
           return res
             .status(400)
-            .send({message: "Invalid type value. Type should be 0 or 1."});
+            .send({ message: "Invalid type value. Type should be 0 or 1." });
         }
         // layFancyRate = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3][0]; 
         // backFancyRate  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3][0];
@@ -1842,13 +1842,13 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+          .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
@@ -1958,11 +1958,11 @@ const placeBet = async (req, res) => {
           TargetScore = DbBackScores[index];
           if (index === -1) {
             activeBettors.delete(userId)
-            return res.status(404).send({message: `Index didn't Match`});
+            return res.status(404).send({ message: `Index didn't Match` });
           }
           if (apiBackOdds[index] < betRate) {
             activeBettors.delete(userId)
-            return res.status(404).send({message: `Bet miss matched`});
+            return res.status(404).send({ message: `Bet miss matched` });
           }
         } else if (req.body.type == 1) {
           const apiBackOdds2 = [
@@ -1991,16 +1991,16 @@ const placeBet = async (req, res) => {
 
           if (index === -1) {
             activeBettors.delete(userId)
-            return res.status(404).send({message: `Index miss matched`});
+            return res.status(404).send({ message: `Index miss matched` });
           }
           if (apiBackOdds[index] < betRate) {
             activeBettors.delete(userId)
-            return res.status(404).send({message: `Bet miss matched`});
+            return res.status(404).send({ message: `Bet miss matched` });
           }
         } else {
           return res
             .status(400)
-            .send({message: "Invalid type value. Type should be 0 or 1."});
+            .send({ message: "Invalid type value. Type should be 0 or 1." });
         }
       }
     }
@@ -2024,13 +2024,13 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+          .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
@@ -2051,7 +2051,7 @@ const placeBet = async (req, res) => {
           message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
         });
       }
-      const dbscore = await Crickets.find({eventId: eventDetail.Id}).sort({_id: -1}).limit(1)
+      const dbscore = await Crickets.find({ eventId: eventDetail.Id }).sort({ _id: -1 }).limit(1)
       const scores = dbscore[0];
       if (!scores) {
         activeBettors.delete(userId)
@@ -2166,25 +2166,25 @@ const placeBet = async (req, res) => {
       if (!userMaxBetSize) {
         console.warn("userMaxBetSize not found ");
         activeBettors.delete(userId)
-        return res.status(404).send({message: `something went wrong !`});
+        return res.status(404).send({ message: `something went wrong !` });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `max bet size is : ${userMaxBetSize.amount}`});
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
 
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({message: `min bet size is : ${userMaxBetSize.minAmount}`});
+          .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
 
-      const DBOddDetails = await AsianMarketOdd.findOne({roundId: roundId, marketId: asianMarketId});
+      const DBOddDetails = await AsianMarketOdd.findOne({ roundId: roundId, marketId: asianMarketId });
       if (!DBOddDetails) {
         activeBettors.delete(userId)
         return res.status(404).send({
@@ -2204,7 +2204,7 @@ const placeBet = async (req, res) => {
       );
       runnerName = OddDetailsTeam?.nation;
 
-      const asianTableDetail = await AsianTable.findOne({tableId: oddsId});
+      const asianTableDetail = await AsianTable.findOne({ tableId: oddsId });
       asianTableName = asianTableDetail.tableName;
 
       if (selectedBetRate == betRate) {
@@ -2290,7 +2290,7 @@ const placeBet = async (req, res) => {
       activeBettors.delete(userId)
       return res
         .status(404)
-        .send({message: `Error Placing bet (Inappropriate Request)`});
+        .send({ message: `Error Placing bet (Inappropriate Request)` });
     }
     /* ============================================================ =============== */
 
@@ -2322,8 +2322,8 @@ const placeBet = async (req, res) => {
         loosingAmount = betAmount;
         selectionId == 0 ? (runnerName = `CHOTA`) : (runnerName = `BARA`);
         runnerForSaveInbets = [
-          {runner: 1, amount: 0},
-          {runner: 0, amount: 0},
+          { runner: 1, amount: 0 },
+          { runner: 0, amount: 0 },
         ];
         expoisureType = 2;
       } else if (type == 3) {
@@ -2331,8 +2331,8 @@ const placeBet = async (req, res) => {
         loosingAmount = betAmount;
         selectionId == 0 ? (runnerName = `KALI`) : (runnerName = `JOTTA`);
         runnerForSaveInbets = [
-          {runner: 1, amount: 0},
-          {runner: 0, amount: 0},
+          { runner: 1, amount: 0 },
+          { runner: 0, amount: 0 },
         ];
         expoisureType = 2;
       } else if (type == 2) {
@@ -2340,16 +2340,16 @@ const placeBet = async (req, res) => {
         loosingAmount = betAmount;
         runnerName = `Figure(${selectionId})`;
         runnerForSaveInbets = [
-          {runner: 0, amount: 0},
-          {runner: 1, amount: 0},
-          {runner: 2, amount: 0},
-          {runner: 3, amount: 0},
-          {runner: 4, amount: 0},
-          {runner: 5, amount: 0},
-          {runner: 6, amount: 0},
-          {runner: 7, amount: 0},
-          {runner: 8, amount: 0},
-          {runner: 9, amount: 0},
+          { runner: 0, amount: 0 },
+          { runner: 1, amount: 0 },
+          { runner: 2, amount: 0 },
+          { runner: 3, amount: 0 },
+          { runner: 4, amount: 0 },
+          { runner: 5, amount: 0 },
+          { runner: 6, amount: 0 },
+          { runner: 7, amount: 0 },
+          { runner: 8, amount: 0 },
+          { runner: 9, amount: 0 },
         ];
         expoisureType = 2;
       } else if (type == 1 && !config.ExcludedBackLay.includes(subMarketDetail.Id)) {
@@ -2370,15 +2370,15 @@ const placeBet = async (req, res) => {
         loosingAmount = (fancyRate / 100) * betAmount;
         winningAmount = betAmount;
         runnerForSaveInbets = [
-          {runner: 1, amount: 0},
-          {runner: 0, amount: 0},
+          { runner: 1, amount: 0 },
+          { runner: 0, amount: 0 },
         ];
       } else if (type == 1 && subMarketDetail.Id == config.Fancy) {
         winningAmount = (fancyRate / 100) * betAmount;
         loosingAmount = betAmount;
         runnerForSaveInbets = [
-          {runner: 1, amount: 0},
-          {runner: 0, amount: 0},
+          { runner: 1, amount: 0 },
+          { runner: 0, amount: 0 },
         ];
       } else if (type == 1 && marketId == 8) {
         winningAmount = betAmount;
@@ -2413,16 +2413,16 @@ const placeBet = async (req, res) => {
             matchId: matchId,
             fancyData: fancyData,
             status: 1,
-          }).sort({_id: -1}).limit(1);
+          }).sort({ _id: -1 }).limit(1);
 
           const AllRunners = lastBet[0].runnersPosition;
           AllRunners.push(...[
-            {runner: Number(TargetScore) - 1, position: 0},
-            {runner: Number(TargetScore), position: 0},
-            {runner: Number(TargetScore) + 1, position: 0}
+            { runner: Number(TargetScore) - 1, position: 0 },
+            { runner: Number(TargetScore), position: 0 },
+            { runner: Number(TargetScore) + 1, position: 0 }
           ])
           let selectedAllRunners = AllRunners.map((item) => {
-            return {runner: item.runner, position: 0}
+            return { runner: item.runner, position: 0 }
           })
 
           const AllPreviousBets = await Bets.find({
@@ -2457,9 +2457,9 @@ const placeBet = async (req, res) => {
 
         } else {
           const runners = [
-            {runner: Number(TargetScore) - 1, position: 0},
-            {runner: Number(TargetScore), position: 0},
-            {runner: Number(TargetScore) + 1, position: 0}
+            { runner: Number(TargetScore) - 1, position: 0 },
+            { runner: Number(TargetScore), position: 0 },
+            { runner: Number(TargetScore) + 1, position: 0 }
           ]
           const runnerCurrentPosition = runners.map((item) => {
             if (type == 1 && item.runner < TargetScore) item.position = -Number(loosingAmount.toFixed(3));
@@ -2492,7 +2492,7 @@ const placeBet = async (req, res) => {
             betSession: currentSession,
             matchId: matchId,
             status: 1,
-          }).sort({_id: -1}).limit(1);
+          }).sort({ _id: -1 }).limit(1);
           const lastrunnersPosition = lastBet[0].runnersPosition;
           runnersPosition = lastrunnersPosition.map((item) => {
             if (item.runner == selectionId) {
@@ -2669,7 +2669,7 @@ const placeBet = async (req, res) => {
       const finalExpAmount = expAmount - prevExpAmount;
       if (finalExpAmount > maxExp) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: `Max Exposure Amount : ${maxExp}`});
+        return res.status(404).send({ message: `Max Exposure Amount : ${maxExp}` });
       }
 
       const bet = new Bets({
@@ -2714,7 +2714,7 @@ const placeBet = async (req, res) => {
 
       if (user.availableBalance < expAmount - prevExpAmount) {
         activeBettors.delete(userId)
-        return res.status(404).send({message: " Insufficient balance "});
+        return res.status(404).send({ message: " Insufficient balance " });
       }
 
       if (subMarketDetail.Id == config.Fancy) {
@@ -2726,7 +2726,7 @@ const placeBet = async (req, res) => {
             fancyData: fancyData,
             status: 1,
           },
-          {calculateExp: false}
+          { calculateExp: false }
         );
 
         // const latestPreviousbet = await Bets.find(
@@ -2741,13 +2741,13 @@ const placeBet = async (req, res) => {
 
       } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
         let setCalculateExpFalse = await Bets.updateMany({
-            marketId: _3rdPartyMarketId,
-            userId: req.decoded.userId,
-            matchId: matchId,
-            betSession: currentSession,
-            status: 1,
-          },
-          {calculateExp: false}
+          marketId: _3rdPartyMarketId,
+          userId: req.decoded.userId,
+          matchId: matchId,
+          betSession: currentSession,
+          status: 1,
+        },
+          { calculateExp: false }
         );
         // const latestPreviousbet = await Bets.find({
         //     marketId: _3rdPartyMarketId,
@@ -2768,7 +2768,7 @@ const placeBet = async (req, res) => {
             status: 1,
             runner: selectionId
           },
-          {calculateExp: false}
+          { calculateExp: false }
         );
         // const latestPreviousbet = await Bets.find(
         //   {
@@ -2788,7 +2788,7 @@ const placeBet = async (req, res) => {
             matchId: matchId,
             status: 1,
           },
-          {calculateExp: false}
+          { calculateExp: false }
         );
         // const latestPreviousbet = await Bets.find(
         //   {
@@ -2805,7 +2805,7 @@ const placeBet = async (req, res) => {
         if (err) {
           console.warn("Error : ", err);
           activeBettors.delete(userId)
-          return res.status(404).send({message: `Something went wrong !`});
+          return res.status(404).send({ message: `Something went wrong !` });
         }
         try {
           const position = new currentPosition({
@@ -2827,7 +2827,7 @@ const placeBet = async (req, res) => {
           const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(3));
 
           await User.findOneAndUpdate(
-            {userId: userId},
+            { userId: userId },
             {
               exposure: UserExpAmount,
               availableBalance: UserAvlBalAmount
@@ -2836,47 +2836,47 @@ const placeBet = async (req, res) => {
 
 
           /** Start of Qaiser added tracking values in deposits */
-            // let newDeposit = new Cash({
-            //   userId: userId,
-            //   description: `Bet Place`,
-            //   betId:randomStr,
-            //   addedExpoisureAmount:expAmount ? expAmount.toFixed(3) : 0,
-            //   UserPrevexposure:user.exposure,
-            //   UpdatedExposure:UserExpAmount,
-            //   sourceCodeBlock:'Bet Place',
-            //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
-            //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
+          // let newDeposit = new Cash({
+          //   userId: userId,
+          //   description: `Bet Place`,
+          //   betId:randomStr,
+          //   addedExpoisureAmount:expAmount ? expAmount.toFixed(3) : 0,
+          //   UserPrevexposure:user.exposure,
+          //   UpdatedExposure:UserExpAmount,
+          //   sourceCodeBlock:'Bet Place',
+          //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
+          //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
 
-            //   amount: betAmount || 0,
-            //   balance: user.balance,
-            //   availableBalance: UserAvlBalAmount,
+          //   amount: betAmount || 0,
+          //   balance: user.balance,
+          //   availableBalance: UserAvlBalAmount,
 
-            //   cashOrCredit: "Bet",
-            //   marketId: _3rdPartyMarketId || 0,
-            //   sportsId: marketId || 0,
-            //   matchId: matchId || null,
-            //   betType: type || 0,
-            //   betDateTime: BetTime,
-            // });
-            // await newDeposit.save()
+          //   cashOrCredit: "Bet",
+          //   marketId: _3rdPartyMarketId || 0,
+          //   sportsId: marketId || 0,
+          //   matchId: matchId || null,
+          //   betType: type || 0,
+          //   betDateTime: BetTime,
+          // });
+          // await newDeposit.save()
 
           const ExpTran = new Exposure({
-              userId: userId,
-              trans_from: "Bet Place",
-              trans_from_id: randomStr,
-              user_prev_balance: user_prev_balance,
-              user_prev_availableBalance: user_prev_availableBalance,
-              user_prev_exposure: user_prev_exposure,
-              user_new_balance: user.balance,
-              user_new_availableBalance: UserAvlBalAmount,
-              user_new_exposure: UserExpAmount,
-              marketId: _3rdPartyMarketId || 0,
-              sportsId: marketId || 0,
-              calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
-              DateTime: new Date(),
-              calculateExp: 1,
-              exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
-            });
+            userId: userId,
+            trans_from: "Bet Place",
+            trans_from_id: randomStr,
+            user_prev_balance: user_prev_balance,
+            user_prev_availableBalance: user_prev_availableBalance,
+            user_prev_exposure: user_prev_exposure,
+            user_new_balance: user.balance,
+            user_new_availableBalance: UserAvlBalAmount,
+            user_new_exposure: UserExpAmount,
+            marketId: _3rdPartyMarketId || 0,
+            sportsId: marketId || 0,
+            calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
+            DateTime: new Date(),
+            calculateExp: 1,
+            exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
+          });
 
           await ExpTran.save()
           /** End of Qaiser added tracking values in deposits */
@@ -2903,7 +2903,7 @@ const placeBet = async (req, res) => {
           activeBettors.delete(userId)
           return res
             .status(404)
-            .send({message: "Error updating user balance"});
+            .send({ message: "Error updating user balance" });
         }
       });
 
@@ -2913,13 +2913,13 @@ const placeBet = async (req, res) => {
     console.warn("Error placing bet Catched ", error);
     const userId = req.decoded.userId;
     activeBettors.delete(userId)
-    return res.status(404).send({message: `Something went wrong !`});
+    return res.status(404).send({ message: `Something went wrong !` });
   } finally {
     const userId = req.decoded.userId;
     activeBettors.delete(userId)
     await User.findOneAndUpdate(
-      {userId: userId},
-      {activeBetPlacing: false}
+      { userId: userId },
+      { activeBetPlacing: false }
     );
   }
 }
@@ -2941,7 +2941,7 @@ async function asainCalculateExposure(
     status: 1,
     runner: selectedRunner
   })
-    .sort({_id: -1})
+    .sort({ _id: -1 })
     .limit(1);
 
   const lastrunnersPosition = lastBet[0].runnersPosition;
@@ -2985,7 +2985,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
     userId: userId,
     matchId: matchId,
     status: 1,
-  }).sort({_id: -1}).limit(1);
+  }).sort({ _id: -1 }).limit(1);
   const lastrunnersPosition = lastBet[0].runnersPosition;
   let newPosition;
   if (type == 0) {
@@ -3016,7 +3016,7 @@ async function calculateExposure(marketId, userId, type, selectedRunner, loosing
 async function getUserBets(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length != 0) {
-    return res.status(400).send({errors: errors.errors});
+    return res.status(400).send({ errors: errors.errors });
   }
   try {
     // Initialize variables with default values
@@ -3050,7 +3050,7 @@ async function getUserBets(req, res) {
     if (req.body.status) query.status = req.body.status;
     if (req.body.sportsId) query.sportsId = req.body.sportsId;
     if (req.body.searchValue)
-      query.event = {$regex: req.body.searchValue, $options: "i"};
+      query.event = { $regex: req.body.searchValue, $options: "i" };
 
     // if (req.body.searchValue) {
     //   const searchRegex = new RegExp(req.body.searchValue, 'i');
@@ -3074,12 +3074,12 @@ async function getUserBets(req, res) {
 
     Bets.paginate(
       query,
-      {page: page, sort: {[sortValue]: sort}, limit: limit},
+      { page: page, sort: { [sortValue]: sort }, limit: limit },
       (err, results) => {
         if (err)
           return res
             .status(404)
-            .send({message: `Something went wrong  ${err} `});
+            .send({ message: `Something went wrong  ${err} ` });
         return res.send({
           success: true,
           message: "bets list",
@@ -3098,29 +3098,29 @@ async function getUserBets(req, res) {
 function betFunds(req, res) {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    return res.status(400).send({errors: errors.array()});
+    return res.status(400).send({ errors: errors.array() });
   }
 
   if (req.decoded.role !== "5") {
-    User.find({createdBy: req.decoded.userId, role: "5"}, (err, users) => {
+    User.find({ createdBy: req.decoded.userId, role: "5" }, (err, users) => {
       if (err || !users) {
         return res
           .status(404)
-          .send({message: "Error occurred while querying users."});
+          .send({ message: "Error occurred while querying users." });
       }
 
       const userIds = users.map((user) => user.userId);
 
-      Bets.find({userId: {$in: userIds}}, (err, bets) => {
+      Bets.find({ userId: { $in: userIds } }, (err, bets) => {
         if (err || !bets) {
-          return res.status(404).send({message: "Error occurred in bets."});
+          return res.status(404).send({ message: "Error occurred in bets." });
         }
 
         const activeBets = bets.filter((bet) => bet.status === 1).length;
 
-        User.findOne({userId: req.decoded.userId}, (err, user) => {
+        User.findOne({ userId: req.decoded.userId }, (err, user) => {
           if (err || !user) {
-            return res.status(404).send({message: "User Not Found"});
+            return res.status(404).send({ message: "User Not Found" });
           }
 
           const results = {
@@ -3131,19 +3131,19 @@ function betFunds(req, res) {
             activeBets: activeBets,
           };
 
-          return res.send({message: "Funds Record Found", results: results});
+          return res.send({ message: "Funds Record Found", results: results });
         });
       });
     });
   } else {
-    Bets.find({userId: req.decoded.userId}, (err, bets) => {
+    Bets.find({ userId: req.decoded.userId }, (err, bets) => {
       if (err) {
-        return res.status(404).send({message: "Error occurred in bets."});
+        return res.status(404).send({ message: "Error occurred in bets." });
       }
 
-      User.findOne({userId: req.decoded.userId}, (err, user) => {
+      User.findOne({ userId: req.decoded.userId }, (err, user) => {
         if (err || !user) {
-          return res.send({message: "User Not Found"});
+          return res.send({ message: "User Not Found" });
         }
 
         const activeBets = bets.filter((bet) => bet.status === 1).length;
@@ -3156,7 +3156,7 @@ function betFunds(req, res) {
           activeBets: activeBets,
         };
 
-        return res.send({message: "Funds Record Found", results: results});
+        return res.send({ message: "Funds Record Found", results: results });
       });
     });
   }
@@ -3236,23 +3236,23 @@ function createBetRates(req, res) {
   betRates
     .insertMany(betRatesData)
     .then(() => {
-      res.status(200).json({message: "Dummy data created successfully."});
+      res.status(200).json({ message: "Dummy data created successfully." });
     })
     .catch((error) => {
-      res.status(500).json({error: "Error creating dummy data."});
+      res.status(500).json({ error: "Error creating dummy data." });
     });
 }
 
 async function getBetRates(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
-    return res.status(400).send({errors: errors.errors});
+    return res.status(400).send({ errors: errors.errors });
   }
 
   const matchId = req.params.id;
-  const match = await betRates.findOne({_id: matchId});
+  const match = await betRates.findOne({ _id: matchId });
   if (!match) {
-    return res.status(404).send({message: "bets rate not found"});
+    return res.status(404).send({ message: "bets rate not found" });
   }
 
   const randomRates = getRandomRates(match);
@@ -3301,8 +3301,8 @@ async function getAllUserIDs(createdByIDs, processedIDs = new Set()) {
   processedIDs = new Set([...processedIDs, ...uniqueIDs]);
 
   const users = await User.find(
-    {createdBy: {$in: uniqueIDs}},
-    {userId: 1, userName: 1, createdBy: 1}
+    { createdBy: { $in: uniqueIDs } },
+    { userId: 1, userName: 1, createdBy: 1 }
   ).lean();
 
   for (const user of users) {
@@ -3320,17 +3320,17 @@ async function getMatchedBets(req, res) {
   const errors = validationResult(req);
   let relatedEvents = [];
   if (!errors.isEmpty()) {
-    return res.status(400).send({errors: errors.array()});
+    return res.status(400).send({ errors: errors.array() });
   }
 
   try {
-    const loginUser = await User.findOne({userId: req.decoded.userId});
+    const loginUser = await User.findOne({ userId: req.decoded.userId });
     if (!loginUser) {
-      return res.status(404).send({message: "User not found"});
+      return res.status(404).send({ message: "User not found" });
     }
 
-    const bettorMaster = await User.findOne({userId: loginUser.createdBy});
-    const userOfLoginUser = await User.find({createdBy: loginUser.userId});
+    const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
+    const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
     const createdByIDs = userOfLoginUser.map((user) => user.userId);
 
     // Fetch all user IDs using optimized function
@@ -3345,7 +3345,7 @@ async function getMatchedBets(req, res) {
     var matchedBets = await Bets.aggregate([
       {
         $match: {
-          userId: {$in: [...createdByIDs, ...userIDs, loginUser.userId]},
+          userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] },
           status: 1,
           matchId: matchId,
         },
@@ -3358,7 +3358,7 @@ async function getMatchedBets(req, res) {
           as: "userDetails",
         },
       },
-      {$unwind: "$userDetails"},
+      { $unwind: "$userDetails" },
       {
         $lookup: {
           from: "users",
@@ -3397,19 +3397,19 @@ async function getMatchedBets(req, res) {
           roundId: "$roundId",
           master: {
             $cond: [
-              {$eq: [loginUser.role, "5"]},
+              { $eq: [loginUser.role, "5"] },
               loginUser.userName,
               {
-                $ifNull: [{$arrayElemAt: ["$masterDetails.userName", 0]}, ""],
+                $ifNull: [{ $arrayElemAt: ["$masterDetails.userName", 0] }, ""],
               },
             ],
           },
           event: {
             $cond: [
-              {$eq: [loginUser.role, "5"]},
+              { $eq: [loginUser.role, "5"] },
               {
                 $map: {
-                  input: {$slice: ["$eventDetails", 5]},
+                  input: { $slice: ["$eventDetails", 5] },
                   as: "event",
                   in: {
                     name: "$$event.name",
@@ -3422,7 +3422,7 @@ async function getMatchedBets(req, res) {
           },
         },
       },
-      {$sort: {_id: -1}},
+      { $sort: { _id: -1 } },
     ]).exec();
 
     // if (!matchedBets || matchedBets.length == 0) {
@@ -3463,15 +3463,15 @@ async function getMatchedBets(req, res) {
     console.warn("Aggregation error:", err);
     return res
       .status(500)
-      .send({message: "Error retrieving matched bets", error: err});
+      .send({ message: "Error retrieving matched bets", error: err });
   }
 }
 
 async function FakeBetsList(req, res) {
   try {
-    Bets.find({isFake: 1}, (err, result) => {
+    Bets.find({ isFake: 1 }, (err, result) => {
       if (err || !result) {
-        return res.status(404).send({message: "bets rate not found"});
+        return res.status(404).send({ message: "bets rate not found" });
       }
       return res.send({
         success: true,
@@ -3492,7 +3492,7 @@ async function updateFakeBet(req, res) {
   try {
     const betId = req.params.id;
     const updateBet = await Bets.findOneAndUpdate(
-      {_id: betId},
+      { _id: betId },
       {
         $set: {
           isFake: 0,
@@ -3501,12 +3501,12 @@ async function updateFakeBet(req, res) {
     );
 
     if (!updateBet) {
-      return res.status(404).json({message: "Bet not found"});
+      return res.status(404).json({ message: "Bet not found" });
     }
 
     return res
       .status(200)
-      .send({message: "Bet successfully updated", success: true});
+      .send({ message: "Bet successfully updated", success: true });
   } catch (error) {
     return res.send({
       success: false,
@@ -3521,12 +3521,12 @@ async function deleteFakeBet(req, res) {
     const betId = req.params.id;
     const deletedBet = await Bets.findByIdAndDelete(betId);
     if (!deletedBet) {
-      return res.status(404).json({message: "Bet not found"});
+      return res.status(404).json({ message: "Bet not found" });
     }
 
     return res
       .status(200)
-      .send({message: "Bet deleted successfully", success: true});
+      .send({ message: "Bet deleted successfully", success: true });
   } catch (error) {
     return res.send({
       success: false,
@@ -3538,7 +3538,7 @@ async function deleteFakeBet(req, res) {
 
 async function countFakeBet(req, res) {
   try {
-    const fakeCount = await Bets.countDocuments({isFake: 1});
+    const fakeCount = await Bets.countDocuments({ isFake: 1 });
 
     return res.send({
       success: false,
@@ -3560,29 +3560,29 @@ async function approvedFakeBet(req, res) {
   if (req.decoded.role !== "0") {
     return res
       .status(403)
-      .send({message: "Only company can perform this operation"});
+      .send({ message: "Only company can perform this operation" });
   }
 
   try {
     const betId = req.params.id;
-    const fakeBet = await Bets.findOne({_id: betId, isFake: 1});
+    const fakeBet = await Bets.findOne({ _id: betId, isFake: 1 });
 
     if (!fakeBet) {
-      return res.status(404).json({message: "Bet not found"});
+      return res.status(404).json({ message: "Bet not found" });
     }
     const updatedUser = await User.findOneAndUpdate(
-      {userId: fakeBet.userId},
-      {$set: {isActive: false}},
-      {new: true}
+      { userId: fakeBet.userId },
+      { $set: { isActive: false } },
+      { new: true }
     );
 
     if (!updatedUser) {
-      return res.status(404).json({message: "User not found"});
+      return res.status(404).json({ message: "User not found" });
     }
 
     return res
       .status(200)
-      .send({message: "user deactivated successfully", success: true});
+      .send({ message: "user deactivated successfully", success: true });
   } catch (error) {
     console.warn("Error updating bet:", error);
     return res.status(500).send({
@@ -3597,7 +3597,7 @@ async function reviewFakeBet(req, res) {
   if (req.decoded.role !== "0") {
     return res
       .status(403)
-      .send({message: "Only company can perform this operation"});
+      .send({ message: "Only company can perform this operation" });
   }
 
   try {
@@ -3611,24 +3611,24 @@ async function reviewFakeBet(req, res) {
     });
 
     if (!fakeBet) {
-      return res.status(404).json({message: "Bet not found"});
+      return res.status(404).json({ message: "Bet not found" });
     }
 
     // Find the odds before the bet's createdAt timestamp
     const oddsBeforeBet = await Odds.find({
       eventId: fakeBet.eventId,
-      createdAt: {$lt: fakeBet.createdAt},
+      createdAt: { $lt: fakeBet.createdAt },
     })
-      .sort({createdAt: -1})
+      .sort({ createdAt: -1 })
       .limit(200)
       .select("eventId updatetime runners");
 
     // Find the odds after the bet's createdAt timestamp
     const oddsAfterBet = await Odds.find({
       eventId: fakeBet.eventId,
-      createdAt: {$gt: fakeBet.createdAt},
+      createdAt: { $gt: fakeBet.createdAt },
     })
-      .sort({createdAt: 1})
+      .sort({ createdAt: 1 })
       .limit(200)
       .select("eventId updatetime runners");
 
@@ -3657,8 +3657,8 @@ async function reviewFakeBet(req, res) {
 async function cricketLiveScore(id) {
   try {
     const event = await Events.findOne(
-      {Id: id},
-      {_id: 0, matchType: 1, sportsId: 1}
+      { Id: id },
+      { _id: 0, matchType: 1, sportsId: 1 }
     );
     const type = event ? event.sportsId : null;
 
@@ -3668,8 +3668,8 @@ async function cricketLiveScore(id) {
       const data = apiResponse.data;
       if (data[0]?.score != null) {
         const event = await Events.findOne(
-          {Id: id},
-          {_id: 0, matchType: 1, sportsId: 1}
+          { Id: id },
+          { _id: 0, matchType: 1, sportsId: 1 }
         );
         const type = event ? event?.matchType : null;
         // const scoreInfo     = JSON.parse(data).score
@@ -3734,15 +3734,19 @@ const sessionCalc = async (req, res) => {
     const eventsIds = await Events.distinct("Id", {
       sportsId: "4",
       inplay: true,
-      status: {$in: ["OPEN", "open"]},
+      CompanySetStatus: "OPEN",
+      isShowed: true,
+      status: { $in: ["OPEN", "open"] },
     });
 
     for (let Id of eventsIds) {
       const event = await Events.findOne(
-        {Id: Id},
-        {_id: 0, matchType: 1, sportsId: 1}
+        { Id: Id },
+        { _id: 0, matchType: 1, sportsId: 1 }
       );
       const type = event.matchType;
+      console.log(type)
+      console.log(config.matchTypes)
       if (config.matchTypes.includes(type)) {
         const score = await cricketLiveScore(Id);
         if (score != 0) {
@@ -3801,7 +3805,7 @@ async function getPercentageSharing(parent_id, child_id) {
   if (parent_id == child_id) return 1;
 
   while (true) {
-    parent = await User.findOne({userId: currentId});
+    parent = await User.findOne({ userId: currentId });
     if (
       !parent ||
       parent.createdBy === null ||
@@ -3824,7 +3828,7 @@ const profitLose = async (req, res) => {
   }
   try {
     const userId = parseInt(req.query.userId);
-    const currentUser = await User.findOne({userId: userId});
+    const currentUser = await User.findOne({ userId: userId });
     if (!currentUser) {
       return res.status(404).send({
         success: false,
@@ -3836,12 +3840,12 @@ const profitLose = async (req, res) => {
         {
           $match: {
             userId: userId,
-            cashOrCredit: {$in: ["Bet"]},
+            cashOrCredit: { $in: ["Bet"] },
           },
         },
         {
           $addFields: {
-            betsId: {$toObjectId: "$betId"},
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -3855,9 +3859,9 @@ const profitLose = async (req, res) => {
         {
           $group: {
             _id: "$sportsId",
-            amount: {$sum: "$amount"},
-            userId: {$first: "$userId"},
-            name: {$first: {$arrayElemAt: ["$marketInfo.name", 0]}},
+            amount: { $sum: "$amount" },
+            userId: { $first: "$userId" },
+            name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } },
           },
         },
       ]);
@@ -3871,7 +3875,7 @@ const profitLose = async (req, res) => {
         {
           $match: {
             userId: userId,
-            cashOrCredit: {$in: ["Bet", "Commission", "loosing"]},
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           },
         },
         {
@@ -3885,9 +3889,9 @@ const profitLose = async (req, res) => {
         {
           $group: {
             _id: "$sportsId",
-            amount: {$sum: "$amount"},
-            userId: {$first: "$userId"},
-            name: {$first: {$arrayElemAt: ["$marketInfo.name", 0]}},
+            amount: { $sum: "$amount" },
+            userId: { $first: "$userId" },
+            name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } },
           },
         },
       ]);
@@ -3916,7 +3920,7 @@ const EventWiseprofitLose = async (req, res) => {
   try {
     const userId = parseInt(req.query.userId);
     const sportsId = req.query.sportsId;
-    const currentUser = await User.findOne({userId: userId});
+    const currentUser = await User.findOne({ userId: userId });
     if (!currentUser) {
       return res.status(404).send({
         success: false,
@@ -3929,12 +3933,12 @@ const EventWiseprofitLose = async (req, res) => {
           $match: {
             userId: userId,
             sportsId: sportsId,
-            cashOrCredit: {$in: ["Bet"]},
+            cashOrCredit: { $in: ["Bet"] },
           },
         },
         {
           $addFields: {
-            betsId: {$toObjectId: "$betId"},
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -3947,11 +3951,11 @@ const EventWiseprofitLose = async (req, res) => {
         },
         {
           $group: {
-            _id: {$arrayElemAt: ["$bets.matchId", 0]},
-            amount: {$sum: "$amount"},
-            userId: {$first: "$userId"},
-            date: {$first: "$date"},
-            name: {$first: {$arrayElemAt: ["$bets.event", 0]}},
+            _id: { $arrayElemAt: ["$bets.matchId", 0] },
+            amount: { $sum: "$amount" },
+            userId: { $first: "$userId" },
+            date: { $first: "$date" },
+            name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
           },
         },
       ]);
@@ -3980,12 +3984,12 @@ const EventWiseprofitLose = async (req, res) => {
           $match: {
             userId: userId,
             sportsId: sportsId,
-            cashOrCredit: {$in: ["Bet", "Commission", "loosing"]},
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           },
         },
         {
           $addFields: {
-            betsId: {$toObjectId: "$betId"},
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -3998,11 +4002,11 @@ const EventWiseprofitLose = async (req, res) => {
         },
         {
           $group: {
-            _id: {$arrayElemAt: ["$bets.matchId", 0]},
-            amount: {$sum: "$amount"},
-            userId: {$first: "$userId"},
-            date: {$first: "$date"},
-            name: {$first: {$arrayElemAt: ["$bets.event", 0]}},
+            _id: { $arrayElemAt: ["$bets.matchId", 0] },
+            amount: { $sum: "$amount" },
+            userId: { $first: "$userId" },
+            date: { $first: "$date" },
+            name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
           },
         },
       ]);
@@ -4031,8 +4035,8 @@ const dailyMatchWiseprofitLose = async (req, res) => {
   try {
     const userId = parseInt(req.query.userId);
     const matchId = req.query.matchId;
-    const currentUser = await User.findOne({userId: userId});
-    const parent = await User.findOne({userId: currentUser.createdBy});
+    const currentUser = await User.findOne({ userId: userId });
+    const parent = await User.findOne({ userId: currentUser.createdBy });
     const match = await Events.findById(matchId);
     if (currentUser.role == "5") {
       const response = await Cash.aggregate([
@@ -4046,19 +4050,19 @@ const dailyMatchWiseprofitLose = async (req, res) => {
                     userId: userId,
                   },
                   {
-                    cashOrCredit: {$in: ["Bet", "Commission", "loosing"]},
+                    cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
                   },
                 ],
               },
               {
-                cashOrCredit: {$in: ["Commission"]},
+                cashOrCredit: { $in: ["Commission"] },
               },
             ],
           },
         },
         {
           $addFields: {
-            betsId: {$toObjectId: "$betId"},
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4072,20 +4076,20 @@ const dailyMatchWiseprofitLose = async (req, res) => {
         {
           $group: {
             _id: "$betId",
-            pl: {$sum: "$amount"},
-            sattledAt: {$first: "$date"},
-            price: {$first: {$arrayElemAt: ["$betsDetails.betAmount", 0]}},
-            name: {$first: {$arrayElemAt: ["$betsDetails.runnerName", 0]}},
+            pl: { $sum: "$amount" },
+            sattledAt: { $first: "$date" },
+            price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
+            name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
             createdAt: {
-              $first: {$arrayElemAt: ["$betsDetails.createdAt", 0]},
+              $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] },
             },
-            size: {$first: {$arrayElemAt: ["$betsDetails.betRate", 0]}},
-            type: {$first: {$arrayElemAt: ["$betsDetails.type", 0]}},
+            size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
+            type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
             fancyData: {
-              $first: {$arrayElemAt: ["$betsDetails.fancyData", 0]},
+              $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] },
             },
             isfancyOrbookmaker: {
-              $first: {$arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0]},
+              $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] },
             },
           },
         },
@@ -4105,12 +4109,12 @@ const dailyMatchWiseprofitLose = async (req, res) => {
           $match: {
             matchId: matchId,
             userId: userId,
-            cashOrCredit: {$in: ["Bet", "Commission", "loosing"]},
+            cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           },
         },
         {
           $addFields: {
-            betsId: {$toObjectId: "$betId"},
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4124,15 +4128,15 @@ const dailyMatchWiseprofitLose = async (req, res) => {
         {
           $group: {
             _id: "$betId",
-            pl: {$sum: "$amount"},
-            sattledAt: {$first: "$date"},
-            price: {$first: {$arrayElemAt: ["$betsDetails.betAmount", 0]}},
-            name: {$first: {$arrayElemAt: ["$betsDetails.runnerName", 0]}},
+            pl: { $sum: "$amount" },
+            sattledAt: { $first: "$date" },
+            price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
+            name: { $first: { $arrayElemAt: ["$betsDetails.runnerName", 0] } },
             createdAt: {
-              $first: {$arrayElemAt: ["$betsDetails.createdAt", 0]},
+              $first: { $arrayElemAt: ["$betsDetails.createdAt", 0] },
             },
-            size: {$first: {$arrayElemAt: ["$betsDetails.betRate", 0]}},
-            type: {$first: {$arrayElemAt: ["$betsDetails.type", 0]}},
+            size: { $first: { $arrayElemAt: ["$betsDetails.betRate", 0] } },
+            type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
           },
         },
       ]);
@@ -4159,16 +4163,90 @@ const SingleUserAllBets = async (req, res) => {
   try {
     const DBNAME = process.env.DB_NAME;
     const DBHost = process.env.DBHost;
-    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+    const client = new MongoClient(`${DBHost}?directConnection=true`, { useUnifiedTopology: true });
     const deposit = client.db(`${DBNAME}`).collection("deposits");
 
     const result = await Bets.find({
       userId: Number(req.query.userId),
     });
     for (const bet of result) {
-      const deposits = await deposit.find({betId: bet._id, userId: Number(req.query.userId)}).toArray();
+      const deposits = await deposit.find({ betId: bet._id, userId: Number(req.query.userId) }).toArray();
       bet.multipeResponse = deposits;
     }
+
+    return res.send({
+      status: true,
+      message: "Bets List !",
+      results: result,
+    });
+
+  } catch (err) {
+    return res.send({
+      message: `Error ${err} !`,
+    });
+  }
+}
+
+const GetAllBets = async (req, res) => {
+  try {
+    const DBNAME = process.env.DB_NAME;
+    const DBHost = process.env.DBHost;
+    const client = new MongoClient(`${DBHost}?directConnection=true`, { useUnifiedTopology: true });
+    const deposit = client.db(`${DBNAME}`).collection("deposits");
+
+    let result = null;
+
+    if (req.query?.eventId) {
+      result = await Bets.find({
+        eventId: req.query?.eventId,
+        status: 1,
+        isfancyOrbookmaker: true
+      })
+    } else {
+      result = await Bets.find({
+        status: 1
+      })
+    }
+
+    page = req.query?.page ?? 1;
+    limit = req.query?.limit ?? 10;
+
+    const results = result.slice((page - 1) * limit, page * limit);
+
+    // for (const bet of results){
+    //   const user = await User.findOne({ _id: bet.userId })
+    //   bet.userName = user.userName
+    // }
+
+    return res.send({
+      status: true,
+      message: "Bets List !",
+      results: results,
+      total: results.length,
+      limit: limit,
+      page: page,
+      pages: Math.ceil(results.length * 1.0 / limit)
+    });
+
+  } catch (err) {
+    return res.send({
+      message: `Error ${err} !`,
+    });
+  }
+}
+
+const GetBetsByEventId = async (req, res) => {
+  try {
+    const DBNAME = process.env.DB_NAME;
+    const DBHost = process.env.DBHost;
+    const client = new MongoClient(`${DBHost}?directConnection=true`, { useUnifiedTopology: true });
+    const deposit = client.db(`${DBNAME}`).collection("deposits");
+
+    const result = await Bets.find({
+      eventId: Number(req.query.eventId),
+      status: 1,
+      isfancyOrbookmaker: true
+    });
 
     return res.send({
       status: true,
@@ -4188,12 +4266,12 @@ const postmanwork_2 = async (req, res) => {
   try {
     const resp = await axios(req.body.url);
     const data = resp.data
-    return res.status(200).send({resp: data});
+    return res.status(200).send({ resp: data });
   } catch (err) {
     console.warn("Query error ======= :", err);
     return res
       .status(500)
-      .send({message: "Error", error: err});
+      .send({ message: "Error", error: err });
   }
 }
 const eventsAPICalls = async (req, res) => {
@@ -4215,12 +4293,12 @@ const eventsAPICalls = async (req, res) => {
       header
     );
     const data = response.data.result;
-    return res.status(200).send({resp: data});
+    return res.status(200).send({ resp: data });
   } catch (err) {
     console.warn("Query error ======= :", err);
     return res
       .status(500)
-      .send({message: "Error", error: err});
+      .send({ message: "Error", error: err });
   }
 }
 const postmanwork = async (req, res) => {
@@ -4265,13 +4343,13 @@ const postmanwork = async (req, res) => {
     if (Number(req.body.type) === 1) {
       for (let i = Number(req.body.start); i < Number(req.body.end); i = i + 50) {
         const casinocallsRecords = await CasinoCalls
-          .find({}).sort({_id: 1})
+          .find({}).sort({ _id: 1 })
           .skip(Number(i))
           .limit(Number(50));
         for (const casinocall of casinocallsRecords) {
           console.log(" ======================== casinocall data", casinocall);
           const resp = await Cash.updateMany(
-            {betId: casinocall.transaction_id},
+            { betId: casinocall.transaction_id },
             {
               // betSession: casinocall.game_id,
               roundId: casinocall.round_id
@@ -4287,10 +4365,10 @@ const postmanwork = async (req, res) => {
      *
      */
     else if (Number(req.body.type) === 2) {
-      const casinocallsRecords = await CasinoCalls.find({remote_id: Number(req.body.userId)}).sort({_id: 1});
+      const casinocallsRecords = await CasinoCalls.find({ remote_id: Number(req.body.userId) }).sort({ _id: 1 });
       for (const casinocall of casinocallsRecords) {
         const resp = await Cash.updateMany(
-          {betId: casinocall.transaction_id},
+          { betId: casinocall.transaction_id },
           {
             roundId: casinocall.round_id
           }
@@ -4306,7 +4384,7 @@ const postmanwork = async (req, res) => {
     })
   } catch (err) {
     console.warn("Query error ======= :", err);
-    return res.status(500).send({message: "Error", error: err});
+    return res.status(500).send({ message: "Error", error: err });
   }
 }
 
@@ -4331,8 +4409,10 @@ loginRouter.get("/EventWiseprofitLose", EventWiseprofitLose);
 loginRouter.get("/dailyMatchWiseprofitLose", dailyMatchWiseprofitLose);
 
 loginRouter.get("/SingleUserAllBets", SingleUserAllBets);
+loginRouter.get("/GetAllBets", GetAllBets);
+loginRouter.get("/GetBetsByEventId", GetBetsByEventId);
 
-module.exports = {sessionCalc, loginRouter, getParents};
+module.exports = { sessionCalc, loginRouter, getParents };
 
 
 // const newRunners = [];
