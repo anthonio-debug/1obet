@@ -3743,6 +3743,8 @@ const sessionCalc = async (req, res) => {
         { _id: 0, matchType: 1, sportsId: 1 }
       );
       const type = event.matchType;
+      console.log(type)
+      console.log(config.matchTypes)
       if (config.matchTypes.includes(type)) {
         const score = await cricketLiveScore(Id);
         if (score != 0) {
