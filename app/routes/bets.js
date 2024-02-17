@@ -34,6 +34,8 @@ const { FANCY_URL, LIVE_BET_TV_URL, HYBRID_URI } = require("../global/constants"
 const message_result = "cannot place bet due to result check";
 const MarketIDS = require("../models/marketIds")
 const { getFancyOdds, getBookmakerOdds } = require("../../helper/hybridApiHelper");
+const { fetchSession } = require("../../helper/sessionAPIHelper");
+const { fetchBookmakerOdds } = require("../../helper/bookmakerApiHelper");
 require('dotenv').config()
 
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
@@ -1696,20 +1698,21 @@ const placeBet = async (req, res) => {
         let odds = []
         for (const odd of apiFancyOddsRes) {
           odds.push({
-            b1: odd.back[0].price,
-            b2: odd.back[1].price,
-            b3: odd.back[2].price,
-            bs1: odd.back[0].size,
-            bs2: odd.back[1].size,
-            bs3: odd.back[2].size,
-            l1: odd.lay[0].price,
-            l2: odd.lay[1].price,
-            l3: odd.lay[2].price,
-            ls1: odd.lay[0].size,
-            ls2: odd.lay[1].size,
-            ls3: odd.lay[2].size,
-            gstatus: odd.status,
-            sid: odd.marketId,
+            b1: odd.BackPrice1,
+            b2: odd.BackPrice2,
+            b3: odd.BackPrice3,
+            bs1: odd.BackSize1,
+            bs2: odd.BackSize2,
+            bs3: odd.BackSize3,
+            l1: odd.LayPrice1,
+            l2: odd.LayPrice2,
+            l3: odd.LayPrice3,
+            ls1: odd.LaySize1,
+            ls2: odd.LaySize2,
+            ls3: odd.LaySize3,
+            nat: odd.RunnerName,
+            gstatus: odd.GameStatus,
+            sid: odd.SelectionId,
           })
         }
         return odds
@@ -1718,8 +1721,10 @@ const placeBet = async (req, res) => {
       // const eventId = eventDetail.Id;
       // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       // const response = await axios.get(url);
-      const apiFancyOddsRes = await getFancyOdds([selectionId])
-      if (apiFancyOddsRes[0]?.status === 'ACTIVE') {
+      // const apiFancyOddsRes = await getFancyOdds([selectionId])
+      let apiFancyOddsRes = await fetchSession(eventDetail.Id)
+      apiFancyOddsRes = apiFancyOddsRes.filter(item => item.SelectionId === selectionId)
+      if (apiFancyOddsRes[0]?.GameStatus === 'ACTIVE') {
         console.log('fancy is active')
       } else {
         activeBettors.delete(userId)
@@ -1739,8 +1744,9 @@ const placeBet = async (req, res) => {
           message: `Bookmaker market not available for selected team ${selectionId}`,
         })
       }
-      const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
-      const bookmakerStatus = apiBookmakerOddRes[0]?.runners.some((item) => item?.runnerStatus === "ACTIVE")
+      // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
+      let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
+      const bookmakerStatus = apiBookmakerOddRes[0]?.runners.some((item) => item?.status === "ACTIVE")
       if (!bookmakerStatus) {
         activeBettors.delete(userId)
         return res.status(404).send({
@@ -1872,7 +1878,8 @@ const placeBet = async (req, res) => {
           message: `Bookmaker Odds not available for the selected team ${selectionId}`,
         });
       }
-      const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
+      // const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
+      let bookmakerOddsRes = await fetchBookmakerOdds(selectedMarketId)
 
       if (bookmakerOddsRes.length === 0) {
         activeBettors.delete(userId)
@@ -1898,10 +1905,10 @@ const placeBet = async (req, res) => {
             ls1: runner.lay[0].size,
             ls2: runner.lay[0].size,
             ls3: runner.lay[0].size,
-            s: runner.runnerStatus,
-            ssid: bookmakerOdd?.marketId,
+            s: runner.status,
             sid: runner.selectionId,
-            nat: runner.name,
+            ssid: bookmakerOdd?.marketId,
+            nat: runner.runnerName,
           })
         }
         return odds
