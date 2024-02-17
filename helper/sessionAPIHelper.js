@@ -17,12 +17,12 @@ async function fetchSession(eventId) {
 async function fetchMarketOdds(marketId) {
   try {
     // const marketId = '1.166536383'
-    const response = await axios.get(`${SESSION_API_URI}/listMarketBookOdds?market_id=1.166536383${marketId}`)
+    const response = await axios.get(`${SESSION_API_URI}/listMarketBookOdds?market_id=${marketId}`)
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
     return res || []
   } catch (err) {
-    console.error('session api fetchSession: ', err)
+    console.error('session api fetchMarketOdds: ', err)
     return []
   }
 }

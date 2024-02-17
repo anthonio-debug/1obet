@@ -136,7 +136,6 @@ function ToolForSessionFancy() {
                 },
                 {upsert: true, new: true, setDefaultsOnInsert: true}
               );
-
             }
           }
           if (bookmakerMarketIds.length > 0) {
