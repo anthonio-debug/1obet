@@ -154,7 +154,7 @@ function ToolForSessionFancy() {
         }
       }
     } catch (error) {
-      console.error("Error getting hybrid fancy odds:", error);
+      console.error("Error getting session fancy odds:", error);
     } finally {
       setTimeout(getSessionFancyOdds, 1000)
     }
