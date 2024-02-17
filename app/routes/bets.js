@@ -3734,6 +3734,8 @@ const sessionCalc = async (req, res) => {
     const eventsIds = await Events.distinct("Id", {
       sportsId: "4",
       inplay: true,
+      CompanySetStatus: "OPEN",
+      isShowed: true,
       status: { $in: ["OPEN", "open"] },
     });
 
