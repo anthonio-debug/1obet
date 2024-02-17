@@ -33,12 +33,9 @@ const CasinoCalls = require('../models/casinoCalls')
 const { FANCY_URL, LIVE_BET_TV_URL, HYBRID_URI } = require("../global/constants");
 const message_result = "cannot place bet due to result check";
 const MarketIDS = require("../models/marketIds")
-const { getFancyOdds, getBookmakerOdds } = require("../../helper/hybridApiHelper");
 const { fetchSession } = require("../../helper/sessionAPIHelper");
 const { fetchBookmakerOdds } = require("../../helper/bookmakerApiHelper");
 require('dotenv').config()
-
-const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
 
 const activeBettors = new Map()
 
