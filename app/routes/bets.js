@@ -4197,7 +4197,8 @@ const GetAllBets = async (req, res) => {
     if (req.query?.eventId) {
       result = await Bets.find({
         eventId: req.query?.eventId,
-        status: 1
+        status: 1,
+        isfancyOrbookmaker: true
       })
     } else {
       result = await Bets.find({
