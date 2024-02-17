@@ -3745,6 +3745,8 @@ const sessionCalc = async (req, res) => {
         { _id: 0, matchType: 1, sportsId: 1 }
       );
       const type = event.matchType;
+      console.log(type)
+      console.log(config.matchTypes)
       if (config.matchTypes.includes(type)) {
         const score = await cricketLiveScore(Id);
         if (score != 0) {
@@ -4198,24 +4200,31 @@ const GetAllBets = async (req, res) => {
       result = await Bets.find({
         eventId: req.query?.eventId,
         status: 1
-      }).populate('userId').exec()
+      })
     } else {
       result = await Bets.find({
         status: 1
-      }).populate('userId').exec()
+      })
     }
 
     page = req.query?.page ?? 1;
     limit = req.query?.limit ?? 10;
 
+    const results = result.slice((page - 1) * limit, page * limit);
+
+    // for (const bet of results){
+    //   const user = await User.findOne({ _id: bet.userId })
+    //   bet.userName = user.userName
+    // }
+
     return res.send({
       status: true,
       message: "Bets List !",
-      results: result.slice((page - 1) * limit, page * limit),
-      total: result.length,
+      results: results,
+      total: results.length,
       limit: limit,
       page: page,
-      pages: Math.ceil(result.length * 1.0 / limit)
+      pages: Math.ceil(results.length * 1.0 / limit)
     });
 
   } catch (err) {
