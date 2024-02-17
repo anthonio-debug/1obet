@@ -9,7 +9,7 @@ async function fetchSession(eventId) {
     // console.log('session list: ', JSON.stringify(res))
     return res || []
   } catch (err) {
-    console.error('session api fetchSession: ', err)
+    console.error('session api fetchSession: ', error?.data || error.message || error)
     return []
   }
 }
@@ -22,7 +22,7 @@ async function fetchMarketOdds(marketId) {
     // console.log('session list: ', JSON.stringify(res))
     return res || []
   } catch (err) {
-    console.error('session api fetchMarketOdds: ', err)
+    console.error('session api fetchMarketOdds: ', error?.data || error.message || error)
     return []
   }
 }
