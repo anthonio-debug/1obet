@@ -300,11 +300,11 @@ async function withDrawCashDeposit(req, res) {
     if ( userToUpdate.role != '5' && req.body.amount > userToUpdate.cash + userToUpdate.creditRemaining ) {
       console.log('comming');
       return res.status(400).send({
-        message: `Max cash withdraw is ${ userToUpdate.cash + userToUpdate.creditRemaining }`,
+        message: `Max cash withdraw is: ${ userToUpdate.cash + userToUpdate.creditRemaining }`,
       });
     } else if ( userToUpdate.role == '5' && req.body.amount > userToUpdate.availableBalance ) {
       return res.status(400).send({
-        message: `Max cash withdraw is ${userToUpdate.availableBalance}`,
+        message: `Max cash withdraw is= ${userToUpdate.availableBalance}`,
       });
     }
 
