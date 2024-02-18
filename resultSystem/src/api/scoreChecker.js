@@ -27,8 +27,8 @@ const {
   handleDrawBet,
 } = require("../CalculateBets/calculations");
 const {API_DOMAIN} = require("../../../app/global/constants");
-const {getFancyOdds, getBookmakerOdds} = require("../../../helper/hybridApiHelper");
 const FancyOdds = require("../../../app/models/fancyOdds");
+const { fetchSession, getSessionFancyResult, getSessionBookmakerResult } = require("../../../helper/sessionAPIHelper");
 
 const tableInfo = [
   {id: "36", tId: "teen20"},
@@ -349,14 +349,15 @@ function scoreChecker() {
         const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
         selectedMarketId = dbFancyOdds[0]?.ssid
         if (!selectedMarketId) return false
-        const bookmakerRes = await getBookmakerOdds([selectedMarketId])
+        // const bookmakerRes = await getBookmakerOdds([selectedMarketId])
+        const bookmakerRes = await getSessionBookmakerResult([selectedMarketId])
         // let url = `https://${API_DOMAIN}:3443/api/bookmaker_result/${event.Id}`;
         // const response = await axios.get(url);
         // results = response.data;
         // { winnerSelId: '51511462' }
-        if (bookmakerRes[0]?.winner) {
+        if (bookmakerRes[0]?.result) {
           results = [
-            {winnerSelId: bookmakerRes[0]?.winner, manuelClose: false},
+            {winnerSelId: bookmakerRes[0]?.result, manuelClose: false},
           ]
         } else {
           return false
@@ -492,11 +493,17 @@ function scoreChecker() {
             {result: manuelRecord.winnerRunnerData, manuelClose: false},
           ];
       } else {
-        const fancyOdds = await getFancyOdds([betData.runner])
+        // const fancyOdds = await getFancyOdds([betData.runner])
+        const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
+        const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
+        const selectedMarketId = dbFancyOdds[0]?.ssid
+        if (!selectedMarketId) return
+        let fancyOdds = await getSessionFancyResult([selectedMarketId])
+        fancyOdds = fancyOdds.filter(item => item.SelectionId === betData.runner)
         // let url = `https://${API_DOMAIN}:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
         // const response = await axios.get(url);
         // results = response.data;
-        let result = fancyOdds[0]?.winner
+        let result = fancyOdds[0]?.result
         results = [{manuelClose: false, result: result}]
       }
 

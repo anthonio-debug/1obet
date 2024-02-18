@@ -6,20 +6,11 @@ const inPlayEvents = require('../../app/models/events');
 const FancyEvent = require('../../app/models/fancyEvent');
 const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
-const {HYBRID_URI} = require("../../app/global/constants");
 const MarketIDS = require("../../app/models/marketIds");
 const {isIterable} = require("../../helper/common");
-const {
-  getFancyMarketList,
-  getBookmakerMarketList,
-  getFancyOdds,
-  getBookmakerOdds
-} = require("../../helper/hybridApiHelper");
 const {fetchSession} = require("../../helper/sessionAPIHelper");
 const {fetchBookmakerList, fetchBookmakerOdds} = require("../../helper/bookmakerApiHelper");
 require('dotenv').config()
-
-const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
 
 let io;
 
