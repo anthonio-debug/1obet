@@ -495,7 +495,7 @@ function scoreChecker() {
       } else {
         // const fancyOdds = await getFancyOdds([betData.runner])
         const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
-        const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
+        const dbFancyOdds = DBOddDetails?.data?.data?.t3.filter(item => item.sid === betData.runner);
         const selectedMarketId = dbFancyOdds[0]?.ssid
         if (!selectedMarketId) return
         let fancyOdds = await getSessionFancyResult([selectedMarketId])
