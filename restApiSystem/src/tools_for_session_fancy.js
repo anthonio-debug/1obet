@@ -27,7 +27,7 @@ function ToolForSessionFancy() {
     let t3 = []
     let bm = {}
     for (const odd of fancyOdds) {
-      if (odd.gtype === 'fancy1') {
+      if (odd.gtype === 'session') {
         t3.push({
           b1: odd.BackPrice1,
           b2: odd.BackPrice2,

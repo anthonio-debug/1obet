@@ -31,7 +31,8 @@ async function getSessionFancyResult(marketIds) {
   try {
     // const marketId = '1.166536383'
     const marketId = marketIds.join(',')
-    const url = `${SESSION_API_URI}/marketResult?type=fancy1&market_id=${marketId}`
+    const url = `${SESSION_API_URI}/marketResult?type=session&market_id=${marketId}`
+    // const url = `${SESSION_API_URI}/marketResult?type=fancy1&market_id=${marketId}`
     const response = await axios.get(url)
     // console.log('session list: ', JSON.stringify(res))
     return response?.data ?? [];
