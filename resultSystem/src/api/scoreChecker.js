@@ -500,7 +500,7 @@ function scoreChecker() {
         const selectedMarketId = `${betData.eventId}_${betData.runner}`
         if (!selectedMarketId) return
         let fancyOdds = await getSessionFancyResult([selectedMarketId])
-        fancyOdds = fancyOdds.filter(item => item.SelectionId === betData.runner)
+        fancyOdds = fancyOdds.filter(item => item.id === selectedMarketId)
         // let url = `https://${API_DOMAIN}:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
         // const response = await axios.get(url);
         // results = response.data;
