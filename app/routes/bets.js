@@ -1721,13 +1721,13 @@ const placeBet = async (req, res) => {
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
       let apiFancyOddsRes = await fetchSession(eventDetail.Id)
       apiFancyOddsRes = apiFancyOddsRes.filter(item => item.SelectionId === selectionId)
-      if (apiFancyOddsRes[0]?.GameStatus === 'ACTIVE') {
-        console.log('fancy is active')
-      } else {
+      if (apiFancyOddsRes[0]?.GameStatus === 'SUSPENDED') {
         activeBettors.delete(userId)
         return res.status(404).send({
           message: `Status not available for selected team ${selectionId}`,
         })
+      } else {
+        console.log('fancy is active')
       }
       // const apiFancyOdds = response?.data?.data?.t3;
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes)
