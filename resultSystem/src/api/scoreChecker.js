@@ -494,9 +494,10 @@ function scoreChecker() {
           ];
       } else {
         // const fancyOdds = await getFancyOdds([betData.runner])
-        const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
-        const dbFancyOdds = DBOddDetails?.data?.data?.t3.filter(item => item.sid === betData.runner);
-        const selectedMarketId = dbFancyOdds[0]?.ssid
+        // const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
+        // const dbFancyOdds = DBOddDetails?.data?.data?.t3.filter(item => item.sid === betData.runner);
+        // const selectedMarketId = dbFancyOdds[0]?.ssid
+        const selectedMarketId = `${betData.eventId}_${betData.runner}`
         if (!selectedMarketId) return
         let fancyOdds = await getSessionFancyResult([selectedMarketId])
         fancyOdds = fancyOdds.filter(item => item.SelectionId === betData.runner)
