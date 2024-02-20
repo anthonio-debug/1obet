@@ -98,7 +98,7 @@ function ToolForScraper() {
       for (const event of inPlayEventList) {
         const eventId = event.Id
         let cricketScore = await getCricketScore(eventId)
-        if (cricketScore) {
+        if (cricketScore?.data) {
           const score = convertSchema(cricketScore, eventId)
           // io.to('#' + eventId).emit('cricket_score', score);
           io.emit('cricket_score', score);
