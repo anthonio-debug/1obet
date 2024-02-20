@@ -4,6 +4,7 @@ let config = require('config');
 const Cash = require('../models/deposits');
 const Bet = require('../models/bets')
 const User = require('../models/user');
+const Deposits = require('../models/deposits');
 const cashValidator = require('../validators/deposits');
 const loginRouter = express.Router();
 const ExpRec = require('../models/ExpRec');
@@ -288,7 +289,10 @@ async function withDrawCashDeposit(req, res) {
     const user_prev_balance = userToUpdate.balance;
     const user_prev_availableBalance = userToUpdate.availableBalance;
     const user_prev_exposure = userToUpdate.exposure;
-
+    const transData = await Deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
+    console.log(transData);
+    const lastTrans = transData[0];
+    console.log(lastTrans);
     const currentUserParent = await User.findOne({
       userId: userToUpdate.createdBy,
       isDeleted: false,
@@ -305,6 +309,13 @@ async function withDrawCashDeposit(req, res) {
     } else if ( userToUpdate.role == '5' && req.body.amount > userToUpdate.availableBalance ) {
       return res.status(400).send({
         message: `Max cash withdraw is ${userToUpdate.availableBalance}`,
+      });
+    } else if (
+      userToUpdate.role === '5' &&
+      (req.body.amount > lastTrans.availableBalance || lastTrans.availableBalance < 0)
+    ) {
+      return res.status(400).send({
+        message: `Something went wrong. Contact Support.`,
       });
     }
 
