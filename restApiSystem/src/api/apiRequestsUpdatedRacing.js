@@ -405,7 +405,7 @@ function apiRequests() {
         "filter": {
           "eventIds": [eventId],
           "eventTypeIds": [sportsId],
-          "marketTypes": ['WIN'],
+          // "marketTypes": ['WIN'],
           // "marketStartTime": {
           //   "from": startTime,
           //   "to": endTime
@@ -426,8 +426,8 @@ function apiRequests() {
       let marketIds = [];
       // Create an instance of the raceMarkets model
       for (let j = 0; j < eventsData.length; j++) {
-        if (eventsData[j]?.description?.marketType === "WIN") {
-        // if (eventsData[j]?.description?.marketType) {
+        // if (eventsData[j]?.description?.marketType === "WIN") {
+        if (eventsData[j]?.description?.marketType) {
           marketIds.push(eventsData[j].marketId);
           await raceMarkets.findOneAndUpdate(
             {
