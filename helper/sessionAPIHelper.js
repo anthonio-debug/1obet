@@ -8,7 +8,7 @@ async function fetchSession(eventId) {
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
     return res || []
-  } catch (err) {
+  } catch (error) {
     console.error('session api fetchSession: ', error?.data || error.message || error)
     return []
   }
@@ -21,7 +21,7 @@ async function fetchMarketOdds(marketId) {
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
     return res || []
-  } catch (err) {
+  } catch (error) {
     console.error('session api fetchMarketOdds: ', error?.data || error.message || error)
     return []
   }
@@ -36,7 +36,7 @@ async function getSessionFancyResult(marketIds) {
     const response = await axios.get(url)
     // console.log('session list: ', JSON.stringify(res))
     return response?.data ?? [];
-  } catch (err) {
+  } catch (error) {
     console.error('session api fetchMarketOdds: ', error?.data || error.message || error)
     return []
   }
@@ -50,7 +50,7 @@ async function getSessionBookmakerResult(marketIds) {
     const response = await axios.get(url)
     // console.log('session list: ', JSON.stringify(res))
     return response?.data ?? [];
-  } catch (err) {
+  } catch (error) {
     console.error('session api fetchMarketOdds: ', error?.data || error.message || error)
     return []
   }
