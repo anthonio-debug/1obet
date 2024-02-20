@@ -4,12 +4,13 @@ const SESSION_API_URI = `http://142.93.36.1/api/v1`
 async function fetchSession(eventId) {
   try {
     // const eventId = '33002177'
-    const response = await axios.get(`${SESSION_API_URI}/listMarketBookSession?match_id=${eventId}`)
+    const url = `${SESSION_API_URI}/listMarketBookSession?match_id=${eventId}`
+    const response = await axios.get(url)
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
     return res || []
   } catch (error) {
-    console.error('session api fetchSession: ', error?.data || error.message || error)
+    console.error('session api fetchSession: ', eventId, error?.data || error.message || error)
     return []
   }
 }
@@ -17,12 +18,13 @@ async function fetchSession(eventId) {
 async function fetchMarketOdds(marketId) {
   try {
     // const marketId = '1.166536383'
-    const response = await axios.get(`${SESSION_API_URI}/listMarketBookOdds?market_id=${marketId}`)
+    const url = `${SESSION_API_URI}/listMarketBookOdds?market_id=${marketId}`
+    const response = await axios.get(url)
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
     return res || []
   } catch (error) {
-    console.error('session api fetchMarketOdds: ', error?.data || error.message || error)
+    console.error('session api fetchMarketOdds: ', marketId, error?.data || error.message || error)
     return []
   }
 }
