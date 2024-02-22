@@ -149,7 +149,7 @@ const stopbetStatusChecker = async (id) => {
         "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed",
         "rain", "suspend", "delay", "pitch", "plood", "bowled", "injured",
         "rain stops play", "bowling review", "stumped", "Run Out Check",
-        "Bowling Review", "Catch Check", "No Ball Check", "LBW Check", "Catch Check", "Caught Out"];
+        "Bowling Review", "No Ball Check", "LBW Check", "Catch Check", "Caught Out"];
       const regexPattern = new RegExp(stopbetStatus.map(word => `\\b${word.replace(/\s+/g, '\\s+')}\\b`).join('|'), 'i');
       if (regexPattern.test(result)) {
         return 400
@@ -4253,10 +4253,18 @@ const CasinoList = async (req, res) => {
   try {
     const page = req.query?.page ?? 1;
     const limit = req.query?.limit ?? 10;
-    const eventId = req.query?.eventId
+    const eventId = req.query?.eventId ?? ''
     let result = null;
+    let pipeline = [];
+    if (eventId) {
+      pipeline.push({
+        $match: {
+          game_id: eventId // Filter documents by game_id
+        }
+      });
+    }
 
-    result = await CasinoCalls.aggregate([
+    pipeline = pipeline.concat([
       {
         $group: {
           _id: {
@@ -4284,7 +4292,9 @@ const CasinoList = async (req, res) => {
       {
         $replaceRoot: { newRoot: "$docs" }
       }
-    ]).exec()
+    ])
+
+    result = await CasinoCalls.aggregate(pipeline).exec()
 
     const results = result.slice((page - 1) * limit, page * limit);
 
