@@ -1741,6 +1741,20 @@ const placeBet = async (req, res) => {
       }
       const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
       const bookmakerStatus = apiBookmakerOddRes[0]?.runners.some((item) => item?.runnerStatus === "ACTIVE")
+      const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.runnerStatus))
+      const bookmakerSuspendedStatus = apiBookmakerOddRes[0]?.runners.every((item) => item?.runnerStatus === 'SUSPENDED')
+      if (bookmakerSuspendedStatus) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bookmaker all runners are in SUSPENDED status for selected team ${selectionId}`,
+        })
+      }
+      if (bookmakerBallRunningStatus) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bookmaker runner is in Ball Running status for selected team ${selectionId}`,
+        })
+      }
       if (!bookmakerStatus) {
         activeBettors.delete(userId)
         return res.status(404).send({
