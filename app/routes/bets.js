@@ -4236,10 +4236,10 @@ const GetAllBets = async (req, res) => {
       status: true,
       message: "Bets List !",
       results: results,
-      total: results.length,
+      total: result.length,
       limit: limit,
       page: page,
-      pages: Math.ceil(results.length * 1.0 / limit)
+      pages: Math.ceil(result.length * 1.0 / limit)
     });
 
   } catch (err) {
@@ -4292,10 +4292,10 @@ const CasinoList = async (req, res) => {
       status: true,
       message: "CasinoCalls List!",
       results: results,
-      total: results.length,
+      total: result.length,
       limit: limit,
       page: page,
-      pages: Math.ceil(results.length * 1.0 / limit)
+      pages: Math.ceil(result.length / limit)
     });
 
   } catch (err) {
