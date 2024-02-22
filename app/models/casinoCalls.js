@@ -35,6 +35,7 @@ const casinoCallsSchema = new mongoose.Schema({
   createdAt: { type: Number },
   updatedAt:  { type: Number },
 });
+
 casinoCallsSchema.pre('save', function (next) {
   let now = new Date().getTime();
   if (!this.createdAt) {

@@ -216,5 +216,6 @@
   "update-setting",
   "get-setting",
   "updateEventStatus",
+  "casino-bets",
   "set-fancy-score"
 ]
