@@ -1865,8 +1865,8 @@ const placeBet = async (req, res) => {
           .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
-      const resultcheck = await stopbetStatusChecker(eventDetail.Id);
-      if (resultcheck === 400) {
+      const resultCheck = await stopbetStatusChecker(eventDetail.Id);
+      if (resultCheck === 400) {
         activeBettors.delete(userId)
         return res.status(404).send({
           message: `${message_result}`,
@@ -1893,6 +1893,28 @@ const placeBet = async (req, res) => {
         return res.status(404).send({
           message: `Bookmaker Odds not available for the selected team ${selectionId}`,
         });
+      }
+
+      const bookmakerStatus = bookmakerOddsRes[0]?.runners.some((item) => item?.runnerStatus === "ACTIVE")
+      const bookmakerBallRunningStatus = bookmakerOddsRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.runnerStatus))
+      const bookmakerSuspendedStatus = bookmakerOddsRes[0]?.runners.every((item) => item?.runnerStatus === 'SUSPENDED')
+      if (bookmakerSuspendedStatus) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bookmaker all runners are in SUSPENDED status for selected team ${selectionId}`,
+        })
+      }
+      if (bookmakerBallRunningStatus) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bookmaker runner is in Ball Running status for selected team ${selectionId}`,
+        })
+      }
+      if (!bookmakerStatus) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bookmaker runner not available for selected team ${selectionId}`,
+        })
       }
 
       const buildBookmakerOdd = (bookmakerOddsRes) => {
