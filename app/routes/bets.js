@@ -148,7 +148,7 @@ const stopbetStatusChecker = async (id) => {
         "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed",
         "rain", "suspend", "delay", "pitch", "plood", "bowled", "injured",
         "rain stops play", "bowling review", "stumped", "Run Out Check",
-        "Bowling Review", "Catch Check", "No Ball Check", "LBW Check", "Catch Check", "Caught Out"];
+        "Bowling Review", "No Ball Check", "LBW Check", "Catch Check", "Caught Out"];
       const regexPattern = new RegExp(stopbetStatus.map(word => `\\b${word.replace(/\s+/g, '\\s+')}\\b`).join('|'), 'i');
       if (regexPattern.test(result)) {
         return 400
@@ -1721,13 +1721,11 @@ const placeBet = async (req, res) => {
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
       let apiFancyOddsRes = await fetchSession(eventDetail.Id)
       apiFancyOddsRes = apiFancyOddsRes.filter(item => item.SelectionId === selectionId)
-      if (apiFancyOddsRes[0]?.GameStatus === 'SUSPENDED') {
+      if (apiFancyOddsRes[0]?.GameStatus !== 'ACTIVE') {
         activeBettors.delete(userId)
         return res.status(404).send({
           message: `Status not available for selected team ${selectionId}`,
         })
-      } else {
-        console.log('fancy is active')
       }
       // const apiFancyOdds = response?.data?.data?.t3;
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes)
@@ -1743,7 +1741,23 @@ const placeBet = async (req, res) => {
       }
       // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
       let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
+      // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
+
       const bookmakerStatus = apiBookmakerOddRes[0]?.runners.some((item) => item?.status === "ACTIVE")
+      const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
+      const bookmakerSuspendedStatus = apiBookmakerOddRes[0]?.runners.every((item) => item?.status === 'SUSPENDED')
+      if (bookmakerSuspendedStatus) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bookmaker all runners are in SUSPENDED status for selected team ${selectionId}`,
+        })
+      }
+      if (bookmakerBallRunningStatus) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bookmaker runner is in Ball Running status for selected team ${selectionId}`,
+        })
+      }
       if (!bookmakerStatus) {
         activeBettors.delete(userId)
         return res.status(404).send({
@@ -1854,8 +1868,8 @@ const placeBet = async (req, res) => {
           .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
-      const resultcheck = await stopbetStatusChecker(eventDetail.Id);
-      if (resultcheck === 400) {
+      const resultCheck = await stopbetStatusChecker(eventDetail.Id);
+      if (resultCheck === 400) {
         activeBettors.delete(userId)
         return res.status(404).send({
           message: `${message_result}`,
@@ -1883,6 +1897,28 @@ const placeBet = async (req, res) => {
         return res.status(404).send({
           message: `Bookmaker Odds not available for the selected team ${selectionId}`,
         });
+      }
+
+      const bookmakerStatus = bookmakerOddsRes[0]?.runners.some((item) => item?.status === "ACTIVE")
+      const bookmakerBallRunningStatus = bookmakerOddsRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
+      const bookmakerSuspendedStatus = bookmakerOddsRes[0]?.runners.every((item) => item?.status === 'SUSPENDED')
+      if (bookmakerSuspendedStatus) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bookmaker all runners are in SUSPENDED status for selected team ${selectionId}`,
+        })
+      }
+      if (bookmakerBallRunningStatus) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bookmaker runner is in Ball Running status for selected team ${selectionId}`,
+        })
+      }
+      if (!bookmakerStatus) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bookmaker runner not available for selected team ${selectionId}`,
+        })
       }
 
       const buildBookmakerOdd = (bookmakerOddsRes) => {
@@ -2745,12 +2781,12 @@ const placeBet = async (req, res) => {
 
       } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
         let setCalculateExpFalse = await Bets.updateMany({
-          marketId: _3rdPartyMarketId,
-          userId: req.decoded.userId,
-          matchId: matchId,
-          betSession: currentSession,
-          status: 1,
-        },
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            betSession: currentSession,
+            status: 1,
+          },
           { calculateExp: false }
         );
         // const latestPreviousbet = await Bets.find({
@@ -2840,47 +2876,47 @@ const placeBet = async (req, res) => {
 
 
           /** Start of Qaiser added tracking values in deposits */
-          // let newDeposit = new Cash({
-          //   userId: userId,
-          //   description: `Bet Place`,
-          //   betId:randomStr,
-          //   addedExpoisureAmount:expAmount ? expAmount.toFixed(3) : 0,
-          //   UserPrevexposure:user.exposure,
-          //   UpdatedExposure:UserExpAmount,
-          //   sourceCodeBlock:'Bet Place',
-          //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
-          //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
+            // let newDeposit = new Cash({
+            //   userId: userId,
+            //   description: `Bet Place`,
+            //   betId:randomStr,
+            //   addedExpoisureAmount:expAmount ? expAmount.toFixed(3) : 0,
+            //   UserPrevexposure:user.exposure,
+            //   UpdatedExposure:UserExpAmount,
+            //   sourceCodeBlock:'Bet Place',
+            //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
+            //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
 
-          //   amount: betAmount || 0,
-          //   balance: user.balance,
-          //   availableBalance: UserAvlBalAmount,
+            //   amount: betAmount || 0,
+            //   balance: user.balance,
+            //   availableBalance: UserAvlBalAmount,
 
-          //   cashOrCredit: "Bet",
-          //   marketId: _3rdPartyMarketId || 0,
-          //   sportsId: marketId || 0,
-          //   matchId: matchId || null,
-          //   betType: type || 0,
-          //   betDateTime: BetTime,
-          // });
-          // await newDeposit.save()
+            //   cashOrCredit: "Bet",
+            //   marketId: _3rdPartyMarketId || 0,
+            //   sportsId: marketId || 0,
+            //   matchId: matchId || null,
+            //   betType: type || 0,
+            //   betDateTime: BetTime,
+            // });
+            // await newDeposit.save()
 
           const ExpTran = new Exposure({
-            userId: userId,
-            trans_from: "Bet Place",
-            trans_from_id: randomStr,
-            user_prev_balance: user_prev_balance,
-            user_prev_availableBalance: user_prev_availableBalance,
-            user_prev_exposure: user_prev_exposure,
-            user_new_balance: user.balance,
-            user_new_availableBalance: UserAvlBalAmount,
-            user_new_exposure: UserExpAmount,
-            marketId: _3rdPartyMarketId || 0,
-            sportsId: marketId || 0,
-            calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
-            DateTime: new Date(),
-            calculateExp: 1,
-            exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
-          });
+              userId: userId,
+              trans_from: "Bet Place",
+              trans_from_id: randomStr,
+              user_prev_balance: user_prev_balance,
+              user_prev_availableBalance: user_prev_availableBalance,
+              user_prev_exposure: user_prev_exposure,
+              user_new_balance: user.balance,
+              user_new_availableBalance: UserAvlBalAmount,
+              user_new_exposure: UserExpAmount,
+              marketId: _3rdPartyMarketId || 0,
+              sportsId: marketId || 0,
+              calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
+              DateTime: new Date(),
+              calculateExp: 1,
+              exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
+            });
 
           await ExpTran.save()
           /** End of Qaiser added tracking values in deposits */
@@ -4226,10 +4262,76 @@ const GetAllBets = async (req, res) => {
       status: true,
       message: "Bets List !",
       results: results,
-      total: results.length,
+      total: result.length,
       limit: limit,
       page: page,
-      pages: Math.ceil(results.length * 1.0 / limit)
+      pages: Math.ceil(result.length * 1.0 / limit)
+    });
+
+  } catch (err) {
+    return res.send({
+      message: `Error ${err} !`,
+    });
+  }
+}
+
+const CasinoList = async (req, res) => {
+  try {
+    const page = req.query?.page ?? 1;
+    const limit = req.query?.limit ?? 10;
+    const eventId = req.query?.eventId ?? ''
+    let result = null;
+    let pipeline = [];
+    if (eventId) {
+      pipeline.push({
+        $match: {
+          game_id: eventId // Filter documents by game_id
+        }
+      });
+    }
+
+    pipeline = pipeline.concat([
+      {
+        $group: {
+          _id: {
+            remote_id: "$remote_id",
+            game_id: "$game_id",
+            round_id: "$round_id"
+          },
+          actions: { $push: "$action" },
+          docs: { $push: "$$ROOT" } // Store the whole documents to return them later
+        }
+      },
+      {
+        $match: {
+          actions: { $all: ["debit"] }, // This checks for 'debit' in the actions array
+          $expr: {
+            $and: [
+              { $eq: [{ $size: "$actions" }, { $size: { $setIntersection: ["$actions", ["debit"]] } }] } // Ensure all actions are 'debit'
+            ]
+          }
+        }
+      },
+      {
+        $unwind: "$docs"
+      },
+      {
+        $replaceRoot: { newRoot: "$docs" }
+      }
+    ])
+
+    result = await CasinoCalls.aggregate(pipeline).exec()
+
+    const results = result.slice((page - 1) * limit, page * limit);
+
+    return res.send({
+      status: true,
+      message: "CasinoCalls List!",
+      results: results,
+      total: result.length,
+      limit: limit,
+      page: page,
+      pages: Math.ceil(result.length / limit)
     });
 
   } catch (err) {
@@ -4407,13 +4509,13 @@ loginRouter.get("/reviewFakeBet/:id/:sportsId", reviewFakeBet);
 loginRouter.post("/postmanwork", postmanwork);
 loginRouter.post("/eventsapicalls", eventsAPICalls);
 
-
 loginRouter.get("/profitLose", profitLose);
 loginRouter.get("/EventWiseprofitLose", EventWiseprofitLose);
 loginRouter.get("/dailyMatchWiseprofitLose", dailyMatchWiseprofitLose);
 
 loginRouter.get("/SingleUserAllBets", SingleUserAllBets);
 loginRouter.get("/GetAllBets", GetAllBets);
+loginRouter.get("/casino-bets", CasinoList);
 loginRouter.get("/GetBetsByEventId", GetBetsByEventId);
 
 module.exports = { sessionCalc, loginRouter, getParents };

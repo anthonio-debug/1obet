@@ -2259,15 +2259,27 @@ const getWaitingBetsForManuel = async (req, res) => {
 
 const getEventWinnerName = async (req, res) => {
   try {
-    if (!req.body.eventId) {
+    const { eventId, marketId } = req.body
+    if (!eventId) {
       return res.status(404).send({
         success: false,
         message: "Invalid Request !",
       });
     }
+    if (marketId) {
+      const result = await MarketIDS.findOne(
+        { marketId: marketId, eventId: eventId },
+        { winnerInfo: 1 }
+      );
+
+      return res.status(200).send({
+        success: true,
+        result: {winner: result.winnerInfo},
+      });
+    }
 
     const result = await Events.findOne(
-      { Id: req.body.eventId },
+      { Id: eventId },
       { winner: 1 }
     );
 
