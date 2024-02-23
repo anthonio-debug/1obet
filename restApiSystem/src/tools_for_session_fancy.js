@@ -8,8 +8,8 @@ const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
 const MarketIDS = require("../../app/models/marketIds");
 const {isIterable} = require("../../helper/common");
-const {fetchSession} = require("../../helper/sessionAPIHelper");
-const {fetchBookmakerList, fetchBookmakerOdds} = require("../../helper/bookmakerApiHelper");
+const {fetchSession} = require("../../helper/api/sessionAPIHelper");
+const {fetchBookmakerList, fetchBookmakerOdds} = require("../../helper/api/bookmakerApiHelper");
 require('dotenv').config()
 
 let io;

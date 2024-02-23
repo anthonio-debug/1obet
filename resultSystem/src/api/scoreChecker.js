@@ -28,7 +28,7 @@ const {
 } = require("../CalculateBets/calculations");
 const {API_DOMAIN} = require("../../../app/global/constants");
 const FancyOdds = require("../../../app/models/fancyOdds");
-const { fetchSession, getSessionFancyResult, getSessionBookmakerResult } = require("../../../helper/sessionAPIHelper");
+const { fetchSession, getSessionFancyResult, getSessionBookmakerResult } = require("../../../helper/api/sessionAPIHelper");
 
 const tableInfo = [
   {id: "36", tId: "teen20"},

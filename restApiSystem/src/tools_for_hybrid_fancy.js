@@ -14,7 +14,7 @@ const {
   getBookmakerMarketList,
   getFancyOdds,
   getBookmakerOdds
-} = require("../../helper/hybridApiHelper");
+} = require("../../helper/api/hybridApiHelper");
 require('dotenv').config()
 
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'

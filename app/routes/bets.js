@@ -33,8 +33,8 @@ const CasinoCalls = require('../models/casinoCalls')
 const { FANCY_URL, LIVE_BET_TV_URL } = require("../global/constants");
 const message_result = "cannot place bet due to result check";
 const MarketIDS = require("../models/marketIds")
-const { fetchSession } = require("../../helper/sessionAPIHelper");
-const { fetchBookmakerOdds } = require("../../helper/bookmakerApiHelper");
+const { fetchSession } = require("../../helper/api/sessionAPIHelper");
+const { fetchBookmakerOdds } = require("../../helper/api/bookmakerApiHelper");
 require('dotenv').config()
 
 const activeBettors = new Map()

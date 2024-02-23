@@ -1,4 +1,4 @@
-const {listMarketCatalogue} = require("./SBApiHelper");
+const {listMarketCatalogue} = require("./api/SBApiHelper");
 const config = require("../config/default.json");
 const MarketIDS = require("../app/models/marketIds");
 const inPlayEvents = require("../app/models/events");

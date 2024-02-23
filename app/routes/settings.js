@@ -1,6 +1,7 @@
 const express = require("express");
 const { validationResult } = require("express-validator");
 const Settings = require("../models/settings");
+const CasinoCalls = require("../models/casinoCalls");
 const moment = require("moment");
 const User = require("../models/user");
 const settingsValidation = require("../validators/settings");
@@ -34,6 +35,7 @@ const loginRecord = require("../models/loginRecord");
 // process.env.TZ = 'UTC';
 
 const SelectedCasino = require("../models/selectedCasino");
+const { rollbackCasino } = require("../../helper/casino/casinoHelper");
 
 function updateDefaultTheme(req, res) {
   const errors = validationResult(req);
@@ -2387,65 +2389,91 @@ const cancelSingleBet = async (req, res) => {
       message: "Unauthorized Operation",
     });
   }
-  const bet = await Bets.findById(req.body.betId);
-  if (!bet || bet.status != 1) {
-    return res.status(404).send({
-      success: false,
-      message: "Bet could not Found or Already Canceled ! ",
-    });
-  }
-  if ([2, 3, 4].includes(bet.type)) {
-    const marketId = bet.marketId;
-    const matchId = bet.matchId;
-    const userId = bet.userId;
-    const session = bet.betSession;
-    const type = bet.type;
-    const allBets = await Bets.find({
-      type: type,
-      matchId: matchId,
-      betSession: session,
-      marketId: marketId,
-      userId: userId,
-      status: 1,
-    });
-    for (const bet of allBets) {
-      await handleDrawBet(bet, 2);
+  const { betId, type } = req.body
+  if (type === 'casino') {
+    const casinoCall = await CasinoCalls.findById(betId)
+    const payload = {
+      action: 'rollback',
+      callerId: casinoCall.callerId,
+      callerPassword: casinoCall.callerPassword,
+      callerPrefix: casinoCall.callerPrefix,
+      username: casinoCall.username,
+      amount: casinoCall.amount,
+      provider: casinoCall.provider,
+      game_id: casinoCall.game_id,
+      gameplay_final: casinoCall.gameplay_final,
+      round_id: casinoCall.round_id,
+      session_id: casinoCall.session_id,
+      gamesession_id: casinoCall.gamesession_id,
+      jackpot_contribution_ids: casinoCall.jackpot_contribution_ids,
+      jackpot_contribution_per_id: casinoCall.jackpot_contribution_per_id,
+      game_id_hash: casinoCall.game_id_hash,
+      jackpot_win_ids: casinoCall.jackpot_win_ids,
+      transaction_id: casinoCall.transaction_id,
+      remote_id: casinoCall.remote_id,
     }
-  } else if (bet.isfancyOrbookmaker == true && bet.fancyData !== null) {
-    const marketId = bet.marketId;
-    const matchId = bet.matchId;
-    const userId = bet.userId;
-    const TargetScore = bet.TargetScore;
-    const allBets = await Bets.find({
-      TargetScore: TargetScore,
-      matchId: matchId,
-      marketId: marketId,
-      userId: userId,
-      isfancyOrbookmaker: true,
-      status: 1,
-    });
-    for (const bet of allBets) {
-      await handleDrawBet(bet, 2);
-    }
+    return rollbackCasino(payload, res)
   } else {
-    const marketId = bet.marketId;
-    const matchId = bet.matchId;
-    const userId = bet.userId;
-    const allBets = await Bets.find({
-      matchId: matchId,
-      marketId: marketId,
-      userId: userId,
-      status: 1,
-    });
-    for (const bet of allBets) {
-      console.log(" ============ BET ============ ", bet);
-      await handleDrawBet(bet, 2);
+    const bet = await Bets.findById(betId);
+    if (!bet || bet.status != 1) {
+      return res.status(404).send({
+        success: false,
+        message: "Bet could not Found or Already Canceled ! ",
+      });
     }
+    if ([2, 3, 4].includes(bet.type)) {
+      const marketId = bet.marketId;
+      const matchId = bet.matchId;
+      const userId = bet.userId;
+      const session = bet.betSession;
+      const type = bet.type;
+      const allBets = await Bets.find({
+        type: type,
+        matchId: matchId,
+        betSession: session,
+        marketId: marketId,
+        userId: userId,
+        status: 1,
+      });
+      for (const bet of allBets) {
+        await handleDrawBet(bet, 2);
+      }
+    } else if (bet.isfancyOrbookmaker == true && bet.fancyData !== null) {
+      const marketId = bet.marketId;
+      const matchId = bet.matchId;
+      const userId = bet.userId;
+      const TargetScore = bet.TargetScore;
+      const allBets = await Bets.find({
+        TargetScore: TargetScore,
+        matchId: matchId,
+        marketId: marketId,
+        userId: userId,
+        isfancyOrbookmaker: true,
+        status: 1,
+      });
+      for (const bet of allBets) {
+        await handleDrawBet(bet, 2);
+      }
+    } else {
+      const marketId = bet.marketId;
+      const matchId = bet.matchId;
+      const userId = bet.userId;
+      const allBets = await Bets.find({
+        matchId: matchId,
+        marketId: marketId,
+        userId: userId,
+        status: 1,
+      });
+      for (const bet of allBets) {
+        console.log(" ============ BET ============ ", bet);
+        await handleDrawBet(bet, 2);
+      }
+    }
+    return res.send({
+      success: true,
+      message: "bet canceled Successfully !",
+    });
   }
-  return res.send({
-    success: true,
-    message: "bet canceled Successfully !",
-  });
 };
 
 async function addTermsAndConditions(req, res) {

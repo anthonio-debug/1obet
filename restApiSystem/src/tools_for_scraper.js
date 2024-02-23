@@ -8,7 +8,7 @@ const MarketIDs = require('../../app/models/marketIds');
 const {isIterable} = require("../../helper/common");
 const {
   getCricketScore
-} = require("../../helper/hybridApiHelper");
+} = require("../../helper/api/hybridApiHelper");
 require('dotenv').config()
 
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'

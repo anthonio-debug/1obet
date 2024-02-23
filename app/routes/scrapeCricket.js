@@ -4,7 +4,7 @@ const cricketRouter = express.Router();
 const Crickets = require('../models/Crickets')
 const Session = require("../models/Session");
 const {calculateSessionNo} = require("../../helper/cricket");
-const {getCricketScore} = require("../../helper/hybridApiHelper");
+const {getCricketScore} = require("../../helper/api/hybridApiHelper");
 
 const convertSchema = (entity) => {
   const overs = entity.overs || [];

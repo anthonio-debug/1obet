@@ -1,4 +1,4 @@
-const {HYBRID_URI} = require("../app/global/constants");
+const {HYBRID_URI} = require("../../app/global/constants");
 const axios = require("axios");
 require('dotenv').config()
 
