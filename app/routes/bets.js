@@ -832,6 +832,10 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && selectedBetRate != betRate) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bet Miss Matched `,
+        });
         // for (let i = 0; i < 4; i++) {
         //   setTimeout(async () => {
         //     // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -874,6 +878,10 @@ const placeBet = async (req, res) => {
         // ELSE
         // mistmatch.....
       } else if (type == 0 && selectedBetRate != betRate) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bet Miss Matched `,
+        });
         // for (let i = 0; i < 4; i++) {
         //   setTimeout(async () => {
         //     // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -1368,6 +1376,10 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && selectedBetRate != betRate) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bet Miss Matched `,
+        });
         // for (let i = 0; i < 4; i++) {
         //   setTimeout(async () => {
         //     // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -1386,6 +1398,10 @@ const placeBet = async (req, res) => {
         //   }, 1000 * i);
         // }
       } else if (type == 0 && selectedBetRate != betRate) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Bet Miss Matched `,
+        });
         // for (let i = 0; i < 4; i++) {
         //   setTimeout(async () => {
         //     // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
