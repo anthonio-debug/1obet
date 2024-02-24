@@ -4240,11 +4240,14 @@ const GetAllBets = async (req, res) => {
       result = await Bets.find({
         eventId: req.query?.eventId,
         status: 1,
+        fancyData: { $ne: null },
         isfancyOrbookmaker: true
       })
     } else {
       result = await Bets.find({
-        status: 1
+        status: 1,
+        fancyData: { $ne: null },
+        isfancyOrbookmaker: true,
       })
     }
 
