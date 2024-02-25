@@ -35,7 +35,7 @@ const loginRecord = require("../models/loginRecord");
 // process.env.TZ = 'UTC';
 
 const SelectedCasino = require("../models/selectedCasino");
-const { rollbackCasino } = require("../../helper/casino/casinoHelper");
+const { rollbackCasino, creditCasino } = require("../../helper/casino/casinoHelper");
 
 function updateDefaultTheme(req, res) {
   const errors = validationResult(req);
@@ -2382,6 +2382,48 @@ const setFancyScore = async (req, res) => {
   });
 };
 
+const setCasinoScore = async (req, res) => {
+  const { betId, resultData } = req.body
+  if (!betId || !resultData) {
+    return res.status(404).send({
+      success: false,
+      message: "betId or resultData is missing",
+    });
+  }
+
+  const casino = await CasinoCalls.findById(betId)
+  if (!casino) {
+    return res.status(404).send({
+      success: false,
+      message: "bet is missing",
+    });
+  }
+  const payload = {
+    action: 'credit',
+    remote_id: casino.remote_id,
+    amount: resultData,
+    game_id: casino.game_id,
+    round_id: casino.round_id,
+    callerId: casino.callerId,
+    callerPassword: casino.callerPassword,
+    callerPrefix: casino.callerPrefix,
+    username: casino.username,
+    provider: casino.provider,
+    session_id: casino.session_id,
+    gamesession_id: casino.gamesession_id,
+    jackpot_contribution_ids: casino.jackpot_contribution_ids,
+    jackpot_contribution_per_id: casino.jackpot_contribution_per_id,
+    game_id_hash: casino.game_id_hash,
+    jackpot_win_ids: casino.jackpot_win_ids,
+    transaction_id: `${casino.transaction_id}-credit`,
+    gameplay_final: 1,
+    jackpot_win_in_amount: 0,
+    is_freeround_win: 0,
+    is_jackpot_win: 0,
+  }
+  return await creditCasino(payload, res)
+};
+
 const cancelSingleBet = async (req, res) => {
   if (req.decoded.role != 0) {
     return res.status(404).send({
@@ -2876,6 +2918,7 @@ loginRouter.get("/getWaitingBetsForManuel", getWaitingBetsForManuel);
 loginRouter.get("/getSessionScore", getSessionScore);
 loginRouter.post("/setSessionScore", setSessionScore);
 loginRouter.post("/set-fancy-score", setFancyScore);
+loginRouter.post("/set-casino-amount", setCasinoScore);
 loginRouter.post("/cancelSingleBet", cancelSingleBet);
 router.get("/removeOdds/:id", removeOdds);
 router.get("/eventListByMarketIds/:sportsId", eventListByMarketIds);

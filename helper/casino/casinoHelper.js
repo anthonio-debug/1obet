@@ -3,10 +3,13 @@ require('dotenv').config();
 const CasinoDebits = require("../../app/models/casinoCalls");
 const crypto = require("crypto");
 const config = require("config");
+const User = require("../../app/models/user");
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const saltKey = process.env.saltKey;
 const casinoMultiples = config.casinoMultiples;
+const { WinLoseTransManagement } = require('./casinoTransaction')
+const { getParents } = require("../../app/routes/bets");
 
 const transactionOptions = {
   readPreference: 'primary',
@@ -130,4 +133,82 @@ async function rollbackCasino(payload, res) {
   }
 }
 
-module.exports = { rollbackCasino }
+async function creditCasino(payload, res) {
+  const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+  await client.connect();
+  const session = client.startSession();
+
+  try {
+    const currentUser = await User.findOne(
+      {remoteId: parseInt(payload.remote_id)}
+    )
+    if (!currentUser) {
+      console.log(" ========================= User Not Found ============= ");
+      return res.json({status: '500', msg: `Internal Error no User`});
+    }
+    const users = client.db(`${DBNAME}`).collection('users');
+
+    const user = await users.findOne(
+      {remoteId: parseInt(payload.remote_id)},
+      {session, readPreference: 'primary'}
+    );
+    if (!user) {
+      console.log(" ========================= User Not Found ============= ");
+      await session.abortTransaction();
+      return res.json({status: '500', msg: `Internal Error no User`});
+    }
+
+    const checkMarketBlockedResponse = await checkMarketBlocked(user);
+
+    if (checkMarketBlockedResponse == 1) {
+      await session.abortTransaction();
+      return res.json({status: '500', msg: ' Batting is not allowed ! '});
+    }
+
+    // let updatedavailableBalance = 0
+    await session.withTransaction(async () => {
+      if (parseInt(payload.amount) < 0) {
+        await session.abortTransaction();
+        return res.json({
+          status: 500,
+          balance: user.availableBalance / casinoMultiples
+        });
+      } else {
+        const amount = payload.amount * casinoMultiples;
+        const response = await WinLoseTransManagement(0, payload, user, 1, res);
+        await session.commitTransaction();
+        const updatedUser = await users.findOne(
+          {remoteId: parseInt(payload.remote_id)},
+          {session}
+        )
+        console.log(" Amount Returning to Casino from Credit ", updatedUser.availableBalance / casinoMultiples);
+        return res.json({
+          status: 200,
+          balance: updatedUser.availableBalance / casinoMultiples
+        });
+      }
+    }, transactionOptions);
+
+  } catch (err) {
+    console.error('Error:', err);
+    return res.json({status: 500, msg: `Internal error ${err}`});
+  } finally {
+    await session.endSession();
+    await client.close();
+  }
+}
+
+const checkMarketBlocked = async (user) => {
+  let parentUserIds = await getParents(user.userId);
+  const marketIds = await User.distinct("blockedMarketPlaces", {userId: {$in: parentUserIds}, isDeleted: false});
+  const marketId = config.casinoMarketId;
+
+  if (marketIds.includes(marketId)) {
+    return 1;
+  } else {
+    return 0;
+  }
+
+}
+
+module.exports = { rollbackCasino, creditCasino, checkMarketBlocked }
