@@ -2354,7 +2354,7 @@ const placeBet = async (req, res) => {
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
       if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.BookMaker) {
-        delay = 4900;
+        delay = 2000;
       }
     }
 
