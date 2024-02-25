@@ -35,6 +35,7 @@ const message_result = "cannot place bet due to result check";
 const MarketIDS = require("../models/marketIds")
 const { fetchSession } = require("../../helper/api/sessionAPIHelper");
 const { fetchBookmakerOdds } = require("../../helper/api/bookmakerApiHelper");
+const moment = require("moment");
 require('dotenv').config()
 
 const activeBettors = new Map()
@@ -172,7 +173,9 @@ const checkMarketActiveForBets = async (marketId) => {
 
 const placeBet = async (req, res) => {
   const errors = validationResult(req);
-  let statusForRes = {}
+  let statusForRes = {
+    betPlaceTime: moment().format('YYYY/MM/DD HH:mm:ss')
+  }
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
@@ -1767,6 +1770,7 @@ const placeBet = async (req, res) => {
       statusForRes.bookmakerStatus = bookmakerStatus
       statusForRes.bookmakerBallRunningStatus = bookmakerBallRunningStatus
       statusForRes.bookmakerSuspendedStatus = bookmakerSuspendedStatus
+      statusForRes.fancyBMCheckTime = moment().format('YYYY/MM/DD HH:mm:ss')
 
       if (bookmakerSuspendedStatus) {
         activeBettors.delete(userId)
@@ -1927,6 +1931,7 @@ const placeBet = async (req, res) => {
       statusForRes.bookmakerStatus = bookmakerStatus
       statusForRes.bookmakerBallRunningStatus = bookmakerBallRunningStatus
       statusForRes.bookmakerSuspendedStatus = bookmakerSuspendedStatus
+      statusForRes.bookmakerBMCheckTime = moment().format('YYYY/MM/DD HH:mm:ss')
       if (bookmakerSuspendedStatus) {
         activeBettors.delete(userId)
         return res.status(404).send({
