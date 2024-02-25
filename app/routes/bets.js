@@ -172,6 +172,7 @@ const checkMarketActiveForBets = async (marketId) => {
 
 const placeBet = async (req, res) => {
   const errors = validationResult(req);
+  let statusForRes = {}
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
@@ -1763,6 +1764,10 @@ const placeBet = async (req, res) => {
       const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
       const bookmakerSuspendedStatus = apiBookmakerOddRes[0]?.runners.every((item) => item?.status === 'SUSPENDED')
       console.error('bookmaker status in fancy', bookmakerStatus, bookmakerBallRunningStatus, bookmakerSuspendedStatus)
+      statusForRes.bookmakerStatus = bookmakerStatus
+      statusForRes.bookmakerBallRunningStatus = bookmakerBallRunningStatus
+      statusForRes.bookmakerSuspendedStatus = bookmakerSuspendedStatus
+
       if (bookmakerSuspendedStatus) {
         activeBettors.delete(userId)
         return res.status(404).send({
@@ -1919,6 +1924,9 @@ const placeBet = async (req, res) => {
       const bookmakerStatus = bookmakerOddsRes[0]?.runners.some((item) => item?.status === "ACTIVE")
       const bookmakerBallRunningStatus = bookmakerOddsRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
       const bookmakerSuspendedStatus = bookmakerOddsRes[0]?.runners.every((item) => item?.status === 'SUSPENDED')
+      statusForRes.bookmakerStatus = bookmakerStatus
+      statusForRes.bookmakerBallRunningStatus = bookmakerBallRunningStatus
+      statusForRes.bookmakerSuspendedStatus = bookmakerSuspendedStatus
       if (bookmakerSuspendedStatus) {
         activeBettors.delete(userId)
         return res.status(404).send({
@@ -2954,6 +2962,7 @@ const placeBet = async (req, res) => {
             success: true,
             message: "Bet placed successfully! ",
             results: result,
+            statusForRes,
           });
         } catch (error) {
           console.warn("error", error);
