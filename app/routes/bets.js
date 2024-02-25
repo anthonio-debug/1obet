@@ -1811,6 +1811,10 @@ const placeBet = async (req, res) => {
         _3rdPartyMarketId = dbSelectedOdds.nat;
         let oddsInsex = 0;
         if (req.body.type == 0) {
+          if (betRate != apiSelectedOdds.l1) {
+            activeBettors.delete(userId)
+            return res.status(404).send({ message: `Bet miss matched ` });
+          }
           const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
           const apiBackOdds = apiBackOdds2.map((item) => Number(item));
           const DbBackOdds2 = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
@@ -1830,6 +1834,10 @@ const placeBet = async (req, res) => {
             return res.status(404).send({ message: `Bet miss matched ` });
           }
         } else if (req.body.type == 1) {
+          if (betRate != apiSelectedOdds.b1) {
+            activeBettors.delete(userId)
+            return res.status(404).send({ message: `Bet miss matched ` });
+          }
           const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
           const apiBackOdds = apiBackOdds2.map((item) => Number(item));
           const DbBackOdds2 = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
@@ -2003,6 +2011,12 @@ const placeBet = async (req, res) => {
         fancyData = null;
         runnerName = dbSelectedOdds.nat;
         if (req.body.type == 0) {
+          if (betRate != apiSelectedOdds.b1) {
+            activeBettors.delete(userId)
+            return res.status(404).send({
+              message: `Odds not available for the selected team ${selectionId}`,
+            });
+          }
           const apiBackOdds2 = [
             apiSelectedOdds.b1,
             apiSelectedOdds.b2,
@@ -2035,6 +2049,12 @@ const placeBet = async (req, res) => {
             return res.status(404).send({ message: `Bet miss matched` });
           }
         } else if (req.body.type == 1) {
+          if (betRate != apiSelectedOdds.l1) {
+            activeBettors.delete(userId)
+            return res.status(404).send({
+              message: `Odds not available for the selected team ${selectionId}`,
+            });
+          }
           const apiBackOdds2 = [
             apiSelectedOdds.l1,
             apiSelectedOdds.l2,
