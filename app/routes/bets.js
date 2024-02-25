@@ -1762,6 +1762,7 @@ const placeBet = async (req, res) => {
       const bookmakerStatus = apiBookmakerOddRes[0]?.runners.some((item) => item?.status === "ACTIVE")
       const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
       const bookmakerSuspendedStatus = apiBookmakerOddRes[0]?.runners.every((item) => item?.status === 'SUSPENDED')
+      console.error('bookmaker status in fancy', bookmakerStatus, bookmakerBallRunningStatus, bookmakerSuspendedStatus)
       if (bookmakerSuspendedStatus) {
         activeBettors.delete(userId)
         return res.status(404).send({
