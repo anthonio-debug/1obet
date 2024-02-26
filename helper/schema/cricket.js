@@ -41,11 +41,6 @@ const convertApiToCricket = (apiRes) => {
 }
 
 const convertCricketToFront = (score) => {
-  const parseScore = (score) => {
-    const lastScore = score.split('&').pop().trim()
-    return lastScore
-  }
-
   return {
     eventId: score.eventId,
     seriesKey: score.seriesKey,

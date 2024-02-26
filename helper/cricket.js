@@ -5,8 +5,8 @@ const calculateSessionNo = (scores) => {
   let currentSession
   let type = scores.type;
   let inning = scores.inning;
-  let currentOver = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.over1 : cricketScore.over2
-  let score = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.score1 : cricketScore.score2
+  let currentOver = (scores.activeTeam === scores.team1ShortName) ? scores.over1 : scores.over2
+  let score = (scores.activeTeam === scores.team1ShortName) ? scores.score1 : scores.score2
   let sessionAddition = 0;
   const sessionAdditionTimes = inning - 1
   if (inning !== 1) {
