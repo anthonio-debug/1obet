@@ -119,26 +119,26 @@ function ToolForScraper() {
 
       for (const event of inPlayEventList) {
         const eventId = event.Id
-        let cricketScore = await getCricketScoreAPI(eventId)
-        if (cricketScore?.data) {
-          const apiCricketScore = convertApiToCricket(cricketScore)
+        let cricketScoreDate = await getCricketScoreAPI(eventId)
+        if (cricketScoreDate?.data) {
+          const apiCricketScore = convertApiToCricket(cricketScoreDate)
           const cricketScore = await Crickets.findOneAndUpdate(
             {eventId: apiCricketScore.eventId},
             apiCricketScore,
             {upsert: true, new: true, setDefaultsOnInsert: true}
           );
-          const eventId = cricketScore.eventId
+          const eventId = apiCricketScore.eventId
           if (eventId) {
-            const type = cricketScore.type
+            const type = apiCricketScore.type
             let divider = 5
             if (type === 'TEST') divider = 10
-            const over = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.over1 : cricketScore.over2
+            const over = (apiCricketScore.activeTeam === apiCricketScore.team1ShortName) ? apiCricketScore.over1 : apiCricketScore.over2
             const currentOver = parseInt(over.split(".")[0])
             const currentBall = parseInt(over.split(".")[1])
             if (((currentOver % divider) === 0) && (currentBall === 0 || currentBall === '0')) {
-              const score = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.score1 : cricketScore.score2
+              const score = (apiCricketScore.activeTeam === apiCricketScore.team1ShortName) ? apiCricketScore.score1 : apiCricketScore.score2
               let currentScore = parseInt(score.split("/")[0])
-              const sessionNo = calculateSessionNo(cricketScore)
+              const sessionNo = calculateSessionNo(apiCricketScore)
               await Session.findOneAndUpdate(
                 {
                   eventId: parseInt(eventId),
