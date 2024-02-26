@@ -2,11 +2,10 @@ const mongoose = require('mongoose');
 let Global = require('../global/settings');
 
 const CricketSchema = new mongoose.Schema({
-  seriesKey: { type: String, required: false, index: true },
   eventId: { type: String, required: false, index: true },
   Title: { type: String, required: false },
-  __v: { type: Number, required: false },
-  day: { type: String, required: false },
+  activeTeam: { type: String, required: false },
+  type: { type: String, required: false },
   matchEnglishTitle: { type: String, required: false },
   matchNo: { type: Number, required: false },
   inning: { type: Number, required: false },
@@ -24,13 +23,17 @@ const CricketSchema = new mongoose.Schema({
   seriesTitle: { type: String, required: false },
   state: { type: String, required: false },
   team1Flag: { type: String, required: false },
-  team1Name: { type: String, required: false },
-  team1Score: { type: String, required: false },
-  team1ShortName: { type: String, required: false },
   team2Flag: { type: String, required: false },
+  team1Name: { type: String, required: false },
   team2Name: { type: String, required: false },
+  team1ShortName: { type: String, required: false },
+  team2ShortName: { type: String, required: false },
+  RRR: { type: String, required: false },
+  CRR: { type: String, required: false },
   time: { type: String, required: false },
-  type: { type: String, required: false },
+  __v: { type: Number, required: false },
+  day: { type: String, required: false },
+  seriesKey: { type: String, required: false, index: true },
   venueName: { type: String, required: false },
   timestamp: { type:Number, default: new Date().getTime() / 1000}
 }, {strict: false});

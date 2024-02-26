@@ -9,6 +9,11 @@ const {isIterable} = require("../../helper/common");
 const {
   getCricketScore
 } = require("../../helper/api/hybridApiHelper");
+const { getCricketScoreAPI } = require("../../helper/api/scoreApiHelper");
+const { convertApiToCricket, convertCricketToFront } = require("../../helper/schema/cricket");
+const Crickets = require("../../app/models/Crickets");
+const { calculateSessionNo } = require("../../helper/cricket");
+const Session = require("../../app/models/Session");
 require('dotenv').config()
 
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
@@ -22,8 +27,8 @@ function ToolForScraper() {
     io = _io;
 
     fetchCricketScoreFromApi()
+    fetchCricketScoreFromScoreApi()
   }
-
 
   function convertSchema(entity, eventId) {
     // 511-10 (144.0) & 17-1 (5.2)
@@ -31,15 +36,6 @@ function ToolForScraper() {
       const lastScore = score.split('&').pop().trim()
       return lastScore
     }
-
-    const getScore = (score) => {
-      const regex = /-?\d+(\.\d+)?/g;
-      const matches = score.match(regex) || [0, 0, '0.0'];
-      // return `${matches[0]}-${matches[1]} (${over})`;
-      return matches
-    };
-    // const over1 = getScore(entity?.data?.teams[0]?.score)[2]
-    // const over2 = getScore(entity?.data?.teams[1]?.score)[2]
 
     return {
       eventId: eventId,
@@ -109,6 +105,64 @@ function ToolForScraper() {
       console.error("Error fetchCricketScoreFromApi:", error);
     } finally {
       setTimeout(fetchCricketScoreFromApi, 3000)
+    }
+  }
+
+  async function fetchCricketScoreFromScoreApi() {
+    try {
+      let inPlayEventList = await inPlayEvents.find({
+        sportsId: '4', isShowed: true,
+        CompanySetStatus: "OPEN",
+        status: 'OPEN',
+        inplay: true,
+      }, {Id: 1}).exec();
+
+      for (const event of inPlayEventList) {
+        const eventId = event.Id
+        let cricketScore = await getCricketScoreAPI(eventId)
+        if (cricketScore?.data) {
+          const apiCricketScore = convertApiToCricket(cricketScore, eventId)
+          const cricketScore = await Crickets.findOneAndUpdate(
+            {eventId: apiCricketScore.eventId},
+            apiCricketScore,
+            {upsert: true, new: true, setDefaultsOnInsert: true}
+          );
+          const eventId = cricketScore.eventId
+          if (eventId) {
+            const type = cricketScore.type
+            let divider = 5
+            if (type === 'TEST') divider = 10
+            const over = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.over1 : cricketScore.over2
+            const currentOver = parseInt(over.split(".")[0])
+            const currentBall = parseInt(over.split(".")[1])
+            if (((currentOver % divider) === 0) && (currentBall === 0 || currentBall === '0')) {
+              const score = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.score1 : cricketScore.score2
+              let currentScore = parseInt(score.split("/")[0])
+              const sessionNo = calculateSessionNo(cricketScore)
+              await Session.findOneAndUpdate(
+                {
+                  eventId: parseInt(eventId),
+                  sessionNo: sessionNo,
+                },
+                {
+                  $set: {
+                    scrap_session_score: `${currentScore}`,
+                    api_session_score: `${currentScore}`,
+                  },
+                }
+              );
+            }
+
+            const frontScore = convertCricketToFront(apiCricketScore)
+            io.emit('cricket_score_api', frontScore);
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error("Error fetchCricketScoreFromScoreApi:", error);
+    } finally {
+      setTimeout(fetchCricketScoreFromScoreApi, 2000)
     }
   }
 }
