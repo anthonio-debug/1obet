@@ -133,11 +133,11 @@ function ToolForScraper() {
             let divider = 5
             if (type === 'TEST') divider = 10
             const over = (apiCricketScore.activeTeam === apiCricketScore.team1ShortName) ? apiCricketScore.over1 : apiCricketScore.over2
-            const currentOver = parseInt(over.split(".")[0])
-            const currentBall = parseInt(over.split(".")[1])
+            const currentOver = parseInt(over?.split(".")[0])
+            const currentBall = parseInt(over?.split(".")[1])
             if (((currentOver % divider) === 0) && (currentBall === 0 || currentBall === '0')) {
               const score = (apiCricketScore.activeTeam === apiCricketScore.team1ShortName) ? apiCricketScore.score1 : apiCricketScore.score2
-              let currentScore = parseInt(score.split("/")[0])
+              let currentScore = parseInt(score?.split("/")[0])
               const sessionNo = calculateSessionNo(apiCricketScore)
               await Session.findOneAndUpdate(
                 {
