@@ -35,7 +35,7 @@ const calculateSessionNo = (scores) => {
       break;
   }
 
-  if (type === "TEST" && score?.day > 1) {
+  if (type === "TEST" && scores?.day > 1) {
     currentSession = currentSession + 18
   }
   return currentSession

@@ -2155,8 +2155,8 @@ const placeBet = async (req, res) => {
       console.log(` scores =================== `, scores);
       let type = eventDetail.matchType;
       let inning = parseInt(scores.inning);
-      let currentOver = scores.over1
-      let score = scores.score1
+      let currentOver = (scores.activeTeam === scores.team1ShortName) ? scores.over1 : scores.over2
+      let score = (scores.activeTeam === scores.team1ShortName) ? scores.score1 : scores.score2
       const wikets = score.split('/')[1];
       if (Number(wikets) === 10) {
         console.warn("Error : Wikets are 10");
@@ -2240,7 +2240,7 @@ const placeBet = async (req, res) => {
         })
 
       }
-      if (type == "TEST" && score?.day > 1) {
+      if (type === "TEST" && scores?.day > 1) {
         currentSession = currentSession + 18
       }
       _3rdPartyMarketId = subMarketDetail.Id;
