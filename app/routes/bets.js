@@ -36,6 +36,7 @@ const MarketIDS = require("../models/marketIds")
 const { fetchSession } = require("../../helper/api/sessionAPIHelper");
 const { fetchBookmakerOdds } = require("../../helper/api/bookmakerApiHelper");
 const moment = require("moment");
+const { SCORE_API_STATUS_BLOCK_LIST } = require("../../helper/api/scoreApiHelper");
 require('dotenv').config()
 
 const activeBettors = new Map()
@@ -145,12 +146,13 @@ const stopbetStatusChecker = async (id) => {
     console.log(`Score details ====================== `, scores);
     if (scores && scores?.result && scores?.result?.length) {
       const result = scores?.result.toLowerCase();
-      const stopbetStatus = ["no ball", "noball", "free hit", "freehit",
-        "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed",
-        "rain", "suspend", "delay", "pitch", "plood", "injured",
-        "rain stops play", "bowling review", "stumped", "Run Out Check",
-        "Bowling Review", "No Ball Check", "LBW Check", "Catch Check",];
-      const regexPattern = new RegExp(stopbetStatus.map(word => `\\b${word.replace(/\s+/g, '\\s+')}\\b`).join('|'), 'i');
+      // const stopbetStatus = ["no ball", "noball", "free hit", "freehit",
+      //   "thirdumpire", "third umpire", "review", "stumps", "bad", "crowed",
+      //   "rain", "suspend", "delay", "pitch", "plood", "injured",
+      //   "rain stops play", "bowling review", "stumped", "Run Out Check",
+      //   "Bowling Review", "No Ball Check", "LBW Check", "Catch Check",];
+      const stopBetStatus = SCORE_API_STATUS_BLOCK_LIST
+      const regexPattern = new RegExp(stopBetStatus.map(word => `\\b${word.replace(/\s+/g, '\\s+')}\\b`).join('|'), 'i');
       if (regexPattern.test(result)) {
         return 400
       }
