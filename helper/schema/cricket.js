@@ -7,6 +7,7 @@ const convertApiToCricket = (apiRes) => {
     Title: `${entity.team_a} vs ${entity.team_b}`,
     over1: entity.team_a_over?.split('&').pop().trim(),
     over2: entity.team_b_over?.split('&').pop().trim(),
+    overs: entity.last4overs,
     res: entity.result,
     result: entity.first_circle ?? entity.second_circle,
     comment: entity.need_run_ball,
@@ -48,7 +49,7 @@ const convertCricketToFront = (score) => {
     score: {
       activenation1: (score.activeTeam === score.team1ShortName) ? 1 : 0,
       activenation2: (score.activeTeam === score.team2ShortName) ? 1 : 0,
-      balls: [],
+      balls: score?.overs?.pop()?.balls,
       overScore: 0,
       inning: score.inning,
       dayno: "",

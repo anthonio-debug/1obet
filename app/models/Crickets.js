@@ -10,6 +10,7 @@ const CricketSchema = new mongoose.Schema({
   matchNo: { type: Number, required: false },
   inning: { type: Number, required: false },
   matchTitle: { type: String, required: false },
+  overs: { type: Object, required: false },
   meta: { type: Object, required: false },
   over1: { type: String, required: false },
   over2: { type: String, required: false },
