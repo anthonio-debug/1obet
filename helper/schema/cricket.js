@@ -49,8 +49,8 @@ const convertCricketToFront = (score) => {
     score: {
       activenation1: (score.activeTeam === score.team1ShortName) ? 1 : 0,
       activenation2: (score.activeTeam === score.team2ShortName) ? 1 : 0,
-      balls: score?.overs?.pop()?.balls,
-      overScore: 0,
+      balls: score?.overs?.pop()?.balls ?? [],
+      overScore: score?.overs?.pop()?.runs ?? 0,
       inning: score.inning,
       dayno: "",
       comment: score?.comment,
