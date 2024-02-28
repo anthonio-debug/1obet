@@ -2240,9 +2240,9 @@ const placeBet = async (req, res) => {
         })
 
       }
-      if (type === "TEST" && scores?.day > 1) {
-        currentSession = currentSession + 18
-      }
+      // if (type === "TEST" && scores?.day > 1) {
+      //   currentSession = currentSession + 18
+      // }
       _3rdPartyMarketId = subMarketDetail.Id;
       console.log(" ================== currentSession  ", currentSession);
     }
