@@ -6,7 +6,6 @@ const calculateSessionNo = (scores) => {
   let type = scores.type;
   let inning = scores.inning;
   let currentOver = (scores.activeTeam === scores.team1ShortName) ? scores.over1 : scores.over2
-  let score = (scores.activeTeam === scores.team1ShortName) ? scores.score1 : scores.score2
   let sessionAddition = 0;
   const sessionAdditionTimes = inning - 1
   if (inning !== 1) {
