@@ -16,6 +16,7 @@ const CricketSchema = new mongoose.Schema({
   rateTeam: { type: String, required: false },
   res: { type: String, required: false },
   result: { type: String, required: false },
+  comment: { type: String, required: false },
   score1: { type: String, required: false },
   score2: { type: String, required: false },
   seriesFullName: { type: String, required: false },
