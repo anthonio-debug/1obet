@@ -147,6 +147,7 @@ function ToolForScraper() {
                 {
                   $set: {
                     scrap_session_score: `${currentScore}`,
+                    score: currentScore,
                     api_session_score: `${currentScore}`,
                   },
                 }
