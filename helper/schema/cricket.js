@@ -10,7 +10,7 @@ const convertApiToCricket = (apiRes) => {
     overs: entity.last4overs,
     res: entity.result,
     result: entity.first_circle ?? entity.second_circle,
-    comment: entity.need_run_ball,
+    comment: entity.need_run_ball || entity.trail_lead || entity.toss || '',
     activeTeam: (entity.batting_team == entity.team_a_id) ? entity.team_a_short : entity.team_b_short,
     score1: entity.team_a_scores?.split('&').pop().trim().replace('-', '/'),
     score2: entity.team_b_scores?.split('&').pop().trim().replace('-', '/'),
