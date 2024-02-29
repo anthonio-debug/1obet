@@ -14,7 +14,10 @@ const { convertApiToCricket, convertCricketToFront } = require("../../helper/sch
 const Crickets = require("../../app/models/Crickets");
 const { calculateSessionNo } = require("../../helper/cricket");
 const Session = require("../../app/models/Session");
+const _ = require('lodash')
 require('dotenv').config()
+
+const activeCrickets = new Map()
 
 const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
 
@@ -155,7 +158,11 @@ function ToolForScraper() {
             }
 
             const frontScore = convertCricketToFront(cricketScore)
-            io.emit('cricket_score_api', frontScore);
+            const oldCricket = activeCrickets.get(eventId)
+            if (!_.isEqual(oldCricket, frontScore)) {
+              io.emit('cricket_score_api', frontScore);
+              activeCrickets.set(eventId, { ...frontScore })
+            }
           }
         }
       }
