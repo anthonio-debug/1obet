@@ -26,7 +26,7 @@ function ToolForScraper() {
   async function init(_io, express) {
     io = _io;
 
-    fetchCricketScoreFromApi()
+    // fetchCricketScoreFromApi()
     fetchCricketScoreFromScoreApi()
   }
 
