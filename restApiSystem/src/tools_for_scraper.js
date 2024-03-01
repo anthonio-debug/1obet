@@ -5,7 +5,7 @@ const axios = require('axios');
 const inPlayEvents = require('../../app/models/events');
 const Settings = require('../../app/models/settings');
 const MarketIDs = require('../../app/models/marketIds');
-const {isIterable} = require("../../helper/common");
+const { isIterable, isObjectEqual } = require("../../helper/common");
 const {
   getCricketScore
 } = require("../../helper/api/hybridApiHelper");
@@ -24,7 +24,7 @@ const HYBRID_PROVIDER = process.env.HYBRID_PROVIDER || 'pys'
 let io;
 
 function ToolForScraper() {
-  return {init};
+  return { init };
 
   async function init(_io, express) {
     io = _io;
@@ -92,7 +92,7 @@ function ToolForScraper() {
         CompanySetStatus: "OPEN",
         status: 'OPEN',
         inplay: true,
-      }, {Id: 1}).exec();
+      }, { Id: 1 }).exec();
 
       for (const event of inPlayEventList) {
         const eventId = event.Id
@@ -118,50 +118,53 @@ function ToolForScraper() {
         CompanySetStatus: "OPEN",
         status: 'OPEN',
         inplay: true,
-      }, {Id: 1}).exec();
+      }, { Id: 1 }).exec();
 
       for (const event of inPlayEventList) {
         const eventId = event.Id
         let cricketScoreDate = await getCricketScoreAPI(eventId)
         if (cricketScoreDate?.data) {
           const apiCricketScore = convertApiToCricket(cricketScoreDate, eventId)
-          const cricketScore = await Crickets.findOneAndUpdate(
-            {eventId: apiCricketScore.eventId},
-            apiCricketScore,
-            {upsert: true, new: true, setDefaultsOnInsert: true}
-          );
-          if (eventId) {
-            const type = cricketScore.type
-            let divider = 5
-            if (type === 'TEST') divider = 10
-            const over = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.over1 : cricketScore.over2
-            const currentOver = parseInt(over?.split(".")[0])
-            const currentBall = parseInt(over?.split(".")[1])
-            if (((currentOver % divider) === 0) && (currentBall === 0 || currentBall === '0')) {
-              const score = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.score1 : cricketScore.score2
-              let currentScore = parseInt(score?.split("/")[0])
-              const sessionNo = calculateSessionNo(cricketScore)
-              await Session.findOneAndUpdate(
-                {
-                  eventId: parseInt(eventId),
-                  sessionNo: sessionNo,
-                },
-                {
-                  $set: {
-                    scrap_session_score: `${currentScore}`,
-                    score: currentScore,
-                    api_session_score: `${currentScore}`,
+          if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
+            activeCrickets.set(eventId, cricketScoreDate)
+            const cricketScore = await Crickets.findOneAndUpdate(
+              { eventId: apiCricketScore.eventId },
+              apiCricketScore,
+              { upsert: true, new: true, setDefaultsOnInsert: true }
+            );
+            if (eventId) {
+              const type = cricketScore.type
+              let divider = 5
+              if (type === 'TEST') divider = 10
+              const over = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.over1 : cricketScore.over2
+              const currentOver = parseInt(over?.split(".")[0])
+              const currentBall = parseInt(over?.split(".")[1])
+              if (((currentOver % divider) === 0) && (currentBall === 0 || currentBall === '0')) {
+                const score = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.score1 : cricketScore.score2
+                let currentScore = parseInt(score?.split("/")[0])
+                const sessionNo = calculateSessionNo(cricketScore)
+                await Session.findOneAndUpdate(
+                  {
+                    eventId: parseInt(eventId),
+                    sessionNo: sessionNo,
                   },
-                }
-              );
-            }
+                  {
+                    $set: {
+                      scrap_session_score: `${currentScore}`,
+                      score: currentScore,
+                      api_session_score: `${currentScore}`,
+                    },
+                  }
+                );
+              }
 
-            const frontScore = convertCricketToFront(cricketScore)
-            io.emit('cricket_score_api', frontScore);
-            const oldCricket = activeCrickets.get(eventId)
-            if (!_.isEqual(oldCricket, frontScore)) {
-              // io.emit('cricket_score_api', frontScore);
-              activeCrickets.set(eventId, { ...frontScore })
+              const frontScore = convertCricketToFront(cricketScore)
+              io.emit('cricket_score_api', frontScore);
+              const oldCricket = activeCrickets.get(eventId)
+              if (!_.isEqual(oldCricket, frontScore)) {
+                // io.emit('cricket_score_api', frontScore);
+                activeCrickets.set(eventId, { ...frontScore })
+              }
             }
           }
         }
