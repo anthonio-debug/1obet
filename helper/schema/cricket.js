@@ -1,8 +1,8 @@
-const convertApiToCricket = (apiRes) => {
+const convertApiToCricket = (apiRes, eventId) => {
   if (!apiRes.status) return null
   const entity = apiRes.data
   const cricketScore = {
-    eventId: `${entity.tv_id}`,
+    eventId: eventId,
     inning: parseInt(entity.current_inning),
     Title: `${entity.team_a} vs ${entity.team_b}`,
     over1: entity.team_a_over?.split('&').pop().trim(),

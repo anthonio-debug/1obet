@@ -124,7 +124,7 @@ function ToolForScraper() {
         const eventId = event.Id
         let cricketScoreDate = await getCricketScoreAPI(eventId)
         if (cricketScoreDate?.data) {
-          const apiCricketScore = convertApiToCricket(cricketScoreDate)
+          const apiCricketScore = convertApiToCricket(cricketScoreDate, eventId)
           const cricketScore = await Crickets.findOneAndUpdate(
             {eventId: apiCricketScore.eventId},
             apiCricketScore,
