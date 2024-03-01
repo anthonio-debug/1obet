@@ -130,7 +130,6 @@ function ToolForScraper() {
             apiCricketScore,
             {upsert: true, new: true, setDefaultsOnInsert: true}
           );
-          const eventId = cricketScore.eventId
           if (eventId) {
             const type = cricketScore.type
             let divider = 5
