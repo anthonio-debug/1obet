@@ -205,11 +205,11 @@ const placeBet = async (req, res) => {
     } = req.body;
     let randomStr = uuidv4();
 
-    if (parseInt(betRate) > 50) {
-      return res.status(404).send({
-        message: `Winning amount can not be more than 50 times than loosing amount`,
-      });
-    }
+    // if (parseInt(betRate) > 50) {
+    //   return res.status(404).send({
+    //     message: `Winning amount can not be more than 50 times than loosing amount`,
+    //   });
+    // }
 
     const selectedBetRate = selectedAmount;
     const userId = req.decoded.userId;
