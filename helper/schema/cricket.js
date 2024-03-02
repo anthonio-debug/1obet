@@ -57,18 +57,18 @@ const convertCricketToFront = (score) => {
       dayno: "",
       comment: score?.comment,
       isfinished: "0",
-      score1: `${score?.score1?.replace('/', '-')} (${score?.over1})`,
-      score2: `${score?.score2?.replace('/', '-')} (${score?.over2})`,
+      score1: `${score?.score1?.replace('/', '-')} (${score?.over1 ?? ''})`,
+      score2: `${score?.score2?.replace('/', '-')} (${score?.over2 ?? ''})`,
       spnballrunningstatus: score?.result,
       spnmessage: "",
       spnnation1: score?.team1ShortName,
       spnnation2: score?.team2ShortName,
-      spnreqrate1: `RRR ${score?.RRR}`,
-      spnreqrate2: `RRR ${score?.RRR}`,
-      spnrunrate1: `CRR ${score?.CRR}`,
-      spnrunrate2: `CRR ${score?.CRR}`,
+      spnreqrate1: `RRR ${score?.RRR ?? ''}`,
+      spnreqrate2: `RRR ${score?.RRR ?? ''}`,
+      spnrunrate1: `CRR ${score?.CRR ?? ''}`,
+      spnrunrate2: `CRR ${score?.CRR ?? ''}`,
     }
-  };
+  }
 }
 
 module.exports = { convertApiToCricket, convertCricketToFront }
