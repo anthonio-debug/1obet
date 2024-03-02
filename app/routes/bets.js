@@ -1,13 +1,11 @@
 const express = require("express");
-var http = require('http')
-  , useragent = require('express-useragent');
+const useragent = require('express-useragent');
 const { validationResult } = require("express-validator");
 let config = require("config");
 const Bets = require("../models/bets");
 const User = require("../models/user");
 const SubMarketType = require("../models/subMarketTypes");
 const loginRouter = express.Router();
-const router = express.Router();
 const betValidator = require("../validators/bets");
 const maxAllowedBetSizes = require("../models/betLimits");
 const userBetSizes = require("../models/userBetSizes");
@@ -381,8 +379,8 @@ const placeBet = async (req, res) => {
       const requiredTime = new Date().getTime() + config.sportsOpenBefore;
       const remainingTimeFromEvent = eventDetail.openDate - requiredTime;
 
-      if (subMarketName == "Toss") {
-        remainingTimeFromEventStart = eventDetail.openDate - new Date().getTime();
+      if (subMarketName === "Toss") {
+        const remainingTimeFromEventStart = eventDetail.openDate - new Date().getTime();
         thirdPartyMarketName = "To Win the Toss";
         const requiredTime = new Date().getTime() - config.tossCloseTime;
         if (subMarketDetail.Id == config.Toss && config.tossCloseTime >= remainingTimeFromEventStart) {
@@ -2763,6 +2761,9 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res.status(404).send({ message: `Max Exposure Amount : ${maxExp}` });
       }
+      const cricketScore = await Crickets.findOne({eventId: eventDetail?.Id})
+      const matchStatus = cricketScore?.result
+      const matchLastUpdate = cricketScore?.updatedAt
 
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
@@ -2772,6 +2773,8 @@ const placeBet = async (req, res) => {
         betAmount: betAmount || 0,
         betRate: Number(betRate) || 0,
         matchType: eventDetail?.matchType,
+        matchStatus: matchStatus,
+        matchLastUpdate: matchLastUpdate,
         eventId: eventDetail?.Id,
         selectedBetRate: selectedBetRate || 0,
         TargetScore: TargetScore || 0,

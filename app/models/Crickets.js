@@ -37,9 +37,20 @@ const CricketSchema = new mongoose.Schema({
   day: { type: String, required: false },
   seriesKey: { type: String, required: false, index: true },
   venueName: { type: String, required: false },
-  timestamp: { type:Number, default: new Date().getTime() / 1000}
+  timestamp: { type:Number, default: new Date().getTime() / 1000},
+  createdAt: { type: Number, required: false },
+  updatedAt: { type: Number, required: false },
 }, {strict: false});
 
+CricketSchema.pre("save", function (next) {
+  const now = new Date().getTime();
+  if (!this.createdAt) {
+    this.createdAt = now;
+  } else {
+    this.updatedAt = now;
+  }
+  next();
+});
 
 CricketSchema.plugin(Global.paginate);
 CricketSchema.plugin(Global.aggregatePaginate);
