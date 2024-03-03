@@ -52,6 +52,7 @@ const SCORE_API_STATUS_BLOCK_LIST = [
   "Bowling Team Review",
   "Run Out Check",
   "3rd Umpire",
+  "Third Umpire",
   "Boundary Check",
   "Stump Check",
   "Free Hit",

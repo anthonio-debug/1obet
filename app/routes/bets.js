@@ -763,13 +763,13 @@ const placeBet = async (req, res) => {
           .send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
-      // const resultcheck = await stopbetStatusChecker(eventDetail.Id);
-      // if (resultcheck === 400) {
-      //   activeBettors.delete(userId)
-      //   return res.status(404).send({
-      //     message: `${message_result}`,
-      //   });
-      // }
+      const resultCheck = await stopbetStatusChecker(eventDetail.Id);
+      if (resultCheck === 400) {
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `${message_result}`,
+        });
+      }
 
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
