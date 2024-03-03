@@ -444,7 +444,7 @@ const placeBet = async (req, res) => {
 
     /* ================================== Market Specific Checks ================================== */
 
-    // Socer Match Odds
+    // Soccer Match Odds
     if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
 
       const userMaxBetSize = await userBetSizes.findOne({
@@ -1095,6 +1095,11 @@ const placeBet = async (req, res) => {
 
     // Soccer Over Under
     else if (config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.overUnder) {
+      if (parseInt(betRate) > 50) {
+        return res.status(404).send({
+          message: `Winning amount can not be more than 50 times than loosing amount`,
+        });
+      }
 
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
@@ -1284,6 +1289,11 @@ const placeBet = async (req, res) => {
 
     // Cricket Tied Match
     else if (config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.tiedMatch) {
+      if (eventDetail.matchType === 'TEST' && (parseInt(betRate) > 50)) {
+        return res.status(404).send({
+          message: `Winning amount can not be more than 50 times than loosing amount`,
+        });
+      }
 
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
