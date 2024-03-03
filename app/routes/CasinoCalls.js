@@ -54,7 +54,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
 
     /*
       action= 0 debit
-      action= 1 credit( decsion came from casino )
+      action= 1 credit( decision came from casino )
       debit = 1350
       credit=  600 or 1350 or 1800
       let bettor_winning_amount = 0;
@@ -67,7 +67,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
     const day = now.getDate().toString().padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
 
-    if (action == 0) {
+    if (action === 0) {
       let amount = Number(payload.amount) * casinoMultiples;
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
@@ -92,7 +92,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
       await casinoDebits.save();
       console.log(" allTrans created Successfully ");
       return 0
-    } else if (action == 1) {
+    } else if (action === 1) {
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
@@ -505,7 +505,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
         const casinoDebits = new CasinoDebits(payload);
         await casinoDebits.save();
         console.log(" =============end of }else if (difference > 0){=============");
-      } else if ((difference == 0)) {
+      } else if ((difference === 0)) {
         // No Win lose
         const updatedavailableBalance = Number((user.availableBalance + (debit * casinoMultiples)).toFixed(3))
         const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3))
@@ -606,6 +606,8 @@ async function balanceFun(req, res) {
 }
 
 async function debitFun(req, res) {
+  const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+
   try {
     const payload = req.query;
     const transactionId = payload.transaction_id
@@ -634,7 +636,6 @@ async function debitFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
     await client.connect();
     const session = client.startSession();
     const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
@@ -705,7 +706,6 @@ async function debitFun(req, res) {
 
     }, transactionOptions);
 
-
   } catch (err) {
     console.error('Error:', err);
     return res.json({status: 500, msg: `Internal error ${err}`});
@@ -716,10 +716,10 @@ async function debitFun(req, res) {
 }
 
 async function creditFun(req, res) {
+  const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
   try {
     const payload = req.query;
     const transactionId = payload.transaction_id
-
     // const sameTransaction = await CasinoDebits.countDocuments({
     //   transaction_id: payload.transaction_id,
     //   remote_id: parseInt(payload.remote_id),
@@ -744,7 +744,7 @@ async function creditFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+
     await client.connect();
     const session = client.startSession();
 
@@ -819,9 +819,9 @@ async function creditFun(req, res) {
 }
 
 async function rollbackFun(req, res) {
+  const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
   try {
     const payload = req.query;
-    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
     await client.connect();
     const session = client.startSession();
 
