@@ -57,9 +57,16 @@ const corsOptions = {
 
 app.use(cors(corsOptions));
 app.get("/", (req, res) => {
-  res.send(
+  return res.send(
     '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.net </h2></body>'
   );
+});
+
+app.get("/active-bettors", (req, res) => {
+  return res.send({
+    success: true,
+    results: global.ActiveBettors
+  });
 });
 
 // Allowed Apis on this server
@@ -126,7 +133,7 @@ app.use("/api", require("./app/routes/betPlaceHold").loginRouter);
 
 // LISTEN HERE
 // Create HTTPs server.
-var server = http.createServer(app);
+const server = http.createServer(app);
 server.listen(PORT, (err) => {
   if (err) throw new Error(err);
   console.log(`Server is listening on port ${PORT}`);
