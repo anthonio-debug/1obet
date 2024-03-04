@@ -15,6 +15,7 @@ const PORT = process.env.SERVERPORT;
 const apisMiddleware = require("./app/middlewares/apisMiddleware");
 const loginMiddleWare = require("./app/middlewares/loginMiddleware");
 const checkRoleMiddleware = require("./app/middlewares/checkRoleMiddleware");
+const {BETS} = require('./app/routes/bets')
 
 const apisContent = fs.readFileSync(config.apisFileName);
 const jsonApis = JSON.parse(apisContent);

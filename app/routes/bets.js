@@ -4625,8 +4625,8 @@ loginRouter.get("/SingleUserAllBets", SingleUserAllBets);
 loginRouter.get("/GetAllBets", GetAllBets);
 loginRouter.get("/casino-bets", CasinoList);
 loginRouter.get("/GetBetsByEventId", GetBetsByEventId);
-
-module.exports = { sessionCalc, loginRouter, getParents };
+const BETS = []
+module.exports = { sessionCalc, loginRouter, getParents, BETS };
 
 
 // const newRunners = [];
