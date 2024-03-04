@@ -30,21 +30,13 @@ const GetAllBets = async (req, res) => {
         as: "userDetails" // The array field name where the joined documents will be placed.
       }
     })
+    pipeline.push({
+      $unwind: {
+        path: "$userDetails",
+        preserveNullAndEmptyArrays: true // Keep documents even if there's no match in the Users collection
+      }
+    });
 
-    // if (req.query?.eventId) {
-    //   result = await Bets.find({
-    //     eventId: req.query?.eventId,
-    //     status: 1,
-    //     fancyData: { $ne: null },
-    //     isfancyOrbookmaker: true
-    //   })
-    // } else {
-    //   result = await Bets.find({
-    //     status: 1,
-    //     fancyData: { $ne: null },
-    //     isfancyOrbookmaker: true,
-    //   })
-    // }
     let result = await Bets.aggregate(pipeline).exec()
 
     const results = result.slice((Number(page) - 1) * limit, page * limit);
