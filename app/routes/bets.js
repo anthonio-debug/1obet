@@ -4408,11 +4408,6 @@ const CasinoList = async (req, res) => {
         preserveNullAndEmptyArrays: true // Keep documents even if there's no match in the Users collection
       }
     });
-    pipeline.push({
-      $project: {
-        username: "$userDetails.userName",
-      }
-    });
 
     result = await CasinoCalls.aggregate(pipeline).exec()
 
