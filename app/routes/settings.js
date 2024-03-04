@@ -2708,7 +2708,7 @@ async function removeOdds(req, res) {
 
 async function getActiveBettors(req, res) {
   try {
-    res.status(200).json({ success: true, results: Object.fromEntries(global.ActiveBettors) })
+    res.status(200).json({ success: true, results: Object.fromEntries(global.activeBettors) })
   } catch (err) {
     console.error('getActiveBettors: ', err)
     res.status(500).json({ success: false, msg: "Failed to remove odds" })
