@@ -24,15 +24,29 @@ const GetAllBets = async (req, res) => {
     })
     pipeline.push({
       $lookup: {
-        from: "users", // The collection to join.
-        localField: "userId", // Field from the input documents.
-        foreignField: "userId", // Field from the documents of the "from" collection.
-        as: "userDetails" // The array field name where the joined documents will be placed.
+        from: "users",
+        localField: "userId",
+        foreignField: "userId",
+        as: "userDetails"
       }
     })
     pipeline.push({
       $unwind: {
         path: "$userDetails",
+        preserveNullAndEmptyArrays: true // Keep documents even if there's no match in the Users collection
+      }
+    });
+    pipeline.push({
+      $lookup: {
+        from: "users",
+        localField: "$userDetails.createdBy",
+        foreignField: "userId",
+        as: "userParent"
+      }
+    })
+    pipeline.push({
+      $unwind: {
+        path: "$userParent",
         preserveNullAndEmptyArrays: true // Keep documents even if there's no match in the Users collection
       }
     });
