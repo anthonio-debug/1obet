@@ -56,7 +56,8 @@ const SCORE_API_STATUS_BLOCK_LIST = [
   "Boundary Check",
   "Stump Check",
   "Free Hit",
-  "LBW"
+  "LBW",
+  "No Ball Check",
 ];
 
 async function getCricketScoreAPI(eventId) {

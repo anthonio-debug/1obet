@@ -4394,6 +4394,25 @@ const CasinoList = async (req, res) => {
         $replaceRoot: { newRoot: "$docs" }
       }
     ])
+    pipeline.push({
+      $lookup: {
+        from: "users", // The collection to join.
+        localField: "remote_id", // Field from the input documents.
+        foreignField: "remoteId", // Field from the documents of the "from" collection.
+        as: "userDetails" // The array field name where the joined documents will be placed.
+      }
+    });
+    pipeline.push({
+      $unwind: {
+        path: "$userDetails",
+        preserveNullAndEmptyArrays: true // Keep documents even if there's no match in the Users collection
+      }
+    });
+    pipeline.push({
+      $project: {
+        username: "$userDetails.userName",
+      }
+    });
 
     result = await CasinoCalls.aggregate(pipeline).exec()
 
