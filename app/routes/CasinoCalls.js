@@ -40,7 +40,6 @@ const checkMarketBlocked = async (user) => {
   } else {
     return 0;
   }
-
 }
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res) => {
@@ -705,12 +704,12 @@ async function debitFun(req, res) {
       }
 
     }, transactionOptions);
+    await session.endSession();
 
   } catch (err) {
     console.error('Error:', err);
     return res.json({status: 500, msg: `Internal error ${err}`});
   } finally {
-    await session.endSession();
     await client.close();
   }
 }
@@ -808,23 +807,23 @@ async function creditFun(req, res) {
         });
       }
     }, transactionOptions);
+    await session.endSession();
 
   } catch (err) {
     console.error('Error:', err);
     return res.json({status: 500, msg: `Internal error ${err}`});
   } finally {
-    await session.endSession();
+
     await client.close();
   }
 }
 
 async function rollbackFun(req, res) {
   const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+  await client.connect();
+  const session = client.startSession();
   try {
     const payload = req.query;
-    await client.connect();
-    const session = client.startSession();
-
     console.log(" rollback req.query ======= ", req.query);
     const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
     const users = client.db(`${DBNAME}`).collection('users');
@@ -924,6 +923,7 @@ async function rollbackFun(req, res) {
         }
 
       }, transactionOptions);
+      await session.endSession();
     } else {
       const newUpdatedUser = await users.findOne(
         {remoteId: parseInt(payload.remote_id)}
@@ -945,7 +945,6 @@ async function rollbackFun(req, res) {
       msg: `Internal error ${err}`
     });
   } finally {
-    await session.endSession();
     await client.close();
   }
 }
