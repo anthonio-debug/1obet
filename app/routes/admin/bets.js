@@ -39,7 +39,7 @@ const GetAllBets = async (req, res) => {
     pipeline.push({
       $lookup: {
         from: "users",
-        localField: "$userDetails.createdBy",
+        localField: "userDetails.createdBy",
         foreignField: "userId",
         as: "userParent"
       }
