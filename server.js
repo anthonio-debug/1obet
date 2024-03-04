@@ -62,13 +62,6 @@ app.get("/", (req, res) => {
   );
 });
 
-app.get("/active-bettors", (req, res) => {
-  return res.send({
-    success: true,
-    results: global.ActiveBettors
-  });
-});
-
 // Allowed Apis on this server
 app.use(function (req, res, next) {
   apisMiddleware(req, res, next, jsonApis);

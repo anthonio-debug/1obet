@@ -2706,6 +2706,14 @@ async function removeOdds(req, res) {
   }
 }
 
+async function getActiveBettors(req, res) {
+  try {
+    res.status(200).json({ success: true, results: global.ActiveBettors })
+  } catch (err) {
+    res.status(500).json({ success: false, msg: "Failed to remove odds" })
+  }
+}
+
 async function eventListByMarketIds(req, res) {
   try {
     const now = new Date();
@@ -2922,6 +2930,7 @@ loginRouter.post("/set-casino-amount", setCasinoScore);
 loginRouter.post("/cancelSingleBet", cancelSingleBet);
 router.get("/removeOdds/:id", removeOdds);
 router.get("/eventListByMarketIds/:sportsId", eventListByMarketIds);
+router.get("/active-bettors", getActiveBettors);
 loginRouter.post("/update-setting", updateSetting);
 loginRouter.post("/get-setting", getSetting);
 
