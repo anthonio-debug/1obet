@@ -1,19 +1,20 @@
 "use strict";
 module.exports = ToolForResults;
 
-const sportsIdsforRacing = ["4339", "7"];
+const sportsIdsForRacing = ["4339", "7"];
 const sportsIds = ["4", "2", "1"];
 const Bets = require("../../app/models/bets");
 const Sessions = require("../../app/models/Session");
+const { checkActiveBettors } = require("../../helper/bet");
 const scoreChecker = require("./api/scoreChecker")();
 
 function ToolForResults() {
-  return {init};
+  return { init };
 
   async function init() {
     getBetForEvents(sportsIds)
     setTimeout(() => {
-      getBetForEvents(sportsIdsforRacing);
+      getBetForEvents(sportsIdsForRacing);
     }, 2000)
     getBetForFancy();
     getBetForAsianOdd();
@@ -27,18 +28,18 @@ function ToolForResults() {
       const results = await Bets.aggregate([
         {
           $match: {
-            sportsId: {$in: targetArray},
+            sportsId: { $in: targetArray },
             //resultId: null,
-            marketId: {$ne: null},
+            marketId: { $ne: null },
             isfancyOrbookmaker: false,
             status: 1,
-            type: {$in: [0, 1]},
+            type: { $in: [0, 1] },
           },
         },
         {
           $group: {
             _id: "$marketId",
-            betDocument: {$first: "$$ROOT"},
+            betDocument: { $first: "$$ROOT" },
           },
         },
         {
@@ -54,38 +55,39 @@ function ToolForResults() {
       //console.log(targetArray);
 
       for (const result of results) {
+        if (checkActiveBettors(result.betDocument)) continue
         await Bets.updateMany(
           {
-            _id: {$in: result.documentIds},
+            _id: { $in: result.documentIds },
           },
           {
-            $set: {lastCheckResult: currentTime},
+            $set: { lastCheckResult: currentTime },
           }
         ).catch((e) => console.error(e));
-      }
 
-      for (const result of results) {
         // console.log("result.betDocument.length:-->", result.betDocument.length);
         console.log("result.betDocument.length:-->", result.betDocument.length);
         console.log("result.betDocument.sportsId:-->", result.betDocument.sportsId);
         if (!result.betDocument) continue;
 
         if (
-          result.betDocument.sportsId == 1 ||
-          result.betDocument.sportsId == 2 ||
-          result.betDocument.sportsId == 4
+          result.betDocument.sportsId === '1' ||
+          result.betDocument.sportsId === '2' ||
+          result.betDocument.sportsId === '4'
         ) {
 
           await scoreChecker.eventsResult(result.betDocument);
         } else if (
-          result.betDocument.sportsId == 7 ||
-          result.betDocument.sportsId == 4339
+          result.betDocument.sportsId === '7' ||
+          result.betDocument.sportsId === '4339'
         ) {
           await scoreChecker.racingResult(result.betDocument);
         } else {
           console.log("Undefined sports type ", result.betDocument);
         }
+
       }
+
     } catch (error) {
       console.error("Error:", error);
     } finally {
@@ -110,13 +112,13 @@ function ToolForResults() {
         .limit(1)
         .exec();
 
-      if (betData) {
+      if (betData && !checkActiveBettors(betData)) {
         await Bets.updateOne(
           {
             _id: betData._id,
           },
           {
-            $set: {lastCheckResult: currentTime},
+            $set: { lastCheckResult: currentTime },
           }
         ).catch((e) => console.error(e));
 
@@ -126,15 +128,12 @@ function ToolForResults() {
           await scoreChecker.bookMakerResult(betData);
         }
       }
-
-      setTimeout(() => {
-        getBetForFancy();
-      }, 5 * 1000);
     } catch (error) {
+      console.error("Error:", error);
+    } finally {
       setTimeout(() => {
         getBetForFancy();
       }, 5 * 1000);
-      console.error("Error:", error);
     }
   }
 
@@ -149,10 +148,10 @@ function ToolForResults() {
       for (const result of results) {
         await Bets.updateMany(
           {
-            _id: {$in: result.documentIds},
+            _id: { $in: result.documentIds },
           },
           {
-            $set: {lastCheckResult: currentTime},
+            $set: { lastCheckResult: currentTime },
           }
         ).catch((e) => console.error(e));
       }
@@ -173,21 +172,21 @@ function ToolForResults() {
         {
           $match: {
             status: 1,
-            type: {$in: [2, 3, 4]},
-            betSession: {$ne: null},
+            type: { $in: [2, 3, 4] },
+            betSession: { $ne: null },
           },
         },
         {
           $lookup: {
             from: "sessions",
-            let: {matchId: "$matchId", betSession: "$betSession"},
+            let: { matchId: "$matchId", betSession: "$betSession" },
             pipeline: [
               {
                 $match: {
                   $expr: {
                     $and: [
-                      {$eq: ["$Id", "$$matchId"]},
-                      {$eq: ["$sessionNo", "$$betSession"]},
+                      { $eq: ["$Id", "$$matchId"] },
+                      { $eq: ["$sessionNo", "$$betSession"] },
                     ],
                   },
                 },
@@ -201,7 +200,7 @@ function ToolForResults() {
         },
         {
           $match: {
-            "sessionDetails.score": {$ne: 0},
+            "sessionDetails.score": { $ne: 0 },
             "sessionDetails.manuelSave": true,
           },
         },
@@ -214,12 +213,9 @@ function ToolForResults() {
       ]);
 
       await scoreChecker.manuel(results);
-
-      setTimeout(() => {
-        manuelBetChecker();
-      }, 5 * 1000);
     } catch (error) {
       console.error("Error fetching data:", error);
+    } finally {
       setTimeout(() => {
         manuelBetChecker();
       }, 5 * 1000);

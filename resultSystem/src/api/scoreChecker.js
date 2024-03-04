@@ -1,7 +1,7 @@
 "use strict";
 module.exports = scoreChecker;
 
-var mongoose = require("mongoose");
+const mongoose = require("mongoose");
 const axios = require("axios");
 require('dotenv').config()
 
@@ -29,6 +29,7 @@ const {
 const {API_DOMAIN} = require("../../../app/global/constants");
 const FancyOdds = require("../../../app/models/fancyOdds");
 const { fetchSession, getSessionFancyResult, getSessionBookmakerResult } = require("../../../helper/api/sessionAPIHelper");
+const { checkActiveBettors } = require("../../../helper/bet");
 
 const tableInfo = [
   {id: "36", tId: "teen20"},
@@ -1131,10 +1132,9 @@ function scoreChecker() {
   }
 
   async function manuel(bets) {
-    for (let index = 0; index < bets.length; index++) {
-      const bet = bets[index];
+    for (let bet of bets) {
+      if (checkActiveBettors(bet.betData)) continue
       //figure bets
-
       const event = await inPlayEvents.findOne(
         {_id: mongoose.Types.ObjectId(bet.betData.matchId)},
         {Id: 1}
@@ -1183,7 +1183,7 @@ function scoreChecker() {
       }
 
       //jotta kali
-      if (bet.betData.type == 3) {
+      if (bet.betData.type === 3) {
         var correctScore;
         if (bet.score == -1) {
           await handleDrawBet(bet.betData);
@@ -1225,7 +1225,7 @@ function scoreChecker() {
         }
       }
       /// Chota bara
-      if (bet.betData.type == 4) {
+      if (bet.betData.type === 4) {
         var correctScore;
         if (bet.score == -1) {
           await handleDrawBet(bet.betData);
