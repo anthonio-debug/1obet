@@ -4301,32 +4301,51 @@ const SingleUserAllBets = async (req, res) => {
 
 const GetAllBets = async (req, res) => {
   try {
-    const DBNAME = process.env.DB_NAME;
-    const DBHost = process.env.DBHost;
-    const client = new MongoClient(`${DBHost}?directConnection=true`, { useUnifiedTopology: true });
-    const deposit = client.db(`${DBNAME}`).collection("deposits");
+    const eventId = req.query?.eventId ?? ''
+    const page = req.query?.page ?? 1;
+    const limit = req.query?.limit ?? 10;
 
-    let result = null;
-
-    if (req.query?.eventId) {
-      result = await Bets.find({
-        eventId: req.query?.eventId,
+    let pipeline = [];
+    if (eventId) {
+      pipeline.push({
+        $match: {
+          eventId: eventId // Filter documents by game_id
+        }
+      })
+    }
+    pipeline.push({
+      $match: {
         status: 1,
         fancyData: { $ne: null },
         isfancyOrbookmaker: true
-      })
-    } else {
-      result = await Bets.find({
-        status: 1,
-        fancyData: { $ne: null },
-        isfancyOrbookmaker: true,
-      })
-    }
+      }
+    })
+    pipeline.push({
+      $lookup: {
+        from: "users", // The collection to join.
+        localField: "userId", // Field from the input documents.
+        foreignField: "userId", // Field from the documents of the "from" collection.
+        as: "userDetails" // The array field name where the joined documents will be placed.
+      }
+    })
 
-    page = req.query?.page ?? 1;
-    limit = req.query?.limit ?? 10;
+    // if (req.query?.eventId) {
+    //   result = await Bets.find({
+    //     eventId: req.query?.eventId,
+    //     status: 1,
+    //     fancyData: { $ne: null },
+    //     isfancyOrbookmaker: true
+    //   })
+    // } else {
+    //   result = await Bets.find({
+    //     status: 1,
+    //     fancyData: { $ne: null },
+    //     isfancyOrbookmaker: true,
+    //   })
+    // }
+    let result = await Bets.aggregate(pipeline).exec()
 
-    const results = result.slice((page - 1) * limit, page * limit);
+    const results = result.slice((Number(page) - 1) * limit, page * limit);
 
     // for (const bet of results){
     //   const user = await User.findOne({ _id: bet.userId })
