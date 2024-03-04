@@ -218,5 +218,6 @@
   "updateEventStatus",
   "casino-bets",
   "set-casino-amount",
-  "set-fancy-score"
+  "set-fancy-score",
+  "active-bettors"
 ]
