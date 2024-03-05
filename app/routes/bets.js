@@ -440,7 +440,6 @@ const placeBet = async (req, res) => {
       return res.status(404).send({ message: "Betting disabled" });
     }
 
-
     let maxExp = 0;
     /* ==================================================================== */
 
@@ -924,9 +923,9 @@ const placeBet = async (req, res) => {
         // 4th       => 36 => save and move next
         // }
 
-        // if array has some values which are lesser than SeleectedRate then take the latest/top most index value.
+        // if array has some values which are lesser than Selected Rate then take the latest/top most index value.
         // ELSE
-        // mistmatch.....
+        // mismatch.....
       }
     }
 
