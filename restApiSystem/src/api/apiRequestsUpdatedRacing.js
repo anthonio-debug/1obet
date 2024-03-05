@@ -12,6 +12,10 @@ const MarketIDS = require('../../../app/models/marketIds')
 const InPlayEvents = require("../../../app/models/events")
 
 const _ = require('lodash');
+const { isObjectEqual } = require("../../../helper/common");
+
+const RacingStatusMap = new Map()
+const RacingOddsMap = new Map()
 
 const header = {
   headers: {
@@ -623,25 +627,39 @@ function apiRequests() {
               runners: tempRunners,
               createdAt: new Date().getTime(),
             }
+            let frontOdds = {
+              marketId: odds.marketId,
+              isMarketDataDelayed: isMarketDataDelayed,
+              state: {
+                numberOfRunners: tempRunners?.length,
+                totalMatched: odds?.totalMatched,
+                inplay: odds?.inplay,
+                status: odds?.status
+              },
+              runners: tempRunners,
+            }
+            const marketId = odds.marketId
+            if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
+              RacingOddsMap.set(marketId, frontOdds)
+              if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
+                //console.log(odds.marketId, " this market has no odds.....");
+                if (odds.status === 'CLOSED') {
+                  await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
+                }
+                if (odds.marketId) {
+                  io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
+                  io.to('$' + odds.marketId).emit('odds', json);
+                }
+              } else {
+                //console.log(odds.marketId, " This market has odds found");
 
-            if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
-              //console.log(odds.marketId, " this market has no odds.....");
-              if (odds.status === 'CLOSED') {
-                await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
-              }
-              if (odds.marketId) {
-                io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
+                const result = await RaceOdds.collection.insertOne(json);
+                odds._id = result.insertedId;
 
                 io.to('$' + odds.marketId).emit('odds', json);
               }
-            } else {
-              //console.log(odds.marketId, " This market has odds found");
-
-              const result = await RaceOdds.collection.insertOne(json);
-              odds._id = result.insertedId;
-
-              io.to('$' + odds.marketId).emit('odds', json);
             }
+
             responsedMarketIDs.push(odds.marketId);
           } else {
             //console.log(marketIds[marketIds_index], " HAS no odds.");
