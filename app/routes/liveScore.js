@@ -7,7 +7,7 @@ async function liveScore(req, res) {
   const url = `${config.liveScoreUrl}/${matchId}`;
   try {
     const response = await axios.get(url);
-    console.log('response', response.data);
+    //console.log('response', response.data);
     const liveScore = response.data;
 
     res.status(200).json({

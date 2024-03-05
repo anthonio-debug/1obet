@@ -234,7 +234,7 @@ async function getAllBetSizes(req, res) {
     //     },
     //   ]);
     // } else {
-    //   console.log('in else case');
+    //   //console.log('in else case');
     //   const createdBy = user.createdBy;
     //   queryResult = await betLimits.aggregate([
     //     {
@@ -311,7 +311,7 @@ async function getAllBetSizes(req, res) {
     // }
 
     // Log the query result
-    // console.log('Query Result:', queryResult);
+    // //console.log('Query Result:', queryResult);
 
     // const modifiedResults = queryResult.map((result) => ({
     //   _id: result._id,
@@ -322,7 +322,7 @@ async function getAllBetSizes(req, res) {
     // }));
 
     // Log the modified results
-    // console.log('Modified Results:', queryResult);
+    // //console.log('Modified Results:', queryResult);
 
     return res.send({
       success: true,

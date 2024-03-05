@@ -31,7 +31,7 @@ async function listTrackBalance(req, res) {
       //     }
       //   }
       // ])
-      console.log("2222222222222", testBetList[i].matchId, i)
+      //console.log("2222222222222", testBetList[i].matchId, i)
 
       const depositList = await Deposits.find(
         {

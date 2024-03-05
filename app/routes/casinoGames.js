@@ -22,7 +22,7 @@ const api_password = process.env.api_password;
 const getParents = async (userId) => {
   const parentUserIds = [];
   let currentUserId = userId;
-  console.log("currentUserId", currentUserId);
+  //console.log("currentUserId", currentUserId);
 
   while (currentUserId) {
     const parentUser = await User.findOne({ userId: currentUserId });
@@ -37,7 +37,7 @@ const getParents = async (userId) => {
     parentUserIds.push(parentUser.createdBy);
     currentUserId = parentUser.createdBy;
   }
-  console.log(" parentUserIds ========== ", parentUserIds);
+  //console.log(" parentUserIds ========== ", parentUserIds);
   return parentUserIds;
 };
 
@@ -148,7 +148,7 @@ async function addEuCasinoGameDetails(req, res) {
       currency: 'PKR',
     });
 
-    console.log('Response:', response.data);
+    //console.log('Response:', response.data);
     const gameList = response.data.response;
     const bulkOps = gameList.map((game) => ({
       updateOne: {
@@ -277,7 +277,7 @@ async function addSelectedCasinoCategories(req, res) {
       }
 
       if (status == 2) {
-        console.log("in here");
+        //console.log("in here");
         // Add all games for _id in selectedCasino
         selectedCasino._id = _id; // Assign _id
         selectedCasino.category = allCasino.category; // Assign _id
@@ -286,7 +286,7 @@ async function addSelectedCasinoCategories(req, res) {
         await selectedCasino.save();
       } else if (status == 1) {
         if (games.length == 0) {
-          console.log("Deleting selected casino ->>> :", _id);
+          //console.log("Deleting selected casino ->>> :", _id);
           await SelectedCasino.deleteOne({ _id: _id });
         } else {
           for (const gameID of games) {
@@ -295,7 +295,7 @@ async function addSelectedCasinoCategories(req, res) {
             );
 
             if (matchingGame) {
-              console.log("Matching game found:", matchingGame);
+              //console.log("Matching game found:", matchingGame);
               // Check if the game is already present in selectedCasino
               const isGameAlreadyAdded = selectedCasino.games.some(
                 (game) => game.id == gameID
@@ -308,7 +308,7 @@ async function addSelectedCasinoCategories(req, res) {
               //   return res.status(404).send({ message: 'Game already present:' });
               // }
             } else {
-              console.log("No matching game found for ID:", gameID);
+              //console.log("No matching game found for ID:", gameID);
             }
           }
           await selectedCasino.save();
@@ -319,7 +319,7 @@ async function addSelectedCasinoCategories(req, res) {
     for (const category of casinoCategories) {
       const { _id, status } = category;
       if (status == 0) {
-        console.log("Deleting selected casino:", _id);
+        //console.log("Deleting selected casino:", _id);
         await SelectedCasino.deleteOne({ _id: _id });
       }
     }
@@ -406,31 +406,31 @@ async function getAllSelectedCasinos(req, res) {
   });
   const marketId = config.casinoMarketId;
 
-  console.log(
+  //console.log(
     " ================== parentUserIds =========================",
     parentUserIds
   );
-  console.log(
+  //console.log(
     " ================== marketIds =========================",
     marketIds
   );
-  console.log(
+  //console.log(
     " ================== subMarketId =========================",
     subMarketId
   );
-  console.log(
+  //console.log(
     " ================== marketId =========================",
     marketId
   );
-  console.log(
+  //console.log(
     " ================== marketId =========================",
     marketId
   );
-  console.log(" ================== user =========================", user);
+  //console.log(" ================== user =========================", user);
 
   try {
   } catch (error) {
-    console.log(error);
+    //console.log(error);
   }
 
   let query = {};
@@ -450,16 +450,16 @@ async function getAllSelectedCasinos(req, res) {
 
   // Check for isMobile parameter in the request body
   if (req.body.isMobile == true) {
-    // console.log('in here isMobile true');
+    // //console.log('in here isMobile true');
     query["games.mobile"] = true;
   } else if (req.body.isMobile == false) {
-    // console.log('in here isMobile false');
+    // //console.log('in here isMobile false');
     query["games.mobile"] = false;
   }
 
   // Check for gameCategory parameter in the request body
   if (req.body.gameCategory != "") {
-    // console.log('in gameCategoryCheck');
+    // //console.log('in gameCategoryCheck');
     query["games.category"] = req.body.gameCategory;
   }
 
@@ -474,11 +474,11 @@ async function getAllSelectedCasinos(req, res) {
     "games.mobile": 1,
     "games.id_hash": 1,
   });
-  // console.log('casino',casino);
+  // //console.log('casino',casino);
   const games = casino
     .flatMap((casino) => casino.games)
     .filter((game) => game.mobile === req.body.isMobile);
-  // console.log('games',games);
+  // //console.log('games',games);
   // Apply pagination based on the requested number of records
   const totalRecords = games.length;
   const totalPages = Math.ceil(totalRecords / limit);
@@ -550,31 +550,31 @@ async function getListAsianGames(req, res) {
   });
   const marketId = config.casinoMarketId;
 
-  console.log(
+  //console.log(
     " ================== parentUserIds =========================",
     parentUserIds
   );
-  console.log(
+  //console.log(
     " ================== marketIds =========================",
     marketIds
   );
-  console.log(
+  //console.log(
     " ================== subMarketId =========================",
     subMarketId
   );
-  console.log(
+  //console.log(
     " ================== marketId =========================",
     marketId
   );
-  console.log(
+  //console.log(
     " ================== marketId =========================",
     marketId
   );
-  console.log(" ================== user =========================", user);
+  //console.log(" ================== user =========================", user);
 
   try {
   } catch (error) {
-    console.log(error);
+    //console.log(error);
   }
 
   let query = {};
@@ -592,11 +592,11 @@ async function getListAsianGames(req, res) {
     page = Number(req.body.page);
   }
 
-  console.log(req.body.gameCategory);
+  //console.log(req.body.gameCategory);
 
   // Check for gameCategory parameter in the request body
   if (req.body.gameCategory != "") {
-    // console.log('in gameCategoryCheck');
+    // //console.log('in gameCategoryCheck');
     query["providerName"] = req.body.gameCategory;
   }
 
@@ -611,7 +611,7 @@ async function getListAsianGames(req, res) {
     thumb: 1,
     category: 1,
   });
-  // console.log('games',games);
+  // //console.log('games',games);
   // Apply pagination based on the requested number of records
   const totalRecords = casino.length;
   const totalPages = Math.ceil(totalRecords / limit);
@@ -668,7 +668,7 @@ async function getGame(req, res) {
     const { homeurl, cashierurl, gameid } = req.body;
     const user = await User.findOne({ userId: req.decoded.userId });
 
-    // console.log(" Get Game user ======= ", user);
+    // //console.log(" Get Game user ======= ", user);
 
     const payload = {
       api_password: api_password,
@@ -777,10 +777,10 @@ async function getSelectedGamesBySearch(req, res) {
 
   // Check for isMobile parameter in the request body
   if (req.body.isMobile == true) {
-    // console.log('in here isMobile true');
+    // //console.log('in here isMobile true');
     query["games.mobile"] = true;
   } else if (req.body.isMobile == false) {
-    // console.log('in here isMobile false');
+    // //console.log('in here isMobile false');
     query["games.mobile"] = false;
   }
 

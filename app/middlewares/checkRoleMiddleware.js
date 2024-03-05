@@ -13,7 +13,7 @@ function checkRole(req, res, next) {
   // Check if the user is allowed to register the requested user type
 
   const requestedRole = req.body.role;
-  console.log("requestRole", req.body.role);
+  //console.log("requestRole", req.body.role);
   if (!allowedRoles[role].includes(requestedRole)) {
     return res.status(404).json({ message: "You are not authorized to do this operation" });
     }

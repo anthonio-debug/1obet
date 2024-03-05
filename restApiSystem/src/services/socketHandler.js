@@ -22,25 +22,25 @@ function SocketHandler() {
 
   function init(io, express) {
     io.on('connection', (socket) => {
-      console.log('socket handler: connection', socket.id)
+      //console.log('socket handler: connection', socket.id)
 
       socket.on('authenticate', (userData) => {
         const { userId } = userData
         connectedUsers.set(socket.id, { userId })
         const duplicated = logoutMultipleConnections(userId, socket.id)
-        // console.log('authenticate', connectedUsers)
+        // //console.log('authenticate', connectedUsers)
         if (duplicated) {
-          console.log('duplicated')
+          //console.log('duplicated')
           socket.emit('authenticated', {status: false})
           socket.disconnect(true)
         } else {
-          console.log('no duplicated')
+          //console.log('no duplicated')
           socket.emit('authenticated', {status: true})
         }
       })
 
       socket.on('disconnect', (reason) => {
-        console.log(`socket handler: disconnect ${socket.id}`)
+        //console.log(`socket handler: disconnect ${socket.id}`)
         connectedUsers.delete(socket.id)
       });
     })

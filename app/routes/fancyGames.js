@@ -9,14 +9,14 @@ const loginRouter = express.Router();
 async function getFancyData(req, res) {
   const eventId = req.params.eventId;
   const url = `${FANCY_URL}/bm_fancy/${eventId}`;
-  console.log('url', url);
+  //console.log('url', url);
   try {
     const response = await axios.get(url);
-    // console.log('response',response?.data);
-    // console.log('response.data.t1', response?.data?.data?.t1);
-    console.log('response.data.t2', response?.data?.data?.t2);
-    // console.log('response.data.t3', response?.data?.data?.t3);
-    // console.log('response.data.t4', response?.data?.data?.t4);
+    // //console.log('response',response?.data);
+    // //console.log('response.data.t1', response?.data?.data?.t1);
+    //console.log('response.data.t2', response?.data?.data?.t2);
+    // //console.log('response.data.t3', response?.data?.data?.t3);
+    // //console.log('response.data.t4', response?.data?.data?.t4);
 
     const fancyData = response?.data;
    // Create a new fancyData document
@@ -68,7 +68,7 @@ async function getFancyResult(req, res) {
 
   try {
     const response = await axios.get(url);
-    console.log('response', response);
+    //console.log('response', response);
     res.status(200).json({
       success: true,
       message: 'Fancy data result found',

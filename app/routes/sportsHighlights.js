@@ -82,7 +82,7 @@ async function getAllSportsHighlight(req, res) {
     })
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId :{ $in : ids }})
 
-    console.log(" ======== ids ", ids);
+    //console.log(" ======== ids ", ids);
 
     return res.send({
       success: true,
@@ -91,7 +91,7 @@ async function getAllSportsHighlight(req, res) {
       totalOpenMarkets: totalOpenMarkets
     });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(404).send({
       success: false,
       message: 'Something went WRONG ',
@@ -110,7 +110,7 @@ async function deleteSportHighlight(req, res) {
       results: sportsHighlights,
     });
   } catch (err) {
-    console.log(err);
+    //console.log(err);
     return res.status(404).send({
       success: false,
       message: 'Internal server error',

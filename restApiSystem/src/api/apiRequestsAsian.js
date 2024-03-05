@@ -66,7 +66,7 @@ function apiRequests() {
   function init(_io, express) {
     io = _io;
     io.on("connection", onConnet);
-    console.log("Express conf loading");
+    //console.log("Express conf loading");
 
     express.get("/updateField", (req, res) => {
       try {
@@ -76,14 +76,14 @@ function apiRequests() {
           io.emit("updateMatch", { eventId: req.query.id, data: d1 });
         }
       } catch (error) {
-        console.log(error);
+        //console.log(error);
       }
       res.send("OK");
     });
   }
 
   function onConnet(socket) {
-    console.log("Socket connect");
+    //console.log("Socket connect");
 
     socket.on("join", async (channel) => {
       if (!channel) {
@@ -438,7 +438,7 @@ function apiRequests() {
 
       await Promise.all(resultArray);
     } catch (err) {
-      console.log(err);
+      //console.log(err);
     }
   }
 }

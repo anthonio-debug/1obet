@@ -64,7 +64,7 @@ function ToolForFancy() {
         processArray.push(event.Id);
       }
 
-      //console.log(processArray.join(','));
+      ////console.log(processArray.join(','));
 
       if (processArray.length > 0) {
         const url = `${fancyUrl}/bm_fancy_multi/` + processArray.join(',');
@@ -74,7 +74,7 @@ function ToolForFancy() {
         if (facyOdds) {
           for (var key in facyOdds) {
 
-            // console.log(facyOdds, key);
+            // //console.log(facyOdds, key);
 
             if (facyOdds.hasOwnProperty(key)) {
               try {
@@ -119,9 +119,9 @@ function ToolForFancy() {
 
               } catch (error) {
 
-                console.log(processArray);
-                console.log(marketIds);
-                console.log(index);
+                //console.log(processArray);
+                //console.log(marketIds);
+                //console.log(index);
                 console.error("Error getting odds:", error);
               }
 
@@ -147,7 +147,7 @@ function ToolForFancy() {
           new: true
         }
       );
-      console.log("Event successfully added or updated.");
+      //console.log("Event successfully added or updated.");
     } catch (error) {
       console.error("Error adding or updating event:", error);
     }
@@ -165,7 +165,7 @@ function ToolForFancy() {
     try {
       const response = await axios.get(url);
       let events = response.data;
-      console.log('cricket event list------------------------------->', events.length)
+      //console.log('cricket event list------------------------------->', events.length)
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.openDate);
@@ -173,7 +173,7 @@ function ToolForFancy() {
 
         for (const event of events) {
           if (event.hasFancy) {
-            console.log('================= fancy found ===================')
+            //console.log('================= fancy found ===================')
             await inPlayEvents.findOneAndUpdate(
               { Id: event.Id },
               {

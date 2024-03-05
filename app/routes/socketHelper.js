@@ -255,8 +255,8 @@ async function racesMarketOdds(marketId) {
       { marketId: marketId },
       projectionRaceOddsData
     ).sort({ _id: -1 });
-    console.log(">> racesMarketsData ==>", racesMarketsData);
-    console.log(">> raceOddsData ==>", raceOddsData);
+    //console.log(">> racesMarketsData ==>", racesMarketsData);
+    //console.log(">> raceOddsData ==>", raceOddsData);
     if (
       raceOddsData?.runners &&
       Array.isArray(raceOddsData?.runners) &&
@@ -296,8 +296,8 @@ async function racesMarketOdds(marketId) {
     }
     const matchId = await Events.findOne({ marketIds: { $in: marketId } });
 
-    console.log("matchId", matchId);
-    console.log("raceOddsData ===>", raceOddsData);
+    //console.log("matchId", matchId);
+    //console.log("raceOddsData ===>", raceOddsData);
     return {
       success: true,
       message: "Records",

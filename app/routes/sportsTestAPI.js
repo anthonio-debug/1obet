@@ -84,9 +84,9 @@ async function inActiveUserExposure(req, res) {
           continue;
         } else {
           const inActiveBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 0})
-          // console.log(inActiveBetCount)
+          // //console.log(inActiveBetCount)
           if (inActiveBetCount > 0) {
-            console.log({inActiveBetCount})
+            //console.log({inActiveBetCount})
             const newData = {
               name: stuckUsers[i].userName,
               userId: stuckUsers[i].userId,
@@ -476,7 +476,7 @@ async function getMarketsByMarketType(req, res) {
       }
     }
 
-    console.log("---------------------->", requestData)
+    //console.log("---------------------->", requestData)
     var url = `${sportsAPIUrl}/listMarketCatalogue`;
 
     const marketResponse = await axios.post(

@@ -14,7 +14,7 @@ function apiRequest() {
 
   async function getRacingResult(markets) {
 
-    console.log('getWaitingResult for Racings ');
+    //console.log('getWaitingResult for Racings ');
 
     const currentTime = new Date().getTime();
     var marketIds = [];
@@ -23,14 +23,14 @@ function apiRequest() {
       await MarketIDs.findOneAndUpdate({_id: markets[index]._id}, {lastResultCheckTime: currentTime})
     }
 
-    console.log(marketIds);
-    console.log("How it can happen....2222");
+    //console.log(marketIds);
+    //console.log("How it can happen....2222");
     var url = `${horseRaceUrl}/results/?ids=` + marketIds.join(',');
-    console.log("Horses end point: ",url);
+    //console.log("Horses end point: ",url);
     try {
       const response = await axios.get(url);
       const results = response.data;
-      console.log(results);
+      //console.log(results);
       for (let index = 0; index < results.length; index++) {
         const result = results[index];
         const marketIndex = _.findIndex(markets, function (o) {
@@ -61,16 +61,16 @@ function apiRequest() {
           await Events.findOneAndUpdate({Id: markets[marketIndex].eventId}, {$set: {isResultSaved: true}});
 
         } else {
-          console.log('Record not found');
+          //console.log('Record not found');
         }
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }
 
   async function getEventResult(markets) {
-    console.log('getWaitingResult for Events...... ');
+    //console.log('getWaitingResult for Events...... ');
 
     const currentTime = new Date().getTime();
     var marketIds = [];
@@ -79,13 +79,13 @@ function apiRequest() {
       await MarketIDs.findOneAndUpdate({_id: markets[index]._id}, {lastResultCheckTime: currentTime})
     }
 
-    //console.log(marketIds);
-    console.log("sudden blockage to results here.........");
+    ////console.log(marketIds);
+    //console.log("sudden blockage to results here.........");
     var url = `${sportsAPIUrl}/results/?ids=` + marketIds.join(',');
     try {
       const response = await axios.get(url);
       const results = response.data;
-      //console.log(results);
+      ////console.log(results);
       for (let index = 0; index < results.length; index++) {
         const result = results[index];
         const marketIndex = _.findIndex(markets, function (o) {
@@ -126,7 +126,7 @@ function apiRequest() {
           await Events.findOneAndUpdate({Id: markets[marketIndex].eventId}, {$set: {isResultSaved: true}});
 
         } else {
-          console.log('Record not found');
+          //console.log('Record not found');
         }
       }
     } catch (error) {

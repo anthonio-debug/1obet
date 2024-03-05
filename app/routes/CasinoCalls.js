@@ -74,7 +74,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
       /**
        * let lastMaxWithdrawRes = await Cash.find( {userId: user.userId}).sort({ _id: -1 });
        * let lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0]: null
-       * console.log(" lastMaxWithdraw ============== ", lastMaxWithdraw);
+       * ////console.log(" lastMaxWithdraw ============== ", lastMaxWithdraw);
        */
       await users.updateOne(
         {_id: user._id},
@@ -89,7 +89,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
 
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
-      console.log(" allTrans created Successfully ");
+      // ////console.log(" allTrans created Successfully ");
       return 0
     } else if (action === 1) {
       const user_prev_balance = user.balance;
@@ -103,7 +103,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
 
       const game = gamesList?.games[0];
 
-      console.log(" ======================= CREDIT IS CAALED ======================= ");
+      // ////console.log(" ======================= CREDIT IS CAALED ======================= ");
 
       const lastDebits = await CasinoDebits.find({
         action: 'debit',
@@ -112,7 +112,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
         remote_id: Number(payload.remote_id)
       });
 
-      console.log(" ======================== lastDebits ======================== ", lastDebits.length);
+      // ////console.log(" ======================== lastDebits ======================== ", lastDebits.length);
       let debit = 0;
       for (const lastDebit of lastDebits) {
         debit = debit + Number(lastDebit.amount)
@@ -124,7 +124,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
       // lose some Amount 
       const betTime = new Date().getTime();
       if (difference < 0) {
-        console.log("   ======================= difference < 0 =======================   ");
+        // ////console.log("   ======================= difference < 0 =======================   ");
         /**
          * lose some money mean there will not be any commission only adjust the lost amount into exposure.
          * 400-1500 = -1100 OR 1499-1500 = -1 OR 0-1500 = -1500
@@ -204,22 +204,22 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
             {session}
           );
           if (parentUser.role == "0") {
-            console.log("break User area ");
+            // ////console.log("break User area ");
             break;
           }
           parentUserIds.push(parentUser.createdBy);
           currentUserId = parentUser.createdBy;
         }
 
-        console.log(" parentUser  ============ ", parentUserIds);
+        // ////console.log(" parentUser  ============ ", parentUserIds);
         const parentUser = await users.find(
           {userId: {$in: parentUserIds}, isDeleted: false}
         ).sort({role: -1}).toArray();
 
-        console.log(" parentUser  ============ ", parentUser);
+        // ////console.log(" parentUser  ============ ", parentUser);
 
         if (!parentUser) {
-          console.log(" ============ Parent User Not Found ============ ");
+          ////console.log(" ============ Parent User Not Found ============ ");
           return res.json({status: '500', msg: `Internal Server Error`});
         }
         let commissionFrom = user.userId;
@@ -231,7 +231,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
           prev = current;
         }
 
-        console.log(" ================= Commission Setting Done ================= ");
+        ////console.log(" ================= Commission Setting Done ================= ");
         for (const user of parentUser) {
           /**
            * 85 Admin  15
@@ -257,7 +257,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
 
           const lastMaxWithdrawRes = await Cash.find({userId: user.userId}).sort({_id: -1});
           const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
-          // console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
+          // ////console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
 
           let betTransaction = {
             userId: user.userId,
@@ -296,7 +296,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
         await casinoDebits.save();
       } else if (difference > 0) {
         // Win some Amount
-        console.log(" ======================= difference > 0 ======================= ");
+        ////console.log(" ======================= difference > 0 ======================= ");
 
         /**
          * Win Some Amount
@@ -314,7 +314,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
          *
          */
 
-        console.log("=============start of giving commissions and loss shares on amount which is WON by bettor");
+        ////console.log("=============start of giving commissions and loss shares on amount which is WON by bettor");
         let bettor_won_amount = credit - debit;
         //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
 
@@ -346,7 +346,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
         const lastMaxWithdrawRes = await Cash.find({userId: user.userId}).sort({_id: -1});
         const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
 
-        console.log(" ================ lastMaxWithdraw ================ ", lastMaxWithdraw);
+        ////console.log(" ================ lastMaxWithdraw ================ ", lastMaxWithdraw);
         let UserWinBetTrans = {
           userId: user.userId,
           description: `Casino (${game.name})`,
@@ -382,23 +382,23 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
             {session}
           );
           if (parentUser.role == "0") {
-            console.log("break User area ");
+            ////console.log("break User area ");
             break;
           }
           parentUserIds.push(parentUser.createdBy);
           currentUserId = parentUser.createdBy;
         }
 
-        console.log(" parentUser  ============ ", parentUserIds);
+        ////console.log(" parentUser  ============ ", parentUserIds);
 
         const parentUser = await users.find(
           {userId: {$in: parentUserIds}, isDeleted: false}
         ).sort({role: -1}).toArray();
 
-        console.log(" parentUser  ============ ", parentUser);
+        ////console.log(" parentUser  ============ ", parentUser);
 
         if (!parentUser) {
-          console.log(" ============ Parent User Not Found ============ ");
+          ////console.log(" ============ Parent User Not Found ============ ");
           return res.json({status: '500', msg: `Internal Server Error`});
         }
 
@@ -409,13 +409,13 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
           prev = current;
         }
 
-        console.log(" ================= Commission Setting Done ================= ");
+        ////console.log(" ================= Commission Setting Done ================= ");
 
         for (const user of parentUser) {
 
           const lastMaxWithdrawRes = await Cash.find({userId: user.userId}).sort({_id: -1});
           const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
-          console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
+          ////console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
 
           let availableBalance = Number((user.balance - (user.commission / 100) * remainingAmount).toFixed(3));
           let Balancebalance = Number((user.balance - (user.commission / 100) * remainingAmount).toFixed(3));
@@ -499,11 +499,11 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
         }
 
         await Cash.insertMany(allTrans);
-        console.log(" =============end of giving commissions and loss shares on amount which is WON by bettor");
+        ////console.log(" =============end of giving commissions and loss shares on amount which is WON by bettor");
 
         const casinoDebits = new CasinoDebits(payload);
         await casinoDebits.save();
-        console.log(" =============end of }else if (difference > 0){=============");
+        ////console.log(" =============end of }else if (difference > 0){=============");
       } else if ((difference === 0)) {
         // No Win lose
         const updatedavailableBalance = Number((user.availableBalance + (debit * casinoMultiples)).toFixed(3))
@@ -539,9 +539,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
       });
 
       await ExpTran.save();
-      console.log(" ===================================================== ");
-      console.log(" All Transection Successfull ");
-      console.log(" ===================================================== ");
+      ////console.log(" ===================================================== ");
+      ////console.log(" All Transection Successfull ");
+      ////console.log(" ===================================================== ");
       return 0
     }
   } catch (err) {
@@ -566,9 +566,9 @@ async function balanceFun(req, res) {
 
   const hash = createHashKey(salt, queryString);
 
-  // console.log('key:', key);
-  // console.log('hash:', hash);
-  // console.log('queryString:', queryString);
+  // ////console.log('key:', key);
+  // ////console.log('hash:', hash);
+  // ////console.log('queryString:', queryString);
 
   if (hash !== key) {
     return res.json({
@@ -622,11 +622,11 @@ async function debitFun(req, res) {
       {remoteId: parseInt(payload.remote_id)}
     )
     if (!currentUser) {
-      console.log(" ========================= User Not Found ============= ");
+      ////console.log(" ========================= User Not Found ============= ");
       return res.json({status: '500', msg: `Internal Error no User`});
     }
     if (transactionIdMap.has(transactionId)) {
-      console.log('====== same Trans already Exists', transactionId)
+      ////console.log('====== same Trans already Exists', transactionId)
       return res.json({
         status: 200,
         balance: currentUser.availableBalance / casinoMultiples,
@@ -640,7 +640,7 @@ async function debitFun(req, res) {
     const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
     const users = client.db(`${DBNAME}`).collection('users');
 
-    console.log(" debt req.query ============== ", req.query);
+    ////console.log(" debt req.query ============== ", req.query);
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
@@ -696,7 +696,7 @@ async function debitFun(req, res) {
           {remoteId: parseInt(payload.remote_id)},
           {session}
         )
-        console.log(" Amount Returning to Casino from Debit  ", updatedUser.availableBalance / casinoMultiples);
+        ////console.log(" Amount Returning to Casino from Debit  ", updatedUser.availableBalance / casinoMultiples);
         return res.json({
           status: 200,
           balance: updatedUser.availableBalance / casinoMultiples
@@ -730,11 +730,11 @@ async function creditFun(req, res) {
       {remoteId: parseInt(payload.remote_id)}
     )
     if (!currentUser) {
-      console.log(" ========================= User Not Found ============= ");
+      ////console.log(" ========================= User Not Found ============= ");
       return res.json({status: '500', msg: `Internal Error no User`});
     }
     if (transactionIdMap.has(transactionId)) {
-      console.log('====== same Trans already Exists', transactionId)
+      ////console.log('====== same Trans already Exists', transactionId)
       return res.json({
         status: 200,
         balance: currentUser.availableBalance / casinoMultiples,
@@ -747,7 +747,7 @@ async function creditFun(req, res) {
     await client.connect();
     const session = client.startSession();
 
-    console.log(" credit req.query ======= ", req.query);
+    ////console.log(" credit req.query ======= ", req.query);
     const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
     const users = client.db(`${DBNAME}`).collection('users');
 
@@ -757,10 +757,10 @@ async function creditFun(req, res) {
 
     const queryString = Object.keys(payload).map(key => `${key}=${payload[key]}`).join('&');
 
-    console.log('queryString', queryString);
+    ////console.log('queryString', queryString);
 
     const hash = createHashKey(salt, queryString);
-    // console.log('hash', hash);
+    // ////console.log('hash', hash);
 
     if (hash !== key) {
       return res.json({
@@ -773,7 +773,7 @@ async function creditFun(req, res) {
       {session, readPreference: 'primary'}
     );
     if (!user) {
-      console.log(" ========================= User Not Found ============= ");
+      ////console.log(" ========================= User Not Found ============= ");
       await session.abortTransaction();
       return res.json({status: '500', msg: `Internal Error no User`});
     }
@@ -800,7 +800,7 @@ async function creditFun(req, res) {
           {remoteId: parseInt(payload.remote_id)},
           {session}
         )
-        console.log(" Amount Returning to Casino from Credit ", updatedUser.availableBalance / casinoMultiples);
+        ////console.log(" Amount Returning to Casino from Credit ", updatedUser.availableBalance / casinoMultiples);
         return res.json({
           status: 200,
           balance: updatedUser.availableBalance / casinoMultiples
@@ -824,7 +824,7 @@ async function rollbackFun(req, res) {
   const session = client.startSession();
   try {
     const payload = req.query;
-    console.log(" rollback req.query ======= ", req.query);
+    ////console.log(" rollback req.query ======= ", req.query);
     const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
     const users = client.db(`${DBNAME}`).collection('users');
 
@@ -858,7 +858,7 @@ async function rollbackFun(req, res) {
           {session}
         );
         if (!user) {
-          // console.log("user not found ");
+          // ////console.log("user not found ");
           await session.abortTransaction();
           return res.json({status: '500', msg: `Internal error User Not Found`});
         } else if (sameTransId === 0) {

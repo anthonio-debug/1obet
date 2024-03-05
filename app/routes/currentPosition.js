@@ -6,7 +6,7 @@ const loginRouter     = express.Router();
 function getCurrentPosition(req, res) {
   try{
     const userId = req.decoded.userId;
-    console.log("userId ======= ", userId);
+    //console.log("userId ======= ", userId);
     currentPosition.aggregate([
       {
         $match: {
@@ -80,7 +80,7 @@ function getCurrentPosition(req, res) {
 function getCurrentPosition_old(req, res) {
   try{
     const userId = req.decoded.userId;
-    console.log("userId ======= ", userId);
+    //console.log("userId ======= ", userId);
     currentPosition.aggregate([
       {
         $match: {
@@ -228,7 +228,7 @@ const currentPositionDetails = async (req, res) => {
       }
     });
   }catch(err){
-    // console.log("current positiion Error ============= ", err);
+    // //console.log("current positiion Error ============= ", err);
     const response = {
       success: true,
       message: `current position error ${err}`,
@@ -328,7 +328,7 @@ const getCurrentPosition2 = async (req, res) => {
       }
     });
   }catch(err){
-    // console.log("current positiion Error ============= ", err);
+    // //console.log("current positiion Error ============= ", err);
     const response = {
       success: true,
       message: `current position error ${err}`,
@@ -402,7 +402,7 @@ const battorcurrentPosition = async (req, res) => {
       }
     });
   }catch(err){
-    console.log("current positiion Error ============= ", err);
+    //console.log("current positiion Error ============= ", err);
     const response = {
       success: true,
       message: `current position error ${err}`,

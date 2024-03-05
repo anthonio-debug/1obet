@@ -92,7 +92,7 @@ async function getAllBets(Id) {
   try {
     // let userId = req.decoded.userId
     const allBets = await Bets.find({ matchId: Id, status: 1 });
-    console.log("allBets =======", allBets);
+    //console.log("allBets =======", allBets);
     return allBets;
   } catch (err) {
     console.error(err);
@@ -125,7 +125,7 @@ async function handleLosingBet(bet) {
       const betStatus  = await Bets.findById(bet._id)
       if (betStatus.status == 1) {
         let calculatedExp = 0;
-        console.log(` ============= Bet ${bet._id} LOSE ============= `);
+        //console.log(` ============= Bet ${bet._id} LOSE ============= `);
         await session.withTransaction(async () => {
           const userId = bet.userId;
           const loosingAmount = Number(bet.loosingAmount.toFixed(3));
@@ -165,7 +165,7 @@ async function handleLosingBet(bet) {
               { session }
             );
 
-            // console.log(" ======================== User Updating Sucessfully ");
+            // //console.log(" ======================== User Updating Sucessfully ");
 
             const lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
             const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
@@ -201,7 +201,7 @@ async function handleLosingBet(bet) {
               UserBalanceBFTrans: user_prev_balance,
               UserBalanceAFTrans: updatedBalance
             });
-            // console.log(" ======================== Cash Updating Sucessfully ");
+            // //console.log(" ======================== Cash Updating Sucessfully ");
 
             const parentUserIds = await getParents(userId);
             const parentUser = await users.find({userId: { $in: parentUserIds }, isDeleted: false }).sort({ userId: -1 }).toArray();
@@ -220,7 +220,7 @@ async function handleLosingBet(bet) {
                 user["commission"] = current - prev;
                 prev = current;
               }
-              // console.log( " ======================== Commitions Calculated  Sucessfully " );
+              // //console.log( " ======================== Commitions Calculated  Sucessfully " );
               let commissionFrom = userToUpdate.userId;
               let upMovingAmount = TotalLoosingAmount;
               for (const user of parentUser) {
@@ -247,7 +247,7 @@ async function handleLosingBet(bet) {
                   { session }
                 )
 
-                // console.log(" ======================== Parent User Updating Sucessfully ");
+                // //console.log(" ======================== Parent User Updating Sucessfully ");
         
                 const lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
                 const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
@@ -286,7 +286,7 @@ async function handleLosingBet(bet) {
                   // UserPreveBalance: parent_prev_balance
                 })
         
-                console.log( " ======================== Parent User Cash Updating Sucessfully ", lastMaxWithdraw);
+                //console.log( " ======================== Parent User Cash Updating Sucessfully ", lastMaxWithdraw);
 
                 upMovingAmount = Number((upMovingAmount - Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3)) ).toFixed(3));
                 commissionFrom = user.userId;
@@ -304,11 +304,11 @@ async function handleLosingBet(bet) {
                 winnerRunnerData = marketInfo?.winnerRunnerData;
               } else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
                 const match = await Events.findById(bet.matchId);
-                console.log("  ============ match =================  ", match);
+                //console.log("  ============ match =================  ", match);
                 const marketInfo = await sessions.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
-                console.log("  ============ marketInfo =================  ", marketInfo);
+                //console.log("  ============ marketInfo =================  ", marketInfo);
                 SessionScore = marketInfo?.score;
-                console.log("  ============ SessionScore =================  ", SessionScore);
+                //console.log("  ============ SessionScore =================  ", SessionScore);
 
               }
               await bets.updateOne(
@@ -328,7 +328,7 @@ async function handleLosingBet(bet) {
                 { session }
               );
 
-              console.log(bet._id.toString());
+              //console.log(bet._id.toString());
               const betIdString = bet._id.toString();
               await currentPositions.deleteMany({ betId: betIdString });
 
@@ -361,7 +361,7 @@ async function handleLosingBet(bet) {
               }
               await session.commitTransaction();
             }
-            console.log("  =============== All losing Part Working ...");
+            //console.log("  =============== All losing Part Working ...");
           }
         }, transactionOptions)
       }
@@ -396,7 +396,7 @@ async function handleWinningBet(bet, winner) {
     if(bet.status == 1){
       const betStatus  = await Bets.findById(bet._id)
       if (betStatus.status == 1){
-        console.log(` ============= Bet ${bet._id} WIN ============= `);
+        //console.log(` ============= Bet ${bet._id} WIN ============= `);
         await session.withTransaction(async () => {
           let calculatedExp = 0;
           const userId = bet.userId;
@@ -414,7 +414,7 @@ async function handleWinningBet(bet, winner) {
               ]
             }, {winningAmount: 1, _id: 0 })
 
-            console.log(" winnings =================  ", winnings );
+            //console.log(" winnings =================  ", winnings );
 
             const loosings = await Bets.find({ 
               sportsId: bet.sportsId, 
@@ -428,7 +428,7 @@ async function handleWinningBet(bet, winner) {
               ]
             }, {loosingAmount: 1, _id: 0 })
 
-            console.log(" loosings =================  ", loosings );
+            //console.log(" loosings =================  ", loosings );
 
             for (const singleWin of winnings) {
               TotalWin = Number(( TotalWin + singleWin.winningAmount).toFixed(3));
@@ -438,7 +438,7 @@ async function handleWinningBet(bet, winner) {
               TotalLose = Number(( TotalLose + singleLose.loosingAmount).toFixed(3));
             }
 
-            console.log(` ===================== TotalWin ${TotalWin} TotalLose ${TotalLose} `);
+            //console.log(` ===================== TotalWin ${TotalWin} TotalLose ${TotalLose} `);
           }
 
           const userToUpdate = await users.findOne({
@@ -472,7 +472,7 @@ async function handleWinningBet(bet, winner) {
               upMovingAmount       = totalRemainingAmount;
               upMovingCommAmount   = commissionAmount;
 
-              console.log(" ====================== Commission should be calculated  ");
+              //console.log(" ====================== Commission should be calculated  ");
 
             } else {
               remainingAmount  = Number(bet.winningAmount.toFixed(3));
@@ -481,7 +481,7 @@ async function handleWinningBet(bet, winner) {
               TotalLoosingAmount   = Number(bet.loosingAmount.toFixed(3));
               upMovingAmount       = totalRemainingAmount;
               upMovingCommAmount   = commissionAmount;
-              console.log(" ====================== Commission should not be calculated  ");
+              //console.log(" ====================== Commission should not be calculated  ");
             }
 
             const user_prev_balance = userToUpdate.balance;
@@ -514,7 +514,7 @@ async function handleWinningBet(bet, winner) {
               },
               { session }
             )
-            // console.log(" =============== User Updated Successfully ");
+            // //console.log(" =============== User Updated Successfully ");
 
             const lastTrans       = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
             const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
@@ -552,7 +552,7 @@ async function handleWinningBet(bet, winner) {
               UserBalanceAFTrans: UpdatedBalance
             });
             
-            // console.log(" =============== Cash Save Successfully! ");
+            // //console.log(" =============== Cash Save Successfully! ");
 
             const parentUserIds = await getParents(userId);
             const parentUser = await users.find({
@@ -574,7 +574,7 @@ async function handleWinningBet(bet, winner) {
                 prev = current;
               }
 
-              // console.log(" =============== Parent Commition Successfull ");
+              // //console.log(" =============== Parent Commition Successfull ");
 
 
               let commissionFrom = userToUpdate.userId;
@@ -604,7 +604,7 @@ async function handleWinningBet(bet, winner) {
         
                 const ParentlastTrans = await Cash.find({ userId: user.userId }).sort({ _id: -1 }).limit(1);
                 const lastMaxWithdraw = ParentlastTrans.length > 0 ? lastTrans[0] : null;
-                console.log(" =============== Parent User Successfull ", lastMaxWithdraw);
+                //console.log(" =============== Parent User Successfull ", lastMaxWithdraw);
         
                 let betTransaction = await deposits.insertOne({
                   userId: user.userId,
@@ -640,7 +640,7 @@ async function handleWinningBet(bet, winner) {
                   // UserPreveBalance: parent_prev_balance
                 })
                 upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
-                // console.log(" =============== Parent bet Transaction  Successfull ");
+                // //console.log(" =============== Parent bet Transaction  Successfull ");
         
                 if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker  && TotalWin > TotalLose){
                   const ParentlastTrans = await Cash.find({ userId: user.userId }).sort({ _id: -1 }).limit(1);
@@ -688,11 +688,11 @@ async function handleWinningBet(bet, winner) {
               } 
               else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))){
                 const match = await Events.findById(bet.matchId);
-                console.log("  ============ match =================  ", match);
+                //console.log("  ============ match =================  ", match);
                 const marketInfo = await cricketSession.findOne({ eventId: Number(match.Id), sessionNo:  bet.betSession  });
-                console.log("  ============ marketInfo =================  ", marketInfo);
+                //console.log("  ============ marketInfo =================  ", marketInfo);
                 SessionScore = marketInfo?.score;
-                console.log("  ============ SessionScore =================  ", SessionScore);
+                //console.log("  ============ SessionScore =================  ", SessionScore);
               }
               await bets.updateOne(
                 { _id: bet._id },
@@ -709,10 +709,10 @@ async function handleWinningBet(bet, winner) {
                 { session }
               );
 
-              // console.log(" betIdString =============== Starting  ");
-              console.log(bet._id.toString());
+              // //console.log(" betIdString =============== Starting  ");
+              //console.log(bet._id.toString());
               const betIdString = bet._id.toString();
-              // console.log(" betIdString =============== ", betIdString);
+              // //console.log(" betIdString =============== ", betIdString);
               await CurrentPosition.deleteMany({ betId: betIdString });
 
               const updatedUser = await users.findOne({
@@ -773,7 +773,7 @@ const handleDrawBet = async (bet, status = 0) => {
       const betStatus  = await Bets.findById(bet._id)
       if (betStatus.status == 1) {
         let calculatedExp = 0;
-        console.log(` ============= Bet ${bet._id} DRAW ============= `);
+        //console.log(` ============= Bet ${bet._id} DRAW ============= `);
         await session.withTransaction( async () => {
           const totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
           const userId = bet.userId;
@@ -815,7 +815,7 @@ const handleDrawBet = async (bet, status = 0) => {
               console.error(" Error : Parent User Not Found Location:(_handle Draw bet ) ");
               await session.abortTransaction();
             }else {
-              console.log(" ==================  ");
+              //console.log(" ==================  ");
               let prev = 0;
               for (const user of parentUser) {
                 let current = user.downLineShare;
@@ -851,10 +851,10 @@ const handleDrawBet = async (bet, status = 0) => {
                 },
                 { session }
               );
-              // console.log(" betIdString ============================== Starting");
-              console.log(bet._id.toString());
+              // //console.log(" betIdString ============================== Starting");
+              //console.log(bet._id.toString());
               const betIdString = bet._id.toString();
-              // console.log(" betIdString ============================== ", betIdString);
+              // //console.log(" betIdString ============================== ", betIdString);
               await currentPositions.deleteMany({ betId: betIdString });
 
               const updatedUser = await users.findOne({ userId: userId, isDeleted: false });

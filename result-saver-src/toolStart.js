@@ -45,7 +45,7 @@ function toolStart() {
       }
 
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     } finally {
       setTimeout(() => {
         getWaitingResultEvent();
@@ -65,7 +65,7 @@ function toolStart() {
       }
 
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     } finally {
       setTimeout(() => {
         getWaitingResultRacing();
@@ -80,7 +80,7 @@ function toolStart() {
             await apiRequest.getRacingResult(racingMarkets);
 
         } catch (error) {
-            console.log(error);
+            //console.log(error);
         }
         setTimeout(() => {
             getWaitingResultRacing();

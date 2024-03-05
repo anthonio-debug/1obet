@@ -127,7 +127,7 @@ const bookDetailSportsWiseReport = async (req, res) => {
       });
     }
     const Id = parseInt(req.query.userId)
-    console.log(" Id ========== ", Id);
+    //console.log(" Id ========== ", Id);
     const response = await CashDeposit.aggregate([
       {
         $match: {
@@ -348,7 +348,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
       const grandchiltren = await User.distinct("userId", { createdBy: { $in: directChild }, role: '5' });
       const users = [userId, ...directChild, ...grandchiltren];
 
-      console.log(" users list  ======== ", users);
+      //console.log(" users list  ======== ", users);
 
       const response = await CashDeposit.aggregate([
         {
@@ -409,7 +409,7 @@ const bookDetailMatchWiseDetailedReports = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("Error ============", error);
+    //console.log("Error ============", error);
     return res.send({
       success: false,
       message: "Something went wrong !",

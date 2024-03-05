@@ -184,7 +184,7 @@ function updateDefaultBetSizes(req, res) {
       });
     })
     .catch((err) => {
-      console.log("err", err);
+      //console.log("err", err);
       return res.status(500).json({ message: "Server error" });
     });
 }
@@ -237,10 +237,10 @@ async function updateMatchType(req, res) {
     const { _id, matchType, iconStatus, eventId } = req.body;
 
     //coded by qaiser started on event with bet delayed time
-    console.log(
+    /*//console.log(
       "I am here with event Id---------------------------------:",
       eventId
-    );
+    );*/
 
     const BetSecondsVal = await BetPlaceHold.findOne({
       eventId: eventId,
@@ -260,17 +260,17 @@ async function updateMatchType(req, res) {
       { $set: { matchType: matchType, iconStatus: iconStatus } },
       (err, updatedMatch) => {
         if (err) {
-          console.log("Error updating figure:", err);
+          //console.log("Error updating figure:", err);
         } else {
-          console.log("Updated match:", updatedMatch);
+          //console.log("Updated match:", updatedMatch);
         }
       }
     )
       .clone()
       .catch(function (err) {
-        console.log(err);
+        //console.log(err);
       });
-    console.log(updatedData);
+    //console.log(updatedData);
 
     res.status(200).json({
       success: true,
@@ -513,7 +513,7 @@ async function listOddsAPI(req, res) {
       eventId: { $in: eventIds },
     }).sort({ createdAt: -1 });
 
-    console.log("fancyData", fancyData);
+    //console.log("fancyData", fancyData);
 
     let livesportscoreData = {};
 
@@ -535,7 +535,7 @@ async function listOddsAPI(req, res) {
     } else {
       livesportscoreData = await otherLiveScore(eventIds);
     }
-    // console.log('liveTVResponse', liveTVResponse);
+    // //console.log('liveTVResponse', liveTVResponse);
     return res.json({
       success: true,
       message: "Records",
@@ -772,8 +772,8 @@ async function racesMarketList(req, res) {
       { marketId: req.params.marketId },
       projectionRaceOddsData
     ).sort({ _id: -1 });
-    console.log("racesMarketsData ==>", racesMarketsData);
-    console.log("raceOddsData ==>", raceOddsData);
+    //console.log("racesMarketsData ==>", racesMarketsData);
+    //console.log("raceOddsData ==>", raceOddsData);
     if (
       raceOddsData?.runners &&
       Array.isArray(raceOddsData?.runners) &&
@@ -812,8 +812,8 @@ async function racesMarketList(req, res) {
       );
     }
 
-    // console.log('racesMarketsData', racesMarketsData);
-    console.log("raceOddsData ===>", raceOddsData);
+    // //console.log('racesMarketsData', racesMarketsData);
+    //console.log("raceOddsData ===>", raceOddsData);
     return res.send({
       success: true,
       message: "Records",
@@ -1618,7 +1618,7 @@ async function getAllMatchSettlements(req, res) {
       },
     ]).exec();
 
-    console.log(
+    //console.log(
       " ======================== Result ======================== ",
       result
     );
@@ -1725,7 +1725,7 @@ async function getAllGamesResults(req, res) {
       select: projection,
     };
 
-    console.log("Query =========== ", query);
+    //console.log("Query =========== ", query);
 
     Events.paginate(query, options, async (err, results) => {
       if (err) {
@@ -2200,7 +2200,7 @@ const getWaitingBetsForManuel = async (req, res) => {
     const results = await Bets.find({ status: 1, isManuel: true }).sort({
       createdAt: -1,
     });
-    // console.log('results:', results);
+    // //console.log('results:', results);
     var groups = {};
     for (var i = 0; i < results.length; i++) {
       var item = results[i].toJSON();
@@ -2507,7 +2507,7 @@ const cancelSingleBet = async (req, res) => {
         status: 1,
       });
       for (const bet of allBets) {
-        console.log(" ============ BET ============ ", bet);
+        //console.log(" ============ BET ============ ", bet);
         await handleDrawBet(bet, 2);
       }
     }
@@ -2537,7 +2537,7 @@ async function addTermsAndConditions(req, res) {
       results: response,
     });
   } catch (err) {
-    console.log("Error ${err} !", `Error ${err}`);
+    //console.log("Error ${err} !", `Error ${err}`);
     return res.send({
       message: `Something went wrong `,
     });
@@ -2556,7 +2556,7 @@ async function GetAllTermsAndConditions(req, res) {
       results: response,
     });
   } catch (err) {
-    console.log("Error ${err} !", `Error ${err}`);
+    //console.log("Error ${err} !", `Error ${err}`);
     return res.send({
       message: `Something went wrong `,
     });
@@ -2584,7 +2584,7 @@ async function addPrivacyPolicy(req, res) {
       results: response,
     });
   } catch (err) {
-    console.log("Error ${err} !", `Error ${err}`);
+    //console.log("Error ${err} !", `Error ${err}`);
     return res.send({
       message: `Something went wrong `,
     });
@@ -2603,7 +2603,7 @@ async function GetAllPrivacyPolicy(req, res) {
       results: privacyPolicy,
     });
   } catch (err) {
-    console.log("Error ${err} !", `Error ${err}`);
+    //console.log("Error ${err} !", `Error ${err}`);
     return res.send({
       message: `Something went wrong `,
     });
@@ -2632,7 +2632,7 @@ async function addRules(req, res) {
       results: response,
     });
   } catch (err) {
-    console.log("Error ${err} !", `Error ${err}`);
+    //console.log("Error ${err} !", `Error ${err}`);
     return res.send({
       message: `Something went wrong `,
     });
@@ -2651,7 +2651,7 @@ async function GetRule(req, res) {
       results: privacy,
     });
   } catch (err) {
-    console.log("Error ${err} !", `Error ${err}`);
+    //console.log("Error ${err} !", `Error ${err}`);
     return res.send({
       message: `Something went wrong `,
     });
@@ -2701,7 +2701,7 @@ async function removeOdds(req, res) {
 
     res.status(200).json({ success: true, msg: "Removed Odds Data older than a day" })
   } catch (err) {
-    console.log(err)
+    //console.log(err)
     res.status(500).json({ success: false, msg: "Failed to remove odds" })
   }
 }
@@ -2800,7 +2800,7 @@ async function eventListByMarketIds(req, res) {
       data: events
     })
   } catch (error) {
-    console.log(`Error ${error}`);
+    //console.log(`Error ${error}`);
     return res.send({ status: false, message: `Something went wrong ${error}` });
   }
 
@@ -2822,7 +2822,7 @@ async function updateSetting(req, res) {
       message: "Updated successfully",
     })
   } catch (error) {
-    console.log(`Error ${error}`);
+    //console.log(`Error ${error}`);
     return res.send({ status: false, message: `Something went wrong ${error}` });
   }
 }
@@ -2846,7 +2846,7 @@ async function getSetting(req, res) {
       message: "Updated successfully",
     })
   } catch (error) {
-    console.log(`Error ${error}`);
+    //console.log(`Error ${error}`);
     return res.send({ status: false, message: `Something went wrong ${error}` });
   }
 }

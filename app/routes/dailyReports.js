@@ -19,12 +19,12 @@ const getDailyReport = async(req, res) => {
         $in: parents
       }
     });
-    // console.log(" child users ======= ", childUsers);
+    // //console.log(" child users ======= ", childUsers);
     if(childUsers.length) users.push(...childUsers)
     parents = childUsers
   }while (childUsers.length > 0)
 
-  console.log(" users list  ======== ", users);
+  //console.log(" users list  ======== ", users);
 
   var sportsIdQuery = {$ne: null};
 
@@ -114,7 +114,7 @@ const dailySportsWiseReport = async (req, res) => {
   }
 
     const Id        =  parseInt(req.query.userId)
-    console.log(" Id ========== ", Id);
+    //console.log(" Id ========== ", Id);
     const response = await CashDeposit.aggregate([
       {  
         $match: {
@@ -162,7 +162,7 @@ const dailyMatchWiseReports = async (req, res) => {
   }
   
   const userId = req.decoded.userId
-  console.log(" userId ====== ", userId);
+  //console.log(" userId ====== ", userId);
   const Id =  parseInt(req.query.userId)
   let response = [];
   if(req.query.sportsId == 6){
@@ -252,7 +252,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
     matchId.length > 10 ? match = await Events.findById(matchId) : '';
     let response;
     if(match){
-      console.log(" =============================== Includes Part  =========================== ");
+      //console.log(" =============================== Includes Part  =========================== ");
         response = await CashDeposit.aggregate([
           {
             $match: {
@@ -304,7 +304,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
         ]);
   
     }else {
-      console.log(" ================= matchId ================= ", matchId);
+      //console.log(" ================= matchId ================= ", matchId);
       response = await CashDeposit.aggregate([
         {
           $match: {
@@ -346,7 +346,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
           }
         }
       ])
-      console.log(" ================= Response ================= ", response);
+      //console.log(" ================= Response ================= ", response);
     }
     return res.send({
       success: true,
@@ -369,12 +369,12 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
           $in: parents
         }
       });
-      console.log(" child users ======= ", childUsers);
+      //console.log(" child users ======= ", childUsers);
       if(childUsers.length) users.push(...childUsers)
       parents = childUsers
     }while (childUsers.length > 0)
   
-    console.log(" users list  ======== ", users);
+    //console.log(" users list  ======== ", users);
   
     const response = await CashDeposit.aggregate([
       {
@@ -462,7 +462,7 @@ const tesTingsheet = async(req, res) =>{
   }
   else {
     const parentUser  = await User.findOne({ userId: currentUser.createdBy });
-    console.log(" ================== parentUser ================  ", parentUser);
+    //console.log(" ================== parentUser ================  ", parentUser);
     resp.push(    
       {
         _id: currentUser.userId,
@@ -482,7 +482,7 @@ const tesTingsheet = async(req, res) =>{
     )
   }
 
-  console.log(" ================== currentUser ================  ", currentUser);
+  //console.log(" ================== currentUser ================  ", currentUser);
 
   const response = await User.aggregate([
     {  

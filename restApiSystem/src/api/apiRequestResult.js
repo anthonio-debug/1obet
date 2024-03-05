@@ -57,7 +57,7 @@ function apiRequestResult() {
             const marketIndex = _.findIndex(markets, (o) => o.marketId === result.marketId);
 
             if (marketIndex === -1) {
-              console.log('Record not found');
+              //console.log('Record not found');
               continue;
             }
             responseMarketIDs.push(result.marketId)
@@ -99,13 +99,13 @@ function apiRequestResult() {
         }
       )
       .catch((error) => {
-        console.log(error);
+        //console.log(error);
       });
   }
 
   async function getRacingResult(markets) {
 
-    console.log('=========== getWaitingResult for Racings');
+    //console.log('=========== getWaitingResult for Racings');
 
     const currentTime = new Date().getTime();
     let marketIds = [];
@@ -130,7 +130,7 @@ function apiRequestResult() {
         const marketIndex = _.findIndex(markets, (o) => o.marketId === result.marketId);
 
         if (marketIndex === -1) {
-          console.log('Record not found');
+          //console.log('Record not found');
           continue;
         }
         responseMarketIDs.push(result.marketId)

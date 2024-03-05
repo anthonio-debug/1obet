@@ -32,15 +32,15 @@ async function UpdateBettingFigures(req, res) {
     }
     try {
         req.body.figures.forEach((figure) => {
-            console.log("figure: ", figure);
+            //console.log("figure: ", figure);
             BettingFigure.findByIdAndUpdate(
                 figure._id,
                 { $set: { amount: figure.amount } },
                 (err, updatedFigure) => {
                     if (err) {
-                        console.log("Error updating figure:", err);
+                        //console.log("Error updating figure:", err);
                     } else {
-                        console.log("Updated figure:", updatedFigure);
+                        //console.log("Updated figure:", updatedFigure);
                     }
                 }
             );
@@ -157,7 +157,7 @@ async function livesportscore(req, res) {
 
       const event = await Event.findOne({ Id: req.params.id }, { _id: 0, matchType: 1, sportsId: 1 });
       const type = event ? event.sportsId : null;
-      console.log("event", event);
+      //console.log("event", event);
       let score = {};
 
       if(type == "4"){
@@ -273,9 +273,9 @@ async function placeBet(req, res) {
   
       // need review check 
       // const UserMaxBetSize = await userBetSizes.findOne({ marketId: marketId }).exec();
-      // console.log('UserMaxBetSize',UserMaxBetSize)
+      // //console.log('UserMaxBetSize',UserMaxBetSize)
       // const MaxBetSize = await maxAllowedBetSizes.findOne({ marketId: marketId }).exec();
-      // console.log('MaxBetSize',MaxBetSize)
+      // //console.log('MaxBetSize',MaxBetSize)
   
       // let errorMessage;
       // if (UserMaxBetSize && UserMaxBetSize.amount < MaxBetSize.maxAmount) {
@@ -291,7 +291,7 @@ async function placeBet(req, res) {
       // need review check  end
   
       const parentUserIds = await getParents(user.userId);
-      console.log('parentUserIds', parentUserIds);
+      //console.log('parentUserIds', parentUserIds);
   
       const parentUser = await User.find({
         userId: { $in: [...parentUserIds] },
@@ -312,8 +312,8 @@ async function placeBet(req, res) {
       const uniqueBlockedSubMarkets         = [...new Set(blockedSubMarkets)];
       const uniqueBlockedSubMarketsByParent = [...new Set(blockedSubMarketsByParent)];
   
-      console.log('uniqueBlockedMarketPlaces', uniqueBlockedMarketPlaces);
-      console.log('uniqueBlockedSubMarkets', uniqueBlockedSubMarkets);
+      //console.log('uniqueBlockedMarketPlaces', uniqueBlockedMarketPlaces);
+      //console.log('uniqueBlockedSubMarkets', uniqueBlockedSubMarkets);
   
       if (uniqueBlockedMarketPlaces.includes(marketId) || uniqueBlockedSubMarkets.includes(subMarketId) 
             || uniqueBlockedSubMarketsByParent.includes(subMarketId) ){
@@ -331,7 +331,7 @@ async function placeBet(req, res) {
       
   
       if (!match) {
-        console.log(`Match not found for sports ID ${marketId}`);
+        //console.log(`Match not found for sports ID ${marketId}`);
         return res.status(404).send({ message: `Match not found for sports ID ${marketId}` });
       }
   
@@ -339,7 +339,7 @@ async function placeBet(req, res) {
   
       // need review 
       if (true == false &&  match.matchEnded) {
-        console.log(`Match has already ended for sports ID ${marketId}`);
+        //console.log(`Match has already ended for sports ID ${marketId}`);
         return res.status(404).send({ message: `Match has already ended for sports ID ${marketId}` });
       }
   
@@ -351,10 +351,10 @@ async function placeBet(req, res) {
         // for Back Will change these Ammounts
         returnAmount = betAmount * betRate - betAmount;
         winningAmount = betAmount * betRate - betAmount;
-        console.log('returnAmount',returnAmount);
+        //console.log('returnAmount',returnAmount);
         loosingAmount = req.body.betAmount;
         remainingAmount = (req.body.betAmount * req.body.betRate) - req.body.betAmount;
-        console.log('remainingAmount',remainingAmount);
+        //console.log('remainingAmount',remainingAmount);
   
       } else {
         // for lay Will change these Ammounts
@@ -383,10 +383,10 @@ async function placeBet(req, res) {
       });
   
       // Save the bet object to the database
-      console.log( `Bet placed for user ID ${userId}, sports ID ${marketId}, and team ${selectedTeam}`);
+      //console.log( `Bet placed for user ID ${userId}, sports ID ${marketId}, and team ${selectedTeam}`);
       bet.save(async (err, result) => {
         if (err) {
-          console.log('err', err);
+          //console.log('err', err);
           return res.status(404).send({ message: 'Error placing bet' });
         }
         try {

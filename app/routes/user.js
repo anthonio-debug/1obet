@@ -41,7 +41,7 @@ async function registerUser(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  console.log(' User Is creatting   ');
+  //console.log(' User Is creatting   ');
 
   if (req.decoded.role == '5') {
     return res.status(404).send({ message: 'you are not allowed to do this ' });
@@ -117,7 +117,7 @@ async function registerUser(req, res) {
       // Add the if condition back here to save the betLimits if parentUser.userId is '0'
       if (parentUser.role == 0) {
         let betLimits = await BetLimits.find({});
-        // console.log(' betLimits ======= ', betLimits);
+        // //console.log(' betLimits ======= ', betLimits);
         user.save((err, user) => {
           if (err || !user) {
             return res
@@ -136,18 +136,18 @@ async function registerUser(req, res) {
             ExpAmount: betLimit.ExpAmount,
           }));
 
-          // console.log(' userbetSizesData ============ ', userbetSizesData);
+          // //console.log(' userbetSizesData ============ ', userbetSizesData);
 
           UserBetSizes.insertMany(
             userbetSizesData,
             async (err, insertedDocs) => {
               if (err) return res.send({ message: err });
-              // console.log(' insertedDocs =========== ', insertedDocs);
+              // //console.log(' insertedDocs =========== ', insertedDocs);
               let user_username = 'user_' + user.userId;
 
-              console.log('user_username', user_username);
+              //console.log('user_username', user_username);
               if (req.body.role == '5') {
-                console.log('in casino bettor user');
+                //console.log('in casino bettor user');
                 try {
                   const response = await axios.post(config.apiUrl, {
                     api_password: api_password,
@@ -159,7 +159,7 @@ async function registerUser(req, res) {
                     currency: req.body.baseCurrency,
                   });
                   let data = response.data.response;
-                  // console.log('API Response:', response.data);
+                  // //console.log('API Response:', response.data);
                   user.remoteId = data.id;
                   user.save();
                 } catch (error) {
@@ -204,10 +204,10 @@ async function registerUser(req, res) {
               if (err) return res.send({ message: err });
 
               let user_username = 'user_' + user.userId;
-              console.log('user_username', user_username);
+              //console.log('user_username', user_username);
 
               if (req.body.role == '5') {
-                console.log('in casino bettor user');
+                //console.log('in casino bettor user');
                 try {
                   const response = await axios.post(config.apiUrl, {
                     api_password: api_password,
@@ -219,7 +219,7 @@ async function registerUser(req, res) {
                     currency: req.body.baseCurrency,
                   });
                   let data = response.data.response;
-                  // console.log('API Response:', response.data);
+                  // //console.log('API Response:', response.data);
                   user.remoteId = data.id;
                   user.save();
                 } catch (error) {
@@ -280,7 +280,7 @@ function login(req, res) {
             .send({ message: 'Invalid username or password' });
 
         if (!user.token) {
-          console.log(
+          //console.log(
             ' =========================  Missing token =====================  '
           );
           var token = getNonExpiringToken(
@@ -293,11 +293,11 @@ function login(req, res) {
         } else if (user.token) {
           jwt.verify(user.token, secret, function (err, decoded) {
             if (err || decoded.expr < new Date().getTime()) {
-              console.log(
+              //console.log(
                 ' =========================  Expired token =====================  '
               );
-              // console.log(' ================== decoded ', decoded);
-              // console.log(' ================== err ', err);
+              // //console.log(' ================== decoded ', decoded);
+              // //console.log(' ================== err ', err);
 
               var token = getNonExpiringToken(
                 user.userId,
@@ -314,7 +314,7 @@ function login(req, res) {
 
         // Retrieve the user's default theme from the database
         Settings.find({}, (err, setting) => {
-          // console.log('setting', setting[1]);
+          // //console.log('setting', setting[1]);
           if (err || !setting) {
             return res.status(404).send({ message: 'setting not found' });
           }
@@ -340,7 +340,7 @@ function login(req, res) {
               geo.country = geoChecking.countryLong;
             }
           } catch (error) {
-            console.log(err);
+            //console.log(err);
           }
 
           var loginRecordData = new loginRecord({
@@ -367,7 +367,7 @@ function login(req, res) {
             createdAt: new Date().getTime(),
             updatedAt: new Date().getTime(),
           };
-          // console.log("userDetailsForLoginActivity", userDetailsForLoginActivity);
+          // //console.log("userDetailsForLoginActivity", userDetailsForLoginActivity);
           saveLoginActivity(userDetailsForLoginActivity, (err, data) => {
             if (err)
               return res
@@ -430,8 +430,8 @@ function getAllUsers(req, res) {
   if (req.decoded.role == '5') {
     return res.status(404).send({ message: 'you are not allowed to do this' });
   }
-  // console.log('role', req.decoded.role);
-  // console.log('role2', req.decoded.login.role);
+  // //console.log('role', req.decoded.role);
+  // //console.log('role2', req.decoded.login.role);
   let query = {};
   let page = 1;
   let sort = -1;
@@ -511,7 +511,7 @@ function updateUser(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  // console.log('req.body:', req.body);
+  // //console.log('req.body:', req.body);
   User.findOne({ userId: req.body.id }, (err, user) => {
     if (err || !user) {
       return res.status(404).send({ message: 'User not found' });
@@ -523,7 +523,7 @@ function updateUser(req, res) {
       user.role,
       req.body.isActive
     );
-    // console.log('updatedtoken:', token);
+    // //console.log('updatedtoken:', token);
     let updateData = {
       isActive: req.body.isActive,
       canSettlePL: req.body.canSettlePL,
@@ -535,7 +535,7 @@ function updateUser(req, res) {
       password: user.password,
     };
     const status = req.body.isActive == 'true' ? 1 : 0;
-    // console.log('status:', status);
+    // //console.log('status:', status);
     var userDetailsForLoginActivity = {
       userName: user.userName,
       userId: user.userId,
@@ -892,7 +892,7 @@ function searchSingleUser(req, res) {
 
 const battorsList = async (req, res) => {
   try{
-    console.log(" lastBet ================================================= ");
+    //console.log(" lastBet ================================================= ");
     if (req.decoded.role != 0) {
       return res.status(404).send({ message: '-----' });
     }
@@ -959,10 +959,10 @@ const battorsList = async (req, res) => {
             const lastDeposit  = await Deposits.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
             const activeBets   = await Bets.countDocuments({ userId: results.docs[i].userId, status: 1  });
             const canceledBets = await Bets.countDocuments({ userId: results.docs[i].userId, status: 2  });
-            console.log("lastBet ======= ", lastBet);
-            console.log("lastDeposit ======= ", lastDeposit);
-            console.log("activeBets ======= ", activeBets);
-            console.log("canceledBets ======= ", canceledBets);
+            //console.log("lastBet ======= ", lastBet);
+            //console.log("lastDeposit ======= ", lastDeposit);
+            //console.log("activeBets ======= ", activeBets);
+            //console.log("canceledBets ======= ", canceledBets);
 
             const data  = {
               lastBetTime : lastBet[0]?.betTime || 0,
@@ -1017,14 +1017,14 @@ const deleteUser = async (req, res) => {
       role: '5',
     });
     finalUsers.push(...dealers, ...battors);
-    // console.log('dealers list ========== ', dealers);
-    // console.log('battors list ========== ', battors);
+    // //console.log('dealers list ========== ', dealers);
+    // //console.log('battors list ========== ', battors);
     userIds = dealers;
     if (dealers.length == 0) {
       break;
     }
   } while (true);
-  // console.log('All Users list ========== ', finalUsers);
+  // //console.log('All Users list ========== ', finalUsers);
   const respone = await User.deleteMany({ userId: { $in: finalUsers } });
   const depositDelete = await Deposits.deleteMany({
     userId: { $in: finalUsers },
@@ -1078,7 +1078,7 @@ const userAccountSattlement = async (req, res) =>{
     });
 
   } catch (error){
-    console.log("Catched", error);
+    //console.log("Catched", error);
     return res.status(404).send({
       success: false,
       message: "Something Went Wrong!",

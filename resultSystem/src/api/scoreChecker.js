@@ -67,7 +67,7 @@ function scoreChecker() {
   }
 
   async function eventsResult(betData) {
-    console.log("Result checking event for ", betData.marketId);
+    //console.log("Result checking event for ", betData.marketId);
     try {
       let results;
       const manuelRecord = await MarketIDs.findOne({
@@ -76,7 +76,7 @@ function scoreChecker() {
       });
 
       if (manuelRecord) {
-        console.log("Inside manual");
+        //console.log("Inside manual");
 
         if (typeof manuelRecord.manuelClose !== undefined) {
           results = [
@@ -109,7 +109,7 @@ function scoreChecker() {
           manuelClose: false,
         }]
       }
-      console.log("results.length -> " + results.length)
+      //console.log("results.length -> " + results.length)
       if (results.length > 0) {
         const result = results[0]
         if (!result.winnerSelectionId) return
@@ -132,7 +132,7 @@ function scoreChecker() {
         );
 
         if (result.winnerSelectionId == -1) {
-          console.log("result.winnerSelectionId == -1 -->", betData.marketId);
+          //console.log("result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
             if (
               typeof bet.isManuel !== "undefined" &&
@@ -149,7 +149,7 @@ function scoreChecker() {
             await handleDrawBet(bet);
           }
         } else {
-          console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
+          //console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
             if (
               typeof bet.isManuel !== "undefined" &&
@@ -161,25 +161,25 @@ function scoreChecker() {
             if (typeof result.manuelClose === "undefined" && bet.isManuel == true)
               continue;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
-              console.log("0 ----- winner ");
+              //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
             } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
-              console.log("0 ----- looser ");
+              //console.log("0 ----- looser ");
               await handleLosingBet(bet);
             } else if (
               bet.type == 1 &&
               bet.runner != result.winnerSelectionId
             ) {
-              console.log("1 ----- winner ");
+              //console.log("1 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
             } else if (
               bet.type == 1 &&
               bet.runner == result.winnerSelectionId
             ) {
-              console.log("1 ----- looser ");
+              //console.log("1 ----- looser ");
               await handleLosingBet(bet);
             } else {
-              console.log("-----  Draw ");
+              //console.log("-----  Draw ");
               await handleDrawBet(bet);
             }
           }
@@ -191,7 +191,7 @@ function scoreChecker() {
   }
 
   async function racingResult(betData) {
-    console.log("Result checking racing with " + betData.marketId);
+    //console.log("Result checking racing with " + betData.marketId);
 
     try {
       let results;
@@ -266,7 +266,7 @@ function scoreChecker() {
               bet.isManuel == true
             )
               continue;
-            console.log("handle bet draw");
+            //console.log("handle bet draw");
             await handleDrawBet(bet);
           }
         } else {
@@ -284,28 +284,28 @@ function scoreChecker() {
             )
               continue;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
-              console.log("0 ----- winner ");
+              //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
             } else if (
               bet.type == 0 &&
               bet.runner != result.winnerSelectionId
             ) {
-              console.log("0 ----- looser ");
+              //console.log("0 ----- looser ");
               await handleLosingBet(bet);
             } else if (
               bet.type == 1 &&
               bet.runner != result.winnerSelectionId
             ) {
-              console.log("1 ----- winner ");
+              //console.log("1 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
             } else if (
               bet.type == 1 &&
               bet.runner == result.winnerSelectionId
             ) {
-              console.log("1 ----- looser ");
+              //console.log("1 ----- looser ");
               await handleLosingBet(bet);
             } else {
-              console.log("-----  Draw ");
+              //console.log("-----  Draw ");
               await handleDrawBet(bet);
             }
           }
@@ -442,19 +442,19 @@ function scoreChecker() {
             )
               continue;
             if (bet.type == 0 && bet.runner == result.winnerSelId) {
-              console.log("0 ----- winner ");
+              //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelId);
             } else if (bet.type == 0 && bet.runner != result.winnerSelId) {
-              console.log("0 ----- looser ");
+              //console.log("0 ----- looser ");
               await handleLosingBet(bet);
             } else if (bet.type == 1 && bet.runner != result.winnerSelId) {
-              console.log("1 ----- winner ");
+              //console.log("1 ----- winner ");
               await handleWinningBet(bet, result.winnerSelId);
             } else if (bet.type == 1 && bet.runner == result.winnerSelId) {
-              console.log("1 ----- looser ");
+              //console.log("1 ----- looser ");
               await handleLosingBet(bet);
             } else {
-              console.log("-----  Draw ");
+              //console.log("-----  Draw ");
               await handleDrawBet(bet);
             }
           }
@@ -616,7 +616,7 @@ function scoreChecker() {
   }
 
   async function asianResult(betData) {
-    console.log("Result checking event");
+    //console.log("Result checking event");
 
     try {
       for (let i = 0; i < betData.length; i++) {
@@ -752,11 +752,11 @@ function scoreChecker() {
           }
           // Teen20
           else if (tableId == "36") {
-            console.log(" ===================== result", result.data.data[0]);
-            console.log(" ===================== winner", result.data.data[0].win);
+            //console.log(" ===================== result", result.data.data[0]);
+            //console.log(" ===================== winner", result.data.data[0].win);
             if (result.data.data[0].win == "0") {
               await handleDrawBet(betData[i]);
-              console.log(" ===================== commining from Line 620");
+              //console.log(" ===================== commining from Line 620");
             } else {
               if ((betData[i].runner == "1" && result.data.data[0].win == "1") || (betData[i].runner == "3" && result.data.data[0].win == "3")) {
                 await handleWinningBet(betData[i]);
@@ -1149,10 +1149,10 @@ function scoreChecker() {
         } else {
           correctScore = bet.score % 10;
           if (bet.betData.runner == correctScore) {
-            console.log("0 ----- winner ");
+            //console.log("0 ----- winner ");
             await handleWinningBet(bet.betData);
           } else {
-            console.log("0 ----- looser ");
+            //console.log("0 ----- looser ");
             await handleLosingBet(bet.betData);
           }
         }
@@ -1192,13 +1192,13 @@ function scoreChecker() {
         } else {
           correctScore = bet.score % 2;
           if (bet.betData.runnerName == "JOTTA" && correctScore == 0) {
-            console.log("0 ----- winner ");
+            //console.log("0 ----- winner ");
             await handleWinningBet(bet.betData);
           } else if (bet.betData.runnerName == "KALI" && correctScore == 1) {
-            console.log("0 ----- winner ");
+            //console.log("0 ----- winner ");
             await handleWinningBet(bet.betData);
           } else {
-            console.log("0 ----- looser ");
+            //console.log("0 ----- looser ");
             await handleLosingBet(bet.betData);
           }
         }
@@ -1234,20 +1234,20 @@ function scoreChecker() {
         } else {
           correctScore = bet.score % 10;
           if (bet.betData.runnerName == "BARA" && correctScore == 0) {
-            console.log("0 ----- winner ");
+            //console.log("0 ----- winner ");
             await handleWinningBet(bet.betData);
           } else if (
             bet.betData.runnerName == "CHOTA" &&
             correctScore < 6 &&
             correctScore > 0
           ) {
-            console.log("0 ----- winner ");
+            //console.log("0 ----- winner ");
             await handleWinningBet(bet.betData);
           } else if (bet.betData.runnerName == "BARA" && correctScore > 5) {
-            console.log("0 ----- winner ");
+            //console.log("0 ----- winner ");
             await handleWinningBet(bet.betData);
           } else {
-            console.log("0 ----- looser ");
+            //console.log("0 ----- looser ");
             await handleLosingBet(bet.betData);
           }
         }

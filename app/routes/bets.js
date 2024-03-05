@@ -143,7 +143,7 @@ const apiCallForOdds = async (marketId) => {
 const stopbetStatusChecker = async (id) => {
   try {
     const scores = await Crickets.findOne({ eventId: id });
-    console.log(`Score details ====================== `, scores);
+    //console.log(`Score details ====================== `, scores);
     if (scores && scores?.result && scores?.result?.length) {
       const result = scores?.result.toLowerCase();
       // const stopbetStatus = ["no ball", "noball", "free hit", "freehit",
@@ -1681,7 +1681,7 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
         subarket: subMarketDetail.Id
       });
-      console.log("Fancy  Max BetSize =============", userMaxBetSize);
+      //console.log("Fancy  Max BetSize =============", userMaxBetSize);
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
         return res.status(404).send({
@@ -1897,7 +1897,7 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
         subarket: subMarketDetail.Id
       });
-      console.log("Bookmaker  Max BetSize =============", userMaxBetSize);
+      //console.log("Bookmaker  Max BetSize =============", userMaxBetSize);
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
         return res.status(404).send({
@@ -2167,7 +2167,7 @@ const placeBet = async (req, res) => {
           message: `Bet Not Allowed`,
         });
       }
-      console.log(` scores =================== `, scores);
+      //console.log(` scores =================== `, scores);
       let type = eventDetail.matchType;
       let inning = parseInt(scores.inning);
       let currentOver = (scores.activeTeam === scores.team1ShortName) ? scores.over1 : scores.over2
@@ -2259,7 +2259,7 @@ const placeBet = async (req, res) => {
       //   currentSession = currentSession + 18
       // }
       _3rdPartyMarketId = subMarketDetail.Id;
-      console.log(" ================== currentSession  ", currentSession);
+      //console.log(" ================== currentSession  ", currentSession);
     }
 
     // For Asian Odd
@@ -2268,7 +2268,7 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId,
       });
-      console.log(" Asian Casino Max BetSize ============= ", userMaxBetSize);
+      //console.log(" Asian Casino Max BetSize ============= ", userMaxBetSize);
 
       if (!userMaxBetSize) {
         console.warn("userMaxBetSize not found ");
@@ -3858,8 +3858,8 @@ const sessionCalc = async (req, res) => {
         { _id: 0, matchType: 1, sportsId: 1 }
       );
       const type = event.matchType;
-      console.log(type)
-      console.log(config.matchTypes)
+      //console.log(type)
+      //console.log(config.matchTypes)
       if (config.matchTypes.includes(type)) {
         const score = await cricketLiveScore(Id);
         if (score != 0) {
@@ -4390,7 +4390,7 @@ const postmanwork = async (req, res) => {
     //                                     .skip(Number(req.body.skip))
     //                                     .limit(Number(req.body.limit));
     //   for (const casinocall of casinocallsRecords){
-    //     console.log(" ======================== casinocall data", casinocall);
+    //     //console.log(" ======================== casinocall data", casinocall);
     //     const resp = await Cash.updateMany(
     //       { betId: casinocall.transaction_id },
     //       {
@@ -4412,7 +4412,7 @@ const postmanwork = async (req, res) => {
           .skip(Number(i))
           .limit(Number(50));
         for (const casinocall of casinocallsRecords) {
-          console.log(" ======================== casinocall data", casinocall);
+          //console.log(" ======================== casinocall data", casinocall);
           const resp = await Cash.updateMany(
             { betId: casinocall.transaction_id },
             {
@@ -4442,7 +4442,7 @@ const postmanwork = async (req, res) => {
     }
 
 
-    console.log(" ---- postmanwork Bets completed ---- ");
+    //console.log(" ---- postmanwork Bets completed ---- ");
     return res.send({
       status: 200,
       message: "Successed !"

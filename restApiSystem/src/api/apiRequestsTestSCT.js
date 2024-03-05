@@ -42,7 +42,7 @@ function apiRequests() {
   function init(_io, express) {
     io = _io;
     io.on("connection", onConnet);
-    console.log("Express conf loading");
+    //console.log("Express conf loading");
 
     express.get("/updateField", (req, res) => {
       try {
@@ -52,7 +52,7 @@ function apiRequests() {
           io.emit("updateMatch", {eventId: req.query.id, data: d1});
         }
       } catch (error) {
-        console.log(error);
+        //console.log(error);
       }
 
       res.send("OK");
@@ -60,7 +60,7 @@ function apiRequests() {
   }
 
   function onConnet(socket) {
-    console.log("Socket connect");
+    //console.log("Socket connect");
 
     socket.on("join", async (channel) => {
       if (!channel) {
@@ -152,7 +152,7 @@ function apiRequests() {
           response = await axios.get(url + events.join(","));
           scores = response.data;
         } catch (error) {
-          console.log("Live sports score empty error");
+          //console.log("Live sports score empty error");
           return;
         }
         if (scores.length > 0) {
@@ -177,10 +177,10 @@ function apiRequests() {
           }
         }
       } else {
-        console.log("Events emp");
+        //console.log("Events emp");
       }
     } catch (error) {
-      console.log(error);
+      //console.log(error);
     }
   }
 
@@ -275,7 +275,7 @@ function apiRequests() {
         // update event status with 'CLOSED-INPLAYLIST'
         // Also update MarketIDs
         for (const diff of diffs) {
-          console.log("Event is closed because it not exists on listEventsBySport: ", diff)
+          //console.log("Event is closed because it not exists on listEventsBySport: ", diff)
           await MarketIDS.updateMany(
             {eventId: diff},
             {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}
@@ -310,7 +310,7 @@ function apiRequests() {
         };
       }
     } catch (error) {
-      console.log("Problem on taking event list");
+      //console.log("Problem on taking event list");
       // console.error(error);
       return {
         success: false,
@@ -322,7 +322,7 @@ function apiRequests() {
 
   async function listMarketsByCronJob(eventId, sportID) {
 
-    console.log("listMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJob");
+    //console.log("listMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJob");
     const requestData = {
       "filter": {
         "eventIds": [eventId],
@@ -693,7 +693,7 @@ function apiRequests() {
           const events = response.data.result;
 
           if (events.length === 0) {
-            console.log('checkInPlay: api res is empty')
+            //console.log('checkInPlay: api res is empty')
             return
           }
 
@@ -706,8 +706,8 @@ function apiRequests() {
               return o.id === eventId;
             })
             if (ix !== -1) {
-              console.log("Event InPlay Value Problem:");
-              console.log(removedInplayList[ix]);
+              //console.log("Event InPlay Value Problem:");
+              //console.log(removedInplayList[ix]);
               removedInplayList.splice(ix, 1);
             }
 
@@ -764,7 +764,7 @@ function apiRequests() {
               removedInplayList.push({id: diff, date: new Date()})
             }
 
-            console.log(`Event is closed because it not exists on inplaylist: ${diff}`)
+            //console.log(`Event is closed because it not exists on inplaylist: ${diff}`)
 
             await MarketIDS.updateMany(
               {eventId: diff},
@@ -810,7 +810,7 @@ function apiRequests() {
 
       //check current active inplaying MarketIDS
       if (markets.length > 19) {
-        console.log("Inplay Events is Full");
+        //console.log("Inplay Events is Full");
         return;
       }
 
@@ -836,7 +836,7 @@ function apiRequests() {
             {_id: market._id},
             {inPlay: true}
           ).exec();
-          console.log(market.marketId + " market updated with inplay");
+          //console.log(market.marketId + " market updated with inplay");
           count++;
           if (count > 19) {
             break;
@@ -901,7 +901,7 @@ function apiRequests() {
         }).sort({index: 1});
 
         if (marketIDs.length > 0) {
-          console.log(
+          //console.log(
             event.Id + " -> " + event.name + " event updated with inplay"
           );
 
@@ -917,9 +917,9 @@ function apiRequests() {
               {_id: market._id},
               {inPlay: true}
             ).exec();
-            console.log(market.marketId + " market updated with inplay");
+            //console.log(market.marketId + " market updated with inplay");
             count++;
-            console.log(count);
+            //console.log(count);
             if (count > 19) {
               break;
             }
@@ -930,7 +930,7 @@ function apiRequests() {
         } else {
           //If this event not have to marketIDS, we update the status of event with CLOSED.
           //await MarketIDS.deleteMany({ eventId: event.Id }).exec();;
-          console.log(event.Id + " was closed. MarketIDS is empty");
+          //console.log(event.Id + " was closed. MarketIDS is empty");
           await inPlayEvents.updateOne({Id: event.Id}, {inPlay: false, status: 'CLOSED-MARKETIDS'});
         }
       }

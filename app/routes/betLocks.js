@@ -16,17 +16,17 @@ async function addBetLock(req, res) {
     }
     const {matchId, allUsers, lock, matchOdds, userIds} = req.body;
     const userId = Number(req.decoded.userId)
-    console.log("matchId ==== ", matchId);
+    //console.log("matchId ==== ", matchId);
     const event = await Events.findById(matchId)
     if (!event) {
       res.status(404).send({message: 'Event Id is Invalid'});
     }
 
     const marketId = event.sportsId
-    console.log("marketId ====== ", marketId);
+    //console.log("marketId ====== ", marketId);
     let subMarketIds
     if (matchOdds) {
-      console.log("matchOdds ====== ");
+      //console.log("matchOdds ====== ");
       subMarketIds = await SubMarket.distinct('Id', {
         name: 'Match Odds',
         marketId: marketId
@@ -39,7 +39,7 @@ async function addBetLock(req, res) {
     }
 
     if (allUsers && lock) {
-      console.log(" All Users && Lock ");
+      //console.log(" All Users && Lock ");
       const users = await User.find({createdBy: userId})
       for (const user of users) {
         let blockedSubMarkets = user.blockedSubMarketsByParent
@@ -49,7 +49,7 @@ async function addBetLock(req, res) {
         await user.save();
       }
     } else if (allUsers && !lock) {
-      console.log(" Not  All Users && Lock");
+      //console.log(" Not  All Users && Lock");
       const users = await User.find({createdBy: userId})
       for (const user of users) {
         let blockedSubMarkets = user.blockedSubMarketsByParent
@@ -60,7 +60,7 @@ async function addBetLock(req, res) {
       }
 
     } else if (!allUsers) {
-      console.log(" Not  All Users ");
+      //console.log(" Not  All Users ");
 
       const usersToUnlock = await User.find({createdBy: userId, userId: {$nin: userIds}})
       for (const user of usersToUnlock) {

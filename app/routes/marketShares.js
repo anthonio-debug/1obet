@@ -249,7 +249,7 @@ const marketGainWithDuplicates = async (req, res) => {
   } else {
     const childUsers = await User.distinct("userId", { createdBy: userId });
     const users = [userId, ...childUsers];
-    console.log(" users ===================  ", users);
+    //console.log(" users ===================  ", users);
 
     const response = await CashDeposit.aggregate([
       {
@@ -295,7 +295,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
   const marketId = req.query.marketId;
   const depositId = mongoose.Types.ObjectId(req.query.depositId);
   const roundId = req.query.roundId;
-  console.log(roundId, userId, marketId, depositId)
+  //console.log(roundId, userId, marketId, depositId)
   let asianWinner = ''
 
   // const condition = { marketId: marketId }
@@ -356,7 +356,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
     }
 
     response.depositInfo = depositInfo
-    console.log("11111111111111", depositRes.sportsId == "8", ":", roundId)
+    //console.log("11111111111111", depositRes.sportsId == "8", ":", roundId)
 
     if (marketId != "none" && depositRes.sportsId != "6" && depositRes.sportsId != "8") {
       const betRes = await Bets.find({ userId: userId, marketId: marketId });
@@ -457,7 +457,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
   } else {
     const childUsers = await User.distinct("userId", { createdBy: userId });
     const users = [userId, ...childUsers];
-    console.log(" users ===================  ", users);
+    //console.log(" users ===================  ", users);
 
     const response = await CashDeposit.aggregate([
       {

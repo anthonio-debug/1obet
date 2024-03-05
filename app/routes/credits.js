@@ -34,7 +34,7 @@ async function addCredit(req, res) {
       isDeleted: false
     });
 
-    console.log("currentUserParent =========== ", currentUserParent);
+    //console.log("currentUserParent =========== ", currentUserParent);
 
     if (!currentUserParent) {
       return res.status(404).send({ message: 'user not found' });
@@ -53,10 +53,10 @@ async function addCredit(req, res) {
 
     const cUserRes = await CashCredit.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const lastMaxWithdraw = cUserRes.length > 0? cUserRes[0] : null
-    console.log(" ======================= lastMaxWithdraw =================================  ", lastMaxWithdraw);
+    //console.log(" ======================= lastMaxWithdraw =================================  ", lastMaxWithdraw);
     const parentRes = await CashCredit.find({ userId: currentUserParent.userId }).sort({ _id: -1 }).limit(1);
     const parentLastMaxWithdraw = parentRes.length > 0? parentRes[0] : null
-    console.log(" ======================= parentLastMaxWithdraw =================================  ", parentLastMaxWithdraw);
+    //console.log(" ======================= parentLastMaxWithdraw =================================  ", parentLastMaxWithdraw);
 
 
 
@@ -260,10 +260,10 @@ async function withdrawCredit(req, res) {
 
     const cUserRes = await CashCredit.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const lastMaxWithdraw = cUserRes.length > 0? cUserRes[0] : null
-    console.log(" ======================= lastMaxWithdraw =================================  ", lastMaxWithdraw);
+    //console.log(" ======================= lastMaxWithdraw =================================  ", lastMaxWithdraw);
     const parentRes = await CashCredit.find({ userId: currentUserParent.userId }).sort({ _id: -1 }).limit(1);
     const parentLastMaxWithdraw = parentRes.length > 0? parentRes[0] : null
-    console.log(" ======================= parentLastMaxWithdraw =================================  ", parentLastMaxWithdraw);
+    //console.log(" ======================= parentLastMaxWithdraw =================================  ", parentLastMaxWithdraw);
 
 
     let Dealers = ['1', '2', '3', '4'];

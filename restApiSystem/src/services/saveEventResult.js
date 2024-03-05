@@ -1,10 +1,10 @@
-console.log("How it can happen....11");
+//console.log("How it can happen....11");
 const axios = require("axios");
 const MarketIDs = require("../../../app/models/marketIds");
 const Events = require("../../../app/models/events");
 
 export async function getEventResult(markets) {
-  console.log('getWaitingResult for Events ');
+  //console.log('getWaitingResult for Events ');
 
   const currentTime = new Date().getTime();
   var marketIds = [];
@@ -13,14 +13,14 @@ export async function getEventResult(markets) {
     await MarketIDs.findOneAndUpdate({_id: markets[index]._id}, {lastResultCheckTime: currentTime})
   }
 
-  //console.log(marketIds);
+  ////console.log(marketIds);
   
   var url = `${sportsAPIUrl}/results/?ids=` + marketIds.join(',');
   
   try {
     const response = await axios.get(url);
     const results = response.data;
-    //console.log(results);
+    ////console.log(results);
     for (let index = 0; index < results.length; index++) {
       const result = results[index];
       const marketIndex = _.findIndex(markets, function (o) {
@@ -61,10 +61,10 @@ export async function getEventResult(markets) {
         await Events.findOneAndUpdate({Id: markets[marketIndex].eventId}, {$set: {isResultSaved: true}});
 
       } else {
-        console.log('Record not found');
+        //console.log('Record not found');
       }
     }
   } catch (error) {
-    console.log(error);
+    //console.log(error);
   }
 }

@@ -120,7 +120,7 @@ const eventListByMarketIds = async (sportId) => {
 
     // return marketIds
   } catch (error) {
-    console.log(`Error ${error}`);
+    //console.log(`Error ${error}`);
     return {error: `Something went wrong ${error}`};
   }
 }
@@ -205,7 +205,7 @@ function apiRequests() {
       if (eventInfo) {
         socket.emit('event_id_db', eventInfo);
       } else {
-        // console.log(eventInfo, id);
+        // //console.log(eventInfo, id);
       }
     });
 
@@ -297,8 +297,8 @@ function apiRequests() {
           }
 
           // if (existingDoc && existingDoc.inplayFromServer != events[k].event.inplay) {
-          //   // console.log(existingDoc);
-          //   // console.log(event.inplay);
+          //   // //console.log(existingDoc);
+          //   // //console.log(event.inplay);
           // }
 
           await InPlayEvents.findOneAndUpdate(
@@ -349,7 +349,7 @@ function apiRequests() {
         let diff = allIDS.filter((item) => !eventIDs.includes(item));
 
         for (let i = 0; i < diff.length; i++) {
-          console.log(`Event is closed because it not exists on listEventsBySport: ${diff[i]}`);
+          //console.log(`Event is closed because it not exists on listEventsBySport: ${diff[i]}`);
           await MarketIDS.updateMany(
             {eventId: diff[i]},
             {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}
@@ -384,7 +384,7 @@ function apiRequests() {
         };
       }
     } catch (error) {
-      console.log("Problem on taking event list");
+      //console.log("Problem on taking event list");
       // console.error(error);
       return {
         success: false,
@@ -414,7 +414,7 @@ function apiRequests() {
         "maxResults": 100,
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
-      console.log("eventId to fetch markets for: ", eventId);
+      //console.log("eventId to fetch markets for: ", eventId);
       const url = `${config.newThirdURL}/listMarketCatalogue`;
       let response = await axios.post(
         url,
@@ -553,7 +553,7 @@ function apiRequests() {
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
-      console.log("Odds Data ----------->", oddsData?.length)
+      //console.log("Odds Data ----------->", oddsData?.length)
 
       let responsedMarketIDs = [];
       let marketIds_index = 0;
@@ -625,7 +625,7 @@ function apiRequests() {
             }
 
             if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
-              console.log(odds.marketId, " this market has no odds.....");
+              //console.log(odds.marketId, " this market has no odds.....");
               if (odds.status === 'CLOSED') {
                 await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
               }
@@ -635,7 +635,7 @@ function apiRequests() {
                 io.to('$' + odds.marketId).emit('odds', json);
               }
             } else {
-              console.log(odds.marketId, " This market has odds found");
+              //console.log(odds.marketId, " This market has odds found");
 
               const result = await RaceOdds.collection.insertOne(json);
               odds._id = result.insertedId;
@@ -644,16 +644,16 @@ function apiRequests() {
             }
             responsedMarketIDs.push(odds.marketId);
           } else {
-            console.log(marketIds[marketIds_index], " HAS no odds.");
+            //console.log(marketIds[marketIds_index], " HAS no odds.");
           }
           marketIds_index++;
-          console.log("VISIT NO: ", numberOfVisits);
+          //console.log("VISIT NO: ", numberOfVisits);
         }
       } else {
-        console.log("I am closing marketId: ", marketIds);
+        //console.log("I am closing marketId: ", marketIds);
         //let difference = marketIds.filter(x => !responsedMarketIDs.includes(x));
         // for (let i = 0; i < events.length; i++) {
-        // console.log(events[i].eventId, 'CLOSED 2');
+        // //console.log(events[i].eventId, 'CLOSED 2');
         //await InPlayEvents.findOneAndUpdate({Id: event.eventId}, {$set: {status: 'CLOSED..', readyForScore: true}});
         //await MarketIDS.updateOne({marketId: marketIds}, {$set: {status: 'CLOSED',readyForScore: true}});
         //await MarketIDS.updateMany({marketId:{$in:madifferencerketIds}},{$set:{status:'PENDING'}})
@@ -687,7 +687,7 @@ function apiRequests() {
     const sportsIds = [4339, 7];
 
     for (let index = 0; index < sportsIds.length; index++) {
-      //console.log("sportsIds[index]-------",sportsIds[index]);
+      ////console.log("sportsIds[index]-------",sportsIds[index]);
       let events = await InPlayEvents.find({
         sportsId: sportsIds[index] + '',
         status: 'OPEN',
@@ -701,13 +701,13 @@ function apiRequests() {
         }).sort({openDate: 1});
         if (checkOther && checkOther.openDate < events[0].openDate) {
           await InPlayEvents.updateMany({status: 'OPEN', sportsId: `${sportsIds[index]}`}, {status: 'WAITING'});
-          console.log('Old event found. All OPEN events status changed with WAITING');
+          //console.log('Old event found. All OPEN events status changed with WAITING');
           return checkOdds();
         }
       }
 
       if (events.length !== 20) {
-        console.log("!=20 length.....");
+        //console.log("!=20 length.....");
         const documents = await InPlayEvents.find({status: 'WAITING', sportsId: sportsIds[index] + ''})
           .sort({openDate: 1})
           .limit(20 - events.length)
@@ -721,7 +721,7 @@ function apiRequests() {
           CompanySetStatus: 'OPEN'
         }).sort({openDate: 1}).limit(20).exec();
       }
-      console.log('Beore Zero length...: ', events.length);
+      //console.log('Beore Zero length...: ', events.length);
       if (events.length === 0) {
         continue;
       }
@@ -744,7 +744,7 @@ function apiRequests() {
         const waitingEvent = await getFirstEvent(sportsId, 'WAITING');
         if (waitingEvent && waitingEvent.openDate < firstEventDate) {
           await updateEventStatus(sportsId, 'OPEN', 'WAITING');
-          console.log('Old event found. All OPEN events status changed to WAITING');
+          //console.log('Old event found. All OPEN events status changed to WAITING');
           return checkOdds();
         }
       }
@@ -779,7 +779,7 @@ function apiRequests() {
   }
 
   async function fillEventsToLimit(sportsId, currentLength) {
-    console.log("!=20 length.....");
+    //console.log("!=20 length.....");
     const documents = await InPlayEvents.find({status: 'WAITING', sportsId: `${sportsId}`})
       .sort({openDate: 1})
       .limit(20 - currentLength)

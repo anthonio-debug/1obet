@@ -17,7 +17,7 @@ const getCommissionReport = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
   const userId = parseInt(req.decoded.userId)
-  console.log("usersId ====== ", userId);
+  //console.log("usersId ====== ", userId);
   const response = await CashDeposit.aggregate([
     {  
       $match: {
@@ -64,7 +64,7 @@ const SportWiseCommissionReport = async (req, res) => {
 
   const userId = parseInt(req.decoded.userId)
   const Id     =  parseInt(req.query.userId)
-  console.log(" Id ========== ", Id);
+  //console.log(" Id ========== ", Id);
 
   const response = await CashDeposit.aggregate([
     {  
@@ -113,7 +113,7 @@ const MatchWiseCommissionReport = async (req, res) => {
   }
 
   const userId = req.decoded.userId
-  console.log(" userId ====== ", userId);
+  //console.log(" userId ====== ", userId);
   const Id =  parseInt(req.query.userId);
   let response = [];
   if(req.query.sportsId == 6){

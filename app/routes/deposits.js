@@ -54,12 +54,12 @@ async function addCashDeposit(req, res) {
     const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const lastMaxWithdraw = cUserRes.length > 0 ? cUserRes[0] : null;
 
-    console.log( ' ======================= lastMaxWithdraw =================================  ', lastMaxWithdraw );
+    //console.log( ' ======================= lastMaxWithdraw =================================  ', lastMaxWithdraw );
 
     const parentRes = await Cash.find({ userId: currentUserParent.userId }).sort({ _id: -1 }).limit(1);
     const parentLastMaxWithdraw = parentRes.length > 0 ? parentRes[0] : null;
 
-    console.log(' ======================= parentLastMaxWithdraw =================================  ', parentLastMaxWithdraw);
+    //console.log(' ======================= parentLastMaxWithdraw =================================  ', parentLastMaxWithdraw);
 
     const Dealers = ['1', '2', '3', '4'];
     // company to Dealer  Deposit
@@ -201,7 +201,7 @@ async function addCashDeposit(req, res) {
         cashOrCredit: 'Cash',
       });
       await cash.save();
-      console.log('cash', cash);
+      //console.log('cash', cash);
 
       // parent update
       let parentCash = new Cash({
@@ -224,7 +224,7 @@ async function addCashDeposit(req, res) {
         cashOrCredit: 'Cash',
       });
       await parentCash.save();
-      console.log('parentCash', parentCash);
+      //console.log('parentCash', parentCash);
     } else {
       return res.status(400).send({ message: 'Invalid Request' });
     }
@@ -290,9 +290,9 @@ async function withDrawCashDeposit(req, res) {
     const user_prev_availableBalance = userToUpdate.availableBalance;
     const user_prev_exposure = userToUpdate.exposure;
     const transData = await Deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
-    console.log(transData);
+    //console.log(transData);
     const lastTrans = transData[0];
-    console.log(lastTrans);
+    //console.log(lastTrans);
     const currentUserParent = await User.findOne({
       userId: userToUpdate.createdBy,
       isDeleted: false,
@@ -302,7 +302,7 @@ async function withDrawCashDeposit(req, res) {
     }
 
     if ( userToUpdate.role != '5' && req.body.amount > userToUpdate.cash + userToUpdate.creditRemaining ) {
-      console.log('comming');
+      //console.log('comming');
       return res.status(400).send({
         message: `Max cash withdraw is: ${ userToUpdate.cash + userToUpdate.creditRemaining }`,
       });
@@ -321,12 +321,12 @@ async function withDrawCashDeposit(req, res) {
 
     const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
     const lastMaxWithdraw = cUserRes.length > 0 ? cUserRes[0] : null;
-    console.log(' ======================= lastMaxWithdraw =================================  ', lastMaxWithdraw );
+    //console.log(' ======================= lastMaxWithdraw =================================  ', lastMaxWithdraw );
     const parentRes = await Cash.find({ userId: currentUserParent.userId })
       .sort({ _id: -1 })
       .limit(1);
     const parentLastMaxWithdraw = parentRes.length > 0 ? parentRes[0] : null;
-    console.log( ' ======================= parentLastMaxWithdraw =================================  ', parentLastMaxWithdraw );
+    //console.log( ' ======================= parentLastMaxWithdraw =================================  ', parentLastMaxWithdraw );
 
     let Dealers = ['1', '2', '3', '4'];
     // Company to Dealer
@@ -545,7 +545,7 @@ function getLedgerDetails(req, res) {
     let sort = -1;
     let sortValue = '_id';
     let limit = config.pageSize;
-    console.log('limit:', limit);
+    //console.log('limit:', limit);
     if ( req.body.numRecords &&  req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
     if (req.body.sortValue) sortValue = req.body.sortValue;
     if (req.body.sort) sort = Number(req.body.sort);
@@ -649,13 +649,13 @@ function getLedgerDetails(req, res) {
         }
       );
 
-      console.log('cashPipeline:', cashPipeline);
+      //console.log('cashPipeline:', cashPipeline);
 
       Cash.aggregate(cashPipeline, async (err, result) => {
 
         if(result[0].results&&result[0].results.length>0){
          for(let i=0;i<result[0].results.length;i++){
-          console.log()
+          //console.log()
           if(result[0].results[i].betId){
             try{
               const betInfo = await Bet.findOne({
@@ -723,7 +723,7 @@ function getLedgerDetails2(req, res) {
     let sort = -1;
     let sortValue = '_id';
     let limit = config.pageSize;
-    console.log('limit:', limit);
+    //console.log('limit:', limit);
     if ( req.body.numRecords &&  req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
     if (req.body.sortValue) sortValue = req.body.sortValue;
     if (req.body.sort) sort = Number(req.body.sort);
@@ -825,7 +825,7 @@ function getLedgerDetails2(req, res) {
         }
       );
 
-      console.log('cashPipeline:', cashPipeline);
+      //console.log('cashPipeline:', cashPipeline);
 
       Cash.aggregate(cashPipeline, async (err, result) => {
 
@@ -906,7 +906,7 @@ async function getAllDeposits(req, res) {
         .exec( async (err, results) => {
           // const resp = await userWithdrawStatusCheck(Number(req.query.userId))
           if (err) {
-            console.log('Error'.err);
+            //console.log('Error'.err);
             return res.status(404).send({ message: 'Record not found' });
           }
           if (!results) {

@@ -54,13 +54,13 @@ async function updateCricketData(req, res) {
   const {type, entities} = req.body;
   const io = req.io
   io.on('connected', () => {
-    console.log('connected')
+    //console.log('connected')
   })
 
   if (type === 'live') {
     const socketData = convertSchema(entities)
     if (socketData) {
-      // console.log('cricket live socket', socketData)
+      // //console.log('cricket live socket', socketData)
       io.emit('score', socketData)
     }
   }

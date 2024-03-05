@@ -68,7 +68,7 @@ async function listEventsBySport(req, res) {
     const response = await axios.get(
       `${config.sportsAPIUrl}/listEventsBySport/${sportId}`
     );
-    console.log('response', response.data);
+    //console.log('response', response.data);
     const eventsData = response.data;
     const events = [];
 
@@ -329,7 +329,7 @@ async function getnewOdds(ids) {
       const response = await axios.get(url);
       
       const oddsData = response.data;
-      console.log('data',oddsData);
+      //console.log('data',oddsData);
       let sportIds = {  "soccer" : "1", "cricket" : "4", "tennis" : "2" }
       let data = []
       if(oddsData.length > 0){
@@ -410,7 +410,7 @@ async function eventsBySupportJobs(sportsId) {
 
     // 1"obet.com/*"
     const savedEvents = await inPlayEvents.bulkWrite(sportsEventData);
-    // console.log('===== Saved Events bulkWrite logs ', savedEvents?.result?.upserted)
+    // //console.log('===== Saved Events bulkWrite logs ', savedEvents?.result?.upserted)
     return({
       success: true,
       message: 'Events retrieved and saved successfully',
@@ -463,7 +463,7 @@ async function listMarketsByCronJob(eventId,sport) {
 
 async function fancyDataByCronjob(eventId) {
   const url = `${config.fancyUrl}/bm_fancy/${eventId}`;
-  console.log('url', url);
+  //console.log('url', url);
   try {
     const response = await axios.get(url);
     const fancyData = response?.data;

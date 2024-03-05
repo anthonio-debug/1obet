@@ -62,7 +62,7 @@ async function updateBetPlaceHold(req, res) {
       data: updatedBet,
     });
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     return res.status(500).json({
       error: "Internal Server Error",
     });
@@ -88,7 +88,7 @@ async function getBetPlaceHold(req, res) {
       });
     }
   } catch (error) {
-    console.log(error);
+    //console.log(error);
     return res.status(500).json({
       message: "Internal Server Error",
     });

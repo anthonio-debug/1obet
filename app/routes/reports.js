@@ -191,7 +191,7 @@ async function getFinalReport(req, res) {
       $in: parents
     }
   });
-  console.log(" child users ======= ", childUsers);
+  //console.log(" child users ======= ", childUsers);
   if (childUsers.length) users.push(...childUsers)
 
   let results = {
@@ -289,7 +289,7 @@ function getClientList(req, res) {
   User.findOne(query)
     // .select('credit creditRemaining clientPL plDownline plUpline')
     .exec((err, results) => {
-      console.log('user', results);
+      //console.log('user', results);
       if (err) {
         return res.status(404).send({ message: 'RETRIEVAL_FAILED' });
       }
@@ -385,7 +385,7 @@ function profitLossReports(req, res) {
       return res.send(response);
     })
     .catch((err) => {
-      console.log('Error retrieving profit/loss records:', err);
+      //console.log('Error retrieving profit/loss records:', err);
       return res
         .status(404)
         .send({ message: 'Error retrieving profit/loss records' });
@@ -526,7 +526,7 @@ async function user_book(req, res) {
           $in: parents
         }
       });
-      console.log(" child users ======= ", childUsers);
+      //console.log(" child users ======= ", childUsers);
       if (childUsers.length) users.push(...childUsers)
       parents = childUsers
     } while (childUsers.length > 0)

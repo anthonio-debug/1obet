@@ -63,7 +63,7 @@ const dailyPlSportWiseReports =  async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
   const Id        =  parseInt(req.query.userId)
-  console.log(" Id ========== ", Id);
+  //console.log(" Id ========== ", Id);
 
   const response = await CashDeposit.aggregate([
     {  
@@ -110,7 +110,7 @@ const dailyPLMatchWiseReport = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
   const userId = req.decoded.userId
-  console.log(" userId ====== ", userId);
+  //console.log(" userId ====== ", userId);
   const Id =  parseInt(req.query.userId)
   let response = [];
   if(req.query.sportsId == 6){
@@ -200,13 +200,13 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
   const currentUser = await User.findOne({ userId: userId});
 
   if(currentUser.role == 5){
-    console.log(" =========================== -5- =========================== ");
+    //console.log(" =========================== -5- =========================== ");
     let match = null;
     matchId.length > 10 ? match = await Events.findOne(matchId) : '';
     const parent = await User.findOne({ userId: currentUser.createdBy});
     let response;
     if(match){
-      console.log(" =============================== Includes Part  =========================== ");
+      //console.log(" =============================== Includes Part  =========================== ");
       response = await CashDeposit.aggregate([
         {
           $match: {
@@ -259,7 +259,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
       ]);
     }
     else {
-      console.log(" ================= matchId ================= ", matchId);
+      //console.log(" ================= matchId ================= ", matchId);
       response = await CashDeposit.aggregate([
         {
           $match: {
@@ -300,7 +300,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
           }
         }
       ]);
-      console.log(" ================= response ================= ", response);
+      //console.log(" ================= response ================= ", response);
     }
     return res.send({
       success: true,
@@ -313,10 +313,10 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
     });
   }
   else {
-    console.log(" =============================== 5 =========================== ");
+    //console.log(" =============================== 5 =========================== ");
     const childUsers  = await User.distinct("userId", { createdBy:  userId });
     const users       = [userId, ...childUsers];
-    console.log(" users ===================  ", users);
+    //console.log(" users ===================  ", users);
 
     const response = await CashDeposit.aggregate([
       {  

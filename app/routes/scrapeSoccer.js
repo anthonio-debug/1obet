@@ -8,7 +8,7 @@ async function updateSoccerScore(req, res) {
   const {type, entities} = req.body;
   const io = req.io
   io.on('connected', () => {
-    console.log('connected')
+    //console.log('connected')
   })
 
   if (type === 'live') {

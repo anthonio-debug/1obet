@@ -22,7 +22,7 @@ function ToolForResults() {
   }
 
   async function getBetForEvents(targetArray) {
-    console.log("targetArray: ", targetArray);
+    //console.log("targetArray: ", targetArray);
     const currentTime = new Date().getTime();
     try {
       const results = await Bets.aggregate([
@@ -52,7 +52,7 @@ function ToolForResults() {
         },
       ]).exec();
 
-      //console.log(targetArray);
+      ////console.log(targetArray);
 
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument)
@@ -66,9 +66,9 @@ function ToolForResults() {
           }
         ).catch((e) => console.error(e));
 
-        // console.log("result.betDocument.length:-->", result.betDocument.length);
-        console.log("result.betDocument.length:-->", result.betDocument.length);
-        console.log("result.betDocument.sportsId:-->", result.betDocument.sportsId);
+        // //console.log("result.betDocument.length:-->", result.betDocument.length);
+        //console.log("result.betDocument.length:-->", result.betDocument.length);
+        //console.log("result.betDocument.sportsId:-->", result.betDocument.sportsId);
         if (!result.betDocument) continue;
 
         if (
@@ -84,7 +84,7 @@ function ToolForResults() {
         ) {
           await scoreChecker.racingResult(result.betDocument);
         } else {
-          console.log("Undefined sports type ", result.betDocument);
+          //console.log("Undefined sports type ", result.betDocument);
         }
 
       }

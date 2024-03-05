@@ -17,7 +17,7 @@ const bookDetail2Report = async (req, res) => {
   }
   const userId = parseInt(req.decoded.userId)
   const Id     =  parseInt(req.query.userId)
-  console.log(" Id ========== ", Id);
+  //console.log(" Id ========== ", Id);
 
   const response = await CashDeposit.aggregate([
     {  

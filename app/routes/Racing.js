@@ -15,7 +15,7 @@ async function racesTodayMeetings(req, res) {
     const response = await axios.get(url);
 
     const horseRacesData = response.data;
-    console.log('horseRacesData', horseRacesData);
+    //console.log('horseRacesData', horseRacesData);
     
     const bulkOperations = [];
     for (const data of horseRacesData.meetings) {
@@ -54,9 +54,9 @@ async function racesTomorrowMeetings(req, res) {
     const response = await axios.get(url);
 
     const horseRacesData = response.data;
-    console.log('horseRacesData', horseRacesData);
-    console.log('meetings', horseRacesData.meetings);
-    console.log('countryCodes', horseRacesData.countryCodes);
+    //console.log('horseRacesData', horseRacesData);
+    //console.log('meetings', horseRacesData.meetings);
+    //console.log('countryCodes', horseRacesData.countryCodes);
 
     const bulkOperations = [];
     for (const data of horseRacesData.meetings) {
@@ -228,7 +228,7 @@ async function raceOdds(req, res) {
     const response = await axios.get(url);
 
     const oddsData = response.data;
-    console.log('oddsData', oddsData);
+    //console.log('oddsData', oddsData);
 
     // Insert the oddsData into the RaceOdds model
     const raceOdds = await RaceOdds.insertMany(oddsData);
@@ -277,7 +277,7 @@ async function todayRaceJob(sportsId) {
         });
       });
     });   
-    console.log(races);
+    //console.log(races);
     const res = await Event.bulkWrite(racesBulkOperation);
     return ({
       success: true,
@@ -301,7 +301,7 @@ async function marketDescriptionCronjob(marketId) {
     const response = await axios.get(url);
     const marketListsData = response.data;
   
-     console.log("marketListsData", marketListsData)
+     //console.log("marketListsData", marketListsData)
     // Extract relevant data from raceMarkets
     const eventTypeData = marketListsData?.eventTypes;
     const eventNodeData = eventTypeData?.eventNodes;
@@ -360,11 +360,11 @@ async function marketDescriptionCronjob(marketId) {
 
 async function raceOddsJob(ids) {
   try {
-   console.log('race Odds Job --->>>', ids)
+   //console.log('race Odds Job --->>>', ids)
     const url = `${config.horseRaceUrl}/odds/?ids=${ids}`;
     const response = await axios.get(url);
     const oddsData = response.data;
-    console.log('oddsData', oddsData);
+    //console.log('oddsData', oddsData);
     let raceOdds
     if(oddsData.length > 0){
       raceOdds = await RaceOdds.insertMany(oddsData);
