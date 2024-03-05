@@ -3,7 +3,7 @@ const checkActiveBettors = async (bet) => {
   const userId  =bet?.userId
   try {
   // const url = `https://production.1obet.net/api/active-bettors`
-  const url = `http://127.0.0.1:5000/api/active-bettors`
+  const url = `http://127.0.0.1/api/active-bettors`
   // const url = `http://localhost:4000/api/active-bettors`
   // const url = `http://185.182.187.118:4000/api/active-bettors`
 
