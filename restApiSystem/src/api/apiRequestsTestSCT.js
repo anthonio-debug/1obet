@@ -629,8 +629,7 @@ function apiRequests() {
                       }
                     }
 
-                    let el = null
-                    el = new Odds(json1);
+                    let el = new Odds(json1);
                     await el.save();
 
                     const ix = _.findIndex(tempArray, function (o) {
