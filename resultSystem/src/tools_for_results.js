@@ -55,7 +55,8 @@ function ToolForResults() {
       //console.log(targetArray);
 
       for (const result of results) {
-        if (await checkActiveBettors(result.betDocument)) continue
+        const checkActive = await checkActiveBettors(result.betDocument)
+        if (checkActive) continue
         await Bets.updateMany(
           {
             _id: { $in: result.documentIds },
@@ -112,7 +113,9 @@ function ToolForResults() {
         .limit(1)
         .exec();
 
-      if (betData && !await checkActiveBettors(betData)) {
+      const checkActive = await checkActiveBettors(betData)
+
+      if (betData && !checkActive) {
         await Bets.updateOne(
           {
             _id: betData._id,
