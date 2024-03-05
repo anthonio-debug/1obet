@@ -1618,10 +1618,7 @@ async function getAllMatchSettlements(req, res) {
       },
     ]).exec();
 
-    //console.log(
-      " ======================== Result ======================== ",
-      result
-    );
+    //console.log(" ======================== Result ======================== ",result);
     const organizedEvents = {
       soccer: result?.soccer, // Access the ' array for the specific event type
       tennis: result?.tennis,

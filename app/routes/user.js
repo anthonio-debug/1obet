@@ -280,9 +280,7 @@ function login(req, res) {
             .send({ message: 'Invalid username or password' });
 
         if (!user.token) {
-          //console.log(
-            ' =========================  Missing token =====================  '
-          );
+          //console.log(' =========================  Missing token =====================  ');
           var token = getNonExpiringToken(
             user.userId,
             user.createdBy,
@@ -293,9 +291,7 @@ function login(req, res) {
         } else if (user.token) {
           jwt.verify(user.token, secret, function (err, decoded) {
             if (err || decoded.expr < new Date().getTime()) {
-              //console.log(
-                ' =========================  Expired token =====================  '
-              );
+              //console.log(' =========================  Expired token =====================  ');
               // //console.log(' ================== decoded ', decoded);
               // //console.log(' ================== err ', err);
 

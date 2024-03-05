@@ -901,9 +901,7 @@ function apiRequests() {
         }).sort({index: 1});
 
         if (marketIDs.length > 0) {
-          //console.log(
-            event.Id + " -> " + event.name + " event updated with inplay"
-          );
+          //console.log(event.Id + " -> " + event.name + " event updated with inplay");
 
           await inPlayEvents
             .updateMany({Id: event.Id}, {inplay: true})

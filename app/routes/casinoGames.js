@@ -16,9 +16,6 @@ require('dotenv').config();
 const api_username = process.env.api_username;
 const api_password = process.env.api_password;
 
-
-
-
 const getParents = async (userId) => {
   const parentUserIds = [];
   let currentUserId = userId;
@@ -406,26 +403,11 @@ async function getAllSelectedCasinos(req, res) {
   });
   const marketId = config.casinoMarketId;
 
-  //console.log(
-    " ================== parentUserIds =========================",
-    parentUserIds
-  );
-  //console.log(
-    " ================== marketIds =========================",
-    marketIds
-  );
-  //console.log(
-    " ================== subMarketId =========================",
-    subMarketId
-  );
-  //console.log(
-    " ================== marketId =========================",
-    marketId
-  );
-  //console.log(
-    " ================== marketId =========================",
-    marketId
-  );
+  //console.log(" ================== parentUserIds =========================",parentUserIds);
+  //console.log(" ================== marketIds =========================",marketIds);
+  //console.log(" ================== subMarketId =========================",subMarketId);
+  //console.log(" ================== marketId =========================",marketId);
+  //console.log(" ================== marketId =========================",marketId);
   //console.log(" ================== user =========================", user);
 
   try {
@@ -550,26 +532,11 @@ async function getListAsianGames(req, res) {
   });
   const marketId = config.casinoMarketId;
 
-  //console.log(
-    " ================== parentUserIds =========================",
-    parentUserIds
-  );
-  //console.log(
-    " ================== marketIds =========================",
-    marketIds
-  );
-  //console.log(
-    " ================== subMarketId =========================",
-    subMarketId
-  );
-  //console.log(
-    " ================== marketId =========================",
-    marketId
-  );
-  //console.log(
-    " ================== marketId =========================",
-    marketId
-  );
+  //console.log(" ================== parentUserIds =========================",parentUserIds);
+  //console.log(" ================== marketIds =========================",marketIds);
+  //console.log(" ================== subMarketId =========================",subMarketId);
+  //console.log(" ================== marketId =========================",marketId);
+  //console.log(" ================== marketId =========================",marketId);
   //console.log(" ================== user =========================", user);
 
   try {
