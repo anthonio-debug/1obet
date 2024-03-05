@@ -35,6 +35,7 @@ const { fetchSession } = require("../../helper/api/sessionAPIHelper");
 const { fetchBookmakerOdds } = require("../../helper/api/bookmakerApiHelper");
 const moment = require("moment");
 const { SCORE_API_STATUS_BLOCK_LIST } = require("../../helper/api/scoreApiHelper");
+const { GetAllBets, CasinoList } = require("./admin/bets");
 require('dotenv').config()
 
 global.activeBettors = new Map()
@@ -4627,7 +4628,6 @@ loginRouter.get("/GetAllBets", GetAllBets);
 loginRouter.get("/casino-bets", CasinoList);
 loginRouter.get("/GetBetsByEventId", GetBetsByEventId);
 module.exports = { sessionCalc, loginRouter, getParents, activeBettors };
-
 
 // const newRunners = [];
 // const uniqueVals = newRecords.map((item)=>{
