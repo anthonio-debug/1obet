@@ -248,10 +248,7 @@ function apiRequests() {
         // update event status with 'CLOSED-INPLAYLIST'
         // Also update MarketIDs
         for (let i = 0; i < diff.length; i++) {
-          //console.log(
-            "Event is closed because it not exists on listEventsBySport: " +
-              diff[i]
-          );
+          //console.log("Event is closed because it not exists on listEventsBySport: " +diff[i]);
           await MarketIDS.updateMany(
             { eventId: diff[i] },
             { $set: { inPlay: false, status: "CLOSED", readyForScore: true } }
@@ -535,9 +532,7 @@ function apiRequests() {
               removedInplayList.push({ id: diff[i], date: new Date() });
             }
 
-            //console.log(
-              "Event is closed because it not exists on inplaylist: " + diff[i]
-            );
+            //console.log("Event is closed because it not exists on inplaylist: " + diff[i]);
             await MarketIDS.updateMany(
               { eventId: diff[i] },
               { $set: { inPlay: false, status: "CLOSED", readyForScore: true } }
@@ -666,9 +661,7 @@ function apiRequests() {
           status: "OPEN",
         }).sort({ index: 1 });
         if (marketIDs.length > 0) {
-          //console.log(
-            event.Id + " -> " + event.name + " event updated with inplay"
-          );
+          //console.log(event.Id + " -> " + event.name + " event updated with inplay");
           await inPlayEvents
             .updateMany({ Id: event.Id }, { inplay: true })
             .exec();

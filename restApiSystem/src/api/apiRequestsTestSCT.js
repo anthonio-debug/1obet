@@ -15,6 +15,9 @@ require('dotenv').config();
 const config = require("../../../config/default.json")
 const moment = require("moment");
 const {CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN} = require("../../../helper/constants");
+const { isObjectEqual } = require("../../../helper/common");
+
+const OddsMap = new Map()
 
 const header = {
   headers: {
@@ -506,6 +509,8 @@ function apiRequests() {
                     .sort({lastCheckMarket: 1})
                     .limit(1)
                     .exec();
+                  const eventId = marketData.eventId
+                  const marketId = element.marketId
 
                   // Filter runners with status "ACTIVE"
                   const activeRunners = element.runners.filter(runner => runner.status === "ACTIVE");
@@ -563,87 +568,90 @@ function apiRequests() {
                     tempRunners.push(tempElement)
                   }
 
-                  let json1 = {
+                  let frontData = {
                     sportsId: marketData.sportID,
                     runners: tempRunners,
-                    marketId: element.marketId,
+                    marketId: marketId,
                     isMarketDataDelayed: isMarketDataDelayed,
                     status: element.status,
-                    eventId: marketData.eventId,
+                    eventId: eventId,
                     isInplay: element.inplay,
                     numberOfRunners: element.runners.length,
                     numberOfActiveRunners: numberOfActiveRunners,
                     totalMatched: element.totalMatched,
-                    createdAt: new Date().getTime(),
                   };
 
-                  let json2 = {
-                    marketId: element.marketId,
-                    isMarketDataDelayed: isMarketDataDelayed,
-                    state: element.status,
-                    runners: tempRunners,
-                    createdAt: new Date().getTime(),
-                  }
+                  if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
+                    OddsMap.set(marketId, frontData)
+                    let json1 = {
+                      sportsId: marketData.sportID,
+                      runners: tempRunners,
+                      marketId: marketId,
+                      isMarketDataDelayed: isMarketDataDelayed,
+                      status: element.status,
+                      eventId: eventId,
+                      isInplay: element.inplay,
+                      numberOfRunners: element.runners.length,
+                      numberOfActiveRunners: numberOfActiveRunners,
+                      totalMatched: element.totalMatched,
+                      createdAt: new Date().getTime(),
+                    };
 
-                  if (element.status === "CLOSED") {
-                    await MarketIDS.updateOne(
-                      {marketId: element.marketId},
-                      {inPlay: false, status: element.status}
-                    );
-                  } else {
-                    await MarketIDS.updateOne(
-                      {marketId: element.marketId},
-                      {status: element.status}
-                    );
-                  }
-
-                  if (runnerCheckerArray.indexOf(element.marketId) === -1) {
-                    let runners = [];
-
-                    for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
-                      const runner = element.runners[ix1];
-                      runners.push({
-                        SelectionId: runner.selectionId,
-                        runnerName: runner.runnerName,
-                      });
-                    }
-
-                    if (runners.length > 0) {
+                    if (element.status === "CLOSED") {
                       await MarketIDS.updateOne(
-                        {marketId: element.marketId, runners: null},
-                        {$set: {runners: runners}}
+                        {marketId: marketId},
+                        {inPlay: false, status: element.status}
                       );
-                      runnerCheckerArray.push(element.marketId);
+                    } else {
+                      await MarketIDS.updateOne(
+                        {marketId: marketId},
+                        {status: element.status}
+                      );
                     }
-                  }
 
-                  let el = null
-                  if (marketData.sportID !== 7) {
+                    if (runnerCheckerArray.indexOf(marketId) === -1) {
+                      let runners = [];
+
+                      for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
+                        const runner = element.runners[ix1];
+                        runners.push({
+                          SelectionId: runner.selectionId,
+                          runnerName: runner.runnerName,
+                        });
+                      }
+
+                      if (runners.length > 0) {
+                        await MarketIDS.updateOne(
+                          {marketId: marketId, runners: null},
+                          {$set: {runners: runners}}
+                        );
+                        runnerCheckerArray.push(marketId);
+                      }
+                    }
+
+                    let el = null
                     el = new Odds(json1);
                     await el.save();
-                  } else {
-                    el = new RaceOdds(json2);
-                    await el.save();
-                  }
 
-                  const ix = _.findIndex(tempArray, function (o) {
-                    return o.market == element.marketId;
-                  });
+                    const ix = _.findIndex(tempArray, function (o) {
+                      return o.market == marketId;
+                    });
 
-                  if (ix != -1 && tempArray[ix].indexID == 0) {
-                    io.to("homepage").emit("odds", {
-                      marketId: element.marketId,
-                      data: el,
-                      eventId: element.eventId,
-                      status: "NewOddsHomepage",
+                    if (ix !== -1 && tempArray[ix].indexID === 0) {
+                      io.to("homepage").emit("odds", {
+                        marketId: marketId,
+                        data: frontData,
+                        eventId: element.eventId,
+                        status: "NewOddsHomepage",
+                      });
+                    }
+                    io.to("#" + eventId).emit("odds", {
+                      marketId: marketId,
+                      data: frontData,
+                      eventId: eventId,
+                      status: "NewOdds",
                     });
                   }
-                  io.to("#" + marketData.eventId).emit("odds", {
-                    marketId: element.marketId,
-                    data: el,
-                    eventId: marketData.eventId,
-                    status: "NewOdds",
-                  });
                 }
               }
             }
@@ -653,8 +661,9 @@ function apiRequests() {
             )
 
             for (let index = 0; index < filteredArray.length; index++) {
+              OddsMap.delete(filteredArray[index]?.market)
               await MarketIDS.updateOne(
-                {marketId: filteredArray.market},
+                {marketId: filteredArray[index]?.market},
                 {inPlay: false, status: "CLOSED-ODDS-EMPTY"}
               );
             }

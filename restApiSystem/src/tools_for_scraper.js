@@ -160,11 +160,6 @@ function ToolForScraper() {
 
               const frontScore = convertCricketToFront(cricketScore)
               io.emit('cricket_score_api', frontScore);
-              const oldCricket = activeCrickets.get(eventId)
-              if (!_.isEqual(oldCricket, frontScore)) {
-                // io.emit('cricket_score_api', frontScore);
-                activeCrickets.set(eventId, { ...frontScore })
-              }
             }
           }
         }
