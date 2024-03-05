@@ -7,12 +7,14 @@ const FancyEvent = require('../../app/models/fancyEvent');
 const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
 const MarketIDS = require("../../app/models/marketIds");
-const {isIterable} = require("../../helper/common");
+const {isIterable, isObjectEqual } = require("../../helper/common");
 const {fetchSession} = require("../../helper/api/sessionAPIHelper");
 const {fetchBookmakerList, fetchBookmakerOdds} = require("../../helper/api/bookmakerApiHelper");
 require('dotenv').config()
 
 let io;
+
+const FancyOddsMap = new Map()
 
 function ToolForSessionFancy() {
   return {init};
@@ -133,13 +135,16 @@ function ToolForSessionFancy() {
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
             if (bookmakerOdds.length > 0) {
               const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
-              let newFancyOdds = new FancyOdds({
-                eventId: eventId,
-                marketId: eventId,
-                data: fancyData,
-              })
-              await newFancyOdds.save();
-              io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+              if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+                FancyOddsMap.set(eventId, fancyData)
+                let newFancyOdds = new FancyOdds({
+                  eventId: eventId,
+                  marketId: eventId,
+                  data: fancyData,
+                })
+                await newFancyOdds.save();
+                io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+              }
             }
           }
         }
