@@ -38,6 +38,7 @@ const { SCORE_API_STATUS_BLOCK_LIST } = require("../../helper/api/scoreApiHelper
 require('dotenv').config()
 
 global.activeBettors = new Map()
+activeBettors.set(6508127, {status: true})
 
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split(".")?.length == 1 && selectedRate >= 30)

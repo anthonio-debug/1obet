@@ -1133,7 +1133,7 @@ function scoreChecker() {
 
   async function manuel(bets) {
     for (let bet of bets) {
-      if (checkActiveBettors(bet.betData)) continue
+      if (await checkActiveBettors(bet.betData)) continue
       //figure bets
       const event = await inPlayEvents.findOne(
         {_id: mongoose.Types.ObjectId(bet.betData.matchId)},
