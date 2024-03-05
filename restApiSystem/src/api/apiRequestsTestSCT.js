@@ -640,14 +640,14 @@ function apiRequests() {
                     if (ix !== -1 && tempArray[ix].indexID === 0) {
                       io.to("homepage").emit("odds", {
                         marketId: marketId,
-                        data: frontData,
+                        data: el,
                         eventId: element.eventId,
                         status: "NewOddsHomepage",
                       });
                     }
                     io.to("#" + eventId).emit("odds", {
                       marketId: marketId,
-                      data: frontData,
+                      data: el,
                       eventId: eventId,
                       status: "NewOdds",
                     });
