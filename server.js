@@ -8,14 +8,13 @@ let cors = require("cors");
 const morgan = require("morgan");
 const http = require("http");
 require('dotenv').config();
-const DBNAME = process.env.DB_NAME;
+// const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const PORT = process.env.SERVERPORT;
 
 const apisMiddleware = require("./app/middlewares/apisMiddleware");
 const loginMiddleWare = require("./app/middlewares/loginMiddleware");
 const checkRoleMiddleware = require("./app/middlewares/checkRoleMiddleware");
-const {BETS} = require('./app/routes/bets')
 
 const apisContent = fs.readFileSync(config.apisFileName);
 const jsonApis = JSON.parse(apisContent);

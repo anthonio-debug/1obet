@@ -7,8 +7,8 @@
  * Before changing file, even if you are 0.0001% not sure, consult the author
  * @author umar
  */
-var mongoosePaginate = require('mongoose-paginate')
-var aggregatePaginate = require('mongoose-aggregate-paginate-v2')
+const mongoosePaginate = require('mongoose-paginate')
+const aggregatePaginate = require('mongoose-aggregate-paginate-v2')
 let config = require('config') // we load the db location from the JSON files
 
 mongoosePaginate.paginate.options = {
@@ -16,7 +16,7 @@ mongoosePaginate.paginate.options = {
   limit: config.pageSize
 }
 
-var Globals = {
+const Globals = {
   'paginate': mongoosePaginate,
   'aggregatePaginate': aggregatePaginate
 }

@@ -195,10 +195,10 @@ function apiRequests() {
 
   function init(_io, express) {
     io = _io
-    io.on('connection', onConnet);
+    io.on('connection', onConnect);
   }
 
-  function onConnet(socket) {
+  function onConnect(socket) {
     socket.on("get_id", async (id) => {
       const eventInfo = await InPlayEvents.findOne({Id: id + ''}, {_id: 1});
 

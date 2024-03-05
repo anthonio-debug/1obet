@@ -1,15 +1,15 @@
 'use strict';
 // const apiRequests = require('./api/apiRequestsRacing.js')();
-var cron = require('node-cron');
+// const cron = require('node-cron');
 const config = require("../../config/default.json")
 const inPlayEvents = require('../../app/models/events');
-const RaceMarkets = require('../../app/models/raceMarkets.js');
+// const RaceMarkets = require('../../app/models/raceMarkets.js');
 const apiRequests = require('./api/apiRequestsUpdatedRacing.js')();
 
 const sportsIds = ['4339', '7'];
 // const sportsIds = ['4339'];
-const HORSE_RACE_SPORTS_ID = '7';
-const GREY_HOUND_ID = '4339'
+// const HORSE_RACE_SPORTS_ID = '7';
+// const GREY_HOUND_ID = '4339'
 
 function ToolForUpdatedRacing() {
   return {init, fetchRacingEvent};

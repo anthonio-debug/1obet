@@ -5,7 +5,7 @@ const https = require("http");
 const socketIo = require("socket.io");
 require('dotenv').config();
 const port = process.env.APISYSTEMPORT;
-const DBNAME = process.env.DB_NAME;
+// const DBNAME = process.env.DB_NAME;
 //Mongoose models
 const inPlayEvents = require("./app/models/events");
 const morgan = require("morgan");
@@ -15,16 +15,16 @@ const cors = require("cors");
 //Tool
 //const ToolForEvent = require("./restApiSystem/src/tools_for_events.js")();
 // const ToolForRacing = require("./restApiSystem/src/tools_for_racing.js")();
-const ToolForRacing = require("./restApiSystem/src/tools_for_updated_racing.js")();
 // const ToolForFancy = require("./restApiSystem/src/tools_for_fancy.js")();
-const ToolForHybridFancy = require("./restApiSystem/src/tools_for_hybrid_fancy.js")();
+// const ToolForHybridFancy = require("./restApiSystem/src/tools_for_hybrid_fancy.js")();
+// const ToolForTestSport = require("./restApiSystem/src/tools_for_test_sport.js")();
+// const SocketHandler = require('./restApiSystem/src/services/socketHandler')()
+const ToolForRacing = require("./restApiSystem/src/tools_for_updated_racing.js")();
 const ToolForSessionFancy = require("./restApiSystem/src/tools_for_session_fancy")();
 const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
-// const ToolForTestSport = require("./restApiSystem/src/tools_for_test_sport.js")();
 const ToolForListEvent = require("./restApiSystem/src/tools_for_list_events.js")();
 const ToolForResult = require("./restApiSystem/src/tools_for_result")();
 const ToolForScraper = require("./restApiSystem/src/tools_for_scraper")();
-// const SocketHandler = require('./restApiSystem/src/services/socketHandler')()
 const DBHost = process.env.DBHost;
 global.cricketScraperLastupdate = new Date().getTime()
 
@@ -77,9 +77,9 @@ mongoose
     console.error(`Failed to connect to the database: ${err}`);
   });
 
-express.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRouter);
-express.post("/update_soccer", require("./app/routes/scrapeSoccer").soccerRouter);
-express.post("/update_tennis", require("./app/routes/scrapeTennis").tennisRouter);
+// express.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRouter);
+// express.post("/update_soccer", require("./app/routes/scrapeSoccer").soccerRouter);
+// express.post("/update_tennis", require("./app/routes/scrapeTennis").tennisRouter);
 
 async function main() {
   console.log("code understanding log ---");
