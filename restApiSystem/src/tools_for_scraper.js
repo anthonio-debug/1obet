@@ -126,7 +126,7 @@ function ToolForScraper() {
         if (cricketScoreDate?.data) {
           const apiCricketScore = convertApiToCricket(cricketScoreDate, eventId)
           if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
-            activeCrickets.set(eventId, cricketScoreDate)
+            activeCrickets.set(eventId, apiCricketScore)
             const cricketScore = await Crickets.findOneAndUpdate(
               { eventId: apiCricketScore.eventId },
               apiCricketScore,
