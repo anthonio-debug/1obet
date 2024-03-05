@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 require('dotenv').config();
 const DBNAME = process.env.DB_NAME;
+const DBHost = process.env.DBHost;
 const ToolForResults = require('./resultSystem/src/tools_for_results.js')();
 
 const mongooseOptions = {
@@ -12,7 +13,7 @@ const mongooseOptions = {
 mongoose.set('strictQuery', false);
 mongoose.set({debug: false});
 mongoose
-  .connect(`mongodb://127.0.0.1/${DBNAME}?directConnection=true`, mongooseOptions)
+  .connect(`${DBHost}?directConnection=true`, mongooseOptions)
   .then(() => {
     console.log('Database connected');
   })

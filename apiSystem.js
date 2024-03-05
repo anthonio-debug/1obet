@@ -25,7 +25,7 @@ const ToolForListEvent = require("./restApiSystem/src/tools_for_list_events.js")
 const ToolForResult = require("./restApiSystem/src/tools_for_result")();
 const ToolForScraper = require("./restApiSystem/src/tools_for_scraper")();
 // const SocketHandler = require('./restApiSystem/src/services/socketHandler')()
-
+const DBHost = process.env.DBHost;
 global.cricketScraperLastupdate = new Date().getTime()
 
 express.use(require('express').json());
@@ -69,7 +69,7 @@ mongoose.set("strictQuery", false);
 mongoose.set({ debug: false });
 
 mongoose
-  .connect(`mongodb://127.0.0.1/${DBNAME}?directConnection=true`, mongooseOptions)
+  .connect(`${DBHost}?directConnection=true`, mongooseOptions)
   .then(() => {
     console.log("MongoDB connected");
   })
