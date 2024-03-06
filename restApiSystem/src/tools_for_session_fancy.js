@@ -94,13 +94,11 @@ function ToolForSessionFancy() {
     try {
       const now = new Date()
       const from = new Date(now.getTime() - (30 * 60 * 1000))
-      const someHoursLater = new Date(now.getTime() + 60 * 60 * 1000)
-      const to = someHoursLater.getTime()
       let fancyEvents = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
         hasFancy: true,
         CompanySetStatus: "OPEN",
-        openDate: {$gte: from, $lte: to},
+        openDate: {$gte: from},
         status: 'OPEN'
       }, {Id: 1}).exec();
       for (const event of fancyEvents) {
