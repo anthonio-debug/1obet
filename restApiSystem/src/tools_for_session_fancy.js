@@ -92,13 +92,13 @@ function ToolForSessionFancy() {
 
   async function getSessionFancyOdds() {
     try {
-      const now = new Date()
-      const from = new Date(now.getTime() - (30 * 60 * 1000))
+      // const now = new Date()
+      // const from = new Date(now.getTime() - (30 * 60 * 1000))
       let fancyEvents = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
         hasFancy: true,
         CompanySetStatus: "OPEN",
-        openDate: {$gte: from},
+        // openDate: {$gte: from},
         status: 'OPEN'
       }, {Id: 1}).exec();
       for (const event of fancyEvents) {
