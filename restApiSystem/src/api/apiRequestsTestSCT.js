@@ -87,11 +87,14 @@ function apiRequests() {
             });
             socket.emit("fancy_event_list", fancyEvents);
           }
-          if (event_information.sportsId === '1' || event_information.sportsId === '2') {
-            soccer = await Score.findOne({
-              scoreKey: event_information.seriesKey
-            })
+          if (event_information.seriesKey) {
+            if (event_information.sportsId === '1' || event_information.sportsId === '2') {
+              soccer = await Score.findOne({
+                scoreKey: event_information.seriesKey
+              })
+            }
           }
+
           cricket = await Crickets.findOne({
             eventId: event_information.Id
           })
