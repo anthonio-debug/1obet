@@ -474,6 +474,7 @@ function getAllUsers(req, res) {
     }
   );
 }
+
 app.set('secret', secret);
 
 function changePassword(req, res) {
@@ -789,7 +790,7 @@ function settlePLAccount(req, res) {
       _id: req.body.id,
     },
     (err, result) => {
-      if (err || !result){
+      if (err || !result) {
         return res.status(404).send({ message: 'user not found' });
       }
       const amount = Math.abs(req.body.amount);
@@ -798,10 +799,10 @@ function settlePLAccount(req, res) {
           .status(404)
           .send(`Max amount to transfer: ${result.availableBalance}`);
       }
-      if(result.availableBalance < 0){
+      if (result.availableBalance < 0) {
         result.availableBalance += amount;
         result.balance += amount;
-      }else {
+      } else {
         result.availableBalance -= amount;
         result.balance -= amount;
       }
@@ -887,98 +888,231 @@ function searchSingleUser(req, res) {
 }
 
 const battorsList = async (req, res) => {
-  try{
+  try {
     //console.log(" lastBet ================================================= ");
     if (req.decoded.role != 0) {
       return res.status(404).send({ message: '-----' });
     }
-    let usersQuery = {};
-    let page = 1;
-    let sort = -1;
-    let sortValue = '_id';
-    var limit = config.pageSize;
-    usersQuery.role = 5;
-    if (
-      req.query.numRecords &&
-      !isNaN(req.query.numRecords) &&
-      req.query.numRecords > 0
-    )
-      limit = Number(req.query.numRecords);
-    if (req.query.sortValue) sortValue = req.query.sortValue;
-    if (req.query.sort) sort = Number(req.query.sort);
-    if (req.query.page) page = Number(req.query.page);
-  
-    if (req.query.username)
-      usersQuery.userName = { $regex: req.query.username, $options: 'i' };
-    usersQuery.isDeleted = false;
-    User.paginate(
-      usersQuery,
-      { page: page, sort: { [sortValue]: sort }, limit: limit },
-      async (err, results) => {
-        if (err) return res.status(404).send({ message: 'Something went wrong' });
-        if(results && results.docs.length > 0){
-          for(let i = 0; i<results.docs.length; i++){
-            const totalExp = await Bets.aggregate([
-              {
-                $match:{
-                  $and: [
-                    {userId: results.docs[i].userId},
-                    {calculateExp: true}
-                  ]
-                }
+    /*old version start*/
+    // let usersQuery = {};
+    // let page = 1;
+    // let sort = -1;
+    // let limit = config.pageSize;
+    // let {numRecords, sortValue, } = req.query
+    // sortValue = sortValue || '_id';
+    // usersQuery.role = 5;
+    // if (numRecords && !isNaN(numRecords) && numRecords > 0) {
+    //   limit = Number(numRecords);
+    // }
+    // if (req.query.sort) sort = Number(req.query.sort);
+    // if (req.query.page) page = Number(req.query.page);
+    //
+    // if (req.query.username) {
+    //   usersQuery.userName = { $regex: req.query.username, $options: 'i' };
+    // }
+    // usersQuery.isDeleted = false;
+    // User.paginate(
+    //   usersQuery,
+    //   { page: page, sort: { [sortValue]: sort }, limit: limit },
+    //   async (err, results) => {
+    //     if (err) return res.status(404).send({ message: 'Something went wrong' });
+    //     if(results && results.docs.length > 0){
+    //       for(let i = 0; i<results.docs.length; i++){
+    //         const totalExp = await Bets.aggregate([
+    //           {
+    //             $match:{
+    //               $and: [
+    //                 {userId: results.docs[i].userId},
+    //                 {calculateExp: true}
+    //               ]
+    //             }
+    //           },
+    //           {
+    //             $group:{
+    //               _id: '$sportsId',
+    //               sum: {$sum: '$exposureAmount'}
+    //             }
+    //           }
+    //         ])
+    //
+    //         let settlementArray = [];
+    //
+    //         if(totalExp && totalExp.length > 0){
+    //           for(let j=0; j < totalExp.length; j++) {
+    //             const sportName = await Markets.findOne({Id: Number(totalExp[j]._id)})
+    //
+    //             const newSettlement = {
+    //               sportName: sportName?.name,
+    //               totalExposure: totalExp[j]?.sum
+    //             }
+    //
+    //             settlementArray.push(newSettlement);
+    //           }
+    //         }
+    //         results.docs[i].settlements = settlementArray;
+    //
+    //         const lastBet      = await Bet.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
+    //         const lastDeposit  = await Deposits.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
+    //         const activeBets   = await Bets.countDocuments({ userId: results.docs[i].userId, status: 1  });
+    //         const canceledBets = await Bets.countDocuments({ userId: results.docs[i].userId, status: 2  });
+    //         //console.log("lastBet ======= ", lastBet);
+    //         //console.log("lastDeposit ======= ", lastDeposit);
+    //         //console.log("activeBets ======= ", activeBets);
+    //         //console.log("canceledBets ======= ", canceledBets);
+    //
+    //         const data  = {
+    //           lastBetTime : lastBet[0]?.betTime || 0,
+    //           availableBalance : lastDeposit[0]?.availableBalance || 0,
+    //           activeBets  : activeBets,
+    //           canceledBets: canceledBets
+    //         }
+    //         results.docs[i].data = data
+    //       }
+    //     }
+    //     return res.send({
+    //       success: true,
+    //       message: 'Users list',
+    //       total: results.total,
+    //       results: results,
+    //     });
+    //   }
+    // );
+    /*old version end*/
+    async function aggregateBetsInfo(userIds) {
+      const betsAggregation = await Bets.aggregate([
+        {
+          $match: {
+            userId: { $in: userIds },
+            calculateExp: true,
+          },
+        },
+        {
+          $group: {
+            _id: { userId: '$userId', sportsId: '$sportsId' },
+            sum: { $sum: '$exposureAmount' },
+          },
+        },
+        {
+          $lookup: {
+            from: 'markets', // Assuming 'markets' is the collection name
+            localField: '_id.sportsId',
+            foreignField: 'Id',
+            as: 'marketInfo',
+          },
+        },
+        {
+          $unwind: '$marketInfo',
+        },
+        {
+          $group: {
+            _id: '$_id.userId',
+            settlements: {
+              $push: {
+                sportName: '$marketInfo.name',
+                totalExposure: '$sum',
               },
-              {
-                $group:{
-                  _id: '$sportsId',
-                  sum: {$sum: '$exposureAmount'}
-                }
-              }
-            ])
+            },
+          },
+        },
+      ]);
 
-            let settlementArray = [];
-            
-            if(totalExp && totalExp.length > 0){
-              for(let j=0; j < totalExp.length; j++) {
-                const sportName = await Markets.findOne({Id: Number(totalExp[j]._id)})
+      // Transform the array into a map for easy access
+      return betsAggregation.reduce((acc, item) => {
+        acc[item._id] = item.settlements;
+        return acc;
+      }, {});
+    }
 
-                const newSettlement = {
-                  sportName: sportName?.name,
-                  totalExposure: totalExp[j]?.sum
-                }
+    async function fetchLastItems(model, userIds, sortField) {
+      const items = await model.aggregate([
+        {
+          $match: {
+            userId: { $in: userIds },
+          },
+        },
+        {
+          $sort: { [sortField]: -1 },
+        },
+        {
+          $group: {
+            _id: '$userId',
+            lastItem: { $first: '$$ROOT' },
+          },
+        },
+      ]);
 
-                settlementArray.push(newSettlement);
-              }
-            }
-            results.docs[i].settlements = settlementArray;
-            
-            const lastBet      = await Bet.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
-            const lastDeposit  = await Deposits.find({ userId: results.docs[i].userId }).sort({ _id: -1 }).limit(1);
-            const activeBets   = await Bets.countDocuments({ userId: results.docs[i].userId, status: 1  });
-            const canceledBets = await Bets.countDocuments({ userId: results.docs[i].userId, status: 2  });
-            //console.log("lastBet ======= ", lastBet);
-            //console.log("lastDeposit ======= ", lastDeposit);
-            //console.log("activeBets ======= ", activeBets);
-            //console.log("canceledBets ======= ", canceledBets);
+      // Transform the array into a map for easy access
+      return items.reduce((acc, item) => {
+        acc[item._id] = item.lastItem;
+        return acc;
+      }, {});
+    }
 
-            const data  = {
-              lastBetTime : lastBet[0]?.betTime || 0,
-              availableBalance : lastDeposit[0]?.availableBalance || 0,
-              activeBets  : activeBets,
-              canceledBets: canceledBets
-            }
-            results.docs[i].data = data
-          }
-        }
-        return res.send({
-          success: true,
-          message: 'Users list',
-          total: results.total,
-          results: results,
-        });
-      }
-    );
+    async function countBetsByStatus(userIds, status) {
+      const counts = await Bets.aggregate([
+        {
+          $match: {
+            userId: { $in: userIds },
+            status: status,
+          },
+        },
+        {
+          $group: {
+            _id: '$userId',
+            count: { $sum: 1 },
+          },
+        },
+      ]);
+
+      // Transform the array into a map for easy access
+      return counts.reduce((acc, item) => {
+        acc[item._id] = item.count;
+        return acc;
+      }, {});
+    }
+
+    let page = Number(req.query.page) || 1;
+    let sortValue = req.query.sortValue || '_id';
+    let sort = Number(req.query.sort) || -1;
+    let limit = req.query.numRecords && !isNaN(req.query.numRecords) && req.query.numRecords > 0 ? Number(req.query.numRecords) : config.pageSize;
+    let usersQuery = { role: 5, isDeleted: false };
+
+    if (req.query.username) {
+      usersQuery.userName = { $regex: req.query.username, $options: 'i' };
+    }
+
+    const options = { page: page, sort: { [sortValue]: sort }, limit: limit };
+    const results = await User.paginate(usersQuery, options);
+    const userIds = results.docs.map(doc => doc.userId);
+
+    // Fetch data concurrently using Promise.all
+    const [betsInfo, lastBets, lastDeposits, activeBetsCount, canceledBetsCount] = await Promise.all([
+      aggregateBetsInfo(userIds),
+      fetchLastItems(Bet, userIds, 'betTime'),
+      fetchLastItems(Deposits, userIds, 'availableBalance'),
+      countBetsByStatus(userIds, 1),
+      countBetsByStatus(userIds, 2)
+    ]);
+
+    // Process the fetched data to attach to results.docs
+    results.docs.forEach(doc => {
+      doc.settlements = betsInfo[doc.userId] || [];
+      doc.data = {
+        lastBetTime: lastBets[doc.userId]?.betTime || 0,
+        availableBalance: lastDeposits[doc.userId]?.availableBalance || 0,
+        activeBets: activeBetsCount[doc.userId] || 0,
+        canceledBets: canceledBetsCount[doc.userId] || 0
+      };
+    });
+
+    return res.send({
+      success: true,
+      message: 'Users list',
+      total: results.total,
+      results: results,
+    });
   } catch (err) {
-    res.status(500).json({success: false, msg:'Failed to get bettors list'})
+    res.status(500).json({ success: false, msg: 'Failed to get bettors list' })
   }
 };
 
@@ -1034,14 +1168,14 @@ const deleteUser = async (req, res) => {
   });
 };
 
-const userAccountSattlement = async (req, res) =>{
+const userAccountSattlement = async (req, res) => {
 
   const errors = validationResult(req);
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const payload = req.body; 
+    const payload = req.body;
     await User.findOneAndUpdate(
       { userId: Number(payload.userId) },
       {
@@ -1055,7 +1189,7 @@ const userAccountSattlement = async (req, res) =>{
     )
 
     const lastDeposit = await Deposits.find({ userId: Number(payload.userId) }).sort({ _id: -1 }).limit(1);
-    if(lastDeposit.length){
+    if (lastDeposit.length) {
       await Deposits.updateOne(
         { _id: lastDeposit[0]?._id },
         {
@@ -1073,7 +1207,7 @@ const userAccountSattlement = async (req, res) =>{
       message: "User Updated Successfully !",
     });
 
-  } catch (error){
+  } catch (error) {
     //console.log("Catched", error);
     return res.status(404).send({
       success: false,
@@ -1142,6 +1276,6 @@ loginRouter.get('/user-latest-ledger', userSingleLedger);
 
 loginRouter.get('/delete-user', deleteUser);
 
-loginRouter.post('/userAccountSettlement',userValidation.validate('userAccountSattlement'), userAccountSattlement);
+loginRouter.post('/userAccountSettlement', userValidation.validate('userAccountSattlement'), userAccountSattlement);
 
 module.exports = { router, loginRouter };
