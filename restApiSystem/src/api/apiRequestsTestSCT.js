@@ -14,7 +14,7 @@ var _ = require("lodash");
 require('dotenv').config();
 const config = require("../../../config/default.json")
 const moment = require("moment");
-const {CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN} = require("../../../helper/constants");
+const { CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN } = require("../../../helper/constants");
 const { isObjectEqual } = require("../../../helper/common");
 
 const OddsMap = new Map()
@@ -52,7 +52,7 @@ function apiRequests() {
         if (req.query.id && req.query.data) {
           var d1 = Buffer.from(req.query.data, "base64").toString("ascii");
           d1 = JSON.parse(d1);
-          io.emit("updateMatch", {eventId: req.query.id, data: d1});
+          io.emit("updateMatch", { eventId: req.query.id, data: d1 });
         }
       } catch (error) {
         //console.log(error);
@@ -87,20 +87,17 @@ function apiRequests() {
             });
             socket.emit("fancy_event_list", fancyEvents);
           }
-          if (event_information.seriesKey) {
-            if (event_information.sportsId === '4') {
-              cricket = await Crickets.findOne({
-                seriesKey: event_information.seriesKey
-              })
-            } else if (event_information.sportsId === '1' || event_information.sportsId === '2') {
-              soccer = await Score.findOne({
-                scoreKey: event_information.seriesKey
-              })
-            }
+          if (event_information.sportsId === '1' || event_information.sportsId === '2') {
+            soccer = await Score.findOne({
+              scoreKey: event_information.seriesKey
+            })
           }
+          cricket = await Crickets.findOne({
+            eventId: event_information.Id
+          })
 
-          const lastScore = await Score.find({eventId: channel.substring(1)})
-            .sort({_id: -1})
+          const lastScore = await Score.find({ eventId: channel.substring(1) })
+            .sort({ _id: -1 })
             .limit(1);
 
           if (lastScore.length > 0) {
@@ -119,13 +116,13 @@ function apiRequests() {
           ) {
             const marketId = event_information.marketIds[index];
 
-            const lOdds = await Odds.find({marketId: marketId.id})
-              .sort({createdAt: -1})
+            const lOdds = await Odds.find({ marketId: marketId.id })
+              .sort({ createdAt: -1 })
               .limit(1);
             if (lOdds.length > 0)
               event_information.marketIds[index].last_odds = lOdds[0];
           }
-          socket.emit("event_info", {...JSON.parse(JSON.stringify(event_information)), cricket, soccer});
+          socket.emit("event_info", { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer });
         } else {
           socket.emit("err", "Event Not Exist");
         }
@@ -140,8 +137,8 @@ function apiRequests() {
 
     try {
       const results = await inPlayEvents.find(
-        {inplay: true},
-        {Id: 1, _id: 0}
+        { inplay: true },
+        { Id: 1, _id: 0 }
       );
 
       var events = [];
@@ -173,7 +170,7 @@ function apiRequests() {
             };
 
             await Score.findOneAndUpdate(
-              {eventId: score.eventId},
+              { eventId: score.eventId },
               item,
               options
             );
@@ -199,11 +196,11 @@ function apiRequests() {
     const requestData = {
       "filter": {
         "eventTypeIds": [sportsId],
-        // "eventIds": 
-        //   sportsId === "1" 
-        //   ? soccerIds 
-        //   : sportsId === "4" 
-        //   ? cricketIds 
+        // "eventIds":
+        //   sportsId === "1"
+        //   ? soccerIds
+        //   : sportsId === "4"
+        //   ? cricketIds
         //   : []
       }
     }
@@ -223,7 +220,7 @@ function apiRequests() {
         });
         let apiEventIds = [];
         for (const event of events) {
-          const existingDoc = await inPlayEvents.findOne({Id: event.event.id});
+          const existingDoc = await inPlayEvents.findOne({ Id: event.event.id });
 
           if (existingDoc && existingDoc.isCanceled === true) {
             continue;
@@ -231,7 +228,7 @@ function apiRequests() {
 
           // var competitions = responseCompetition.data.result;
           await inPlayEvents.findOneAndUpdate(
-            {Id: event.event.id},
+            { Id: event.event.id },
             {
               $set: {
                 sportsId: sportsId,
@@ -265,8 +262,8 @@ function apiRequests() {
 
         let dbEventIdS = [];
         const currentEvents = await inPlayEvents.find(
-          {status: 'OPEN', sportsId: `${sportsId}`},
-          {Id: 1}
+          { status: 'OPEN', sportsId: `${sportsId}` },
+          { Id: 1 }
         );
 
         for (const event of currentEvents) {
@@ -280,11 +277,11 @@ function apiRequests() {
         for (const diff of diffs) {
           //console.log("Event is closed because it not exists on listEventsBySport: ", diff)
           await MarketIDS.updateMany(
-            {eventId: diff},
-            {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}
+            { eventId: diff },
+            { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } }
           );
           await inPlayEvents.updateOne(
-            {Id: diff},
+            { Id: diff },
             {
               $set: {
                 status: 'CLOSED-EVENTLIST',
@@ -294,7 +291,7 @@ function apiRequests() {
               },
             }
           );
-          io.emit("inplay", {eventID: diff, inplay: false});
+          io.emit("inplay", { eventID: diff, inplay: false });
           io.to("eventStatusChange").emit("event_status", {
             eventId: diff,
             status: 'CLOSED-EVENTLIST',
@@ -411,7 +408,7 @@ function apiRequests() {
           });
 
           if (!marketID) {
-            const countOfMarket = await MarketIDS.countDocuments({eventId: eventId, status: "OPEN"});
+            const countOfMarket = await MarketIDS.countDocuments({ eventId: eventId, status: "OPEN" });
 
             if (
               countOfMarket >
@@ -441,15 +438,15 @@ function apiRequests() {
 
           } else {
             await MarketIDS.findOneAndUpdate(
-              {eventId: ev, marketId: marketIds[index].id + ""},
-              {status: marketIds[index].status}
+              { eventId: ev, marketId: marketIds[index].id + "" },
+              { status: marketIds[index].status }
             );
           }
         }
 
         await inPlayEvents.findOneAndUpdate(
-          {Id: eventId},
-          {marketIds: marketIds}
+          { Id: eventId },
+          { marketIds: marketIds }
         );
       }
     } catch (error) {
@@ -505,8 +502,8 @@ function apiRequests() {
                 ) {
                   checkedMarkets.push(element.marketId);
 
-                  const marketData = await MarketIDS.findOne({marketId: `${element.marketId}`})
-                    .sort({lastCheckMarket: 1})
+                  const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
+                    .sort({ lastCheckMarket: 1 })
                     .limit(1)
                     .exec();
                   const eventId = marketData.eventId
@@ -599,13 +596,13 @@ function apiRequests() {
 
                     if (element.status === "CLOSED") {
                       await MarketIDS.updateOne(
-                        {marketId: marketId},
-                        {inPlay: false, status: element.status}
+                        { marketId: marketId },
+                        { inPlay: false, status: element.status }
                       );
                     } else {
                       await MarketIDS.updateOne(
-                        {marketId: marketId},
-                        {status: element.status}
+                        { marketId: marketId },
+                        { status: element.status }
                       );
                     }
 
@@ -622,8 +619,8 @@ function apiRequests() {
 
                       if (runners.length > 0) {
                         await MarketIDS.updateOne(
-                          {marketId: marketId, runners: null},
-                          {$set: {runners: runners}}
+                          { marketId: marketId, runners: null },
+                          { $set: { runners: runners } }
                         );
                         runnerCheckerArray.push(marketId);
                       }
@@ -662,8 +659,8 @@ function apiRequests() {
             for (let index = 0; index < filteredArray.length; index++) {
               OddsMap.delete(filteredArray[index]?.market)
               await MarketIDS.updateOne(
-                {marketId: filteredArray[index]?.market},
-                {inPlay: false, status: "CLOSED-ODDS-EMPTY"}
+                { marketId: filteredArray[index]?.market },
+                { inPlay: false, status: "CLOSED-ODDS-EMPTY" }
               );
             }
           } catch (error) {
@@ -721,16 +718,16 @@ function apiRequests() {
 
             //update these events inplay status with data that was come from data provider.
             await inPlayEvents.updateOne(
-              {Id: eventId},
-              {inplayFromServer: true, inplay: true}
+              { Id: eventId },
+              { inplayFromServer: true, inplay: true }
             );
           }
 
           // check old inplayFromServer true record. Match with new list.
           let dbLiveEventIds = [];
           const dbLiveEvents = await inPlayEvents.find(
-            {inplayFromServer: true, sportsId: `${sportID}`},
-            {Id: 1}
+            { inplayFromServer: true, sportsId: `${sportID}` },
+            { Id: 1 }
           );
 
           for (const event of dbLiveEvents) {
@@ -742,7 +739,7 @@ function apiRequests() {
           // update event status with 'CLOSED-INPLAYLIST'
           // Also update MarketIDs
           for (const diff of diffs) {
-            const inPlayEvent = await inPlayEvents.findOne({Id: diff})
+            const inPlayEvent = await inPlayEvents.findOne({ Id: diff })
             const sportsId = inPlayEvent.sportsId
             if (['1', '2', '4'].includes(sportsId)) {
               const openDate = Number(inPlayEvent.openDate)
@@ -769,18 +766,18 @@ function apiRequests() {
             });
 
             if (ix === -1) {
-              removedInplayList.push({id: diff, date: new Date()})
+              removedInplayList.push({ id: diff, date: new Date() })
             }
 
             //console.log(`Event is closed because it not exists on inplaylist: ${diff}`)
 
             await MarketIDS.updateMany(
-              {eventId: diff},
-              {$set: {inPlay: false, status: "CLOSED", readyForScore: true}}
+              { eventId: diff },
+              { $set: { inPlay: false, status: "CLOSED", readyForScore: true } }
             )
 
             await inPlayEvents.updateOne(
-              {Id: diff},
+              { Id: diff },
               {
                 $set: {
                   status: "CLOSED-INPLAYLIST",
@@ -791,7 +788,7 @@ function apiRequests() {
               }
             );
 
-            io.emit("inplay", {eventID: diff, inplay: false});
+            io.emit("inplay", { eventID: diff, inplay: false });
 
             io.to("eventStatusChange").emit("event_status", {
               eventId: diff,
@@ -826,23 +823,23 @@ function apiRequests() {
 
       // Take list of inplay Event. If this event have new marketids that is added after the match start. Add this marketids to checking list.
       const inPlayEventsDocs = await inPlayEvents
-        .find({inplay: true, sportsId: sportsId + ""}, "Id")
-        .sort({openDate: 1});
+        .find({ inplay: true, sportsId: sportsId + "" }, "Id")
+        .sort({ openDate: 1 });
 
       const eventIds = inPlayEventsDocs.map((doc) => doc.Id);
 
       const marketIDsPlaying = await MarketIDS.find({
-        eventId: {$in: eventIds},
+        eventId: { $in: eventIds },
         status: "OPEN",
-        inPlay: {$ne: true},
-      }).sort({index: 1});
+        inPlay: { $ne: true },
+      }).sort({ index: 1 });
 
       if (marketIDsPlaying.length > 0) {
         for (let x = 0; x < marketIDsPlaying.length; x++) {
           const market = marketIDsPlaying[x];
           await MarketIDS.updateOne(
-            {_id: market._id},
-            {inPlay: true}
+            { _id: market._id },
+            { inPlay: true }
           ).exec();
           //console.log(market.marketId + " market updated with inplay");
           count++;
@@ -866,17 +863,17 @@ function apiRequests() {
       // If these events have valid marketIDS(status='OPEN')
       const currentTime = Date.now();
       const query = {
-        openDate: {$gt: currentTime},
+        openDate: { $gt: currentTime },
         inplayFromServer: true,
         sportsId: sportsId + "",
         status: "OPEN",
-        inplay: {$ne: true},
+        inplay: { $ne: true },
         isShowed: true,
       };
 
       var events = await inPlayEvents
         .find(query)
-        .sort({openDate: 1})
+        .sort({ openDate: 1 })
         .limit(10)
         .exec();
 
@@ -886,11 +883,11 @@ function apiRequests() {
           sportsId: sportsId + "",
           isShowed: true,
           status: "OPEN",
-          inplay: {$ne: true},
+          inplay: { $ne: true },
         };
         events = await inPlayEvents
           .find(queryPastEvents)
-          .sort({openDate: -1})
+          .sort({ openDate: -1 })
           .limit(10)
           .exec();
       }
@@ -906,22 +903,22 @@ function apiRequests() {
         const marketIDs = await MarketIDS.find({
           eventId: event.Id,
           status: "OPEN",
-        }).sort({index: 1});
+        }).sort({ index: 1 });
 
         if (marketIDs.length > 0) {
           //console.log(event.Id + " -> " + event.name + " event updated with inplay");
 
           await inPlayEvents
-            .updateMany({Id: event.Id}, {inplay: true})
+            .updateMany({ Id: event.Id }, { inplay: true })
             .exec();
 
-          io.emit("inplay", {eventID: event.Id, inplay: true});
+          io.emit("inplay", { eventID: event.Id, inplay: true });
 
           for (let x = 0; x < marketIDs.length; x++) {
             const market = marketIDs[x];
             await MarketIDS.updateOne(
-              {_id: market._id},
-              {inPlay: true}
+              { _id: market._id },
+              { inPlay: true }
             ).exec();
             //console.log(market.marketId + " market updated with inplay");
             count++;
@@ -937,7 +934,7 @@ function apiRequests() {
           //If this event not have to marketIDS, we update the status of event with CLOSED.
           //await MarketIDS.deleteMany({ eventId: event.Id }).exec();;
           //console.log(event.Id + " was closed. MarketIDS is empty");
-          await inPlayEvents.updateOne({Id: event.Id}, {inPlay: false, status: 'CLOSED-MARKETIDS'});
+          await inPlayEvents.updateOne({ Id: event.Id }, { inPlay: false, status: 'CLOSED-MARKETIDS' });
         }
       }
     } catch (error) {
