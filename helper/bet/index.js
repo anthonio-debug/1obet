@@ -1,16 +1,18 @@
 const axios = require("axios");
+require('dotenv').config();
+const ACTIVE_BETTOR_URI = process.env.ACTIVE_BETTOR_URI || `http://127.0.0.1/api/active-bettors`;
 const checkActiveBettors = async (bet) => {
-  const userId  =bet?.userId
+  const userId = bet?.userId
   try {
-  // const url = `https://production.1obet.net/api/active-bettors`
-  const url = `http://127.0.0.1/api/active-bettors`
-  // const url = `http://localhost:4000/api/active-bettors`
-  // const url = `http://185.182.187.118:4000/api/active-bettors`
+    // const url = `https://production.1obet.net/api/active-bettors`
+    const url = ACTIVE_BETTOR_URI || `http://127.0.0.1/api/active-bettors`
+    // const url = `http://localhost:4000/api/active-bettors`
+    // const url = `http://185.182.187.118:4000/api/active-bettors`
 
-  const activeBettorsRes = await axios.get(url)
-  const activeBettors = new Map(Object.entries(activeBettorsRes?.data?.results));
+    const activeBettorsRes = await axios.get(url)
+    const activeBettors = new Map(Object.entries(activeBettorsRes?.data?.results));
     console.log('checkActiveBettors: ', userId)
-  return activeBettors.has(`${userId}`)
+    return activeBettors.has(`${userId}`)
   } catch (error) {
     console.error('checkActiveBettors: ', userId, error?.data || error.message || error)
     return false
