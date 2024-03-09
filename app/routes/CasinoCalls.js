@@ -29,6 +29,7 @@ const transactionOptions = {
   readConcern: {level: 'local'},
   writeConcern: {w: 'majority'}
 }
+const dbClient = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
 
 const checkMarketBlocked = async (user) => {
   let parentUserIds = await getParents(user.userId);
@@ -42,15 +43,10 @@ const checkMarketBlocked = async (user) => {
   }
 }
 
-const WinLoseTransManagement = async (balance, payload, users123, action, res) => {
+const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
-    const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
-    await client.connect();
-    const session = client.startSession();
-    const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
-    const users = client.db(`${DBNAME}`).collection('users');
+    const users = dbClient.db(`${DBNAME}`).collection('users');
     const user = await users.findOne({remoteId: Number(payload.remote_id)});
-
     /*
       action= 0 debit
       action= 1 credit( decision came from casino )
@@ -605,19 +601,10 @@ async function balanceFun(req, res) {
 }
 
 async function debitFun(req, res) {
-  const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
-
+  const session = dbClient.startSession();
   try {
     const payload = req.query;
     const transactionId = payload.transaction_id
-
-    // const sameTransaction = await CasinoDebits.countDocuments({
-    //   transaction_id: payload.transaction_id,
-    //   remote_id: parseInt(payload.remote_id),
-    //   round_id: payload.round_id,
-    //   game_id: payload.game_id,
-    //   action: 'debit'
-    // })
     const currentUser = await User.findOne(
       {remoteId: parseInt(payload.remote_id)}
     )
@@ -635,10 +622,8 @@ async function debitFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    await client.connect();
-    const session = client.startSession();
-    const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
-    const users = client.db(`${DBNAME}`).collection('users');
+
+    const users = dbClient.db(`${DBNAME}`).collection('users');
 
     ////console.log(" debt req.query ============== ", req.query);
     const salt = saltKey;
@@ -692,30 +677,29 @@ async function debitFun(req, res) {
         let balance = user.availableBalance / casinoMultiples;
         const resp = await WinLoseTransManagement(balance, payload, user, 0, res);
         await session.commitTransaction();
-        const updatedUser = await users.findOne(
-          {remoteId: parseInt(payload.remote_id)},
-          {session}
-        )
-        ////console.log(" Amount Returning to Casino from Debit  ", updatedUser.availableBalance / casinoMultiples);
-        return res.json({
-          status: 200,
-          balance: updatedUser.availableBalance / casinoMultiples
-        });
       }
-
     }, transactionOptions);
-    await session.endSession();
+    const updatedUser = await users.findOne(
+      {remoteId: parseInt(payload.remote_id)},
+      {session}
+    )
+    ////console.log(" Amount Returning to Casino from Debit  ", updatedUser.availableBalance / casinoMultiples);
+    return res.json({
+      status: 200,
+      balance: updatedUser.availableBalance / casinoMultiples
+    });
+
 
   } catch (err) {
     console.error('Error:', err);
     return res.json({status: 500, msg: `Internal error ${err}`});
   } finally {
-    await client.close();
+    await session.endSession();
   }
 }
 
 async function creditFun(req, res) {
-  const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+  const session = dbClient.startSession();
   try {
     const payload = req.query;
     const transactionId = payload.transaction_id
@@ -743,13 +727,8 @@ async function creditFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-
-    await client.connect();
-    const session = client.startSession();
-
     ////console.log(" credit req.query ======= ", req.query);
-    const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
-    const users = client.db(`${DBNAME}`).collection('users');
+    const users = dbClient.db(`${DBNAME}`).collection('users');
 
     const salt = saltKey;
     const key = payload.key;
@@ -793,40 +772,37 @@ async function creditFun(req, res) {
           balance: user.availableBalance / casinoMultiples
         });
       } else {
-        const amount = payload.amount * casinoMultiples;
-        const response = await WinLoseTransManagement(0, payload, user, 1, res);
+        // const amount = payload.amount * casinoMultiples;
+        const response = await WinLoseTransManagement(0, payload, user, 1, res, session);
         await session.commitTransaction();
-        const updatedUser = await users.findOne(
-          {remoteId: parseInt(payload.remote_id)},
-          {session}
-        )
-        ////console.log(" Amount Returning to Casino from Credit ", updatedUser.availableBalance / casinoMultiples);
-        return res.json({
-          status: 200,
-          balance: updatedUser.availableBalance / casinoMultiples
-        });
+        //console.log(" Amount Returning to Casino from Credit ", updatedUser.availableBalance / casinoMultiples);
       }
     }, transactionOptions);
-    await session.endSession();
+
+    const updatedUser = await users.findOne(
+      {remoteId: parseInt(payload.remote_id)},
+      {session}
+    )
+    return res.json({
+      status: 200,
+      balance: updatedUser.availableBalance / casinoMultiples
+    });
 
   } catch (err) {
     console.error('Error:', err);
     return res.json({status: 500, msg: `Internal error ${err}`});
   } finally {
-
-    await client.close();
+    await session.endSession();
   }
 }
 
 async function rollbackFun(req, res) {
-  const client = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
-  await client.connect();
-  const session = client.startSession();
+  const session = dbClient.startSession();
   try {
     const payload = req.query;
     ////console.log(" rollback req.query ======= ", req.query);
-    const casinoCalls = client.db(`${DBNAME}`).collection('casinocalls');
-    const users = client.db(`${DBNAME}`).collection('users');
+    const casinoCalls = dbClient.db(`${DBNAME}`).collection('casinocalls');
+    const users = dbClient.db(`${DBNAME}`).collection('users');
 
     const salt = saltKey;
     const key = payload.key;
@@ -945,7 +921,7 @@ async function rollbackFun(req, res) {
       msg: `Internal error ${err}`
     });
   } finally {
-    await client.close();
+    await session.endSession()
   }
 }
 
