@@ -23,6 +23,7 @@ function ToolForEvent() {
 
     if (config.activeProvider === 'NEW') {
       fetchEvents();
+      setBrokenRecord();
 
       setInterval(fetchEvents, 6 * 60 * 60 * 1000);
       setInterval(fetchMarkets, 10 * 1000);
@@ -43,6 +44,24 @@ function ToolForEvent() {
       setInterval(() => {
         fetchOdds(true);
       }, 1500);
+
+      setInterval(() => {
+        setBrokenRecord();
+      }, 10 * 60 * 1000);
+    }
+  }
+
+  async function setBrokenRecord() {
+    const checkOldRecordWithoutReady = await MarketIDs.find({
+      readyForScore: { $ne: true },
+      winnerInfo: null,
+      runners: { $ne: null },
+      status: { $ne: 'OPEN' }
+    });
+
+    for (let index = 0; index < checkOldRecordWithoutReady.length; index++) {
+      const element = checkOldRecordWithoutReady[index];
+      await MarketIDs.updateOne({ _id: element._id }, { $set: { readyForScore: true } });
     }
   }
 
