@@ -30,6 +30,8 @@ const transactionOptions = {
   writeConcern: {w: 'majority'}
 }
 const dbClient = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+const casinoCalls = dbClient.db(`${DBNAME}`).collection('casinocalls');
+const users = dbClient.db(`${DBNAME}`).collection('users');
 
 const checkMarketBlocked = async (user) => {
   let parentUserIds = await getParents(user.userId);
@@ -45,7 +47,6 @@ const checkMarketBlocked = async (user) => {
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
-    const users = dbClient.db(`${DBNAME}`).collection('users');
     const user = await users.findOne({remoteId: Number(payload.remote_id)});
     /*
       action= 0 debit
@@ -597,6 +598,10 @@ async function balanceFun(req, res) {
   } catch (err) {
     console.error(err);
     return res.json({status: 500, msg: `Internal error ${err}`});
+  } finally {
+    res.json({
+      status: 200,
+    });
   }
 }
 
@@ -622,10 +627,7 @@ async function debitFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-
-    const users = dbClient.db(`${DBNAME}`).collection('users');
-
-    ////console.log(" debt req.query ============== ", req.query);
+    //console.log(" debt req.query ============== ", req.query);
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
@@ -695,6 +697,9 @@ async function debitFun(req, res) {
     return res.json({status: 500, msg: `Internal error ${err}`});
   } finally {
     await session.endSession();
+    res.json({
+      status: 200,
+    });
   }
 }
 
@@ -727,19 +732,17 @@ async function creditFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    ////console.log(" credit req.query ======= ", req.query);
-    const users = dbClient.db(`${DBNAME}`).collection('users');
-
+    //console.log(" credit req.query ======= ", req.query);
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
 
     const queryString = Object.keys(payload).map(key => `${key}=${payload[key]}`).join('&');
 
-    ////console.log('queryString', queryString);
+    //console.log('queryString', queryString);
 
     const hash = createHashKey(salt, queryString);
-    // ////console.log('hash', hash);
+    //console.log('hash', hash);
 
     if (hash !== key) {
       return res.json({
@@ -760,7 +763,7 @@ async function creditFun(req, res) {
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
     if (checkMarketBlockedResponse == 1) {
       await session.abortTransaction();
-      return res.json({status: '500', msg: ' Batting is not allowed ! '});
+      return res.json({status: '500', msg: 'Batting is not allowed !'});
     }
 
     // let updatedavailableBalance = 0
@@ -793,6 +796,9 @@ async function creditFun(req, res) {
     return res.json({status: 500, msg: `Internal error ${err}`});
   } finally {
     await session.endSession();
+    res.json({
+      status: 200,
+    });
   }
 }
 
@@ -801,9 +807,6 @@ async function rollbackFun(req, res) {
   try {
     const payload = req.query;
     ////console.log(" rollback req.query ======= ", req.query);
-    const casinoCalls = dbClient.db(`${DBNAME}`).collection('casinocalls');
-    const users = dbClient.db(`${DBNAME}`).collection('users');
-
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
@@ -905,7 +908,7 @@ async function rollbackFun(req, res) {
         {remoteId: parseInt(payload.remote_id)}
       );
       if (!newUpdatedUser) {
-        return res.json({status: '500', msg: `Internal error User Not Found`});
+        return res.json({status: '500', msg: `Internal error: User Not Found`});
       } else {
         return res.json({
           status: 404,
@@ -922,6 +925,9 @@ async function rollbackFun(req, res) {
     });
   } finally {
     await session.endSession()
+    res.json({
+      status: 200,
+    });
   }
 }
 

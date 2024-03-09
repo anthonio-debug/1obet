@@ -23,7 +23,7 @@ let depositsSchema = new Schema({
   matchId: { type: String, index: true },
   marketId : { type : String },
   commissionFrom: { type: Number },
-  betId: { type: String },
+  betId: { type: String, required: false },
   sportsId: { type: String },
   upLineAmount: { type : Number },
   updatedAt: { type: String },
@@ -53,12 +53,12 @@ depositsSchema.plugin(Global.aggregatePaginate);
 depositsSchema.plugin(Global.paginate);
 
 depositsSchema.pre('save', function (next) {
-  var now = new Date();
-  var year = now.getFullYear().toString(); // Extract last two digits of year
-  var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Convert month to two digits and pad with zero if necessary
-  var day = now.getDate().toString().padStart(2, '0'); // Convert day to two digits and pad with zero if necessary
-  var formattedDate = `${year}-${month}-${day}`;
-  this. date = now.getTime();
+  let now = new Date();
+  let year = now.getFullYear().toString(); // Extract last two digits of year
+  let month = (now.getMonth() + 1).toString().padStart(2, '0'); // Convert month to two digits and pad with zero if necessary
+  let day = now.getDate().toString().padStart(2, '0'); // Convert day to two digits and pad with zero if necessary
+  let formattedDate = `${year}-${month}-${day}`;
+  this.date = now.getTime();
   if (!this.createdAt) {
     this.createdAt = formattedDate ;
   } else {
