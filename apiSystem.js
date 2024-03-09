@@ -96,7 +96,7 @@ async function main() {
   ToolForSessionFancy.init(io, express);
 
   /*init asian odds*/
-  ToolForAsian.init(io, express);
+  // ToolForAsian.init(io, express);
 
   /*init events list*/
   ToolForListEvent.init(io, express);
