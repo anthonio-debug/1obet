@@ -163,10 +163,11 @@ function ToolForResults() {
       }
     } catch (error) {
       console.error("Error:", error);
+    } finally {
+      setTimeout(() => {
+        getBetForAsianOdd();
+      }, 5 * 1000);
     }
-    setTimeout(() => {
-      getBetForAsianOdd();
-    }, 5 * 1000);
   }
 
   async function manuelBetChecker() {
@@ -214,8 +215,9 @@ function ToolForResults() {
           },
         },
       ]);
-
-      await scoreChecker.manuel(results);
+      if (results.length > 0) {
+        await scoreChecker.manuel(results);
+      }
     } catch (error) {
       console.error("Error fetching data:", error);
     } finally {
