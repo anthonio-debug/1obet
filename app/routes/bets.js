@@ -3790,6 +3790,7 @@ async function cricketLiveScore(id) {
         let day = 1;
         let score = 0;
         let inning = 1;
+        let played
         if (scoreInfo.activenation1 == 1) {
           score = scoreInfo.score1;
           played = scoreInfo.score2;
