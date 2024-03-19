@@ -4,6 +4,7 @@ const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
 const axios = require('axios');
 const User = require('../models/user');
+const { fetchSession } = require("../../helper/api/sessionAPIHelper");
 const router = express.Router();
 const apiURL = "http://185.58.225.212:8080/api/"
 const apiSystemRacing = require("../../restApiSystem/src/tools_for_updated_racing.js")();
@@ -496,10 +497,9 @@ async function getMarketsByMarketType(req, res) {
 async function getFanciesByEventId(req, res) {
   const eventId = req.params.eventId;
   try {
-    const url = `http://142.93.36.1/api/v1/listMarketBookSession?match_id=${eventId}`
-    const response = await axios.get(url);
+    const sessions = await fetchSession(eventId)
 
-    res.status(200).json({success: true, data: response.data});
+    res.status(200).json({success: true, data: sessions});
   } catch (err) {
     res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
   }
