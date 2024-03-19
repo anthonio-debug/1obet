@@ -1,15 +1,14 @@
 const axios = require("axios");
-const SESSION_API_URI = `http://142.93.36.1/api/v2`
+const SESSION_API_URI = `http://142.93.36.1/api/v1`
 
 async function fetchSession(eventId) {
   try {
     // const eventId = '33002177'
-    // http://142.93.36.1/api/v2/getSessions?EventTypeID=4&matchId=33061168
-    const url = `${SESSION_API_URI}/getSessions?EventTypeID=4&matchId=${eventId}`
+    const url = `${SESSION_API_URI}/listMarketBookSession?match_id=${eventId}`
     const response = await axios.get(url)
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
-    return JSON.parse(res) || []
+    return res || []
   } catch (error) {
     console.error('session api fetchSession: ', eventId, error?.data || error.message || error)
     return []
