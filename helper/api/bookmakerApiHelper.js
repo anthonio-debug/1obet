@@ -9,8 +9,8 @@ async function fetchBookmakerList(eventId) {
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
     return res || []
-  } catch (err) {
-    console.error('bookmaker api fetchBookmakerList: ', err)
+  } catch (error) {
+    console.error('bookmaker api fetchBookmakerList: ', eventId, error?.data || error.message || error)
     return []
   }
 }
@@ -23,8 +23,8 @@ async function fetchBookmakerOdds(marketId) {
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
     return res || []
-  } catch (err) {
-    console.error('bookmaker api fetchBookmakerOdds: ', err)
+  } catch (error) {
+    console.error('bookmaker api fetchBookmakerOdds: ', marketId, error?.data || error.message || error)
     return []
   }
 }
