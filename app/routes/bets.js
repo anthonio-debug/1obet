@@ -2742,7 +2742,7 @@ const placeBet = async (req, res) => {
 
       const geoAPIKey = "2dee49c5aad5906aff30a1d0eb8ae024c548fed9"
 
-      var geo = {
+      let geo = {
         latitude: 0,
         longitude: 0,
         region: null,
@@ -2824,7 +2824,8 @@ const placeBet = async (req, res) => {
         // layFancyRate 
       });
 
-      if (user.availableBalance < expAmount - prevExpAmount) {
+      let nowUser = await User.findOne({ userId }).exec();
+      if (nowUser.availableBalance < expAmount - prevExpAmount) {
         activeBettors.delete(userId)
         return res.status(404).send({ message: " Insufficient balance " });
       }
@@ -2928,14 +2929,15 @@ const placeBet = async (req, res) => {
           });
           await position.save();
 
-          const user_prev_balance = user.balance;
-          const user_prev_availableBalance = user.availableBalance;
-          const user_prev_exposure = user.exposure;
+          const nowUser = await User.findOne({ userId }).exec();
+          const user_prev_balance = nowUser.balance;
+          const user_prev_availableBalance = nowUser.availableBalance;
+          const user_prev_exposure = nowUser.exposure;
 
           const totalExpAmount = expAmount - prevExpAmount;
-          const UserExpAmountFix = user.exposure + prevExpAmount - expAmount;
+          const UserExpAmountFix = nowUser.exposure + prevExpAmount - expAmount;
           const UserExpAmount = Number(UserExpAmountFix.toFixed(3));
-          const UserAvlBalAmountAmt = user.availableBalance + prevExpAmount - expAmount;
+          const UserAvlBalAmountAmt = nowUser.availableBalance + prevExpAmount - expAmount;
           const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(3));
 
           await User.findOneAndUpdate(
@@ -2979,7 +2981,7 @@ const placeBet = async (req, res) => {
               user_prev_balance: user_prev_balance,
               user_prev_availableBalance: user_prev_availableBalance,
               user_prev_exposure: user_prev_exposure,
-              user_new_balance: user.balance,
+              user_new_balance: nowUser.balance,
               user_new_availableBalance: UserAvlBalAmount,
               user_new_exposure: UserExpAmount,
               marketId: _3rdPartyMarketId || 0,
