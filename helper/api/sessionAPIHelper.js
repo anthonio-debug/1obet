@@ -1,4 +1,5 @@
 const axios = require("axios");
+const { isIterable } = require("../common");
 const SESSION_API_URI = `http://142.93.36.1/api/v2`
 
 async function fetchSession(eventId) {
@@ -9,7 +10,13 @@ async function fetchSession(eventId) {
     const response = await axios.get(url)
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
-    return JSON.parse(res) || []
+    if (isIterable(res)) {
+      return res.map((item) => {
+        return JSON.parse(item)
+      })
+    } else {
+      return []
+    }
   } catch (error) {
     console.error('session api fetchSession: ', eventId, error?.data || error.message || error)
     return []
@@ -24,7 +31,13 @@ async function fetchMarketOdds(marketId) {
     const response = await axios.get(url)
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
-    return JSON.parse(res) || []
+    if (isIterable(res)) {
+      return res.map((item) => {
+        return JSON.parse(item)
+      })
+    } else {
+      return []
+    }
   } catch (error) {
     console.error('session api fetchMarketOdds: ', marketId, error?.data || error.message || error)
     return []
