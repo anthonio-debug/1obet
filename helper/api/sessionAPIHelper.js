@@ -11,9 +11,10 @@ async function fetchSession(eventId) {
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
     if (isIterable(res)) {
-      return res.map((item) => {
+      const items = res.map((item) => {
         return JSON.parse(item)
       })
+      return items
     } else {
       return []
     }
@@ -32,9 +33,10 @@ async function fetchMarketOdds(marketId) {
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
     if (isIterable(res)) {
-      return res.map((item) => {
+      const items = res.map((item) => {
         return JSON.parse(item)
       })
+      return items
     } else {
       return []
     }
