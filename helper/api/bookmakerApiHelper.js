@@ -1,5 +1,5 @@
 const axios = require("axios");
-const BOOKMAKER_API_URI = `http://46.101.9.108/api/v1`
+const BOOKMAKER_API_URI = `http://46.101.9.108/api/v2`
 
 async function fetchBookmakerList(eventId) {
   try {
