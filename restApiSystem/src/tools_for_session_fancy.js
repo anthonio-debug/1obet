@@ -9,7 +9,7 @@ const MarketIDs = require('../../app/models/marketIds');
 const MarketIDS = require("../../app/models/marketIds");
 const {isIterable, isObjectEqual } = require("../../helper/common");
 const {fetchSession} = require("../../helper/api/sessionAPIHelper");
-const {fetchBookmakerList, fetchBookmakerOdds} = require("../../helper/api/bookmakerApiHelper");
+const {fetchBookmakerList, fetchBookmakerOdds} = require("../../helper/api/sessionAPIHelper");
 require('dotenv').config()
 
 let io;

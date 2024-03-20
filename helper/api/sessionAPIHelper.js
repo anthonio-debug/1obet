@@ -77,4 +77,43 @@ async function getSessionBookmakerResult(marketIds) {
   }
 }
 
-module.exports = {fetchSession, fetchMarketOdds, getSessionFancyResult, getSessionBookmakerResult}
+async function fetchBookmakerList(eventId) {
+  try {
+    // const eventId = '33068371'
+    // http://142.93.36.1/api/v2/getBookmakers?EventTypeID=4&EventID=33068371
+    const url = `${SESSION_API_URI}/getBookmakers?EventTypeID=4&EventID=${eventId}`
+    const response = await axios.get(url)
+    // console.log('session list: ', JSON.stringify(res))
+    return response?.data ?? [];
+  } catch (error) {
+    console.error('session api fetchBookmakerList: ', error?.data || error.message || error)
+    return []
+  }
+}
+
+async function fetchBookmakerOdds(marketIds) {
+  try {
+    // const marketId = '1.166536383'
+    const marketId = marketIds.join(',')
+    // http://142.93.36.1/api/v2/getBookmakerOdds?EventTypeID=4&marketId=9991.225522065_bm1
+    const url = `${SESSION_API_URI}/getBookmakerOdds?EventTypeID=4&marketId=${marketId}`
+    const response = await axios.get(url)
+    // console.log('session list: ', JSON.stringify(res))
+    const res = response.data
+    if (isIterable(res)) {
+      const items = res.map((item) => {
+        return JSON.parse(item)
+      })
+      return items
+    } else {
+      return []
+    }
+  } catch (error) {
+    console.error('session api fetchBookmakerRate: ', error?.data || error.message || error)
+    return []
+  }
+}
+
+module.exports = {fetchSession, fetchMarketOdds, getSessionFancyResult, getSessionBookmakerResult,
+  fetchBookmakerList, fetchBookmakerOdds
+}
