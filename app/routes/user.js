@@ -1112,8 +1112,7 @@ const battorsList = async (req, res) => {
     results.docs.forEach(doc => {
       doc.settlements = betsInfo[doc.userId] || [];
       doc.data = {
-        parent: parents[doc.createdBy] || 'parent',
-        totalParent: parents,
+        parent: parents[doc.createdBy] || '',
         lastBetTime: lastBets[doc.userId]?.betTime || 0,
         availableBalance: lastDeposits[doc.userId]?.availableBalance || 0,
         activeBets: activeBetsCount[doc.userId] || 0,
