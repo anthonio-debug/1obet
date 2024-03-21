@@ -57,7 +57,7 @@ async function getSessionFancyResult(marketIds) {
     // console.log('session list: ', JSON.stringify(res))
     return response?.data ?? [];
   } catch (error) {
-    console.error('session api fetchMarketOdds: ', error?.data || error.message || error)
+    console.error('session api getSessionFancyResult: ', marketIds, error?.data || error.message || error)
     return []
   }
 }
@@ -72,7 +72,7 @@ async function getSessionBookmakerResult(marketIds) {
     // console.log('session list: ', JSON.stringify(res))
     return response?.data ?? [];
   } catch (error) {
-    console.error('session api fetchMarketOdds: ', error?.data || error.message || error)
+    console.error('session api getSessionBookmakerResult: ', marketIds, error?.data || error.message || error)
     return []
   }
 }
@@ -86,7 +86,7 @@ async function fetchBookmakerList(eventId) {
     // console.log('session list: ', JSON.stringify(res))
     return response?.data ?? [];
   } catch (error) {
-    console.error('session api fetchBookmakerList: ', error?.data || error.message || error)
+    console.error('session api fetchBookmakerList: ',eventId,  error?.data || error.message || error)
     return []
   }
 }
@@ -109,7 +109,7 @@ async function fetchBookmakerOdds(marketIds) {
       return []
     }
   } catch (error) {
-    console.error('session api fetchBookmakerRate: ', error?.data || error.message || error)
+    console.error('session api fetchBookmakerOdds: ', marketIds, error?.data || error.message || error)
     return []
   }
 }
