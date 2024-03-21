@@ -1195,6 +1195,7 @@ const userAccountSattlement = async (req, res) => {
         {
           // exposure: Number(Number(payload.exposure).toFixed(3)),
           availableBalance: Number(Number(payload.availableBalance).toFixed(3)),
+          maxWithdraw: Number(Number(payload.availableBalance).toFixed(3)),
           balance: Number(Number(payload.balance).toFixed(3)),
           // clientPL: Number(Number(payload.clientPL).toFixed(3)),
           description: `${lastDeposit.description} ...`,
