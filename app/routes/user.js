@@ -1048,6 +1048,18 @@ const battorsList = async (req, res) => {
       }, {});
     }
 
+    async function fetchParent(parentIds) {
+      const parents = await User.find({
+        userId: { $in: parentIds }
+      });
+
+      // Transform the array into a map for easy access
+      return parents.reduce((acc, item) => {
+        acc[item.userId] = item.userName;
+        return acc;
+      }, {});
+    }
+
     async function countBetsByStatus(userIds, status) {
       const counts = await Bets.aggregate([
         {
@@ -1084,10 +1096,12 @@ const battorsList = async (req, res) => {
     const options = { page: page, sort: { [sortValue]: sort }, limit: limit };
     const results = await User.paginate(usersQuery, options);
     const userIds = results.docs.map(doc => doc.userId);
+    const parentIds = results.docs.map(doc => doc.createdBy);
 
     // Fetch data concurrently using Promise.all
-    const [betsInfo, lastBets, lastDeposits, activeBetsCount, canceledBetsCount] = await Promise.all([
+    const [betsInfo, parents, lastBets, lastDeposits, activeBetsCount, canceledBetsCount] = await Promise.all([
       aggregateBetsInfo(userIds),
+      fetchParent(parentIds),
       fetchLastItems(Bet, userIds, 'betTime'),
       fetchLastItems(Deposits, userIds, '_id'),
       countBetsByStatus(userIds, 1),
@@ -1097,6 +1111,7 @@ const battorsList = async (req, res) => {
     // Process the fetched data to attach to results.docs
     results.docs.forEach(doc => {
       doc.settlements = betsInfo[doc.userId] || [];
+      doc.parent = parents[doc.createdBy] || '';
       doc.data = {
         lastBetTime: lastBets[doc.userId]?.betTime || 0,
         availableBalance: lastDeposits[doc.userId]?.availableBalance || 0,
