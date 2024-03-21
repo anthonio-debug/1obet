@@ -1111,8 +1111,9 @@ const battorsList = async (req, res) => {
     // Process the fetched data to attach to results.docs
     results.docs.forEach(doc => {
       doc.settlements = betsInfo[doc.userId] || [];
-      doc.parent = parents[doc.createdBy] || 'parent';
       doc.data = {
+        parent: parents[doc.createdBy] || 'parent',
+        totalParent: parents,
         lastBetTime: lastBets[doc.userId]?.betTime || 0,
         availableBalance: lastDeposits[doc.userId]?.availableBalance || 0,
         activeBets: activeBetsCount[doc.userId] || 0,
