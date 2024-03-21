@@ -1089,7 +1089,7 @@ const battorsList = async (req, res) => {
     const [betsInfo, lastBets, lastDeposits, activeBetsCount, canceledBetsCount] = await Promise.all([
       aggregateBetsInfo(userIds),
       fetchLastItems(Bet, userIds, 'betTime'),
-      fetchLastItems(Deposits, userIds, 'availableBalance'),
+      fetchLastItems(Deposits, userIds, '_id'),
       countBetsByStatus(userIds, 1),
       countBetsByStatus(userIds, 2)
     ]);
