@@ -2778,6 +2778,13 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res.status(404).send({ message: `Max Exposure Amount : ${maxExp}` });
       }
+
+      if (runnerName === 'The Draw' && parseInt(betRate) > 50) {
+        return res.status(404).send({
+          message: `Winning amount can not be more than 50 times than loosing amount`,
+        });
+      }
+
       const cricketScore = await Crickets.findOne({eventId: eventDetail?.Id})
       const matchStatus = cricketScore?.result
       const matchLastUpdate = cricketScore?.updatedAt
