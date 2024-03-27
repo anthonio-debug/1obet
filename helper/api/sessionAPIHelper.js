@@ -114,6 +114,22 @@ async function fetchBookmakerOdds(marketIds) {
   }
 }
 
+async function fetchScore(eventId) {
+  try {
+    // const marketId = '1.166536383'
+    // const marketId = marketIds.join(',')
+    // http://142.93.36.1/api/v2/score?EventTypeID=4&matchId=33057044
+    const url = `${SESSION_API_URI}/score?EventTypeID=4&matchId=${eventId}`
+    const response = await axios.get(url)
+    // console.log('session list: ', JSON.stringify(res))
+    const res = response.data
+    return res
+  } catch (error) {
+    console.error('session api fetchScore: ', eventId, error?.data || error.message || error)
+    return {}
+  }
+}
+
 module.exports = {fetchSession, fetchMarketOdds, getSessionFancyResult, getSessionBookmakerResult,
-  fetchBookmakerList, fetchBookmakerOdds
+  fetchBookmakerList, fetchBookmakerOdds, fetchScore
 }
