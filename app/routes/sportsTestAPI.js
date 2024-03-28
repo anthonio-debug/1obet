@@ -496,8 +496,12 @@ async function getMarketsByMarketType(req, res) {
 
 async function getFanciesByEventId(req, res) {
   const eventId = req.params.eventId;
+  const gtype = req.query.gtype;
   try {
-    const sessions = await fetchSession(eventId)
+    let sessions = await fetchSession(eventId)
+    if (gtype) {
+      sessions = sessions.filter(item => item.gtype === gtype)
+    }
 
     res.status(200).json({success: true, data: sessions});
   } catch (err) {

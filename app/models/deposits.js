@@ -58,7 +58,7 @@ depositsSchema.pre('save', function (next) {
   var month = (now.getMonth() + 1).toString().padStart(2, '0'); // Convert month to two digits and pad with zero if necessary
   var day = now.getDate().toString().padStart(2, '0'); // Convert day to two digits and pad with zero if necessary
   var formattedDate = `${year}-${month}-${day}`;
-  this. date = now.getTime();
+  this.date = now.getTime();
   if (!this.createdAt) {
     this.createdAt = formattedDate ;
   } else {
