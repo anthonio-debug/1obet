@@ -3051,6 +3051,7 @@ const placeBet = async (req, res) => {
             message: "Bet placed successfully! ",
             results: result,
             statusForRes,
+            delay: delayAddition,
           });
         } catch (error) {
           console.warn("error", error);
