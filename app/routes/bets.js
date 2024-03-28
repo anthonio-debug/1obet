@@ -1290,7 +1290,8 @@ const placeBet = async (req, res) => {
 
     // Cricket Tied Match
     else if (config.sportMarkets.includes(marketId) && subMarketDetail.Id == config.tiedMatch) {
-      if (eventDetail.matchType === 'TEST' && (parseInt(betRate) > 50)) {
+      // if (eventDetail.matchType === 'TEST' && (parseInt(betRate) > 50)) {
+      if ((parseInt(betRate) > 50)) {
         return res.status(404).send({
           message: `Winning amount can not be more than 50 times than loosing amount`,
         });
