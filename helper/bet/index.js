@@ -24,10 +24,10 @@ const getDiffBackAndLay = (team) => {
   const layList = team?.ExchangePrices?.AvailableToLay ?? []
   const maxBack = backList?.reduce((max, obj) => {
     return obj.price > max.price ? obj : max;
-  }, data[0]) || { price: 0 };
+  }, backList[0]) || { price: 0 };
   const minLay = layList?.reduce((min, obj) => {
     return obj.price < min.price ? obj : min;
-  }, data[0]) || { price: 0 };
+  }, layList[0]) || { price: 0 };
 
   return Math.abs(maxBack.price - minLay.price)
 }
@@ -37,10 +37,10 @@ const getRaceDiffBackAndLay = (team) => {
   const layList = team?.exchange?.availableToLay ?? []
   const maxBack = backList?.reduce((max, obj) => {
     return obj.price > max.price ? obj : max;
-  }, data[0]) || { price: 0 };
+  }, backList[0]) || { price: 0 };
   const minLay = layList?.reduce((min, obj) => {
     return obj.price < min.price ? obj : min;
-  }, data[0]) || { price: 0 };
+  }, layList[0]) || { price: 0 };
 
   return Math.abs(maxBack.price - minLay.price)
 }
