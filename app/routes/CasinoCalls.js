@@ -6,9 +6,9 @@ const CasinoDebits = require('../models/casinoCalls');
 const Cash = require("../../app/models/deposits");
 const crypto = require('crypto');
 const config = require('config');
-const {MongoClient} = require('mongodb');
+const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
-const {getParents} = require("./bets");
+const { getParents } = require("./bets");
 const SelectedCasino = require("../models/selectedCasino");
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
@@ -26,16 +26,16 @@ let transactionIdMap = new Map()
 
 const transactionOptions = {
   readPreference: 'primary',
-  readConcern: {level: 'local'},
-  writeConcern: {w: 'majority'}
+  readConcern: { level: 'local' },
+  writeConcern: { w: 'majority' }
 }
-const dbClient = new MongoClient(`${DBHost}?directConnection=true`, {useUnifiedTopology: true});
+const dbClient = new MongoClient(`${DBHost}?directConnection=true`, { useUnifiedTopology: true });
 const casinoCalls = dbClient.db(`${DBNAME}`).collection('casinocalls');
 const users = dbClient.db(`${DBNAME}`).collection('users');
 
 const checkMarketBlocked = async (user) => {
   let parentUserIds = await getParents(user.userId);
-  const marketIds = await User.distinct("blockedMarketPlaces", {userId: {$in: parentUserIds}, isDeleted: false});
+  const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
   const marketId = config.casinoMarketId;
 
   if (marketIds.includes(marketId)) {
@@ -47,7 +47,7 @@ const checkMarketBlocked = async (user) => {
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
-    const user = await users.findOne({remoteId: Number(payload.remote_id)});
+    const user = await users.findOne({ remoteId: Number(payload.remote_id) });
     /*
       action= 0 debit
       action= 1 credit( decision came from casino )
@@ -74,14 +74,14 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
        * ////console.log(" lastMaxWithdraw ============== ", lastMaxWithdraw);
        */
       await users.updateOne(
-        {_id: user._id},
+        { _id: user._id },
         {
           $set: {
             availableBalance: updatedavailableBalance,
             exposure: UpdatedExposure
           }
         },
-        {session}
+        { session }
       );
 
       const casinoDebits = new CasinoDebits(payload);
@@ -94,8 +94,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const user_prev_exposure = user.exposure;
 
       const gamesList = await SelectedCasino.findOne(
-        {"games.id": payload.game_id},
-        {"games.$": 1}
+        { "games.id": payload.game_id },
+        { "games.$": 1 }
       );
 
       const game = gamesList?.games[0];
@@ -147,7 +147,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const UpdatedExposure = Number((user.exposure + amount).toFixed(3));
 
         await users.updateOne(
-          {_id: user?._id},
+          { _id: user?._id },
           {
             $set: {
               availableBalance: updatedavailableBalance,
@@ -156,10 +156,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               balance: updatedbalance
             }
           },
-          {session}
+          { session }
         );
 
-        const lastMaxWithdrawRes = await Cash.find({userId: user.userId}).sort({_id: -1});
+        const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
         const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
 
         //divide lost money to all share holders.
@@ -197,8 +197,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         while (currentUserId) {
 
           const parentUser = await users.findOne(
-            {userId: currentUserId},
-            {session}
+            { userId: currentUserId },
+            { session }
           );
           if (parentUser.role == "0") {
             // ////console.log("break User area ");
@@ -210,14 +210,14 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
         // ////console.log(" parentUser  ============ ", parentUserIds);
         const parentUser = await users.find(
-          {userId: {$in: parentUserIds}, isDeleted: false}
-        ).sort({role: -1}).toArray();
+          { userId: { $in: parentUserIds }, isDeleted: false }
+        ).sort({ role: -1 }).toArray();
 
         // ////console.log(" parentUser  ============ ", parentUser);
 
         if (!parentUser) {
           ////console.log(" ============ Parent User Not Found ============ ");
-          return res.json({status: '500', msg: `Internal Server Error`});
+          return res.json({ status: '500', msg: `Internal Server Error` });
         }
         let commissionFrom = user.userId;
         let upMovingAmount = bettor_lost_amount;
@@ -241,7 +241,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           const balance = Number((user.balance + (user.commission / 100) * bettor_lost_amount).toFixed(3));
           const clientPL = user.clientPL - user.downLineShare !== 100 ? Number((user.clientPL - ((100 - user.downLineShare) / 100) * bettor_lost_amount).toFixed(3)) : 0;
           const userResponse = await users.updateOne(
-            {_id: user?._id},
+            { _id: user?._id },
             {
               $set: {
                 availableBalance: availableBalance,
@@ -249,10 +249,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
                 balance: balance
               }
             },
-            {session}
+            { session }
           );
 
-          const lastMaxWithdrawRes = await Cash.find({userId: user.userId}).sort({_id: -1});
+          const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
           const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
           // ////console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
 
@@ -311,7 +311,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
          *
          */
 
-        ////console.log("=============start of giving commissions and loss shares on amount which is WON by bettor");
+          ////console.log("=============start of giving commissions and loss shares on amount which is WON by bettor");
         let bettor_won_amount = credit - debit;
         //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
 
@@ -328,7 +328,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const UpdatedExposure = Number(((user.exposure) + (debit * config.casinoMultiples)).toFixed(3));
 
         const userResponse = await users.updateOne(
-          {_id: user?._id},
+          { _id: user?._id },
           {
             $set: {
               availableBalance: updatedavailableBalance,
@@ -337,10 +337,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               exposure: UpdatedExposure,
             }
           },
-          {session}
+          { session }
         );
 
-        const lastMaxWithdrawRes = await Cash.find({userId: user.userId}).sort({_id: -1});
+        const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
         const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
 
         ////console.log(" ================ lastMaxWithdraw ================ ", lastMaxWithdraw);
@@ -375,8 +375,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         let currentUserId = user.userId;
         while (currentUserId) {
           const parentUser = await users.findOne(
-            {userId: currentUserId},
-            {session}
+            { userId: currentUserId },
+            { session }
           );
           if (parentUser.role == "0") {
             ////console.log("break User area ");
@@ -389,14 +389,14 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         ////console.log(" parentUser  ============ ", parentUserIds);
 
         const parentUser = await users.find(
-          {userId: {$in: parentUserIds}, isDeleted: false}
-        ).sort({role: -1}).toArray();
+          { userId: { $in: parentUserIds }, isDeleted: false }
+        ).sort({ role: -1 }).toArray();
 
         ////console.log(" parentUser  ============ ", parentUser);
 
         if (!parentUser) {
           ////console.log(" ============ Parent User Not Found ============ ");
-          return res.json({status: '500', msg: `Internal Server Error`});
+          return res.json({ status: '500', msg: `Internal Server Error` });
         }
 
         let prev = 0;
@@ -410,7 +410,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
         for (const user of parentUser) {
 
-          const lastMaxWithdrawRes = await Cash.find({userId: user.userId}).sort({_id: -1});
+          const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
           const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
           ////console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
 
@@ -419,14 +419,14 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           let clientPL = user.downLineShare !== 100 ? Number((user.clientPL + ((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
 
           let userResponse = await users.updateOne(
-            {_id: user?._id}, {
+            { _id: user?._id }, {
               $set: {
                 availableBalance: availableBalance,
                 clientPL: clientPL,
                 balance: Balancebalance
               }
             },
-            {session}
+            { session }
           );
 
           let betTransaction = {
@@ -506,16 +506,16 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const updatedavailableBalance = Number((user.availableBalance + (debit * casinoMultiples)).toFixed(3))
         const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3))
         await users.updateOne(
-          {_id: user?._id},
-          {$set: {availableBalance: updatedavailableBalance, exposure: UpdatedExposure}},
-          {session}
+          { _id: user?._id },
+          { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure } },
+          { session }
         );
 
         const casinoDebits = new CasinoDebits(payload);
         await casinoDebits.save();
       }
 
-      const updatedUser = await users.findOne({remoteId: Number(payload.remote_id)});
+      const updatedUser = await users.findOne({ remoteId: Number(payload.remote_id) });
       const user_new_balance = updatedUser.balance;
       const user_new_availableBalance = updatedUser.availableBalance;
       const user_new_exposure = updatedUser.exposure;
@@ -575,20 +575,20 @@ async function balanceFun(req, res) {
   }
 
   try {
-    const user = await User.findOne({remoteId: payload.remote_id}).exec();
+    const user = await User.findOne({ remoteId: payload.remote_id }).exec();
 
     if (!user) {
-      return res.json({status: 500, msg: 'Internal error no user'});
+      return res.json({ status: 500, msg: 'Internal error no user' });
     }
 
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
     if (checkMarketBlockedResponse == 1) {
-      return res.json({status: '500', msg: ' Batting is not allowed ! '});
+      return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
     }
 
     const balance = user.availableBalance;
     if (balance < 0) {
-      return res.json({status: 500, msg: 'Negative amount not allowed!'});
+      return res.json({ status: 500, msg: 'Negative amount not allowed!' });
     }
 
     return res.json({
@@ -597,7 +597,7 @@ async function balanceFun(req, res) {
     });
   } catch (err) {
     console.error(err);
-    return res.json({status: 500, msg: `Internal error ${err}`});
+    return res.json({ status: 500, msg: `Internal error ${err}` });
   } finally {
     res.json({
       status: 200,
@@ -611,11 +611,11 @@ async function debitFun(req, res) {
     const payload = req.query;
     const transactionId = payload.transaction_id
     const currentUser = await User.findOne(
-      {remoteId: parseInt(payload.remote_id)}
+      { remoteId: parseInt(payload.remote_id) }
     )
     if (!currentUser) {
       ////console.log(" ========================= User Not Found ============= ");
-      return res.json({status: '500', msg: `Internal Error no User`});
+      return res.json({ status: '500', msg: `Internal Error no User` });
     }
     if (transactionIdMap.has(transactionId)) {
       ////console.log('====== same Trans already Exists', transactionId)
@@ -643,18 +643,18 @@ async function debitFun(req, res) {
       });
     }
     const user = await users.findOne(
-      {remoteId: parseInt(payload.remote_id)},
-      {session}
+      { remoteId: parseInt(payload.remote_id) },
+      { session }
     )
     if (!user) {
       await session.abortTransaction();
-      return res.json({status: '500', msg: `Internal error no user`});
+      return res.json({ status: '500', msg: `Internal error no user` });
     }
 
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
     if (checkMarketBlockedResponse == 1) {
       await session.abortTransaction();
-      return res.json({status: '500', msg: ' Batting is not allowed ! '});
+      return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
     }
 
     let updatedavailableBalance = 0
@@ -671,10 +671,10 @@ async function debitFun(req, res) {
         });
       } else if (parseInt(payload.amount) < 0) {
         await session.abortTransaction();
-        return res.json({status: '500', msg: 'Negative bet not allowed!'});
+        return res.json({ status: '500', msg: 'Negative bet not allowed!' });
       } else if (updatedavailableBalance < 0) {
         await session.abortTransaction();
-        return res.json({status: 500, msg: 'Negative balance not allowed!'});
+        return res.json({ status: 500, msg: 'Negative balance not allowed!' });
       } else {
         let balance = user.availableBalance / casinoMultiples;
         const resp = await WinLoseTransManagement(balance, payload, user, 0, res);
@@ -682,8 +682,8 @@ async function debitFun(req, res) {
       }
     }, transactionOptions);
     const updatedUser = await users.findOne(
-      {remoteId: parseInt(payload.remote_id)},
-      {session}
+      { remoteId: parseInt(payload.remote_id) },
+      { session }
     )
     ////console.log(" Amount Returning to Casino from Debit  ", updatedUser.availableBalance / casinoMultiples);
     return res.json({
@@ -694,7 +694,7 @@ async function debitFun(req, res) {
 
   } catch (err) {
     console.error('Error:', err);
-    return res.json({status: 500, msg: `Internal error ${err}`});
+    return res.json({ status: 500, msg: `Internal error ${err}` });
   } finally {
     await session.endSession();
     res.json({
@@ -716,11 +716,11 @@ async function creditFun(req, res) {
     //   action: "credit"
     // })
     const currentUser = await User.findOne(
-      {remoteId: parseInt(payload.remote_id)}
+      { remoteId: parseInt(payload.remote_id) }
     )
     if (!currentUser) {
       ////console.log(" ========================= User Not Found ============= ");
-      return res.json({status: '500', msg: `Internal Error no User`});
+      return res.json({ status: '500', msg: `Internal Error no User` });
     }
     if (transactionIdMap.has(transactionId)) {
       ////console.log('====== same Trans already Exists', transactionId)
@@ -751,19 +751,19 @@ async function creditFun(req, res) {
       });
     }
     const user = await users.findOne(
-      {remoteId: parseInt(payload.remote_id)},
-      {session, readPreference: 'primary'}
+      { remoteId: parseInt(payload.remote_id) },
+      { session, readPreference: 'primary' }
     );
     if (!user) {
       ////console.log(" ========================= User Not Found ============= ");
       await session.abortTransaction();
-      return res.json({status: '500', msg: `Internal Error no User`});
+      return res.json({ status: '500', msg: `Internal Error no User` });
     }
 
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
     if (checkMarketBlockedResponse == 1) {
       await session.abortTransaction();
-      return res.json({status: '500', msg: 'Batting is not allowed !'});
+      return res.json({ status: '500', msg: 'Batting is not allowed !' });
     }
 
     // let updatedavailableBalance = 0
@@ -783,8 +783,8 @@ async function creditFun(req, res) {
     }, transactionOptions);
 
     const updatedUser = await users.findOne(
-      {remoteId: parseInt(payload.remote_id)},
-      {session}
+      { remoteId: parseInt(payload.remote_id) },
+      { session }
     )
     return res.json({
       status: 200,
@@ -793,7 +793,7 @@ async function creditFun(req, res) {
 
   } catch (err) {
     console.error('Error:', err);
-    return res.json({status: 500, msg: `Internal error ${err}`});
+    return res.json({ status: 500, msg: `Internal error ${err}` });
   } finally {
     await session.endSession();
     res.json({
@@ -830,16 +830,16 @@ async function rollbackFun(req, res) {
             remote_id: parseInt(payload.remote_id),
             // round_id: payload.round_id,
           },
-          {session}
+          { session }
         );
         const user = await users.findOne(
-          {remoteId: parseInt(payload.remote_id)},
-          {session}
+          { remoteId: parseInt(payload.remote_id) },
+          { session }
         );
         if (!user) {
           // ////console.log("user not found ");
           await session.abortTransaction();
-          return res.json({status: '500', msg: `Internal error User Not Found`});
+          return res.json({ status: '500', msg: `Internal error User Not Found` });
         } else if (sameTransId === 0) {
           await session.abortTransaction();
           return res.json({
@@ -858,7 +858,7 @@ async function rollbackFun(req, res) {
               transaction_id: payload.transaction_id,
               remote_id: parseInt(payload.remote_id)
             },
-            {session}
+            { session }
           );
 
           let amount = 0;
@@ -882,8 +882,8 @@ async function rollbackFun(req, res) {
           let updatedExposureAmount = user.exposure + (amount * casinoMultiples);
 
           await users.updateOne(
-            {_id: user?._id}, {$set: {exposure: updatedExposureAmount, availableBalance: updatedBalance}},
-            {session}
+            { _id: user?._id }, { $set: { exposure: updatedExposureAmount, availableBalance: updatedBalance } },
+            { session }
           );
 
           const casinoDebits = new CasinoDebits(payload);
@@ -891,8 +891,8 @@ async function rollbackFun(req, res) {
           await session.commitTransaction();
 
           const updatedUser = await users.findOne(
-            {remoteId: parseInt(payload.remote_id)},
-            {session}
+            { remoteId: parseInt(payload.remote_id) },
+            { session }
           )
 
           return res.json({
@@ -905,10 +905,10 @@ async function rollbackFun(req, res) {
       await session.endSession();
     } else {
       const newUpdatedUser = await users.findOne(
-        {remoteId: parseInt(payload.remote_id)}
+        { remoteId: parseInt(payload.remote_id) }
       );
       if (!newUpdatedUser) {
-        return res.json({status: '500', msg: `Internal error: User Not Found`});
+        return res.json({ status: '500', msg: `Internal error: User Not Found` });
       } else {
         return res.json({
           status: 404,
@@ -932,9 +932,9 @@ async function rollbackFun(req, res) {
 }
 
 function casino(req, res) {
-  const {action, remote_id} = req.query;
+  const { action, remote_id } = req.query;
   if (!remote_id || !action) {
-    return res.send({status: '400', msg: 'Invalid Request'});
+    return res.send({ status: '400', msg: 'Invalid Request' });
   }
   switch (action) {
     case 'balance':
@@ -946,9 +946,9 @@ function casino(req, res) {
     case 'rollback':
       return rollbackFun(req, res);
     default:
-      return res.send({status: '400', msg: 'Invalid action'});
+      return res.send({ status: '400', msg: 'Invalid action' });
   }
 }
 
 router.get('/casino', casino);
-module.exports = {router};
+module.exports = { router };
