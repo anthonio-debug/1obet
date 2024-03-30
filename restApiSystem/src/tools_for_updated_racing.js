@@ -1,5 +1,4 @@
 'use strict';
-// const apiRequests = require('./api/apiRequestsRacing.js')();
 // const cron = require('node-cron');
 const config = require("../../config/default.json")
 const inPlayEvents = require('../../app/models/events');

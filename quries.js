@@ -921,7 +921,7 @@ db.betlimits.insertMany([
 
 ])
 
-// pm2 start apiSystem.js resultChecker.js resultSaver.js server.js ./cronJobs/SessionsResults.js 
+// pm2 start apiSystem.js resultChecker.js server.js ./cronJobs/SessionsResults.js
 
 
 
