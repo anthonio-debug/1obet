@@ -286,7 +286,7 @@ async function updateMatchType(req, res) {
   }
 }
 
-function getSideBarMenu(req, res) {
+async function getSideBarMenu(req, res) {
   let type = [];
   if (req.decoded.role == 5) {
     type = [0];
@@ -295,15 +295,11 @@ function getSideBarMenu(req, res) {
   } else {
     type = [1];
   }
-  SideBarMenu.find({ type: { $in: type } }, (err, results) => {
-    if (err) {
-      return res.status(404).json({ message: "settings not found" });
-    }
-    return res.json({
-      success: true,
-      message: "Side Bar Menu Records",
-      results: results,
-    });
+  const results = await SideBarMenu.find({ type: { $in: type } }).sort({sort_by: 1})
+  return res.json({
+    success: true,
+    message: "Side Bar Menu Records",
+    results: results,
   });
 }
 
@@ -2273,7 +2269,7 @@ const getEventWinnerName = async (req, res) => {
 
       return res.status(200).send({
         success: true,
-        result: {winner: result.winnerInfo},
+        result: { winner: result.winnerInfo },
       });
     }
 
