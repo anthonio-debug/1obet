@@ -295,7 +295,7 @@ async function getSideBarMenu(req, res) {
   } else {
     type = [1];
   }
-  const results = await SideBarMenu.find({ type: { $in: type } }).sort({sort_by: -1})
+  const results = await SideBarMenu.find({ type: { $in: type } }).sort({sort_by: 1})
   return res.json({
     success: true,
     message: "Side Bar Menu Records",
