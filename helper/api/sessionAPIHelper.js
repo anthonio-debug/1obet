@@ -141,7 +141,7 @@ async function fetchScoreSessionApi(eventId) {
 
 const convertSessionScoreToCricket = (apiRes, eventEntity) => {
   if (apiRes.error) return null
-  const eventId = eventEntity.eventId
+  const eventId = eventEntity.Id
   const entity = apiRes.data
   const getCurrentOver = (team) => {
     if (entity.current_inning === entity.teams[team].team_name) {
