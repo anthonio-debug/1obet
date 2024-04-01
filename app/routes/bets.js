@@ -33,6 +33,7 @@ const { fetchBookmakerOdds } = require("../../helper/api/sessionAPIHelper");
 const moment = require("moment");
 const { SCORE_API_STATUS_BLOCK_LIST } = require("../../helper/api/scoreApiHelper");
 const { GetAllBets, CasinoList } = require("./admin/bets");
+const { getDiffBackAndLay, getRaceDiffBackAndLay } = require("../../helper/bet");
 require('dotenv').config()
 
 global.activeBettors = new Map()
@@ -229,6 +230,7 @@ const placeBet = async (req, res) => {
     let isManuel = true;
     let delay = 5200;
     let asianTableName = "";
+    let delayAddition = 0
     /* ====================================================================== */
 
     /* ============================== Innitial Checks  ============================== */
@@ -481,10 +483,14 @@ const placeBet = async (req, res) => {
       const OddDetailsTeam = DBOddDetails.runners.find(
         (runner) => runner.SelectionId == selectionId
       );
+      const diff = getDiffBackAndLay(OddDetailsTeam)
+      if (diff > 0.03) {
+        delayAddition = 4
+      }
       runnerName = OddDetailsTeam?.runnerName;
 
       if (selectedBetRate == betRate) {
-        for (let i = 1; i < 5; i++) {
+        for (let i = 1; i < 5 + delayAddition; i++) {
           setTimeout(async () => {
             const oddsData = await apiCallForOdds(id);
             // const response = await axios.get(url);
@@ -535,7 +541,7 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && selectedBetRate != betRate) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 4+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -553,7 +559,7 @@ const placeBet = async (req, res) => {
           }, 1000 * i);
         }
       } else if (type == 0 && selectedBetRate != betRate) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 4+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -614,10 +620,16 @@ const placeBet = async (req, res) => {
       const OddDetailsTeam = DBOddDetails.runners.find(
         (runner) => runner.SelectionId == selectionId
       );
+
+      const diff = getDiffBackAndLay(OddDetailsTeam)
+      if (diff > 0.03) {
+        delayAddition = 4
+      }
+
       runnerName = OddDetailsTeam?.runnerName;
 
       if (selectedBetRate == betRate) {
-        for (let i = 1; i < 5; i++) {
+        for (let i = 1; i < 5+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -671,7 +683,7 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && selectedBetRate != betRate) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 4+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -713,7 +725,7 @@ const placeBet = async (req, res) => {
         // ELSE
         // mistmatch.....
       } else if (type == 0 && selectedBetRate != betRate) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 4+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -786,6 +798,11 @@ const placeBet = async (req, res) => {
         (runner) => runner.SelectionId == selectionId
       );
 
+      const diff = getDiffBackAndLay(OddDetailsTeam)
+      if (diff > 0.03) {
+        delayAddition = 4
+      }
+
       runnerName = OddDetailsTeam?.runnerName;
       /* start of code by qaiser */
       const BetPlaceData = await BetPlaceHold.findOne({
@@ -793,9 +810,9 @@ const placeBet = async (req, res) => {
       });
 
       /*end of code by qaiser*/
-      delay = BetPlaceData.secondsValue * 1000 + 200;
+      delay = (BetPlaceData.secondsValue + delayAddition) * 1000 + 200;
       if (selectedBetRate == betRate) {
-        for (let i = 1; i < BetPlaceData.secondsValue; i++) {
+        for (let i = 1; i < BetPlaceData.secondsValue+delayAddition; i++) {
           setTimeout(async () => {
 
             const oddsData = await apiCallForOdds(id);
@@ -844,7 +861,7 @@ const placeBet = async (req, res) => {
         // return res.status(404).send({
         //   message: `Bet Miss Matched `,
         // });
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 4+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -890,7 +907,7 @@ const placeBet = async (req, res) => {
         // return res.status(404).send({
         //   message: `Bet Miss Matched `,
         // });
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 4+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -971,6 +988,12 @@ const placeBet = async (req, res) => {
       const OddDetailsTeam = DBOddDetails?.runners.find(
         (runner) => runner.selectionId == selectionId
       );
+
+      const diff = getRaceDiffBackAndLay(OddDetailsTeam)
+      if (diff > 3) {
+        delayAddition = 4
+      }
+
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets = runners.map((runner) => ({
         runner: runner.selectionId,
@@ -978,7 +1001,7 @@ const placeBet = async (req, res) => {
       }));
 
       if (selectedBetRate == betRate) {
-        for (let i = 1; i < 5; i++) {
+        for (let i = 1; i < 5+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -1030,7 +1053,7 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && selectedBetRate != betRate) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 4+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -1069,7 +1092,7 @@ const placeBet = async (req, res) => {
         // ELSE
         // mistmatch.....
       } else if (type == 0 && selectedBetRate != betRate) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 4+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -1140,9 +1163,15 @@ const placeBet = async (req, res) => {
       const OddDetailsTeam = DBOddDetails.runners.find(
         (runner) => runner.SelectionId == selectionId
       );
+
+      const diff = getDiffBackAndLay(OddDetailsTeam)
+      if (diff > 0.03) {
+        delayAddition = 4
+      }
+
       runnerName = OddDetailsTeam?.runnerName;
       if (selectedBetRate == betRate) {
-        for (let i = 1; i < 5; i++) {
+        for (let i = 1; i < 5+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
             // const response = await axios.get(url);
@@ -1205,7 +1234,7 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `,
         });
       } else if (type == 1 && selectedBetRate != betRate) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 4+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
             // const response = await axios.get(url);
@@ -1248,7 +1277,7 @@ const placeBet = async (req, res) => {
         // ELSE
         // mistmatch.....
       } else if (type == 0 && selectedBetRate != betRate) {
-        for (let i = 0; i < 4; i++) {
+        for (let i = 0; i < 4+delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
             // const response = await axios.get(url);
@@ -2405,6 +2434,8 @@ const placeBet = async (req, res) => {
       if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.BookMaker) {
         delay = 2000;
       }
+    } else {
+      delay += delayAddition * 1000;
     }
 
     setTimeout(async () => {
@@ -3017,6 +3048,7 @@ const placeBet = async (req, res) => {
             message: "Bet placed successfully! ",
             results: result,
             statusForRes,
+            delay: delayAddition,
           });
         } catch (error) {
           console.warn("error", error);

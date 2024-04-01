@@ -19,4 +19,30 @@ const checkActiveBettors = async (bet) => {
   }
 }
 
-module.exports = { checkActiveBettors }
+const getDiffBackAndLay = (team) => {
+  const backList = team?.ExchangePrices?.AvailableToBack ?? []
+  const layList = team?.ExchangePrices?.AvailableToLay ?? []
+  const maxBack = backList?.reduce((max, obj) => {
+    return obj.price > max.price ? obj : max;
+  }, backList[0]) || { price: 0 };
+  const minLay = layList?.reduce((min, obj) => {
+    return obj.price < min.price ? obj : min;
+  }, layList[0]) || { price: 0 };
+
+  return Math.abs(maxBack.price - minLay.price)
+}
+
+const getRaceDiffBackAndLay = (team) => {
+  const backList = team?.exchange?.availableToBack ?? []
+  const layList = team?.exchange?.availableToLay ?? []
+  const maxBack = backList?.reduce((max, obj) => {
+    return obj.price > max.price ? obj : max;
+  }, backList[0]) || { price: 0 };
+  const minLay = layList?.reduce((min, obj) => {
+    return obj.price < min.price ? obj : min;
+  }, layList[0]) || { price: 0 };
+
+  return Math.abs(maxBack.price - minLay.price)
+}
+
+module.exports = { checkActiveBettors, getDiffBackAndLay, getRaceDiffBackAndLay }
