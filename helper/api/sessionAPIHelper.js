@@ -123,7 +123,7 @@ async function fetchBookmakerOdds(marketIds) {
   }
 }
 
-async function fetchScore(eventId) {
+async function fetchScoreSessionApi(eventId) {
   try {
     // const marketId = '1.166536383'
     // const marketId = marketIds.join(',')
@@ -139,6 +139,51 @@ async function fetchScore(eventId) {
   }
 }
 
+const convertSessionScoreToCricket = (apiRes, eventEntity) => {
+  if (apiRes.error) return null
+  const eventId = eventEntity.eventId
+  const entity = apiRes.data
+  const getCurrentOver = (team) => {
+    if (entity.current_inning === entity.teams[team].team_name) {
+      return entity.current_over.replace('(', '').replace(')', '')
+    } else {
+      return `0.0`
+    }
+  }
+  const getCurrentScore = (team) => {
+    if (entity.current_inning === entity.teams[team].team_name) {
+      return entity.current_score?.replace('-', '/')
+    } else {
+      return `0/0`
+    }
+  }
+
+  const cricketScore = {
+    eventId: eventId,
+    inning: entity?.current_inning===entity?.teams[1]?.team_name ? 2 : 1,
+    Title: entity?.rky,
+    over1: getCurrentOver(0),
+    over2: getCurrentOver(1),
+    overs: [],
+    res: entity.msg,
+    result: entity.msg ?? entity.completed_message,
+    comment: entity.msg || '',
+    activeTeam: entity.current_inning,
+    score1: getCurrentScore(0),
+    score2: getCurrentScore(1),
+    RRR: entity.requireRunRate,
+    CRR: entity.currentRunRate,
+    team1Flag: '',
+    team2Flag: '',
+    team1Name: entity.teams[0].team_name,
+    team2Name: entity.teams[1].team_name,
+    team1ShortName: entity.teams[0].team_short_name,
+    team2ShortName: entity.teams[1].team_short_name,
+    type: eventEntity.matchType,
+    matchTitle: entity.rky,
+  }
+  return cricketScore
+}
 module.exports = {fetchSession, fetchMarketOdds, getSessionFancyResult, getSessionBookmakerResult,
-  fetchBookmakerList, fetchBookmakerOdds, fetchScore
+  fetchBookmakerList, fetchBookmakerOdds, fetchScoreSessionApi, convertSessionScoreToCricket
 }

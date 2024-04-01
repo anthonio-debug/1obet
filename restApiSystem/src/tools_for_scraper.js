@@ -15,6 +15,7 @@ const Crickets = require("../../app/models/Crickets");
 const { calculateSessionNo } = require("../../helper/cricket");
 const Session = require("../../app/models/Session");
 const _ = require('lodash')
+const { fetchScoreSessionApi, convertSessionScoreToCricket } = require("../../helper/api/sessionAPIHelper");
 require('dotenv').config()
 
 const activeCrickets = new Map()
@@ -120,11 +121,26 @@ function ToolForScraper() {
         inplay: true,
       }, { Id: 1 }).exec();
 
+      const cricketScoreSourceSetting = await Settings.findOne({
+        settingKey: 'CRICKET_SCORECARD_SOURCE'
+      })
+
       for (const event of inPlayEventList) {
         const eventId = event.Id
-        let cricketScoreDate = await getCricketScoreAPI(eventId)
-        if (cricketScoreDate?.data) {
-          const apiCricketScore = convertApiToCricket(cricketScoreDate, eventId)
+        let cricketScoreData = null
+        if (cricketScoreSourceSetting?.settingValue === 'SESSION') {
+          cricketScoreData = await fetchScoreSessionApi(eventId)
+        } else {
+          cricketScoreData = await getCricketScoreAPI(eventId)
+        }
+        if (cricketScoreData?.data) {
+          let apiCricketScore
+          if (cricketScoreSourceSetting?.settingValue === 'SESSION') {
+            apiCricketScore = convertSessionScoreToCricket(cricketScoreData, event)
+          } else {
+            apiCricketScore = convertApiToCricket(cricketScoreData, eventId)
+          }
+
           if (!activeCrickets.has(eventId) || !isObjectEqual(activeCrickets.get(eventId), apiCricketScore)) {
             activeCrickets.set(eventId, apiCricketScore)
             const cricketScore = await Crickets.findOneAndUpdate(
