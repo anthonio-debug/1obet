@@ -948,7 +948,7 @@ const placeBet = async (req, res) => {
       if (betRate > 50) {
         activeBettors.delete(userId)
         return res.status(404).send({
-          message: `Bet Miss Matched `,
+          message: `Winning amount can not be more than 50 times than loosing amount`,
         });
       }
       //isManuel = false;
