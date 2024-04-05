@@ -1,5 +1,6 @@
 {
   "apisFileName": "config/settings/apis/allApis.json",
+  
   "saltRounds": 10,
   "pageSize": 10,
   "staging_apiUrl": "https://stage.game-program.com/api/seamless/provider",

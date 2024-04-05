@@ -19,7 +19,6 @@ let depositsSchema = new Schema({
   createdBy: { type: String },
   loosingAmount:{ type: String , default: '.'},
   winningAmount:{ type: String , default: '.'},
-
   matchId: { type: String, index: true },
   marketId : { type : String },
   commissionFrom: { type: Number },
@@ -36,7 +35,6 @@ let depositsSchema = new Schema({
   betTime : {type: Number, default: new Date().getTime()- 30},
   betSession: { type: Number, default: 0 },
   roundId: { type: String, default: "0" },
-
   sourceCodeBlock:{ type: String , default: 0 },
   addedExpoisureAmount:{ type: String , default: 0 },
   UserPrevexposure:{ type: String , default: 0 },
@@ -46,7 +44,6 @@ let depositsSchema = new Schema({
   userAvailableBalanceAFTrans:{ type: Number , default: 0 },
   UserBalanceBFTrans:{ type: Number , default: 0 },
   UserBalanceAFTrans:{ type: Number , default: 0 },
-
 });
 
 depositsSchema.plugin(Global.aggregatePaginate);
