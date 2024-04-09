@@ -932,7 +932,8 @@ function getdeopsitDetailsCash(req, res) {
         {
           $match: {
             credit: 0, // Match deposits where cash field is zero
-            cash: { $gt: 0 }
+            cash: { $gt: 0 },
+            cashOrCredit:"Cash"
           }
         },
         {
@@ -1061,7 +1062,8 @@ function getdepositDetailsCredit(req, res) {
         {
           $match: {
             cash: 0,
-            credit: { $gt: 0 }
+            credit: { $gt: 0 },
+            cashOrCredit:"Credit"
           }
         },
         {
