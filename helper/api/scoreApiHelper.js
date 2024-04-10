@@ -1,6 +1,8 @@
 const axios = require("axios");
 require('dotenv').config()
-const SCORE_API_URI = `http://103.76.123.249:5500/api`
+// http://apicricketchampion.in/webservices/liveLive?match_id=33160612
+const SCORE_API_URI = `http://apicricketchampion.in`
+
 const SCORE_API_STATUS_LIST = [
   "Ball",
   "NB",
@@ -63,7 +65,7 @@ const SCORE_API_STATUS_BLOCK_LIST = [
 async function getCricketScoreAPI(eventId) {
   try {
     // const eventId = 32980846
-    const url = `${SCORE_API_URI}/LiveScore?match_id=${eventId}`
+    const url = `${SCORE_API_URI}/webservices/liveLive?match_id=${eventId}`
     const response = await axios.get(url)
     return  response.data
   } catch (error) {
