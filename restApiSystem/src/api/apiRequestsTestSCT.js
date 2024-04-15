@@ -388,10 +388,10 @@ function apiRequests() {
               element.marketName === "Match Odds"
               || element.marketName === "Over/Under 0.5 Goals"
               || element.marketName === "Over/Under 1.5 Goals"
-              // || element.marketName === "Over/Under 2.5 Goals"
-              || element.marketName === "Over/Under 3.5 Goals"
-              || element.marketName === "Over/Under 4.5 Goals"
-              || element.marketName === "Over/Under 5.5 Goals"
+              || element.marketName === "Over/Under 2.5 Goals"
+              // || element.marketName === "Over/Under 3.5 Goals"
+              // || element.marketName === "Over/Under 4.5 Goals"
+              // || element.marketName === "Over/Under 5.5 Goals"
             )
               marketIds.push({
                 id: element.marketId,
