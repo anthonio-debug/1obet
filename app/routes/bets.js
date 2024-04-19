@@ -2820,12 +2820,14 @@ const placeBet = async (req, res) => {
 
       let backFancyRate = 0
       let layFancyRate = 0
-      const DBOdd = await Odds.findById(oddsId);
-      if (DBOdd) {
-        const runner = DBOdd?.runners?.filter((item) => item.SelectionId === selectionId)[0]
-        if (runner) {
-          backFancyRate = runner?.ExchangePrices?.AvailableToBack?.length ? [...runner?.ExchangePrices?.AvailableToBack]?.sort((a, b) => b?.price - a?.price)[0]?.price : 0
-          layFancyRate = runner?.ExchangePrices?.AvailableToLay?.length ? runner?.ExchangePrices?.AvailableToLay[0]?.price : 0
+      if (oddsId) {
+        const DBOdd = await Odds.findById(oddsId);
+        if (DBOdd) {
+          const runner = DBOdd?.runners?.filter((item) => item.SelectionId === selectionId)[0]
+          if (runner) {
+            backFancyRate = runner?.ExchangePrices?.AvailableToBack?.length ? [...runner?.ExchangePrices?.AvailableToBack]?.sort((a, b) => b?.price - a?.price)[0]?.price : 0
+            layFancyRate = runner?.ExchangePrices?.AvailableToLay?.length ? runner?.ExchangePrices?.AvailableToLay[0]?.price : 0
+          }
         }
       }
 
