@@ -15,6 +15,9 @@ const PORT = process.env.SERVERPORT;
 const apisMiddleware = require("./app/middlewares/apisMiddleware");
 const loginMiddleWare = require("./app/middlewares/loginMiddleware");
 const checkRoleMiddleware = require("./app/middlewares/checkRoleMiddleware");
+const { horseRaceStreaming, greyhoundRaceStreaming } = require("./app/routes/obsServer");
+const {} = require("./app/routes/obsServer");
+const {  getdeopsitDetailsCash, getdepositDetailsCredit } = require("./app/routes/deposits");
 
 const apisContent = fs.readFileSync(config.apisFileName);
 const jsonApis = JSON.parse(apisContent);
@@ -61,6 +64,8 @@ app.get("/", (req, res) => {
     '<body style="background: #000; color: #fff"><h2> This is the homepage of 1obet.net </h2></body>'
   );
 });
+app.get("/streaming/horseracestreaming", horseRaceStreaming);
+app.get("/streaming/greyhoundraceing", greyhoundRaceStreaming);
 
 // Allowed Apis on this server
 app.use(function (req, res, next) {
@@ -116,6 +121,9 @@ app.use("/api", require("./app/routes/sportBook").loginRouter);
 app.use("/api", require("./app/routes/marketPositions").loginRouter);
 app.use("/api", require("./app/routes/marketShares").loginRouter);
 app.use("/api", require("./app/routes/betPlaceHold").loginRouter);
+app.post("/api/getdeopsitDetailsCash", getdeopsitDetailsCash);
+app.post("/api/getdepositDetailsCredit", getdepositDetailsCredit);
+// app.use("/api", require("./app/routes/deposits").loginRouter);  
 
 // // Allowed Apis for this role
 // app.use(function (req, res, next) {
