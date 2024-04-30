@@ -69,8 +69,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
 
       /**
-       * let lastMaxWithdrawRes = await Cash.find( {userId: user.userId}).sort({ _id: -1 });
-       * let lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0]: null
+       * let lastMaxWithdraw = await Cash.findOne( {userId: user.userId}).sort({ _id: -1 });
        * ////console.log(" lastMaxWithdraw ============== ", lastMaxWithdraw);
        */
       await users.updateOne(
@@ -159,8 +158,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           { session }
         );
 
-        const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
-        const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
+        const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
 
         //divide lost money to all share holders.
 
@@ -252,8 +250,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             { session }
           );
 
-          const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
-          const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
+          const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
           // ////console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
 
           let betTransaction = {
@@ -340,8 +337,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           { session }
         );
 
-        const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
-        const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
+        const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
 
         ////console.log(" ================ lastMaxWithdraw ================ ", lastMaxWithdraw);
         let UserWinBetTrans = {
@@ -410,8 +406,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
         for (const user of parentUser) {
 
-          const lastMaxWithdrawRes = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
-          const lastMaxWithdraw = lastMaxWithdrawRes.length > 0 ? lastMaxWithdrawRes[0] : null
+          const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
           ////console.log(' last Max Withdraw ========== ', lastMaxWithdraw);
 
           let availableBalance = Number((user.balance - (user.commission / 100) * remainingAmount).toFixed(3));

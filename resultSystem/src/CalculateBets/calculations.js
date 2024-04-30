@@ -134,6 +134,20 @@ async function handleLosingBet(bet) {
             console.error("Error: User Not Found Location:(_handle losing bet)");
             await session.abortTransaction();
           }else {
+            const exists = await deposits.findOne({
+              userId: userToUpdate.userId,
+              betId: bet._id,
+              amount: -loosingAmount,
+              marketId: bet.marketId,
+              sportsId: bet.sportsId,
+              matchId: bet.matchId,
+            });
+            if (exists) {
+              console.log("=====================handleLosingBet exists=====================");
+              console.log(bet);
+              console.log("=====================handleLosingBet exists=====================");
+              return;
+            }
             const user_prev_balance = userToUpdate.balance;
             const user_prev_availableBalance = userToUpdate.availableBalance;
             const user_prev_exposure = userToUpdate.exposure;
@@ -169,7 +183,7 @@ async function handleLosingBet(bet) {
 
             const lastTrans = await deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
             const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
-            let newCash = deposits.insertOne({
+            let newCash = await deposits.insertOne({
               userId: userToUpdate.userId,
               description: `Event (${bet.event}) Runner (${bet.runnerName})`,
               amount: -loosingAmount,
@@ -252,7 +266,7 @@ async function handleLosingBet(bet) {
                 const lastTrans       = await deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
                 const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
 
-                let newCash = deposits.insertOne({
+                let newCash = await deposits.insertOne({
                   userId: user.userId,
                   description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
                   createdBy: 0,
@@ -499,6 +513,20 @@ async function handleWinningBet(bet, winner) {
             }
             const UpdatedExposure = Number((userToUpdate.exposure + addExposureAmount).toFixed(3));
             const UpdatedAvailableBalance = Number((userToUpdate.availableBalance +Number(userToUpdateAvailableBalance.toFixed(3))).toFixed(3));
+            const exists = await deposits.findOne({
+              userId: userToUpdate.userId,
+              betId: bet._id,
+              amount: remainingAmount,
+              marketId: bet.marketId,
+              sportsId: bet.sportsId,
+              matchId: bet.matchId,
+            });
+            if (exists) {
+              console.log("=====================handleWinningBet exists=====================");
+              console.log(bet);
+              console.log("=====================handleWinningBet exists=====================");
+              return;
+            }
             await users.updateOne(
               {
                 userId: userId,
