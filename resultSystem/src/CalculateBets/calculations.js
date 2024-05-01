@@ -146,6 +146,16 @@ async function handleLosingBet(bet) {
               console.log("=====================handleLosingBet exists=====================");
               console.log(bet._id, bet.status);
               console.log("=====================handleLosingBet exists=====================");
+              await bets.updateOne(
+                { _id: bet._id },
+                {
+                  $set: {
+                    status: 0,
+                    updatedAt: new Date().getTime()
+                  }
+                },
+                { session }
+              );
               return;
             }
             const user_prev_balance = userToUpdate.balance;
@@ -525,6 +535,16 @@ async function handleWinningBet(bet, winner) {
               console.log("=====================handleWinningBet exists=====================");
               console.log(bet._id, bet.status);
               console.log("=====================handleWinningBet exists=====================");
+              await bets.updateOne(
+                { _id: bet._id },
+                {
+                  $set: {
+                    status: 0,
+                    updatedAt: new Date().getTime()
+                  }
+                },
+                { session }
+              );
               return;
             }
             await users.updateOne(
