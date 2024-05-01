@@ -144,7 +144,7 @@ async function handleLosingBet(bet) {
             });
             if (exists) {
               console.log("=====================handleLosingBet exists=====================");
-              console.log(bet);
+              console.log(bet._id);
               console.log("=====================handleLosingBet exists=====================");
               return;
             }
@@ -523,7 +523,7 @@ async function handleWinningBet(bet, winner) {
             });
             if (exists) {
               console.log("=====================handleWinningBet exists=====================");
-              console.log(bet);
+              console.log(bet._id);
               console.log("=====================handleWinningBet exists=====================");
               return;
             }
