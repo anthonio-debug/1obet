@@ -155,7 +155,7 @@ async function handleLosingBet(bet) {
               availableBalance: updatedAvailableBalance
             }
           );
-          const lastTrans = await Deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1).toArray();
+          const lastTrans = await Deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
           const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
           await Deposits.create({
             userId: userToUpdate.userId,
@@ -192,10 +192,7 @@ async function handleLosingBet(bet) {
           const parentUser = await User.find({
             userId: { $in: parentUserIds },
             isDeleted: false
-          })
-            .sort({ userId: -1 })
-            .toArray();
-
+          }).sort({ userId: -1 });
           if (!parentUser) {
             console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
             return;
@@ -229,7 +226,7 @@ async function handleLosingBet(bet) {
                 }
               );
 
-              const lastTrans = await Deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1).toArray();
+              const lastTrans = await Deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1);
               const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
 
               await Deposits.create({
@@ -475,8 +472,7 @@ async function handleWinningBet(bet, winner) {
             userId: userToUpdate.userId
           })
             .sort({ _id: -1 })
-            .limit(1)
-            .toArray();
+            .limit(1);
           const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
 
           await Deposits.create({
@@ -516,10 +512,7 @@ async function handleWinningBet(bet, winner) {
               $in: [...parentUserIds]
             },
             isDeleted: false
-          })
-            .sort({ userId: -1 })
-            .toArray();
-
+          }).sort({ userId: -1 });
           if (!parentUser) {
             console.error(' Error: Parent Users Not Found Location:(_handle Winning  bet) ');
             return;
@@ -734,10 +727,7 @@ const handleDrawBet = async (bet, status = 0) => {
           const parentUser = await User.find({
             userId: { $in: [...parentUserIds] },
             isDeleted: false
-          })
-            .sort({ role: -1 })
-            .toArray();
-
+          }).sort({ role: -1 });
           if (!parentUser) {
             console.error(' Error : Parent User Not Found Location:(_handle Draw bet ) ');
             return;
