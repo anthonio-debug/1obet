@@ -2,7 +2,6 @@
 module.exports = ToolForResults;
 const sportsIdsForRacing = ['4339', '7'];
 const sportsIds = ['4', '2', '1'];
-const CurrentPosition = require('../../app/models/CurrentPosition');
 const Bets = require('../../app/models/bets');
 const { checkActiveBettors } = require('../../helper/bet');
 const scoreChecker = require('./api/scoreChecker')();
@@ -18,19 +17,6 @@ function ToolForResults() {
     getBetForFancy();
     getBetForAsianOdd();
     manuelBetChecker();
-
-    const bets = await Bets.find({ status: 1 });
-    const currentPositions = await CurrentPosition.find();
-    const betIds = bets.map((item) => item._id);
-    const ids = [];
-    console.log('betIds', betIds);
-    for (const position of currentPositions) {
-      if (!betIds.filter((item) => String(item) === String(position.betId)).length && !ids.includes(position._id)) {
-        ids.push(position._id);
-      }
-    }
-    console.log('ids', ids);
-    // await CurrentPosition.deleteMany({ _id: { $in: ids } });
   }
 
   async function getBetForEvents(targetArray) {
