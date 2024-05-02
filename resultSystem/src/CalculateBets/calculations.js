@@ -126,6 +126,7 @@ async function handleLosingBet(bet) {
                 updatedAt: new Date().getTime()
               }
             );
+            await CurrentPosition.deleteMany({ betId: betIdString });
             return;
           }
           const user_prev_balance = userToUpdate.balance;
@@ -454,6 +455,7 @@ async function handleWinningBet(bet, winner) {
                 updatedAt: new Date().getTime()
               }
             );
+            await CurrentPosition.deleteMany({ betId: betIdString });
             return;
           }
           await User.updateOne(
