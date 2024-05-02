@@ -21,13 +21,16 @@ function ToolForResults() {
 
     const bets = await Bets.find({ status: 1 });
     const currentPositions = await CurrentPosition.find();
-    const betIds = bets.map((item) => item.id);
+    const betIds = bets.map((item) => item._id);
     const ids = [];
+    console.log('ids', ids);
+    console.log('betIds', betIds);
     for (const id of betIds) {
       if (!currentPositions.find((item) => String(item.betId) === String(id))) {
         ids.push(currentPositions._id);
       }
     }
+    console.log('ids', ids);
     await CurrentPosition.deleteMany({ _id: { $in: ids } });
   }
 
