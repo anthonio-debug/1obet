@@ -156,8 +156,7 @@ async function handleLosingBet(bet) {
               availableBalance: updatedAvailableBalance
             }
           );
-          const lastTrans = await Deposits.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
-          const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
+          const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
           await Deposits.create({
             userId: userToUpdate.userId,
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -227,8 +226,7 @@ async function handleLosingBet(bet) {
                 }
               );
 
-              const lastTrans = await Deposits.find({ userId: user.userId }).sort({ _id: -1 }).limit(1);
-              const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
+              const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
               await Deposits.create({
                 userId: user.userId,
@@ -470,12 +468,7 @@ async function handleWinningBet(bet, winner) {
               availableBalance: UpdatedAvailableBalance
             }
           );
-          const lastTrans = await Deposits.find({
-            userId: userToUpdate.userId
-          })
-            .sort({ _id: -1 })
-            .limit(1);
-          const lastMaxWithdraw = lastTrans.length > 0 ? lastTrans[0] : null;
+          const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
 
           await Deposits.create({
             userId: userToUpdate.userId,
@@ -545,12 +538,7 @@ async function handleWinningBet(bet, winner) {
                 }
               );
 
-              const ParentlastTrans = await Deposits.find({
-                userId: user.userId
-              })
-                .sort({ _id: -1 })
-                .limit(1);
-              const lastMaxWithdraw = ParentlastTrans.length > 0 ? lastTrans[0] : null;
+              const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
               await Deposits.create({
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -585,12 +573,7 @@ async function handleWinningBet(bet, winner) {
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
 
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
-                const ParentlastTrans = await Deposits.find({
-                  userId: user.userId
-                })
-                  .sort({ _id: -1 })
-                  .limit(1);
-                const lastMaxWithdraw = ParentlastTrans.length > 0 ? lastTrans[0] : null;
+                const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
                 await Deposits.create({
                   userId: user.userId,
