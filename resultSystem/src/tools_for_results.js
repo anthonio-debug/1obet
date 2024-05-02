@@ -25,9 +25,9 @@ function ToolForResults() {
     const ids = [];
     console.log('ids', ids);
     console.log('betIds', betIds);
-    for (const id of betIds) {
-      if (!currentPositions.find((item) => String(item.betId) === String(id))) {
-        ids.push(currentPositions._id);
+    for (const position of currentPositions) {
+      if (!betIds.filter((item) => String(item) === String(position.betId)).length && !ids.includes(position._id)) {
+        ids.push(position._id);
       }
     }
     console.log('ids', ids);
