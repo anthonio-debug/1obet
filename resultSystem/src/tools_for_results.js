@@ -20,7 +20,15 @@ function ToolForResults() {
     manuelBetChecker();
 
     const bets = await Bets.find({ status: 1 });
-    const currentPosition = await CurrentPosition.deleteMany({ betId: { $ne: bets.map((item) => item.id) } });
+    const currentPositions = await CurrentPosition.find();
+    const betIds = bets.map((item) => item.id);
+    const ids = [];
+    for (const id of betIds) {
+      if (!currentPositions.find((item) => String(item.betId) === String(id))) {
+        ids.push(currentPositions._id);
+      }
+    }
+    await CurrentPosition.deleteMany({ _id: { $in: ids } });
   }
 
   async function getBetForEvents(targetArray) {
