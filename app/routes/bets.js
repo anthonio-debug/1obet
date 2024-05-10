@@ -461,7 +461,7 @@ const placeBet = async (req, res) => {
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId)
-        return res.status(404).send({ message: `max bet size is 1: ${userMaxBetSize.amount}` });
+        return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
@@ -597,7 +597,7 @@ const placeBet = async (req, res) => {
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId)
-        return res.status(404).send({ message: `max bet size is 2: ${userMaxBetSize.amount}` });
+        return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
 
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
