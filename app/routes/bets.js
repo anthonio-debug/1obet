@@ -764,7 +764,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: `max bet size is 3: ${userMaxBetSize.amount}` });
+          .send({ message: `max bet size is 3: ${"userMaxBetSize "+userMaxBetSize +"userId "+userId+" subMarketDetail.Id"+ subMarketDetail.Id+"marketId "+marketId +" config.sportMarkets"+config.sportMarkets+" userMaxBetSize"+userMaxBetSize+" betAmount"+ betAmount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
