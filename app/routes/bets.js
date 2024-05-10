@@ -461,7 +461,7 @@ const placeBet = async (req, res) => {
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId)
-        return res.status(404).send({ message: `max bet size is 1 : ${userMaxBetSize.amount}` });
+        return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
@@ -597,7 +597,7 @@ const placeBet = async (req, res) => {
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId)
-        return res.status(404).send({ message: `max bet size is 2: ${userMaxBetSize.amount}` });
+        return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
 
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
@@ -764,7 +764,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: `max bet size is 3: ${"userMaxBetSize "+userMaxBetSize +"userId "+userId+" subMarketDetail.Id"+ subMarketDetail.Id+"marketId "+marketId +" config.sportMarkets"+config.sportMarkets+" userMaxBetSize"+userMaxBetSize+" betAmount"+ betAmount}` });
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
@@ -968,7 +968,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: `max bet size is 4: ${userMaxBetSize.amount}` });
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
@@ -1138,7 +1138,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: `max bet size is 5: ${userMaxBetSize.amount}` });
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
@@ -1340,7 +1340,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: `max bet size is 6: ${userMaxBetSize.amount}` });
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
@@ -1489,7 +1489,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: `max bet size is 7: ${userMaxBetSize.amount}` });
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
@@ -1625,7 +1625,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: `max bet size is 8: ${userMaxBetSize.amount}` });
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
@@ -1721,7 +1721,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: `max bet size is 9: ${userMaxBetSize.amount}` });
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
@@ -1750,7 +1750,7 @@ const placeBet = async (req, res) => {
       }
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
         activeBettors.delete(userId)
-        return res.status(404).send({ message: `max bet size is 10: ${fancyBetLimit.amount}` });
+        return res.status(404).send({ message: `max bet size is : ${fancyBetLimit.amount}` });
       }
 
       isFancyOrBookMaker = true;
@@ -1937,7 +1937,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: `max bet size is 11: ${userMaxBetSize.amount}` });
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
@@ -2158,7 +2158,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: `max bet size is 12: ${userMaxBetSize.amount}` });
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
@@ -2182,7 +2182,7 @@ const placeBet = async (req, res) => {
       if (FigureEvenOddSmallBig && betAmount > FigureEvenOddSmallBig.amount) {
         activeBettors.delete(userId)
         return res.status(404).send({
-          message: `max bet size is 13: ${FigureEvenOddSmallBig.amount}`,
+          message: `max bet size is : ${FigureEvenOddSmallBig.amount}`,
         });
       }
       const dbscore = await Crickets.find({ eventId: eventDetail.Id }).sort({ _id: -1 }).limit(1)
@@ -2307,7 +2307,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: `max bet size is 14: ${userMaxBetSize.amount}` });
+          .send({ message: `max bet size is : ${userMaxBetSize.amount}` });
       }
 
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
