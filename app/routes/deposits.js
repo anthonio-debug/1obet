@@ -916,26 +916,52 @@ function getdeopsitDetailsCash(req, res) {
       console.log(req.decoded)
 
       let depositPipeline = [
+     
         {
           $match: {
             userId: Number(req.decoded.userId),
-            // $and: [
-            //   {
-            //     createdAt: { $gte: req.body.startDate }
-            //   },
-            //   {
-            //     createdAt: { $lte: req.body.endDate }
-            //   }
-            // ]
-          }
-        },
-        {
-          $match: {
             credit: 0, // Match deposits where cash field is zero
             cash: { $gt: 0 },
-            cashOrCredit:"Cash"
+            cashOrCredit: "Cash",
+            $and: [
+              {
+                createdAt: { $gte: req.body.startDate }
+              },
+              {
+                createdAt: { $lte: req.body.endDate }
+              }
+            ]
           }
         },
+     
+      ];
+      if (req.body.searchValue) {
+        const searchRegex = new RegExp(req.body.searchValue, 'i');
+        depositPipeline.push({
+          $match: {
+            $or: [
+              { description: { $regex: searchRegex } },
+              {
+                $expr: {
+                  $regexMatch: {
+                    input: { $toString: '$amount' },
+                    regex: searchRegex,
+                  },
+                },
+              },
+              {
+                $expr: {
+                  $regexMatch: {
+                    input: { $toString: '$maxWithdraw' },
+                    regex: searchRegex,
+                  },
+                },
+              },
+            ],
+          },
+        });
+      }
+      depositPipeline.push(
         {
           $group: {
             _id: "$_id",
@@ -965,8 +991,7 @@ function getdeopsitDetailsCash(req, res) {
               results: [{ $skip: (page - 1) * limit }, { $limit: limit }],
             },
           }
-      ];
-
+      )
       Deposits.aggregate(depositPipeline, async (err, result) => {
         console.log(result);
         if (result[0].results && result[0].results.length > 0) {
@@ -1046,26 +1071,52 @@ function getdepositDetailsCredit(req, res) {
       }
 
       let depositPipeline = [
-        {
-          $match: {
-            userId: Number(req.decoded.userId),
-            // $and: [
-            //   {
-            //     createdAt: { $gte: req.body.startDate }
-            //   },
-            //   {
-            //     createdAt: { $lte: req.body.endDate }
-            //   }
-            // ]
-          }
-        },
+       
         {
           $match: {
             cash: 0,
             credit: { $gt: 0 },
-            cashOrCredit:"Credit"
+            cashOrCredit: "Credit",
+            userId: Number(req.decoded.userId),
+            $and: [
+              {
+                createdAt: { $gte: req.body.startDate }
+              },
+              {
+                createdAt: { $lte: req.body.endDate }
+              }
+            ]
           }
         },
+      
+      ];
+      if (req.body.searchValue) {
+        const searchRegex = new RegExp(req.body.searchValue, 'i');
+        depositPipeline.push({
+          $match: {
+            $or: [
+              { description: { $regex: searchRegex } },
+              {
+                $expr: {
+                  $regexMatch: {
+                    input: { $toString: '$amount' },
+                    regex: searchRegex,
+                  },
+                },
+              },
+              {
+                $expr: {
+                  $regexMatch: {
+                    input: { $toString: '$maxWithdraw' },
+                    regex: searchRegex,
+                  },
+                },
+              },
+            ],
+          },
+        });
+      }
+      depositPipeline.push(
         {
           $group: {
             _id: "$_id",
@@ -1083,21 +1134,19 @@ function getdepositDetailsCredit(req, res) {
             marketId: { $first: "$marketId" },
             betId: { $first: "$betId" },
             userId: { $first: "$userId" },
-           
-            deposits:{$last: "$credit"}
+            deposits:{$last: "$cash"}
           },
         },
         {
           $sort: { date: -1 },
         },
-        {
-          $facet: {
-            metadata: [{ $count: 'total' }],
-            results: [{ $skip: (page - 1) * limit }, { $limit: limit }],
-          },
-        }
-      ];
-
+          {
+            $facet: {
+              metadata: [{ $count: 'total' }],
+              results: [{ $skip: (page - 1) * limit }, { $limit: limit }],
+            },
+          }
+      )
       Deposits.aggregate(depositPipeline, async (err, result) => {
         console.log(result);
         if (result[0].results && result[0].results.length > 0) {
