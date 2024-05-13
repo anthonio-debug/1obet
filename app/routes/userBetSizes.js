@@ -11,7 +11,9 @@ const updateBetSizes = async (req, res) => {
     const errors = validationResult(req);
     if (errors.errors.length !== 0) {
       return res.status(400).send({ errors: errors.errors });
+
     }
+    console.log(req.body)
     const betSizes = req.body.betSizes;
     for (const size of betSizes) {
       await UserBetSizes.updateOne(
@@ -23,6 +25,7 @@ const updateBetSizes = async (req, res) => {
         }
       )
     }
+    
     return res.send({
       success: true,
       message: 'Bet sizes updated successfully',

@@ -747,11 +747,12 @@ const placeBet = async (req, res) => {
 
     // Cricket Match Odds
     else if (config.sportMarkets.includes(marketId) && config.cricketOdds == subMarketDetail.Id) {
-
+      
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
       });
+      
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
         return res.status(404).send({
@@ -760,12 +761,13 @@ const placeBet = async (req, res) => {
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
-      // if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
-      //   activeBettors.delete(userId)
-      //   return res
-      //     .status(404)
-      //     .send({ message: `max bet size is 3: ${userMaxBetSize.amount}` });
-      // }
+      console.log(userMaxBetSize, "userMaxBetSize",marketId)
+      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId)
+        return res
+          .status(404)
+          .send({ message: `max bet size is 3: ${userMaxBetSize.amount}` });
+      }
       if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
         activeBettors.delete(userId)
         return res
