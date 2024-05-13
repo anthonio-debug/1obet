@@ -221,5 +221,6 @@
   "casino-bets",
   "set-casino-amount",
   "set-fancy-score",
-  "active-bettors"
+  "active-bettors",
+  "gethighlights"
 ]
