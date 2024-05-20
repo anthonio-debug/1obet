@@ -51,7 +51,7 @@
   "tiedMatch": 35,
   "overUnder": 14,
   "raceOpenBefore": 240000,
-  "sportsOpenBefore": 600000,
+  "sportsOpenBefore": 60000000,
   "tossCloseTime": 2700000,
   "raceEventsAllowedCount": 20,
   "raceEventsMarketAllowedCount": 8,
