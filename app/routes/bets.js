@@ -2972,6 +2972,8 @@ const placeBet = async (req, res) => {
           return res.status(404).send({ message: `Something went wrong !` });
         }
         try {
+          console.log("Start placing bet");
+        
           const position = new currentPosition({
             userId: userId,
             amount: -Number(loosingAmount.toFixed(3)),
@@ -2979,18 +2981,21 @@ const placeBet = async (req, res) => {
             betId: result._id,
           });
           await position.save();
-
+          console.log("Position saved");
+        
           const nowUser = await User.findOne({ userId }).exec();
+          console.log("User fetched", nowUser);
+        
           const user_prev_balance = nowUser.balance;
           const user_prev_availableBalance = nowUser.availableBalance;
           const user_prev_exposure = nowUser.exposure;
-
+        
           const totalExpAmount = expAmount - prevExpAmount;
           const UserExpAmountFix = nowUser.exposure + prevExpAmount - expAmount;
           const UserExpAmount = Number(UserExpAmountFix.toFixed(3));
           const UserAvlBalAmountAmt = nowUser.availableBalance + prevExpAmount - expAmount;
           const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(3));
-
+        
           await User.findOneAndUpdate(
             { userId: userId },
             {
@@ -2998,54 +3003,53 @@ const placeBet = async (req, res) => {
               availableBalance: UserAvlBalAmount
             }
           );
-
-
-          /** Start of Qaiser added tracking values in deposits */
-            // let newDeposit = new Cash({
-            //   userId: userId,
-            //   description: `Bet Place`,
-            //   betId:randomStr,
-            //   addedExpoisureAmount:expAmount ? expAmount.toFixed(3) : 0,
-            //   UserPrevexposure:user.exposure,
-            //   UpdatedExposure:UserExpAmount,
-            //   sourceCodeBlock:'Bet Place',
-            //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
-            //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
-
-            //   amount: betAmount || 0,
-            //   balance: user.balance,
-            //   availableBalance: UserAvlBalAmount,
-
-            //   cashOrCredit: "Bet",
-            //   marketId: _3rdPartyMarketId || 0,
-            //   sportsId: marketId || 0,
-            //   matchId: matchId || null,
-            //   betType: type || 0,
-            //   betDateTime: BetTime,
-            // });
-            // await newDeposit.save()
-
+          console.log("User balance updated");
+        
+          // Uncomment and debug if necessary
+          // let newDeposit = new Cash({
+          //   userId: userId,
+          //   description: `Bet Place`,
+          //   betId: randomStr,
+          //   addedExpoisureAmount: expAmount ? expAmount.toFixed(3) : 0,
+          //   UserPrevexposure: user.exposure,
+          //   UpdatedExposure: UserExpAmount,
+          //   sourceCodeBlock: 'Bet Place',
+          //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
+          //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
+          //   amount: betAmount || 0,
+          //   balance: user.balance,
+          //   availableBalance: UserAvlBalAmount,
+          //   cashOrCredit: "Bet",
+          //   marketId: _3rdPartyMarketId || 0,
+          //   sportsId: marketId || 0,
+          //   matchId: matchId || null,
+          //   betType: type || 0,
+          //   betDateTime: BetTime,
+          // });
+          // await newDeposit.save();
+          // console.log("New deposit saved");
+        
           const ExpTran = new Exposure({
-              userId: userId,
-              trans_from: "Bet Place",
-              trans_from_id: randomStr,
-              user_prev_balance: user_prev_balance,
-              user_prev_availableBalance: user_prev_availableBalance,
-              user_prev_exposure: user_prev_exposure,
-              user_new_balance: nowUser.balance,
-              user_new_availableBalance: UserAvlBalAmount,
-              user_new_exposure: UserExpAmount,
-              marketId: _3rdPartyMarketId || 0,
-              sportsId: marketId || 0,
-              calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
-              DateTime: new Date(),
-              calculateExp: 1,
-              exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
-            });
-
-          await ExpTran.save()
-          /** End of Qaiser added tracking values in deposits */
-
+            userId: userId,
+            trans_from: "Bet Place",
+            trans_from_id: randomStr,
+            user_prev_balance: user_prev_balance,
+            user_prev_availableBalance: user_prev_availableBalance,
+            user_prev_exposure: user_prev_exposure,
+            user_new_balance: nowUser.balance,
+            user_new_availableBalance: UserAvlBalAmount,
+            user_new_exposure: UserExpAmount,
+            marketId: _3rdPartyMarketId || 0,
+            sportsId: marketId || 0,
+            calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
+            DateTime: new Date(),
+            calculateExp: 1,
+            exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
+          });
+        
+          await ExpTran.save();
+          console.log("Exposure transaction saved");
+        
           await updateParentUserBalance(
             parentUserIds,
             winningAmount,
@@ -3055,23 +3059,26 @@ const placeBet = async (req, res) => {
             _3rdPartyMarketId,
             subMarketDetail?.Id
           );
-
-          activeBettors.delete(userId)
-
+          console.log("Parent user balance updated");
+        
+          activeBettors.delete(userId);
+        
+          console.log("Bet placed successfully");
           return res.send({
             success: true,
-            message: "Bet placed successfully! ",
+            message: "Bet placed successfully!",
             results: result,
             statusForRes,
             delay: delayAddition,
           });
         } catch (error) {
           console.warn("error", error);
-          activeBettors.delete(userId)
+          activeBettors.delete(userId);
           return res
             .status(404)
             .send({ message: "Error updating user balance" });
         }
+        
       });
 
       /* -------------- */
