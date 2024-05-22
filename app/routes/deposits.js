@@ -1016,8 +1016,12 @@ function getdeopsitDetailsCash(req, res) {
           }
         }
 
-        console.log("result here -----------",result.length(), result[0].metadata[0].total)
+        // console.log("result here -----------",result)
         if (err || !result || result.length === 0 || result[0].results.length === 0) {
+          console.log('Error:', err);
+          console.log('Result:', result);
+          console.log('Result length:', result ? result.length : 'result is null or undefined');
+          console.log('First result\'s results length:', result && result[0] ? result[0].results.length : 'first result is null or undefined');
           return res.status(200).send({ message: 'Deposit record not found' });
         }
 
