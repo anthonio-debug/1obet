@@ -1016,7 +1016,7 @@ function getdeopsitDetailsCash(req, res) {
           }
         }
 
-        console.log("result here -----------",result)
+        console.log("result here -----------",result.length(), result[0].metadata[0].total)
         if (err || !result || result.length === 0 || result[0].results.length === 0) {
           return res.status(200).send({ message: 'Deposit record not found' });
         }
