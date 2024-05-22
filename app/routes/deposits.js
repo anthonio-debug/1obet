@@ -171,7 +171,7 @@ async function addCashDeposit(req, res) {
     }
 
     // Dealer to Battor
-    else if ( Dealers.includes(currentUserParent.role) && userToUpdate.role == '5' ) {
+    else if (Dealers.includes(currentUserParent.role) && userToUpdate.role == '5') {
       userToUpdate.balance += req.body.amount;
       userToUpdate.availableBalance += req.body.amount;
       userToUpdate.clientPL += req.body.amount;
@@ -301,12 +301,12 @@ async function withDrawCashDeposit(req, res) {
       return res.status(404).send({ message: 'user not found' });
     }
 
-    if ( userToUpdate.role != '5' && req.body.amount > userToUpdate.cash + userToUpdate.creditRemaining ) {
+    if (userToUpdate.role != '5' && req.body.amount > userToUpdate.cash + userToUpdate.creditRemaining) {
       //console.log('comming');
       return res.status(400).send({
-        message: `Max cash withdraw is: ${ userToUpdate.cash + userToUpdate.creditRemaining }`,
+        message: `Max cash withdraw is: ${userToUpdate.cash + userToUpdate.creditRemaining}`,
       });
-    } else if ( userToUpdate.role == '5' && req.body.amount > userToUpdate.availableBalance ) {
+    } else if (userToUpdate.role == '5' && req.body.amount > userToUpdate.availableBalance) {
       return res.status(400).send({
         message: `Max cash withdraw is= ${userToUpdate.availableBalance}`,
       });
@@ -392,7 +392,7 @@ async function withDrawCashDeposit(req, res) {
     }
 
     //  Dealer to Dealer
-    else if ( Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {
+    else if (Dealers.includes(currentUserParent.role) && Dealers.includes(userToUpdate.role)) {
       userToUpdate.clientPL -= req.body.amount;
       userToUpdate.cash -= req.body.amount;
       // currentUserParent.clientPL += req.body.amount;
@@ -534,44 +534,44 @@ async function withDrawCashDeposit(req, res) {
 }
 
 function getLedgerDetails(req, res) {
-  try{
+  try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).send({ errors: errors.errors });
     }
-  
+
     const query = { userId: req.body.userId };
     let page = 1;
     let sort = -1;
     let sortValue = '_id';
     let limit = config.pageSize;
     //console.log('limit:', limit);
-    if ( req.body.numRecords &&  req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
+    if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
     if (req.body.sortValue) sortValue = req.body.sortValue;
     if (req.body.sort) sort = Number(req.body.sort);
     if (req.body.page) page = Number(req.body.page);
-  
+
     User.findOne(query, (err, user) => {
       if (err || !user) {
         return res.status(404).send({ message: 'User not found' });
       }
-      let cashPipeline = [{ 
-        $match: { 
+      let cashPipeline = [{
+        $match: {
           userId: Number(req.body.userId),
           $and: [
             {
-              createdAt: {$gte: req.body.startDate}
+              createdAt: { $gte: req.body.startDate }
             },
             {
-              createdAt: {$lte: req.body.endDate}
+              createdAt: { $lte: req.body.endDate }
             }
           ]
-        } 
+        }
       }];
-  
+
       const userRole = user.role;
-  
-      if (userRole !== '5' && req.body.type ){
+
+      if (userRole !== '5' && req.body.type) {
         cashPipeline.push({ $match: { cashOrCredit: req.body.type }, });
       }
 
@@ -607,9 +607,9 @@ function getLedgerDetails(req, res) {
           // _id: "$_id",
           _id: {
             $cond: {
-              if: 
-              { $in: ["$cashOrCredit", ['Cash', 'Credit']] }, 
-              then: "$_id", 
+              if:
+                { $in: ["$cashOrCredit", ['Cash', 'Credit']] },
+              then: "$_id",
               else: {
                 matchId: "$matchId",
                 marketId: "$marketId",
@@ -619,15 +619,15 @@ function getLedgerDetails(req, res) {
             }
           },
           originalId: { $first: "$_id" },
-          description:  { $first: "$description" },
-          amount:  { $sum: "$amount" },
-          balance:  { $last: "$balance" },
-          availableBalance:  { $last: "$availableBalance" },
-          maxWithdraw:  { $last: "$maxWithdraw" },
-          betTime	:  { $first: "$betDateTime" },
-          cashOrCredit : { $first: "$cashOrCredit" },
-          date	:  { $first: "$date" },
-          createdAt	:  { $first: "$createdAt" },
+          description: { $first: "$description" },
+          amount: { $sum: "$amount" },
+          balance: { $last: "$balance" },
+          availableBalance: { $last: "$availableBalance" },
+          maxWithdraw: { $last: "$maxWithdraw" },
+          betTime: { $first: "$betDateTime" },
+          cashOrCredit: { $first: "$cashOrCredit" },
+          date: { $first: "$date" },
+          createdAt: { $first: "$createdAt" },
           sportsId: { $first: "$sportsId" },
           marketId: { $first: "$marketId" },
           roundId: { $first: "$roundId" },
@@ -636,7 +636,7 @@ function getLedgerDetails(req, res) {
           matchId: { $first: "$matchId" },
         },
       })
-  
+
       cashPipeline.push(
         {
           $sort: { date: 1 },
@@ -653,28 +653,28 @@ function getLedgerDetails(req, res) {
 
       Cash.aggregate(cashPipeline, async (err, result) => {
 
-        if(result[0].results&&result[0].results.length>0){
-         for(let i=0;i<result[0].results.length;i++){
-          //console.log()
-          if(result[0].results[i].betId){
-            try{
-              const betInfo = await Bet.findOne({
-                _id: result[0].results[i].betId
-              })
+        if (result[0].results && result[0].results.length > 0) {
+          for (let i = 0; i < result[0].results.length; i++) {
+            //console.log()
+            if (result[0].results[i].betId) {
+              try {
+                const betInfo = await Bet.findOne({
+                  _id: result[0].results[i].betId
+                })
 
-              result[0].results[i].betSession = betInfo?.betSession;
-              result[0].results[i].matchType = betInfo?.matchType;
-              result[0].results[i].matchId = betInfo?.matchId;
-              result[0].results[i].SessionScore = betInfo?.SessionScore;
-              result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
-              result[0].results[i].fancyData = betInfo?.fancyData;
-              result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
-              result[0].results[i].roundId = betInfo?.roundId;
-            } catch (err) {
-              continue;
+                result[0].results[i].betSession = betInfo?.betSession;
+                result[0].results[i].matchType = betInfo?.matchType;
+                result[0].results[i].matchId = betInfo?.matchId;
+                result[0].results[i].SessionScore = betInfo?.SessionScore;
+                result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
+                result[0].results[i].fancyData = betInfo?.fancyData;
+                result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
+                result[0].results[i].roundId = betInfo?.roundId;
+              } catch (err) {
+                continue;
+              }
             }
           }
-         }
         }
         if (
           err ||
@@ -684,10 +684,10 @@ function getLedgerDetails(req, res) {
         ) {
           return res.status(200).send({ message: 'Deposit record not found' });
         }
-  
+
         const responseData = {
           message: 'Deposit Records',
-  
+
           results: {
             docs: result[0].results,
             total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
@@ -699,57 +699,57 @@ function getLedgerDetails(req, res) {
                 : 0,
           },
         };
-  
+
         return res.send(responseData);
       });
-  
-   
+
+
     });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Ledger Detail info"})
+    res.status(500).json({ success: false, msg: "Failed to get Ledger Detail info" })
   }
-  
+
 }
 
 function getLedgerDetails2(req, res) {
-  try{
+  try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).send({ errors: errors.errors });
     }
-  
+
     const query = { userId: req.body.userId };
     let page = 1;
     let sort = -1;
     let sortValue = '_id';
     let limit = config.pageSize;
     //console.log('limit:', limit);
-    if ( req.body.numRecords &&  req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
+    if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
     if (req.body.sortValue) sortValue = req.body.sortValue;
     if (req.body.sort) sort = Number(req.body.sort);
     if (req.body.page) page = Number(req.body.page);
-  
+
     User.findOne(query, (err, user) => {
       if (err || !user) {
         return res.status(404).send({ message: 'User not found' });
       }
-      let cashPipeline = [{ 
-        $match: { 
+      let cashPipeline = [{
+        $match: {
           userId: Number(req.body.userId),
           $and: [
             {
-              createdAt: {$gte: req.body.startDate}
+              createdAt: { $gte: req.body.startDate }
             },
             {
-              createdAt: {$lte: req.body.endDate}
+              createdAt: { $lte: req.body.endDate }
             }
           ]
-        } 
+        }
       }];
-  
+
       const userRole = user.role;
-  
-      if (userRole !== '5' && req.body.type ){
+
+      if (userRole !== '5' && req.body.type) {
         cashPipeline.push({ $match: { cashOrCredit: req.body.type }, });
       }
 
@@ -797,22 +797,22 @@ function getLedgerDetails2(req, res) {
           //   }
           // },
           originalId: { $first: "$_id" },
-          description:  { $first: "$description" },
-          amount:  { $sum: "$amount" },
-          balance:  { $last: "$balance" },
-          availableBalance:  { $last: "$availableBalance" },
-          maxWithdraw:  { $last: "$maxWithdraw" },
-          betTime	:  { $first: "$betDateTime" },
-          date	:  { $first: "$date" },
-          createdAt	:  { $first: "$createdAt" },
-          cashOrCredit : { $first: "$cashOrCredit" },
+          description: { $first: "$description" },
+          amount: { $sum: "$amount" },
+          balance: { $last: "$balance" },
+          availableBalance: { $last: "$availableBalance" },
+          maxWithdraw: { $last: "$maxWithdraw" },
+          betTime: { $first: "$betDateTime" },
+          date: { $first: "$date" },
+          createdAt: { $first: "$createdAt" },
+          cashOrCredit: { $first: "$cashOrCredit" },
           sportsId: { $first: "$sportsId" },
           marketId: { $first: "$marketId" },
           betId: { $first: "$betId" },
           userId: { $first: "$userId" },
         },
       })
-  
+
       cashPipeline.push(
         {
           $sort: { date: 1 },
@@ -829,26 +829,26 @@ function getLedgerDetails2(req, res) {
 
       Cash.aggregate(cashPipeline, async (err, result) => {
 
-        if(result[0].results&&result[0].results.length>0){
-         for(let i=0;i<result[0].results.length;i++){
-          if(result[0].results[i].betId){
-            try{
-              const betInfo = await Bet.findOne({
-                _id: result[0].results[i].betId
-              })
+        if (result[0].results && result[0].results.length > 0) {
+          for (let i = 0; i < result[0].results.length; i++) {
+            if (result[0].results[i].betId) {
+              try {
+                const betInfo = await Bet.findOne({
+                  _id: result[0].results[i].betId
+                })
 
-              result[0].results[i].betSession = betInfo?.betSession;
-              result[0].results[i].matchType = betInfo?.matchType;
-              result[0].results[i].SessionScore = betInfo?.SessionScore;
-              result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
-              result[0].results[i].fancyData = betInfo?.fancyData;
-              result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
-              result[0].results[i].roundId = betInfo?.roundId;
-            } catch (err) {
-              continue;
+                result[0].results[i].betSession = betInfo?.betSession;
+                result[0].results[i].matchType = betInfo?.matchType;
+                result[0].results[i].SessionScore = betInfo?.SessionScore;
+                result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
+                result[0].results[i].fancyData = betInfo?.fancyData;
+                result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
+                result[0].results[i].roundId = betInfo?.roundId;
+              } catch (err) {
+                continue;
+              }
             }
           }
-         }
         }
         if (
           err ||
@@ -858,10 +858,10 @@ function getLedgerDetails2(req, res) {
         ) {
           return res.status(200).send({ message: 'Deposit record not found' });
         }
-  
+
         const responseData = {
           message: 'Deposit Records',
-  
+
           results: {
             docs: result[0].results,
             total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
@@ -873,16 +873,16 @@ function getLedgerDetails2(req, res) {
                 : 0,
           },
         };
-  
+
         return res.send(responseData);
       });
-  
-   
+
+
     });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Ledger Detail info"})
+    res.status(500).json({ success: false, msg: "Failed to get Ledger Detail info" })
   }
-  
+
 }
 function getdeopsitDetailsCash(req, res) {
   try {
@@ -897,16 +897,16 @@ function getdeopsitDetailsCash(req, res) {
     let sortValue = '_id';
     let limit = config.pageSize;
 
-    if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) 
+    if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords))
       limit = Number(req.body.numRecords);
-    
-    if (req.body.sortValue) 
+
+    if (req.body.sortValue)
       sortValue = req.body.sortValue;
-    
-    if (req.body.sort) 
+
+    if (req.body.sort)
       sort = Number(req.body.sort);
-    
-    if (req.body.page) 
+
+    if (req.body.page)
       page = Number(req.body.page);
 
     User.findOne(query, (err, user) => {
@@ -916,7 +916,7 @@ function getdeopsitDetailsCash(req, res) {
       console.log(req.decoded)
 
       let depositPipeline = [
-     
+
         {
           $match: {
             userId: Number(req.decoded.userId),
@@ -933,7 +933,7 @@ function getdeopsitDetailsCash(req, res) {
             ]
           }
         },
-     
+
       ];
       if (req.body.searchValue) {
         const searchRegex = new RegExp(req.body.searchValue, 'i');
@@ -979,21 +979,21 @@ function getdeopsitDetailsCash(req, res) {
             marketId: { $first: "$marketId" },
             betId: { $first: "$betId" },
             userId: { $first: "$userId" },
-            deposits:{$last: "$cash"}
+            deposits: { $last: "$cash" }
           },
         },
         {
           $sort: { date: -1 },
         },
-          {
-            $facet: {
-              metadata: [{ $count: 'total' }],
-              results: [{ $skip: (page - 1) * limit }, { $limit: limit }],
-            },
-          }
+        {
+          $facet: {
+            metadata: [{ $count: 'total' }],
+            results: [{ $skip: (page - 1) * limit }, { $limit: limit }],
+          },
+        }
       )
       Deposits.aggregate(depositPipeline, async (err, result) => {
-        console.log(result);
+        console.log("result", result);
         if (result[0].results && result[0].results.length > 0) {
           for (let i = 0; i < result[0].results.length; i++) {
             if (result[0].results[i].betId) {
@@ -1051,7 +1051,7 @@ function getdepositDetailsCredit(req, res) {
     if (!errors.isEmpty()) {
       return res.status(400).send({ errors: errors.errors });
     }
-   
+
 
     const query = { userId: req.decoded.userId };
     let page = 1;
@@ -1059,16 +1059,16 @@ function getdepositDetailsCredit(req, res) {
     let sortValue = '_id';
     let limit = config.pageSize;
 
-    if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) 
+    if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords))
       limit = Number(req.body.numRecords);
-    
-    if (req.body.sortValue) 
+
+    if (req.body.sortValue)
       sortValue = req.body.sortValue;
-    
-    if (req.body.sort) 
+
+    if (req.body.sort)
       sort = Number(req.body.sort);
-    
-    if (req.body.page) 
+
+    if (req.body.page)
       page = Number(req.body.page);
 
     User.findOne(query, (err, user) => {
@@ -1077,7 +1077,7 @@ function getdepositDetailsCredit(req, res) {
       }
 
       let depositPipeline = [
-       
+
         {
           $match: {
             cash: 0,
@@ -1094,7 +1094,7 @@ function getdepositDetailsCredit(req, res) {
             ]
           }
         },
-      
+
       ];
       if (req.body.searchValue) {
         const searchRegex = new RegExp(req.body.searchValue, 'i');
@@ -1140,18 +1140,18 @@ function getdepositDetailsCredit(req, res) {
             marketId: { $first: "$marketId" },
             betId: { $first: "$betId" },
             userId: { $first: "$userId" },
-            deposits:{$last: "$cash"}
+            deposits: { $last: "$cash" }
           },
         },
         {
           $sort: { date: -1 },
         },
-          {
-            $facet: {
-              metadata: [{ $count: 'total' }],
-              results: [{ $skip: (page - 1) * limit }, { $limit: limit }],
-            },
-          }
+        {
+          $facet: {
+            metadata: [{ $count: 'total' }],
+            results: [{ $skip: (page - 1) * limit }, { $limit: limit }],
+          },
+        }
       )
       Deposits.aggregate(depositPipeline, async (err, result) => {
         console.log(result);
@@ -1219,7 +1219,7 @@ async function getAllDeposits(req, res) {
         { maxWithdraw: 1 }
       )
         .sort({ _id: -1 })
-        .exec( async (err, results) => {
+        .exec(async (err, results) => {
           // const resp = await userWithdrawStatusCheck(Number(req.query.userId))
           if (err) {
             //console.log('Error'.err);
@@ -1239,7 +1239,7 @@ async function getAllDeposits(req, res) {
             });
           }
 
-          
+
 
           if (user.role == '5') {
             return res.send({
@@ -1307,4 +1307,4 @@ loginRouter.post('/getLedgerDetails', getLedgerDetails);
 loginRouter.post('/getLedgerDetails2', getLedgerDetails2);
 loginRouter.post('/getdeopsitDetailsCredit', getdeopsitDetailsCash);
 loginRouter.get('/getAllDeposits', getAllDeposits);
-module.exports = { loginRouter ,getdeopsitDetailsCash,getdepositDetailsCredit};
+module.exports = { loginRouter, getdeopsitDetailsCash, getdepositDetailsCredit };
