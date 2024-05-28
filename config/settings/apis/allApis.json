@@ -222,5 +222,6 @@
   "set-casino-amount",
   "set-fancy-score",
   "active-bettors",
-  "gethighlights"
+  "gethighlights",
+  "setCashWithdrawDisabled"
 ]
