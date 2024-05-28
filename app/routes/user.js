@@ -379,6 +379,7 @@ function login(req, res) {
               balance: user.balance,
               defaultTheme: setting[1].defaultThemeName,
               defaultLoginPage: setting[0].defaultLoginPage,
+              user
             });
           });
         });
