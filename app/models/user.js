@@ -49,6 +49,7 @@ const userSchema = new Schema({
   remoteId: { type: Number },
   data: { type: Object, default: {} },
   activeBetPlacing: { type: Boolean, default: false },
+  cashWithdrawDisable:{type:Boolean, default:false}
 });
 
 userSchema.methods.hashPass = function (next) {
