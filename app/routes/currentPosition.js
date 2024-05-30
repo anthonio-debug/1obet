@@ -1,6 +1,7 @@
 const express         = require('express');
 const currentPosition = require('../models/CurrentPosition');
 const Bets = require('../models/bets');
+const MarketId = require("./../models/marketIds")
 const loginRouter     = express.Router();
 
 function getCurrentPosition(req, res) {
@@ -340,112 +341,72 @@ const getHighlights = async (req, res) => {
   try {
     const userId = req.decoded.userId;
     const matchId = req.query.matchId;
-
-    currentPosition.aggregate([
-      {
-        $match: {
-          userId: userId
-        }
-      },
-      {
-        $addFields: {
-          'betsId': { $toObjectId: "$betId" }
-        }
-      },
-      {
-        "$lookup": {
-          "from": "bets",
-          "localField": "betsId",
-          "foreignField": "_id",
-          "as": "bets"
-        }
-      },
-
-      {
-        "$lookup": {
-          "from": "marketids",
-          "localField": "marketId",
-          "foreignField": "marketId",
-          "as": "marketIds"
-        }
-      },
-
-      {
-        $addFields: {
-          'inPlayEventId': { $toObjectId: "$matchsId" }
-        }
-      },
-      {
-        "$lookup": {
-          "from": "inplayevents",
-          "localField": "inPlayEventId",
-          "foreignField": "_id",
-          "as": "matches"
-        }
-      },
-      {
-        $group: {
-          _id: "$_id",
-          marketId: { $first: { $arrayElemAt: ["$bets.marketId", 0] } },
-          matchId: { $first: { $arrayElemAt: ["$bets.matchId", 0] } },
-          loosingAmount: { $first: "$amount" },
-          maxWinningAmount: {
-            $first: {
-              $multiply: [
-                { $arrayElemAt: ["$bets.loosingAmount", 0] },
-                { $divide: ["$share", 100] }
-              ]
-            }
+    MarketId.aggregate(
+      [
+        {
+          $match: {
+            status: "OPEN",
+            marketName: "Match Odds",
           },
-          runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
-          TargetScore: { $first: { $arrayElemAt: ["$bets.TargetScore", 0] } },
-          betRate: { $first: { $arrayElemAt: ["$bets.betRate", 0] } },
-          betSession: { $first: { $arrayElemAt: ["$bets.betSession", 0] } },
-          resultId: { $first: { $arrayElemAt: ["$bets.resultId", 0] } },
-          fancyData: { $first: { $arrayElemAt: ["$bets.fancyData", 0] } },
-          isfancyOrbookmaker: { $first: { $arrayElemAt: ["$bets.isfancyOrbookmaker", 0] } },
-          subMarketId: { $first: { $arrayElemAt: ["$bets.subMarketId", 0] } },
-          fancyRate: { $first: { $arrayElemAt: ["$bets.fancyRate", 0] } },
-          runnerId: { $first: { $arrayElemAt: ["$bets.runnerName", 0] } },
-          runners: { $first: { $arrayElemAt: ["$bets.runnersPosition", 0] } },
-          type: { $first: { $arrayElemAt: ["$bets.type", 0] } },
-          sportsId: { $first: { $arrayElemAt: ["$bets.sportsId", 0] } },
-          event: { $first: { $arrayElemAt: ["$bets.event", 0] } },
-          mId: { $first: { $arrayElemAt: ["$matches.Id", 0] } },
-          matchId: { $first: { $arrayElemAt: ["$matches._id", 0] } },
-          share: { $first: "$share" },
-          totalMatched: { $first: { $arrayElemAt: ["$marketIds.totalMatched", 0] } },
+        },
+
+        {
+          $lookup: {
+            from: "inplayevents",
+            localField: "eventId",
+            foreignField: "Id",
+            as: "inplayData",
+          },
+        },
+        {
+          $lookup: {
+            from: "odds",
+            localField: "eventId",
+            foreignField: "eventId",
+            as: "oddsData",
+          },
+        },
+        {
+          $group: {
+            _id: "$_id",
+
+            eventName: { $first: { $arrayElemAt: ["$inplayData.name", 0] } },
+            openDate: { $first: { $arrayElemAt: ["$inplayData.openDate", 0] } },
+            totalMatched: {
+              $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] },
+            },
+            marketName: { $first: "$marketName" },
+            sportID: { $first: "$sportID" }
+          },
+        },
+      ],
+      (err, currentPositionData) => {
+        if (err) {
+          const response = {
+            success: false,
+            message: "Failed to get data",
+            error: err,
+          };
+          res.send(response);
+        } else {
+          const response = {
+            success: true,
+            message: "hilights records",
+            results: currentPositionData,
+          };
+          res.send(response);
         }
-      },
-      {
-        $sort: { _id: -1 }
-      },
-    ], (err, currentPositionData) => {
-      if (err) {
-        const response = {
-          success: false,
-          message: 'Failed to get data',
-          error: err,
-        };
-        res.send(response);
-      } else {
-        const response = {
-          success: true,
-          message: 'current position records',
-          results: currentPositionData
-        };
-        res.send(response);
       }
-    });
+    );
   } catch (err) {
     // //console.log("current positiion Error ============= ", err);
     const response = {
       success: true,
-      message: `current position error ${err}`,
-    }
+      message: ` error ${err}`,
+    };
     res.send(response);
   }
-}
+};
 const battorcurrentPosition = async (req, res) => {
   try{
     const userId = req.decoded.userId;
