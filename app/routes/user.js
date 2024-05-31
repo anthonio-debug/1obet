@@ -513,7 +513,7 @@ function updateUser(req, res) {
   // //console.log('req.body:', req.body);
   User.findOne({ userId: req.body.id }, (err, user) => {
     if (err || !user) {
-      return res.status(404).send({ message: 'User not found' });
+      return res.status(404).send({ message: "User not found" });
     }
 
     const token = getNonExpiringToken(
@@ -523,6 +523,7 @@ function updateUser(req, res) {
       req.body.isActive
     );
     // //console.log('updatedtoken:', token);
+    const status = req.body.isActive == true ? 1 : 0;
     let updateData = {
       casinoAllowed: req.body.casinoAllowed,
       isActive: req.body.isActive,
@@ -533,8 +534,9 @@ function updateUser(req, res) {
       notes: req.body.notes,
       updatedBy: req.decoded.userId,
       password: user.password,
+      status,
     };
-    const status = req.body.isActive == 'true' ? 1 : 0;
+    // const status = req.body.isActive == "true" ? 1 : 0;
     // //console.log('status:', status);
     var userDetailsForLoginActivity = {
       userName: user.userName,
@@ -548,15 +550,15 @@ function updateUser(req, res) {
       createdBy: user.createdBy,
       updatedAt: new Date().getTime(),
     };
-    if (req.body.isActive == 'true') {
+    if (req.body.isActive == "true") {
       updateData.status = 1;
-    } else if (req.body.isActive == 'false') {
+    } else if (req.body.isActive == "false") {
       updateData.status = 0;
     }
-    if (req.body.password && req.body.password !== '') {
+    if (req.body.password && req.body.password !== "") {
       bcrypt.hash(req.body.password, config.saltRounds, (err, hash) => {
         if (err) {
-          return res.status(404).send({ message: 'NEW_PASS_HASH_FAIL' });
+          return res.status(404).send({ message: "NEW_PASS_HASH_FAIL" });
         }
         updateData.password = hash;
 
@@ -566,7 +568,7 @@ function updateUser(req, res) {
           { new: true },
           (err, updatedUser) => {
             if (err) {
-              return res.status(404).send({ message: 'User not updated' });
+              return res.status(404).send({ message: "User not updated" });
             }
             LoginActivity.findOneAndUpdate(
               {
@@ -576,10 +578,10 @@ function updateUser(req, res) {
               { upsert: true, new: true },
               (err, user) => {
                 if (err)
-                  return res.send({ message: 'login activity not updated' });
+                  return res.send({ message: "login activity not updated" });
                 return res.send({
                   success: true,
-                  message: 'User updated successfully',
+                  message: "User updated successfully",
                   results: null,
                 });
               }
@@ -589,7 +591,7 @@ function updateUser(req, res) {
       });
     } else if (
       req.body.password == null ||
-      req.body.password == '' ||
+      req.body.password == "" ||
       req.body.password == undefined
     ) {
       User.updateOne(
@@ -598,7 +600,7 @@ function updateUser(req, res) {
         { new: true },
         (err, updatedUser) => {
           if (err) {
-            return res.status(404).send({ message: 'User not updated' });
+            return res.status(404).send({ message: "User not updated" });
           }
           LoginActivity.findOneAndUpdate(
             {
@@ -608,10 +610,10 @@ function updateUser(req, res) {
             { upsert: true, new: true },
             (err, user) => {
               if (err)
-                return res.send({ message: 'login activity not updated' });
+                return res.send({ message: "login activity not updated" });
               return res.send({
                 success: true,
-                message: 'User updated successfully',
+                message: "User updated successfully",
                 results: null,
               });
             }
