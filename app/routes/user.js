@@ -105,6 +105,7 @@ async function registerUser(req, res) {
       }
 
       user.downLineShare = req.body.downLineShare;
+      user.casinoAllowed = req.body.casinoAllowed;
       // var token = getNonExpiringToken(
       //   user.userId,
       //   req.decoded.userId,
@@ -523,6 +524,7 @@ function updateUser(req, res) {
     );
     // //console.log('updatedtoken:', token);
     let updateData = {
+      casinoAllowed: req.body.casinoAllowed,
       isActive: req.body.isActive,
       canSettlePL: req.body.canSettlePL,
       bettingAllowed: req.body.bettingAllowed,

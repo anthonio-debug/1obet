@@ -369,13 +369,13 @@ const getHighlights = async (req, res) => {
         {
           $group: {
             _id: "$_id",
-
             eventName: { $first: { $arrayElemAt: ["$inplayData.name", 0] } },
             openDate: { $first: { $arrayElemAt: ["$inplayData.openDate", 0] } },
             totalMatched: {
               $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] },
             },
             marketName: { $first: "$marketName" },
+            marketId: { $first: "$marketId" },
             sportID: { $first: "$sportID" }
           },
         },

@@ -479,7 +479,8 @@ async function getAllSelectedCasinos(req, res) {
   
   if ( marketIds.includes(marketId) 
   // || subMarketId.includes(subMarketDetail.Id) 
-  || user.betLockStatus == true ) {
+  || user.betLockStatus == true  ||
+  user.casinoAllowed == false  ) {
     // return res.status(404).send({ message:  });
     return res.send({
       message: "Betting is disabled",
