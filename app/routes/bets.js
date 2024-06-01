@@ -3064,7 +3064,7 @@ const placeBet = async (req, res) => {
         
           activeBettors.delete(userId);
         
-          console.log("Bet placed successfully");
+          console.log("Bet placed successfully..............................");
           return res.send({
             success: true,
             message: "Bet placed successfully!",
