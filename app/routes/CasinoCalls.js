@@ -660,6 +660,7 @@ async function debitFun(req, res) {
       updatedavailableBalance = user.availableBalance - (amount);
 
 
+      console.log(user.availableBalance);  
       console.log("===========================================================");
       console.log(user.availableBalance * casinoMultiples);
       console.log("......................................................................");
