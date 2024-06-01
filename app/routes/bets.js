@@ -2874,7 +2874,7 @@ const placeBet = async (req, res) => {
         backFancyRate,
         layFancyRate,
       });
-      console.log("I am checking.............................................................");
+      
       let nowUser = await User.findOne({ userId }).exec();
       if (nowUser.availableBalance < expAmount - prevExpAmount) {
         activeBettors.delete(userId)
@@ -3057,7 +3057,7 @@ const placeBet = async (req, res) => {
           );
 
           activeBettors.delete(userId)
-
+          console.log("I am checking.............................................................");
           return res.send({
             success: true,
             message: "Bet placed successfully! ",
