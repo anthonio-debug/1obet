@@ -2877,6 +2877,7 @@ const placeBet = async (req, res) => {
       });
 
       let nowUser = await User.findOne({ userId }).exec();
+      console.log("===========================================================");
       if (nowUser.availableBalance < expAmount - prevExpAmount) {
         activeBettors.delete(userId)
         return res.status(404).send({ message: " Insufficient balance " });
@@ -3064,7 +3065,7 @@ const placeBet = async (req, res) => {
         
           activeBettors.delete(userId);
         
-          console.log("Bet placed successfully..............................");
+          
           return res.send({
             success: true,
             message: "Bet placed successfully!",
