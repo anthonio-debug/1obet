@@ -662,18 +662,18 @@ async function debitFun(req, res) {
       //const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
       
 
-      console.log(user.availableBalance);  
+      console.log(user.availableBalance);  //1142
       console.log("===========================================================");
-      console.log(user.availableBalance * casinoMultiples);
+      console.log(user.availableBalance * casinoMultiples);//2244
       console.log("......................................................................");
-      console.log(debitAmount);
+      console.log(debitAmount); //20 was actual bet ad it was showing same as 20 in casino
       //console.log(lastMaxWithdraw.availableBalance);
       console.log("---------------------------------------------------------");
       console.log(payload);
       console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||');
       console.log("Actual Debit:",amount);
 
-      if (debitAmount > user.availableBalance * casinoMultiples) {
+      if (amount > user.availableBalance) {
         await session.abortTransaction();
         return res.json({
           status: 403,
