@@ -659,6 +659,8 @@ async function debitFun(req, res) {
       const amount = debitAmount * casinoMultiples;
       updatedavailableBalance = user.availableBalance - (amount);
 
+      //const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
+      
 
       console.log(user.availableBalance);  
       console.log("===========================================================");
@@ -669,7 +671,7 @@ async function debitFun(req, res) {
       console.log("---------------------------------------------------------");
       console.log(payload);
       console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||');
-      cosole.log("Actual Debit:",amount);
+      console.log("Actual Debit:",amount);
 
       if (debitAmount > user.availableBalance * casinoMultiples) {
         await session.abortTransaction();
