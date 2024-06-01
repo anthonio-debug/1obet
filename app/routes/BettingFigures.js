@@ -261,6 +261,7 @@ async function placeBet(req, res) {
       if (!user) {
         return res.status(404).send({ message: 'User not found' });
       }
+      console.log(".............................................................");
       if (user.availableBalance < betAmount) {
         return res.status(404).send({ message: 'Insufficient balance' });
       }
