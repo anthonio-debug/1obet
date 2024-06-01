@@ -661,8 +661,11 @@ async function debitFun(req, res) {
 
 
       console.log("===========================================================");
+      console.log(user.availableBalance * casinoMultiples);
+      console.log("......................................................................");
+      console.log(debitAmount);
       //console.log(lastMaxWithdraw.availableBalance);
-      //console.log("---------------------------------------------------------");
+      console.log("---------------------------------------------------------");
 
       if (debitAmount > user.availableBalance * casinoMultiples) {
         await session.abortTransaction();
