@@ -404,7 +404,7 @@ async function placeBet(req, res) {
       
           return res.send({
             success: true,
-            message: 'Bet placed successfully',
+            message: 'Bet placed successfully..',
             results: result,
           });
         }
