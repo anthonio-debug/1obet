@@ -669,7 +669,7 @@ async function debitFun(req, res) {
       console.log("---------------------------------------------------------");
       console.log(payload);
       console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||');
-      
+      cosole.log("Actual Debit:",amount);
 
       if (debitAmount > user.availableBalance * casinoMultiples) {
         await session.abortTransaction();
