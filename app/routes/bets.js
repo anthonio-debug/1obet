@@ -2878,9 +2878,7 @@ const placeBet = async (req, res) => {
 
       let nowUser = await User.findOne({ userId }).exec();
       const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
-      console.log("===========================================================");
-      console.log(lastMaxWithdraw.availableBalance);
-      console.log("---------------------------------------------------------");
+      
       
       
 

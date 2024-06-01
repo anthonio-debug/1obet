@@ -658,6 +658,12 @@ async function debitFun(req, res) {
       let debitAmount = parseInt(payload.amount);
       const amount = debitAmount * casinoMultiples;
       updatedavailableBalance = user.availableBalance - (amount);
+
+
+      console.log("===========================================================");
+      //console.log(lastMaxWithdraw.availableBalance);
+      //console.log("---------------------------------------------------------");
+
       if (debitAmount > user.availableBalance * casinoMultiples) {
         await session.abortTransaction();
         return res.json({
