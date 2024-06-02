@@ -10,6 +10,7 @@ const router = express.Router();
 const apiURL = "http://185.58.225.212:8080/api/"
 const apiSystemRacing = require("../../restApiSystem/src/tools_for_updated_racing.js")();
 require('dotenv').config()
+console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
 async function listEvents(req, res) {
   try {
