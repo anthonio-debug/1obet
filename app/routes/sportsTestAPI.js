@@ -2,6 +2,7 @@ const express = require('express');
 const Bets = require("../models/bets")
 const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
+const MarketIDS = require("../models/marketIds")
 const axios = require('axios');
 const User = require('../models/user');
 const { fetchSession } = require("../../helper/api/sessionAPIHelper");
@@ -537,8 +538,21 @@ async function getEventList(req, res) {
     res.status(500).json({success: false, message: `Failed to get Error: ${err}`})
   }
 }
+async function closeOpenMarkets(req, res) {
+
+  
+  try {
+  
+    
+    res.status(200).json({success: true, data: 'Testing.....'})
+  } catch (err) {
+    res.status(500).json({success: false, msg: "Failed to get "})
+  }
+
+}
 
 +router.get('/testSports/events', listEvents)
+router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
 router.get('/track-score/get-cricketscore', getCricketScore)
 router.get('/testSports/events', listEvents);
 router.get('/testSports/marketbooks/:ids', listMarketBook);
