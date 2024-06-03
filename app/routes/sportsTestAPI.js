@@ -232,7 +232,7 @@ async function getMarketsByEventId(req, res) {
 
 try {
   
-  const response = await axios.get(`http://213.52.128.52/api/v2/score?EventTypeID=2&matchId=33322684`)
+  const response = await axios.get(`http://213.52.128.52/api/v2/getMarkets?EventTypeID=4&EventID=33293816`)
 
 
   
