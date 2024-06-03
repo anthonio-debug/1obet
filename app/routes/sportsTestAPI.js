@@ -238,7 +238,8 @@ try {
   
   res.status(200).json({response: true, data: response})
 } catch (err) {
-  res.status(500).json({response: false, msg: "Failed to get "})
+
+  res.status(500).json({response: false, msg: err})
 }
 
 
