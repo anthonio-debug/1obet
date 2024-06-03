@@ -232,13 +232,13 @@ async function getMarketsByEventId(req, res) {
 
 try {
   
-  const response = await axios.get(`http://213.52.128.52/api/v2/getMarkets?EventTypeID=4&EventID=33293816`)
+  const response = await axios.get(`http://142.93.36.1/api/v2/getMarkets?EventTypeID=4&EventID=33293816`)
 
 
   
-  res.status(200).json({success: true, data: response})
+  res.status(200).json({response: true, data: response})
 } catch (err) {
-  res.status(500).json({success: false, msg: "Failed to get "})
+  res.status(500).json({response: false, msg: "Failed to get "})
 }
 
 
