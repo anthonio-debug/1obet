@@ -231,7 +231,7 @@ async function getMarketsByEventId(req, res) {
 //code placed for rahul api for score
 
 try {
-  const marketIds = req.params.ids
+  
   const response = await axios.get(`http://213.52.128.52/api/v2/score?EventTypeID=2&matchId=33322684`)
 
 
