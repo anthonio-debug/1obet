@@ -593,10 +593,6 @@ async function balanceFun(req, res) {
   } catch (err) {
     console.error(err);
     return res.json({ status: 500, msg: `Internal error ${err}` });
-  } finally {
-    res.json({
-      status: 200,
-    });
   }
 }
 
@@ -707,9 +703,6 @@ async function debitFun(req, res) {
     return res.json({ status: 500, msg: `Internal error ${err}` });
   } finally {
     await session.endSession();
-    res.json({
-      status: 200,
-    });
   }
 }
 
@@ -806,9 +799,6 @@ async function creditFun(req, res) {
     return res.json({ status: 500, msg: `Internal error ${err}` });
   } finally {
     await session.endSession();
-    res.json({
-      status: 200,
-    });
   }
 }
 
@@ -935,9 +925,6 @@ async function rollbackFun(req, res) {
     });
   } finally {
     await session.endSession()
-    res.json({
-      status: 200,
-    });
   }
 }
 
