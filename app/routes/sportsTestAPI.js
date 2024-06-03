@@ -225,8 +225,42 @@ async function testAPI(req, res) {
 
 async function getMarketsByEventId(req, res) {
   const eventId = req.params.eventId;
+  
+
+
+//code placed for rahul api for score
+
+try {
+  const marketIds = req.params.ids
+  const response = await axios.get(`http://213.52.128.52/api/v2/score?EventTypeID=2&matchId=33322684`)
+
+
+  
+  res.status(200).json({success: true, data: response})
+} catch (err) {
+  res.status(500).json({success: false, msg: "Failed to get "})
+}
+
+
+
+//code for rahul api for score
+
+
+
+
+
+
+
+
+
 
   try {
+
+    
+
+    
+
+
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
     const header = {
       headers: {
@@ -553,7 +587,7 @@ async function closeOpenMarkets(req, res) {
 }
 
 +router.get('/testSports/events', listEvents)
-router.get('/closeopenmarkets', closeOpenMarkets)
+router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
 router.get('/track-score/get-cricketscore', getCricketScore)
 router.get('/testSports/events', listEvents);
 router.get('/testSports/marketbooks/:ids', listMarketBook);
