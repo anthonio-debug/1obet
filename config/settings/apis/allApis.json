@@ -223,5 +223,6 @@
   "set-fancy-score",
   "active-bettors",
   "gethighlights",
-  "setCashWithdrawDisabled"
+  "setCashWithdrawDisabled",
+  "closeOpenMarkets"
 ]
