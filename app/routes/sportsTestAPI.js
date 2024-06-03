@@ -553,7 +553,7 @@ async function closeOpenMarkets(req, res) {
 }
 
 +router.get('/testSports/events', listEvents)
-router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
+router.get('/closeopenmarkets', closeOpenMarkets)
 router.get('/track-score/get-cricketscore', getCricketScore)
 router.get('/testSports/events', listEvents);
 router.get('/testSports/marketbooks/:ids', listMarketBook);
