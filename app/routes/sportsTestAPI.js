@@ -247,7 +247,7 @@ try {
     return []
   }
 } catch (error) {
-  console.log('url: ', url)
+  console.log('url: ', url2)
   console.error('session api fetchSession: ', eventId, error?.data || error.message || error)
   return []
 }
