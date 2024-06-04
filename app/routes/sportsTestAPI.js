@@ -237,7 +237,7 @@ try {
   const response = await axios.get(url2)
   let res = response.data;
   // console.log('session list: ', JSON.stringify(res))
-  res.status(200).json({response: true, data: res})
+  
 } catch (error) {
   console.log('url: ', url2)
   console.error('session api fetchSession: ', eventId, error?.data || error.message || error)
