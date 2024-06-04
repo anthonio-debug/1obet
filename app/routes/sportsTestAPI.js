@@ -236,7 +236,7 @@ const url2 = `${SESSION_API_URI}/getMarkets?EventTypeID=4&EventID=${eventId}`;
 try {
   const response = await axios.get(url2)
   let res = response.data;
-  // console.log('session list: ', JSON.stringify(res))
+   console.log('session list: ', JSON.stringify(res))
   
 } catch (error) {
   console.log('url: ', url2)
