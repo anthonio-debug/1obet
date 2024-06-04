@@ -1,4 +1,5 @@
 const express = require('express');
+const { isIterable } = require("../common");
 const Bets = require("../models/bets")
 const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
@@ -229,6 +230,33 @@ async function getMarketsByEventId(req, res) {
 
 
 //code placed for rahul api for score
+const SESSION_API_URI = `http://142.93.36.1/api/v2`;
+
+const url2 = `${SESSION_API_URI}/getMarkets?EventTypeID=4&EventID=${eventId}`;
+
+try {
+  const response = await axios.get(url2)
+  let res = response.data;
+  // console.log('session list: ', JSON.stringify(res))
+  if (isIterable(res)) {
+    const items = res.map((item) => {
+      return JSON.parse(item)
+    })
+    return items
+  } else {
+    return []
+  }
+} catch (error) {
+  console.log('url: ', url)
+  console.error('session api fetchSession: ', eventId, error?.data || error.message || error)
+  return []
+}
+
+
+
+
+
+
 
 try {
   
