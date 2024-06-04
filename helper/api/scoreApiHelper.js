@@ -42,8 +42,7 @@ const SCORE_API_STATUS_LIST = [
   "No Ball Check",
   "Catch Drop",
   "Player IN",
-  "Toss delayed due to rain",
-  "Rain",
+  "Toss delayed due to rain"
   
 ];
 
@@ -63,7 +62,8 @@ const SCORE_API_STATUS_BLOCK_LIST = [
   "Free Hit",
   "LBW",
   "No Ball Check",
-  "Toss delayed due to rain"
+  "Toss delayed due to rain",
+  "Rain"
 ];
 
 async function getCricketScoreAPI(eventId) {
