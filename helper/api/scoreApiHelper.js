@@ -42,7 +42,9 @@ const SCORE_API_STATUS_LIST = [
   "No Ball Check",
   "Catch Drop",
   "Player IN",
-  "Toss delayed due to rain"
+  "Toss delayed due to rain",
+  "Rain",
+  
 ];
 
 const SCORE_API_STATUS_BLOCK_LIST = [
