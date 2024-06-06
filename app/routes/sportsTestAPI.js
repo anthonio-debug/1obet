@@ -607,7 +607,33 @@ async function closeOpenMarkets(req, res) {
 
 }
 
-+router.get('/testSports/events', listEvents)
+async function getMarketsLimitlessByEventId(req, res) {
+  const eventId = req.params.eventId;
+  const url = `http://142.93.36.1/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
+  try {
+    const response = await axios.get(url);
+    res.status(200).json({ success: true, data: response.data });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + error.message });
+  }
+}
+
+async function getOddsLimitlessByMarketId(req, res) {
+  const marketId = req.params.marketId;
+  const url = `http://142.93.36.1/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
+  try {
+    const response = await axios.get(url);
+    res.status(200).json({ success: true, data: response.data });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + error.message });
+  }
+}
+
+router.get('/testSports/events', listEvents)
 router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
 router.get('/track-score/get-cricketscore', getCricketScore)
 router.get('/testSports/events', listEvents);
@@ -618,9 +644,11 @@ router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
 
 router.get('/track-bet/testAPI/:marketId', testAPI)
 router.get('/track-bet/get-markets/:eventId', getMarketsByEventId)
+router.get('/track-bet/get-markets-limitless/:eventId', getMarketsLimitlessByEventId)
 router.get('/track-bet/get-events/:sportsId', getEventsBySportsId)
 router.get('/track-bet/get-today-events/:sportsId', getTodayEventsBySportsId)
 router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
+router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId)
 router.get('/track-bet/get-odds-multi-marketids/:eventId', getOddsByMultiMarketId)
 router.get('/track-bet/get-markettype', getMarketType)
 router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByMarketType)
