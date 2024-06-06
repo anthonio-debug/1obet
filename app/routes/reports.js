@@ -457,140 +457,163 @@ function GetAllCashDepositLedger(req, res) {
 }
 
 async function user_book(req, res) {
-  const userId = parseInt(req.decoded.userId);
-  var query = { status: 1, marketId: { $ne: null } };
+  try {
+    const userId = parseInt(req.decoded.userId);
+    const query = { status: 1, marketId: { $ne: null } };
 
-  if (req.body.matchId) {
-    query.matchId = req.body.matchId;
-  }
-
-  const currentUser = await User.findOne({ userId: userId });
-  console.log(currentUser, 'currentUser');
-
-  if (req.body.myUser) {
-    var users = await User.distinct('userId', { createdBy: userId });
-    query.userId = { $in: users };
-  } else {
-    var users = [userId];
-    let parents = [userId];
-    let childUsers;
-
-    do {
-      childUsers = await User.distinct('userId', {
-        createdBy: {
-          $in: parents
-        }
-      });
-      console.log(' child users ======= ', childUsers);
-      if (childUsers.length) users.push(...childUsers);
-      parents = childUsers;
-    } while (childUsers.length > 0);
-    query.userId = { $in: users };
-  }
-
-  var bookRecord = await Bets.aggregate([
-    { $match: query },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'userDetails'
-      }
-    },
-    { $unwind: '$userDetails' },
-    {
-      $lookup: {
-        from: 'marketids',
-        localField: 'marketId',
-        foreignField: 'marketId',
-        as: 'marketDetails'
-      }
-    },
-    {
-      $project: {
-        sportsId: 1,
-        marketId: 1,
-        userId: 1,
-        betAmount: 1,
-        betRate: 1,
-        winningAmount: 1,
-        loosingAmount: 1,
-        event: 1,
-        runnerName: 1,
-        type: 1,
-        username: '$userDetails.userName',
-        downLineShare: '$userDetails.downLineShare',
-        marketName: '$marketDetails.marketName',
-        runners: {
-          $ifNull: [{ $arrayElemAt: ['$marketDetails.runners', 0] }, []]
-        },
-        _id: 1
-      }
-    },
-    {
-      $group: {
-        _id: {
-          userId: '$userId',
-          marketId: '$marketId',
-          type: '$type',
-          runnerName: '$runnerName'
-        },
-        marketId: { $first: '$marketId' },
-        downLineShare: { $first: '$downLineShare' },
-        betAmountTotal: { $sum: '$betAmount' },
-        betRateAverage: { $avg: '$betRate' },
-        marketName: { $first: '$marketName' },
-        totalWinningAmount: { $sum: '$winningAmount' },
-        totalLoosingAmount: { $sum: '$loosingAmount' },
-        event: { $first: '$event' },
-        runners: { $first: '$runners' },
-        username: { $first: '$username' }
-      }
+    if (req.body.matchId) {
+      query.matchId = req.body.matchId;
     }
-  ]);
 
-  const updatedValues = await Promise.all(
-    bookRecord.map(async (record) => {
-      const parentInfo = [];
+    const currentUser = await User.findOne({ userId: userId });
+    console.log(currentUser, 'currentUser');
 
-      if (record._id.userId !== userId) {
-        const alllParent = await getParents(record._id.userId);
+    let users;
+    if (req.body.myUser) {
+      users = await User.distinct('userId', { createdBy: userId });
+      query.userId = { $in: users };
+    } else {
+      users = [userId];
+      let parents = [userId];
+      let childUsers;
 
-        if (alllParent.length < 2) {
-          parentInfo.push({ id: currentUser.userId, downLineShare: currentUser.downLineShare, username: currentUser.userName });
-        } else {
-          var subChild = null;
-          for (let index = 0; index < alllParent.length; index++) {
-            const parentID = alllParent[index];
-            if (parentID == userId && index > 0) {
-              subChild = index - 1;
-              break;
-            }
-          }
-          let myParentInfo;
-          if (subChild) {
-            myParentInfo = await User.findOne({ userId: alllParent[subChild] });
-            if (myParentInfo) {
-              parentInfo.push({ id: currentUser.userId, downLineShare: currentUser.downLineShare - myParentInfo?.downLineShare, username: currentUser.userName });
-            }
-          } else {
-            parentInfo.push({ id: currentUser.userId, downLineShare: currentUser.downLineShare - myParentInfo?.downLineShare, username: currentUser.userName });
-          }
+      do {
+        childUsers = await User.distinct('userId', {
+          createdBy: { $in: parents }
+        });
+        console.log('child users ======= ', childUsers);
+        if (childUsers.length) users.push(...childUsers);
+        parents = childUsers;
+      } while (childUsers.length > 0);
+      query.userId = { $in: users };
+    }
+
+    const bookRecord = await Bets.aggregate([
+      { $match: query },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'userId',
+          as: 'userDetails'
+        }
+      },
+      { $unwind: '$userDetails' },
+      {
+        $lookup: {
+          from: 'marketids',
+          localField: 'marketId',
+          foreignField: 'marketId',
+          as: 'marketDetails'
+        }
+      },
+      {
+        $project: {
+          sportsId: 1,
+          marketId: 1,
+          userId: 1,
+          betAmount: 1,
+          betRate: 1,
+          winningAmount: 1,
+          loosingAmount: 1,
+          event: 1,
+          runnerName: 1,
+          type: 1,
+          username: '$userDetails.userName',
+          downLineShare: '$userDetails.downLineShare',
+          marketName: '$marketDetails.marketName',
+          runners: {
+            $ifNull: [{ $arrayElemAt: ['$marketDetails.runners', 0] }, []]
+          },
+          _id: 1
+        }
+      },
+      {
+        $group: {
+          _id: {
+            userId: '$userId',
+            marketId: '$marketId',
+            type: '$type',
+            runnerName: '$runnerName'
+          },
+          marketId: { $first: '$marketId' },
+          downLineShare: { $first: '$downLineShare' },
+          betAmountTotal: { $sum: '$betAmount' },
+          betRateAverage: { $avg: '$betRate' },
+          marketName: { $first: '$marketName' },
+          totalWinningAmount: { $sum: '$winningAmount' },
+          totalLoosingAmount: { $sum: '$loosingAmount' },
+          event: { $first: '$event' },
+          runners: { $first: '$runners' },
+          username: { $first: '$username' }
         }
       }
-      return {
-        ...record,
-        parentInfo
-      };
-    })
-  );
+    ]);
 
-  return res.json({
-    message: 'User Book List',
-    results: updatedValues
-  });
+    const updatedValues = await Promise.all(
+      bookRecord.map(async (record) => {
+        const parentInfo = [];
+
+        if (record._id.userId !== userId) {
+          const alllParent = await getParents(record._id.userId);
+
+          console.log('All Parents:', alllParent);
+
+          if (alllParent.length < 2) {
+            parentInfo.push({
+              id: currentUser.userId,
+              downLineShare: currentUser.downLineShare,
+              username: currentUser.userName
+            });
+          } else {
+            let subChild = null;
+            for (let index = 0; index < alllParent.length; index++) {
+              const parentID = alllParent[index];
+              if (parentID == userId && index > 0) {
+                subChild = index - 1;
+                break;
+              }
+            }
+
+            console.log('SubChild:', subChild);
+
+            if (subChild !== null && subChild !== undefined) { // Explicitly checking against null and undefined
+              const myParentInfo = await User.findOne({ userId: alllParent[subChild] });
+              if (myParentInfo) {
+                parentInfo.push({
+                  id: currentUser.userId,
+                  Share: currentUser.downLineShare - myParentInfo.downLineShare,
+                  username: currentUser.userName
+                });
+              }
+            } else {
+              parentInfo.push({
+                id: currentUser.userId,
+                Share: currentUser.downLineShare,
+                username: currentUser.userName
+              });
+            }
+          }
+        }
+        return {
+          ...record,
+          parentInfo
+        };
+      })
+    );
+
+    return res.json({
+      message: 'User Book List',
+      results: updatedValues
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: 'Internal Server Error'
+    });
+  }
 }
+
 
 async function fancy_full_book(req, res) {
   const userId = parseInt(req.decoded.userId);
