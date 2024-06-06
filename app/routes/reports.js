@@ -575,7 +575,7 @@ async function user_book(req, res) {
               parentInfo.push({ id: currentUser.userId, Share: currentUser.downLineShare - myParentInfo?.downLineShare, username: currentUser.userName });
             }
           } else {
-            parentInfo.push({ id: currentUser.userId, downLineShare: currentUser.downLineShare, username: currentUser.userName });
+            parentInfo.push({ id: currentUser.userId, Share: currentUser.downLineShare, username: currentUser.userName });
           }
         }
       }
