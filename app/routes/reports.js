@@ -556,7 +556,7 @@ async function user_book(req, res) {
 
       if (record._id.userId !== userId) {
         const alllParent = await getParents(record._id.userId);
-        
+
         if (alllParent.length < 2) {
           parentInfo.push({ id: currentUser.userId, downLineShare: currentUser.downLineShare, username: currentUser.userName });
         } else {
@@ -568,14 +568,14 @@ async function user_book(req, res) {
               break;
             }
           }
-
+          let myParentInfo;
           if (subChild) {
-            const myParentInfo = await User.findOne({ userId: alllParent[subChild] });
+            myParentInfo = await User.findOne({ userId: alllParent[subChild] });
             if (myParentInfo) {
-              parentInfo.push({ id: currentUser.userId, Share: currentUser.downLineShare - myParentInfo?.downLineShare, username: currentUser.userName });
+              parentInfo.push({ id: currentUser.userId, downLineShare: currentUser.downLineShare - myParentInfo?.downLineShare, username: currentUser.userName });
             }
           } else {
-            parentInfo.push({ id: currentUser.userId, Share: currentUser.downLineShare, username: currentUser.userName });
+            parentInfo.push({ id: currentUser.userId, downLineShare: currentUser.downLineShare - myParentInfo?.downLineShare, username: currentUser.userName });
           }
         }
       }
