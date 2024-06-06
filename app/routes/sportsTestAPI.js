@@ -225,91 +225,40 @@ async function testAPI(req, res) {
 
 async function getMarketsByEventId(req, res) {
   const eventId = req.params.eventId;
-  
-
-
-//code placed for rahul api for score
-const SESSION_API_URI = `http://142.93.36.1/api/v2`;
-
-const url2 = `${SESSION_API_URI}/getMarkets?EventTypeID=4&EventID=${eventId}`;
-
-try {
-  const response = await axios.get(url2)
-  let res = response.data;
-   console.log('session list: ',res)
-  
-} catch (error) {
-  console.log('url: ', url2)
-  console.error('session api fetchSession: ', eventId, error?.data || error.message || error)
-  return []
-}
-
-
-
-
-
-
-
-try {
-  
-  const response = await axios.get(`http://142.93.36.1/api/v2/getMarkets?EventTypeID=4&EventID=33293816`)
-
-
-  
-  res.status(200).json({response: true, data: response})
-} catch (err) {
-
-  res.status(500).json({response: false, msg: err})
-}
-
-
-
-//code for rahul api for score
-
-
-
-
-
-
-
-
-
 
   try {
-
-    
-
-    
-
-
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
     const header = {
       headers: {
-        'accept': 'application/json',
-        'Content-Type': 'application/json',
-        'X-App': process.env.XAPP_NAME
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
       },
-    }
+    };
     const requestData = {
-      "filter": {
-        eventIds: [eventId]
+      filter: {
+        eventIds: [eventId],
       },
-      "maxResults": 200,
-      "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
-    }
+      maxResults: 200,
+      marketProjection: [
+        "EVENT",
+        "EVENT_TYPE",
+        "MARKET_START_TIME",
+        "MARKET_DESCRIPTION",
+        "RUNNER_DESCRIPTION",
+      ],
+    };
     var url = `${sportsAPIUrl}/listMarketCatalogue`;
 
-    const response = await axios.post(
-      url,
-      requestData,
-      header
-    );
+    const response = await axios.post(url, requestData, header);
 
     const marketsData = response.data;
 
-    res.status(200).json({success: true, data: marketsData});
+    res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
 
