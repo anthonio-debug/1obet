@@ -574,7 +574,11 @@ async function getMarketsLimitlessByEventId2(req, res) {
   const url = `http://142.93.36.1/api/v2/getSessions?EventTypeID=4&matchId=${eventId}`;
   try {
     const response = await axios.get(url);
-    res.status(200).json({ success: true, data: response.data });
+    const data = []
+    for (const item of response.data) {
+      data.push(JSON.parse(item))
+    }
+    res.status(200).json({ success: true, data });
   } catch (error) {
     res
       .status(500)
