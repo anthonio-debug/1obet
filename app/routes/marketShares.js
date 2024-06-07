@@ -166,7 +166,7 @@ const marketGainWithDuplicates = async (req, res) => {
           } 
         }
 
-        if (marketId == "9" || marketId == "34" || marketId == "34" ) {
+        if (marketId == "9" || marketId == "34" || marketId == "35" || marketId =="11" ) {
           asianWinner = betRes[k]?.SessionScore
         }
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
@@ -184,7 +184,9 @@ const marketGainWithDuplicates = async (req, res) => {
           winnerRunnerData: betRes[k]?.winnerRunnerData,
           resultData: betRes[k]?.resultData,
           roundId: betRes[k]?.roundId, 
-          winner: Winner  
+          winner: Winner,
+          subMarketId: betRes[k].subMarketId,
+          resultData: betRes[k].resultData 
         }
         betsInfo.push(tempBet)
       }
@@ -227,7 +229,9 @@ const marketGainWithDuplicates = async (req, res) => {
           winnerRunnerData: betRes[k]?.winnerRunnerData,
           resultData: betRes[k]?.resultData,
           roundId: betRes[k]?.roundId, 
-          winner: Winner  
+          winner: Winner,
+          subMarketId: betRes[k].subMarketId,
+          resultData: betRes[k].resultData 
         }
         betsInfo.push(tempBet)
       }
