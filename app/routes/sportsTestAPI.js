@@ -569,6 +569,19 @@ async function getMarketsLimitlessByEventId(req, res) {
   }
 }
 
+async function getMarketsLimitlessByEventId2(req, res) {
+  const eventId = req.params.eventId;
+  const url = `http://142.93.36.1/api/v2/getSessions?EventTypeID=4&matchId=${eventId}`;
+  try {
+    const response = await axios.get(url);
+    res.status(200).json({ success: true, data: JSON.parse(response.data) });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + error.message });
+  }
+}
+
 async function getBookmakersLimitlessByEventId(req, res) {
   const eventId = req.params.eventId;
   const url = `http://142.93.36.1/api/v2/getBookmakers?EventTypeID=4&EventID=${eventId}`;
@@ -615,6 +628,7 @@ router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByM
 router.get('/track-bet/get-market-bet-session/:eventId', getFanciesByEventId)
 
 router.get('/track-bet/get-markets-limitless/:eventId', getMarketsLimitlessByEventId)
+router.get('/track-bet/get-markets-limitless2/:eventId', getMarketsLimitlessByEventId2)
 router.get('/track-bet/get-bookmakers-limitless/:eventId', getBookmakersLimitlessByEventId)
 router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId)
 
