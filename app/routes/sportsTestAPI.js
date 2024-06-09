@@ -611,6 +611,18 @@ async function getOddsLimitlessByMarketId(req, res) {
       .json({ success: false, msg: "Failed to get Error: " + error.message });
   }
 }
+async function getScoreLimitlessByEventId(req, res) {
+  const eventId = req.params.eventId;
+  const url = `http://142.93.36.1/api/v2/score?EventTypeID=1&matchId=${eventId}`;
+  try {
+    const response = await axios.get(url);
+    res.status(200).json({ success: true, data: JSON.parse(response.data) });
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + error.message });
+  }
+}
 
 router.get('/testSports/events', listEvents)
 router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
@@ -635,6 +647,7 @@ router.get('/track-bet/get-markets-limitless/:eventId', getMarketsLimitlessByEve
 router.get('/track-bet/get-markets-limitless2/:eventId', getMarketsLimitlessByEventId2)
 router.get('/track-bet/get-bookmakers-limitless/:eventId', getBookmakersLimitlessByEventId)
 router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId)
+router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
 
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
