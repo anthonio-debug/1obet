@@ -617,7 +617,7 @@ async function getScoreLimitlessByEventId(req, res) {
   const url = `http://142.93.36.1/api/v2/score?EventTypeID=1&matchId=${eventId}`;
   try {
     const response = await axios.get(url);
-    res.status(200).json({ success: true, data: response });
+    res.status(200).json({ success: true, data: JSON.parse(response.data) });
   } catch (error) {
     res
       .status(500)
