@@ -463,11 +463,8 @@ async function listInplayEvents(req, res) {
 async function listOddsAPI(req, res) {
   try {
     const eventIds = req.query.ids;
-    // const odds = await Odds.find({ eventId: { $in: eventIds } });
     const odds = await Odds.aggregate([{ $match: { eventId: eventIds } }, { $sort: { createdAt: -1 } }, { $group: { _id: '$marketName', odds: { $first: '$$ROOT' } } }, { $replaceRoot: { newRoot: '$odds' } }]).exec();
-    // const url = `${config.liveTvUrl}/get_live_tv_url/${eventIds}`;
-    // const liveTVResponse = await axios.get(url);
-    // const liveTVData = liveTVResponse.data;
+
     const fancyData = await FancyGames.findOne({
       eventId: { $in: eventIds }
     }).sort({ createdAt: -1 });
@@ -494,7 +491,6 @@ async function listOddsAPI(req, res) {
     } else {
       livesportscoreData = await otherLiveScore(eventIds);
     }
-    // //console.log('liveTVResponse', liveTVResponse);
     return res.json({
       success: true,
       message: 'Records',
