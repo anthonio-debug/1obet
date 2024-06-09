@@ -614,10 +614,10 @@ async function getOddsLimitlessByMarketId(req, res) {
 async function getScoreLimitlessByEventId(req, res) {
   const eventId = req.params.eventId;
  
-  const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=33335769`;
+  const url = `http://142.93.36.1/api/v2/score?EventTypeID=1&matchId=${eventId}`;
   try {
     const response = await axios.get(url);
-    res.status(200).json({ success: true, data: JSON.parse(response.data) });
+    res.status(200).json({ success: true, data: response });
   } catch (error) {
     res
       .status(500)
