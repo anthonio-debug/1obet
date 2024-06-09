@@ -613,16 +613,13 @@ async function getOddsLimitlessByMarketId(req, res) {
 }
 async function getScoreLimitlessByEventId(req, res) {
   const eventId = req.params.eventId;
- 
+
   const url = `http://142.93.36.1/api/v2/score?EventTypeID=4&matchId=33330794`;
   try {
     const response = await axios.get(url);
-//res.write(response);
-    res.status(200).json({ success: true, data: JSON.parse(response.message) });
+    res.status(200).json({ success: true, data: response.data });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, msg: "Failed and Error: " + "------==.."  + error.message });
+    res.status(500).json({ success: false, msg: "Failed and Error: " + error.message });
   }
 }
 
