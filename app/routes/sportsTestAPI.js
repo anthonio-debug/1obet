@@ -604,7 +604,7 @@ async function getOddsLimitlessByMarketId(req, res) {
   const url = `http://142.93.36.1/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
   try {
     const response = await axios.get(url);
-    res.status(200).json({ success: true, data: JSON.parse(response.data) });
+    res.status(200).json({ success: true, data: JSON.parse(response) });
   } catch (error) {
     res
       .status(500)
