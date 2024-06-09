@@ -29,23 +29,7 @@ async function liveTv(req, res) {
   }
 }
 
-async function getAllTables(req, res) {
-  try {
-    const allAsianTables = await AsianTable.find({ status: "1" });
 
-    res.status(200).json({
-      success: true,
-      message: "All Asian Tables",
-      allAsianTables: allAsianTables,
-    });
-  } catch (error) {
-    res.status(200).json({
-      success: false,
-      message: "Failed to get all asian tables",
-      error: error.message,
-    });
-  }
-}
 
 
 
