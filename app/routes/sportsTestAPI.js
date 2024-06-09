@@ -621,7 +621,7 @@ async function getScoreLimitlessByEventId(req, res) {
   } catch (error) {
     res
       .status(500)
-      .json({ success: false, msg: "Failed to get Error: " + error.message });
+      .json({ success: false, msg: "Failed to get Error: " +eventId+ "------"  + error.message });
   }
 }
 
