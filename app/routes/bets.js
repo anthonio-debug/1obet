@@ -589,8 +589,9 @@ const placeBet = async (req, res) => {
 
 
       if(userId==20126){
-
-        const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${eventId}`;
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",matchId);
+        
+        const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${matchId}`;
         try {
           const response = await axios.get(url);
           const matchStatus = response?.data?.data[0]?.matchStatus;
