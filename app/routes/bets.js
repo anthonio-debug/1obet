@@ -669,7 +669,7 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
-            console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR:",oddsData);
+            console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR:",oddsData[0]);
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
