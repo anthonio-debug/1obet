@@ -508,7 +508,7 @@ const placeBet = async (req, res) => {
 
             const marketStatus = oddsData[0]?.status;
             
-            if(marketStatus=='OPEN'){
+            if(marketStatus!='OPEN'){
               activeBettors.delete(userId)
               return res.status(404).send({
                 message: `Betting is CLOSED.`,
@@ -1250,7 +1250,19 @@ const placeBet = async (req, res) => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
             // const response = await axios.get(url);
             // const oddsData = response.data;
+            
             const oddsData = await apiCallForOdds(overunderMarketId);
+            
+            
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus=='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
+
 
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
