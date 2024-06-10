@@ -121,7 +121,7 @@ const activeBetPlacing = async (userId) => {
 }
 
 //function to validate marketStatus for odds START
-const ValidateMarketStatus = async (marketStatus) => {
+const ValidateMarketStatus = async (marketStatus,userId) => {
   
   console.log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIINTO");
   if(marketStatus=='OPEN'){
@@ -688,7 +688,7 @@ const placeBet = async (req, res) => {
             const marketStatus = oddsData[0]?.status;
             //console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR....:",marketStatus);
 
-            ValidateMarketStatus(marketStatus);
+            ValidateMarketStatus(marketStatus,userId);
 
 
             
