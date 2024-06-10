@@ -122,7 +122,8 @@ const activeBetPlacing = async (userId) => {
 
 //function to validate marketStatus for odds START
 const ValidateMarketStatus = async (marketStatus,userId) => {
-  
+  const express = require('express');
+const app = express();
   console.log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIINTO");
   if(marketStatus=='OPEN'){
     activeBettors.delete(userId)
