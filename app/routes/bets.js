@@ -672,11 +672,13 @@ const placeBet = async (req, res) => {
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
-            console.log("runnerFromAPI::::::::::::::::::::::::::::::::::::"+runnerFromAPI);
+            
             let selectedOddsValue = 0;
             if (type == 0) {
               const ApiResponseOdds =
                 runnerFromAPI?.ex?.availableToBack;
+
+              console.log("ApiResponseOdds  : : Type: 0::::::::::::::::::::::::::::::",ApiResponseOdds);
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0].price;
               }
@@ -687,6 +689,9 @@ const placeBet = async (req, res) => {
             } else if (type == 1) {
               const ApiResponseOdds =
                 runnerFromAPI.ex?.availableToLay;
+              
+                console.log("ApiResponseOdds  : : Type: 1::::::::::::::::::::::::::::::",ApiResponseOdds);
+
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0]?.price;
               }
