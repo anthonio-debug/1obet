@@ -473,7 +473,7 @@ function apiRequests() {
         eventId: el.eventId,
         indexID: el.index,
       });
-      console.log(":::::::::::::::::::::::::::::::::::",el.marketId);
+      // console.log(":::::::::::::::::::::::::::::::::::",el.marketId);
       tempArrayForIDs.push(`${el.marketId}`);
     }
 
@@ -597,7 +597,7 @@ function apiRequests() {
                       totalMatched: element.totalMatched,
                       createdAt: new Date().getTime(),
                     };
-                    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",element.status);
+                    //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",element.status);
                     if (element.status === "CLOSED") {
                       await MarketIDS.updateOne(
                         { marketId: marketId },
