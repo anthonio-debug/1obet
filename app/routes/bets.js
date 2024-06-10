@@ -135,6 +135,7 @@ const apiCallForOdds = async (marketId) => {
     data,
     header
   );
+  console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",response);
   return response?.data?.result;
 }
 
