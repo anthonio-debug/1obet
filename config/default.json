@@ -1,6 +1,6 @@
 {
   "apisFileName": "config/settings/apis/allApis.json",
-  
+
   "saltRounds": 10,
   "pageSize": 10,
   "staging_apiUrl": "https://stage.game-program.com/api/seamless/provider",
@@ -20,7 +20,7 @@
   "worldCasinoOnlineApiUrl": "https://stageapi.worldcasinoonline.com/api",
   "oldSaltKey": "Loa0192Jua",
   "betMinimumAmount": 100,
-  "activeProvider": "NEW", 
+  "activeProvider": "NEW",
 
   "language": "en",
   "play_for_fun": false,
@@ -50,7 +50,7 @@
   "Cup": 12,
   "tiedMatch": 35,
   "overUnder": 14,
-  "raceOpenBefore": 240000,
+  "raceOpenBefore": 100,
   "sportsOpenBefore": 600000,
   "tossCloseTime": 2700000,
   "raceEventsAllowedCount": 20,
