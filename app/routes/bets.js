@@ -589,7 +589,9 @@ const placeBet = async (req, res) => {
 
 
       if(userId==20126){
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",matchId);
+        //eventDetail = await Events.findById(matchId);
+        
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventDetail);
         
         const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${matchId}`;
         try {
