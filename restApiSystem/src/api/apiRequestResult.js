@@ -119,7 +119,7 @@ function apiRequestResult() {
         "marketIds": marketIds
       }
 
-      console.log("odd}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",marketIds);
+      //console.log("odd}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       let response = await axios.post(
         url,
@@ -127,7 +127,7 @@ function apiRequestResult() {
         header
       );
       const results = response.data.result;
-      console.log("--------------------------------------------------->",results);
+      //console.log("--------------------------------------------------->",results);
 
       let responseMarketIDs = []
       for (const result of results) {
