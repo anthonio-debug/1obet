@@ -125,7 +125,7 @@ function apiRequests() {
             if (lOdds.length > 0)
               event_information.marketIds[index].last_odds = lOdds[0];
           }
-          socket.emit("event_info", { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer });
+          socket.emit("event_info", { JSON.parse(JSON.stringify(event_information)), cricket, soccer });
         } else {
           socket.emit("err", "Event Not Exist");
         }
