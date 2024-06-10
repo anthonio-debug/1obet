@@ -120,6 +120,21 @@ const activeBetPlacing = async (userId) => {
   );
 }
 
+//function to validate marketStatus for odds START
+const ValidateMarketStatus = async (marketStatus) => {
+  
+  console.log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIINTO");
+  if(marketStatus=='OPEN'){
+    activeBettors.delete(userId)
+    return res.status(404).send({
+      message: `Betting is CLOSED.`,
+    });
+  }
+  
+}
+
+//function to validate marketStatus for odds END
+
 const apiCallForOdds = async (marketId) => {
   const url = `${config.sportsAPIUrl}/listMarketBook`;
   const data = { marketIds: [marketId] }
@@ -135,7 +150,7 @@ const apiCallForOdds = async (marketId) => {
     data,
     header
   );
-  console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",response);
+  //console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",response);
   return response?.data?.result;
   
 }
@@ -672,12 +687,11 @@ const placeBet = async (req, res) => {
             
             const marketStatus = oddsData[0]?.status;
             //console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR....:",marketStatus);
-            if(marketStatus!='OPEN'){
-              activeBettors.delete(userId)
-              return res.status(404).send({
-                message: `Betting is CLOSED.`,
-              });
-            }
+
+            ValidateMarketStatus(marketStatus);
+
+
+            
               
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
