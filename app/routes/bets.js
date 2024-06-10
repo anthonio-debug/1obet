@@ -121,16 +121,10 @@ const activeBetPlacing = async (userId) => {
 }
 
 //function to validate marketStatus for odds START
-const ValidateMarketStatus = async (marketStatus,userId) => {
-  const express = require('express');
-const app = express();
-  console.log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIINTO");
-  if(marketStatus=='OPEN'){
-    activeBettors.delete(userId)
-    return res.status(404).send({
-      message: `Betting is CLOSED.`,
-    });
-  }
+const ValidateMarketStatus = async (marketStatus) => {
+  
+
+  return response?.data?.result;
   
 }
 
@@ -511,6 +505,17 @@ const placeBet = async (req, res) => {
         for (let i = 1; i < 5 + delayAddition; i++) {
           setTimeout(async () => {
             const oddsData = await apiCallForOdds(id);
+
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus=='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
+
+
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const runnerFromAPI = oddsData[0]?.runners.find(
@@ -688,11 +693,12 @@ const placeBet = async (req, res) => {
             
             const marketStatus = oddsData[0]?.status;
             //console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR....:",marketStatus);
-
-            ValidateMarketStatus(marketStatus,userId);
-
-
-            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
               
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
