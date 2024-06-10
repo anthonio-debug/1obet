@@ -595,7 +595,7 @@ const placeBet = async (req, res) => {
         const matchStatus = response?.data?.data[0]?.matchStatus;
         console.log(`Match Status: ${matchStatus}`);
 
-        if ((matchStatus && matchStatus == 'Finished') || matchStatus == 'RainDelay') {
+        if ((matchStatus && matchStatus == 'Finished') || (matchStatus && matchStatus == 'RainDelay')) {
           return res.status(404).send({
             error: 'Error!',
             message: 'Bet is not allowed'
