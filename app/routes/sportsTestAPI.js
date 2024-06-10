@@ -618,7 +618,7 @@ async function getScoreLimitlessByEventId(req, res) {
   try {
     const response = await axios.get(url);
   if(!response.data.data[0].matchStatus)
-    res.status(200).json({ success: true, data: "Status not set Event--->"+response.data.data[0].eventId });
+    res.status(200).json({ success: true, data: "Status not set Event--->"+response.data.data[0].eventId+  response.data});
   else if(response.data.eventId)
   res.status(200).json({ success: true, data: "--->"+response.data.eventId });
   else
