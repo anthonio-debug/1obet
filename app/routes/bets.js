@@ -671,8 +671,14 @@ const placeBet = async (req, res) => {
             const oddsData = await apiCallForOdds(id);
             
             const marketStatus = oddsData[0]?.status;
-            console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR....:",marketStatus);
-
+            //console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR....:",marketStatus);
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
+              
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -682,7 +688,7 @@ const placeBet = async (req, res) => {
               const ApiResponseOdds =
                 runnerFromAPI?.ex?.availableToBack;
 
-              console.log("ApiResponseOdds  : : Type: 0::::::::::::::::::::::::::::::",ApiResponseOdds);
+              //console.log("ApiResponseOdds  : : Type: 0::::::::::::::::::::::::::::::",ApiResponseOdds);
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0].price;
               }
