@@ -589,6 +589,7 @@ const placeBet = async (req, res) => {
 
 
 
+      /*
       const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${eventId}`;
       try {
         const response = await axios.get(url);
@@ -604,6 +605,8 @@ const placeBet = async (req, res) => {
       } catch (error) {
         res.status(500).json({ success: false, msg: 'Failed and Error: ' + error.message });
       }
+      */
+     
 
 
 
