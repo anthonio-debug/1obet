@@ -137,7 +137,7 @@ const apiCallForOdds = async (marketId) => {
   );
   console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",response);
   return response?.data?.result;
-  console.log("|||||||||||||||||||||||||||||||||||||||||||||||");
+  
 }
 
 const stopbetStatusChecker = async (id) => {
@@ -672,6 +672,7 @@ const placeBet = async (req, res) => {
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
+            console.log("runnerFromAPI::::::::::::::::::::::::::::::::::::"+runnerFromAPI);
             let selectedOddsValue = 0;
             if (type == 0) {
               const ApiResponseOdds =
