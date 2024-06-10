@@ -137,7 +137,7 @@ const apiCallForOdds = async (marketId) => {
   );
   console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",response);
   return response?.data?.result;
-  console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}");
+  console.log("|||||||||||||||||||||||||||||||||||||||||||||||");
 }
 
 const stopbetStatusChecker = async (id) => {
