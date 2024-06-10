@@ -1754,7 +1754,7 @@ const placeBet = async (req, res) => {
       }
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
         activeBettors.delete(userId)
-        return res.status(404).send({ message: `max bet size is 10: ${fancyBetLimit.amount}` });
+        return res.status(404).send({ message: `max bet size is: ${fancyBetLimit.amount}` });
       }
 
       isFancyOrBookMaker = true;
@@ -2991,7 +2991,7 @@ const placeBet = async (req, res) => {
           console.log("Position saved");
         
           const nowUser = await User.findOne({ userId }).exec();
-          console.log("User fetched", nowUser);
+          //console.log("User fetched", nowUser);
         
           const user_prev_balance = nowUser.balance;
           const user_prev_availableBalance = nowUser.availableBalance;
