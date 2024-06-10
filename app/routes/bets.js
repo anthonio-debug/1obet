@@ -588,25 +588,29 @@ const placeBet = async (req, res) => {
       });
 
 
+      if(userId==20126){
 
-      /*
-      const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${eventId}`;
-      try {
-        const response = await axios.get(url);
-        const matchStatus = response?.data?.data[0]?.matchStatus;
-        console.log(`Match Status: ${matchStatus}`);
-
-        if ((matchStatus && matchStatus == 'Finished') || (matchStatus && matchStatus == 'RainDelay')) {
-          return res.status(404).send({
-            error: 'Error!',
-            message: 'Bet is not allowed'
-          });
+        const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${eventId}`;
+        try {
+          const response = await axios.get(url);
+          const matchStatus = response?.data?.data[0]?.matchStatus;
+          console.log(`Match Status: ${matchStatus}`);
+  
+          if ((matchStatus && matchStatus == 'Finished') || (matchStatus && matchStatus == 'RainDelay')) {
+            return res.status(404).send({
+              error: 'Error!',
+              message: 'Bet is not allowed'
+            });
+          }
+        } catch (error) {
+          res.status(500).json({ success: false, msg: 'Failed and Error: ' + error.message });
         }
-      } catch (error) {
-        res.status(500).json({ success: false, msg: 'Failed and Error: ' + error.message });
+        
       }
-      */
+      /*
      
+      */
+
 
 
 
