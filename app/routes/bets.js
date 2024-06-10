@@ -588,11 +588,11 @@ const placeBet = async (req, res) => {
       });
 
 
-      if(userId==20126){
+      
         //eventDetail = await Events.findById(matchId);
         
         
-        
+            //Code added for matchStatus started
         const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${eventDetail.Id}`;
         try {
           const response = await axios.get(url);
@@ -609,10 +609,8 @@ const placeBet = async (req, res) => {
           res.status(500).json({ success: false, msg: 'Failed and Error: ' + error.message });
         }
         
-      }
-      /*
-     
-      */
+      
+    //Code added for matchStatus ended
 
 
 

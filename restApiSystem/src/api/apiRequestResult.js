@@ -118,6 +118,8 @@ function apiRequestResult() {
       const requestData = {
         "marketIds": marketIds
       }
+
+      console.log("}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       let response = await axios.post(
         url,
