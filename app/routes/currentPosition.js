@@ -375,7 +375,7 @@ const getHighlights = async (req, res) => {
               $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] },
             },
             marketName: { $first: "$marketName" },
-            marketId: { $first: "$marketId" },
+            eventId: { $first: "$eventId" },
             sportID: { $first: "$sportID" }
           },
         },
