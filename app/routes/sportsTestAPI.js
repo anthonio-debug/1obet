@@ -10,11 +10,7 @@ const router = express.Router();
 const apiURL = "http://185.58.225.212:8080/api/"
 const apiSystemRacing = require("../../restApiSystem/src/tools_for_updated_racing.js")();
 require('dotenv').config()
-const express = require('express');
-const {MongoClient} = require('mongodb');
-const DBNAME = process.env.DB_NAME;
-const DBHost = process.env.DBHost;
-
+console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
 async function listEvents(req, res) {
   try {
@@ -627,19 +623,6 @@ async function getScoreLimitlessByEventId(req, res) {
   }
 }
 
-async function deleteOddsMany(req, res){
-  const client = new MongoClient(DBHost, { useUnifiedTopology: true });
-  await client.connect();
-  const odds = client.db(`${DBNAME}`).collection("odds");
-
-
-
-  const oddsDelete = await odds.deleteMany({});
-
-}
-
-
-
 
 
 router.get('/testSports/events', listEvents)
@@ -666,9 +649,6 @@ router.get('/track-bet/get-markets-limitless2/:eventId', getMarketsLimitlessByEv
 router.get('/track-bet/get-bookmakers-limitless/:eventId', getBookmakersLimitlessByEventId)
 router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId)
 router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
-
-router.get('/track-bet/delete-odds/:eventId', deleteOdds)
-
 
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
