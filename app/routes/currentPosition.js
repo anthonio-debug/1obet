@@ -374,6 +374,9 @@ const getHighlights = async (req, res) => {
             totalMatched: {
               $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] },
             },
+            inplay: {
+              $first: { $arrayElemAt: ["$oddsData.isInplay", 0] },
+            },
             marketName: { $first: "$marketName" },
             eventId: { $first: "$eventId" },
             sportID: { $first: "$sportID" }
