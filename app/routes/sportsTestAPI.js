@@ -3,6 +3,7 @@ const Bets = require("../models/bets")
 const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
 const MarketIDS = require("../models/marketIds")
+const odds = require('../models/odds');
 const axios = require('axios');
 const User = require('../models/user');
 const { fetchSession } = require("../../helper/api/sessionAPIHelper");
@@ -624,6 +625,18 @@ async function getScoreLimitlessByEventId(req, res) {
 }
 
 
+async function deleteOdds(req, res) {
+
+
+  try {
+    await odds.deleteMany({});
+
+    res.status(200).json({success: true, message: 'Odds deleted successfully'});
+  } catch (error) {
+    console.error('Error updating odds:', error);
+    res.status(500).json({success: false, message: 'Internal server error'});
+  }
+}
 
 router.get('/testSports/events', listEvents)
 router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
@@ -649,7 +662,7 @@ router.get('/track-bet/get-markets-limitless2/:eventId', getMarketsLimitlessByEv
 router.get('/track-bet/get-bookmakers-limitless/:eventId', getBookmakersLimitlessByEventId)
 router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId)
 router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
-
+router.get('/track-bet/delete-odds/:eventId', deleteOdds)
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
