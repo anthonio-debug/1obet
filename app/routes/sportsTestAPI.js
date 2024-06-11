@@ -629,7 +629,7 @@ async function deleteOdds(req, res) {
 
 
   try {
-    await Odds.deleteMany({});
+    await Odds.deleteOne({_id:ObjectId('6667a87549f7702e234c99d3')});
 
     res.status(200).json({success: true, message: 'Odds deleted successfully'});
   } catch (error) {
