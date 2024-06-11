@@ -639,6 +639,135 @@ async function deleteOdds(req, res) {
   }
 }
 
+async function getMatchOdds(eventId) {
+  const marketUrl = `http://142.93.36.1/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
+  const marketRes = await axios.get(marketUrl);
+  for (const item of marketRes.data) {
+    const oddUrl = `http://142.93.36.1/api/v2/getMarketsOdds?EventTypeID=4&marketId=${item.marketId}`;
+    const oddRes = await axios.get(oddUrl);
+    const oddData = JSON.parse(oddRes.data);
+    const runners = [];
+    for (const runner of oddData.runners) {
+      runners.push({
+        SelectionId: runner.selectionId,
+        runnerName: runner.runner,
+        Status: runner.status,
+        LastPriceTraded: runner.lastPriceTraded,
+        TotalMatched: 0,
+        ExchangePrices: {
+          AvailableToBack: runner.back,
+          AvailableToLay: runner.lay,
+        },
+      });
+    }
+    const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
+    const odds = new Odds({
+      eventId: oddData.eventid,
+      marketId: oddData.marketId,
+      status: oddData.status,
+      isInplay: oddData.inplay,
+      totalMatched: oddData.totalMatched,
+      isMarketDataDelayed: false,
+      sportsId: "4",
+      numberOfRunners: runners.length,
+      numberOfActiveRunners: activeRunners.length,
+      runners,
+    });
+    await odds.save();
+  }
+  // const tossUrl = `http://142.93.36.1/api/v2/getSessions?EventTypeID=4&matchId=${eventId}`;
+  // const tossRes = await axios.get(tossUrl);
+  // const tossData = [];
+  // for (const item of tossRes.data) {
+  //   const data = JSON.parse(item);
+  //   if (data.RunnerName.includes("Toss")) {
+  //     tossData.push(data);
+  //   }
+  // }
+  // const runners = []
+  // for (const runner of tossData) {
+  //   runners.push({
+  //     SelectionId: runner.SelectionId,
+  //     runnerName: runner.RunnerName,
+  //     Status: runner.GameStatus,
+  //     LastPriceTraded: runner.srno,
+  //     TotalMatched: 0,
+  //     ExchangePrices: {
+  //       AvailableToBack: [
+  //         {
+  //           price: runner.BackPrice1,
+  //           size: runner.BackSize1,
+  //         },
+  //         {
+  //           price: runner.BackPrice2,
+  //           size: runner.BackSize2,
+  //         },
+  //         {
+  //           price: runner.BackPrice3,
+  //           size: runner.BackSize3,
+  //         },
+  //       ],
+  //       AvailableToLay: [
+  //         {
+  //           price: runner.LayPrice1,
+  //           size: runner.LaySize1,
+  //         },
+  //         {
+  //           price: runner.LayPrice2,
+  //           size: runner.LaySize2,
+  //         },
+  //         {
+  //           price: runner.LayPrice3,
+  //           size: runner.LaySize3,
+  //         },
+  //       ],
+  //     },
+  //   });
+  // }
+  // const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
+  // const odds = new Odds({
+  //   eventId,
+  //   marketId: oddData.marketId,
+  //   status: oddData.status,
+  //   isInplay: oddData.inplay,
+  //   totalMatched: oddData.totalMatched,
+  //   isMarketDataDelayed: false,
+  //   sportsId: "4",
+  //   numberOfRunners: runners.length,
+  //   numberOfActiveRunners: activeRunners.length,
+  //   runners,
+  // });
+  // await odds.save();
+}
+
+async function cronOdds() {
+  const markets = await MarketIDS.aggregate([
+    {
+      $match: {
+        openDate: { $lte: Date.now() - 2 * 60 * 1000 },
+        status: "CLOSED",
+      },
+    },
+    {
+      $group: {
+        _id: {
+          eventId: "$eventId",
+        },
+      },
+    },
+    {
+      $project: {
+        _id: 0,
+        eventId: "$_id.eventId",
+      },
+    },
+  ]);
+  for (const market of markets) {
+    await getMatchOdds(market.eventId);
+  }
+  console.log(markets);
+}
+
 router.get('/testSports/events', listEvents)
 router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
 router.get('/track-score/get-cricketscore', getCricketScore)
