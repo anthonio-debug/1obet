@@ -3,7 +3,7 @@ const Bets = require("../models/bets")
 const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
 const MarketIDS = require("../models/marketIds")
-const odds = require('../models/odds');
+const Odds = require('../models/odds');
 const axios = require('axios');
 const User = require('../models/user');
 const { fetchSession } = require("../../helper/api/sessionAPIHelper");
@@ -629,7 +629,7 @@ async function deleteOdds(req, res) {
 
 
   try {
-    await odds.deleteMany({});
+    await Odds.deleteMany({});
 
     res.status(200).json({success: true, message: 'Odds deleted successfully'});
   } catch (error) {
