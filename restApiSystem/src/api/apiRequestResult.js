@@ -118,6 +118,8 @@ function apiRequestResult() {
       const requestData = {
         "marketIds": marketIds
       }
+
+      //console.log("odd}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}}",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       let response = await axios.post(
         url,
@@ -125,6 +127,8 @@ function apiRequestResult() {
         header
       );
       const results = response.data.result;
+      //console.log("--------------------------------------------------->",results);
+
       let responseMarketIDs = []
       for (const result of results) {
         const marketIndex = _.findIndex(markets, (o) => o.marketId === result.marketId);
@@ -136,7 +140,7 @@ function apiRequestResult() {
         responseMarketIDs.push(result.marketId)
 
         const market = markets[marketIndex];
-
+        
         if (result.status !== 'CLOSED') continue;
 
         let winnerSelectionId = result.runners.find(runner => runner.status === 'WINNER')?.selectionId;

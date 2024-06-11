@@ -120,6 +120,16 @@ const activeBetPlacing = async (userId) => {
   );
 }
 
+//function to validate marketStatus for odds START
+const ValidateMarketStatus = async (marketStatus) => {
+  
+
+  return response?.data?.result;
+  
+}
+
+//function to validate marketStatus for odds END
+
 const apiCallForOdds = async (marketId) => {
   const url = `${config.sportsAPIUrl}/listMarketBook`;
   const data = { marketIds: [marketId] }
@@ -135,7 +145,9 @@ const apiCallForOdds = async (marketId) => {
     data,
     header
   );
+  //console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]",response);
   return response?.data?.result;
+  
 }
 
 const stopbetStatusChecker = async (id) => {
@@ -493,6 +505,17 @@ const placeBet = async (req, res) => {
         for (let i = 1; i < 5 + delayAddition; i++) {
           setTimeout(async () => {
             const oddsData = await apiCallForOdds(id);
+
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
+
+
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const runnerFromAPI = oddsData[0]?.runners.find(
@@ -547,6 +570,14 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -565,6 +596,14 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -588,11 +627,11 @@ const placeBet = async (req, res) => {
       });
 
 
-      if(userId==20126){
+      
         //eventDetail = await Events.findById(matchId);
         
         
-        
+            //Code added for matchStatus started
         const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${eventDetail.Id}`;
         try {
           const response = await axios.get(url);
@@ -609,10 +648,8 @@ const placeBet = async (req, res) => {
           res.status(500).json({ success: false, msg: 'Failed and Error: ' + error.message });
         }
         
-      }
-      /*
-     
-      */
+      
+    //Code added for matchStatus ended
 
 
 
@@ -669,13 +706,26 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            
+            const marketStatus = oddsData[0]?.status;
+            //console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR....:",marketStatus);
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
+              
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
+            
             let selectedOddsValue = 0;
             if (type == 0) {
               const ApiResponseOdds =
                 runnerFromAPI?.ex?.availableToBack;
+
+              //console.log("ApiResponseOdds  : : Type: 0::::::::::::::::::::::::::::::",ApiResponseOdds);
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0].price;
               }
@@ -686,6 +736,9 @@ const placeBet = async (req, res) => {
             } else if (type == 1) {
               const ApiResponseOdds =
                 runnerFromAPI.ex?.availableToLay;
+              
+                console.log("ApiResponseOdds  : : Type: 1::::::::::::::::::::::::::::::",ApiResponseOdds);
+
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0]?.price;
               }
@@ -723,6 +776,14 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -765,6 +826,14 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.Runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -853,6 +922,14 @@ const placeBet = async (req, res) => {
           setTimeout(async () => {
 
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners?.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -904,6 +981,14 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -950,6 +1035,14 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners?.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -1044,6 +1137,14 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -1097,7 +1198,14 @@ const placeBet = async (req, res) => {
             // const oddsData = response.data;
 
             const oddsData = await apiCallForOdds(id);
-
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -1135,6 +1243,14 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -1213,7 +1329,19 @@ const placeBet = async (req, res) => {
             // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
             // const response = await axios.get(url);
             // const oddsData = response.data;
+            
             const oddsData = await apiCallForOdds(overunderMarketId);
+            
+            
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
+
 
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
@@ -1423,6 +1551,15 @@ const placeBet = async (req, res) => {
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
 
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
+
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -1471,6 +1608,15 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
+
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -1493,6 +1639,15 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
+            
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -1567,6 +1722,15 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
+
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -1611,6 +1775,14 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -1629,6 +1801,14 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -1702,6 +1882,14 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+            
+            if(marketStatus!='OPEN'){
+              activeBettors.delete(userId)
+              return res.status(404).send({
+                message: `Betting is CLOSED.`,
+              });
+            }
             const runnerFromAPI = oddsData[0]?.runners.find(
               (runner) => runner.selectionId == selectionId
             );
@@ -1745,6 +1933,11 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
         subarket: subMarketDetail.Id
       });
+      if(userId == 20126) {
+    
+        console.log(subMarketName + "---------" +fancyData + "-----------" + marketId);
+        }
+        
       console.log("Fancy  Max BetSize =====================================", userMaxBetSize);
       console.log("config.Fancy =====================================", config.Fancy);
       if (!userMaxBetSize) {

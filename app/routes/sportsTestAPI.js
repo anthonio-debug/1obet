@@ -3,6 +3,8 @@ const Bets = require("../models/bets")
 const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
 const MarketIDS = require("../models/marketIds")
+const Odds = require('../models/odds');
+const RaceOdds = require('../models/raceOdds')
 const axios = require('axios');
 const User = require('../models/user');
 const { fetchSession } = require("../../helper/api/sessionAPIHelper");
@@ -617,18 +619,25 @@ async function getScoreLimitlessByEventId(req, res) {
   const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${eventId}`;
   try {
     const response = await axios.get(url);
-  if(!response.data.data[0].matchStatus)
-    res.status(200).json({ success: true, data: "Status not set Event--->"+response.data.data[0].eventId+  response.data});
-  else if(response.data.eventId)
-  res.status(200).json({ success: true, data: "--->"+response.data.eventId });
-  else
-  res.status(200).json({ success: true, data: response.data });
+    res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     res.status(500).json({ success: false, msg: "Failed and Error: " + error.message });
   }
 }
 
 
+async function deleteOdds(req, res) {
+
+
+  try {
+    await Odds.deleteMany({});
+    await RaceOdds.deleteMany({});
+    res.status(200).json({success: true, message: 'Odds deleted successfully'});
+  } catch (error) {
+    console.error('Error updating odds:', error);
+    res.status(500).json({success: false, message: 'Internal server error'});
+  }
+}
 
 router.get('/testSports/events', listEvents)
 router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
@@ -654,7 +663,7 @@ router.get('/track-bet/get-markets-limitless2/:eventId', getMarketsLimitlessByEv
 router.get('/track-bet/get-bookmakers-limitless/:eventId', getBookmakersLimitlessByEventId)
 router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId)
 router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
-
+router.get('/track-bet/delete-odds/:eventId', deleteOdds)
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
