@@ -1933,6 +1933,11 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
         subarket: subMarketDetail.Id
       });
+      if(userId == 20126) {
+    
+        console.log(subMarketName + "---------" +fancyData + "-----------" + marketId);
+        }
+        
       console.log("Fancy  Max BetSize =====================================", userMaxBetSize);
       console.log("config.Fancy =====================================", config.Fancy);
       if (!userMaxBetSize) {
