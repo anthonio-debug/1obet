@@ -155,6 +155,7 @@ function ToolForEvent() {
 
   async function fetchOddsForEvent(eventId) {
     try {
+      //console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR odds for markets fetching.....");
       const documents = await MarketIDs.find({inPlay: true, eventId: eventId})
         .sort({lastCheck: 1})
         .limit(20)
@@ -173,6 +174,7 @@ function ToolForEvent() {
       );
 
       if (marketIds.length > 0) {
+        console.log("17777777777777777777777777777777777777777777777777777");
         apiRequests.getOddsFromProvider(documents, eventId);
       }
     } catch (error) {
@@ -243,6 +245,7 @@ function ToolForEvent() {
       );
 
       if (marketIds.length > 0) {
+        console.log("24444444444444477777777777777777777777777777777777777777777");
         apiRequests.getOddsFromProvider(documents);
       }
     } catch (error) {

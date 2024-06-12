@@ -639,133 +639,92 @@ async function deleteOdds(req, res) {
   }
 }
 
-async function getMatchOdds(eventId) {
-  const marketUrl = `http://142.93.36.1/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
-  const marketRes = await axios.get(marketUrl);
-  for (const item of marketRes.data) {
-    const oddUrl = `http://142.93.36.1/api/v2/getMarketsOdds?EventTypeID=4&marketId=${item.marketId}`;
-    const oddRes = await axios.get(oddUrl);
-    const oddData = JSON.parse(oddRes.data);
-    const runners = [];
-    for (const runner of oddData.runners) {
-      runners.push({
-        SelectionId: runner.selectionId,
-        runnerName: runner.runner,
-        Status: runner.status,
-        LastPriceTraded: runner.lastPriceTraded,
-        TotalMatched: 0,
-        ExchangePrices: {
-          AvailableToBack: runner.back,
-          AvailableToLay: runner.lay,
-        },
-      });
-    }
-    const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
-    const odds = new Odds({
-      eventId: oddData.eventid,
-      marketId: oddData.marketId,
-      status: oddData.status,
-      isInplay: oddData.inplay,
-      totalMatched: oddData.totalMatched,
-      isMarketDataDelayed: false,
-      sportsId: "4",
-      numberOfRunners: runners.length,
-      numberOfActiveRunners: activeRunners.length,
-      runners,
+async function saveOdds(oddData, sportsId) {
+  const runners = [];
+  for (const runner of oddData.runners) {
+    runners.push({
+      SelectionId: runner.selectionId,
+      runnerName: runner.runner,
+      Status: runner.status,
+      LastPriceTraded: runner.lastPriceTraded,
+      TotalMatched: 0,
+      ExchangePrices: {
+        AvailableToBack: runner.back,
+        AvailableToLay: runner.lay,
+      },
     });
-    await odds.save();
   }
-  // const tossUrl = `http://142.93.36.1/api/v2/getSessions?EventTypeID=4&matchId=${eventId}`;
-  // const tossRes = await axios.get(tossUrl);
-  // const tossData = [];
-  // for (const item of tossRes.data) {
-  //   const data = JSON.parse(item);
-  //   if (data.RunnerName.includes("Toss")) {
-  //     tossData.push(data);
-  //   }
-  // }
-  // const runners = []
-  // for (const runner of tossData) {
-  //   runners.push({
-  //     SelectionId: runner.SelectionId,
-  //     runnerName: runner.RunnerName,
-  //     Status: runner.GameStatus,
-  //     LastPriceTraded: runner.srno,
-  //     TotalMatched: 0,
-  //     ExchangePrices: {
-  //       AvailableToBack: [
-  //         {
-  //           price: runner.BackPrice1,
-  //           size: runner.BackSize1,
-  //         },
-  //         {
-  //           price: runner.BackPrice2,
-  //           size: runner.BackSize2,
-  //         },
-  //         {
-  //           price: runner.BackPrice3,
-  //           size: runner.BackSize3,
-  //         },
-  //       ],
-  //       AvailableToLay: [
-  //         {
-  //           price: runner.LayPrice1,
-  //           size: runner.LaySize1,
-  //         },
-  //         {
-  //           price: runner.LayPrice2,
-  //           size: runner.LaySize2,
-  //         },
-  //         {
-  //           price: runner.LayPrice3,
-  //           size: runner.LaySize3,
-  //         },
-  //       ],
-  //     },
-  //   });
-  // }
-  // const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
-  // const odds = new Odds({
-  //   eventId,
-  //   marketId: oddData.marketId,
-  //   status: oddData.status,
-  //   isInplay: oddData.inplay,
-  //   totalMatched: oddData.totalMatched,
-  //   isMarketDataDelayed: false,
-  //   sportsId: "4",
-  //   numberOfRunners: runners.length,
-  //   numberOfActiveRunners: activeRunners.length,
-  //   runners,
-  // });
-  // await odds.save();
+  const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
+  const odd = {
+    eventId: oddData.eventid,
+    marketId: oddData.marketId,
+    status: oddData.status,
+    isInplay: oddData.inplay,
+    totalMatched: oddData.totalMatched,
+    isMarketDataDelayed: false,
+    sportsId,
+    numberOfRunners: runners.length,
+    numberOfActiveRunners: activeRunners.length,
+    runners,
+  };
+  return odd;
+  const odds = new Odds(oddData);
+  await odds.save();
 }
 
-async function cronOdds() {
-  const markets = await MarketIDS.aggregate([
-    {
-      $match: {
-        openDate: { $lte: Date.now() - 2 * 60 * 1000 },
-        status: "CLOSED",
-      },
-    },
-    {
-      $group: {
-        _id: {
-          eventId: "$eventId",
-        },
-      },
-    },
-    {
-      $project: {
-        _id: 0,
-        eventId: "$_id.eventId",
-      },
-    },
-  ]);
-  for (const market of markets) {
-    await getMatchOdds(market.eventId);
+async function getOdds(marketIds, sportsId) {
+  return new Promise((resolve, reject) => {
+    const odds = [];
+    const oddUrl = `http://142.93.36.1/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+    axios
+      .get(oddUrl)
+      .then(async (oddRes) => {
+        if (!oddRes || !oddRes?.data) return;
+        if (oddRes.data.length) {
+          for (const item of oddRes.data) {
+            const oddData = JSON.parse(item);
+            odds.push(await saveOdds(oddData, sportsId));
+          }
+        } else {
+          const oddData = JSON.parse(oddRes.data);
+          odds.push(await saveOdds(oddData, sportsId));
+        }
+        resolve(odds);
+      })
+      .catch((error) => {
+        console.log("error", error.response.data);
+        resolve([]);
+      });
+  });
+}
+
+async function cronOdds(req, res) {
+  const { eventId, sportID } = req.params;
+  const markets = await MarketIDS.find({
+    // openDate: { $gte: Date.now() + 2 * 60 * 1000 },
+    // status: "CLOSED",
+    eventId,
+    sportID,
+  });
+  const count = 15;
+  const pages = Math.ceil(markets.length / count);
+  const matchIds = markets.map((e) => e.marketId);
+  const sendMarketIds = [];
+  for (let i = 0; i < pages; i++) {
+    let matchId = [];
+    if (i === 0) {
+      matchId = matchIds.slice(0, i + 1 * count);
+    } else {
+      matchId = matchIds.slice(i * count, (i + 1) * count);
+    }
+    sendMarketIds.push(matchId.join(","));
   }
-  console.log(markets);
+  let result = [];
+  for (const marketIds of sendMarketIds) {
+    const odds = await getOdds(marketIds, sportID);
+    result = [...result, ...odds];
+  }
+  res.json({ status: true, data: result });
 }
 
 router.get('/testSports/events', listEvents)
@@ -792,6 +751,7 @@ router.get('/track-bet/get-markets-limitless2/:eventId', getMarketsLimitlessByEv
 router.get('/track-bet/get-bookmakers-limitless/:eventId', getBookmakersLimitlessByEventId)
 router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId)
 router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
+router.get('/track-bet/check-market/:sportID/:eventId', cronOdds)
 router.get('/track-bet/delete-odds/:eventId', deleteOdds)
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
