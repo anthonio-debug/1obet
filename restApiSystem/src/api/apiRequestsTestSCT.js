@@ -468,7 +468,7 @@ function apiRequests() {
     //console.log("market ids for getting sports odds----------------------------"+marketIdsArray.length+"===================="+marketIdsArray);
     for (let index = 0; index < marketIdsArray.length; index++) {
       const el = marketIdsArray[index];
-      console.log("here is the el element for the market object::::::",el);
+      console.log("here is ::::::::::::::::::::::::::::::::::::::::::::::::",el.status);
       tempArray.push({
         market: el.marketId,
         eventId: el.eventId,
