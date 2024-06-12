@@ -654,7 +654,7 @@ async function saveOdds(oddData) {
     });
   }
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
-  const oddData = {
+  const odd = {
     eventId: oddData.eventid,
     marketId: oddData.marketId,
     status: oddData.status,
@@ -666,7 +666,7 @@ async function saveOdds(oddData) {
     numberOfActiveRunners: activeRunners.length,
     runners,
   };
-  return oddData;
+  return odd;
   const odds = new Odds(oddData);
   await odds.save();
 }
