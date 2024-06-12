@@ -51,6 +51,42 @@ const GetAllBets = async (req, res) => {
       }
     });
 
+    pipeline.push(
+      {
+        $group: {
+          _id: "$fancyData",
+          marketId: {
+            "$first": "$marketId"
+          },
+          status: {
+            "$first": "$status"
+          },
+          fancyData: {
+            "$first": "$fancyData"
+          },
+          event: {
+            "$first": "$event"
+          },
+          runnerName: {
+            "$first": "$runnerName"
+          },
+          eventId: {
+            "$first": "$eventId"
+          },
+          details: {
+            $push: {
+              _id: "$_id",
+              userId: "$userId",
+              userParent: "$userParent.userName",
+              userDetails: "$userDetails.userName",
+              betAmount: "$betAmount",
+              createdAt: "$createdAt"
+            }
+          }
+        }
+      }
+    )
+
     let result = await Bets.aggregate(pipeline).exec()
 
     const results = result.slice((Number(page) - 1) * limit, page * limit);
