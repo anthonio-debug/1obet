@@ -638,7 +638,8 @@ async function deleteOdds(req, res) {
     res.status(500).json({success: false, message: 'Internal server error'});
   }
 }
-async function saveOdds(oddData) {
+
+async function saveOdds(oddData, sportsId) {
   const runners = [];
   for (const runner of oddData.runners) {
     runners.push({
@@ -682,11 +683,11 @@ async function getOdds(marketIds, sportsId) {
         if (oddRes.data.length) {
           for (const item of oddRes.data) {
             const oddData = JSON.parse(item);
-            odds.push(await saveOdds(oddData));
+            odds.push(await saveOdds(oddData, sportsId));
           }
         } else {
           const oddData = JSON.parse(oddRes.data);
-          odds.push(await saveOdds(oddData));
+          odds.push(await saveOdds(oddData, sportsId));
         }
         console.log('odds', odds)
         resolve(odds);
