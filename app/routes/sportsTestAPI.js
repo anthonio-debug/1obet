@@ -691,6 +691,8 @@ async function getOdds(marketIds, sportsId) {
         }
         console.log('odds', odds)
         resolve(odds);
+      }).catch((error)=>{
+        console.log('error', error.data)
       })
     } catch (error) {
       console.log(error);
