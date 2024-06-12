@@ -574,7 +574,7 @@ async function user_book(req, res) {
                 id: parentUser.userId,
                 downLineShare: parentUser.downLineShare - previousShare,
                 username: parentUser.userName,
-                role: firstParent.role
+                role: parentUser.role
               });
               previousShare = parentUser.downLineShare;
             }
