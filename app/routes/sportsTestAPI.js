@@ -674,6 +674,7 @@ async function saveOdds(oddData) {
 async function getOdds(marketIds, sportsId) {
   return new Promise((resolve, reject) => {
     try {
+      console.log('marketIds, sportsId', marketIds, sportsId)
       const odds = [];
       const oddUrl = `http://142.93.36.1/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
       axios.get(oddUrl).then(async (oddRes)=>{
@@ -687,6 +688,7 @@ async function getOdds(marketIds, sportsId) {
           const oddData = JSON.parse(oddRes.data);
           odds.push(await saveOdds(oddData));
         }
+        console.log('odds', odds)
         resolve(odds);
       })
     } catch (error) {
@@ -720,6 +722,7 @@ async function cronOdds(req, res) {
   let result = [];
   for (const marketIds of sendMarketIds) {
     const odds = await getOdds(marketIds, sportID);
+    console.log('odds', odds)
     result = [...result, ...odds];
   }
   res.json({ status: true, data: result });
