@@ -174,6 +174,7 @@ function ToolForEvent() {
       );
 
       if (marketIds.length > 0) {
+        console.log("17777777777777777777777777777777777777777777777777777");
         apiRequests.getOddsFromProvider(documents, eventId);
       }
     } catch (error) {
@@ -244,6 +245,7 @@ function ToolForEvent() {
       );
 
       if (marketIds.length > 0) {
+        console.log("24444444444444477777777777777777777777777777777777777777777");
         apiRequests.getOddsFromProvider(documents);
       }
     } catch (error) {
