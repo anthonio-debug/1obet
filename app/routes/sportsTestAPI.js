@@ -672,25 +672,28 @@ async function saveOdds(oddData) {
 }
 
 async function getOdds(marketIds, sportsId) {
-  try {
-    const odds = [];
-    const oddUrl = `http://142.93.36.1/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
-    const oddRes = await axios.get(oddUrl);
-    if (!oddRes || !oddRes?.data) return;
-    if (oddRes.data.length) {
-      for (const item of oddRes.data) {
-        const oddData = JSON.parse(item);
-        odds.push(await saveOdds(oddData));
-      }
-    } else {
-      const oddData = JSON.parse(oddRes.data);
-      odds.push(await saveOdds(oddData));
+  return new Promise((resolve, reject) => {
+    try {
+      const odds = [];
+      const oddUrl = `http://142.93.36.1/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+      axios.get(oddUrl).then(async (oddRes)=>{
+        if (!oddRes || !oddRes?.data) return;
+        if (oddRes.data.length) {
+          for (const item of oddRes.data) {
+            const oddData = JSON.parse(item);
+            odds.push(await saveOdds(oddData));
+          }
+        } else {
+          const oddData = JSON.parse(oddRes.data);
+          odds.push(await saveOdds(oddData));
+        }
+        resolve(odds);
+      })
+    } catch (error) {
+      console.log(error);
+      resolve([]);
     }
-    return odds;
-  } catch (error) {
-    console.log(error);
-    return [];
-  }
+  })
 }
 
 async function cronOdds(req, res) {
