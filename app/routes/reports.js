@@ -563,7 +563,8 @@ async function user_book(req, res) {
               parentInfo.push({
                 id: firstParent.userId,
                 downLineShare: firstParent.downLineShare,
-                username: firstParent.userName
+                username: firstParent.userName,
+                role: firstParent.role
               });
             }
           } else {
@@ -572,7 +573,8 @@ async function user_book(req, res) {
               parentInfo.push({
                 id: parentUser.userId,
                 downLineShare: parentUser.downLineShare - previousShare,
-                username: parentUser.userName
+                username: parentUser.userName,
+                role: firstParent.role
               });
               previousShare = parentUser.downLineShare;
             }
