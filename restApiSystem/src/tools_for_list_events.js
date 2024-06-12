@@ -155,6 +155,7 @@ function ToolForEvent() {
 
   async function fetchOddsForEvent(eventId) {
     try {
+      console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR odds for markets fetching.....");
       const documents = await MarketIDs.find({inPlay: true, eventId: eventId})
         .sort({lastCheck: 1})
         .limit(20)

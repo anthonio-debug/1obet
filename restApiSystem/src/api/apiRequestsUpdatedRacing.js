@@ -553,7 +553,7 @@ function apiRequests() {
       const requestData = {
         "marketIds": marketIds
       }
-
+      console.log("----------------------------",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
