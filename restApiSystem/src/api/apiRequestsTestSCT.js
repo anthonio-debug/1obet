@@ -465,7 +465,7 @@ function apiRequests() {
   async function getOddsFromProvider(marketIdsArray) {
     let tempArray = [];
     let tempArrayForIDs = [];
-    //console.log("market ids for getting sports odds----------------------------"+marketIdsArray.length+"===================="+marketIdsArray);
+    console.log("market ids for getting sports odds----------------------------"+marketIdsArray.length+"====================");
     for (let index = 0; index < marketIdsArray.length; index++) {
       const el = marketIdsArray[index];
       console.log("here is ::::::::::::::::::::::::::::::::::::::::::::::::",el.status);
