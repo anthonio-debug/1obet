@@ -1935,7 +1935,7 @@ const placeBet = async (req, res) => {
       });
       if(userId == 20126) {
     
-        console.log(subMarketName + "------------------------------" +fancyData + "-----------" + marketId);
+        console.log(subMarketName + "------------------------------" +fancyData + "-----------" + marketId + "-UUUUUUUUUUUU-" + userId);
         }
         
       console.log("Fancy  Max BetSize =====================================", userMaxBetSize);
