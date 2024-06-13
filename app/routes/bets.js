@@ -737,7 +737,7 @@ const placeBet = async (req, res) => {
               const ApiResponseOdds =
                 runnerFromAPI.ex?.availableToLay;
               
-                console.log("ApiResponseOdds  : : Type: 1::::::::::::::::::::::::::::::",ApiResponseOdds);
+                //console.log("ApiResponseOdds  : : Type: 1::::::::::::::::::::::::::::::",ApiResponseOdds);
 
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0]?.price;
