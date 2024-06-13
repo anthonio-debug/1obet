@@ -89,7 +89,7 @@ const GetAllBets = async (req, res) => {
 
     let result = await Bets.aggregate(pipeline).exec()
 
-    const results = result.slice((Number(page) - 1) * limit, page * limit);
+    // const results = result.slice((Number(page) - 1) * limit, page * limit);
 
     // for (const bet of results){
     //   const user = await User.findOne({ _id: bet.userId })
@@ -99,7 +99,7 @@ const GetAllBets = async (req, res) => {
     return res.send({
       status: true,
       message: "Bets List !",
-      results: results,
+      results: result,
       total: result.length,
       limit: limit,
       page: page,
