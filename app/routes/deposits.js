@@ -1236,6 +1236,7 @@ function getdepositDetailsCredit(req, res) {
       if (err || !user) {
         return res.status(404).send({ message: 'User not found' });
       }
+
       let cashPipeline = [{ 
         $match: { 
           userId: Number(req.decoded.userId),
