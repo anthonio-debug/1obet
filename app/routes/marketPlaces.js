@@ -198,8 +198,16 @@ async function getMarketsByEventId(req, res) {
   try {
     const eventId = req.params.eventId;
     const marketData = await MarketIDS.aggregate([
-      { 
-        $match: { eventId: eventId } 
+      {
+        $match: { eventId: eventId }
+      },
+      {
+        $lookup: {
+          from: 'odds',
+          localField: 'eventId',
+          foreignField: 'eventId',
+          as: 'oddsData'
+        }
       },
       {
         $project: {
@@ -209,15 +217,16 @@ async function getMarketsByEventId(req, res) {
           marketId: 1,
           marketName: 1,
           status: 1,
+          totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
         }
       }
     ]);
 
-    res.status(200).json({success: true, data: marketData});
+    res.status(200).json({ success: true, data: marketData });
   } catch (err) {
     return res.status(404).send({
       success: false,
-      message: 'Failed to update allowed market type by EventId',
+      message: 'Failed to update allowed market type by EventId'
     });
   }
 }

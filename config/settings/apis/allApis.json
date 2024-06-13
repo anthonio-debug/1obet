@@ -76,7 +76,7 @@
   "getGamesByName",
   "getBetRates",
   "getdeopsitDetailsCash",
-  "getdepositDetailsCredit",
+  "getdeopsitDetailsCredit",
   "getSideBarMenu",
   "addSideBarMenu",
   "getMatchedBets",
