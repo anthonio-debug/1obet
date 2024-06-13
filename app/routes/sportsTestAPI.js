@@ -631,8 +631,14 @@ async function deleteOdds(req, res) {
 
   try {
 
+
+    
+    await Bets.updateMany(
+      { subMarketId: '7', eventId: '33340930'},
+      { $set: { isManuel:true } }
+    )
    
-    await InPlayEvents.updateMany({isManuel:true}, {subMarketId: '7', eventId: '33340930'});
+   // await InPlayEvents.updateMany({isManuel:true}, {subMarketId: '7', eventId: '33340930'});
 
     
 
