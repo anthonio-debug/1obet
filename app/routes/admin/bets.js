@@ -73,6 +73,9 @@ const GetAllBets = async (req, res) => {
           eventId: {
             "$first": "$eventId"
           },
+          resultData :{
+            "$first": "$resultData"
+          },
           details: {
             $push: {
               _id: "$_id",

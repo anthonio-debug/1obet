@@ -2170,29 +2170,29 @@ const setSessionScore = async (req, res) => {
 };
 
 const setFancyScore = async (req, res) => {
-  const { betId, resultData } = req.body;
-  if (!betId || !resultData) {
+  const { eventId, resultData, fancyData } = req.body;
+  if (!eventId || !resultData) {
     return res.status(404).send({
       success: false,
-      message: 'betId or resultData is missing'
+      message: 'eventId or resultData is missing'
     });
   }
 
-  const bet = await Bets.findOne({ _id: mongoose.Types.ObjectId(betId) });
-  if (!bet) {
-    return res.status(404).send({
-      success: false,
-      message: 'bet is missing'
-    });
-  }
+  // const bet = await Bets.findOne({ _id: mongoose.Types.ObjectId(betId) });
+  // if (!bet) {
+  //   return res.status(404).send({
+  //     success: false,
+  //     message: 'bet is missing'
+  //   });
+  // }
 
   await MarketIDS.findOneAndUpdate(
-    { marketId: bet.fancyData, eventId: bet.eventId },
+    { marketId: fancyData, eventId: eventId },
     {
       $set: { winnerRunnerData: resultData, manuelClose: true },
       $setOnInsert: {
-        eventId: bet.eventId,
-        marketId: bet.fancyData,
+        eventId: eventId,
+        marketId: fancyData,
         __v: 0,
         inPlay: false,
         index: 0,
