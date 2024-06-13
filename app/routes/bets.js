@@ -1933,10 +1933,7 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
         subarket: subMarketDetail.Id
       });
-      if(userId == 20126) {
-    
-        console.log(subMarketName + "------------------------------" +fancyData + "-----------" + marketId + "-UUUUUUUUUUUU-" + userId);
-        }
+      
         
       console.log("Fancy  Max BetSize =====================================", userMaxBetSize);
       console.log("config.Fancy =====================================", config.Fancy);
@@ -2084,6 +2081,13 @@ const placeBet = async (req, res) => {
         fancyData = dbSelectedOdds.nat;
         runnerName = dbSelectedOdds.nat;
         _3rdPartyMarketId = dbSelectedOdds.nat;
+
+
+        if(userId == 20126) {
+    
+          console.log(subMarketName + "------------------------------" +fancyData + "-----------" + marketId + "-UUUUUUUUUUUU-" + userId);
+          }
+
         let oddsInsex = 0;
         if (req.body.type == 0) {
           if (betRate != apiSelectedOdds.l1) {
