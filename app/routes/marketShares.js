@@ -239,6 +239,7 @@ const marketGainWithDuplicates = async (req, res) => {
     }
 
     response.totalDespoitInfo = totalDespoitInfo
+    const resultData = response.betsInfo[0].resultData;
 
     return res.send({
       success: true,
@@ -248,6 +249,7 @@ const marketGainWithDuplicates = async (req, res) => {
       dealer: parent.userName,
       currentUser: currentUser.userName,
       Winner: marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner,
+      resultData: resultData
     });
 
   } else {
