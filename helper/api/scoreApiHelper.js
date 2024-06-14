@@ -48,7 +48,6 @@ const SCORE_API_STATUS_LIST = [
 
 const SCORE_API_STATUS_BLOCK_LIST = [
   "NB",
-  "Tea Break",
   "Rain Stop Play",
   "Rain Stops Play",
   "Catch Check",
