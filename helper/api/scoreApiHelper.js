@@ -63,7 +63,9 @@ const SCORE_API_STATUS_BLOCK_LIST = [
   "LBW",
   "No Ball Check",
   "Toss delayed due to rain",
-  "Rain"
+  "Rain",
+  "wet outfield",
+  "Toss delayed"
 ];
 
 async function getCricketScoreAPI(eventId) {
