@@ -72,6 +72,32 @@ async function getAllSportsHighlight(req, res) {
       },
     ]);
 
+    let marketData = [];
+
+    if (sportsHighlights.length > 0) {
+      for (let i = 0; i < sportsHighlights.length; i++) {
+        marketData = await marketIds.aggregate([
+          {
+            $match: { eventId: sportsHighlights[i].Id, marketName: "Match Odds" }
+          },
+          {
+            $lookup: {
+              from: 'odds',
+              localField: 'eventId',
+              foreignField: 'eventId',
+              as: 'oddsData'
+            }
+          },
+          {
+            $project: {
+              _id: 1,
+              totalMatched: { $max: '$oddsData.totalMatched' }
+            }
+          }
+        ]);
+        sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
+      }
+    }
 
     const ids = await inPlayEvents.distinct("Id", {
       sportsId: sportId,
