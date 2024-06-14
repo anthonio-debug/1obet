@@ -6,8 +6,8 @@ const MarketIDS = require('../models/marketIds');
 const User = require('../models/user');
 const { v4: uuidv4 } = require('uuid');
 const marketPlaceVlidator = require('../validators/marketPlaces');
-const inPlayEvents = require("../models/events");
-const {fetchMarket} = require("../../helper/eventHelper");
+const inPlayEvents = require('../models/events');
+const { fetchMarket } = require('../../helper/eventHelper');
 
 const router = express.Router();
 const loginRouter = express.Router();
@@ -21,8 +21,7 @@ function addMarketType(req, res) {
   marketType.marketId = uuidv4();
   marketType.save((err, marketType) => {
     if (err && err.code == 11000) {
-      if (err.keyPattern.name == 1)
-        return res.status(404).send({ message: 'market type already present' });
+      if (err.keyPattern.name == 1) return res.status(404).send({ message: 'market type already present' });
     }
     if (err || !marketType) {
       return res.status(404).send({ message: 'market type not added', err });
@@ -30,7 +29,7 @@ function addMarketType(req, res) {
     return res.send({
       success: true,
       message: 'Market type added successfully',
-      results: marketType,
+      results: marketType
     });
   });
 }
@@ -41,21 +40,18 @@ async function updateMarketStatusInPlay(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const {checked, eventId, marketId} = req.body
-    const status = checked ? 'OPEN' : 'CLOSED'
-    const inPlay = !!checked
-    await MarketIDS.updateOne(
-      { eventId: eventId, marketId: marketId },
-      { inPlay: inPlay, status: status}
-    )
+    const { checked, eventId, marketId } = req.body;
+    const status = checked ? 'OPEN' : 'CLOSED';
+    const inPlay = !!checked;
+    await MarketIDS.updateOne({ eventId: eventId, marketId: marketId }, { inPlay: inPlay, status: status });
     return res.status(200).send({
       success: true,
-      message: 'Updated successfully !',
+      message: 'Updated successfully !'
     });
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Failed to update allowed market type by MarketId',
+      message: 'Failed to update allowed market type by MarketId'
     });
   }
 }
@@ -66,27 +62,21 @@ function addSubMarketTypes(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   MarketType.findOne({ marketId: req.body.marketId }, (err, data) => {
-    if (err)
-      return res.status(404).send({ message: 'market type not found', err });
+    if (err) return res.status(404).send({ message: 'market type not found', err });
     const subMarketType = new SubMarketType(req.body);
     subMarketType.marketId = data.marketId;
     subMarketType.subMarketId = uuidv4(); // Generate a unique UUID
     subMarketType.save((err, marketType) => {
       if (err && err.code == 11000) {
-        if (err.keyPattern.name == 1)
-          return res
-            .status(404)
-            .send({ message: 'sub market type already present' });
+        if (err.keyPattern.name == 1) return res.status(404).send({ message: 'sub market type already present' });
       }
       if (err || !marketType) {
-        return res
-          .status(404)
-          .send({ message: 'sub market type not added', err });
+        return res.status(404).send({ message: 'sub market type not added', err });
       }
       return res.send({
         success: true,
         message: 'Sub Market type added successfully',
-        results: marketType,
+        results: marketType
       });
     });
   });
@@ -101,12 +91,12 @@ async function getAllMarketTypes(req, res) {
     const blockedSubMarkets = user.blockedSubMarkets;
 
     const data = await MarketType.aggregate([
-      { 
+      {
         $lookup: {
           from: 'submarkettypes',
           localField: 'Id',
           foreignField: 'marketId',
-          as: 'subMarkets',
+          as: 'subMarkets'
         }
       },
       {
@@ -115,7 +105,7 @@ async function getAllMarketTypes(req, res) {
           marketName: '$name',
           status: {
             $cond: {
-              if: { $in: ["$Id", blockedMarkets] },
+              if: { $in: ['$Id', blockedMarkets] },
               then: 0,
               else: 1
             }
@@ -130,7 +120,7 @@ async function getAllMarketTypes(req, res) {
                 marketId: '$$subMarket.marketId',
                 status: {
                   $cond: {
-                    if: { $in: ["$$subMarket.Id", blockedSubMarkets] },
+                    if: { $in: ['$$subMarket.Id', blockedSubMarkets] },
                     then: 0,
                     else: 1
                   }
@@ -149,7 +139,7 @@ async function getAllMarketTypes(req, res) {
         markets: data,
         blockedMarkets,
         blockedSubMarkets
-      },
+      }
     });
   });
 }
@@ -158,38 +148,38 @@ async function getMarketsBySportsId(req, res) {
   try {
     const sportsId = req.params.sportsId;
     const marketData = await MarketIDS.aggregate([
-      { 
-        $match: { sportID: parseInt(sportsId, 10) } 
+      {
+        $match: { sportID: parseInt(sportsId, 10) }
       },
       {
         $lookup: {
           from: 'inplayevents',
           localField: 'eventId',
           foreignField: 'Id',
-          as: 'eventDetails',
+          as: 'eventDetails'
         }
       },
       {
-        $unwind: "$eventDetails"
+        $unwind: '$eventDetails'
       },
       {
         $project: {
           _id: 1,
           sportID: 1,
           eventId: 1,
-          eventName: "$eventDetails.name",
+          eventName: '$eventDetails.name',
           marketId: 1,
           marketName: 1,
-          status: 1,
+          status: 1
         }
       }
     ]);
 
-    res.status(200).json({success: true, data: marketData});
+    res.status(200).json({ success: true, data: marketData });
   } catch (err) {
     return res.status(404).send({
       success: false,
-      message: 'Failed to update allowed market type by SportsId',
+      message: 'Failed to update allowed market type by SportsId'
     });
   }
 }
@@ -204,8 +194,8 @@ async function getMarketsByEventId(req, res) {
       {
         $lookup: {
           from: 'odds',
-          localField: 'eventId',
-          foreignField: 'eventId',
+          localField: 'marketId',
+          foreignField: 'marketId',
           as: 'oddsData'
         }
       },
@@ -234,19 +224,19 @@ async function getMarketsByEventId(req, res) {
 async function activateEvent(req, res) {
   try {
     const eventId = req.params.eventId;
-    const event = await inPlayEvents.findOne({Id: eventId})
-    event.status = 'OPEN'
-    event.CompanySetStatus = 'OPEN'
-    event.isShowed = true
-    event.lastCheckMarket = Date.now()
-    await event.save()
-    await fetchMarket(event)
+    const event = await inPlayEvents.findOne({ Id: eventId });
+    event.status = 'OPEN';
+    event.CompanySetStatus = 'OPEN';
+    event.isShowed = true;
+    event.lastCheckMarket = Date.now();
+    await event.save();
+    await fetchMarket(event);
 
-    res.status(200).json({success: true, message: 'Event updated successfully'});
+    res.status(200).json({ success: true, message: 'Event updated successfully' });
   } catch (err) {
     return res.status(404).send({
       success: false,
-      message: 'Failed to update allowed market type by EventId',
+      message: 'Failed to update allowed market type by EventId'
     });
   }
 }
@@ -257,22 +247,18 @@ async function updateCompanySetStatus(req, res) {
     return res.status(400).send({ message: errors.errors });
   }
   try {
-    const data = req.query
-    await inPlayEvents.updateOne(
-      { Id: data.Id },
-      { CompanySetStatus: data.status }
-    )
+    const data = req.query;
+    await inPlayEvents.updateOne({ Id: data.Id }, { CompanySetStatus: data.status });
     return res.status(200).send({
       success: true,
-      message: 'Updated successfully !',
+      message: 'Updated successfully !'
     });
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Failed to update allowed market type by SportsId',
+      message: 'Failed to update allowed market type by SportsId'
     });
   }
-
 }
 
 async function updateEventStatus(req, res) {
@@ -282,27 +268,23 @@ async function updateEventStatus(req, res) {
   }
   try {
     const data = req.body;
-    const event = await inPlayEvents.countDocuments({ Id: data.Id })
-    if(!event){
+    const event = await inPlayEvents.countDocuments({ Id: data.Id });
+    if (!event) {
       console.warn(`Error: Event not found for ${req.body.Id}`);
       return res.status(400).send({ message: `Event not found ` });
-    }else {
-      await inPlayEvents.updateOne(
-        { Id: data.Id },
-        { status: data.status }
-      )
+    } else {
+      await inPlayEvents.updateOne({ Id: data.Id }, { status: data.status });
       return res.status(200).send({
         success: true,
-        message: 'Updated successfully !',
+        message: 'Updated successfully !'
       });
     }
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Failed to update allowed market type by SportsId',
+      message: 'Failed to update allowed market type by SportsId'
     });
   }
-
 }
 
 async function updateEventMarketstatus(req, res) {
@@ -313,27 +295,23 @@ async function updateEventMarketstatus(req, res) {
   try {
     const data = req.body;
 
-    const market = await MarketIDS.countDocuments({ marketId: data.marketId })
-    if(!market){
+    const market = await MarketIDS.countDocuments({ marketId: data.marketId });
+    if (!market) {
       console.warn(`Error: market not found for ${data.marketId}`);
       return res.status(400).send({ message: `market not found ` });
     }
 
-    await MarketIDS.updateOne(
-      { marketId: data.marketId },
-      { status: data.status }
-    )
+    await MarketIDS.updateOne({ marketId: data.marketId }, { status: data.status });
     return res.status(200).send({
       success: true,
-      message: 'Updated successfully !',
+      message: 'Updated successfully !'
     });
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Failed to update allowed market type by SportsId',
+      message: 'Failed to update allowed market type by SportsId'
     });
   }
-
 }
 
 async function addAllowedMarketTypes(req, res) {
@@ -343,21 +321,26 @@ async function addAllowedMarketTypes(req, res) {
   }
   try {
     const userId = req.decoded.userId;
-    const {markets, subMarkets } = req.body.blocked;
+    const { markets, subMarkets } = req.body.blocked;
 
-    await User.findOneAndUpdate({userId: userId}, {$set:{
-      blockedMarketPlaces: markets,
-      blockedSubMarkets: subMarkets
-    }})
+    await User.findOneAndUpdate(
+      { userId: userId },
+      {
+        $set: {
+          blockedMarketPlaces: markets,
+          blockedSubMarkets: subMarkets
+        }
+      }
+    );
     return res.send({
       success: true,
-      message: 'Markets updated successfully',
+      message: 'Markets updated successfully'
     });
   } catch (error) {
     console.error(error);
     return res.status(404).send({
       success: false,
-      message: 'Failed to update allowed market types',
+      message: 'Failed to update allowed market types'
     });
   }
 }

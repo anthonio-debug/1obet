@@ -630,9 +630,23 @@ async function deleteOdds(req, res) {
 
 
   try {
-    await Odds.deleteMany({});
-    await RaceOdds.deleteMany({});
-    res.status(200).json({success: true, message: 'Odds deleted successfully'});
+
+
+    
+    await Bets.updateMany(
+      { subMarketId: '7', eventId: '33340930'},
+      { $set: { isManuel:true } }
+    )
+   
+   // await InPlayEvents.updateMany({isManuel:true}, {subMarketId: '7', eventId: '33340930'});
+
+    
+
+
+
+    //await Odds.deleteMany({});
+    //await RaceOdds.deleteMany({});
+    res.status(200).json({success: true, message: 'Odds updated successfully'});
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({success: false, message: 'Internal server error'});
