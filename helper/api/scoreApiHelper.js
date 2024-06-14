@@ -64,6 +64,10 @@ const SCORE_API_STATUS_BLOCK_LIST = [
   "Toss delayed due to rain",
   "Rain",
   "wet outfield",
+  "Won By",
+  "won by",
+  "won By",
+  "Won by",
   "Toss delayed"
 ];
 
