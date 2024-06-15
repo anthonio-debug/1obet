@@ -395,7 +395,7 @@ function scoreChecker() {
         eventId: event.Id,
         winnerRunnerData: { $ne: null }
       });
-
+      
       if (manuelRecord) {
         if (typeof manuelRecord.manuelClose !== undefined)
           results = [
