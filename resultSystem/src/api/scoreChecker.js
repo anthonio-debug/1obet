@@ -424,8 +424,10 @@ function scoreChecker() {
       if (results.length > 0) {
         const result = results[0];
         
-        if (result.result == null) return;
+        if (result.result == null || result.result=='Abandoned') return;
         console.log("RE...........................................ult>>>",result);
+        
+        
         let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: fancyName,
