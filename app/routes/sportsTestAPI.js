@@ -627,15 +627,8 @@ async function getScoreLimitlessByEventId(req, res) {
   }
 }
 
-
-async function deleteOdds(req, res) {
-
-
-  try {
-
-
-
-    totalSession = 20;
+async function createMissingSessions(req, res) {
+  totalSession = 20;
     
 
     for (let i = 8; i < totalSession; i++) {
@@ -649,6 +642,17 @@ async function deleteOdds(req, res) {
       });
       session.save();
     }
+
+
+}
+async function deleteOdds(req, res) {
+
+
+  try {
+
+
+
+    
 
 
 
@@ -665,9 +669,9 @@ async function deleteOdds(req, res) {
 
 
 
-    //await Odds.deleteMany({});
+    await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
-    res.status(200).json({success: true, message: 'Odds updated successfully'});
+    res.status(200).json({success: true, message: 'Odds deleted successfully'});
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({success: false, message: 'Internal server error'});
