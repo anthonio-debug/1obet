@@ -420,10 +420,10 @@ function scoreChecker() {
         let result = fancyOdds[0]?.result;
         results = [{ manuelClose: false, result: result }];
       }
-      console.log("RESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSult",results);
+      
       if (results.length > 0) {
         const result = results[0];
-
+        console.log("RESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSult>>>",result);
         if (result.result == null) return;
 
         let newRecord = new resultRecords({
