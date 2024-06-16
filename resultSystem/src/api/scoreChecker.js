@@ -424,7 +424,27 @@ function scoreChecker() {
       if (results.length > 0) {
         const result = results[0];
         
-        if (result.result == null || result.result=='Abandoned') return;
+        if (result.result == null) return;
+
+        let FindInMe = result.result;
+        let findMe = FindInMe.search("Adv");
+        
+
+
+        if(result.result=='Abandoned' || findMe==-1){
+          await Bets.updateMany(
+            {
+              matchId: event._id.toString(),
+              isfancyOrbookmaker: true,
+              fancyData: fancyName
+            },
+            {
+              $set: {
+                manuelClose: true
+              }
+            }
+          );
+        }
         console.log("RE...........................................ult>>>",result);
         
         
