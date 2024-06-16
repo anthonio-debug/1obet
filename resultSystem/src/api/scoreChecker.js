@@ -423,9 +423,9 @@ function scoreChecker() {
       
       if (results.length > 0) {
         const result = results[0];
-        console.log("RESSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSult>>>",result);
+        
         if (result.result == null) return;
-
+        console.log("RE...........................................ult>>>",result);
         let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: fancyName,
