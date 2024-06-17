@@ -1045,7 +1045,8 @@ async function bettorDashboardGames(req, res) {
         name: 1,
         competitionName: 1,
         inplay: 1,
-        sportsId: 1
+        sportsId: 1,
+        marketIds: 1
         // oddsData: {
         //   $slice: ["$odds", 1]
         // }
@@ -1054,12 +1055,33 @@ async function bettorDashboardGames(req, res) {
       openDate: -1
     });
 
+    const inPlayEvents = await Promise.all(
+      inPlay.map(async (event) => {
+        if (event.marketIds && event.marketIds.length > 0) {
+          const marketId = event.marketIds[0].id;
+          const oddsData = await Odds.findOne({ marketId: marketId }).sort({
+            createdAt: -1
+          });
+          return {
+            ...event.toObject(),
+            odds: oddsData
+          };
+        } else {
+          //  if marketIds[0] is undefined
+          return {
+            ...event.toObject(),
+            odds: null
+          };
+        }
+      })
+    );
+
     const asianCasino = await AsianTable.find({ isDashboard: true });
 
     const organizedEvents = {
       horseRace: horseRace,
       greyhound: greyHound,
-      inPlay: inPlay,
+      inPlay: inPlayEvents,
       casinoData: selectedCasinoData,
       asianCasino: asianCasino
     };
