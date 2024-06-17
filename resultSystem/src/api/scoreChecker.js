@@ -395,7 +395,7 @@ function scoreChecker() {
         eventId: event.Id,
         winnerRunnerData: { $ne: null }
       });
-
+      
       if (manuelRecord) {
         if (typeof manuelRecord.manuelClose !== undefined)
           results = [
@@ -420,12 +420,34 @@ function scoreChecker() {
         let result = fancyOdds[0]?.result;
         results = [{ manuelClose: false, result: result }];
       }
-
+      
       if (results.length > 0) {
         const result = results[0];
-
+        
         if (result.result == null) return;
 
+        let FindInMe = result.result;
+        let findMe = FindInMe.search("Adv");
+        
+
+
+        if(result.result=='Abandoned' || findMe==-1){
+          await Bets.updateMany(
+            {
+              matchId: event._id.toString(),
+              isfancyOrbookmaker: true,
+              fancyData: fancyName
+            },
+            {
+              $set: {
+                manuelClose: true
+              }
+            }
+          );
+        }
+        console.log("RE...........................................ult>>>",result);
+        
+        
         let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: fancyName,

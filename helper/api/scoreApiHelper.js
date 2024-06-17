@@ -68,9 +68,11 @@ const SCORE_API_STATUS_BLOCK_LIST = [
   "won by",
   "won By",
   "Won by",
-  "Toss delayed"
+  "Toss delayed",
+  "Match Finished",
+  "Match Tied"
 ];
-
+//Match Tied,Match Finished, Won By, won by, won By, Won by on tied odds and match odds.
 async function getCricketScoreAPI(eventId) {
   try {
     // const eventId = 32980846

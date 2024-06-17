@@ -11,6 +11,8 @@ const { fetchSession } = require("../../helper/api/sessionAPIHelper");
 const router = express.Router();
 const apiURL = "http://185.58.225.212:8080/api/"
 const apiSystemRacing = require("../../restApiSystem/src/tools_for_updated_racing.js")();
+const Session = require('../models/Session');
+
 require('dotenv').config()
 console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
@@ -625,18 +627,41 @@ async function getScoreLimitlessByEventId(req, res) {
   }
 }
 
+async function createMissingSessions(req, res) {
+  totalSession = 20;
+    
 
+    for (let i = 8; i < totalSession; i++) {
+      const session = new Session({
+        sessionNo: i,
+        eventId: 33347567,
+        Id: '666c4091a8b2218c182e8379',
+        createdAt:1718399592994,
+        updatedAt:1718399592994,
+        manuelSave:false
+      });
+      session.save();
+    }
+
+
+}
 async function deleteOdds(req, res) {
 
 
   try {
 
 
+
     
-    await Bets.updateMany(
-      { subMarketId: '7', eventId: '33340930'},
-      { $set: { isManuel:true } }
-    )
+
+
+
+
+    
+    // await Bets.updateMany(
+    //   { subMarketId: '7', eventId: '33345422'},
+    //   { $set: { isManuel:true } }
+    // )
    
    // await InPlayEvents.updateMany({isManuel:true}, {subMarketId: '7', eventId: '33340930'});
 
@@ -644,9 +669,9 @@ async function deleteOdds(req, res) {
 
 
 
-    //await Odds.deleteMany({});
+    await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
-    res.status(200).json({success: true, message: 'Odds updated successfully'});
+    res.status(200).json({success: true, message: 'Odds deleted successfully'});
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({success: false, message: 'Internal server error'});
