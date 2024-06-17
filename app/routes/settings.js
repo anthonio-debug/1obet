@@ -1129,7 +1129,8 @@ async function bettorDashboardGames2(req, res) {
       {
         sportsId: 2,
         status: 'OPEN',
-        isShowed: true
+        isShowed: true,
+        inplay: true
       },
       {
         _id: 1,
