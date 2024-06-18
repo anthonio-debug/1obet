@@ -247,7 +247,7 @@ function ToolForEvent() {
           marketIds.push(element.marketId);
         });
       }
-
+      console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
       await MarketIDs.updateMany(
         {marketId: {$in: marketIds}},
         {$set: {lastCheck: Date.now()}}
