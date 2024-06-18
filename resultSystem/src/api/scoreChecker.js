@@ -95,6 +95,7 @@ function scoreChecker() {
           marketIds: [betData.marketId]
         };
         const response = await axios.post(url, requestData, header);
+        if(!response?.data?.result) return;
         const resData = response.data.result;
         results = [
           {
