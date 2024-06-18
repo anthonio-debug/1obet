@@ -655,6 +655,7 @@ async function user_book2(req, res) {
         event: 1,
         runnerName: 1,
         type: 1,
+        runnersPosition: 1,
         username: '$userDetails.userName',
         downLineShare: '$userDetails.downLineShare',
         marketName: '$marketDetails.marketName',
@@ -681,6 +682,7 @@ async function user_book2(req, res) {
         totalLoosingAmount: { $sum: '$loosingAmount' },
         event: { $first: '$event' },
         runners: { $first: '$runners' },
+        runnersPosition: { $first: '$runnersPosition' },
         username: { $first: '$username' }
       }
     }
