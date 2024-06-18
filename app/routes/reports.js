@@ -656,6 +656,7 @@ async function user_book2(req, res) {
         runnerName: 1,
         type: 1,
         runnersPosition: 1,
+        createdAt: 1,
         username: '$userDetails.userName',
         downLineShare: '$userDetails.downLineShare',
         marketName: '$marketDetails.marketName',
@@ -683,6 +684,7 @@ async function user_book2(req, res) {
         event: { $first: '$event' },
         runners: { $first: '$runners' },
         runnersPosition: { $first: '$runnersPosition' },
+        createdAt: { $first: '$createdAt' },
         username: { $first: '$username' }
       }
     }
