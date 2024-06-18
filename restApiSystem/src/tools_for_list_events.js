@@ -185,7 +185,7 @@ function ToolForEvent() {
   async function fetchOdds(inPlay) {
     try {
       const now = moment().utc(); // Get the current time in UTC
-      const startTime = moment(now).subtract(8000, 'minutes').valueOf(); // Get the timestamp in milliseconds
+      const startTime = moment(now).subtract(1000, 'minutes').valueOf(); // Get the timestamp in milliseconds
       const endTime = moment(now).add(50, 'minutes').valueOf(); // Add 5 hours and get the timestamp in milliseconds
      console.log("--------------------------------------------------------------------");
       const documents = await MarketIDs.aggregate([
@@ -193,8 +193,11 @@ function ToolForEvent() {
           $match: {
             inPlay: inPlay,
            
-            status: {$in: ['INACTIVE', 'OPEN']},
-            
+            status: {$in: ['INACTIVE', 'OPEN', 'SUSPENDED']},
+            openDate: {
+              $gte: startTime,
+              $lte: endTime
+            },
             $or: [
               {sportID: 1},
               {sportID: 2},
