@@ -635,9 +635,9 @@ const placeBet = async (req, res) => {
         const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${eventDetail.Id}`;
         try {
           const response = await axios.get(url);
-          console.log('=======================EventTypeID===========================')
-          console.log(response?.data)
-          console.log('=======================EventTypeID===========================')
+          console.log('=======================EventTypeID success===========================')
+          console.log(JSON.stringify(response?.data, null, 2))
+          console.log('=======================EventTypeID success===========================')
           const matchStatus = response?.data?.data[0]?.matchStatus;
           console.log(`Match Status: ${matchStatus}`);
   
@@ -648,6 +648,9 @@ const placeBet = async (req, res) => {
             });
           }
         } catch (error) {
+          console.log('=======================EventTypeID error===========================')
+          console.log(JSON.stringify(error, null, 2))
+          console.log('=======================EventTypeID error===========================')
           res.status(500).json({ success: false, msg: 'Failed and Error: ' + error.message });
         }
         
