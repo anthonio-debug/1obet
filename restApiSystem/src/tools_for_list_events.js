@@ -174,7 +174,7 @@ function ToolForEvent() {
       );
 
       if (marketIds.length > 0) {
-        console.log("17777777777777777777777777777777777777777777777777777");
+        //console.log("17777777777777777777777777777777777777777777777777777");
         apiRequests.getOddsFromProvider(documents, eventId);
       }
     } catch (error) {
@@ -187,14 +187,17 @@ function ToolForEvent() {
       const now = moment().utc(); // Get the current time in UTC
       const startTime = moment(now).subtract(1000, 'minutes').valueOf(); // Get the timestamp in milliseconds
       const endTime = moment(now).add(1600, 'minutes').valueOf(); // Add 5 hours and get the timestamp in milliseconds
-     console.log("................-------------------------------------------");
+     //console.log("................-------------------------------------------");
       const documents = await MarketIDs.aggregate([
         {
           $match: {
             inPlay: inPlay,
            
             status: {$in: ['INACTIVE', 'OPEN', 'SUSPENDED']},
-           
+            openDate: {
+              $gte: startTime,
+              $lte: endTime
+            },
             $or: [
               {sportID: 1},
               {sportID: 2},
