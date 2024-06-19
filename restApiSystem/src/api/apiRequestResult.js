@@ -126,6 +126,7 @@ function apiRequestResult() {
         requestData,
         header
       );
+      if(!response?.data?.result) return;
       const results = response.data.result;
       //console.log("--------------------------------------------------->",results);
 

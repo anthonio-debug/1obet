@@ -184,11 +184,17 @@ function ToolForEvent() {
 
   async function fetchOdds(inPlay) {
     try {
+      const now = moment().utc(); // Get the current time in UTC
+      const startTime = moment(now).subtract(9000, 'minutes').valueOf(); // Get the timestamp in minutes
+      const endTime = moment(now).add(20, 'minutes').valueOf(); // Add 5 hours and get the timestamp in minutes
+      console.log("................-------------------------------------------",startTime,"============",endTime);
       const documents = await MarketIDs.aggregate([
         {
           $match: {
             inPlay: inPlay,
+           
             status: {$in: ['INACTIVE', 'OPEN', 'SUSPENDED']},
+          
             $or: [
               {sportID: 1},
               {sportID: 2},
@@ -232,13 +238,13 @@ function ToolForEvent() {
       ]).exec();
 
       let marketIds = [];
-
+      //console.log("==============>>>>",documents.length);
       if (documents.length > 0) {
         documents.forEach(element => {
           marketIds.push(element.marketId);
         });
       }
-
+      //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
       await MarketIDs.updateMany(
         {marketId: {$in: marketIds}},
         {$set: {lastCheck: Date.now()}}

@@ -664,7 +664,7 @@ async function debitFun(req, res) {
       console.log("......................................................................");
       console.log(debitAmount); //20 was actual bet ad it was showing same as 20 in casino
       //console.log(lastMaxWithdraw.availableBalance);
-      console.log("---------------------------------------------------------");
+      //console.log("---------------------------------------------------------");
       console.log(payload);
       console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||');
       console.log("Actual Debit:",amount);

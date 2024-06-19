@@ -488,6 +488,7 @@ function apiRequests() {
       header
     ).then(
       async (response) => {
+        if(!response?.data?.result) return;
         const oddsData = response.data.result;
         let checkedMarkets = [];
         if (oddsData.length > 0) {
