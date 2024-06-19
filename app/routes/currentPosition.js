@@ -172,7 +172,8 @@ const currentPositionDetails = async (req, res) => {
       },
       {
         $addFields: {
-          'betsId': { $toObjectId: "$betId" }
+          'betsId': "$betId"
+          // 'betsId': { $toObjectId: "$betId" }
         }
       },
       {
@@ -253,7 +254,8 @@ const getCurrentPosition2 = async (req, res) => {
       },
       {
         $addFields: {
-          'betsId': { $toObjectId: "$betId" }
+          'betsId': "$betId"
+          // 'betsId': { $toObjectId: "$betId" }
         }
       },
       {
