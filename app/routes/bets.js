@@ -4236,7 +4236,7 @@ const profitLose = async (req, res) => {
   if (!req.query.userId) {
     return res.status(404).send({
       success: false,
-      message: "Something Went Wrong!",
+      message: "Something Went Wrong!.",
     });
   }
   try {
