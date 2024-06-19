@@ -192,7 +192,7 @@ function ToolForEvent() {
         {
           $match: {
             inPlay: inPlay,
-           
+            marketId:'1.229932193',
             status: {$in: ['INACTIVE', 'OPEN', 'SUSPENDED']},
           
             $or: [
@@ -244,7 +244,7 @@ function ToolForEvent() {
           marketIds.push(element.marketId);
         });
       }
-      //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
+      console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
       await MarketIDs.updateMany(
         {marketId: {$in: marketIds}},
         {$set: {lastCheck: Date.now()}}
