@@ -293,6 +293,7 @@ const getCurrentPosition2 = async (req, res) => {
           },
           runner: { $first: { $arrayElemAt: ["$bets.runner", 0] } },
           createdAt: { $first: { $arrayElemAt: ["$bets.createdAt", 0] } },
+          userid: { $first: { $arrayElemAt: ["$bets.userid", 0] } },
           TargetScore: { $first: { $arrayElemAt: ["$bets.TargetScore", 0] } },
           betRate: { $first: { $arrayElemAt: ["$bets.betRate", 0] } },
           betSession: { $first: { $arrayElemAt: ["$bets.betSession", 0] } },
