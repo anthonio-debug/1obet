@@ -185,9 +185,9 @@ function ToolForEvent() {
   async function fetchOdds(inPlay) {
     try {
       const now = moment().utc(); // Get the current time in UTC
-      const startTime = moment(now).subtract(1000, 'minutes').valueOf(); // Get the timestamp in milliseconds
-      const endTime = moment(now).add(1600, 'minutes').valueOf(); // Add 5 hours and get the timestamp in milliseconds
-     //console.log("................-------------------------------------------");
+      const startTime = moment(now).subtract(9000, 'minutes').valueOf(); // Get the timestamp in minutes
+      const endTime = moment(now).add(20, 'minutes').valueOf(); // Add 5 hours and get the timestamp in minutes
+      //console.log("................-------------------------------------------");
       const documents = await MarketIDs.aggregate([
         {
           $match: {
@@ -241,13 +241,13 @@ function ToolForEvent() {
       ]).exec();
 
       let marketIds = [];
-      console.log("==============>>>>",documents.length);
+      //console.log("==============>>>>",documents.length);
       if (documents.length > 0) {
         documents.forEach(element => {
           marketIds.push(element.marketId);
         });
       }
-      console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
+      //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
       await MarketIDs.updateMany(
         {marketId: {$in: marketIds}},
         {$set: {lastCheck: Date.now()}}
