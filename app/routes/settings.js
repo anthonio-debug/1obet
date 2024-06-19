@@ -2152,7 +2152,7 @@ const getEventWinnerName = async (req, res) => {
   } catch (error) {
     return res.status(404).send({
       success: false,
-      message: 'Something went wrong!'
+      message: 'Something went wrong!W'
     });
   }
 };
