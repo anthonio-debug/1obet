@@ -4225,7 +4225,8 @@ const profitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: { $toObjectId: "$betId" },
+            betsId: "$betId"
+            // betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4318,7 +4319,8 @@ const EventWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: { $toObjectId: "$betId" },
+            betsId: "$betId"
+            // betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4369,7 +4371,8 @@ const EventWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: { $toObjectId: "$betId" },
+            betsId: "$betId"
+            // betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4442,7 +4445,8 @@ const dailyMatchWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: { $toObjectId: "$betId" },
+            betsId: "$betId"
+            // betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4494,7 +4498,8 @@ const dailyMatchWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: { $toObjectId: "$betId" },
+            betsId: "$betId"
+            // betsId: { $toObjectId: "$betId" },
           },
         },
         {
