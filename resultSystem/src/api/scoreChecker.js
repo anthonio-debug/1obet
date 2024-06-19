@@ -432,7 +432,7 @@ function scoreChecker() {
         
 
 
-        if(result.result=='Abandoned' || findMe==-1){
+        if(result.result=='Abandoned' || findMe != -1){
           await Bets.updateMany(
             {
               matchId: event._id.toString(),
