@@ -635,6 +635,9 @@ const placeBet = async (req, res) => {
         const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${eventDetail.Id}`;
         try {
           const response = await axios.get(url);
+          console.log('=======================EventTypeID===========================')
+          console.log(response?.data)
+          console.log('=======================EventTypeID===========================')
           const matchStatus = response?.data?.data[0]?.matchStatus;
           console.log(`Match Status: ${matchStatus}`);
   
