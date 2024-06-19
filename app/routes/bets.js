@@ -651,7 +651,10 @@ const placeBet = async (req, res) => {
           console.log('=======================EventTypeID error===========================')
           console.log(JSON.stringify(error, null, 2))
           console.log('=======================EventTypeID error===========================')
-          return res.status(500).json({ success: false, msg: 'Failed and Error: ' + error.message });
+          return res.status(404).send({
+            error: 'Error!',
+            message: 'There is some error in fetching Event Data.'
+          });
         }
         
       
