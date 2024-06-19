@@ -625,48 +625,6 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId,
       });
-
-
-      
-        //eventDetail = await Events.findById(matchId);
-        
-        
-            //Code added for matchStatus started
-        const url = `http://142.93.36.1/api/v2/score?EventTypeID=2&matchId=${eventDetail.Id}`;
-        try {
-          const response = await axios.get(url);
-          console.log('=======================EventTypeID success===========================')
-          console.log(JSON.stringify(response?.data, null, 2))
-          console.log('=======================EventTypeID success===========================')
-          const matchStatus = response?.data?.data[0]?.matchStatus;
-          console.log(`Match Status: ${matchStatus}`);
-  
-          if ((matchStatus && matchStatus == 'Finished') || (matchStatus && matchStatus == 'RainDelay')) {
-            return res.status(404).send({
-              error: 'Error!',
-              message: 'Bet is not allowed'
-            });
-          }
-        } catch (error) {
-          console.log('=======================EventTypeID error===========================')
-          console.log(JSON.stringify(error, null, 2))
-          console.log('=======================EventTypeID error===========================')
-          return res.status(404).send({
-            error: 'Error!',
-            message: 'There is some error in fetching Event Data.'
-          });
-        }
-        
-      
-    //Code added for matchStatus ended
-
-
-
-
-
-
-
-
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
         return res.status(404).send({
