@@ -625,6 +625,7 @@ const placeBet = async (req, res) => {
         userId: userId,
         sportsId: marketId,
       });
+<<<<<<< HEAD
 
 
       if(userId==20126){
@@ -660,6 +661,8 @@ const placeBet = async (req, res) => {
 
 
 
+=======
+>>>>>>> f2846699fd429ba402d65319e3a87d022ae18f1c
       if (!userMaxBetSize) {
         activeBettors.delete(userId)
         return res.status(404).send({
@@ -4260,7 +4263,8 @@ const profitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: { $toObjectId: "$betId" },
+            betsId: "$betId"
+            // betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4353,7 +4357,8 @@ const EventWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: { $toObjectId: "$betId" },
+            betsId: "$betId"
+            // betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4404,7 +4409,8 @@ const EventWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: { $toObjectId: "$betId" },
+            betsId: "$betId"
+            // betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4477,7 +4483,8 @@ const dailyMatchWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: { $toObjectId: "$betId" },
+            betsId: "$betId"
+            // betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4529,7 +4536,8 @@ const dailyMatchWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: { $toObjectId: "$betId" },
+            betsId: "$betId"
+            // betsId: { $toObjectId: "$betId" },
           },
         },
         {
