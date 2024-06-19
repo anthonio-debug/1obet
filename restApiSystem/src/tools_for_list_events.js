@@ -187,7 +187,7 @@ function ToolForEvent() {
       const now = moment().utc(); // Get the current time in UTC
       const startTime = moment(now).subtract(9000, 'minutes').valueOf(); // Get the timestamp in minutes
       const endTime = moment(now).add(20, 'minutes').valueOf(); // Add 5 hours and get the timestamp in minutes
-      //console.log("................-------------------------------------------");
+      console.log("................-------------------------------------------",startTime,"============",endTime);
       const documents = await MarketIDs.aggregate([
         {
           $match: {
