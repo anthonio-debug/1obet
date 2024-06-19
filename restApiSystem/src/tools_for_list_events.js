@@ -194,10 +194,7 @@ function ToolForEvent() {
             inPlay: inPlay,
            
             status: {$in: ['INACTIVE', 'OPEN', 'SUSPENDED']},
-            openDate: {
-              $gte: startTime,
-              $lte: endTime
-            },
+          
             $or: [
               {sportID: 1},
               {sportID: 2},
