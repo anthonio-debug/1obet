@@ -32,6 +32,9 @@ const fetchMarket = async (event) => {
       if ((sportsId === SPORT_SOCCER && ["Match Odds", "Over/Under 0.5 Goals", "Over/Under 1.5 Goals", "Over/Under 2.5 Goals"].includes(market.marketName)) ||
         (sportsId === SPORT_TENNIS && market.marketName === "Match Odds") ||
         (sportsId === SPORT_CRICKET && ["Match Odds", "Tied Match", "To Win the Toss"].includes(market.marketName))) {
+
+          console.log("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD DATE::::::",element.marketStartTime);
+            console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP DATE::::::",Date.parse((element.marketStartTime)));
         marketIds.push({
           id: market.marketId,
           marketName: market.marketName,

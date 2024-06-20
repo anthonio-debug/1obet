@@ -360,6 +360,8 @@ function apiRequests() {
             })
           }
           if (sportID == "4") {
+
+            
             if (
               element.marketName === "Match Odds"
               || element.marketName === "Tied Match"
