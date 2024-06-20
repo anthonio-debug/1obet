@@ -90,6 +90,7 @@ const handleNewMarket = async (eventId, market, index, sportsId) => {
     sportID: Number(sportsId),
     totalMatched: market.totalMatched,
     status: market.status,
+    openDate: market.openDate,
     index,
     runners: market.runners,
     inPlay: true
