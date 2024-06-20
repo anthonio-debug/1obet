@@ -4233,6 +4233,11 @@ const profitLose = async (req, res) => {
         message: "Something Went Wrong!",
       });
     }
+    console.log('first', {
+      userId: userId,
+      cashOrCredit: { $in: ["Bet"] },
+      ...(req.query.start && req.query.end && ({ createdAt: { $gte: Number(req.query.start), $lte: Number(req.query.end) } }))
+    })
     if (currentUser.role == "5") {
       const response = await Cash.aggregate([
         {
