@@ -669,7 +669,7 @@ async function deleteOdds(req, res) {
 
 
 
-    await Odds.deleteMany({eventId:'33352266'});
+    await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
     res.status(200).json({success: true, message: 'Event Odds deleted successfully'});
   } catch (error) {
