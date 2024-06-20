@@ -4239,7 +4239,7 @@ const profitLose = async (req, res) => {
           $match: {
             userId: userId,
             cashOrCredit: { $in: ["Bet"] },
-            ...(req.query.start && req.query.end({ createdAt: { $gte: Number(req.query.start), $lte: Number(req.query.end) } }))
+            ...(req.query.start && req.query.end && ({ createdAt: { $gte: Number(req.query.start), $lte: Number(req.query.end) } }))
           },
         },
         {
