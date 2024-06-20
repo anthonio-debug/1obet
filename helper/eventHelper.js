@@ -35,6 +35,7 @@ const fetchMarket = async (event) => {
         marketIds.push({
           id: market.marketId,
           marketName: market.marketName,
+          openDate:Date.parse((market.marketStartTime)),
           status: marketStatus,
           runners
         });
