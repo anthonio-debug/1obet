@@ -4337,9 +4337,6 @@ const EventWiseprofitLose = async (req, res) => {
           },
         },
         {
-          $sort: { date: -1 }
-        },
-        {
           $addFields: {
             betsId: { $toObjectId: "$betId" },
           },
@@ -4360,6 +4357,9 @@ const EventWiseprofitLose = async (req, res) => {
             date: { $first: "$date" },
             name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
           },
+        },
+        {
+          $sort: { date: -1 }
         },
       ]);
       return res.send({
