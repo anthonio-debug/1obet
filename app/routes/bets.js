@@ -4236,7 +4236,7 @@ const profitLose = async (req, res) => {
     console.log('first', {
       userId: userId,
       cashOrCredit: { $in: ["Bet"] },
-      ...(req.query.start && req.query.end && ({ createdAt: { $gte: Number(req.query.start), $lte: Number(req.query.end) } }))
+      ...(req.query.start && req.query.end && ({ date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } }))
     })
     if (currentUser.role == "5") {
       const response = await Cash.aggregate([
@@ -4244,7 +4244,7 @@ const profitLose = async (req, res) => {
           $match: {
             userId: userId,
             cashOrCredit: { $in: ["Bet"] },
-            ...(req.query.start && req.query.end && ({ createdAt: { $gte: Number(req.query.start), $lte: Number(req.query.end) } }))
+            ...(req.query.start && req.query.end && ({ date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } }))
           },
         },
         {
