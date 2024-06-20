@@ -646,6 +646,10 @@ function apiRequests() {
                 //console.log(odds.marketId, " this market has no odds.....");
                 if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
                   await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
+                  const result = await RaceOdds.collection.insertOne(json);
+                  odds._id = result.insertedId;
+
+                  io.to('$' + odds.marketId).emit('odds', json);
                 }
                 if (odds.marketId) {
                   io.emit('racing_status', {status: odds.status, marketId: odds.marketId});
