@@ -365,6 +365,7 @@ const placeBet = async (req, res) => {
         });
       }
       const requiredTime = new Date().getTime() + config.raceOpenBefore;
+      // const requiredTime = new Date().getTime() + (subMarketName === "UK" || subMarketName === "US") ? (config.raceOpenBefore / 4) * 5 : config.raceOpenBefore;
       const remainingTimeFromEvent = idDetails.openDate - requiredTime;
       if (remainingTimeFromEvent > 0) {
         activeBettors.delete(userId)
@@ -481,12 +482,21 @@ const placeBet = async (req, res) => {
       }
 
       const DBOddDetails = await Odds.findById(oddsId);
+      
       if (!DBOddDetails) {
         activeBettors.delete(userId)
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
       }
+
+      if(DBOddDetails?.totalMatched < 20000){
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Low volume markets are not allowed to bet`,
+        });
+      }
+
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets = runners.map((runner) => ({
         runner: runner.SelectionId,
@@ -650,6 +660,14 @@ const placeBet = async (req, res) => {
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`,
         });
       }
+
+      if(DBOddDetails?.totalMatched < 20000){
+        activeBettors.delete(userId)
+        return res.status(404).send({
+          message: `Low volume markets are not allowed to bet`,
+        });
+      } 
+
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets = runners.map((runner) => ({
         runner: runner.SelectionId,

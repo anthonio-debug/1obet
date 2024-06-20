@@ -644,7 +644,7 @@ function apiRequests() {
               RacingOddsMap.set(marketId, frontOdds)
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
                 //console.log(odds.marketId, " this market has no odds.....");
-                if (odds.status === 'CLOSED') {
+                if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
                   await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
                 }
                 if (odds.marketId) {
