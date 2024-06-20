@@ -4243,7 +4243,7 @@ const profitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: { $toObjectId: "$betId" },
+            betsId: "$betId"
           },
         },
         {
