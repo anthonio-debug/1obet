@@ -4239,12 +4239,12 @@ const profitLose = async (req, res) => {
           $match: {
             userId: userId,
             cashOrCredit: { $in: ["Bet"] },
+            ...(req.query.start && req.query.end && ({ date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } }))
           },
         },
         {
           $addFields: {
             betsId: "$betId"
-            // betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4333,12 +4333,12 @@ const EventWiseprofitLose = async (req, res) => {
             userId: userId,
             sportsId: sportsId,
             cashOrCredit: { $in: ["Bet"] },
+            ...(req.query.start && req.query.end && ({ date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } })),
           },
         },
         {
           $addFields: {
-            betsId: "$betId"
-            // betsId: { $toObjectId: "$betId" },
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4357,6 +4357,9 @@ const EventWiseprofitLose = async (req, res) => {
             date: { $first: "$date" },
             name: { $first: { $arrayElemAt: ["$bets.event", 0] } },
           },
+        },
+        {
+          $sort: { date: -1 }
         },
       ]);
       return res.send({
@@ -4389,8 +4392,7 @@ const EventWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: "$betId"
-            // betsId: { $toObjectId: "$betId" },
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4463,8 +4465,7 @@ const dailyMatchWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: "$betId"
-            // betsId: { $toObjectId: "$betId" },
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
@@ -4516,8 +4517,7 @@ const dailyMatchWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: "$betId"
-            // betsId: { $toObjectId: "$betId" },
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {

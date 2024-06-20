@@ -360,6 +360,8 @@ function apiRequests() {
             })
           }
           if (sportID == "4") {
+
+            
             if (
               element.marketName === "Match Odds"
               || element.marketName === "Tied Match"
@@ -368,6 +370,7 @@ function apiRequests() {
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
+                openDate:Date.parse((element.marketStartTime)),
                 status: marketStatus,
                 runners: tempRunners
               });
@@ -379,6 +382,7 @@ function apiRequests() {
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
+                openDate:Date.parse((element.marketStartTime)),
                 status: marketStatus,
                 runners: tempRunners
               });
@@ -396,9 +400,11 @@ function apiRequests() {
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
+                openDate:Date.parse((element.marketStartTime)),
                 status: marketStatus,
                 runners: tempRunners
               });
+              
           }
         });
 
