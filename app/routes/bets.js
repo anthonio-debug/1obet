@@ -4319,8 +4319,7 @@ const EventWiseprofitLose = async (req, res) => {
         },
         {
           $addFields: {
-            betsId: "$betId"
-            // betsId: { $toObjectId: "$betId" },
+            betsId: { $toObjectId: "$betId" },
           },
         },
         {
