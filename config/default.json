@@ -51,6 +51,7 @@
   "tiedMatch": 35,
   "overUnder": 14,
   "raceOpenBefore": 240000,
+  "ukRaceOpenBefore": 300000,
   "sportsOpenBefore": 600000,
   "tossCloseTime": 2700000,
   "raceEventsAllowedCount": 20,

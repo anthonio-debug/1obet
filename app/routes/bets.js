@@ -364,8 +364,8 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `,
         });
       }
-      const requiredTime = new Date().getTime() + config.raceOpenBefore;
-      // const requiredTime = new Date().getTime() + (subMarketName === "UK" || subMarketName === "US") ? (config.raceOpenBefore / 4) * 5 : config.raceOpenBefore;
+      // const requiredTime = new Date().getTime() + config.raceOpenBefore;
+      const requiredTime = new Date().getTime() + (subMarketName.toUpperCase() == "UK" || subMarketName.toUpperCase() == "US" ? config.ukRaceOpenBefore : config.raceOpenBefore);
       const remainingTimeFromEvent = idDetails.openDate - requiredTime;
       if (remainingTimeFromEvent > 0) {
         activeBettors.delete(userId)
