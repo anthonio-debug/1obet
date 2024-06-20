@@ -364,6 +364,16 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched `,
         });
       }
+
+      const latestRaceOdds = await RaceOdds.find({ marketId: DBOddDetails.marketId }).sort({ createdAt: -1 }).limit(1);
+
+      if (latestRaceOdds) {
+        if (latestRaceOdds[0]?.state?.status == "SUSPENDED" || latestRaceOdds[0]?.state?.status == "CLOSED") {
+          activeBettors.delete(userId)
+          return res.status(404).send({ message: "Bet not allowed" });
+        }
+      }
+
       // const requiredTime = new Date().getTime() + config.raceOpenBefore;
       const requiredTime = new Date().getTime() + (subMarketName.toUpperCase() == "UK" || subMarketName.toUpperCase() == "US" ? config.ukRaceOpenBefore : config.raceOpenBefore);
       const remainingTimeFromEvent = idDetails.openDate - requiredTime;
