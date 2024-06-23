@@ -652,11 +652,13 @@ async function TestTrial(req, res) {
   try {
 
     let FindInMe = "Yes here you can Player in 1 find my string";
-    let findMe1 = FindInMe.search("Player In");
+    let FindInMeRes = FindInMe.toLowerCase();
+    let findMe1 = FindInMeRes.search("player in");
+    let findMe2 = FindInMeRes.search("players in");
     
 
 
-    if( findMe1 > 0){
+    if( findMe1 > 0 ||  findMe2 > 0){
 
     await InPlayEvents.updateMany(
       { Id: '33136442' },
