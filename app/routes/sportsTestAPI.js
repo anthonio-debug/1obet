@@ -649,6 +649,8 @@ async function createMissingSessions(req, res) {
 
 async function TestTrial(req, res) {
 
+  const eventId = req.params.eventId;
+
   try {
 
     let FindInMe = "Yes here you can Player in 1 find my string";
@@ -661,7 +663,7 @@ async function TestTrial(req, res) {
     if( findMe1 > 0 ||  findMe2 > 0){
 
     await InPlayEvents.updateMany(
-      { Id: '33136442' },
+      { Id: eventId },
       { $set: { player_in:1 } }
     )
     res.status(200).json({success: true, message: 'Event updated successfully.'});
