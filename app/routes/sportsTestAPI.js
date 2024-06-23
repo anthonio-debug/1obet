@@ -645,6 +645,40 @@ async function createMissingSessions(req, res) {
 
 
 }
+
+
+async function TestTrial(req, res) {
+
+  try {
+
+    let FindInMe = "Yes here you can Player In1 find my string";
+    let findMe1 = FindInMe.search("Player In");
+    
+
+
+    if( findMe1 > 0){
+
+    await InPlayEvents.updateMany(
+      { eventId: '33136442' },
+      { $set: { player_in:1 } }
+    )
+    res.status(200).json({success: true, message: 'Event updated successfully.'});
+  }else{
+    res.status(200).json({success: true, message: 'Event update failed.'});
+  }
+   
+    
+  } catch (error) {
+    console.error('Error updating odds:', error);
+    res.status(500).json({success: false, message: 'Internal server error'});
+  }
+
+
+
+
+
+}
+
 async function deleteOdds(req, res) {
 
 
@@ -792,6 +826,7 @@ router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId
 router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
 router.get('/track-bet/check-market/:sportID/:eventId', cronOdds)
 router.get('/track-bet/delete-odds/:eventId', deleteOdds)
+router.get('/track-bet/test-trial/:eventId', TestTrial)
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 

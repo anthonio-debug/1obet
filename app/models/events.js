@@ -25,6 +25,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   isPremium:{type: Boolean },
   marketIds:{type: Array, default: [] },
   type: { type: Number, default: 0 },
+  player_in: { type: Number, default: 0 },
   matchType: { type: String, default: '' },
   islocked: { type: Boolean , default: false, index: true },
   iconStatus: { type: Boolean, default: false },

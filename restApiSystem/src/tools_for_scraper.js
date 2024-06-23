@@ -156,6 +156,8 @@ function ToolForScraper() {
               const over = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.over1 : cricketScore.over2
               const currentOver = parseInt(over?.split(".")[0])
               const currentBall = parseInt(over?.split(".")[1])
+              
+
               if (((currentOver % divider) === 0) && (currentBall === 0 || currentBall === '0')) {
                 const score = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.score1 : cricketScore.score2
                 let currentScore = parseInt(score?.split("/")[0])
