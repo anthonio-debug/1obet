@@ -313,11 +313,11 @@ const placeBet = async (req, res) => {
 
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",subMarketName);
 
-      if (eventDetail.player_in == 0 && subMarketName != 'Toss' && sportsId == '4') {
+      if (eventDetail.player_in == 0 && subMarketName != 'Toss' && eventDetail.sportsId == '4') {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: "Players not reached in the ground", data: eventDetail.betAllowed });
+          .send({ message: "Players not reached in the ground"});
       }
 
       if (!eventDetail.betAllowed) {
