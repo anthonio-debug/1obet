@@ -149,8 +149,8 @@ function ToolForScraper() {
               { upsert: true, new: true, setDefaultsOnInsert: true }
             );
             if (eventId) {
-              console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
-
+              
+              
     if(eventId.player_in==0){
       let FindInMe = cricketScore.comment;
       let FindInMeRes = FindInMe.toLowerCase();
@@ -166,6 +166,25 @@ function ToolForScraper() {
         { $set: { player_in:1 } }
       )
     }
+    }
+    if(eventId.player_in==1 && eventId.inplay==true){
+
+      let FindInMe = cricketScore.comment;
+      let FindInMeRes = FindInMe.toLowerCase();
+      let findMe1 = FindInMeRes.search("won by");
+      let findMe2 = FindInMeRes.search("match finished");
+      let findMe3 = FindInMeRes.search("match tied");
+      
+  
+  
+      if( findMe1 > 0 ||  findMe2 > 0 ||  findMe3 > 0){
+  
+      await InPlayEvents.updateMany(
+        { Id: eventId },
+        { $set: { inplay:false } }
+      )
+    }
+
     }
 
    
