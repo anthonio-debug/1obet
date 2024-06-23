@@ -659,7 +659,7 @@ async function TestTrial(req, res) {
     if( findMe1 > 0){
 
     await InPlayEvents.updateMany(
-      { eventId: '33136442' },
+      { Id: '33136442' },
       { $set: { player_in:1 } }
     )
     res.status(200).json({success: true, message: 'Event updated successfully.'});
