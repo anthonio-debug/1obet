@@ -311,7 +311,15 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: "EVENT COULD NOT FOUND" });
       }
 
-      console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",subMarketName);
+      //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",subMarketName);
+
+      if (eventDetail.player_in == 0 && subMarketName != 'Toss' && sportsId == '4') {
+        activeBettors.delete(userId)
+        return res
+          .status(404)
+          .send({ message: "Players not reached in the ground", data: eventDetail.betAllowed });
+      }
+
       if (!eventDetail.betAllowed) {
         activeBettors.delete(userId)
         return res
