@@ -311,31 +311,31 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: "EVENT COULD NOT FOUND" });
       }
 
-
+      console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",subMarketName);
       if (!eventDetail.betAllowed) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: "Batting Not Allowd on this Match1", data: eventDetail.betAllowed });
+          .send({ message: "Betting Not Allowd on this Match", data: eventDetail.betAllowed });
       }
       if (eventDetail.status.toUpperCase() != "OPEN") {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: "Batting Not Allowd on this Match2", data: eventDetail.status.toUpperCase() });
+          .send({ message: "Betting Not Allowd on this Match", data: eventDetail.status.toUpperCase() });
       }
       if (eventDetail.matchStopStatus) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: "Batting Not Allowd on this Match3", data: eventDetail.matchStopStatus });
+          .send({ message: "Betting Not Allowd on this Match3", data: eventDetail.matchStopStatus });
       }
 
       if (eventDetail.matchStopStatus) {
         activeBettors.delete(userId)
         return res
           .status(404)
-          .send({ message: "Batting Not Allowd on this Match" });
+          .send({ message: "Betting Not Allowd on this Match" });
       }
 
       marketId = eventDetail?.sportsId;
@@ -440,11 +440,14 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res.status(404).send({ message: "you cannot place bet" });
       }
+      console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE:");
+      console.log(eventDetail);
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
+        //As I see it runs for cricket,soccer and tennis and did not check for races
         activeBettors.delete(userId)
         return res.status(404).send({
           status: true,
-          message: `Bets will Allow in 2: ${Math.ceil(remainingTimeFromEvent / 60000)} min`,
+          message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`,
         });
       }
     }
