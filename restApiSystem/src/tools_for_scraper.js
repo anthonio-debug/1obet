@@ -149,6 +149,7 @@ function ToolForScraper() {
               { upsert: true, new: true, setDefaultsOnInsert: true }
             );
             if (eventId) {
+              console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
               const type = cricketScore.type
               let divider = 5
               if (type === 'TEST') divider = 10
