@@ -651,7 +651,7 @@ async function TestTrial(req, res) {
 
   try {
 
-    let FindInMe = "Yes here you can Player In 1 find my string";
+    let FindInMe = "Yes here you can Player in 1 find my string";
     let findMe1 = FindInMe.search("Player In");
     
 
@@ -664,6 +664,10 @@ async function TestTrial(req, res) {
     )
     res.status(200).json({success: true, message: 'Event updated successfully.'});
   }else{
+    await InPlayEvents.updateMany(
+      { Id: '33136442' },
+      { $set: { player_in:0 } }
+    )
     res.status(200).json({success: true, message: 'Event update failed.'});
   }
    
