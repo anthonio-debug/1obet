@@ -150,13 +150,50 @@ function ToolForScraper() {
             );
             if (eventId) {
               console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
+
+    if(eventId.player_in==0){
+      let FindInMe = cricketScore.comment;
+      let FindInMeRes = FindInMe.toLowerCase();
+      let findMe1 = FindInMeRes.search("player in");
+      let findMe2 = FindInMeRes.search("players in");
+      
+  
+  
+      if( findMe1 > 0 ||  findMe2 > 0){
+  
+      await InPlayEvents.updateMany(
+        { Id: eventId },
+        { $set: { player_in:1 } }
+      )
+    }
+    }
+
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
               const type = cricketScore.type
               let divider = 5
               if (type === 'TEST') divider = 10
               const over = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.over1 : cricketScore.over2
               const currentOver = parseInt(over?.split(".")[0])
               const currentBall = parseInt(over?.split(".")[1])
-              
+
 
               if (((currentOver % divider) === 0) && (currentBall === 0 || currentBall === '0')) {
                 const score = (cricketScore.activeTeam === cricketScore.team1ShortName) ? cricketScore.score1 : cricketScore.score2
