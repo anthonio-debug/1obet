@@ -651,7 +651,7 @@ async function TestTrial(req, res) {
 
   try {
 
-    let FindInMe = "Yes here you can Player In1 find my string";
+    let FindInMe = "Yes here you can Player In 1 find my string";
     let findMe1 = FindInMe.search("Player In");
     
 
