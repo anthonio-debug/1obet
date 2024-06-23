@@ -381,7 +381,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res.status(404).send({
           status: true,
-          message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`,
+          message: `Bets will Allow in 1 : ${Math.ceil(remainingTimeFromEvent / 60000)} min`,
         });
       }
       const now = new Date().getTime()
@@ -444,7 +444,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res.status(404).send({
           status: true,
-          message: `Bets will Allow in : ${Math.ceil(remainingTimeFromEvent / 60000)} min`,
+          message: `Bets will Allow in 2: ${Math.ceil(remainingTimeFromEvent / 60000)} min`,
         });
       }
     }
