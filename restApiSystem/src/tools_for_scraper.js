@@ -165,7 +165,7 @@ function ToolForScraper() {
 
     if(event.player_in==0){
       console.log("pLAYER INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN TRUE:");
-      let FindInMe = cricketScore.result;
+      let FindInMe = apiCricketScore.result;
       let FindInMeRes = FindInMe.toLowerCase();
       let findMe1 = FindInMeRes.search("player in");
       let findMe2 = FindInMeRes.search("players in");
