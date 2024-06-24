@@ -180,7 +180,7 @@ function ToolForScraper() {
       )
     }
     }
-    if(event.player_in==1 && event.inplay==true){
+    if(event.player_in==1){
 
       let FindInMe = apiCricketScore.comment;
       let FindInMeRes = FindInMe.toLowerCase();
