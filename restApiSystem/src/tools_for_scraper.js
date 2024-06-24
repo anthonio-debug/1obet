@@ -150,9 +150,19 @@ function ToolForScraper() {
             );
             if (eventId) {
               
+              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
               console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",apiCricketScore);
               console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
               console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFTER:");
+
+              console.log("Cooooooooooooooooooooment:::::::::::::::",apiCricketScore.comment);
+              console.log("RESSSSSSSSSSSSSSSSSSSSSSSSULT:::::::::::::::",apiCricketScore.result);
+
     if(eventId.player_in==0){
       console.log("pLAYER INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN TRUE:");
       let FindInMe = cricketScore.result;
