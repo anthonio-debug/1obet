@@ -153,7 +153,7 @@ function ToolForScraper() {
               console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
 
     if(eventId.player_in==0){
-      let FindInMe = cricketScore.comment;
+      let FindInMe = cricketScore.result;
       let FindInMeRes = FindInMe.toLowerCase();
       let findMe1 = FindInMeRes.search("player in");
       let findMe2 = FindInMeRes.search("players in");

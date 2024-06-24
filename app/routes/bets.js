@@ -448,8 +448,8 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId)
         return res.status(404).send({ message: "you cannot place bet" });
       }
-      console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE:");
-      console.log(eventDetail);
+      
+      
       if (subMarketDetail.Id != config.Toss && remainingTimeFromEvent > 0) {
         //As I see it runs for cricket,soccer and tennis and did not check for races
         activeBettors.delete(userId)
