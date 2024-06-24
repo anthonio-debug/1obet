@@ -150,6 +150,7 @@ function ToolForScraper() {
             );
             if (eventId) {
               
+              console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",apiCricketScore);
               console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
               console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFTER:");
     if(eventId.player_in==0){

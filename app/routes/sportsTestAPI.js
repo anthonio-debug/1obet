@@ -653,6 +653,42 @@ async function TestTrial(req, res) {
 
   try {
 
+
+
+    let strdata = {
+      _id: new ObjectId("6677d152f951cb9f19e8117d"),
+      eventId: '33358971',
+      Title: 'India Women vs South Africa Women',
+      __v: 0,
+      activeTeam: 'IND-W',
+      comment: 'India Women NEED 134 RUNS IN 35 OVERS TO WIN',
+      inning: 2,
+      matchTitle: 'India Women vs South Africa Women',
+      over2: '50.0',
+      res: '',
+      result: 'Ball',
+      score2: '215/8',
+      team1Flag: 'https://cricketchampion.co.in/webroot/img/teams/139358236_team.png',
+      team1Name: 'India Women',
+      team1ShortName: 'IND-W',
+      team2Flag: 'https://cricketchampion.co.in/webroot/img/teams/1102297845_team.jpg',
+      team2Name: 'South Africa Women',
+      team2ShortName: 'RSA-W',
+      timestamp: 1718961896.851,
+      type: 'ODI',
+      CRR: '5.47',
+      overs: [
+        { over: 12, balls: [Array], runs: 3 },
+        { over: 13, balls: [Array], runs: 6 },
+        { over: 14, balls: [Array], runs: 5 },
+        { over: 15, balls: [Array], runs: 10 }
+      ],
+      RRR: '3.83',
+      over1: '15.0',
+      score1: '82/1'
+    };
+    
+
     let FindInMe = "Yes here you can Player in 1 find my string";
     let FindInMeRes = FindInMe.toLowerCase();
     let findMe1 = FindInMeRes.search("player in");
