@@ -151,8 +151,9 @@ function ToolForScraper() {
             if (eventId) {
               
               console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
-
+              console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFTER:");
     if(eventId.player_in==0){
+      console.log("pLAYER INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN TRUE:");
       let FindInMe = cricketScore.result;
       let FindInMeRes = FindInMe.toLowerCase();
       let findMe1 = FindInMeRes.search("player in");
@@ -161,7 +162,7 @@ function ToolForScraper() {
   
   
       if( findMe1 > 0 ||  findMe2 > 0){
-  
+        console.log("FIND ME IS GREATER AND FIND ME 2 ALSO GREATER");
       await InPlayEvents.updateMany(
         { Id: eventId },
         { $set: { player_in:1 } }
