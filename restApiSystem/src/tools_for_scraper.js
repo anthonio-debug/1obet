@@ -150,7 +150,8 @@ function ToolForScraper() {
             );
             if (eventId) {
               
-              
+              console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
+
     if(eventId.player_in==0){
       let FindInMe = cricketScore.comment;
       let FindInMeRes = FindInMe.toLowerCase();
