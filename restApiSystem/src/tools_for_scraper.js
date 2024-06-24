@@ -150,18 +150,18 @@ function ToolForScraper() {
             );
             if (eventId) {
               
-              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",apiCricketScore);
-              console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
-              console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFTER:");
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",apiCricketScore);
+              // console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
+              // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFTER:");
 
-              console.log("Cooooooooooooooooooooment:::::::::::::::",apiCricketScore.comment);
-              console.log("RESSSSSSSSSSSSSSSSSSSSSSSSULT:::::::::::::::",apiCricketScore.result);
+              // console.log("Cooooooooooooooooooooment:::::::::::::::",apiCricketScore.comment);
+              // console.log("RESSSSSSSSSSSSSSSSSSSSSSSSULT:::::::::::::::",apiCricketScore.result);
 
     if(event.player_in==0){
       console.log("pLAYER INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN TRUE:");
@@ -173,7 +173,7 @@ function ToolForScraper() {
   
   
       if( findMe1 > 0 ||  findMe2 > 0){
-        console.log("FIND ME IS GREATER AND FIND ME 2 ALSO GREATER");
+        //console.log("FIND ME IS GREATER AND FIND ME 2 ALSO GREATER");
       await InPlayEvents.updateMany(
         { Id: eventId },
         { $set: { player_in:1 } }
@@ -182,7 +182,7 @@ function ToolForScraper() {
     }
     if(event.player_in==1 && event.inplay==true){
 
-      let FindInMe = cricketScore.comment;
+      let FindInMe = apiCricketScore.comment;
       let FindInMeRes = FindInMe.toLowerCase();
       let findMe1 = FindInMeRes.search("won by");
       let findMe2 = FindInMeRes.search("match finished");
