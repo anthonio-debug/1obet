@@ -163,7 +163,7 @@ function ToolForScraper() {
               console.log("Cooooooooooooooooooooment:::::::::::::::",apiCricketScore.comment);
               console.log("RESSSSSSSSSSSSSSSSSSSSSSSSULT:::::::::::::::",apiCricketScore.result);
 
-    if(eventId.player_in==0){
+    if(event.player_in==0){
       console.log("pLAYER INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN TRUE:");
       let FindInMe = cricketScore.result;
       let FindInMeRes = FindInMe.toLowerCase();
@@ -180,7 +180,7 @@ function ToolForScraper() {
       )
     }
     }
-    if(eventId.player_in==1 && eventId.inplay==true){
+    if(event.player_in==1 && event.inplay==true){
 
       let FindInMe = cricketScore.comment;
       let FindInMeRes = FindInMe.toLowerCase();
