@@ -167,7 +167,7 @@ function ToolForScraper() {
       console.log("pLAYER INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN TRUE:");
       let FindInMe = apiCricketScore.result;
       let FindInMeRes = FindInMe.toLowerCase();
-      let findMe1 = FindInMeRes.search("player in");
+      let findMe1 = FindInMeRes.search("Players IN");
       let findMe2 = FindInMeRes.search("players in");
       
   
