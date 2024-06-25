@@ -2059,7 +2059,7 @@ const placeBet = async (req, res) => {
       console.log("B>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",dbBookmakerMarketId);
       let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
       // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
-
+      console.log("Overallllllllllllllllllllllllllllllllllllllllllllll:",apiBookmakerOddRes);
       const bookmakerStatus = apiBookmakerOddRes[0]?.runners.some((item) => item?.status === "ACTIVE")
       const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
       const bookmakerSuspendedStatus = apiBookmakerOddRes[0]?.runners.every((item) => item?.status === 'SUSPENDED')
