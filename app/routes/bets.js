@@ -2068,7 +2068,8 @@ const placeBet = async (req, res) => {
       statusForRes.bookmakerBallRunningStatus = bookmakerBallRunningStatus
       statusForRes.bookmakerSuspendedStatus = bookmakerSuspendedStatus
       statusForRes.fancyBMCheckTime = moment().format('YYYY/MM/DD HH:mm:ss')
-
+      console.log("BBBBBBBBBBBBBBBBBBBBBBBBBSSSSSSSSSS:",bookmakerBallRunningStatus);
+      console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:",bookmakerSuspendedStatus);
       if (bookmakerSuspendedStatus) {
         activeBettors.delete(userId)
         return res.status(404).send({
