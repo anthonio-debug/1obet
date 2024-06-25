@@ -2404,21 +2404,37 @@ async function updateLiveStreamUrl(req, res) {
   // const {type, liveUrl, sportsId} = req.body;
   try {
     for (let i = 0; i < data.length; i++) {
-      const {type, liveUrl, sportsId} = data[i];
-      await LiveStream.findOneAndUpdate({type: type, sportsId: sportsId}, { $set: { liveUrl: liveUrl } }, {upsert: true});
+      const { type, liveUrl, sportsId } = data[i];
+      await LiveStream.findOneAndUpdate({ type: type, sportsId: sportsId }, { $set: { liveUrl: liveUrl } }, { upsert: true });
     }
     return res.send({
       success: true,
-      message: 'Live Stream Url Updated Successfully',
+      message: 'Live Stream Url Updated Successfully'
     });
   } catch (err) {
     return res.send({
       success: false,
-      message: 'Failed to Update Live Stream Url',
+      message: 'Failed to Update Live Stream Url'
     });
   }
 }
 
+async function getLiveStreamUrl(req, res) {
+  const { sportsIds } = req.body;
+  try {
+    const results = await LiveStream.find({ sportsId: sportsIds });
+    return res.send({
+      success: true,
+      results,
+      message: 'Live Stream Url'
+    });
+  } catch (err) {
+    return res.send({
+      success: false,
+      message: 'Failed to Get Live Stream Url'
+    });
+  }
+}
 
 async function GetAllTermsAndConditions(req, res) {
   try {
@@ -2711,6 +2727,7 @@ loginRouter.post('/updateDefaultTheme', settingsValidation.validate('updateDefau
 loginRouter.post('/updateDefaultLoginPage', settingsValidation.validate('updateDefaultLoginPage'), updateDefaultLoginPage);
 loginRouter.post('/addTermsAndConditions', settingsValidation.validate('addTermsAndConditions'), addTermsAndConditions);
 loginRouter.post('/updateLiveStreamUrl', updateLiveStreamUrl);
+loginRouter.post('/getLiveStreamUrl', getLiveStreamUrl);
 router.get('/GetAllTermsAndConditions', GetAllTermsAndConditions);
 loginRouter.post('/addPrivacyPolicy', settingsValidation.validate('addPrivacyPolicy'), addPrivacyPolicy);
 router.get('/GetAllPrivacyPolicy', GetAllPrivacyPolicy);
