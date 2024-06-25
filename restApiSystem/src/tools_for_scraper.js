@@ -172,7 +172,7 @@ function ToolForScraper() {
       
   
   
-      if( findMe1 != -1 ||  findMe2 != -1){
+      if( findMe1 >=0 ||  findMe2 >=0){
         console.log("FIND ME IS GREATER AND FIND ME 2 ALSO GREATER");
       await InPlayEvents.updateMany(
         { Id: eventId },
@@ -190,7 +190,7 @@ function ToolForScraper() {
       
   
   
-      if( findMe1 != -1 ||  findMe2 != -1 ||  findMe3 != -1){
+      if( findMe1 >=0 ||  findMe2 >=0 ||  findMe3 >=0){
   
       await InPlayEvents.updateMany(
         { Id: eventId },
