@@ -627,6 +627,15 @@ async function user_book2(req, res) {
     { $match: query },
     { $sort: { createdAt: -1 } },
     {
+      $group: {
+        _id: '$userId',
+        doc: { $first: '$$ROOT' }
+      }
+    },
+    {
+      $replaceRoot: { newRoot: '$doc' }
+    },
+    {
       $lookup: {
         from: 'users',
         localField: 'userId',
