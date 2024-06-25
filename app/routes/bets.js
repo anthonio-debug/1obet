@@ -2038,7 +2038,7 @@ const placeBet = async (req, res) => {
       // console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:",bookmakerSuspendedStatus);
       //end of code to block fancy bet if bookmaker has ball running or suspended status
       
-
+      console.log("..................................");
       
 
 
