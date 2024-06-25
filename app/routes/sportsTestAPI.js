@@ -652,6 +652,7 @@ async function TestTrial(req, res) {
   const eventId = req.params.eventId;
 
   try {
+    
 
     let FindInMe = "Yes here you can Player in 1 find my string";
     let FindInMeRes = FindInMe.toLowerCase();

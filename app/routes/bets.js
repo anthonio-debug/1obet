@@ -2019,12 +2019,30 @@ const placeBet = async (req, res) => {
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
       let apiFancyOddsRes = await fetchSession(eventDetail.Id)
       apiFancyOddsRes = apiFancyOddsRes.filter(item => item.SelectionId === selectionId)
+      //console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:",apiFancyOddsRes);
       if (apiFancyOddsRes[0]?.GameStatus === 'SUSPENDED' || apiFancyOddsRes[0]?.GameStatus === 'Ball Running') {
         activeBettors.delete(userId)
         return res.status(404).send({
           message: `Status not available for selected team ${selectionId}`,
         })
       }
+      
+      
+      //start of code to block fancy bet if bookmaker has ball running or suspended status
+      // let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
+      // const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
+      // const bookmakerSuspendedStatus = apiBookmakerOddRes[0]?.runners.every((item) => item?.status === 'SUSPENDED')
+
+
+      // console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:",bookmakerBallRunningStatus);
+      // console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:",bookmakerSuspendedStatus);
+      //end of code to block fancy bet if bookmaker has ball running or suspended status
+      
+      console.log("..................................");
+      
+
+
+
       // const apiFancyOdds = response?.data?.data?.t3;
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes)
       const DBOddDetails = await FancyOdds.findById(oddsId);
@@ -2038,9 +2056,11 @@ const placeBet = async (req, res) => {
         })
       }
       // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
+      console.log("B>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",dbBookmakerMarketId);
+      //console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR::::::",apiBookmakerOddRes[0]?.runners);
       let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
       // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
-
+      console.log("Overallllllllllllllllllllllllllllllllllllllllllllll:",apiBookmakerOddRes);
       const bookmakerStatus = apiBookmakerOddRes[0]?.runners.some((item) => item?.status === "ACTIVE")
       const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
       const bookmakerSuspendedStatus = apiBookmakerOddRes[0]?.runners.every((item) => item?.status === 'SUSPENDED')
@@ -2049,7 +2069,8 @@ const placeBet = async (req, res) => {
       statusForRes.bookmakerBallRunningStatus = bookmakerBallRunningStatus
       statusForRes.bookmakerSuspendedStatus = bookmakerSuspendedStatus
       statusForRes.fancyBMCheckTime = moment().format('YYYY/MM/DD HH:mm:ss')
-
+      console.log("BBBBBBBBBBBBBBBBBBBBBBBBBSSSSSSSSSS:",bookmakerBallRunningStatus);
+      console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:",bookmakerSuspendedStatus);
       if (bookmakerSuspendedStatus) {
         activeBettors.delete(userId)
         return res.status(404).send({

@@ -150,18 +150,29 @@ function ToolForScraper() {
             );
             if (eventId) {
               
-              console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
-              console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFTER:");
-    if(eventId.player_in==0){
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
+              // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",apiCricketScore);
+              // console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
+              // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFTER:");
+
+              // console.log("Cooooooooooooooooooooment:::::::::::::::",apiCricketScore.comment);
+              // console.log("RESSSSSSSSSSSSSSSSSSSSSSSSULT:::::::::::::::",apiCricketScore.result);
+
+    if(event.player_in==0){
       console.log("pLAYER INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN TRUE:");
-      let FindInMe = cricketScore.result;
+      let FindInMe = apiCricketScore.result;
       let FindInMeRes = FindInMe.toLowerCase();
-      let findMe1 = FindInMeRes.search("player in");
+      let findMe1 = FindInMeRes.search("Players IN");
       let findMe2 = FindInMeRes.search("players in");
       
   
   
-      if( findMe1 > 0 ||  findMe2 > 0){
+      if( findMe1 >=0 ||  findMe2 >=0){
         console.log("FIND ME IS GREATER AND FIND ME 2 ALSO GREATER");
       await InPlayEvents.updateMany(
         { Id: eventId },
@@ -169,9 +180,9 @@ function ToolForScraper() {
       )
     }
     }
-    if(eventId.player_in==1 && eventId.inplay==true){
+    if(event.player_in==1){
 
-      let FindInMe = cricketScore.comment;
+      let FindInMe = apiCricketScore.comment;
       let FindInMeRes = FindInMe.toLowerCase();
       let findMe1 = FindInMeRes.search("won by");
       let findMe2 = FindInMeRes.search("match finished");
@@ -179,7 +190,7 @@ function ToolForScraper() {
       
   
   
-      if( findMe1 > 0 ||  findMe2 > 0 ||  findMe3 > 0){
+      if( findMe1 >=0 ||  findMe2 >=0 ||  findMe3 >=0){
   
       await InPlayEvents.updateMany(
         { Id: eventId },
