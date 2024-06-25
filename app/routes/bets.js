@@ -2057,6 +2057,7 @@ const placeBet = async (req, res) => {
       }
       // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
       console.log("B>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",dbBookmakerMarketId);
+      console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR::::::",apiBookmakerOddRes[0]?.runners);
       let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
       // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
       console.log("Overallllllllllllllllllllllllllllllllllllllllllllll:",apiBookmakerOddRes);
