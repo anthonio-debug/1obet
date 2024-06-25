@@ -2028,7 +2028,19 @@ const placeBet = async (req, res) => {
       }
       
       
+      //start of code to block fancy bet if bookmaker has ball running or suspended status
+      // let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
+      // const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
+      // const bookmakerSuspendedStatus = apiBookmakerOddRes[0]?.runners.every((item) => item?.status === 'SUSPENDED')
+
+
+      // console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:",bookmakerBallRunningStatus);
+      // console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:",bookmakerSuspendedStatus);
+      //end of code to block fancy bet if bookmaker has ball running or suspended status
       
+
+      
+
 
 
       // const apiFancyOdds = response?.data?.data?.t3;
@@ -2044,6 +2056,7 @@ const placeBet = async (req, res) => {
         })
       }
       // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
+      console.log("B>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",dbBookmakerMarketId);
       let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
       // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
 
