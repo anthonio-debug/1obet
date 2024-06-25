@@ -50,6 +50,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   isResultSaved: { type: Boolean, default: false },
   seriesKey:  { type: String },
   CompanySetStatus: { type: String, default: "PENDING" },
+  liveUrl: {type: String}
 });
 
 inPlayEventsSchema.plugin(Global.paginate);

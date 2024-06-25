@@ -120,6 +120,7 @@
   "getOdds",
   "getFancyData",
   "liveTv",
+  "liveStream",
   "liveScore",
   "listCompetitions",
   "listEventsBySport",
@@ -225,5 +226,6 @@
   "active-bettors",
   "gethighlights",
   "setCashWithdrawDisabled",
-  "closeOpenMarkets"
+  "closeOpenMarkets",
+  "updateLiveStreamUrl"
 ]

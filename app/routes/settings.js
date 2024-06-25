@@ -6,6 +6,7 @@ const moment = require('moment');
 const User = require('../models/user');
 const settingsValidation = require('../validators/settings');
 const PrivacyPolicy = require('../models/privacyPolicy');
+const LiveStream = require('../models/liveStream');
 const Competition = require('../models/listCompetitions');
 const Odds = require('../models/odds');
 const Exchanges = require('../models/exchanges');
@@ -209,7 +210,7 @@ async function updateMatchType(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const { _id, matchType, iconStatus, eventId } = req.body;
+    const { _id, matchType, iconStatus, eventId, liveUrl } = req.body;
 
     //coded by qaiser started on event with bet delayed time
     /*//console.log(
@@ -230,7 +231,7 @@ async function updateMatchType(req, res) {
       betseconds.save();
     }
 
-    const updatedData = await Events.findByIdAndUpdate(_id, { $set: { matchType: matchType, iconStatus: iconStatus } }, (err, updatedMatch) => {
+    const updatedData = await Events.findByIdAndUpdate(_id, { $set: { matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl } }, (err, updatedMatch) => {
       if (err) {
         //console.log("Error updating figure:", err);
       } else {
@@ -2398,6 +2399,27 @@ async function addTermsAndConditions(req, res) {
   }
 }
 
+async function updateLiveStreamUrl(req, res) {
+  const data = req.body;
+  // const {type, liveUrl, sportsId} = req.body;
+  try {
+    for (let i = 0; i < data.length; i++) {
+      const {type, liveUrl, sportsId} = data[i];
+      await LiveStream.findOneAndUpdate({type: type, sportsId: sportsId}, { $set: { liveUrl: liveUrl } }, {upsert: true});
+    }
+    return res.send({
+      success: true,
+      message: 'Live Stream Url Updated Successfully',
+    });
+  } catch (err) {
+    return res.send({
+      success: false,
+      message: 'Failed to Update Live Stream Url',
+    });
+  }
+}
+
+
 async function GetAllTermsAndConditions(req, res) {
   try {
     const response = await PrivacyPolicy.findOne({}, { termAndConditionsContent: 1, createdAt: 1, updatedAt: 1 });
@@ -2688,6 +2710,7 @@ async function getSetting(req, res) {
 loginRouter.post('/updateDefaultTheme', settingsValidation.validate('updateDefaultTheme'), updateDefaultTheme);
 loginRouter.post('/updateDefaultLoginPage', settingsValidation.validate('updateDefaultLoginPage'), updateDefaultLoginPage);
 loginRouter.post('/addTermsAndConditions', settingsValidation.validate('addTermsAndConditions'), addTermsAndConditions);
+loginRouter.post('/updateLiveStreamUrl', updateLiveStreamUrl);
 router.get('/GetAllTermsAndConditions', GetAllTermsAndConditions);
 loginRouter.post('/addPrivacyPolicy', settingsValidation.validate('addPrivacyPolicy'), addPrivacyPolicy);
 router.get('/GetAllPrivacyPolicy', GetAllPrivacyPolicy);
