@@ -2438,16 +2438,15 @@ async function getLiveStreamUrl(req, res) {
 }
 
 async function updateLiveUrl(req, res) {
-  const { Id } = req.query;
-  const { liveTVUrl } = req.body;
+  const { eventId, liveUrl } = req.body;
 
-  if (!Id) {
+  if (!eventId) {
     return res.status(400).send({
       success: false,
       message: 'Missing eventId'
     });
   }
-  if (!liveTVUrl) {
+  if (!liveUrl) {
     return res.status(400).send({
       success: false,
       message: 'Missing Live TV URL'
@@ -2456,8 +2455,8 @@ async function updateLiveUrl(req, res) {
 
   try {
     const updatedURL = await inPlayEvents.findOneAndUpdate(
-      { Id: Id },
-      { liveUrl: liveTVUrl },
+      { Id: eventId },
+      { liveUrl: liveUrl },
       { upsert: true, new: true }
     );
 
