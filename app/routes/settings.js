@@ -26,6 +26,7 @@ const MarketIDS = require('../models/marketIds');
 const Bets = require('../models/bets');
 const BetPlaceHold = require('../models/betaPlaceHold');
 const AsianTable = require('../models/asianTable');
+const inPlayEvents = require('./../models/events.js')
 const mongoose = require('mongoose');
 const { handleDrawBet } = require('../../resultSystem/src/CalculateBets/calculations');
 
@@ -1698,7 +1699,7 @@ async function setLoginHistories(req, res) {
         thead: ['Username', 'Last login', 'Ip Address', 'City', 'Location'],
         data: lastLogins
       });
-    } catch (error) {}
+    } catch (error) { }
   }
 }
 
@@ -2436,6 +2437,53 @@ async function getLiveStreamUrl(req, res) {
   }
 }
 
+async function updateLiveUrl(req, res) {
+  const { Id } = req.query;
+  const { liveTVUrl } = req.body;
+
+  if (!Id) {
+    return res.status(400).send({
+      success: false,
+      message: 'Missing eventId'
+    });
+  }
+  if (!liveTVUrl) {
+    return res.status(400).send({
+      success: false,
+      message: 'Missing Live TV URL'
+    });
+  }
+
+  try {
+    const updatedURL = await inPlayEvents.findOneAndUpdate(
+      { Id: Id },
+      { liveUrl: liveTVUrl },
+      { upsert: true, new: true }
+    );
+
+    if (!updatedURL) {
+      return res.status(404).send({
+        success: false,
+        message: 'Event not found'
+      });
+    }
+
+    return res.status(200).send({
+      success: true,
+      updatedURL,
+      message: "Live TV URL updated"
+    });
+  } catch (error) {
+    console.error('Error updating Live TV URL:', error);
+
+    return res.status(500).send({
+      success: false,
+      message: 'Failed to update Live TV URL',
+      error: error.message
+    });
+  }
+}
+
 async function GetAllTermsAndConditions(req, res) {
   try {
     const response = await PrivacyPolicy.findOne({}, { termAndConditionsContent: 1, createdAt: 1, updatedAt: 1 });
@@ -2728,6 +2776,7 @@ loginRouter.post('/updateDefaultLoginPage', settingsValidation.validate('updateD
 loginRouter.post('/addTermsAndConditions', settingsValidation.validate('addTermsAndConditions'), addTermsAndConditions);
 loginRouter.post('/updateLiveStreamUrl', updateLiveStreamUrl);
 loginRouter.post('/getLiveStreamUrl', getLiveStreamUrl);
+loginRouter.post("/updateLiveUrl", updateLiveUrl)
 router.get('/GetAllTermsAndConditions', GetAllTermsAndConditions);
 loginRouter.post('/addPrivacyPolicy', settingsValidation.validate('addPrivacyPolicy'), addPrivacyPolicy);
 router.get('/GetAllPrivacyPolicy', GetAllPrivacyPolicy);

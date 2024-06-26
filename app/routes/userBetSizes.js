@@ -98,9 +98,9 @@ async function getAllBetSizes(req, res) {
     }
 
     const parent = await User.findOne({ userId: user.createdBy });
-    if (!parent) {
-      return res.status(404).send({ message: 'PARENT_USER_NOT_FOUND' });
-    }
+    // if (!parent) {
+    //   return res.status(404).send({ message: 'PARENT_USER_NOT_FOUND' });
+    // }
 
     // 
     let queryResult;

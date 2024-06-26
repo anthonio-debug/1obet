@@ -228,5 +228,6 @@
   "setCashWithdrawDisabled",
   "closeOpenMarkets",
   "getLiveStreamUrl",
-  "updateLiveStreamUrl"
+  "updateLiveStreamUrl",
+  "updateLiveUrl"
 ]
