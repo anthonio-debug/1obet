@@ -99,7 +99,7 @@ async function getAllBetSizes(req, res) {
 
     const parent = await User.findOne({ userId: user.createdBy });
     if (!parent) {
-      return res.status(200);
+      return res.status(400).send({ message: "This is company User" });
     }
 
     // 
