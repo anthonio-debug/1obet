@@ -19,18 +19,18 @@ const updateBetSizes = async (req, res) => {
       await UserBetSizes.updateOne(
         { _id: size._id },
         {
-          amount: size.amount,           
-          minAmount: size?.minAmount,      
-          ExpAmount: size?.ExpAmount,  
+          amount: size.amount,
+          minAmount: size?.minAmount,
+          ExpAmount: size?.ExpAmount,
         }
       )
     }
-    
+
     return res.send({
       success: true,
       message: 'Bet sizes updated successfully',
     });
-    
+
   } catch (error) {
     return res.status(404).send({
       success: false,
@@ -98,16 +98,16 @@ async function getAllBetSizes(req, res) {
     }
 
     const parent = await User.findOne({ userId: user.createdBy });
-    // if (!parent) {
-    //   return res.status(404).send({ message: 'PARENT_USER_NOT_FOUND' });
-    // }
+    if (!parent) {
+      return res.status(200);
+    }
 
     // 
     let queryResult;
-    if(parent.role == 0){
+    if (parent.role == 0) {
       queryResult = await UserBetSizes.aggregate([
         {
-          $match:{
+          $match: {
             userId: userId
           }
         },
@@ -128,19 +128,19 @@ async function getAllBetSizes(req, res) {
           $group: {
             _id: '$_id',
             name: { $first: "$name" },
-            minAmount:{ $first: "$minAmount" },
-            ExpAmount:{ $first: "$ExpAmount" },
+            minAmount: { $first: "$minAmount" },
+            ExpAmount: { $first: "$ExpAmount" },
             amount: { $first: "$amount" },
-            limit_minAmount :  { $first: { $arrayElemAt: ["$limits.minAmount", 0] } },
-            limit_ExpAmount :  { $first: { $arrayElemAt: ["$limits.ExpAmount", 0] } },
-            limit_max_amount : { $first: { $arrayElemAt: ["$limits.maxAmount", 0] } }
+            limit_minAmount: { $first: { $arrayElemAt: ["$limits.minAmount", 0] } },
+            limit_ExpAmount: { $first: { $arrayElemAt: ["$limits.ExpAmount", 0] } },
+            limit_max_amount: { $first: { $arrayElemAt: ["$limits.maxAmount", 0] } }
           }
         }
       ])
-    }else {
+    } else {
       queryResult = await UserBetSizes.aggregate([
         {
-          $match:{
+          $match: {
             userId: userId
           }
         },
@@ -162,13 +162,13 @@ async function getAllBetSizes(req, res) {
           $group: {
             _id: '$_id',
             name: { $first: "$name" },
-            minAmount:{ $first: "$minAmount" },
-            ExpAmount:{ $first: "$ExpAmount" },
+            minAmount: { $first: "$minAmount" },
+            ExpAmount: { $first: "$ExpAmount" },
             amount: { $first: "$amount" },
-            limit_minAmount :  { $first: { $arrayElemAt: ["$limits.minAmount", 0] } },
-            limit_ExpAmount :  { $first: { $arrayElemAt: ["$limits.ExpAmount", 0] } },
+            limit_minAmount: { $first: { $arrayElemAt: ["$limits.minAmount", 0] } },
+            limit_ExpAmount: { $first: { $arrayElemAt: ["$limits.ExpAmount", 0] } },
             // limit_max_amount : { $first: { $arrayElemAt: ["$limits.amount", 0] } }
-            limit_max_amount : { $first: { $arrayElemAt: ["$limits.maxAmount", 0] } }
+            limit_max_amount: { $first: { $arrayElemAt: ["$limits.maxAmount", 0] } }
           }
         }
       ])
