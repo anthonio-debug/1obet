@@ -36,10 +36,10 @@ async function liveStream(req, res) {
   const eventId = req.params.eventId;
   try {
     if (eventId !== 0) {
-      const event = await Events.find({ Id: eventId.toString(), $or: [{ liveUrl: { $ne: null } }, { liveUrl: { $ne: '' } }] });
+      const event = await Events.findOne({ Id: eventId.toString(), liveUrl: { $ne: null } });
 
-      if (event.length > 0) {
-        const liveStream = [{ sportsId: Number(event[0].sportsId), liveUrl: event[0].liveUrl, directUrl: true }];
+      if (event && event.liveUrl) {
+        const liveStream = [{ sportsId: Number(event.sportsId), liveUrl: event.liveUrl, directUrl: true }];
         res.status(200).json({
           success: true,
           message: 'Live Tv Streaming Urls',
