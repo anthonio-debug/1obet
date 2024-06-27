@@ -2,21 +2,21 @@
 module.exports = ToolForEvent;
 
 // const sportsIds = ["1", "7522", "2", "4", "27454571", "468328"];
-const sportsIds = ["1", "2", "4"];
+const sportsIds = ['1', '2', '4'];
 
 const inPlayEvents = require('../../app/models/events');
 const MarketIDs = require('../../app/models/marketIds');
 const Odds = require('../../app/models/odds');
-const config = require("../../config/default.json")
+const config = require('../../config/default.json');
 
 const apiRequests = require('./api/apiRequestsTestSCT.js')();
-const {CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN} = require('../../helper/constants')
-const moment = require("moment/moment");
+const { CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN } = require('../../helper/constants');
+const moment = require('moment/moment');
 
 let lastType = 0;
 
 function ToolForEvent() {
-  return {init};
+  return { init };
 
   async function init(_io, express) {
     apiRequests.init(_io, express);
@@ -46,8 +46,8 @@ function ToolForEvent() {
         }
       }, 30 * 1000);
 
-      setInterval(() => {
-        fetchOdds(true);
+      const intervalId = setInterval(() => {
+        fetchOdds(true, intervalId);
       }, 1500);
 
       setInterval(() => {
@@ -83,69 +83,64 @@ function ToolForEvent() {
   async function fetchMarkets() {
     try {
       for (const id of sportsIds) {
-        let documents = null
-        if (id === "4") {
-          documents = await inPlayEvents.findOne({
-            status: 'OPEN',
-            CompanySetStatus: "OPEN",
-            isShowed: true,
-            sportsId: id
-          })
-            .sort({lastCheckMarket: 1})
+        let documents = null;
+        if (id === '4') {
+          documents = await inPlayEvents
+            .findOne({
+              status: 'OPEN',
+              CompanySetStatus: 'OPEN',
+              isShowed: true,
+              sportsId: id
+            })
+            .sort({ lastCheckMarket: 1 })
             .limit(1)
             .exec();
         } else {
-          const now = new Date()
-          const from = new Date(now.getTime() - (30 * 60 * 1000))
-          const someHoursLater = new Date(now.getTime() + 10 * 60 * 60 * 1000)
-          const to = someHoursLater.getTime()
-          documents = await inPlayEvents.findOne({
-            status: 'OPEN',
-            CompanySetStatus: "OPEN",
-            isShowed: true,
-            openDate: {$gte: from, $lte: to},
-            sportsId: id
-          })
-            .sort({lastCheckMarket: 1})
+          const now = new Date();
+          const from = new Date(now.getTime() - 30 * 60 * 1000);
+          const someHoursLater = new Date(now.getTime() + 10 * 60 * 60 * 1000);
+          const to = someHoursLater.getTime();
+          documents = await inPlayEvents
+            .findOne({
+              status: 'OPEN',
+              CompanySetStatus: 'OPEN',
+              isShowed: true,
+              openDate: { $gte: from, $lte: to },
+              sportsId: id
+            })
+            .sort({ lastCheckMarket: 1 })
             .limit(1)
             .exec();
         }
 
         if (documents && documents.Id) {
-          const sportsId = documents.sportsId
+          const sportsId = documents.sportsId;
           if (['1', '2', '4'].includes(sportsId)) {
-            const openDate = Number(documents.openDate)
-            const now = moment().utc().valueOf()
-            let limitMin = 0
+            const openDate = Number(documents.openDate);
+            const now = moment().utc().valueOf();
+            let limitMin = 0;
             switch (sportsId) {
               case '1':
-                limitMin = SOCCER_LIVE_SET_MIN
-                break
+                limitMin = SOCCER_LIVE_SET_MIN;
+                break;
               case '2':
-                limitMin = TENNIS_LIVE_SET_MIN
-                break
+                limitMin = TENNIS_LIVE_SET_MIN;
+                break;
               case '4':
-                limitMin = CRICKET_LIVE_SET_MIN
-                break
+                limitMin = CRICKET_LIVE_SET_MIN;
+                break;
             }
-            if (((openDate - now) < (limitMin * 60 * 1000)) && ((openDate - now) > 0)) {
-              await inPlayEvents.updateOne(
-                {Id: documents.Id},
-                {$set: {inplay: true}}
-              );
+            if (openDate - now < limitMin * 60 * 1000 && openDate - now > 0) {
+              await inPlayEvents.updateOne({ Id: documents.Id }, { $set: { inplay: true } });
             }
           }
-          await inPlayEvents.updateMany(
-            { Id: documents.Id },
-            { $set: { lastCheckMarket: Date.now() } }
-          );
+          await inPlayEvents.updateMany({ Id: documents.Id }, { $set: { lastCheckMarket: Date.now() } });
           const existedMarkets = await MarketIDs.findOne({
-            eventId: documents.Id, status: "OPEN", inPlay: true,
-            $and: [
-              {marketName: {$ne: 'BOOKMAKER'}},
-              {marketName: {$ne: null}},
-            ]
-          })
+            eventId: documents.Id,
+            status: 'OPEN',
+            inPlay: true,
+            $and: [{ marketName: { $ne: 'BOOKMAKER' } }, { marketName: { $ne: null } }]
+          });
 
           if (documents && !existedMarkets?._id) {
             await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
@@ -161,22 +156,16 @@ function ToolForEvent() {
   async function fetchOddsForEvent(eventId) {
     try {
       //console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR odds for markets fetching.....");
-      const documents = await MarketIDs.find({inPlay: true, eventId: eventId})
-        .sort({lastCheck: 1})
-        .limit(20)
-        .exec();
+      const documents = await MarketIDs.find({ inPlay: true, eventId: eventId }).sort({ lastCheck: 1 }).limit(20).exec();
       let marketIds = [];
 
       if (documents.length > 0) {
-        documents.forEach(element => {
+        documents.forEach((element) => {
           marketIds.push(element.marketId);
         });
       }
 
-      await MarketIDs.updateMany(
-        {marketId: {$in: marketIds}},
-        {$set: {lastCheck: Date.now()}}
-      );
+      await MarketIDs.updateMany({ marketId: { $in: marketIds } }, { $set: { lastCheck: Date.now() } });
 
       if (marketIds.length > 0) {
         //console.log("17777777777777777777777777777777777777777777777777777");
@@ -187,77 +176,70 @@ function ToolForEvent() {
     }
   }
 
-  async function fetchOdds(inPlay) {
+  async function fetchOdds(inPlay, intervalId) {
     try {
       const now = moment().utc(); // Get the current time in UTC
       const startTime = moment(now).subtract(9000, 'minutes').valueOf(); // Get the timestamp in minutes
       const endTime = moment(now).add(20, 'minutes').valueOf(); // Add 5 hours and get the timestamp in minutes
-      console.log("................-------------------------------------------",startTime,"============",endTime);
+      console.log('................-------------------------------------------', startTime, '============', endTime);
       const documents = await MarketIDs.aggregate([
         {
           $match: {
             inPlay: inPlay,
-           
-            status: {$in: ['INACTIVE', 'OPEN', 'SUSPENDED']},
-          
-            $or: [
-              {sportID: 1},
-              {sportID: 2},
-              {sportID: 4},
-            ],
-          },
+
+            status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
+
+            $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]
+          }
         },
         {
           $lookup: {
-            from: "inplayevents",
-            localField: "eventId",
-            foreignField: "Id",
-            as: "event",
-          },
+            from: 'inplayevents',
+            localField: 'eventId',
+            foreignField: 'Id',
+            as: 'event'
+          }
         },
         {
           $addFields: {
             event: {
               $cond: {
                 if: {
-                  $eq: [{$type: "$event"}, "array"]
+                  $eq: [{ $type: '$event' }, 'array']
                 },
-                then: {$arrayElemAt: ["$event", 0]},
-                else: "$event"
+                then: { $arrayElemAt: ['$event', 0] },
+                else: '$event'
               }
             }
           }
         },
         {
           $match: {
-            "event.CompanySetStatus": "OPEN",
-            "event.status": "OPEN",
+            'event.CompanySetStatus': 'OPEN',
+            'event.status': 'OPEN'
           }
         },
         {
-          $sort: {lastCheck: 1},
+          $sort: { lastCheck: 1 }
         },
         {
-          $limit: 30,
+          $limit: 30
         }
       ]).exec();
 
       let marketIds = [];
       //console.log("==============>>>>",documents.length);
       if (documents.length > 0) {
-        documents.forEach(element => {
+        documents.forEach((element) => {
           marketIds.push(element.marketId);
         });
       }
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
-      await MarketIDs.updateMany(
-        {marketId: {$in: marketIds}},
-        {$set: {lastCheck: Date.now()}}
-      );
+      await MarketIDs.updateMany({ marketId: { $in: marketIds } }, { $set: { lastCheck: Date.now() } });
 
       if (marketIds.length > 0) {
         //console.log("24444444444444477777777777777777777777777777777777777777777");
-        apiRequests.getOddsFromProvider(documents);
+        apiRequests.getOddsFromProvider(documents, intervalId);
       }
     } catch (error) {
       console.error('Error fetching odds:', error);
@@ -265,15 +247,11 @@ function ToolForEvent() {
   }
 
   async function handleSetInplay() {
-    const documents = await inPlayEvents.find({isShowed: true, inplay: false})
-      .limit(20)
-      .exec();
+    const documents = await inPlayEvents.find({ isShowed: true, inplay: false }).limit(20).exec();
 
     if (documents.length > 0) {
       for (const document of documents) {
-        await inPlayEvents.updateOne(
-          {Id: document.Id}, {$set: {inplay: true}}
-        )
+        await inPlayEvents.updateOne({ Id: document.Id }, { $set: { inplay: true } });
       }
     }
   }
