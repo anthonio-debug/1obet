@@ -96,11 +96,13 @@ async function getAllBetSizes(req, res) {
     if (!user) {
       return res.status(404).send({ message: 'USER_NOT_FOUND' });
     }
-
-    const parent = await User.findOne({ userId: user.createdBy });
-    if (!parent) {
-      return res.status(400).send({ message: "This is company User" });
+    if (user.role === "0") {
+      return res.status(200).send()
     }
+    const parent = await User.findOne({ userId: user.createdBy });
+    // if (!parent) {
+    //   return res.status(400).send({ message: "This is company User" });
+    // }
 
     // 
     let queryResult;
