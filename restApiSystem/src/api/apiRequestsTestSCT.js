@@ -41,6 +41,7 @@ function apiRequests() {
     setInplay,
     takeScores,
     takeScores2,
+    takeScores
   };
 
   function init(_io, express) {
