@@ -845,7 +845,7 @@ async function getMatchEvents(req, res) {
           }
         }
         for (const item of results) {
-          await inPlayEvents.updateOne({ _id: item._id }, { theSportsId: item.id });
+          await inPlayEvents.updateOne({ _id: item._id }, { theSportsId: item.theSports.id });
         }
       }
       res.json({ status: true, data: { count: results.length, results } });
