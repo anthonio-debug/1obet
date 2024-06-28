@@ -12,6 +12,7 @@ const router = express.Router();
 const apiURL = "http://185.58.225.212:8080/api/"
 const apiSystemRacing = require("../../restApiSystem/src/tools_for_updated_racing.js")();
 const Session = require('../models/Session');
+const inPlayEvents = require('../models/events');
 
 require('dotenv').config()
 console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -809,6 +810,48 @@ async function cronOdds(req, res) {
   res.json({ status: true, data: result });
 }
 
+async function getMatchEvents(req, res) {
+  const { sportsId } = req.params;
+  const inplays = await inPlayEvents.find({ sportsId });
+  let sportsName = 'football';
+  if (sportsId === '2') {
+    sportsName = 'tennis';
+  }
+  const theSportsUrl = `https://api.thesports.com/v1/${sportsName}/match/diary?user=stepinn&secret=f365f74fbc01e6ecf55ba89bb725f504`;
+  axios
+    .get(theSportsUrl)
+    .then(async ({ data }) => {
+      console.log('data', data)
+      const results = [];
+      if (data?.results && data?.results?.length) {
+        const newDatas = data.results.map((item) => {
+          const home_team = data.results_extra.team.find((e) => e.id === item.home_team_id);
+          item.home_team = home_team.name;
+          const away_team = data.results_extra.team.find((e) => e.id === item.away_team_id);
+          item.away_team = away_team.name;
+          item.match_time = item.match_time * 1000;
+          if (home_team.name && away_team.name) return item;
+        });
+        for (const newData of newDatas) {
+          const data = inplays.filter((e) => (e.name.toLowerCase().includes(newData.home_team.toLowerCase()) || e.name.toLowerCase().includes(newData.away_team.toLowerCase())) && e.openDate === newData.match_time);
+          if (data.length) {
+            if (data.length === 1) {
+              results.push({ ...data[0]._doc, theSports: newData });
+            }
+          }
+        }
+        for (const item of results) {
+          await inPlayEvents.updateOne({ _id: item._id }, { theSportsId: item.id });
+        }
+      }
+      res.json({ status: true, data: { count: results.length, results } });
+    })
+    .catch((error) => {
+      console.log('error', error.response.data);
+      res.status(500).json({ status: false, data: error.response.data });
+    });
+}
+
 router.get('/testSports/events', listEvents)
 router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
 router.get('/track-score/get-cricketscore', getCricketScore)
@@ -836,6 +879,7 @@ router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId
 router.get('/track-bet/check-market/:sportID/:eventId', cronOdds)
 router.get('/track-bet/delete-odds/:eventId', deleteOdds)
 router.get('/track-bet/test-trial/:eventId', TestTrial)
+router.get('/match-events/:sportsId', getMatchEvents)
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
