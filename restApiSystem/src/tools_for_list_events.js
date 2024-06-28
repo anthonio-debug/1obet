@@ -46,8 +46,8 @@ function ToolForEvent() {
         }
       }, 30 * 1000);
 
-      setInterval(() => {
-        fetchOdds(true);
+      const intervalId =setInterval(() => {
+        fetchOdds(true, intervalId);
       }, 1500);
 
       setInterval(() => {
@@ -187,7 +187,7 @@ function ToolForEvent() {
     }
   }
 
-  async function fetchOdds(inPlay) {
+  async function fetchOdds(inPlay, intervalId) {
     try {
       const now = moment().utc(); // Get the current time in UTC
       const startTime = moment(now).subtract(9000, 'minutes').valueOf(); // Get the timestamp in minutes
@@ -257,7 +257,7 @@ function ToolForEvent() {
 
       if (marketIds.length > 0) {
         //console.log("24444444444444477777777777777777777777777777777777777777777");
-        apiRequests.getOddsFromProvider(documents);
+        apiRequests.getOddsFromProvider(documents, intervalId);
       }
     } catch (error) {
       console.error('Error fetching odds:', error);
