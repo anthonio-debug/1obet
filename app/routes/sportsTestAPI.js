@@ -821,7 +821,6 @@ async function getMatchEvents(req, res) {
   axios
     .get(theSportsUrl)
     .then(async ({ data }) => {
-      console.log('data', data)
       const results = [];
       if (data?.results && data?.results?.length) {
         const newDatas = data.results.map((item) => {
@@ -833,7 +832,12 @@ async function getMatchEvents(req, res) {
           if (home_team.name && away_team.name) return item;
         });
         for (const newData of newDatas) {
-          const data = inplays.filter((e) => (e.name.toLowerCase().includes(newData.home_team.toLowerCase()) || e.name.toLowerCase().includes(newData.away_team.toLowerCase())) && e.openDate === newData.match_time);
+          const data = inplays.filter((e) => (
+            e.name.toLowerCase().includes(newData.home_team.toLowerCase()) || 
+            e.name.toLowerCase().includes(newData.away_team.toLowerCase()) ||
+            newData.home_team.toLowerCase().includes(e.name.split(' v ')[0]) ||
+            newData.away_team.toLowerCase().includes(e.name.split(' v ')[1])
+          ) && e.openDate === newData.match_time);
           if (data.length) {
             if (data.length === 1) {
               results.push({ ...data[0]._doc, theSports: newData });
