@@ -845,15 +845,14 @@ async function getMatchEvents(req, res) {
           }
         }
         for (const item of results) {
-          console.log('item._id, ', item._id,item.theSports.id)
           await inPlayEvents.updateOne({ _id: item._id }, { theSportsId: item.theSports.id });
         }
       }
       res.json({ status: true, data: { count: results.length, results } });
     })
     .catch((error) => {
-      console.log('error', error.response.data);
-      res.status(500).json({ status: false, data: error.response.data });
+      console.log('error', error?.response?.data);
+      res.status(500).json({ status: false, data: error?.response?.data });
     });
 }
 
