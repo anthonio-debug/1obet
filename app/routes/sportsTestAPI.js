@@ -845,6 +845,7 @@ async function getMatchEvents(req, res) {
           }
         }
         for (const item of results) {
+          console.log('item._id, ', item._id,item.theSports.id)
           await inPlayEvents.updateOne({ _id: item._id }, { theSportsId: item.theSports.id });
         }
       }
