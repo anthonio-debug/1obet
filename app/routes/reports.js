@@ -626,15 +626,15 @@ async function user_book2(req, res) {
   const bookRecord = await Bets.aggregate([
     { $match: query },
     { $sort: { createdAt: -1 } },
-    // {
-    //   $group: {
-    //     _id: '$userId',
-    //     doc: { $first: '$$ROOT' }
-    //   }
-    // },
-    // {
-    //   $replaceRoot: { newRoot: '$doc' }
-    // },
+    {
+      $group: {
+        _id: { userId: '$userId', marketId: '$marketId' },
+        doc: { $first: '$$ROOT' }
+      }
+    },
+    {
+      $replaceRoot: { newRoot: '$doc' }
+    },
     {
       $lookup: {
         from: 'users',
