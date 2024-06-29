@@ -601,9 +601,12 @@ async function user_book(req, res) {
 
 async function user_book2(req, res) {
   const userId = parseInt(req.decoded.userId);
-  const query = { status: 1, marketId: { $ne: null } };
+  const query = { marketId: { $ne: null } };
   if (req.body.matchId) {
     query.matchId = req.body.matchId;
+  }
+  if (req.body?.marketId) {
+    query.marketId = req.body.marketId;
   }
   if (req.body?.status !== undefined) {
     query.status = req.body.status;
