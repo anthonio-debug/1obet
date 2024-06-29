@@ -163,7 +163,7 @@ function ToolForScraper() {
               console.log("Cooooooooooooooooooooment:::::::::::::::",apiCricketScore.comment);
                console.log("RESSSSSSSSSSSSSSSSSSSSSSSSULT:::::::::::::::",apiCricketScore.result);
 
-    if(event.player_in==0){
+    
       console.log("pLAYER INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN TRUE:");
       let FindInMe = apiCricketScore.result;
       let FindInMeRes = FindInMe.toLowerCase();
@@ -180,7 +180,7 @@ function ToolForScraper() {
         { $set: { player_in:1 } }
       )
     }
-    }
+    
     if(event.player_in==1){
 
       let FindInMe = apiCricketScore.comment;
