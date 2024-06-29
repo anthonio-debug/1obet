@@ -170,8 +170,9 @@ function ToolForScraper() {
       let findMe1 = FindInMeRes.search("Players IN");
       let findMe2 = FindInMeRes.search("players in");
       
-  
-  
+      console.log("FFFFFFFFFFFF@@@@@@@@@@@@@22222222222222222222222::",findMe1);
+      console.log("FFFFFFFFFFFF@@@@@@@@@@@@@22222222222222222222222::",findMe2);
+      console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE:",eventId);
       if( findMe1 >=0 ||  findMe2 >=0){
         console.log("FIND ME IS GREATER AND FIND ME 2 ALSO GREATER");
       await InPlayEvents.updateMany(
