@@ -160,8 +160,8 @@ function ToolForScraper() {
               // console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
               // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFTER:");
 
-              // console.log("Cooooooooooooooooooooment:::::::::::::::",apiCricketScore.comment);
-              // console.log("RESSSSSSSSSSSSSSSSSSSSSSSSULT:::::::::::::::",apiCricketScore.result);
+              console.log("Cooooooooooooooooooooment:::::::::::::::",apiCricketScore.comment);
+               console.log("RESSSSSSSSSSSSSSSSSSSSSSSSULT:::::::::::::::",apiCricketScore.result);
 
     if(event.player_in==0){
       console.log("pLAYER INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN TRUE:");
