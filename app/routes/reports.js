@@ -605,6 +605,9 @@ async function user_book2(req, res) {
   if (req.body.matchId) {
     query.matchId = req.body.matchId;
   }
+  if (req.body?.status !== undefined) {
+    query.status = req.body.status;
+  }
 
   if (req.body.myUser) {
     const users = await User.distinct('userId', { createdBy: userId });
