@@ -816,7 +816,9 @@ async function getTheSportsMatchScoreEvents(req, res) {
   const { sportsId } = req.params;
   const inplays = await inPlayEvents.find({ sportsId });
   let sportsName = 'cricket';
-  if (sportsId === '2') {
+  if (sportsId === '1') {
+    sportsName = 'football';
+  } else if (sportsId === '2') {
     sportsName = 'tennis';
   }
   const theSportsUrl = `https://api.thesports.com/v1/${sportsName}/match/diary?user=stepinn&secret=f365f74fbc01e6ecf55ba89bb725f504`;
@@ -868,7 +870,9 @@ async function getMatchEvents(req, res) {
   const { sportsId } = req.params;
   const inplays = await inPlayEvents.find({ sportsId });
   let sportsName = 'cricket';
-  if (sportsId === '2') {
+  if (sportsId === '1') {
+    sportsName = 'football';
+  } else if (sportsId === '2') {
     sportsName = 'tennis';
   }
   const theSportsUrl = `https://api.thesports.com/v1/${sportsName}/match/diary?user=stepinn&secret=f365f74fbc01e6ecf55ba89bb725f504`;

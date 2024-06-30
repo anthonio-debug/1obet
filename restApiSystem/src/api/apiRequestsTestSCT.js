@@ -40,6 +40,7 @@ function apiRequests() {
     checkInPlay,
     setInplay,
     takeScores,
+    takeScores2,
   };
 
   function init(_io, express) {
@@ -133,6 +134,33 @@ function apiRequests() {
 
       socket.join(channel);
     });
+  }
+
+  async function takeScores2() {
+    const results = await inPlayEvents.find({ inplay: true }, { Id: 1, theSportsId: 1, sportsId: 1, _id: 0 });
+    const sportsIds = [];
+    for (const item of results) {
+      if (item.theSportsId) {
+        let sportsName = 'cricket';
+        if (item.sportsId === '1') {
+          sportsName = 'football';
+        } else if (item.sportsId === '2') {
+          sportsName = 'tennis';
+        }
+        sportsIds.push({ theSportsId: item.theSportsId, sportsName, eventId: item.eventId });
+      }
+    }
+    for (const item of sportsIds) {
+      const theSportsUrl = `https://api.thesports.com/v1/${item.sportsName}/match/live/history/?user=stepinn&secret=f365f74fbc01e6ecf55ba89bb725f504&uuid=${item.theSportsId}`;
+      try {
+        const { data } = await axios.get(theSportsUrl);
+        console.log('takeScores2 success', item, data);
+        const score = data?.results?.score;
+        io.to('#' + item.eventId).emit('score2', score);
+      } catch (error) {
+        console.log('takeScores2 error', item, error);
+      }
+    }
   }
 
   async function takeScores() {
