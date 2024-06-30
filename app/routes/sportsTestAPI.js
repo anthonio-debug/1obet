@@ -846,7 +846,32 @@ async function getMatchEvents(req, res) {
     .get(theSportsUrl)
     .then(async ({ data }) => {
       const results = [];
-      if (data?.results && data?.results?.length) { }
+      if (data?.results && data?.results?.length) {
+        const newDatas = data.results.map((item) => {
+          const home_team = data.results_extra.team.find((e) => e.id === item.home_team_id);
+          item.home_team = home_team.name;
+          const away_team = data.results_extra.team.find((e) => e.id === item.away_team_id);
+          item.away_team = away_team.name;
+          item.match_time = item.match_time * 1000;
+          if (home_team.name && away_team.name) return item;
+        });
+        for (const newData of newDatas) {
+          const data = inplays.filter((e) => (
+            e.name.toLowerCase().includes(newData.home_team.toLowerCase()) || 
+            e.name.toLowerCase().includes(newData.away_team.toLowerCase()) ||
+            newData.home_team.toLowerCase().includes(e.name.split(' v ')[0]) ||
+            newData.away_team.toLowerCase().includes(e.name.split(' v ')[1])
+          ) && e.openDate === newData.match_time);
+          if (data.length) {
+            if (data.length === 1) {
+              results.push({ ...data[0]._doc, theSports: newData });
+            }
+          }
+        }
+        //for (const item of results) {
+          //await inPlayEvents.updateOne({ _id: item._id }, { theSportsId: item.theSports.id });
+        //}
+      }
       res.json({ status: true, data: { count: results.length, results } });
     })
     .catch((error) => {
