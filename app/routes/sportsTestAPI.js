@@ -810,6 +810,30 @@ async function cronOdds(req, res) {
   res.json({ status: true, data: result });
 }
 
+async function getTheSportsMatchScoreEvents(req, res) {
+  const { sportsId } = req.params;
+  
+  let sportsName = 'football';
+  if (sportsId === '2') {
+    sportsName = 'tennis';
+  }
+  const theSportsUrl = `https://api.thesports.com/v1/${sportsName}/match/detail_live?user=stepinn&secret=f365f74fbc01e6ecf55ba89bb725f504`;
+  axios
+    .get(theSportsUrl)
+    .then(async ({ data }) => {
+      const results = [];
+      
+      res.json({ status: true, data: { count: results.length, results } });
+    })
+    .catch((error) => {
+      console.log('error', error?.response?.data);
+      res.status(500).json({ status: false, data: error?.response?.data });
+    });
+}
+
+
+
+
 async function getMatchEvents(req, res) {
   const { sportsId } = req.params;
   const inplays = await inPlayEvents.find({ sportsId });
@@ -884,6 +908,7 @@ router.get('/track-bet/check-market/:sportID/:eventId', cronOdds)
 router.get('/track-bet/delete-odds/:eventId', deleteOdds)
 router.get('/track-bet/test-trial/:eventId', TestTrial)
 router.get('/match-events/:sportsId', getMatchEvents)
+router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
