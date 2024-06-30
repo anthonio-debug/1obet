@@ -817,7 +817,7 @@ async function getTheSportsMatchScoreEvents(req, res) {
   if (sportsId === '2') {
     sportsName = 'tennis';
   }
-  const theSportsUrl = `https://api.thesports.com/v1/cricket/match/diary?user=stepinn&secret=f365f74fbc01e6ecf55ba89bb725f504`;
+  const theSportsUrl = `https://api.thesports.com/v1/${sportsName}/match/diary?user=stepinn&secret=f365f74fbc01e6ecf55ba89bb725f504`;
   axios
     .get(theSportsUrl)
     .then(async ({ data }) => {
