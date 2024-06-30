@@ -837,7 +837,7 @@ async function getTheSportsMatchScoreEvents(req, res) {
 async function getMatchEvents(req, res) {
   const { sportsId } = req.params;
   const inplays = await inPlayEvents.find({ sportsId });
-  let sportsName = 'football';
+  let sportsName = 'cricket';
   if (sportsId === '2') {
     sportsName = 'tennis';
   }
