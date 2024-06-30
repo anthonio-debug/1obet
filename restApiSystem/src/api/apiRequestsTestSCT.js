@@ -147,11 +147,12 @@ function apiRequests() {
         } else if (item.sportsId === '2') {
           sportsName = 'tennis';
         }
-        sportsIds.push({ theSportsId: item.theSportsId, sportsName, eventId: item.eventId });
+        sportsIds.push({ theSportsId: item.theSportsId, sportsName, eventId: item.Id });
       }
     }
     for (const item of sportsIds) {
       const theSportsUrl = `https://api.thesports.com/v1/${item.sportsName}/match/live/history/?user=stepinn&secret=f365f74fbc01e6ecf55ba89bb725f504&uuid=${item.theSportsId}`;
+      console.log('theSportsUrl', theSportsUrl)
       try {
         const { data } = await axios.get(theSportsUrl);
         console.log('takeScores2 success', item, data);
