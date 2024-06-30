@@ -2456,7 +2456,7 @@ const placeBet = async (req, res) => {
           message: `Bet Not Allowed`,
         });
       }
-      console.log(` scores =================== `, scores);
+      //console.log(` scores =================== `, scores);
       let type = eventDetail.matchType;
       let inning = parseInt(scores.inning);
       let currentOver = (scores.activeTeam === scores.team1ShortName) ? scores.over1 : scores.over2
