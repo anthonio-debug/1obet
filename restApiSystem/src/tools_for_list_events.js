@@ -33,8 +33,12 @@ function ToolForEvent() {
         for (const sportsId of sportsIds) {
           apiRequests.setInplay(sportsId);
         }
-        apiRequests.takeScores2();
       }, 10 * 1000);
+
+      apiRequests.takeScores2();
+      setInterval(() => {
+        apiRequests.takeScores2();
+      }, 5 * 60 * 1000);
 
       setInterval(async () => {
         for (const sportsId of sportsIds) {
