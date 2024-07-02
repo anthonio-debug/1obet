@@ -2813,12 +2813,10 @@ const placeBet = async (req, res) => {
             status: 1,
           }).sort({ _id: -1 }).limit(1);
 
-          const AllRunners = lastBet[0].runnersPosition;
-          AllRunners.push(...[
+          const AllRunners = [
             { runner: Number(TargetScore) - 1, position: 0 },
             { runner: Number(TargetScore), position: 0 },
-            { runner: Number(TargetScore) + 1, position: 0 }
-          ])
+          ]
           let selectedAllRunners = AllRunners.map((item) => {
             return { runner: item.runner, position: 0 }
           })
@@ -2857,7 +2855,6 @@ const placeBet = async (req, res) => {
           const runners = [
             { runner: Number(TargetScore) - 1, position: 0 },
             { runner: Number(TargetScore), position: 0 },
-            { runner: Number(TargetScore) + 1, position: 0 }
           ]
           const runnerCurrentPosition = runners.map((item) => {
             if (type == 1 && item.runner < TargetScore) item.position = -Number(loosingAmount.toFixed(3));
