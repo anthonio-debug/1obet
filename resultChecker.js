@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+console.log("server is running------------------------------");
 require('dotenv').config();
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
