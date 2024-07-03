@@ -510,21 +510,12 @@ function updateUser(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  // //console.log('req.body:', req.body);
   User.findOne({ userId: req.body.id }, (err, user) => {
     if (err || !user) {
       return res.status(404).send({ message: "User not found" });
     }
-
-    const token = getNonExpiringToken(
-      user.userId,
-      user.createdBy,
-      user.role,
-      req.body.isActive
-    );
-    // //console.log('updatedtoken:', token);
     const status = req.body.isActive == true ? 1 : 0;
-    let updateData = {
+    const updateData = {
       casinoAllowed: req.body.casinoAllowed,
       isActive: req.body.isActive,
       canSettlePL: req.body.canSettlePL,
@@ -533,35 +524,32 @@ function updateUser(req, res) {
       reference: req.body.reference,
       notes: req.body.notes,
       updatedBy: req.decoded.userId,
-      password: user.password,
       status,
     };
-    // const status = req.body.isActive == "true" ? 1 : 0;
-    // //console.log('status:', status);
-    var userDetailsForLoginActivity = {
-      userName: user.userName,
-      userId: user.userId,
-      balance: user.balance,
-      status: status,
-      phone: req.body.phone,
-      role: user.role,
-      token: token,
-      isActive: req.body.isActive,
-      createdBy: user.createdBy,
-      updatedAt: new Date().getTime(),
-    };
-    if (req.body.isActive == "true") {
-      updateData.status = 1;
-    } else if (req.body.isActive == "false") {
-      updateData.status = 0;
-    }
-    if (req.body.password && req.body.password !== "") {
+    if (req.body.password) {
       bcrypt.hash(req.body.password, config.saltRounds, (err, hash) => {
         if (err) {
           return res.status(404).send({ message: "NEW_PASS_HASH_FAIL" });
         }
         updateData.password = hash;
-
+        const token = getNonExpiringToken(
+          user.userId,
+          user.createdBy,
+          user.role,
+          req.body.isActive
+        );
+        const userDetailsForLoginActivity = {
+          userName: user.userName,
+          userId: user.userId,
+          balance: user.balance,
+          status: status,
+          phone: req.body.phone,
+          role: user.role,
+          token: token,
+          isActive: req.body.isActive,
+          createdBy: user.createdBy,
+          updatedAt: new Date().getTime(),
+        };
         User.updateOne(
           { userId: req.body.id },
           { $set: updateData },
@@ -589,11 +577,7 @@ function updateUser(req, res) {
           }
         );
       });
-    } else if (
-      req.body.password == null ||
-      req.body.password == "" ||
-      req.body.password == undefined
-    ) {
+    } else {
       User.updateOne(
         { userId: req.body.id },
         { $set: updateData },
@@ -602,22 +586,11 @@ function updateUser(req, res) {
           if (err) {
             return res.status(404).send({ message: "User not updated" });
           }
-          LoginActivity.findOneAndUpdate(
-            {
-              userId: req.body.id,
-            },
-            userDetailsForLoginActivity,
-            { upsert: true, new: true },
-            (err, user) => {
-              if (err)
-                return res.send({ message: "login activity not updated" });
-              return res.send({
-                success: true,
-                message: "User updated successfully",
-                results: null,
-              });
-            }
-          );
+          return res.send({
+            success: true,
+            message: "User updated successfully",
+            results: null,
+          });
         }
       );
     }
