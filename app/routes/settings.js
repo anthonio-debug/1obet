@@ -1071,7 +1071,7 @@ async function bettorDashboardGames(req, res) {
             });
             totalMatched.push(odd?.totalMatched || 0);
           }
-          oddsData.totalMatched = Math.max(...totalMatched);
+          if (oddsData) oddsData.totalMatched = Math.max(...totalMatched);
           return {
             ...event.toObject(),
             odds: oddsData
