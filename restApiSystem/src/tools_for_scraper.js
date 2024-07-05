@@ -188,7 +188,9 @@ function ToolForScraper() {
       let findMe1 = FindInMeRes.search("won by");
       let findMe2 = FindInMeRes.search("match finished");
       let findMe3 = FindInMeRes.search("match tied");
-      
+      console.log('FindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeRes')
+      console.log(FindInMeRes)
+      console.log('FindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeRes')
   
   
       if( findMe1 >=0 ||  findMe2 >=0 ||  findMe3 >=0){
