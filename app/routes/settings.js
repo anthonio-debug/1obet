@@ -26,7 +26,7 @@ const MarketIDS = require('../models/marketIds');
 const Bets = require('../models/bets');
 const BetPlaceHold = require('../models/betaPlaceHold');
 const AsianTable = require('../models/asianTable');
-const inPlayEvents = require('./../models/events.js')
+const inPlayEvents = require('./../models/events.js');
 const mongoose = require('mongoose');
 const { handleDrawBet } = require('../../resultSystem/src/CalculateBets/calculations');
 
@@ -1064,6 +1064,14 @@ async function bettorDashboardGames(req, res) {
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({
             createdAt: -1
           });
+          let totalMatched = 0;
+          for (const market of event.marketIds) {
+            const odd = await Odds.findOne({ marketId: market.id }).sort({
+              createdAt: -1
+            });
+            totalMatched += odd.totalMatched;
+          }
+          oddsData.totalMatched = totalMatched;
           return {
             ...event.toObject(),
             odds: oddsData
@@ -1699,7 +1707,7 @@ async function setLoginHistories(req, res) {
         thead: ['Username', 'Last login', 'Ip Address', 'City', 'Location'],
         data: lastLogins
       });
-    } catch (error) { }
+    } catch (error) {}
   }
 }
 
@@ -2454,11 +2462,7 @@ async function updateLiveUrl(req, res) {
   }
 
   try {
-    const updatedURL = await inPlayEvents.findOneAndUpdate(
-      { Id: eventId },
-      { liveUrl: liveUrl },
-      { upsert: true, new: true }
-    );
+    const updatedURL = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { liveUrl: liveUrl }, { upsert: true, new: true });
 
     if (!updatedURL) {
       return res.status(404).send({
@@ -2470,7 +2474,7 @@ async function updateLiveUrl(req, res) {
     return res.status(200).send({
       success: true,
       updatedURL,
-      message: "Live TV URL updated"
+      message: 'Live TV URL updated'
     });
   } catch (error) {
     console.error('Error updating Live TV URL:', error);
@@ -2775,7 +2779,7 @@ loginRouter.post('/updateDefaultLoginPage', settingsValidation.validate('updateD
 loginRouter.post('/addTermsAndConditions', settingsValidation.validate('addTermsAndConditions'), addTermsAndConditions);
 loginRouter.post('/updateLiveStreamUrl', updateLiveStreamUrl);
 loginRouter.post('/getLiveStreamUrl', getLiveStreamUrl);
-loginRouter.post("/updateLiveUrl", updateLiveUrl)
+loginRouter.post('/updateLiveUrl', updateLiveUrl);
 router.get('/GetAllTermsAndConditions', GetAllTermsAndConditions);
 loginRouter.post('/addPrivacyPolicy', settingsValidation.validate('addPrivacyPolicy'), addPrivacyPolicy);
 router.get('/GetAllPrivacyPolicy', GetAllPrivacyPolicy);
