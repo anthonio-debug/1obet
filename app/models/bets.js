@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-let Global = require("../global/settings");
-let Schema = mongoose.Schema
+const mongoose = require('mongoose');
+let Global = require('../global/settings');
+let Schema = mongoose.Schema;
 /**
  * [betSchema description]
  *  @status [ 1 active), 0 (settled), 2 (cancelled), 3 (voided)]
@@ -26,8 +26,8 @@ const betSchema = new mongoose.Schema({
   winningAmount: { type: Number },
   loosingAmount: { type: Number },
   subMarketId: { type: String },
-  event: { type: String, default: "" },
-  runner: { type: String, default: "" },
+  event: { type: String, default: '' },
+  runner: { type: String, default: '' },
   position: { type: Number, default: 0 },
   name: { type: String },
   matchStatus: { type: String, required: false },
@@ -41,9 +41,11 @@ const betSchema = new mongoose.Schema({
   lastCheckResult: { type: Number, default: 0 },
   calculateExp: { type: Boolean, default: true },
   exposureAmount: { type: Number, default: 0 },
-  randomStr:{ type: String, default: '.' },
+  randomStr: { type: String, default: '.' },
   runnersPosition: { type: Array },
   ratesRecord: { type: Array },
+  rates: { type: Array },
+  partnerValue: { type: Number },
   multipeResponse: { type: Array },
   betTime: { type: Number },
   isManuel: { type: Boolean, default: false },
@@ -51,10 +53,10 @@ const betSchema = new mongoose.Schema({
   roundId: { type: String },
   asianTableName: { type: String },
   asianTableId: { type: String },
-  matchType:{ type: String, default: 0 },
-  winnerRunnerData:{ type: String, default: 0 },
-  resultData:{ type: String, default: '.' },
-  SessionScore : { type: Number, default: 0 },
+  matchType: { type: String, default: 0 },
+  winnerRunnerData: { type: String, default: 0 },
+  resultData: { type: String, default: '.' },
+  SessionScore: { type: Number, default: 0 },
   backFancyRate: { type: Number, default: 0 },
   layFancyRate: { type: Number, default: 0 },
   locationData: { type: Schema.Types.Mixed },
@@ -63,7 +65,7 @@ const betSchema = new mongoose.Schema({
   vpn: { type: Boolean, default: false }
 });
 
-betSchema.pre("save", function (next) {
+betSchema.pre('save', function (next) {
   var now = new Date().getTime();
   if (!this.createdAt) {
     this.createdAt = now;
@@ -75,6 +77,5 @@ betSchema.pre("save", function (next) {
 
 betSchema.plugin(Global.aggregatePaginate);
 betSchema.plugin(Global.paginate);
-const Bets = mongoose.model("bet", betSchema);
-//   Bets.createIndexes();
+const Bets = mongoose.model('bet', betSchema);
 module.exports = Bets;
