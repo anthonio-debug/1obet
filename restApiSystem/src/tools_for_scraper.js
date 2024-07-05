@@ -175,7 +175,7 @@ function ToolForScraper() {
       console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE:",eventId);
       if( findMe1 >=0 ||  findMe2 >=0){
         console.log("FIND ME IS GREATER AND FIND ME 2 ALSO GREATER");
-      await InPlayEvents.findOneAndUpdate(
+      await inPlayEvents.findOneAndUpdate(
         { Id: eventId },
         { $set: { player_in:1 } }
       )
@@ -193,7 +193,7 @@ function ToolForScraper() {
   
       if( findMe1 >=0 ||  findMe2 >=0 ||  findMe3 >=0){
   
-      await InPlayEvents.findOneAndUpdate(
+      await inPlayEvents.findOneAndUpdate(
         { Id: eventId },
         { $set: { inplay:false } }
       )
