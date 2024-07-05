@@ -120,6 +120,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       // lose some Amount 
       const betTime = new Date().getTime();
       if (difference < 0) {
+        let GameName = '';
+        if(game.name)
+          GameName = game.name;
+
         // ////console.log("   ======================= difference < 0 =======================   ");
         /**
          * lose some money mean there will not be any commission only adjust the lost amount into exposure.
@@ -164,7 +168,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
         let BettorLostTran = {
           userId: user.userId,
-          description: `Casino (${game.name})`,
+          description: `Casino (${GameName})`,
           date: now.getTime(),
           createdAt: formattedDate,
           amount: -bettor_lost_amount,
@@ -177,7 +181,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           calledArea: " difference < 0 ",
           createdBy: 0,
           casinoBetAmount: debit,
-          event: game.name,
+          event: GameName,
           betDateTime: betTime,
           betId: payload.transaction_id,
           marketId: payload.game_id,
@@ -255,7 +259,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
           let betTransaction = {
             userId: user.userId,
-            description: `Casino (${game.name})`,
+            description: `Casino (${GameName})`,
             date: now.getTime(),
             createdAt: formattedDate,
             commissionFrom: commissionFrom,
@@ -272,7 +276,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             betId: payload.transaction_id,
             cashOrCredit: "Bet",
             sportsId: "6",
-            event: game.name,
+            event: GameName,
             roundId: payload.round_id,
             marketId: payload.game_id,
             matchId: payload.game_id,
@@ -310,6 +314,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
           ////console.log("=============start of giving commissions and loss shares on amount which is WON by bettor");
         let bettor_won_amount = credit - debit;
+        let GameName = '';
+        if(game.name)
+          GameName = game.name;
         //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
 
         const amount = bettor_won_amount * casinoMultiples;
@@ -342,7 +349,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         ////console.log(" ================ lastMaxWithdraw ================ ", lastMaxWithdraw);
         let UserWinBetTrans = {
           userId: user.userId,
-          description: `Casino (${game.name})`,
+          description: `Casino (${GameName})`,
           date: now.getTime(),
           createdAt: formattedDate,
           createdBy: 0,
@@ -359,7 +366,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           betId: payload.transaction_id,
           roundId: payload.round_id,
           calledArea: "difference > 0",
-          event: game.name,
+          event: GameName,
           sportsId: "6",
           marketId: payload.game_id,
           matchId: payload.game_id,
@@ -426,7 +433,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
           let betTransaction = {
             userId: user.userId,
-            description: `Casino (${game.name})`,
+            description: `Casino (${GameName})`,
             date: now.getTime(),
             createdAt: formattedDate,
             createdBy: 0,
@@ -441,7 +448,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
             cashOrCredit: "Bet",
             sportsId: "6",
-            event: game.name,
+            event: GameName,
             marketId: payload.game_id,
             roundId: payload.round_id,
             betId: payload.transaction_id,
@@ -456,7 +463,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
           let commissionTransaction = {
             userId: user.userId,
-            description: `Casino (${game.name})`,
+            description: `Casino (${GameName})`,
             date: now.getTime(),
             createdAt: formattedDate,
             createdBy: 0,
@@ -477,7 +484,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             betId: payload.transaction_id,
             roundId: payload.round_id,
             sportsId: "6",
-            event: game.name,
+            event: GameName,
             marketId: payload.game_id,
             matchId: payload.game_id,
             upLineAmount: upMovingCommAmount
