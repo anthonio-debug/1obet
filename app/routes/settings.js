@@ -1069,7 +1069,7 @@ async function bettorDashboardGames(req, res) {
             const odd = await Odds.findOne({ marketId: market.id }).sort({
               createdAt: -1
             });
-            totalMatched.push(odd.totalMatched);
+            totalMatched.push(odd?.totalMatched || 0);
           }
           oddsData.totalMatched = Math.max(...totalMatched);
           return {
