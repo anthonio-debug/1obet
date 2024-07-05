@@ -120,10 +120,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       // lose some Amount 
       const betTime = new Date().getTime();
       if (difference < 0) {
-        console.log("GGGGGGGGGGGGGGGGGGGGGGGGG.....",game);
+       
 
         let GameName = 'N/A';
-        if(game.name)
+        if(game)
           GameName = game.name;
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>............",GameName);
         // ////console.log("   ======================= difference < 0 =======================   ");
@@ -316,9 +316,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
           ////console.log("=============start of giving commissions and loss shares on amount which is WON by bettor");
         let bettor_won_amount = credit - debit;
-        console.log("GGGGGGGGGGGGGGGGGGGGGGGGG========",game);
+        //console.log("GGGGGGGGGGGGGGGGGGGGGGGGG========",game);
         let GameName = 'N/A';
-        if(game.name)
+        if(game)
           GameName = game.name;
         console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>=======",GameName);
         //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
