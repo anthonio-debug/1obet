@@ -668,7 +668,10 @@ function apiRequests() {
 
                     let el = new Odds(json1);
                     await el.save();
-
+                    
+                    const totalMatcheds = oddsData.map((item)=>item.totalMatched) || [0]
+                    const totalMatched = Math.max(...totalMatcheds)
+                    el.totalMatched = totalMatched
                     const ix = _.findIndex(tempArray, function (o) {
                       return o.market == marketId;
                     });
