@@ -1064,14 +1064,14 @@ async function bettorDashboardGames(req, res) {
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({
             createdAt: -1
           });
-          let totalMatched = 0;
+          const totalMatched = [];
           for (const market of event.marketIds) {
             const odd = await Odds.findOne({ marketId: market.id }).sort({
               createdAt: -1
             });
-            totalMatched += odd.totalMatched;
+            totalMatched.push(odd.totalMatched);
           }
-          oddsData.totalMatched = totalMatched;
+          oddsData.totalMatched = Math.max(...totalMatched);
           return {
             ...event.toObject(),
             odds: oddsData
