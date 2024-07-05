@@ -180,6 +180,9 @@ function ToolForScraper() {
         { $set: { player_in:1 } }
       )
     }
+    console.log('event.player_inevent.player_inevent.player_inevent.player_inevent.player_in')
+    console.log(event)
+    console.log('event.player_inevent.player_inevent.player_inevent.player_inevent.player_in')
     
     if(event.player_in==1){
 
