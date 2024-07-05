@@ -123,7 +123,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         let GameName = 'N/A';
         if(game.name)
           GameName = game.name;
-
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>............",GameName);
         // ////console.log("   ======================= difference < 0 =======================   ");
         /**
          * lose some money mean there will not be any commission only adjust the lost amount into exposure.
@@ -317,6 +317,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         let GameName = 'N/A';
         if(game.name)
           GameName = game.name;
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>=======",GameName);
         //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
 
         const amount = bettor_won_amount * casinoMultiples;
