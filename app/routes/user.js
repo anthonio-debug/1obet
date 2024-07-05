@@ -8,6 +8,7 @@ const User = require('../models/user');
 const Deposits = require('../models/deposits');
 const Markets = require('../models/marketTypes')
 const Bet = require("../models/bets")
+const { getParents } = require("./bets")
 
 require('dotenv').config();
 const secret = process.env.secret;
@@ -30,6 +31,7 @@ const loginRecord = require('../models/loginRecord');
 const axios = require('axios');
 const userBetSizes = require('../models/userBetSizes');
 const Bets = require('../models/bets');
+const loginActivity = require('../models/loginActivity');
 
 const router = express.Router();
 const loginRouter = express.Router();
@@ -80,9 +82,8 @@ async function registerUser(req, res) {
         (req.body.role != 5 && req.body.downLineShare == 0)
       ) {
         return res.status(404).send({
-          message: `Max allowed downline share is 1 - ${
-            parentUser.downLineShare - 1
-          }`,
+          message: `Max allowed downline share is 1 - ${parentUser.downLineShare - 1
+            }`,
         });
       }
       // Update their isDeleted field to true using updateMany()
@@ -505,16 +506,36 @@ function changePassword(req, res) {
   });
 }
 
-function updateUser(req, res) {
+function getNonExpiringTokenfourDigit(userId, createdBy, role, isActive) {
+  const payload = {
+    userId: userId,
+    createdBy: createdBy,
+    role: role,
+    isActive: isActive,
+    expr: new Date().getTime() + 5 * 60 * 1000,
+  };
+  var token = jwt.sign(payload, secret, {
+    expiresIn: new Date().getTime() + 5 * 60 * 1000,
+  });
+  return token;
+}
+
+async function updateUser(req, res) {
   const errors = validationResult(req);
-  if (errors.errors.length !== 0) {
-    return res.status(400).send({ errors: errors.errors });
+  if (!errors.isEmpty()) {
+    return res.status(400).json({ errors: errors.array() });
   }
-  User.findOne({ userId: req.body.id }, (err, user) => {
-    if (err || !user) {
-      return res.status(404).send({ message: "User not found" });
+
+  try {
+    const user = await User.findOne({ userId: req.body.id }).exec();
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
     }
-    const status = req.body.isActive == true ? 1 : 0;
+
+    let parentIdss = await getParents(user.userId);
+    const parentId = await User.findOne({ createdBy: { $in: parentIdss } });
+
+    const status = req.body.isActive ? 1 : 0;
     const updateData = {
       casinoAllowed: req.body.casinoAllowed,
       isActive: req.body.isActive,
@@ -526,75 +547,117 @@ function updateUser(req, res) {
       updatedBy: req.decoded.userId,
       status,
     };
+
     if (req.body.password) {
-      bcrypt.hash(req.body.password, config.saltRounds, (err, hash) => {
-        if (err) {
-          return res.status(404).send({ message: "NEW_PASS_HASH_FAIL" });
-        }
-        updateData.password = hash;
-        const token = getNonExpiringToken(
-          user.userId,
-          user.createdBy,
-          user.role,
-          req.body.isActive
-        );
-        const userDetailsForLoginActivity = {
-          userName: user.userName,
-          userId: user.userId,
-          balance: user.balance,
-          status: status,
-          phone: req.body.phone,
-          role: user.role,
-          token: token,
-          isActive: req.body.isActive,
-          createdBy: user.createdBy,
-          updatedAt: new Date().getTime(),
-        };
-        User.updateOne(
-          { userId: req.body.id },
-          { $set: updateData },
-          { new: true },
-          (err, updatedUser) => {
-            if (err) {
-              return res.status(404).send({ message: "User not updated" });
-            }
-            LoginActivity.findOneAndUpdate(
-              {
-                userId: req.body.id,
-              },
-              userDetailsForLoginActivity,
-              { upsert: true, new: true },
-              (err, user) => {
-                if (err)
-                  return res.send({ message: "login activity not updated" });
-                return res.send({
-                  success: true,
-                  message: "User updated successfully",
-                  results: null,
-                });
-              }
-            );
-          }
-        );
-      });
-    } else {
-      User.updateOne(
-        { userId: req.body.id },
-        { $set: updateData },
-        { new: true },
-        (err, updatedUser) => {
-          if (err) {
-            return res.status(404).send({ message: "User not updated" });
-          }
-          return res.send({
-            success: true,
-            message: "User updated successfully",
-            results: null,
-          });
-        }
-      );
+      try {
+        updateData.password = await bcrypt.hash(req.body.password, config.saltRounds);
+      } catch (error) {
+        return res.status(500).json({ message: "NEW_PASSWORD_HASH_FAIL" });
+      }
     }
+
+    if (req.body.parentDigit) {
+      updateData.digitVerification = await bcrypt.hash(req.body.parentDigit, config.saltRounds);
+      updateUserData(user, updateData, res, true);
+    }
+
+    if (req.body.digit && !user.digitVerification) {
+      try {
+        updateData.digitVerification = await bcrypt.hash(req.body.digit, config.saltRounds);
+        updateUserData(user, updateData, res, true);
+        return;
+      } catch (error) {
+        return res.status(500).json({ message: "NEW_4-DIGIT_HASH_FAIL" });
+      }
+    }
+
+    if (user.digitVerification) {
+      const { oldDigitVerification, newDigitVerification } = req.body;
+
+      console.log("Stored digit hash:", user.digitVerification); // Added logging
+      console.log("Provided old digit:", oldDigitVerification); // Added logging
+
+      try {
+        const checkfourdigitcode = await bcrypt.compare(oldDigitVerification, user.digitVerification);
+        console.log("Comparison result:", checkfourdigitcode); // Added logging
+        if (!checkfourdigitcode) {
+          return res.status(400).send({ message: 'Incorrect 4-digit code' });
+        }
+
+        try {
+          updateData.digitVerification = await bcrypt.hash(newDigitVerification, config.saltRounds);
+          updateUserData(user, updateData, res, true);
+          return;
+        } catch (error) {
+          return res.status(500).json({ message: "NEW_4-DIGIT_HASH_FAIL" });
+        }
+      } catch (error) {
+        return res.status(500).json({ message: "4-DIGIT_COMPARE_FAIL" });
+      }
+    }
+
+    updateUserData(user, updateData, res);
+  } catch (error) {
+    return res.status(500).json({ message: "An error occurred", error: error.message });
+  }
+}
+
+function updateUserData(user, updateData, res, isDigitUpdate = false) {
+  User.updateOne({ userId: user.userId }, { $set: updateData }, { new: true }, (err) => {
+    if (err) {
+      return res.status(500).json({ message: "User not updated" });
+    }
+
+    const userDetailsForActivity = {
+      userName: user.userName,
+      userId: user.userId,
+      balance: user.balance,
+      status: updateData.status,
+      phone: updateData.phone,
+      role: user.role,
+      token: isDigitUpdate ? getNonExpiringTokenfourDigit(user.userId, user.createdBy, user.role, updateData.isActive) : getNonExpiringToken(user.userId, user.createdBy, user.role, updateData.isActive),
+      isActive: updateData.isActive,
+      createdBy: user.createdBy,
+      updatedAt: new Date().getTime(),
+    };
+
+    LoginActivity.findOneAndUpdate({ userId: user.userId }, userDetailsForActivity, { upsert: true, new: true }, (err) => {
+      if (err) {
+        return res.status(500).json({ message: "Login activity not updated" });
+      }
+      res.json({ success: true, message: "User updated successfully", results: null });
+    });
   });
+}
+
+async function checkfourdigitcode(req, res) {
+  try {
+    const { fourDigitCode } = req.body;
+    const { userId } = req.decoded
+    console.log(fourDigitCode);
+    if (!userId || !fourDigitCode) {
+      return res.status(400).send({ message: 'userId and fourDigitCode are required' });
+    }
+
+    const user = await User.findOne({ userId });
+    if (!user) {
+      return res.status(404).send({ message: 'User not found' });
+    }
+
+    if (!user.digitVerification) {
+      return res.status(400).send({ message: 'User does not have a 4-digit code set' });
+    }
+
+    const isMatch = await bcrypt.compare(fourDigitCode, user.digitVerification);
+    if (!isMatch) {
+      return res.status(400).send({ message: 'Invalid four-digit code' });
+    }
+
+    return res.send({ success: true, message: '4-digit code is verified' });
+  } catch (err) {
+    console.error(err.message);
+    return res.status(500).send({ message: 'Server error' });
+  }
 }
 
 function searchUsers(req, res) {
@@ -1228,6 +1291,7 @@ loginRouter.post(
   userValidation.validate('updateUser'),
   updateUser
 );
+loginRouter.post("/checkfourdigitcode", checkfourdigitcode)
 
 loginRouter.post(
   '/searchUsers',
