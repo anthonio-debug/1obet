@@ -587,8 +587,8 @@ async function updateUser(req, res) {
       }
     }
 
-    if (user.digitVerification) {
-      const { oldDigitVerification, newDigitVerification } = req.body;
+    const { oldDigitVerification, newDigitVerification } = req.body;
+    if (user.digitVerification && oldDigitVerification) {
 
       console.log("Stored digit hash:", user.digitVerification); // Added logging
       console.log("Provided old digit:", oldDigitVerification); // Added logging
