@@ -432,8 +432,8 @@ function getAllUsers(req, res) {
   // //console.log('role2', req.decoded.login.role);
   let query = {};
   let page = 1;
-  let sort = -1;
-  let sortValue = 'createdAt';
+  let sort = 1;
+  let sortValue = 'username';
   var limit = config.pageSize;
   query.role = { $ne: '0' };
   if (
