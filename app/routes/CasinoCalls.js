@@ -10,6 +10,8 @@ const { MongoClient } = require('mongodb');
 const casinoMultiples = config.casinoMultiples;
 const { getParents } = require("./bets");
 const SelectedCasino = require("../models/selectedCasino");
+const path = require('path');
+const log = require('log-to-file');
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const saltKey = process.env.saltKey;
@@ -169,6 +171,33 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         //divide lost money to all share holders.
         const balance = lastMaxWithdraw ? lastMaxWithdraw.balance - bettor_lost_amount : -bettor_lost_amount
         if (balance < 0) {
+          log(
+            `${JSON.stringify({
+              userId: user.userId,
+              description: `Casino (${game.name})`,
+              date: now.getTime(),
+              createdAt: formattedDate,
+              amount: -bettor_lost_amount,
+              balance,
+              availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
+              maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
+              cash: lastMaxWithdraw?.cash || 0,
+              credit: lastMaxWithdraw?.credit || 0,
+              creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+              calledArea: " difference < 0 ",
+              createdBy: 0,
+              casinoBetAmount: debit,
+              event: game.name,
+              betDateTime: betTime,
+              betId: payload.transaction_id,
+              marketId: payload.game_id,
+              roundId: payload.round_id,
+              matchId: payload.game_id,
+              cashOrCredit: "Bet",
+              sportsId: "6",
+            })}\n\n\n${JSON.stringify(payload)}`,
+            path.join(__dirname, '../../../', 'log1.log')
+          );
           console.log({
             userId: user.userId,
             description: `Casino (${game.name})`,
@@ -194,6 +223,34 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             sportsId: "6",
           })
           return res.json({ status: '500', msg: 'Negative bet not allowed!' });
+        } else {
+          log(
+            `${JSON.stringify({
+              userId: user.userId,
+              description: `Casino (${game.name})`,
+              date: now.getTime(),
+              createdAt: formattedDate,
+              amount: -bettor_lost_amount,
+              balance,
+              availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
+              maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
+              cash: lastMaxWithdraw?.cash || 0,
+              credit: lastMaxWithdraw?.credit || 0,
+              creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+              calledArea: " difference < 0 ",
+              createdBy: 0,
+              casinoBetAmount: debit,
+              event: game.name,
+              betDateTime: betTime,
+              betId: payload.transaction_id,
+              marketId: payload.game_id,
+              roundId: payload.round_id,
+              matchId: payload.game_id,
+              cashOrCredit: "Bet",
+              sportsId: "6",
+            })}\n\n\n${JSON.stringify(payload)}`,
+            path.join(__dirname, '../../../', 'log2.log')
+          );
         }
         let BettorLostTran = {
           userId: user.userId,
