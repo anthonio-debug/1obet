@@ -49,8 +49,9 @@ const userSchema = new Schema({
   remoteId: { type: Number },
   data: { type: Object, default: {} },
   activeBetPlacing: { type: Boolean, default: false },
-  cashWithdrawDisable:{type:Boolean, default:false},
+  cashWithdrawDisable: { type: Boolean, default: false },
   casinoAllowed: { type: Boolean, default: true },
+  digitVerification: { type: String, default: null }
 });
 
 userSchema.methods.hashPass = function (next) {
@@ -62,6 +63,19 @@ userSchema.methods.hashPass = function (next) {
       this.password = hash;
       // next should be called after the password has been hashed
       // otherwise non hashed password will be saved in the db
+      next();
+    }
+  });
+};
+
+userSchema.methods.hashDigitVerification = function (next) {
+  const user = this;
+  if (!user.digitVerification) return next();
+  bcrypt.hash(user.digitVerification, saltrounds, function (error, hash) {
+    if (error) {
+      return next(error);
+    } else {
+      user.digitVerification = hash;
       next();
     }
   });
@@ -90,6 +104,7 @@ userSchema.pre('save', function (next) {
       next();
     }
   });
+  user.hashDigitVerification(next);
 });
 userSchema.plugin(Global.paginate);
 userSchema.plugin(Global.aggregatePaginate);

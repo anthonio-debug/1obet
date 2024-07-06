@@ -230,5 +230,6 @@
   "getLiveStreamUrl",
   "match-events",
   "updateLiveStreamUrl",
-  "updateLiveUrl"
+  "updateLiveUrl",
+  "checkfourdigitcode"
 ]

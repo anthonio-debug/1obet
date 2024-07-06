@@ -2835,6 +2835,16 @@ const placeBet = async (req, res) => {
         }
       }
 
+      if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e))) {
+        console.log('===========================================');
+        console.log(multipeResponseForSecurityCheck);
+        console.log('===========================================');
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          message: `Bet Miss Matched `
+        });
+      }
+
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
         sportsId: marketId || 0,

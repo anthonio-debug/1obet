@@ -12,6 +12,7 @@ let LoginActivitySchema = new Schema({
 	userName: { type: String },
 	phone: { type: String },
 	token: { type: String, default: '', index: true },
+	fourToken: { type: String, default: "", index: true },
 	isActive: { type: String, default: false },
 	status: { type: Number, default: 0 },
 	userId: { type: Number, required: true, default: 0 },
