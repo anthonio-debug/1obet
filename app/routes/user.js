@@ -478,11 +478,17 @@ function getAllUsers(req, res) {
         success: true,
         message: 'Users list',
         total,
-        results
+        results: {
+          docs: results,
+          page,
+          limit,
+          pages: Math.ceil(total / limit),
+          total
+        }
       });
     })
     .catch((error) => {
-      console.log('Users list error', error)
+      console.log('Users list error', error);
       return res.status(404).send({ message: 'Something went wrong' });
     });
 }
