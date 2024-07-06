@@ -167,14 +167,41 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
 
         //divide lost money to all share holders.
-
+        const balance = lastMaxWithdraw ? lastMaxWithdraw.balance - bettor_lost_amount : -bettor_lost_amount
+        if (balance < 0) {
+          console.log({
+            userId: user.userId,
+            description: `Casino (${game.name})`,
+            date: now.getTime(),
+            createdAt: formattedDate,
+            amount: -bettor_lost_amount,
+            balance,
+            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
+            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
+            cash: lastMaxWithdraw?.cash || 0,
+            credit: lastMaxWithdraw?.credit || 0,
+            creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+            calledArea: " difference < 0 ",
+            createdBy: 0,
+            casinoBetAmount: debit,
+            event: game.name,
+            betDateTime: betTime,
+            betId: payload.transaction_id,
+            marketId: payload.game_id,
+            roundId: payload.round_id,
+            matchId: payload.game_id,
+            cashOrCredit: "Bet",
+            sportsId: "6",
+          })
+          return res.json({ status: '500', msg: 'Negative bet not allowed!' });
+        }
         let BettorLostTran = {
           userId: user.userId,
           description: `Casino (${GameName})`,
           date: now.getTime(),
           createdAt: formattedDate,
           amount: -bettor_lost_amount,
-          balance: lastMaxWithdraw ? lastMaxWithdraw.balance - bettor_lost_amount : -bettor_lost_amount,
+          balance,
           availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
           maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
           cash: lastMaxWithdraw?.cash || 0,
