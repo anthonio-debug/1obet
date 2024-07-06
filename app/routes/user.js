@@ -597,7 +597,7 @@ async function updateUser(req, res) {
         const checkfourdigitcode = await bcrypt.compare(oldDigitVerification, user.digitVerification);
         console.log("Comparison result:", checkfourdigitcode); // Added logging
         if (!checkfourdigitcode) {
-          return res.status(400).send({ message: 'Incorrect 4-digit code' });
+          return res.status(400).send({ message: 'Incorrect Old 4-digit code' });
         }
 
         try {
