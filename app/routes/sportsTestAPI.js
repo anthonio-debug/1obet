@@ -712,12 +712,12 @@ async function deleteOdds(req, res) {
 
     
 
-   FancyOdds.deleteMany({})
-      RaceOdds.deleteMany({})
+   await FancyOdds.deleteMany({})
+   await  RaceOdds.deleteMany({})
     //await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
 
-    res.status(200).json({success: true, message: 'Event Odds deleted successfully'});
+    res.status(200).json({success: true, message: 'Odds deleted successfully.'});
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({success: false, message: 'Internal server error'});
