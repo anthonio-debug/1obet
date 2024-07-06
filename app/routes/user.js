@@ -461,20 +461,30 @@ function getAllUsers(req, res) {
   query.isDeleted = false;
   // Exclude the currently logged-in user from the results
   query.userId = { $ne: req.decoded.userId };
-  User.paginate(
-    query,
-
-    { page: page, sort: { [sortValue]: sort }, limit: limit },
-    (err, results) => {
-      if (err) return res.status(404).send({ message: 'Something went wrong' });
+  User.aggregate([
+    { $match: query },
+    {
+      $addFields: {
+        [`__${sortValue}`]: { $toLower: `$${sortValue}` }
+      }
+    },
+    { $sort: { [`__${sortValue}`]: sort } },
+    { $skip: (page - 1) * limit },
+    { $limit: limit }
+  ])
+    .then(async (results) => {
+      const total = await User.count(query);
       return res.send({
         success: true,
         message: 'Users list',
-        total: results.total,
-        results: results,
+        total,
+        results
       });
-    }
-  );
+    })
+    .catch((error) => {
+      console.log('Users list error', error)
+      return res.status(404).send({ message: 'Something went wrong' });
+    });
 }
 
 app.set('secret', secret);
