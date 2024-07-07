@@ -101,8 +101,8 @@ function apiRequests() {
 
           const lastScore = await Score.findOne({ eventId: channel.substring(1) }).sort({ _id: -1 });
 
-          if (lastScore.length > 0) {
-            socket.emit('last_score', lastScore[0]);
+          if (lastScore) {
+            socket.emit('last_score', lastScore);
           } else {
             socket.emit('last_score', {
               status: false,
@@ -114,7 +114,7 @@ function apiRequests() {
             const marketId = event_information.marketIds[index];
 
             const lOdds = await Odds.findOne({ marketId: marketId.id }).sort({ createdAt: -1 });
-            if (lOdds.length > 0) event_information.marketIds[index].last_odds = lOdds[0];
+            if (lOdds) event_information.marketIds[index].last_odds = lOdds;
           }
           const totalMatched = [];
           const marketIds = event_information.marketIds.map((item) => item.id);
