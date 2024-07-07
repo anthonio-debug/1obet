@@ -467,9 +467,6 @@ function apiRequests() {
         const oddsData = response.data.result;
         let checkedMarkets = [];
         if (oddsData.length > 0) {
-          console.log('=====================oddsData')
-          console.log(oddsData)
-          console.log('=====================oddsData')
           try {
             for (let index = 0; index < oddsData.length; index++) {
               const element = oddsData[index];
@@ -616,6 +613,9 @@ function apiRequests() {
                         status: 'NewOddsHomepage'
                       });
                     }
+                    console.log('=====================oddsData')
+                    console.log(el)
+                    console.log('=====================oddsData')
                     io.to('#' + eventId).emit('odds', {
                       marketId: marketId,
                       data: el,
