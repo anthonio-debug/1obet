@@ -116,16 +116,12 @@ function apiRequests() {
             const lOdds = await Odds.findOne({ marketId: marketId.id }).sort({ createdAt: -1 });
             if (lOdds) event_information.marketIds[index].last_odds = lOdds;
           }
-          const totalMatched = [];
           const marketIds = event_information.marketIds.map((item) => item.id);
           if (marketIds.length) {
-            const odds = await Odds.find({ marketId: { $in: marketIds } }).select({ totalMatched: 1 });
-            odds.forEach((item) => {
-              totalMatched.push(item?.totalMatched || 0);
-            });
+            const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
+            console.log('odds.totalMatched', odds.totalMatched);
+            if (event_information && odds) event_information.totalMatched = odds.totalMatched;
           }
-          console.log('totalMatched', Math.max(...totalMatched))
-          if (event_information) event_information.totalMatched = Math.max(...totalMatched);
           socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer });
         } else {
           socket.emit('err', 'Event Not Exist');
