@@ -49,7 +49,7 @@ function ToolForResult() {
           .sort({lastCheckMarket: 1})
           .limit(10)
           .exec();
-
+        console.log("Check if the fetchRacingResult_old is in use or not......................");
         for (const document of documents) {
           if (document) {
             await apiRequestResult.getRacingResult(document.Id, document.sportsId, document.competitionId);
@@ -69,7 +69,7 @@ function ToolForResult() {
     try {
       const racingMarkets = await MarketIDs.find({
         readyForScore: true,
-        status: 'CLOSED',
+        status: 'OPEN',
         sportID: {$in: [4339, 7]},
         winnerInfo: null
       }).sort({lastResultCheckTime: 1}).limit(10).exec();
