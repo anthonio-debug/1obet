@@ -189,6 +189,7 @@ function scoreChecker() {
             }
           ];
       } else {
+        console.log("scoreChecker.js....................................................192");
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]

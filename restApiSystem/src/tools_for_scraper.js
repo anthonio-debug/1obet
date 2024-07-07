@@ -154,46 +154,25 @@ function ToolForScraper() {
             activeCrickets.set(eventId, apiCricketScore);
             const cricketScore = await Crickets.findOneAndUpdate({ eventId: apiCricketScore.eventId }, apiCricketScore, { upsert: true, new: true, setDefaultsOnInsert: true });
             if (eventId) {
-              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              // console.log("YAHOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:");
-              // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",apiCricketScore);
-              // console.log("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCC:",cricketScore);
-              // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAFTER:");
-
-              console.log('Cooooooooooooooooooooment:::::::::::::::', apiCricketScore.comment);
-              console.log('RESSSSSSSSSSSSSSSSSSSSSSSSULT:::::::::::::::', apiCricketScore.result);
-
-              console.log('pLAYER INNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNNN TRUE:');
+              
               let FindInMe = apiCricketScore.result;
               let FindInMeRes = FindInMe.toLowerCase();
               let findMe1 = FindInMeRes.search('Players IN');
               let findMe2 = FindInMeRes.search('players in');
 
-              console.log('FFFFFFFFFFFF@@@@@@@@@@@@@22222222222222222222222::', findMe1);
-              console.log('FFFFFFFFFFFF@@@@@@@@@@@@@22222222222222222222222::', findMe2);
-              console.log('EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE:', eventId);
+              
               if (findMe1 >= 0 || findMe2 >= 0) {
-                console.log('FIND ME IS GREATER AND FIND ME 2 ALSO GREATER');
+                
                 await inPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: { player_in: 1 } });
               }
-              console.log('event.player_inevent.player_inevent.player_inevent.player_inevent.player_in');
-              console.log(event);
-              console.log('event.player_inevent.player_inevent.player_inevent.player_inevent.player_in');
-
+             
               if (event.player_in == 1) {
                 let FindInMe = apiCricketScore.comment;
                 let FindInMeRes = FindInMe.toLowerCase();
                 let findMe1 = FindInMeRes.search('won by');
                 let findMe2 = FindInMeRes.search('match finished');
                 let findMe3 = FindInMeRes.search('match tied');
-                console.log('FindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeRes');
-                console.log(FindInMeRes);
-                console.log('FindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeResFindInMeRes');
-
+               
                 if (findMe1 >= 0 || findMe2 >= 0 || findMe3 >= 0) {
                   await inPlayEvents.findOneAndUpdate({ Id: eventId }, { $set: { inplay: false } });
                 }
