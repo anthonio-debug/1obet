@@ -628,9 +628,9 @@ console.log('===============marketIds===============')
                         status: 'NewOddsHomepage'
                       });
                     }
-                    console.log('=====================oddsData')
-                    console.log(el)
-                    console.log('=====================oddsData')
+                    // console.log('=====================oddsData')
+                    // console.log(el)
+                    // console.log('=====================oddsData')
                     io.to('#' + eventId).emit('odds', {
                       marketId: marketId,
                       data: el,
