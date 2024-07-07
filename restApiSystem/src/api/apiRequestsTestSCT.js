@@ -124,6 +124,7 @@ function apiRequests() {
               totalMatched.push(item?.totalMatched || 0);
             });
           }
+          console.log('totalMatched', totalMatched)
           if (event_information) event_information.totalMatched = Math.max(...totalMatched);
           socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer });
         } else {
