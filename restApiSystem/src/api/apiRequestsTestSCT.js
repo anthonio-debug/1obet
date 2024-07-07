@@ -617,7 +617,7 @@ function apiRequests() {
                         runnerCheckerArray.push(marketId);
                       }
                     }
-
+                    console.log("Json to be saved into odds collection:::::::::::::::::::::::::::::::",json1);
                     let el = new Odds(json1);
                     await el.save();
 
