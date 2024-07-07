@@ -467,6 +467,9 @@ function apiRequests() {
         const oddsData = response.data.result;
         let checkedMarkets = [];
         if (oddsData.length > 0) {
+          console.log('=====================oddsData')
+          console.log(oddsData)
+          console.log('=====================oddsData')
           try {
             for (let index = 0; index < oddsData.length; index++) {
               const element = oddsData[index];
