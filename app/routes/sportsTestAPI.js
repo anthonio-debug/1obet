@@ -713,6 +713,8 @@ async function deleteOdds(req, res) {
     
    const totalgreyhound = await MarketIDS.countDocuments({ winnerInfo: null,sportID:4339 });
    const totalhorses = await MarketIDS.countDocuments({ winnerInfo: null,sportID:7 });
+   await MarketIDS.deleteMany({winnerInfo: null,sportID:4339})
+   await MarketIDS.deleteMany({winnerInfo: null,sportID:7})
    //await FancyOdds.deleteMany({})
    //await  RaceOdds.deleteMany({})
     //await Odds.deleteMany({});
