@@ -4,7 +4,8 @@ const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
 const MarketIDS = require("../models/marketIds")
 const Odds = require('../models/odds');
-const RaceOdds = require('../models/raceOdds')
+const RaceOdds = require('../models/raceOdds');
+const FancyOdds = require('../models/fancyOdds');
 const axios = require('axios');
 const User = require('../models/user');
 const { fetchSession } = require("../../helper/api/sessionAPIHelper");
@@ -711,11 +712,12 @@ async function deleteOdds(req, res) {
 
     
 
-
-
-    await Odds.deleteMany({});
+   await FancyOdds.deleteMany({})
+   await  RaceOdds.deleteMany({})
+    //await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
-    res.status(200).json({success: true, message: 'Event Odds deleted successfully'});
+
+    res.status(200).json({success: true, message: 'Odds deleted successfully.'});
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({success: false, message: 'Internal server error'});
