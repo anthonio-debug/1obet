@@ -711,13 +711,14 @@ async function deleteOdds(req, res) {
    // await InPlayEvents.updateMany({isManuel:true}, {subMarketId: '7', eventId: '33340930'});
 
     
-
+   const totalgreyhound = await MarketIDS.countDocuments({ winnerInfo: null,sportID:4339 });
+   const totalhorses = await MarketIDS.countDocuments({ winnerInfo: null,sportID:7 });
    //await FancyOdds.deleteMany({})
    //await  RaceOdds.deleteMany({})
-    await Odds.deleteMany({});
+    //await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
 
-    res.status(200).json({success: true, message: 'Odds deleted successfully.'});
+    res.status(200).json({success: true, message: 'Odds deleted successfully...'+totalhorses + "=======" + totalgreyhound});
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({success: false, message: 'Internal server error'});
