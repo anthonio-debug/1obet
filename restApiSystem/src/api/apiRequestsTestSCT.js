@@ -99,12 +99,10 @@ function apiRequests() {
             eventId: event_information.Id
           });
 
-          const lastScore = await Score.find({ eventId: channel.substring(1) })
-            .sort({ _id: -1 })
-            .limit(1);
+          const lastScore = await Score.findOne({ eventId: channel.substring(1) }).sort({ _id: -1 });
 
-          if (lastScore.length > 0) {
-            socket.emit('last_score', lastScore[0]);
+          if (lastScore) {
+            socket.emit('last_score', lastScore);
           } else {
             socket.emit('last_score', {
               status: false,
@@ -115,10 +113,16 @@ function apiRequests() {
           for (let index = 0; index < event_information.marketIds.length; index++) {
             const marketId = event_information.marketIds[index];
 
-            const lOdds = await Odds.find({ marketId: marketId.id }).sort({ createdAt: -1 }).limit(1);
-            if (lOdds.length > 0) event_information.marketIds[index].last_odds = lOdds[0];
+            const lOdds = await Odds.findOne({ marketId: marketId.id }).sort({ createdAt: -1 });
+            if (lOdds) event_information.marketIds[index].last_odds = lOdds;
           }
-          socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer });
+          const marketIds = event_information.marketIds.map((item) => item.id);
+          let totalMatched = 0
+          if (marketIds.length) {
+            const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
+            if (odds) totalMatched = odds.totalMatched;
+          }
+          socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched });
         } else {
           socket.emit('err', 'Event Not Exist');
         }
@@ -144,7 +148,7 @@ function apiRequests() {
     }
     for (const item of sportsIds) {
       const theSportsUrl = `https://api.thesports.com/v1/${item.sportsName}/match/live/history/?user=stepinn&secret=f365f74fbc01e6ecf55ba89bb725f504&uuid=${item.theSportsId}`;
-      console.log('theSportsUrl', theSportsUrl)
+      console.log('theSportsUrl', theSportsUrl);
       try {
         const { data } = await axios.get(theSportsUrl);
         console.log('takeScores2 success', item, data);
@@ -396,9 +400,9 @@ function apiRequests() {
               });
           }
         });
-console.log('===============marketIds===============')
-console.log(marketIds)
-console.log('===============marketIds===============')
+        console.log('===============marketIds===============');
+        console.log(marketIds);
+        console.log('===============marketIds===============');
         for (let index = 0; index < marketIds.length; index++) {
           var ev = parseInt(eventId);
 
@@ -413,7 +417,7 @@ console.log('===============marketIds===============')
             if (countOfMarket > (sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount)) {
               return;
             } else {
-              console.log('=========================MarketIDS=========================')
+              console.log('=========================MarketIDS=========================');
               console.log({
                 eventId: eventId,
                 marketId: marketIds[index].id + '',
@@ -424,8 +428,8 @@ console.log('===============marketIds===============')
                 index: index,
                 runners: marketIds[index].runners,
                 inPlay: true
-              })
-              console.log('=========================MarketIDS=========================')
+              });
+              console.log('=========================MarketIDS=========================');
               const newMarket = new MarketIDS({
                 eventId: eventId,
                 marketId: marketIds[index].id + '',
