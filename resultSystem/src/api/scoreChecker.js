@@ -442,7 +442,7 @@ function scoreChecker() {
             },
             {
               $set: {
-                manuelClose: true
+                isManuel: true
               }
             }
           );
