@@ -712,9 +712,9 @@ async function deleteOdds(req, res) {
 
     
 
-   await FancyOdds.deleteMany({})
-   await  RaceOdds.deleteMany({})
-    //await Odds.deleteMany({});
+   //await FancyOdds.deleteMany({})
+   //await  RaceOdds.deleteMany({})
+    await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
 
     res.status(200).json({success: true, message: 'Odds deleted successfully.'});

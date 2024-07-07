@@ -18,6 +18,7 @@ const listMarketCatalogue = async (eventId) => {
     "maxResults": 100,
     "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION"]
   }
+  console.log("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPP::",process.env.XAPP_NAME);
   const url = `${config.newThirdURL}/listMarketCatalogue`;
   try {
     const response = await axios.post(
