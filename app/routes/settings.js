@@ -1065,11 +1065,12 @@ async function bettorDashboardGames(req, res) {
             createdAt: -1
           });
           const totalMatched = [];
-          for (const market of event.marketIds) {
-            const odd = await Odds.findOne({ marketId: market.id }).sort({
-              createdAt: -1
+          const marketIds = event.marketIds.map((item) => item.id);
+          if (marketIds.length) {
+            const odds = await Odds.find({ marketId: { $in: marketIds } }).select({ totalMatched: 1 });
+            odds.forEach((item) => {
+              totalMatched.push(item?.totalMatched || 0);
             });
-            totalMatched.push(odd?.totalMatched || 0);
           }
           if (oddsData) oddsData.totalMatched = Math.max(...totalMatched);
           return {
@@ -1143,6 +1144,15 @@ async function bettorDashboardGames2(req, res) {
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({
             createdAt: -1
           });
+          const totalMatched = [];
+          const marketIds = event.marketIds.map((item) => item.id);
+          if (marketIds.length) {
+            const odds = await Odds.find({ marketId: { $in: marketIds } }).select({ totalMatched: 1 });
+            odds.forEach((item) => {
+              totalMatched.push(item?.totalMatched || 0);
+            });
+          }
+          if (oddsData) oddsData.totalMatched = Math.max(...totalMatched);
           return {
             ...event.toObject(),
             odds: oddsData
@@ -1184,6 +1194,15 @@ async function bettorDashboardGames2(req, res) {
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({
             createdAt: -1
           });
+          const totalMatched = [];
+          const marketIds = event.marketIds.map((item) => item.id);
+          if (marketIds.length) {
+            const odds = await Odds.find({ marketId: { $in: marketIds } }).select({ totalMatched: 1 });
+            odds.forEach((item) => {
+              totalMatched.push(item?.totalMatched || 0);
+            });
+          }
+          if (oddsData) oddsData.totalMatched = Math.max(...totalMatched);
           return {
             ...event.toObject(),
             odds: oddsData
@@ -1226,6 +1245,15 @@ async function bettorDashboardGames2(req, res) {
           const oddsData = await Odds.findOne({ marketId: marketId }).sort({
             createdAt: -1
           });
+          const totalMatched = [];
+          const marketIds = event.marketIds.map((item) => item.id);
+          if (marketIds.length) {
+            const odds = await Odds.find({ marketId: { $in: marketIds } }).select({ totalMatched: 1 });
+            odds.forEach((item) => {
+              totalMatched.push(item?.totalMatched || 0);
+            });
+          }
+          if (oddsData) oddsData.totalMatched = Math.max(...totalMatched);
           return {
             ...event.toObject(),
             odds: oddsData
