@@ -485,7 +485,7 @@ function apiRequests() {
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
         let checkedMarkets = [];
-        console.log("-------------------------------------->>>>>>>>",oddsData.length);
+        console.log("odds length:-------------------------------------->>>>>>>>",oddsData.length);
         if (oddsData.length > 0) {
           let counter = 0;
           try {
@@ -658,7 +658,7 @@ function apiRequests() {
           } catch (error) {
             console.error('getOddsFromProvider----->', error);
           }
-          console.log("If tehre aer some odddddddddddddddddddddddddddddddddddddsssssss>",counter);
+          console.log("If there are some odddddddddddddddddddddddddddddddddddddsssssss>",counter);
         }
       },
       (error) => {
