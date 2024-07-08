@@ -186,7 +186,7 @@ function ToolForEvent() {
         {
           $match: {
             
-            
+
             status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
 
             $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]
@@ -238,7 +238,7 @@ function ToolForEvent() {
       await MarketIDs.updateMany({ marketId: { $in: marketIds } }, { $set: { lastCheck: Date.now() } });
       console.log("market ids before passing.....................................",marketIds);
       if (marketIds.length > 0) {
-        console.log("24444444444444477777777777777777777777777777777777777777777--",marketIds.length);
+        console.log("244444444444444uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu--",marketIds.length);
         apiRequests.getOddsFromProvider(documents, intervalId);
       }
     } catch (error) {
