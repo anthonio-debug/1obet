@@ -445,6 +445,7 @@ function apiRequests() {
   }
 
   async function getOddsFromProvider(marketIdsArray, intervalId) {
+    console.log("Juuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu");
     let tempArray = [];
     let tempArrayForIDs = [];
     for (let index = 0; index < marketIdsArray.length; index++) {
@@ -462,7 +463,7 @@ function apiRequests() {
     const requestData = {
       marketIds: tempArrayForIDs
     };
-    console.log('soccer,tennis etc marketIds:::::', tempArrayForIDs);
+    console.log('soccer,tennis etc marketIds:::::::::::::', tempArrayForIDs);
     const url = `${config.newThirdURL}/listMarketBook`;
     axios.post(url, requestData, header).then(
       async (response) => {
