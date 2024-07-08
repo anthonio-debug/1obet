@@ -400,9 +400,6 @@ function apiRequests() {
               });
           }
         });
-        console.log('===============marketIds===============');
-        console.log(marketIds);
-        console.log('===============marketIds===============');
         for (let index = 0; index < marketIds.length; index++) {
           var ev = parseInt(eventId);
 
@@ -417,19 +414,6 @@ function apiRequests() {
             if (countOfMarket > (sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount)) {
               return;
             } else {
-              console.log('all any 3 sports =========================MarketIDS=========================');
-              console.log({
-                eventId: eventId,
-                marketId: marketIds[index].id + '',
-                marketName: marketIds[index].marketName,
-                sportID: sportID,
-                totalMatched: marketIds[index].totalMatched,
-                status: marketIds[index].status,
-                index: index,
-                runners: marketIds[index].runners,
-                inPlay: true
-              });
-              console.log('all any 3 sports =========================MarketIDS=========================');
               const newMarket = new MarketIDS({
                 eventId: eventId,
                 marketId: marketIds[index].id + '',
@@ -635,9 +619,6 @@ function apiRequests() {
                         status: 'NewOddsHomepage'
                       });
                     }
-                    // console.log('=====================oddsData')
-                    // console.log(el)
-                    // console.log('=====================oddsData')
                     io.to('#' + eventId).emit('odds', {
                       marketId: marketId,
                       data: el,
