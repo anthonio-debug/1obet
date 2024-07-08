@@ -575,7 +575,8 @@ function updateUserData(user, updateData, res, isDigitUpdate = false) {
       status: updateData.status,
       phone: updateData.phone,
       role: user.role,
-      token: isDigitUpdate ? getNonExpiringTokenfourDigit(user.userId, user.createdBy, user.role, updateData.isActive) : getNonExpiringToken(user.userId, user.createdBy, user.role, updateData.isActive),
+      token: getNonExpiringToken(user.userId, user.createdBy, user.role, updateData.isActive),
+      fourToken: isDigitUpdate ? getNonExpiringTokenfourDigit(user.userId, user.createdBy, user.role, updateData.isActive) : null,
       isActive: updateData.isActive,
       createdBy: user.createdBy,
       updatedAt: new Date().getTime()
