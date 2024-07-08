@@ -514,9 +514,7 @@ async function getFanciesByEventId(req, res) {
   try {
     let sessions = await fetchSession(eventId)
     if (gtype) {
-      sessions = sessions.filter(item => {
-        item.gtype === gtype 
-        console.log(item.gtype === gtype) })
+      sessions = sessions.filter(item => item.gtype === gtype)
     }
 
     res.status(200).json({ success: true, data: sessions });
