@@ -36,6 +36,7 @@ const loginRecord = require('../models/loginRecord');
 
 const SelectedCasino = require('../models/selectedCasino');
 const { rollbackCasino, creditCasino } = require('../../helper/casino/casinoHelper');
+const { fetchSession, fetchBookmakerList } = require("./../../helper/api/sessionAPIHelper.js")
 
 function updateDefaultTheme(req, res) {
   const errors = validationResult(req);
@@ -232,11 +233,33 @@ async function updateMatchType(req, res) {
       betseconds.save();
     }
 
-    // has_bookmaker, has_fancy
+    let has_bookmaker;
+    let has_fancy;
+    try {
+      let fancySessions = await fetchSession(eventId)
+      if (fancySessions) {
+        has_fancy = true
+      }
+      res.status(200).json({ success: true, data: fancySessions });
+    } catch (error) {
+      res.status(500).json({ success: false, msg: "Failed to get Error: " + error.message })
+    }
+    try {
+      let bookmakerSession = await fetchBookmakerList(eventId)
+      if (bookmakerSession) {
+        has_bookmaker = true
+        res.status(200).json({ success: true, data: bookmakerSession });
+      }
+    } catch (error) {
+      res.status(500).json({ success: false, msg: "Failed to get Error: " + error.message })
+
+    }
 
     const updatedData = await Events.findByIdAndUpdate(_id, {
       $set: {
-        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl } }, (err, updatedMatch) => {
+        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, has_bookmaker: has_bookmaker, has_fancy: has_fancy
+      }
+    }, { upsert: true, new: true }, (err, updatedMatch) => {
       if (err) {
         //console.log("Error updating figure:", err);
       } else {
@@ -1723,7 +1746,7 @@ async function setLoginHistories(req, res) {
         thead: ['Username', 'Last login', 'Ip Address', 'City', 'Location'],
         data: lastLogins
       });
-    } catch (error) {}
+    } catch (error) { }
   }
 }
 
