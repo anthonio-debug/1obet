@@ -510,6 +510,7 @@ async function getFanciesByEventId(req, res) {
   const eventId = req.params.eventId;
   const gtype = req.query.gtype;
   console.log("gtype===================================", gtype);
+  console.log("eventId===================================", eventId);
   try {
     let sessions = await fetchSession(eventId)
     if (gtype) {
