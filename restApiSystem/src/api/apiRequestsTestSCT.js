@@ -630,6 +630,8 @@ function apiRequests() {
               }
             }
 
+
+            
             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
 
             for (let index = 0; index < filteredArray.length; index++) {
