@@ -90,6 +90,7 @@ function scoreChecker() {
           ];
         }
       } else {
+        console.log("scoreChecker.js....................................................line no#93");
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]
@@ -189,7 +190,7 @@ function scoreChecker() {
             }
           ];
       } else {
-        console.log("scoreChecker.js....................................................192");
+        console.log("scoreChecker.js....................................................line no#192");
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]

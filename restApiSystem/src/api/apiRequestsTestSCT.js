@@ -463,7 +463,7 @@ function apiRequests() {
     const requestData = {
       marketIds: tempArrayForIDs
     };
-    console.log('soccer,tennis etc marketIds:::::', tempArrayForIDs);
+    console.log('soccer,tennis etc marketIds:::::::::::::', tempArrayForIDs);
     const url = `${config.newThirdURL}/listMarketBook`;
     axios.post(url, requestData, header).then(
       async (response) => {
