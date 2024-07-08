@@ -400,9 +400,9 @@ function apiRequests() {
               });
           }
         });
-        console.log('sports id : 1 start===============marketIds===============');
+        console.log('===============marketIds===============');
         console.log(marketIds);
-        console.log('sports id : 1 end===============marketIds===============');
+        console.log('===============marketIds===============');
         for (let index = 0; index < marketIds.length; index++) {
           var ev = parseInt(eventId);
 

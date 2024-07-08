@@ -168,7 +168,7 @@ function ToolForEvent() {
       await MarketIDs.updateMany({ marketId: { $in: marketIds } }, { $set: { lastCheck: Date.now() } });
 
       if (marketIds.length > 0) {
-        //console.log("17777777777777777777777777777777777777777777777777777");
+        console.log("17777777777777777777777777777777777777777777777777777");
         apiRequests.getOddsFromProvider(documents, eventId);
       }
     } catch (error) {
@@ -238,7 +238,7 @@ function ToolForEvent() {
       await MarketIDs.updateMany({ marketId: { $in: marketIds } }, { $set: { lastCheck: Date.now() } });
 
       if (marketIds.length > 0) {
-        //console.log("24444444444444477777777777777777777777777777777777777777777");
+        console.log("24444444444444477777777777777777777777777777777777777777777");
         apiRequests.getOddsFromProvider(documents, intervalId);
       }
     } catch (error) {
