@@ -117,7 +117,7 @@ function apiRequests() {
             if (lOdds) event_information.marketIds[index].last_odds = lOdds;
           }
           const marketIds = event_information.marketIds.map((item) => item.id);
-          let totalMatched = 0
+          let totalMatched = 0;
           if (marketIds.length) {
             const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
@@ -478,14 +478,14 @@ function apiRequests() {
     const requestData = {
       marketIds: tempArrayForIDs
     };
-    console.log("soccer,tennis etc marketIds:::::",tempArrayForIDs);
+    console.log('soccer,tennis etc marketIds:::::', tempArrayForIDs);
     const url = `${config.newThirdURL}/listMarketBook`;
     axios.post(url, requestData, header).then(
       async (response) => {
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
         let checkedMarkets = [];
-        console.log("odds length:-------------------------------------->>>>>>>>",oddsData.length);
+        console.log('odds length:-------------------------------------->>>>>>>>', oddsData.length);
         if (oddsData.length > 0) {
           let counter = 0;
           try {
@@ -619,7 +619,7 @@ function apiRequests() {
                         runnerCheckerArray.push(marketId);
                       }
                     }
-                    console.log("sportsId:"+json1.sportsId+"-->marketId:"+json1.marketId);
+                    console.log('sportsId:' + json1.sportsId + '-->marketId:' + json1.marketId);
                     let el = new Odds(json1);
                     await el.save();
 
@@ -658,7 +658,7 @@ function apiRequests() {
           } catch (error) {
             console.error('getOddsFromProvider----->', error);
           }
-          console.log("If there are some odddddddddddddddddddddddddddddddddddddsssssss>",counter);
+          console.log('If there are some odddddddddddddddddddddddddddddddddddddsssssss>', counter);
         }
       },
       (error) => {
