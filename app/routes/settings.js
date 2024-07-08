@@ -232,7 +232,11 @@ async function updateMatchType(req, res) {
       betseconds.save();
     }
 
-    const updatedData = await Events.findByIdAndUpdate(_id, { $set: { matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl } }, (err, updatedMatch) => {
+    // has_bookmaker, has_fancy
+
+    const updatedData = await Events.findByIdAndUpdate(_id, {
+      $set: {
+        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl } }, (err, updatedMatch) => {
       if (err) {
         //console.log("Error updating figure:", err);
       } else {
