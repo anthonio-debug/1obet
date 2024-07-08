@@ -185,7 +185,7 @@ function ToolForEvent() {
       const documents = await MarketIDs.aggregate([
         {
           $match: {
-            inPlay: inPlay,
+            
 
             status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
 
