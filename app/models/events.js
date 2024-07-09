@@ -20,7 +20,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   inplayFromServer: { type: Boolean, index: true },
   lastCheckMarket: { type: Number, default: 0 },
   isShowed: { type: Boolean, index: true, default: false },
-  hasFancy: { type: Boolean },
+  // hasFancy: { type: Boolean },
   status: { type: String },
   isPremium: { type: Boolean },
   marketIds: { type: Array, default: [] },
