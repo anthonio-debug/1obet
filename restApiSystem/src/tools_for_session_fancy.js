@@ -144,8 +144,10 @@ function ToolForSessionFancy() {
           console.log("length of bookmaker: ",bookmakerMarketIds.length );
           if (bookmakerMarketIds.length > 0) {
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
-            console.log('bookmaker odds length;::::::::::::::'.bookmakerOdds.length);
+            
             if (bookmakerOdds.length > 0) {
+              
+              console.log('::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'.bookmakerOdds.length);
               const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
               if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
                 FancyOddsMap.set(eventId, fancyData)
