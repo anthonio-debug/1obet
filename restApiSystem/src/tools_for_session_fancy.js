@@ -123,7 +123,7 @@ function ToolForSessionFancy() {
                 })
               }
               console.log("bookamerk market id to insert:",market.marketId);
-              
+              console.log("for the eventID: :",eventId);
               await MarketIDS.findOneAndUpdate(
                 {
                   eventId: eventId,
