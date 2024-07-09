@@ -122,6 +122,8 @@ function ToolForSessionFancy() {
                   runnerName: runner.runnerName,
                 })
               }
+              console.log("bookamerk market id to insert:",market.marketId);
+              
               await MarketIDS.findOneAndUpdate(
                 {
                   eventId: eventId,
@@ -139,6 +141,7 @@ function ToolForSessionFancy() {
               );
             }
           }
+          console.log("length of bookmaker: ",bookmakerMarketIds.length );
           if (bookmakerMarketIds.length > 0) {
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
             if (bookmakerOdds.length > 0) {
