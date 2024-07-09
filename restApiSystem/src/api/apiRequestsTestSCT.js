@@ -709,7 +709,7 @@ function apiRequests() {
             const inPlayEvent = await inPlayEvents.findOne({ Id: diff });
             const sportsId = inPlayEvent.sportsId;
             if (['1', '2', '4'].includes(sportsId)) {
-              const openDate = Number(inPlayEvent.openDate);
+              const openDate = moment(inPlayEvent.openDate).utc().valueOf();
               const now = moment().utc().valueOf();
               let limitMin = 0;
               switch (sportsId) {
