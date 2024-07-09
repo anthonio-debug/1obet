@@ -582,7 +582,7 @@ function apiRequests() {
                     };
                     //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",element.status);
                     if (element.status === 'CLOSED') {
-                      clearInterval(intervalId);
+                      // clearInterval(intervalId);
                       await MarketIDS.updateOne({ marketId: marketId }, { inPlay: false, status: element.status });
                     } else {
                       await MarketIDS.updateOne({ marketId: marketId }, { status: element.status });
@@ -630,6 +630,8 @@ function apiRequests() {
                 }
               }
             }
+
+
 
             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
 
