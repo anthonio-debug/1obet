@@ -52,8 +52,8 @@ const inPlayEventsSchema = new mongoose.Schema({
   CompanySetStatus: { type: String, default: "PENDING" },
   liveUrl: { type: String },
   theSportsId: { type: String },
-  has_bookmaker: { type: Boolean, default: false },
-  has_fancy: { type: Boolean, default: false }
+  hasBookmaker: { type: Boolean, default: false },
+  hasFancy: { type: Boolean, default: false }
 });
 
 inPlayEventsSchema.plugin(Global.paginate);

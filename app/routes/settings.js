@@ -233,24 +233,24 @@ async function updateMatchType(req, res) {
       betseconds.save();
     }
 
-    let has_bookmaker;
-    let has_fancy;
+    let hasFancy;
+    let hasBookmaker;
     const fancySessions = await fetchSession(eventId)
     if (fancySessions) {
-      has_fancy = true
+      hasFancy = true
       res.status(200).json({ success: true, data: fancySessions });
     }
     res.status(200).json({ success: true, data: fancySessions });
     const bookmakerSession = await fetchBookmakerList(eventId)
     if (bookmakerSession) {
-      has_bookmaker = true
+      hasBookmaker = true
       res.status(200).json({ success: true, data: bookmakerSession });
     }
 
 
     const updatedData = await Events.findByIdAndUpdate(_id, {
       $set: {
-        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, has_bookmaker: has_bookmaker, has_fancy: has_fancy
+        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancy: hasFancy
       }
     }, { upsert: true, new: true }, (err, updatedMatch) => {
       if (err) {
