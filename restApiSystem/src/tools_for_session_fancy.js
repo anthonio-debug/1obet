@@ -94,6 +94,7 @@ function ToolForSessionFancy() {
     try {
       const now = new Date()
       const from = new Date(now.getTime() + (1040 * 60 * 1000)).getTime()
+      console.log("Time change acttttttttttttttttttttttttttttttttttttttt:",from);
       let fancyEvents = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
         hasFancy: true,
