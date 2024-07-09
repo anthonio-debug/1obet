@@ -235,26 +235,18 @@ async function updateMatchType(req, res) {
 
     let has_bookmaker;
     let has_fancy;
-    try {
-      console.log("eventId===================================",eventId);
-      let fancySessions = await fetchSession(eventId)
-      if (fancySessions) {
-        has_fancy = true
-      }
+    const fancySessions = await fetchSession(eventId)
+    if (fancySessions) {
+      has_fancy = true
       res.status(200).json({ success: true, data: fancySessions });
-    } catch (error) {
-      res.status(500).json({ success: false, msg: "Failed to get Error: " + error.message })
     }
-    try {
-      let bookmakerSession = await fetchBookmakerList(eventId)
-      if (bookmakerSession) {
-        has_bookmaker = true
-        res.status(200).json({ success: true, data: bookmakerSession });
-      }
-    } catch (error) {
-      res.status(500).json({ success: false, msg: "Failed to get Error: " + error.message })
+    res.status(200).json({ success: true, data: fancySessions });
+    const bookmakerSession = await fetchBookmakerList(eventId)
+    if (bookmakerSession) {
+      has_bookmaker = true
+      res.status(200).json({ success: true, data: bookmakerSession });
+    }
 
-    }
 
     const updatedData = await Events.findByIdAndUpdate(_id, {
       $set: {
