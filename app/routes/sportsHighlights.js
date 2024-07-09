@@ -69,6 +69,8 @@ async function getAllSportsHighlight(req, res) {
           matchStoppedReason: '$matchStoppedReason',
           theSportsId: "$theSportsId",
           CompanySetStatus: "$CompanySetStatus",
+          hasFancy: "$hasFancy",
+          hasBookmaker: "$hasBookmaker"
         },
       },
     ]);
