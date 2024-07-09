@@ -94,7 +94,6 @@ function ToolForSessionFancy() {
     try {
       const now = new Date()
       const from = new Date(now.getTime() + (1040 * 60 * 1000)).getTime()
-      console.log("Time change acttttttttttttttttttttttttttttttttttttttt:",from);
       let fancyEvents = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
         hasFancy: true,
@@ -104,7 +103,11 @@ function ToolForSessionFancy() {
       }, {Id: 1}).exec();
       for (const event of fancyEvents) {
         const eventId = event.Id
+        console.log("Time change acttttttttttttttttttttttttttttttttttttttt with event IDDDDDD:",eventId);
         let fancyOdds = await fetchSession(eventId)
+        
+        console.log("Time change acttttttttttttttttttttttttttttttttttttttt with FancyDDDD:",fancyOdds);
+
         if (fancyOdds) {
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
