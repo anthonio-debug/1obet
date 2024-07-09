@@ -675,6 +675,7 @@ async function user_book2(req, res) {
         username: '$userDetails.userName',
         downLineShare: '$userDetails.downLineShare',
         marketName: '$marketDetails.marketName',
+        createdBy: '$userDetails.createdBy',
         runners: {
           $ifNull: [{ $arrayElemAt: ['$marketDetails.runners', 0] }, []]
         },
@@ -700,6 +701,7 @@ async function user_book2(req, res) {
         runners: { $first: '$runners' },
         runnersPosition: { $first: '$runnersPosition' },
         createdAt: { $first: '$createdAt' },
+        createdBy: { $first: '$createdBy' },
         username: { $first: '$username' }
       }
     }
