@@ -106,11 +106,12 @@ function ToolForSessionFancy() {
         console.log("Time change acttttttttttttttttttttttttttttttttttttttt with event IDDDDDD:",eventId);
         let fancyOdds = await fetchSession(eventId)
         
-        console.log("Time change acttttttttttttttttttttttttttttttttttttttt with FancyDDDD:",fancyOdds);
+        
 
         if (fancyOdds) {
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
+          console.log("Time change bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb with bookmaker;;:",bookmakerMarketList);
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
