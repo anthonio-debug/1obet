@@ -236,8 +236,8 @@ async function updateMatchType(req, res) {
     let has_bookmaker;
     let has_fancy;
     try {
+      console.log(eventId);
       let fancySessions = await fetchSession(eventId)
-      console.log("FancySession===================================",fancySessions);
       if (fancySessions) {
         has_fancy = true
       }
@@ -247,7 +247,7 @@ async function updateMatchType(req, res) {
     }
     try {
       let bookmakerSession = await fetchBookmakerList(eventId)
-      console.log("bookmakerSession===================================",bookmakerSession);
+      console.log("bookmakerSession===================================", bookmakerSession);
       if (bookmakerSession) {
         has_bookmaker = true
         res.status(200).json({ success: true, data: bookmakerSession });
