@@ -45,6 +45,7 @@ function ToolForSessionFancy() {
           ls3: odd.LaySize3,
           nat: odd.RunnerName,
           gstatus: odd.GameStatus,
+          gtype:odd.gtype,
           sid: odd.SelectionId,
           ssid: `${eventId}_${odd.SelectionId}`,
         })
