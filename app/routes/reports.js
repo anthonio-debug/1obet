@@ -726,6 +726,7 @@ async function user_book2(req, res) {
               parentInfo.push({
                 id: firstParent.userId,
                 downLineShare: firstParent.downLineShare,
+                createdBy: firstParent.createdBy,
                 username: firstParent.userName
               });
             }
@@ -735,6 +736,7 @@ async function user_book2(req, res) {
               parentInfo.push({
                 id: parentUser.userId,
                 downLineShare: parentUser.downLineShare - previousShare,
+                createdBy: parentUser.createdBy,
                 username: parentUser.userName
               });
               previousShare = parentUser.downLineShare;
