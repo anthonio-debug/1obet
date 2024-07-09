@@ -445,7 +445,6 @@ function apiRequests() {
   }
 
   async function getOddsFromProvider(marketIdsArray, intervalId) {
-    
     let tempArray = [];
     let tempArrayForIDs = [];
     for (let index = 0; index < marketIdsArray.length; index++) {
@@ -463,7 +462,7 @@ function apiRequests() {
     const requestData = {
       marketIds: tempArrayForIDs
     };
-   
+
     const url = `${config.newThirdURL}/listMarketBook`;
     axios.post(url, requestData, header).then(
       async (response) => {
@@ -631,8 +630,6 @@ function apiRequests() {
               }
             }
 
-
-
             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
 
             for (let index = 0; index < filteredArray.length; index++) {
@@ -669,11 +666,14 @@ function apiRequests() {
         async (response) => {
           // Take last inplay list for events
           const events = response.data.result;
-
           if (events.length === 0) {
             //console.log('checkInPlay: api res is empty')
             return;
           }
+          console.log('events=================================');
+          console.log(events[0]);
+          console.log(events.length);
+          console.log('events=================================');
 
           let apiLiveEventIds = [];
           for (const event of events) {
