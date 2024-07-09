@@ -45,6 +45,7 @@ function ToolForSessionFancy() {
           ls3: odd.LaySize3,
           nat: odd.RunnerName,
           gstatus: odd.GameStatus,
+          gtype: odd.gtype,
           sid: odd.SelectionId,
           ssid: `${eventId}_${odd.SelectionId}`,
         })
@@ -146,7 +147,6 @@ function ToolForSessionFancy() {
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
             
             if (bookmakerOdds.length > 0) {
-              
               console.log('::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'.bookmakerOdds.length);
               const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
               if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
