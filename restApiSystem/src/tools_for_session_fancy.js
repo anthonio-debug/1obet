@@ -29,7 +29,7 @@ function ToolForSessionFancy() {
     let t3 = []
     let bm = {}
     for (const odd of fancyOdds) {
-      
+      if (odd.gtype === 'session') {
         t3.push({
           b1: odd.BackPrice1,
           b2: odd.BackPrice2,
@@ -49,7 +49,7 @@ function ToolForSessionFancy() {
           sid: odd.SelectionId,
           ssid: `${eventId}_${odd.SelectionId}`,
         })
-      
+      }
     }
 
     for (const [index, odd] of bookmakerOdds.entries()) {
