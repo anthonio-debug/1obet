@@ -117,7 +117,7 @@ function apiRequests() {
             if (lOdds) event_information.marketIds[index].last_odds = lOdds;
           }
           const marketIds = event_information.marketIds.map((item) => item.id);
-          let totalMatched = 0
+          let totalMatched = 0;
           if (marketIds.length) {
             const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
@@ -400,9 +400,6 @@ function apiRequests() {
               });
           }
         });
-        console.log('===============marketIds===============');
-        console.log(marketIds);
-        console.log('===============marketIds===============');
         for (let index = 0; index < marketIds.length; index++) {
           var ev = parseInt(eventId);
 
@@ -417,19 +414,6 @@ function apiRequests() {
             if (countOfMarket > (sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount)) {
               return;
             } else {
-              console.log('all any 3 sports =========================MarketIDS=========================');
-              console.log({
-                eventId: eventId,
-                marketId: marketIds[index].id + '',
-                marketName: marketIds[index].marketName,
-                sportID: sportID,
-                totalMatched: marketIds[index].totalMatched,
-                status: marketIds[index].status,
-                index: index,
-                runners: marketIds[index].runners,
-                inPlay: true
-              });
-              console.log('all any 3 sports =========================MarketIDS=========================');
               const newMarket = new MarketIDS({
                 eventId: eventId,
                 marketId: marketIds[index].id + '',
@@ -461,6 +445,7 @@ function apiRequests() {
   }
 
   async function getOddsFromProvider(marketIdsArray, intervalId) {
+    
     let tempArray = [];
     let tempArrayForIDs = [];
     for (let index = 0; index < marketIdsArray.length; index++) {
@@ -478,14 +463,14 @@ function apiRequests() {
     const requestData = {
       marketIds: tempArrayForIDs
     };
-    console.log("soccer,tennis etc marketIds:::::",tempArrayForIDs);
+   
     const url = `${config.newThirdURL}/listMarketBook`;
     axios.post(url, requestData, header).then(
       async (response) => {
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
         let checkedMarkets = [];
-        console.log("odds length:-------------------------------------->>>>>>>>",oddsData.length);
+        console.log('odds length:-------------------------------------->>>>>>>>', oddsData.length);
         if (oddsData.length > 0) {
           let counter = 0;
           try {
@@ -597,7 +582,7 @@ function apiRequests() {
                     };
                     //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",element.status);
                     if (element.status === 'CLOSED') {
-                      clearInterval(intervalId);
+                      // clearInterval(intervalId);
                       await MarketIDS.updateOne({ marketId: marketId }, { inPlay: false, status: element.status });
                     } else {
                       await MarketIDS.updateOne({ marketId: marketId }, { status: element.status });
@@ -619,7 +604,7 @@ function apiRequests() {
                         runnerCheckerArray.push(marketId);
                       }
                     }
-                    console.log("sportsId:"+json1.sportsId+"-->marketId:"+json1.marketId);
+                    console.log('sportsId:' + json1.sportsId + '-->marketId:' + json1.marketId);
                     let el = new Odds(json1);
                     await el.save();
 
@@ -635,9 +620,6 @@ function apiRequests() {
                         status: 'NewOddsHomepage'
                       });
                     }
-                    // console.log('=====================oddsData')
-                    // console.log(el)
-                    // console.log('=====================oddsData')
                     io.to('#' + eventId).emit('odds', {
                       marketId: marketId,
                       data: el,
@@ -649,6 +631,8 @@ function apiRequests() {
               }
             }
 
+
+
             const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
 
             for (let index = 0; index < filteredArray.length; index++) {
@@ -658,7 +642,7 @@ function apiRequests() {
           } catch (error) {
             console.error('getOddsFromProvider----->', error);
           }
-          console.log("If there are some odddddddddddddddddddddddddddddddddddddsssssss>",counter);
+          console.log('If there are some odddddddddddddddddddddddddddddddddddddsssssss>', counter);
         }
       },
       (error) => {

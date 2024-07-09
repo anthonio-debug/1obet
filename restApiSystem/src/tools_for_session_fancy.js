@@ -93,7 +93,7 @@ function ToolForSessionFancy() {
   async function getSessionFancyOdds() {
     try {
       const now = new Date()
-      const from = new Date(now.getTime() + (40 * 60 * 1000)).getTime()
+      const from = new Date(now.getTime() + (1040 * 60 * 1000)).getTime()
       let fancyEvents = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
         hasFancy: true,
@@ -103,10 +103,15 @@ function ToolForSessionFancy() {
       }, {Id: 1}).exec();
       for (const event of fancyEvents) {
         const eventId = event.Id
+        console.log("Time change acttttttttttttttttttttttttttttttttttttttt with event IDDDDDD:",eventId);
         let fancyOdds = await fetchSession(eventId)
+        
+        
+
         if (fancyOdds) {
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
+          console.log("Time change bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb with bookmaker;;:",bookmakerMarketList);
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
@@ -117,6 +122,8 @@ function ToolForSessionFancy() {
                   runnerName: runner.runnerName,
                 })
               }
+              console.log("bookamerk market id to insert:",market.marketId);
+              console.log("for the eventID: :",eventId);
               await MarketIDS.findOneAndUpdate(
                 {
                   eventId: eventId,
@@ -134,9 +141,13 @@ function ToolForSessionFancy() {
               );
             }
           }
+          console.log("length of bookmaker: ",bookmakerMarketIds.length );
           if (bookmakerMarketIds.length > 0) {
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
+            
             if (bookmakerOdds.length > 0) {
+              
+              console.log('::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'.bookmakerOdds.length);
               const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
               if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
                 FancyOddsMap.set(eventId, fancyData)

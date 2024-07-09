@@ -184,13 +184,13 @@ const getRaceMarketIds = async (sportsId) => {
   ]).exec();
 
   let marketIds = [];
-
+  
   if (documents.length > 0) {
     documents.forEach(element => {
       marketIds.push(element.marketId);
     });
   }
-
+  console.log("I promise I am fetching......................................Races:",marketIds);
   return marketIds;
 }
 
@@ -554,7 +554,6 @@ function apiRequests() {
       const requestData = {
         "marketIds": marketIds
       }
-      console.log("market ids for getting race odds for races...----------------------------",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
