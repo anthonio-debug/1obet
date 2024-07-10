@@ -268,7 +268,7 @@ async function updateMatchType(req, res) {
     res.status(200).json({
       success: true,
       message: 'Updated Successfully',
-      result: updatedData
+      updated: updatedData
     });
   } catch (error) {
     console.error(error);
