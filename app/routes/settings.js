@@ -215,6 +215,7 @@ async function updateMatchType(req, res) {
   try {
     const { _id, matchType, iconStatus, eventId, liveUrl } = req.body;
 
+    // Check if BetPlaceHold exists for the event
     const BetSecondsVal = await BetPlaceHold.findOne({ eventId: eventId }).exec();
     if (!BetSecondsVal) {
       const betseconds = new BetPlaceHold({
@@ -225,31 +226,27 @@ async function updateMatchType(req, res) {
       await betseconds.save();
     }
 
-    const currentEvent = await inPlayEvents.findOne({ Id: eventId })
-    let hasFancy = currentEvent.hasFancy;
-    let hasBookmaker = currentEvent.hasBookmaker;
+    // Retrieve current event details
+    const currentEvent = await inPlayEvents.findOne({ Id: eventId });
+    let hasFancy = currentEvent ? currentEvent.hasFancy : false;
+    let hasBookmaker = currentEvent ? currentEvent.hasBookmaker : false;
 
-    if (hasFancy && hasBookmaker) {
-      res.status(200)
-    } else if (hasFancy || hasBookmaker) {
-      if (!hasFancy) {
-        console.log("before hasFancy========================================", hasFancy);
-        const fancySessions = await fetchSession(eventId);
-        if (fancySessions && fancySessions.length > 0) {
-          hasFancy = true;
-        }
-        console.log("after hasFancy========================================", hasFancy);
-      }
-      if (!hasBookmaker) {
-        console.log("before hasBookmaker========================================", hasBookmaker);
-        const bookmakerSession = await fetchBookmakerList(eventId);
-        if (bookmakerSession && bookmakerSession.length > 0) {
-          hasBookmaker = true;
-        }
-        console.log("after hasBookmaker========================================", hasBookmaker);
+    // Check and update fancy and bookmaker statuses
+    if (!hasFancy) {
+      const fancySessions = await fetchSession(eventId);
+      if (fancySessions && fancySessions.length > 0) {
+        hasFancy = true;
       }
     }
 
+    if (!hasBookmaker) {
+      const bookmakerSession = await fetchBookmakerList(eventId);
+      if (bookmakerSession && bookmakerSession.length > 0) {
+        hasBookmaker = true;
+      }
+    }
+
+    // Update event details
     const updatedData = await Events.findByIdAndUpdate(
       _id, {
       $set: {
@@ -271,6 +268,7 @@ async function updateMatchType(req, res) {
     });
   }
 }
+
 
 
 async function getSideBarMenu(req, res) {
