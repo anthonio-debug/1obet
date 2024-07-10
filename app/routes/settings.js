@@ -211,74 +211,55 @@ async function updateMatchType(req, res) {
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.errors });
   }
+
   try {
     const { _id, matchType, iconStatus, eventId, liveUrl } = req.body;
 
-    //coded by qaiser started on event with bet delayed time
-    /*//console.log(
-      "I am here with event Id---------------------------------:",
-      eventId
-    );*/
-
-    const BetSecondsVal = await BetPlaceHold.findOne({
-      eventId: eventId
-    }).exec();
-
+    const BetSecondsVal = await BetPlaceHold.findOne({ eventId: eventId }).exec();
     if (!BetSecondsVal) {
       const betseconds = new BetPlaceHold({
         sportsId: 6,
         secondsValue: 4,
         eventId: eventId
       });
-      betseconds.save();
+      await betseconds.save();
     }
 
-    let hasFancy;
-    let hasBookmaker;
-    const fancySessions = await fetchSession(eventId)
-    if (fancySessions) {
-      hasFancy = true
-      res.status(200).json({ success: true, data: fancySessions });
-    }
-    res.status(200).json({ success: true, data: fancySessions });
-    const bookmakerSession = await fetchBookmakerList(eventId)
-    if (bookmakerSession) {
-      hasBookmaker = true
-      res.status(200).json({ success: true, data: bookmakerSession });
+    let hasFancy = false;
+    let hasBookmaker = false;
+
+    const fancySessions = await fetchSession(eventId);
+    if (fancySessions && fancySessions.length > 0) {
+      hasFancy = true;
     }
 
+    const bookmakerSession = await fetchBookmakerList(eventId);
+    if (bookmakerSession && bookmakerSession.length > 0) {
+      hasBookmaker = true;
+    }
 
-    const updatedData = await Events.findByIdAndUpdate(_id, {
+    const updatedData = await Events.findByIdAndUpdate(
+      _id, {
       $set: {
         matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancy: hasFancy
       }
-    }, { upsert: true, new: true }, (err, updatedMatch) => {
-      if (err) {
-        //console.log("Error updating figure:", err);
-      } else {
-        //console.log("Updated match:", updatedMatch);
-      }
-    })
-      .clone()
-      .catch(function (err) {
-        //console.log(err);
-      });
-    //console.log(updatedData);
+    }, { upsert: true, new: true }).exec();
 
     res.status(200).json({
       success: true,
       message: 'Updated Successfully',
-      updated: updatedData
+      result: updatedData,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: 'Failed to save fancy data4',
+      message: 'Failed to save fancy data',
       error: error.message
     });
   }
 }
+
 
 async function getSideBarMenu(req, res) {
   let type = [];
