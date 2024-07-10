@@ -225,17 +225,29 @@ async function updateMatchType(req, res) {
       await betseconds.save();
     }
 
-    let hasFancy = false;
-    let hasBookmaker = false;
+    const currentEvent = await inPlayEvents.findOne({ Id: eventId })
+    let hasFancy = currentEvent.hasFancy;
+    let hasBookmaker = currentEvent.hasBookmaker;
 
-    const fancySessions = await fetchSession(eventId);
-    if (fancySessions && fancySessions.length > 0) {
-      hasFancy = true;
-    }
-
-    const bookmakerSession = await fetchBookmakerList(eventId);
-    if (bookmakerSession && bookmakerSession.length > 0) {
-      hasBookmaker = true;
+    if (hasFancy && hasBookmaker) {
+      res.status(200)
+    } else if (hasFancy || hasBookmaker) {
+      if (!hasFancy) {
+        console.log("before hasFancy========================================", hasFancy);
+        const fancySessions = await fetchSession(eventId);
+        if (fancySessions && fancySessions.length > 0) {
+          hasFancy = true;
+        }
+        console.log("after hasFancy========================================", hasFancy);
+      }
+      if (!hasBookmaker) {
+        console.log("before hasBookmaker========================================", hasBookmaker);
+        const bookmakerSession = await fetchBookmakerList(eventId);
+        if (bookmakerSession && bookmakerSession.length > 0) {
+          hasBookmaker = true;
+        }
+        console.log("after hasBookmaker========================================", hasBookmaker);
+      }
     }
 
     const updatedData = await Events.findByIdAndUpdate(
