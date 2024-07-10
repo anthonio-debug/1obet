@@ -224,18 +224,19 @@ async function updateMatchType(req, res) {
       });
       await betseconds.save();
     }
-
-    let hasFancy = false;
-    let hasBookmaker = false;
-
-    const fancySessions = await fetchSession(eventId);
-    if (fancySessions && fancySessions.length > 0) {
-      hasFancy = true;
-    }
-
-    const bookmakerSession = await fetchBookmakerList(eventId);
-    if (bookmakerSession && bookmakerSession.length > 0) {
-      hasBookmaker = true;
+    const event = await inPlayEvents.findOne({ eventId: eventId })
+    console.log(event);
+    if (hasFancy === true || hasBookmaker === true) {
+      res.status(200).send()
+    } else {
+      const bookmakerSession = await fetchBookmakerList(eventId);
+      if (fancySessions && fancySessions.length > 0) {
+        hasFancy = true;
+      }
+      const fancySessions = await fetchSession(eventId);
+      if (bookmakerSession && bookmakerSession.length > 0) {
+        hasBookmaker = true;
+      }
     }
 
     const updatedData = await Events.findByIdAndUpdate(
