@@ -228,14 +228,14 @@ async function updateMatchType(req, res) {
 
     // Retrieve current event details
     const currentEvent = await inPlayEvents.findOne({ Id: eventId });
-    let hasFancy = currentEvent ? currentEvent.hasFancy : false;
+    let hasFancyMatch = currentEvent ? currentEvent.hasFancyMatch : false;
     let hasBookmaker = currentEvent ? currentEvent.hasBookmaker : false;
 
     // Check and update fancy and bookmaker statuses
-    if (!hasFancy) {
+    if (!hasFancyMatch) {
       const fancySessions = await fetchSession(eventId);
       if (fancySessions && fancySessions.length > 0) {
-        hasFancy = true;
+        hasFancyMatch = true;
       }
     }
 
@@ -250,7 +250,7 @@ async function updateMatchType(req, res) {
     const updatedData = await Events.findByIdAndUpdate(
       _id, {
       $set: {
-        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancy: hasFancy
+        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancyMatch: hasFancyMatch
       }
     }, { upsert: true, new: true }).exec();
 
