@@ -1770,7 +1770,7 @@ const placeBet = async (req, res) => {
 
     // For Fancy
     else if (subMarketDetail.Id == config.Fancy || subMarketDetail.subMarketName == "Fancy 2") {
-      console.log(subMarketDetail.subMarketName)
+      console.log("+++++++++++++++++++++++++++++++++++++", subMarketDetail.subMarketName)
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
