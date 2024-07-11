@@ -7,9 +7,9 @@ const FancyEvent = require('../../app/models/fancyEvent');
 const FancyOdds = require('../../app/models/fancyOdds');
 const MarketIDs = require('../../app/models/marketIds');
 const MarketIDS = require("../../app/models/marketIds");
-const {isIterable, isObjectEqual } = require("../../helper/common");
-const {fetchSession} = require("../../helper/api/sessionAPIHelper");
-const {fetchBookmakerList, fetchBookmakerOdds} = require("../../helper/api/sessionAPIHelper");
+const { isIterable, isObjectEqual } = require("../../helper/common");
+const { fetchSession } = require("../../helper/api/sessionAPIHelper");
+const { fetchBookmakerList, fetchBookmakerOdds } = require("../../helper/api/sessionAPIHelper");
 require('dotenv').config()
 
 let io;
@@ -17,7 +17,7 @@ let io;
 const FancyOddsMap = new Map()
 
 function ToolForSessionFancy() {
-  return {init};
+  return { init };
 
   async function init(_io, express) {
     io = _io;
@@ -29,7 +29,7 @@ function ToolForSessionFancy() {
     let t3 = []
     let bm = {}
     for (const odd of fancyOdds) {
-      if (odd.gtype === 'session') {
+      if (odd.gtype === 'session' || odd.gtype === 'oddeven') {
         t3.push({
           b1: odd.BackPrice1,
           b2: odd.BackPrice2,
@@ -45,6 +45,7 @@ function ToolForSessionFancy() {
           ls3: odd.LaySize3,
           nat: odd.RunnerName,
           gstatus: odd.GameStatus,
+          gtype: odd.gtype,
           sid: odd.SelectionId,
           ssid: `${eventId}_${odd.SelectionId}`,
         })
@@ -80,7 +81,7 @@ function ToolForSessionFancy() {
     return {
       data: {
         t1: null,
-        t2: [{...bm}],
+        t2: [{ ...bm }],
         t3,
         t4: null,
       },
@@ -98,20 +99,20 @@ function ToolForSessionFancy() {
         sportsId: '4', isShowed: true,
         hasFancy: true,
         CompanySetStatus: "OPEN",
-        openDate: {$lte: from},
+        openDate: { $lte: from },
         status: 'OPEN'
-      }, {Id: 1}).exec();
+      }, { Id: 1 }).exec();
       for (const event of fancyEvents) {
         const eventId = event.Id
-        console.log("Time change acttttttttttttttttttttttttttttttttttttttt with event IDDDDDD:",eventId);
+        console.log("There is some error then why and what you asked to test?:", eventId);
         let fancyOdds = await fetchSession(eventId)
-        
-        
+
+
 
         if (fancyOdds) {
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
-          console.log("Time change bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb with bookmaker;;:",bookmakerMarketList);
+
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
@@ -122,32 +123,26 @@ function ToolForSessionFancy() {
                   runnerName: runner.runnerName,
                 })
               }
-              console.log("bookamerk market id to insert:",market.marketId);
-              console.log("for the eventID: :",eventId);
               await MarketIDS.findOneAndUpdate(
                 {
                   eventId: eventId,
                   marketId: market.marketId,
                 }, {
-                  eventId: eventId,
-                  marketId: market.marketId,
-                  marketName: market.marketName,
-                  sportID: 4,
-                  // status: '',
-                  runners: runners,
-                  inPlay: true
-                },
-                {upsert: true, new: true, setDefaultsOnInsert: true}
+                eventId: eventId,
+                marketId: market.marketId,
+                marketName: market.marketName,
+                sportID: 4,
+                // status: '',
+                runners: runners,
+                inPlay: true
+              },
+                { upsert: true, new: true, setDefaultsOnInsert: true }
               );
             }
           }
-          console.log("length of bookmaker: ",bookmakerMarketIds.length );
           if (bookmakerMarketIds.length > 0) {
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
-            
             if (bookmakerOdds.length > 0) {
-              
-              console.log('::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::'.bookmakerOdds.length);
               const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
               if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
                 FancyOddsMap.set(eventId, fancyData)
