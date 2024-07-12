@@ -64,10 +64,12 @@ async function addBetLock(req, res) {
     const updateUserSubmarkets = async (users, add) => {
       for (const user of users) {
         let blockedSubMarkets = user.blockedSubMarketsByParent;
-        let allSubMarkets = add
-          ? blockedSubMarkets.concat(subMarketIds)
-          : blockedSubMarkets.filter(item => !subMarketIds.includes(item));
-        user.blockedSubMarketsByParent = [...new Set(allSubMarkets)];
+        if (add) {
+          blockedSubMarkets = [...new Set(blockedSubMarkets.concat(subMarketIds))];
+        } else {
+          blockedSubMarkets = blockedSubMarkets.filter(id => subMarketIds.includes(id));
+        }
+        user.blockedSubMarketsByParent = blockedSubMarkets;
         await user.save();
       }
     };
