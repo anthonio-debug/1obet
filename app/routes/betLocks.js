@@ -33,14 +33,14 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(matchOddsIds);
-      console.log(subMarketIds)
+      console.log("check the if Odds subMarketIds", subMarketIds)
     } else {
       const matchOddsIds = await SubMarket.distinct('Id', {
         name: 'Match Odds',
         marketId: marketId
       });
       subMarketIds = subMarketIds.filter(id => !matchOddsIds.includes(id));
-      console.log(subMarketIds)
+      console.log("checck the else Odds subMarketIds", subMarketIds)
     }
 
     if (bookmaker) {
@@ -49,14 +49,14 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(bookmakerIds);
-      console.log(subMarketIds)
+      console.log("check the if Bookmaker subMarketIds", subMarketIds)
     } else {
       const bookmakerIds = await SubMarket.distinct('Id', {
         name: 'Bookmaker',
         marketId: marketId
       });
       subMarketIds = subMarketIds.filter(id => !bookmakerIds.includes(id));
-      console.log(subMarketIds)
+      console.log("checck the else Bookmaker subMarketIds", subMarketIds)
     }
 
     if (fancy) {
@@ -65,14 +65,14 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(fancyIds);
-      console.log(subMarketIds)
+      console.log("checck the if fancy subMarketIds", subMarketIds)
     } else {
       const fancyIds = await SubMarket.distinct('Id', {
         name: 'Fancy',
         marketId: marketId
       });
       subMarketIds = subMarketIds.filter(id => !fancyIds.includes(id));
-      console.log(subMarketIds)
+      console.log("checck the else  fancy subMarketIds", subMarketIds)
     }
     if (tiedMatch) {
       const tiedMatchIds = await SubMarket.distinct('Id', {
@@ -80,14 +80,14 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(tiedMatchIds);
-      console.log(subMarketIds)
+      console.log("checck the if tiedmatch  subMarketIds", subMarketIds)
     } else {
       const tiedMatchIds = await SubMarket.distinct('Id', {
         name: 'Tied Match',
         marketId: marketId
       });
       subMarketIds = subMarketIds.filter(id => !tiedMatchIds.includes(id));
-      console.log(subMarketIds)
+      console.log("checck the else tiedmatch subMarketIds", subMarketIds)
     }
     if (sessionBetting) {
       const sessionBettingIds = await SubMarket.distinct('Id', {
@@ -95,14 +95,14 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(sessionBettingIds);
-      console.log(subMarketIds)
+      console.log("checck the if session subMarketIds", subMarketIds)
     } else {
       const sessionBettingIds = await SubMarket.distinct('Id', {
         name: { $in: ["Even Odds", "Figure", "Small Big"] },
         marketId: marketId
       });
       subMarketIds = subMarketIds.filter(id => !sessionBettingIds.includes(id));
-      console.log(subMarketIds)
+      console.log("checck the else session subMarketIds", subMarketIds)
     }
     if (overUnder) {
       const overUnderIds = await SubMarket.distinct('Id', {
@@ -110,14 +110,14 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(overUnderIds);
-      console.log(subMarketIds)
+      console.log("checck the if under subMarketIds", subMarketIds)
     } else {
       const overUnderIds = await SubMarket.distinct('Id', {
         name: "Over/Under Goals",
         marketId: marketId
       });
       subMarketIds = subMarketIds.filter(id => !overUnderIds.includes(id));
-      console.log(subMarketIds)
+      console.log("checck the else under subMarketIds", subMarketIds)
     }
 
     // Remove duplicates if any
