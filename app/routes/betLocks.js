@@ -9,14 +9,17 @@ const SubMarket = require('../models/subMarketTypes');
 const loginRouter = express.Router();
 
 async function getSubMarketIds(marketId, subMarketNames) {
+  console.log(`Fetching submarket IDs for marketId: ${marketId} and names: ${subMarketNames}`);
   const subMarketIds = await SubMarket.distinct('Id', {
     name: { $in: subMarketNames },
     marketId: marketId,
   });
+  console.log(`Fetched submarket IDs: ${subMarketIds}`);
   return subMarketIds;
 }
 
 async function updateUsersSubMarkets(userIds, subMarketIds, lock) {
+  console.log(`Updating users: ${userIds} with submarket IDs: ${subMarketIds} and lock: ${lock}`);
   const users = await User.find({ userId: { $in: userIds } });
   await Promise.all(users.map(async (user) => {
     let blockedSubMarkets = user.blockedSubMarketsByParent;
@@ -28,12 +31,15 @@ async function updateUsersSubMarkets(userIds, subMarketIds, lock) {
     user.blockedSubMarketsByParent = blockedSubMarkets;
     await user.save();
   }));
+  console.log(`Updated users: ${userIds}`);
 }
 
 async function addBetLock(req, res) {
   try {
+    console.log('Received request to add bet lock');
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
+      console.log('Validation errors:', errors.errors);
       return res.status(400).send({ errors: errors.errors });
     }
 
@@ -43,6 +49,7 @@ async function addBetLock(req, res) {
     const event = await Events.findById(matchId);
 
     if (!event) {
+      console.log('Event does not exist:', matchId);
       return res.status(404).send({ message: 'Event does not exist' });
     }
 
@@ -68,13 +75,14 @@ async function addBetLock(req, res) {
       await updateUsersSubMarkets(usersToLockIds, subMarketIds, true);
     }
 
+    console.log('Betlock created successfully');
     return res.send({
       success: true,
       message: 'Betlock created successfully',
       results: null,
     });
   } catch (err) {
-    console.error(err);
+    console.error('Error creating betlock:', err);
     res.status(500).send({ message: 'Betlock not saved', error: err.message });
   }
 }
