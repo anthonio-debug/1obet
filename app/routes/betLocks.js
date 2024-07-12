@@ -19,144 +19,68 @@ async function addBetLock(req, res) {
       tiedMatch, sessionBetting, overUnder, userIds } = req.body;
     const userId = Number(req.decoded.userId);
     const event = await Events.findById(matchId);
+
     if (!event) {
-      return res.status(404).send({ message: 'Event is not exist' });
+      return res.status(404).send({ message: 'Event does not exist' });
     }
 
     const marketId = event.sportsId;
-    // console.log(event.Id);
     let subMarketIds = [];
 
-    if (matchOdds) {
-      const matchOddsIds = await SubMarket.distinct('Id', {
-        name: 'Match Odds',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(matchOddsIds);
-      console.log(subMarketIds)
-    } else {
-      const matchOddsIds = await SubMarket.distinct('Id', {
-        name: 'Match Odds',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !matchOddsIds.includes(id));
-      console.log(subMarketIds)
-    }
+    const subMarketMapping = {
+      matchOdds: 'Match Odds',
+      bookmaker: 'Bookmaker',
+      fancy: 'Fancy',
+      tiedMatch: 'Tied Match',
+      sessionBetting: { $in: ["Even Odds", "Figure", "Small Big"] },
+      overUnder: 'Over/Under Goals'
+    };
 
-    if (bookmaker) {
-      const bookmakerIds = await SubMarket.distinct('Id', {
-        name: 'Bookmaker',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(bookmakerIds);
-      console.log(subMarketIds)
-    } else {
-      const bookmakerIds = await SubMarket.distinct('Id', {
-        name: 'Bookmaker',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !bookmakerIds.includes(id));
-      console.log(subMarketIds)
-    }
+    const addOrRemoveSubMarketIds = async (key, add) => {
+      if (req.body[key]) {
+        const subMarketKeyIds = await SubMarket.distinct('Id', {
+          name: subMarketMapping[key],
+          marketId
+        });
+        subMarketIds = add
+          ? subMarketIds.concat(subMarketKeyIds)
+          : subMarketIds.filter(id => !subMarketKeyIds.includes(id));
+        console.log(subMarketIds);
+      }
+    };
 
-    if (fancy) {
-      const fancyIds = await SubMarket.distinct('Id', {
-        name: 'Fancy',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(fancyIds);
-      console.log(subMarketIds)
-    } else {
-      const fancyIds = await SubMarket.distinct('Id', {
-        name: 'Fancy',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !fancyIds.includes(id));
-      console.log(subMarketIds)
-    }
-    if (tiedMatch) {
-      const tiedMatchIds = await SubMarket.distinct('Id', {
-        name: 'Tied Match',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(tiedMatchIds);
-      console.log(subMarketIds)
-    } else {
-      const tiedMatchIds = await SubMarket.distinct('Id', {
-        name: 'Tied Match',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !tiedMatchIds.includes(id));
-      console.log(subMarketIds)
-    }
-    if (sessionBetting) {
-      const sessionBettingIds = await SubMarket.distinct('Id', {
-        name: { $in: ["Even Odds", "Figure", "Small Big"] },
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(sessionBettingIds);
-      console.log(subMarketIds)
-    } else {
-      const sessionBettingIds = await SubMarket.distinct('Id', {
-        name: { $in: ["Even Odds", "Figure", "Small Big"] },
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !sessionBettingIds.includes(id));
-      console.log(subMarketIds)
-    }
-    if (overUnder) {
-      const overUnderIds = await SubMarket.distinct('Id', {
-        name: "Over/Under Goals",
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(overUnderIds);
-      console.log(subMarketIds)
-    } else {
-      const overUnderIds = await SubMarket.distinct('Id', {
-        name: "Over/Under Goals",
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !overUnderIds.includes(id));
-      console.log(subMarketIds)
-    }
+    await Promise.all([
+      addOrRemoveSubMarketIds('matchOdds', matchOdds),
+      addOrRemoveSubMarketIds('bookmaker', bookmaker),
+      addOrRemoveSubMarketIds('fancy', fancy),
+      addOrRemoveSubMarketIds('tiedMatch', tiedMatch),
+      addOrRemoveSubMarketIds('sessionBetting', sessionBetting),
+      addOrRemoveSubMarketIds('overUnder', overUnder)
+    ]);
 
-    // Remove duplicates if any
-    subMarketIds = [...new Set(subMarketIds)]
+    // Remove duplicates
+    subMarketIds = [...new Set(subMarketIds)];
 
-    if (allUsers && lock) {
-      const users = await User.find({ createdBy: userId });
+    const updateUserSubmarkets = async (users, add) => {
       for (const user of users) {
         let blockedSubMarkets = user.blockedSubMarketsByParent;
-        let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
-        const finalSubMarkets = [...new Set(allSubMarkets)];
-        user.blockedSubMarketsByParent = finalSubMarkets;
+        let allSubMarkets = add
+          ? blockedSubMarkets.concat(subMarketIds)
+          : blockedSubMarkets.filter(item => !subMarketIds.includes(item));
+        user.blockedSubMarketsByParent = [...new Set(allSubMarkets)];
         await user.save();
       }
-    } else if (allUsers && !lock) {
+    };
+
+    if (allUsers) {
       const users = await User.find({ createdBy: userId });
-      for (const user of users) {
-        let blockedSubMarkets = user.blockedSubMarketsByParent;
-        const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
-        user.blockedSubMarketsByParent = finalSubMarkets;
-        await user.save();
-      }
-    } else if (!allUsers) {
+      await updateUserSubmarkets(users, lock);
+    } else {
       const usersToUnlock = await User.find({ createdBy: userId, userId: { $nin: userIds } });
-      for (const user of usersToUnlock) {
-        let blockedSubMarkets = user.blockedSubMarketsByParent;
-        const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
-        user.blockedSubMarketsByParent = finalSubMarkets;
-        await user.save();
-      }
+      await updateUserSubmarkets(usersToUnlock, false);
 
       const usersToLock = await User.find({ userId: { $in: userIds } });
-      for (const user of usersToLock) {
-        let blockedSubMarkets = user.blockedSubMarketsByParent;
-        let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
-        const finalSubMarkets = [...new Set(allSubMarkets)];
-        user.blockedSubMarketsByParent = finalSubMarkets;
-        await user.save();
-      }
+      await updateUserSubmarkets(usersToLock, true);
     }
 
     return res.send({
@@ -166,9 +90,10 @@ async function addBetLock(req, res) {
     });
   } catch (err) {
     console.error(err);
-    res.status(404).send({ message: 'betlock not saved' });
+    res.status(500).send({ message: 'Betlock not saved' });
   }
 }
+
 
 loginRouter.post(
   '/addBetLock',
