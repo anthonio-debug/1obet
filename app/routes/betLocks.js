@@ -1,12 +1,34 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
-let config = require('config');
+const config = require('config');
 const betLockValidator = require('../validators/betLocks');
 const User = require('../models/user');
 const Market = require('../models/marketTypes');
 const Events = require('../models/events');
 const SubMarket = require('../models/subMarketTypes');
 const loginRouter = express.Router();
+
+async function getSubMarketIds(marketId, subMarketNames) {
+  const subMarketIds = await SubMarket.distinct('Id', {
+    name: { $in: subMarketNames },
+    marketId: marketId,
+  });
+  return subMarketIds;
+}
+
+async function updateUsersSubMarkets(userIds, subMarketIds, lock) {
+  const users = await User.find({ userId: { $in: userIds } });
+  await Promise.all(users.map(async (user) => {
+    let blockedSubMarkets = user.blockedSubMarketsByParent;
+    if (lock) {
+      blockedSubMarkets = [...new Set([...blockedSubMarkets, ...subMarketIds])];
+    } else {
+      blockedSubMarkets = blockedSubMarkets.filter(id => !subMarketIds.includes(id));
+    }
+    user.blockedSubMarketsByParent = blockedSubMarkets;
+    await user.save();
+  }));
+}
 
 async function addBetLock(req, res) {
   try {
@@ -19,144 +41,31 @@ async function addBetLock(req, res) {
       tiedMatch, sessionBetting, overUnder, userIds } = req.body;
     const userId = Number(req.decoded.userId);
     const event = await Events.findById(matchId);
+
     if (!event) {
-      return res.status(404).send({ message: 'Event is not exist' });
+      return res.status(404).send({ message: 'Event does not exist' });
     }
 
     const marketId = event.sportsId;
-    // console.log(event.Id);
-    let subMarketIds = [];
+    const subMarketNames = [];
+    if (matchOdds) subMarketNames.push('Match Odds');
+    if (bookmaker) subMarketNames.push('Bookmaker');
+    if (fancy) subMarketNames.push('Fancy');
+    if (tiedMatch) subMarketNames.push('Tied Match');
+    if (sessionBetting) subMarketNames.push(...["Even Odds", "Figure", "Small Big"]);
+    if (overUnder) subMarketNames.push('Over/Under Goals');
 
-    if (matchOdds) {
-      const matchOddsIds = await SubMarket.distinct('Id', {
-        name: 'Match Odds',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(matchOddsIds);
-      console.log("check the if Odds subMarketIds", subMarketIds)
-    } else {
-      const matchOddsIds = await SubMarket.distinct('Id', {
-        name: 'Match Odds',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !matchOddsIds.includes(id));
-      console.log("checck the else Odds subMarketIds", subMarketIds)
-    }
+    let subMarketIds = await getSubMarketIds(marketId, subMarketNames);
 
-    if (bookmaker) {
-      const bookmakerIds = await SubMarket.distinct('Id', {
-        name: 'Bookmaker',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(bookmakerIds);
-      console.log("check the if Bookmaker subMarketIds", subMarketIds)
-    } else {
-      const bookmakerIds = await SubMarket.distinct('Id', {
-        name: 'Bookmaker',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !bookmakerIds.includes(id));
-      console.log("checck the else Bookmaker subMarketIds", subMarketIds)
-    }
-
-    if (fancy) {
-      const fancyIds = await SubMarket.distinct('Id', {
-        name: 'Fancy',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(fancyIds);
-      console.log("checck the if fancy subMarketIds", subMarketIds)
-    } else {
-      const fancyIds = await SubMarket.distinct('Id', {
-        name: 'Fancy',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !fancyIds.includes(id));
-      console.log("checck the else  fancy subMarketIds", subMarketIds)
-    }
-    if (tiedMatch) {
-      const tiedMatchIds = await SubMarket.distinct('Id', {
-        name: 'Tied Match',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(tiedMatchIds);
-      console.log("checck the if tiedmatch  subMarketIds", subMarketIds)
-    } else {
-      const tiedMatchIds = await SubMarket.distinct('Id', {
-        name: 'Tied Match',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !tiedMatchIds.includes(id));
-      console.log("checck the else tiedmatch subMarketIds", subMarketIds)
-    }
-    if (sessionBetting) {
-      const sessionBettingIds = await SubMarket.distinct('Id', {
-        name: { $in: ["Even Odds", "Figure", "Small Big"] },
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(sessionBettingIds);
-      console.log("checck the if session subMarketIds", subMarketIds)
-    } else {
-      const sessionBettingIds = await SubMarket.distinct('Id', {
-        name: { $in: ["Even Odds", "Figure", "Small Big"] },
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !sessionBettingIds.includes(id));
-      console.log("checck the else session subMarketIds", subMarketIds)
-    }
-    if (overUnder) {
-      const overUnderIds = await SubMarket.distinct('Id', {
-        name: "Over/Under Goals",
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(overUnderIds);
-      console.log("checck the if under subMarketIds", subMarketIds)
-    } else {
-      const overUnderIds = await SubMarket.distinct('Id', {
-        name: "Over/Under Goals",
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !overUnderIds.includes(id));
-      console.log("checck the else under subMarketIds", subMarketIds)
-    }
-
-    // Remove duplicates if any
-    subMarketIds = [...new Set(subMarketIds)]
-
-    if (allUsers && lock) {
+    if (allUsers) {
       const users = await User.find({ createdBy: userId });
-      for (const user of users) {
-        let blockedSubMarkets = user.blockedSubMarketsByParent;
-        let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
-        const finalSubMarkets = [...new Set(allSubMarkets)];
-        user.blockedSubMarketsByParent = finalSubMarkets;
-        await user.save();
-      }
-    } else if (allUsers && !lock) {
-      const users = await User.find({ createdBy: userId });
-      for (const user of users) {
-        let blockedSubMarkets = user.blockedSubMarketsByParent;
-        const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
-        user.blockedSubMarketsByParent = finalSubMarkets;
-        await user.save();
-      }
-    } else if (!allUsers) {
-      const usersToUnlock = await User.find({ createdBy: userId, userId: { $nin: userIds } });
-      for (const user of usersToUnlock) {
-        let blockedSubMarkets = user.blockedSubMarketsByParent;
-        const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
-        user.blockedSubMarketsByParent = finalSubMarkets;
-        await user.save();
-      }
-
-      const usersToLock = await User.find({ userId: { $in: userIds } });
-      for (const user of usersToLock) {
-        let blockedSubMarkets = user.blockedSubMarketsByParent;
-        let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
-        const finalSubMarkets = [...new Set(allSubMarkets)];
-        user.blockedSubMarketsByParent = finalSubMarkets;
-        await user.save();
-      }
+      const userIds = users.map(user => user.userId);
+      await updateUsersSubMarkets(userIds, subMarketIds, lock);
+    } else {
+      const usersToUnlockIds = (await User.find({ createdBy: userId, userId: { $nin: userIds } })).map(user => user.userId);
+      const usersToLockIds = (await User.find({ userId: { $in: userIds } })).map(user => user.userId);
+      await updateUsersSubMarkets(usersToUnlockIds, subMarketIds, false);
+      await updateUsersSubMarkets(usersToLockIds, subMarketIds, true);
     }
 
     return res.send({
@@ -166,7 +75,7 @@ async function addBetLock(req, res) {
     });
   } catch (err) {
     console.error(err);
-    res.status(404).send({ message: 'betlock not saved' });
+    res.status(500).send({ message: 'Betlock not saved', error: err.message });
   }
 }
 
