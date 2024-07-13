@@ -41,18 +41,13 @@ async function addBetLock(req, res) {
 
     // Fetch submarket IDs based on the flags
     for (const type of subMarketTypes) {
+      const ids = await SubMarket.find({ name: type.name, marketId: marketId }, 'Id');
+      const idList = ids.map(doc => doc.Id);
+
       if (type.flag) {
-        const ids = await SubMarket.distinct('Id', {
-          name: type.name,
-          marketId: marketId
-        });
-        subMarketIds = subMarketIds.concat(ids);
+        subMarketIds = subMarketIds.concat(idList);
       } else {
-        const ids = await SubMarket.distinct('Id', {
-          name: type.name,
-          marketId: marketId
-        });
-        subMarketIds = subMarketIds.filter(id => !ids.includes(id));
+        subMarketIds = subMarketIds.filter(id => !idList.includes(id));
       }
     }
 
@@ -61,6 +56,8 @@ async function addBetLock(req, res) {
 
     const updateUserBlockedSubMarkets = async (user, add) => {
       let blockedSubMarkets = user.blockedSubMarketsByParent;
+      console.log(`Before update: ${blockedSubMarkets}`);
+
       if (add) {
         let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
         const finalSubMarkets = [...new Set(allSubMarkets)];
@@ -69,6 +66,8 @@ async function addBetLock(req, res) {
         const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
         user.blockedSubMarketsByParent = finalSubMarkets;
       }
+
+      console.log(`After update: ${user.blockedSubMarketsByParent}`);
       await user.save();
     };
 
@@ -99,6 +98,12 @@ async function addBetLock(req, res) {
     res.status(404).send({ message: 'betlock not saved' });
   }
 }
+
+loginRouter.post(
+  '/addBetLock',
+  betLockValidator.validate('addBetLock'),
+  addBetLock
+);
 
 loginRouter.post(
   '/addBetLock',
