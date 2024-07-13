@@ -276,12 +276,13 @@ async function getMarketsByEventId(req, res) {
           
           let completeMarketName = element.marketName;
           let FindInMeRes = completeMarketName.toLowerCase();
-                let findMe1 = FindInMeRes.search('Overs Line');
-              
+                let findMe1 = FindInMeRes.search('overs line');
+                console.log("MarketName:",element.marketName);
                
                 if (findMe1 >= 0) {
-                  console.log("MarketName:",element.marketName);
-                  
+                  console.log("MarketName Found....................:",element.marketName);
+
+
 
 
                 }
