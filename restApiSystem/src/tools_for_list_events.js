@@ -236,7 +236,7 @@ function ToolForEvent() {
       }
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
       await MarketIDs.updateMany({ marketId: { $in: marketIds } }, { $set: { lastCheck: Date.now() } });
-      console.log("market ids before passing.....................................",marketIds);
+      
       if (marketIds.length > 0) {
         //console.log("244444444444444uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu--",marketIds.length);
         apiRequests.getOddsFromProvider(documents, intervalId);
