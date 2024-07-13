@@ -258,7 +258,7 @@ async function getMarketsByEventId(req, res) {
 
     const response = await axios.post(url, requestData, header);
 
-    const marketsData = response.data;
+    const marketsData = response.data.result;
 
     res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
