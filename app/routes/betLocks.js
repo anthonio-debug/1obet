@@ -62,16 +62,19 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(oddevent);
+      console.log("subMarketIds===============================", subMarketIds);
       const figure = await SubMarket.distinct('Id', {
         name: "Figure",
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(figure);
+      console.log("subMarketIds===============================", subMarketIds);
       const smallbig = await SubMarket.distinct('Id', {
         name: "Small Big",
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(smallbig);
+      console.log("subMarketIds===============================", subMarketIds);
     }
     if (overUnder) {
       const overUnderids = await SubMarket.distinct('Id', {
