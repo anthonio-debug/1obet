@@ -266,9 +266,7 @@ async function getMarketsByEventId(req, res) {
 
     marketsData.forEach((element) => {
     let tempRunners = [];
-          if (config.activeProvider == 'old') {
-            marketStatus = element.status;
-          }
+         
           for (let k = 0; k < element?.runners?.length; k++) {
             tempRunners.push({
               SelectionId: element?.runners[k]?.selectionId,
