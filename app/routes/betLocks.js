@@ -89,6 +89,7 @@ async function addBetLock(req, res) {
 
     // Remove duplicates if any
     subMarketIds = [...new Set(subMarketIds)]
+    console.log("subMarketIds=============", subMarketIds);
 
     if (allUsers && lock) {
       const users = await User.find({ createdBy: userId });
