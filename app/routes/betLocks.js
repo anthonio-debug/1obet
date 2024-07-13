@@ -69,9 +69,10 @@ async function addBetLock(req, res) {
           marketId: marketId
         });
         sessionBettingIds = sessionBettingIds.concat(ids);
+        console.log("sessionBettingIds=====================", sessionBettingIds);
       }
       subMarketIds = subMarketIds.concat(sessionBettingIds);
-      console.log("sessionbetting", subMarketIds);
+      console.log("sessionbetting================", subMarketIds);
     }
 
     if (overUnder) {
