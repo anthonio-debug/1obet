@@ -96,7 +96,7 @@ async function addBetLock(req, res) {
       for (const user of users) {
         let blockedSubMarkets = user.blockedSubMarketsByParent;
         let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
-        const finalSubMarkets = [...new Set(allSubMarkets)];
+        const finalSubMarkets = Array.from(new Set(allSubMarkets.map(item => JSON.stringify(item)))).map(item => JSON.parse(item));
         user.blockedSubMarketsByParent = finalSubMarkets;
         await user.save();
       }
@@ -104,7 +104,7 @@ async function addBetLock(req, res) {
       const users = await User.find({ createdBy: userId });
       for (const user of users) {
         let blockedSubMarkets = user.blockedSubMarketsByParent;
-        const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
+        const finalSubMarkets = blockedSubMarkets.filter(blockedItem => !subMarketIds.some(subMarketItem => JSON.stringify(blockedItem) === JSON.stringify(subMarketItem)));
         user.blockedSubMarketsByParent = finalSubMarkets;
         await user.save();
       }
@@ -112,7 +112,7 @@ async function addBetLock(req, res) {
       const usersToUnlock = await User.find({ createdBy: userId, userId: { $nin: userIds } });
       for (const user of usersToUnlock) {
         let blockedSubMarkets = user.blockedSubMarketsByParent;
-        const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
+        const finalSubMarkets = blockedSubMarkets.filter(blockedItem => !subMarketIds.some(subMarketItem => JSON.stringify(blockedItem) === JSON.stringify(subMarketItem)));
         user.blockedSubMarketsByParent = finalSubMarkets;
         await user.save();
       }
@@ -121,11 +121,12 @@ async function addBetLock(req, res) {
       for (const user of usersToLock) {
         let blockedSubMarkets = user.blockedSubMarketsByParent;
         let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
-        const finalSubMarkets = [...new Set(allSubMarkets)];
+        const finalSubMarkets = Array.from(new Set(allSubMarkets.map(item => JSON.stringify(item)))).map(item => JSON.parse(item));
         user.blockedSubMarketsByParent = finalSubMarkets;
         await user.save();
       }
     }
+
 
     return res.send({
       success: true,
