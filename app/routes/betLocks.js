@@ -57,6 +57,7 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat({ subMarketId: tiedMatchid, eventId: eventId });
+      console.log(subMarketIds);
     }
     if (sessionBetting) {
       const sessionBettingmarkets = ["Even Odd", "Figure", "Chotta Bara"];
@@ -68,11 +69,9 @@ async function addBetLock(req, res) {
           name: sessionBettingmarket,
           marketId: marketId
         });
-        sessionBettingIds = sessionBettingIds.concat(ids);
-        console.log("sessionBettingIds=====================", sessionBettingIds);
+        sessionBettingIds = sessionBettingIds.concat({ids});
       }
       subMarketIds = subMarketIds.concat(sessionBettingIds);
-      console.log("sessionbetting================", subMarketIds);
     }
 
     if (overUnder) {
