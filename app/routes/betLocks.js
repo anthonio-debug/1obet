@@ -88,7 +88,7 @@ async function addBetLock(req, res) {
     }
 
     // Remove duplicates if any
-    subMarketIds = [...new Set(subMarketIds)]
+    subMarketIds = Array.from(new Set(subMarketIds.map(item => JSON.stringify(item)))).map(item => JSON.parse(item));
     console.log("subMarketIds=============", subMarketIds);
 
     if (allUsers && lock) {
