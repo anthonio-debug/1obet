@@ -59,7 +59,7 @@ async function addBetLock(req, res) {
       subMarketIds = subMarketIds.concat({ subMarketId: tiedMatchid, eventId: eventId });
     }
     if (sessionBetting) {
-      const sessionBettingmarkets = ["Even Odds", "Figure", "Small Big"];
+      const sessionBettingmarkets = ["Even Odd", "Figure", "Chotta Bara"];
 
       let sessionBettingIds = [];
 
