@@ -33,7 +33,7 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat({ subMarketId: matchOddsId, eventId: eventId });
-      // console.log(subMarketIds);
+      console.log("subMarketIds=============", subMarketIds);
     }
 
     if (bookmaker) {
@@ -42,6 +42,7 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat({ subMarketId: bookmakerId, eventId: eventId });
+      console.log("subMarketIds=============", subMarketIds);
     }
 
     if (fancy) {
@@ -50,7 +51,7 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat({ subMarketId: fancyId, eventId: eventId });
-      console.log(subMarketIds);
+      console.log("subMarketIds=============", subMarketIds);
     }
     if (tiedMatch) {
       const tiedMatchid = await SubMarket.distinct('Id', {
@@ -58,7 +59,9 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat({ subMarketId: tiedMatchid, eventId: eventId });
+      console.log("subMarketIds=============", subMarketIds);
     }
+
     if (sessionBetting) {
       const sessionBettingmarkets = ["Even Odd", "Figure", "Chotta Bara"];
 
@@ -69,9 +72,10 @@ async function addBetLock(req, res) {
           name: sessionBettingmarket,
           marketId: marketId
         });
-        sessionBettingIds = sessionBettingIds.concat({ids});
+        sessionBettingIds = sessionBettingIds.concat({ subMarketId: ids, eventId: eventId });
       }
       subMarketIds = subMarketIds.concat(sessionBettingIds);
+      console.log("subMarketIds=============", subMarketIds);
     }
 
     if (overUnder) {
@@ -79,7 +83,8 @@ async function addBetLock(req, res) {
         name: "Over/Under Goals",
         marketId: marketId
       });
-      subMarketIds = subMarketIds.concat(overUnderids);
+      subMarketIds = subMarketIds.concat({ subMarketId: overUnderids, eventId: eventId });
+      console.log("subMarketIds=============", subMarketIds);
     }
 
     // Remove duplicates if any
