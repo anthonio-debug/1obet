@@ -32,6 +32,7 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(matchOddsIds);
+      console.log(matchOddsIds);
     }
 
     if (bookmaker) {
