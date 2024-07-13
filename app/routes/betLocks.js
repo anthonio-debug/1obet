@@ -6,6 +6,7 @@ const User = require('../models/user');
 const Market = require('../models/marketTypes');
 const Events = require('../models/events');
 const SubMarket = require('../models/subMarketTypes');
+const { getAllUserIDs } = require("./bets.js")
 const loginRouter = express.Router();
 
 async function addBetLock(req, res) {
@@ -32,7 +33,7 @@ async function addBetLock(req, res) {
         name: 'Match Odds',
         marketId: marketId
       });
-      subMarketIds = subMarketIds.concat({ subMarketId: matchOddsId, eventId: eventId });
+      subMarketIds = subMarketIds.concat(matchOddsId);
       // console.log(subMarketIds);
     }
 
@@ -41,7 +42,7 @@ async function addBetLock(req, res) {
         name: 'Bookmaker',
         marketId: marketId
       });
-      subMarketIds = subMarketIds.concat({ subMarketId: bookmakerId, eventId: eventId });
+      subMarketIds = subMarketIds.concat(bookmakerId);
     }
 
     if (fancy) {
@@ -49,14 +50,14 @@ async function addBetLock(req, res) {
         name: 'Fancy',
         marketId: marketId
       });
-      subMarketIds = subMarketIds.concat({ subMarketId: fancyId, eventId: eventId });
+      subMarketIds = subMarketIds.concat(fancyId);
     }
     if (tiedMatch) {
       const tiedMatchid = await SubMarket.distinct('Id', {
         name: 'Tied Match',
         marketId: marketId
       });
-      subMarketIds = subMarketIds.concat({ subMarketId: tiedMatchid, eventId: eventId });
+      subMarketIds = subMarketIds.concat(tiedMatchid);
     }
     if (sessionBetting) {
       const sessionBettingmarkets = ["Even Odds", "Figure", "Small Big"];
@@ -130,6 +131,36 @@ async function addBetLock(req, res) {
   }
 }
 
+async function gettingBlockUsers(req, res) {
+  try {
+    const userId = req.decoded.userId;
+    const blockUsers = [];
+
+    const userIdArray = Array.isArray(userId) ? userId : [userId];
+    const allUserIDs = await getAllUserIDs(userIdArray);
+
+    for (const user of allUserIDs) {
+      try {
+        const getUser = await User.findOne({ userId: user });
+
+        if (getUser && getUser.blockedSubMarketsByParent.length) {
+          blockUsers.push(getUser);
+        }
+      } catch (error) {
+        console.error(`Error fetching user with ID ${user}:`, error);
+      }
+    }
+
+    return res.status(200).send(blockUsers);
+
+  } catch (error) {
+    console.error('Error in gettingBlockUsers:', error);
+    return res.status(500).send({ message: 'Something went wrong' });
+  }
+}
+
+
+loginRouter.get("/getblockusers", gettingBlockUsers)
 loginRouter.post(
   '/addBetLock',
   betLockValidator.validate('addBetLock'),
