@@ -58,17 +58,17 @@ async function addBetLock(req, res) {
     }
     if (sessionBetting) {
       const oddevent = await SubMarket.distinct('Id', {
-        name: { $in: ["Even Odds", "Figure", "Small Big"] },
+        name: "Even Odds",
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(oddevent);
       const figure = await SubMarket.distinct('Id', {
-        name: { $in: ["Even Odds", "Figure", "Small Big"] },
+        name: "Figure",
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(figure);
       const smallbig = await SubMarket.distinct('Id', {
-        name: { $in: ["Even Odds", "Figure", "Small Big"] },
+        name: "Small Big",
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat(smallbig);
