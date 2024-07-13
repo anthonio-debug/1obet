@@ -50,6 +50,7 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat({ subMarketId: fancyId, eventId: eventId });
+      console.log(subMarketIds);
     }
     if (tiedMatch) {
       const tiedMatchid = await SubMarket.distinct('Id', {
@@ -57,7 +58,6 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat({ subMarketId: tiedMatchid, eventId: eventId });
-      console.log(subMarketIds);
     }
     if (sessionBetting) {
       const sessionBettingmarkets = ["Even Odd", "Figure", "Chotta Bara"];
