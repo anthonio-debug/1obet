@@ -22,9 +22,8 @@ async function addBetLock(req, res) {
     if (!event) {
       return res.status(404).send({ message: 'Event Id is Invalid' });
     }
-    const eventId = event.Id
-    console.log(eventId);
 
+    const eventId = event.Id
     const marketId = event.sportsId;
     let subMarketIds = [];
 
@@ -34,7 +33,7 @@ async function addBetLock(req, res) {
         marketId: marketId
       });
       subMarketIds = subMarketIds.concat({ subMarketId: matchOddsId, eventId: eventId });
-      console.log(subMarketIds);
+      // console.log(subMarketIds);
     }
 
     if (bookmaker) {
@@ -60,12 +59,19 @@ async function addBetLock(req, res) {
       subMarketIds = subMarketIds.concat({ subMarketId: tiedMatchid, eventId: eventId });
     }
     if (sessionBetting) {
-      const sessionBettingids = await SubMarket.distinct('Id', {
-        name: { $in: ["Even Odds", "Figure", "Small Big"] },
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(sessionBettingids);
+      const sessionBettingmarkets = ["Even Odds", "Figure", "Small Big"];
+      let sessionBettingIds = [];
+      for (const sessionBettingmarket of sessionBettingmarkets) {
+        const ids = await SubMarket.distinct('Id', {
+          name: sessionBettingmarket,
+          marketId: marketId
+        });
+        sessionBettingIds = sessionBettingIds.concat(ids);
+      }
+      subMarketIds = subMarketIds.concat(sessionBettingIds);
+      console.log(subMarketIds);
     }
+
     if (overUnder) {
       const overUnderids = await SubMarket.distinct('Id', {
         name: "Over/Under Goals",
