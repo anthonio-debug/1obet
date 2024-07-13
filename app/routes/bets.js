@@ -4451,7 +4451,7 @@ loginRouter.get('/SingleUserAllBets', SingleUserAllBets);
 loginRouter.get('/GetAllBets', GetAllBets);
 loginRouter.get('/casino-bets', CasinoList);
 loginRouter.get('/GetBetsByEventId', GetBetsByEventId);
-module.exports = { sessionCalc, loginRouter, getParents, activeBettors };
+module.exports = { sessionCalc, loginRouter, getParents, activeBettors, getAllUserIDs };
 
 // const newRunners = [];
 // const uniqueVals = newRecords.map((item)=>{
