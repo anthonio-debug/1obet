@@ -373,6 +373,9 @@ function apiRequests() {
 
 
             if (betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
+              
+              console.log("completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",completeMarketName);
+              
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
