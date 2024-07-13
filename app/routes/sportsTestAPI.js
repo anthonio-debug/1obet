@@ -273,7 +273,21 @@ async function getMarketsByEventId(req, res) {
               runnerName: element?.runners[k]?.runnerName
             });
           }
-          console.log("MarketName:",element.marketName);
+          
+          let completeMarketName = element.marketName;
+          let FindInMeRes = completeMarketName.toLowerCase();
+                let findMe1 = FindInMeRes.search('Overs Line');
+              
+               
+                if (findMe1 >= 0) {
+                  console.log("MarketName:",element.marketName);
+                  
+
+
+                }
+
+
+
         });
       }
 
