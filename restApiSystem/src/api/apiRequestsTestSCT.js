@@ -683,10 +683,7 @@ function apiRequests() {
             //console.log('checkInPlay: api res is empty')
             return;
           }
-          console.log('events=================================');
-          console.log(events[0]);
-          console.log(events.length);
-          console.log('events=================================');
+      
 
           let apiLiveEventIds = [];
           for (const event of events) {
