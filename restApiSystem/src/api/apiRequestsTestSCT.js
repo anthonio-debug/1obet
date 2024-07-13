@@ -363,7 +363,16 @@ function apiRequests() {
             });
           }
           if (sportID == '4') {
-            if (element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
+            let completeMarketName = element.marketName;
+          let FindInMeRes = completeMarketName.toLowerCase();
+                let betfairFancy = FindInMeRes.search('overs line');
+                //console.log("MarketName:",element.marketName);
+               
+               
+
+
+
+            if (betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
