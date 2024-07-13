@@ -25,138 +25,67 @@ async function addBetLock(req, res) {
     }
 
     const marketId = event.sportsId;
-    console.log(event);
     let subMarketIds = [];
 
-    if (matchOdds) {
-      const matchOddsIds = await SubMarket.distinct('Id', {
-        name: 'Match Odds',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(matchOddsIds);
-      console.log(subMarketIds)
-    } else {
-      const matchOddsIds = await SubMarket.distinct('Id', {
-        name: 'Match Odds',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !matchOddsIds.includes(id));
-      console.log(subMarketIds)
-    }
+    // Define submarket types and their corresponding names
+    const subMarketTypes = [
+      { name: 'Match Odds', flag: matchOdds },
+      { name: 'Bookmaker', flag: bookmaker },
+      { name: 'Fancy', flag: fancy },
+      { name: 'Tied Match', flag: tiedMatch },
+      { name: 'Even Odds', flag: sessionBetting },
+      { name: 'Figure', flag: sessionBetting },
+      { name: 'Small Big', flag: sessionBetting },
+      { name: 'Over/Under Goals', flag: overUnder }
+    ];
 
-    if (bookmaker) {
-      const bookmakerIds = await SubMarket.distinct('Id', {
-        name: 'Bookmaker',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(bookmakerIds);
-      console.log(subMarketIds)
-    } else {
-      const bookmakerIds = await SubMarket.distinct('Id', {
-        name: 'Bookmaker',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !bookmakerIds.includes(id));
-      console.log(subMarketIds)
-    }
-
-    if (fancy) {
-      const fancyIds = await SubMarket.distinct('Id', {
-        name: 'Fancy',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(fancyIds);
-      console.log(subMarketIds)
-    } else {
-      const fancyIds = await SubMarket.distinct('Id', {
-        name: 'Fancy',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !fancyIds.includes(id));
-      console.log(subMarketIds)
-    }
-    if (tiedMatch) {
-      const tiedMatchIds = await SubMarket.distinct('Id', {
-        name: 'Tied Match',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(tiedMatchIds);
-      console.log(subMarketIds)
-    } else {
-      const tiedMatchIds = await SubMarket.distinct('Id', {
-        name: 'Tied Match',
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !tiedMatchIds.includes(id));
-      console.log(subMarketIds)
-    }
-    if (sessionBetting) {
-      const sessionBettingIds = await SubMarket.distinct('Id', {
-        name: { $in: ["Even Odds", "Figure", "Small Big"] },
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(sessionBettingIds);
-      console.log(subMarketIds)
-    } else {
-      const sessionBettingIds = await SubMarket.distinct('Id', {
-        name: { $in: ["Even Odds", "Figure", "Small Big"] },
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !sessionBettingIds.includes(id));
-      console.log(subMarketIds)
-    }
-    if (overUnder) {
-      const overUnderIds = await SubMarket.distinct('Id', {
-        name: "Over/Under Goals",
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.concat(overUnderIds);
-      console.log(subMarketIds)
-    } else {
-      const overUnderIds = await SubMarket.distinct('Id', {
-        name: "Over/Under Goals",
-        marketId: marketId
-      });
-      subMarketIds = subMarketIds.filter(id => !overUnderIds.includes(id));
-      console.log(subMarketIds)
+    // Fetch submarket IDs based on the flags
+    for (const type of subMarketTypes) {
+      if (type.flag) {
+        const ids = await SubMarket.distinct('Id', {
+          name: type.name,
+          marketId: marketId
+        });
+        subMarketIds = subMarketIds.concat(ids);
+      } else {
+        const ids = await SubMarket.distinct('Id', {
+          name: type.name,
+          marketId: marketId
+        });
+        subMarketIds = subMarketIds.filter(id => !ids.includes(id));
+      }
     }
 
     // Remove duplicates if any
-    subMarketIds = [...new Set(subMarketIds)]
+    subMarketIds = [...new Set(subMarketIds)];
 
-    if (allUsers && lock) {
-      const users = await User.find({ createdBy: userId });
-      for (const user of users) {
-        let blockedSubMarkets = user.blockedSubMarketsByParent;
+    const updateUserBlockedSubMarkets = async (user, add) => {
+      let blockedSubMarkets = user.blockedSubMarketsByParent;
+      if (add) {
         let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
         const finalSubMarkets = [...new Set(allSubMarkets)];
         user.blockedSubMarketsByParent = finalSubMarkets;
-        await user.save();
+      } else {
+        const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
+        user.blockedSubMarketsByParent = finalSubMarkets;
       }
-    } else if (allUsers && !lock) {
+      await user.save();
+    };
+
+    if (allUsers) {
       const users = await User.find({ createdBy: userId });
       for (const user of users) {
-        let blockedSubMarkets = user.blockedSubMarketsByParent;
-        const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
-        user.blockedSubMarketsByParent = finalSubMarkets;
-        await user.save();
+        await updateUserBlockedSubMarkets(user, lock);
       }
-    } else if (!allUsers) {
+    } else {
       const usersToUnlock = await User.find({ createdBy: userId, userId: { $nin: userIds } });
       for (const user of usersToUnlock) {
-        let blockedSubMarkets = user.blockedSubMarketsByParent;
-        const finalSubMarkets = blockedSubMarkets.filter(item => !subMarketIds.includes(item));
-        user.blockedSubMarketsByParent = finalSubMarkets;
-        await user.save();
+        await updateUserBlockedSubMarkets(user, false);
       }
 
       const usersToLock = await User.find({ userId: { $in: userIds } });
       for (const user of usersToLock) {
-        let blockedSubMarkets = user.blockedSubMarketsByParent;
-        let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
-        const finalSubMarkets = [...new Set(allSubMarkets)];
-        user.blockedSubMarketsByParent = finalSubMarkets;
-        await user.save();
+        await updateUserBlockedSubMarkets(user, true);
       }
     }
 
