@@ -82,14 +82,14 @@ async function addBetLock(req, res) {
     }
 
     // Remove duplicates if any
-    subMarketIds = [...new Set(subMarketIds)]
+    subMarketIds = [...new Map(subMarketIds1.map(item => [JSON.stringify(item), item])).values()]
 
     if (allUsers && lock) {
       const users = await User.find({ createdBy: userId });
       for (const user of users) {
         let blockedSubMarkets = user.blockedSubMarketsByParent;
         let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
-        const finalSubMarkets = [...new Set(allSubMarkets)];
+        const finalSubMarkets = [...new Map(subMarketIds1.map(item => [JSON.stringify(item), item])).values()];
         user.blockedSubMarketsByParent = finalSubMarkets;
         await user.save();
       }
@@ -114,7 +114,7 @@ async function addBetLock(req, res) {
       for (const user of usersToLock) {
         let blockedSubMarkets = user.blockedSubMarketsByParent;
         let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
-        const finalSubMarkets = [...new Set(allSubMarkets)];
+        const finalSubMarkets = [...new Map(subMarketIds1.map(item => [JSON.stringify(item), item])).values()];
         user.blockedSubMarketsByParent = finalSubMarkets;
         await user.save();
       }
@@ -135,23 +135,29 @@ async function gettingBlockUsers(req, res) {
   try {
     const userId = req.decoded.userId;
     const blockUsers = [];
+    const unblockUsers = [];
 
     const userIdArray = Array.isArray(userId) ? userId : [userId];
     const allUserIDs = await getAllUserIDs(userIdArray);
-
     for (const user of allUserIDs) {
       try {
         const getUser = await User.findOne({ userId: user });
 
         if (getUser && getUser.blockedSubMarketsByParent.length) {
           blockUsers.push(getUser);
+        } else {
+          unblockUsers.push(getUser)
         }
       } catch (error) {
         console.error(`Error fetching user with ID ${user}:`, error);
       }
     }
 
-    return res.status(200).send(blockUsers);
+    return res.status(200).send({
+      success: true,
+      blockUsers: blockUsers,
+      unblockUsers: unblockUsers
+    });
 
   } catch (error) {
     console.error('Error in gettingBlockUsers:', error);
