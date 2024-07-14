@@ -116,7 +116,7 @@ function apiRequests() {
             const lOdds = await Odds.findOne({ marketId: marketId.id }).sort({ createdAt: -1 });
             if (lOdds) event_information.marketIds[index].last_odds = lOdds;
           }
-          console.log("------------------------------------------------>>>>>>>>",event_information);
+          //console.log("------------------------------------------------>>>>>>>>",event_information);
           const marketIds = event_information.marketIds.map((item) => item.id);
 
           const Eventmarkets = await MarketIDS.find({
