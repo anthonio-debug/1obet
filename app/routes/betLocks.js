@@ -15,7 +15,6 @@ async function addBetLock(req, res) {
     if (!errors.isEmpty()) {
       return res.status(400).send({ errors: errors.errors });
     }
-
     const { matchId, allUsers, lock, matchOdds, fancy, bookmaker, tiedMatch, sessionBetting, overUnder, userIds } = req.body;
     const userId = Number(req.decoded.userId);
     const event = await Events.findById(matchId);
@@ -30,7 +29,7 @@ async function addBetLock(req, res) {
 
     async function getSubMarketId(subMarketName) {
       const subMarket = await SubMarket.findOne({ name: subMarketName, marketId }, { Id: 1 });
-      return subMarket ? subMarket.Id : null;
+      return subMarket
     }
 
     if (matchOdds) {
@@ -77,12 +76,7 @@ async function addBetLock(req, res) {
         subMarketIds.push({ eventId, subMarketId: overUnderId });
       }
     }
-
-    console.log('SubMarket IDs before removing duplicates:', subMarketIds);
-
     subMarketIds = [...new Map(subMarketIds.map(item => [JSON.stringify(item), item])).values()];
-
-    console.log('SubMarket IDs after removing duplicates:', subMarketIds);
 
     if (allUsers && lock) {
       await User.updateMany(
@@ -109,7 +103,6 @@ async function addBetLock(req, res) {
       }
 
       const usersToLock = await User.find({ userId: { $in: userIds } });
-      console.log('Users to lock:', usersToLock);
 
       for (const user of usersToLock) {
         await User.updateOne(
@@ -130,9 +123,6 @@ async function addBetLock(req, res) {
     res.status(500).send({ message: 'Error creating betlock' });
   }
 }
-
-
-
 
 async function gettingBlockUsers(req, res) {
   try {
