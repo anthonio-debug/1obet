@@ -118,12 +118,22 @@ function apiRequests() {
           }
           console.log("------------------------------------------------>>>>>>>>",event_information);
           const marketIds = event_information.marketIds.map((item) => item.id);
+
+          const Eventmarkets = await MarketIDS.find({
+            //inPlay: true,
+            eventId: event_information.Id,
+         
+          }).exec();
+
+
+
+
           let totalMatched = 0;
           if (marketIds.length) {
             const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
           }
-          socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched });
+          socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched,Eventmarkets });
         } else {
           socket.emit('err', 'Event Not Exist');
         }
