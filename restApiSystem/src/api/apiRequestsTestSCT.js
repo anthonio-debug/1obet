@@ -123,7 +123,7 @@ function apiRequests() {
             const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
           }
-          socket.emit('event_infooe', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched });
+          socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched });
         } else {
           socket.emit('err', 'Event Not Exist');
         }
