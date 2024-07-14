@@ -25,7 +25,7 @@ function ToolForEvent() {
       fetchEvents();
       setBrokenRecord();
 
-      setInterval(fetchEvents, 6 * 60 * 60 * 1000);
+      setInterval(fetchEvents,  60 * 1000);
       setInterval(fetchMarkets, 10 * 1000);
       // setInterval(handleSetInplay, 10 * 1000);
 

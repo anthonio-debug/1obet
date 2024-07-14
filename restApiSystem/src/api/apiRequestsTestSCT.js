@@ -444,7 +444,7 @@ function apiRequests() {
             await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
           }
         }
-
+        console.log("============================================================================================",marketIds);
         await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
       }
     } catch (error) {
