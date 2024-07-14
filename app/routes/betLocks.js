@@ -89,7 +89,7 @@ async function addBetLock(req, res) {
       for (const user of users) {
         let blockedSubMarkets = user.blockedSubMarketsByParent;
         let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
-        const finalSubMarkets = [...new Map(subMarketIds1.map(item => [JSON.stringify(item), item])).values()];
+        const finalSubMarkets = [...new Map(allSubMarkets.map(item => [JSON.stringify(item), item])).values()];
         user.blockedSubMarketsByParent = finalSubMarkets;
         await user.save();
       }
@@ -114,7 +114,7 @@ async function addBetLock(req, res) {
       for (const user of usersToLock) {
         let blockedSubMarkets = user.blockedSubMarketsByParent;
         let allSubMarkets = blockedSubMarkets.concat(subMarketIds);
-        const finalSubMarkets = [...new Map(subMarketIds1.map(item => [JSON.stringify(item), item])).values()];
+        const finalSubMarkets = [...new Map(allSubMarkets.map(item => [JSON.stringify(item), item])).values()];
         user.blockedSubMarketsByParent = finalSubMarkets;
         await user.save();
       }
