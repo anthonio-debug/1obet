@@ -714,13 +714,36 @@ async function deleteOdds(req, res) {
    const totalgreyhound = await MarketIDS.countDocuments({ winnerInfo: null,sportID:4339 });
    const totalhorses = await MarketIDS.countDocuments({ winnerInfo: null,sportID:7 });
    //await MarketIDS.deleteMany({winnerInfo: null,sportID:4339})
-   //await MarketIDS.deleteMany({winnerInfo: null,sportID:7})
+   await MarketIDS.deleteOne({eventId:'33415386'})
+   await MarketIDS.deleteOne({eventId:'33415387'})
+   await MarketIDS.deleteOne({eventId:'33415385'})
+   await MarketIDS.deleteOne({eventId:'33415388'})
+   await MarketIDS.deleteOne({eventId:'33416245'})
+   await MarketIDS.deleteOne({eventId:'33416236'})
+   await MarketIDS.deleteOne({eventId:'33416279'})
+   await MarketIDS.deleteOne({eventId:'33416224'})
+   await MarketIDS.deleteOne({eventId:'33416217'})
+   await MarketIDS.deleteOne({eventId:'33416557'})
+   await MarketIDS.deleteOne({eventId:'33416548'})
+   await MarketIDS.deleteOne({eventId:'33416545'})
+   await MarketIDS.deleteOne({eventId:'33416671'})
+   await MarketIDS.deleteOne({eventId:'33416308'})
+   await MarketIDS.deleteOne({eventId:'33416306'})
+   await MarketIDS.deleteOne({eventId:'33416435'})
+   await MarketIDS.deleteOne({eventId:'33416412'})
+   await MarketIDS.deleteOne({eventId:'33416312'})
+   await MarketIDS.deleteOne({eventId:'33416573'})
+   await MarketIDS.deleteOne({eventId:'33416575'})
+   await MarketIDS.deleteOne({eventId:'33416604'})
+
+
+   await inPlayEvents.deleteMany({name:'/15th Jul/'})
    //await FancyOdds.deleteMany({})
    //await  RaceOdds.deleteMany({})
     //await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
 
-    res.status(200).json({success: true, message: 'Odds deleted successfully...'+totalhorses + "=======" + totalgreyhound});
+    res.status(200).json({success: true, message: 'Odds deleted successfully...'+totalhorses + "====...===" + totalgreyhound});
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({success: false, message: 'Internal server error'});
