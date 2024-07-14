@@ -139,14 +139,19 @@ async function gettingBlockUsers(req, res) {
 
     const userIdArray = Array.isArray(userId) ? userId : [userId];
     const allUserIDs = await getAllUserIDs(userIdArray);
+
     for (const user of allUserIDs) {
       try {
         const getUser = await User.findOne({ userId: user });
 
-        if (getUser && getUser.blockedSubMarketsByParent.length) {
-          blockUsers.push(getUser);
-        } else {
-          unblockUsers.push(getUser)
+        if (getUser) {
+          const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role };
+          if (getUser.blockedSubMarketsByParent.length) {
+            blockUsers.push(userInfo);
+            console.log(userInfo);
+          } else {
+            unblockUsers.push(userInfo);
+          }
         }
       } catch (error) {
         console.error(`Error fetching user with ID ${user}:`, error);
@@ -155,8 +160,8 @@ async function gettingBlockUsers(req, res) {
 
     return res.status(200).send({
       success: true,
-      blockUsers: blockUsers,
-      unblockUsers: unblockUsers
+      blockUsers,
+      unblockUsers,
     });
 
   } catch (error) {
@@ -164,6 +169,7 @@ async function gettingBlockUsers(req, res) {
     return res.status(500).send({ message: 'Something went wrong' });
   }
 }
+
 
 
 loginRouter.get("/getblockusers", gettingBlockUsers)
