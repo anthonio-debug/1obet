@@ -15,7 +15,8 @@ async function addBetLock(req, res) {
     if (!errors.isEmpty()) {
       return res.status(400).send({ errors: errors.errors });
     }
-    const { matchId, allUsers, lock, matchOdds, fancy, bookmaker, tiedMatch, sessionBetting, overUnder, userIds } = req.body;
+    const { matchId, allUsers, lock, matchOdds, fancy,
+      bookmaker, tiedMatch, sessionBetting, overUnder, userIds } = req.body;
     const userId = Number(req.decoded.userId);
     const event = await Events.findById(matchId);
 
@@ -29,6 +30,7 @@ async function addBetLock(req, res) {
 
     async function getSubMarketId(subMarketName) {
       const subMarket = await SubMarket.findOne({ name: subMarketName, marketId }, { Id: 1 });
+      console.log(subMarket);
       return subMarket
     }
 
@@ -83,23 +85,19 @@ async function addBetLock(req, res) {
         { createdBy: userId },
         { $set: { blockedSubMarketsByParent: subMarketIds } }
       );
-      console.log('Updated all users with new blockedSubMarketsByParent.');
     } else if (allUsers && !lock) {
       await User.updateMany(
         { createdBy: userId },
         { $set: { blockedSubMarketsByParent: [] } }
       );
-      console.log('Cleared blockedSubMarketsByParent for all users.');
     } else if (!allUsers) {
       const usersToUnlock = await User.find({ createdBy: userId, userId: { $nin: userIds } });
-      console.log('Users to unlock:', usersToUnlock);
 
       for (const user of usersToUnlock) {
         await User.updateOne(
           { userId: user.userId },
           { $set: { blockedSubMarketsByParent: [] } }
         );
-        console.log(`Cleared blockedSubMarketsByParent for user ${user.userId}`);
       }
 
       const usersToLock = await User.find({ userId: { $in: userIds } });
@@ -109,7 +107,6 @@ async function addBetLock(req, res) {
           { userId: user.userId },
           { $set: { blockedSubMarketsByParent: subMarketIds } }
         );
-        console.log(`Updated blockedSubMarketsByParent for user ${user.userId}`);
       }
     }
 
@@ -141,7 +138,6 @@ async function gettingBlockUsers(req, res) {
           const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role };
           if (getUser.blockedSubMarketsByParent.length) {
             blockUsers.push(userInfo);
-            console.log(userInfo);
           } else {
             unblockUsers.push(userInfo);
           }
@@ -162,8 +158,6 @@ async function gettingBlockUsers(req, res) {
     return res.status(500).send({ message: 'Something went wrong' });
   }
 }
-
-
 
 loginRouter.get("/getblockusers", gettingBlockUsers)
 loginRouter.post(
