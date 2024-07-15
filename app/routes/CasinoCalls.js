@@ -222,7 +222,6 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             cashOrCredit: "Bet",
             sportsId: "6",
           })
-          return res.json({ status: '500', msg: 'Negative bet not allowed!' });
         } else {
           log(
             `${JSON.stringify({
