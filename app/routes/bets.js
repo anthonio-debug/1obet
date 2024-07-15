@@ -1577,6 +1577,9 @@ const placeBet = async (req, res) => {
       const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName;
 
+      console.log("subMarketDetail.Id=====================", subMarketDetail.Id);
+      console.log("config.Fancy=====================", config.Fancy);
+
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5; i++) {
           setTimeout(async () => {
@@ -1770,6 +1773,7 @@ const placeBet = async (req, res) => {
 
     // For Fancy
     else if (subMarketDetail.Id == config.Fancy) {
+
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -4447,7 +4451,7 @@ loginRouter.get('/SingleUserAllBets', SingleUserAllBets);
 loginRouter.get('/GetAllBets', GetAllBets);
 loginRouter.get('/casino-bets', CasinoList);
 loginRouter.get('/GetBetsByEventId', GetBetsByEventId);
-module.exports = { sessionCalc, loginRouter, getParents, activeBettors };
+module.exports = { sessionCalc, loginRouter, getParents, activeBettors, getAllUserIDs };
 
 // const newRunners = [];
 // const uniqueVals = newRecords.map((item)=>{

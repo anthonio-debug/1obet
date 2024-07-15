@@ -104,7 +104,7 @@ function ToolForSessionFancy() {
       }, { Id: 1 }).exec();
       for (const event of fancyEvents) {
         const eventId = event.Id
-        console.log("There is some error then why and what you asked to test?:", eventId);
+        
         let fancyOdds = await fetchSession(eventId)
 
 

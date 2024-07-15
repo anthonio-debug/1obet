@@ -258,9 +258,42 @@ async function getMarketsByEventId(req, res) {
 
     const response = await axios.post(url, requestData, header);
 
-    const marketsData = response.data;
+    const marketsData = response.data.result;
 
-    res.status(200).json({ success: true, data: marketsData });
+
+    if (marketsData.length > 0) {
+      let marketIds = [];
+
+    marketsData.forEach((element) => {
+    let tempRunners = [];
+         
+          for (let k = 0; k < element?.runners?.length; k++) {
+            tempRunners.push({
+              SelectionId: element?.runners[k]?.selectionId,
+              runnerName: element?.runners[k]?.runnerName
+            });
+          }
+          
+          let completeMarketName = element.marketName;
+          let FindInMeRes = completeMarketName.toLowerCase();
+                let findMe1 = FindInMeRes.search('overs line');
+                console.log("MarketName:",element.marketName);
+               
+                if (findMe1 >= 0) {
+                  console.log("MarketName Found....................:",element.marketName);
+
+
+
+
+                }
+
+
+
+        });
+      }
+
+
+    res.status(200).json({ successs: true, data: marketsData });
   } catch (err) {
     res
       .status(500)

@@ -231,5 +231,6 @@
   "match-events",
   "updateLiveStreamUrl",
   "updateLiveUrl",
-  "checkfourdigitcode"
+  "checkfourdigitcode",
+  "getblockusers"
 ]

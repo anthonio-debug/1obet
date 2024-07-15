@@ -116,13 +116,24 @@ function apiRequests() {
             const lOdds = await Odds.findOne({ marketId: marketId.id }).sort({ createdAt: -1 });
             if (lOdds) event_information.marketIds[index].last_odds = lOdds;
           }
+          //console.log("------------------------------------------------>>>>>>>>",event_information);
           const marketIds = event_information.marketIds.map((item) => item.id);
+
+          const Eventmarkets = await MarketIDS.find({
+            //inPlay: true,
+            eventId: event_information.Id,
+         
+          }).exec();
+
+
+
+
           let totalMatched = 0;
           if (marketIds.length) {
             const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
           }
-          socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched });
+          socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched,Eventmarkets });
         } else {
           socket.emit('err', 'Event Not Exist');
         }
@@ -363,12 +374,29 @@ function apiRequests() {
             });
           }
           if (sportID == '4') {
-            if (element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
+            let completeMarketName = element.marketName;
+          let FindInMeRes = completeMarketName.toLowerCase();
+                let betfairFancy = FindInMeRes.search('overs line');
+                //console.log("MarketName:",element.marketName);
+               
+               
+
+
+
+            if (betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
+              
+              console.log("completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",completeMarketName);
+              if(betfairFancy >= 0){
+                const betfairFancy = true;
+              }
+              
+
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
                 openDate: Date.parse(element.marketStartTime),
                 status: marketStatus,
+                betfairFancy:betfairFancy,
                 runners: tempRunners
               });
             }
@@ -419,6 +447,7 @@ function apiRequests() {
                 marketId: marketIds[index].id + '',
                 marketName: marketIds[index].marketName,
                 sportID: sportID,
+                betfairFancy:betfairFancy,
                 totalMatched: marketIds[index].totalMatched,
                 status: marketIds[index].status,
                 index: index,
@@ -431,7 +460,7 @@ function apiRequests() {
             await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
           }
         }
-
+        console.log("============================================================================================",marketIds);
         await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
       }
     } catch (error) {
@@ -469,7 +498,7 @@ function apiRequests() {
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
         let checkedMarkets = [];
-        console.log('odds length:-------------------------------------->>>>>>>>', oddsData.length);
+       
         if (oddsData.length > 0) {
           let counter = 0;
           try {
@@ -639,7 +668,7 @@ function apiRequests() {
           } catch (error) {
             console.error('getOddsFromProvider----->', error);
           }
-          console.log('If there are some odddddddddddddddddddddddddddddddddddddsssssss>', counter);
+          
         }
       },
       (error) => {
@@ -670,10 +699,7 @@ function apiRequests() {
             //console.log('checkInPlay: api res is empty')
             return;
           }
-          console.log('events=================================');
-          console.log(events[0]);
-          console.log(events.length);
-          console.log('events=================================');
+      
 
           let apiLiveEventIds = [];
           for (const event of events) {
