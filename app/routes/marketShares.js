@@ -239,7 +239,7 @@ const marketGainWithDuplicates = async (req, res) => {
     }
 
     response.totalDespoitInfo = totalDespoitInfo
-    const resultData = response.betsInfo[0].resultData;
+    const resultData = response.betsInfo[0]?.resultData;
 
     return res.send({
       success: true,
