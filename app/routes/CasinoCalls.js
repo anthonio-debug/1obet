@@ -195,7 +195,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               matchId: payload.game_id,
               cashOrCredit: "Bet",
               sportsId: "6",
-            })}\n\n\n${JSON.stringify(payload)}\n\n\n${JSON.stringify(user)}\n\n\n${JSON.stringify(lastMaxWithdraw)}\n\n\n${JSON.stringify(game)}`,
+            })}\n\n\n${JSON.stringify(payload)}\n\n\n${JSON.stringify(user)}\n\n\n${JSON.stringify(lastMaxWithdraw)}\n\n\n${JSON.stringify(game)}\n\n\n${JSON.stringify(lastDebits)}`,
             path.join(__dirname, '../../../', 'log1.log')
           );
         } else {
@@ -223,7 +223,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               matchId: payload.game_id,
               cashOrCredit: "Bet",
               sportsId: "6",
-            })}\n\n\n${JSON.stringify(payload)}\n\n\n${JSON.stringify(user)}\n\n\n${JSON.stringify(lastMaxWithdraw)}\n\n\n${JSON.stringify(game)}`,
+            })}\n\n\n${JSON.stringify(payload)}\n\n\n${JSON.stringify(user)}\n\n\n${JSON.stringify(lastMaxWithdraw)}\n\n\n${JSON.stringify(game)}\n\n\n${JSON.stringify(lastDebits)}`,
             path.join(__dirname, '../../../', 'log2.log')
           );
         }
