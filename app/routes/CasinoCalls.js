@@ -1001,9 +1001,9 @@ async function rollbackFun(req, res) {
 function casino(req, res) {
   const { action, remote_id } = req.query;
   if(remote_id==6896479){
-    console.log('===============================================')
+    console.log(`===========casino===========${action}=============${req.query?.amount}============`)
     console.log(JSON.stringify(req.query, null, 2))
-    console.log('===============================================')
+    console.log(`===========casino===========${action}=============${req.query?.amount}============`)
   }
   if (!remote_id || !action) {
     return res.send({ status: '400', msg: 'Invalid Request' });
