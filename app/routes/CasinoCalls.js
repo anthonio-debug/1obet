@@ -174,7 +174,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           log(
             `${JSON.stringify({
               userId: user.userId,
-              description: `Casino (${game.name})`,
+              description: `Casino (${GameName})`,
               date: now.getTime(),
               createdAt: formattedDate,
               amount: -bettor_lost_amount,
@@ -187,7 +187,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               calledArea: " difference < 0 ",
               createdBy: 0,
               casinoBetAmount: debit,
-              event: game.name,
+              event: GameName,
               betDateTime: betTime,
               betId: payload.transaction_id,
               marketId: payload.game_id,
@@ -202,7 +202,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           log(
             `${JSON.stringify({
               userId: user.userId,
-              description: `Casino (${game.name})`,
+              description: `Casino (${GameName})`,
               date: now.getTime(),
               createdAt: formattedDate,
               amount: -bettor_lost_amount,
@@ -215,7 +215,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               calledArea: " difference < 0 ",
               createdBy: 0,
               casinoBetAmount: debit,
-              event: game.name,
+              event: GameName,
               betDateTime: betTime,
               betId: payload.transaction_id,
               marketId: payload.game_id,
