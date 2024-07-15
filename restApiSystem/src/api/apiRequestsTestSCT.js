@@ -386,12 +386,17 @@ function apiRequests() {
             if (betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
               
               console.log("completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",completeMarketName);
+              if(betfairFancy >= 0){
+                const betfairFancy = true;
+              }
               
+
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
                 openDate: Date.parse(element.marketStartTime),
                 status: marketStatus,
+                betfairFancy:betfairFancy,
                 runners: tempRunners
               });
             }
@@ -442,6 +447,7 @@ function apiRequests() {
                 marketId: marketIds[index].id + '',
                 marketName: marketIds[index].marketName,
                 sportID: sportID,
+                betfairFancy:betfairFancy,
                 totalMatched: marketIds[index].totalMatched,
                 status: marketIds[index].status,
                 index: index,

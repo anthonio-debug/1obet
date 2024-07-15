@@ -5,6 +5,7 @@ const MarketIDsSchema = new mongoose.Schema({
   marketId: { type: String,index: true },
   marketName:{ type: String},
   marketType:{ type: String, require: false},
+  betfairFancy: { type: Boolean, default: false },
   inPlay: { type: Boolean, default: false },
   ReadyForOdds: { type: Boolean, default: false },
   lastCheck: { type: Number,default: 0 },
