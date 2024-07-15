@@ -159,8 +159,6 @@ async function gettingBlockUsers(req, res) {
   }
 }
 
-
-
 loginRouter.get("/getblockusers", gettingBlockUsers)
 loginRouter.post(
   '/addBetLock',
