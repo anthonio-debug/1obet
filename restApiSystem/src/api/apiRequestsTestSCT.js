@@ -370,6 +370,7 @@ function apiRequests() {
             });
           }
           if (sportID == '4') {
+            let hasbetfairFancy = false;
             let completeMarketName = element.marketName;
             let FindInMeRes = completeMarketName.toLowerCase();
             let betfairFancy = FindInMeRes.search('overs line');
@@ -379,7 +380,7 @@ function apiRequests() {
             if (betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
               console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
               if (betfairFancy >= 0) {
-                const hasbetfairFancy = true;
+                let hasbetfairFancy = true;
               }
 
               marketIds.push({
