@@ -360,7 +360,7 @@ function apiRequests() {
         let arrMarketIds = [];
             let cntrl = 0;
         marketsData.forEach((element) => {
-          cntrl++;
+          
           let tempRunners = [];
           let hasbetfairFancy = false;
           if (config.activeProvider == 'old') {
@@ -385,6 +385,7 @@ function apiRequests() {
             if (betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
               
               if(betfairFancy >= 0){
+                cntrl++;
                 hasbetfairFancy = true;
                 arrMarketIds[cntrl] = completeMarketName;
                 console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
@@ -460,10 +461,11 @@ function apiRequests() {
             await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
           }
         }
+
         console.log('============================================================================================', arrMarketIds);
 
         
-
+console.log("=================length>>>>>>>>",arrMarketIds.length);
 
       
 
