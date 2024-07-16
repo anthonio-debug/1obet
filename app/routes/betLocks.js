@@ -123,11 +123,11 @@ async function addBetLock(req, res) {
 
 async function gettingBlockUsers(req, res) {
   try {
-    const userId = req.decoded.userId;
+    const userID = req.decoded.userId;
     const blockUsers = [];
     const unblockUsers = [];
 
-    const userIdArray = Array.isArray(userId) ? userId : [userId];
+    const userIdArray = Array.isArray(userID) ? userID : [userID];
     const allUserIDs = await getAllUserIDs(userIdArray);
 
     for (const user of allUserIDs) {
@@ -136,10 +136,17 @@ async function gettingBlockUsers(req, res) {
 
         if (getUser) {
           const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role };
-          if (getUser.blockedSubMarketsByParent.length) {
-            blockUsers.push(userInfo);
-          } else {
-            unblockUsers.push(userInfo);
+          const blockparent = getUser.blockedSubMarketsByParent.length
+          if (blockparent) {
+            User.updateOne({ userId: getUser.userId }, { $set: { betLockStatus : true}})
+          }
+          console.log(getUser.betLockStatus);
+          if (getUser.createdBy === userID) {
+            if (blockparent) {
+              blockUsers.push(userInfo);
+            } else {
+              unblockUsers.push(userInfo);
+            }
           }
         }
       } catch (error) {

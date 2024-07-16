@@ -41,7 +41,7 @@ const userSchema = new Schema({
   blockedMarketPlaces: { type: Array },
   blockedSubMarkets: { type: Array },
   blockedSubMarketsByParent: { type: Array },
-  betLockStatus: { type: Boolean },
+  betLockStatus: { type: Boolean, default: false },
   matchOddsStatus: { type: Boolean },
   baseCurrency: { type: String },
   creditRemaining: { type: Number, default: 0 },
