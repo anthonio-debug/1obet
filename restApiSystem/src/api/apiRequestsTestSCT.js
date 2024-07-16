@@ -355,7 +355,7 @@ function apiRequests() {
       const marketsData = response.data.result;
       let marketStatus = 'OPEN';
 
-      if (marketsData.length > 0) {
+      if (marketsData && marketsData?.length > 0) {
         let marketIds = [];
 
         marketsData.forEach((element) => {
