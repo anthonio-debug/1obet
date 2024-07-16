@@ -796,6 +796,7 @@ function apiRequests() {
   }
 
   async function setInplay(sportsId) {
+    console.log('setInplaysetInplaysetInplaysetInplaysetInplaysetInplay')
     try {
       const markets = await MarketIDS.find({
         inPlay: true,
