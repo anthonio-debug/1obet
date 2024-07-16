@@ -357,8 +357,10 @@ function apiRequests() {
 
       if (marketsData && marketsData?.length > 0) {
         let marketIds = [];
-
+        let arrMarketIds = [];
+            let cntrl = 0;
         marketsData.forEach((element) => {
+          cntrl++;
           let tempRunners = [];
           let hasbetfairFancy = false;
           if (config.activeProvider == 'old') {
@@ -372,7 +374,8 @@ function apiRequests() {
           }
           
           if (sportID == '4') {
-            let hasbetfairFancy = false;
+            
+            
             let completeMarketName = element.marketName;
             let FindInMeRes = completeMarketName.toLowerCase();
             let betfairFancy = FindInMeRes.search('overs line');
@@ -383,6 +386,7 @@ function apiRequests() {
               
               if(betfairFancy >= 0){
                 hasbetfairFancy = true;
+                arrMarketIds[cntrl] = completeMarketName;
                 console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
               }
                 
@@ -457,6 +461,29 @@ function apiRequests() {
           }
         }
         console.log('============================================================================================', marketIds);
+
+
+        marketIds.forEach(market => {
+
+          console.log('Market ID:', market.id);
+          
+        
+      });
+
+
+      
+
+      const sorted = arrMarketIds.sort((a, b) => {
+        return a.localeCompare(b, undefined, {
+          numeric: true,
+          sensitivity: 'base'
+        })
+      });
+      console.log("I am sorted:::::::::::::::::::::::::::::::",sorted);
+
+
+
+
         await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
       }
     } catch (error) {
