@@ -460,12 +460,12 @@ function apiRequests() {
             await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
           }
         }
-        console.log('============================================================================================', marketIds);
+        console.log('============================================================================================', arrMarketIds);
 
 
-        marketIds.forEach(market => {
+        arrMarketIds.forEach(market => {
 
-          console.log('Market ID:', market.id);
+          console.log('Overs Market ID:', market.id);
           
         
       });
@@ -479,6 +479,7 @@ function apiRequests() {
           sensitivity: 'base'
         })
       });
+      console.length("",sorted.length);
       console.log("I am sorted:::::::::::::::::::::::::::::::",sorted);
 
 
