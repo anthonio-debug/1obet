@@ -121,19 +121,15 @@ function apiRequests() {
 
           const Eventmarkets = await MarketIDS.find({
             //inPlay: true,
-            eventId: event_information.Id,
-         
+            eventId: event_information.Id
           }).exec();
-
-
-
 
           let totalMatched = 0;
           if (marketIds.length) {
             const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
           }
-          socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched,Eventmarkets });
+          socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched, Eventmarkets });
         } else {
           socket.emit('err', 'Event Not Exist');
         }
@@ -269,7 +265,7 @@ function apiRequests() {
                 // competitionId: competitions[0]?.competition?.id ? competitions[0]?.competition?.id : null,
                 // competitionName: competitions[0]?.competition?.name ? competitions[0]?.competition?.name : null,
                 inplayFromServer: false,
-                
+
                 status: 'OPEN',
                 isPremium: false,
                 type: event.event.type,
@@ -343,7 +339,7 @@ function apiRequests() {
   }
 
   async function listMarketsByCronJob(eventId, sportID) {
-    console.log("listMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJob");
+    console.log('listMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJob');
     const requestData = {
       filter: {
         eventIds: [eventId]
@@ -375,28 +371,22 @@ function apiRequests() {
           }
           if (sportID == '4') {
             let completeMarketName = element.marketName;
-          let FindInMeRes = completeMarketName.toLowerCase();
-                let betfairFancy = FindInMeRes.search('overs line');
-                //console.log("MarketName:",element.marketName);
-               
-               
-
-
+            let FindInMeRes = completeMarketName.toLowerCase();
+            let betfairFancy = FindInMeRes.search('overs line');
+            //console.log("MarketName:",element.marketName);
 
             if (betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
-              
-              console.log("completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",completeMarketName);
-              if(betfairFancy >= 0){
+              console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
+              if (betfairFancy >= 0) {
                 const betfairFancy = true;
               }
-              
 
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
                 openDate: Date.parse(element.marketStartTime),
                 status: marketStatus,
-                betfairFancy:betfairFancy,
+                betfairFancy: betfairFancy,
                 runners: tempRunners
               });
             }
@@ -447,7 +437,7 @@ function apiRequests() {
                 marketId: marketIds[index].id + '',
                 marketName: marketIds[index].marketName,
                 sportID: sportID,
-                betfairFancy:betfairFancy,
+                betfairFancy: betfairFancy,
                 totalMatched: marketIds[index].totalMatched,
                 status: marketIds[index].status,
                 index: index,
@@ -460,7 +450,7 @@ function apiRequests() {
             await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
           }
         }
-        console.log("============================================================================================",marketIds);
+        console.log('============================================================================================', marketIds);
         await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
       }
     } catch (error) {
@@ -498,7 +488,7 @@ function apiRequests() {
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
         let checkedMarkets = [];
-       
+
         if (oddsData.length > 0) {
           let counter = 0;
           try {
@@ -668,7 +658,6 @@ function apiRequests() {
           } catch (error) {
             console.error('getOddsFromProvider----->', error);
           }
-          
         }
       },
       (error) => {
@@ -699,7 +688,6 @@ function apiRequests() {
             //console.log('checkInPlay: api res is empty')
             return;
           }
-      
 
           let apiLiveEventIds = [];
           for (const event of events) {
@@ -796,7 +784,7 @@ function apiRequests() {
   }
 
   async function setInplay(sportsId) {
-    console.log('setInplaysetInplaysetInplaysetInplaysetInplaysetInplay')
+    console.log('setInplaysetInplaysetInplaysetInplaysetInplaysetInplay');
     try {
       const markets = await MarketIDS.find({
         inPlay: true,
@@ -869,7 +857,9 @@ function apiRequests() {
         };
         events = await inPlayEvents.find(queryPastEvents).sort({ openDate: -1 }).limit(10).exec();
       }
-
+      console.log('events');
+      console.log(events);
+      console.log('events');
       for (let index = 0; index < events.length; index++) {
         const event = events[index];
         // Before the set inplay true
