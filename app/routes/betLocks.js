@@ -137,16 +137,11 @@ async function gettingBlockUsers(req, res) {
         if (getUser) {
           const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role };
           const blockparent = getUser.blockedSubMarketsByParent.length
-          if (blockparent) {
-            User.updateOne({ userId: getUser.userId }, { $set: { betLockStatus : true}})
-          }
-          console.log(getUser.betLockStatus);
+
+          blockparent ? User.updateOne({ userId: getUser.userId }, { $set: { betLockStatus: true } }) : User.updateOne({ userId: getUser.userId }, { $set: { betLockStatus: false } })
+
           if (getUser.createdBy === userID) {
-            if (blockparent) {
-              blockUsers.push(userInfo);
-            } else {
-              unblockUsers.push(userInfo);
-            }
+            blockparent ? blockUsers.push(userInfo) : unblockUsers.push(userInfo)
           }
         }
       } catch (error) {
