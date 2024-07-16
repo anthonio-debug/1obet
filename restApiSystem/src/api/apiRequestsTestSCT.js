@@ -237,7 +237,7 @@ function apiRequests() {
       const response = await axios.post(url, requestData, header);
 
       let events = response.data.result;
-      console.log("eeee:",events);
+      
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
@@ -379,7 +379,7 @@ function apiRequests() {
             if (betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
               console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
               if (betfairFancy >= 0) {
-                const betfairFancy = true;
+                const hasbetfairFancy = true;
               }
 
               marketIds.push({
@@ -387,7 +387,7 @@ function apiRequests() {
                 marketName: element.marketName,
                 openDate: Date.parse(element.marketStartTime),
                 status: marketStatus,
-                betfairFancy: betfairFancy,
+                hasbetfairFancy: hasbetfairFancy,
                 runners: tempRunners
               });
             }
@@ -438,7 +438,7 @@ function apiRequests() {
                 marketId: marketIds[index].id + '',
                 marketName: marketIds[index].marketName,
                 sportID: sportID,
-                betfairFancy: betfairFancy,
+                hasbetfairFancy: hasbetfairFancy,
                 totalMatched: marketIds[index].totalMatched,
                 status: marketIds[index].status,
                 index: index,
