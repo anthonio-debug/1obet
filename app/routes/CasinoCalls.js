@@ -174,7 +174,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           log(
             `${JSON.stringify({
               userId: user.userId,
-              description: `Casino (${game.name})`,
+              description: `Casino (${GameName})`,
               date: now.getTime(),
               createdAt: formattedDate,
               amount: -bettor_lost_amount,
@@ -187,7 +187,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               calledArea: " difference < 0 ",
               createdBy: 0,
               casinoBetAmount: debit,
-              event: game.name,
+              event: GameName,
               betDateTime: betTime,
               betId: payload.transaction_id,
               marketId: payload.game_id,
@@ -195,39 +195,14 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               matchId: payload.game_id,
               cashOrCredit: "Bet",
               sportsId: "6",
-            })}\n\n\n${JSON.stringify(payload)}`,
+            })}\n\n\n${JSON.stringify(payload)}\n\n\n${JSON.stringify(user)}\n\n\n${JSON.stringify(lastMaxWithdraw)}\n\n\n${JSON.stringify(game)}\n\n\n${JSON.stringify(lastDebits)}`,
             path.join(__dirname, '../../../', 'log1.log')
           );
-          console.log({
-            userId: user.userId,
-            description: `Casino (${game.name})`,
-            date: now.getTime(),
-            createdAt: formattedDate,
-            amount: -bettor_lost_amount,
-            balance,
-            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
-            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
-            cash: lastMaxWithdraw?.cash || 0,
-            credit: lastMaxWithdraw?.credit || 0,
-            creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-            calledArea: " difference < 0 ",
-            createdBy: 0,
-            casinoBetAmount: debit,
-            event: game.name,
-            betDateTime: betTime,
-            betId: payload.transaction_id,
-            marketId: payload.game_id,
-            roundId: payload.round_id,
-            matchId: payload.game_id,
-            cashOrCredit: "Bet",
-            sportsId: "6",
-          })
-          return res.json({ status: '500', msg: 'Negative bet not allowed!' });
         } else {
           log(
             `${JSON.stringify({
               userId: user.userId,
-              description: `Casino (${game.name})`,
+              description: `Casino (${GameName})`,
               date: now.getTime(),
               createdAt: formattedDate,
               amount: -bettor_lost_amount,
@@ -240,7 +215,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               calledArea: " difference < 0 ",
               createdBy: 0,
               casinoBetAmount: debit,
-              event: game.name,
+              event: GameName,
               betDateTime: betTime,
               betId: payload.transaction_id,
               marketId: payload.game_id,
@@ -248,7 +223,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               matchId: payload.game_id,
               cashOrCredit: "Bet",
               sportsId: "6",
-            })}\n\n\n${JSON.stringify(payload)}`,
+            })}\n\n\n${JSON.stringify(payload)}\n\n\n${JSON.stringify(user)}\n\n\n${JSON.stringify(lastMaxWithdraw)}\n\n\n${JSON.stringify(game)}\n\n\n${JSON.stringify(lastDebits)}`,
             path.join(__dirname, '../../../', 'log2.log')
           );
         }
@@ -1025,6 +1000,11 @@ async function rollbackFun(req, res) {
 
 function casino(req, res) {
   const { action, remote_id } = req.query;
+  if(remote_id==6896479){
+    console.log(`===========casino===========${action}=============${req.query?.amount}============`)
+    console.log(JSON.stringify(req.query, null, 2))
+    console.log(`===========casino===========${action}=============${req.query?.amount}============`)
+  }
   if (!remote_id || !action) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
