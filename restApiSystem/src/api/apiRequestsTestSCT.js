@@ -237,7 +237,7 @@ function apiRequests() {
       const response = await axios.post(url, requestData, header);
 
       let events = response.data.result;
-
+      console.log("eeee:",events);
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
