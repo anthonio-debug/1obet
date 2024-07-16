@@ -687,7 +687,7 @@ function apiRequests() {
         async (response) => {
           // Take last inplay list for events
           const events = response.data.result;
-          if (events.length === 0) {
+          if (!events || events?.length === 0) {
             //console.log('checkInPlay: api res is empty')
             return;
           }
