@@ -462,13 +462,7 @@ function apiRequests() {
         }
         console.log('============================================================================================', arrMarketIds);
 
-
-        arrMarketIds.forEach(market => {
-
-          console.log('Overs Market ID:', market.id);
-          
         
-      });
 
 
       
@@ -479,7 +473,7 @@ function apiRequests() {
           sensitivity: 'base'
         })
       });
-      console.length("",sorted.length);
+      console.log("=================length>>>>>>>>",sorted.length);
       console.log("I am sorted:::::::::::::::::::::::::::::::",sorted);
 
 
@@ -818,7 +812,7 @@ function apiRequests() {
   }
 
   async function setInplay(sportsId) {
-    console.log('setInplaysetInplaysetInplaysetInplaysetInplaysetInplay');
+
     try {
       const markets = await MarketIDS.find({
         inPlay: true,
