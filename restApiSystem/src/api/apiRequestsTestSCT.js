@@ -381,8 +381,8 @@ function apiRequests() {
                
                
 
-
-
+                console.log("NOTTTTTTcompleteMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",completeMarketName);
+                console.log("NOTTTTTTFANCY>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",betfairFancy);
             if (betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
               
               console.log("completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",completeMarketName);
@@ -472,6 +472,7 @@ function apiRequests() {
       };
     }
   }
+
 
   async function getOddsFromProvider(marketIdsArray, intervalId) {
     let tempArray = [];
