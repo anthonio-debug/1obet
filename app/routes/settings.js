@@ -36,6 +36,7 @@ const loginRecord = require('../models/loginRecord');
 
 const SelectedCasino = require('../models/selectedCasino');
 const { rollbackCasino, creditCasino } = require('../../helper/casino/casinoHelper');
+const { fetchSession, fetchBookmakerList } = require("./../../helper/api/sessionAPIHelper.js")
 
 function updateDefaultTheme(req, res) {
   const errors = validationResult(req);
@@ -210,54 +211,65 @@ async function updateMatchType(req, res) {
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.errors });
   }
+
   try {
     const { _id, matchType, iconStatus, eventId, liveUrl } = req.body;
 
-    //coded by qaiser started on event with bet delayed time
-    /*//console.log(
-      "I am here with event Id---------------------------------:",
-      eventId
-    );*/
-
-    const BetSecondsVal = await BetPlaceHold.findOne({
-      eventId: eventId
-    }).exec();
-
+    // Check if BetPlaceHold exists for the event
+    const BetSecondsVal = await BetPlaceHold.findOne({ eventId: eventId }).exec();
     if (!BetSecondsVal) {
       const betseconds = new BetPlaceHold({
         sportsId: 6,
         secondsValue: 4,
         eventId: eventId
       });
-      betseconds.save();
+      await betseconds.save();
     }
 
-    const updatedData = await Events.findByIdAndUpdate(_id, { $set: { matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl } }, (err, updatedMatch) => {
-      if (err) {
-        //console.log("Error updating figure:", err);
-      } else {
-        //console.log("Updated match:", updatedMatch);
+    // Retrieve current event details
+    const currentEvent = await inPlayEvents.findOne({ Id: eventId });
+    let hasFancyMatch = currentEvent ? currentEvent.hasFancyMatch : false;
+    let hasBookmaker = currentEvent ? currentEvent.hasBookmaker : false;
+
+    // Check and update fancy and bookmaker statuses
+    if (!hasFancyMatch) {
+      const fancySessions = await fetchSession(eventId);
+      if (fancySessions && fancySessions.length > 0) {
+        hasFancyMatch = true;
       }
-    })
-      .clone()
-      .catch(function (err) {
-        //console.log(err);
-      });
-    //console.log(updatedData);
+    }
+
+    if (!hasBookmaker) {
+      const bookmakerSession = await fetchBookmakerList(eventId);
+      if (bookmakerSession && bookmakerSession.length > 0) {
+        hasBookmaker = true;
+      }
+    }
+
+    // Update event details
+    const updatedData = await Events.findByIdAndUpdate(
+      _id, {
+      $set: {
+        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancyMatch: hasFancyMatch
+      }
+    }, { upsert: true, new: true }).exec();
 
     res.status(200).json({
       success: true,
-      message: 'Updated Successfully'
+      message: 'Updated Successfully',
+      result: updatedData,
     });
   } catch (error) {
     console.error(error);
     res.status(500).json({
       success: false,
-      message: 'Failed to save fancy data4',
+      message: 'Failed to save fancy data',
       error: error.message
     });
   }
 }
+
+
 
 async function getSideBarMenu(req, res) {
   let type = [];
@@ -1719,7 +1731,7 @@ async function setLoginHistories(req, res) {
         thead: ['Username', 'Last login', 'Ip Address', 'City', 'Location'],
         data: lastLogins
       });
-    } catch (error) {}
+    } catch (error) { }
   }
 }
 

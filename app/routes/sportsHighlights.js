@@ -64,11 +64,13 @@ async function getAllSportsHighlight(req, res) {
           status: "$status",
           iconStatus: '$iconStatus',
           matchTypeProvider: '$matchTypeProvider',
-          betAllowed : "$betAllowed",
+          betAllowed: "$betAllowed",
           matchCanceledStatus: "$matchCanceledStatus",
           matchStoppedReason: '$matchStoppedReason',
           theSportsId: "$theSportsId",
-          CompanySetStatus: "$CompanySetStatus"
+          CompanySetStatus: "$CompanySetStatus",
+          hasFancyMatch: "$hasFancyMatch",
+          hasBookmaker: "$hasBookmaker"
         },
       },
     ]);
@@ -107,7 +109,7 @@ async function getAllSportsHighlight(req, res) {
         $lt: endOfDayTimestamp
       }
     })
-    const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId :{ $in : ids }})
+    const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
 
     //console.log(" ======== ids ", ids);
 

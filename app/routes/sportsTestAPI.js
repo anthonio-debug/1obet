@@ -54,9 +54,9 @@ async function listEvents(req, res) {
       }
     }
     const response = await axios.post(`${apiURL}/listEvents`, body)
-    res.status(200).json({success: true, data: response})
+    res.status(200).json({ success: true, data: response })
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get events"})
+    res.status(500).json({ success: false, msg: "Failed to get events" })
   }
 }
 
@@ -75,24 +75,24 @@ async function listMarketBook(req, res) {
         resultArray.push(odd)
       }
     }
-    res.status(200).json({success: true, data: resultArray})
+    res.status(200).json({ success: true, data: resultArray })
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get "})
+    res.status(500).json({ success: false, msg: "Failed to get " })
   }
 }
 
 async function inActiveUserExposure(req, res) {
   try {
-    const stuckUsers = await User.find({exposure: {$lt: 0}})
+    const stuckUsers = await User.find({ exposure: { $lt: 0 } })
     let newResultArray = [];
     if (stuckUsers.length > 0) {
       for (let i = 0; i < stuckUsers.length; i++) {
-        const activeBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 1})
+        const activeBetCount = await Bets.countDocuments({ userId: stuckUsers[i].userId, status: 1 })
         if (activeBetCount > 0) {
           // stuckUsers.pop(e => e.userId == stuckUsers[i].userId)
           continue;
         } else {
-          const inActiveBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 0})
+          const inActiveBetCount = await Bets.countDocuments({ userId: stuckUsers[i].userId, status: 0 })
           // //console.log(inActiveBetCount)
           if (inActiveBetCount > 0) {
             //console.log({inActiveBetCount})
@@ -109,19 +109,19 @@ async function inActiveUserExposure(req, res) {
         }
       }
     }
-    res.status(200).json({success: true, data: newResultArray})
+    res.status(200).json({ success: true, data: newResultArray })
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get "})
+    res.status(500).json({ success: false, msg: "Failed to get " })
   }
 }
 
 async function activeUserExposure(req, res) {
   try {
-    const stuckUsers = await User.find({exposure: {$gte: 0.1}})
+    const stuckUsers = await User.find({ exposure: { $gte: 0.1 } })
     let newResultArray = []
     if (stuckUsers.length > 0) {
       for (let i = 0; i < stuckUsers.length; i++) {
-        const activeBetCount = await Bets.countDocuments({userId: stuckUsers[i].userId, status: 1})
+        const activeBetCount = await Bets.countDocuments({ userId: stuckUsers[i].userId, status: 1 })
         if (activeBetCount > 0) {
           stuckUsers[i].BetCount = activeBetCount;
           const newData = {
@@ -136,9 +136,9 @@ async function activeUserExposure(req, res) {
         }
       }
     }
-    res.status(200).json({success: true, data: newResultArray})
+    res.status(200).json({ success: true, data: newResultArray })
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get "})
+    res.status(500).json({ success: false, msg: "Failed to get " })
   }
 }
 
@@ -148,19 +148,19 @@ async function betStatisticsByUserId(req, res) {
   try {
     const userStats = await Bets.aggregate([
       {
-        $match: {userId: parseInt(userId)} // Match bets for the specific user
+        $match: { userId: parseInt(userId) } // Match bets for the specific user
       },
       {
         $group: {
           _id: "$marketId",
-          betIds: {$addToSet: "$_id"},
-          totalDifference: {$sum: {$subtract: ["$winningAmount", "$loosingAmount"]}},
-          totalExposure: {$sum: {$cond: {if: "$calculateExp", then: "$exposureAmount", else: 0}}},
-          winningAmounts: {$addToSet: {$cond: {if: "$calculateExp", then: "$winningAmount", else: 0}}},
-          loosingAmounts: {$addToSet: {$cond: {if: "$calculateExp", then: "$loosingAmount", else: 0}}},
-          totalPosition: {$sum: {$cond: {if: "$calculateExp", then: "$position", else: 0}}},
-          events: {$addToSet: "$event"},
-          runnerNames: {$addToSet: "$runnerName"},
+          betIds: { $addToSet: "$_id" },
+          totalDifference: { $sum: { $subtract: ["$winningAmount", "$loosingAmount"] } },
+          totalExposure: { $sum: { $cond: { if: "$calculateExp", then: "$exposureAmount", else: 0 } } },
+          winningAmounts: { $addToSet: { $cond: { if: "$calculateExp", then: "$winningAmount", else: 0 } } },
+          loosingAmounts: { $addToSet: { $cond: { if: "$calculateExp", then: "$loosingAmount", else: 0 } } },
+          totalPosition: { $sum: { $cond: { if: "$calculateExp", then: "$position", else: 0 } } },
+          events: { $addToSet: "$event" },
+          runnerNames: { $addToSet: "$runnerName" },
         },
       },
       {
@@ -178,9 +178,9 @@ async function betStatisticsByUserId(req, res) {
       }
     ]);
 
-    res.status(200).json({success: true, data: userStats});
+    res.status(200).json({ success: true, data: userStats });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
 
@@ -189,9 +189,9 @@ async function getCricketScore(req, res) {
     // const eventId = 32981327
     const response = await axios.get('http://167.99.198.2/api/matches/score/32981327')
     let resultArray = response;
-    res.status(200).json({success: true, data: resultArray})
+    res.status(200).json({ success: true, data: resultArray })
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get "})
+    res.status(500).json({ success: false, msg: "Failed to get " })
   }
 }
 
@@ -223,9 +223,9 @@ async function testAPI(req, res) {
 
     const marketsData = response.data;
 
-    res.status(200).json({success: true, data: marketsData});
+    res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
 
@@ -328,9 +328,9 @@ async function getEventsBySportsId(req, res) {
 
     const marketsData = response.data;
 
-    res.status(200).json({success: true, data: marketsData});
+    res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
 
@@ -359,9 +359,9 @@ async function getOddsByMarketId(req, res) {
 
     const marketsData = response.data;
 
-    res.status(200).json({success: true, data: marketsData});
+    res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
 
@@ -389,9 +389,9 @@ async function getMarketType(req, res) {
     );
     const marketsData = response.data;
 
-    res.status(200).json({success: true, data: marketsData});
+    res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
 
@@ -440,9 +440,9 @@ async function getOddsByMultiMarketId(req, res) {
 
     const marketsData = oddsResponse?.data?.result;
 
-    res.status(200).json({success: true, data: marketsData});
+    res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
 
@@ -462,13 +462,13 @@ async function getTodayEventsBySportsId(req, res) {
       {
         sportsId: sportsId,
         status: "OPEN",
-        openDate: {$gte: startOfDayTimestamp, $lt: endOfDayTimestamp}
+        openDate: { $gte: startOfDayTimestamp, $lt: endOfDayTimestamp }
       },
       {
         _id: 1,
         Id: 1,
         name: 1,
-        openDate: {$toDate: "$openDate"}
+        openDate: { $toDate: "$openDate" }
       }
     );
 
@@ -482,9 +482,9 @@ async function getTodayEventsBySportsId(req, res) {
         openDate: new Date(events[k].openDate)
       })
     }
-    res.status(200).json({success: true, data: data});
+    res.status(200).json({ success: true, data: data });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
 
@@ -533,24 +533,26 @@ async function getMarketsByMarketType(req, res) {
 
     const marketsData = marketResponse?.data?.result;
 
-    res.status(200).json({success: true, data: marketsData});
+    res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
 
 async function getFanciesByEventId(req, res) {
   const eventId = req.params.eventId;
   const gtype = req.query.gtype;
+  console.log("gtype===================================", gtype);
+  console.log("eventId===================================", eventId);
   try {
     let sessions = await fetchSession(eventId)
     if (gtype) {
       sessions = sessions.filter(item => item.gtype === gtype)
     }
 
-    res.status(200).json({success: true, data: sessions});
+    res.status(200).json({ success: true, data: sessions });
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get Error: " + err.message})
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
 
@@ -558,14 +560,14 @@ async function fetchEvents(req, res) {
   const sportsId = req.params.sportsId;
   try {
     await apiSystemRacing.fetchRacingEvent(sportsId)
-    res.status(200).json({success: true, message: `Fetched successfully with sportsId: ${sportsId}`});
+    res.status(200).json({ success: true, message: `Fetched successfully with sportsId: ${sportsId}` });
   } catch (err) {
-    res.status(500).json({success: false, message: `Failed to get Error: ${err}`})
+    res.status(500).json({ success: false, message: `Failed to get Error: ${err}` })
   }
 }
 
 async function getEventList(req, res) {
-  const {sportsId, from, to} = req.body;
+  const { sportsId, from, to } = req.body;
   try {
     const now = new Date()
     const fromTimestamp = new Date(now.getTime() - (Number(from) * 24 * 60 * 60 * 1000))
@@ -574,23 +576,23 @@ async function getEventList(req, res) {
 
     const events = await InPlayEvents.find({
       sportsId: `${sportsId}`,
-      openDate: {$gte: fromTimestamp, $lte: toTimeStamp},
+      openDate: { $gte: fromTimestamp, $lte: toTimeStamp },
     })
 
-    res.status(200).json({success: true, results: events});
+    res.status(200).json({ success: true, results: events });
   } catch (err) {
-    res.status(500).json({success: false, message: `Failed to get Error: ${err}`})
+    res.status(500).json({ success: false, message: `Failed to get Error: ${err}` })
   }
 }
 async function closeOpenMarkets(req, res) {
 
-  
+
   try {
-  
-    
-    res.status(200).json({success: true, data: 'Testing.....'})
+
+
+    res.status(200).json({ success: true, data: 'Testing.....' })
   } catch (err) {
-    res.status(500).json({success: false, msg: "Failed to get "})
+    res.status(500).json({ success: false, msg: "Failed to get " })
   }
 
 }
@@ -664,19 +666,19 @@ async function getScoreLimitlessByEventId(req, res) {
 
 async function createMissingSessions(req, res) {
   totalSession = 20;
-    
 
-    for (let i = 8; i < totalSession; i++) {
-      const session = new Session({
-        sessionNo: i,
-        eventId: 33347567,
-        Id: '666c4091a8b2218c182e8379',
-        createdAt:1718399592994,
-        updatedAt:1718399592994,
-        manuelSave:false
-      });
-      session.save();
-    }
+
+  for (let i = 8; i < totalSession; i++) {
+    const session = new Session({
+      sessionNo: i,
+      eventId: 33347567,
+      Id: '666c4091a8b2218c182e8379',
+      createdAt: 1718399592994,
+      updatedAt: 1718399592994,
+      manuelSave: false
+    });
+    session.save();
+  }
 
 
 }
@@ -687,34 +689,34 @@ async function TestTrial(req, res) {
   const eventId = req.params.eventId;
 
   try {
-    
+
 
     let FindInMe = "Yes here you can Player in 1 find my string";
     let FindInMeRes = FindInMe.toLowerCase();
     let findMe1 = FindInMeRes.search("player in");
     let findMe2 = FindInMeRes.search("players in");
-    
 
 
-    if( findMe1 > 0 ||  findMe2 > 0){
 
-    await InPlayEvents.updateMany(
-      { Id: eventId },
-      { $set: { player_in:1 } }
-    )
-    res.status(200).json({success: true, message: 'Event updated successfully.'});
-  }else{
-    await InPlayEvents.updateMany(
-      { Id: eventId },
-      { $set: { player_in:0 } }
-    )
-    res.status(200).json({success: true, message: 'Event update failed.'});
-  }
-   
-    
+    if (findMe1 > 0 || findMe2 > 0) {
+
+      await InPlayEvents.updateMany(
+        { Id: eventId },
+        { $set: { player_in: 1 } }
+      )
+      res.status(200).json({ success: true, message: 'Event updated successfully.' });
+    } else {
+      await InPlayEvents.updateMany(
+        { Id: eventId },
+        { $set: { player_in: 0 } }
+      )
+      res.status(200).json({ success: true, message: 'Event update failed.' });
+    }
+
+
   } catch (error) {
     console.error('Error updating odds:', error);
-    res.status(500).json({success: false, message: 'Internal server error'});
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 
 
@@ -727,36 +729,24 @@ async function deleteOdds(req, res) {
 
 
   try {
-
-
-
-    
-
-
-
-
-    
     // await Bets.updateMany(
     //   { subMarketId: '7', eventId: '33345422'},
     //   { $set: { isManuel:true } }
     // )
-   
-   // await InPlayEvents.updateMany({isManuel:true}, {subMarketId: '7', eventId: '33340930'});
-
-    
-   const totalgreyhound = await MarketIDS.countDocuments({ winnerInfo: null,sportID:4339 });
-   const totalhorses = await MarketIDS.countDocuments({ winnerInfo: null,sportID:7 });
-   //await MarketIDS.deleteMany({winnerInfo: null,sportID:4339})
-   //await MarketIDS.deleteMany({winnerInfo: null,sportID:7})
-   //await FancyOdds.deleteMany({})
-   //await  RaceOdds.deleteMany({})
+    // await InPlayEvents.updateMany({isManuel:true}, {subMarketId: '7', eventId: '33340930'});
+    const totalgreyhound = await MarketIDS.countDocuments({ winnerInfo: null, sportID: 4339 });
+    const totalhorses = await MarketIDS.countDocuments({ winnerInfo: null, sportID: 7 });
+    //await MarketIDS.deleteMany({winnerInfo: null,sportID:4339})
+    //await MarketIDS.deleteMany({winnerInfo: null,sportID:7})
+    //await FancyOdds.deleteMany({})
+    //await  RaceOdds.deleteMany({})
     //await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
 
-    res.status(200).json({success: true, message: 'Odds deleted successfully...'+totalhorses + "=======" + totalgreyhound});
+    res.status(200).json({ success: true, message: 'Odds deleted successfully...' + totalhorses + "=======" + totalgreyhound });
   } catch (error) {
     console.error('Error updating odds:', error);
-    res.status(500).json({success: false, message: 'Internal server error'});
+    res.status(500).json({ success: false, message: 'Internal server error' });
   }
 }
 
@@ -849,8 +839,8 @@ async function cronOdds(req, res) {
 }
 
 async function getTheSportsMatchScoreEvents(req, res) {
-  
-  
+
+
   const { sportsId } = req.params;
   const inplays = await inPlayEvents.find({ sportsId });
   let sportsName = 'cricket';
@@ -875,7 +865,7 @@ async function getTheSportsMatchScoreEvents(req, res) {
         });
         for (const newData of newDatas) {
           const data = inplays.filter((e) => (
-            e.name.toLowerCase().includes(newData.home_team.toLowerCase()) || 
+            e.name.toLowerCase().includes(newData.home_team.toLowerCase()) ||
             e.name.toLowerCase().includes(newData.away_team.toLowerCase()) ||
             newData.home_team.toLowerCase().includes(e.name.split(' v ')[0]) ||
             newData.away_team.toLowerCase().includes(e.name.split(' v ')[1])
@@ -887,7 +877,7 @@ async function getTheSportsMatchScoreEvents(req, res) {
           }
         }
         //for (const item of results) {
-          //await inPlayEvents.updateOne({ _id: item._id }, { theSportsId: item.theSports.id });
+        //await inPlayEvents.updateOne({ _id: item._id }, { theSportsId: item.theSports.id });
         //}
       }
       res.json({ status: true, data: { count: results.length, results } });
@@ -898,7 +888,7 @@ async function getTheSportsMatchScoreEvents(req, res) {
     });
 
 
-    
+
 }
 
 
@@ -929,7 +919,7 @@ async function getMatchEvents(req, res) {
         });
         for (const newData of newDatas) {
           const data = inplays.filter((e) => (
-            e.name.toLowerCase().includes(newData.home_team.toLowerCase()) || 
+            e.name.toLowerCase().includes(newData.home_team.toLowerCase()) ||
             e.name.toLowerCase().includes(newData.away_team.toLowerCase()) ||
             newData.home_team.toLowerCase().includes(e.name.split(' v ')[0]) ||
             newData.away_team.toLowerCase().includes(e.name.split(' v ')[1])
@@ -941,7 +931,7 @@ async function getMatchEvents(req, res) {
           }
         }
         //for (const item of results) {
-          //await inPlayEvents.updateOne({ _id: item._id }, { theSportsId: item.theSports.id });
+        //await inPlayEvents.updateOne({ _id: item._id }, { theSportsId: item.theSports.id });
         //}
       }
       res.json({ status: true, data: { count: results.length, results } });
@@ -986,5 +976,5 @@ router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
 router.post('/list-events', getEventList)
 
-module.exports = {router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore};
+module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore };
 
