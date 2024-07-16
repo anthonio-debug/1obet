@@ -369,6 +369,7 @@ function apiRequests() {
               runnerName: element?.runners[k]?.runnerName
             });
           }
+          let hasbetfairFancy = false;
           if (sportID == '4') {
             let hasbetfairFancy = false;
             let completeMarketName = element.marketName;
