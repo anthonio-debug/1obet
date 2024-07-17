@@ -438,18 +438,19 @@ function apiRequests() {
         
         console.log("=================length>>>>>>>>",arrMarketIds.length);
         
-              
+        //sorting start
         
-              const sorted = arrMarketIds.sort((a, b) => {
+              const sortedarrMarketIds = arrMarketIds.sort((a, b) => {
                 return a.localeCompare(b, undefined, {
                   numeric: true,
                   sensitivity: 'base'
                 })
               });
-              console.log("=================length>>>>>>>>",sorted.length);
-              console.log("I am sorted:::::::::::::::::::::::::::::::",sorted);
+        //sorting end      
+              //console.log("=================length>>>>>>>>",sortedarrMarketIds.length);
+              console.log("I am sorted:::::::::::::::::::::::::::::::",sortedarrMarketIds);
 
-
+              sortedarrMarketIds.indexOf("Apple"); 
 
 
         for (let index = 0; index < marketIds.length; index++) {
@@ -460,12 +461,22 @@ function apiRequests() {
             marketId: marketIds[index].id + ''
           });
 
+          if(marketIds[index].hasbetfairFancy==true){
+              console.log("MarkentName::::::::::::::::::::::::::::",marketIds[index].marketName);
+              console.log("Index::::::::::::::::::::::::::::",marketIds.indexOf(marketIds[index].marketName));
+          }
+          
+
+
           if (!marketID) {
             const countOfMarket = await MarketIDS.countDocuments({ eventId: eventId, status: 'OPEN' });
 
             if (countOfMarket > (sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount)) {
               return;
             } else {
+
+
+
               const newMarket = new MarketIDS({
                 eventId: eventId,
                 marketId: marketIds[index].id + '',
