@@ -464,6 +464,7 @@ function apiRequests() {
           if(marketIds[index].hasbetfairFancy==true){
               console.log("MarkentName::::::::::::::::::::::::::::",marketIds[index].marketName);
               console.log("Index::::::::::::::::::::::::::::",sortedarrMarketIds.indexOf(marketIds[index].marketName));
+              marketIds[index].sort = sortedarrMarketIds.indexOf(marketIds[index].marketName);
           }
           
 
