@@ -396,6 +396,7 @@ function apiRequests() {
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
+                sort: 1,
                 openDate: Date.parse(element.marketStartTime),
                 status: marketStatus,
                 hasbetfairFancy: hasbetfairFancy,
@@ -430,6 +431,27 @@ function apiRequests() {
               });
           }
         });
+
+
+        console.log('============================================================================================', arrMarketIds);
+
+        
+        console.log("=================length>>>>>>>>",arrMarketIds.length);
+        
+              
+        
+              const sorted = arrMarketIds.sort((a, b) => {
+                return a.localeCompare(b, undefined, {
+                  numeric: true,
+                  sensitivity: 'base'
+                })
+              });
+              console.log("=================length>>>>>>>>",sorted.length);
+              console.log("I am sorted:::::::::::::::::::::::::::::::",sorted);
+
+
+
+
         for (let index = 0; index < marketIds.length; index++) {
           var ev = parseInt(eventId);
 
@@ -462,21 +484,7 @@ function apiRequests() {
           }
         }
 
-        console.log('============================================================================================', arrMarketIds);
-
         
-console.log("=================length>>>>>>>>",arrMarketIds.length);
-
-      
-
-      const sorted = arrMarketIds.sort((a, b) => {
-        return a.localeCompare(b, undefined, {
-          numeric: true,
-          sensitivity: 'base'
-        })
-      });
-      console.log("=================length>>>>>>>>",sorted.length);
-      console.log("I am sorted:::::::::::::::::::::::::::::::",sorted);
 
 
 
