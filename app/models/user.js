@@ -51,7 +51,8 @@ const userSchema = new Schema({
   activeBetPlacing: { type: Boolean, default: false },
   cashWithdrawDisable: { type: Boolean, default: false },
   casinoAllowed: { type: Boolean, default: true },
-  digitVerification: { type: String, default: null }
+  digitVerification: { type: String, default: null },
+  lockStatus: { type: Boolean, default: false }
 });
 
 userSchema.methods.hashPass = function (next) {
