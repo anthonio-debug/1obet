@@ -627,7 +627,8 @@ function apiRequests() {
 
                     tempRunners.push(tempElement);
                   }
-
+                  var sttr = element.totalMatched;
+                  const totalMatched = sttr.replace('.','');
                   let frontData = {
                     sportsId: marketData.sportID,
                     runners: tempRunners,
@@ -638,7 +639,7 @@ function apiRequests() {
                     isInplay: element.inplay,
                     numberOfRunners: element.runners.length,
                     numberOfActiveRunners: numberOfActiveRunners,
-                    totalMatched: element.totalMatched
+                    totalMatched: totalMatched
                   };
 
                   if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
@@ -653,7 +654,7 @@ function apiRequests() {
                       isInplay: element.inplay,
                       numberOfRunners: element.runners.length,
                       numberOfActiveRunners: numberOfActiveRunners,
-                      totalMatched: element.totalMatched,
+                      totalMatched: totalMatched,
                       createdAt: new Date().getTime()
                     };
                     //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",element.status);
