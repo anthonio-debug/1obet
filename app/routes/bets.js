@@ -3580,9 +3580,10 @@ async function getMatchedBets(req, res) {
         sportsId: eventId.sportsId,
         openDate: {
           $gt: eventId.openDate,
-          isShowed:true,
-          CompanySetStatus:"OPEN"
-        }
+          
+        },
+        isShowed:true,
+        CompanySetStatus:"OPEN"
       }).limit(5);
     }
 
