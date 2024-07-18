@@ -135,7 +135,7 @@ async function gettingBlockUsers(req, res) {
         const getUser = await User.findOne({ userId: user });
 
         if (getUser) {
-          const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role, blockStatus: getUser.blockStatus };
+          const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role, blockStatus: getUser.blockStatus, blockedSubMarketsByParent: getUser.blockedSubMarketsByParent };
           const blockparent = getUser.blockedSubMarketsByParent.length
           blockparent ? User.updateOne({ userId: getUser.userId }) : User.updateOne({ userId: getUser.userId })
 
