@@ -380,10 +380,14 @@ function apiRequests() {
             let completeMarketName = element.marketName;
             let FindInMeRes = completeMarketName.toLowerCase();
             let betfairFancy = FindInMeRes.search('overs line');
+
+
+            let betfairFancy2 = FindInMeRes.search('runs line');
+
             //console.log("MarketName:",element.marketName);
-             if (betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
+             if (betfairFancy2 >=0 || betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
               
-              if(betfairFancy >= 0){
+              if(betfairFancy >= 0 || betfairFancy2 >= 0){
                 
                 hasbetfairFancy = true;
                 console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
