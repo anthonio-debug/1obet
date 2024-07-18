@@ -83,12 +83,12 @@ async function addBetLock(req, res) {
     if (allUsers && lock) {
       await User.updateMany(
         { createdBy: userId },
-        { $set: { blockedSubMarketsByParent: subMarketIds, lockStatus: true } }
+        { $set: { blockedSubMarketsByParent: subMarketIds, blockStatus: true } }
       );
     } else if (allUsers && !lock) {
       await User.updateMany(
         { createdBy: userId },
-        { $set: { blockedSubMarketsByParent: [], lockStatus: false } }
+        { $set: { blockedSubMarketsByParent: [], blockStatus: false } }
       );
     } else if (!allUsers) {
       const usersToUnlock = await User.find({ createdBy: userId, userId: { $nin: userIds } });
@@ -96,7 +96,7 @@ async function addBetLock(req, res) {
       for (const user of usersToUnlock) {
         await User.updateOne(
           { userId: user.userId },
-          { $set: { blockedSubMarketsByParent: [], lockStatus: false } }
+          { $set: { blockedSubMarketsByParent: [], blockStatus: false } }
         );
       }
 
@@ -105,7 +105,7 @@ async function addBetLock(req, res) {
       for (const user of usersToLock) {
         await User.updateOne(
           { userId: user.userId },
-          { $set: { blockedSubMarketsByParent: subMarketIds, lockStatus: true } }
+          { $set: { blockedSubMarketsByParent: subMarketIds, blockStatus: true } }
         );
       }
     }
@@ -135,7 +135,7 @@ async function gettingBlockUsers(req, res) {
         const getUser = await User.findOne({ userId: user });
 
         if (getUser) {
-          const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role, lockStatus: getUser.lockStatus };
+          const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role, blockStatus: getUser.blockStatus };
           const blockparent = getUser.blockedSubMarketsByParent.length
           blockparent ? User.updateOne({ userId: getUser.userId }) : User.updateOne({ userId: getUser.userId })
 

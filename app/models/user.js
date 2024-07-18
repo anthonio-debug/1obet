@@ -52,7 +52,7 @@ const userSchema = new Schema({
   cashWithdrawDisable: { type: Boolean, default: false },
   casinoAllowed: { type: Boolean, default: true },
   digitVerification: { type: String, default: null },
-  lockStatus: { type: Boolean, default: false }
+  blockStatus: { type: Boolean, default: false }
 });
 
 userSchema.methods.hashPass = function (next) {
