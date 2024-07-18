@@ -30,12 +30,13 @@ async function addBetLock(req, res) {
 
     async function getSubMarketId(subMarketName) {
       const subMarket = await SubMarket.findOne({ name: subMarketName, marketId }, { Id: 1 });
-      console.log(subMarket);
-      return subMarket
+      console.log(subMarket.Id);
+      return subMarket ? subMarket.Id : null;
     }
 
     if (matchOdds) {
       const matchOddsId = await getSubMarketId('Match Odds');
+      console.log(matchOddsId);
       if (matchOddsId) {
         subMarketIds.push({ eventId, subMarketId: matchOddsId });
       }
@@ -135,7 +136,7 @@ async function gettingBlockUsers(req, res) {
         const getUser = await User.findOne({ userId: user });
 
         if (getUser) {
-          const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role, blockStatus: getUser.blockStatus, blockedSubMarketsByParent: getUser.blockedSubMarketsByParent };
+          const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role, blockStatus: getUser.blockStatus, blockedMarkets: getUser.blockedSubMarketsByParent };
           const blockparent = getUser.blockedSubMarketsByParent.length
           blockparent ? User.updateOne({ userId: getUser.userId }) : User.updateOne({ userId: getUser.userId })
 
