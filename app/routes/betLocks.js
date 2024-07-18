@@ -83,12 +83,12 @@ async function addBetLock(req, res) {
     if (allUsers && lock) {
       await User.updateMany(
         { createdBy: userId },
-        { $set: { blockedSubMarketsByParent: subMarketIds } }
+        { $set: { blockedSubMarketsByParent: subMarketIds, betLockStatus: true } }
       );
     } else if (allUsers && !lock) {
       await User.updateMany(
         { createdBy: userId },
-        { $set: { blockedSubMarketsByParent: [] } }
+        { $set: { blockedSubMarketsByParent: [], betLockStatus: false } }
       );
     } else if (!allUsers) {
       const usersToUnlock = await User.find({ createdBy: userId, userId: { $nin: userIds } });
@@ -96,7 +96,7 @@ async function addBetLock(req, res) {
       for (const user of usersToUnlock) {
         await User.updateOne(
           { userId: user.userId },
-          { $set: { blockedSubMarketsByParent: [] } }
+          { $set: { blockedSubMarketsByParent: [], betLockStatus: false } }
         );
       }
 
@@ -105,7 +105,7 @@ async function addBetLock(req, res) {
       for (const user of usersToLock) {
         await User.updateOne(
           { userId: user.userId },
-          { $set: { blockedSubMarketsByParent: subMarketIds } }
+          { $set: { blockedSubMarketsByParent: subMarketIds, betLockStatus: true } }
         );
       }
     }
@@ -138,7 +138,8 @@ async function gettingBlockUsers(req, res) {
           const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role, betLockStatus: getUser.betLockStatus };
           const blockparent = getUser.blockedSubMarketsByParent.length
 
-          blockparent ? User.updateOne({ userId: getUser.userId }, { $set: { betLockStatus: true } }) : User.updateOne({ userId: getUser.userId }, { $set: { betLockStatus: false } })
+          blockparent ? User.updateOne({ userId: getUser.userId }, { $set: { betLockStatus: true } })
+            : User.updateOne({ userId: getUser.userId }, { $set: { betLockStatus: false } })
 
           if (getUser.createdBy === userID) {
             blockparent ? blockUsers.push(userInfo) : unblockUsers.push(userInfo)
