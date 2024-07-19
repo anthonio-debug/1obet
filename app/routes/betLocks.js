@@ -25,6 +25,7 @@ async function addBetLock(req, res) {
     }
 
     const eventId = event.Id;
+    let status = false
     const marketId = event.sportsId;
     let subMarketIds = [];
 
@@ -35,30 +36,33 @@ async function addBetLock(req, res) {
 
     if (matchOdds) {
       const matchOddsId = await getSubMarketId('Match Odds');
-      console.log(matchOddsId);
+      status = true
       if (matchOddsId) {
-        subMarketIds.push({ eventId, subMarketId: matchOddsId });
+        subMarketIds.push({ eventId, status, subMarketId: matchOddsId });
       }
     }
 
     if (bookmaker) {
       const bookmakerId = await getSubMarketId('Bookmaker');
+      status = true
       if (bookmakerId) {
-        subMarketIds.push({ eventId, status: true, subMarketId: bookmakerId });
+        subMarketIds.push({ eventId, status, subMarketId: bookmakerId });
       }
     }
 
     if (fancy) {
       const fancyId = await getSubMarketId('Fancy');
+      status = true
       if (fancyId) {
-        subMarketIds.push({ eventId, status: true, subMarketId: fancyId });
+        subMarketIds.push({ eventId, status, subMarketId: fancyId });
       }
     }
 
     if (tiedMatch) {
       const tiedMatchId = await getSubMarketId('Tied Match');
+      status = true
       if (tiedMatchId) {
-        subMarketIds.push({ eventId, status: true, subMarketId: tiedMatchId });
+        subMarketIds.push({ eventId, status, subMarketId: tiedMatchId });
       }
     }
 
@@ -67,7 +71,8 @@ async function addBetLock(req, res) {
       for (const sessionBettingMarket of sessionBettingMarkets) {
         const sessionBettingId = await getSubMarketId(sessionBettingMarket);
         if (sessionBettingId) {
-          subMarketIds.push({ eventId, status: true, subMarketId: sessionBettingId });
+          status = true
+          subMarketIds.push({ eventId, status, subMarketId: sessionBettingId });
         }
       }
     }
@@ -75,7 +80,8 @@ async function addBetLock(req, res) {
     if (overUnder) {
       const overUnderId = await getSubMarketId('Over/Under Goals');
       if (overUnderId) {
-        subMarketIds.push({ eventId, status: true, subMarketId: overUnderId });
+        status = true
+        subMarketIds.push({ eventId, status, subMarketId: overUnderId });
       }
     }
     subMarketIds = [...new Map(subMarketIds.map(item => [JSON.stringify(item), item])).values()];
@@ -187,8 +193,8 @@ async function gettingBlockUsers(req, res) {
 async function updateBlockUsers(req, res) {
   try {
     const { userMarkets, eventId } = req.body;
-    const userId = Number(req.decoded.userId); // Assuming userId is decoded from the token
-    const marketId = await getMarketId(eventId); // Assuming you have a function to get the marketId using eventId
+    const userId = Number(req.decoded.userId);
+    const marketId = await getMarketId(eventId);
 
     async function getSubMarketId(subMarketName) {
       const subMarket = await SubMarket.findOne({ name: subMarketName, marketId }, { Id: 1 });
@@ -209,6 +215,7 @@ async function updateBlockUsers(req, res) {
           if (bookmakerId) userSubMarketIds.push({ eventId, subMarketId: bookmakerId });
         }
 
+
         if (user.sessionBetting) {
           const sessionBettingMarkets = ["Even Odd", "Figure", "Chotta Bara"];
           for (const market of sessionBettingMarkets) {
@@ -222,7 +229,6 @@ async function updateBlockUsers(req, res) {
           if (tiedMatchId) userSubMarketIds.push({ eventId, subMarketId: tiedMatchId });
         }
 
-        // Remove duplicates
         const uniqueSubMarketIds = [...new Map(userSubMarketIds.map(item => [JSON.stringify(item), item])).values()];
 
         await User.updateOne(
@@ -242,9 +248,8 @@ async function updateBlockUsers(req, res) {
   }
 }
 
-
-
 loginRouter.get("/getblockusers", gettingBlockUsers)
+
 loginRouter.post("/updateblockusers", updateBlockUsers)
 loginRouter.post(
   '/addBetLock',
