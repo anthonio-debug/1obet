@@ -211,7 +211,7 @@ async function updateMatchType(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
-    const { _id, matchType, iconStatus, eventId, liveUrl } = req.body;
+    const { _id, matchType, iconStatus, eventId, liveUrl,hasBetfairFancy } = req.body;
 
     //coded by qaiser started on event with bet delayed time
     /*//console.log(
@@ -232,7 +232,7 @@ async function updateMatchType(req, res) {
       betseconds.save();
     }
 
-    const updatedData = await Events.findByIdAndUpdate(_id, { $set: { matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl } }, (err, updatedMatch) => {
+    const updatedData = await Events.findByIdAndUpdate(_id, { $set: { matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl,hasBetfairFancy:hasBetfairFancy } }, (err, updatedMatch) => {
       if (err) {
         //console.log("Error updating figure:", err);
       } else {

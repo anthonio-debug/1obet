@@ -21,7 +21,7 @@ const inPlayEventsSchema = new mongoose.Schema({
   lastCheckMarket: { type: Number, default: 0 },
   isShowed:{ type: Boolean, index: true, default:false },
   hasFancy: { type: Boolean },
-  hasBetfair:{ type: Boolean, default:true },
+  hasBetfairFancy:{ type: Boolean, default:true },
   status: { type: String },
   isPremium:{type: Boolean },
   marketIds:{type: Array, default: [] },
