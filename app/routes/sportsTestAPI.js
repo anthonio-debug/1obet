@@ -737,7 +737,7 @@ async function deleteOdds(req, res) {
 
    $markets =  await await MarketIDS.findOne({
    
-    runners:  null ,
+    
     sportID: 4339
   });
 
