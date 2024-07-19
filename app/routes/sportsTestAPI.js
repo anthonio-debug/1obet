@@ -749,7 +749,7 @@ async function deleteOdds(req, res) {
     var arra = [];
    for (let index = 0; index < response.length; index++) {
      const element = response[index];
-    // arra[index] = element.name;
+     //arra[index] = element.name;
 
    }
     
@@ -762,7 +762,7 @@ async function deleteOdds(req, res) {
     //await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
 
-    res.status(200).json({success: true, message: 'Odds deleted successfully'+response.length + "---totalMarkets::" + totalMarkets});
+    res.status(200).json({success: true, message: 'Odds deleted successfully'+element + "---totalMarkets::" + totalMarkets});
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({success: false, message: 'Internal server error'});
