@@ -748,7 +748,7 @@ async function deleteOdds(req, res) {
    // await InPlayEvents.updateMany({isManuel:true}, {subMarketId: '7', eventId: '33340930'});
     var arra = [];
    for (let index = 0; index < response.length; index++) {
-     const element = response[index];
+     let element = response[index];
      //arra[index] = element.name;
 
    }
