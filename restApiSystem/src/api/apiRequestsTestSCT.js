@@ -627,8 +627,17 @@ function apiRequests() {
 
                     tempRunners.push(tempElement);
                   }
-                  let sttr = element.totalMatched;
-                  const totalMatched = sttr.replace('.','');
+                  // let sttr = element.totalMatched;
+                  // const totalMatched = sttr.replace('.','');
+
+
+                  let sentence = element.totalMatched;
+
+                  let totalMatched  = sentence.replace(".", "");
+
+
+
+
                   let frontData = {
                     sportsId: marketData.sportID,
                     runners: tempRunners,
