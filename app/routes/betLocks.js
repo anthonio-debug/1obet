@@ -30,7 +30,6 @@ async function addBetLock(req, res) {
 
     async function getSubMarketId(subMarketName) {
       const subMarket = await SubMarket.findOne({ name: subMarketName, marketId }, { Id: 1 });
-      console.log(subMarket.Id);
       return subMarket ? subMarket.Id : null;
     }
 
@@ -102,12 +101,35 @@ async function addBetLock(req, res) {
       }
 
       const usersToLock = await User.find({ userId: { $in: userIds } });
-
+      const userMarkets = req.body.userMarkets
       for (const user of usersToLock) {
-        await User.updateOne(
-          { userId: user.userId },
-          { $set: { blockedSubMarketsByParent: subMarketIds, blockStatus: true } }
-        );
+        if (userMarkets) {
+          const submarket = userMarkets.find(checkUser => checkUser.userId === user.userId);
+          console.log("submarket", submarket);
+          let userSubMarketIds = [];
+
+          if (submarket) {
+            if (submarket.fancy) userSubMarketIds.push({ eventId, subMarketId: await getSubMarketId('Fancy') });
+            if (submarket.bookmaker) userSubMarketIds.push({ eventId, subMarketId: await getSubMarketId('Bookmaker') });
+            if (submarket.sessionBetting) {
+              const sessionBettingMarkets = ["Even Odd", "Figure", "Chotta Bara"];
+              for (const market of sessionBettingMarkets) {
+                userSubMarketIds.push({ eventId, subMarketId: await getSubMarketId(market) });
+              }
+            }
+            if (submarket.tiedMatch) userSubMarketIds.push({ eventId, subMarketId: await getSubMarketId('Tied Match') });
+            userSubMarketIds = [...new Map(userSubMarketIds.map(item => [JSON.stringify(item), item])).values()];
+          }
+          await User.updateOne(
+            { userId: user.userId },
+            { $set: { blockedSubMarketsByParent: userSubMarketIds, blockStatus: true } }
+          );
+        } {
+          await User.updateOne(
+            { userId: user.userId },
+            { $set: { blockedSubMarketsByParent: subMarketIds, blockStatus: true } }
+          );
+        }
       }
     }
 
@@ -116,6 +138,7 @@ async function addBetLock(req, res) {
       message: 'Betlock created successfully',
       results: null,
     });
+
   } catch (err) {
     console.error('Error creating betlock:', err);
     res.status(500).send({ message: 'Error creating betlock' });
