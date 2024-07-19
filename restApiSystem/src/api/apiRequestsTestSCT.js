@@ -635,10 +635,10 @@ function apiRequests() {
                   console.log("------------------------------->"+element.totalMatched);
 
                   let totalMatched = element.totalMatched;
-                  let totalMatched = totalMatched.toString();
+                  let totalMatchedStr = totalMatched.toString();
 // Ensure sentence is a string before using replace
-if (typeof totalMatched === 'string') {
-  totalMatched = totalMatched.replace('.', '');
+if (typeof totalMatchedStr === 'string') {
+  totalMatchedStr = totalMatchedStr.replace('.', '');
 } else {
     console.log('sentence is not a string');
 }
@@ -660,7 +660,7 @@ if (typeof totalMatched === 'string') {
                     isInplay: element.inplay,
                     numberOfRunners: element.runners.length,
                     numberOfActiveRunners: numberOfActiveRunners,
-                    totalMatched: totalMatched
+                    totalMatched: totalMatchedStr
                   };
 
                   if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
@@ -675,7 +675,7 @@ if (typeof totalMatched === 'string') {
                       isInplay: element.inplay,
                       numberOfRunners: element.runners.length,
                       numberOfActiveRunners: numberOfActiveRunners,
-                      totalMatched: totalMatched,
+                      totalMatched: totalMatchedStr,
                       createdAt: new Date().getTime()
                     };
                     //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",element.status);
