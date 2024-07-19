@@ -735,15 +735,14 @@ async function deleteOdds(req, res) {
 
 
 
-   $markets =  await MarketIDS.find([
-      {
-        $project: {
-          name: "$marketName",   // Alias for marketName
-          
-        }
-      }
-    ])
+   $markets =  await await MarketIDS.findOne({
+   
+    runners:  null ,
+    sportID: 4339
+  });
 
+
+    
 
     // await Bets.updateMany(
     //   { subMarketId: '7', eventId: '33345422'},
