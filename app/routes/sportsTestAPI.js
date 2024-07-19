@@ -735,7 +735,7 @@ async function deleteOdds(req, res) {
 
 
 
-   $markets =  await MarketIDS.aggregate([
+   $markets =  await MarketIDS.find([
       {
         $project: {
           name: "$marketName",   // Alias for marketName
