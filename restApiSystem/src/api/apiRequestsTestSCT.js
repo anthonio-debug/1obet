@@ -635,6 +635,7 @@ function apiRequests() {
                   console.log("------------------------------->"+element.totalMatched);
 
                   let totalMatched = element.totalMatched;
+                  let totalMatched = totalMatched.toString();
 // Ensure sentence is a string before using replace
 if (typeof totalMatched === 'string') {
   totalMatched = totalMatched.replace('.', '');
