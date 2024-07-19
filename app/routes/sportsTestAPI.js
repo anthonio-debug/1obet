@@ -742,7 +742,7 @@ async function deleteOdds(req, res) {
   });
 
 
-    
+  const totalMarkets = await MarketIDS.countDocuments({ sportID: 4 });
 
     // await Bets.updateMany(
     //   { subMarketId: '7', eventId: '33345422'},
@@ -761,7 +761,7 @@ async function deleteOdds(req, res) {
     //await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
 
-    res.status(200).json({success: true, message: 'Odds deleted successfully'+$markets});
+    res.status(200).json({success: true, message: 'Odds deleted successfully'+$markets + "---totalMarkets::" + totalMarkets});
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({success: false, message: 'Internal server error'});
