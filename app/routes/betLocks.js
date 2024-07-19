@@ -44,21 +44,21 @@ async function addBetLock(req, res) {
     if (bookmaker) {
       const bookmakerId = await getSubMarketId('Bookmaker');
       if (bookmakerId) {
-        subMarketIds.push({ eventId, subMarketId: bookmakerId });
+        subMarketIds.push({ eventId, status: true, subMarketId: bookmakerId });
       }
     }
 
     if (fancy) {
       const fancyId = await getSubMarketId('Fancy');
       if (fancyId) {
-        subMarketIds.push({ eventId, subMarketId: fancyId });
+        subMarketIds.push({ eventId, status: true, subMarketId: fancyId });
       }
     }
 
     if (tiedMatch) {
       const tiedMatchId = await getSubMarketId('Tied Match');
       if (tiedMatchId) {
-        subMarketIds.push({ eventId, subMarketId: tiedMatchId });
+        subMarketIds.push({ eventId, status: true, subMarketId: tiedMatchId });
       }
     }
 
@@ -67,7 +67,7 @@ async function addBetLock(req, res) {
       for (const sessionBettingMarket of sessionBettingMarkets) {
         const sessionBettingId = await getSubMarketId(sessionBettingMarket);
         if (sessionBettingId) {
-          subMarketIds.push({ eventId, subMarketId: sessionBettingId });
+          subMarketIds.push({ eventId, status: true, subMarketId: sessionBettingId });
         }
       }
     }
@@ -75,7 +75,7 @@ async function addBetLock(req, res) {
     if (overUnder) {
       const overUnderId = await getSubMarketId('Over/Under Goals');
       if (overUnderId) {
-        subMarketIds.push({ eventId, subMarketId: overUnderId });
+        subMarketIds.push({ eventId, status: true, subMarketId: overUnderId });
       }
     }
     subMarketIds = [...new Map(subMarketIds.map(item => [JSON.stringify(item), item])).values()];
@@ -124,7 +124,7 @@ async function addBetLock(req, res) {
             { userId: user.userId },
             { $set: { blockedSubMarketsByParent: userSubMarketIds, blockStatus: true } }
           );
-        } {
+        } else {
           await User.updateOne(
             { userId: user.userId },
             { $set: { blockedSubMarketsByParent: subMarketIds, blockStatus: true } }
@@ -184,7 +184,68 @@ async function gettingBlockUsers(req, res) {
   }
 }
 
+async function updateBlockUsers(req, res) {
+  try {
+    const { userMarkets, eventId } = req.body;
+    const userId = Number(req.decoded.userId); // Assuming userId is decoded from the token
+    const marketId = await getMarketId(eventId); // Assuming you have a function to get the marketId using eventId
+
+    async function getSubMarketId(subMarketName) {
+      const subMarket = await SubMarket.findOne({ name: subMarketName, marketId }, { Id: 1 });
+      return subMarket ? subMarket.Id : null;
+    }
+
+    if (userMarkets) {
+      for (const user of userMarkets) {
+        const userSubMarketIds = [];
+
+        if (user.fancy) {
+          const fancyId = await getSubMarketId('Fancy');
+          if (fancyId) userSubMarketIds.push({ eventId, subMarketId: fancyId });
+        }
+
+        if (user.bookmaker) {
+          const bookmakerId = await getSubMarketId('Bookmaker');
+          if (bookmakerId) userSubMarketIds.push({ eventId, subMarketId: bookmakerId });
+        }
+
+        if (user.sessionBetting) {
+          const sessionBettingMarkets = ["Even Odd", "Figure", "Chotta Bara"];
+          for (const market of sessionBettingMarkets) {
+            const sessionBettingId = await getSubMarketId(market);
+            if (sessionBettingId) userSubMarketIds.push({ eventId, subMarketId: sessionBettingId });
+          }
+        }
+
+        if (user.tiedMatch) {
+          const tiedMatchId = await getSubMarketId('Tied Match');
+          if (tiedMatchId) userSubMarketIds.push({ eventId, subMarketId: tiedMatchId });
+        }
+
+        // Remove duplicates
+        const uniqueSubMarketIds = [...new Map(userSubMarketIds.map(item => [JSON.stringify(item), item])).values()];
+
+        await User.updateOne(
+          { userId: user.userId },
+          { $set: { blockedSubMarketsByParent: uniqueSubMarketIds, blockStatus: true } }
+        );
+      }
+    }
+
+    res.send({
+      success: true,
+      message: 'Users updated successfully',
+    });
+  } catch (err) {
+    console.error('Error updating users:', err);
+    res.status(500).send({ message: 'Error updating users' });
+  }
+}
+
+
+
 loginRouter.get("/getblockusers", gettingBlockUsers)
+loginRouter.post("/updateblockusers", updateBlockUsers)
 loginRouter.post(
   '/addBetLock',
   betLockValidator.validate('addBetLock'),
