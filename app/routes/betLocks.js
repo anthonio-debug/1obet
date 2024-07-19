@@ -25,7 +25,6 @@ async function addBetLock(req, res) {
     }
 
     const eventId = event.Id;
-    let status = false
     const marketId = event.sportsId;
     let subMarketIds = [];
 
@@ -36,33 +35,29 @@ async function addBetLock(req, res) {
 
     if (matchOdds) {
       const matchOddsId = await getSubMarketId('Match Odds');
-      status = true
       if (matchOddsId) {
-        subMarketIds.push({ eventId, status, subMarketId: matchOddsId });
+        subMarketIds.push({ eventId, subMarketId: matchOddsId });
       }
     }
 
     if (bookmaker) {
       const bookmakerId = await getSubMarketId('Bookmaker');
-      status = true
       if (bookmakerId) {
-        subMarketIds.push({ eventId, status, subMarketId: bookmakerId });
+        subMarketIds.push({ eventId, subMarketId: bookmakerId });
       }
     }
 
     if (fancy) {
       const fancyId = await getSubMarketId('Fancy');
-      status = true
       if (fancyId) {
-        subMarketIds.push({ eventId, status, subMarketId: fancyId });
+        subMarketIds.push({ eventId, subMarketId: fancyId });
       }
     }
 
     if (tiedMatch) {
       const tiedMatchId = await getSubMarketId('Tied Match');
-      status = true
       if (tiedMatchId) {
-        subMarketIds.push({ eventId, status, subMarketId: tiedMatchId });
+        subMarketIds.push({ eventId, subMarketId: tiedMatchId });
       }
     }
 
@@ -71,8 +66,7 @@ async function addBetLock(req, res) {
       for (const sessionBettingMarket of sessionBettingMarkets) {
         const sessionBettingId = await getSubMarketId(sessionBettingMarket);
         if (sessionBettingId) {
-          status = true
-          subMarketIds.push({ eventId, status, subMarketId: sessionBettingId });
+          subMarketIds.push({ eventId, subMarketId: sessionBettingId });
         }
       }
     }
@@ -80,8 +74,7 @@ async function addBetLock(req, res) {
     if (overUnder) {
       const overUnderId = await getSubMarketId('Over/Under Goals');
       if (overUnderId) {
-        status = true
-        subMarketIds.push({ eventId, status, subMarketId: overUnderId });
+        subMarketIds.push({ eventId, subMarketId: overUnderId });
       }
     }
     subMarketIds = [...new Map(subMarketIds.map(item => [JSON.stringify(item), item])).values()];
@@ -89,12 +82,12 @@ async function addBetLock(req, res) {
     if (allUsers && lock) {
       await User.updateMany(
         { createdBy: userId },
-        { $set: { blockedSubMarketsByParent: subMarketIds, blockStatus: true } }
+        { $set: { blockedSubMarketsByParent: subMarketIds } }
       );
     } else if (allUsers && !lock) {
       await User.updateMany(
         { createdBy: userId },
-        { $set: { blockedSubMarketsByParent: [], blockStatus: false } }
+        { $set: { blockedSubMarketsByParent: [] } }
       );
     } else if (!allUsers) {
       const usersToUnlock = await User.find({ createdBy: userId, userId: { $nin: userIds } });
@@ -102,7 +95,7 @@ async function addBetLock(req, res) {
       for (const user of usersToUnlock) {
         await User.updateOne(
           { userId: user.userId },
-          { $set: { blockedSubMarketsByParent: [], blockStatus: false } }
+          { $set: { blockedSubMarketsByParent: [] } }
         );
       }
 
@@ -128,12 +121,12 @@ async function addBetLock(req, res) {
           }
           await User.updateOne(
             { userId: user.userId },
-            { $set: { blockedSubMarketsByParent: userSubMarketIds, blockStatus: true } }
+            { $set: { blockedSubMarketsByParent: userSubMarketIds } }
           );
         } else {
           await User.updateOne(
             { userId: user.userId },
-            { $set: { blockedSubMarketsByParent: subMarketIds, blockStatus: true } }
+            { $set: { blockedSubMarketsByParent: subMarketIds } }
           );
         }
       }
@@ -165,7 +158,7 @@ async function gettingBlockUsers(req, res) {
         const getUser = await User.findOne({ userId: user });
 
         if (getUser) {
-          const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role, blockStatus: getUser.blockStatus, blockedMarkets: getUser.blockedSubMarketsByParent };
+          const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role, blockedMarkets: getUser.blockedSubMarketsByParent };
           const blockparent = getUser.blockedSubMarketsByParent.length
           blockparent ? User.updateOne({ userId: getUser.userId }) : User.updateOne({ userId: getUser.userId })
 
@@ -233,7 +226,7 @@ async function updateBlockUsers(req, res) {
 
         await User.updateOne(
           { userId: user.userId },
-          { $set: { blockedSubMarketsByParent: uniqueSubMarketIds, blockStatus: true } }
+          { $set: { blockedSubMarketsByParent: uniqueSubMarketIds } }
         );
       }
     }
