@@ -735,7 +735,7 @@ async function deleteOdds(req, res) {
 
 
 
-    $markets = await MarketIDS.aggregate([{$project:{name:"$marketName"}}])
+    const response = await MarketIDS.aggregate([{$project:{name:"$marketName"}}])
 
 
   const totalMarkets = await MarketIDS.countDocuments({ sportID: 4 });
@@ -746,7 +746,12 @@ async function deleteOdds(req, res) {
     // )
    
    // await InPlayEvents.updateMany({isManuel:true}, {subMarketId: '7', eventId: '33340930'});
+    var arra = [];
+   for (let index = 0; index < response.length; index++) {
+    const element = response[index];
+    arra[index] = element.name;
 
+   }
     
    const totalgreyhound = await MarketIDS.countDocuments({ winnerInfo: null,sportID:4339 });
    const totalhorses = await MarketIDS.countDocuments({ winnerInfo: null,sportID:7 });
@@ -757,7 +762,7 @@ async function deleteOdds(req, res) {
     //await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
 
-    res.status(200).json({success: true, message: 'Odds deleted successfully'+$markets + "---totalMarkets::" + totalMarkets});
+    res.status(200).json({success: true, message: 'Odds deleted successfully'+arra + "---totalMarkets::" + totalMarkets});
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({success: false, message: 'Internal server error'});
