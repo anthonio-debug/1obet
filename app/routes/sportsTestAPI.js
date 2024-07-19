@@ -749,6 +749,7 @@ async function deleteOdds(req, res) {
     var arra = [];
    for (let index = 0; index < response.length; index++) {
      let element = response[index];
+     console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++"+element);
      //arra[index] = element.name;
 
    }
