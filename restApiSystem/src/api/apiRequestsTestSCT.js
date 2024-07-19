@@ -627,7 +627,7 @@ function apiRequests() {
 
                     tempRunners.push(tempElement);
                   }
-                  var sttr = element.totalMatched;
+                  let sttr = element.totalMatched;
                   const totalMatched = sttr.replace('.','');
                   let frontData = {
                     sportsId: marketData.sportID,
