@@ -634,10 +634,10 @@ function apiRequests() {
                  
                   console.log("------------------------------->"+element.totalMatched);
 
-                  let sentence = element.totalMatched;
+                  let totalMatched = element.totalMatched;
 // Ensure sentence is a string before using replace
-if (typeof sentence === 'string') {
-  totalMatched = sentence.replace('.', '');
+if (typeof totalMatched === 'string') {
+  totalMatched = totalMatched.replace('.', '');
 } else {
     console.log('sentence is not a string');
 }
