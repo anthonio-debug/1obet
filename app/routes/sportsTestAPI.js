@@ -735,11 +735,7 @@ async function deleteOdds(req, res) {
 
 
 
-   $markets =  await await MarketIDS.findOne({
-   
-    
-    sportID: 4
-  });
+    $markets = await MarketIDS.aggregate([{$project:{name:"$marketName"}}])
 
 
   const totalMarkets = await MarketIDS.countDocuments({ sportID: 4 });
