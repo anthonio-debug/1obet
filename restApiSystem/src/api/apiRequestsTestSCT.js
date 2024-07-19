@@ -631,9 +631,20 @@ function apiRequests() {
                   // const totalMatched = sttr.replace('.','');
 
 
-                  let sentence = element.totalMatched;
+                 
+                  console.log("------------------------------->"+element.totalMatched);
 
-                  let totalMatched  = sentence.replace(".", "");
+                  let sentence = element.totalMatched;
+// Ensure sentence is a string before using replace
+if (typeof sentence === 'string') {
+  totalMatched = sentence.replace('.', '');
+} else {
+    console.log('sentence is not a string');
+}
+
+
+
+
 
 
 
