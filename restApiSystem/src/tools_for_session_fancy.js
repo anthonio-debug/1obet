@@ -141,6 +141,7 @@ function ToolForSessionFancy() {
             }
           }
           if (bookmakerMarketIds.length > 0) {
+            console.log("----------------------------",bookmakerMarketIds.length);
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
             if (bookmakerOdds.length > 0) {
               const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
