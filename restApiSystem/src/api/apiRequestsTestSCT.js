@@ -384,16 +384,16 @@ function apiRequests() {
 
             let betfairFancy2 = FindInMeRes.search('runs line');
 
-            console.log("MarketName:",element.marketName);
-            console.log('betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
-            console.log('betfairFancy2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy2);
+            //console.log("MarketName:",element.marketName);
+            //console.log('betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
+            //console.log('betfairFancy2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy2);
 
              if (betfairFancy2 >=0 || betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
               
               if(betfairFancy >= 0 || betfairFancy2 >= 0){
                 
                 hasbetfairFancy = true;
-                console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
+                //console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
                 arrMarketIds[cntrl] = completeMarketName;
                 cntrl++;
                 
@@ -441,10 +441,10 @@ function apiRequests() {
         });
 
 
-        console.log('============================================================================================', arrMarketIds);
+        //console.log('============================================================================================', arrMarketIds);
 
         
-        console.log("=================length>>>>>>>>",arrMarketIds.length);
+        //console.log("=================length>>>>>>>>",arrMarketIds.length);
         
         //sorting start
         
@@ -470,8 +470,8 @@ function apiRequests() {
           });
 
           if(marketIds[index].hasbetfairFancy==true){
-              console.log("MarkentName::::::::::::::::::::::::::::",marketIds[index].marketName);
-              console.log("Index::::::::::::::::::::::::::::",sortedarrMarketIds.indexOf(marketIds[index].marketName));
+              //console.log("MarkentName::::::::::::::::::::::::::::",marketIds[index].marketName);
+             // console.log("Index::::::::::::::::::::::::::::",sortedarrMarketIds.indexOf(marketIds[index].marketName));
               marketIds[index].sort = sortedarrMarketIds.indexOf(marketIds[index].marketName);
           }
           
@@ -588,9 +588,9 @@ function apiRequests() {
                   let tempRunners = [];
                   for (let n = 0; n < element.runners?.length; n++) {
 
-                    console.log("eeeeeeeeeeeeeeeeee:",element);
+                    //console.log("eeeeeeeeeeeeeeeeee:",element);
                     let totalMatched = element.totalMatched;
-                    console.log("BEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF::::",totalMatched);
+                    //console.log("BEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF::::",totalMatched);
 
                     let totalMatchedStr = totalMatched.toString();
                     // Ensure sentence is a string before using replace
@@ -600,7 +600,7 @@ function apiRequests() {
                         console.log('sentence is not a string');
                     }
                     
-                    console.log("AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:",totalMatchedStr);
+                   // console.log("AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:",totalMatchedStr);
 
 
                     let tempElement = {
@@ -648,7 +648,7 @@ function apiRequests() {
 
 
                  
-                  console.log("------------------------------->"+element.totalMatched);
+                  //console.log("------------------------------->"+element.totalMatched);
 
                   let totalMatched = element.totalMatched;
                   let totalMatchedStr = totalMatched.toString();
