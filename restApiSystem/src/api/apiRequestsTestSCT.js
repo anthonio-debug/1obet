@@ -718,7 +718,7 @@ if (typeof totalMatchedStr === 'string') {
                         runnerCheckerArray.push(marketId);
                       }
                     }
-                    console.log('sportsId:' + json1.sportsId + '-->marketId:' + json1.marketId);
+                    console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
                     let el = new Odds(json1);
                     await el.save();
 
