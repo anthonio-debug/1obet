@@ -213,7 +213,7 @@ async function updateMatchType(req, res) {
   }
 
   try {
-    const { _id, matchType, iconStatus, eventId, liveUrl,hasBetfairFancy } = req.body;
+    const { _id, matchType, iconStatus, eventId, liveUrl, hasBetfairFancy } = req.body;
 
     // Check if BetPlaceHold exists for the event
     const BetSecondsVal = await BetPlaceHold.findOne({ eventId: eventId }).exec();
@@ -226,16 +226,14 @@ async function updateMatchType(req, res) {
       await betseconds.save();
     }
 
-    const updatedData = await Events.findByIdAndUpdate(_id, { $set: { matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl,hasBetfairFancy:hasBetfairFancy } }, (err, updatedMatch) => {
+    const updatedData = await Events.findByIdAndUpdate(_id, { $set: { matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBetfairFancy: hasBetfairFancy } }, (err, updatedMatch) => {
       if (err) {
         //console.log("Error updating figure:", err);
       } else {
         //console.log("Updated match:", updatedMatch);
       }
-    }
-
-
-
+    })
+    
     res.status(200).json({
       success: true,
       message: 'Updated Successfully',
