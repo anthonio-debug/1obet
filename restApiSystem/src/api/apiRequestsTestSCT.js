@@ -121,19 +121,15 @@ function apiRequests() {
 
           const Eventmarkets = await MarketIDS.find({
             //inPlay: true,
-            eventId: event_information.Id,
-         
+            eventId: event_information.Id
           }).exec();
-
-
-
 
           let totalMatched = 0;
           if (marketIds.length) {
             const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
           }
-          socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched,Eventmarkets });
+          socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched, Eventmarkets });
         } else {
           socket.emit('err', 'Event Not Exist');
         }
@@ -241,7 +237,7 @@ function apiRequests() {
       const response = await axios.post(url, requestData, header);
 
       let events = response.data.result;
-
+      
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
@@ -269,7 +265,7 @@ function apiRequests() {
                 // competitionId: competitions[0]?.competition?.id ? competitions[0]?.competition?.id : null,
                 // competitionName: competitions[0]?.competition?.name ? competitions[0]?.competition?.name : null,
                 inplayFromServer: false,
-                
+
                 status: 'OPEN',
                 isPremium: false,
                 type: event.event.type,
@@ -343,7 +339,7 @@ function apiRequests() {
   }
 
   async function listMarketsByCronJob(eventId, sportID) {
-    //console.log("listMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJob");
+    console.log('listMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJob');
     const requestData = {
       filter: {
         eventIds: [eventId]
@@ -359,11 +355,12 @@ function apiRequests() {
       const marketsData = response.data.result;
       let marketStatus = 'OPEN';
 
-      if (marketsData.length > 0) {
+      if (marketsData && marketsData?.length > 0) {
         let marketIds = [];
 
         marketsData.forEach((element) => {
           let tempRunners = [];
+          let hasbetfairFancy = false;
           if (config.activeProvider == 'old') {
             marketStatus = element.status;
           }
@@ -373,22 +370,19 @@ function apiRequests() {
               runnerName: element?.runners[k]?.runnerName
             });
           }
+          
           if (sportID == '4') {
+            let hasbetfairFancy = false;
             let completeMarketName = element.marketName;
-          let FindInMeRes = completeMarketName.toLowerCase();
-                let betfairFancy = FindInMeRes.search('overs line');
-                //console.log("MarketName:",element.marketName);
-               
-               
-
-                console.log("NOTTTTTTcompleteMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",completeMarketName);
-                console.log("NOTTTTTTFANCY>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",betfairFancy);
+            let FindInMeRes = completeMarketName.toLowerCase();
+            let betfairFancy = FindInMeRes.search('overs line');
+            //console.log("MarketName:",element.marketName);
+            console.log('NOT completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
+            console.log('NOT betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
             if (betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
-              
-              console.log("completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",completeMarketName);
-              if(betfairFancy >= 0){
-                const betfairFancy = true;
-              }
+              console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
+              if(betfairFancy >= 0)
+                hasbetfairFancy = true;
               
 
               marketIds.push({
@@ -396,7 +390,7 @@ function apiRequests() {
                 marketName: element.marketName,
                 openDate: Date.parse(element.marketStartTime),
                 status: marketStatus,
-                betfairFancy:betfairFancy,
+                hasbetfairFancy: hasbetfairFancy,
                 runners: tempRunners
               });
             }
@@ -447,7 +441,6 @@ function apiRequests() {
                 marketId: marketIds[index].id + '',
                 marketName: marketIds[index].marketName,
                 sportID: sportID,
-                betfairFancy:betfairFancy,
                 totalMatched: marketIds[index].totalMatched,
                 status: marketIds[index].status,
                 index: index,
@@ -460,7 +453,7 @@ function apiRequests() {
             await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
           }
         }
-        console.log("============================================================================================",marketIds);
+        console.log('============================================================================================', marketIds);
         await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
       }
     } catch (error) {
@@ -499,7 +492,7 @@ function apiRequests() {
         if (!response?.data?.result) return;
         const oddsData = response.data.result;
         let checkedMarkets = [];
-       
+
         if (oddsData.length > 0) {
           let counter = 0;
           try {
@@ -669,7 +662,6 @@ function apiRequests() {
           } catch (error) {
             console.error('getOddsFromProvider----->', error);
           }
-          
         }
       },
       (error) => {
@@ -696,11 +688,10 @@ function apiRequests() {
         async (response) => {
           // Take last inplay list for events
           const events = response.data.result;
-          if (events.length === 0) {
+          if (!events || events?.length === 0) {
             //console.log('checkInPlay: api res is empty')
             return;
           }
-      
 
           let apiLiveEventIds = [];
           for (const event of events) {
@@ -797,6 +788,7 @@ function apiRequests() {
   }
 
   async function setInplay(sportsId) {
+    console.log('setInplaysetInplaysetInplaysetInplaysetInplaysetInplay');
     try {
       const markets = await MarketIDS.find({
         inPlay: true,
@@ -869,7 +861,9 @@ function apiRequests() {
         };
         events = await inPlayEvents.find(queryPastEvents).sort({ openDate: -1 }).limit(10).exec();
       }
-
+      console.log('events');
+      console.log(events);
+      console.log('events');
       for (let index = 0; index < events.length; index++) {
         const event = events[index];
         // Before the set inplay true
