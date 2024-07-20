@@ -587,12 +587,28 @@ function apiRequests() {
 
                   let tempRunners = [];
                   for (let n = 0; n < element.runners?.length; n++) {
+
+
+                    let totalMatched = element.totalMatched;
+                    console.log("BEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF::::",totalMatched);
+
+                    let totalMatchedStr = totalMatched.toString();
+                    // Ensure sentence is a string before using replace
+                    if (typeof totalMatchedStr === 'string') {
+                      totalMatchedStr = totalMatchedStr.replace('.', '');
+                    } else {
+                        console.log('sentence is not a string');
+                    }
+                    
+                    console.log("AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:",totalMatchedStr);
+
+
                     let tempElement = {
                       SelectionId: element.runners[n]?.selectionId,
                       runnerName: marketData?.runners[n]?.runnerName,
                       Status: element.runners[n]?.status,
                       LastPriceTraded: element.runners[n]?.lastPriceTraded,
-                      TotalMatched: element.runners[n]?.totalMatched,
+                      TotalMatched: totalMatchedStr,
                       ExchangePrices: {
                         AvailableToBack: [
                           {
