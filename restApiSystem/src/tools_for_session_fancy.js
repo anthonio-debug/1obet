@@ -104,7 +104,7 @@ function ToolForSessionFancy() {
       }, { Id: 1 }).exec();
       for (const event of fancyEvents) {
         const eventId = event.Id
-        console.log("-------------------------->",eventId);
+        
         let fancyOdds = await fetchSession(eventId)
 
 
@@ -112,7 +112,7 @@ function ToolForSessionFancy() {
         if (fancyOdds) {
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
-          console.log("-------------------------->",bookmakerMarketList);
+
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
@@ -141,7 +141,6 @@ function ToolForSessionFancy() {
             }
           }
           if (bookmakerMarketIds.length > 0) {
-            console.log("----------------------------",bookmakerMarketIds.length);
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
             if (bookmakerOdds.length > 0) {
               const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
