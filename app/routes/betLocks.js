@@ -83,12 +83,12 @@ async function addBetLock(req, res) {
     if (allUsers && lock) {
       await User.updateMany(
         { createdBy: userId },
-        { $set: { blockedSubMarketsByParent: subMarketIds } }
+        { $set: { blockedSubMarketsByParent: subMarketIds, blockStatus: true } }
       );
     } else if (allUsers && !lock) {
       await User.updateMany(
         { createdBy: userId },
-        { $set: { blockedSubMarketsByParent: [] } }
+        { $set: { blockedSubMarketsByParent: [], blockStatus: false } }
       );
     } else if (!allUsers) {
       const usersToUnlock = await User.find({ createdBy: userId, userId: { $nin: userIds } });
@@ -96,7 +96,7 @@ async function addBetLock(req, res) {
       for (const user of usersToUnlock) {
         await User.updateOne(
           { userId: user.userId },
-          { $set: { blockedSubMarketsByParent: [] } }
+          { $set: { blockedSubMarketsByParent: [], blockStatus: false } }
         );
       }
 
@@ -105,7 +105,7 @@ async function addBetLock(req, res) {
       for (const user of usersToLock) {
         await User.updateOne(
           { userId: user.userId },
-          { $set: { blockedSubMarketsByParent: subMarketIds } }
+          { $set: { blockedSubMarketsByParent: subMarketIds, blockStatus: true } }
         );
       }
     }
@@ -123,11 +123,11 @@ async function addBetLock(req, res) {
 
 async function gettingBlockUsers(req, res) {
   try {
-    const userId = req.decoded.userId;
+    const userID = req.decoded.userId;
     const blockUsers = [];
     const unblockUsers = [];
 
-    const userIdArray = Array.isArray(userId) ? userId : [userId];
+    const userIdArray = Array.isArray(userID) ? userID : [userID];
     const allUserIDs = await getAllUserIDs(userIdArray);
 
     for (const user of allUserIDs) {
@@ -135,11 +135,12 @@ async function gettingBlockUsers(req, res) {
         const getUser = await User.findOne({ userId: user });
 
         if (getUser) {
-          const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role };
-          if (getUser.blockedSubMarketsByParent.length) {
-            blockUsers.push(userInfo);
-          } else {
-            unblockUsers.push(userInfo);
+          const userInfo = { userName: getUser.userName, userId: getUser.userId, role: getUser.role, blockStatus: getUser.blockStatus, blockedSubMarketsByParent: getUser.blockedSubMarketsByParent };
+          const blockparent = getUser.blockedSubMarketsByParent.length
+          blockparent ? User.updateOne({ userId: getUser.userId }) : User.updateOne({ userId: getUser.userId })
+
+          if (getUser.createdBy === userID) {
+            blockparent ? blockUsers.push(userInfo) : unblockUsers.push(userInfo)
           }
         }
       } catch (error) {

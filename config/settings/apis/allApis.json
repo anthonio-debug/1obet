@@ -232,5 +232,6 @@
   "updateLiveStreamUrl",
   "updateLiveUrl",
   "checkfourdigitcode",
-  "getblockusers"
+  "getblockusers",
+  "updateBlockUsers"
 ]

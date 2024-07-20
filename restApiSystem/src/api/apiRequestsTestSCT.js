@@ -521,6 +521,7 @@ function apiRequests() {
     }
   }
 
+
   async function getOddsFromProvider(marketIdsArray, intervalId) {
     let tempArray = [];
     let tempArrayForIDs = [];

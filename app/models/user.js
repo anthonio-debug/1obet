@@ -41,7 +41,7 @@ const userSchema = new Schema({
   blockedMarketPlaces: { type: Array },
   blockedSubMarkets: { type: Array },
   blockedSubMarketsByParent: { type: Array },
-  betLockStatus: { type: Boolean },
+  betLockStatus: { type: Boolean, default: false },
   matchOddsStatus: { type: Boolean },
   baseCurrency: { type: String },
   creditRemaining: { type: Number, default: 0 },
@@ -51,7 +51,8 @@ const userSchema = new Schema({
   activeBetPlacing: { type: Boolean, default: false },
   cashWithdrawDisable: { type: Boolean, default: false },
   casinoAllowed: { type: Boolean, default: true },
-  digitVerification: { type: String, default: null }
+  digitVerification: { type: String, default: null },
+  blockStatus: { type: Boolean, default: false }
 });
 
 userSchema.methods.hashPass = function (next) {

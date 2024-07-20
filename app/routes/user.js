@@ -699,7 +699,7 @@ function getCurrentUser(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   const fieldsToSelect = '"balance":1,"exposure":1,"userName":1,"availableBalance":1,"isActive":1,"status":1,"userId":1,"role":1';
-  User.findOne({ userId: req.decoded.userId }, async (err, user) => {
+  User.findOne({ userId: req.decoded.userId },{"balance":1,"exposure":1,"userName":1,"availableBalance":1,"isActive":1,"status":1,"userId":1,"role":1}, async (err, user) => {
     if (err || !user) return res.status(404).send({ message: 'user not found' });
 
     return res.send({
