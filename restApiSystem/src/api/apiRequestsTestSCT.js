@@ -648,16 +648,6 @@ function apiRequests() {
 
 
                  
-                  console.log("------------------------------->"+element.totalMatched);
-
-                  let totalMatched = element.totalMatched;
-                  let totalMatchedStr = totalMatched.toString();
-// Ensure sentence is a string before using replace
-if (typeof totalMatchedStr === 'string') {
-  totalMatchedStr = totalMatchedStr.replace('.', '');
-} else {
-    console.log('sentence is not a string');
-}
 
 
 
@@ -718,7 +708,7 @@ if (typeof totalMatchedStr === 'string') {
                         runnerCheckerArray.push(marketId);
                       }
                     }
-                    console.log('sportsId:' + json1.sportsId + '-->marketId:' + json1.marketId);
+                    console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
                     let el = new Odds(json1);
                     await el.save();
 
