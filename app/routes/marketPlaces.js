@@ -185,39 +185,41 @@ async function getMarketsBySportsId(req, res) {
 }
 
 async function getMarketsByEventId(req, res) {
-  try {
-    const eventId = req.params.eventId;
-    const marketData = await MarketIDS.aggregate([
-      {
-        $match: { eventId: eventId }
-      },
-      {
-        $lookup: {
-          from: 'odds',
-          localField: 'marketId',
-          foreignField: 'marketId',
-          as: 'oddsData'
-        }
-      },
-      {
-        $project: {
-          _id: 1,
-          sportID: 1,
-          eventId: 1,
-          marketId: 1,
-          marketName: 1,
-          status: 1,
-          totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
-        }
-      }
-    ]);
+  const eventId = req.params.eventId;
 
-    res.status(200).json({ success: true, data: marketData });
+  try {
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+      },
+    };
+    const requestData = {
+      filter: {
+        eventIds: [eventId],
+      },
+      maxResults: 200,
+      marketProjection: [
+        "EVENT",
+        "EVENT_TYPE",
+        "MARKET_START_TIME",
+        "MARKET_DESCRIPTION",
+        "RUNNER_DESCRIPTION",
+      ],
+    };
+    var url = `${sportsAPIUrl}/listMarketCatalogue`;
+
+    const response = await axios.post(url, requestData, header);
+
+    const marketsData = response.data;
+
+    res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    return res.status(404).send({
-      success: false,
-      message: 'Failed to update allowed market type by EventId'
-    });
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
 
