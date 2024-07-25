@@ -20,8 +20,9 @@ const inPlayEventsSchema = new mongoose.Schema({
   inplayFromServer: { type: Boolean, index: true },
   lastCheckMarket: { type: Number, default: 0 },
   isShowed: { type: Boolean, index: true, default: false },
-  hasFancy: { type: Boolean },
-  hasBetfairFancy:{ type: Boolean, default:true },
+  hasFancy: { type: Boolean },//This is for normal fancy from Rahul
+  hasOverbyOverOddEven: { type: Boolean , default:false}, //Over by Over Odd Even
+  hasBetfairFancy:{ type: Boolean, default:false }, // over by over fancy
   status: { type: String },
   isPremium: { type: Boolean },
   marketIds: { type: Array, default: [] },

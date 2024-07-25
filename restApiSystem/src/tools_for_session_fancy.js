@@ -94,7 +94,7 @@ function ToolForSessionFancy() {
   async function getSessionFancyOdds() {
     try {
       const now = new Date()
-      const from = new Date(now.getTime() + (1040 * 60 * 1000)).getTime()
+      const from = new Date(now.getTime() + (100040 * 60 * 1000)).getTime()
       let fancyEvents = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
         hasFancy: true,
@@ -140,7 +140,11 @@ function ToolForSessionFancy() {
               );
             }
           }
+          console.log("There is some error then why and what you asked to EventId:", eventId);
+          console.log("There is some error then why and what you asked to bookmakerMarketIds.length:", bookmakerMarketIds.length);
+    
           if (bookmakerMarketIds.length > 0) {
+            console.log("cccccccccccccccccccccccccccccccccccccccccccccccccccccc:",bookmakerMarketIds.length);
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
             if (bookmakerOdds.length > 0) {
               const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)

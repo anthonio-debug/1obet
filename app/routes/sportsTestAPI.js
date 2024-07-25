@@ -258,42 +258,9 @@ async function getMarketsByEventId(req, res) {
 
     const response = await axios.post(url, requestData, header);
 
-    const marketsData = response.data.result;
+    const marketsData = response.data;
 
-
-    if (marketsData.length > 0) {
-      let marketIds = [];
-
-    marketsData.forEach((element) => {
-    let tempRunners = [];
-         
-          for (let k = 0; k < element?.runners?.length; k++) {
-            tempRunners.push({
-              SelectionId: element?.runners[k]?.selectionId,
-              runnerName: element?.runners[k]?.runnerName
-            });
-          }
-          
-          let completeMarketName = element.marketName;
-          let FindInMeRes = completeMarketName.toLowerCase();
-                let findMe1 = FindInMeRes.search('overs line');
-                console.log("MarketName:",element.marketName);
-               
-                if (findMe1 >= 0) {
-                  console.log("MarketName Found....................:",element.marketName);
-
-
-
-
-                }
-
-
-
-        });
-      }
-
-
-    res.status(200).json({ successs: true, data: marketsData });
+    res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
     res
       .status(500)
@@ -726,13 +693,13 @@ async function TestTrial(req, res) {
 }
 
 async function deleteOdds(req, res) {
-
+  const eventId = req.params.eventId;
 
   try {
 
 
 
-    
+    await InPlayEvents.updateMany({Id: eventId},{$set:{hasFancy:true}});
 
 
 
@@ -981,7 +948,7 @@ router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
 router.get('/track-bet/get-odds-multi-marketids/:eventId', getOddsByMultiMarketId)
 router.get('/track-bet/get-markettype', getMarketType)
 router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByMarketType)
-router.get('/track-bet/get-market-bet-session/:eventId', getFanciesByEventId)
+router.get('/track-bet/get-markget-market-bet-sessionet-bet-session/:eventId', getFanciesByEventId)
 
 router.get('/track-bet/get-markets-limitless/:eventId', getMarketsLimitlessByEventId)
 router.get('/track-bet/get-markets-limitless2/:eventId', getMarketsLimitlessByEventId2)
