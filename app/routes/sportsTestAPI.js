@@ -824,8 +824,8 @@ async function cronOdds(req, res) {
     const odds = await getOdds(marketIds, sportID);
     result = [...result, ...odds];
   }
-  res.json({ status: true, data: result });
-  
+  res.json({ status: true, data: "here in res" });
+
 }
 
 async function getTheSportsMatchScoreEvents(req, res) {
