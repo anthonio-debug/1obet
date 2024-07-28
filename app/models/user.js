@@ -49,7 +49,7 @@ const userSchema = new Schema({
   remoteId: { type: Number },
   data: { type: Object, default: {} },
   activeBetPlacing: { type: Boolean, default: false },
-  cashWithdrawDisable: { type: Boolean, default: false },
+  blockCashWithdraw: { type: Boolean, default: false },
   casinoAllowed: { type: Boolean, default: true },
   digitVerification: { type: String, default: null },
   blockStatus: { type: Boolean, default: false }

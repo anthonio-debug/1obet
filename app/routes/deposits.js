@@ -286,6 +286,11 @@ async function withDrawCashDeposit(req, res) {
     if (!userToUpdate) {
       return res.status(404).send({ message: 'user not found' });
     }
+
+    if (userToUpdate.blockCashWithdraw == true) {
+      return res.status(404).send({ message: 'Withdraw blocked' });
+    }
+
     const user_prev_balance = userToUpdate.balance;
     const user_prev_availableBalance = userToUpdate.availableBalance;
     const user_prev_exposure = userToUpdate.exposure;
