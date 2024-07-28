@@ -1256,7 +1256,7 @@ loginRouter.get('/getAllUsers', getAllUsers);
 loginRouter.post('/changePassword', userValidation.validate('changePassword'), changePassword);
 loginRouter.post('/updateUser', userValidation.validate('updateUser'), updateUser);
 loginRouter.post('/checkfourdigitcode', checkfourdigitcode);
-loginRouter.get('/blockcashwithdraw', blockCashWithdraw);
+loginRouter.get('/blockCashWithdraw', blockCashWithdraw);
 loginRouter.post('/searchUsers', userValidation.validate('searchUsers'), searchUsers);
 
 loginRouter.get('/getCurrentUser', getCurrentUser);
