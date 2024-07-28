@@ -225,7 +225,6 @@
   "set-fancy-score",
   "active-bettors",
   "gethighlights",
-  "setCashWithdrawDisabled",
   "closeOpenMarkets",
   "getLiveStreamUrl",
   "match-events",
@@ -233,5 +232,6 @@
   "updateLiveUrl",
   "checkfourdigitcode",
   "getblockusers",
-  "updateBlockUsers"
+  "updateblockusers",
+  "blockCashWithdraw"
 ]
