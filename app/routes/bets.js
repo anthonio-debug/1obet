@@ -263,8 +263,6 @@ const placeBet = async (req, res) => {
       userId: { $in: parentUserIds },
       isDeleted: false
     });
-
-    console.log("subMarketId2===============", subMarketId2);
     const subMarketId = subMarketId1.concat(subMarketId2);
     let eventDetail;
 
@@ -426,13 +424,9 @@ const placeBet = async (req, res) => {
      * Is market Blocked from any Flow
      */
     let userBlockedSubMarketsByParent = user.blockedSubMarketsByParent
-    console.log("userBlockedSubMarketsByParent=========", userBlockedSubMarketsByParent);
     let userSubMarketId = subMarketDetail.Id;
-    console.log("userSubMarketId=========", userSubMarketId);
     let userEventId = eventDetail.Id
-    console.log("userEventId=========", userEventId);
-    const blockedSubMarketsByParentBet = userBlockedSubMarketsByParent.some(item => item.eventId === userEventId && item.subMarketId === userSubMarketId);
-    console.log("blockedSubMarketsByParentBet==========", blockedSubMarketsByParentBet);
+    const blockedSubMarketsByParentBet = userBlockedSubMarketsByParent.some(item => item.eventId === userEventId && item.subMarketId === userSubMarketId);    
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || blockedSubMarketsByParentBet) {
       activeBettors.delete(userId);
       return res.status(404).send({ message: 'Betting disabled' });
@@ -3583,16 +3577,53 @@ async function getMatchedBets(req, res) {
     // if (!matchedBets || matchedBets.length == 0) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
-
+    const currentTime = new Date().getTime()
     const eventId = await Events.findById(matchId);
     if (eventId) {
-      relatedEvents = await Events.find({
-        sportsId: eventId.sportsId,
-        status: "OPEN",
-        Id: { $ne: eventId.Id },
-        isShowed: true,
-        CompanySetStatus: "OPEN"
-      }).limit(5);
+      if (eventId.sportsId === "7" || eventId.sportsId === "4339") {
+        const 
+        relatedEvents = await MarketIDS.aggregate([
+          {
+            $match: {
+              sportsId: eventId.sportsId,
+              openDate: { $gte: currentTime },
+              status: "OPEN",
+              Id: { $ne: eventId.Id },
+              isShowed: true,
+              CompanySetStatus: "OPEN"
+            }
+          },
+          {
+            $group: {
+              _id: '$_id',
+              eventId: { $first: '$Id' },
+              marketIds: { $push: '$marketId' },
+              sportsId: { $first: '$sportsId' },
+              openDate: { $first: '$openDate' },
+              openDate2: { $first: '$event.openDate' },
+              status: { $first: '$status' },
+              inPlay: { $first: '$inPlay' },
+              countryCode: { $first: '$event.countryCode' },
+              venue: { $first: '$event.venue' },
+              inplay2: { $first: '$event.inplay' },
+              matchId: { $first: '$event._id' },
+              name: { $first: '$eventName' }
+            }
+          },
+          {
+            $limit: 5
+          }
+        ]);
+        console.log(relatedEvents);
+      } else {
+        relatedEvents = await Events.find({
+          sportsId: eventId.sportsId,
+          status: "OPEN",
+          Id: { $ne: eventId.Id },
+          isShowed: true,
+          CompanySetStatus: "OPEN"
+        }).limit(5);
+      }
     }
 
     if (matchedBets.length > 0) {
