@@ -3614,7 +3614,7 @@ async function getMatchedBets(req, res) {
             $limit: 5
           }
         ]);
-        console.log(relatedEvents);
+        console.log("relatedEvents========================", relatedEvents);
       } else {
         relatedEvents = await Events.find({
           sportsId: eventId.sportsId,
@@ -3624,6 +3624,7 @@ async function getMatchedBets(req, res) {
           CompanySetStatus: "OPEN"
         }).limit(5);
       }
+      console.log("relatedEvents========================", relatedEvents);
     }
 
     if (matchedBets.length > 0) {
