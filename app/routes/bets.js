@@ -3578,54 +3578,16 @@ async function getMatchedBets(req, res) {
     // if (!matchedBets || matchedBets.length == 0) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
+
     const eventId = await Events.findById(matchId);
     if (eventId) {
-      if (eventId.sportsId === "7" || eventId.sportsId === "4339") {
-        let event = await MarketIDS.find({ matchId: matchId })
-        let eventTime = event.openDate
-        relatedEvents = await MarketIDS.aggregate([
-          {
-            $match: {
-              sportsId: eventId.sportsId,
-              openDate: { $gte: eventTime },
-              status: "OPEN",
-              Id: { $ne: eventId.Id },
-              isShowed: true,
-              CompanySetStatus: "OPEN"
-            }
-          },
-          {
-            $group: {
-              _id: '$_id',
-              eventId: { $first: '$Id' },
-              marketIds: { $push: '$marketId' },
-              sportsId: { $first: '$sportsId' },
-              openDate: { $first: '$openDate' },
-              openDate2: { $first: '$event.openDate' },
-              status: { $first: '$status' },
-              inPlay: { $first: '$inPlay' },
-              countryCode: { $first: '$event.countryCode' },
-              venue: { $first: '$event.venue' },
-              inplay2: { $first: '$event.inplay' },
-              matchId: { $first: '$event._id' },
-              name: { $first: '$eventName' }
-            }
-          },
-          {
-            $limit: 5
-          }
-        ]);
-        console.log("relatedEvents========================", relatedEvents);
-      } else {
-        relatedEvents = await Events.find({
-          sportsId: eventId.sportsId,
-          status: "OPEN",
-          Id: { $ne: eventId.Id },
-          isShowed: true,
-          CompanySetStatus: "OPEN"
-        }).limit(5);
-      }
-      console.log("relatedEvents========================", relatedEvents);
+      relatedEvents = await Events.find({
+        sportsId: eventId.sportsId,
+        status: "OPEN",
+        Id: { $ne: eventId.Id },
+        isShowed: true,
+        CompanySetStatus: "OPEN"
+      }).limit(5);
     }
 
     if (matchedBets.length > 0) {
