@@ -319,7 +319,7 @@ const placeBet = async (req, res) => {
         console.warn(`Error : Odds not found !`);
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-1 `
         });
       }
       const idDetails = await MarketIDS.findOne({ marketId: DBOddDetails.marketId, eventId: eventDetail.Id });
@@ -327,7 +327,7 @@ const placeBet = async (req, res) => {
         console.warn(`Error : Market details Not found !`);
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-2 `
         });
       }
 
@@ -531,22 +531,22 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-3 `
         });
       } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-4 `
         });
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-5 `
         });
       } else if (type == 0 && betRate > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-6 `
         });
       } else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
@@ -698,22 +698,22 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-7 `
         });
       } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-8 `
         });
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-9 `
         });
       } else if (type == 0 && betRate > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-10 `
         });
       } else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
@@ -892,12 +892,12 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-11 `
         });
       } else if (type == 0 && betRate > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-2 `
         });
       } else if (type == 1 && selectedBetRate != betRate) {
         // activeBettors.delete(userId)
@@ -1033,7 +1033,7 @@ const placeBet = async (req, res) => {
       if (!DBOddDetails) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-13 `
         });
       }
       const OddDetailsTeam = DBOddDetails?.runners.find((runner) => runner.selectionId == selectionId);
@@ -1090,22 +1090,22 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-14 `
         });
       } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-15 `
         });
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-16 `
         });
       } else if (type == 0 && betRate > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-17 `
         });
       } else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
@@ -1274,22 +1274,22 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-18 `
         });
       } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-19 `
         });
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-20 `
         });
       } else if (type == 0 && betRate > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-21 `
         });
       } else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
@@ -1469,12 +1469,12 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-22 `
         });
       } else if (type == 0 && betRate > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-23 `
         });
       } else if (type == 1 && selectedBetRate != betRate) {
         // activeBettors.delete(userId)
@@ -1627,12 +1627,12 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-25 `
         });
       } else if (type == 0 && betRate > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-26 `
         });
       } else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
@@ -1771,7 +1771,7 @@ const placeBet = async (req, res) => {
       } else {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet miss matched`
+          message: `Bet miss matched-27`
         });
       }
     }
@@ -1950,7 +1950,7 @@ const placeBet = async (req, res) => {
         if (req.body.type == 0) {
           if (betRate != apiSelectedOdds.l1) {
             activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched ` });
+            return res.status(404).send({ message: `Bet miss matched-28 ` });
           }
           const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
           const apiBackOdds = apiBackOdds2.map((item) => Number(item));
@@ -1964,16 +1964,16 @@ const placeBet = async (req, res) => {
 
           if (index == -1) {
             activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched` });
+            return res.status(404).send({ message: `Bet miss matched-29` });
           }
           if (apiBackOdds[index] < betRate) {
             activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched ` });
+            return res.status(404).send({ message: `Bet miss matched-30 ` });
           }
         } else if (req.body.type == 1) {
           if (betRate != apiSelectedOdds.b1) {
             activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched ` });
+            return res.status(404).send({ message: `Bet miss matched-31 ` });
           }
           const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
           const apiBackOdds = apiBackOdds2.map((item) => Number(item));
@@ -1992,7 +1992,7 @@ const placeBet = async (req, res) => {
           }
           if (apiBackOdds[index] < betRate) {
             activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched` });
+            return res.status(404).send({ message: `Bet miss matched-32` });
           }
         } else {
           activeBettors.delete(userId);
@@ -2161,7 +2161,7 @@ const placeBet = async (req, res) => {
           }
           if (apiBackOdds[index] < betRate) {
             activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched` });
+            return res.status(404).send({ message: `Bet miss matched-34` });
           }
         } else if (req.body.type == 1) {
           if (betRate != apiSelectedOdds.l1) {
@@ -2188,7 +2188,7 @@ const placeBet = async (req, res) => {
           }
           if (apiBackOdds[index] < betRate) {
             activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched` });
+            return res.status(404).send({ message: `Bet miss matched-35` });
           }
         } else {
           return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
@@ -2405,22 +2405,22 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-36 `
         });
       } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-37 `
         });
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-38 `
         });
       } else if (type == 0 && betRate > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-39 `
         });
       } else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
@@ -2473,7 +2473,7 @@ const placeBet = async (req, res) => {
       if (multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-40 `
         });
       } else if (multipeResponse.length > 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         betRate = multipeResponse[multipeResponse.length - 1];
@@ -2850,7 +2850,7 @@ const placeBet = async (req, res) => {
         console.log('===========================================');
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Bet Miss Matched `
+          message: `Bet Miss Matched-42 `
         });
       }
 
