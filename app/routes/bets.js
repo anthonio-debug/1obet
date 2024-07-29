@@ -426,7 +426,7 @@ const placeBet = async (req, res) => {
     let userBlockedSubMarketsByParent = user.blockedSubMarketsByParent
     let userSubMarketId = subMarketDetail.Id;
     let userEventId = eventDetail.Id
-    const blockedSubMarketsByParentBet = userBlockedSubMarketsByParent.some(item => item.eventId === userEventId && item.subMarketId === userSubMarketId);    
+    const blockedSubMarketsByParentBet = userBlockedSubMarketsByParent.some(item => item.eventId === userEventId && item.subMarketId === userSubMarketId);
     if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || blockedSubMarketsByParentBet) {
       activeBettors.delete(userId);
       return res.status(404).send({ message: 'Betting disabled' });
@@ -3577,16 +3577,16 @@ async function getMatchedBets(req, res) {
     // if (!matchedBets || matchedBets.length == 0) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
-    const currentTime = new Date().getTime()
     const eventId = await Events.findById(matchId);
     if (eventId) {
       if (eventId.sportsId === "7" || eventId.sportsId === "4339") {
-        const 
+        let event = await MarketIDS.find({ matchId: matchId })
+        let eventTime = event.openDate
         relatedEvents = await MarketIDS.aggregate([
           {
             $match: {
               sportsId: eventId.sportsId,
-              openDate: { $gte: currentTime },
+              openDate: { $gte: eventTime },
               status: "OPEN",
               Id: { $ne: eventId.Id },
               isShowed: true,
