@@ -423,6 +423,7 @@ const placeBet = async (req, res) => {
     /**
      * Is market Blocked from any Flow
      */
+    console.log("44444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
     let userBlockedSubMarketsByParent = user.blockedSubMarketsByParent
     let userSubMarketId = subMarketDetail.Id;
     let userEventId = eventDetail.Id
