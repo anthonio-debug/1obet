@@ -129,7 +129,7 @@ function apiRequests() {
             const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
           }
-          console.log(".......................................................",event_information);
+          console.log(".......................................................", event_information);
           socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched, Eventmarkets });
         } else {
           socket.emit('err', 'Event Not Exist');
@@ -238,7 +238,7 @@ function apiRequests() {
       const response = await axios.post(url, requestData, header);
 
       let events = response.data.result;
-      
+
       if (events.length > 0) {
         events = events.filter(function (item) {
           return isValidDate(item.event.openDate);
@@ -359,9 +359,9 @@ function apiRequests() {
       if (marketsData && marketsData?.length > 0) {
         let marketIds = [];
         let arrMarketIds = [];
-            let cntrl = 0;
+        let cntrl = 0;
         marketsData.forEach((element) => {
-          
+
           let tempRunners = [];
           let hasbetfairFancy = false;
           if (config.activeProvider == 'old') {
@@ -373,10 +373,10 @@ function apiRequests() {
               runnerName: element?.runners[k]?.runnerName
             });
           }
-          
+
           if (sportID == '4') {
-            
-            
+
+
             let completeMarketName = element.marketName;
             let FindInMeRes = completeMarketName.toLowerCase();
             let betfairFancy = FindInMeRes.search('overs line');
@@ -384,22 +384,22 @@ function apiRequests() {
 
             let betfairFancy2 = FindInMeRes.search('runs line');
 
-            //console.log("MarketName:",element.marketName);
-            //console.log('betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
-            //console.log('betfairFancy2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy2);
+            console.log("MarketName:", element.marketName);
+            console.log('betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
+            console.log('betfairFancy2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy2);
 
-             if (betfairFancy2 >=0 || betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
-              
-              if(betfairFancy >= 0 || betfairFancy2 >= 0){
-                
+            if (betfairFancy2 >= 0 || betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
+
+              if (betfairFancy >= 0 || betfairFancy2 >= 0) {
+
                 hasbetfairFancy = true;
-                //console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
+                console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
                 arrMarketIds[cntrl] = completeMarketName;
                 cntrl++;
-                
+
               }
-                
-              
+
+
 
               marketIds.push({
                 id: element.marketId,
@@ -443,22 +443,22 @@ function apiRequests() {
 
         //console.log('============================================================================================', arrMarketIds);
 
-        
-        //console.log("=================length>>>>>>>>",arrMarketIds.length);
-        
-        //sorting start
-        
-              const sortedarrMarketIds = arrMarketIds.sort((a, b) => {
-                return a.localeCompare(b, undefined, {
-                  numeric: true,
-                  sensitivity: 'base'
-                })
-              });
-        //sorting end      
-              //console.log("=================length>>>>>>>>",sortedarrMarketIds.length);
-              console.log("I am sorted:::::::::::::::::::::::::::::::",sortedarrMarketIds);
 
-              sortedarrMarketIds.indexOf("Apple"); 
+        //console.log("=================length>>>>>>>>",arrMarketIds.length);
+
+        //sorting start
+
+        const sortedarrMarketIds = arrMarketIds.sort((a, b) => {
+          return a.localeCompare(b, undefined, {
+            numeric: true,
+            sensitivity: 'base'
+          })
+        });
+        //sorting end      
+        //console.log("=================length>>>>>>>>",sortedarrMarketIds.length);
+        console.log("I am sorted:::::::::::::::::::::::::::::::", sortedarrMarketIds);
+
+        sortedarrMarketIds.indexOf("Apple");
 
 
         for (let index = 0; index < marketIds.length; index++) {
@@ -469,12 +469,12 @@ function apiRequests() {
             marketId: marketIds[index].id + ''
           });
 
-          if(marketIds[index].hasbetfairFancy==true){
-              //console.log("MarkentName::::::::::::::::::::::::::::",marketIds[index].marketName);
-             // console.log("Index::::::::::::::::::::::::::::",sortedarrMarketIds.indexOf(marketIds[index].marketName));
-              marketIds[index].sort = sortedarrMarketIds.indexOf(marketIds[index].marketName);
+          if (marketIds[index].hasbetfairFancy == true) {
+            //console.log("MarkentName::::::::::::::::::::::::::::",marketIds[index].marketName);
+            // console.log("Index::::::::::::::::::::::::::::",sortedarrMarketIds.indexOf(marketIds[index].marketName));
+            marketIds[index].sort = sortedarrMarketIds.indexOf(marketIds[index].marketName);
           }
-          
+
 
 
           if (!marketID) {
@@ -504,7 +504,7 @@ function apiRequests() {
           }
         }
 
-        
+
 
 
 
@@ -598,10 +598,10 @@ function apiRequests() {
                     if (typeof totalMatchedStr === 'string') {
                       totalMatchedStr = totalMatchedStr.replace('.', '');
                     } else {
-                        console.log('sentence is not a string');
+                      console.log('sentence is not a string');
                     }
-                    
-                   // console.log("AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:",totalMatchedStr);
+
+                    // console.log("AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:",totalMatchedStr);
 
 
                     let tempElement = {
@@ -648,17 +648,17 @@ function apiRequests() {
                   // const totalMatched = sttr.replace('.','');
 
 
-                 
+
                   //console.log("------------------------------->"+element.totalMatched);
 
                   let totalMatched = element.totalMatched;
                   let totalMatchedStr = totalMatched.toString();
-// Ensure sentence is a string before using replace
-if (typeof totalMatchedStr === 'string') {
-  totalMatchedStr = totalMatchedStr.replace('.', '');
-} else {
-    console.log('sentence is not a string');
-}
+                  // Ensure sentence is a string before using replace
+                  if (typeof totalMatchedStr === 'string') {
+                    totalMatchedStr = totalMatchedStr.replace('.', '');
+                  } else {
+                    console.log('sentence is not a string');
+                  }
 
 
 

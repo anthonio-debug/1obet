@@ -263,6 +263,8 @@ const placeBet = async (req, res) => {
       userId: { $in: parentUserIds },
       isDeleted: false
     });
+
+    console.log("subMarketId2===============", subMarketId2);
     const subMarketId = subMarketId1.concat(subMarketId2);
     let eventDetail;
 
