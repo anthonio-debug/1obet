@@ -739,6 +739,44 @@ async function deleteOdds(req, res) {
   }
 }
 
+async function getRelatedMarkets(req, res) {
+  const marketId = req.params.marketId;
+
+  try {
+
+
+    const marketData = await MarketIDS.aggregate([
+      {
+        $match: { eventId: eventId }
+      },
+      {
+        $lookup: {
+          from: 'odds',
+          localField: 'marketId',
+          foreignField: 'marketId',
+          as: 'oddsData'
+        }
+      },
+      {
+        $project: {
+          _id: 1,
+          sportID: 1,
+          eventId: 1,
+          marketId: 1,
+          marketName: 1,
+          status: 1,
+          totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
+        }
+      }
+    ]);
+
+
+res.status(200).json({success: true, message: 'Odds deleted successfully'+element + "---totalMarkets::" + totalMarkets});
+} catch (error) {
+  console.error('Error updating odds:', error);
+  res.status(500).json({ success: false, message: 'Internal server error' });
+}
+}
 async function saveOdds(oddData, sportsId) {
   const runners = [];
   for (const runner of oddData.runners) {
@@ -958,6 +996,7 @@ router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId
 router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
 router.get('/track-bet/check-market/:sportID/:eventId', cronOdds)
 router.get('/track-bet/delete-odds/:eventId', deleteOdds)
+router.get('/track-bet/get-relatedmarkets/:marketId', getRelatedMarkets)
 router.get('/track-bet/test-trial/:eventId', TestTrial)
 router.get('/match-events/:sportsId', getMatchEvents)
 router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
