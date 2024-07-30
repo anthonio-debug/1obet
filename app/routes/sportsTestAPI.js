@@ -771,7 +771,7 @@ async function getRelatedMarkets(req, res) {
     ]);
 
 
-res.status(200).json({success: true, message: 'Odds deleted successfully'+element + "---totalMarkets::" + totalMarkets});
+res.status(200).json({success: true, message: 'Related Markets:'+marketData});
 } catch (error) {
   console.error('Error updating odds:', error);
   res.status(500).json({ success: false, message: 'Internal server error' });
