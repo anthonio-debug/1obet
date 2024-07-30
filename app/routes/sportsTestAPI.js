@@ -770,7 +770,7 @@ async function getRelatedMarkets(req, res) {
       }
     ]);
 
-
+    console.log("....................................."+marketData);
 res.status(200).json({success: true, message: 'Related Markets:'+marketData});
 } catch (error) {
   console.error('Error updating odds:', error);
