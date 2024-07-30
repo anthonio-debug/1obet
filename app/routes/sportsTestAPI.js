@@ -747,7 +747,7 @@ async function getRelatedMarkets(req, res) {
 
     const marketData = await MarketIDS.aggregate([
       {
-        $match: { eventId: eventId }
+        $match: { eventId: '33447578' }
       },
       {
         $lookup: {
