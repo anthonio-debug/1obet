@@ -211,7 +211,7 @@ async function getMarketsByEventId(req, res) {
         }
       }
     ]);
-
+    console.log("....................................."+marketData);
     res.status(200).json({ success: true, data: marketData });
   } catch (err) {
     return res.status(404).send({
