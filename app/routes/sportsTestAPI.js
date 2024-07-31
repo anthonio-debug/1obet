@@ -738,18 +738,21 @@ async function deleteOdds(req, res) {
 }
 
 async function getRelatedMarkets(req, res) {
-  const marketId = req.params.marketId;
-
+  const {marketId, sportid} = req.params;
+  const sportId=+sportid
+  // console.log(typeof sportId);
+  // const currentDate=  Date.now()
   try {
-
-
+    const market= await MarketIDS.findOne({marketId:marketId })
+    const marketOpendate=market.openDate 
+  
     const marketData = await MarketIDS.aggregate([
       {
-        $match: { eventId: '33447578' }
+        $match:{sportID:sportId, openDate: { $lt: marketOpendate }}
       },
       {
         $lookup: {
-          from: 'odds',
+          from: 'raceodds',
           localField: 'marketId',
           foreignField: 'marketId',
           as: 'oddsData'
@@ -761,14 +764,27 @@ async function getRelatedMarkets(req, res) {
           sportID: 1,
           eventId: 1,
           marketId: 1,
-          marketName: 1,
+          Name: "$marketName",
+          openDate:1,
           status: 1,
           totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
         }
-      }
-    ]);
+      },
+      {$sort:{openDate:1}},
+      {$limit:5}
+      
 
-    console.log("....................................." + marketData.eventId);
+    ]);
+    console.log("....................................." + marketData);
+
+    marketData.forEach(data => {
+       console.log(data);
+    });
+
+    if(!marketData){
+      return res.status(404).json({ success: false, message: 'Market data not found' });
+    }
+
     res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
   } catch (error) {
     console.error('Error updating odds:', error);
@@ -994,7 +1010,7 @@ router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId
 router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
 router.get('/track-bet/check-market/:sportID/:eventId', cronOdds)
 router.get('/track-bet/delete-odds/:eventId', deleteOdds)
-router.get('/track-bet/get-relatedmarkets/:marketId', getRelatedMarkets)
+router.get('/track-bet/get-relatedmarkets/:marketId/:sportid', getRelatedMarkets)
 router.get('/track-bet/test-trial/:eventId', TestTrial)
 router.get('/match-events/:sportsId', getMatchEvents)
 router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
