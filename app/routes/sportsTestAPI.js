@@ -775,16 +775,8 @@ async function getRelatedMarkets(req, res) {
       
 
     ]);
-    console.log("....................................." + marketData);
 
-    marketData.forEach(data => {
-       console.log(data);
-    });
-
-    if(!marketData){
-      return res.status(404).json({ success: false, message: 'Market data not found' });
-    }
-
+    console.log("....................................." + marketData.eventId);
     res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
   } catch (error) {
     console.error('Error updating odds:', error);
