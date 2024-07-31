@@ -376,7 +376,7 @@ function apiRequests() {
 
           if (sportID == '4') {
 
-
+            
             let completeMarketName = element.marketName;
             let FindInMeRes = completeMarketName.toLowerCase();
             let betfairFancy = FindInMeRes.search('overs line');
