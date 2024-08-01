@@ -3579,7 +3579,7 @@ async function getMatchedBets(req, res) {
     // }
 
     const eventId = await Events.findById("66a610175cb1177094209c71");
-    console.log(eventId);
+    console.log("Yahoooooooooooooooo.....................",eventId);
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
         try {
