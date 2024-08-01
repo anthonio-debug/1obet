@@ -775,9 +775,11 @@ async function getRelatedMarkets(req, res) {
 
 
     ]);
-    marketData.forEach((data)=>{console.log(data);})
+    
+    const marketsData=marketData.map((data)=>(data))
+    console.log(marketsData);
     console.log("....................................." + marketData);
-    res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
+    res.status(200).json({ success: true, message: 'Related Markets:' , marketsData });
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });

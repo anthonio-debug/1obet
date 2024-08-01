@@ -3488,6 +3488,10 @@ async function getMatchedBets(req, res) {
     //const { id, matchId } = req.query;
     const matchId = req.query.id;
     const marketId = req.query.marketId;
+    /////////////////////////////
+    // const marketId = req.query.id;
+    // const matchId  = req.query.marketId;
+    /////////////////
     //const marketId = '1.231243057';
     if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
@@ -3595,7 +3599,8 @@ async function getMatchedBets(req, res) {
        eventId = await Events.findById(matchId);
     
     }
-    console.log(",,,,,,,,,,,,,,,,",eventId);
+    // console.log(",,,,,,,,,,,,,,,,",eventId);
+    console.log(",,,,,,,,,,,,,,,,",marketOpendate);
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
         try {
@@ -3631,10 +3636,11 @@ async function getMatchedBets(req, res) {
 
 
           ]);
-          console.log("....................................." + marketData);
-          marketData.forEach((data) => { console.log(data); })
-          relatedEvents = marketData;
-          //res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
+          // console.log("....................................." , marketData);
+          const marketsData = marketData.map((data)=>data)
+          console.log("MMMMMMMMMMMMM",relatedEvents);
+          // relatedEvents = marketData;
+          res.status(200).json({ success: true, message: 'Related Markets:' , marketsData });
 
         } catch (error) {
           console.error('Error updating odds:', error);
