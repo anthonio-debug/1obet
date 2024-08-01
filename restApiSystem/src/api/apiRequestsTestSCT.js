@@ -348,7 +348,7 @@ function apiRequests() {
       maxResults: 100,
       marketProjection: ['EVENT', 'EVENT_TYPE', 'MARKET_START_TIME', 'MARKET_DESCRIPTION', 'RUNNER_DESCRIPTION']
     };
-
+    console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE:",eventId);
     const url = `${config.newThirdURL}/listMarketCatalogue`;
     try {
       const response = await axios.post(url, requestData, header);
@@ -376,7 +376,7 @@ function apiRequests() {
 
           if (sportID == '4') {
 
-            
+
             let completeMarketName = element.marketName;
             let FindInMeRes = completeMarketName.toLowerCase();
             let betfairFancy = FindInMeRes.search('overs line');

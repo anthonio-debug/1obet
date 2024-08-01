@@ -985,7 +985,7 @@ router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
 router.get('/track-bet/get-odds-multi-marketids/:eventId', getOddsByMultiMarketId)
 router.get('/track-bet/get-markettype', getMarketType)
 router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByMarketType)
-router.get('/track-bet/get-markget-market-bet-sessionet-bet-session/:eventId', getFanciesByEventId)
+router.get('/track-bet/get-market-bet-session/:eventId', getFanciesByEventId)
 
 router.get('/track-bet/get-markets-limitless/:eventId', getMarketsLimitlessByEventId)
 router.get('/track-bet/get-markets-limitless2/:eventId', getMarketsLimitlessByEventId2)
