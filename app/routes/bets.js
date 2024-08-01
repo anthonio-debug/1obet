@@ -3629,10 +3629,10 @@ async function getMatchedBets(req, res) {
       else {
         relatedEvents = await Events.find({
           sportsId: eventId.sportsId,
-          status: "OPEN",
+          //status: "OPEN",
           //Id: { $ne: eventId.Id },
           isShowed: true,
-          CompanySetStatus: "OPEN"
+          //CompanySetStatus: "OPEN"
         }).limit(5);
       }
     }
