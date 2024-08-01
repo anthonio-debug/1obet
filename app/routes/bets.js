@@ -3582,16 +3582,17 @@ async function getMatchedBets(req, res) {
     // }
     //console.log("Yahoooooooooooooooo.....................",matchId);
     console.log("Yahoooooooooooooooo.....................====",matchId);
-    
+    let eventId;
+    let marketOpendate;
     if(marketId){
       const market = await MarketIDS.findOne({ marketId: marketId })
       console.log("-----------------",market);
-      const marketOpendate = market.openDate;
-      const eventId = await Events.findOne({ Id: market.eventId })
+      marketOpendate = market.openDate;
+      eventId = await Events.findOne({ Id: market.eventId })
       
 
     }else{
-      const eventId = await Events.findById(matchId);
+       eventId = await Events.findById(matchId);
     
     }
     console.log(".........................................",eventId);
