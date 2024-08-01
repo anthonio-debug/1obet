@@ -3487,7 +3487,8 @@ async function getMatchedBets(req, res) {
     const userIDs = await getAllUserIDs(createdByIDs);
     //const { id, matchId } = req.query;
     const matchId = req.query.id;
-    const marketId = req.query.marketId;
+    //const marketId = req.query.marketId;
+    const marketId = '1.231243057';
     if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
     }
@@ -3581,7 +3582,7 @@ async function getMatchedBets(req, res) {
     // }
     //console.log("Yahoooooooooooooooo.....................",matchId);
     console.log("Yahoooooooooooooooo.....................====",matchId);
-    const marketId = '1.231243057';
+    
     if(marketId){
       const market = await MarketIDS.findOne({ marketId: marketId })
       const marketOpendate = market.openDate
