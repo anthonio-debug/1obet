@@ -3485,7 +3485,9 @@ async function getMatchedBets(req, res) {
 
     // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
-    const { id, matchId } = req.query;
+    //const { id, matchId } = req.query;
+    const matchId = req.query.id;
+    const marketId = req.query.marketId;
     if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
     }
@@ -3578,14 +3580,22 @@ async function getMatchedBets(req, res) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
     //console.log("Yahoooooooooooooooo.....................",matchId);
-    console.log("Yahoooooooooooooooo.....................====",id);
-    const eventId = await Events.findById(id);
+    console.log("Yahoooooooooooooooo.....................====",matchId);
+    const marketId = '1.231243057';
+    if(marketId){
+      const market = await MarketIDS.findOne({ marketId: marketId })
+      const marketOpendate = market.openDate
+      const eventId = await Events.findOne({ Id: market.eventId })
+
+    }else{
+      const eventId = await Events.findById(matchId);
+    
+    }
     
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
         try {
-          const market = await MarketIDS.findOne({ marketId: "1.231243085" })
-          const marketOpendate = market.openDate
+          
 
           const sportid = +eventId.sportsId
           const marketData = await MarketIDS.aggregate([
