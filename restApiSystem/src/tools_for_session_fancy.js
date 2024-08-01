@@ -143,11 +143,8 @@ if(bookmakerOdds!==0){
               );
             }
           }
-          console.log("There is some error then why and what you asked to EventId:", eventId);
-          console.log("There is some error then why and what you asked to bookmakerMarketIds.length:", bookmakerMarketIds.length);
-    
-          if (bookmakerMarketIds.length > 0) {
-            console.log("cccccccccccccccccccccccccccccccccccccccccccccccccccccc:",bookmakerMarketIds.length);
+           if (bookmakerMarketIds.length > 0) {
+            console.log("bookmaker found.........................:",bookmakerMarketIds.length);
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
             if (bookmakerOdds.length > 0) {
               const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
@@ -163,6 +160,7 @@ if(bookmakerOdds!==0){
               }
             }else{
               
+              console.log("bookmaker not found so fancies are saving now.....................",fancyOdds);
               const fancyData = buildFancyStructure(bookmakerMarketList, 0, fancyOdds, eventId)
               if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
                 FancyOddsMap.set(eventId, fancyData)
