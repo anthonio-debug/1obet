@@ -51,8 +51,7 @@ function ToolForSessionFancy() {
         })
       }
     }
-    let bm = []
-if(bookmakerOdds!=0){
+if(bookmakerOdds!==0){
     for (const [index, odd] of bookmakerOdds.entries()) {
       let bms = []
       if (isIterable(odd.runners)) {
