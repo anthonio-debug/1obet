@@ -3578,11 +3578,11 @@ async function getMatchedBets(req, res) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
 
-    const eventId = await Events.findById(matchId);
+    const eventId = await Events.findById("66aa64b5162ea71e060ecadc");
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
         try {
-          const market = await MarketIDS.findOne({ marketId: id })
+          const market = await MarketIDS.findOne({ marketId: "1.231243085" })
           const marketOpendate = market.openDate
 
           const sportid = +eventId.sportsId
