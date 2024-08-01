@@ -3595,12 +3595,12 @@ async function getMatchedBets(req, res) {
        eventId = await Events.findById(matchId);
     
     }
-    console.log(".........................................",eventId);
+    console.log(",,,,,,,,,,,,,,,,",eventId);
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
         try {
           
-
+          console.log("ssssssssssssssssssssssssssssssss:",eventId.sportsId);
           const sportid = +eventId.sportsId
           const marketData = await MarketIDS.aggregate([
             {
