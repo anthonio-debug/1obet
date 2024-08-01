@@ -770,13 +770,13 @@ async function getRelatedMarkets(req, res) {
           totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
         }
       },
-      { $sort: { openDate: 1 } },
       { $limit: 5 },
+      { $sort: { openDate: 1 } },
 
 
     ]);
     // marketData.forEach((data)=>{console.log(data);})
-    // console.log("....................................." + marketData);
+    console.log("....................................." + marketData);
     res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
   } catch (error) {
     console.error('Error updating odds:', error);
