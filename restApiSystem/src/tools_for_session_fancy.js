@@ -51,7 +51,8 @@ function ToolForSessionFancy() {
         })
       }
     }
-
+    let bm = []
+if(bookmakerOdds!=0){
     for (const [index, odd] of bookmakerOdds.entries()) {
       let bms = []
       if (isIterable(odd.runners)) {
@@ -78,6 +79,7 @@ function ToolForSessionFancy() {
       }
       bm[`bm${index + 1}`] = bms
     }
+  }
     return {
       data: {
         t1: null,
@@ -103,7 +105,7 @@ function ToolForSessionFancy() {
         status: 'OPEN'
       }, { Id: 1 }).exec();
 
-      console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhazzzzzzzzzzzzzzzz",fancyEvents);
+
       for (const event of fancyEvents) {
         const eventId = event.Id
         
@@ -160,6 +162,21 @@ function ToolForSessionFancy() {
                 await newFancyOdds.save();
                 io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
               }
+            }else{
+              
+              const fancyData = buildFancyStructure(bookmakerMarketList, 0, fancyOdds, eventId)
+              if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+                FancyOddsMap.set(eventId, fancyData)
+                let newFancyOdds = new FancyOdds({
+                  eventId: eventId,
+                  marketId: eventId,
+                  data: fancyData,
+                })
+                await newFancyOdds.save();
+                io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+              }
+            
+
             }
           }
         }
