@@ -3577,9 +3577,9 @@ async function getMatchedBets(req, res) {
     // if (!matchedBets || matchedBets.length == 0) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
-    console.log("Yahoooooooooooooooo.....................",matchId);
+    //console.log("Yahoooooooooooooooo.....................",matchId);
     console.log("Yahoooooooooooooooo.....................====",id);
-    const eventId = await Events.findById(matchId);
+    const eventId = await Events.findById(id);
     
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
