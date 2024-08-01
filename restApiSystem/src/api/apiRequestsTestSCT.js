@@ -340,7 +340,7 @@ function apiRequests() {
   }
 
   async function listMarketsByCronJob(eventId, sportID) {
-    console.log('listMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJoblistMarketsByCronJob');
+
     const requestData = {
       filter: {
         eventIds: [eventId]
@@ -954,9 +954,9 @@ function apiRequests() {
         };
         events = await inPlayEvents.find(queryPastEvents).sort({ openDate: -1 }).limit(10).exec();
       }
-      console.log('events');
+      console.log('events............');
       console.log(events);
-      console.log('events');
+      console.log('events-------------');
       for (let index = 0; index < events.length; index++) {
         const event = events[index];
         // Before the set inplay true
