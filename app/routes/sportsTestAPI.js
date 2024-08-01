@@ -738,17 +738,17 @@ async function deleteOdds(req, res) {
 }
 
 async function getRelatedMarkets(req, res) {
-  const {marketId, sportid} = req.params;
-  const sportId=+sportid
+  const { marketId, sportid } = req.params;
+  const sportId = +sportid
   // console.log(typeof sportId);
   // const currentDate=  Date.now()
   try {
-    const market= await MarketIDS.findOne({marketId:marketId })
-    const marketOpendate=market.openDate 
-  
+    const market = await MarketIDS.findOne({ marketId: "1.224778485" })
+    const marketOpendate = market.openDate;
+
     const marketData = await MarketIDS.aggregate([
       {
-        $match:{sportID:sportId, openDate: { $lt: marketOpendate }}
+        $match: { sportID: sportId, openDate: { $gt: marketOpendate } }
       },
       {
         $lookup: {
@@ -765,18 +765,18 @@ async function getRelatedMarkets(req, res) {
           eventId: 1,
           marketId: 1,
           Name: "$marketName",
-          openDate:1,
+          openDate: 1,
           status: 1,
           totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
         }
       },
-      {$sort:{openDate:1}},
-      {$limit:5}
-      
+      { $sort: { openDate: 1 } },
+      { $limit: 5 },
+
 
     ]);
-
-    console.log("....................................." + marketData.eventId);
+    // marketData.forEach((data)=>{console.log(data);})
+    // console.log("....................................." + marketData);
     res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
   } catch (error) {
     console.error('Error updating odds:', error);

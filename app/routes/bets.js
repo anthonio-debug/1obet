@@ -3485,8 +3485,7 @@ async function getMatchedBets(req, res) {
 
     // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
-    const matchId = req.query.id;
-
+    const { id, matchId } = req.query;
     if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
     }
@@ -3578,17 +3577,66 @@ async function getMatchedBets(req, res) {
     // if (!matchedBets || matchedBets.length == 0) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
-
+   
     const eventId = await Events.findById(matchId);
     if (eventId) {
-      relatedEvents = await Events.find({
-        sportsId: eventId.sportsId,
-        status: "OPEN",
-        Id: { $ne: eventId.Id },
-        isShowed: true,
-        CompanySetStatus: "OPEN"
-      }).limit(5);
+      if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
+        try {
+          const market = await MarketIDS.findOne({ marketId: "1.224778485" })
+          const marketOpendate = market.openDate
+
+          const marketData = await MarketIDS.aggregate([
+            {
+              $match: { sportID: sportId,  openDate: { $gt: marketOpendate } }
+            },
+            {
+              $lookup: {
+                from: 'raceodds',
+                localField: 'marketId',
+                foreignField: 'marketId',
+                as: 'oddsData'
+              }
+            },
+            {
+              $project: {
+                _id: 1,
+                sportID: 1,
+                eventId: 1,
+                marketId: 1,
+                Name: "$marketName",
+                openDate: 1,
+                status: 1,
+                totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
+              }
+            },
+            { $sort: { openDate: 1 } },
+            { $limit: 5 },
+
+
+          ]);
+          // marketData.forEach((data)=>{console.log(data);})
+          // console.log("....................................." + marketData);
+          res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
+        } catch (error) {
+          console.error('Error updating odds:', error);
+          res.status(500).json({ success: false, message: 'Internal server error' });
+        }
+
+      }
+
+      else {
+        relatedEvents = await Events.find({
+          sportsId: eventId.sportsId,
+          status: "OPEN",
+          Id: { $ne: eventId.Id },
+          isShowed: true,
+          CompanySetStatus: "OPEN"
+        }).limit(5);
+      }
     }
+    ////////////
+
+
 
     if (matchedBets.length > 0) {
       const promises = matchedBets.map(async (item) => {
