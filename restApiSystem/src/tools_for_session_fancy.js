@@ -102,6 +102,8 @@ function ToolForSessionFancy() {
         openDate: { $lte: from },
         status: 'OPEN'
       }, { Id: 1 }).exec();
+
+      console.log("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhazzzzzzzzzzzzzzzz",fancyEvents);
       for (const event of fancyEvents) {
         const eventId = event.Id
         
