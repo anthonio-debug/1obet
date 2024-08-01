@@ -3633,7 +3633,9 @@ async function getMatchedBets(req, res) {
           ]);
           console.log("....................................." + marketData);
           marketData.forEach((data) => { console.log(data); })
-          res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
+          relatedEvents = marketData;
+          //res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
+
         } catch (error) {
           console.error('Error updating odds:', error);
           res.status(500).json({ success: false, message: 'Internal server error' });
