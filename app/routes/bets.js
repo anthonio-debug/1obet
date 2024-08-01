@@ -3586,15 +3586,15 @@ async function getMatchedBets(req, res) {
     if(marketId){
       const market = await MarketIDS.findOne({ marketId: marketId })
       console.log("-----------------",market);
-      const marketOpendate = market.openDate
+      const marketOpendate = market.openDate;
       const eventId = await Events.findOne({ Id: market.eventId })
-      console.log("-----------------",eventId);
+      
 
     }else{
       const eventId = await Events.findById(matchId);
     
     }
-    
+    console.log(".........................................",eventId);
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
         try {
