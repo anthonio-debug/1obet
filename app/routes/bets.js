@@ -3577,8 +3577,10 @@ async function getMatchedBets(req, res) {
     // if (!matchedBets || matchedBets.length == 0) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
-
+    console.log("here I am match id..................",matchId);
     const eventId = await Events.findById(matchId);
+    console.log("here I am ..................",eventId.sportsId);
+
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
         // try {
@@ -3626,7 +3628,7 @@ async function getMatchedBets(req, res) {
       }
 
       else {
-        console.log("here I am ..................",eventId.sportsId);
+        
         relatedEvents = await Events.find({
           sportsId: eventId.sportsId,
           //status: "OPEN",
