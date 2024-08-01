@@ -743,7 +743,7 @@ async function getRelatedMarkets(req, res) {
   // console.log(typeof sportId);
   // const currentDate=  Date.now()
   try {
-    const market = await MarketIDS.findOne({ marketId: "1.224778485" })
+    const market = await MarketIDS.findOne({ marketId: marketId })
     const marketOpendate = market.openDate;
 
     const marketData = await MarketIDS.aggregate([
@@ -770,12 +770,12 @@ async function getRelatedMarkets(req, res) {
           totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
         }
       },
-      { $limit: 5 },
       { $sort: { openDate: 1 } },
+      { $limit: 5 },
 
 
     ]);
-    // marketData.forEach((data)=>{console.log(data);})
+    marketData.forEach((data)=>{console.log(data);})
     console.log("....................................." + marketData);
     res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
   } catch (error) {
