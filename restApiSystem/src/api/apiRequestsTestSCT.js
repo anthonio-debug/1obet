@@ -848,7 +848,7 @@ function apiRequests() {
             }
 
             //console.log(`Event is closed because it not exists on inplaylist: ${diff}`)
-
+            
             await MarketIDS.updateMany({ eventId: diff }, { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } });
 
             await inPlayEvents.updateOne(

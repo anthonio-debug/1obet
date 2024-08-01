@@ -3578,50 +3578,50 @@ async function getMatchedBets(req, res) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
 
-    const eventId = await Events.findById("66aa64b5162ea71e060ecadc");
+    const eventId = await Events.findById(matchId);
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
-        try {
-          const market = await MarketIDS.findOne({ marketId: "1.231243085" })
-          const marketOpendate = market.openDate
+        // try {
+        //   const market = await MarketIDS.findOne({ marketId: "1.231243085" })
+        //   const marketOpendate = market.openDate
 
-          const sportid = +eventId.sportsId
-          const marketData = await MarketIDS.aggregate([
-            {
-              $match: { sportID: sportid, openDate: { $gt: marketOpendate } }
-            },
-            {
-              $lookup: {
-                from: 'raceodds',
-                localField: 'marketId',
-                foreignField: 'marketId',
-                as: 'oddsData'
-              }
-            },
-            {
-              $project: {
-                _id: 1,
-                sportID: 1,
-                eventId: 1,
-                marketId: 1,
-                Name: "$marketName",
-                openDate: 1,
-                status: 1,
-                totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
-              }
-            },
-            { $sort: { openDate: 1 } },
-            { $limit: 5 },
+        //   const sportid = +eventId.sportsId
+        //   const marketData = await MarketIDS.aggregate([
+        //     {
+        //       $match: { sportID: sportid, openDate: { $gt: marketOpendate } }
+        //     },
+        //     {
+        //       $lookup: {
+        //         from: 'raceodds',
+        //         localField: 'marketId',
+        //         foreignField: 'marketId',
+        //         as: 'oddsData'
+        //       }
+        //     },
+        //     {
+        //       $project: {
+        //         _id: 1,
+        //         sportID: 1,
+        //         eventId: 1,
+        //         marketId: 1,
+        //         Name: "$marketName",
+        //         openDate: 1,
+        //         status: 1,
+        //         totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
+        //       }
+        //     },
+        //     { $sort: { openDate: 1 } },
+        //     { $limit: 5 },
 
 
-          ]);
-          console.log("....................................." + marketData);
-          marketData.forEach((data) => { console.log(data); })
-          res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
-        } catch (error) {
-          console.error('Error updating odds:', error);
-          res.status(500).json({ success: false, message: 'Internal server error' });
-        }
+        //   ]);
+        //   console.log("....................................." + marketData);
+        //   marketData.forEach((data) => { console.log(data); })
+        //   res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
+        // } catch (error) {
+        //   console.error('Error updating odds:', error);
+        //   res.status(500).json({ success: false, message: 'Internal server error' });
+        // }
 
       }
 
