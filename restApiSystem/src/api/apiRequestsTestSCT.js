@@ -129,7 +129,7 @@ function apiRequests() {
             const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
           }
-          console.log(".......................................................", event_information);
+          //console.log(".......................................................", event_information);
           socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched, Eventmarkets });
         } else {
           socket.emit('err', 'Event Not Exist');
@@ -384,16 +384,16 @@ function apiRequests() {
 
             let betfairFancy2 = FindInMeRes.search('runs line');
 
-            console.log("MarketName:", element.marketName);
-            console.log('betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
-            console.log('betfairFancy2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy2);
+            //console.log("MarketName:", element.marketName);
+            //console.log('betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
+            //console.log('betfairFancy2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy2);
 
             if (betfairFancy2 >= 0 || betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
 
               if (betfairFancy >= 0 || betfairFancy2 >= 0) {
 
                 hasbetfairFancy = true;
-                console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
+                //console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
                 arrMarketIds[cntrl] = completeMarketName;
                 cntrl++;
 
@@ -456,7 +456,7 @@ function apiRequests() {
         });
         //sorting end      
         //console.log("=================length>>>>>>>>",sortedarrMarketIds.length);
-        console.log("I am sorted:::::::::::::::::::::::::::::::", sortedarrMarketIds);
+        //console.log("I am sorted:::::::::::::::::::::::::::::::", sortedarrMarketIds);
 
         sortedarrMarketIds.indexOf("Apple");
 
@@ -848,7 +848,7 @@ function apiRequests() {
             }
 
             //console.log(`Event is closed because it not exists on inplaylist: ${diff}`)
-            
+
             await MarketIDS.updateMany({ eventId: diff }, { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } });
 
             await inPlayEvents.updateOne(
