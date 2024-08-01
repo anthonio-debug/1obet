@@ -949,7 +949,8 @@ function apiRequests() {
           inplayFromServer: true,
           sportsId: sportsId + '',
           isShowed: true,
-          status: 'OPEN'
+          status: 'OPEN',
+          inplay: { $ne: true }
         };
         events = await inPlayEvents.find(queryPastEvents).sort({ openDate: -1 }).limit(10).exec();
       }
