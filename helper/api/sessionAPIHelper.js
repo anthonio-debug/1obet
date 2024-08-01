@@ -1,6 +1,6 @@
 const axios = require("axios");
 const { isIterable } = require("../common");
-const SESSION_API_URI = `http://84.8.153.51/api/v2`
+const SESSION_API_URI = `http://142.93.36.1/api/v2`
 
 async function fetchSession(eventId) {
   // const eventId = '33002177'
