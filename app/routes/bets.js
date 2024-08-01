@@ -3577,8 +3577,9 @@ async function getMatchedBets(req, res) {
     // if (!matchedBets || matchedBets.length == 0) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
-   
-    const eventId = await Events.findById(matchId);
+
+    const eventId = await Events.findById("");
+    console.log(eventId, "|||||||||||||||||||||||||||||||||||||||||||||||||||||||||");
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
         try {
@@ -3587,7 +3588,7 @@ async function getMatchedBets(req, res) {
 
           const marketData = await MarketIDS.aggregate([
             {
-              $match: { sportID: eventId.sportsId,  openDate: { $gt: marketOpendate } }
+              $match: { sportID: eventId.sportsId, openDate: { $lt: marketOpendate } }
             },
             {
               $lookup: {
@@ -3615,7 +3616,7 @@ async function getMatchedBets(req, res) {
 
           ]);
           // marketData.forEach((data)=>{console.log(data);})
-          // console.log("....................................." + marketData);
+          console.log("....................................." + marketData);
           res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
         } catch (error) {
           console.error('Error updating odds:', error);
