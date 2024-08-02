@@ -1787,6 +1787,8 @@ const placeBet = async (req, res) => {
 
       console.log('Fancy  Max BetSize =====================================', userMaxBetSize);
       console.log('config.Fancy =====================================', config.Fancy);
+      console.log('config.overby over =====================================', config.overByOver);
+    
       if (!userMaxBetSize) {
         activeBettors.delete(userId);
         return res.status(404).send({
