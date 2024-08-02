@@ -3630,7 +3630,7 @@ async function getMatchedBets(req, res) {
                 sportsId: { $toString: "$sportID" },
                 Id: "$eventId",
                 marketIds: "$marketId",
-                nowUserame: "$marketName",
+                name: "$marketName",
                 openDate: 1,
                 status: 1,
                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
