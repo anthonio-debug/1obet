@@ -1788,7 +1788,7 @@ const placeBet = async (req, res) => {
       console.log('Fancy  Max BetSize =====================================', userMaxBetSize);
       console.log('config.Fancy =====================================', config.Fancy);
       console.log('config.overby over =====================================', config.overByOver);
-    
+
       if (!userMaxBetSize) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1863,14 +1863,14 @@ const placeBet = async (req, res) => {
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
       let apiFancyOddsRes = await fetchSession(eventDetail.Id);
       apiFancyOddsRes = apiFancyOddsRes.filter((item) => item.SelectionId === selectionId);
-      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:",apiFancyOddsRes);
+      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
       if (apiFancyOddsRes[0]?.GameStatus === 'SUSPENDED' || apiFancyOddsRes[0]?.GameStatus === 'Ball Running') {
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Status not available for selected team ${selectionId}`
         });
       }
-      
+
       //start of code to block fancy bet if bookmaker has ball running or suspended status
       // let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
       // const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
@@ -1881,7 +1881,7 @@ const placeBet = async (req, res) => {
       //end of code to block fancy bet if bookmaker has ball running or suspended status
 
       console.log('..................................');
-      
+
       // const apiFancyOdds = response?.data?.data?.t3;
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes);
       const DBOddDetails = await FancyOdds.findById(oddsId);
@@ -1932,7 +1932,7 @@ const placeBet = async (req, res) => {
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
         const apiSelectedOdds = apiFancyOdds.find((runner) => runner.sid == selectionId);
         const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid == selectionId);
-        
+
         if (!apiSelectedOdds || !dbSelectedOdds) {
           activeBettors.delete(userId);
           return res.status(404).send({
@@ -1943,11 +1943,11 @@ const placeBet = async (req, res) => {
         fancyData = dbSelectedOdds.nat;
         runnerName = dbSelectedOdds.nat;
         _3rdPartyMarketId = dbSelectedOdds.nat;
-        
+
         if (userId == 20126) {
           console.log(subMarketName + '------------------------------' + fancyData + '-----------' + marketId + '-UUUUUUUUUUUU-' + userId);
         }
-        
+
         let oddsInsex = 0;
         if (req.body.type == 0) {
           if (betRate != apiSelectedOdds.l1) {
@@ -1965,12 +1965,12 @@ const placeBet = async (req, res) => {
           const index = DbBackOdds.indexOf(betRate);
           oddsInsex = index;
           TargetScore = betRate;
-          console.log("oddsInsex=======", oddsInsex);
-          
+
           if (index == -1) {
             activeBettors.delete(userId);
             return res.status(404).send({ message: `Bet miss matched-29` });
           }
+          console.log(`apiBackOdds[index] =========${apiBackOdds[index]} and ==========betRate============${betRate}`);
           if (apiBackOdds[index] < betRate) {
             activeBettors.delete(userId);
             return res.status(404).send({ message: `Bet miss matched-30 ` });
