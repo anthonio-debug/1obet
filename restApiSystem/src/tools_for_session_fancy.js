@@ -98,7 +98,7 @@ if(bookmakerOdds!==0){
       const from = new Date(now.getTime() + (100040 * 60 * 1000)).getTime()
       let fancyEvents = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
-        hasFancy: true,
+       
         CompanySetStatus: "OPEN",
         openDate: { $lte: from },
         status: 'OPEN'
