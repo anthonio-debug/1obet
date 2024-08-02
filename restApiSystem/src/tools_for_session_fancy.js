@@ -115,7 +115,7 @@ if(bookmakerOdds!==0){
         if (fancyOdds) {
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
-
+          console.log("boooooooooooooooooooooooooooooooooooooooooooooooook",bookmakerMarketIds);
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
