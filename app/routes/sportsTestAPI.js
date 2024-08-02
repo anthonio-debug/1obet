@@ -702,35 +702,13 @@ async function deleteOdds(req, res) {
     await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
 
 
-
-
-    const response = await MarketIDS.aggregate([{ $project: { name: "$marketName" } }])
-
-
-    const totalMarkets = await MarketIDS.countDocuments({ sportID: 4 });
-
-    // await Bets.updateMany(
-    //   { subMarketId: '7', eventId: '33345422'},
-    //   { $set: { isManuel:true } }
-    // )
-    // await InPlayEvents.updateMany({isManuel:true}, {subMarketId: '7', eventId: '33340930'});
-    var arra = [];
-    for (let index = 0; index < response.length; index++) {
-      let element = response[index];
-      console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++" + element);
-      //arra[index] = element.name;
-    }
-
-    const totalgreyhound = await MarketIDS.countDocuments({ winnerInfo: null, sportID: 4339 });
-    const totalhorses = await MarketIDS.countDocuments({ winnerInfo: null, sportID: 7 });
-    //await MarketIDS.deleteMany({winnerInfo: null,sportID:4339})
     //await MarketIDS.deleteMany({winnerInfo: null,sportID:7})
     //await FancyOdds.deleteMany({})
     //await  RaceOdds.deleteMany({})
     //await Odds.deleteMany({});
     //await RaceOdds.deleteMany({});
 
-    res.status(200).json({ success: true, message: 'Odds deleted successfully' + element + "---totalMarkets::" + totalMarkets });
+    res.status(200).json({ success: true, message: 'Odds deleted successfully' });
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
