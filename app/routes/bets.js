@@ -3627,10 +3627,10 @@ async function getMatchedBets(req, res) {
             {
               $project: {
                 _id: 1,
-                sportID: 1,
-                eventId: 1,
-                marketId: 1,
-                name: "$marketName",
+                sportsId: { $toString: "$sportID" },
+                Id: "$eventId",
+                marketIds: "$marketId",
+                nowUserame: "$marketName",
                 openDate: 1,
                 status: 1,
                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
