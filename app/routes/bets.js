@@ -1862,6 +1862,7 @@ const placeBet = async (req, res) => {
       // const response = await axios.get(url);
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
       let apiFancyOddsRes = await fetchSession(eventDetail.Id);
+      console.log("fetchSession=======", apiFancyOddsRes);
       apiFancyOddsRes = apiFancyOddsRes.filter((item) => item.SelectionId === selectionId);
       console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:",apiFancyOddsRes);
       if (apiFancyOddsRes[0]?.GameStatus === 'SUSPENDED' || apiFancyOddsRes[0]?.GameStatus === 'Ball Running') {
