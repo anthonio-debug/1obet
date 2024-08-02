@@ -3638,7 +3638,7 @@ async function getMatchedBets(req, res) {
           ]);
           // console.log("....................................." , marketData);
           const events = marketData.map((data) => data)
-          console.log("MMMMMMMMMMMMM", marketsData);
+          console.log("MMMMMMMMMMMMM", events);
           // relatedEvents = marketData;
           res.status(200).json({ success: true, message: 'Related Markets:', events });
 
