@@ -3490,7 +3490,7 @@ async function getMatchedBets(req, res) {
     const marketId = req.query.marketId;
     /////////////////////////////
     // const marketId = req.query.id;
-    // const matchId  = req.query.marketId;
+    // const matchId = req.query.marketId;
     /////////////////
     //const marketId = '1.231243057';
     if (loginUser.role == '5') {
@@ -3585,27 +3585,27 @@ async function getMatchedBets(req, res) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
     //console.log("Yahoooooooooooooooo.....................",matchId);
-    console.log("Yahoooooooooooooooo.....................====",matchId);
+    console.log("Yahoooooooooooooooo.....................====", matchId);
     let eventId;
     let marketOpendate;
-    if(marketId!== ''){
+    if (marketId !== '') {
       const market = await MarketIDS.findOne({ marketId: marketId })
-      console.log("-----------------",market);
+      console.log("-----------------", market);
       marketOpendate = market.openDate;
       eventId = await Events.findOne({ Id: market.eventId })
-      
 
-    }else{
-       eventId = await Events.findById(matchId);
-    
+
+    } else {
+      eventId = await Events.findById(matchId);
+
     }
     // console.log(",,,,,,,,,,,,,,,,",eventId);
-    console.log(",,,,,,,,,,,,,,,,",marketOpendate);
+    console.log(",,,,,,,,,,,,,,,,", marketOpendate);
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
         try {
-          
-          console.log("ssssssssssssssssssssssssssssssss:",eventId.sportsId);
+
+          console.log("ssssssssssssssssssssssssssssssss:", eventId.sportsId);
           const sportid = +eventId.sportsId
           const marketData = await MarketIDS.aggregate([
             {
@@ -3625,7 +3625,7 @@ async function getMatchedBets(req, res) {
                 sportID: 1,
                 eventId: 1,
                 marketId: 1,
-                Name: "$marketName",
+                name: "$marketName",
                 openDate: 1,
                 status: 1,
                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
@@ -3637,10 +3637,10 @@ async function getMatchedBets(req, res) {
 
           ]);
           // console.log("....................................." , marketData);
-          const marketsData = marketData.map((data)=>data)
-          console.log("MMMMMMMMMMMMM",relatedEvents);
+          const marketsData = marketData.map((data) => data)
+          console.log("MMMMMMMMMMMMM", marketsData);
           // relatedEvents = marketData;
-          res.status(200).json({ success: true, message: 'Related Markets:' , marketsData });
+          res.status(200).json({ success: true, message: 'Related Markets:', marketsData });
 
         } catch (error) {
           console.error('Error updating odds:', error);
