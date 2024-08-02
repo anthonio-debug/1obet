@@ -3639,10 +3639,10 @@ async function getMatchedBets(req, res) {
 
           ]);
           // console.log("....................................." , marketData);
-          const marketsData = marketData.map((data) => data)
-          console.log("MMMMMMMMMMMMM", relatedEvents);
+          const events = marketData.map((data) => data)
+          console.log("MMMMMMMMMMMMM", events);
           // relatedEvents = marketData;
-          res.status(200).json({ success: true, message: 'Related Markets:', marketsData });
+          res.status(200).json({ success: true, message: 'Related Markets:', events });
 
         } catch (error) {
           console.error('Error updating odds:', error);
