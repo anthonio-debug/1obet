@@ -1965,7 +1965,7 @@ const placeBet = async (req, res) => {
           const index = DbBackOdds.indexOf(betRate);
           oddsInsex = index;
           TargetScore = betRate;
-          console.log("DbBackOdds2=======", DbBackOdds2);
+          console.log("oddsInsex=======", oddsInsex);
           
           if (index == -1) {
             activeBettors.delete(userId);
