@@ -2471,6 +2471,7 @@ const placeBet = async (req, res) => {
 
     setTimeout(async () => {
       console.log("subMarketDetail.Id========================", subMarketDetail.Id);
+      console.log("multipeResponse========================", multipeResponse);
       if (multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         activeBettors.delete(userId);
         return res.status(404).send({
