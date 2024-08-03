@@ -1863,7 +1863,7 @@ const placeBet = async (req, res) => {
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
       let apiFancyOddsRes = await fetchSession(eventDetail.Id);
       apiFancyOddsRes = apiFancyOddsRes.filter((item) => item.SelectionId === selectionId);
-      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
+      // console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
       if (apiFancyOddsRes[0]?.GameStatus === 'SUSPENDED' || apiFancyOddsRes[0]?.GameStatus === 'Ball Running') {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1955,10 +1955,8 @@ const placeBet = async (req, res) => {
             return res.status(404).send({ message: `Bet miss matched-28 ` });
           }
           const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
-          console.log("apiBackOdds2=======", apiBackOdds2);
           const apiBackOdds = apiBackOdds2.map((item) => Number(item));
           const DbBackOdds2 = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
-          console.log("DbBackOdds2=======", DbBackOdds2);
           const DbBackOdds = DbBackOdds2.map((item) => Number(item));
           const DbBackScores2 = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
           const DbBackScores = DbBackScores2.map((item) => Number(item));
@@ -1970,7 +1968,6 @@ const placeBet = async (req, res) => {
             activeBettors.delete(userId);
             return res.status(404).send({ message: `Bet miss matched-29` });
           }
-          console.log(`apiBackOdds[index] =========${apiBackOdds[index]} and ==========betRate============${betRate}`);
           if (apiBackOdds[index] < betRate) {
             activeBettors.delete(userId);
             return res.status(404).send({ message: `Bet miss matched-30 ` });
@@ -2465,6 +2462,8 @@ const placeBet = async (req, res) => {
     /* ============================================================ =============== */
 
     const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.overByOver, config.Fancy, config.BookMaker, config.Toss];
+    console.log("delayExcludedMarkets==============", delayExcludedMarkets);
+    
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
       if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.BookMaker || subMarketDetail.Id == config.overByOver) {
