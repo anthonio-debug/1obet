@@ -2012,13 +2012,12 @@ const placeBet = async (req, res) => {
 
     // For Bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
-      console.log(`config.BookMaker=======================${config.BookMaker}`)
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
         subarket: subMarketDetail.Id
       });
-      //console.log("Bookmaker  Max BetSize =============", userMaxBetSize);
+      console.log("Bookmaker  Max BetSize =============", userMaxBetSize);
       if (!userMaxBetSize) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -2035,7 +2034,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
-
+      
       const resultCheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultCheck === 400) {
         activeBettors.delete(userId);
@@ -2043,13 +2042,14 @@ const placeBet = async (req, res) => {
           message: `${message_result}`
         });
       }
-
+      
       isFancyOrBookMaker = true;
       // const eventId = eventDetail.Id;
       // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       // const response = await axios.get(url);
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
+      console.log(`dbFancyOdds=======================${dbFancyOdds}`)
       const selectedMarketId = dbFancyOdds[0]?.ssid;
       if (!selectedMarketId) {
         activeBettors.delete(userId);
