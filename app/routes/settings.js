@@ -211,6 +211,7 @@ async function updateMatchType(req, res) {
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.errors });
   }
+  let hasFancy;
 
   try {
     const { _id, matchType, iconStatus, eventId, liveUrl, hasBetfairFancy, hasOverbyOverOddEven } = req.body;
@@ -224,6 +225,8 @@ async function updateMatchType(req, res) {
       });
       await betseconds.save();
     }
+
+    if (hasBetfairFancy || hasOverbyOverOddEven) hasFancy = true
 
     const currentEvent = await inPlayEvents.findOne({ Id: eventId });
     let hasFancyMatch = currentEvent ? currentEvent.hasFancyMatch : false;
@@ -248,7 +251,7 @@ async function updateMatchType(req, res) {
     const updatedData = await Events.findByIdAndUpdate(
       _id, {
       $set: {
-        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancyMatch: hasFancyMatch, hasBetfairFancy: hasBetfairFancy
+          matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancyMatch: hasFancyMatch, hasBetfairFancy: hasBetfairFancy, hasFancy: hasFancy
       }
     }, { upsert: true, new: true }).exec();
 
