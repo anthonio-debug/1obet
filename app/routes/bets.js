@@ -2012,6 +2012,7 @@ const placeBet = async (req, res) => {
 
     // For Bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
+      console.log(`config.BookMaker=======================${config.BookMaker}`)
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -2127,7 +2128,6 @@ const placeBet = async (req, res) => {
         amount: 0
       }));
       console.log(`runnerForSaveInbets==================${runnerForSaveInbetss}`);
-      
       if (apiBookmakerOdds.length && dbFancyOdds.length) {
         const apiSelectedOdds = apiBookmakerOdds.find((runner) => runner.sid === selectionId);
         const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid === selectionId);
