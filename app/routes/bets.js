@@ -2463,7 +2463,7 @@ const placeBet = async (req, res) => {
     }
     /* ============================================================ =============== */
 
-    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.Fancy, config.overByOver, config.BookMaker, config.Toss];
+    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.Fancy, config.BookMaker, config.Toss];
 
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
@@ -2477,7 +2477,6 @@ const placeBet = async (req, res) => {
     setTimeout(async () => {
       console.log("subMarketDetail.Id========================", subMarketDetail.Id);
       if (multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
-        console.log("multipeResponse========================", multipeResponse);
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Bet Miss Matched-40 `
@@ -2486,6 +2485,7 @@ const placeBet = async (req, res) => {
         betRate = multipeResponse[multipeResponse.length - 1];
       }
 
+      console.log("linee number 2488========================", multipeResponse);
       /**
        * Winning Loosing Amounts Calculations
        */
