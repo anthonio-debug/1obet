@@ -2431,7 +2431,9 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             const playerFromAPI = oddsData.data?.t2.find((player) => player.sid == selectionId);
+            console.log("playerFromAPI==================", playerFromAPI);
             let selectedOddsValue = playerFromAPI?.rate;
+            console.log("selectedOddsValue==================", selectedOddsValue);
             if (selectedOddsValue <= betRate) {
               multipeResponse.push(selectedOddsValue);
             }
