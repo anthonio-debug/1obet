@@ -2022,7 +2022,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong ! in the bookmaker size`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
