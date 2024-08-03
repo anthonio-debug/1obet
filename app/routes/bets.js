@@ -2126,7 +2126,8 @@ const placeBet = async (req, res) => {
         runner: runner.sid,
         amount: 0
       }));
-
+      console.log(`runnerForSaveInbets==================${runnerForSaveInbetss}`);
+      
       if (apiBookmakerOdds.length && dbFancyOdds.length) {
         const apiSelectedOdds = apiBookmakerOdds.find((runner) => runner.sid === selectionId);
         const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid === selectionId);
