@@ -1793,7 +1793,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-fancy`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1817,7 +1817,7 @@ const placeBet = async (req, res) => {
       if (!userMaxBetSize) {
         console.warn('Fancy userMaxBetSize not found ');
         activeBettors.delete(userId);
-        return res.status(404).send({ message: `something went wrong !` });
+        return res.status(404).send({ message: `something went wrong !-fancy-2` });
       }
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
@@ -2022,7 +2022,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-bookmaker`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -3007,7 +3007,7 @@ const placeBet = async (req, res) => {
         if (err) {
           console.warn('Error : ', err);
           activeBettors.delete(userId);
-          return res.status(404).send({ message: `Something went wrong !` });
+          return res.status(404).send({ message: `Something went wrong ! -1` });
         }
         try {
           console.log('Start placing bet');
@@ -3113,7 +3113,7 @@ const placeBet = async (req, res) => {
     console.warn('Error placing bet Catched ', error);
     const userId = req.decoded.userId;
     activeBettors.delete(userId);
-    return res.status(404).send({ message: `Something went wrong !` });
+    return res.status(404).send({ message: `Something went wrong !-2` });
   } finally {
     const userId = req.decoded.userId;
     activeBettors.delete(userId);
