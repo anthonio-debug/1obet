@@ -33,6 +33,7 @@
   "raceMarkets": ["7", "4339"],
   "casinoMarketId": "6",
   "FigureEvenOddSmallBig": [9, 10, 34],
+  "FancyOddEven":[7, 70],
   "asianSubMarket": [36, 37, 38, 39, 40, 41, 42, 43, 44],
   "commissionLessSubMarkets": [2, 3, 4],
   "balls": ["1", "2", "3", "4", "5", "6"],
