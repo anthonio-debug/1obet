@@ -3007,7 +3007,7 @@ const placeBet = async (req, res) => {
         if (err) {
           console.warn('Error : ', err);
           activeBettors.delete(userId);
-          return res.status(404).send({ message: `Something went wrong ! for save bet` });
+          return res.status(404).send({ message: `Something went wrong !` });
         }
         try {
           console.log('Start placing bet');
