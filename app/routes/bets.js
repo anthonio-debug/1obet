@@ -2464,10 +2464,10 @@ const placeBet = async (req, res) => {
     }
     /* ============================================================ =============== */
 
-    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.Fancy, config.BookMaker, config.Toss];
+    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.overByOver, config.Fancy, config.BookMaker, config.Toss];
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
-      if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.BookMaker) {
+      if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.BookMaker || subMarketDetail.Id == config.overByOver) {
         delay = 4000;
       }
     } else {
