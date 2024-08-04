@@ -2141,7 +2141,7 @@ const placeBet = async (req, res) => {
         runner: runner.sid,
         amount: 0
       }));
-      console.log(`runnerForSaveInbets==================${runnerForSaveInbets}`);
+      console.log(`runnerForSaveInbets==================${runnerForSaveInbets.map(data => console.log(data))}`);
       if (apiBookmakerOdds.length && dbFancyOdds.length) {
         const apiSelectedOdds = apiBookmakerOdds.find((runner) => runner.sid === selectionId);
         const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid === selectionId);
@@ -2695,7 +2695,6 @@ const placeBet = async (req, res) => {
           });
           prevExpAmount = lastBet[0].exposureAmount;
         } else {
-          console.log(`runnerForSaveInbets line 2683==================${runnerForSaveInbets}`);
           runnersPosition = runnerForSaveInbets.map((item) => {
             if (item.runner == selectionId) {
               item.amount = Number((item.amount + Number(winningAmount.toFixed(3))).toFixed(3));
@@ -2725,7 +2724,6 @@ const placeBet = async (req, res) => {
           prevExpAmount = resp.prevExpAmount;
         } else {
           if (type == 0) {
-            console.log(`runnerForSaveInbets line 2713==================${runnerForSaveInbets}`);
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
                 item.amount = Number((item.amount + Number(winningAmount.toFixed(3))).toFixed(3));
@@ -2736,7 +2734,6 @@ const placeBet = async (req, res) => {
             });
             runnersPosition = runnerCurrentPosition;
           } else if (type == 1) {
-            console.log(`runnerForSaveInbets line 2724==================${runnerForSaveInbets}`);
             runnersPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
                 item.amount = Number((item.amount - Number(loosingAmount.toFixed(3))).toFixed(3));
@@ -2777,7 +2774,6 @@ const placeBet = async (req, res) => {
             });
             runnersPosition = runnerCurrentPosition;
           } else if (type == 1) {
-            console.log(`runnerForSaveInbets line 2765==================${runnerForSaveInbets}`);
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
                 item.amount = Number((item.amount - Number(loosingAmount.toFixed(3))).toFixed(3));
