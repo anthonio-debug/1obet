@@ -1777,7 +1777,8 @@ const placeBet = async (req, res) => {
     }
 
     // For Fancy
-    else if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.overByOver) {
+    // else if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.overByOver) {
+    else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
 
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
@@ -2034,7 +2035,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
-      
+
       const resultCheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultCheck === 400) {
         activeBettors.delete(userId);
@@ -2042,7 +2043,7 @@ const placeBet = async (req, res) => {
           message: `${message_result}`
         });
       }
-      
+
       isFancyOrBookMaker = true;
       // const eventId = eventDetail.Id;
       // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
