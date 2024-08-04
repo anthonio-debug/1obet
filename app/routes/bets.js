@@ -1900,14 +1900,15 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes);
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
-
+      // Code by qadir
+      const selectedMarketId = dbFancyOdds[0]?.ssid;
       let runners = dbFancyOdds;
       _3rdPartyMarketId = selectedMarketId;
       runnerForSaveInbets = runners.map((runner) => ({
         runner: runner.sid,
         amount: 0
       }));
-
+      ///
       /* bookmaker check start */
       const dbBookmakerMarketId = DBOddDetails?.data?.data?.t2[0]?.bm1[0]?.ssid;
       if (!dbBookmakerMarketId) {
