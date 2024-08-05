@@ -1777,7 +1777,8 @@ const placeBet = async (req, res) => {
     }
 
     // For Fancy
-    else if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.overByOver) {
+    // else if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.overByOver) {
+    else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
 
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
@@ -1814,6 +1815,13 @@ const placeBet = async (req, res) => {
           subarket: config.Fancy
         })
         .exec();
+      const fancyOddEvenBetLimit = await userBetSizes
+        .findOne({
+          userId: userId,
+          sportsId: marketId,
+          subarket: config.Fancy
+        }).exec();
+
       if (!userMaxBetSize) {
         console.warn('Fancy userMaxBetSize not found ');
         activeBettors.delete(userId);
@@ -1826,9 +1834,15 @@ const placeBet = async (req, res) => {
           message: `${message_result}`
         });
       }
+
       if (fancyBetLimit && betAmount > fancyBetLimit.amount) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `max bet size is: ${fancyBetLimit.amount}` });
+      }
+
+      if (fancyOddEvenBetLimit && betAmount > fancyOddEvenBetLimit.amount) {
+        activeBettors.delete(userId);
+        return res.status(404).send({ message: `max bet size is: ${fancyOddEvenBetLimit.amount}` });
       }
 
       isFancyOrBookMaker = true;
@@ -1881,11 +1895,22 @@ const placeBet = async (req, res) => {
       //end of code to block fancy bet if bookmaker has ball running or suspended status
 
       console.log('..................................');
-
+      console.log('type..................................', type);
       // const apiFancyOdds = response?.data?.data?.t3;
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes);
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
+
+      // Code by qadir
+      const selectedMarketId = dbFancyOdds[0]?.ssid;
+      let runners = dbFancyOdds;
+      _3rdPartyMarketId = selectedMarketId;
+      runnerForSaveInbets = runners.map((runner) => ({
+        runner: runner.sid,
+        amount: 0
+      }));
+      ///
+
       /* bookmaker check start */
       const dbBookmakerMarketId = DBOddDetails?.data?.data?.t2[0]?.bm1[0]?.ssid;
       if (!dbBookmakerMarketId) {
@@ -2017,7 +2042,7 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
         subarket: subMarketDetail.Id
       });
-      //console.log("Bookmaker  Max BetSize =============", userMaxBetSize);
+      console.log("Bookmaker  Max BetSize =============", userMaxBetSize);
       if (!userMaxBetSize) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -2049,6 +2074,7 @@ const placeBet = async (req, res) => {
       // const response = await axios.get(url);
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
+      console.log(`dbFancyOdds=======================${dbFancyOdds}`)
       const selectedMarketId = dbFancyOdds[0]?.ssid;
       if (!selectedMarketId) {
         activeBettors.delete(userId);
@@ -2126,7 +2152,7 @@ const placeBet = async (req, res) => {
         runner: runner.sid,
         amount: 0
       }));
-
+      console.log(`runnerForSaveInbets==================${runnerForSaveInbets.map(data => console.log(data))}`);
       if (apiBookmakerOdds.length && dbFancyOdds.length) {
         const apiSelectedOdds = apiBookmakerOdds.find((runner) => runner.sid === selectionId);
         const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid === selectionId);
@@ -2431,7 +2457,9 @@ const placeBet = async (req, res) => {
             const response = await axios.get(url);
             const oddsData = response.data;
             const playerFromAPI = oddsData.data?.t2.find((player) => player.sid == selectionId);
+            console.log("playerFromAPI==================", playerFromAPI);
             let selectedOddsValue = playerFromAPI?.rate;
+            console.log("selectedOddsValue==================", selectedOddsValue);
             if (selectedOddsValue <= betRate) {
               multipeResponse.push(selectedOddsValue);
             }
@@ -2461,12 +2489,11 @@ const placeBet = async (req, res) => {
     }
     /* ============================================================ =============== */
 
-    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.overByOver, config.Fancy, config.BookMaker, config.Toss];
-    console.log("delayExcludedMarkets==============", delayExcludedMarkets);
-    
+    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, ...config.FancyOddEven, config.BookMaker, config.Toss];
+
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
-      if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.BookMaker || subMarketDetail.Id == config.overByOver) {
+      if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.BookMaker) {
         delay = 4000;
       }
     } else {
@@ -2475,16 +2502,16 @@ const placeBet = async (req, res) => {
 
     setTimeout(async () => {
       console.log("subMarketDetail.Id========================", subMarketDetail.Id);
-      console.log("multipeResponse========================", multipeResponse);
       if (multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Bet Miss Matched-40 `
         });
-      } else if (multipeResponse.length > 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
+      } else if (multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         betRate = multipeResponse[multipeResponse.length - 1];
       }
 
+      console.log("linee number 2488========================", multipeResponse);
       /**
        * Winning Loosing Amounts Calculations
        */
@@ -2747,6 +2774,7 @@ const placeBet = async (req, res) => {
           prevExpAmount = resp.prevExpAmount;
         } else {
           if (type == 0) {
+            console.log(`runnerForSaveInbets line 2754==================${runnerForSaveInbets}`);
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
                 item.amount = Number((item.amount + Number(winningAmount.toFixed(3))).toFixed(3));
