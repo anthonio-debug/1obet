@@ -38,6 +38,7 @@
   "balls": ["1", "2", "3", "4", "5", "6"],
   "matchTypes": ["T10", "T20", "ODI", "TEST"],
   "ExcludedBackLay": [7, 8],
+  "FancyOddEven":[7, 70],
   "soccerOdds": 13,
   "tennisOdds": 15,
   "cricketOdds": 6,

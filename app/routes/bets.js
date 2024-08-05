@@ -448,7 +448,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-1`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -609,7 +609,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-2`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -802,7 +802,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-3`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1015,7 +1015,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-4`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1196,7 +1196,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-5`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1386,7 +1386,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-6`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1547,7 +1547,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-7`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1695,7 +1695,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-8`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1777,8 +1777,8 @@ const placeBet = async (req, res) => {
     }
 
     // For Fancy
-    else if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.overByOver) {
-    // else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
+    // else if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.overByOver) {
+    else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
 
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
@@ -1794,7 +1794,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-9`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -1825,7 +1825,7 @@ const placeBet = async (req, res) => {
       if (!userMaxBetSize) {
         console.warn('Fancy userMaxBetSize not found ');
         activeBettors.delete(userId);
-        return res.status(404).send({ message: `something went wrong !` });
+        return res.status(404).send({ message: `something went wrong !-10` });
       }
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
@@ -2047,7 +2047,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-11`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -2235,7 +2235,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !`
+          message: `something went wrong !-12`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
@@ -2382,7 +2382,7 @@ const placeBet = async (req, res) => {
       if (!userMaxBetSize) {
         console.warn('userMaxBetSize not found ');
         activeBettors.delete(userId);
-        return res.status(404).send({ message: `something went wrong !` });
+        return res.status(404).send({ message: `something went wrong !-13` });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
@@ -3028,7 +3028,7 @@ const placeBet = async (req, res) => {
         if (err) {
           console.warn('Error : ', err);
           activeBettors.delete(userId);
-          return res.status(404).send({ message: `Something went wrong !` });
+          return res.status(404).send({ message: `Something went wrong !-14` });
         }
         try {
           console.log('Start placing bet');
@@ -3134,7 +3134,7 @@ const placeBet = async (req, res) => {
     console.warn('Error placing bet Catched ', error);
     const userId = req.decoded.userId;
     activeBettors.delete(userId);
-    return res.status(404).send({ message: `Something went wrong !` });
+    return res.status(404).send({ message: `Something went wrong !-15` });
   } finally {
     const userId = req.decoded.userId;
     activeBettors.delete(userId);
