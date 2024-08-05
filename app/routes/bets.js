@@ -1895,11 +1895,12 @@ const placeBet = async (req, res) => {
       //end of code to block fancy bet if bookmaker has ball running or suspended status
 
       console.log('..................................');
-      
+      console.log('type..................................', type);
       // const apiFancyOdds = response?.data?.data?.t3;
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes);
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
+
       // Code by qadir
       const selectedMarketId = dbFancyOdds[0]?.ssid;
       let runners = dbFancyOdds;
@@ -1908,9 +1909,8 @@ const placeBet = async (req, res) => {
         runner: runner.sid,
         amount: 0
       }));
-      console.log(`'.................................. ${runnerForSaveInbets.map(data=> console.log(data))}'`);
-      
       ///
+
       /* bookmaker check start */
       const dbBookmakerMarketId = DBOddDetails?.data?.data?.t2[0]?.bm1[0]?.ssid;
       if (!dbBookmakerMarketId) {
