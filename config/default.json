@@ -4,7 +4,7 @@
   "saltRounds": 10,
   "pageSize": 10,
   "staging_apiUrl": "https://stage.game-program.com/api/seamless/provider",
-  "apiUrl": "https://em-api.thegameprovider.com/api/seamless/provider",
+  "apiUrl": "https://stage.game-program.com/api/seamless/provider",
   "eventListAPIUrl": "https://tvlivestreaming.online:3440/api",
   "sportsAPIUrl": "http://185.58.225.212:8080/api",
   "old_sportsAPIUrl": "http://209.250.242.175:33332",
