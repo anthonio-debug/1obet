@@ -455,8 +455,8 @@ function apiRequests() {
           })
         });
         //sorting end      
-        //console.log("=================length>>>>>>>>",sortedarrMarketIds.length);
-        //console.log("I am sorted:::::::::::::::::::::::::::::::", sortedarrMarketIds);
+        console.log("=================length>>>>>>>>",sortedarrMarketIds.length);
+        console.log("I am sorted:::::::::::::::::::::::::::::::", sortedarrMarketIds);
 
         sortedarrMarketIds.indexOf("Apple");
 
@@ -501,6 +501,7 @@ function apiRequests() {
             }
           } else {
             await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
+            
           }
         }
 
@@ -510,6 +511,7 @@ function apiRequests() {
 
 
         await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
+
       }
     } catch (error) {
       console.error(error);
@@ -950,7 +952,7 @@ function apiRequests() {
           sportsId: sportsId + '',
           isShowed: true,
           status: 'OPEN',
-          inplay: { $ne: true }
+          // inplay: { $ne: true }
         };
         events = await inPlayEvents.find(queryPastEvents).sort({ openDate: -1 }).limit(10).exec();
       }
