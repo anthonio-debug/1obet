@@ -1777,8 +1777,8 @@ const placeBet = async (req, res) => {
     }
 
     // For Fancy
-    // else if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.overByOver) {
-    else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
+    else if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.overByOver) {
+    // else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
 
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
