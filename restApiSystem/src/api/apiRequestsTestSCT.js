@@ -355,7 +355,7 @@ function apiRequests() {
 
       const marketsData = response.data.result;
       let marketStatus = 'OPEN';
-      console.log(`marketData=============================================${marketData}`);
+      console.log(`marketsData=============================================${marketsData}`);
 
 
       if (marketsData && marketsData?.length > 0) {
