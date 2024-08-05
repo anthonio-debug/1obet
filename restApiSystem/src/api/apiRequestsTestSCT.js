@@ -348,7 +348,7 @@ function apiRequests() {
       maxResults: 100,
       marketProjection: ['EVENT', 'EVENT_TYPE', 'MARKET_START_TIME', 'MARKET_DESCRIPTION', 'RUNNER_DESCRIPTION']
     };
-    console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE:",eventId);
+    console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE:", eventId);
     const url = `${config.newThirdURL}/listMarketCatalogue`;
     try {
       const response = await axios.post(url, requestData, header);
@@ -385,8 +385,8 @@ function apiRequests() {
             let betfairFancy2 = FindInMeRes.search('runs line');
 
             //console.log("MarketName:", element.marketName);
-            // console.log('betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
-            // console.log('betfairFancy2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy2);
+            console.log('betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
+            console.log('betfairFancy2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy2);
 
             if (betfairFancy2 >= 0 || betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
 
@@ -455,7 +455,7 @@ function apiRequests() {
           })
         });
         //sorting end      
-        console.log("=================length>>>>>>>>",sortedarrMarketIds.length);
+        console.log("=================length>>>>>>>>", sortedarrMarketIds.length);
         console.log("I am sorted:::::::::::::::::::::::::::::::", sortedarrMarketIds);
 
         sortedarrMarketIds.indexOf("Apple");
@@ -501,7 +501,7 @@ function apiRequests() {
             }
           } else {
             await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
-            
+
           }
         }
 

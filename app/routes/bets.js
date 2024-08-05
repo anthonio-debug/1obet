@@ -162,6 +162,10 @@ const checkMarketActiveForBets = async (marketId) => {
     return 400;
   }
 };
+function checkRunsOrOvers(inputString) {
+  const submarket = /(runs|overs)/i;
+  return submarket.test(inputString);
+}
 
 const placeBet = async (req, res) => {
   const errors = validationResult(req);
@@ -209,6 +213,9 @@ const placeBet = async (req, res) => {
     let delay = 5200;
     let asianTableName = '';
     let delayAddition = 0;
+    let submarketForBetfair = ''
+
+    if (checkRunsOrOvers(subMarketName)) submarketForBetfair = "Betfair Fancy"
     /* ====================================================================== */
 
     /* ============================== Innitial Checks  ============================== */
@@ -1777,7 +1784,6 @@ const placeBet = async (req, res) => {
     }
 
     // For Fancy
-    // else if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.overByOver) {
     else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
 
       const userMaxBetSize = await userBetSizes.findOne({
@@ -2034,7 +2040,6 @@ const placeBet = async (req, res) => {
         });
       }
     }
-
     // For Bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
       const userMaxBetSize = await userBetSizes.findOne({
@@ -3674,7 +3679,6 @@ async function getMatchedBets(req, res) {
 
 
           ]);
-        
           console.log("MMMMMMMMMMMMM", events);
           res.status(200).json({ success: true, message: 'Related Markets:', events });
 
