@@ -456,7 +456,7 @@ function apiRequests() {
         });
         //sorting end      
         console.log("=================length>>>>>>>>", sortedarrMarketIds.length);
-        console.log("I am sorted:::::::::::::::::::::::::::::::", sortedarrMarketIds);
+        // console.log("I am sorted:::::::::::::::::::::::::::::::", sortedarrMarketIds);
 
         sortedarrMarketIds.indexOf("Apple");
 
@@ -721,7 +721,7 @@ function apiRequests() {
                         runnerCheckerArray.push(marketId);
                       }
                     }
-                    console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
+                    // console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
                     let el = new Odds(json1);
                     await el.save();
 
