@@ -759,12 +759,21 @@ async function getRelatedMarkets(req, res) {
         }
       },
       {
+        $lookup: {
+          from: 'inplayevents',
+          localField: 'eventId',
+          foreignField: 'Id',
+          as: 'event'
+        }
+      },
+      {
         $project: {
           _id: 1,
           sportID: 1,
           eventId: 1,
           marketId: 1,
           Name: "$marketName",
+          countryCode: { $first: '$event.countryCode' },
           openDate: 1,
           status: 1,
           totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
@@ -775,9 +784,8 @@ async function getRelatedMarkets(req, res) {
 
 
     ]);
-    marketData.forEach((data)=>{console.log(data);})
-    console.log("....................................." + marketData);
-    res.status(200).json({ success: true, message: 'Related Markets:' + marketData });
+    console.log("....................................." , marketData);
+    res.status(200).json({ success: true, message: 'Related Markets:' , marketData });
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });

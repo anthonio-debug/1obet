@@ -3519,13 +3519,8 @@ async function getMatchedBets(req, res) {
 
     // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
-    //const { id, matchId } = req.query;
     const matchId = req.query.id;
     const marketId = req.query.marketId;
-    /////////////////////////////
-    // const marketId = req.query.id;
-    // const matchId  = req.query.marketId;
-    /////////////////
     //const marketId = '1.231243057';
     if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
@@ -3641,7 +3636,7 @@ async function getMatchedBets(req, res) {
 
           console.log("ssssssssssssssssssssssssssssssss:", eventId.sportsId);
           const sportid = +eventId.sportsId
-          const marketData = await MarketIDS.aggregate([
+          const events = await MarketIDS.aggregate([
             {
               $match: { sportID: sportid, openDate: { $gt: marketOpendate } }
             },
@@ -3654,26 +3649,33 @@ async function getMatchedBets(req, res) {
               }
             },
             {
+              $lookup: {
+                from: 'inplayevents',
+                localField: 'eventId',
+                foreignField: 'Id',
+                as: 'event'
+              }
+            },
+            {
               $project: {
                 _id: 1,
                 sportsId: { $toString: "$sportID" },
                 Id: "$eventId",
                 marketIds: "$marketId",
                 name: "$marketName",
+                countryCode: { $first: '$event.countryCode' },
                 openDate: 1,
                 status: 1,
                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
               }
             },
-            { $sort: { openDate: 1 } },
             { $limit: 5 },
+            { $sort: { openDate: 1 } },
 
 
           ]);
-          // console.log("....................................." , marketData);
-          const events = marketData.map((data) => data)
+        
           console.log("MMMMMMMMMMMMM", events);
-          // relatedEvents = marketData;
           res.status(200).json({ success: true, message: 'Related Markets:', events });
 
         } catch (error) {
