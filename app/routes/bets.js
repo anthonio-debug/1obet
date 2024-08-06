@@ -213,11 +213,8 @@ const placeBet = async (req, res) => {
     let delay = 5200;
     let asianTableName = '';
     let delayAddition = 0;
-    let submarketForBetfair = ""
 
     if (checkRunsOrOvers(subMarketName)) subMarketName = "Betfair Fancy"
-    console.log(`submarketForBetfair=============================${submarketForBetfair}`);
-    console.log(`subMarketName=============================${subMarketName}`);
 
     /* ====================================================================== */
 
@@ -2085,7 +2082,7 @@ const placeBet = async (req, res) => {
           setTimeout(async () => {
             console.log(`Fetching odds data, attempt: ${i}`);
 
-            const oddsData = await apiCallForOdds(id);
+            const oddsData = await apiCallForOdds(DBOddDetails.marketId);
             const marketStatus = oddsData[0]?.status;
             console.log(`Market status: ${marketStatus}`);
 
