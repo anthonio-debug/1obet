@@ -499,11 +499,11 @@ function apiRequests() {
                 inPlay: true
               });
               await newMarket.save();
-              log(`newMarket=========================${newMarket}`)
+              console.log(`newMarket=========================${newMarket}`)
             }
           } else {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
-            log(`newmarkets2=========================${newmarkets2}`)
+            console.log(`newmarkets2=========================${newmarkets2}`)
           }
         }
 
