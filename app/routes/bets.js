@@ -215,7 +215,7 @@ const placeBet = async (req, res) => {
     let delayAddition = 0;
     let submarketForBetfair = ""
 
-    if (checkRunsOrOvers(subMarketName)) submarketForBetfair = "Betfair Fancy"
+    if (checkRunsOrOvers(subMarketName)) subMarketName = "Betfair Fancy"
     console.log(`submarketForBetfair=============================${submarketForBetfair}`);
     console.log(`subMarketName=============================${subMarketName}`);
 
