@@ -355,7 +355,7 @@ function apiRequests() {
 
       const marketsData = response.data.result;
       let marketStatus = 'OPEN';
-      // console.log(`marketsData=============================================${marketsData.map(data => console.log(data))}`);
+      console.log(`marketsData=============================================${marketsData.map(data => console.log(data))}`);
 
       if (marketsData && marketsData?.length > 0) {
         let marketIds = [];
@@ -394,7 +394,7 @@ function apiRequests() {
               if (betfairFancy >= 0 || betfairFancy2 >= 0) {
 
                 hasbetfairFancy = true;
-                //console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
+                console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
                 arrMarketIds[cntrl] = completeMarketName;
                 cntrl++;
 
@@ -502,7 +502,7 @@ function apiRequests() {
               log(`newMarket=========================${newMarket}`)
             }
           } else {
-            const newmarkets2= await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
+            const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
             log(`newmarkets2=========================${newmarkets2}`)
           }
         }
