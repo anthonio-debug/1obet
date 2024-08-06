@@ -216,6 +216,8 @@ const placeBet = async (req, res) => {
     let submarketForBetfair = ""
 
     if (checkRunsOrOvers(subMarketName)) submarketForBetfair = "Betfair Fancy"
+    console.log(`submarketForBetfair=============================${submarketForBetfair}`);
+
     /* ====================================================================== */
 
     /* ============================== Innitial Checks  ============================== */
@@ -441,8 +443,6 @@ const placeBet = async (req, res) => {
     }
 
     let maxExp = 0;
-    console.log(`submarketForBetfair===================${submarketForBetfair}`)
-    console.log(`subMarketDetail.Id == config.BetfairFancy=====================${subMarketDetail.Id == config.BetfairFancy}`)
     /* ==================================================================== */
 
     /* ================================== Market Specific Checks ================================== */
@@ -2044,7 +2044,7 @@ const placeBet = async (req, res) => {
     }
 
     // For Betfair Fancy 
-    else if (submarketForBetfair && subMarketDetail.Id == config.BetfairFancy) {
+    else if (submarketForBetfair) {
       console.log('submarketForBetfair condition met.');
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
