@@ -441,6 +441,8 @@ const placeBet = async (req, res) => {
     }
 
     let maxExp = 0;
+    console.log(`submarketForBetfair===================${submarketForBetfair}`)
+    console.log(`subMarketDetail.Id == config.BetfairFancy=====================${subMarketDetail.Id == config.BetfairFancy}`)
     /* ==================================================================== */
 
     /* ================================== Market Specific Checks ================================== */
@@ -2043,10 +2045,12 @@ const placeBet = async (req, res) => {
 
     // For Betfair Fancy 
     else if (submarketForBetfair && subMarketDetail.Id == config.BetfairFancy) {
-      
+      console.log('submarketForBetfair condition met.');
+
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
         activeBettors.delete(userId);
+        console.log(`stopbetStatusChecker returned 400 for eventId: ${eventDetail.Id}`);
         return res.status(404).send({
           message: `${message_result}`
         });
@@ -2055,34 +2059,51 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         activeBettors.delete(userId);
+        console.log(`Odds details not found in DB for oddsId: ${oddsId}`);
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
         });
       }
+      console.log(`Odds details found in DB for oddsId: ${oddsId}`);
+
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets = runners.map((runner) => ({
         runner: runner.SelectionId,
         amount: 0
       }));
+      console.log('Runners mapped for saving in bets:', runnerForSaveInbets);
+
       const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName;
+      console.log(`Runner name found: ${runnerName}`);
 
       if (selectedBetRate == betRate) {
+        console.log('Selected bet rate matches the provided bet rate.');
+
         for (let i = 1; i < 5; i++) {
           setTimeout(async () => {
+            console.log(`Fetching odds data, attempt: ${i}`);
+
             const oddsData = await apiCallForOdds(id);
             const marketStatus = oddsData[0]?.status;
+            console.log(`Market status: ${marketStatus}`);
 
             if (marketStatus != 'OPEN') {
               activeBettors.delete(userId);
+              console.log('Betting is CLOSED.');
               return res.status(404).send({
                 message: `Betting is CLOSED.`
               });
             }
+
             const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
+            console.log(`Runner from API:`, runnerFromAPI);
+
             let selectedOddsValue = 0;
             if (type == 0) {
               const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
+              console.log('Available to Back:', ApiResponseOdds);
+
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0].price;
               }
@@ -2091,7 +2112,9 @@ const placeBet = async (req, res) => {
               }
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             } else if (type == 1) {
-              const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
+              const ApiResponseOdds = runnerFromAPI?.ex?.availableToLay;
+              console.log('Available to Lay:', ApiResponseOdds);
+
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0]?.price;
               }
@@ -2100,15 +2123,18 @@ const placeBet = async (req, res) => {
               }
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             }
+            console.log(`selectedOddsValue: ${selectedOddsValue}`);
           }, 1000 * i);
         }
       } else {
         activeBettors.delete(userId);
+        console.log(`Bet mismatch: selectedBetRate (${selectedBetRate}) does not match betRate (${betRate}).`);
         return res.status(404).send({
           message: `Bet miss matched-45`
         });
       }
     }
+
     // For Bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
       const userMaxBetSize = await userBetSizes.findOne({
