@@ -163,7 +163,7 @@ const checkMarketActiveForBets = async (marketId) => {
   }
 };
 function checkRunsOrOvers(inputString) {
-  const submarket = /(runs|overs)/i;
+  const submarket = /(runs line|overs line)/i;
   return submarket.test(inputString);
 }
 
@@ -213,7 +213,7 @@ const placeBet = async (req, res) => {
     let delay = 5200;
     let asianTableName = '';
     let delayAddition = 0;
-    let submarketForBetfair = ''
+    let submarketForBetfair = ""
 
     if (checkRunsOrOvers(subMarketName)) submarketForBetfair = "Betfair Fancy"
     /* ====================================================================== */
