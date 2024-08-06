@@ -73,6 +73,9 @@ const GetAllBets = async (req, res) => {
           eventId: {
             "$first": "$eventId"
           },
+          subMarketId:{
+            "$first": "$subMarketId"
+          },
           resultData :{
             "$first": "$resultData"
           },
