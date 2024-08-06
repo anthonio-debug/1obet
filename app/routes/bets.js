@@ -2040,6 +2040,75 @@ const placeBet = async (req, res) => {
         });
       }
     }
+
+    // For Betfair Fancy 
+    else if (submarketForBetfair && subMarketDetail.Id == config.BetfairFancy) {
+      
+      const resultcheck = await stopbetStatusChecker(eventDetail.Id);
+      if (resultcheck === 400) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          message: `${message_result}`
+        });
+      }
+
+      const DBOddDetails = await Odds.findById(oddsId);
+      if (!DBOddDetails) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
+        });
+      }
+      let runners = DBOddDetails?.runners;
+      runnerForSaveInbets = runners.map((runner) => ({
+        runner: runner.SelectionId,
+        amount: 0
+      }));
+      const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
+      runnerName = OddDetailsTeam?.runnerName;
+
+      if (selectedBetRate == betRate) {
+        for (let i = 1; i < 5; i++) {
+          setTimeout(async () => {
+            const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
+
+            if (marketStatus != 'OPEN') {
+              activeBettors.delete(userId);
+              return res.status(404).send({
+                message: `Betting is CLOSED.`
+              });
+            }
+            const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
+            let selectedOddsValue = 0;
+            if (type == 0) {
+              const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
+              if (ApiResponseOdds && ApiResponseOdds.length > 0) {
+                selectedOddsValue = ApiResponseOdds[0].price;
+              }
+              if (selectedOddsValue != 0 && betRate <= selectedOddsValue) {
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+            } else if (type == 1) {
+              const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
+              if (ApiResponseOdds && ApiResponseOdds.length > 0) {
+                selectedOddsValue = ApiResponseOdds[0]?.price;
+              }
+              if (selectedOddsValue != 0 && betRate >= selectedOddsValue) {
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+            }
+          }, 1000 * i);
+        }
+      } else {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          message: `Bet miss matched-45`
+        });
+      }
+    }
     // For Bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
       const userMaxBetSize = await userBetSizes.findOne({
