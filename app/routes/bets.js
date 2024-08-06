@@ -2044,7 +2044,7 @@ const placeBet = async (req, res) => {
     // For Betfair Fancy 
     else if (subMarketDetail.Id == config.BetfairFancy) {
       console.log('submarketForBetfair condition met.');
-
+      isManuel = false;
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
         activeBettors.delete(userId);
@@ -2062,33 +2062,26 @@ const placeBet = async (req, res) => {
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
         });
       }
-      console.log(`Odds details found in DB for oddsId: ${oddsId}`);
 
       let runners = DBOddDetails?.runners;
       runnerForSaveInbets = runners.map((runner) => ({
         runner: runner.SelectionId,
         amount: 0
       }));
-      console.log('Runners mapped for saving in bets:', runnerForSaveInbets);
 
       const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName;
-      console.log(`Runner name found: ${runnerName}`);
 
       if (selectedBetRate == betRate) {
-        console.log('Selected bet rate matches the provided bet rate.');
 
         for (let i = 1; i < 5; i++) {
           setTimeout(async () => {
-            console.log(`Fetching odds data, attempt: ${i}`);
 
             const oddsData = await apiCallForOdds(DBOddDetails.marketId);
             const marketStatus = oddsData[0]?.status;
-            console.log(`Market status: ${marketStatus}`);
 
             if (marketStatus != 'OPEN') {
               activeBettors.delete(userId);
-              console.log('Betting is CLOSED.');
               return res.status(404).send({
                 message: `Betting is CLOSED.`
               });
@@ -2126,7 +2119,6 @@ const placeBet = async (req, res) => {
         }
       } else {
         activeBettors.delete(userId);
-        console.log(`Bet mismatch: selectedBetRate (${selectedBetRate}) does not match betRate (${betRate}).`);
         return res.status(404).send({
           message: `Bet miss matched-45`
         });
@@ -2140,7 +2132,6 @@ const placeBet = async (req, res) => {
         sportsId: marketId,
         subarket: subMarketDetail.Id
       });
-      console.log("Bookmaker  Max BetSize =============", userMaxBetSize);
       if (!userMaxBetSize) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -2172,7 +2163,6 @@ const placeBet = async (req, res) => {
       // const response = await axios.get(url);
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t2[0]?.bm1;
-      console.log(`dbFancyOdds=======================${dbFancyOdds}`)
       const selectedMarketId = dbFancyOdds[0]?.ssid;
       if (!selectedMarketId) {
         activeBettors.delete(userId);
@@ -2587,7 +2577,7 @@ const placeBet = async (req, res) => {
     }
     /* ============================================================ =============== */
 
-    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, ...config.FancyOddEven, config.BookMaker, config.Toss];
+    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.BetfairFancy, ...config.FancyOddEven, config.BookMaker, config.Toss];
 
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
@@ -2599,7 +2589,6 @@ const placeBet = async (req, res) => {
     }
 
     setTimeout(async () => {
-      console.log("subMarketDetail.Id========================", subMarketDetail.Id);
       if (multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -2608,8 +2597,6 @@ const placeBet = async (req, res) => {
       } else if (multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         betRate = multipeResponse[multipeResponse.length - 1];
       }
-
-      console.log("linee number 2488========================", multipeResponse);
       /**
        * Winning Loosing Amounts Calculations
        */
@@ -3138,7 +3125,7 @@ const placeBet = async (req, res) => {
             betId: result._id
           });
           await position.save();
-          console.log('Position saved');
+          console.log('Position saved',);
 
           const nowUser = await User.findOne({ userId }).exec();
           //console.log("User fetched", nowUser);
