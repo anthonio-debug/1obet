@@ -508,7 +508,7 @@ function apiRequests() {
         }
 
         const CheckEvnts = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
-        console.log(`CheckEvnts=========================${CheckEvnts}`)
+        console.log(`CheckEvnts=========================${marketIds}`)
 
       }
     } catch (error) {
