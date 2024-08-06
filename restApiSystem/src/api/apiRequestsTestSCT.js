@@ -355,7 +355,7 @@ function apiRequests() {
 
       const marketsData = response.data.result;
       let marketStatus = 'OPEN';
-      console.log(`marketsData=============================================${marketsData.map(data => console.log(data))}`);
+      // console.log(`marketsData=============================================${marketsData.map(data => console.log(data))}`);
 
       if (marketsData && marketsData?.length > 0) {
         let marketIds = [];
@@ -499,19 +499,16 @@ function apiRequests() {
                 inPlay: true
               });
               await newMarket.save();
+              log(`newMarket=========================${newMarket}`)
             }
           } else {
-            await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
-
+            const newmarkets2= await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
+            log(`newmarkets2=========================${newmarkets2}`)
           }
         }
 
-
-
-
-
-
-        await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
+        const CheckEvnts = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
+        log(`CheckEvnts=========================${CheckEvnts}`)
 
       }
     } catch (error) {
