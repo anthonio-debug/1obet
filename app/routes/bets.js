@@ -2045,7 +2045,7 @@ const placeBet = async (req, res) => {
     }
 
     // For Betfair Fancy 
-    else if (subMarketDetail.Id == submarketForBetfair || subMarketDetail.Id == config.BetfairFancy) {
+    else if (subMarketDetail.Id == config.BetfairFancy) {
       console.log('submarketForBetfair condition met.');
 
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
