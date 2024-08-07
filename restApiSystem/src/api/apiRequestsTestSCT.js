@@ -509,6 +509,7 @@ function apiRequests() {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
             console.log(`newmarkets2=========================${newmarkets2}`)
           }
+          console.log(`marketIdsout side if=========================${marketIds.length}`)
         }
 
         const CheckEvnts = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
