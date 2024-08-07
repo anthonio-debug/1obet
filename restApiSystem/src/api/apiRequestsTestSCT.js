@@ -462,10 +462,9 @@ function apiRequests() {
 
         sortedarrMarketIds.indexOf("Apple");
 
-
         for (let index = 0; index < marketIds.length; index++) {
-          var ev = parseInt(eventId);
 
+          var ev = parseInt(eventId);
           const marketID = await MarketIDS.findOne({
             eventId: ev,
             marketId: marketIds[index].id + ''
@@ -477,16 +476,12 @@ function apiRequests() {
             marketIds[index].sort = sortedarrMarketIds.indexOf(marketIds[index].marketName);
           }
 
-
-
           if (!marketID) {
             const countOfMarket = await MarketIDS.countDocuments({ eventId: eventId, status: 'OPEN' });
 
             if (countOfMarket > (sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount)) {
               return;
             } else {
-
-
 
               const newMarket = new MarketIDS({
                 eventId: eventId,
@@ -500,16 +495,16 @@ function apiRequests() {
                 inPlay: true
               });
               await newMarket.save();
-              // console.log(`newMarket=========================${newMarket}`)
               console.log(`marketIds=========================${marketIds.length}`)
-              console.log(`marketIds=========================${marketIds.map(data => console.log(data)
-              )}`)
+              console.log(`marketIds=========================${marketIds.map(data => console.log(data))}`)
             }
           } else {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
             console.log(`newmarkets2=========================${newmarkets2}`)
           }
-          console.log(`marketIdsout side if=========================${marketIds.length}`)
+
+          console.log(`marketIdsout side if=========================${marketID.length}`)
+
         }
 
         const CheckEvnts = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
