@@ -503,7 +503,7 @@ function apiRequests() {
             console.log(`newmarkets2=========================${newmarkets2}`)
           }
 
-          console.log(`marketIdsout side if=========================${marketID.length}`)
+          console.log(`marketIdsout side if=========================${marketID}`)
 
         }
 
