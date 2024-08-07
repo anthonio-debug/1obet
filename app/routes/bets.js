@@ -2775,7 +2775,6 @@ const placeBet = async (req, res) => {
         }, runnersPosition[0]);
         expAmount = expAmount.position;
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
-        console.log(`expAmount5===================${expAmount}`);
       } else if (expoisureType == 2) {
         const lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
@@ -2820,7 +2819,6 @@ const placeBet = async (req, res) => {
         }, runnersPosition[0]);
         expAmount = expAmount.amount;
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
-        console.log(`expAmount4===================${expAmount}`);
         /* ============================= */
       } else if (marketId == '8') {
         const lastBetsCount = await Bets.countDocuments({
@@ -2862,7 +2860,6 @@ const placeBet = async (req, res) => {
         }, runnersPosition[0]);
         expAmount = expAmount.amount;
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
-        console.log(`expAmount3===================${expAmount}`);
       } else {
         const lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
@@ -2874,7 +2871,6 @@ const placeBet = async (req, res) => {
           const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType, matchId);
           runnersPosition = resp.runnersPosition;
           prevExpAmount = resp.prevExpAmount;
-          console.log(`expAmount2===================${expAmount}`);
         } else {
           if (type == 0) {
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
@@ -2905,7 +2901,6 @@ const placeBet = async (req, res) => {
         expAmount = expAmount.amount;
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
         console.log(`expAmount1===================${expAmount}`);
-
       }
 
       let source = req.headers['user-agent'];
