@@ -458,6 +458,7 @@ function apiRequests() {
         });
         //sorting end      
         console.log("=================length>>>>>>>>", sortedarrMarketIds.length);
+        console.log("=================length>>>>>>>>", marketIds.length);
         // console.log("I am sorted:::::::::::::::::::::::::::::::", sortedarrMarketIds);
 
         sortedarrMarketIds.indexOf("Apple");
