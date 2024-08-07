@@ -500,7 +500,8 @@ function apiRequests() {
                 inPlay: true
               });
               await newMarket.save();
-              console.log(`newMarket=========================${newMarket}`)
+              // console.log(`newMarket=========================${newMarket}`)
+              console.log(`marketIds=========================${marketIds.length}`)
               console.log(`marketIds=========================${marketIds.map(data => console.log(data)
               )}`)
             }
