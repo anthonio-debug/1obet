@@ -501,11 +501,11 @@ function apiRequests() {
               });
               await newMarket.save();
               console.log(`newMarket=========================${newMarket}`)
+              console.log(`marketIds=========================${marketIds}`)
             }
           } else {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
             console.log(`newmarkets2=========================${newmarkets2}`)
-            console.log(`marketIds=========================${marketIds}`)
           }
         }
 
