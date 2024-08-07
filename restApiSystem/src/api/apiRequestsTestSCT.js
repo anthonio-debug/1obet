@@ -503,8 +503,6 @@ function apiRequests() {
             console.log(`newmarkets2=========================${newmarkets2}`)
           }
 
-          console.log(`marketIdsout side if=========================${marketID}`)
-
         }
 
         const CheckEvnts = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
