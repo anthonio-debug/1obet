@@ -401,7 +401,6 @@ function apiRequests() {
 
               }
 
-
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
@@ -505,7 +504,7 @@ function apiRequests() {
         }
 
         const CheckEvnts = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
-        // console.log(`CheckEvnts=========================${CheckEvnts}`)
+        console.log(`CheckEvnts=========================${CheckEvnts}`)
 
       }
     } catch (error) {
@@ -947,7 +946,7 @@ function apiRequests() {
           sportsId: sportsId + '',
           isShowed: true,
           status: 'OPEN',
-          inplay: { $ne: true }
+          // inplay: { $ne: true }
         };
         events = await inPlayEvents.find(queryPastEvents).sort({ openDate: -1 }).limit(10).exec();
       }
