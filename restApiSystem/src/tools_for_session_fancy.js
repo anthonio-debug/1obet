@@ -155,6 +155,7 @@ if(bookmakerOdds!==0){
                   marketId: eventId,
                   data: fancyData,
                 })
+                console.log("MMMMMMMMMMMMMMMMMMMMMMMMM",newFancyOdds);
                 await newFancyOdds.save();
                 io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
               }
