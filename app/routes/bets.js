@@ -1825,7 +1825,7 @@ const placeBet = async (req, res) => {
         .findOne({
           userId: userId,
           sportsId: marketId,
-          subarket: config.Fancy
+          subarket: config.overByOver
         }).exec();
 
       if (!userMaxBetSize) {
@@ -2088,7 +2088,7 @@ const placeBet = async (req, res) => {
             }
 
             const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
-            console.log(`Runner from API:`, runnerFromAPI);
+            // console.log(`Runner from API:`, runnerFromAPI);
 
             let selectedOddsValue = 0;
             if (type == 0) {
@@ -2695,7 +2695,7 @@ const placeBet = async (req, res) => {
       let prevExpAmount = 0;
       let expAmount = 0;
 
-      if (config.FancyOddEven.includes(subMarketDetail.Id)) {
+      if (config.FancyOddEven.includes(subMarketDetail.Id) || config.BetfairFancy == subMarketDetail.Id) {
         const lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
@@ -2948,6 +2948,7 @@ const placeBet = async (req, res) => {
        *  Check for Total calculated Exp should not greater then Allowed
        */
       const finalExpAmount = expAmount - prevExpAmount;
+      console.log(`finalExpAmount===================${finalExpAmount}`);
       if (finalExpAmount > maxExp) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `Max Exposure Amount : ${maxExp}` });
@@ -3029,6 +3030,8 @@ const placeBet = async (req, res) => {
         rates,
         partnerValue
       });
+      console.log(`Bet ======================${bet}`);
+
 
       let nowUser = await User.findOne({ userId }).exec();
       const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
@@ -3038,7 +3041,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: ' Insufficient balance amount ' });
       }
 
-      if (subMarketDetail.Id == config.Fancy) {
+      if (config.FancyOddEven.includes(subMarketDetail.Id)) {
         await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
@@ -3049,16 +3052,18 @@ const placeBet = async (req, res) => {
           },
           { calculateExp: false }
         );
-
-        // const latestPreviousbet = await Bets.find(
-        //   {
-        //     marketId: _3rdPartyMarketId,
-        //     userId: req.decoded.userId,
-        //     matchId: matchId,
-        //     status: 1
-        //   }
-        // ).sort({_id: -1}).limit(1);
-        // await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
+      }
+        else if(config.BetfairFancy == subMarketDetail.Id){
+        await Bets.updateMany(
+          {
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            fancyData: fancyData,
+            status: 1
+          },
+          { calculateExp: false }
+        );
       } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
         let setCalculateExpFalse = await Bets.updateMany(
           {
@@ -3161,7 +3166,6 @@ const placeBet = async (req, res) => {
             }
           );
           console.log('User balance updated');
-
           // Uncomment and debug if necessary
           // let newDeposit = new Cash({
           //   userId: userId,
@@ -3185,6 +3189,7 @@ const placeBet = async (req, res) => {
           // });
           // await newDeposit.save();
           // console.log("New deposit saved");
+
 
           const ExpTran = new Exposure({
             userId: userId,
