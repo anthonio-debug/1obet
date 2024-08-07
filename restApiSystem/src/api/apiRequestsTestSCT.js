@@ -78,7 +78,7 @@ function apiRequests() {
           Id: channel.substring(1)
         });
 
-        console.log("outside of If .......................................................", event_information);
+        // console.log("outside of If .......................................................", event_information);
         if (event_information) {
           let cricket = null;
           let soccer = null;
@@ -130,7 +130,7 @@ function apiRequests() {
             const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
           }
-          console.log(".......................................................", event_information);
+          // console.log(".......................................................", event_information);
           socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched, Eventmarkets });
         } else {
           socket.emit('err', 'Event Not Exist');
@@ -402,7 +402,6 @@ function apiRequests() {
               }
 
 
-
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
@@ -506,12 +505,12 @@ function apiRequests() {
           } else {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
             console.log(`newmarkets2=========================${newmarkets2}`)
+            console.log(`marketIds=========================${marketIds}`)
           }
         }
 
-        console.log(`marketIds=========================${marketIds}`)
         const CheckEvnts = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
-        console.log(`CheckEvnts=========================${CheckEvnts}`)
+        // console.log(`CheckEvnts=========================${CheckEvnts}`)
 
       }
     } catch (error) {
