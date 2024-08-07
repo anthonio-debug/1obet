@@ -2043,15 +2043,58 @@ const placeBet = async (req, res) => {
 
     // For Betfair Fancy 
     else if (subMarketDetail.Id == config.BetfairFancy) {
-      console.log('submarketForBetfair condition met.');
+
+      const userMaxBetSize = await userBetSizes.findOne({
+        userId: userId,
+        sportsId: marketId,
+        subarket: subMarketDetail.Id
+      });
+
+      if (!userMaxBetSize) {
+        activeBettors.delete(userId);
+        return res.status(404).send({
+          error: 'User Max Bet Size Not Found',
+          message: `something went wrong !-9`
+        });
+      }
+
+      maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
+      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
+        activeBettors.delete(userId);
+        return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
+      }
+      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
+        activeBettors.delete(userId);
+        return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
+      }
+
+      isManuel = false;
+
+      const BetfairFancyLimit = await userBetSizes
+        .findOne({
+          userId: userId,
+          sportsId: marketId,
+          subarket: config.BetfairFancy
+        })
+        .exec();
+
+      if (!userMaxBetSize) {
+        console.warn('Betfair Fancy userMaxBetSize not found ');
+        activeBettors.delete(userId);
+        return res.status(404).send({ message: `something went wrong !-10` });
+      }
       isManuel = false;
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
         activeBettors.delete(userId);
-        console.log(`stopbetStatusChecker returned 400 for eventId: ${eventDetail.Id}`);
         return res.status(404).send({
           message: `${message_result}`
         });
+      }
+
+      if (BetfairFancyLimit && betAmount > BetfairFancyLimit.amount) {
+        activeBettors.delete(userId);
+        return res.status(404).send({ message: `max bet size is: ${BetfairFancyLimit.amount}` });
       }
 
       const DBOddDetails = await Odds.findById(oddsId);
