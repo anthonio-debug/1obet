@@ -126,10 +126,10 @@ function apiRequests() {
 
           let totalMatched = 0;
           if (marketIds.length) {
-            const odds = await Odds.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
+            const odds = await Oddsevent_info.findOne({ marketId: { $in: marketIds } }).sort({ totalMatched: -1 });
             if (odds) totalMatched = odds.totalMatched;
           }
-          //console.log(".......................................................", event_information);
+          console.log(".......................................................", event_information);
           socket.emit('event_info', { ...JSON.parse(JSON.stringify(event_information)), cricket, soccer, totalMatched, Eventmarkets });
         } else {
           socket.emit('err', 'Event Not Exist');
