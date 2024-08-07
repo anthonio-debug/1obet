@@ -2695,7 +2695,7 @@ const placeBet = async (req, res) => {
       let prevExpAmount = 0;
       let expAmount = 0;
 
-      if (config.FancyOddEven.includes(subMarketDetail.Id) || subMarketDetail.Id == config.BetfairFancy) {
+      if (config.FancyOddEven.includes(subMarketDetail.Id)) {
         const lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
