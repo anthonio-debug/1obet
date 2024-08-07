@@ -501,7 +501,8 @@ function apiRequests() {
               });
               await newMarket.save();
               console.log(`newMarket=========================${newMarket}`)
-              console.log(`marketIds=========================${marketIds}`)
+              console.log(`marketIds=========================${marketIds.map(data => console.log(data)
+              )}`)
             }
           } else {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
