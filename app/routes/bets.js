@@ -2650,15 +2650,29 @@ const placeBet = async (req, res) => {
         // ((rate) /100 ) * bet_amount = winning amount
         winningAmount = (betRate * betAmount) / 100;
         loosingAmount = betAmount;
-      } else if (type == 0 && (config.FancyOddEven.includes(subMarketDetail.Id) || config.BetfairFancy)) {
+      } else if (type == 0 && config.FancyOddEven.includes(subMarketDetail.Id)) {
         loosingAmount = (fancyRate / 100) * betAmount;
         winningAmount = betAmount;
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
         ];
-      } else if (type == 1 && (config.FancyOddEven.includes(subMarketDetail.Id) || config.BetfairFancy)) {
+      } else if (type == 1 && config.FancyOddEven.includes(subMarketDetail.Id)) {
         winningAmount = (fancyRate / 100) * betAmount;
+        loosingAmount = betAmount;
+        runnerForSaveInbets = [
+          { runner: 1, amount: 0 },
+          { runner: 0, amount: 0 }
+        ];
+      } else if (type == 0 && subMarketDetail.Id == config.BetfairFancy) {
+        loosingAmount = (betRate / 100) * betAmount;
+        winningAmount = betAmount;
+        runnerForSaveInbets = [
+          { runner: 1, amount: 0 },
+          { runner: 0, amount: 0 }
+        ];
+      } else if (type == 1 && subMarketDetail.Id == config.BetfairFancy) {
+        winningAmount = (betRate / 100) * betAmount;
         loosingAmount = betAmount;
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
@@ -2681,7 +2695,7 @@ const placeBet = async (req, res) => {
       let prevExpAmount = 0;
       let expAmount = 0;
 
-      if (config.FancyOddEven.includes(subMarketDetail.Id) || config.BetfairFancy) {
+      if (config.FancyOddEven.includes(subMarketDetail.Id)) {
         const lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
