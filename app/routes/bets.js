@@ -2695,7 +2695,7 @@ const placeBet = async (req, res) => {
       let prevExpAmount = 0;
       let expAmount = 0;
 
-      if (config.FancyOddEven.includes(subMarketDetail.Id) || config.BetfairFancy == subMarketDetail.Id) {
+      if (config.FancyOddEven.includes(subMarketDetail.Id)) {
         const lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
@@ -3053,7 +3053,7 @@ const placeBet = async (req, res) => {
           { calculateExp: false }
         );
       }
-        else if(config.BetfairFancy == subMarketDetail.Id){
+      else if (config.BetfairFancy == subMarketDetail.Id) {
         await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
