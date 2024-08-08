@@ -542,12 +542,11 @@ function addSideBarMenu(req, res) {
 
 
 async function betsRecords(req, res) {
-  const now = new Date(1715320644540).getTime();
+  const now = new Date().getTime();
   const lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
 
   try {
     console.log("Fetching bets records between", lastDay, "and", now);
-
     const betsRecords = await Bets.aggregate([
       {
         '$match': {
@@ -2946,5 +2945,6 @@ router.get('/active-bettors', getActiveBettors);
 loginRouter.post('/update-setting', updateSetting);
 loginRouter.post('/get-setting', getSetting);
 loginRouter.get('/bets-records', betsRecords);
+
 
 module.exports = { loginRouter, router, listOddsAPI };
