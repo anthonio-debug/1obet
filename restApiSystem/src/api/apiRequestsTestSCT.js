@@ -503,8 +503,18 @@ function apiRequests() {
           }
         }
 
-        const CheckEvnts = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds });
-        console.log(`CheckEvnts=========================${CheckEvnts}`)
+        await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds })
+          .then((CheckEvnts) => {
+            if (!CheckEvnts) {
+              console.error(`No document found with eventId: ${eventId} for update.`);
+            } else {
+              console.log("Check Events:", CheckEvnts);
+            }
+          })
+          .catch((error) => {
+            console.error(`Failed to update inPlayEvents for eventId: ${eventId}`, error);
+          });
+
 
       }
     } catch (error) {
