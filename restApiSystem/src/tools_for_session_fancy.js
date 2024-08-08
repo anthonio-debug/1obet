@@ -110,7 +110,7 @@ if(bookmakerOdds!==0){
         
         let fancyOdds = await fetchSession(eventId)
 
-        console.log(fancyOdds,"????MMMMMMMMMMMMMMMMMMMMMMMM")
+        // console.log(fancyOdds,"????MMMMMMMMMMMMMMMMMMMMMMMM")
 
 
         // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
