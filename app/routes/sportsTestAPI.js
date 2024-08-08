@@ -984,6 +984,33 @@ async function getMatchEvents(req, res) {
     });
 }
 
+/////////////////`
+const SESSION_API_URI = `http://84.8.153.51/api/v2`
+async function getSession(req,res) {
+  const eventId = req.params.sessionId;
+  // http://142.93.36.1/api/v2/getSessions?EventTypeID=4&matchId=33061168
+  const url = `${SESSION_API_URI}/getSessions?EventTypeID=4&matchId=${eventId}`
+  //console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",url);
+  try {
+    const response = await axios.get(url)
+    let res = response.data;
+    // console.log('session list: ', JSON.stringify(res))
+    if (isIterable(res)) {
+      const items = res.map((item) => {
+        return JSON.parse(item)
+      })
+      res.status(200).json({ success: true, data: items });
+    } else {
+      return []
+    }
+  } catch (error) {
+    console.log('url: ', url)
+    console.error('session api fetchSession: ', eventId, error?.data || error.message || error)
+    return []
+  }
+}
+////////////////
+
 router.get('/testSports/events', listEvents)
 router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
 router.get('/track-score/get-cricketscore', getCricketScore)
@@ -995,6 +1022,7 @@ router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
 
 router.get('/track-bet/testAPI/:marketId', testAPI)
 router.get('/track-bet/get-markets/:eventId', getMarketsByEventId)
+router.get('/track-bet/get-session/:sessionId', getSession)   //// by mujahid
 router.get('/track-bet/get-events/:sportsId', getEventsBySportsId)
 router.get('/track-bet/get-today-events/:sportsId', getTodayEventsBySportsId)
 router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
