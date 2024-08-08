@@ -993,13 +993,14 @@ async function getSession(req,res) {
   //console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",url);
   try {
     const response = await axios.get(url)
-    let res = response.data;
+    let result = response.data;
+  
     // console.log('session list: ', JSON.stringify(res))
-    if (isIterable(res)) {
-      const items = res.map((item) => {
+    if (isIterable(result)) {
+      const items = result.map((item) => {
         return JSON.parse(item)
       })
-      res.status(200).json({ success: true, data: items });
+      return res.status(200).json({ success: true, data: items });
     } else {
       return []
     }
