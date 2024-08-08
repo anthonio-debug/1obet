@@ -233,6 +233,5 @@
   "checkfourdigitcode",
   "getblockusers",
   "updateblockusers",
-  "blockCashWithdraw",
-  "fetchSession"
+  "blockCashWithdraw"
 ]
