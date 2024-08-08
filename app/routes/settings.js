@@ -36,7 +36,8 @@ const loginRecord = require('../models/loginRecord');
 
 const SelectedCasino = require('../models/selectedCasino');
 const { rollbackCasino, creditCasino } = require('../../helper/casino/casinoHelper');
-const { fetchSession, fetchBookmakerList } = require("./../../helper/api/sessionAPIHelper.js")
+const { fetchSession, fetchBookmakerList } = require("./../../helper/api/sessionAPIHelper.js");
+const Deposits = require('../models/deposits.js');
 
 function updateDefaultTheme(req, res) {
   const errors = validationResult(req);
@@ -245,7 +246,7 @@ async function updateMatchType(req, res) {
         hasBookmaker = true;
       }
     }
-    
+
     if (hasFancyMatch || hasBookmaker) { hasFancy = true }
 
     const updatedData = await Events.findByIdAndUpdate(
@@ -538,6 +539,93 @@ function addSideBarMenu(req, res) {
     return res.send({ message: 'menu record saved', results });
   });
 }
+
+
+async function betsRecords(req, res) {
+  const now = new Date(1715320644540).getTime();
+  const lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
+
+  try {
+    console.log("Fetching bets records between", lastDay, "and", now);
+
+    const betsRecords = await Bets.aggregate([
+      {
+        '$match': {
+          'betTime': {
+            '$gte': lastDay,
+            '$lt': now
+          }
+        }
+      },
+      {
+        '$group': {
+          '_id': '$userId',
+          'count': {
+            '$sum': 1
+          }
+        }
+      }
+    ]);
+
+    console.log(`Total Bets Records Found: ${betsRecords.length}`);
+    console.log("Bets Records:", betsRecords);
+
+    const userIds = betsRecords.map(record => record._id);
+    console.log("Unique User IDs:", userIds.length);
+
+    const users = await User.aggregate([
+      {
+        $match: {
+          userId: { $in: userIds }
+        }
+      },
+      {
+        $lookup: {
+          from: "deposits",
+          localField: "userId",
+          foreignField: "userId",
+          as: "depositInfo"
+        }
+      },
+      {
+        $unwind: "$depositInfo"
+      },
+      {
+        $sort: {
+          "depositInfo.date": -1
+        }
+      },
+      {
+        $group: {
+          _id: "$userId",
+          userName: { $first: "$userName" },
+          availableBalance: { $first: "$availableBalance" },
+          balance: { $first: "$balance" },
+          clientPL: { $first: "$clientPL" },
+          lastWithdraw: { $first: "$depositInfo.amount" }
+        }
+      },
+      {
+        $project: {
+          userId: "$_id",
+          userName: 1,
+          availableBalance: 1,
+          balance: 1,
+          clientPL: 1,
+          lastWithdraw: 1
+        }
+      }
+    ]);
+
+    console.log("Users and their details:", users.length);
+
+    res.status(200).send({ data: users });
+  } catch (error) {
+    console.error('Error fetching records:', error);
+    res.status(500).send({ message: "Internal server error" });
+  }
+}
+
 
 async function racesAPI(req, res) {
   try {
@@ -2857,5 +2945,6 @@ router.get('/eventListByMarketIds/:sportsId', eventListByMarketIds);
 router.get('/active-bettors', getActiveBettors);
 loginRouter.post('/update-setting', updateSetting);
 loginRouter.post('/get-setting', getSetting);
+loginRouter.get('/bets-records', betsRecords);
 
 module.exports = { loginRouter, router, listOddsAPI };

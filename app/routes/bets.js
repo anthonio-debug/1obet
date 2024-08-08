@@ -2068,7 +2068,7 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
-      isManuel = false;
+      isManuel = true;
 
       const BetfairFancyLimit = await userBetSizes
         .findOne({
@@ -2083,7 +2083,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `something went wrong !-10` });
       }
-      isManuel = false;
+      
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
         activeBettors.delete(userId);
@@ -2100,7 +2100,6 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await Odds.findById(oddsId);
       if (!DBOddDetails) {
         activeBettors.delete(userId);
-        console.log(`Odds details not found in DB for oddsId: ${oddsId}`);
         return res.status(404).send({
           message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
         });
@@ -2131,8 +2130,7 @@ const placeBet = async (req, res) => {
             }
 
             const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
-            // console.log(`Runner from API:`, runnerFromAPI);
-
+    
             let selectedOddsValue = 0;
             if (type == 0) {
               const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
