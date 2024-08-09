@@ -578,6 +578,7 @@ function apiRequests() {
                     .exec();
                   const eventId = marketData.eventId;
                   const marketId = element.marketId;
+console.log(marketData,"---------4444444444444-------------44444444444---------after-marketdata");
 
                   // Filter runners with status "ACTIVE"
                   const activeRunners = element.runners.filter((runner) => runner.status === 'ACTIVE');
