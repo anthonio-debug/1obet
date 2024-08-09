@@ -2991,7 +2991,9 @@ const placeBet = async (req, res) => {
        *  Check for Total calculated Exp should not greater then Allowed
        */
       const finalExpAmount = expAmount - prevExpAmount;
+
       console.log(`prevExpAmount===================${prevExpAmount}`);
+      console.log(`maxExp===================${maxExp}`);
       console.log(`finalExpAmount===================${finalExpAmount}`);
       if (finalExpAmount > maxExp) {
         activeBettors.delete(userId);
