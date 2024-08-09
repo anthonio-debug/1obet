@@ -402,7 +402,7 @@ async function handleWinningBet(bet, winner) {
           let TotalLoosingAmount;
           let upMovingAmount;
           let upMovingCommAmount;
-          if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.overByOver && bet.subMarketId != config.BookMaker && (TotalWin > TotalLose || Number(bet.sportsId) == 8)) {
+          if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && (TotalWin > TotalLose || Number(bet.sportsId) == 8)) {
             const absouteWin = Number((TotalWin - TotalLose).toFixed(3));
             const totalCooission = Number((absouteWin * 0.02).toFixed(3));
             commissionAmount = Number(((totalCooission / TotalWin) * bet.winningAmount).toFixed(3));
@@ -574,7 +574,7 @@ async function handleWinningBet(bet, winner) {
               });
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
 
-              if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.overByOver &&  bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
+              if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy  &&  bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
                 const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
                 await Deposits.create({
