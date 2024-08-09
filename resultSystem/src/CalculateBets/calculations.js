@@ -44,11 +44,10 @@ const config = {
   commissionLessSubMarkets: [2, 3, 4],
   balls: ['1', '2', '3', '4', '5', '6'],
   matchTypes: ['T10', 'T20', 'ODI', 'TEST'],
-  ExcludedBackLay: [7, 8, 70, 100],
+  ExcludedBackLay: [7, 8],
   soccerOdds: 13,
   tennisOdds: 15,
   cricketOdds: 6,
-  FancyOddEven: [7, 70],
   overByOver: 70,
   Fancy: 7,
   BookMaker: 8,
@@ -574,7 +573,7 @@ async function handleWinningBet(bet, winner) {
               });
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
 
-              if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy  &&  bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
+              if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
                 const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
                 await Deposits.create({
