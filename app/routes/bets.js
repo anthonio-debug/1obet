@@ -1784,7 +1784,7 @@ const placeBet = async (req, res) => {
     }
 
     // For Fancy
-    
+
     else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
@@ -1908,13 +1908,13 @@ const placeBet = async (req, res) => {
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
 
       // Code by qadir
-      const selectedMarketId = dbFancyOdds[0]?.ssid;
-      let runners = dbFancyOdds;
-      _3rdPartyMarketId = selectedMarketId;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.sid,
-        amount: 0
-      }));
+      // const selectedMarketId = dbFancyOdds[0]?.ssid;
+      // let runners = dbFancyOdds;
+      // _3rdPartyMarketId = selectedMarketId;
+      // runnerForSaveInbets = runners.map((runner) => ({
+      //   runner: runner.sid,
+      //   amount: 0
+      // }));
       ///
 
       /* bookmaker check start */
