@@ -541,7 +541,7 @@ function addSideBarMenu(req, res) {
 }
 
 async function betsRecords(req, res) {
-  const now = new Date(1715320644540).getTime();
+  const now = new Date().getTime();
   const lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
 
   try {
