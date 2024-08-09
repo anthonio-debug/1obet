@@ -1784,8 +1784,8 @@ const placeBet = async (req, res) => {
     }
 
     // For Fancy
+    
     else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
-
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -1795,7 +1795,6 @@ const placeBet = async (req, res) => {
       console.log('Fancy  Max BetSize =====================================', userMaxBetSize);
       console.log('config.Fancy =====================================', config.Fancy);
       console.log('config.overby over =====================================', config.overByOver);
-      console.log(`maxExp===================inside If======${userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0}`)
 
       if (!userMaxBetSize) {
         activeBettors.delete(userId);
@@ -1907,6 +1906,16 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes);
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
+
+      // Code by qadir
+      const selectedMarketId = dbFancyOdds[0]?.ssid;
+      let runners = dbFancyOdds;
+      _3rdPartyMarketId = selectedMarketId;
+      runnerForSaveInbets = runners.map((runner) => ({
+        runner: runner.sid,
+        amount: 0
+      }));
+      ///
 
       /* bookmaker check start */
       const dbBookmakerMarketId = DBOddDetails?.data?.data?.t2[0]?.bm1[0]?.ssid;
@@ -3068,8 +3077,6 @@ const placeBet = async (req, res) => {
         rates,
         partnerValue
       });
-      console.log(`Bet ======================${bet}`);
-
 
       let nowUser = await User.findOne({ userId }).exec();
       const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
@@ -3091,6 +3098,7 @@ const placeBet = async (req, res) => {
           { calculateExp: false }
         );
       }
+
       else if (config.BetfairFancy == subMarketDetail.Id) {
         await Bets.updateMany(
           {
