@@ -356,7 +356,7 @@ function apiRequests() {
 
       const marketsData = response.data.result;
       let marketStatus = 'OPEN';
-      console.log(`marketsData=============================================${marketsData.map(data => console.log(data))}`);
+
 
       if (marketsData && marketsData?.length > 0) {
         let marketIds = [];
