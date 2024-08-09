@@ -44,7 +44,7 @@ const config = {
   commissionLessSubMarkets: [2, 3, 4],
   balls: ['1', '2', '3', '4', '5', '6'],
   matchTypes: ['T10', 'T20', 'ODI', 'TEST'],
-  ExcludedBackLay: [7, 8],
+  ExcludedBackLay: [7, 8, 70, 100],
   soccerOdds: 13,
   tennisOdds: 15,
   cricketOdds: 6,

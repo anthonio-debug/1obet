@@ -540,13 +540,11 @@ function addSideBarMenu(req, res) {
   });
 }
 
-
 async function betsRecords(req, res) {
-  const now = new Date().getTime();
+  const now = new Date(1715320644540).getTime();
   const lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
 
   try {
-    console.log("Fetching bets records between", lastDay, "and", now);
     const betsRecords = await Bets.aggregate([
       {
         '$match': {
@@ -566,11 +564,7 @@ async function betsRecords(req, res) {
       }
     ]);
 
-    console.log(`Total Bets Records Found: ${betsRecords.length}`);
-    console.log("Bets Records:", betsRecords);
-
     const userIds = betsRecords.map(record => record._id);
-    console.log("Unique User IDs:", userIds.length);
 
     const users = await User.aggregate([
       {
@@ -601,7 +595,11 @@ async function betsRecords(req, res) {
           availableBalance: { $first: "$availableBalance" },
           balance: { $first: "$balance" },
           clientPL: { $first: "$clientPL" },
-          lastWithdraw: { $first: "$depositInfo.amount" }
+          depositBalance: { $first: "$depositInfo.balance" },
+          depositAvailableBalance: { $first: "$depositInfo.availableBalance" },
+          depositMaxWithdraw: { $first: "$depositInfo.maxWithdraw" },
+          depositCash: { $first: "$depositInfo.cash" },
+          depositCredit: { $first: "$depositInfo.credit" },
         }
       },
       {
@@ -611,12 +609,14 @@ async function betsRecords(req, res) {
           availableBalance: 1,
           balance: 1,
           clientPL: 1,
-          lastWithdraw: 1
+          depositBalance: 1,
+          depositAvailableBalance: 1,
+          depositMaxWithdraw: 1,
+          depositCash: 1,
+          depositCredit: 1
         }
       }
     ]);
-
-    console.log("Users and their details:", users.length);
 
     res.status(200).send({ data: users });
   } catch (error) {
@@ -624,7 +624,6 @@ async function betsRecords(req, res) {
     res.status(500).send({ message: "Internal server error" });
   }
 }
-
 
 async function racesAPI(req, res) {
   try {
