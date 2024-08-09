@@ -1908,16 +1908,6 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
 
-      // // Code by qadir
-      // const selectedMarketId = dbFancyOdds[0]?.ssid;
-      // let runners = dbFancyOdds;
-      // _3rdPartyMarketId = selectedMarketId;
-      // runnerForSaveInbets = runners.map((runner) => ({
-      //   runner: runner.sid,
-      //   amount: 0
-      // }));
-      ///
-
       /* bookmaker check start */
       const dbBookmakerMarketId = DBOddDetails?.data?.data?.t2[0]?.bm1[0]?.ssid;
       if (!dbBookmakerMarketId) {
@@ -2994,7 +2984,8 @@ const placeBet = async (req, res) => {
       const finalExpAmount = expAmount - prevExpAmount;
 
       console.log(`prevExpAmount===================${prevExpAmount}`);
-      console.log(`maxExp===================${maxExp}`);
+      console.log(`expAmount===================${expAmount}`);
+      console.log(`expAmount - prevExpAmount===================${expAmount - prevExpAmount}`);
       console.log(`finalExpAmount===================${finalExpAmount}`);
       if (finalExpAmount > maxExp) {
         activeBettors.delete(userId);
