@@ -1795,16 +1795,16 @@ const placeBet = async (req, res) => {
       console.log('Fancy  Max BetSize =====================================', userMaxBetSize);
       console.log('config.Fancy =====================================', config.Fancy);
       console.log('config.overby over =====================================', config.overByOver);
+      console.log(`maxExp===================inside If======${userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0}`)
 
       if (!userMaxBetSize) {
         activeBettors.delete(userId);
         return res.status(404).send({
           error: 'User Max Bet Size Not Found',
-          message: `something went wrong !-9`
+          message: `something went wrong !`
         });
       }
       maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
-      console.log(`maxExp===================inside If======${maxExp}`)
       if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
