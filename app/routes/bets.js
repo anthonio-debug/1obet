@@ -2083,7 +2083,7 @@ const placeBet = async (req, res) => {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `something went wrong !-10` });
       }
-      
+
       const resultcheck = await stopbetStatusChecker(eventDetail.Id);
       if (resultcheck === 400) {
         activeBettors.delete(userId);
@@ -2130,7 +2130,7 @@ const placeBet = async (req, res) => {
             }
 
             const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
-    
+
             let selectedOddsValue = 0;
             if (type == 0) {
               const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
@@ -2736,7 +2736,7 @@ const placeBet = async (req, res) => {
       let prevExpAmount = 0;
       let expAmount = 0;
 
-      if (config.FancyOddEven.includes(subMarketDetail.Id) || subMarketDetail.Id == config.BetfairFancy) {
+      if (config.FancyOddEven.includes(subMarketDetail.Id)) {
         const lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
           userId: req.decoded.userId,
