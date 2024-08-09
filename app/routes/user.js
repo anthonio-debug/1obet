@@ -592,34 +592,35 @@ function updateUserData(user, updateData, res, isDigitUpdate = false) {
 }
 
 async function blockCashWithdraw(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+const errors = validationResult(req);
+  if (!errors.isEmpty()) { 
+    return res.status(400).json({ errors: errors.array() }); 
   }
 
-  const { blockCashWithdraw, userId } = req.query
+  const { blockCashWithdraw, userId } = req.query 
 
-  if (!userId) {
-    return res.status(403).send({ message: " user id required " });
-  }
+  if (!userId) { 
+    return res.status(403).send({ message: " User id Required " });
+   }
 
-  try {
-    if (req.decoded.role != 0) {
-      return res.status(403).send({ message: " you can't block cash withdraw " });
-    }
-    const user = await User.findOneAndUpdate(
-      { userId: userId },
-      { $set: { blockCashWithdraw: blockCashWithdraw } },
-      { upsert: true }
+  try { 
+    if ( req.decoded.role != 0 ) {
+      return res.status(403).send({ message: "you can't block cash withdraw" });
+     }
+    const user = await User.findOneAndUpdate( 
+        { userId: userId },
+        { $set: { blockCashWithdraw: blockCashWithdraw } },
+        { upsert: true }
+
     )
-    if (!user) {
-      return res.status(404).send({ message: 'User not found' });
-    }
+    if (!user){
+      return res.status(404).send({ message: 'User not Found' });
+     }
 
-    return res.status(200).json({ message: 'Cash withdraw updated successfully' });
-  } catch (error) {
-    return res.status(500).json({ message: 'An error occurred', error: error.message });
-  }
+    return res.status(200).json({ message: 'Cash Withdraw Updated Successfully' });
+  } catch (error){
+    return res.status(500).json({ message: 'Something went Wrong', error: error.message });
+   }
 }
 
 async function checkfourdigitcode(req, res) {

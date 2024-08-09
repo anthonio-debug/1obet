@@ -232,7 +232,7 @@
   "updateLiveUrl",
   "checkfourdigitcode",
   "getblockusers",
+  "blockCashWithdraw" ,
   "updateblockusers",
-  "blockCashWithdraw",
   "bets-records"
 ]
