@@ -1908,14 +1908,14 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
 
-      // Code by qadir
-      const selectedMarketId = dbFancyOdds[0]?.ssid;
-      let runners = dbFancyOdds;
-      _3rdPartyMarketId = selectedMarketId;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.sid,
-        amount: 0
-      }));
+      // // Code by qadir
+      // const selectedMarketId = dbFancyOdds[0]?.ssid;
+      // let runners = dbFancyOdds;
+      // _3rdPartyMarketId = selectedMarketId;
+      // runnerForSaveInbets = runners.map((runner) => ({
+      //   runner: runner.sid,
+      //   amount: 0
+      // }));
       ///
 
       /* bookmaker check start */
