@@ -225,6 +225,71 @@ async function registerUser(req, res) {
     });
 }
 
+////////////////
+async function updateUserBetSizesColec(req, res) {
+
+  try {
+
+    const userIds = await User.aggregate([
+      {
+        $group: {
+          _id: "$userId",
+        },
+      },
+      { $sort: { _id: 1 } },
+    ])
+    // console.log(userIds, "IIIIIIIIIIIIIIII");
+  
+    const userids = userIds.filter((data) => data._id !== null).sort().map((data) => data._id)
+    // console.log(userids);
+  
+    let betLimits = await BetLimits.find({$or: [
+      { name: "Betfair Fancy" },
+      { name: "Over by Over" }
+    ]});
+    
+    for (let i = 0; i <= userIds.length; i++) {
+      
+     let userId = userids[i]
+    //  let userId = 11003
+
+     const userbetSizesData = betLimits.map((betLimit) => ({
+      userId: userId,
+      betLimitId: betLimit._id,
+      amount: betLimit.maxAmount,
+      name: betLimit.name,
+      sportsId: betLimit.sportsId,
+      subarket: betLimit.subarket,
+      minAmount: betLimit.minAmount,
+      ExpAmount: betLimit.ExpAmount
+    }));
+
+    // console.log(userbetSizesData);    
+  //     await userBetSizes.deleteMany({ userId:userId });
+  
+      await userBetSizes.insertMany(userbetSizesData);
+      
+    }
+  
+  return res.send({
+    message: 'User Best Sizrs Updated Successfully',
+    success: true,
+    // results: userbetSizesData
+  });
+    
+  } catch (error) {
+    console.error("Error in updateUserBetSizesColec:", error);
+    return res.status(500).send({
+      message: 'An error occurred while updating user bet sizes',
+      success: false,
+      error: error.message,
+    });
+    
+  }
+  
+}
+///////////////
+
 function login(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -1248,7 +1313,9 @@ const userAccountSattlement = async (req, res) => {
     });
   }
 };
-
+//////
+loginRouter.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
+/////
 router.post('/login', userValidation.validate('login'), login);
 loginRouter.post('/register', userValidation.validate('registerUser'), registerUser);
 

@@ -234,5 +234,6 @@
   "getblockusers",
   "blockCashWithdraw",
   "updateblockusers",
-  "bets-records"
-]
+  "bets-records",
+  "updateUserBetSizesColec"
+  ]
