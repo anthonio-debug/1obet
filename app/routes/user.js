@@ -228,6 +228,15 @@ async function registerUser(req, res) {
 ////////////////
 async function updateUserBetSizesColec(req, res) {
 
+  const role= req.decoded.login.role
+  if(role!=0){
+    return res.send({
+      message: 'you are not allowed to update bet sizes',
+      success: true,
+      
+    });
+  }
+
   try {
 
     const userIds = await User.aggregate([
