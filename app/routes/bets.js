@@ -1907,16 +1907,6 @@ const placeBet = async (req, res) => {
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
 
-      // Code by qadir
-      // const selectedMarketId = dbFancyOdds[0]?.ssid;
-      // let runners = dbFancyOdds;
-      // _3rdPartyMarketId = selectedMarketId;
-      // runnerForSaveInbets = runners.map((runner) => ({
-      //   runner: runner.sid,
-      //   amount: 0
-      // }));
-      ///
-
       /* bookmaker check start */
       const dbBookmakerMarketId = DBOddDetails?.data?.data?.t2[0]?.bm1[0]?.ssid;
       if (!dbBookmakerMarketId) {
@@ -2815,8 +2805,11 @@ const placeBet = async (req, res) => {
         expAmount = runnersPosition.reduce((min, current) => {
           return current.position < min.position ? current : min;
         }, runnersPosition[0]);
+        console.log(`expAMountcheck1 ======================${expAmount}`);
         expAmount = expAmount.position;
+        console.log(`expAMountcheck2 ======================${expAmount}`);
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
+        console.log(`expAMountcheck3 ======================${expAmount}`);
       } else if (expoisureType == 2) {
         const lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
@@ -2859,8 +2852,11 @@ const placeBet = async (req, res) => {
         expAmount = runnersPosition.reduce((min, current) => {
           return current.amount < min.amount ? current : min;
         }, runnersPosition[0]);
+        console.log(`expAMountcheck1 else======================${expAmount}`);
         expAmount = expAmount.amount;
+        console.log(`expAMountcheck2 else======================${expAmount}`);
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
+        console.log(`expAMountcheck3 else======================${expAmount}`);
         /* ============================= */
       } else if (marketId == '8') {
         const lastBetsCount = await Bets.countDocuments({
@@ -2900,8 +2896,11 @@ const placeBet = async (req, res) => {
         expAmount = runnersPosition.reduce((min, current) => {
           return current.amount < min.amount ? current : min;
         }, runnersPosition[0]);
+        console.log(`expAMountcheck1 after elseif======================${expAmount}`);
         expAmount = expAmount.amount;
+        console.log(`expAMountcheck2 after elseif======================${expAmount}`);
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
+        console.log(`expAMountcheck3 after elseif======================${expAmount}`);
       } else {
         const lastBetsCount = await Bets.countDocuments({
           marketId: _3rdPartyMarketId,
