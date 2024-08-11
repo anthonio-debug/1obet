@@ -112,15 +112,13 @@ async function registerUser(req, res) {
         let betLimits = await BetLimits.find({});
         // //console.log(' betLimits ======= ', betLimits);
         console.log(`before Save ============${user}`)
-        
-        user.save(  async (err, user) => {
+
+        user.save(async (err, user) => {
           if (err || !user) {
             return res.status(404).send({ message: 'user not registered', err });
           }
           const findduser = await User.findOne({ userName: req.body.userName })
           console.log(`check Save ============${findduser}`)
-          
-          
 
           const userbetSizesData = betLimits.map((betLimit) => ({
             userId: user.userId,
@@ -154,7 +152,7 @@ async function registerUser(req, res) {
                   currency: req.body.baseCurrency
                 });
                 let data = response.data.response;
-                // //console.log('API Response:', response.data);
+                console.log('API Response:', response.data);
                 user.remoteId = data.id;
                 user.save();
               } catch (error) {
