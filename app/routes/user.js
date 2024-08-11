@@ -112,6 +112,7 @@ async function registerUser(req, res) {
         let betLimits = await BetLimits.find({});
         // //console.log(' betLimits ======= ', betLimits);
         console.log(`before Save ============${user}`)
+        return
         user.save( async (err, user) => {
           if (err || !user) {
             return res.status(404).send({ message: 'user not registered', err });
