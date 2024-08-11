@@ -75,7 +75,7 @@ async function registerUser(req, res) {
       const parentUser = await User.findOne({ userId: req.decoded.userId });
       console.log(`parentuser===============${parentUser.downLineShare}`);
       console.log(`req.body.downLineShare===============${req.body.downLineShare}`);
-      if ((parentUser.role != 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100) {
+      if ((parentUser.role != 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100 || req.body.role != 5) {
         return res.status(404).send({
           message: `Max allowed downline share is 1 - ${parentUser.downLineShare - 1}`
         });
@@ -454,6 +454,7 @@ function changePassword(req, res) {
     if (err || !user) return res.status(404).send({ message: 'User not found' });
     user.password = req.body.password;
     user.passwordChanged = true;
+    console.log(user.password)
     user.hashPass(function (err) {
       if (err) return res.status(404).send({ message: 'NEW_PASS_HASH_FAIL' });
       user.save((err, results) => {
@@ -467,6 +468,7 @@ function changePassword(req, res) {
         });
       });
     });
+    console.log(user)
   });
 }
 
