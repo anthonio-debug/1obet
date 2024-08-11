@@ -2487,7 +2487,7 @@ const placeBet = async (req, res) => {
     }
     /* ============================================================ =============== */
 
-    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, ...config.FancyOddEven, config.BookMaker, config.Toss];
+    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.Fancy, config.BookMaker, config.Toss];
 
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
@@ -2560,16 +2560,30 @@ const placeBet = async (req, res) => {
         // ((rate) /100 ) * bet_amount = winning amount
         winningAmount = (betRate * betAmount) / 100;
         loosingAmount = betAmount;
-      } else if (type == 0 && config.FancyOddEven.includes(subMarketDetail.Id)) {
+      } else if (type == 0 && config.Fancy == subMarketDetail.Id) {
         loosingAmount = (fancyRate / 100) * betAmount;
         winningAmount = betAmount;
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
         ];
-      } else if (type == 1 && config.FancyOddEven.includes(subMarketDetail.Id)) {
+      } else if (type == 1 && config.Fancy == subMarketDetail.Id) {
         winningAmount = (fancyRate / 100) * betAmount;
         loosingAmount = betAmount;
+        runnerForSaveInbets = [
+          { runner: 1, amount: 0 },
+          { runner: 0, amount: 0 }
+        ];
+      } else if (type == 0 && subMarketDetail.Id == config.overByOver) {
+        winningAmount = (betRate * betAmount) / 100;
+        loosingAmount = betAmount;
+        runnerForSaveInbets = [
+          { runner: 1, amount: 0 },
+          { runner: 0, amount: 0 }
+        ];
+      } else if (type == 1 && subMarketDetail.Id == config.overByOver) {
+        winningAmount = betAmount;
+        loosingAmount = (betRate * betAmount) / 100;
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
