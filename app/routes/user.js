@@ -67,6 +67,14 @@ async function registerUser(req, res) {
       if (err) return res.status(404).send({ message: 'user not found', err });
 
       const user = new User(req.body);
+
+      try {
+        const salt = await bcrypt.genSalt(10);
+        user.password = await bcrypt.hash(req.body.password, salt);
+      } catch (err) {
+        return res.status(500).send({ message: 'Error encrypting password', err });
+      }
+
       // Check if the user's role is 5, and if so, set downLineShare to null Ignore downLineShare field if role is 5
       if (req.body.role == '5') {
         req.body.downLineShare = 0;
