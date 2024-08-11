@@ -712,7 +712,7 @@ async function deleteOdds(req, res) {
 
     res.status(200).json({
       success: true,
-      message: `Odds deleted successfully. Last processed element: ${response[response.length - 1]} --- totalMarkets:: ${totalMarkets}`,
+      message: `Odds deleted successfully. Last processed element: ${response[response.length - 1].map(data=>console.log(data))} --- totalMarkets:: ${totalMarkets}`,
     });
   } catch (error) {
     console.error('Error updating odds:', error);
