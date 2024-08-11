@@ -45,7 +45,6 @@ function apiRequests() {
   function init(_io, express) {
     io = _io;
     io.on('connection', onConnet);
-    //console.log("Express conf loading");
 
     express.get('/updateField', (req, res) => {
       try {
@@ -157,14 +156,11 @@ function apiRequests() {
     }
     for (const item of sportsIds) {
       const theSportsUrl = `https://api.thesports.com/v1/${item.sportsName}/match/live/history/?user=stepinn&secret=f365f74fbc01e6ecf55ba89bb725f504&uuid=${item.theSportsId}`;
-      console.log('theSportsUrl', theSportsUrl);
       try {
         const { data } = await axios.get(theSportsUrl);
-        console.log('takeScores2 success', item, data);
         const score = data?.results?.score;
         io.to('#' + item.eventId).emit('score2', score);
       } catch (error) {
-        console.log('takeScores2 error', item, error);
       }
     }
   }
@@ -349,7 +345,6 @@ function apiRequests() {
       maxResults: 100,
       marketProjection: ['EVENT', 'EVENT_TYPE', 'MARKET_START_TIME', 'MARKET_DESCRIPTION', 'RUNNER_DESCRIPTION']
     };
-    console.log("EEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE:", eventId);
     const url = `${config.newThirdURL}/listMarketCatalogue`;
     try {
       const response = await axios.post(url, requestData, header);
@@ -387,15 +382,15 @@ function apiRequests() {
             let betfairFancy2 = FindInMeRes.search('runs line');
 
             //console.log("MarketName:", element.marketName);
-            console.log('betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
-            console.log('betfairFancy2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy2);
+            // console.log('betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
+            // console.log('betfairFancy2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy2);
 
             if (betfairFancy2 >= 0 || betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
 
               if (betfairFancy >= 0 || betfairFancy2 >= 0) {
 
                 hasbetfairFancy = true;
-                console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
+                // console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
                 arrMarketIds[cntrl] = completeMarketName;
                 cntrl++;
 
@@ -455,8 +450,6 @@ function apiRequests() {
           })
         });
         //sorting end      
-        console.log("=================length>>>>>>>>", sortedarrMarketIds.length);
-        console.log("=================length>>>>>>>>", marketIds.length);
         // console.log("I am sorted:::::::::::::::::::::::::::::::", sortedarrMarketIds);
 
         sortedarrMarketIds.indexOf("Apple");
@@ -494,12 +487,12 @@ function apiRequests() {
                 inPlay: true
               });
               await newMarket.save();
-              console.log(`marketIds=========================${marketIds.length}`)
-              console.log(`marketIds=========================${marketIds.map(data => console.log(data))}`)
+              // console.log(`marketIds=========================${marketIds.length}`)
+              // console.log(`marketIds=========================${marketIds.map(data => console.log(data))}`)
             }
           } else {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
-            console.log(`newmarkets2=========================${newmarkets2}`)
+            // console.log(`newmarkets2=========================${newmarkets2}`)
           }
         }
 
@@ -508,7 +501,7 @@ function apiRequests() {
             if (!CheckEvnts) {
               console.error(`No document found with eventId: ${eventId} for update.`);
             } else {
-              console.log("Check Events:", CheckEvnts);
+              // console.log("Check Events:", CheckEvnts);
             }
           })
           .catch((error) => {
@@ -578,7 +571,6 @@ function apiRequests() {
                     .exec();
                   const eventId = marketData.eventId;
                   const marketId = element.marketId;
-console.log(marketData,"---------4444444444444-------------44444444444---------after-marketdata");
 
                   // Filter runners with status "ACTIVE"
                   const activeRunners = element.runners.filter((runner) => runner.status === 'ACTIVE');
@@ -961,9 +953,9 @@ console.log(marketData,"---------4444444444444-------------44444444444---------a
         };
         events = await inPlayEvents.find(queryPastEvents).sort({ openDate: -1 }).limit(10).exec();
       }
-      console.log('events............');
-      console.log(events);
-      console.log('events-------------');
+      // console.log('events............');
+      // console.log(events);
+      // console.log('events-------------');
       for (let index = 0; index < events.length; index++) {
         const event = events[index];
         // Before the set inplay true

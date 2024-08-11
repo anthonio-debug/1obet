@@ -431,11 +431,15 @@ const placeBet = async (req, res) => {
      * Is market Blocked from any Flow
      */
     console.log("44444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
-    let userBlockedSubMarketsByParent = user.blockedSubMarketsByParent
+    let { blockedSubMarketsByParent } = user;
     let userSubMarketId = subMarketDetail.Id;
     let userEventId = eventDetail.Id
-    const blockedSubMarketsByParentBet = userBlockedSubMarketsByParent.some(item => item.eventId === userEventId && item.subMarketId === userSubMarketId);
-    if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || blockedSubMarketsByParentBet) {
+    const blockedSubMarketsByParentBet = blockedSubMarketsByParent.some(item =>
+      item.eventId === userEventId &&
+      (Array.isArray(item.subMarketId) ? item.subMarketId.includes(userSubMarketId) : item.subMarketId === userSubMarketId)
+    );
+
+    if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus || blockedSubMarketsByParentBet) {
       activeBettors.delete(userId);
       return res.status(404).send({ message: 'Betting disabled' });
     }
@@ -2031,131 +2035,6 @@ const placeBet = async (req, res) => {
       }
     }
 
-    // For Betfair Fancy 
-    else if (subMarketDetail.Id == config.BetfairFancy) {
-
-      const userMaxBetSize = await userBetSizes.findOne({
-        userId: userId,
-        sportsId: marketId,
-        subarket: subMarketDetail.Id
-      });
-
-      if (!userMaxBetSize) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          error: 'User Max Bet Size Not Found',
-          message: `something went wrong !-9`
-        });
-      }
-
-      maxExp = userMaxBetSize.ExpAmount ? userMaxBetSize.ExpAmount : 0;
-      if (userMaxBetSize && betAmount > userMaxBetSize.amount) {
-        activeBettors.delete(userId);
-        return res.status(404).send({ message: `max bet size is : ${userMaxBetSize.amount}` });
-      }
-      if (userMaxBetSize && betAmount < userMaxBetSize.minAmount) {
-        activeBettors.delete(userId);
-        return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
-      }
-
-      isManuel = true;
-
-      const BetfairFancyLimit = await userBetSizes
-        .findOne({
-          userId: userId,
-          sportsId: marketId,
-          subarket: config.BetfairFancy
-        })
-        .exec();
-
-      if (!userMaxBetSize) {
-        console.warn('Betfair Fancy userMaxBetSize not found ');
-        activeBettors.delete(userId);
-        return res.status(404).send({ message: `something went wrong !-10` });
-      }
-
-      const resultcheck = await stopbetStatusChecker(eventDetail.Id);
-      if (resultcheck === 400) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `${message_result}`
-        });
-      }
-
-      if (BetfairFancyLimit && betAmount > BetfairFancyLimit.amount) {
-        activeBettors.delete(userId);
-        return res.status(404).send({ message: `max bet size is: ${BetfairFancyLimit.amount}` });
-      }
-
-      const DBOddDetails = await Odds.findById(oddsId);
-      if (!DBOddDetails) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Frontend provided odds _id do not found in db & _id =  ${oddsId}`
-        });
-      }
-
-      let runners = DBOddDetails?.runners;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.SelectionId,
-        amount: 0
-      }));
-
-      const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
-      runnerName = OddDetailsTeam?.runnerName;
-
-      if (selectedBetRate == betRate) {
-
-        for (let i = 1; i < 5; i++) {
-          setTimeout(async () => {
-
-            const oddsData = await apiCallForOdds(DBOddDetails.marketId);
-            const marketStatus = oddsData[0]?.status;
-
-            if (marketStatus != 'OPEN') {
-              activeBettors.delete(userId);
-              return res.status(404).send({
-                message: `Betting is CLOSED.`
-              });
-            }
-
-            const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
-
-            let selectedOddsValue = 0;
-            if (type == 0) {
-              const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
-              console.log('Available to Back:', ApiResponseOdds);
-
-              if (ApiResponseOdds && ApiResponseOdds.length > 0) {
-                selectedOddsValue = ApiResponseOdds[0].price;
-              }
-              if (selectedOddsValue != 0 && betRate <= selectedOddsValue) {
-                multipeResponse.push(selectedOddsValue);
-              }
-              multipeResponseForSecurityCheck.push(selectedOddsValue);
-            } else if (type == 1) {
-              const ApiResponseOdds = runnerFromAPI?.ex?.availableToLay;
-              console.log('Available to Lay:', ApiResponseOdds);
-
-              if (ApiResponseOdds && ApiResponseOdds.length > 0) {
-                selectedOddsValue = ApiResponseOdds[0]?.price;
-              }
-              if (selectedOddsValue != 0 && betRate >= selectedOddsValue) {
-                multipeResponse.push(selectedOddsValue);
-              }
-              multipeResponseForSecurityCheck.push(selectedOddsValue);
-            }
-            console.log(`selectedOddsValue: ${selectedOddsValue}`);
-          }, 1000 * i);
-        }
-      } else {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet miss matched-45`
-        });
-      }
-    }
-
     // For Bookmaker
     else if (subMarketDetail.Id == config.BookMaker) {
       const userMaxBetSize = await userBetSizes.findOne({
@@ -2608,7 +2487,7 @@ const placeBet = async (req, res) => {
     }
     /* ============================================================ =============== */
 
-    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.BetfairFancy, ...config.FancyOddEven, config.BookMaker, config.Toss];
+    const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.Fancy, config.BookMaker, config.Toss];
 
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
@@ -2681,30 +2560,30 @@ const placeBet = async (req, res) => {
         // ((rate) /100 ) * bet_amount = winning amount
         winningAmount = (betRate * betAmount) / 100;
         loosingAmount = betAmount;
-      } else if (type == 0 && config.FancyOddEven.includes(subMarketDetail.Id)) {
+      } else if (type == 0 && config.Fancy == subMarketDetail.Id) {
         loosingAmount = (fancyRate / 100) * betAmount;
         winningAmount = betAmount;
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
         ];
-      } else if (type == 1 && config.FancyOddEven.includes(subMarketDetail.Id)) {
+      } else if (type == 1 && config.Fancy == subMarketDetail.Id) {
         winningAmount = (fancyRate / 100) * betAmount;
         loosingAmount = betAmount;
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
         ];
-      } else if (type == 0 && subMarketDetail.Id == config.BetfairFancy) {
-        loosingAmount = (betRate / 100) * betAmount;
-        winningAmount = betAmount;
+      } else if (type == 0 && subMarketDetail.Id == config.overByOver) {
+        winningAmount = (betRate * betAmount) / 100;
+        loosingAmount = betAmount;
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
         ];
-      } else if (type == 1 && subMarketDetail.Id == config.BetfairFancy) {
-        winningAmount = (betRate / 100) * betAmount;
-        loosingAmount = betAmount;
+      } else if (type == 1 && subMarketDetail.Id == config.overByOver) {
+        winningAmount = betAmount;
+        loosingAmount = (betRate * betAmount) / 100;
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
@@ -3098,18 +2977,7 @@ const placeBet = async (req, res) => {
         );
       }
 
-      else if (config.BetfairFancy == subMarketDetail.Id) {
-        await Bets.updateMany(
-          {
-            marketId: _3rdPartyMarketId,
-            userId: req.decoded.userId,
-            matchId: matchId,
-            fancyData: fancyData,
-            status: 1
-          },
-          { calculateExp: false }
-        );
-      } else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+      else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
         let setCalculateExpFalse = await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,

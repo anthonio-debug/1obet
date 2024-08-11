@@ -241,6 +241,7 @@ async function getMarketsByEventId(req, res) {
         accept: "application/json",
         "Content-Type": "application/json",
         "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
       },
     };
     const requestData = {
@@ -688,51 +689,41 @@ async function TestTrial(req, res) {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 
-
-
-
-
 }
 
 async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
 
   try {
-
-
-
     await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
 
-
-
-
-    const response = await MarketIDS.aggregate([{ $project: { name: "$marketName" } }])
-
+    const response = await MarketIDS.aggregate([{ $project: { name: "$marketName" } }]);
 
     const totalMarkets = await MarketIDS.countDocuments({ sportID: 4 });
 
-    // await Bets.updateMany(
-    //   { subMarketId: '7', eventId: '33345422'},
-    //   { $set: { isManuel:true } }
-    // )
-    // await InPlayEvents.updateMany({isManuel:true}, {subMarketId: '7', eventId: '33340930'});
     var arra = [];
     for (let index = 0; index < response.length; index++) {
-      let element = response[index];
+      var element = response[index];
       console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++" + element);
       //arra[index] = element.name;
     }
+    if (Array.isArray(element)) {
+      console.log("Element is an array", element.map(data => console.log(data)));
+    } else if (element !== null && typeof element === 'object') {
+      console.log("Element is an object");
+    } else {
+      console.log("Element is neither an array nor an object");
+    }
 
     const totalgreyhound = await MarketIDS.countDocuments({ winnerInfo: null, sportID: 4339 });
+    console.log(`totalgreyhound================${totalgreyhound}`);
     const totalhorses = await MarketIDS.countDocuments({ winnerInfo: null, sportID: 7 });
-    //await MarketIDS.deleteMany({winnerInfo: null,sportID:4339})
-    //await MarketIDS.deleteMany({winnerInfo: null,sportID:7})
-    //await FancyOdds.deleteMany({})
-    //await  RaceOdds.deleteMany({})
-    //await Odds.deleteMany({});
-    //await RaceOdds.deleteMany({});
+    console.log(`totalhorses================${totalhorses}`);
 
-    res.status(200).json({ success: true, message: 'Odds deleted successfully' + element + "---totalMarkets::" + totalMarkets });
+    res.status(200).json({
+      success: true,
+      message: `Odds deleted successfully. Last processed element: ${element} --- totalMarkets:: ${totalMarkets}`,
+    });
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });

@@ -95,7 +95,7 @@ if(bookmakerOdds!==0){
   async function getSessionFancyOdds() {
     try {
       const now = new Date()
-      const from = new Date(now.getTime() + (100040 * 60 * 1000)).getTime()
+      const from = new Date(now.getTime() + (432000 * 60 * 1000)).getTime()
       let fancyEvents = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
         hasFancy: true,
@@ -104,20 +104,15 @@ if(bookmakerOdds!==0){
         status: 'OPEN'
       }, { Id: 1 }).exec();
 
-
       for (const event of fancyEvents) {
         const eventId = event.Id
         
         let fancyOdds = await fetchSession(eventId)
 
-        // console.log(fancyOdds,"????MMMMMMMMMMMMMMMMMMMMMMMM")
-
-
-        // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
         if (fancyOdds) {
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
-          console.log("boooooooooooooooooooooooooooooooooooooooooooooooook",bookmakerMarketIds);
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
@@ -146,7 +141,6 @@ if(bookmakerOdds!==0){
             }
           }
            if (bookmakerMarketIds.length > 0) {
-            console.log("bookmaker found.........................:",bookmakerMarketIds.length);
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
             if (bookmakerOdds.length > 0) {
               const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
@@ -163,7 +157,6 @@ if(bookmakerOdds!==0){
               }
             }else{
               
-              console.log("bookmaker not found so fancies are saving now.....................",fancyOdds);
               const fancyData = buildFancyStructure(bookmakerMarketList, 0, fancyOdds, eventId)
               if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
                 FancyOddsMap.set(eventId, fancyData)
