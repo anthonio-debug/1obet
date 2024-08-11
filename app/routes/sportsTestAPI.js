@@ -686,10 +686,6 @@ async function TestTrial(req, res) {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 
-
-
-
-
 }
 
 async function deleteOdds(req, res) {
@@ -697,17 +693,12 @@ async function deleteOdds(req, res) {
 
   try {
 
-
-
     await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
-
-
-
-
+    console.log('InPlayEvents update successful');
     const response = await MarketIDS.aggregate([{ $project: { name: "$marketName" } }])
-
-
+    console.log('MarketIDS aggregation successful', response);
     const totalMarkets = await MarketIDS.countDocuments({ sportID: 4 });
+    console.log('totalmarket================', totalMarkets);
 
     // await Bets.updateMany(
     //   { subMarketId: '7', eventId: '33345422'},
@@ -784,8 +775,8 @@ async function getRelatedMarkets(req, res) {
 
 
     ]);
-    console.log("....................................." , marketData);
-    res.status(200).json({ success: true, message: 'Related Markets:' , marketData });
+    console.log(".....................................", marketData);
+    res.status(200).json({ success: true, message: 'Related Markets:', marketData });
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
