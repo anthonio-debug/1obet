@@ -120,7 +120,7 @@ async function registerUser(req, res) {
           const findduser = await User.findOne({ userName: req.body.userName })
           console.log(`check Save ============${findduser}`)
           
-          return
+          
 
           const userbetSizesData = betLimits.map((betLimit) => ({
             userId: user.userId,
