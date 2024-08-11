@@ -693,18 +693,15 @@ async function deleteOdds(req, res) {
 
   try {
     await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
-    console.log('InPlayEvents update successful');
 
     const response = await MarketIDS.aggregate([{ $project: { name: "$marketName" } }]);
-    console.log('MarketIDS aggregation successful', response);
 
     const totalMarkets = await MarketIDS.countDocuments({ sportID: 4 });
-    console.log('totalmarket================', totalMarkets);
 
     var arra = [];
     for (let index = 0; index < response.length; index++) {
       let element = response[index];
-      console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++" + element);
+      console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++" + element.map(data => console.log(data)));
       //arra[index] = element.name;
     }
 
