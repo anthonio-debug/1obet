@@ -704,6 +704,13 @@ async function deleteOdds(req, res) {
       console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++" + element);
       //arra[index] = element.name;
     }
+    if (Array.isArray(element)) {
+      console.log("Element is an array", element.map(data => console.log(data)));
+    } else if (element !== null && typeof element === 'object') {
+      console.log("Element is an object");
+    } else {
+      console.log("Element is neither an array nor an object");
+    }
 
     const totalgreyhound = await MarketIDS.countDocuments({ winnerInfo: null, sportID: 4339 });
     console.log(`totalgreyhound================${totalgreyhound}`);
