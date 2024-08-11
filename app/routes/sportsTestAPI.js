@@ -14,6 +14,8 @@ const apiURL = "http://185.58.225.212:8080/api/"
 const apiSystemRacing = require("../../restApiSystem/src/tools_for_updated_racing.js")();
 const Session = require('../models/Session');
 const inPlayEvents = require('../models/events');
+const userBetSizes = require('../models/userBetSizes');
+const BetLimits = require('../models/betLimits');
 
 require('dotenv').config()
 console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -784,8 +786,8 @@ async function getRelatedMarkets(req, res) {
 
 
     ]);
-    console.log("....................................." , marketData);
-    res.status(200).json({ success: true, message: 'Related Markets:' , marketData });
+    console.log(".....................................", marketData);
+    res.status(200).json({ success: true, message: 'Related Markets:', marketData });
   } catch (error) {
     console.error('Error updating odds:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
@@ -983,6 +985,87 @@ async function getMatchEvents(req, res) {
       res.status(500).json({ status: false, data: error?.response?.data });
     });
 }
+
+
+////////////////
+async function updateUserBetSizesColec(req, res) {
+
+  // const role = req.decoded.login.role
+  // if (role != 0) {
+  //   return res.send({
+  //     message: 'you are not allowed to update bet sizes',
+  //     success: true,
+
+  //   });
+  // }
+
+  try {
+
+    const userIds = await User.aggregate([
+      {
+        $group: {
+          _id: "$userId",
+        },
+      },
+      { $sort: { _id: 1 } },
+    ])
+    // console.log(userIds, "IIIIIIIIIIIIIIII");
+
+    const userids = userIds.filter((data) => data._id !== null).sort().map((data) => data._id)
+    // console.log(userids);
+
+    let betLimits = await BetLimits.find({
+      $or: [
+        { name: "Betfair Fancy" },
+        { name: "Over by Over" }
+      ]
+    });
+
+    for (let i = 0; i <= userIds.length; i++) {
+
+     let userId = userids[i]
+    // let userId = 11001
+
+    const userbetSizesData = betLimits.map((betLimit) => ({
+      userId: userId,
+      betLimitId: betLimit._id,
+      amount: betLimit.maxAmount,
+      name: betLimit.name,
+      sportsId: betLimit.sportsId,
+      subarket: betLimit.subarket,
+      minAmount: betLimit.minAmount,
+      ExpAmount: betLimit.ExpAmount
+    }));
+
+    // console.log(userbetSizesData);    
+    //     await userBetSizes.deleteMany({ userId:userId });
+
+    await userBetSizes.insertMany(userbetSizesData);
+
+    }
+
+    return res.send({
+      message: 'User Best Sizrs Updated Successfully',
+      success: true,
+      // results: userbetSizesData
+    });
+
+  } catch (error) {
+    console.error("Error in updateUserBetSizesColec:", error);
+    return res.status(500).send({
+      message: 'An error occurred while updating user bet sizes',
+      success: false,
+      error: error.message,
+    });
+
+  }
+
+}
+///////////////
+
+//////
+router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
+/////
 
 router.get('/testSports/events', listEvents)
 router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
