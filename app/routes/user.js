@@ -96,8 +96,7 @@ async function registerUser(req, res) {
         user.status = 0;
       }
 
-      user.downLineShare = req.body.downLineShare;
-      console.log(typeof(user.downLineShare))
+      user.downLineShare = +req.body.downLineShare;
       user.casinoAllowed = req.body.casinoAllowed;
       // var token = getNonExpiringToken(
       //   user.userId,
