@@ -431,11 +431,15 @@ const placeBet = async (req, res) => {
      * Is market Blocked from any Flow
      */
     console.log("44444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
-    let userBlockedSubMarketsByParent = user.blockedSubMarketsByParent
+    let { blockedSubMarketsByParent } = user;
     let userSubMarketId = subMarketDetail.Id;
     let userEventId = eventDetail.Id
-    const blockedSubMarketsByParentBet = userBlockedSubMarketsByParent.some(item => item.eventId === userEventId && item.subMarketId === userSubMarketId);
-    if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus == true || blockedSubMarketsByParentBet) {
+    const blockedSubMarketsByParentBet = blockedSubMarketsByParent.some(item =>
+      item.eventId === userEventId &&
+      (Array.isArray(item.subMarketId) ? item.subMarketId.includes(userSubMarketId) : item.subMarketId === userSubMarketId)
+    );
+
+    if (marketIds.includes(marketId) || subMarketId.includes(subMarketDetail.Id) || user.betLockStatus || blockedSubMarketsByParentBet) {
       activeBettors.delete(userId);
       return res.status(404).send({ message: 'Betting disabled' });
     }
