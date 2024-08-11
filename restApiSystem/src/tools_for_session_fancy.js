@@ -104,7 +104,6 @@ if(bookmakerOdds!==0){
         status: 'OPEN'
       }, { Id: 1 }).exec();
 
-
       for (const event of fancyEvents) {
         const eventId = event.Id
         
@@ -113,7 +112,7 @@ if(bookmakerOdds!==0){
         // console.log(fancyOdds,"????MMMMMMMMMMMMMMMMMMMMMMMM")
 
 
-        // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
+        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
         if (fancyOdds) {
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
