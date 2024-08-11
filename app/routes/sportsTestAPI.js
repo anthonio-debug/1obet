@@ -991,6 +991,22 @@ async function updateUserBetSizesColec(req, res) {
   // }
 
   try {
+    await BetLimits.insertMany([{
+      name: 'Over by Over',
+      sportsId: '4',
+      subarket: 70,
+      maxAmount: 200000,
+      ExpAmount: 200000,
+      minAmount: 1000
+    },
+    {
+      name: 'Betfair Fancy',
+      sportsId: '4',
+      subarket: 100,
+      maxAmount: 200000,
+      ExpAmount: 200000,
+      minAmount: 1000
+    }])
 
     const userIds = await User.aggregate([
       {
@@ -1014,24 +1030,24 @@ async function updateUserBetSizesColec(req, res) {
 
     for (let i = 0; i <= userIds.length; i++) {
 
-     let userId = userids[i]
-    // let userId = 11001
+      let userId = userids[i]
+      // let userId = 11001
 
-    const userbetSizesData = betLimits.map((betLimit) => ({
-      userId: userId,
-      betLimitId: betLimit._id,
-      amount: betLimit.maxAmount,
-      name: betLimit.name,
-      sportsId: betLimit.sportsId,
-      subarket: betLimit.subarket,
-      minAmount: betLimit.minAmount,
-      ExpAmount: betLimit.ExpAmount
-    }));
+      const userbetSizesData = betLimits.map((betLimit) => ({
+        userId: userId,
+        betLimitId: betLimit._id,
+        amount: betLimit.maxAmount,
+        name: betLimit.name,
+        sportsId: betLimit.sportsId,
+        subarket: betLimit.subarket,
+        minAmount: betLimit.minAmount,
+        ExpAmount: betLimit.ExpAmount
+      }));
 
-    // console.log(userbetSizesData);    
-    //     await userBetSizes.deleteMany({ userId:userId });
+      // console.log(userbetSizesData);    
+      //     await userBetSizes.deleteMany({ userId:userId });
 
-    await userBetSizes.insertMany(userbetSizesData);
+      await userBetSizes.insertMany(userbetSizesData);
 
     }
 
