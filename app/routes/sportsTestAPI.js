@@ -239,6 +239,7 @@ async function getMarketsByEventId(req, res) {
         accept: "application/json",
         "Content-Type": "application/json",
         "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
       },
     };
     const requestData = {
