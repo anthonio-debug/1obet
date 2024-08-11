@@ -706,7 +706,9 @@ async function deleteOdds(req, res) {
     }
 
     const totalgreyhound = await MarketIDS.countDocuments({ winnerInfo: null, sportID: 4339 });
+    console.log(`totalgreyhound================${totalgreyhound}`);
     const totalhorses = await MarketIDS.countDocuments({ winnerInfo: null, sportID: 7 });
+    console.log(`totalhorses================${totalhorses}`);
 
     res.status(200).json({
       success: true,
