@@ -56,14 +56,13 @@ const userSchema = new Schema({
 });
 
 userSchema.methods.hashPass = function (next) {
-  // add some stuff to the users name
-  bcrypt.hash(this.password, saltrounds, function (error, hash) {
+  const user = this;
+
+  bcrypt.hash(user.password, saltrounds, function (error, hash) {
     if (error) {
       return next(error);
     } else {
-      this.password = hash;
-      // next should be called after the password has been hashed
-      // otherwise non hashed password will be saved in the db
+      user.password = hash;  
       next();
     }
   });
