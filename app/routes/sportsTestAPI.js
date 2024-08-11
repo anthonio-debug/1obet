@@ -700,7 +700,7 @@ async function deleteOdds(req, res) {
 
     var arra = [];
     for (let index = 0; index < response.length; index++) {
-      let element = response[index];
+      var element = response[index];
       console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++" + element);
       //arra[index] = element.name;
     }
@@ -712,7 +712,7 @@ async function deleteOdds(req, res) {
 
     res.status(200).json({
       success: true,
-      message: `Odds deleted successfully. Last processed element: ${response[response.length - 1]} --- totalMarkets:: ${totalMarkets}`,
+      message: `Odds deleted successfully. Last processed element: ${element} --- totalMarkets:: ${totalMarkets}`,
     });
   } catch (error) {
     console.error('Error updating odds:', error);
