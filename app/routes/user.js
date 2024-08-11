@@ -74,8 +74,8 @@ async function registerUser(req, res) {
       // Check if the downline share is greater than the parent's downline share
       const parentUser = await User.findOne({ userId: req.decoded.userId });
       console.log(`parentuser===============${parentUser.downLineShare}`);
-      console.log(`req.body.downLineShare===============${req.body.downLineShare}`);
-      if ((parentUser.role != 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100 || req.body.role != 5) {
+      console.log(`req.body.downLineShare===============${typeof (req.body.downLineShare)}`);
+      if ((parentUser.role != 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100) {
         return res.status(404).send({
           message: `Max allowed downline share is 1 - ${parentUser.downLineShare - 1}`
         });
