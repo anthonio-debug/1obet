@@ -111,10 +111,12 @@ async function registerUser(req, res) {
       if (parentUser.role == 0) {
         let betLimits = await BetLimits.find({});
         // //console.log(' betLimits ======= ', betLimits);
+        console.log(`before Save ============${user}`)
         user.save((err, user) => {
           if (err || !user) {
             return res.status(404).send({ message: 'user not registered', err });
           }
+          console.log(`After Save ============${user}`)
 
           const userbetSizesData = betLimits.map((betLimit) => ({
             userId: user.userId,
