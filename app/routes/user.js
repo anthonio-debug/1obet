@@ -72,7 +72,7 @@ async function registerUser(req, res) {
         req.body.downLineShare = 0;
       }
       // Check if the downline share is greater than the parent's downline share
-      const parentUser = await User.findOne({ userId: req.decoded.userId });
+      const   parentUser = await User.findOne({ userId: req.decoded.userId });
       if ((parentUser.role != 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100 || (req.body.role != 5 && req.body.downLineShare == 0)) {
         return res.status(404).send({
           message: `Max allowed downline share is 1 - ${parentUser.downLineShare - 1}`
@@ -731,7 +731,7 @@ function getCurrentUser(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   const fieldsToSelect = '"balance":1,"exposure":1,"userName":1,"availableBalance":1,"isActive":1,"status":1,"userId":1,"role":1';
-  User.findOne({ userId: req.decoded.userId }, { "balance": 1, "exposure": 1, "userName": 1, "availableBalance": 1, "isActive": 1, "status": 1, "userId": 1, "role": 1 }, async (err, user) => {
+  User.findOne({ userId: req.decoded.userId }, { "balance": 1, "exposure": 1, "userName": 1, "availableBalance": 1, "isActive": 1, "status": 1, "userId": 1, "role": 1, "downLineShare":1 }, async (err, user) => {
     if (err || !user) return res.status(404).send({ message: 'user not found' });
 
     return res.send({
