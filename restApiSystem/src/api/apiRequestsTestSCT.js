@@ -638,13 +638,13 @@ function apiRequests() {
                     };
 
                     tempRunners.push(tempElement);
+                    console.log("------------------------------->" + tempElement);
                   }
                   // let sttr = element.totalMatched;
                   // const totalMatched = sttr.replace('.','');
 
 
 
-                  console.log("------------------------------->" + tempElement);
 
                   let totalMatched = element.totalMatched;
                   let totalMatchedStr = totalMatched.toString();
