@@ -1124,7 +1124,7 @@ async function getRaceLatestRecord(req,res){
         res.status(200).json({ success: true, message: 'Sports Latest Record from odds:', raceLatestRecord });
      }
       else{
-        const raceLatestRecord= await RaceOdds.aggregate([
+        const raceLatestRecord= await Odds.aggregate([
           {
             $match:{marketId:marketId}
           },
