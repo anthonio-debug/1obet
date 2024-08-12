@@ -487,12 +487,12 @@ function apiRequests() {
                 inPlay: true
               });
               await newMarket.save();
-              // console.log(`marketIds=========================${marketIds.length}`)
-              // console.log(`marketIds=========================${marketIds.map(data => console.log(data))}`)
+              console.log(`marketIds=========================${marketIds.length}`)
+              console.log(`marketIds=========================${marketIds.map(data => console.log(data))}`)
             }
           } else {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
-            // console.log(`newmarkets2=========================${newmarkets2}`)
+            console.log(`newmarkets2=========================${newmarkets2}`)
           }
         }
 
@@ -501,7 +501,7 @@ function apiRequests() {
             if (!CheckEvnts) {
               console.error(`No document found with eventId: ${eventId} for update.`);
             } else {
-              // console.log("Check Events:", CheckEvnts);
+              console.log("Check Events:", CheckEvnts);
             }
           })
           .catch((error) => {
