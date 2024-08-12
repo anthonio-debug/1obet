@@ -352,11 +352,12 @@ function apiRequests() {
       const marketsData = response.data.result;
       let marketStatus = 'OPEN';
 
-
       if (marketsData && marketsData?.length > 0) {
         let marketIds = [];
         let arrMarketIds = [];
         let cntrl = 0;
+        let shouldInsertMarkets = true; // Flag to control whether we should insert new markets
+
         marketsData.forEach((element) => {
 
           let tempRunners = [];
@@ -372,28 +373,17 @@ function apiRequests() {
           }
 
           if (sportID == '4') {
-
-
             let completeMarketName = element.marketName;
             let FindInMeRes = completeMarketName.toLowerCase();
             let betfairFancy = FindInMeRes.search('overs line');
-
-
             let betfairFancy2 = FindInMeRes.search('runs line');
-
-            //console.log("MarketName:", element.marketName);
-            // console.log('betfairFancy>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy);
-            // console.log('betfairFancy2>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', betfairFancy2);
 
             if (betfairFancy2 >= 0 || betfairFancy >= 0 || element.marketName === 'Match Odds' || element.marketName === 'Tied Match' || element.marketName === 'To Win the Toss') {
 
               if (betfairFancy >= 0 || betfairFancy2 >= 0) {
-
                 hasbetfairFancy = true;
-                // console.log('completeMarketName>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', completeMarketName);
                 arrMarketIds[cntrl] = completeMarketName;
                 cntrl++;
-
               }
 
               marketIds.push({
@@ -421,9 +411,6 @@ function apiRequests() {
               element.marketName === 'Over/Under 0.5 Goals' ||
               element.marketName === 'Over/Under 1.5 Goals' ||
               element.marketName === 'Over/Under 2.5 Goals'
-              // || element.marketName === "Over/Under 3.5 Goals"
-              // || element.marketName === "Over/Under 4.5 Goals"
-              // || element.marketName === "Over/Under 5.5 Goals"
             )
               marketIds.push({
                 id: element.marketId,
@@ -435,52 +422,32 @@ function apiRequests() {
           }
         });
 
-
-        //console.log('============================================================================================', arrMarketIds);
-
-
-        //console.log("=================length>>>>>>>>",arrMarketIds.length);
-
-        //sorting start
-
         const sortedarrMarketIds = arrMarketIds.sort((a, b) => {
           return a.localeCompare(b, undefined, {
             numeric: true,
             sensitivity: 'base'
-          })
+          });
         });
-        //sorting end      
-        console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
-
-        sortedarrMarketIds.indexOf("Apple");
 
         for (let index = 0; index < marketIds.length; index++) {
 
-          var ev = parseInt(eventId);
+          const ev = parseInt(eventId);
           const marketID = await MarketIDS.findOne({
             eventId: ev,
             marketId: marketIds[index].id + ''
           });
 
           if (marketIds[index].hasbetfairFancy == true) {
-            //console.log("MarkentName::::::::::::::::::::::::::::",marketIds[index].marketName);
-            // console.log("Index::::::::::::::::::::::::::::",sortedarrMarketIds.indexOf(marketIds[index].marketName));
             marketIds[index].sort = sortedarrMarketIds.indexOf(marketIds[index].marketName);
           }
 
           if (!marketID) {
             const countOfMarket = await MarketIDS.countDocuments({ eventId: eventId, status: 'OPEN' });
 
-
-            console.log("countOfMarket::::::::::::::::::::::::::::", countOfMarket);
-            console.log("sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2'::::::::::::::::::::::::::::", sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2');
-            console.log("sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4'::::::::::::::::::::::::::::", sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4');
-            console.log("sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount::::::::::::::::::::::::::::", sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount);
             if (countOfMarket > (sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount)) {
-              console.log("This condition is going to true")
-              return;
+              console.log("This condition is going to true");
+              shouldInsertMarkets = false;
             } else {
-
               const newMarket = new MarketIDS({
                 eventId: eventId,
                 marketId: marketIds[index].id + '',
@@ -493,18 +460,29 @@ function apiRequests() {
                 inPlay: true
               });
               const newmarket = await newMarket.save();
-              console.log(`newmarket=========================${newmarket}`)
+              console.log(`newmarket=========================${newmarket}`);
             }
           } else {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
-            console.log(`newmarkets2=========================${newmarkets2}`)
+            console.log(`newmarkets2=========================${newmarkets2}`);
           }
         }
-        console.log(`marketIds==========================${marketIds}`);
-        console.log(`eventId==========================${eventId}`);
 
-        const checkevent = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds })
-        console.log(`checkevent======================${checkevent}`);
+        if (shouldInsertMarkets) {
+          await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds })
+            .then((CheckEvnts) => {
+              if (!CheckEvnts) {
+                console.error(`No document found with eventId: ${eventId} for update.`);
+              } else {
+                console.log("Check Events:", CheckEvnts);
+              }
+            })
+            .catch((error) => {
+              console.error(`Failed to update inPlayEvents for eventId: ${eventId}`, error);
+            });
+        } else {
+          console.log("Skipping inPlayEvents update due to market count exceeding the allowed limit.");
+        }
       }
     } catch (error) {
       console.error(error);
@@ -515,6 +493,7 @@ function apiRequests() {
       };
     }
   }
+
 
 
   async function getOddsFromProvider(marketIdsArray, intervalId) {
