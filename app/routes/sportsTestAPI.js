@@ -991,22 +991,22 @@ async function updateUserBetSizesColec(req, res) {
   // }
 
   try {
-    await BetLimits.insertMany([{
-      name: 'Over by Over',
-      sportsId: '4',
-      subarket: 70,
-      maxAmount: 200000,
-      ExpAmount: 200000,
-      minAmount: 1000
-    },
-    {
-      name: 'Betfair Fancy',
-      sportsId: '4',
-      subarket: 100,
-      maxAmount: 200000,
-      ExpAmount: 200000,
-      minAmount: 1000
-    }])
+    // await BetLimits.insertMany([{
+    //   name: 'Over by Over',
+    //   sportsId: '4',
+    //   subarket: 70,
+    //   maxAmount: 200000,
+    //   ExpAmount: 200000,
+    //   minAmount: 1000
+    // },
+    // {
+    //   name: 'Betfair Fancy',
+    //   sportsId: '4',
+    //   subarket: 100,
+    //   maxAmount: 200000,
+    //   ExpAmount: 200000,
+    //   minAmount: 1000
+    // }])
 
     const userIds = await User.aggregate([
       {
@@ -1046,6 +1046,10 @@ async function updateUserBetSizesColec(req, res) {
 
       // console.log(userbetSizesData);    
       //     await userBetSizes.deleteMany({ userId:userId });
+      await userBetSizes.deleteMany({
+        userId: userId,
+        name: { $in: ["Betfair Fancy", "Over by Over"] }
+      });
 
       await userBetSizes.insertMany(userbetSizesData);
 
