@@ -501,20 +501,9 @@ function apiRequests() {
           }
         }
         console.log(`marketIds==========================${marketIds}`);
-        
-        await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds })
-          .then((CheckEvnts) => {
-            if (!CheckEvnts) {
-              console.error(`No document found with eventId: ${eventId} for update.`);
-            } else {
-              console.log("Check Events:", CheckEvnts);
-            }
-          })
-          .catch((error) => {
-            console.error(`Failed to update inPlayEvents for eventId: ${eventId}`, error);
-          });
 
-
+        const checkevent = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds })
+        console.log(`checkevent======================{checkevent}`);
       }
     } catch (error) {
       console.error(error);
