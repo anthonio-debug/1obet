@@ -655,13 +655,6 @@ function apiRequests() {
                     console.log('sentence is not a string');
                   }
 
-
-
-
-
-
-
-
                   let frontData = {
                     sportsId: marketData.sportID,
                     runners: tempRunners,
@@ -945,7 +938,7 @@ function apiRequests() {
           sportsId: sportsId + '',
           isShowed: true,
           status: 'OPEN',
-          inplay: { $ne: true }
+          // inplay: { $ne: true }
         };
         events = await inPlayEvents.find(queryPastEvents).sort({ openDate: -1 }).limit(10).exec();
       }
