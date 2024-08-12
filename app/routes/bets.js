@@ -215,7 +215,8 @@ const placeBet = async (req, res) => {
     let asianTableName = '';
     let delayAddition = 0;
 
-    if (checkRunsOrOvers(subMarketName)) subMarketName = "Betfair Fancy"
+    if (checkRunsOrOvers(subMarketName)) { subMarketName = "Betfair Fancy" }
+    else { subMarketName }
 
     /* ====================================================================== */
 
