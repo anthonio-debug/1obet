@@ -471,6 +471,11 @@ function apiRequests() {
           if (!marketID) {
             const countOfMarket = await MarketIDS.countDocuments({ eventId: eventId, status: 'OPEN' });
 
+
+            console.log("countOfMarket::::::::::::::::::::::::::::", countOfMarket);
+            console.log("sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2'::::::::::::::::::::::::::::", sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2');
+            console.log("sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4'::::::::::::::::::::::::::::", sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4');
+            console.log("sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount::::::::::::::::::::::::::::", sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount);
             if (countOfMarket > (sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount)) {
               console.log("This condition is going to true")
               return;
