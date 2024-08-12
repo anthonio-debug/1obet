@@ -334,6 +334,36 @@ async function getOddsByMarketId(req, res) {
     res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
+async function getOddsByMarketId2(req, res) {
+  const marketId = req.params.marketId;
+
+  try {
+    const sportsAPIUrl = "http://185.58.225.212:8080/api";
+    const header = {
+      headers: {
+        'accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-App': process.env.XAPP_NAME
+      },
+    }
+    const requestData = {
+      "marketIds": [marketId]
+    }
+    var url = `${sportsAPIUrl}/listMarketBook`;
+
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+
+    const marketsData = response.data;
+
+    res.status(200).json({ success: true, data: marketsData });
+  } catch (err) {
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
+  }
+}
 
 async function getMarketType(req, res) {
   try {
@@ -1073,11 +1103,48 @@ async function updateUserBetSizesColec(req, res) {
 
 }
 ///////////////
+async function getRaceLatestRecord(req,res){
+   const {collectionName,marketId} =req.params;
 
+   console.log(`raceodds ------- ${collectionName}---------`);
+   console.log(`marketId ------- ${marketId}---------`);
+   
+  //  const marketId = req.query.marketId
+  // raceodds
+
+   try {
+    if (colectionName ="odds"){
+      const raceLatestRecord =await Odds.aggregate([
+        {
+          $match:{marketId:marketId}
+      },
+      {$sort:{createdAt:-1}},
+          {$limit:1}
+    ])
+        res.status(200).json({ success: true, message: 'Race Latest Record from odds:', raceLatestRecord });
+     }
+      else{
+        const raceLatestRecord= await RaceOdds.aggregate([
+          {
+            $match:{marketId:marketId}
+          },
+          {$sort:{createdAt:-1}},
+          {$limit:1}
+        ])
+
+        res.status(200).json({ success: true, message: 'Race Latest Record race odds:', raceLatestRecord });
+      }
+      
+   } catch (error) {
+    console.error("Error in updateUserBetSizesColec:", error);
+    res.status(500).json({ success: false, message: 'Internal server error' });
+   }
+
+}
 //////
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
 /////
-
+router.get('/track-bet/get-odds2/:marketId/:colectionName', getRaceLatestRecord)
 router.get('/testSports/events', listEvents)
 router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
 router.get('/track-score/get-cricketscore', getCricketScore)
@@ -1092,6 +1159,7 @@ router.get('/track-bet/get-markets/:eventId', getMarketsByEventId)
 router.get('/track-bet/get-events/:sportsId', getEventsBySportsId)
 router.get('/track-bet/get-today-events/:sportsId', getTodayEventsBySportsId)
 router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
+router.get('/track-bet/get-odds2/:marketId', getOddsByMarketId2)
 router.get('/track-bet/get-odds-multi-marketids/:eventId', getOddsByMultiMarketId)
 router.get('/track-bet/get-markettype', getMarketType)
 router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByMarketType)
