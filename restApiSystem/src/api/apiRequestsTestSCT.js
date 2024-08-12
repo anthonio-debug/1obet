@@ -478,7 +478,7 @@ function apiRequests() {
             console.log("sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount::::::::::::::::::::::::::::", sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount);
             if (countOfMarket > (sportID === '1' ? config.soccerEventsAllowedCount : sportID === '2' ? config.tennistEventsAllowedCount : sportID === '4' ? config.cricketEventsAllowedCount : config.allSportsEventsAllowedCount)) {
               console.log("This condition is going to true")
-              return;
+              // return;
             } else {
 
               const newMarket = new MarketIDS({
