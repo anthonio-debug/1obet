@@ -638,7 +638,7 @@ function apiRequests() {
                     };
 
                     tempRunners.push(tempElement);
-                    console.log("------------------------------->" + tempElement.map(data=>console.log(data)));
+                    console.log("------------------------------->" + tempElement);
                   }
                   // let sttr = element.totalMatched;
                   // const totalMatched = sttr.replace('.','');
