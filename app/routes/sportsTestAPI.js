@@ -1113,7 +1113,7 @@ async function getRaceLatestRecord(req,res){
   // raceodds
 
    try {
-    if (colectionName ="odds"){
+    if (collectionName =="odds"){
       const raceLatestRecord =await Odds.aggregate([
         {
           $match:{marketId:marketId}
