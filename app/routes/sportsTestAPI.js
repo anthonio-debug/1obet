@@ -1121,7 +1121,7 @@ async function getRaceLatestRecord(req,res){
       {$sort:{createdAt:-1}},
           {$limit:1}
     ])
-        res.status(200).json({ success: true, message: 'Race Latest Record from odds:', raceLatestRecord });
+        res.status(200).json({ success: true, message: 'Sports Latest Record from odds:', raceLatestRecord });
      }
       else{
         const raceLatestRecord= await RaceOdds.aggregate([
