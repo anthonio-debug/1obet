@@ -486,9 +486,8 @@ function apiRequests() {
                 runners: marketIds[index].runners,
                 inPlay: true
               });
-              await newMarket.save();
-              console.log(`marketIds=========================${marketIds.length}`)
-              console.log(`marketIds=========================${marketIds.map(data => console.log(data))}`)
+              const newmarket = await newMarket.save();
+              console.log(`newmarket=========================${newmarket}`)
             }
           } else {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
