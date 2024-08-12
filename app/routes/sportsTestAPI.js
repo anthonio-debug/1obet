@@ -1144,7 +1144,7 @@ async function getRaceLatestRecord(req,res){
 //////
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
 /////
-router.get('/track-bet/get-odds2/:marketId/:colectionName', getRaceLatestRecord)
+router.get('/track-bet/get-latest-odds/:marketId/:collectionName', getRaceLatestRecord)
 router.get('/testSports/events', listEvents)
 router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
 router.get('/track-score/get-cricketscore', getCricketScore)
