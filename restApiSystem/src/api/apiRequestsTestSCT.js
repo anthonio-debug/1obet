@@ -503,7 +503,7 @@ function apiRequests() {
         console.log(`marketIds==========================${marketIds}`);
         console.log(`eventId==========================${eventId}`);
         console.log(`eventId==========================${typeof (eventId)}`);
-        const checkevent = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { marketIds: marketIds })
+        const checkevent = await inPlayEvents.updateOne({ Id: eventId }, { marketIds: marketIds })
         console.log(`checkevent======================${checkevent}`);
       }
     } catch (error) {
