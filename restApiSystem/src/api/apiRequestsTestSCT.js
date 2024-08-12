@@ -644,7 +644,7 @@ function apiRequests() {
 
 
 
-                  //console.log("------------------------------->"+element.totalMatched);
+                  console.log("------------------------------->" + tempElement);
 
                   let totalMatched = element.totalMatched;
                   let totalMatchedStr = totalMatched.toString();
@@ -683,7 +683,7 @@ function apiRequests() {
                       totalMatched: totalMatchedStr,
                       createdAt: new Date().getTime()
                     };
-                    //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",element.status);
+                    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", element.status);
                     if (element.status === 'CLOSED') {
                       // clearInterval(intervalId);
                       await MarketIDS.updateOne({ marketId: marketId }, { inPlay: false, status: element.status });
@@ -707,7 +707,7 @@ function apiRequests() {
                         runnerCheckerArray.push(marketId);
                       }
                     }
-                    // console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
+                    console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
                     let el = new Odds(json1);
                     await el.save();
 
