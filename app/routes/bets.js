@@ -3741,7 +3741,7 @@ async function getMatchedBets(req, res) {
           }
         }
       },
-      { $sort: { _id: -1 ,openDate:-1} }
+      { $sort: { openDate:-1} }
     ]).exec();
 
     // if (!matchedBets || matchedBets.length == 0) {
