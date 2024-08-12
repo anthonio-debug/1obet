@@ -600,6 +600,7 @@ async function betsRecords(req, res) {
         $group: {
           _id: "$userId",
           userName: { $first: "$userName" },
+          exposure: { $first:"exposure"},
           availableBalance: { $first: "$availableBalance" },
           balance: { $first: "$balance" },
           clientPL: { $first: "$clientPL" },
