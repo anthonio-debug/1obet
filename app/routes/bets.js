@@ -3827,7 +3827,7 @@ async function getMatchedBets(req, res) {
           Id: { $ne: eventId.Id },
           isShowed: true,
           CompanySetStatus: "OPEN"
-        }).limit(5);
+        }).sort({ openDate: 1 }).limit(5);
       }
     }
     ////////////
