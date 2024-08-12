@@ -450,7 +450,7 @@ function apiRequests() {
           })
         });
         //sorting end      
-        // console.log("I am sorted:::::::::::::::::::::::::::::::", sortedarrMarketIds);
+        console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
 
         sortedarrMarketIds.indexOf("Apple");
 
