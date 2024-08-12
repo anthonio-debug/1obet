@@ -162,6 +162,7 @@ const checkMarketActiveForBets = async (marketId) => {
     return 400;
   }
 };
+
 function checkRunsOrOvers(inputString) {
   const submarket = /(runs line|overs line)/i;
   return submarket.test(inputString);
@@ -1788,7 +1789,6 @@ const placeBet = async (req, res) => {
     }
 
     // For Fancy
-
     else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,

@@ -541,6 +541,14 @@ function addSideBarMenu(req, res) {
 }
 
 async function betsRecords(req, res) {
+  const { start, end, page = 1} = req.query
+  const limit = config.pageSize;
+  const userRole = req.decoded.role
+
+  if(userRole !== 0){
+    res.status(400).send({message:"Only Company can access"})
+  }
+
   const now = new Date().getTime();
   const lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
 
