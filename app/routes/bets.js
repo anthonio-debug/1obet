@@ -3655,6 +3655,7 @@ async function getMatchedBets(req, res) {
     const userIDs = await getAllUserIDs(createdByIDs);
     const matchId = req.query.id;
     const marketId = req.query.marketId;
+    console.log("MMMMMMMMMMMM marketid", marketId);
     //const marketId = '1.231243057';
     if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
