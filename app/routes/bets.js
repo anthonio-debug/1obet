@@ -2107,7 +2107,9 @@ const placeBet = async (req, res) => {
       runnerName = OddDetailsTeam?.runnerName;
       console.log("Check the code Im here OddDetailsTeam", OddDetailsTeam)
       console.log("Check the code Im here runnerName", runnerName)
-
+      console.log('selectedBetRate================', selectedBetRate);
+      console.log('betRate================', betRate);
+      
       if (selectedBetRate == betRate) {
 
         for (let i = 1; i < 5; i++) {
@@ -2116,13 +2118,13 @@ const placeBet = async (req, res) => {
             console.log("Check the code Im here DBOddDetails", DBOddDetails.marketId)
             const oddsData = await apiCallForOdds(DBOddDetails.marketId);
             const marketStatus = oddsData[0]?.status;
-            // if (marketStatus != 'OPEN' || !marketStatus) {
+            if (marketStatus != 'OPEN' || !marketStatus) {
               activeBettors.delete(userId);
               console.log("Check the code Im here")
               return res.status(400).send({
                 message: `Betting is CLOSED.`
               });
-            // }
+            }
 
             const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
 
