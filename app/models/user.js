@@ -49,20 +49,21 @@ const userSchema = new Schema({
   remoteId: { type: Number },
   data: { type: Object, default: {} },
   activeBetPlacing: { type: Boolean, default: false },
-  blockCashWithdraw: { type: Boolean, default: false },
+  cashWithdrawDisable: { type: Boolean, default: false },
   casinoAllowed: { type: Boolean, default: true },
   digitVerification: { type: String, default: null },
   blockStatus: { type: Boolean, default: false }
 });
 
 userSchema.methods.hashPass = function (next) {
-  const user = this;
-
-  bcrypt.hash(user.password, saltrounds, function (error, hash) {
+  // add some stuff to the users name
+  bcrypt.hash(this.password, saltrounds, function (error, hash) {
     if (error) {
       return next(error);
     } else {
-      user.password = hash;  
+      this.password = hash;
+      // next should be called after the password has been hashed
+      // otherwise non hashed password will be saved in the db
       next();
     }
   });
