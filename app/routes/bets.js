@@ -2109,53 +2109,57 @@ const placeBet = async (req, res) => {
       console.log("Check the code Im here runnerName", runnerName)
       console.log('selectedBetRate================', selectedBetRate);
       console.log('betRate================', betRate);
-      
+
       if (selectedBetRate == betRate) {
 
         for (let i = 1; i < 5; i++) {
           setTimeout(async () => {
+            try {
+              console.log("Check the code I'm here DBOddDetails", DBOddDetails.marketId);
+              const oddsData = await apiCallForOdds(DBOddDetails.marketId);
 
-            console.log("Check the code Im here DBOddDetails", DBOddDetails.marketId)
-            const oddsData = await apiCallForOdds(DBOddDetails.marketId);
-            const marketStatus = oddsData[0]?.status;
-            if (marketStatus != 'OPEN' || !marketStatus) {
-              activeBettors.delete(userId);
-              console.log("Check the code Im here")
-              return res.status(400).send({
-                message: `Betting is CLOSED.`
-              });
-            }
+              if (!oddsData || oddsData.length === 0) {
+                console.log("Odds data is empty or undefined.");
+                return res.status(400).send({ message: "Data Is not available" });
+              }
 
-            const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
+              const marketStatus = oddsData[0]?.status;
+              if (marketStatus !== 'OPEN') {
+                activeBettors.delete(userId);
+                console.log("Check the code I'm here");
+                return res.status(400).send({ message: `Betting is CLOSED.` });
+              }
 
-            let selectedOddsValue = 0;
-            if (type == 0) {
-              const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
-              console.log('Available to Back:', ApiResponseOdds);
+              const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
+
+              if (!runnerFromAPI) {
+                console.log("Runner not found.");
+                return;
+              }
+
+              let selectedOddsValue = 0;
+              const ApiResponseOdds = type === 0 ? runnerFromAPI?.ex?.availableToBack : runnerFromAPI?.ex?.availableToLay;
+              console.log(`Available to ${type === 0 ? 'Back' : 'Lay'}:`, ApiResponseOdds);
 
               if (ApiResponseOdds && ApiResponseOdds.length > 0) {
                 selectedOddsValue = ApiResponseOdds[0].price;
               }
-              if (selectedOddsValue != 0 && betRate <= selectedOddsValue) {
-                multipeResponse.push(selectedOddsValue);
-              }
-              multipeResponseForSecurityCheck.push(selectedOddsValue);
-            } else if (type == 1) {
-              const ApiResponseOdds = runnerFromAPI?.ex?.availableToLay;
-              console.log('Available to Lay:', ApiResponseOdds);
 
-              if (ApiResponseOdds && ApiResponseOdds.length > 0) {
-                selectedOddsValue = ApiResponseOdds[0]?.price;
-              }
-              if (selectedOddsValue != 0 && betRate >= selectedOddsValue) {
+              if ((type === 0 && betRate <= selectedOddsValue) || (type === 1 && betRate >= selectedOddsValue)) {
                 multipeResponse.push(selectedOddsValue);
               }
+
               multipeResponseForSecurityCheck.push(selectedOddsValue);
+
+              console.log(`selectedOddsValue: ${selectedOddsValue}`);
+
+            } catch (error) {
+              console.error("Error during API call:", error);
             }
-            console.log(`selectedOddsValue: ${selectedOddsValue}`);
           }, 1000 * i);
         }
-      } else {
+      }
+      else {
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Bet miss matched-45`
