@@ -2112,7 +2112,7 @@ const placeBet = async (req, res) => {
 
             const oddsData = await apiCallForOdds(DBOddDetails.marketId);
             const marketStatus = oddsData[0]?.status;
-            console.log("Check the code Im here", marketStatus)
+            console.log("Check the code Im here", oddsData)
             if (marketStatus != 'OPEN') {
               activeBettors.delete(userId);
               console.log("Check the code Im here")
