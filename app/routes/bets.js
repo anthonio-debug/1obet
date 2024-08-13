@@ -3803,15 +3803,15 @@ async function getMatchedBets(req, res) {
                 sportsId: { $toString: "$sportID" },
                 Id: "$eventId",
                 marketIds: "$marketId",
-                name: "$marketName",
+                name: { $first: '$event.name' },
                 countryCode: { $first: '$event.countryCode' },
                 openDate: 1,
                 status: 1,
                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
               }
             },
-            { $limit: 5 },
             { $sort: { openDate: 1 } },
+            { $limit: 5 },
 
 
           ]);
