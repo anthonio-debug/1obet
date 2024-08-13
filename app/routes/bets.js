@@ -2122,7 +2122,6 @@ const placeBet = async (req, res) => {
               return res.status(400).send({
                 message: `Betting is CLOSED.`
               });
-              console.log("after return")
             }
 
             const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
