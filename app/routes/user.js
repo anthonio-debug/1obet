@@ -68,12 +68,15 @@ async function registerUser(req, res) {
 
       const user = new User(req.body);
 
-      try {
-        const salt = await bcrypt.genSalt(10);
-        user.password = await bcrypt.hash(req.body.password, salt);
-      } catch (err) {
-        return res.status(500).send({ message: 'Error encrypting password', err });
+      if (req.body.role !== "5") {
+        try {
+          const salt = await bcrypt.genSalt(10);
+          user.password = await bcrypt.hash(req.body.password, salt);
+        } catch (err) {
+          return res.status(500).send({ message: 'Error encrypting password', err });
+        }
       }
+
 
       // Check if the user's role is 5, and if so, set downLineShare to null Ignore downLineShare field if role is 5
       if (req.body.role == '5') {
@@ -81,8 +84,6 @@ async function registerUser(req, res) {
       }
       // Check if the downline share is greater than the parent's downline share
       const parentUser = await User.findOne({ userId: req.decoded.userId });
-      console.log(`parentuser===============${parentUser.downLineShare}`);
-      console.log(`req.body.downLineShare===============${typeof (req.body.downLineShare)}`);
       if ((parentUser.role != 0 && parentUser.downLineShare <= req.body.downLineShare) || req.body.downLineShare >= 100) {
         return res.status(404).send({
           message: `Max allowed downline share is 1 - ${parentUser.downLineShare - 1}`
@@ -128,6 +129,8 @@ async function registerUser(req, res) {
           const findduser = await User.findOne({ userName: req.body.userName })
           console.log(`check Save ============${findduser}`)
 
+
+
           const userbetSizesData = betLimits.map((betLimit) => ({
             userId: user.userId,
             betLimitId: betLimit._id,
@@ -160,7 +163,7 @@ async function registerUser(req, res) {
                   currency: req.body.baseCurrency
                 });
                 let data = response.data.response;
-                console.log('API Response:', response.data);
+                // //console.log('API Response:', response.data);
                 user.remoteId = data.id;
                 user.save();
               } catch (error) {
