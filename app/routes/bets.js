@@ -2117,6 +2117,7 @@ const placeBet = async (req, res) => {
             try {
               console.log("Check the code I'm here DBOddDetails", DBOddDetails.marketId);
               const oddsData = await apiCallForOdds(DBOddDetails.marketId);
+              console.log(`Odds data is coming ${oddsData}`);
 
               if (!oddsData || oddsData.length === 0) {
                 console.log("Odds data is empty or undefined.");
