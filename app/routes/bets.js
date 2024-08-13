@@ -3809,7 +3809,7 @@ async function getMatchedBets(req, res) {
                 sportsId: { $toString: "$sportID" },
                 Id: "$eventId",
                 marketIds: "$marketId",
-                name: { $marketName },
+                name:  "$marketName" ,
                 countryCode: { $first: '$event.countryCode' },
                 openDate: 1,
                 status: 1,
