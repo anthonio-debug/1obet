@@ -126,7 +126,7 @@ const apiCallForOdds = async (marketId) => {
     }
   };
   const response = await axios.post(url, data, header);
-  console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", response);
+  // console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", response);
   return response?.data?.result;
 };
 
@@ -2089,7 +2089,6 @@ const placeBet = async (req, res) => {
       }
 
       const DBOddDetails = await Odds.findById(oddsId);
-      console.log("Check the code Im here DBOddDetails", DBOddDetails.marketId)
       if (!DBOddDetails) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -2114,7 +2113,8 @@ const placeBet = async (req, res) => {
         for (let i = 1; i < 5; i++) {
           setTimeout(async () => {
 
-            const oddsData = await apiCallForOdds(id);
+            console.log("Check the code Im here DBOddDetails", DBOddDetails.marketId)
+            const oddsData = await apiCallForOdds(DBOddDetails.marketId);
             const marketStatus = oddsData[0]?.status;
             console.log("Check the code Im here", oddsData)
             if (marketStatus != 'OPEN') {
