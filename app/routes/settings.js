@@ -1088,7 +1088,7 @@ async function bettorDashboardGames(req, res) {
       {
         $match: {
           sportID: Number('7'),
-          status:"OPEN",
+          status:{$ne:"CLOSED"},
           $and: [{ openDate: { $gte: startOfDayTimestamp } }, { openDate: { $lte: endOfDayTimestamp } }]
         }
       },
