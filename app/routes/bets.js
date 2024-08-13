@@ -2116,13 +2116,13 @@ const placeBet = async (req, res) => {
             console.log("Check the code Im here DBOddDetails", DBOddDetails.marketId)
             const oddsData = await apiCallForOdds(DBOddDetails.marketId);
             const marketStatus = oddsData[0]?.status;
-            // if (marketStatus != 'OPEN' || marketStatus == undefined) {
-            if (true) {
+            if (marketStatus != 'OPEN' || !marketStatus) {
               activeBettors.delete(userId);
               console.log("Check the code Im here")
               return res.status(400).send({
                 message: `Betting is CLOSED.`
               });
+              console.log("after return")
             }
 
             const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
