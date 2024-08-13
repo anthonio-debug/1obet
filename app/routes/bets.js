@@ -2089,7 +2089,7 @@ const placeBet = async (req, res) => {
       }
 
       const DBOddDetails = await Odds.findById(oddsId);
-      console.log("Check the code Im here DBOddDetails", DBOddDetails)
+      console.log("Check the code Im here DBOddDetails", DBOddDetails.marketId)
       if (!DBOddDetails) {
         activeBettors.delete(userId);
         return res.status(404).send({
