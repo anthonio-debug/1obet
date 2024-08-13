@@ -2089,6 +2089,7 @@ const placeBet = async (req, res) => {
       }
 
       const DBOddDetails = await Odds.findById(oddsId);
+      console.log("Check the code Im here DBOddDetails", DBOddDetails)
       if (!DBOddDetails) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -2101,9 +2102,12 @@ const placeBet = async (req, res) => {
         runner: runner.SelectionId,
         amount: 0
       }));
+      console.log("Check the code Im here runners", runners)
 
       const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName;
+      console.log("Check the code Im here OddDetailsTeam", OddDetailsTeam)
+      console.log("Check the code Im here runnerName", runnerName)
 
       if (selectedBetRate == betRate) {
 
