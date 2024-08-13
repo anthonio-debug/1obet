@@ -2117,7 +2117,7 @@ const placeBet = async (req, res) => {
             const oddsData = await apiCallForOdds(DBOddDetails.marketId);
             const marketStatus = oddsData[0]?.status;
             if (marketStatus != 'OPEN' || marketStatus == undefined) {
-              activeBettors.delete(userId);
+              // activeBettors.delete(userId);
               console.log("Check the code Im here")
               return res.status(400).send({
                 message: `Betting is CLOSED.`
