@@ -2120,7 +2120,7 @@ const placeBet = async (req, res) => {
 
               if (!oddsData || oddsData.length === 0) {
                 console.log("Odds data is empty or undefined.");
-                return res.status(400).send({ message: "Data Is not available" });
+                return
               }
 
               const marketStatus = oddsData[0]?.status;
