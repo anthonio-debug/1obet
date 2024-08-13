@@ -2115,6 +2115,7 @@ const placeBet = async (req, res) => {
 
             if (marketStatus != 'OPEN') {
               activeBettors.delete(userId);
+              console.log("Check the code Im here")
               return res.status(404).send({
                 message: `Betting is CLOSED.`
               });
