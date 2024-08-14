@@ -2719,7 +2719,7 @@ const placeBet = async (req, res) => {
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
         ];
-      } else if (type == 0 && subMarketDetail.Id == config.BetfairFancy) {
+      } else if (type === 0 && subMarketDetail.Id == config.BetfairFancy) {
         loosingAmount = betAmount;
         winningAmount = betAmount;
         console.log("loosingAmount11", loosingAmount);
@@ -3815,7 +3815,7 @@ async function getMatchedBets(req, res) {
                 sportsId: { $toString: "$sportID" },
                 Id: "$eventId",
                 marketIds: "$marketId",
-                name:  "$marketName" ,
+                name: "$marketName",
                 countryCode: { $first: '$event.countryCode' },
                 openDate: 1,
                 status: 1,
@@ -3849,7 +3849,7 @@ async function getMatchedBets(req, res) {
     }
     ////////////
 
-    console.log("---------------------------------------------------------------------------------",matchedBets.length);
+    console.log("---------------------------------------------------------------------------------", matchedBets.length);
 
     if (matchedBets.length > 0) {
       const promises = matchedBets.map(async (item) => {
