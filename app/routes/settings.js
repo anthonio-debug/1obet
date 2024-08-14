@@ -230,23 +230,23 @@ async function updateMatchType(req, res) {
     const currentEvent = await inPlayEvents.findOne({ Id: eventId });
     let hasFancyMatch = currentEvent ? currentEvent.hasFancyMatch : false;
     let hasBookmaker = currentEvent ? currentEvent.hasBookmaker : false;
-    
-    if(iconStatus){
-      console.log("icon status:",iconStatus);
-      
+
+    if (iconStatus) {
+
       if (!hasFancyMatch) {
         const fancySessions = await fetchSession(eventId);
         if (fancySessions && fancySessions.length > 0) {
           hasFancyMatch = true;
         }
       }
-      
+
       if (!hasBookmaker) {
         const bookmakerSession = await fetchBookmakerList(eventId);
         if (bookmakerSession && bookmakerSession.length > 0) {
           hasBookmaker = true;
         }
-      } 
+      }
+
       if (hasFancyMatch || hasBookmaker) { hasFancy = true }
     }
 
@@ -542,12 +542,12 @@ function addSideBarMenu(req, res) {
 }
 
 async function betsRecords(req, res) {
-  const { start, end, page = 1} = req.query
+  const { start, end, page = 1 } = req.query
   const limit = config.pageSize;
   const userRole = req.decoded.role
 
-  if(userRole !== 0){
-    res.status(400).send({message:"Only Company can access"})
+  if (userRole !== 0) {
+    res.status(400).send({ message: "Only Company can access" })
   }
 
   const now = new Date().getTime();
@@ -601,7 +601,7 @@ async function betsRecords(req, res) {
         $group: {
           _id: "$userId",
           userName: { $first: "$userName" },
-          exposure: { $first:"exposure"},
+          exposure: { $first: "exposure" },
           availableBalance: { $first: "$availableBalance" },
           balance: { $first: "$balance" },
           clientPL: { $first: "$clientPL" },
@@ -1029,7 +1029,7 @@ async function bettorDashboardGames(req, res) {
       {
         $match: {
           sportID: Number('4339'),
-          status:{$ne:"CLOSED"},
+          status: { $ne: "CLOSED" },
           $and: [{ openDate: { $gte: startOfDayTimestamp } }, { openDate: { $lte: endOfDayTimestamp } }]
         }
       },
@@ -1089,7 +1089,7 @@ async function bettorDashboardGames(req, res) {
       {
         $match: {
           sportID: Number('7'),
-          status:{$ne:"CLOSED"},
+          status: { $ne: "CLOSED" },
           $and: [{ openDate: { $gte: startOfDayTimestamp } }, { openDate: { $lte: endOfDayTimestamp } }]
         }
       },
