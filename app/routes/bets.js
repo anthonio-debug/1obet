@@ -2956,6 +2956,9 @@ const placeBet = async (req, res) => {
         expAmount = expAmount.amount;
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
       }
+      console.log("expAmount1", expAmount)
+      console.log("winningAmount", winningAmount)
+      console.log("loosingAmount", loosingAmount)
 
       let source = req.headers['user-agent'];
       let ua = useragent.parse(source);
@@ -3004,6 +3007,8 @@ const placeBet = async (req, res) => {
        */
       const finalExpAmount = expAmount - prevExpAmount;
       console.log("finalExpAmount", finalExpAmount)
+      console.log("expAmount", expAmount)
+      console.log("prevExpAmount", prevExpAmount)
       if (finalExpAmount > maxExp) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `Max Exposure Amount : ${maxExp}` });
