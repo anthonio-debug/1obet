@@ -2125,9 +2125,9 @@ const placeBet = async (req, res) => {
               }
 
               const marketStatus = oddsData[0]?.status;
+              console.log("Check the code I'm here", marketStatus);
               if (marketStatus !== 'OPEN') {
                 activeBettors.delete(userId);
-                console.log("Check the code I'm here");
                 return res.status(400).send({ message: `Betting is CLOSED.` });
               }
 
@@ -3809,7 +3809,7 @@ async function getMatchedBets(req, res) {
                 sportsId: { $toString: "$sportID" },
                 Id: "$eventId",
                 marketIds: "$marketId",
-                name:  "$marketName" ,
+                name: "$marketName",
                 countryCode: { $first: '$event.countryCode' },
                 openDate: 1,
                 status: 1,
@@ -3843,7 +3843,7 @@ async function getMatchedBets(req, res) {
     }
     ////////////
 
-    console.log("---------------------------------------------------------------------------------",matchedBets.length);
+    console.log("---------------------------------------------------------------------------------", matchedBets.length);
 
     if (matchedBets.length > 0) {
       const promises = matchedBets.map(async (item) => {
