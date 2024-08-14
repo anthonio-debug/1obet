@@ -2930,6 +2930,8 @@ const placeBet = async (req, res) => {
         });
         if (lastBetsCount) {
           const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType, matchId);
+          console.log("resp======", resp);
+          
           runnersPosition = resp.runnersPosition;
           prevExpAmount = resp.prevExpAmount;
         } else {
