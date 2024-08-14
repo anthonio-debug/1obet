@@ -2641,7 +2641,8 @@ const placeBet = async (req, res) => {
       /**
        * Winning Loosing Amounts Calculations
        */
-
+      console.log("config.BetfairFancy", config.BetfairFancy)
+      console.log("config.BetfairFancy", type)
       if (type == 4) {
         winningAmount = betAmount;
         loosingAmount = betAmount;
