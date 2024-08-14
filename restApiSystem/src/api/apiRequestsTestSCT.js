@@ -641,8 +641,6 @@ function apiRequests() {
                   }
                   // let sttr = element.totalMatched;
                   // const totalMatched = sttr.replace('.','');
-                  
-                  console.log("------------------------------->" + tempRunners.map(data=>console.log(data)));
 
 
 
