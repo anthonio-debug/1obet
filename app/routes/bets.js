@@ -2916,6 +2916,10 @@ const placeBet = async (req, res) => {
           matchId: matchId,
           status: 1
         });
+        
+        console.log("_3rdpartymarketId", _3rdPartyMarketId);
+        console.log("matchId", matchId);
+
         if (lastBetsCount) {
           const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType, matchId);
 
@@ -2933,6 +2937,7 @@ const placeBet = async (req, res) => {
             });
             runnersPosition = runnerCurrentPosition;
             console.log("resp======", runnersPosition);
+            console.log("runnerForSaveInbets======", runnerForSaveInbets);
           } else if (type == 1) {
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
