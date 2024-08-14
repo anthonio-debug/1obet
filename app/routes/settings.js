@@ -230,23 +230,25 @@ async function updateMatchType(req, res) {
     const currentEvent = await inPlayEvents.findOne({ Id: eventId });
     let hasFancyMatch = currentEvent ? currentEvent.hasFancyMatch : false;
     let hasBookmaker = currentEvent ? currentEvent.hasBookmaker : false;
-    console.log("icon status:",iconStatus);
     
-    if (!hasFancyMatch) {
-      const fancySessions = await fetchSession(eventId);
-      if (fancySessions && fancySessions.length > 0) {
-        hasFancyMatch = true;
+    if(iconStatus){
+      console.log("icon status:",iconStatus);
+      
+      if (!hasFancyMatch) {
+        const fancySessions = await fetchSession(eventId);
+        if (fancySessions && fancySessions.length > 0) {
+          hasFancyMatch = true;
+        }
       }
+      
+      if (!hasBookmaker) {
+        const bookmakerSession = await fetchBookmakerList(eventId);
+        if (bookmakerSession && bookmakerSession.length > 0) {
+          hasBookmaker = true;
+        }
+      } 
+      if (hasFancyMatch || hasBookmaker) { hasFancy = true }
     }
-
-    if (!hasBookmaker) {
-      const bookmakerSession = await fetchBookmakerList(eventId);
-      if (bookmakerSession && bookmakerSession.length > 0) {
-        hasBookmaker = true;
-      }
-    }
-
-    if (hasFancyMatch || hasBookmaker) { hasFancy = true }
 
     const updatedData = await Events.findByIdAndUpdate(
       _id, {
