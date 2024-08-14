@@ -230,10 +230,10 @@ async function updateMatchType(req, res) {
     const currentEvent = await inPlayEvents.findOne({ Id: eventId });
     let hasFancyMatch = currentEvent ? currentEvent.hasFancyMatch : false;
     let hasBookmaker = currentEvent ? currentEvent.hasBookmaker : false;
-
+    console.log("icon status:",iconStatus);
+    
     if (!hasFancyMatch) {
       const fancySessions = await fetchSession(eventId);
-      console.log("fancySessions=============", fancySessions);
       if (fancySessions && fancySessions.length > 0) {
         hasFancyMatch = true;
       }
@@ -241,7 +241,6 @@ async function updateMatchType(req, res) {
 
     if (!hasBookmaker) {
       const bookmakerSession = await fetchBookmakerList(eventId);
-      console.log("bookmakerSession=============", bookmakerSession);
       if (bookmakerSession && bookmakerSession.length > 0) {
         hasBookmaker = true;
       }
