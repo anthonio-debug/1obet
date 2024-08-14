@@ -3186,7 +3186,7 @@ const placeBet = async (req, res) => {
             betId: result._id
           });
           await position.save();
-          console.log('Position saved',);
+          console.log('Position saved', position);
 
           const nowUser = await User.findOne({ userId }).exec();
           //console.log("User fetched", nowUser);
@@ -3809,7 +3809,7 @@ async function getMatchedBets(req, res) {
                 sportsId: { $toString: "$sportID" },
                 Id: "$eventId",
                 marketIds: "$marketId",
-                name: "$marketName",
+                name:  "$marketName" ,
                 countryCode: { $first: '$event.countryCode' },
                 openDate: 1,
                 status: 1,
@@ -3843,7 +3843,7 @@ async function getMatchedBets(req, res) {
     }
     ////////////
 
-    console.log("---------------------------------------------------------------------------------", matchedBets.length);
+    console.log("---------------------------------------------------------------------------------",matchedBets.length);
 
     if (matchedBets.length > 0) {
       const promises = matchedBets.map(async (item) => {
