@@ -2722,6 +2722,8 @@ const placeBet = async (req, res) => {
       } else if (type == 0 && subMarketDetail.Id == config.BetfairFancy) {
         loosingAmount = betAmount;
         winningAmount = betAmount;
+        console.log("loosingAmount11", loosingAmount);
+        console.log("winningAmount11", winningAmount);
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
@@ -2729,6 +2731,8 @@ const placeBet = async (req, res) => {
       } else if (type == 1 && subMarketDetail.Id == config.BetfairFancy) {
         winningAmount = betAmount;
         loosingAmount = betAmount;
+        console.log("loosingAmount2", loosingAmount);
+        console.log("winningAmount2", winningAmount);
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
