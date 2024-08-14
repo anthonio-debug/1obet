@@ -2930,7 +2930,6 @@ const placeBet = async (req, res) => {
         });
         if (lastBetsCount) {
           const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType, matchId);
-          console.log("resp======", resp);
           
           runnersPosition = resp.runnersPosition;
           prevExpAmount = resp.prevExpAmount;
@@ -2945,6 +2944,7 @@ const placeBet = async (req, res) => {
               return item;
             });
             runnersPosition = runnerCurrentPosition;
+            console.log("resp======", runnersPosition);
           } else if (type == 1) {
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
@@ -2955,6 +2955,7 @@ const placeBet = async (req, res) => {
               return item;
             });
             runnersPosition = runnerCurrentPosition;
+            console.log("runnerCurrentPosition======", runnerCurrentPosition);
           }
         }
 
