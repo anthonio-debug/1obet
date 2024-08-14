@@ -3003,7 +3003,7 @@ const placeBet = async (req, res) => {
        *  Check for Total calculated Exp should not greater then Allowed
        */
       const finalExpAmount = expAmount - prevExpAmount;
-
+      console.log("finalExpAmount", finalExpAmount)
       if (finalExpAmount > maxExp) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `Max Exposure Amount : ${maxExp}` });
@@ -3033,9 +3033,6 @@ const placeBet = async (req, res) => {
       }
 
       if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e))) {
-        console.log('============================================');
-        console.log(multipeResponseForSecurityCheck);
-        console.log('===========================================');
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Bet Miss Matched-42 `
