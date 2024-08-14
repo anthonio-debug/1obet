@@ -584,19 +584,36 @@ function apiRequests() {
                   let tempRunners = [];
                   for (let n = 0; n < element.runners?.length; n++) {
 
-                    //console.log("eeeeeeeeeeeeeeeeee:",element);
+                    
                     let totalMatched = element.totalMatched;
-                    //console.log("BEFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF::::",totalMatched);
+                    
 
                     let totalMatchedStr = totalMatched.toString();
                     // Ensure sentence is a string before using replace
                     if (typeof totalMatchedStr === 'string') {
-                      totalMatchedStr = totalMatchedStr.replace('.', '');
-                    } else {
-                      console.log('sentence is not a string');
-                    }
 
-                    // console.log("AFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:",totalMatchedStr);
+                      //console.log(totalMatchedStr);
+                      const myArray = totalMatchedStr.split(".");
+
+
+
+                      let firstTwoChars= '';
+
+                      if(myArray.length == '2' ){
+                      firstTwoChars = myArray[1].slice(0, 2);
+                      console.log(firstTwoChars);
+                      }
+                      totalMatchedStr = myArray[0] + firstTwoChars;
+
+
+
+
+                                            
+                    } else {
+                          console.log('sentence is not a string');
+                      }
+
+                   
 
 
                     let tempElement = {
@@ -642,7 +659,7 @@ function apiRequests() {
                   // let sttr = element.totalMatched;
                   // const totalMatched = sttr.replace('.','');
                   
-                  console.log("------------------------------->" + tempRunners.map(data=>console.log(data)));
+                  
 
 
 
@@ -650,10 +667,27 @@ function apiRequests() {
                   let totalMatchedStr = totalMatched.toString();
                   // Ensure sentence is a string before using replace
                   if (typeof totalMatchedStr === 'string') {
-                    totalMatchedStr = totalMatchedStr.replace('.', '');
-                  } else {
-                    console.log('sentence is not a string');
-                  }
+
+                    //console.log(totalMatchedStr);
+                    const myArray = totalMatchedStr.split(".");
+
+                    
+
+                    let firstTwoChars= '';
+
+                    if(myArray.length == '2' ){
+                    firstTwoChars = myArray[1].slice(0, 2);
+                    
+                    }
+                    totalMatchedStr = myArray[0] + firstTwoChars;
+                    
+
+
+
+                                        
+                                      } else {
+                                        console.log('sentence is not a string');
+                    }
 
                   let frontData = {
                     sportsId: marketData.sportID,
@@ -683,7 +717,7 @@ function apiRequests() {
                       totalMatched: totalMatchedStr,
                       createdAt: new Date().getTime()
                     };
-                    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", element.status);
+                    //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", element.status);
                     if (element.status === 'CLOSED') {
                       // clearInterval(intervalId);
                       await MarketIDS.updateOne({ marketId: marketId }, { inPlay: false, status: element.status });
@@ -707,7 +741,7 @@ function apiRequests() {
                         runnerCheckerArray.push(marketId);
                       }
                     }
-                    console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
+                    //console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
                     let el = new Odds(json1);
                     await el.save();
 
