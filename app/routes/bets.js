@@ -3675,8 +3675,10 @@ async function getMatchedBets(req, res) {
     let matchId = req.query.id;
     let marketId = '';
     if(req.query.matchId){
+
       marketId = req.query.id;
       matchId = req.query.matchId;
+      console.log("market id within body..............::::",marketId);
     }
     
 
