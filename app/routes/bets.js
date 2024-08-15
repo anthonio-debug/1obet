@@ -2101,14 +2101,9 @@ const placeBet = async (req, res) => {
         runner: runner.SelectionId,
         amount: 0
       }));
-      console.log("Check the code Im here runners", runners)
 
       const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName;
-      console.log("Check the code Im here OddDetailsTeam", OddDetailsTeam)
-      console.log("Check the code Im here runnerName", runnerName)
-      console.log('selectedBetRate================', selectedBetRate);
-      console.log('betRate================', betRate);
 
       if (selectedBetRate == betRate) {
 
