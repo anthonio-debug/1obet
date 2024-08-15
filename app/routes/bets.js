@@ -3823,8 +3823,8 @@ async function getMatchedBets(req, res) {
                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
               }
             },
-            { $sort: { openDate: 1 } },
             { $limit: 5 },
+            { $sort: { openDate: 1 } },
 
 
           ]);
