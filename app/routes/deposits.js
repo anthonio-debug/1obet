@@ -605,6 +605,7 @@ function getLedgerDetails(req, res) {
             ],
           },
         });
+        console.log(`searchRegex===============${searchRegex}`);
       }
 
       cashPipeline.push({
@@ -654,7 +655,7 @@ function getLedgerDetails(req, res) {
         }
       );
 
-      //console.log('cashPipeline:', cashPipeline);
+      // console.log('cashPipeline:', cashPipeline);
 
       Cash.aggregate(cashPipeline, async (err, result) => {
 
@@ -666,6 +667,7 @@ function getLedgerDetails(req, res) {
                 const betInfo = await Bet.findOne({
                   _id: result[0].results[i].betId
                 })
+                // console.log("betInfo", betInfo);
 
                 result[0].results[i].betSession = betInfo?.betSession;
                 result[0].results[i].matchType = betInfo?.matchType;
@@ -675,12 +677,21 @@ function getLedgerDetails(req, res) {
                 result[0].results[i].fancyData = betInfo?.fancyData;
                 result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
                 result[0].results[i].roundId = betInfo?.roundId;
+                console.log("result", result[0].results.map(data => console.log(data)))
+                console.log("betInfo?.betSession", betInfo?.betSession)
+                console.log("betInfo?.matchId", betInfo?.matchId)
+                console.log("betInfo?.SessionScore;", betInfo?.SessionScore)
+                console.log("betInfo?.winnerRunnerData", betInfo?.winnerRunnerData)
+                console.log("betInfo?.fancyData", betInfo?.fancyData)
+                console.log("betInfo?.isfancyOrbookmaker", betInfo?.isfancyOrbookmaker)
+                console.log("betInfo?.roundId", betInfo?.roundId)
               } catch (err) {
                 continue;
               }
             }
           }
         }
+
         if (
           err ||
           !result ||
