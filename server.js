@@ -74,13 +74,7 @@ app.use(function (req, res, next) {
 
 //Without Authorization
 app.use("/api", require("./app/routes/user").router);
-app.use("/api", require("./app/routes/listScraper").router);
 app.use("/api", require("./app/routes/settings").router);
-app.use("/api", require("./app/routes/CasinoCalls").router);
-// app.use("/api", require("./app/routes/AsianCasinoCalls").router);
-app.use("/api", require("./app/routes/liveTv").router);
-app.use("/api", require("./app/routes/listBetting").router);
-app.use("/api", require("./app/routes/listTrackBalance").router);
 app.use("/api", require("./app/routes/sportsTestAPI").router);
 
 // Login middleware
@@ -90,6 +84,13 @@ app.use(function (req, res, next) {
 app.use(function (req, res, next) {
   checkRoleMiddleware(req, res, next);
 });
+
+app.use("/api", require("./app/routes/listScraper").router);
+app.use("/api", require("./app/routes/CasinoCalls").router);
+// app.use("/api", require("./app/routes/AsianCasinoCalls").router);
+app.use("/api", require("./app/routes/liveTv").router);
+app.use("/api", require("./app/routes/listBetting").router);
+app.use("/api", require("./app/routes/listTrackBalance").router);
 
 // APIS With Authorization
 app.use("/api", require("./app/routes/user").loginRouter);
