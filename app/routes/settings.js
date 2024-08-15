@@ -542,16 +542,16 @@ function addSideBarMenu(req, res) {
 }
 
 async function betsRecords(req, res) {
-  const { start, end, page = 1 } = req.query
+  const page = parseInt(req.query.page) || 1;
   const limit = config.pageSize;
-  const userRole = req.decoded.role
+  const userRole = req.decoded.role;
 
-  if (userRole != "0") {
-    res.status(400).send({ message: "Only Company can access" })
+  if (userRole !== 0) {
+    return res.status(400).send({ message: "Only Company can access" });
   }
 
-  const now = new Date().getTime();
-  const lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
+  const now = req.body.endDate
+  const lastDay = req.body.startDate
 
   try {
     const betsRecords = await Bets.aggregate([
@@ -559,43 +559,37 @@ async function betsRecords(req, res) {
         '$match': {
           'betTime': {
             '$gte': lastDay,
-            '$lt': now
-          }
-        }
+            '$lt': now,
+          },
+        },
       },
       {
         '$group': {
           '_id': '$userId',
-          'count': {
-            '$sum': 1
-          }
-        }
-      }
+          'count': { '$sum': 1 },
+        },
+      },
     ]);
 
     const userIds = betsRecords.map(record => record._id);
 
     const users = await User.aggregate([
       {
-        $match: {
-          userId: { $in: userIds }
-        }
+        $match: { userId: { $in: userIds } },
       },
       {
         $lookup: {
           from: "deposits",
           localField: "userId",
           foreignField: "userId",
-          as: "depositInfo"
-        }
+          as: "depositInfo",
+        },
       },
       {
-        $unwind: "$depositInfo"
+        $unwind: "$depositInfo",
       },
       {
-        $sort: {
-          "depositInfo.date": -1
-        }
+        $sort: { "depositInfo.date": -1 },
       },
       {
         $group: {
@@ -610,7 +604,7 @@ async function betsRecords(req, res) {
           depositMaxWithdraw: { $first: "$depositInfo.maxWithdraw" },
           depositCash: { $first: "$depositInfo.cash" },
           depositCredit: { $first: "$depositInfo.credit" },
-        }
+        },
       },
       {
         $project: {
@@ -623,17 +617,33 @@ async function betsRecords(req, res) {
           depositAvailableBalance: 1,
           depositMaxWithdraw: 1,
           depositCash: 1,
-          depositCredit: 1
-        }
-      }
+          depositCredit: 1,
+        },
+      },
+      {
+        $skip: (page - 1) * limit,
+      },
+      {
+        $limit: limit,
+      },
     ]);
 
-    res.status(200).send({ data: users });
+    const totalUsers = await User.countDocuments({ userId: { $in: userIds } });
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    res.status(200).send({
+      page,
+      limit,
+      totalPages,
+      totalUsers,
+      data: users,
+    });
   } catch (error) {
     console.error('Error fetching records:', error);
     res.status(500).send({ message: "Internal server error" });
   }
 }
+
 
 async function racesAPI(req, res) {
   try {
