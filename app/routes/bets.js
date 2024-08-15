@@ -3672,8 +3672,14 @@ async function getMatchedBets(req, res) {
 
     // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
-    const matchId = req.query.id;
-    const marketId = req.query.matchId;
+    let matchId = req.query.id;
+    let marketId = '';
+    if(req.query.matchId){
+      marketId = req.query.id;
+      matchId = req.query.matchId;
+    }
+    
+
 
     //for sports id has matchId while for races matchId has machId like following: id=1.231812456&matchId=66bd1e37dc2d435bee4a6278&eId=33494827
 
@@ -3787,12 +3793,12 @@ async function getMatchedBets(req, res) {
 
     }
     
-    //if(userId==20126){
-      // console.log("=======================>>>>>>>>>",eventId);
-      // console.log("=======================>>>....>>>>>>",marketOpendate);
-      // console.log("=======================>>>....,",matchId);
+    if(req.body.userId==20126){
+      console.log("=======================>>>>>>>>>",eventId);
+      console.log("=======================>>>....>>>>>>",marketOpendate);
+      console.log("=======================>>>....,",matchId);
 
-    //}
+    }
     
 
 
