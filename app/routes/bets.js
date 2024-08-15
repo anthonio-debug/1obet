@@ -3673,7 +3673,7 @@ async function getMatchedBets(req, res) {
     // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
     const matchId = req.query.id;
-    const marketId = req.query.matchId;
+    const marketId = req.query.marketId;
 
     //for sports id has matchId while for races matchId has machId like following: id=1.231812456&matchId=66bd1e37dc2d435bee4a6278&eId=33494827
 
