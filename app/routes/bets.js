@@ -2101,14 +2101,9 @@ const placeBet = async (req, res) => {
         runner: runner.SelectionId,
         amount: 0
       }));
-      console.log("Check the code Im here runners", runners)
 
       const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
       runnerName = OddDetailsTeam?.runnerName;
-      console.log("Check the code Im here OddDetailsTeam", OddDetailsTeam)
-      console.log("Check the code Im here runnerName", runnerName)
-      console.log('selectedBetRate================', selectedBetRate);
-      console.log('betRate================', betRate);
 
       if (selectedBetRate == betRate) {
 
@@ -2125,9 +2120,9 @@ const placeBet = async (req, res) => {
               }
 
               const marketStatus = oddsData[0]?.status;
+              console.log("Check the code I'm here", marketStatus);
               if (marketStatus !== 'OPEN') {
                 activeBettors.delete(userId);
-                console.log("Check the code I'm here");
                 return res.status(400).send({ message: `Betting is CLOSED.` });
               }
 
@@ -2641,7 +2636,9 @@ const placeBet = async (req, res) => {
       /**
        * Winning Loosing Amounts Calculations
        */
-
+      console.log("config.BetfairFancy", config.BetfairFancy)
+      console.log("config.BetfairFancy Id", subMarketDetail.Id)
+      console.log("config.BetfairFancy", type)
       if (type == 4) {
         winningAmount = betAmount;
         loosingAmount = betAmount;
@@ -2922,8 +2919,13 @@ const placeBet = async (req, res) => {
           matchId: matchId,
           status: 1
         });
+        
+        console.log("_3rdpartymarketId", _3rdPartyMarketId);
+        console.log("matchId", matchId);
+
         if (lastBetsCount) {
           const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType, matchId);
+
           runnersPosition = resp.runnersPosition;
           prevExpAmount = resp.prevExpAmount;
         } else {
@@ -2937,6 +2939,8 @@ const placeBet = async (req, res) => {
               return item;
             });
             runnersPosition = runnerCurrentPosition;
+            console.log("resp======", runnersPosition);
+            console.log("runnerForSaveInbets======", runnerForSaveInbets);
           } else if (type == 1) {
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
@@ -2947,6 +2951,7 @@ const placeBet = async (req, res) => {
               return item;
             });
             runnersPosition = runnerCurrentPosition;
+            console.log("runnerCurrentPosition======", runnerCurrentPosition);
           }
         }
 
@@ -2956,6 +2961,9 @@ const placeBet = async (req, res) => {
         expAmount = expAmount.amount;
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
       }
+      console.log("expAmount1", expAmount)
+      console.log("winningAmount", winningAmount)
+      console.log("loosingAmount", loosingAmount)
 
       let source = req.headers['user-agent'];
       let ua = useragent.parse(source);
@@ -3003,7 +3011,9 @@ const placeBet = async (req, res) => {
        *  Check for Total calculated Exp should not greater then Allowed
        */
       const finalExpAmount = expAmount - prevExpAmount;
-
+      console.log("finalExpAmount", finalExpAmount)
+      console.log("expAmount", expAmount)
+      console.log("prevExpAmount", prevExpAmount)
       if (finalExpAmount > maxExp) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `Max Exposure Amount : ${maxExp}` });
@@ -3033,9 +3043,6 @@ const placeBet = async (req, res) => {
       }
 
       if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e))) {
-        console.log('============================================');
-        console.log(multipeResponseForSecurityCheck);
-        console.log('===========================================');
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Bet Miss Matched-42 `
@@ -3186,7 +3193,7 @@ const placeBet = async (req, res) => {
             betId: result._id
           });
           await position.save();
-          console.log('Position saved',);
+          console.log('Position saved', position);
 
           const nowUser = await User.findOne({ userId }).exec();
           //console.log("User fetched", nowUser);
@@ -3809,7 +3816,7 @@ async function getMatchedBets(req, res) {
                 sportsId: { $toString: "$sportID" },
                 Id: "$eventId",
                 marketIds: "$marketId",
-                name:  "$marketName" ,
+                name: "$marketName",
                 countryCode: { $first: '$event.countryCode' },
                 openDate: 1,
                 status: 1,
@@ -3843,7 +3850,7 @@ async function getMatchedBets(req, res) {
     }
     ////////////
 
-    console.log("---------------------------------------------------------------------------------",matchedBets.length);
+    console.log("---------------------------------------------------------------------------------", matchedBets.length);
 
     if (matchedBets.length > 0) {
       const promises = matchedBets.map(async (item) => {
