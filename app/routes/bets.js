@@ -3672,19 +3672,13 @@ async function getMatchedBets(req, res) {
 
     // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
-    let matchId = req.query.id;
-    let marketId = '';
-    if(req.query.matchId){
-       matchId = req.query.matchId;
-       marketId = req.query.id;
-    }
-    
+    const matchId = req.query.id;
+    const marketId = req.query.matchId;
 
-    //for sports id has matchId while for races matchId has machId like following: 
-    //id=1.231812456&matchId=66bd1e37dc2d435bee4a6278&eId=33494827
+    //for sports id has matchId while for races matchId has machId like following: id=1.231812456&matchId=66bd1e37dc2d435bee4a6278&eId=33494827
 
     
-    //console.log("MMMMMMMMMMMM marketid", marketId);
+    console.log("MMMMMMMMMMMM marketid", marketId);
     //const marketId = '1.231243057';
     if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
