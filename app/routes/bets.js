@@ -2724,9 +2724,17 @@ const placeBet = async (req, res) => {
       } else if (type == 0 && subMarketDetail.Id == config.BetfairFancy) {
         loosingAmount = betAmount;
         winningAmount = betAmount;
+        runnerForSaveInbets = [
+          { runner: 1, amount: 0 },
+          { runner: 0, amount: 0 }
+        ];
       } else if (type == 1 && subMarketDetail.Id == config.BetfairFancy) {
         winningAmount = betAmount;
         loosingAmount = betAmount;
+        runnerForSaveInbets = [
+          { runner: 1, amount: 0 },
+          { runner: 0, amount: 0 }
+        ];
       } else if (type == 1 && marketId == 8) {
         winningAmount = betAmount;
         loosingAmount = betAmount * betRate - betAmount;
