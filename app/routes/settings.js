@@ -546,7 +546,7 @@ async function betsRecords(req, res) {
   const limit = config.pageSize;
   const userRole = req.decoded.role;
 
-  if (userRole !== 0) {
+  if (userRole != "0") {
     return res.status(400).send({ message: "Only Company can access" });
   }
 
