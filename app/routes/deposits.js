@@ -575,6 +575,7 @@ function getLedgerDetails(req, res) {
       }];
 
       const userRole = user.role;
+      console.log("user role", user);
 
       if (userRole !== '5' && req.body.type) {
         cashPipeline.push({ $match: { cashOrCredit: req.body.type }, });
@@ -605,7 +606,6 @@ function getLedgerDetails(req, res) {
             ],
           },
         });
-        console.log(`searchRegex===============${searchRegex}`);
       }
 
       cashPipeline.push({
@@ -655,10 +655,8 @@ function getLedgerDetails(req, res) {
         }
       );
 
-      // console.log('cashPipeline:', cashPipeline);
-
       Cash.aggregate(cashPipeline, async (err, result) => {
-
+        console.log("check the code I'm Here")
         if (result[0].results && result[0].results.length > 0) {
           for (let i = 0; i < result[0].results.length; i++) {
             //console.log()
@@ -667,7 +665,6 @@ function getLedgerDetails(req, res) {
                 const betInfo = await Bet.findOne({
                   _id: result[0].results[i].betId
                 })
-                // console.log("betInfo", betInfo);
 
                 result[0].results[i].betSession = betInfo?.betSession;
                 result[0].results[i].matchType = betInfo?.matchType;
