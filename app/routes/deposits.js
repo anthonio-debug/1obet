@@ -667,7 +667,7 @@ function getLedgerDetails(req, res) {
                 const betInfo = await Bet.findOne({
                   _id: result[0].results[i].betId
                 })
-
+                console.log("MMMMMMMMMMMMMMMMMM///",betInfo)
                 result[0].results[i].betSession = betInfo?.betSession;
                 result[0].results[i].matchType = betInfo?.matchType;
                 result[0].results[i].matchId = betInfo?.matchId;
