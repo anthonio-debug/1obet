@@ -576,7 +576,7 @@ async function betsRecords(req, res) {
     ]);
 
     const userIds = betsRecords.map(record => record._id);
-    console.log(`userIds==========${userIds}`)
+    console.log(`userIds==========${userIds.length}`)
 
     const users = await User.aggregate([
       {
