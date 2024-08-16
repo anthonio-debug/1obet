@@ -555,9 +555,8 @@ async function betsRecords(req, res) {
 
   const now = endDate ? new Date(endDate).getTime() : new Date().getTime();
 
-  const lastDay = startDate ? new Date(startDate).getTime() : new Date(now - 24 * 60 * 60 * 1000).getTime();
-  console.log("now", now);
-  console.log("lastDay", lastDay);
+  const lastDay = startDate ? new Date(startDate).getTime() : new Date(now - 240 * 60 * 60 * 1000).getTime();
+
   try {
     const betsRecords = await Bets.aggregate([
       {
