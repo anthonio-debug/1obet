@@ -1910,12 +1910,12 @@ const placeBet = async (req, res) => {
 
       /* bookmaker check start */
       const dbBookmakerMarketId = DBOddDetails?.data?.data?.t2[0]?.bm1[0]?.ssid;
-      if (!dbBookmakerMarketId) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bookmaker market not available for selected team ${selectionId}`
-        });
-      }
+      // if (!dbBookmakerMarketId) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bookmaker market not available for selected team ${selectionId}`
+      //   });
+      // }
       // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
       console.log('B>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', dbBookmakerMarketId);
       //console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR::::::",apiBookmakerOddRes[0]?.runners);
@@ -1932,24 +1932,24 @@ const placeBet = async (req, res) => {
       statusForRes.fancyBMCheckTime = moment().format('YYYY/MM/DD HH:mm:ss');
       console.log('BBBBBBBBBBBBBBBBBBBBBBBBBSSSSSSSSSS:', bookmakerBallRunningStatus);
       console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:', bookmakerSuspendedStatus);
-      if (bookmakerSuspendedStatus) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bookmaker all runners are in SUSPENDED status for selected team ${selectionId}`
-        });
-      }
-      if (bookmakerBallRunningStatus) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bookmaker runner is in Ball Running status for selected team ${selectionId}`
-        });
-      }
-      if (!bookmakerStatus) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bookmaker runner not available for selected team ${selectionId}`
-        });
-      }
+      // if (bookmakerSuspendedStatus) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bookmaker all runners are in SUSPENDED status for selected team ${selectionId}`
+      //   });
+      // }
+      // if (bookmakerBallRunningStatus) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bookmaker runner is in Ball Running status for selected team ${selectionId}`
+      //   });
+      // }
+      // if (!bookmakerStatus) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bookmaker runner not available for selected team ${selectionId}`
+      //   });
+      // }
       /* bookmaker check end */
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
         const apiSelectedOdds = apiFancyOdds.find((runner) => runner.sid == selectionId);
