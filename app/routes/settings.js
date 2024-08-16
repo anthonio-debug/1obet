@@ -557,7 +557,7 @@ async function betsRecords(req, res) {
   if (req.body.page) page = Number(req.body.page);
 
   const now = req.body.endDate ? new Date(req.body.endDate).getTime() : new Date().getTime();
-  const lastDay = req.body.startDate ? new Date(req.body.startDate).getTime() : new Date(now - 2400 * 60 * 60 * 1000).getTime();
+  const lastDay = req.body.startDate ? new Date(req.body.startDate).getTime() : new Date(now - 24 * 60 * 60 * 1000).getTime();
 
   console.log(`Start Date (lastDay): ${new Date(lastDay).getTime()}`);
   console.log(`End Date (now): ${new Date(now).getTime()}`);
