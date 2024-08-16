@@ -44,7 +44,7 @@ async function registerUser(req, res) {
   }
 
   //console.log(' User Is creatting   ');
-
+  const userNameLowerNext = req.body.userName.toLowerCase()
   if (req.decoded.role == '5') {
     return res.status(404).send({ message: 'you are not allowed to do this ' });
   }
@@ -55,7 +55,7 @@ async function registerUser(req, res) {
     }
   }
 
-  const userToDelete = await User.findOne({ userName: req.body.userName });
+  const userToDelete = await User.findOne({ userName: userNameLowerNext });
   // if (userToDelete && userToDelete.createdBy != req.decoded.userId) {
   if (userToDelete?.userName) {
     return res.status(404).send({ message: 'username not available', status: 2 });
@@ -67,6 +67,8 @@ async function registerUser(req, res) {
       if (err) return res.status(404).send({ message: 'user not found', err });
 
       const user = new User(req.body);
+      const userNameLower = user.userName.toLowerCase()
+      user.userName = userNameLower
 
       if (req.body.role !== '5') {
         try {
@@ -89,7 +91,7 @@ async function registerUser(req, res) {
         });
       }
       // Update their isDeleted field to true using updateMany()
-      await User.updateMany({ userName: req.body.userName }, { isDeleted: true });
+      await User.updateMany({ userName: userNameLowerNext }, { isDeleted: true });
 
       var lastUserID = data.userId + 1;
 
@@ -245,9 +247,10 @@ function login(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
+  const userNameLower = req.body.userName
   User.findOne(
     {
-      userName: req.body.userName,
+      userName: userNameLower,
       isDeleted: false
     },
     (err, user) => {
@@ -690,9 +693,9 @@ function searchUsers(req, res) {
   if (req.body.page) {
     page = req.body.page;
   }
-
+  const userNameLower = req.body.userName
   const query = {};
-  query.userName = { $regex: req.body.userName, $options: 'i' };
+  query.userName = { $regex: userNameLower, $options: 'i' };
 
   User.aggregate([
     { $match: query },
@@ -882,9 +885,9 @@ function searchSingleUser(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-
+  const userNameLower = req.body.userName
   const query = {};
-  query.userName = req.body.userName;
+  query.userName = userNameLower;
   query.isDeleted = false;
   User.aggregate([
     { $match: query },
