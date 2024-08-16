@@ -28,7 +28,7 @@ function ToolForSessionFancy() {
   function buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId) {
     let t3 = []
     let bm = {}
-    if(fancyOdds!=''){
+    if(fancyOdds!=0){
     for (const odd of fancyOdds) {
       if (odd.gtype === 'session' || odd.gtype === 'oddeven') {
         t3.push({
@@ -53,7 +53,7 @@ function ToolForSessionFancy() {
       }
     }
   }
-if(bookmakerOdds!==''){
+if(bookmakerOdds!==0){
     for (const [index, odd] of bookmakerOdds.entries()) {
       let bms = []
       if (isIterable(odd.runners)) {
@@ -108,7 +108,7 @@ if(bookmakerOdds!==''){
 
       for (const event of fancyEvents) {
         const eventId = event.Id
-        let fancyOdds = '';
+        let fancyOdds = 0;
          fancyOdds = await fetchSession(eventId)
 
          
@@ -146,11 +146,37 @@ if(bookmakerOdds!==''){
             }
           }
         //start of bookmakers call for odds here...
-        let bookmakerOdds = '';
+        let bookmakerOdds = 0;
         if (bookmakerMarketIds.length > 0) {
            bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
-          if (bookmakerOdds.length > 0) {
+          if (bookmakerOdds.length > 0 && fancyOdds.length > 0) {
             const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
+            if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+              FancyOddsMap.set(eventId, fancyData)
+              let newFancyOdds = new FancyOdds({
+                eventId: eventId,
+                marketId: eventId,
+                data: fancyData,
+              })
+              
+              await newFancyOdds.save();
+              io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+            }
+          }else if (bookmakerOdds.length > 0 && fancyOdds.length == 0) {
+            const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, 0, eventId)
+            if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+              FancyOddsMap.set(eventId, fancyData)
+              let newFancyOdds = new FancyOdds({
+                eventId: eventId,
+                marketId: eventId,
+                data: fancyData,
+              })
+              
+              await newFancyOdds.save();
+              io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+            }
+          }else if (bookmakerOdds.length == 0 && fancyOdds.length > 0) {
+            const fancyData = buildFancyStructure(bookmakerMarketList, 0, fancyOdds, eventId)
             if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
               FancyOddsMap.set(eventId, fancyData)
               let newFancyOdds = new FancyOdds({
