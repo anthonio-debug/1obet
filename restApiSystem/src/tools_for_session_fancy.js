@@ -28,6 +28,7 @@ function ToolForSessionFancy() {
   function buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId) {
     let t3 = []
     let bm = {}
+    if(fancyOdds!=''){
     for (const odd of fancyOdds) {
       if (odd.gtype === 'session' || odd.gtype === 'oddeven') {
         t3.push({
@@ -51,7 +52,8 @@ function ToolForSessionFancy() {
         })
       }
     }
-if(bookmakerOdds!==0){
+  }
+if(bookmakerOdds!==''){
     for (const [index, odd] of bookmakerOdds.entries()) {
       let bms = []
       if (isIterable(odd.runners)) {
@@ -106,13 +108,16 @@ if(bookmakerOdds!==0){
 
       for (const event of fancyEvents) {
         const eventId = event.Id
-        
-        let fancyOdds = await fetchSession(eventId)
+        let fancyOdds = '';
+         fancyOdds = await fetchSession(eventId)
 
-        // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
-        if (fancyOdds) {
+         
+        
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',bookmakerMarketList.length);
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds.length);
+          if(bookmakerMarketList.length>0){
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
@@ -140,39 +145,35 @@ if(bookmakerOdds!==0){
               );
             }
           }
-           if (bookmakerMarketIds.length > 0) {
-            let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
-            if (bookmakerOdds.length > 0) {
-              const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
-              if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
-                FancyOddsMap.set(eventId, fancyData)
-                let newFancyOdds = new FancyOdds({
-                  eventId: eventId,
-                  marketId: eventId,
-                  data: fancyData,
-                })
-                
-                await newFancyOdds.save();
-                io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
-              }
-            }else{
+        //start of bookmakers call for odds here...
+        let bookmakerOdds = '';
+        if (bookmakerMarketIds.length > 0) {
+           bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
+          if (bookmakerOdds.length > 0) {
+            const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
+            if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+              FancyOddsMap.set(eventId, fancyData)
+              let newFancyOdds = new FancyOdds({
+                eventId: eventId,
+                marketId: eventId,
+                data: fancyData,
+              })
               
-              const fancyData = buildFancyStructure(bookmakerMarketList, 0, fancyOdds, eventId)
-              if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
-                FancyOddsMap.set(eventId, fancyData)
-                let newFancyOdds = new FancyOdds({
-                  eventId: eventId,
-                  marketId: eventId,
-                  data: fancyData,
-                })
-                await newFancyOdds.save();
-                io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
-              }
-            
-
+              await newFancyOdds.save();
+              io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
             }
           }
         }
+      //end of bookmakers call for odds here...
+
+        //start fancyOdds call...
+        
+
+        //end fancyOdds call
+
+        }
+           
+        
       }
     } catch (error) {
       console.error("Error getting session fancy odds:", error);

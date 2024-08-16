@@ -542,16 +542,15 @@ function addSideBarMenu(req, res) {
 }
 
 async function betsRecords(req, res) {
-  const page = parseInt(req.query.page) || 1;
-  const limit = config.pageSize;
-  const userRole = req.decoded.role;
+  const userRole = req.decoded.role
 
-  if (userRole != "0") {
+  if (userRole !== "0") {
     return res.status(400).send({ message: "Only Company can access" });
   }
 
-  const now = req.body.endDate
-  const lastDay = req.body.startDate
+  const now = new Date().getTime();
+  const lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
+  // const lastDay = new Date("2022-08-15").getTime();
 
   try {
     const betsRecords = await Bets.aggregate([
@@ -559,91 +558,84 @@ async function betsRecords(req, res) {
         '$match': {
           'betTime': {
             '$gte': lastDay,
-            '$lt': now,
-          },
-        },
+            '$lt': now
+          }
+        }
       },
       {
         '$group': {
           '_id': '$userId',
-          'count': { '$sum': 1 },
-        },
-      },
+          'count': {
+            '$sum': 1
+          }
+        }
+      }
     ]);
 
     const userIds = betsRecords.map(record => record._id);
-
-    const users = await User.aggregate([
-      {
-        $match: { userId: { $in: userIds } },
-      },
-      {
-        $lookup: {
-          from: "deposits",
-          localField: "userId",
-          foreignField: "userId",
-          as: "depositInfo",
+    console.log("userIds", userIds)
+    const usersArray = await Promise.all(userIds.map(async (userId) => {
+      const result = await User.aggregate([
+        {
+          $match: { userId: userId }
         },
-      },
-      {
-        $unwind: "$depositInfo",
-      },
-      {
-        $sort: { "depositInfo.date": -1 },
-      },
-      {
-        $group: {
-          _id: "$userId",
-          userName: { $first: "$userName" },
-          exposure: { $first: "exposure" },
-          availableBalance: { $first: "$availableBalance" },
-          balance: { $first: "$balance" },
-          clientPL: { $first: "$clientPL" },
-          depositBalance: { $first: "$depositInfo.balance" },
-          depositAvailableBalance: { $first: "$depositInfo.availableBalance" },
-          depositMaxWithdraw: { $first: "$depositInfo.maxWithdraw" },
-          depositCash: { $first: "$depositInfo.cash" },
-          depositCredit: { $first: "$depositInfo.credit" },
+        {
+          $lookup: {
+            from: "deposits",
+            localField: "userId",
+            foreignField: "userId",
+            as: "depositInfo"
+          }
         },
-      },
-      {
-        $project: {
-          userId: "$_id",
-          userName: 1,
-          availableBalance: 1,
-          balance: 1,
-          clientPL: 1,
-          depositBalance: 1,
-          depositAvailableBalance: 1,
-          depositMaxWithdraw: 1,
-          depositCash: 1,
-          depositCredit: 1,
+        {
+          $unwind: "$depositInfo"
         },
-      },
-      {
-        $skip: (page - 1) * limit,
-      },
-      {
-        $limit: limit,
-      },
-    ]);
+        {
+          $sort: { "depositInfo.date": -1 }
+        },
+        {
+          $group: {
+            _id: "$userId",
+            userName: { $first: "$userName" },
+            exposure: { $first: "$exposure" },
+            availableBalance: { $first: "$availableBalance" },
+            balance: { $first: "$balance" },
+            clientPL: { $first: "$clientPL" },
+            depositBalance: { $first: "$depositInfo.balance" },
+            depositAvailableBalance: { $first: "$depositInfo.availableBalance" },
+            depositMaxWithdraw: { $first: "$depositInfo.maxWithdraw" },
+            depositCash: { $first: "$depositInfo.cash" },
+            depositCredit: { $first: "$depositInfo.credit" },
+          }
+        },
+        {
+          $project: {
+            userId: "$_id",
+            userName: 1,
+            availableBalance: 1,
+            balance: 1,
+            clientPL: 1,
+            exposure: 1,
+            depositBalance: 1,
+            depositAvailableBalance: 1,
+            depositMaxWithdraw: 1,
+            depositCash: 1,
+            depositCredit: 1
+          }
+        }
+      ]);
 
-    const totalUsers = await User.countDocuments({ userId: { $in: userIds } });
-    const totalPages = Math.ceil(totalUsers / limit);
+      return result.length > 0 ? result[0] : null;
+    }));
 
-    res.status(200).send({
-      page,
-      limit,
-      totalPages,
-      totalUsers,
-      data: users,
-    });
+    const users = usersArray.filter(user => user !== null);
+    console.log("users", users.length)
+    return res.status(200).send({ data: users });
   } catch (error) {
     console.error('Error fetching records:', error);
     res.status(500).send({ message: "Internal server error" });
   }
 }
-
 
 async function racesAPI(req, res) {
   try {
@@ -1168,7 +1160,9 @@ async function bettorDashboardGames(req, res) {
         competitionName: 1,
         inplay: 1,
         sportsId: 1,
-        marketIds: 1
+        marketIds: 1,
+        hasBookmaker: 1,
+        hasFancyMatch: 1,
         // oddsData: {
         //   $slice: ["$odds", 1]
         // }
@@ -1339,7 +1333,9 @@ async function bettorDashboardGames2(req, res) {
         name: 1,
         competitionName: 1,
         marketIds: 1,
-        inplay: 1
+        inplay: 1,
+        hasBookmaker: 1,
+        hasFancyMatch: 1,
       }
     ).sort({
       inplay: -1,
