@@ -1143,6 +1143,35 @@ async function getRaceLatestRecord(req,res){
    }
 
 }
+
+
+async function updateUserName(req, res) {
+  console.log("updating user name");
+  try {
+    const user = await Users.updateMany(
+      {},
+      [{ $set: { userName: { $toLower: "$userName" } } }]
+    );
+
+    res.status(200).json({
+      success: true,
+      message: 'User names updated successfully',
+      user
+    });
+  } catch (error) {
+    console.error("Error in update user name:", error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+
+
+
+//////////////////
+router.get('/track-bet/updateUserName', updateUserName)
+/////////////////
 //////
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
 /////
