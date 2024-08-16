@@ -2974,7 +2974,7 @@ router.get('/eventListByMarketIds/:sportsId', eventListByMarketIds);
 router.get('/active-bettors', getActiveBettors);
 loginRouter.post('/update-setting', updateSetting);
 loginRouter.post('/get-setting', getSetting);
-loginRouter.get('/bets-records', betsRecords);
+loginRouter.post('/bets-records', betsRecords);
 
 
 module.exports = { loginRouter, router, listOddsAPI };
