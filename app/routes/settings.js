@@ -542,20 +542,25 @@ function addSideBarMenu(req, res) {
 }
 
 async function betsRecords(req, res) {
-  const page = parseInt(req.query.page) || 1;
-  const limit = config.pageSize;
-  const userRole = req.decoded.role;
-
-  if (userRole != "0") {
-    return res.status(400).send({ message: "Only Company can access" });
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    return res.status(400).send({ errors: errors.errors });
   }
 
-  const startDate = req.body.startDate || null;
-  const endDate = req.body.endDate || null;
+  let page = 1;
+  let sort = -1;
+  let sortValue = '_id';
+  let limit = config.pageSize;
+  if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
+  if (req.body.sortValue) sortValue = req.body.sortValue;
+  if (req.body.sort) sort = Number(req.body.sort);
+  if (req.body.page) page = Number(req.body.page);
 
-  const now = endDate ? new Date(endDate).getTime() : new Date().getTime();
+  const now = req.body.endDate ? new Date(req.body.endDate).getTime() : new Date().getTime();
+  const lastDay = req.body.startDate ? new Date(req.body.startDate).getTime() : new Date(now - 2400 * 60 * 60 * 1000).getTime();
 
-  const lastDay = startDate ? new Date(startDate).getTime() : new Date(now - 2400 * 60 * 60 * 1000).getTime();
+  console.log(`Start Date (lastDay): ${new Date(lastDay).getTime()}`);
+  console.log(`End Date (now): ${new Date(now).getTime()}`);
 
   try {
     const betsRecords = await Bets.aggregate([
@@ -576,7 +581,11 @@ async function betsRecords(req, res) {
     ]);
 
     const userIds = betsRecords.map(record => record._id);
-    console.log(`userIds==========${userIds.length}`)
+    console.log(`Number of users found in bets: ${userIds.length}`);
+
+    if (userIds.length === 0) {
+      return res.status(404).send({ message: "No records found for the given date range." });
+    }
 
     const users = await User.aggregate([
       {
@@ -600,7 +609,7 @@ async function betsRecords(req, res) {
         $group: {
           _id: "$userId",
           userName: { $first: "$userName" },
-          exposure: { $first: "exposure" },
+          exposure: { $first: "$exposure" },
           availableBalance: { $first: "$availableBalance" },
           balance: { $first: "$balance" },
           clientPL: { $first: "$clientPL" },
@@ -618,6 +627,7 @@ async function betsRecords(req, res) {
           availableBalance: 1,
           balance: 1,
           clientPL: 1,
+          exposure: 1,
           depositBalance: 1,
           depositAvailableBalance: 1,
           depositMaxWithdraw: 1,
@@ -635,6 +645,9 @@ async function betsRecords(req, res) {
 
     const totalUsers = await User.countDocuments({ userId: { $in: userIds } });
     const totalPages = Math.ceil(totalUsers / limit);
+
+    console.log(`Users returned: ${users.length}`);
+    console.log(`Total pages: ${totalPages}, Total users: ${totalUsers}`);
 
     res.status(200).send({
       page,
