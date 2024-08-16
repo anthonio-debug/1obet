@@ -550,8 +550,12 @@ async function betsRecords(req, res) {
     return res.status(400).send({ message: "Only Company can access" });
   }
 
-  const now = req.body.endDate
-  const lastDay = req.body.startDate
+  const startDate = req.body.startDate || null;
+  const endDate = req.body.endDate || null;
+
+  const now = endDate ? new Date(endDate).getTime() : new Date().getTime();
+
+  const lastDay = startDate ? new Date(startDate).getTime() : new Date(now - 24 * 60 * 60 * 1000).getTime();
 
   try {
     const betsRecords = await Bets.aggregate([
@@ -643,7 +647,6 @@ async function betsRecords(req, res) {
     res.status(500).send({ message: "Internal server error" });
   }
 }
-
 
 async function racesAPI(req, res) {
   try {
@@ -1169,8 +1172,8 @@ async function bettorDashboardGames(req, res) {
         inplay: 1,
         sportsId: 1,
         marketIds: 1,
-        hasBookmaker:1, 
-        hasFancyMatch:1,
+        hasBookmaker: 1,
+        hasFancyMatch: 1,
         // oddsData: {
         //   $slice: ["$odds", 1]
         // }
