@@ -28,6 +28,7 @@ function ToolForSessionFancy() {
   function buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId) {
     let t3 = []
     let bm = {}
+    if(fancyOdds!=0){
     for (const odd of fancyOdds) {
       if (odd.gtype === 'session' || odd.gtype === 'oddeven') {
         t3.push({
@@ -51,6 +52,7 @@ function ToolForSessionFancy() {
         })
       }
     }
+  }
 if(bookmakerOdds!==0){
     for (const [index, odd] of bookmakerOdds.entries()) {
       let bms = []
@@ -109,10 +111,11 @@ if(bookmakerOdds!==0){
         
         let fancyOdds = await fetchSession(eventId)
 
-        // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
+         
         if (fancyOdds) {
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',bookmakerMarketList.length);
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
