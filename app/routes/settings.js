@@ -542,15 +542,20 @@ function addSideBarMenu(req, res) {
 }
 
 async function betsRecords(req, res) {
-  const userRole = req.decoded.role
+  const page = parseInt(req.query.page) || 1;
+  const limit = config.pageSize;
+  const userRole = req.decoded.role;
 
-  if (userRole !== "0") {
+  if (userRole != "0") {
     return res.status(400).send({ message: "Only Company can access" });
   }
 
-  const now = new Date().getTime();
-  const lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
-  // const lastDay = new Date("2022-08-15").getTime();
+  const startDate = req.body.startDate || null;
+  const endDate = req.body.endDate || null;
+
+  const now = endDate ? new Date(endDate).getTime() : new Date().getTime();
+
+  const lastDay = startDate ? new Date(startDate).getTime() : new Date(now - 2400 * 60 * 60 * 1000).getTime();
 
   try {
     const betsRecords = await Bets.aggregate([
@@ -558,79 +563,86 @@ async function betsRecords(req, res) {
         '$match': {
           'betTime': {
             '$gte': lastDay,
-            '$lt': now
-          }
-        }
+            '$lt': now,
+          },
+        },
       },
       {
         '$group': {
           '_id': '$userId',
-          'count': {
-            '$sum': 1
-          }
-        }
-      }
+          'count': { '$sum': 1 },
+        },
+      },
     ]);
 
     const userIds = betsRecords.map(record => record._id);
-    console.log("userIds", userIds)
-    const usersArray = await Promise.all(userIds.map(async (userId) => {
-      const result = await User.aggregate([
-        {
-          $match: { userId: userId }
-        },
-        {
-          $lookup: {
-            from: "deposits",
-            localField: "userId",
-            foreignField: "userId",
-            as: "depositInfo"
-          }
-        },
-        {
-          $unwind: "$depositInfo"
-        },
-        {
-          $sort: { "depositInfo.date": -1 }
-        },
-        {
-          $group: {
-            _id: "$userId",
-            userName: { $first: "$userName" },
-            exposure: { $first: "$exposure" },
-            availableBalance: { $first: "$availableBalance" },
-            balance: { $first: "$balance" },
-            clientPL: { $first: "$clientPL" },
-            depositBalance: { $first: "$depositInfo.balance" },
-            depositAvailableBalance: { $first: "$depositInfo.availableBalance" },
-            depositMaxWithdraw: { $first: "$depositInfo.maxWithdraw" },
-            depositCash: { $first: "$depositInfo.cash" },
-            depositCredit: { $first: "$depositInfo.credit" },
-          }
-        },
-        {
-          $project: {
-            userId: "$_id",
-            userName: 1,
-            availableBalance: 1,
-            balance: 1,
-            clientPL: 1,
-            exposure: 1,
-            depositBalance: 1,
-            depositAvailableBalance: 1,
-            depositMaxWithdraw: 1,
-            depositCash: 1,
-            depositCredit: 1
-          }
-        }
-      ]);
+    console.log(`userIds==========${userIds.length}`)
 
-      return result.length > 0 ? result[0] : null;
-    }));
+    const users = await User.aggregate([
+      {
+        $match: { userId: { $in: userIds } },
+      },
+      {
+        $lookup: {
+          from: "deposits",
+          localField: "userId",
+          foreignField: "userId",
+          as: "depositInfo",
+        },
+      },
+      {
+        $unwind: "$depositInfo",
+      },
+      {
+        $sort: { "depositInfo.date": -1 },
+      },
+      {
+        $group: {
+          _id: "$userId",
+          userName: { $first: "$userName" },
+          exposure: { $first: "exposure" },
+          availableBalance: { $first: "$availableBalance" },
+          balance: { $first: "$balance" },
+          clientPL: { $first: "$clientPL" },
+          depositBalance: { $first: "$depositInfo.balance" },
+          depositAvailableBalance: { $first: "$depositInfo.availableBalance" },
+          depositMaxWithdraw: { $first: "$depositInfo.maxWithdraw" },
+          depositCash: { $first: "$depositInfo.cash" },
+          depositCredit: { $first: "$depositInfo.credit" },
+        },
+      },
+      {
+        $project: {
+          userId: "$_id",
+          userName: 1,
+          availableBalance: 1,
+          balance: 1,
+          clientPL: 1,
+          depositBalance: 1,
+          depositAvailableBalance: 1,
+          depositMaxWithdraw: 1,
+          depositCash: 1,
+          depositCredit: 1,
+        },
+      },
+      {
+        $skip: (page - 1) * limit,
+      },
+      {
+        $limit: limit,
+      },
+    ]);
 
-    const users = usersArray.filter(user => user !== null);
-    console.log("users", users.length)
-    return res.status(200).send({ data: users });
+    const totalUsers = await User.countDocuments({ userId: { $in: userIds } });
+    const totalPages = Math.ceil(totalUsers / limit);
+
+    res.status(200).send({
+      page,
+      limit,
+      totalPages,
+      totalUsers,
+      data: users,
+    });
   } catch (error) {
     console.error('Error fetching records:', error);
     res.status(500).send({ message: "Internal server error" });
