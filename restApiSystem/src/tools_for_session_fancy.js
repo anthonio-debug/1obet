@@ -112,10 +112,12 @@ if(bookmakerOdds!==0){
         let fancyOdds = await fetchSession(eventId)
 
          
-        if (fancyOdds) {
+        
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
           console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',bookmakerMarketList.length);
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds.length);
+          if(bookmakerMarketList.length>0){
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.marketName === 'Bookmaker') {
               bookmakerMarketIds.push(market?.marketId)
@@ -143,6 +145,14 @@ if(bookmakerOdds!==0){
               );
             }
           }
+        //put bookmakers call for odds here...
+
+
+
+        //here u will check if fancyOdds then call them...
+
+
+        }
            if (bookmakerMarketIds.length > 0) {
             let bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
             if (bookmakerOdds.length > 0) {
@@ -175,7 +185,7 @@ if(bookmakerOdds!==0){
 
             }
           }
-        }
+        
       }
     } catch (error) {
       console.error("Error getting session fancy odds:", error);
