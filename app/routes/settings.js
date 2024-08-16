@@ -573,7 +573,7 @@ async function betsRecords(req, res) {
     ]);
 
     const userIds = betsRecords.map(record => record._id);
-
+    console.log("userIds", userIds)
     const usersArray = await Promise.all(userIds.map(async (userId) => {
       const result = await User.aggregate([
         {
@@ -629,7 +629,7 @@ async function betsRecords(req, res) {
     }));
 
     const users = usersArray.filter(user => user !== null);
-
+    console.log("users", users.length)
     return res.status(200).send({ data: users });
   } catch (error) {
     console.error('Error fetching records:', error);
