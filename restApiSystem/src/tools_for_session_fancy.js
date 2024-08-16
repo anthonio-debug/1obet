@@ -189,6 +189,23 @@ if(bookmakerOdds!==0){
               io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
             }
           }
+        }else if(fancyOdds.length > 0){
+
+          
+          const fancyData = buildFancyStructure(bookmakerMarketList, 0, fancyOdds, eventId)
+          if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+            FancyOddsMap.set(eventId, fancyData)
+            let newFancyOdds = new FancyOdds({
+              eventId: eventId,
+              marketId: eventId,
+              data: fancyData,
+            })
+            
+            await newFancyOdds.save();
+            io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+          }
+       
+
         }
       //end of bookmakers call for odds here...
 
