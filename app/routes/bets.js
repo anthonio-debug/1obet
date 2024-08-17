@@ -1814,8 +1814,9 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
-      if (config.Fancy== 7) isManuel = false;
-      else isManuel = true
+      isManuel = false;
+      // if (config.Fancy== 7) 
+      // else isManuel = true
       console.log("for fancy check ", isManuel);
       console.log("for fancy checktarget  ", typeof(config.fancy));
       
