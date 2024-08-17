@@ -31,7 +31,7 @@ function ToolForSessionFancy() {
     if(fancyOdds!=0){
     for (const odd of fancyOdds) {
       if (odd.gtype === 'session' || odd.gtype === 'oddeven') {
-        console.log("ooooooooooooooooooooooooooooooooooooooooooooooooooooooo:",odd.gtype);
+        console.log("ooooooooooooooooooooooooooooooooooooooooooooooooooooooo:",odd);
         t3.push({
           b1: odd.BackPrice1,
           b2: odd.BackPrice2,
