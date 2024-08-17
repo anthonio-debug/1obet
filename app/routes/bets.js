@@ -1814,13 +1814,13 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
-      
-      if (config.Fancy == 7) isManuel = false; 
-      else isManuel = true
+
+      if (config.Fancy === 7) { isManuel = false }
+      else if (config.overByOver === 100) { isManuel = true }
       console.log("for fancy check ", isManuel);
-      console.log("for fancy checktarget  ", typeof(config.Fancy));
-      console.log("for fancy checktarget  ", typeof(config.overByOver));
-      
+      console.log("for fancy checktarget  ", typeof (config.Fancy));
+      console.log("for fancy checktarget  ", typeof (config.overByOver));
+
       const fancyBetLimit = await userBetSizes
         .findOne({
           userId: userId,
@@ -2925,7 +2925,7 @@ const placeBet = async (req, res) => {
           matchId: matchId,
           status: 1
         });
-        
+
         console.log("_3rdpartymarketId", _3rdPartyMarketId);
         console.log("matchId", matchId);
 
@@ -3680,18 +3680,18 @@ async function getMatchedBets(req, res) {
     const userIDs = await getAllUserIDs(createdByIDs);
     let matchId = req.query.id;
     let marketId = '';
-    if(req.query.marketId){
+    if (req.query.marketId) {
 
       marketId = req.query.marketId;
       matchId = req.query.id;
-      console.log("market id within body..............::::",marketId);
+      console.log("market id within body..............::::", marketId);
     }
-    
+
 
 
     //for sports id has matchId while for races matchId has machId like following: id=1.231812456&matchId=66bd1e37dc2d435bee4a6278&eId=33494827
 
-    
+
     console.log("MMMMMMMMMMMM marketid", marketId);
     //const marketId = '1.231243057';
     if (loginUser.role == '5') {
@@ -3800,17 +3800,17 @@ async function getMatchedBets(req, res) {
       eventId = await Events.findById(matchId);
 
     }
-    
-    if(req.body.userId==20126){
-      console.log("=======================>>>>>>>>>",eventId);
-      console.log("=======================>>>....>>>>>>",marketOpendate);
-      console.log("=======================>>>....,",matchId);
+
+    if (req.body.userId == 20126) {
+      console.log("=======================>>>>>>>>>", eventId);
+      console.log("=======================>>>....>>>>>>", marketOpendate);
+      console.log("=======================>>>....,", matchId);
 
     }
-    
 
 
-    
+
+
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
         try {
