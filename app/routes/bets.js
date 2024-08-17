@@ -1790,7 +1790,7 @@ const placeBet = async (req, res) => {
     }
 
     // For Fancy
-    else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
+    else if (config.Fancy == subMarketDetail.Id || config.overByOver == subMarketDetail.Id) {
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -1817,7 +1817,7 @@ const placeBet = async (req, res) => {
 
       if (config.Fancy == 7) {
         isManuel = false;
-      } 
+      }
       else if (config.overByOver == 70) {
         isManuel = true;
       }
