@@ -1817,6 +1817,7 @@ const placeBet = async (req, res) => {
       if (config.Fancy== 7) isManuel = false;
       else isManuel = true
       console.log("for fancy check ", isManuel);
+      console.log("for fancy checktarget  ", typeof(config.fancy));
       
       const fancyBetLimit = await userBetSizes
         .findOne({
