@@ -2704,14 +2704,14 @@ const placeBet = async (req, res) => {
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
         ];
-      } else if (type == 0 && subMarketDetail.Id == config.overByOver) {
+      } else if (type == 1 && subMarketDetail.Id == config.overByOver) {
         winningAmount = (betRate * betAmount) - betAmount;
         loosingAmount = betAmount;
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
         ];
-      } else if (type == 1 && subMarketDetail.Id == config.overByOver) {
+      } else if (type == 0 && subMarketDetail.Id == config.overByOver) {
         winningAmount = betAmount;
         loosingAmount = (betRate * betAmount) - betAmount;
         runnerForSaveInbets = [
