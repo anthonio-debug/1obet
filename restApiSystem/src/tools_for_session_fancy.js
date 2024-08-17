@@ -31,6 +31,7 @@ function ToolForSessionFancy() {
     if(fancyOdds!=0){
     for (const odd of fancyOdds) {
       if (odd.gtype === 'session' || odd.gtype === 'oddeven') {
+        console.log("ooooooooooooooooooooooooooooooooooooooooooooooooooooooo:",odd.gtype);
         t3.push({
           b1: odd.BackPrice1,
           b2: odd.BackPrice2,
@@ -80,6 +81,9 @@ if(bookmakerOdds!==0){
       }
       bm[`bm${index + 1}`] = bms
     }
+  }else{
+    let bms = []
+    bm[`bm${index + 1}`] = bms
   }
     return {
       data: {
@@ -153,7 +157,7 @@ if(bookmakerOdds!==0){
           if (bookmakerOdds.length > 0 && fancyOdds.length > 0) {
             console.log("f lengthhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh..:",fancyOdds.length);
            console.log("b lengthhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh..:",bookmakerOdds.length);
-           io.to('#' + eventId).emit('fancy_odds', fancyOdds);
+
             const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
             if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
               FancyOddsMap.set(eventId, fancyData)
@@ -164,7 +168,7 @@ if(bookmakerOdds!==0){
               })
               
               await newFancyOdds.save();
-              console.log("newFancyOdds:",newFancyOdds);
+              
               io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
             }
           }else if (bookmakerOdds.length > 0 && fancyOdds.length == 0) {
