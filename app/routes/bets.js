@@ -1814,17 +1814,8 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
-
-      if (subMarketDetail.Id == 7) {
-        isManuel = false;
-        console.log("for fancy check 1", isManuel);
-      }
-      
-      if (subMarketDetail.Id == 70) {
-        isManuel = true;
-        console.log("for fancy check 2", isManuel);
-      }
-      console.log("for fancy check 3", isManuel);
+      isManuel = false
+      // subMarketDetail.Id == 7 ? isManuel = false : isManuel = true 
 
       const fancyBetLimit = await userBetSizes
         .findOne({
