@@ -85,6 +85,7 @@ if(bookmakerOdds!=0){
     let bms = []
     bm[`bm${index + 1}`] = bms
   }
+  console.log("tttttttttttttttttttttttttttttttttttttttttttttttttt:",t3);
     return {
       data: {
         t1: null,
