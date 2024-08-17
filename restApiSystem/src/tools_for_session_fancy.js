@@ -153,6 +153,7 @@ if(bookmakerOdds!==0){
           if (bookmakerOdds.length > 0 && fancyOdds.length > 0) {
             console.log("f lengthhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh..:",fancyOdds.length);
            console.log("b lengthhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh..:",bookmakerOdds.length);
+           io.to('#' + eventId).emit('fancy_odds', fancyOdds);
             const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
             if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
               FancyOddsMap.set(eventId, fancyData)
