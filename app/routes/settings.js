@@ -542,25 +542,14 @@ function addSideBarMenu(req, res) {
 }
 
 async function betsRecords(req, res) {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).send({ errors: errors.errors });
+  const userRole = req.decoded.role
+
+  if (userRole !== "0") {
+    res.status(400).send({ message: "Only Company can access" })
   }
 
-  let page = 1;
-  let sort = -1;
-  let sortValue = '_id';
-  let limit = config.pageSize;
-  if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
-  if (req.body.sortValue) sortValue = req.body.sortValue;
-  if (req.body.sort) sort = Number(req.body.sort);
-  if (req.body.page) page = Number(req.body.page);
-
-  const now = req.body.endDate ? new Date(req.body.endDate).getTime() : new Date().getTime();
-  const lastDay = req.body.startDate ? new Date(req.body.startDate).getTime() : new Date(now - 24 * 60 * 60 * 1000).getTime();
-
-  console.log(`Start Date (lastDay): ${new Date(lastDay).getTime()}`);
-  console.log(`End Date (now): ${new Date(now).getTime()}`);
+  const now = new Date().getTime();
+  const lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
 
   try {
     const betsRecords = await Bets.aggregate([
@@ -568,48 +557,49 @@ async function betsRecords(req, res) {
         '$match': {
           'betTime': {
             '$gte': lastDay,
-            '$lt': now,
-          },
-        },
+            '$lt': now
+          }
+        }
       },
       {
         '$group': {
           '_id': '$userId',
-          'count': { '$sum': 1 },
-        },
-      },
+          'count': {
+            '$sum': 1
+          }
+        }
+      }
     ]);
 
     const userIds = betsRecords.map(record => record._id);
-    console.log(`Number of users found in bets: ${userIds.length}`);
-
-    if (userIds.length === 0) {
-      return res.status(404).send({ message: "No records found for the given date range." });
-    }
 
     const users = await User.aggregate([
       {
-        $match: { userId: { $in: userIds } },
+        $match: {
+          userId: { $in: userIds }
+        }
       },
       {
         $lookup: {
           from: "deposits",
           localField: "userId",
           foreignField: "userId",
-          as: "depositInfo",
-        },
+          as: "depositInfo"
+        }
       },
       {
-        $unwind: "$depositInfo",
+        $unwind: "$depositInfo"
       },
       {
-        $sort: { "depositInfo.date": -1 },
+        $sort: {
+          "depositInfo.date": -1
+        }
       },
       {
         $group: {
           _id: "$userId",
           userName: { $first: "$userName" },
-          exposure: { $first: "$exposure" },
+          exposure: { $first: "exposure" },
           availableBalance: { $first: "$availableBalance" },
           balance: { $first: "$balance" },
           clientPL: { $first: "$clientPL" },
@@ -618,7 +608,7 @@ async function betsRecords(req, res) {
           depositMaxWithdraw: { $first: "$depositInfo.maxWithdraw" },
           depositCash: { $first: "$depositInfo.cash" },
           depositCredit: { $first: "$depositInfo.credit" },
-        },
+        }
       },
       {
         $project: {
@@ -632,30 +622,12 @@ async function betsRecords(req, res) {
           depositAvailableBalance: 1,
           depositMaxWithdraw: 1,
           depositCash: 1,
-          depositCredit: 1,
-        },
-      },
-      {
-        $skip: (page - 1) * limit,
-      },
-      {
-        $limit: limit,
-      },
+          depositCredit: 1
+        }
+      }
     ]);
 
-    const totalUsers = await User.countDocuments({ userId: { $in: userIds } });
-    const totalPages = Math.ceil(totalUsers / limit);
-
-    console.log(`Users returned: ${users.length}`);
-    console.log(`Total pages: ${totalPages}, Total users: ${totalUsers}`);
-
-    res.status(200).send({
-      page,
-      limit,
-      totalPages,
-      totalUsers,
-      data: users,
-    });
+    res.status(200).send({ data: users });
   } catch (error) {
     console.error('Error fetching records:', error);
     res.status(500).send({ message: "Internal server error" });
