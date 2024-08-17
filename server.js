@@ -75,7 +75,6 @@ app.use(function (req, res, next) {
 //Without Authorization
 app.use("/api", require("./app/routes/user").router);
 app.use("/api", require("./app/routes/settings").router);
-app.use("/api", require("./app/routes/sportsTestAPI").router);
 app.use("/api", require("./app/routes/listScraper").router);
 app.use("/api", require("./app/routes/CasinoCalls").router);
 // app.use("/api", require("./app/routes/AsianCasinoCalls").router);
@@ -91,6 +90,7 @@ app.use(function (req, res, next) {
   checkRoleMiddleware(req, res, next);
 });
 // APIS With Authorization
+app.use("/api", require("./app/routes/sportsTestAPI").router);
 app.use("/api", require("./app/routes/user").loginRouter);
 app.use("/api", require("./app/routes/userBetSizes").loginRouter);
 app.use("/api", require("./app/routes/modulePermissionsUsers").loginRouter);
