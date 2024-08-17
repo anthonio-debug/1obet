@@ -1790,7 +1790,7 @@ const placeBet = async (req, res) => {
     }
 
     // For Fancy
-    else if (config.FancyOddEven.includes(subMarketDetail.Id)) {
+    else if (config.Fancy == subMarketDetail.Id || config.overByOver == subMarketDetail.Id) {
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId,
@@ -1814,7 +1814,9 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: `min bet size is : ${userMaxBetSize.minAmount}` });
       }
 
-      isManuel = false;
+      isManuel = false
+      // subMarketDetail.Id == 7 ? isManuel = false : isManuel = true 
+
       const fancyBetLimit = await userBetSizes
         .findOne({
           userId: userId,
@@ -2702,14 +2704,14 @@ const placeBet = async (req, res) => {
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
         ];
-      } else if (type == 0 && subMarketDetail.Id == config.overByOver) {
+      } else if (type == 1 && subMarketDetail.Id == config.overByOver) {
         winningAmount = (betRate * betAmount) - betAmount;
         loosingAmount = betAmount;
         runnerForSaveInbets = [
           { runner: 1, amount: 0 },
           { runner: 0, amount: 0 }
         ];
-      } else if (type == 1 && subMarketDetail.Id == config.overByOver) {
+      } else if (type == 0 && subMarketDetail.Id == config.overByOver) {
         winningAmount = betAmount;
         loosingAmount = (betRate * betAmount) - betAmount;
         runnerForSaveInbets = [
@@ -2919,7 +2921,7 @@ const placeBet = async (req, res) => {
           matchId: matchId,
           status: 1
         });
-        
+
         console.log("_3rdpartymarketId", _3rdPartyMarketId);
         console.log("matchId", matchId);
 
@@ -3674,18 +3676,18 @@ async function getMatchedBets(req, res) {
     const userIDs = await getAllUserIDs(createdByIDs);
     let matchId = req.query.id;
     let marketId = '';
-    if(req.query.marketId){
+    if (req.query.marketId) {
 
       marketId = req.query.marketId;
       matchId = req.query.id;
-      console.log("market id within body..............::::",marketId);
+      console.log("market id within body..............::::", marketId);
     }
-    
+
 
 
     //for sports id has matchId while for races matchId has machId like following: id=1.231812456&matchId=66bd1e37dc2d435bee4a6278&eId=33494827
 
-    
+
     console.log("MMMMMMMMMMMM marketid", marketId);
     //const marketId = '1.231243057';
     if (loginUser.role == '5') {
@@ -3794,17 +3796,17 @@ async function getMatchedBets(req, res) {
       eventId = await Events.findById(matchId);
 
     }
-    
-    if(req.body.userId==20126){
-      console.log("=======================>>>>>>>>>",eventId);
-      console.log("=======================>>>....>>>>>>",marketOpendate);
-      console.log("=======================>>>....,",matchId);
+
+    if (req.body.userId == 20126) {
+      console.log("=======================>>>>>>>>>", eventId);
+      console.log("=======================>>>....>>>>>>", marketOpendate);
+      console.log("=======================>>>....,", matchId);
 
     }
-    
 
 
-    
+
+
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
         try {
