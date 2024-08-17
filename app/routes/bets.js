@@ -1817,11 +1817,13 @@ const placeBet = async (req, res) => {
 
       if (config.Fancy == 7) {
         isManuel = false;
+        console.log("for fancy check 1", isManuel);
       }
-      else if (config.overByOver == 70) {
+      else if (config.overByOver == 70 || config.overByOver == "70") {
         isManuel = true;
+        console.log("for fancy check 2", isManuel);
       }
-      console.log("for fancy check ", isManuel);
+      console.log("for fancy check 3", isManuel);
 
       const fancyBetLimit = await userBetSizes
         .findOne({
