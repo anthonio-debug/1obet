@@ -1817,11 +1817,9 @@ const placeBet = async (req, res) => {
 
       if (config.Fancy == 7) {
         isManuel = false;
-        console.log("for fancy check ", isManuel);
       } 
-      if (config.overByOver == 100) {
+      if (config.overByOver == 70) {
         isManuel = true;
-        console.log("for fancy check ", isManuel);
       }
       console.log("for fancy check ", isManuel);
 
