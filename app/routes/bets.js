@@ -1815,11 +1815,12 @@ const placeBet = async (req, res) => {
       }
 
 
-      if (config.Fancy == 7) {
+      if (subMarketDetail.Id == 7) {
         isManuel = false;
         console.log("for fancy check 1", isManuel);
       }
-      else if (config.overByOver == 70 || config.overByOver == "70") {
+      
+      if (subMarketDetail.Id == 70) {
         isManuel = true;
         console.log("for fancy check 2", isManuel);
       }
