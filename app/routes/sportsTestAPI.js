@@ -1171,47 +1171,47 @@ async function updateUserName(req, res) {
 
 
 // //////////////////
-// router.get('/track-bet/updateUserName', updateUserName)
-// /////////////////
-// //////
-// router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
-// /////
-// router.get('/track-bet/get-latest-odds/:marketId/:collectionName', getRaceLatestRecord)
-// router.get('/testSports/events', listEvents)
-// router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
-// router.get('/track-score/get-cricketscore', getCricketScore)
-// router.get('/testSports/events', listEvents);
-// router.get('/testSports/marketbooks/:ids', listMarketBook);
-// router.get('/trackstuck/activeusers', activeUserExposure);
-// router.get('/trackstuck/inactiveusers', inActiveUserExposure);
-// router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
+router.get('/track-bet/updateUserName', updateUserName)
+/////////////////
+//////
+router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
+/////
+router.get('/track-bet/get-latest-odds/:marketId/:collectionName', getRaceLatestRecord)
+router.get('/testSports/events', listEvents)
+router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
+router.get('/track-score/get-cricketscore', getCricketScore)
+router.get('/testSports/events', listEvents);
+router.get('/testSports/marketbooks/:ids', listMarketBook);
+router.get('/trackstuck/activeusers', activeUserExposure);
+router.get('/trackstuck/inactiveusers', inActiveUserExposure);
+router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
 
-// router.get('/track-bet/testAPI/:marketId', testAPI)
-// router.get('/track-bet/get-markets/:eventId', getMarketsByEventId)
-// router.get('/track-bet/get-events/:sportsId', getEventsBySportsId)
-// router.get('/track-bet/get-today-events/:sportsId', getTodayEventsBySportsId)
-// router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
-// router.get('/track-bet/get-odds2/:marketId', getOddsByMarketId2)
-// router.get('/track-bet/get-odds-multi-marketids/:eventId', getOddsByMultiMarketId)
-// router.get('/track-bet/get-markettype', getMarketType)
-// router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByMarketType)
-// router.get('/track-bet/get-market-bet-session/:eventId', getFanciesByEventId)
+router.get('/track-bet/testAPI/:marketId', testAPI)
+router.get('/track-bet/get-markets/:eventId', getMarketsByEventId)
+router.get('/track-bet/get-events/:sportsId', getEventsBySportsId)
+router.get('/track-bet/get-today-events/:sportsId', getTodayEventsBySportsId)
+router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
+router.get('/track-bet/get-odds2/:marketId', getOddsByMarketId2)
+router.get('/track-bet/get-odds-multi-marketids/:eventId', getOddsByMultiMarketId)
+router.get('/track-bet/get-markettype', getMarketType)
+router.get('/track-bet/get-market-by-type/:eventId/:marketTypes?', getMarketsByMarketType)
+router.get('/track-bet/get-market-bet-session/:eventId', getFanciesByEventId)
 
-// router.get('/track-bet/get-markets-limitless/:eventId', getMarketsLimitlessByEventId)
-// router.get('/track-bet/get-markets-limitless2/:eventId', getMarketsLimitlessByEventId2)
-// router.get('/track-bet/get-bookmakers-limitless/:eventId', getBookmakersLimitlessByEventId)
-// router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId)
-// router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
-// router.get('/track-bet/check-market/:sportID/:eventId', cronOdds)
-// router.get('/track-bet/delete-odds/:eventId', deleteOdds)
-// router.get('/track-bet/get-relatedmarkets/:marketId/:sportid', getRelatedMarkets)
-// router.get('/track-bet/test-trial/:eventId', TestTrial)
-// router.get('/match-events/:sportsId', getMatchEvents)
-// router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
-// /*admin dashboard*/
-// router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
+router.get('/track-bet/get-markets-limitless/:eventId', getMarketsLimitlessByEventId)
+router.get('/track-bet/get-markets-limitless2/:eventId', getMarketsLimitlessByEventId2)
+router.get('/track-bet/get-bookmakers-limitless/:eventId', getBookmakersLimitlessByEventId)
+router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId)
+router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
+router.get('/track-bet/check-market/:sportID/:eventId', cronOdds)
+router.get('/track-bet/delete-odds/:eventId', deleteOdds)
+router.get('/track-bet/get-relatedmarkets/:marketId/:sportid', getRelatedMarkets)
+router.get('/track-bet/test-trial/:eventId', TestTrial)
+router.get('/match-events/:sportsId', getMatchEvents)
+router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
+/*admin dashboard*/
+router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
-// router.post('/list-events', getEventList)
+router.post('/list-events', getEventList)
 
 module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore };
 
