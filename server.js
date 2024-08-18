@@ -55,7 +55,7 @@ app.use(bodyParser.json({strict: false}));
 
 
 
-const allowedOrigin = 'https://dev.bookofblack.com';
+const allowedOrigin = 'https://1obet.com';
 
 // Configure CORS options
 const corsOptions = {
