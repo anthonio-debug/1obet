@@ -61,7 +61,7 @@ const allowedAPI = 'https://production.1obet.net'
 // Configure CORS options
 const corsOptions = {
   origin: function(origin, callback) {
-    if (origin === allowedAPI || origin === allowedAPI || origin === allowedOrigin || !origin) {
+    if (origin === allowedAPI || origin === allowedAdminOrigin || origin === allowedOrigin || !origin) {
       // Allow requests with no origin (like mobile apps or curl requests)
       callback(null, true);
     } else {
