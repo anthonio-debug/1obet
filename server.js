@@ -56,11 +56,11 @@ app.use(bodyParser.json({strict: false}));
 
 
 const allowedOrigin = 'https://1obet.com';
-
+const allowedAdminOrigin = 'https://admin.1obet.com';
 // Configure CORS options
 const corsOptions = {
   origin: function(origin, callback) {
-    if (origin === allowedOrigin || !origin) {
+    if (origin === allowedAdminOrigin ||origin === allowedOrigin || !origin) {
       // Allow requests with no origin (like mobile apps or curl requests)
       callback(null, true);
     } else {
