@@ -52,11 +52,29 @@ app.use(express.urlencoded({extended: false}));
 
 app.use(bodyParser.urlencoded({extended: false})); //support encoded bodies
 app.use(bodyParser.json({strict: false}));
+
+
+
+const allowedOrigin = 'https://1obet3.com';
+const allowedAdminOrigin = 'https://admin.13obet.com';
+const allowedAPI = 'https://production.1obet.net'
+// Configure CORS options
 const corsOptions = {
-  origin: true,
-  credentials: true,
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  origin: function(origin, callback) {
+    if (origin === allowedAPI || origin === allowedAPI || origin === allowedOrigin || !origin) {
+      // Allow requests with no origin (like mobile apps or curl requests)
+      callback(null, true);
+    } else {
+      // Disallow requests from other origins
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
 };
+
+
+
+
+
 
 app.use(cors(corsOptions));
 app.get("/", (req, res) => {
