@@ -57,7 +57,7 @@ app.use(bodyParser.json({strict: false}));
 
 const allowedOrigin = 'https://1obet3.com';
 const allowedAdminOrigin = 'https://admin.13obet.com';
-const allowedAPI = 'https://production.1obet.net'
+const allowedAPI = 'https://production.1obet.net/api';
 // Configure CORS options
 const corsOptions = {
   origin: function(origin, callback) {
