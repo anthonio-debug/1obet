@@ -76,6 +76,23 @@ async function getAllSportsHighlight(req, res) {
       },
     ]);
 
+    const explainResult = await inPlayEvents.find({
+      sportsId: sportId,
+      $expr: {
+        $or: [
+          { $eq: ["$inplay", true] },
+          {
+            $and: [
+              { $gte: ["$openDate", startOfDayTimestamp] },
+              { $lt: ["$openDate", endOfDayTimestamp] }
+            ]
+          }
+        ]
+      }
+    }).explain("executionStats");
+
+    console.log(JSON.stringify(explainResult, null, 2));
+
     let marketData = [];
 
     if (sportsHighlights.length > 0) {
