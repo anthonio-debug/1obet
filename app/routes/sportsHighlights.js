@@ -27,7 +27,7 @@ async function getAllSportsHighlight(req, res) {
       {
         $match: {
           sportsId: sportId,
-          status: "OPEN",
+          // status: "OPEN",
           $expr: {
             $or: [
               { $eq: ["$inplay", true] },
