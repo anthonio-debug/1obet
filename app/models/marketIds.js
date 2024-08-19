@@ -23,5 +23,8 @@ const MarketIDsSchema = new mongoose.Schema({
 
 });
 
+MarketIDsSchema.index({ eventId: 1, marketName: 1 });
+MarketIDsSchema.index({ status: 1 });
+
 const MarketIDS = mongoose.model('MarketIDS', MarketIDsSchema);
 module.exports = MarketIDS;
