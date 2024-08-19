@@ -28,10 +28,8 @@ function ToolForSessionFancy() {
   function buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId) {
     let t3 = []
     let bm = {}
-    if(fancyOdds!=0){
     for (const odd of fancyOdds) {
       if (odd.gtype === 'session' || odd.gtype === 'oddeven') {
-        console.log("ooooooooooooooooooooooooooooooooooooooooooooooooooooooo:",odd);
         t3.push({
           b1: odd.BackPrice1,
           b2: odd.BackPrice2,
@@ -53,8 +51,7 @@ function ToolForSessionFancy() {
         })
       }
     }
-  }
-if(bookmakerOdds!=0){
+if(bookmakerOdds!==0){
     for (const [index, odd] of bookmakerOdds.entries()) {
       let bms = []
       if (isIterable(odd.runners)) {
@@ -81,9 +78,6 @@ if(bookmakerOdds!=0){
       }
       bm[`bm${index + 1}`] = bms
     }
-  }else{
-    let bms = []
-    bm[`bm${index + 1}`] = bms
   }
     return {
       data: {
@@ -101,7 +95,7 @@ if(bookmakerOdds!=0){
   async function getSessionFancyOdds() {
     try {
       const now = new Date()
-      const from = new Date(now.getTime() + (432000  60  1000)).getTime()
+      const from = new Date(now.getTime() + (432000 * 60 * 1000)).getTime()
       let fancyEvents = await inPlayEvents.find({
         sportsId: '4', isShowed: true,
         hasFancy: true,
@@ -112,6 +106,7 @@ if(bookmakerOdds!=0){
 
       for (const event of fancyEvents) {
         const eventId = event.Id
+        
         let fancyOdds = 0;
          fancyOdds = await fetchSession(eventId)
 
@@ -225,7 +220,8 @@ if(bookmakerOdds!=0){
         //end fancyOdds call
 
         }
-           
+
+        // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
         
       }
     } catch (error) {
