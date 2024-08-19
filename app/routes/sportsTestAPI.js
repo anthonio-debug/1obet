@@ -614,7 +614,7 @@ async function getMarketsLimitlessByEventId(req, res) {
 
 async function getMarketsLimitlessByEventId2(req, res) {
   const eventId = req.params.eventId;
-  const url = `http://142.93.36.1/api/v2/getSessions?EventTypeID=4&matchId=${eventId}`;
+  const url = `http://84.8.153.51/api/v2/getSessions?EventTypeID=4&matchId=${eventId}`;
   try {
     const response = await axios.get(url);
     const data = []
@@ -631,7 +631,7 @@ async function getMarketsLimitlessByEventId2(req, res) {
 
 async function getBookmakersLimitlessByEventId(req, res) {
   const eventId = req.params.eventId;
-  const url = `http://142.93.36.1/api/v2/getBookmakers?EventTypeID=4&EventID=${eventId}`;
+  const url = `http://84.8.153.51/api/v2/getBookmakers?EventTypeID=4&EventID=${eventId}`;
   try {
     const response = await axios.get(url);
     res.status(200).json({ success: true, data: response.data });
@@ -644,7 +644,7 @@ async function getBookmakersLimitlessByEventId(req, res) {
 
 async function getOddsLimitlessByMarketId(req, res) {
   const marketId = req.params.marketId;
-  const url = `http://142.93.36.1/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
+  const url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
   try {
     const response = await axios.get(url);
     res.status(200).json({ success: true, data: JSON.parse(response.data) });
@@ -657,7 +657,7 @@ async function getOddsLimitlessByMarketId(req, res) {
 async function getScoreLimitlessByEventId(req, res) {
   const eventId = req.params.eventId;
 
-  const url = `http://142.93.36.1/api/v2/score?EventTypeID=1&matchId=${eventId}`;
+  const url = `http://84.8.153.51/api/v2/score?EventTypeID=1&matchId=${eventId}`;
   try {
     const response = await axios.get(url);
     res.status(200).json({ success: true, data: response.data });
@@ -854,7 +854,7 @@ async function saveOdds(oddData, sportsId) {
 async function getOdds(marketIds, sportsId) {
   return new Promise((resolve, reject) => {
     const odds = [];
-    const oddUrl = `http://142.93.36.1/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
     axios
       .get(oddUrl)
       .then(async (oddRes) => {
