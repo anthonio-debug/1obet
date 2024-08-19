@@ -26,6 +26,7 @@ async function getAllSportsHighlight(req, res) {
       if (sportId =="2") endOfDayTimestamp = new Date(startOfDayTimestamp + (24 * 60 * 60 * 1000)).getTime();
       else endOfDayTimestamp = new Date(startOfDayTimestamp + (2 * 24 * 60 * 60 * 1000)).getTime(); // 2days
     }
+    const startTime = Date.now();
     const sportsHighlights = await inPlayEvents.aggregate([
       {
         $match: {
@@ -75,24 +76,10 @@ async function getAllSportsHighlight(req, res) {
         },
       },
     ]);
+    const endTime = Date.now();
 
-    const explainResult = await inPlayEvents.find({
-      sportsId: sportId,
-      $expr: {
-        $or: [
-          { $eq: ["$inplay", true] },
-          {
-            $and: [
-              { $gte: ["$openDate", startOfDayTimestamp] },
-              { $lt: ["$openDate", endOfDayTimestamp] }
-            ]
-          }
-        ]
-      }
-    }).explain("executionStats");
-
-    console.log(JSON.stringify(explainResult, null, 2));
-
+    console.log(`Query execution time: ${endTime - startTime}ms`);
+    
     let marketData = [];
 
     if (sportsHighlights.length > 0) {
