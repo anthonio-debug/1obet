@@ -239,7 +239,12 @@ function ToolForEvent() {
       if (marketIds.length > 0) {
         // console.log("244444444444444uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu--",marketIds.length);
         //this code runs
-        apiRequests.getOddsFromProvider(documents, intervalId);
+        console.log(documents, "MMMMMMMMMMMMMMMMMMMMMMM------")
+        for (let element of documents){
+          if (element.ReadyForOdds){
+            apiRequests.getOddsFromProvider(documents, intervalId);
+          }
+        }
       }
     } catch (error) {
       console.error('Error fetching odds:', error);

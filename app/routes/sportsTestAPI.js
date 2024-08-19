@@ -600,7 +600,8 @@ async function closeOpenMarkets(req, res) {
 
 async function getMarketsLimitlessByEventId(req, res) {
   const eventId = req.params.eventId;
-  const url = `http://142.93.36.1/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
+  // const url = `http://142.93.36.1/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
+  const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
   try {
     const response = await axios.get(url);
     res.status(200).json({ success: true, data: response.data });
@@ -906,6 +907,35 @@ async function cronOdds(req, res) {
 
 }
 
+async function cronOdds2(req, res) {
+  const { eventId, sportID } = req.params;
+  const markets = await MarketIDS.find({
+    // openDate: { $gte: Date.now() + 2 * 60 * 1000 },
+    // status: "CLOSED",
+    eventId,
+    sportID,
+  });
+  const count = 15;
+  const pages = Math.ceil(markets.length / count);
+  const matchIds = markets.map((e) => e.marketId);
+  const sendMarketIds = [];
+  for (let i = 0; i < pages; i++) {
+    let matchId = [];
+    if (i === 0) {
+      matchId = matchIds.slice(0, i + 1 * count);
+    } else {
+      matchId = matchIds.slice(i * count, (i + 1) * count);
+    }
+    sendMarketIds.push(matchId.join(","));
+  }
+  let result = [];
+  for (const marketIds of sendMarketIds) {
+    const odds = await getOdds(marketIds, sportID);
+    result = [...result, ...odds];
+  }
+  res.json({ status: true, data: "here in res" });
+
+}
 async function getTheSportsMatchScoreEvents(req, res) {
 
 
@@ -1167,11 +1197,32 @@ async function updateUserName(req, res) {
     });
   }
 }
+async function testing(req, res) {
+  try {
+    const currentTime = Date.now();
+// const formattedTime = currentTime.toLocaleTimeString();
+console.log(currentTime,"//////");
+    
+
+    res.status(200).json({
+      success: true,
+      message: 'User names updated successfully',
+   
+    });
+  } catch (error) {
+    console.error("Error in update user name:", error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
 
 
 
 // //////////////////
 router.get('/track-bet/updateUserName', updateUserName)
+router.get('/track-bet/testing', testing)
 /////////////////
 //////
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
@@ -1203,6 +1254,7 @@ router.get('/track-bet/get-bookmakers-limitless/:eventId', getBookmakersLimitles
 router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId)
 router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
 router.get('/track-bet/check-market/:sportID/:eventId', cronOdds)
+router.get('/track-bet/check-market2/:sportID/:eventId', cronOdds2)
 router.get('/track-bet/delete-odds/:eventId', deleteOdds)
 router.get('/track-bet/get-relatedmarkets/:marketId/:sportid', getRelatedMarkets)
 router.get('/track-bet/test-trial/:eventId', TestTrial)
