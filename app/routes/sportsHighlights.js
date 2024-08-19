@@ -9,28 +9,30 @@ const marketIds = require('../models/marketIds');
 
 async function getAllSportsHighlight(req, res) {
   try {
-    let now = new Date();  // Get the current date and time
+    let now = new Date();
     let startOfDay = new Date(now);
     startOfDay.setHours(0, 0, 0, 0);
     let startOfDayTimestamp = startOfDay.getTime();
 
-    let endOfDayTimestamp
+    let endOfDayTimestamp;
 
     const sportId = req.query.sport;
 
-    if (sportId == '1') {
+    if (sportId === '1') {
       let endOfDay = new Date(now);
       endOfDay.setHours(23, 59, 59, 999);
       endOfDayTimestamp = endOfDay.getTime();
     } else {
-      endOfDayTimestamp = new Date(startOfDayTimestamp + (2 * 24 * 60 * 60 * 1000)).getTime(); // 2days
+      endOfDayTimestamp = new Date(startOfDayTimestamp + (2 * 24 * 60 * 60 * 1000)).getTime(); // 2 days
     }
+
     const sportsHighlights = await inPlayEvents.aggregate([
       {
         $match: {
+          sportsId: sportId,
           $expr: {
             $or: [
-              { $eq: ["$inplay", true] }, // If inPlay is true, this part always evaluates to true, bypassing the date filter
+              { $eq: ["$inplay", true] },
               {
                 $and: [
                   { $gte: ["$openDate", startOfDayTimestamp] },
@@ -39,7 +41,6 @@ async function getAllSportsHighlight(req, res) {
               }
             ]
           },
-          sportsId: sportId,
         }
       },
       {
@@ -78,10 +79,10 @@ async function getAllSportsHighlight(req, res) {
     let marketData = [];
 
     if (sportsHighlights.length > 0) {
-      for (let i = 0; i < sportsHighlights.length; i++) {
-        marketData = await marketIds.aggregate([
+      const marketDataPromises = sportsHighlights.map(highlight =>
+        marketIds.aggregate([
           {
-            $match: { eventId: sportsHighlights[i].Id, marketName: "Match Odds" }
+            $match: { eventId: highlight.Id, marketName: "Match Odds" }
           },
           {
             $lookup: {
@@ -97,8 +98,13 @@ async function getAllSportsHighlight(req, res) {
               totalMatched: { $max: '$oddsData.totalMatched' }
             }
           }
-        ]);
-        sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
+        ]).toArray()
+      );
+
+      const marketResults = await Promise.all(marketDataPromises);
+
+      for (let i = 0; i < sportsHighlights.length; i++) {
+        sportsHighlights[i].totalMatched = marketResults[i][0] ? marketResults[i][0].totalMatched : 0;
       }
     }
 
@@ -108,10 +114,8 @@ async function getAllSportsHighlight(req, res) {
         $gte: startOfDayTimestamp,
         $lt: endOfDayTimestamp
       }
-    })
-    const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
-
-    //console.log(" ======== ids ", ids);
+    });
+    const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } });
 
     return res.send({
       success: true,
@@ -120,10 +124,10 @@ async function getAllSportsHighlight(req, res) {
       totalOpenMarkets: totalOpenMarkets
     });
   } catch (err) {
-    //console.log(err);
+    console.error(err);
     return res.status(404).send({
       success: false,
-      message: 'Something went WRONG ',
+      message: 'Something went WRONG',
     });
   }
 }
