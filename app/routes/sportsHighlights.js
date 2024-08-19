@@ -18,11 +18,16 @@ async function getAllSportsHighlight(req, res) {
 
     const sportId = req.query.sport;
 
-    if (sportId == '1' || sportId == '2') {
+    if (sportId == '1') {
       let endOfDay = new Date(now);
       endOfDay.setHours(23, 59, 59, 999);
       endOfDayTimestamp = endOfDay.getTime();
-    } else {
+    } else if (sportId == '2') {
+      let endOfDay = new Date(now);
+      endOfDay.setHours(12, 59, 59, 999);
+      endOfDayTimestamp = endOfDay.getTime();
+    }
+    else {
       endOfDayTimestamp = new Date(startOfDayTimestamp + (2 * 24 * 60 * 60 * 1000)).getTime(); // 2days
     }
     const sportsHighlights = await inPlayEvents.aggregate([
