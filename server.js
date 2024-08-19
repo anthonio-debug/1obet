@@ -55,8 +55,8 @@ app.use(bodyParser.json({strict: false}));
 
 
 
-const allowedOrigin = 'https://dev.bookofblack.com/';
-const allowedAdminOrigin = 'https://socket.bookofblack.com/';
+const allowedOrigin = 'https://dev.bookofblack.com';
+const allowedAdminOrigin = 'https://socket.bookofblack.com';
 const allowedAPI = 'https://api.bookofblack.com';
 // Configure CORS options
 const corsOptions = {
