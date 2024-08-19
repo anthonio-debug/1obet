@@ -26,11 +26,11 @@ async function getAllSportsHighlight(req, res) {
     const sportsHighlights = await inPlayEvents.aggregate([
       {
         $match: {
-          sportsId: sportId,
-          status: "OPEN",
+          sportsId: sportId, 
+          // status: "OPEN",
           $expr: {
             $or: [
-              { $eq: ["$inplay", true] },
+              { $eq: ["$inplay", true] }, 
               {
                 $and: [
                   { $gte: ["$openDate", startOfDay] },
@@ -75,7 +75,6 @@ async function getAllSportsHighlight(req, res) {
     const endTime = Date.now();
     console.log(`Query execution time: ${endTime - startTime}ms`);
 
-    // Batch process to avoid multiple database calls within a loop
     if (sportsHighlights.length > 0) {
       const highlightIds = sportsHighlights.map(highlight => highlight.Id);
 
@@ -100,7 +99,7 @@ async function getAllSportsHighlight(req, res) {
             totalMatched: { $max: '$oddsData.totalMatched' }
           }
         }
-      ]).exec();
+      ]);
 
       const marketDataMap = marketData.reduce((acc, item) => {
         acc[item._id] = item.totalMatched;
@@ -140,7 +139,6 @@ async function getAllSportsHighlight(req, res) {
     });
   }
 }
-
 
 async function deleteSportHighlight(req, res) {
   try {
