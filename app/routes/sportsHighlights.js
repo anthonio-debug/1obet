@@ -31,6 +31,8 @@ async function getAllSportsHighlight(req, res) {
     const sportsHighlights = await inPlayEvents.aggregate([
       {
         $match: {
+          sportsId: sportId,
+          status: "OPEN",
           $expr: {
             $or: [
               { $eq: ["$inplay", true] }, // If inPlay is true, this part always evaluates to true, bypassing the date filter
@@ -42,7 +44,6 @@ async function getAllSportsHighlight(req, res) {
               }
             ]
           },
-          sportsId: sportId,
         }
       },
       {
