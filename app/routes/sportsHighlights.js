@@ -26,11 +26,11 @@ async function getAllSportsHighlight(req, res) {
     const sportsHighlights = await inPlayEvents.aggregate([
       {
         $match: {
-          sportsId: sportId, 
+          sportsId: sportId,
           // status: "OPEN",
           $expr: {
             $or: [
-              { $eq: ["$inplay", true] }, 
+              { $eq: ["$inplay", true] },
               {
                 $and: [
                   { $gte: ["$openDate", startOfDay] },
@@ -128,7 +128,7 @@ async function getAllSportsHighlight(req, res) {
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
       results: sportsHighlights,
-      totalOpenMarkets: totalOpenMarkets
+      // totalOpenMarkets: totalOpenMarkets
     });
 
   } catch (err) {
