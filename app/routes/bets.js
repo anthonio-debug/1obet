@@ -1889,6 +1889,9 @@ const placeBet = async (req, res) => {
       apiFancyOddsRes = apiFancyOddsRes.filter((item) => item.SelectionId === selectionId);
       console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
       gameStatus = apiFancyOddsRes[0]?.GameStatus;
+      console.log(`apiFancyOddsRes[0]?.GameStatus==================${apiFancyOddsRes[0]?.GameStatus}`);
+      console.log(`GameStatus==================${gameStatus}`);
+      
       if (apiFancyOddsRes[0]?.GameStatus === 'SUSPENDED' || apiFancyOddsRes[0]?.GameStatus === 'Ball Running') {
         activeBettors.delete(userId);
         return res.status(404).send({
