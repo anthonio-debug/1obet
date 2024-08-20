@@ -62,6 +62,7 @@ const betSchema = new mongoose.Schema({
   locationData: { type: Schema.Types.Mixed },
   ipAddress: { type: String },
   device: { type: String },
+  timer: { type: Number, default: 0 },
   vpn: { type: Boolean, default: false }
 });
 

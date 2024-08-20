@@ -185,7 +185,7 @@ const placeBet = async (req, res) => {
     let currentSession;
     let subMarketDetail;
     let marketId;
-    let { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate, overunderMarketId, selectedAmount, asianOdd, roundId, asianMarketId, rates, partnerValue } = req.body;
+    let { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate, overunderMarketId, selectedAmount, asianOdd, roundId, asianMarketId, rates, partnerValue, timer } = req.body;
     let randomStr = uuidv4();
 
     // if (parseInt(betRate) > 50) {
@@ -1815,7 +1815,7 @@ const placeBet = async (req, res) => {
       }
 
       // isManuel = false
-      subMarketDetail.Id == 7 ? isManuel = false : isManuel = true 
+      subMarketDetail.Id == 7 ? isManuel = false : isManuel = true
 
       const fancyBetLimit = await userBetSizes
         .findOne({
@@ -2638,9 +2638,6 @@ const placeBet = async (req, res) => {
       /**
        * Winning Loosing Amounts Calculations
        */
-      console.log("config.BetfairFancy", config.BetfairFancy)
-      console.log("config.BetfairFancy Id", subMarketDetail.Id)
-      console.log("config.BetfairFancy", type)
       if (type == 4) {
         winningAmount = betAmount;
         loosingAmount = betAmount;
@@ -2953,7 +2950,6 @@ const placeBet = async (req, res) => {
               return item;
             });
             runnersPosition = runnerCurrentPosition;
-            console.log("runnerCurrentPosition======", runnerCurrentPosition);
           }
         }
 
@@ -3013,9 +3009,6 @@ const placeBet = async (req, res) => {
        *  Check for Total calculated Exp should not greater then Allowed
        */
       const finalExpAmount = expAmount - prevExpAmount;
-      console.log("finalExpAmount", finalExpAmount)
-      console.log("expAmount", expAmount)
-      console.log("prevExpAmount", prevExpAmount)
       if (finalExpAmount > maxExp) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: `Max Exposure Amount : ${maxExp}` });
@@ -3089,6 +3082,7 @@ const placeBet = async (req, res) => {
         locationData: geo,
         ipAddress: realIP,
         device: device,
+        timer: timer,
         backFancyRate,
         layFancyRate,
         rates,
