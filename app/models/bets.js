@@ -63,6 +63,7 @@ const betSchema = new mongoose.Schema({
   ipAddress: { type: String },
   device: { type: String },
   timer: { type: Number, default: 0 },
+  gameStatus: { type: String },
   vpn: { type: Boolean, default: false }
 });
 

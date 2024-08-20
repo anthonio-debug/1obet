@@ -214,6 +214,7 @@ const placeBet = async (req, res) => {
     let delay = 5200;
     let asianTableName = '';
     let delayAddition = 0;
+    let gameStatus=''
 
     if (checkRunsOrOvers(subMarketName)) { subMarketName = "Betfair Fancy" }
     else { subMarketName }
@@ -1887,6 +1888,7 @@ const placeBet = async (req, res) => {
       let apiFancyOddsRes = await fetchSession(eventDetail.Id);
       apiFancyOddsRes = apiFancyOddsRes.filter((item) => item.SelectionId === selectionId);
       console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
+      gameStatus = apiFancyOddsRes[0]?.GameStatus;
       if (apiFancyOddsRes[0]?.GameStatus === 'SUSPENDED' || apiFancyOddsRes[0]?.GameStatus === 'Ball Running') {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -3083,6 +3085,7 @@ const placeBet = async (req, res) => {
         ipAddress: realIP,
         device: device,
         timer: timer,
+        gameStatus: gameStatus,
         backFancyRate,
         layFancyRate,
         rates,
