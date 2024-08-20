@@ -338,6 +338,17 @@ function apiRequests() {
 
   async function listMarketsByCronJob(eventId, sportID) {
 
+    //////////////
+//    const event =await inPlayEvents.findOne({Id:eventId})
+//    const minutes = 30;
+// const Time30min = minutes * 60 * 1000;
+// const currentTime = Date.now();
+// const remainigTime =event.openDate-currentTime
+// if (remainigTime<Time30min){
+//   await MarketIDS.findOneAndUpdate({eventId:eventId}, {$set:{ReadyForOdds:true}})
+  
+// }
+/////////////
     const requestData = {
       filter: {
         eventIds: [eventId]
