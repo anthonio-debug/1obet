@@ -975,12 +975,12 @@ async function cronOdds(req, res) {
   }
 
 
-const markets = await MarketIDS.findOne({
+const markets = await MarketIDS.find({
     // openDate: { $gte: Date.now() + 2 * 60 * 1000 },
     // status: "CLOSED",
     eventId:eventId
   });
-console.log("markets: ",markets);
+console.log("marketIds: ",marketIds);
  const count = 15;
   const pages = Math.ceil(markets.length / count);
   const matchIds = markets.map((e) => e.marketId);
