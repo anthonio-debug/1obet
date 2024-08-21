@@ -890,7 +890,7 @@ async function cronOdds(req, res) {
   try {
     const response = await axios.get(url);
     
-
+    
     const marketsData = response.data;
       let marketStatus = 'OPEN';
 
@@ -906,7 +906,7 @@ async function cronOdds(req, res) {
 
           let tempRunners = [];
           let hasbetfairFancy = false;
-         
+          console.log("===================================================================================>length:",element?.runners?.length);
           for (let k = 0; k < element?.runners?.length; k++) {
             tempRunners.push({
               SelectionId: element?.runners[k]?.selectionId,
