@@ -975,7 +975,7 @@ async function cronOdds(req, res) {
   }
 
 
-const markets = await MarketIDS.findOne({
+const markets =  MarketIDS.findOne({
     // openDate: { $gte: Date.now() + 2 * 60 * 1000 },
     // status: "CLOSED",
     eventId:eventId
