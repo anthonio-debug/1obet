@@ -921,7 +921,7 @@ async function cronOdds(req, res) {
        
             if (element.marketName === 'Match Odds') {
 
-              console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn>>.",element);
+              
 
               marketIds.push({
                 id: element.marketId,
@@ -975,11 +975,16 @@ async function cronOdds(req, res) {
 
 
 
-
-  const sendMarketIds = [];
-  
-
-
+const sendMarketIds = [];
+  for (let i = 0; i < pages; i++) {
+    let matchId = [];
+    if (i === 0) {
+      matchId = matchIds.slice(0, i + 1 * count);
+    } else {
+      matchId = matchIds.slice(i * count, (i + 1) * count);
+    }
+    sendMarketIds.push(matchId.join(","));
+  }
 
 
 
