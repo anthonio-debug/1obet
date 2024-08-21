@@ -917,11 +917,11 @@ async function cronOdds(req, res) {
 
 
 
-          
+        
        
             if (element.marketName === 'Match Odds') {
 
-              
+              console.log("..............................match odds");
 
               marketIds.push({
                 id: element.marketId,
@@ -975,7 +975,10 @@ async function cronOdds(req, res) {
 
 
 
-const sendMarketIds = [];
+ const count = 15;
+  const pages = Math.ceil(markets.length / count);
+  const matchIds = markets.map((e) => e.marketId);
+  const sendMarketIds = [];
   for (let i = 0; i < pages; i++) {
     let matchId = [];
     if (i === 0) {
