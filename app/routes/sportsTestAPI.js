@@ -899,6 +899,7 @@ async function cronOdds(req, res) {
     } else {
       matchId = matchIds.slice(i * count, (i + 1) * count);
     }
+    console.log("matchId id..............................................>",matchId);
     sendMarketIds.push(matchId.join(","));
   }
   let result = [];
