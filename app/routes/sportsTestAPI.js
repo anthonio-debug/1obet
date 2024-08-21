@@ -917,12 +917,11 @@ async function cronOdds(req, res) {
 
 
 
-            let completeMarketName = element.marketName;
-            let FindInMeRes = completeMarketName.toLowerCase();
+          
        
             if (element.marketName === 'Match Odds') {
 
-              
+              console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn>>.",element);
 
               marketIds.push({
                 id: element.marketId,
@@ -934,7 +933,7 @@ async function cronOdds(req, res) {
                 runners: tempRunners
               });
             }
-          
+            
             const marketID =  MarketIDS.findOne({
               eventId: eventId,
               marketId: element.marketId
