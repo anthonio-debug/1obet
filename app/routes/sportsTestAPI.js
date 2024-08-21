@@ -941,7 +941,7 @@ async function cronOdds(req, res) {
             console.log("..............................eventId:",eventId);
             console.log("..............................element.marketId:",element.marketId);
             console.log("..............................marketID:",marketID);
-            if(!marketID){
+            
 
               const newMarket = new MarketIDS({
                 eventId: eventId,
@@ -958,7 +958,7 @@ async function cronOdds(req, res) {
               const newmarket =  newMarket.save();
 
 
-            }
+            
 
         });
       
