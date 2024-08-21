@@ -902,6 +902,7 @@ async function cronOdds(req, res) {
     sendMarketIds.push(matchId.join(","));
   }
   let result = [];
+  console.log("sending market ids..............................................>",sendMarketIds);
   for (const marketIds of sendMarketIds) {
     console.log("===================================================================================5");
     const odds = await getOdds(marketIds, sportID);
