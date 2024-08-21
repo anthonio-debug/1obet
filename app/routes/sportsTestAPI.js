@@ -953,6 +953,7 @@ async function cronOdds(req, res) {
                 runners: tempRunners,
                 inPlay: true
               });
+              console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn>>.",newMarket);
               const newmarket =  newMarket.save();
 
 
