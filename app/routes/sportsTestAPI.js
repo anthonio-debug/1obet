@@ -880,6 +880,7 @@ async function getOdds(marketIds, sportsId) {
 }
 
 async function cronOdds(req, res) {
+  console.log("===================================================================================3");
   const { eventId, sportID } = req.params;
   const markets = await MarketIDS.find({
     // openDate: { $gte: Date.now() + 2 * 60 * 1000 },
