@@ -76,6 +76,7 @@ async function getAllSportsHighlight(req, res) {
     ]);
 
     let marketData = [];
+    console.log(`sportsHighlights.length=======${sportsHighlights.length}`);
 
     if (sportsHighlights.length > 0) {
       for (let i = 0; i < sportsHighlights.length; i++) {
@@ -109,6 +110,8 @@ async function getAllSportsHighlight(req, res) {
         $lt: endOfDayTimestamp
       }
     })
+    console.log(`marketData==============${marketData}`);
+    console.log(`ids================${ids}`);
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
 
     //console.log(" ======== ids ", ids);
