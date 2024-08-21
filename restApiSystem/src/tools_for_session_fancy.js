@@ -150,11 +150,9 @@ if(bookmakerOdds!==0){
            bookmakerOdds = await fetchBookmakerOdds(bookmakerMarketIds[0])
            
           if (bookmakerOdds.length > 0 && fancyOdds.length > 0) {
-            console.log("f lengthhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh..:",fancyOdds.length);
-           console.log("b lengthhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh..:",bookmakerOdds.length);
-
+      
             const fancyData = buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
-            console.log('fancy oddsssssssssssssss returned',fancyData);
+           // console.log('fancy oddsssssssssssssss returned',fancyData);
             if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
               FancyOddsMap.set(eventId, fancyData)
               let newFancyOdds = new FancyOdds({
