@@ -855,11 +855,11 @@ async function getOdds(marketIds, sportsId) {
   return new Promise((resolve, reject) => {
     const odds = [];
     const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
-
+    console.log("===================================================================================4",marketIds);
     axios
       .get(oddUrl)
       .then(async (oddRes) => {
-        console.log("===================================================================================4");
+        
         if (!oddRes || !oddRes?.data) return;
         if (oddRes.data.length) {
           console.log("===================================================================================1");
