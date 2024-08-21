@@ -973,7 +973,11 @@ async function cronOdds(req, res) {
   }
 
 
-
+const markets = await MarketIDS.find({
+    // openDate: { $gte: Date.now() + 2 * 60 * 1000 },
+    // status: "CLOSED",
+    eventId
+  });
 
  const count = 15;
   const pages = Math.ceil(markets.length / count);
