@@ -860,12 +860,14 @@ async function getOdds(marketIds, sportsId) {
       .then(async (oddRes) => {
         if (!oddRes || !oddRes?.data) return;
         if (oddRes.data.length) {
+          console.log("===================================================================================1");
           for (const item of oddRes.data) {
             const oddData = JSON.parse(item);
             odds.push(await saveOdds(oddData, sportsId));
           }
         } else {
           const oddData = JSON.parse(oddRes.data);
+          console.log("===================================================================================2");
           odds.push(await saveOdds(oddData, sportsId));
         }
         resolve(odds);
