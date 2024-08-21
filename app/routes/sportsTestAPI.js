@@ -906,7 +906,7 @@ async function cronOdds(req, res) {
 
           let tempRunners = [];
           let hasbetfairFancy = false;
-          console.log("===================================================================================>length:",element?.runners?.length);
+          
           for (let k = 0; k < element?.runners?.length; k++) {
             tempRunners.push({
               SelectionId: element?.runners[k]?.selectionId,
@@ -935,12 +935,33 @@ async function cronOdds(req, res) {
               });
             }
           
+            const marketID =  MarketIDS.findOne({
+              eventId: eventId,
+              marketId: element.marketId
+            });
+
+            if(!marketID){
+
+              const newMarket = new MarketIDS({
+                eventId: eventId,
+                marketId: element.marketId,
+                marketName: element.marketName,
+                sportID: '4',
+                totalMatched: element.totalMatched,
+                status: marketStatus,
+                index: 0,
+                runners: tempRunners,
+                inPlay: true
+              });
+              const newmarket =  newMarket.save();
 
 
-
+            }
 
         });
       
+
+        
       }
 
 
