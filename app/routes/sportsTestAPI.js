@@ -893,7 +893,7 @@ async function cronOdds(req, res) {
     
     const marketsData = response.data;
       let marketStatus = 'OPEN';
-
+    console.log('market data..................................>',marketsData);
 
       if (marketsData && marketsData?.length > 0) {
         let marketIds = [];
@@ -980,7 +980,7 @@ const markets = await MarketIDS.find({
     // status: "CLOSED",
     eventId:eventId
   });
-console.log("marketIds: ",marketIds);
+console.log("markets: ",markets);
  const count = 15;
   const pages = Math.ceil(markets.length / count);
   const matchIds = markets.map((e) => e.marketId);
