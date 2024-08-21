@@ -882,26 +882,88 @@ async function getOdds(marketIds, sportsId) {
 async function cronOdds(req, res) {
   console.log("===================================================================================3");
   const { eventId, sportID } = req.params;
-  const markets = await MarketIDS.find({
-    // openDate: { $gte: Date.now() + 2 * 60 * 1000 },
-    // status: "CLOSED",
-    eventId,
-    sportID,
-  });
-  const count = 15;
-  const pages = Math.ceil(markets.length / count);
-  const matchIds = markets.map((e) => e.marketId);
-  const sendMarketIds = [];
-  for (let i = 0; i < pages; i++) {
-    let matchId = [];
-    if (i === 0) {
-      matchId = matchIds.slice(0, i + 1 * count);
-    } else {
-      matchId = matchIds.slice(i * count, (i + 1) * count);
-    }
-    console.log("matchId id..............................................>",matchId);
-    sendMarketIds.push(matchId.join(","));
+  
+ 
+  const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
+
+
+  try {
+    const response = await axios.get(url);
+    
+
+    const marketsData = response.data;
+      let marketStatus = 'OPEN';
+
+
+      if (marketsData && marketsData?.length > 0) {
+        let marketIds = [];
+        let arrMarketIds = [];
+        let cntrl = 0;
+        marketsData.forEach((element) => {
+
+         
+          
+
+          let tempRunners = [];
+          let hasbetfairFancy = false;
+         
+          for (let k = 0; k < element?.runners?.length; k++) {
+            tempRunners.push({
+              SelectionId: element?.runners[k]?.selectionId,
+              runnerName: element?.runners[k]?.runnerName
+            });
+          }
+
+
+
+
+            let completeMarketName = element.marketName;
+            let FindInMeRes = completeMarketName.toLowerCase();
+       
+            if (element.marketName === 'Match Odds') {
+
+              
+
+              marketIds.push({
+                id: element.marketId,
+                marketName: element.marketName,
+                sort: 1,
+                openDate: Date.parse(element.marketStartTime),
+                status: marketStatus,
+                hasbetfairFancy: hasbetfairFancy,
+                runners: tempRunners
+              });
+            }
+          
+
+
+
+
+        });
+      
+      }
+
+
+
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + error.message });
   }
+
+
+
+
+
+  const sendMarketIds = [];
+  
+
+
+
+
+
+
+
   let result = [];
   console.log("sending market ids..............................................>",sendMarketIds);
   for (const marketIds of sendMarketIds) {
