@@ -934,7 +934,7 @@ async function cronOdds(req, res) {
               });
             }
             
-            const marketID =  MarketIDS.findOne({
+            const marketID =  await MarketIDS.findOne({
               eventId: eventId,
               marketId: element.marketId
             });
@@ -942,7 +942,7 @@ async function cronOdds(req, res) {
             console.log("..............................element.marketId:",element.marketId);
             console.log("..............................marketID:",marketID);
             
-
+            if(!marketID){
               const newMarket = new MarketIDS({
                 eventId: eventId,
                 marketId: element.marketId,
@@ -956,7 +956,7 @@ async function cronOdds(req, res) {
               });
               console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn>>.",newMarket);
               const newmarket =  newMarket.save();
-
+            }
 
             
 
@@ -975,12 +975,12 @@ async function cronOdds(req, res) {
   }
 
 
-const markets = await MarketIDS.find({
+const markets = await MarketIDS.findOne({
     // openDate: { $gte: Date.now() + 2 * 60 * 1000 },
     // status: "CLOSED",
-    eventId
+    eventId:eventId
   });
-console.log("event id: ",eventId);
+console.log("fetched markets: ",markets);
  const count = 15;
   const pages = Math.ceil(markets.length / count);
   const matchIds = markets.map((e) => e.marketId);
