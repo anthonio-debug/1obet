@@ -346,6 +346,10 @@ function apiRequests() {
       marketProjection: ['EVENT', 'EVENT_TYPE', 'MARKET_START_TIME', 'MARKET_DESCRIPTION', 'RUNNER_DESCRIPTION']
     };
     const url = `${config.newThirdURL}/listMarketCatalogue`;
+
+
+
+
     try {
       const response = await axios.post(url, requestData, header);
 
@@ -358,6 +362,21 @@ function apiRequests() {
         let arrMarketIds = [];
         let cntrl = 0;
         marketsData.forEach((element) => {
+
+
+
+          ///mujahid code here start
+           
+          //==> compare open date, if its more than half hour then 
+          //if(openDate>now()){
+            //call limitless api for odds for this market... and update odds collection and marketsids collection only with totalMathedAmount...
+          //AND set readyForOdds : true in marketids for this market.
+          
+        //  }
+          
+          
+          //here code ends for mujahid
+
 
           let tempRunners = [];
           let hasbetfairFancy = false;
