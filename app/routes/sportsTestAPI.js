@@ -888,40 +888,12 @@ async function cronOdds(req, res) {
 
 
   try {
-    // const response = await axios.get(url);
-    ///////////////////
-    const response = {
-      "success": true,
-      "data": [
-        {
-          "marketId": "1.232001727",
-          "marketName": "Match Odds",
-          "marketStartTime": "2024-08-21T23:00:00.000Z",
-          "totalMatched": "417.55",
-          "runners": [
-            {
-              "selectionId": 47674067,
-              "runnerName": "Barbados Royals W",
-              "sortPriority": 1
-            },
-            {
-              "selectionId": 47674068,
-              "runnerName": "Guyana Amazon Warriors W",
-              "sortPriority": 2
-            }
-          ]
-        }
-      ]
-    };
-    ///////////////////
-
-    console.log(response,"{{{{{{{{{{{{{{{{{{{");
-    
+    const response = await axios.get(url);
     
     
     const marketsData = response.data;
       let marketStatus = 'OPEN';
-    console.log('market data..................................>',marketsData);
+
 
       if (marketsData && marketsData?.length > 0) {
         let marketIds = [];
@@ -945,11 +917,11 @@ async function cronOdds(req, res) {
 
 
 
-        
+          
        
             if (element.marketName === 'Match Odds') {
 
-              console.log("..............................match odds");
+              
 
               marketIds.push({
                 id: element.marketId,
@@ -966,11 +938,9 @@ async function cronOdds(req, res) {
               eventId: eventId,
               marketId: element.marketId
             });
-            console.log("..............................eventId:",eventId);
-            console.log("..............................element.marketId:",element.marketId);
-            console.log("..............................marketID:",marketID);
-            
-           
+
+            if(!marketID){
+
               const newMarket = new MarketIDS({
                 eventId: eventId,
                 marketId: element.marketId,
@@ -985,8 +955,8 @@ async function cronOdds(req, res) {
               console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn>>.",newMarket);
               const newmarket =  newMarket.save();
 
-            
-            
+
+            }
 
         });
       
@@ -1003,16 +973,9 @@ async function cronOdds(req, res) {
   }
 
 
-const markets = await MarketIDS.find({
-    // openDate: { $gte: Date.now() + 2 * 60 * 1000 },
-    // status: "CLOSED",
-    eventId:eventId
-  });
-console.log("markets:{{{{{{{{{{{}}}}}}}}}}} ",markets);
- const count = 15;
-  const pages = Math.ceil(markets.length / count);
-  const matchIds = markets.map((e) => e.marketId);
-  const sendMarketIds = [];
+
+
+const sendMarketIds = [];
   for (let i = 0; i < pages; i++) {
     let matchId = [];
     if (i === 0) {
@@ -1032,8 +995,6 @@ console.log("markets:{{{{{{{{{{{}}}}}}}}}}} ",markets);
   for (const marketIds of sendMarketIds) {
     console.log("===================================================================================5");
     const odds = await getOdds(marketIds, sportID);
-    console.log(odds, "odds}}}}}}}}}}}}}}");
-    
     result = [...result, ...odds];
   }
   res.json({ status: true, data: "here in res"+result });
@@ -1041,17 +1002,102 @@ console.log("markets:{{{{{{{{{{{}}}}}}}}}}} ",markets);
 }
 
 async function cronOdds2(req, res) {
+  console.log("===================================================================================3");
   const { eventId, sportID } = req.params;
-  const markets = await MarketIDS.find({
-    // openDate: { $gte: Date.now() + 2 * 60 * 1000 },
-    // status: "CLOSED",
-    eventId,
-    sportID,
-  });
-  const count = 15;
-  const pages = Math.ceil(markets.length / count);
-  const matchIds = markets.map((e) => e.marketId);
-  const sendMarketIds = [];
+  
+ 
+  const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
+
+
+  try {
+    const response = await axios.get(url);
+    
+    
+    const marketsData = response.data;
+      let marketStatus = 'OPEN';
+
+
+      if (marketsData && marketsData?.length > 0) {
+        let marketIds = [];
+        let arrMarketIds = [];
+        let cntrl = 0;
+        marketsData.forEach((element) => {
+
+         
+          
+
+          let tempRunners = [];
+          let hasbetfairFancy = false;
+          
+          for (let k = 0; k < element?.runners?.length; k++) {
+            tempRunners.push({
+              SelectionId: element?.runners[k]?.selectionId,
+              runnerName: element?.runners[k]?.runnerName
+            });
+          }
+
+
+
+
+          
+       
+            if (element.marketName === 'Match Odds') {
+
+              
+
+              marketIds.push({
+                id: element.marketId,
+                marketName: element.marketName,
+                sort: 1,
+                openDate: Date.parse(element.marketStartTime),
+                status: marketStatus,
+                hasbetfairFancy: hasbetfairFancy,
+                runners: tempRunners
+              });
+            }
+            
+            const marketID =  MarketIDS.findOne({
+              eventId: eventId,
+              marketId: element.marketId
+            });
+
+            if(!marketID){
+
+              const newMarket = new MarketIDS({
+                eventId: eventId,
+                marketId: element.marketId,
+                marketName: element.marketName,
+                sportID: '4',
+                totalMatched: element.totalMatched,
+                status: marketStatus,
+                index: 0,
+                runners: tempRunners,
+                inPlay: true
+              });
+              console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn>>.",newMarket);
+              const newmarket =  newMarket.save();
+
+
+            }
+
+        });
+      
+
+        
+      }
+
+
+
+  } catch (error) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + error.message });
+  }
+
+
+
+
+const sendMarketIds = [];
   for (let i = 0; i < pages; i++) {
     let matchId = [];
     if (i === 0) {
@@ -1061,12 +1107,19 @@ async function cronOdds2(req, res) {
     }
     sendMarketIds.push(matchId.join(","));
   }
+
+
+
+
+
   let result = [];
+  console.log("sending market ids..............................................>",sendMarketIds);
   for (const marketIds of sendMarketIds) {
+    console.log("===================================================================================5");
     const odds = await getOdds(marketIds, sportID);
     result = [...result, ...odds];
   }
-  res.json({ status: true, data: "here in res" });
+  res.json({ status: true, data: "here in res"+result });
 
 }
 async function getTheSportsMatchScoreEvents(req, res) {
