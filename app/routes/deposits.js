@@ -307,6 +307,8 @@ async function withDrawCashDeposit(req, res) {
     }
     const checkdiff = lastTrans.availableBalance - userToUpdate.availableBalance
     console.log(`checkdiff=======================${checkdiff}`)
+    console.log(`userToUpdate.availableBalance=======================${userToUpdate.availableBalance}`)
+    console.log(`lastTrans.availableBalance=======================${lastTrans.availableBalance}`)
     const checkabs = Math.abs(checkdiff)
     console.log(`checkabs=======================${checkabs}`)
     
