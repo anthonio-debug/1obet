@@ -73,7 +73,8 @@ async function getAllSportsHighlight(req, res) {
           theSportsId: "$theSportsId",
           CompanySetStatus: "$CompanySetStatus",
           hasFancyMatch: "$hasFancyMatch",
-          hasBookmaker: "$hasBookmaker"
+          hasBookmaker: "$hasBookmaker",
+          serverTime:"$serverTime"
         },
       },
     ]);
