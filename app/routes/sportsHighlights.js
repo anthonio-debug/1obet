@@ -8,7 +8,19 @@ const { default: mongoose } = require('mongoose');
 const marketIds = require('../models/marketIds');
 
 async function getAllSportsHighlight(req, res) {
-  const serverTime = new Date();
+  let serverTime = new Date();
+  serverTime = serverTime.toLocaleString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+    timeZoneName: 'short'
+  });
+  
   console.log("Server time:", serverTime.toString());
   try {
 
