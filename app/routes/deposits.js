@@ -311,7 +311,8 @@ async function withDrawCashDeposit(req, res) {
     console.log(`lastTrans.availableBalance=======================${lastTrans.availableBalance}`)
     const checkabs = Math.abs(checkdiff)
     console.log(`checkabs=======================${checkabs}`)
-
+    return
+    
     if (userToUpdate.role != '5' && req.body.amount > userToUpdate.cash + userToUpdate.creditRemaining) {
       //console.log('comming');
       return res.status(400).send({
