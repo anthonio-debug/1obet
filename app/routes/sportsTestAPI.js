@@ -22,7 +22,7 @@ console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
 
 async function listEvents(req, res) {
   try {
-    
+
     const body = {
       "filter": {
         "textQuery": "string",
@@ -846,123 +846,220 @@ async function saveOdds(oddData, sportsId) {
     numberOfActiveRunners: activeRunners.length,
     runners,
   };
-  return odd;
+  
   const odds = new Odds(oddData);
   await odds.save();
+  return odd;
 }
 
+// async function getOdds(marketIds, sportsId) {
+//   return new Promise((resolve, reject) => {
+//     const odds = [];
+//     const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+//     axios
+//       .get(oddUrl)
+//       .then(async (oddRes) => {
+//         if (!oddRes || !oddRes?.data) return;
+//         if (oddRes.data.length) {
+//           console.log("===================================================================================1");
+//           for (const item of oddRes.data) {
+//             const oddData = JSON.parse(item);
+//             odds.push(await saveOdds(oddData, sportsId));
+//           }
+//         } else {
+//           const oddData = JSON.parse(oddRes.data);
+//           console.log("===================================================================================2");
+//           odds.push(await saveOdds(oddData, sportsId));
+//         }
+//         resolve(odds);
+//       })
+//       .catch((error) => {
+//         console.log("error", error.response.data);
+//         resolve([]);
+//       });
+//   });
+// }
+
+//////////////////////////////////////////////////////////////////////////////////////
 async function getOdds(marketIds, sportsId) {
-  return new Promise((resolve, reject) => {
+  return new Promise(async (resolve, reject) => {
     const odds = [];
-    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
-    axios
-      .get(oddUrl)
-      .then(async (oddRes) => {
-        if (!oddRes || !oddRes?.data) return;
-        if (oddRes.data.length) {
-          console.log("===================================================================================1");
-          for (const item of oddRes.data) {
-            const oddData = JSON.parse(item);
-            odds.push(await saveOdds(oddData, sportsId));
+
+    // Use the mock data directly instead of making an API call
+    const oddUrl = {
+      "success": true,
+      "data": {
+        "eventid": "33504867",
+        "marketId": "1.232001727",
+        "market": "Match Odds",
+        "updateTime": "2024-08-22T06:48:54",
+        "status": "OPEN",
+        "inplay": true,
+        "totalMatched": 3488240.53,
+        "active": true,
+        "markettype": "ODDS",
+        "runners": [
+          {
+            "selectionId": 47674067,
+            "runner": "Barbados Royals W",
+            "status": "ACTIVE",
+            "lastPriceTraded": 1.5,
+            "removalDate": "1900-01-01T00:00:00",
+            "ex": {
+              "availableToBack": [
+                { "level": 0, "price": 1.5, "size": 3954 },
+                { "level": 1, "price": 1.45, "size": 8240 },
+                { "level": 2, "price": 1.39, "size": 98 }
+              ],
+              "availableToLay": [
+                { "level": 0, "price": 1.52, "size": 78 },
+                { "level": 1, "price": 1.54, "size": 24 },
+                { "level": 2, "price": 1.55, "size": 57 }
+              ]
+            },
+            "back": [
+              { "level": 0, "price": 1.5, "size": 3954 },
+              { "level": 1, "price": 1.45, "size": 8240 },
+              { "level": 2, "price": 1.39, "size": 98 }
+            ],
+            "lay": [
+              { "level": 0, "price": 1.52, "size": 78 },
+              { "level": 1, "price": 1.54, "size": 24 },
+              { "level": 2, "price": 1.55, "size": 57 }
+            ]
+          },
+          {
+            "selectionId": 47674068,
+            "runner": "Guyana Amazon Warriors W",
+            "status": "ACTIVE",
+            "lastPriceTraded": 3.1,
+            "removalDate": "1900-01-01T00:00:00",
+            "ex": {
+              "availableToBack": [
+                { "level": 0, "price": 2.92, "size": 41 },
+                { "level": 1, "price": 2.84, "size": 13 },
+                { "level": 2, "price": 2.8, "size": 32 }
+              ],
+              "availableToLay": [
+                { "level": 0, "price": 3, "size": 1977 },
+                { "level": 1, "price": 3.25, "size": 3676 },
+                { "level": 2, "price": 3.6, "size": 38 }
+              ]
+            },
+            "back": [
+              { "level": 0, "price": 2.92, "size": 41 },
+              { "level": 1, "price": 2.84, "size": 13 },
+              { "level": 2, "price": 2.8, "size": 32 }
+            ],
+            "lay": [
+              { "level": 0, "price": 3, "size": 1977 },
+              { "level": 1, "price": 3.25, "size": 3676 },
+              { "level": 2, "price": 3.6, "size": 38 }
+            ]
           }
-        } else {
-          const oddData = JSON.parse(oddRes.data);
-          console.log("===================================================================================2");
-          odds.push(await saveOdds(oddData, sportsId));
-        }
-        resolve(odds);
-      })
-      .catch((error) => {
-        console.log("error", error.response.data);
-        resolve([]);
-      });
+        ],
+        "min": "",
+        "max": ""
+      }
+    };
+
+    
+    if (oddUrl.success && oddUrl.data) {
+      const oddData = oddUrl.data;
+      console.log("===================================================================================2");
+      odds.push(await saveOdds(oddData, sportsId));
+    }
+
+    // Resolve the promise with the collected odds
+    resolve(odds);
   });
 }
 
+///////////////////////////////////////////////////////////////////////////////////////
 async function cronOdds(req, res) {
   console.log("===================================================================================3");
   const { eventId, sportID } = req.params;
-  
- 
+
+
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
 
 
   try {
     const response = await axios.get(url);
-    
-    
+
+
     const marketsData = response.data;
-      let marketStatus = 'OPEN';
+    let marketStatus = 'OPEN';
 
 
-      if (marketsData && marketsData?.length > 0) {
-        let marketIds = [];
-        let arrMarketIds = [];
-        let cntrl = 0;
-        marketsData.forEach((element) => {
-
-         
-          
-
-          let tempRunners = [];
-          let hasbetfairFancy = false;
-          
-          for (let k = 0; k < element?.runners?.length; k++) {
-            tempRunners.push({
-              SelectionId: element?.runners[k]?.selectionId,
-              runnerName: element?.runners[k]?.runnerName
-            });
-          }
+    if (marketsData && marketsData?.length > 0) {
+      let marketIds = [];
+      let arrMarketIds = [];
+      let cntrl = 0;
+      marketsData.forEach((element) => {
 
 
 
 
-          
-       
-            if (element.marketName === 'Match Odds') {
+        let tempRunners = [];
+        let hasbetfairFancy = false;
 
-              
-
-              marketIds.push({
-                id: element.marketId,
-                marketName: element.marketName,
-                sort: 1,
-                openDate: Date.parse(element.marketStartTime),
-                status: marketStatus,
-                hasbetfairFancy: hasbetfairFancy,
-                runners: tempRunners
-              });
-            }
-            
-            const marketID =  MarketIDS.findOne({
-              eventId: eventId,
-              marketId: element.marketId
-            });
-
-            if(!marketID){
-
-              const newMarket = new MarketIDS({
-                eventId: eventId,
-                marketId: element.marketId,
-                marketName: element.marketName,
-                sportID: '4',
-                totalMatched: element.totalMatched,
-                status: marketStatus,
-                index: 0,
-                runners: tempRunners,
-                inPlay: true
-              });
-              console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn>>.",newMarket);
-              const newmarket =  newMarket.save();
+        for (let k = 0; k < element?.runners?.length; k++) {
+          tempRunners.push({
+            SelectionId: element?.runners[k]?.selectionId,
+            runnerName: element?.runners[k]?.runnerName
+          });
+        }
 
 
-            }
 
+
+
+
+        if (element.marketName === 'Match Odds') {
+
+
+
+          marketIds.push({
+            id: element.marketId,
+            marketName: element.marketName,
+            sort: 1,
+            openDate: Date.parse(element.marketStartTime),
+            status: marketStatus,
+            hasbetfairFancy: hasbetfairFancy,
+            runners: tempRunners
+          });
+        }
+
+        const marketID = MarketIDS.findOne({
+          eventId: eventId,
+          marketId: element.marketId
         });
-      
 
-        
-      }
+        if (!marketID) {
+
+          const newMarket = new MarketIDS({
+            eventId: eventId,
+            marketId: element.marketId,
+            marketName: element.marketName,
+            sportID: '4',
+            totalMatched: element.totalMatched,
+            status: marketStatus,
+            index: 0,
+            runners: tempRunners,
+            inPlay: true
+          });
+          console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn>>.", newMarket);
+          const newmarket = newMarket.save();
+
+
+        }
+
+      });
+
+
+
+    }
 
 
 
@@ -975,7 +1072,7 @@ async function cronOdds(req, res) {
 
 
 
-const sendMarketIds = [];
+  const sendMarketIds = [];
   for (let i = 0; i < pages; i++) {
     let matchId = [];
     if (i === 0) {
@@ -991,137 +1088,110 @@ const sendMarketIds = [];
 
 
   let result = [];
-  console.log("sending market ids..............................................>",sendMarketIds);
+  console.log("sending market ids..............................................>", sendMarketIds);
   for (const marketIds of sendMarketIds) {
     console.log("===================================================================================5");
     const odds = await getOdds(marketIds, sportID);
     result = [...result, ...odds];
   }
-  res.json({ status: true, data: "here in res"+result });
+  res.json({ status: true, data: "here in res" + result });
 
 }
 
 async function cronOdds2(req, res) {
   console.log("===================================================================================3");
   const { eventId, sportID } = req.params;
-  
- 
+
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
 
-
   try {
-    const response = await axios.get(url);
-    
-    
+    // const response = await axios.get(url);
+    const response = {
+      "success": true,
+      "data": [
+        {
+          "marketId": "1.232001727",
+          "marketName": "Match Odds",
+          "marketStartTime": "2024-08-21T23:00:00.000Z",
+          "totalMatched": "417.55",
+          "runners": [
+            {
+              "selectionId": 47674067,
+              "runnerName": "Barbados Royals W",
+              "sortPriority": 1
+            },
+            {
+              "selectionId": 47674068,
+              "runnerName": "Guyana Amazon Warriors W",
+              "sortPriority": 2
+            }
+          ]
+        }
+      ]
+    };
+
     const marketsData = response.data;
-      let marketStatus = 'OPEN';
 
+    console.log(marketsData, "||||||||||||||||||||");
+    const marketStatus = 'OPEN';
 
-      if (marketsData && marketsData?.length > 0) {
-        let marketIds = [];
-        let arrMarketIds = [];
-        let cntrl = 0;
-        marketsData.forEach((element) => {
+    if (marketsData && marketsData.length > 0) {
+      for (const element of marketsData) {
+        const tempRunners = element.runners.map(runner => ({
+          SelectionId: runner.selectionId,
+          runnerName: runner.runnerName,
+        }));
 
-         
-          
+        if (element.marketName === 'Match Odds') {
+          const marketID = await MarketIDS.findOne({
+            eventId: eventId,
+            marketId: element.marketId,
+          });
 
-          let tempRunners = [];
-          let hasbetfairFancy = false;
-          
-          for (let k = 0; k < element?.runners?.length; k++) {
-            tempRunners.push({
-              SelectionId: element?.runners[k]?.selectionId,
-              runnerName: element?.runners[k]?.runnerName
-            });
-          }
-
-
-
-
-          
-       
-            if (element.marketName === 'Match Odds') {
-
-              
-
-              marketIds.push({
-                id: element.marketId,
-                marketName: element.marketName,
-                sort: 1,
-                openDate: Date.parse(element.marketStartTime),
-                status: marketStatus,
-                hasbetfairFancy: hasbetfairFancy,
-                runners: tempRunners
-              });
-            }
-            
-            const marketID =  MarketIDS.findOne({
+          if (!marketID) {
+            const newMarket = new MarketIDS({
               eventId: eventId,
-              marketId: element.marketId
+              marketId: element.marketId,
+              marketName: element.marketName,
+              sportID: '4',
+              totalMatched: element.totalMatched,
+              status: marketStatus,
+              index: 0,
+              runners: tempRunners,
+              inPlay: true,
             });
 
-            if(!marketID){
-
-              const newMarket = new MarketIDS({
-                eventId: eventId,
-                marketId: element.marketId,
-                marketName: element.marketName,
-                sportID: '4',
-                totalMatched: element.totalMatched,
-                status: marketStatus,
-                index: 0,
-                runners: tempRunners,
-                inPlay: true
-              });
-              console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn>>.",newMarket);
-              const newmarket =  newMarket.save();
-
-
-            }
-
-        });
-      
-
-        
+            console.log("Saving new market: ", newMarket);
+            await newMarket.save();
+          }else{
+            await MarketIDS.findOneAndUpdate({eventId: eventId,marketId: element.marketId,}, {$set:{
+              totalMatched:element.totalMatched,
+            }} )
+          }
+        }
       }
+    }
 
+    
+    const sendMarketIds = ["1.232001727"];
 
+    let result = [];
+    console.log(result,"=-=-=---=-=---=--=");
+    
+    console.log("Sending market ids:", sendMarketIds);
+    for (const marketId of sendMarketIds) {
+      console.log("===================================================================================5");
+      const odds = await getOdds(marketId, sportID);
+      result = [...result, ...odds];
+    }
+
+    res.json({ status: true, data: "Result: " , result });
 
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, msg: "Failed to get Error: " + error.message });
+    res.status(500).json({ success: false, msg: "Failed to get data. Error: " + error.message });
   }
-
-
-
-
-const sendMarketIds = [];
-  for (let i = 0; i < pages; i++) {
-    let matchId = [];
-    if (i === 0) {
-      matchId = matchIds.slice(0, i + 1 * count);
-    } else {
-      matchId = matchIds.slice(i * count, (i + 1) * count);
-    }
-    sendMarketIds.push(matchId.join(","));
-  }
-
-
-
-
-
-  let result = [];
-  console.log("sending market ids..............................................>",sendMarketIds);
-  for (const marketIds of sendMarketIds) {
-    console.log("===================================================================================5");
-    const odds = await getOdds(marketIds, sportID);
-    result = [...result, ...odds];
-  }
-  res.json({ status: true, data: "here in res"+result });
-
 }
+
 async function getTheSportsMatchScoreEvents(req, res) {
 
 
@@ -1322,42 +1392,42 @@ async function updateUserBetSizesColec(req, res) {
 
 }
 ///////////////
-async function getRaceLatestRecord(req,res){
-   const {collectionName,marketId} =req.params;
+async function getRaceLatestRecord(req, res) {
+  const { collectionName, marketId } = req.params;
 
-   console.log(`raceodds ------- ${collectionName}---------`);
-   console.log(`marketId ------- ${marketId}---------`);
-   
+  console.log(`raceodds ------- ${collectionName}---------`);
+  console.log(`marketId ------- ${marketId}---------`);
+
   //  const marketId = req.query.marketId
   // raceodds
 
-   try {
-    if (collectionName =="odds"){
-      const raceLatestRecord =await Odds.aggregate([
+  try {
+    if (collectionName == "odds") {
+      const raceLatestRecord = await Odds.aggregate([
         {
-          $match:{marketId:marketId}
-      },
-      {$sort:{createdAt:-1}},
-          {$limit:1}
-    ])
-        res.status(200).json({ success: true, message: 'Sports Latest Record from odds:', raceLatestRecord });
-     }
-      else{
-        const raceLatestRecord= await RaceOdds.aggregate([
-          {
-            $match:{marketId:marketId}
-          },
-          {$sort:{createdAt:-1}},
-          {$limit:1}
-        ])
+          $match: { marketId: marketId }
+        },
+        { $sort: { createdAt: -1 } },
+        { $limit: 1 }
+      ])
+      res.status(200).json({ success: true, message: 'Sports Latest Record from odds:', raceLatestRecord });
+    }
+    else {
+      const raceLatestRecord = await RaceOdds.aggregate([
+        {
+          $match: { marketId: marketId }
+        },
+        { $sort: { createdAt: -1 } },
+        { $limit: 1 }
+      ])
 
-        res.status(200).json({ success: true, message: 'Race Latest Record race odds:', raceLatestRecord });
-      }
-      
-   } catch (error) {
+      res.status(200).json({ success: true, message: 'Race Latest Record race odds:', raceLatestRecord });
+    }
+
+  } catch (error) {
     console.error("Error in updateUserBetSizesColec:", error);
     res.status(500).json({ success: false, message: 'Internal server error' });
-   }
+  }
 
 }
 
@@ -1386,14 +1456,14 @@ async function updateUserName(req, res) {
 async function testing(req, res) {
   try {
     const currentTime = Date.now();
-// const formattedTime = currentTime.toLocaleTimeString();
-console.log(currentTime,"//////");
-    
+    // const formattedTime = currentTime.toLocaleTimeString();
+    console.log(currentTime, "//////");
+
 
     res.status(200).json({
       success: true,
       message: 'User names updated successfully',
-   
+
     });
   } catch (error) {
     console.error("Error in update user name:", error);
