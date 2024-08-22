@@ -889,6 +889,9 @@ async function cronOdds(req, res) {
 
   try {
     const response = await axios.get(url);
+
+    console.log(response,"{{{{{{{{{{{{{{{{{{{");
+    
     
     
     const marketsData = response.data;
