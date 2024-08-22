@@ -8,7 +8,10 @@ const { default: mongoose } = require('mongoose');
 const marketIds = require('../models/marketIds');
 
 async function getAllSportsHighlight(req, res) {
+  const serverTime = new Date();
+  console.log("Server time:", serverTime.toString());
   try {
+
     let now = new Date();  // Get the current date and time
     let startOfDay = new Date(now);
     startOfDay.setHours(0, 0, 0, 0);
@@ -120,7 +123,8 @@ async function getAllSportsHighlight(req, res) {
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
       results: sportsHighlights,
-      totalOpenMarkets: totalOpenMarkets
+      totalOpenMarkets: totalOpenMarkets,
+      serverTime: serverTime
     });
   } catch (err) {
     //console.log(err);
