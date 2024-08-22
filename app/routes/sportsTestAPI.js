@@ -1008,7 +1008,7 @@ const markets = await MarketIDS.find({
     // status: "CLOSED",
     eventId:eventId
   });
-console.log("markets: ",markets);
+console.log("markets:{{{{{{{{{{{}}}}}}}}}}} ",markets);
  const count = 15;
   const pages = Math.ceil(markets.length / count);
   const matchIds = markets.map((e) => e.marketId);
@@ -1032,6 +1032,8 @@ console.log("markets: ",markets);
   for (const marketIds of sendMarketIds) {
     console.log("===================================================================================5");
     const odds = await getOdds(marketIds, sportID);
+    console.log(odds, "odds}}}}}}}}}}}}}}");
+    
     result = [...result, ...odds];
   }
   res.json({ status: true, data: "here in res"+result });
