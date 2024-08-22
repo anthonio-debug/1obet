@@ -306,19 +306,8 @@ async function withDrawCashDeposit(req, res) {
       return res.status(404).send({ message: 'user not found' });
     }
 
-    const checkdiff = userToUpdate.availableBalance - lastTrans.availableBalance
-    console.log(`checkdiff=======================${checkdiff}`)
-    console.log(`userToUpdate.availableBalance=======================${userToUpdate.availableBalance}`)
-    console.log(`lastTrans.availableBalance=======================${lastTrans.availableBalance}`)
-    const checkabs = Math.abs(userToUpdate.availableBalance - lastTrans.availableBalance)
-    console.log(`checkabs=======================${checkabs}`)
-    if (checkabs < 1) {
-      console.log(`checkabs=======================Less than${checkabs}`)
-    }
-    if (checkabs >= 1) {
-      console.log(`checkabs=======================greater${checkabs}`)
-    }
-
+    const checkAbs = Math.abs(userToUpdate.availableBalance - lastTrans.availableBalance)
+    
     if (userToUpdate.role != '5' && req.body.amount > userToUpdate.cash + userToUpdate.creditRemaining) {
       //console.log('comming');
       return res.status(400).send({
@@ -335,7 +324,7 @@ async function withDrawCashDeposit(req, res) {
       return res.status(400).send({
         message: `Something went wrong. Contact Support.`,
       });
-    } else if (userToUpdate.role === '5' && checkabs >= 1) {
+    } else if (userToUpdate.role === '5' && checkAbs >= 1) {
       return res.status(400).send({
         message: `Something went wrong. Contact Support.`,
       });
