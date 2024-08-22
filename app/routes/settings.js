@@ -547,9 +547,10 @@ async function betsRecords(req, res) {
   if (userRole !== "0") {
     res.status(400).send({ message: "Only Company can access" })
   }
-
-  const now = new Date().getTime();
-  const lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
+  const { startDate, endDate } = req.body
+  
+  const now = new Date(startDate).getTime();
+  const lastDay = new Date(endDate).getTime();
 
   try {
     const betsRecords = await Bets.aggregate([
