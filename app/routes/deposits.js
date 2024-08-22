@@ -305,7 +305,11 @@ async function withDrawCashDeposit(req, res) {
     if (!currentUserParent) {
       return res.status(404).send({ message: 'user not found' });
     }
-
+    const checkdiff = lastTrans.availableBalance - userToUpdate.availableBalance
+    console.log(`checkdiff=======================${checkdiff}`)
+    const checkabs = Math.abs(checkdiff)
+    console.log(`checkabs=======================${checkabs}`)
+    
     if (userToUpdate.role != '5' && req.body.amount > userToUpdate.cash + userToUpdate.creditRemaining) {
       //console.log('comming');
       return res.status(400).send({
