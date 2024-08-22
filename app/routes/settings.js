@@ -548,8 +548,15 @@ async function betsRecords(req, res) {
     res.status(400).send({ message: "Only Company can access" })
   }
 
-  const now = new Date().getTime();
-  const lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
+  let { startDate, endDate } = req.body
+
+  let now = new Date(startDate).getTime();
+  let lastDay = new Date(endDate).getTime();
+
+  if (now === lastDay) {
+    now = new Date().getTime();
+    lastDay = new Date(now - 24 * 60 * 60 * 1000).getTime();
+  }
 
   try {
     const betsRecords = await Bets.aggregate([
@@ -627,7 +634,7 @@ async function betsRecords(req, res) {
       }
     ]);
 
-    res.status(200).send({ data: users });
+    res.status(200).send({ data: users, total: users.length });
   } catch (error) {
     console.error('Error fetching records:', error);
     res.status(500).send({ message: "Internal server error" });
