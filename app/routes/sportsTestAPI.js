@@ -884,7 +884,8 @@ async function saveOdds(oddData, sportsId) {
 async function getOdds(marketIds, sportsId) {
   return new Promise(async (resolve, reject) => {
     const odds = [];
-    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+    // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
 
     console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
     
@@ -1110,7 +1111,7 @@ async function cronOdds2(req, res) {
   try {
     const response = await axios.get(url);
 
-    console.log("=-=--==---=-=--=-===--= market api response", );
+    console.log("=-=--==---=-=--=-===--= market api response", response);
     
     /////////////////////////
     // const response = {
