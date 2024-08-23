@@ -39,7 +39,7 @@ const checkMarketBlocked = async (user) => {
   let parentUserIds = await getParents(user.userId);
   const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
   const marketId = config.casinoMarketId;
-
+  console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU:",user);
   if (marketIds.includes(marketId) || user.casinoAllowed == false || user.bettingAllowed == false) {
     return 1;
   } else {
@@ -647,6 +647,7 @@ async function balanceFun(req, res) {
     }
 
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
+    console.log("checkMarketBlockedResponse::::::::::::",checkMarketBlockedResponse);
     if (checkMarketBlockedResponse == 1) {
       return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
     }
