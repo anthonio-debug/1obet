@@ -2242,6 +2242,7 @@ const getWaitingBetsForManuel = async (req, res) => {
             eventId: eventData.Id,
             marketId: item.marketId
           });
+          console.log("marketData===================>", marketData);
 
           if (marketData) {
             groups[main_group_key].eventData.marketData = marketData;
