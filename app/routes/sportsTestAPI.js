@@ -834,7 +834,7 @@ async function saveOdds(oddData, sportsId) {
       },
     });
   }
-  const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
+  // const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
   const odd = {
     eventId: oddData.eventid,
     marketId: oddData.marketId,
