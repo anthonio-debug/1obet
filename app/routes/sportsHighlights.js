@@ -8,7 +8,22 @@ const { default: mongoose } = require('mongoose');
 const marketIds = require('../models/marketIds');
 
 async function getAllSportsHighlight(req, res) {
+  let serverTime = new Date();
+  serverTime = serverTime.toLocaleString('en-US', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: true,
+    timeZoneName: 'short'
+  });
+  
+  console.log("Server time:", serverTime.toString());
   try {
+
     let now = new Date();  // Get the current date and time
     let startOfDay = new Date(now);
     startOfDay.setHours(0, 0, 0, 0);
@@ -70,13 +85,13 @@ async function getAllSportsHighlight(req, res) {
           theSportsId: "$theSportsId",
           CompanySetStatus: "$CompanySetStatus",
           hasFancyMatch: "$hasFancyMatch",
-          hasBookmaker: "$hasBookmaker"
+          hasBookmaker: "$hasBookmaker",
+          serverTime:"$serverTime"
         },
       },
     ]);
 
     let marketData = [];
-    console.log(`sportsHighlights.length=======${sportsHighlights.length}`);
 
     if (sportsHighlights.length > 0) {
       for (let i = 0; i < sportsHighlights.length; i++) {
@@ -100,6 +115,7 @@ async function getAllSportsHighlight(req, res) {
           }
         ]);
         sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
+        sportsHighlights[i].serverTime = serverTime;
       }
     }
 
@@ -110,8 +126,6 @@ async function getAllSportsHighlight(req, res) {
         $lt: endOfDayTimestamp
       }
     })
-    console.log(`marketData==============${marketData}`);
-    console.log(`ids================${ids}`);
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
 
     //console.log(" ======== ids ", ids);
@@ -120,7 +134,8 @@ async function getAllSportsHighlight(req, res) {
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
       results: sportsHighlights,
-      totalOpenMarkets: totalOpenMarkets
+      totalOpenMarkets: totalOpenMarkets,
+      serverTime: serverTime
     });
   } catch (err) {
     //console.log(err);
