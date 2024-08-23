@@ -55,34 +55,35 @@ app.use(bodyParser.json({strict: false}));
 
 
 
-const allowedOrigin = 'https://dev.bookofblack.com';
-const allowedAdminOrigin = 'https://socket.bookofblack.com';
-const allowedAPI = 'https://api.bookofblack.com';
+// const allowedOrigin = 'https://dev.bookofblack.com';
+// const allowedAdminOrigin = 'https://socket.bookofblack.com';
+// const allowedAPI = 'https://api.bookofblack.com';
 
+
+
+// Configure CORS options
 // const allowedOrigin = 'https://1obet.com';
 // const allowedAdminOrigin = 'https://admin.1obet.com';
 // const allowedAPI = 'https://production.1obet.net';
 
 
-
-// Configure CORS options
-const corsOptions = {
-  origin: function(origin, callback) {
-    if (origin === allowedAPI || origin === allowedAdminOrigin || origin === allowedOrigin || !origin) {
-      // Allow requests with no origin (like mobile apps or curl requests)
-      callback(null, true);
-    } else {
-      // Disallow requests from other origins
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-};
-
 // const corsOptions = {
-//   origin: true,
-//   credentials: true,
-//   optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+//   origin: function(origin, callback) {
+//     if (origin === allowedAPI || origin === allowedAdminOrigin || origin === allowedOrigin || !origin) {
+//       // Allow requests with no origin (like mobile apps or curl requests)
+//       callback(null, true);
+//     } else {
+//       // Disallow requests from other origins
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
 // };
+
+const corsOptions = {
+  origin: true,
+  credentials: true,
+  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+};
 
 
 
