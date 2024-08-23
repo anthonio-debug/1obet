@@ -39,9 +39,14 @@ const checkMarketBlocked = async (user) => {
   let parentUserIds = await getParents(user.userId);
   console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU:",parentUserIds);
   const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
+
+  const  anyParentCasinoBlocked= await User.find( { userId: { $in: parentUserIds }, casinoAllowed: false });
+  const anyParentBettingBlocked = await User.find( { userId: { $in: parentUserIds }, bettingAllowed: false });
+  console.log('anyParentCasinoBlocked---------------------------------------->',anyParentCasinoBlocked);
+  console.log('anyParentBettingBlocked---------------------------------------->',anyParentBettingBlocked);
   const marketId = config.casinoMarketId;
-  
-  if (marketIds.includes(marketId) || user.casinoAllowed == false || user.bettingAllowed == false) {
+  //if any of the parents hierarchy
+  if (marketIds.includes(marketId) || user.casinoAllowed == false || user.bettingAllowed == false || anyParentCasinoBlocked || anyParentBettingBlocked ) {
     return 1;
   } else {
     return 0;
