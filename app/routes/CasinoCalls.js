@@ -40,7 +40,7 @@ const checkMarketBlocked = async (user) => {
   const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
   const marketId = config.casinoMarketId;
 
-  if (marketIds.includes(marketId)) {
+  if (marketIds.includes(marketId) || user.casinoAllowed == false || user.bettingAllowed == false) {
     return 1;
   } else {
     return 0;
@@ -715,7 +715,7 @@ async function debitFun(req, res) {
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
     if (checkMarketBlockedResponse == 1) {
       await session.abortTransaction();
-      return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
+      return res.json({ status: '500', msg: ' Betting is not allowed ! ' });
     }
 
     let updatedavailableBalance = 0
