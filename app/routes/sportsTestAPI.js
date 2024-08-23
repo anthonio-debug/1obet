@@ -886,16 +886,11 @@ async function getOdds(marketIds, sportsId) {
     const odds = [];
     const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
     // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
-    try {
+    
       const response = await axios.get(oddUrl);
       console.log(response, "================///============");
       
-      res.status(200).json({ success: true, data: JSON.parse(response.data) });
-    } catch (error) {
-      res
-        .status(500)
-        .json({ success: false, msg: "Failed to get Error: " + error.message });
-    }
+      
     // console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
     
     ////////////////////////////
@@ -977,10 +972,10 @@ async function getOdds(marketIds, sportsId) {
     // };
 /////////////////////////////
     
-    if (oddUrl.success && oddUrl.data) {
-      const oddData = oddUrl.data;
+    if (response.success && response.data) {
+      const response = response.data;
       console.log("===================================================================================2");
-      odds.push(await saveOdds(oddData, sportsId));
+      odds.push(await saveOdds(response, sportsId));
     }
 
     // Resolve the promise with the collected odds
