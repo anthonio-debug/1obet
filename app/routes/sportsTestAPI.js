@@ -972,7 +972,7 @@ async function getOdds(marketIds, sportsId) {
     // };
 /////////////////////////////
     
-    if (response.success && response.data) {
+    if (response.data) {
 
       console.log("=-=--=-=-=--=-=-=- response.data",response.data);
       
