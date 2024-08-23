@@ -840,8 +840,8 @@ async function saveOdds(oddData, sportsId) {
   console.log("=-=-==-=-=-====-=- saveodds runig");
  
   
+  console.log("????????????????",oddData.eventid);
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
-  console.log("????????????????",oddData.eventid,);
   
   const odd = {
     eventId: oddData.eventid,
