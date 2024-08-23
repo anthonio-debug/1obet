@@ -164,7 +164,7 @@ const checkMarketActiveForBets = async (marketId) => {
 };
 
 function checkRunsOrOvers(inputString) {
-  const submarket = /(runs line|overs line)/i;
+  const submarket = /(runs line|overs line|over line)/i;
   return submarket.test(inputString);
 }
 
@@ -871,7 +871,7 @@ const placeBet = async (req, res) => {
           setTimeout(async () => {
             const oddsData = await apiCallForOdds(id);
             console.log("oddsData = await apiCallForOdds", id);
-            
+
             const marketStatus = oddsData[0]?.status;
             console.log("oddsData =========", marketStatus);
 
@@ -2120,7 +2120,7 @@ const placeBet = async (req, res) => {
         for (let i = 1; i < 5; i++) {
           setTimeout(async () => {
             try {
-              const oddsData = await apiCallForOdds(DBOddDetails.marketId);
+              const oddsData = await apiCallForOdds(id);
 
               const marketStatus = oddsData[0]?.status;
               if (marketStatus !== 'OPEN') {
