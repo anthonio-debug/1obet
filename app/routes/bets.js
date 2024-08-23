@@ -164,8 +164,8 @@ const checkMarketActiveForBets = async (marketId) => {
 };
 
 function checkRunsOrOvers(inputString) {
-  const submarket = /(runs line|overs line|over line)/i;
-  return submarket.test(inputString);
+  const subMarket = /(runs line|overs line|over line)/i;
+  return subMarket.test(inputString);
 }
 
 const placeBet = async (req, res) => {
