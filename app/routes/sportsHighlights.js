@@ -21,7 +21,6 @@ async function getAllSportsHighlight(req, res) {
     timeZoneName: 'short'
   });
   
-  console.log("Server time:", serverTime.toString());
   try {
 
     let now = new Date();  // Get the current date and time
@@ -86,7 +85,6 @@ async function getAllSportsHighlight(req, res) {
           CompanySetStatus: "$CompanySetStatus",
           hasFancyMatch: "$hasFancyMatch",
           hasBookmaker: "$hasBookmaker",
-          serverTime:"$serverTime"
         },
       },
     ]);
