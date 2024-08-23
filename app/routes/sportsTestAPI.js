@@ -884,84 +884,86 @@ async function saveOdds(oddData, sportsId) {
 async function getOdds(marketIds, sportsId) {
   return new Promise(async (resolve, reject) => {
     const odds = [];
-
+    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+    console.log("+=-=--=-=-=-=-=-=--=-=-==-",oddUrl);
+    
     // Use the mock data directly instead of making an API call
-    const oddUrl = {
-      "success": true,
-      "data": {
-        "eventid": "33504867",
-        "marketId": "1.232001727",
-        "market": "Match Odds",
-        "updateTime": "2024-08-22T06:48:54",
-        "status": "OPEN",
-        "inplay": true,
-        "totalMatched": 3488240.53,
-        "active": true,
-        "markettype": "ODDS",
-        "runners": [
-          {
-            "selectionId": 47674067,
-            "runner": "Barbados Royals W",
-            "status": "ACTIVE",
-            "lastPriceTraded": 1.5,
-            "removalDate": "1900-01-01T00:00:00",
-            "ex": {
-              "availableToBack": [
-                { "level": 0, "price": 1.5, "size": 3954 },
-                { "level": 1, "price": 1.45, "size": 8240 },
-                { "level": 2, "price": 1.39, "size": 98 }
-              ],
-              "availableToLay": [
-                { "level": 0, "price": 1.52, "size": 78 },
-                { "level": 1, "price": 1.54, "size": 24 },
-                { "level": 2, "price": 1.55, "size": 57 }
-              ]
-            },
-            "back": [
-              { "level": 0, "price": 1.5, "size": 3954 },
-              { "level": 1, "price": 1.45, "size": 8240 },
-              { "level": 2, "price": 1.39, "size": 98 }
-            ],
-            "lay": [
-              { "level": 0, "price": 1.52, "size": 78 },
-              { "level": 1, "price": 1.54, "size": 24 },
-              { "level": 2, "price": 1.55, "size": 57 }
-            ]
-          },
-          {
-            "selectionId": 47674068,
-            "runner": "Guyana Amazon Warriors W",
-            "status": "ACTIVE",
-            "lastPriceTraded": 3.1,
-            "removalDate": "1900-01-01T00:00:00",
-            "ex": {
-              "availableToBack": [
-                { "level": 0, "price": 2.92, "size": 41 },
-                { "level": 1, "price": 2.84, "size": 13 },
-                { "level": 2, "price": 2.8, "size": 32 }
-              ],
-              "availableToLay": [
-                { "level": 0, "price": 3, "size": 1977 },
-                { "level": 1, "price": 3.25, "size": 3676 },
-                { "level": 2, "price": 3.6, "size": 38 }
-              ]
-            },
-            "back": [
-              { "level": 0, "price": 2.92, "size": 41 },
-              { "level": 1, "price": 2.84, "size": 13 },
-              { "level": 2, "price": 2.8, "size": 32 }
-            ],
-            "lay": [
-              { "level": 0, "price": 3, "size": 1977 },
-              { "level": 1, "price": 3.25, "size": 3676 },
-              { "level": 2, "price": 3.6, "size": 38 }
-            ]
-          }
-        ],
-        "min": "",
-        "max": ""
-      }
-    };
+    // const oddUrl = {
+    //   "success": true,
+    //   "data": {
+    //     "eventid": "33504867",
+    //     "marketId": "1.232001727",
+    //     "market": "Match Odds",
+    //     "updateTime": "2024-08-22T06:48:54",
+    //     "status": "OPEN",
+    //     "inplay": true,
+    //     "totalMatched": 3488240.53,
+    //     "active": true,
+    //     "markettype": "ODDS",
+    //     "runners": [
+    //       {
+    //         "selectionId": 47674067,
+    //         "runner": "Barbados Royals W",
+    //         "status": "ACTIVE",
+    //         "lastPriceTraded": 1.5,
+    //         "removalDate": "1900-01-01T00:00:00",
+    //         "ex": {
+    //           "availableToBack": [
+    //             { "level": 0, "price": 1.5, "size": 3954 },
+    //             { "level": 1, "price": 1.45, "size": 8240 },
+    //             { "level": 2, "price": 1.39, "size": 98 }
+    //           ],
+    //           "availableToLay": [
+    //             { "level": 0, "price": 1.52, "size": 78 },
+    //             { "level": 1, "price": 1.54, "size": 24 },
+    //             { "level": 2, "price": 1.55, "size": 57 }
+    //           ]
+    //         },
+    //         "back": [
+    //           { "level": 0, "price": 1.5, "size": 3954 },
+    //           { "level": 1, "price": 1.45, "size": 8240 },
+    //           { "level": 2, "price": 1.39, "size": 98 }
+    //         ],
+    //         "lay": [
+    //           { "level": 0, "price": 1.52, "size": 78 },
+    //           { "level": 1, "price": 1.54, "size": 24 },
+    //           { "level": 2, "price": 1.55, "size": 57 }
+    //         ]
+    //       },
+    //       {
+    //         "selectionId": 47674068,
+    //         "runner": "Guyana Amazon Warriors W",
+    //         "status": "ACTIVE",
+    //         "lastPriceTraded": 3.1,
+    //         "removalDate": "1900-01-01T00:00:00",
+    //         "ex": {
+    //           "availableToBack": [
+    //             { "level": 0, "price": 2.92, "size": 41 },
+    //             { "level": 1, "price": 2.84, "size": 13 },
+    //             { "level": 2, "price": 2.8, "size": 32 }
+    //           ],
+    //           "availableToLay": [
+    //             { "level": 0, "price": 3, "size": 1977 },
+    //             { "level": 1, "price": 3.25, "size": 3676 },
+    //             { "level": 2, "price": 3.6, "size": 38 }
+    //           ]
+    //         },
+    //         "back": [
+    //           { "level": 0, "price": 2.92, "size": 41 },
+    //           { "level": 1, "price": 2.84, "size": 13 },
+    //           { "level": 2, "price": 2.8, "size": 32 }
+    //         ],
+    //         "lay": [
+    //           { "level": 0, "price": 3, "size": 1977 },
+    //           { "level": 1, "price": 3.25, "size": 3676 },
+    //           { "level": 2, "price": 3.6, "size": 38 }
+    //         ]
+    //       }
+    //     ],
+    //     "min": "",
+    //     "max": ""
+    //   }
+    // };
 
     
     if (oddUrl.success && oddUrl.data) {
