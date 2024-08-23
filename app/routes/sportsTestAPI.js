@@ -819,6 +819,7 @@ async function getRelatedMarkets(req, res) {
   }
 }
 async function saveOdds(oddData, sportsId) {
+  console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
   const runners = [];
   for (const runner of oddData.runners) {
     runners.push({
