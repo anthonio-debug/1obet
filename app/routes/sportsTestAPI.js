@@ -886,8 +886,17 @@ async function getOdds(marketIds, sportsId) {
     const odds = [];
     const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
     // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
-
-    console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
+    try {
+      const response = await axios.get(oddUrl);
+      console.log(response, "================///============");
+      
+      res.status(200).json({ success: true, data: JSON.parse(response.data) });
+    } catch (error) {
+      res
+        .status(500)
+        .json({ success: false, msg: "Failed to get Error: " + error.message });
+    }
+    // console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
     
     ////////////////////////////
     // const oddUrl = {
