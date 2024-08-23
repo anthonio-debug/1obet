@@ -826,7 +826,7 @@ async function saveOdds(oddData, sportsId) {
     return;
 }
 
-  console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
+  // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
   const runners = [];
 
   for (const runner of oddData.runners) {
@@ -842,12 +842,12 @@ async function saveOdds(oddData, sportsId) {
       },
     });
   }
-  console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-  runners",runners)
+  // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-  runners",runners)
 
-  console.log("=-=-==-=-=-====-=- saveodds runig");
+  // console.log("=-=-==-=-=-====-=- saveodds runig");
  
   
-  console.log("????????????????",oddData.eventid);
+  // console.log("????????????????",oddData.eventid);
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
   
   const odd = {
@@ -904,7 +904,7 @@ async function getOdds(marketIds, sportsId) {
     // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
     
       const response = await axios.get(oddUrl);
-      console.log(response, "================///============");
+      // console.log(response, "================///============");
       
       
     // console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
@@ -990,7 +990,7 @@ async function getOdds(marketIds, sportsId) {
     
     if (response.data) {
 
-      console.log("=-=--=-=-=--=-=-=- response.data",response.data);
+      // console.log("=-=--=-=-=--=-=-=- response.data",response.data);
       
       const oddData = response.data;
       console.log("===================================================================================2");
@@ -1134,7 +1134,7 @@ async function cronOdds2(req, res) {
   try {
     const response = await axios.get(url);
 
-    console.log("=-=--==---=-=--=-===--= market api response", response);
+    // console.log("=-=--==---=-=--=-===--= market api response", response);
     
     /////////////////////////
     // const response = {
@@ -1210,7 +1210,7 @@ async function cronOdds2(req, res) {
     // const sendMarketIds = ["1.232001727"];
 
     let result = [];
-    console.log(result,"=-=-=---=-=---=--=");
+    // console.log(result,"=-=-=---=-=---=--=");
     
     console.log("Sending market ids:", sendMarketIds);
     for (const marketId of sendMarketIds) {
