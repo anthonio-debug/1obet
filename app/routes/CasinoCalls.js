@@ -41,7 +41,7 @@ const checkMarketBlocked = async (user) => {
   const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
   const marketId = config.casinoMarketId;
   
-  if (marketIds.includes(marketId) || user.casinoAllowed == false || user.bettingAllowed == false) {
+  if (marketIds.includes(marketId) ) {
     return 1;
   } else {
     return 0;
