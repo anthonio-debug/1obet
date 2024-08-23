@@ -821,6 +821,7 @@ async function getRelatedMarkets(req, res) {
 async function saveOdds(oddData, sportsId) {
   console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
   const runners = [];
+
   for (const runner of oddData.runners) {
     runners.push({
       SelectionId: runner.selectionId,
@@ -834,6 +835,11 @@ async function saveOdds(oddData, sportsId) {
       },
     });
   }
+  console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-  runners",runners)
+
+  console.log("=-=-==-=-=-====-=- saveodds runig");
+ 
+  
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
   console.log("????????????????",oddData.eventid,);
   
