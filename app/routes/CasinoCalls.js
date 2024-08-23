@@ -46,7 +46,7 @@ const checkMarketBlocked = async (user) => {
   console.log('anyParentBettingBlocked---------------------------------------->',anyParentBettingBlocked);
   const marketId = config.casinoMarketId;
   //if any of the parents hierarchy
-  if (marketIds.includes(marketId)  ) {
+  if (marketIds.includes(marketId) || !user.casinoAllowed || !user.bettingAllowed || anyParentCasinoBlocked.length==0 || anyParentBettingBlocked.length==0 ) {
     return 1;
   } else {
     return 0;
