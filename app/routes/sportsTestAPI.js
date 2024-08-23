@@ -887,7 +887,7 @@ async function getOdds(marketIds, sportsId) {
     // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
     // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
 
-    console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
+    // console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
     
     ////////////////////////////
     const oddUrl = {
