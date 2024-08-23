@@ -885,7 +885,7 @@ async function getOdds(marketIds, sportsId) {
   return new Promise(async (resolve, reject) => {
     const odds = [];
     const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
-    
+
     console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
     
     // Use the mock data directly instead of making an API call
@@ -1137,7 +1137,7 @@ async function cronOdds2(req, res) {
     // };
 
     const marketsData = response.data;
-
+    const sendMarketIds = [];
     console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
@@ -1149,6 +1149,9 @@ async function cronOdds2(req, res) {
         }));
 
         if (element.marketName === 'Match Odds') {
+          
+          sendMarketIds.push(element.marketId);
+          
           const marketID = await MarketIDS.findOne({
             eventId: eventId,
             marketId: element.marketId,
@@ -1179,7 +1182,7 @@ async function cronOdds2(req, res) {
     }
 
     
-    const sendMarketIds = ["1.232001727"];
+    // const sendMarketIds = ["1.232001727"];
 
     let result = [];
     console.log(result,"=-=-=---=-=---=--=");
