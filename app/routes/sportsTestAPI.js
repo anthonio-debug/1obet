@@ -885,7 +885,8 @@ async function getOdds(marketIds, sportsId) {
   return new Promise(async (resolve, reject) => {
     const odds = [];
     const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
-    console.log("+=-=--=-=-=-=-=-=--=-=-==-",oddUrl);
+    
+    console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
     
     // Use the mock data directly instead of making an API call
     // const oddUrl = {
@@ -1107,30 +1108,33 @@ async function cronOdds2(req, res) {
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
 
   try {
-    // const response = await axios.get(url);
-    const response = {
-      "success": true,
-      "data": [
-        {
-          "marketId": "1.232001727",
-          "marketName": "Match Odds",
-          "marketStartTime": "2024-08-21T23:00:00.000Z",
-          "totalMatched": "417.55",
-          "runners": [
-            {
-              "selectionId": 47674067,
-              "runnerName": "Barbados Royals W",
-              "sortPriority": 1
-            },
-            {
-              "selectionId": 47674068,
-              "runnerName": "Guyana Amazon Warriors W",
-              "sortPriority": 2
-            }
-          ]
-        }
-      ]
-    };
+    const response = await axios.get(url);
+
+    console.log("=-=--==---=-=--=-===--= market api response", );
+    
+    // const response = {
+    //   "success": true,
+    //   "data": [
+    //     {
+    //       "marketId": "1.232001727",
+    //       "marketName": "Match Odds",
+    //       "marketStartTime": "2024-08-21T23:00:00.000Z",
+    //       "totalMatched": "417.55",
+    //       "runners": [
+    //         {
+    //           "selectionId": 47674067,
+    //           "runnerName": "Barbados Royals W",
+    //           "sortPriority": 1
+    //         },
+    //         {
+    //           "selectionId": 47674068,
+    //           "runnerName": "Guyana Amazon Warriors W",
+    //           "sortPriority": 2
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // };
 
     const marketsData = response.data;
 
