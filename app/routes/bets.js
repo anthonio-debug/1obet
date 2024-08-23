@@ -3782,12 +3782,12 @@ async function getMatchedBets(req, res) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
     // }
     //console.log("Yahoooooooooooooooo.....................",matchId);
-    console.log("Yahoooooooooooooooo.....................====", matchId);
+    //console.log("Yahoooooooooooooooo.....................====", matchId);
     let eventId;
     let marketOpendate;
     if (marketId !== '') {
       const market = await MarketIDS.findOne({ marketId: marketId })
-      console.log("-----------------", market);
+      //console.log("-----------------", market);
       marketOpendate = market.openDate;
       eventId = await Events.findOne({ Id: market.eventId })
 

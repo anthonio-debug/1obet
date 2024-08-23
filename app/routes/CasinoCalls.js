@@ -37,9 +37,10 @@ const users = dbClient.db(`${DBNAME}`).collection('users');
 
 const checkMarketBlocked = async (user) => {
   let parentUserIds = await getParents(user.userId);
+  console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU:",parentUserIds);
   const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
   const marketId = config.casinoMarketId;
-  console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU:",user);
+  
   if (marketIds.includes(marketId) || user.casinoAllowed == false || user.bettingAllowed == false) {
     return 1;
   } else {
