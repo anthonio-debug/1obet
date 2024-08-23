@@ -55,13 +55,13 @@ app.use(bodyParser.json({strict: false}));
 
 
 
-const allowedOrigin = 'https://dev.bookofblack.com';
-const allowedAdminOrigin = 'https://socket.bookofblack.com';
-const allowedAPI = 'https://api.bookofblack.com';
+// const allowedOrigin = 'https://dev.bookofblack.com';
+// const allowedAdminOrigin = 'https://socket.bookofblack.com';
+// const allowedAPI = 'https://api.bookofblack.com';
 
-// const allowedOrigin = 'https://1obet.com';
-// const allowedAdminOrigin = 'https://admin.1obet.com';
-// const allowedAPI = 'https://production.1obet.net';
+ const allowedOrigin = 'https://1obet.com';
+ const allowedAdminOrigin = 'https://admin.1obet.com';
+ const allowedAPI = 'https://production.1obet.net';
 
 
 

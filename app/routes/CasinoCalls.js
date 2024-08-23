@@ -715,7 +715,7 @@ async function debitFun(req, res) {
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
     if (checkMarketBlockedResponse == 1) {
       await session.abortTransaction();
-      return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
+      return res.json({ status: '500', msg: ' Betting is not allowed ! ' });
     }
 
     let updatedavailableBalance = 0
