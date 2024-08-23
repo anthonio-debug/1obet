@@ -847,7 +847,7 @@ async function saveOdds(oddData, sportsId) {
     runners,
   };
   
-  const odds = new Odds(oddData);
+  const odds = new Odds(odd);
   await odds.save();
   return odd;
 }
@@ -888,7 +888,7 @@ async function getOdds(marketIds, sportsId) {
 
     console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
     
-    // Use the mock data directly instead of making an API call
+    ////////////////////////////
     // const oddUrl = {
     //   "success": true,
     //   "data": {
@@ -965,7 +965,7 @@ async function getOdds(marketIds, sportsId) {
     //     "max": ""
     //   }
     // };
-
+/////////////////////////////
     
     if (oddUrl.success && oddUrl.data) {
       const oddData = oddUrl.data;
@@ -1112,6 +1112,7 @@ async function cronOdds2(req, res) {
 
     console.log("=-=--==---=-=--=-===--= market api response", );
     
+    /////////////////////////
     // const response = {
     //   "success": true,
     //   "data": [
@@ -1135,7 +1136,7 @@ async function cronOdds2(req, res) {
     //     }
     //   ]
     // };
-
+    ///////////////////////////
     const marketsData = response.data;
     const sendMarketIds = [];
     console.log(marketsData, "||||||||||||||||||||");
