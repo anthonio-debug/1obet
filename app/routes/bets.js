@@ -1924,7 +1924,7 @@ const placeBet = async (req, res) => {
       //end of code to block fancy bet if bookmaker has ball running or suspended status
 
       console.log('..................................');
-      console.log('type..................................', type);
+      console.log('apiFancyOddsResponse[0])..................................', apiFancyOddsResponse[0]));
       // const apiFancyOdds = response?.data?.data?.t3;
       const apiFancyOdds = buildFancyOdd(apiFancyOddsResponse[0]);
       const DBOddDetails = await FancyOdds.findById(oddsId);
