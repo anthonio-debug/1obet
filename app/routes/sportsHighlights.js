@@ -8,7 +8,7 @@ const { default: mongoose } = require('mongoose');
 const marketIds = require('../models/marketIds');
 
 async function getAllSportsHighlight(req, res) {
-  // let serverTime = new Date();
+   let serverTime = new Date();
   // serverTime = serverTime.toLocaleString('en-US', {
   //   weekday: 'long',
   //   year: 'numeric',
@@ -113,7 +113,7 @@ async function getAllSportsHighlight(req, res) {
           }
         ]);
         sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
-        //sportsHighlights[i].serverTime = serverTime;
+        sportsHighlights[i].serverTime = serverTime;
       }
     }
 
