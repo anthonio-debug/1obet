@@ -8,21 +8,7 @@ const { default: mongoose } = require('mongoose');
 const marketIds = require('../models/marketIds');
 
 async function getAllSportsHighlight(req, res) {
-  let serverTime = new Date();
-  serverTime = serverTime.toLocaleString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    hour12: true,
-    timeZoneName: 'short'
-  });
-  
   try {
-
     let now = new Date();  // Get the current date and time
     let startOfDay = new Date(now);
     startOfDay.setHours(0, 0, 0, 0);
@@ -32,7 +18,7 @@ async function getAllSportsHighlight(req, res) {
 
     const sportId = req.query.sport;
 
-    if (sportId == '1' || sportId == '2') {
+    if (sportId == '1') {
       let endOfDay = new Date(now);
       endOfDay.setHours(23, 59, 59, 999);
       endOfDayTimestamp = endOfDay.getTime();
@@ -78,13 +64,11 @@ async function getAllSportsHighlight(req, res) {
           status: "$status",
           iconStatus: '$iconStatus',
           matchTypeProvider: '$matchTypeProvider',
-          betAllowed: "$betAllowed",
+          betAllowed : "$betAllowed",
           matchCanceledStatus: "$matchCanceledStatus",
           matchStoppedReason: '$matchStoppedReason',
           theSportsId: "$theSportsId",
-          CompanySetStatus: "$CompanySetStatus",
-          hasFancyMatch: "$hasFancyMatch",
-          hasBookmaker: "$hasBookmaker",
+          CompanySetStatus: "$CompanySetStatus"
         },
       },
     ]);
@@ -113,7 +97,6 @@ async function getAllSportsHighlight(req, res) {
           }
         ]);
         sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
-        sportsHighlights[i].serverTime = serverTime;
       }
     }
 
@@ -124,7 +107,7 @@ async function getAllSportsHighlight(req, res) {
         $lt: endOfDayTimestamp
       }
     })
-    const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
+    const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId :{ $in : ids }})
 
     //console.log(" ======== ids ", ids);
 
@@ -132,8 +115,7 @@ async function getAllSportsHighlight(req, res) {
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
       results: sportsHighlights,
-      totalOpenMarkets: totalOpenMarkets,
-      serverTime: serverTime
+      totalOpenMarkets: totalOpenMarkets
     });
   } catch (err) {
     //console.log(err);
