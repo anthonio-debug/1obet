@@ -404,6 +404,7 @@ async function getOdds(marketIds, sportsId) {
 async function cronOdds2(eventId, sportID) {
   console.log("===================================================================================3");
   // const { eventId, sportID } = req.params;
+  console.log("=-=--==---=-=--=-===--=  eventId====", eventId);
 
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
 
@@ -438,7 +439,7 @@ async function cronOdds2(eventId, sportID) {
               eventId: eventId,
               marketId: element.marketId,
               marketName: element.marketName,
-              sportID: '4',
+              sportID: 4,
               totalMatched: element.totalMatched,
               status: marketStatus,
               index: 0,
