@@ -211,7 +211,8 @@ async function getMarketsByEventId(req, res) {
         }
       }
     ]);
-
+    cronOdds2(eventId, marketData.sportID)
+    
     res.status(200).json({ success: true, data: marketData });
   } catch (err) {
     return res.status(404).send({
@@ -514,7 +515,7 @@ async function updateCompanySetStatus(req, res) {
     const data = req.query;
     await inPlayEvents.updateOne({ Id: data.Id }, { CompanySetStatus: data.status });
 
-    cronOdds2(data.Id, data.sportsId)
+    // cronOdds2(data.Id, data.sportsId)
     return res.status(200).send({
       success: true,
       message: 'Updated successfully !'
