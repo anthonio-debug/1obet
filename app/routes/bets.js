@@ -499,7 +499,7 @@ const placeBet = async (req, res) => {
       const OddDetailsTeam = DBOddDetails.runners.find((runner) => runner.SelectionId == selectionId);
       const diff = getDiffBackAndLay(OddDetailsTeam);
       if (diff > 0.03) {
-        delayAddition = 4;
+        //delayAddition = 4;
       }
       runnerName = OddDetailsTeam?.runnerName;
 
@@ -661,7 +661,7 @@ const placeBet = async (req, res) => {
 
       const diff = getDiffBackAndLay(OddDetailsTeam);
       if (diff > 0.03) {
-        delayAddition = 4;
+        //delayAddition = 4;
       }
 
       runnerName = OddDetailsTeam?.runnerName;
@@ -855,7 +855,7 @@ const placeBet = async (req, res) => {
 
       const diff = getDiffBackAndLay(OddDetailsTeam);
       if (diff > 0.03) {
-        delayAddition = 4;
+       // delayAddition = 4;
       }
 
       runnerName = OddDetailsTeam?.runnerName;
@@ -1057,7 +1057,7 @@ const placeBet = async (req, res) => {
 
       const diff = getRaceDiffBackAndLay(OddDetailsTeam);
       if (diff > 3) {
-        delayAddition = 4;
+        //delayAddition = 4;
       }
 
       let runners = DBOddDetails?.runners;
@@ -1243,7 +1243,7 @@ const placeBet = async (req, res) => {
 
       const diff = getDiffBackAndLay(OddDetailsTeam);
       if (diff > 0.03) {
-        delayAddition = 4;
+        //delayAddition = 4;
       }
 
       runnerName = OddDetailsTeam?.runnerName;
@@ -2623,7 +2623,8 @@ const placeBet = async (req, res) => {
         delay = 4000;
       }
     } else {
-      delay += delayAddition * 1000;
+      //delay += delayAddition * 1000;
+      delay +=  1000;
     }
 
     setTimeout(async () => {
