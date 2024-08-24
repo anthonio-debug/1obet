@@ -3292,7 +3292,7 @@ const placeBet = async (req, res) => {
     console.warn('Error placing bet Catched ', error);
     const userId = req.decoded.userId;
     activeBettors.delete(userId);
-    return res.status(404).send({ message: `Something went wrong !` });
+    return res.status(404).send({ message: `Something went wrong !-1` });
   } finally {
     const userId = req.decoded.userId;
     activeBettors.delete(userId);
