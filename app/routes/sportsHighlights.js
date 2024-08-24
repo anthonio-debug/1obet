@@ -32,7 +32,7 @@ async function getAllSportsHighlight(req, res) {
 
     const sportId = req.query.sport;
 
-    if (sportId == '1') {
+    if (sportId == '1' || sportId == '2') {
       let endOfDay = new Date(now);
       endOfDay.setHours(23, 59, 59, 999);
       endOfDayTimestamp = endOfDay.getTime();
