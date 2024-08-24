@@ -113,8 +113,8 @@ async function getAllSportsHighlight(req, res) {
             }
           }
         ]);
-        sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
-        sportsHighlights[i].serverTime = '';
+        sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0;
+        sportsHighlights[i].serverTime = serverTime;
         console.log("------------------------------->",8,'===============>>>',sportsHighlights)
         
       }
