@@ -8,18 +8,18 @@ const { default: mongoose } = require('mongoose');
 const marketIds = require('../models/marketIds');
 
 async function getAllSportsHighlight(req, res) {
-  let serverTime = new Date();
-  serverTime = serverTime.toLocaleString('en-US', {
-    weekday: 'long',
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-    hour: 'numeric',
-    minute: 'numeric',
-    second: 'numeric',
-    hour12: true,
-    timeZoneName: 'short'
-  });
+  // let serverTime = new Date();
+  // serverTime = serverTime.toLocaleString('en-US', {
+  //   weekday: 'long',
+  //   year: 'numeric',
+  //   month: 'long',
+  //   day: 'numeric',
+  //   hour: 'numeric',
+  //   minute: 'numeric',
+  //   second: 'numeric',
+  //   hour12: true,
+  //   timeZoneName: 'short'
+  // });
   
   try {
 
@@ -113,7 +113,7 @@ async function getAllSportsHighlight(req, res) {
           }
         ]);
         sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
-        sportsHighlights[i].serverTime = serverTime;
+        //sportsHighlights[i].serverTime = serverTime;
       }
     }
 
@@ -132,8 +132,7 @@ async function getAllSportsHighlight(req, res) {
       success: true,
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
       results: sportsHighlights,
-      totalOpenMarkets: totalOpenMarkets,
-      serverTime: serverTime
+      totalOpenMarkets: totalOpenMarkets
     });
   } catch (err) {
     //console.log(err);
