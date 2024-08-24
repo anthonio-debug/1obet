@@ -855,7 +855,7 @@ const placeBet = async (req, res) => {
 
       const diff = getDiffBackAndLay(OddDetailsTeam);
       if (diff > 0.03) {
-       // delayAddition = 4;
+        // delayAddition = 4;
       }
 
       runnerName = OddDetailsTeam?.runnerName;
@@ -1888,18 +1888,25 @@ const placeBet = async (req, res) => {
       // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       // const response = await axios.get(url);
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
-      let apiFancyOddsRes = await fetchSession(eventDetail.Id);
-      apiFancyOddsRes = apiFancyOddsRes.filter((item) => item.SelectionId === selectionId);
-      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
-      gameStatus = apiFancyOddsRes[0]?.GameStatus;
-      console.log(`apiFancyOddsRes[0]?.GameStatus==================${apiFancyOddsRes[0]?.GameStatus}`);
-      console.log(`GameStatus==================${gameStatus}`);
+      let apiFancyOddsRes
+      for (const i = 0; i < 5; i++) {
+        setTimeout(async () => {
 
-      if (apiFancyOddsRes[0]?.GameStatus === 'SUSPENDED' || apiFancyOddsRes[0]?.GameStatus === 'Ball Running') {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Status not available for selected team ${selectionId}`
-        });
+          apiFancyOddsRes = await fetchSession(eventDetail.Id);
+          apiFancyOddsRes = apiFancyOddsRes.filter((item) => item.SelectionId === selectionId);
+          console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
+          gameStatus = apiFancyOddsRes[0]?.GameStatus;
+          console.log(`apiFancyOddsRes[0]?.GameStatus==================${apiFancyOddsRes[0]?.GameStatus}`);
+          console.log(`GameStatus==================${gameStatus}`);
+
+          if (apiFancyOddsRes[0]?.GameStatus === 'SUSPENDED' || apiFancyOddsRes[0]?.GameStatus === 'Ball Running') {
+            activeBettors.delete(userId);
+            return res.status(404).send({
+              message: `Status not available for selected team ${selectionId}`
+            });
+          }
+
+        }, 1000 * i);
       }
 
       //start of code to block fancy bet if bookmaker has ball running or suspended status
@@ -2624,7 +2631,7 @@ const placeBet = async (req, res) => {
       }
     } else {
       //delay += delayAddition * 1000;
-      delay +=  1000;
+      delay += 1000;
     }
 
     setTimeout(async () => {
