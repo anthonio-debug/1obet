@@ -607,30 +607,11 @@ function apiRequests() {
                     let totalMatched = element.totalMatched;
                     
 
-                    let totalMatchedStr = totalMatched.toString();
+                    
+                    
                     // Ensure sentence is a string before using replace
-                    if (typeof totalMatchedStr === 'string') {
-
-                      //console.log(totalMatchedStr);
-                      const myArray = totalMatchedStr.split(".");
-
-
-
-                      let firstTwoChars= '';
-
-                      if(myArray.length == '2' ){
-                      firstTwoChars = myArray[1].slice(0, 2);
-                      console.log(firstTwoChars);
-                      }
-                      totalMatchedStr = myArray[0] + firstTwoChars;
-
-
-
-
-                                            
-                    } else {
-                          console.log('sentence is not a string');
-                      }
+                  
+                    const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
 
                    
 
@@ -683,30 +664,8 @@ function apiRequests() {
 
 
                   let totalMatched = element.totalMatched;
-                  let totalMatchedStr = totalMatched.toString();
-                  // Ensure sentence is a string before using replace
-                  if (typeof totalMatchedStr === 'string') {
-
-                    //console.log(totalMatchedStr);
-                    const myArray = totalMatchedStr.split(".");
-
-                    
-
-                    let firstTwoChars= '';
-
-                    if(myArray.length == '2' ){
-                    firstTwoChars = myArray[1].slice(0, 2);
-                    
-                    }
-                    totalMatchedStr = myArray[0] + firstTwoChars;
-                    
-
-
-
-                                        
-                                      } else {
-                                        console.log('sentence is not a string');
-                    }
+                  
+                  const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
 
                   let frontData = {
                     sportsId: marketData.sportID,
@@ -920,7 +879,29 @@ function apiRequests() {
       console.error('checkInPlay', error);
     }
   }
+  async function gettotalMatchedStr(totalMatchedStr){
+    if (typeof totalMatchedStr === 'string') {
 
+      //console.log(totalMatchedStr);
+      const myArray = totalMatchedStr.split(".");
+
+
+
+      let firstTwoChars= '';
+
+      if(myArray.length == '2' ){
+      firstTwoChars = myArray[1].slice(0, 2);
+      console.log(firstTwoChars);
+      }
+      totalMatchedStr = myArray[0] + firstTwoChars;
+
+return totalMatchedStr;
+
+
+                            
+    }
+    return totalMatchedStr;
+  }
   async function setInplay(sportsId) {
 
     try {
