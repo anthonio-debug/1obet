@@ -117,7 +117,7 @@ async function getAllSportsHighlight(req, res) {
         sportsHighlights[i].serverTime = serverTime;
       }
     }
-
+    console.log("------------------------------->",5,'===============>>>',sportsHighlights)
     const ids = await inPlayEvents.distinct("Id", {
       sportsId: sportId,
       openDate: {
@@ -127,7 +127,7 @@ async function getAllSportsHighlight(req, res) {
     })
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
 
-    //console.log(" ======== ids ", ids);
+    console.log(" ======== ids ", ids);
 
     return res.send({
       success: true,
