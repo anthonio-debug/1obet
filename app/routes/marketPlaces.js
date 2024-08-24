@@ -8,6 +8,7 @@ const { v4: uuidv4 } = require('uuid');
 const marketPlaceVlidator = require('../validators/marketPlaces');
 const inPlayEvents = require('../models/events');
 const { fetchMarket } = require('../../helper/eventHelper');
+const Odds = require('../models/odds');
 const axios = require('axios');
 
 
@@ -289,7 +290,7 @@ async function saveOdds(oddData, sportsId) {
     runners,
   };
   
-  const odds = new odds(odd);
+  const odds = new Odds(odd);
   await odds.save();
   return odd;
 }
