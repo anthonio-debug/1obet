@@ -1889,7 +1889,7 @@ const placeBet = async (req, res) => {
       // const response = await axios.get(url);
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
       let apiFancyOddsRes = [];
-      const apiFancyOddsResponse = [];
+      let apiFancyOddsResponse = [];
       let hasError = false; 
 
       for (let i = 1; i < 5; i++) {
@@ -1902,10 +1902,16 @@ const placeBet = async (req, res) => {
               return;
             }
 
-            apiFancyOddsRes = response.filter((item) => item.SelectionId === selectionId);
-            apiFancyOddsResponse.push(apiFancyOddsRes);
+            const filteredResponse = response.filter((item) => item.SelectionId === selectionId);
 
-            const gameStatus = apiFancyOddsRes[0]?.GameStatus;
+            if (!Array.isArray(filteredResponse)) {
+              console.error("Filtered response is not an array:", filteredResponse);
+              return;
+            }
+
+            apiFancyOddsResponse.push(filteredResponse);
+
+            const gameStatus = filteredResponse[0]?.GameStatus;
 
             if (gameStatus === 'SUSPENDED' || gameStatus === 'Ball Running') {
               activeBettors.delete(userId);
@@ -1923,6 +1929,7 @@ const placeBet = async (req, res) => {
           }
         }, 1000 * i);
       }
+
       console.log(`apiFancyOddsResponse==================${apiFancyOddsResponse}`);
       
 
