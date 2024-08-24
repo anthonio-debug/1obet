@@ -1912,6 +1912,7 @@ const placeBet = async (req, res) => {
         }, 1000 * i);
       }
       console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:============", apiFancyOddsRes);
+      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:check============", apiFancyOddsResponse);
       
       //start of code to block fancy bet if bookmaker has ball running or suspended status
       // let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
