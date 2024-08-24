@@ -40,7 +40,7 @@ async function getAllSportsHighlight(req, res) {
       endOfDayTimestamp = new Date(startOfDayTimestamp + (2 * 24 * 60 * 60 * 1000)).getTime(); // 2days
     }
     console.log("------------------------------->",3);
-    const sportsHighlights = await inPlayEvents.aggregate([
+    let sportsHighlights = await inPlayEvents.aggregate([
       {
         $match: {
           $expr: {
