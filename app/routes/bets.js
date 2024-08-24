@@ -1888,8 +1888,9 @@ const placeBet = async (req, res) => {
       // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       // const response = await axios.get(url);
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
-      let apiFancyOddsRes
-      for (let i = 0; i < 5; i++) {
+      let apiFancyOddsRes = []
+
+      for (let i = 1; i < 5; i++) {
         setTimeout(async () => {
 
           apiFancyOddsRes = await fetchSession(eventDetail.Id);
