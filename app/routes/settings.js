@@ -1340,6 +1340,8 @@ async function bettorDashboardGames2(req, res) {
         inplay: 1,
         hasBookmaker: 1,
         hasFancyMatch: 1,
+        isShowed: 1,
+        status: 1
       }
     ).sort({
       inplay: -1,

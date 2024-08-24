@@ -20,7 +20,7 @@ async function getAllSportsHighlight(req, res) {
   //   hour12: true,
   //   timeZoneName: 'short'
   // });
-  
+
   try {
 
     let now = new Date();  // Get the current date and time
@@ -133,7 +133,6 @@ async function getAllSportsHighlight(req, res) {
       message: 'GETTING_ALL_SPORTSHIGHLIGHT_DATA_SUCCESS',
       results: sportsHighlights,
       totalOpenMarkets: totalOpenMarkets,
-      serverTime: serverTime
     });
   } catch (err) {
     //console.log(err);
