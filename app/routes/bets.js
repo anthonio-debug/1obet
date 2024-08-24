@@ -1865,7 +1865,7 @@ const placeBet = async (req, res) => {
 
       let gameStatus;
       for (let i = 1; i < 5; i++) {
-        const apiFancyOddsRes = await fetchSession(eventDetail.Id);
+        var apiFancyOddsRes = await fetchSession(eventDetail.Id);
         const filteredOdds = apiFancyOddsRes.filter(item => item.SelectionId === selectionId);
         gameStatus = filteredOdds[0]?.GameStatus;
 
