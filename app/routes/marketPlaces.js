@@ -8,6 +8,8 @@ const { v4: uuidv4 } = require('uuid');
 const marketPlaceVlidator = require('../validators/marketPlaces');
 const inPlayEvents = require('../models/events');
 const { fetchMarket } = require('../../helper/eventHelper');
+const axios = require('axios');
+
 
 const router = express.Router();
 const loginRouter = express.Router();
