@@ -1894,7 +1894,7 @@ const placeBet = async (req, res) => {
 
           apiFancyOddsRes = await fetchSession(eventDetail.Id);
           apiFancyOddsRes = apiFancyOddsRes.filter((item) => item.SelectionId === selectionId);
-          // console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
+          console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
           gameStatus = apiFancyOddsRes[0]?.GameStatus;
           console.log(`apiFancyOddsRes[0]?.GameStatus==================${apiFancyOddsRes[0]?.GameStatus}`);
           console.log(`GameStatus==================${gameStatus}`);
