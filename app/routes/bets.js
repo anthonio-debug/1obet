@@ -1977,7 +1977,7 @@ const placeBet = async (req, res) => {
         if (!apiSelectedOdds || !dbSelectedOdds) {
           activeBettors.delete(userId);
           return res.status(404).send({
-            message: `Odds not available for the selected team ${selectionId}`
+            message: `Odds not available for the selected team ${selectionId}1-`
           });
         }
         // Get the runner name from the 'nat' field
@@ -2046,7 +2046,7 @@ const placeBet = async (req, res) => {
       } else {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Odds not available for the selected team ${req.body.selectionId}`
+          message: `Odds not available for the selected team ${req.body.selectionId}-2`
         });
       }
     }
@@ -2297,7 +2297,7 @@ const placeBet = async (req, res) => {
         if (!apiSelectedOdds || !dbSelectedOdds) {
           activeBettors.delete(userId);
           return res.status(404).send({
-            message: `Odds not available for the selected team ${selectionId}`
+            message: `Odds not available for the selected team ${selectionId}-4`
           });
         }
         fancyData = null;
@@ -2306,7 +2306,7 @@ const placeBet = async (req, res) => {
           if (betRate != apiSelectedOdds.b1) {
             activeBettors.delete(userId);
             return res.status(404).send({
-              message: `Odds not available for the selected team ${selectionId}`
+              message: `Odds not available for the selected team ${selectionId}-5`
             });
           }
           const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
@@ -2332,7 +2332,7 @@ const placeBet = async (req, res) => {
           if (betRate != apiSelectedOdds.l1) {
             activeBettors.delete(userId);
             return res.status(404).send({
-              message: `Odds not available for the selected team ${selectionId}`
+              message: `Odds not available for the selected team ${selectionId}-66`
             });
           }
           const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
