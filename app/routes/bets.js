@@ -1889,7 +1889,7 @@ const placeBet = async (req, res) => {
       // const response = await axios.get(url);
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
       let apiFancyOddsRes = [];
-      const apiFancyOddsResponse = [];
+      // const apiFancyOddsResponse = [];
       let hasError = false; // Flag to manage early exit
 
       for (let i = 1; i < 5; i++) {
@@ -1902,10 +1902,9 @@ const placeBet = async (req, res) => {
           }
 
           apiFancyOddsRes = response.filter((item) => item.SelectionId === selectionId);
-          apiFancyOddsResponse.push(apiFancyOddsRes);
+          // apiFancyOddsResponse.push(apiFancyOddsRes);
 
           console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
-          console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsResponse);
 
           const gameStatus = apiFancyOddsRes[0]?.GameStatus;
           console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
@@ -1928,7 +1927,9 @@ const placeBet = async (req, res) => {
         }
       }
 
-      const apiFancyOdds = buildFancyOdd(apiFancyOddsResponse[0]);
+      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: outside ", apiFancyOddsRes);
+
+      const apiFancyOdds = buildFancyOdd(apiFancyOddsRes);
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
 
