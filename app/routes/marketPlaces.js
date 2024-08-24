@@ -514,7 +514,13 @@ async function updateCompanySetStatus(req, res) {
     const data = req.query;
     await inPlayEvents.updateOne({ Id: data.Id }, { CompanySetStatus: data.status });
     const event=await inPlayEvents.findOne({Id:data.Id})
+
+
+    console.log("=-=--=-=-=-=--=-=-====-=-= event.sportsId", event.sportsId);
     cronOdds2(data.Id, event.sportsId)
+
+    console.log("=-=--=-=-=-=--=-=-====-=-= cronOdds2");
+    
     return res.status(200).send({
       success: true,
       message: 'Updated successfully !'
