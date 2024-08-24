@@ -1115,9 +1115,9 @@ async function cronOdds(req, res) {
 
 
   let result = [];
-  console.log("sending market ids..............................................>", sendMarketIds);
+  // console.log("sending market ids..............................................>", sendMarketIds);
   for (const marketIds of sendMarketIds) {
-    console.log("===================================================================================5");
+    // console.log("===================================================================================5");
     const odds = await getOdds(marketIds, sportID);
     result = [...result, ...odds];
   }
@@ -1163,7 +1163,7 @@ async function cronOdds2(req, res) {
     ///////////////////////////
     const marketsData = response.data;
     const sendMarketIds = [];
-    console.log(marketsData, "||||||||||||||||||||");
+    // console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
     if (marketsData && marketsData.length > 0) {
