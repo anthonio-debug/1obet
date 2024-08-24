@@ -1889,12 +1889,13 @@ const placeBet = async (req, res) => {
       // const response = await axios.get(url);
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
       let apiFancyOddsRes = []
-
+      const apiFancyOddsResponse = []
       for (let i = 1; i < 5; i++) {
         setTimeout(async () => {
 
           apiFancyOddsRes = await fetchSession(eventDetail.Id);
           apiFancyOddsRes = apiFancyOddsRes.filter((item) => item.SelectionId === selectionId);
+          apiFancyOddsResponse.push(apiFancyOddsRes)
           console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
           gameStatus = apiFancyOddsRes[0]?.GameStatus;
           console.log(`apiFancyOddsRes[0]?.GameStatus==================${apiFancyOddsRes[0]?.GameStatus}`);
@@ -1924,7 +1925,7 @@ const placeBet = async (req, res) => {
       console.log('..................................');
       console.log('type..................................', type);
       // const apiFancyOdds = response?.data?.data?.t3;
-      const apiFancyOdds = buildFancyOdd(apiFancyOddsRes);
+      const apiFancyOdds = buildFancyOdd(apiFancyOddsResponse[0]);
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
 
