@@ -1888,12 +1888,12 @@ const placeBet = async (req, res) => {
       // const url = `${FANCY_URL}/bm_fancy/${eventId}`;
       // const response = await axios.get(url);
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
-      // let apiFancyOddsRes = []
+      let apiFancyOddsRes = []
 
-      // for (let i = 1; i < 5; i++) {
-      //   setTimeout(async () => {
+      for (let i = 1; i < 5; i++) {
+        setTimeout(async () => {
 
-          let apiFancyOddsRes = await fetchSession(eventDetail.Id);
+          apiFancyOddsRes = await fetchSession(eventDetail.Id);
           apiFancyOddsRes = apiFancyOddsRes.filter((item) => item.SelectionId === selectionId);
           console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
           gameStatus = apiFancyOddsRes[0]?.GameStatus;
@@ -1902,13 +1902,14 @@ const placeBet = async (req, res) => {
 
           if (apiFancyOddsRes[0]?.GameStatus === 'SUSPENDED' || apiFancyOddsRes[0]?.GameStatus === 'Ball Running') {
             activeBettors.delete(userId);
+            
             return res.status(404).send({
-              message: `Status not available for selected team ${selectionId}`
+              message: `Status not available for selected team ${selectionId}-11`
             });
           }
 
-      //   }, 1000 * i);
-      // }
+        }, 1000 * i);
+      }
 
       //start of code to block fancy bet if bookmaker has ball running or suspended status
       // let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
