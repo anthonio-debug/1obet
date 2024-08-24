@@ -1889,7 +1889,7 @@ const placeBet = async (req, res) => {
       // const response = await axios.get(url);
       // const apiFancyOddsRes = await getFancyOdds([selectionId])
       let apiFancyOddsRes
-      for (const i = 0; i < 5; i++) {
+      for (let i = 0; i < 5; i++) {
         setTimeout(async () => {
 
           apiFancyOddsRes = await fetchSession(eventDetail.Id);
