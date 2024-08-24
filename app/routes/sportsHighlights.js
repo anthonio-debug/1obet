@@ -22,14 +22,14 @@ async function getAllSportsHighlight(req, res) {
   });
   
   try {
-    console.log("------------------------------->",1);
+
     let now = new Date();  // Get the current date and time
     let startOfDay = new Date(now);
     startOfDay.setHours(0, 0, 0, 0);
     let startOfDayTimestamp = startOfDay.getTime();
 
     let endOfDayTimestamp
-    console.log("------------------------------->",2);
+
     const sportId = req.query.sport;
 
     if (sportId == '1' || sportId == '2') {
@@ -39,8 +39,7 @@ async function getAllSportsHighlight(req, res) {
     } else {
       endOfDayTimestamp = new Date(startOfDayTimestamp + (2 * 24 * 60 * 60 * 1000)).getTime(); // 2days
     }
-    console.log("------------------------------->",3);
-    let sportsHighlights = await inPlayEvents.aggregate([
+    const sportsHighlights = await inPlayEvents.aggregate([
       {
         $match: {
           $expr: {
@@ -91,7 +90,7 @@ async function getAllSportsHighlight(req, res) {
     ]);
 
     let marketData = [];
-    console.log("------------------------------->",4,'=========',sportsHighlights.length);
+
     if (sportsHighlights.length > 0) {
       for (let i = 0; i < sportsHighlights.length; i++) {
         marketData = await marketIds.aggregate([
@@ -113,13 +112,11 @@ async function getAllSportsHighlight(req, res) {
             }
           }
         ]);
-        sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0;
+        sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
         sportsHighlights[i].serverTime = serverTime;
-        console.log("------------------------------->",8,'===============>>>',sportsHighlights)
-        
       }
     }
-    
+
     const ids = await inPlayEvents.distinct("Id", {
       sportsId: sportId,
       openDate: {
@@ -129,7 +126,7 @@ async function getAllSportsHighlight(req, res) {
     })
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
 
-    console.log(" ======== ids ", ids);
+    //console.log(" ======== ids ", ids);
 
     return res.send({
       success: true,
