@@ -1902,14 +1902,14 @@ const placeBet = async (req, res) => {
               return;
             }
 
-            const filteredResponse = response.filter((item) => item.SelectionId === selectionId);
+            const filteredResponse = await response.filter((item) => item.SelectionId === selectionId);
 
             if (!Array.isArray(filteredResponse)) {
               console.error("Filtered response is not an array:", filteredResponse);
               return;
             }
 
-            apiFancyOddsResponse.push(filteredResponse);
+            await apiFancyOddsResponse.push(filteredResponse);
 
             const gameStatus = filteredResponse[0]?.GameStatus;
 
