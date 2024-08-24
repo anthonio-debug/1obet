@@ -91,7 +91,7 @@ async function getAllSportsHighlight(req, res) {
     ]);
 
     let marketData = [];
-
+    console.log("------------------------------->",4,'=========',sportsHighlights.length);
     if (sportsHighlights.length > 0) {
       for (let i = 0; i < sportsHighlights.length; i++) {
         marketData = await marketIds.aggregate([
