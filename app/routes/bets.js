@@ -1912,6 +1912,96 @@ const placeBet = async (req, res) => {
             console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
             console.log(`GameStatus==================${gameStatus}`);
 
+
+            const apiFancyOdds = buildFancyOdd(apiFancyOddsRes);
+            const DBOddDetails = await FancyOdds.findById(oddsId);
+            const dbFancyOdds = DBOddDetails?.data?.data?.t3;
+      
+           
+            if (apiFancyOdds?.length && dbFancyOdds?.length) {
+              const apiSelectedOdds = apiFancyOdds.find((runner) => runner.sid == selectionId);
+              const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid == selectionId);
+      
+              if (!apiSelectedOdds || !dbSelectedOdds) {
+                activeBettors.delete(userId);
+                return res.status(404).send({
+                  message: `Odds not available for the selected team ${selectionId}1-`
+                });
+              }
+              // Get the runner name from the 'nat' field
+              fancyData = dbSelectedOdds.nat;
+              runnerName = dbSelectedOdds.nat;
+              _3rdPartyMarketId = dbSelectedOdds.nat;
+      
+              if (userId == 20126) {
+                console.log(subMarketName + '------------------------------' + fancyData + '-----------' + marketId + '-UUUUUUUUUUUU-' + userId);
+              }
+      
+              let oddsInsex = 0;
+              if (req.body.type == 0) {
+                if (betRate != apiSelectedOdds.l1) {
+                  activeBettors.delete(userId);
+                  return res.status(404).send({ message: `Bet miss matched-28 ` });
+                }
+                const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
+                const apiBackOdds = apiBackOdds2.map((item) => Number(item));
+                const DbBackOdds2 = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
+                const DbBackOdds = DbBackOdds2.map((item) => Number(item));
+                const DbBackScores2 = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
+                const DbBackScores = DbBackScores2.map((item) => Number(item));
+                const index = DbBackOdds.indexOf(betRate);
+                oddsInsex = index;
+                TargetScore = betRate;
+      
+                if (index == -1) {
+                  activeBettors.delete(userId);
+                  return res.status(404).send({ message: `Bet miss matched-29` });
+                }
+                if (apiBackOdds[index] < betRate) {
+                  activeBettors.delete(userId);
+                  return res.status(404).send({ message: `Bet miss matched-30 ` });
+                }
+              } else if (req.body.type == 1) {
+                if (betRate != apiSelectedOdds.b1) {
+                  activeBettors.delete(userId);
+                  return res.status(404).send({ message: `Bet miss matched-31 ` });
+                }
+                const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
+                const apiBackOdds = apiBackOdds2.map((item) => Number(item));
+                const DbBackOdds2 = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
+                const DbBackOdds = DbBackOdds2.map((item) => Number(item));
+                const DbBackScores2 = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
+                const DbBackScores = DbBackScores2.map((item) => Number(item));
+      
+                const index = DbBackOdds.indexOf(betRate);
+                oddsInsex = index;
+                TargetScore = betRate;
+      
+                if (index == -1) {
+                  activeBettors.delete(userId);
+                  return res.status(404).send({ message: `Index miss matched` });
+                }
+                if (apiBackOdds[index] < betRate) {
+                  activeBettors.delete(userId);
+                  return res.status(404).send({ message: `Bet miss matched-32` });
+                }
+              } else {
+                activeBettors.delete(userId);
+                return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
+              }
+              // layFancyRate = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3][0];
+              // backFancyRate  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3][0];
+            } else {
+              activeBettors.delete(userId);
+              return res.status(404).send({
+                message: `Odds not available for the selected team ${req.body.selectionId}-2`
+              });
+            }
+
+
+
+
+
             if (gameStatus === 'SUSPENDED' || gameStatus === 'Ball Running') {
               activeBettors.delete(userId);
 
@@ -1928,144 +2018,8 @@ const placeBet = async (req, res) => {
           }
         }, 1000 * i);
       }
-      //start of code to block fancy bet if bookmaker has ball running or suspended status
-      // let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
-      // const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
-      // const bookmakerSuspendedStatus = apiBookmakerOddRes[0]?.runners.every((item) => item?.status === 'SUSPENDED')
-
-      // console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:",bookmakerBallRunningStatus);
-      // console.log("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:",bookmakerSuspendedStatus);
-      //end of code to block fancy bet if bookmaker has ball running or suspended status
-
-      console.log('..................................');
-      console.log('type..................................', type);
-      // const apiFancyOdds = response?.data?.data?.t3;
-      const apiFancyOdds = buildFancyOdd(apiFancyOddsResponse[0]);
-      const DBOddDetails = await FancyOdds.findById(oddsId);
-      const dbFancyOdds = DBOddDetails?.data?.data?.t3;
-
-      /* bookmaker check start */
-      const dbBookmakerMarketId = DBOddDetails?.data?.data?.t2[0]?.bm1[0]?.ssid;
-      // if (!dbBookmakerMarketId) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bookmaker market not available for selected team ${selectionId}`
-      //   });
-      // }
-      // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
-      console.log('B>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>', dbBookmakerMarketId);
-      //console.log("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRR::::::",apiBookmakerOddRes[0]?.runners);
-      let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId);
-      // const apiBookmakerOddRes = await getBookmakerOdds([dbBookmakerMarketId])
-      console.log('Overallllllllllllllllllllllllllllllllllllllllllllll:', apiBookmakerOddRes);
-      const bookmakerStatus = apiBookmakerOddRes[0]?.runners.some((item) => item?.status === 'ACTIVE');
-      const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status));
-      const bookmakerSuspendedStatus = apiBookmakerOddRes[0]?.runners.every((item) => item?.status === 'SUSPENDED');
-      console.error('bookmaker status in fancy', bookmakerStatus, bookmakerBallRunningStatus, bookmakerSuspendedStatus);
-      statusForRes.bookmakerStatus = bookmakerStatus;
-      statusForRes.bookmakerBallRunningStatus = bookmakerBallRunningStatus;
-      statusForRes.bookmakerSuspendedStatus = bookmakerSuspendedStatus;
-      statusForRes.fancyBMCheckTime = moment().format('YYYY/MM/DD HH:mm:ss');
-      console.log('BBBBBBBBBBBBBBBBBBBBBBBBBSSSSSSSSSS:', bookmakerBallRunningStatus);
-      console.log('SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS:', bookmakerSuspendedStatus);
-      // if (bookmakerSuspendedStatus) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bookmaker all runners are in SUSPENDED status for selected team ${selectionId}`
-      //   });
-      // }
-      // if (bookmakerBallRunningStatus) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bookmaker runner is in Ball Running status for selected team ${selectionId}`
-      //   });
-      // }
-      // if (!bookmakerStatus) {
-      //   activeBettors.delete(userId);
-      //   return res.status(404).send({
-      //     message: `Bookmaker runner not available for selected team ${selectionId}`
-      //   });
-      // }
-      /* bookmaker check end */
-      if (apiFancyOdds?.length && dbFancyOdds?.length) {
-        const apiSelectedOdds = apiFancyOdds.find((runner) => runner.sid == selectionId);
-        const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid == selectionId);
-
-        if (!apiSelectedOdds || !dbSelectedOdds) {
-          activeBettors.delete(userId);
-          return res.status(404).send({
-            message: `Odds not available for the selected team ${selectionId}1-`
-          });
-        }
-        // Get the runner name from the 'nat' field
-        fancyData = dbSelectedOdds.nat;
-        runnerName = dbSelectedOdds.nat;
-        _3rdPartyMarketId = dbSelectedOdds.nat;
-
-        if (userId == 20126) {
-          console.log(subMarketName + '------------------------------' + fancyData + '-----------' + marketId + '-UUUUUUUUUUUU-' + userId);
-        }
-
-        let oddsInsex = 0;
-        if (req.body.type == 0) {
-          if (betRate != apiSelectedOdds.l1) {
-            activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched-28 ` });
-          }
-          const apiBackOdds2 = [apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3];
-          const apiBackOdds = apiBackOdds2.map((item) => Number(item));
-          const DbBackOdds2 = [dbSelectedOdds.l1, dbSelectedOdds.l2, dbSelectedOdds.l3];
-          const DbBackOdds = DbBackOdds2.map((item) => Number(item));
-          const DbBackScores2 = [dbSelectedOdds.ls1, dbSelectedOdds.ls2, dbSelectedOdds.ls3];
-          const DbBackScores = DbBackScores2.map((item) => Number(item));
-          const index = DbBackOdds.indexOf(betRate);
-          oddsInsex = index;
-          TargetScore = betRate;
-
-          if (index == -1) {
-            activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched-29` });
-          }
-          if (apiBackOdds[index] < betRate) {
-            activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched-30 ` });
-          }
-        } else if (req.body.type == 1) {
-          if (betRate != apiSelectedOdds.b1) {
-            activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched-31 ` });
-          }
-          const apiBackOdds2 = [apiSelectedOdds.b1, apiSelectedOdds.b2, apiSelectedOdds.b3];
-          const apiBackOdds = apiBackOdds2.map((item) => Number(item));
-          const DbBackOdds2 = [dbSelectedOdds.b1, dbSelectedOdds.b2, dbSelectedOdds.b3];
-          const DbBackOdds = DbBackOdds2.map((item) => Number(item));
-          const DbBackScores2 = [dbSelectedOdds.bs1, dbSelectedOdds.bs2, dbSelectedOdds.bs3];
-          const DbBackScores = DbBackScores2.map((item) => Number(item));
-
-          const index = DbBackOdds.indexOf(betRate);
-          oddsInsex = index;
-          TargetScore = betRate;
-
-          if (index == -1) {
-            activeBettors.delete(userId);
-            return res.status(404).send({ message: `Index miss matched` });
-          }
-          if (apiBackOdds[index] < betRate) {
-            activeBettors.delete(userId);
-            return res.status(404).send({ message: `Bet miss matched-32` });
-          }
-        } else {
-          activeBettors.delete(userId);
-          return res.status(400).send({ message: 'Invalid type value. Type should be 0 or 1.' });
-        }
-        // layFancyRate = [ apiSelectedOdds.l1, apiSelectedOdds.l2, apiSelectedOdds.l3][0];
-        // backFancyRate  = [apiSelectedOdds.b1,apiSelectedOdds.b2, apiSelectedOdds.b3][0];
-      } else {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Odds not available for the selected team ${req.body.selectionId}-2`
-        });
-      }
+      
+     
     }
 
     // For Betfair Fancy 
