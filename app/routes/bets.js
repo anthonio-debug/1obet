@@ -1907,10 +1907,11 @@ const placeBet = async (req, res) => {
               message: `Status not available for selected team ${selectionId}-11`
             });
           }
-
+          
         }, 1000 * i);
       }
-
+      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:============", apiFancyOddsRes);
+      
       //start of code to block fancy bet if bookmaker has ball running or suspended status
       // let apiBookmakerOddRes = await fetchBookmakerOdds(dbBookmakerMarketId)
       // const bookmakerBallRunningStatus = apiBookmakerOddRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status))
