@@ -410,33 +410,8 @@ async function cronOdds2(eventId, sportID) {
   try {
     const response = await axios.get(url);
 
-    // console.log("=-=--==---=-=--=-===--= market api response", response);
+    console.log("=-=--==---=-=--=-===--= market api response", response);
     
-    /////////////////////////
-    // const response = {
-    //   "success": true,
-    //   "data": [
-    //     {
-    //       "marketId": "1.232001727",
-    //       "marketName": "Match Odds",
-    //       "marketStartTime": "2024-08-21T23:00:00.000Z",
-    //       "totalMatched": "417.55",
-    //       "runners": [
-    //         {
-    //           "selectionId": 47674067,
-    //           "runnerName": "Barbados Royals W",
-    //           "sortPriority": 1
-    //         },
-    //         {
-    //           "selectionId": 47674068,
-    //           "runnerName": "Guyana Amazon Warriors W",
-    //           "sortPriority": 2
-    //         }
-    //       ]
-    //     }
-    //   ]
-    // };
-    ///////////////////////////
     const marketsData = response.data;
     const sendMarketIds = [];
     // console.log(marketsData, "||||||||||||||||||||");
