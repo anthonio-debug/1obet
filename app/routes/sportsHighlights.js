@@ -32,7 +32,7 @@ async function getAllSportsHighlight(req, res) {
 
     const sportId = req.query.sport;
 
-    if (sportId == '1' || sportId == '2') {
+    if (sportId == '1') {
       let endOfDay = new Date(now);
       endOfDay.setHours(23, 59, 59, 999);
       endOfDayTimestamp = endOfDay.getTime();
@@ -113,7 +113,7 @@ async function getAllSportsHighlight(req, res) {
           }
         ]);
         sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
-        //sportsHighlights[i].serverTime = serverTime;
+        sportsHighlights[i].serverTime = serverTime;
       }
     }
 
