@@ -1860,9 +1860,9 @@ const placeBet = async (req, res) => {
 
       isFancyOrBookMaker = true;
 
-      const buildFancyOdd = (apiFancyOddsRes) => {
+      const buildFancyOdd = (apiFancyOddsResponse) => {
         let odds = [];
-        for (const odd of apiFancyOddsRes) {
+        for (const odd of apiFancyOddsResponse) {
           odds.push({
             b1: odd.BackPrice1,
             b2: odd.BackPrice2,
