@@ -22,14 +22,14 @@ async function getAllSportsHighlight(req, res) {
   });
   
   try {
-
+    console.log("------------------------------->",1);
     let now = new Date();  // Get the current date and time
     let startOfDay = new Date(now);
     startOfDay.setHours(0, 0, 0, 0);
     let startOfDayTimestamp = startOfDay.getTime();
 
     let endOfDayTimestamp
-
+    console.log("------------------------------->",2);
     const sportId = req.query.sport;
 
     if (sportId == '1' || sportId == '2') {
@@ -39,6 +39,7 @@ async function getAllSportsHighlight(req, res) {
     } else {
       endOfDayTimestamp = new Date(startOfDayTimestamp + (2 * 24 * 60 * 60 * 1000)).getTime(); // 2days
     }
+    console.log("------------------------------->",3);
     const sportsHighlights = await inPlayEvents.aggregate([
       {
         $match: {
