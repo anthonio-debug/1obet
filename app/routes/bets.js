@@ -1895,7 +1895,7 @@ const placeBet = async (req, res) => {
       let apiFancyOddsRes = [];
       // const apiFancyOddsResponse = [];
       let hasError = false; // Flag to manage early exit
-
+      console.log("set time =========================================== before------")
       for (let i = 1; i < 4; i++) {
         try {
           await new Promise(resolve => setTimeout(resolve, 500));
