@@ -18,7 +18,7 @@ const userBetSizes = require('../models/userBetSizes');
 const BetLimits = require('../models/betLimits');
 
 require('dotenv').config()
-console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+// console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
 async function listEvents(req, res) {
   try {
@@ -543,8 +543,8 @@ async function getMarketsByMarketType(req, res) {
 async function getFanciesByEventId(req, res) {
   const eventId = req.params.eventId;
   const gtype = req.query.gtype;
-  console.log("gtype===================================", gtype);
-  console.log("eventId===================================", eventId);
+  // console.log("gtype===================================", gtype);
+  // console.log("eventId===================================", eventId);
   try {
     let sessions = await fetchSession(eventId)
     if (gtype) {
@@ -738,7 +738,7 @@ async function deleteOdds(req, res) {
     var arra = [];
     for (let index = 0; index < response.length; index++) {
       var element = response[index];
-      console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++" + element);
+      // console.log("+++++++++++++++++++++++++++++++++++++++++++++++++++++" + element);
       //arra[index] = element.name;
     }
     if (Array.isArray(element)) {
@@ -750,9 +750,9 @@ async function deleteOdds(req, res) {
     }
 
     const totalgreyhound = await MarketIDS.countDocuments({ winnerInfo: null, sportID: 4339 });
-    console.log(`totalgreyhound================${totalgreyhound}`);
+    // console.log(`totalgreyhound================${totalgreyhound}`);
     const totalhorses = await MarketIDS.countDocuments({ winnerInfo: null, sportID: 7 });
-    console.log(`totalhorses================${totalhorses}`);
+    // console.log(`totalhorses================${totalhorses}`);
 
     res.status(200).json({
       success: true,
@@ -811,7 +811,7 @@ async function getRelatedMarkets(req, res) {
 
 
     ]);
-    console.log(".....................................", marketData);
+    // console.log(".....................................", marketData);
     res.status(200).json({ success: true, message: 'Related Markets:', marketData });
   } catch (error) {
     console.error('Error updating odds:', error);
@@ -993,7 +993,7 @@ async function getOdds(marketIds, sportsId) {
       // console.log("=-=--=-=-=--=-=-=- response.data",response.data);
       
       const oddData = response.data;
-      console.log("===================================================================================2");
+      // console.log("===================================================================================2");
       odds.push(await saveOdds(oddData, sportsId));
     }
 
@@ -1004,7 +1004,7 @@ async function getOdds(marketIds, sportsId) {
 
 ///////////////////////////////////////////////////////////////////////////////////////
 async function cronOdds(req, res) {
-  console.log("===================================================================================3");
+  // console.log("===================================================================================3");
   const { eventId, sportID } = req.params;
 
 
@@ -1076,7 +1076,7 @@ async function cronOdds(req, res) {
             runners: tempRunners,
             inPlay: true
           });
-          console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn>>.", newMarket);
+          // console.log("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn>>.", newMarket);
           const newmarket = newMarket.save();
 
 
@@ -1126,7 +1126,7 @@ async function cronOdds(req, res) {
 }
 
 async function cronOdds2(req, res) {
-  console.log("===================================================================================3");
+  // console.log("===================================================================================3");
   const { eventId, sportID } = req.params;
 
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
@@ -1195,7 +1195,7 @@ async function cronOdds2(req, res) {
               inPlay: true,
             });
 
-            console.log("Saving new market: ", newMarket);
+            // console.log("Saving new market: ", newMarket);
             await newMarket.save();
           }else{
             await MarketIDS.findOneAndUpdate({eventId: eventId,marketId: element.marketId,}, {$set:{
@@ -1214,7 +1214,7 @@ async function cronOdds2(req, res) {
     
     console.log("Sending market ids:", sendMarketIds);
     for (const marketId of sendMarketIds) {
-      console.log("===================================================================================5");
+      // console.log("===================================================================================5");
       const odds = await getOdds(marketId, sportID);
       result = [...result, ...odds];
     }
@@ -1271,7 +1271,7 @@ async function getTheSportsMatchScoreEvents(req, res) {
       res.json({ status: true, data: { count: results.length, results } });
     })
     .catch((error) => {
-      console.log('error', error?.response?.data);
+      // console.log('error', error?.response?.data);
       res.status(500).json({ status: false, data: error?.response?.data });
     });
 
@@ -1429,8 +1429,8 @@ async function updateUserBetSizesColec(req, res) {
 async function getRaceLatestRecord(req, res) {
   const { collectionName, marketId } = req.params;
 
-  console.log(`raceodds ------- ${collectionName}---------`);
-  console.log(`marketId ------- ${marketId}---------`);
+  // console.log(`raceodds ------- ${collectionName}---------`);
+  // console.log(`marketId ------- ${marketId}---------`);
 
   //  const marketId = req.query.marketId
   // raceodds
@@ -1467,7 +1467,7 @@ async function getRaceLatestRecord(req, res) {
 
 
 async function updateUserName(req, res) {
-  console.log("updating user name");
+  // console.log("updating user name");
   try {
     const user = await Users.updateMany(
       {},
@@ -1491,7 +1491,7 @@ async function testing(req, res) {
   try {
     const currentTime = Date.now();
     // const formattedTime = currentTime.toLocaleTimeString();
-    console.log(currentTime, "//////");
+    // console.log(currentTime, "//////");
 
 
     res.status(200).json({
