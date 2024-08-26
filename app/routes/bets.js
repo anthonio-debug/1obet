@@ -1896,37 +1896,39 @@ const placeBet = async (req, res) => {
       // const apiFancyOddsResponse = [];
       let hasError = false; // Flag to manage early exit
 
-      try {
-        await new Promise(resolve => setTimeout(resolve, 1000 * 4));
-        const response = await fetchSession(eventDetail.Id);
+      for (let i = 1; i < 5; i++) {
+        try {
+          await new Promise(resolve => setTimeout(resolve, 1000));
+          const response = await fetchSession(eventDetail.Id);
 
-        if (!Array.isArray(response)) {
-          console.error("Expected an array but got:", response);
-          return;
-        }
-
-        apiFancyOddsRes = response.filter((item) => item.SelectionId === selectionId);
-        // apiFancyOddsResponse.push(apiFancyOddsRes);
-
-        console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
-
-        const gameStatus = apiFancyOddsRes[0]?.GameStatus;
-        console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
-        console.log(`GameStatus==================${gameStatus}`);
-
-        if (gameStatus === 'SUSPENDED' || gameStatus === 'Ball Running') {
-          activeBettors.delete(userId);
-
-          if (!hasError) { // Send response only once
-            hasError = true;
-            res.status(404).send({
-              message: `Status not available for selected team ${selectionId}-11`
-            });
+          if (!Array.isArray(response)) {
+            console.error("Expected an array but got:", response);
+            return;
           }
-          return; // Exit early to stop further processing
+
+          apiFancyOddsRes = response.filter((item) => item.SelectionId === selectionId);
+          // apiFancyOddsResponse.push(apiFancyOddsRes);
+
+          console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
+
+          const gameStatus = apiFancyOddsRes[0]?.GameStatus;
+          console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
+          console.log(`GameStatus==================${gameStatus}`);
+
+          if (gameStatus === 'SUSPENDED' || gameStatus === 'Ball Running') {
+            activeBettors.delete(userId);
+
+            if (!hasError) { // Send response only once
+              hasError = true;
+              res.status(404).send({
+                message: `Status not available for selected team ${selectionId}-11`
+              });
+            }
+            return; // Exit early to stop further processing
+          }
+        } catch (error) {
+          console.error("Error fetching data:", error);
         }
-      } catch (error) {
-        console.error("Error fetching data:", error);
       }
 
       console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: outside ", apiFancyOddsRes);

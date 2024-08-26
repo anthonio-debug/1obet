@@ -1241,7 +1241,10 @@ async function bettorDashboardGames2(req, res) {
         name: 1,
         competitionName: 1,
         marketIds: 1,
-        inplay: 1
+        inplay: 1,
+        isShowed: 1,
+        status: 1,
+        CompanySetStatus:1,
         // oddsData: {
         //   $slice: ["$odds", 1]
         // }
@@ -1290,7 +1293,10 @@ async function bettorDashboardGames2(req, res) {
         name: 1,
         competitionName: 1,
         marketIds: 1,
-        inplay: 1
+        inplay: 1,
+        isShowed: 1,
+        status: 1,
+        CompanySetStatus:1
       }
     ).sort({
       inplay: -1,
@@ -1341,7 +1347,8 @@ async function bettorDashboardGames2(req, res) {
         hasBookmaker: 1,
         hasFancyMatch: 1,
         isShowed: 1,
-        status: 1
+        status: 1,
+        CompanySetStatus:1
       }
     ).sort({
       inplay: -1,
