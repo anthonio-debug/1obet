@@ -889,7 +889,7 @@ function apiRequests() {
 
       let firstTwoChars= '';
 
-      if(myArray.length == '2' ){
+      if(myArray.length == 2 ){
       firstTwoChars = myArray[1].slice(0, 2);
       console.log(firstTwoChars);
       }
