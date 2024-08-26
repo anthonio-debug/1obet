@@ -361,10 +361,13 @@ function apiRequests() {
         let marketIds = [];
         let arrMarketIds = [];
         let cntrl = 0;
+
+        console.log('listMarketsByCronJobs is running ----------');
+        
         for(let element of marketsData) {
 
-
-
+          
+          
           ///mujahid code here start
           const time30minuts = 30*60*1000; 
           const currentTime=  Date.now();
@@ -373,9 +376,10 @@ function apiRequests() {
           if (remaingTime<time30minuts){
             await MarketIDS.findOneAndUpdate({eventId:element.eventId}, {$set:{ReadyForOdds:true}})
           }
-
+          console.log('listMarketsByCronJobs is running ----------');
+          
           if(remaingTime>time30minuts){
-        console.log("cron jobs code running ======----- ", response);
+            console.log("cron jobs code running for updating odds ======----- ");
 
             const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportID}&marketId=${element.marketId}`;
     
