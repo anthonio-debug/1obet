@@ -253,7 +253,7 @@ async function saveOdds(oddData, sportsId) {
     return;
 }
 
-  console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
+  // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
   const runners = [];
 
   for (const runner of oddData.runners) {
@@ -276,7 +276,7 @@ async function saveOdds(oddData, sportsId) {
   
   // console.log("????????????????",oddData.eventid);
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
-       const response= await Odds.findOne({marketId: oddData.marketId})
+       const response= await Odds.findOne({eventId: oddData.marketId})
        let odd;
        if (!response){
          odd = {
@@ -296,7 +296,7 @@ async function saveOdds(oddData, sportsId) {
         await odds.save();
        }else{
             console.log("+_+_+_+_+___+_+_+_   == updating odds")
-            await Odds.findOneAndUpdate({marketId: oddData.marketId},{$set:{totalMatched:oddData.totalMatched}})
+            await Odds.findOneAndUpdate({eventId: oddData.eventid},{$set:{totalMatched:oddData.totalMatched}})
             console.log("+_+_++_+_+_+_+_+_+_+_ odds uptdation completed");
             
         }
@@ -405,10 +405,10 @@ async function cronOdds2(eventId, sportID) {
       result = [...result, ...odds];
     }
 
-    // res.json({ status: true, data: "Result: " , result });
+    res.json({ status: true, data: "Result: " , result });
 
   } catch (error) {
-    console.log ({ msg: "Failed to get data. Error: " + error.message });
+    res.status(500).json({ success: false, msg: "Failed to get data. Error: " + error.message });
   }
 }
 
