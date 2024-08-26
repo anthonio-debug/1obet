@@ -1898,10 +1898,10 @@ const placeBet = async (req, res) => {
 
       for (let i = 1; i < 4; i++) {
         try {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 500));
           console.log("set time ", i)
           const response = await fetchSession(eventDetail.Id);
-          
+
           if (!Array.isArray(response)) {
             console.error("Expected an array but got:", response);
             return;

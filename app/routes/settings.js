@@ -2219,15 +2219,15 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
 const getWaitingBetsForManuel = async (req, res) => {
   try {
     const results = await Bets.find({ status: 1, isManuel: true }).sort({ createdAt: -1 });
-    console.log('Fetched bets:', results.length);
+    // console.log('Fetched bets:', results.length);
 
     const groups = {};
     for (let i = 0; i < results.length; i++) {
       const item = results[i].toJSON();
-      console.log(`Processing item ${i + 1}:`, item);
+      // console.log(`Processing item ${i + 1}:`, item);
 
       const main_group_key = `${item.matchId}_${item.marketId}_${item.betSession}`;
-      console.log('Group key:', main_group_key);
+      // console.log('Group key:', main_group_key);
 
       if (!groups[main_group_key]) {
         groups[main_group_key] = {
@@ -2244,26 +2244,26 @@ const getWaitingBetsForManuel = async (req, res) => {
           groups[main_group_key].eventData.eventName = eventData.name;
           groups[main_group_key].eventData.eventId = eventData.Id;
           groups[main_group_key].eventData.matchType = eventData.matchType;
-          console.log('Event data:', eventData);
+          // console.log('Event data:', eventData);
 
           // Fetch market data
           const marketData = await MarketIDS.findOne({
             eventId: eventData.Id,
             marketId: item.marketId
           });
-          console.log("marketData===================>", marketData);
+          // console.log("marketData===================>", marketData);
 
           if (marketData) {
             groups[main_group_key].eventData.marketData = marketData;
             groups[main_group_key].eventData.marketName = marketData.name; // Ensure marketData has a 'name' field
-            console.log('Market data:', marketData);
+            // console.log('Market data:', marketData);
           } else {
             groups[main_group_key].eventData.marketData = null;
             groups[main_group_key].eventData.marketName = 'Unknown Market';
-            console.log(`No market data found for marketId: ${item.marketId}`);
+            // console.log(`No market data found for marketId: ${item.marketId}`);
           }
         } else {
-          console.log(`No event data found for matchId: ${item.matchId}`);
+          // console.log(`No event data found for matchId: ${item.matchId}`);
         }
       }
 
@@ -2272,19 +2272,19 @@ const getWaitingBetsForManuel = async (req, res) => {
       const parent = await User.findOne({ userId: u1?.createdBy }, { userName: 1 });
       item.userName = u1 ? u1.userName : 'Unknown User';
       item.parentName = parent ? parent.userName : 'Unknown Parent';
-      console.log('User data:', { userName: item.userName, parentName: item.parentName });
+      // console.log('User data:', { userName: item.userName, parentName: item.parentName });
 
       // Fetch session data
       if (item.betSession !== null) {
         const session = await Session.findOne({ sessionNo: Number(item.betSession), eventId: Number(item.eventId) });
         item.session = session || 'Unknown Session';
-        console.log('Session data:', item.session);
+        // console.log('Session data:', item.session);
       }
 
       groups[main_group_key].bets.push(item);
     }
 
-    console.log('Final groups:', JSON.stringify(groups, null, 2));
+    // console.log('Final groups:', JSON.stringify(groups, null, 2));
     return res.status(200).send({
       success: true,
       results: groups
