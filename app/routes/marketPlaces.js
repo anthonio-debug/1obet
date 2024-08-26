@@ -405,9 +405,10 @@ async function cronOdds2(eventId, sportID) {
       result = [...result, ...odds];
     }
 
+    // res.json({ status: true, data: "Result: " , result });
 
   } catch (error) {
-    console.log ({  msg: "Failed to get data. Error: " + error.message });
+    console.log ({ msg: "Failed to get data. Error: " + error.message });
   }
 }
 
