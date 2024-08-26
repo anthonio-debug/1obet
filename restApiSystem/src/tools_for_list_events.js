@@ -93,7 +93,8 @@ function ToolForEvent() {
         } else {
           const now = new Date();
           const from = new Date(now.getTime() - 30 * 60 * 1000);
-          const someHoursLater = new Date(now.getTime() + 10 * 60 * 60 * 1000);
+          // const someHoursLater = new Date(now.getTime() + 10 * 60 * 60 * 1000);
+          const someHoursLater = new Date(now.getTime() + 10 * 60 * 60 * 100000);
           const to = someHoursLater.getTime();
           documents = await inPlayEvents
             .findOne({
