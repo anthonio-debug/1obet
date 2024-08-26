@@ -375,10 +375,13 @@ function apiRequests() {
           }
 
           if(remaingTime>time30minuts){
+        console.log("cron jobs code running ======----- ", response);
+
             const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportID}&marketId=${element.marketId}`;
     
       const response = await axios.get(oddUrl);
       
+      console.log("cron jobs response ======----- ", response);
 
       if (response.data) {
 
