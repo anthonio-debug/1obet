@@ -253,7 +253,7 @@ async function saveOdds(oddData, sportsId) {
     return;
 }
 
-  // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
+  console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
   const runners = [];
 
   for (const runner of oddData.runners) {
@@ -276,7 +276,7 @@ async function saveOdds(oddData, sportsId) {
   
   // console.log("????????????????",oddData.eventid);
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
-       const response= await Odds.findOne({eventId: oddData.marketId})
+       const response= await Odds.findOne({marketId: oddData.marketId})
        let odd;
        if (!response){
          odd = {
@@ -408,7 +408,7 @@ async function cronOdds2(eventId, sportID) {
     res.json({ status: true, data: "Result: " , result });
 
   } catch (error) {
-    res.status(500).json({ success: false, msg: "Failed to get data. Error: " + error.message });
+    console.log (status(500).json({ success: false, msg: "Failed to get data. Error: " + error.message }));
   }
 }
 

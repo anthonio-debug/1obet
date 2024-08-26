@@ -393,7 +393,7 @@ function apiRequests() {
           console.error("Failed to parse oddData:", error);
           return;
         }
-        const response= await Odds.findOne({eventId: oddData.marketId})
+        const response= await Odds.findOne({marketId: oddData.marketId})
 
         console.log("response in cronjobs of odds----- ", response);
         
