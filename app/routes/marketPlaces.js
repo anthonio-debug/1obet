@@ -277,8 +277,9 @@ async function saveOdds(oddData, sportsId) {
   // console.log("????????????????",oddData.eventid);
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
        const response= await Odds.findOne({eventId: oddData.marketId})
+       let odd;
        if (!response){
-        const odd = {
+         odd = {
           eventId: oddData.eventid,
           marketId: oddData.marketId,
           status: oddData.status,
