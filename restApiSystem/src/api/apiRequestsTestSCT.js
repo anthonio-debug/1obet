@@ -665,7 +665,7 @@ function apiRequests() {
 
                   let totalMatched = element.totalMatched;
                   
-                  const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
+                  const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
 
                   let frontData = {
                     sportsId: marketData.sportID,
