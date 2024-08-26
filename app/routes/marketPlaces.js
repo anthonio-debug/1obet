@@ -252,8 +252,6 @@ async function saveOdds(oddData, sportsId) {
     console.error("Failed to parse oddData:", error);
     return;
 }
-
-  // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
   const runners = [];
 
   for (const runner of oddData.runners) {
@@ -269,12 +267,7 @@ async function saveOdds(oddData, sportsId) {
       },
     });
   }
-  // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-  runners",runners)
 
-  // console.log("=-=-==-=-=-====-=- saveodds runig");
- 
-  
-  // console.log("????????????????",oddData.eventid);
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
        const response= await Odds.findOne({marketId: oddData.marketId})
        let odd;
@@ -313,22 +306,13 @@ async function getOdds(marketIds, sportsId) {
     // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
     
       const response = await axios.get(oddUrl);
-      // console.log(response, "================///============");
-      
-      
-    // console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
-    
     
     if (response.data) {
-
-      // console.log("=-=--=-=-=--=-=-=- response.data",response.data);
       
       const oddData = response.data;
       console.log("===================================================================================2");
       odds.push(await saveOdds(oddData, sportsId));
     }
-
-    // Resolve the promise with the collected odds
     resolve(odds);
   });
 }
@@ -338,14 +322,10 @@ async function getOdds(marketIds, sportsId) {
 async function cronOdds2(eventId, sportID) {
   console.log("===================================================================================3");
   // const { eventId, sportID } = req.params;
-  // console.log("=-=--==---=-=--=-===--=  eventId====", eventId);
-
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
 
   try {
     const response = await axios.get(url);
-
-    console.log("=-=--==---=-=--=-===--= market api response", response);
     
     const marketsData = response.data;
     const sendMarketIds = [];
@@ -396,7 +376,6 @@ async function cronOdds2(eventId, sportID) {
     // const sendMarketIds = ["1.232001727"];
 
     let result = [];
-    // console.log(result,"=-=-=---=-=---=--=");
     
     console.log("Sending market ids:", sendMarketIds);
     for (const marketId of sendMarketIds) {
