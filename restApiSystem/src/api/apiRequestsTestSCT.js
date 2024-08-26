@@ -383,7 +383,7 @@ function apiRequests() {
       if (response.data) {
 
         
-        const oddData = response.data;
+        let oddData = response.data;
         try {
           oddData = JSON.parse(oddData);
       } catch (error) {
