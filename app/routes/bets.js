@@ -1896,9 +1896,10 @@ const placeBet = async (req, res) => {
       // const apiFancyOddsResponse = [];
       let hasError = false; // Flag to manage early exit
 
-      for (let i = 1; i < 5; i++) {
+      for (let i = 1; i < 4; i++) {
         try {
           await new Promise(resolve => setTimeout(resolve, 1000));
+          console.log("set time ", i)
           const response = await fetchSession(eventDetail.Id);
 
           if (!Array.isArray(response)) {
