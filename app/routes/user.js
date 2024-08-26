@@ -810,6 +810,7 @@ async function getCurrentUser(req, res) {
     ]);
     console.log("userId", users)
     if (!users) {
+      console.log("userId not found")
       return res.status(404).json({ message: 'User not found' });
     }
 
