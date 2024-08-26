@@ -392,9 +392,14 @@ function apiRequests() {
         }
         const response= await Odds.findOne({eventId: oddData.marketId})
 
+        console.log("response in cronjobs of odds----- ", response);
+        
+
         if(response){
 
           await Odds.findOneAndUpdate({eventId: oddData.eventid},{$set:{totalMatched:oddData.totalMatched}})
+          console.log("odds updated in cronjobs for total matched----- TotalMatched=", response.totalMatched);
+        
         }
 
         

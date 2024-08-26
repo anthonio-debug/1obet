@@ -294,8 +294,11 @@ async function saveOdds(oddData, sportsId) {
         const odds = new Odds(odd);
         await odds.save();
        }else{
+            console.log("+_+_+_+_+___+_+_+_   == updating odds")
             await Odds.findOneAndUpdate({eventId: oddData.eventid},{$set:{totalMatched:oddData.totalMatched}})
-       }
+            console.log("+_+_++_+_+_+_+_+_+_+_ odds uptdation completed");
+            
+        }
 
   return odd;
 }
@@ -334,7 +337,7 @@ async function getOdds(marketIds, sportsId) {
 async function cronOdds2(eventId, sportID) {
   console.log("===================================================================================3");
   // const { eventId, sportID } = req.params;
-  console.log("=-=--==---=-=--=-===--=  eventId====", eventId);
+  // console.log("=-=--==---=-=--=-===--=  eventId====", eventId);
 
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
 
@@ -422,10 +425,10 @@ async function updateCompanySetStatus(req, res) {
     const event=await inPlayEvents.findOne({Id:data.Id})
 
 
-    console.log("=-=--=-=-=-=--=-=-====-=-= event.sportsId", event.sportsId);
+    // console.log("=-=--=-=-=-=--=-=-====-=-= event.sportsId", event.sportsId);
     cronOdds2(data.Id, event.sportsId)
 
-    console.log("=-=--=-=-=-=--=-=-====-=-= cronOdds2");
+    // console.log("=-=--=-=-=-=--=-=-====-=-= cronOdds2");
     
     return res.status(200).send({
       success: true,
