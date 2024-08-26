@@ -1901,7 +1901,7 @@ const placeBet = async (req, res) => {
           await new Promise(resolve => setTimeout(resolve, 1000));
           console.log("set time ", i)
           const response = await fetchSession(eventDetail.Id);
-
+          
           if (!Array.isArray(response)) {
             console.error("Expected an array but got:", response);
             return;
@@ -1910,11 +1910,11 @@ const placeBet = async (req, res) => {
           apiFancyOddsRes = response.filter((item) => item.SelectionId === selectionId);
           // apiFancyOddsResponse.push(apiFancyOddsRes);
 
-          console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
+          // console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
 
           const gameStatus = apiFancyOddsRes[0]?.GameStatus;
-          console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
-          console.log(`GameStatus==================${gameStatus}`);
+          // console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
+          // console.log(`GameStatus==================${gameStatus}`);
 
           if (gameStatus === 'SUSPENDED' || gameStatus === 'Ball Running') {
             activeBettors.delete(userId);
@@ -1932,7 +1932,7 @@ const placeBet = async (req, res) => {
         }
       }
 
-      console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: outside ", apiFancyOddsRes);
+      // console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF: outside ", apiFancyOddsRes);
 
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes);
       const DBOddDetails = await FancyOdds.findById(oddsId);
