@@ -750,6 +750,7 @@ async function getCurrentUser(req, res) {
     return res.status(400).send({ errors: errors.errors });
   }
   const userId = req.decoded.userId
+  console.log("userId", userId)
   try {
     const users = await User.aggregate([
       {
