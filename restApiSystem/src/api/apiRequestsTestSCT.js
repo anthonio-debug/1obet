@@ -400,7 +400,7 @@ function apiRequests() {
 
         if(response){
 
-          await Odds.findOneAndUpdate({eventId: oddData.eventid},{$set:{totalMatched:oddData.totalMatched}})
+          await Odds.findOneAndUpdate({marketId: oddData.marketId},{$set:{totalMatched:oddData.totalMatched}})
           console.log("odds updated in cronjobs for total matched----- TotalMatched=", response.totalMatched);
         
         }

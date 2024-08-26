@@ -296,7 +296,7 @@ async function saveOdds(oddData, sportsId) {
         await odds.save();
        }else{
             console.log("+_+_+_+_+___+_+_+_   == updating odds")
-            await Odds.findOneAndUpdate({eventId: oddData.eventid},{$set:{totalMatched:oddData.totalMatched}})
+            await Odds.findOneAndUpdate({marketId: oddData.marketId},{$set:{totalMatched:oddData.totalMatched}})
             console.log("+_+_++_+_+_+_+_+_+_+_ odds uptdation completed");
             
         }
