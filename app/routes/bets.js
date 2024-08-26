@@ -1894,6 +1894,7 @@ const placeBet = async (req, res) => {
 
       for (let i = 1; i < 5; i++) {
         try {
+          await new Promise(resolve => setTimeout(resolve, 1000 * i));
           const response = await fetchSession(eventDetail.Id);
 
           if (!Array.isArray(response)) {
@@ -1921,7 +1922,6 @@ const placeBet = async (req, res) => {
             }
             return; // Exit early to stop further processing
           }
-          await new Promise(resolve => setTimeout(resolve, 1000 * i));
         } catch (error) {
           console.error("Error fetching data:", error);
         }
