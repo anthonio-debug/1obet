@@ -368,6 +368,8 @@ const placeBet = async (req, res) => {
       }
       id = idDetails.marketId;
       _3rdPartyMarketId = id;
+      console.log("Check the marketId", id, "and", _3rdPartyMarketId, "idDetails.marketId", idDetails.marketId);
+
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
       if (!subMarketDetail) {
         activeBettors.delete(userId);
@@ -405,6 +407,8 @@ const placeBet = async (req, res) => {
       const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == thirdPartyMarketName);
       id = currentMarket?.id;
       _3rdPartyMarketId = id;
+      console.log("_3rdPartyMarketId================= after cup", id, "and", _3rdPartyMarketId, "idDetails.marketId", idDetails.marketId);
+
       subMarketDetail = await SubMarketType.findOne({
         name: subMarketName,
         marketId: marketId
@@ -1932,7 +1936,6 @@ const placeBet = async (req, res) => {
       const apiFancyOdds = buildFancyOdd(apiFancyOddsRes);
       const DBOddDetails = await FancyOdds.findById(oddsId);
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
-
 
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
         const apiSelectedOdds = apiFancyOdds.find((runner) => runner.sid == selectionId);
