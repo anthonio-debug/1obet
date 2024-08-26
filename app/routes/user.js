@@ -743,24 +743,82 @@ function searchUsers(req, res) {
   });
 }
 
-function getCurrentUser(req, res) {
+async function getCurrentUser(req, res) {
   //to do show status of marketplaces for that specific user
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const fieldsToSelect = '"balance":1,"exposure":1,"userName":1,"availableBalance":1,"isActive":1,"status":1,"userId":1,"role":1';
-  User.findOne({ userId: req.decoded.userId }, async (err, user) => {
+  const userId = req.decoded.userId
+  try {
+    const users = await User.aggregate([
+      {
+        $match: {
+          userId: userId
+        }
+      },
+      {
+        $lookup: {
+          from: "deposits",
+          localField: "userId",
+          foreignField: "userId",
+          as: "depositInfo"
+        }
+      },
+      {
+        $unwind: "$depositInfo"
+      },
+      {
+        $sort: {
+          "depositInfo.date": -1
+        }
+      },
+      {
+        $group: {
+          _id: "$userId",
+          userName: { $first: "$userName" },
+          exposure: { $first: "$exposure" },
+          availableBalance: { $first: "$availableBalance" },
+          balance: { $first: "$balance" },
+          isActive: { $first: "$isActive" },
+          status: { $first: "$status" },
+          role: { $first: "$role" },
+          depositBalance: { $first: "$depositInfo.balance" },
+          depositAvailableBalance: { $first: "$depositInfo.availableBalance" },
+          depositMaxWithdraw: { $first: "$depositInfo.maxWithdraw" },
+          depositAmount: { $first: "$depositInfo.amount" },
+        }
+      },
+      {
+        $project: {
+          userId: "$_id",
+          userName: 1,
+          exposure: 1,
+          isActive: 1,
+          status: 1,
+          userId: 1,
+          role: 1,
+          balance: 1,
+          availableBalance: 1,
+          depositBalance: 1,
+          depositAvailableBalance: 1,
+          depositMaxWithdraw: 1,
+          depositAmount: 1
+        }
+      }
+    ]);
+    if (!users) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
-    if (err || !user) return res.status(404).send({ message: 'user not found' });
-
-    return res.send({
+    return res.json({
       success: true,
-      message: 'users record found',
-      results: user,
-      correctExposure: []
+      message: 'User record found',
+      results: users,
     });
-  });
+  } catch (err) {
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
 }
 
 function getSingleUser(req, res) {
