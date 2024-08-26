@@ -817,7 +817,7 @@ async function getCurrentUser(req, res) {
     return res.json({
       success: true,
       message: 'User record found',
-      results: users,
+      results: users[0],
     });
   } catch (err) {
     return res.status(500).json({ message: 'Server error', error: err.message });
