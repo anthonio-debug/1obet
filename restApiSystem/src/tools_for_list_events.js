@@ -185,7 +185,7 @@ function ToolForEvent() {
         {
           $match: {
             
-            // ReadyForOdds:true,
+            ReadyForOdds:true,
             status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
 
             $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]

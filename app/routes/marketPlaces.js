@@ -276,22 +276,27 @@ async function saveOdds(oddData, sportsId) {
   
   // console.log("????????????????",oddData.eventid);
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
-  
-  const odd = {
-    eventId: oddData.eventid,
-    marketId: oddData.marketId,
-    status: oddData.status,
-    isInplay: oddData.inplay,
-    totalMatched: oddData.totalMatched,
-    isMarketDataDelayed: false,
-    sportsId,
-    numberOfRunners: runners.length,
-    numberOfActiveRunners: activeRunners.length,
-    runners,
-  };
-  
-  const odds = new Odds(odd);
-  await odds.save();
+       const response= await Odds.findOne({eventId: oddData.marketId})
+       if (!response){
+        const odd = {
+          eventId: oddData.eventid,
+          marketId: oddData.marketId,
+          status: oddData.status,
+          isInplay: oddData.inplay,
+          totalMatched: oddData.totalMatched,
+          isMarketDataDelayed: false,
+          sportsId,
+          numberOfRunners: runners.length,
+          numberOfActiveRunners: activeRunners.length,
+          runners,
+        };
+        
+        const odds = new Odds(odd);
+        await odds.save();
+       }else{
+            await Odds.findOneAndUpdate({eventId: oddData.eventid},{$set:{totalMatched:oddData.totalMatched}})
+       }
+
   return odd;
 }
 

@@ -2,7 +2,7 @@
 module.exports = apiRequests;
 
 const axios = require('axios');
-
+// const {cronOdds2} = require('../../../app/routes/marketPlaces');
 const inPlayEvents = require('../../../app/models/events');
 const MarketIDS = require('../../../app/models/marketIds');
 const RaceOdds = require('../../../app/models/raceOdds');
@@ -361,12 +361,47 @@ function apiRequests() {
         let marketIds = [];
         let arrMarketIds = [];
         let cntrl = 0;
-        marketsData.forEach((element) => {
+        for(let element of marketsData) {
 
 
 
           ///mujahid code here start
-           
+          const time30minuts = 30*60*1000; 
+          const currentTime=  Date.now();
+          const marketOpenDate=element.openDate
+          const remaingTime = marketOpenDate-currentTime
+          if (remaingTime<time30minuts){
+            await MarketIDS.findOneAndUpdate({eventId:element.eventId}, {$set:{ReadyForOdds:true}})
+          }
+
+          if(remaingTime>time30minuts){
+            const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportID}&marketId=${element.marketId}`;
+    
+      const response = await axios.get(oddUrl);
+      
+
+      if (response.data) {
+
+        
+        const oddData = response.data;
+        try {
+          oddData = JSON.parse(oddData);
+      } catch (error) {
+          console.error("Failed to parse oddData:", error);
+          return;
+        }
+        const response= await Odds.findOne({eventId: oddData.marketId})
+
+        if(response){
+
+          await Odds.findOneAndUpdate({eventId: oddData.eventid},{$set:{totalMatched:oddData.totalMatched}})
+        }
+
+        
+      }
+          }
+            
+          
           //==> compare open date, if its more than half hour then 
           //if(openDate>now()){
             //call limitless api for odds for this market... and update odds collection and marketsids collection only with totalMathedAmount...
@@ -452,7 +487,7 @@ function apiRequests() {
                 runners: tempRunners
               });
           }
-        });
+        };
 
 
         //console.log('============================================================================================', arrMarketIds);
