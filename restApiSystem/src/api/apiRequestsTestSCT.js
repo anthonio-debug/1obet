@@ -338,6 +338,7 @@ function apiRequests() {
 
   async function listMarketsByCronJob(eventId, sportID) {
 
+    console.log("inside...................................................",eventId);
     const requestData = {
       filter: {
         eventIds: [eventId]
