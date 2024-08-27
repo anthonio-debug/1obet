@@ -3827,7 +3827,7 @@ async function getMatchedBets(req, res) {
 
           ]);
           console.log("MMMMMMMMMMMMM", events);
-          return res.status(200).json({ success: true, message: 'Related Markets:', events });
+           res.status(200).json({ success: true, message: 'Related Markets:', events });
 
         } catch (error) {
           console.error('Error updating odds:', error);

@@ -75,6 +75,15 @@ function ToolForEvent() {
       console.error('Error fetching events:', error);
     }
   }
+  // async function updateOddsFormLimitless() {
+  //   try {
+  //     for (const sportsId of sportsIds) {
+  //       await apiRequests.eventsBySupportJobs(sportsId);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error fetching events:', error);
+  //   }
+  // }
 
   async function fetchMarkets() {
     try {
