@@ -3670,88 +3670,7 @@ async function getMatchedBets(req, res) {
     }
 
     // Use the $lookup aggregation pipeline to fetch matched bets along with user information and related events
-    var matchedBets = await Bets.aggregate([
-      {
-        $match: {
-          userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] },
-          status: 1,
-          matchId: matchId
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: 'userId',
-          as: 'userDetails'
-        }
-      },
-      { $unwind: '$userDetails' },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'userDetails.createdBy',
-          foreignField: 'userId',
-          as: 'masterDetails'
-        }
-      },
-      {
-        $lookup: {
-          from: 'inplayevents',
-          localField: 'sportsId',
-          foreignField: 'sportsId',
-          as: 'eventDetails'
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          price: '$betRate',
-          runnersPosition: '$runnersPosition',
-          calculateExp: '$calculateExp',
-          runnerId: '$runnerName',
-          createdAt: '$createdAt',
-          size: '$betAmount',
-          runner: '$runner',
-          marketId: '$marketId',
-          betRate: '$betRate',
-          type: '$type',
-          isfancyOrbookmaker: '$isfancyOrbookmaker',
-          fancyData: '$fancyData',
-          bettor: '$userDetails.userName',
-          bettorId: '$userDetails.userId',
-          fancyRate: '$fancyRate',
-          betSession: '$betSession',
-          roundId: '$roundId',
-          master: {
-            $cond: [
-              { $eq: [loginUser.role, '5'] },
-              loginUser.userName,
-              {
-                $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, '']
-              }
-            ]
-          },
-          event: {
-            $cond: [
-              { $eq: [loginUser.role, '5'] },
-              {
-                $map: {
-                  input: { $slice: ['$eventDetails', 5] },
-                  as: 'event',
-                  in: {
-                    name: '$$event.name',
-                    openDate: '$$event.openDate'
-                  }
-                }
-              },
-              '$$REMOVE'
-            ]
-          }
-        }
-      },
-      { $sort: { _id: -1 } }
-    ]).exec();
+  
 
     // if (!matchedBets || matchedBets.length == 0) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
@@ -3784,8 +3703,94 @@ async function getMatchedBets(req, res) {
 
     if (eventId) {
       if (eventId.sportsId == "7" || eventId.sportsId == "4339") {
+
         try {
 
+          ///////////////////////////////////
+          var matchedBets = await Bets.aggregate([
+            {
+              $match: {
+                userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] },
+                status: 1,
+                matchId: matchId,
+                marketId:marketId
+              }
+            },
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'userId',
+                foreignField: 'userId',
+                as: 'userDetails'
+              }
+            },
+            { $unwind: '$userDetails' },
+            {
+              $lookup: {
+                from: 'users',
+                localField: 'userDetails.createdBy',
+                foreignField: 'userId',
+                as: 'masterDetails'
+              }
+            },
+            {
+              $lookup: {
+                from: 'inplayevents',
+                localField: 'sportsId',
+                foreignField: 'sportsId',
+                as: 'eventDetails'
+              }
+            },
+            {
+              $project: {
+                _id: 0,
+                price: '$betRate',
+                runnersPosition: '$runnersPosition',
+                calculateExp: '$calculateExp',
+                runnerId: '$runnerName',
+                createdAt: '$createdAt',
+                size: '$betAmount',
+                runner: '$runner',
+                marketId: '$marketId',
+                betRate: '$betRate',
+                type: '$type',
+                isfancyOrbookmaker: '$isfancyOrbookmaker',
+                fancyData: '$fancyData',
+                bettor: '$userDetails.userName',
+                bettorId: '$userDetails.userId',
+                fancyRate: '$fancyRate',
+                betSession: '$betSession',
+                roundId: '$roundId',
+                master: {
+                  $cond: [
+                    { $eq: [loginUser.role, '5'] },
+                    loginUser.userName,
+                    {
+                      $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, '']
+                    }
+                  ]
+                },
+                event: {
+                  $cond: [
+                    { $eq: [loginUser.role, '5'] },
+                    {
+                      $map: {
+                        input: { $slice: ['$eventDetails', 5] },
+                        as: 'event',
+                        in: {
+                          name: '$$event.name',
+                          openDate: '$$event.openDate'
+                        }
+                      }
+                    },
+                    '$$REMOVE'
+                  ]
+                }
+              }
+            },
+            { $sort: { _id: -1 } }
+          ]).exec();
+          ////////////////////////////////////
           console.log("ssssssssssssssssssssssssssssssss:", eventId.sportsId);
           const sportid = +eventId.sportsId
           const events = await MarketIDS.aggregate([
@@ -3848,6 +3853,91 @@ async function getMatchedBets(req, res) {
       }
 
       else {
+
+        ///////////////////////////////////////////////////
+        var matchedBets = await Bets.aggregate([
+          {
+            $match: {
+              userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] },
+              status: 1,
+              matchId: matchId
+            }
+          },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'userId',
+              foreignField: 'userId',
+              as: 'userDetails'
+            }
+          },
+          { $unwind: '$userDetails' },
+          {
+            $lookup: {
+              from: 'users',
+              localField: 'userDetails.createdBy',
+              foreignField: 'userId',
+              as: 'masterDetails'
+            }
+          },
+          {
+            $lookup: {
+              from: 'inplayevents',
+              localField: 'sportsId',
+              foreignField: 'sportsId',
+              as: 'eventDetails'
+            }
+          },
+          {
+            $project: {
+              _id: 0,
+              price: '$betRate',
+              runnersPosition: '$runnersPosition',
+              calculateExp: '$calculateExp',
+              runnerId: '$runnerName',
+              createdAt: '$createdAt',
+              size: '$betAmount',
+              runner: '$runner',
+              marketId: '$marketId',
+              betRate: '$betRate',
+              type: '$type',
+              isfancyOrbookmaker: '$isfancyOrbookmaker',
+              fancyData: '$fancyData',
+              bettor: '$userDetails.userName',
+              bettorId: '$userDetails.userId',
+              fancyRate: '$fancyRate',
+              betSession: '$betSession',
+              roundId: '$roundId',
+              master: {
+                $cond: [
+                  { $eq: [loginUser.role, '5'] },
+                  loginUser.userName,
+                  {
+                    $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, '']
+                  }
+                ]
+              },
+              event: {
+                $cond: [
+                  { $eq: [loginUser.role, '5'] },
+                  {
+                    $map: {
+                      input: { $slice: ['$eventDetails', 5] },
+                      as: 'event',
+                      in: {
+                        name: '$$event.name',
+                        openDate: '$$event.openDate'
+                      }
+                    }
+                  },
+                  '$$REMOVE'
+                ]
+              }
+            }
+          },
+          { $sort: { _id: -1 } }
+        ]).exec();
+        ///////////////////////////////////////////////////
         relatedEvents = await Events.find({
           sportsId: eventId.sportsId,
           status: "OPEN",
