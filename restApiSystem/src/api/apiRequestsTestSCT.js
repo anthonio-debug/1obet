@@ -367,6 +367,7 @@ function apiRequests() {
         
         for(let element of marketsData) {
 
+          console.log("=-=-=-=-=-=--=-= element =", element)
           
           
           ///mujahid code here start
