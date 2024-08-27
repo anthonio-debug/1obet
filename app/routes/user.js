@@ -784,6 +784,8 @@ async function getCurrentUser(req, res) {
         $project: {
           userId: 1,
           userName: 1,
+          downLineShare: 1,
+          digitVerification: 1,
           exposure: 1,
           isActive: 1,
           status: 1,
