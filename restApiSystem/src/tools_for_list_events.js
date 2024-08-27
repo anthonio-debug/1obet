@@ -82,8 +82,8 @@ async function updateOddsFormLimitless() {
   console.log("inside...................................................");
   
   try {
-    // ReadyForOdds: false, status:"OPEN",
-    const marketsData = await MarketIDs.find({ marketName: "Match Odds" });
+    // ,
+    const marketsData = await MarketIDs.find({ marketName: "Match Odds",ReadyForOdds: false, status:"OPEN" });
          
     console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
     
