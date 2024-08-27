@@ -379,7 +379,7 @@ function apiRequests() {
           }
           console.log('listMarketsByCronJobs is running for marketname: ----------',element.marketName);
           
-          if(remaingTime>time30minuts){
+          if(remaingTime>time30minuts && element.marketName=='Match Odds'){
             console.log("cron jobs code running for updating odds ======----- ");
 
             const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportID}&marketId=${element.marketId}`;
@@ -412,6 +412,16 @@ function apiRequests() {
 
         
       }
+          }else{
+
+
+            const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportID}&marketId=${element.marketId}`;
+    
+      const response = await axios.get(oddUrl);
+      
+      console.log("cron jobs response for other than match odds ======----------------------------- ", response);
+
+
           }
             
           
