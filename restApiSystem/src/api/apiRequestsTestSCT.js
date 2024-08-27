@@ -402,15 +402,15 @@ function apiRequests() {
           console.error("Failed to parse oddData:", error);
           return;
         }
-        const response= await Odds.findOne({marketId: oddData.marketId})
+        const marketResp= await Odds.findOne({marketId: oddData.marketId})
 
-        console.log("response in cronjobs of odds----- ", response);
+        console.log("response in cronjobs of odds----- ", marketResp);
         
 
-        if(response){
+        if(marketResp){
 
           await Odds.findOneAndUpdate({marketId: oddData.marketId},{$set:{totalMatched:oddData.totalMatched}})
-          console.log("odds updated in cronjobs for total matched----- TotalMatched=", response.totalMatched);
+          console.log("odds updated in cronjobs for total matched----- TotalMatched=", marketResp.totalMatched);
         
         }
 
