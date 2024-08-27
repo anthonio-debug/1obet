@@ -27,7 +27,6 @@ function ToolForEvent() {
 
       setInterval(fetchEvents,  60 * 1000);
       setInterval(updateOddsFormLimitless,  10 * 1000);
-      console.log("=++++++++++++++++++++++=");
       
       setInterval(fetchMarkets, 10 * 1000);
       // setInterval(handleSetInplay, 10 * 1000);
@@ -85,6 +84,8 @@ async function updateOddsFormLimitless() {
   try {
     const marketsData = await MarketIDs.find({ReadyForOdds: false, status:"OPEN", marketName: "Match Odds" });
          
+    console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
+    
   
           if (marketsData && marketsData.length > 0) {
               console.log("marketsData::::::::::::::::;", marketsData);
@@ -101,7 +102,7 @@ async function updateOddsFormLimitless() {
                       console.log("======================-------------- market Name =", element.marketName);
                   }
   
-                  if (remainingTime > time30Minutes && element.marketName === 'Match Odds') {
+                  if (remainingTime > time30Minutes) {
                       console.log("cron jobs code running for updating odds ======----- ");
   
                       const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${element.sportID}&marketId=${element.marketId}`;
