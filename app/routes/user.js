@@ -783,17 +783,17 @@ async function getCurrentUser(req, res) {
         }
       },
       {
+        $unwind: {
+          path: "$depositInfo",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
         $lookup: {
           from: "deposits",
           localField: "userId",
           foreignField: "userId",
           as: "depositInfo"
-        }
-      },
-      {
-        $unwind: {
-          path: "$depositInfo",
-          preserveNullAndEmptyArrays: true
         }
       },
       {
@@ -812,7 +812,6 @@ async function getCurrentUser(req, res) {
           isActive: { $first: "$isActive" },
           status: { $first: "$status" },
           role: { $first: "$role" },
-          // Add other fields from user collection that you want to include
           depositBalance: { $first: "$depositInfo.balance" },
           depositAvailableBalance: { $first: "$depositInfo.availableBalance" },
           depositMaxWithdraw: { $first: "$depositInfo.maxWithdraw" },
@@ -829,11 +828,10 @@ async function getCurrentUser(req, res) {
           role: 1,
           balance: 1,
           availableBalance: 1,
-          // depositBalance: 1,
-          // depositAvailableBalance: 1,
-          // depositMaxWithdraw: 1,
-          // depositAmount: 1,
-          // Ensure only selected fields are included
+          depositBalance: 1,
+          depositAvailableBalance: 1,
+          depositMaxWithdraw: 1,
+          depositAmount: 1,
         }
       }
     ]);
