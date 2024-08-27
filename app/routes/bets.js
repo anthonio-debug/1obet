@@ -1901,7 +1901,7 @@ const placeBet = async (req, res) => {
           await new Promise(resolve => setTimeout(resolve, 500));
           console.log("set time ", i)
           const response = await fetchSession(eventDetail.Id);
-          
+
           if (!Array.isArray(response)) {
             console.error("Expected an array but got:", response);
             return;
@@ -1911,14 +1911,14 @@ const placeBet = async (req, res) => {
           // apiFancyOddsResponse.push(apiFancyOddsRes);
 
           // console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
-          
+
           const gameStatus = apiFancyOddsRes[0]?.GameStatus;
           // console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
           // console.log(`GameStatus==================${gameStatus}`);
-          
+
           if (gameStatus === 'SUSPENDED' || gameStatus === 'Ball Running') {
             activeBettors.delete(userId);
-            
+
             if (!hasError) { // Send response only once
               hasError = true;
               res.status(404).send({
@@ -3827,7 +3827,7 @@ async function getMatchedBets(req, res) {
 
           ]);
           console.log("MMMMMMMMMMMMM", events);
-          //  res.status(200).json({ success: true, message: 'Related Markets:', events });
+          res.status(200).json({ success: true, message: 'Related Markets:', events, data: matchedBets });
 
         } catch (error) {
           console.error('Error updating odds:', error);
