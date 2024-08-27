@@ -3834,7 +3834,7 @@ async function getMatchedBets(req, res) {
 
 
           ]);
-          console.log("MMMMMMMMMMMMM", events);
+          // console.log("MMMMMMMMMMMMM", events);
           if (matchedBets.length > 0) {
             const promises = matchedBets.map(async (item) => {
               const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
