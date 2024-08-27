@@ -93,9 +93,13 @@ async function updateOddsFormLimitless() {
               console.log('listMarketsByCronJobs is running ----------');
   
               for (let element of marketsData) {
+                console.log("||||||||||||||||--------------- element",element);
+
                 const time30Minutes = 30 * 60 * 1000; 
                 const currentTime = Date.now();
                 const marketStartTime = element.openDate
+                console.log("||||||||||||||||\\\\\\ marketStartTime",marketStartTime);
+                
                 const remainingTime = marketStartTime - currentTime;
 
                 console.log("remainingTime======", remainingTime/60000);
