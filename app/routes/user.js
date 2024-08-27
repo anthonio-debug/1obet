@@ -798,8 +798,6 @@ async function getCurrentUser(req, res) {
       }
     ]);
 
-    console.log("Fetched Users:", users);
-
     if (users.length === 0) {
       console.log("User not found");
       return res.status(404).json({ message: 'User not found' });
