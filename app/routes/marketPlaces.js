@@ -347,15 +347,16 @@ async function cronOdds2(eventId, sportID) {
             eventId: eventId,
             marketId: element.marketId,
           });
-
+          
           if (!marketID) {
+            console.log("Date.parse(element.marketStartTime),",Date.parse(element.marketStartTime),);
             const newMarket = new MarketIDS({
               eventId: eventId,
               marketId: element.marketId,
               marketName: element.marketName,
               sportID: 4,
               totalMatched: element.totalMatched,
-              openDate: element.marketStartTime,
+              openDate: Date.parse(element.marketStartTime),
               status: marketStatus,
               index: 0,
               runners: tempRunners,
