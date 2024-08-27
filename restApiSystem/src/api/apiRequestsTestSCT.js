@@ -373,7 +373,8 @@ function apiRequests() {
           ///mujahid code here start
           const time30minuts = 30*60*1000; 
           const currentTime=  Date.now();
-          const marketOpenDate=element.openDate
+          const marketStartTime = new Date(element.marketStartTime).getTime();
+          const marketOpenDate=marketStartTime
 
           console.log("=-=-=-=-=-=--=-= marketOpenDate =", marketOpenDate)
           const remaingTime = marketOpenDate-currentTime
