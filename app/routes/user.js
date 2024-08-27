@@ -756,15 +756,7 @@ async function getCurrentUser(req, res) {
   const userId = req.decoded.userId;
 
   try {
-    // Fetch user details
-    const user = await User.findOne({ userId });
-
-    if (!user) {
-      return res.status(404).json({ message: 'User not found' });
-    }
-
-    // Aggregate deposit info
-    const depositInfo = await User.aggregate([
+    const users = await User.aggregate([
       {
         $match: {
           userId: userId
@@ -790,34 +782,59 @@ async function getCurrentUser(req, res) {
         }
       },
       {
+        $group: {
+          _id: "$userId",
+          userId: { $first: "$userId" },
+          userName: { $first: "$userName" },
+          exposure: { $first: "$exposure" },
+          availableBalance: { $first: "$availableBalance" },
+          balance: { $first: "$balance" },
+          isActive: { $first: "$isActive" },
+          status: { $first: "$status" },
+          role: { $first: "$role" },
+          // Add other fields from user collection that you want to include
+          depositBalance: { $first: "$depositInfo.balance" },
+          depositAvailableBalance: { $first: "$depositInfo.availableBalance" },
+          depositMaxWithdraw: { $first: "$depositInfo.maxWithdraw" },
+          depositAmount: { $first: "$depositInfo.amount" },
+        }
+      },
+      {
         $project: {
-          depositBalance: "$depositInfo.balance",
-          depositAvailableBalance: "$depositInfo.availableBalance",
-          depositMaxWithdraw: "$depositInfo.maxWithdraw",
-          depositAmount: "$depositInfo.amount"
+          userId: 1,
+          userName: 1,
+          exposure: 1,
+          isActive: 1,
+          status: 1,
+          role: 1,
+          balance: 1,
+          availableBalance: 1,
+          depositBalance: 1,
+          depositAvailableBalance: 1,
+          depositMaxWithdraw: 1,
+          depositAmount: 1,
+          // Ensure only selected fields are included
         }
       }
     ]);
 
-    const depositData = depositInfo.length > 0 ? depositInfo[0] : {};
+    console.log("Fetched Users:", users);
 
-    // Combine user and deposit data
-    const result = {
-      ...user.toObject(),
-      ...depositData
-    };
+    if (users.length === 0) {
+      console.log("User not found");
+      return res.status(404).json({ message: 'User not found' });
+    }
 
     return res.json({
       success: true,
       message: 'User record found',
-      results: result,
+      results: users[0],  // Assuming you only expect one user
     });
   } catch (err) {
     console.error("Server error:", err);
     return res.status(500).json({ message: 'Server error', error: err.message });
   }
 }
-
 
 function getSingleUser(req, res) {
   const errors = validationResult(req);
