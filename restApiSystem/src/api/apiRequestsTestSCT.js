@@ -390,7 +390,7 @@ function apiRequests() {
     
       const response = await axios.get(oddUrl);
       
-      console.log("cron jobs response ======----- ", response);
+      console.log("cron jobs response ======----- ", response.data);
 
       if (response.data) {
 
