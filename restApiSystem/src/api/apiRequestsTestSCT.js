@@ -378,6 +378,7 @@ function apiRequests() {
           if (remaingTime<time30minuts){
             await MarketIDS.findOneAndUpdate({marketId:element.marketId}, {$set:{ReadyForOdds:true}})
           }
+          console.log("======================-------------- market Name =",element.marketName)
           if(element.marketName=='Match Odds'){
             console.log('listMarketsByCronJobs is running for marketname: ----------',element.marketName);
           }
