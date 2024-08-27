@@ -20,7 +20,7 @@ function ToolForEvent() {
 
   async function init(_io, express) {
     apiRequests.init(_io, express);
-
+    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",config.activeProvider);
     if (config.activeProvider === 'NEW') {
       fetchEvents();
       setBrokenRecord();
