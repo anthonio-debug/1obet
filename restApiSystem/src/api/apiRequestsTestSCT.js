@@ -381,7 +381,10 @@ function apiRequests() {
             console.log('listMarketsByCronJobs is running for marketname: ----------',element.marketName);
           }
           
-          
+          if (remaingTime>time30minuts ){
+            console.log('Remaining time is grater then 30 mins');
+            
+          }
           if(remaingTime>time30minuts && element.marketName=='Match Odds'){
             console.log("cron jobs code running for updating odds ======----- ");
 
