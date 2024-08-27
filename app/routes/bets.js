@@ -3788,7 +3788,7 @@ async function getMatchedBets(req, res) {
 
           console.log("ssssssssssssssssssssssssssssssss:", eventId.sportsId);
           const sportid = +eventId.sportsId
-          relatedEvents = await MarketIDS.aggregate([
+          const events = await MarketIDS.aggregate([
             {
               $match: { sportID: sportid, openDate: { $gt: marketOpendate } }
             },
@@ -3826,8 +3826,19 @@ async function getMatchedBets(req, res) {
 
 
           ]);
-          console.log("MMMMMMMMMMMMM", relatedEvents);
-          return res.status(200).json({ success: true, message: 'Related Markets:', relatedEvents, data: matchedBets });
+          console.log("MMMMMMMMMMMMM", events);
+          if (matchedBets.length > 0) {
+            const promises = matchedBets.map(async (item) => {
+              const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
+              return {
+                ...item,
+                percentage: multiplier
+              };
+            });
+            matchedBets = await Promise.all(promises);
+          }
+      
+                return res.status(200).json({ success: true, message: 'Related Markets:', events,data: matchedBets });
 
         } catch (error) {
           console.error('Error updating odds:', error);
