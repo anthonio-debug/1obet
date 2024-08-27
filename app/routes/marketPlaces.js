@@ -349,7 +349,6 @@ async function cronOdds2(eventId, sportID) {
           });
           
           if (!marketID) {
-            console.log("Date.parse(element.marketStartTime),",Date.parse(element.marketStartTime),);
             const newMarket = new MarketIDS({
               eventId: eventId,
               marketId: element.marketId,
