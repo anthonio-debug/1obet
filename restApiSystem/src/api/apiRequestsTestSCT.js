@@ -376,7 +376,6 @@ function apiRequests() {
           const marketStartTime = new Date(element.marketStartTime).getTime();
           const marketOpenDate=marketStartTime
 
-          console.log("=-=-=-=-=-=--=-= marketOpenDate =", marketOpenDate)
           const remaingTime = marketOpenDate-currentTime
           if (remaingTime<time30minuts){
             await MarketIDS.findOneAndUpdate({marketId:element.marketId}, {$set:{ReadyForOdds:true}})
@@ -385,10 +384,6 @@ function apiRequests() {
             console.log('listMarketsByCronJobs is running for marketname: ----------',element.marketName);
           }
           
-          if (remaingTime>time30minuts ){
-            console.log('Remaining time is grater then 30 mins');
-            
-          }
           if(remaingTime>time30minuts && element.marketName=='Match Odds'){
             console.log("cron jobs code running for updating odds ======----- ");
 
