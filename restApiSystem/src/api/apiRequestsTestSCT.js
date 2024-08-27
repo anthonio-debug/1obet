@@ -369,7 +369,7 @@ function apiRequests() {
           
           
           ///mujahid code here start
-          const time30minuts = 30*60*1000; 
+          const time30minuts = 100*60*1000; 
           const currentTime=  Date.now();
           const marketStartTime = new Date(element.marketStartTime).getTime();
           const marketOpenDate=marketStartTime
