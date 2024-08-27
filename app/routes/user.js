@@ -743,25 +743,81 @@ function searchUsers(req, res) {
   });
 }
 
-function getCurrentUser(req, res) {
-  //to do show status of marketplaces for that specific user
+async function getCurrentUser(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const fieldsToSelect = '"balance":1,"exposure":1,"userName":1,"availableBalance":1,"isActive":1,"status":1,"userId":1,"role":1';
-  User.findOne({ userId: req.decoded.userId }, async (err, user) => {
 
-    if (err || !user) return res.status(404).send({ message: 'user not found' });
+  if (!req.decoded || !req.decoded.userId) {
+    return res.status(400).json({ message: 'Invalid request: User ID missing' });
+  }
 
-    return res.send({
+  const userId = req.decoded.userId;
+
+  try {
+    // Fetch user details
+    const user = await User.findOne({ userId });
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    // Aggregate deposit info
+    const depositInfo = await User.aggregate([
+      {
+        $match: {
+          userId: userId
+        }
+      },
+      {
+        $lookup: {
+          from: "deposits",
+          localField: "userId",
+          foreignField: "userId",
+          as: "depositInfo"
+        }
+      },
+      {
+        $unwind: {
+          path: "$depositInfo",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $sort: {
+          "depositInfo.date": -1
+        }
+      },
+      {
+        $project: {
+          depositBalance: "$depositInfo.balance",
+          depositAvailableBalance: "$depositInfo.availableBalance",
+          depositMaxWithdraw: "$depositInfo.maxWithdraw",
+          depositAmount: "$depositInfo.amount"
+        }
+      }
+    ]);
+
+    const depositData = depositInfo.length > 0 ? depositInfo[0] : {};
+
+    // Combine user and deposit data
+    const result = {
+      ...user.toObject(),
+      ...depositData
+    };
+
+    return res.json({
       success: true,
-      message: 'users record found',
-      results: user,
-      correctExposure: []
+      message: 'User record found',
+      results: result,
     });
-  });
+  } catch (err) {
+    console.error("Server error:", err);
+    return res.status(500).json({ message: 'Server error', error: err.message });
+  }
 }
+
 
 function getSingleUser(req, res) {
   const errors = validationResult(req);
