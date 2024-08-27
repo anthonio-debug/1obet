@@ -110,7 +110,7 @@ function ToolForEvent() {
         }
         
         if (documents && documents.Id) {
-          console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMm");
+          
           const sportsId = documents.sportsId;
           if (['1', '2', '4'].includes(sportsId)) {
             const openDate = Number(documents.openDate);
@@ -127,7 +127,7 @@ function ToolForEvent() {
                 limitMin = CRICKET_LIVE_SET_MIN;
                 break;
             }
-            if (openDate - now < limitMin * 60 * 100000 && openDate - now > 0) {
+            if (openDate - now < limitMin * 60 * 1000 && openDate - now > 0) {
               await inPlayEvents.updateOne({ Id: documents.Id }, { $set: { inplay: true } });
             }
           }
@@ -140,7 +140,8 @@ function ToolForEvent() {
           });
           
          
-
+          console.log("documents...................................",documents);
+          console.log("existedMarkets...................................",documeexistedMarketsnts);
           if (documents && !existedMarkets?._id) {
             await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
             // fetchOddsForEvent(documents.Id);
