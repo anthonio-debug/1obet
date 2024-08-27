@@ -67,6 +67,7 @@ function ToolForResult() {
 
   async function fetchRacingResult() {
     try {
+      console.log("races results calculations................................................................");
       const racingMarkets = await MarketIDs.find({
         readyForScore: true,
         status: {$in:['INACTIVE','OPEN','SUSPENDED']},
