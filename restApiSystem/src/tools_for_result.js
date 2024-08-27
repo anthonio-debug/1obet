@@ -70,7 +70,7 @@ function ToolForResult() {
       console.log("races results calculations................................................................");
       const racingMarkets = await MarketIDs.find({
         readyForScore: true,
-        status: {$in:['INACTIVE','OPEN','SUSPENDED']},
+        status: {$in:['INACTIVE','OPEN','SUSPENDED','CLOSED']},
         sportID: {$in: [4339, 7]},
         winnerInfo: null
       }).sort({lastResultCheckTime: 1}).limit(10).exec();
