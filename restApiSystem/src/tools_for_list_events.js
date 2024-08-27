@@ -78,6 +78,7 @@ function ToolForEvent() {
   async function fetchMarkets() {
     try {
       for (const id of sportsIds) {
+        console.log('==============documents 1st..=======================')
         let documents = null;
         if (id === '4') {
           documents = await inPlayEvents
@@ -107,7 +108,7 @@ function ToolForEvent() {
             .limit(1)
             .exec();
         }
-        console.log('==============documents 1st=======================')
+        
         if (documents && documents.Id) {
           const sportsId = documents.sportsId;
           if (['1', '2', '4'].includes(sportsId)) {
