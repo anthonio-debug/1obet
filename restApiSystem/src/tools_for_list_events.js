@@ -96,8 +96,8 @@ async function updateOddsFormLimitless() {
                 console.log("||||||||||||||||--------------- element",element);
 
                 const time30Minutes = 30 * 60 * 1000; 
+                const marketStartTime = new Date(element.openDate).getTime();
                 const currentTime = Date.now();
-                const marketStartTime = element.openDate
                 console.log("||||||||||||||||\\\\\\ marketStartTime",marketStartTime);
                 
                 const remainingTime = marketStartTime - currentTime;
