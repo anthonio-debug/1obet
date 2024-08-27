@@ -825,7 +825,7 @@ async function getCurrentUser(req, res) {
       return res.status(404).json({ message: 'User not found' });
     }
 
-    return res.json({
+    return res.send({
       success: true,
       message: 'User record found',
       results: users[0],  // Assuming you only expect one user
