@@ -3661,6 +3661,8 @@ async function getMatchedBets(req, res) {
       if (market) {
         marketOpendate = market.openDate;
         eventId = await Events.findOne({ Id: market.eventId });
+      } else {
+        return res.status(404).send({ message: 'Market not found' });
       }
     } else {
       eventId = await Events.findById(matchId);
@@ -3688,7 +3690,7 @@ async function getMatchedBets(req, res) {
           as: 'userDetails'
         }
       },
-      { $unwind: '$userDetails' },
+      { $unwind: { path: '$userDetails', preserveNullAndEmptyArrays: true } }, // Prevent errors on empty arrays
       {
         $lookup: {
           from: 'users',
@@ -3756,70 +3758,86 @@ async function getMatchedBets(req, res) {
     ];
 
     // Fetch matched bets based on event type
-    let matchedBets = await Bets.aggregate(aggregationPipeline).exec();
+    let matchedBets;
+    try {
+      matchedBets = await Bets.aggregate(aggregationPipeline).exec();
+    } catch (aggError) {
+      console.error('Error during matched bets aggregation:', aggError);
+      return res.status(500).json({ message: 'Error retrieving matched bets', error: aggError.message });
+    }
 
     // Log matched bet size for debugging
     console.log(`matched bet for event type ${eventId.sportsId}: ${matchedBets.length}`);
 
     // Fetch related events
     let relatedEvents = [];
-    if (eventId.sportsId === "7" || eventId.sportsId === "4339") {
-      relatedEvents = await MarketIDS.aggregate([
-        {
-          $match: { sportID: +eventId.sportsId, openDate: { $gt: marketOpendate } }
-        },
-        {
-          $lookup: {
-            from: 'raceodds',
-            localField: 'marketId',
-            foreignField: 'marketId',
-            as: 'oddsData'
-          }
-        },
-        {
-          $lookup: {
-            from: 'inplayevents',
-            localField: 'eventId',
-            foreignField: 'Id',
-            as: 'event'
-          }
-        },
-        {
-          $project: {
-            _id: 1,
-            sportsId: { $toString: "$sportID" },
-            Id: "$eventId",
-            marketIds: "$marketId",
-            name: "$event.name",
-            countryCode: { $first: '$event.countryCode' },
-            openDate: 1,
-            status: 1,
-            totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
-          }
-        },
-        { $sort: { openDate: 1 } },
-        { $limit: 5 }
-      ]);
-    } else {
-      relatedEvents = await Events.find({
-        sportsId: eventId.sportsId,
-        status: "OPEN",
-        Id: { $ne: eventId.Id },
-        isShowed: true,
-        CompanySetStatus: "OPEN"
-      }).sort({ openDate: 1 }).limit(5);
+    try {
+      if (eventId.sportsId === "7" || eventId.sportsId === "4339") {
+        relatedEvents = await MarketIDS.aggregate([
+          {
+            $match: { sportID: +eventId.sportsId, openDate: { $gt: marketOpendate } }
+          },
+          {
+            $lookup: {
+              from: 'raceodds',
+              localField: 'marketId',
+              foreignField: 'marketId',
+              as: 'oddsData'
+            }
+          },
+          {
+            $lookup: {
+              from: 'inplayevents',
+              localField: 'eventId',
+              foreignField: 'Id',
+              as: 'event'
+            }
+          },
+          {
+            $project: {
+              _id: 1,
+              sportsId: { $toString: "$sportID" },
+              Id: "$eventId",
+              marketIds: "$marketId",
+              name: "$event.name",
+              countryCode: { $first: '$event.countryCode' },
+              openDate: 1,
+              status: 1,
+              totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
+            }
+          },
+          { $sort: { openDate: 1 } },
+          { $limit: 5 }
+        ]);
+      } else {
+        relatedEvents = await Events.find({
+          sportsId: eventId.sportsId,
+          status: "OPEN",
+          Id: { $ne: eventId.Id },
+          isShowed: true,
+          CompanySetStatus: "OPEN"
+        }).sort({ openDate: 1 }).limit(5);
+      }
+    } catch (relatedError) {
+      console.error('Error fetching related events:', relatedError);
+      return res.status(500).json({ message: 'Error retrieving related events', error: relatedError.message });
     }
 
     // Calculate the percentage sharing for each matched bet
     if (matchedBets.length > 0) {
-      const promises = matchedBets.map(async (item) => {
-        const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
-        return {
-          ...item,
-          percentage: multiplier
-        };
-      });
-      matchedBets = await Promise.all(promises);
+      try {
+        const promises = matchedBets.map(async (item) => {
+          const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
+          return {
+            ...item,
+            percentage: multiplier
+          };
+        });
+        matchedBets = await Promise.all(promises);
+      } catch (sharingError) {
+        console.error('Error calculating percentage sharing:', sharingError);
+        return res.status(500).json({ message: 'Error calculating percentage sharing', error: sharingError.message });
+      }
     }
 
     return res.status(200).json({
@@ -3834,6 +3852,7 @@ async function getMatchedBets(req, res) {
     return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
   }
 }
+
 
 
 ////////////////////////////
