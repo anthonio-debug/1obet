@@ -26,7 +26,9 @@ function ToolForEvent() {
       setBrokenRecord();
 
       setInterval(fetchEvents,  60 * 1000);
-      setInterval(updateOddsFormLimitless,  60 * 1000);
+      setInterval(updateOddsFormLimitless,  10 * 1000);
+      console.log("=++++++++++++++++++++++=");
+      
       setInterval(fetchMarkets, 10 * 1000);
       // setInterval(handleSetInplay, 10 * 1000);
 
