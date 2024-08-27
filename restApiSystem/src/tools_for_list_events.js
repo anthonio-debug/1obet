@@ -127,7 +127,7 @@ function ToolForEvent() {
                 limitMin = CRICKET_LIVE_SET_MIN;
                 break;
             }
-            if (openDate - now < limitMin * 60 * 1000 && openDate - now > 0) {
+            if (openDate - now < limitMin * 60 * 100000 && openDate - now > 0) {
               await inPlayEvents.updateOne({ Id: documents.Id }, { $set: { inplay: true } });
             }
           }
