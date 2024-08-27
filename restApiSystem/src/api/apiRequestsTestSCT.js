@@ -379,7 +379,7 @@ function apiRequests() {
           console.log("=-=-=-=-=-=--=-= marketOpenDate =", marketOpenDate)
           const remaingTime = marketOpenDate-currentTime
           if (remaingTime<time30minuts){
-            await MarketIDS.findOneAndUpdate({eventId:element.eventId}, {$set:{ReadyForOdds:true}})
+            await MarketIDS.findOneAndUpdate({marketId:element.marketId}, {$set:{ReadyForOdds:true}})
           }
           if(element.marketName=='Match Odds'){
             console.log('listMarketsByCronJobs is running for marketname: ----------',element.marketName);
