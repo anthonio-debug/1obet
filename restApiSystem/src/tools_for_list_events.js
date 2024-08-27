@@ -136,12 +136,9 @@ function ToolForEvent() {
             inPlay: true,
             $and: [{ marketName: { $ne: 'BOOKMAKER' } }, { marketName: { $ne: null } }]
           });
-          //console.log('==============documents=======================')
-          //console.log(documents)
-          //console.log('==============documents=======================')
-          //console.log('==============existedMarkets=======================')
-          //console.log(existedMarkets)
-          //console.log('==============existedMarkets=======================')
+          console.log('==============documents=======================')
+         
+
           if (documents && !existedMarkets?._id) {
             await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
             // fetchOddsForEvent(documents.Id);
