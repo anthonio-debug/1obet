@@ -107,7 +107,7 @@ function ToolForEvent() {
             .limit(1)
             .exec();
         }
-
+        console.log('==============documents 1st=======================')
         if (documents && documents.Id) {
           const sportsId = documents.sportsId;
           if (['1', '2', '4'].includes(sportsId)) {
@@ -136,7 +136,7 @@ function ToolForEvent() {
             inPlay: true,
             $and: [{ marketName: { $ne: 'BOOKMAKER' } }, { marketName: { $ne: null } }]
           });
-          console.log('==============documents=======================')
+          
          
 
           if (documents && !existedMarkets?._id) {
