@@ -3670,7 +3670,7 @@ async function getMatchedBets(req, res) {
     }
 
     // Use the $lookup aggregation pipeline to fetch matched bets along with user information and related events
-  
+
 
     // if (!matchedBets || matchedBets.length == 0) {
     //   return res.status(200).send({ message: 'Matched bets not found', data: [] });
@@ -3713,7 +3713,7 @@ async function getMatchedBets(req, res) {
                 userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] },
                 status: 1,
                 matchId: matchId,
-                marketId:marketId
+                marketId: marketId
               }
             },
             {
@@ -3790,6 +3790,9 @@ async function getMatchedBets(req, res) {
             },
             { $sort: { _id: -1 } }
           ]).exec();
+
+          console.log("matched bet {{{{{{{{{{{{{{{{{{", matchedBets.size);
+
           ////////////////////////////////////
           console.log("ssssssssssssssssssssssssssssssss:", eventId.sportsId);
           const sportid = +eventId.sportsId
@@ -3842,8 +3845,8 @@ async function getMatchedBets(req, res) {
             });
             matchedBets = await Promise.all(promises);
           }
-      
-                return res.status(200).json({ success: true, message: 'Related Markets:', events,data: matchedBets });
+
+          return res.status(200).json({ success: true, message: 'Related Markets:', events, data: matchedBets });
 
         } catch (error) {
           console.error('Error updating odds:', error);
@@ -3937,6 +3940,7 @@ async function getMatchedBets(req, res) {
           },
           { $sort: { _id: -1 } }
         ]).exec();
+        console.log("matched bet {{{{{{{{{{{{{{{{{{------- ", matchedBets.size);
         ///////////////////////////////////////////////////
         relatedEvents = await Events.find({
           sportsId: eventId.sportsId,
@@ -3973,6 +3977,7 @@ async function getMatchedBets(req, res) {
     return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
   }
 }
+////////////////////////////
 
 async function FakeBetsList(req, res) {
   try {
