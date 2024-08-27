@@ -415,11 +415,7 @@ function apiRequests() {
           }else{
 
 
-            const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportID}&marketId=${element.marketId}`;
-    
-      const response = await axios.get(oddUrl);
-      
-      console.log("cron jobs response for other than match odds ======----------------------------- ", response);
+          return
 
 
           }
