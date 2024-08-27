@@ -97,6 +97,9 @@ async function updateOddsFormLimitless() {
                 const currentTime = Date.now();
                 const marketStartTime = element.openDate
                 const remainingTime = marketStartTime - currentTime;
+
+                console.log("remainingTime======", remainingTime/60000);
+                
   
                   if (remainingTime < time30Minutes) {
                       await MarketIDs.findOneAndUpdate({ marketId: element.marketId }, { $set: { ReadyForOdds: true } });
