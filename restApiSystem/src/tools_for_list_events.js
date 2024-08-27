@@ -110,6 +110,7 @@ function ToolForEvent() {
         }
         
         if (documents && documents.Id) {
+          console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMm");
           const sportsId = documents.sportsId;
           if (['1', '2', '4'].includes(sportsId)) {
             const openDate = Number(documents.openDate);
