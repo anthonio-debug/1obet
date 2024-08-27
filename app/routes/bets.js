@@ -3632,7 +3632,6 @@ async function getAllUserIDs(createdByIDs, processedIDs = new Set()) {
 
 async function getMatchedBets(req, res) {
   const errors = validationResult(req);
-  let relatedEvents = [];
   if (!errors.isEmpty()) {
     return res.status(400).send({ errors: errors.array() });
   }
@@ -3643,44 +3642,42 @@ async function getMatchedBets(req, res) {
       return res.status(404).send({ message: 'User not found' });
     }
 
+    const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
     const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
     const createdByIDs = userOfLoginUser.map((user) => user.userId);
-
-    // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
 
-    let matchId = req.query.id;
-    let marketId = req.query.marketId || '';
-
-    if (loginUser.role == '5') {
+    if (loginUser.role === '5') {
       userIDs.push(loginUser.userId);
     }
 
-    let eventId;
-    let marketOpenDate;
+    let { id: matchId, marketId = '' } = req.query;
 
+    // Fetch event details based on the provided marketId or matchId
+    let eventId;
+    let marketOpendate;
     if (marketId) {
-      const market = await MarketIDS.findOne({ marketId: marketId });
+      const market = await MarketIDS.findOne({ marketId });
       if (market) {
-        marketOpenDate = market.openDate;
+        marketOpendate = market.openDate;
         eventId = await Events.findOne({ Id: market.eventId });
       }
     } else {
       eventId = await Events.findById(matchId);
-
     }
 
     if (!eventId) {
       return res.status(404).send({ message: 'Event not found' });
     }
 
-    let matchedBets = await Bets.aggregate([
+    // Define the aggregation pipeline for fetching matched bets
+    const aggregationPipeline = [
       {
         $match: {
           userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] },
           status: 1,
-          matchId: matchId,
-          ...(marketId && { marketId: marketId }),
+          matchId,
+          ...(marketId && { marketId })  // Conditionally include marketId if provided
         }
       },
       {
@@ -3732,7 +3729,9 @@ async function getMatchedBets(req, res) {
             $cond: [
               { $eq: [loginUser.role, '5'] },
               loginUser.userName,
-              { $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, ''] }
+              {
+                $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, '']
+              }
             ]
           },
           event: {
@@ -3754,25 +3753,20 @@ async function getMatchedBets(req, res) {
         }
       },
       { $sort: { _id: -1 } }
-    ]).exec();
+    ];
 
-    if (matchedBets.length > 0) {
-      const promises = matchedBets.map(async (item) => {
-        const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
-        return {
-          ...item,
-          percentage: multiplier
-        };
-      });
-      matchedBets = await Promise.all(promises);
-    }
+    // Fetch matched bets based on event type
+    let matchedBets = await Bets.aggregate(aggregationPipeline).exec();
 
+    // Log matched bet size for debugging
+    console.log(`matched bet for event type ${eventId.sportsId}: ${matchedBets.length}`);
+
+    // Fetch related events
     let relatedEvents = [];
-
     if (eventId.sportsId === "7" || eventId.sportsId === "4339") {
       relatedEvents = await MarketIDS.aggregate([
         {
-          $match: { sportID: +eventId.sportsId, openDate: { $gt: marketOpenDate } }
+          $match: { sportID: +eventId.sportsId, openDate: { $gt: marketOpendate } }
         },
         {
           $lookup: {
@@ -3816,17 +3810,31 @@ async function getMatchedBets(req, res) {
       }).sort({ openDate: 1 }).limit(5);
     }
 
+    // Calculate the percentage sharing for each matched bet
+    if (matchedBets.length > 0) {
+      const promises = matchedBets.map(async (item) => {
+        const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
+        return {
+          ...item,
+          percentage: multiplier
+        };
+      });
+      matchedBets = await Promise.all(promises);
+    }
+
     return res.status(200).json({
       success: true,
       message: 'Matched bets record found',
       data: matchedBets,
       events: relatedEvents
     });
+
   } catch (err) {
-    console.error('Error retrieving matched bets:', err);
-    return res.status(500).send({ message: 'Internal server error', error: err });
+    console.warn('Aggregation error:', err);
+    return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
   }
 }
+
 
 ////////////////////////////
 
