@@ -3643,12 +3643,16 @@ async function getMatchedBets(req, res) {
       return res.status(404).send({ message: 'User not found' });
     }
 
-    const bettorMaster = await User.findOne({ userId: loginUser.createdBy });
     const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
     const createdByIDs = userOfLoginUser.map((user) => user.userId);
+
+    // Fetch all user IDs using optimized function
     const userIDs = await getAllUserIDs(createdByIDs);
 
-    if (loginUser.role === '5') {
+    let matchId = req.query.id;
+    let marketId = req.query.marketId || '';
+
+    if (loginUser.role == '5') {
       userIDs.push(loginUser.userId);
     }
 
@@ -3670,14 +3674,13 @@ async function getMatchedBets(req, res) {
       return res.status(404).send({ message: 'Event not found' });
     }
 
-    // Define the aggregation pipeline for fetching matched bets
-    const aggregationPipeline = [
+    let matchedBets = await Bets.aggregate([
       {
         $match: {
           userId: { $in: [...createdByIDs, ...userIDs, loginUser.userId] },
           status: 1,
-          matchId,
-          ...(marketId && { marketId })  // Conditionally include marketId if provided
+          matchId: matchId,
+          ...(marketId && { marketId: marketId }),
         }
       },
       {
@@ -3729,9 +3732,7 @@ async function getMatchedBets(req, res) {
             $cond: [
               { $eq: [loginUser.role, '5'] },
               loginUser.userName,
-              {
-                $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, '']
-              }
+              { $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, ''] }
             ]
           },
           event: {
@@ -3753,20 +3754,25 @@ async function getMatchedBets(req, res) {
         }
       },
       { $sort: { _id: -1 } }
-    ];
+    ]).exec();
 
-    // Fetch matched bets based on event type
-    let matchedBets = await Bets.aggregate(aggregationPipeline).exec();
+    if (matchedBets.length > 0) {
+      const promises = matchedBets.map(async (item) => {
+        const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
+        return {
+          ...item,
+          percentage: multiplier
+        };
+      });
+      matchedBets = await Promise.all(promises);
+    }
 
-    // Log matched bet size for debugging
-    console.log(`matched bet for event type ${eventId.sportsId}: ${matchedBets.length}`);
-
-    // Fetch related events
     let relatedEvents = [];
+
     if (eventId.sportsId === "7" || eventId.sportsId === "4339") {
       relatedEvents = await MarketIDS.aggregate([
         {
-          $match: { sportID: +eventId.sportsId, openDate: { $gt: marketOpendate } }
+          $match: { sportID: +eventId.sportsId, openDate: { $gt: marketOpenDate } }
         },
         {
           $lookup: {
@@ -3810,18 +3816,6 @@ async function getMatchedBets(req, res) {
       }).sort({ openDate: 1 }).limit(5);
     }
 
-    // Calculate the percentage sharing for each matched bet
-    if (matchedBets.length > 0) {
-      const promises = matchedBets.map(async (item) => {
-        const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
-        return {
-          ...item,
-          percentage: multiplier
-        };
-      });
-      matchedBets = await Promise.all(promises);
-    }
-
     return res.status(200).json({
       success: true,
       message: 'Matched bets record found',
@@ -3829,8 +3823,8 @@ async function getMatchedBets(req, res) {
       events: relatedEvents
     });
   } catch (err) {
-    console.warn('Aggregation error:', err);
-    return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
+    console.error('Error retrieving matched bets:', err);
+    return res.status(500).send({ message: 'Internal server error', error: err });
   }
 }
 
