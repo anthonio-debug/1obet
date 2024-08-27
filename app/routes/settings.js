@@ -2219,15 +2219,13 @@ const saveMarketIDSWinnerRunner = async (req, res) => {
 const getWaitingBetsForManuel = async (req, res) => {
   try {
     const results = await Bets.find({ status: 1, isManuel: true }).sort({ createdAt: -1 });
-    console.log('Fetched bets:', results.length);
+    // console.log('Fetched bets:', results.length);
 
     const groups = {};
     for (let i = 0; i < results.length; i++) {
       const item = results[i].toJSON();
-      console.log(`Processing item ${i + 1}:`, item);
 
       const main_group_key = `${item.matchId}_${item.marketId}_${item.betSession}`;
-      console.log('Group key:', main_group_key);
 
       if (!groups[main_group_key]) {
         groups[main_group_key] = {
@@ -2235,7 +2233,6 @@ const getWaitingBetsForManuel = async (req, res) => {
           bets: []
         };
 
-        // Fetch event data
         const eventData = await Events.findOne(
           { _id: mongoose.Types.ObjectId(item.matchId) },
           { Id: 1, name: 1, matchType: 1 }
@@ -2244,9 +2241,7 @@ const getWaitingBetsForManuel = async (req, res) => {
           groups[main_group_key].eventData.eventName = eventData.name;
           groups[main_group_key].eventData.eventId = eventData.Id;
           groups[main_group_key].eventData.matchType = eventData.matchType;
-          console.log('Event data:', eventData);
 
-          // Fetch market data
           const marketData = await MarketIDS.findOne({
             eventId: eventData.Id,
             marketId: item.marketId
@@ -2255,19 +2250,16 @@ const getWaitingBetsForManuel = async (req, res) => {
 
           if (marketData) {
             groups[main_group_key].eventData.marketData = marketData;
-            groups[main_group_key].eventData.marketName = marketData.name; // Ensure marketData has a 'name' field
-            // console.log('Market data:', marketData);
+            groups[main_group_key].eventData.marketName = marketData.name; 
           } else {
             groups[main_group_key].eventData.marketData = null;
             groups[main_group_key].eventData.marketName = 'Unknown Market';
-            console.log(`No market data found for marketId: ${item.marketId}`);
           }
         } else {
           console.log(`No event data found for matchId: ${item.matchId}`);
         }
       }
 
-      // Fetch user data
       const u1 = await User.findOne({ userId: item.userId }, { userName: 1, createdBy: 1 });
       const parent = await User.findOne({ userId: u1?.createdBy }, { userName: 1 });
       item.userName = u1 ? u1.userName : 'Unknown User';
