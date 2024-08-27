@@ -3826,7 +3826,7 @@ async function getMatchedBets(req, res) {
 
 
           ]);
-          console.log("MMMMMMMMMMMMM", events);
+          console.log("MMMMMMMMMMMMM", relatedEvents);
           return res.status(200).json({ success: true, message: 'Related Markets:', relatedEvents, data: matchedBets });
 
         } catch (error) {
