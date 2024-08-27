@@ -355,6 +355,7 @@ async function cronOdds2(eventId, sportID) {
               marketName: element.marketName,
               sportID: 4,
               totalMatched: element.totalMatched,
+              openDate: Date.parse(element.marketStartTime),
               status: marketStatus,
               index: 0,
               runners: tempRunners,
