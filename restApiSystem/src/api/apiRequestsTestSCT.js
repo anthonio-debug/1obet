@@ -366,8 +366,6 @@ function apiRequests() {
         console.log('listMarketsByCronJobs is running ----------');
         
         for(let element of marketsData) {
-
-          console.log("=-=-=-=-=-=--=-= element =", element)
           
           
           ///mujahid code here start
