@@ -26,6 +26,7 @@ function ToolForEvent() {
       setBrokenRecord();
 
       setInterval(fetchEvents,  60 * 1000);
+      // setInterval(updateOddsFormLimitless,  60 * 1000);
       setInterval(fetchMarkets, 10 * 1000);
       // setInterval(handleSetInplay, 10 * 1000);
 
@@ -140,10 +141,10 @@ function ToolForEvent() {
           });
           
          
-           // if (documents && !existedMarkets?._id) {
+           if (documents && !existedMarkets?._id) {
             await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
             // fetchOddsForEvent(documents.Id);
-         // }
+         }
         }
       }
     } catch (error) {
