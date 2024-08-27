@@ -392,7 +392,7 @@ function apiRequests() {
       
       console.log("cron jobs response ======----- ", response.data);
 
-      if (response.data) {
+      if (response) {
 
         
         let oddData = response.data;
