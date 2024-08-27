@@ -373,6 +373,8 @@ function apiRequests() {
           const time30minuts = 30*60*1000; 
           const currentTime=  Date.now();
           const marketOpenDate=element.openDate
+
+          console.log("=-=-=-=-=-=--=-= marketOpenDate =", marketOpenDate)
           const remaingTime = marketOpenDate-currentTime
           if (remaingTime<time30minuts){
             await MarketIDS.findOneAndUpdate({eventId:element.eventId}, {$set:{ReadyForOdds:true}})
