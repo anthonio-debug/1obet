@@ -141,7 +141,7 @@ function ToolForEvent() {
           
          
           console.log("documents...................................",documents);
-          console.log("existedMarkets...................................",documeexistedMarketsnts);
+          console.log("existedMarkets...................................",existedMarkets);
           if (documents && !existedMarkets?._id) {
             await apiRequests.listMarketsByCronJob(documents.Id, documents.sportsId, documents.competitionId);
             // fetchOddsForEvent(documents.Id);
