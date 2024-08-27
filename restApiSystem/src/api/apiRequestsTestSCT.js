@@ -416,12 +416,6 @@ function apiRequests() {
 
         
       }
-          }else{
-
-
-          return
-
-
           }
             
           
