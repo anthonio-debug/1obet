@@ -377,7 +377,7 @@ function apiRequests() {
           if (remaingTime<time30minuts){
             await MarketIDS.findOneAndUpdate({eventId:element.eventId}, {$set:{ReadyForOdds:true}})
           }
-          console.log('listMarketsByCronJobs is running ----------');
+          console.log('listMarketsByCronJobs is running for marketname: ----------',element.marketName);
           
           if(remaingTime>time30minuts){
             console.log("cron jobs code running for updating odds ======----- ");
