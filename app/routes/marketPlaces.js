@@ -368,6 +368,7 @@ async function cronOdds2(eventId, sportID) {
             await MarketIDS.findOneAndUpdate({eventId: eventId,marketId: element.marketId,}, {$set:{
               totalMatched:element.totalMatched,
             }} )
+            console.log("updated Markets MMMMMMMMMMM=-");
           }
         }
       }
@@ -406,7 +407,7 @@ async function updateCompanySetStatus(req, res) {
     const event=await inPlayEvents.findOne({Id:data.Id})
 
 
-    // console.log("=-=--=-=-=-=--=-=-====-=-= event.sportsId", event.sportsId);
+    console.log("=-=--=-=-=-=--=-=-====-=-= event.sportsId", data.Id);
     cronOdds2(data.Id, event.sportsId)
 
     // console.log("=-=--=-=-=-=--=-=-====-=-= cronOdds2");
