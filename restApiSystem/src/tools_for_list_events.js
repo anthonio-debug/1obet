@@ -83,7 +83,7 @@ async function updateOddsFormLimitless() {
   
   try {
     // ,
-    const marketsData = await MarketIDs.find({ marketName: "Match Odds", ReadyForOdds: true, status: 'OPEN' });
+    const marketsData = await MarketIDs.find({ marketName: "Match Odds", ReadyForOdds: false, status: 'OPEN' });
          
     console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
     
@@ -93,7 +93,6 @@ async function updateOddsFormLimitless() {
               console.log('listMarketsByCronJobs is running ----------');
   
               for (let element of marketsData) {
-                console.log("||||||||||||||||--------------- element",element);
 
                 const time30Minutes = 30 * 60 * 1000; 
                 const currentTime = Date.now();
