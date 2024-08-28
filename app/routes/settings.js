@@ -2604,7 +2604,7 @@ async function getLiveStreamUrl(req, res) {
 }
 
 async function updateLiveUrl(req, res) {
-  const { eventId, liveUrl } = req.body;
+  const { eventId, liveUrl, iconStatus } = req.body;
 
   if (!eventId) {
     return res.status(400).send({
@@ -2620,7 +2620,7 @@ async function updateLiveUrl(req, res) {
   // }
 
   try {
-    const updatedURL = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { liveUrl: liveUrl }, { upsert: true, new: true });
+    const updatedURL = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { liveUrl: liveUrl }, { iconStatus: iconStatus }, { upsert: true, new: true });
 
     if (!updatedURL) {
       return res.status(404).send({
