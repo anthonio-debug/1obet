@@ -95,7 +95,7 @@ async function updateOddsFormLimitless() {
   
               for (let element of marketsData) {
 
-                const time30Minutes = 240 * 60 * 1000; 
+                const time30Minutes = 30 * 60 * 1000; 
                 const currentTime = Date.now();
                 const marketStartTime = element.openDate
                 console.log("||||||||||||||||\\\\\\ marketStartTime",marketStartTime);
@@ -106,7 +106,7 @@ async function updateOddsFormLimitless() {
                 
   
                   if (remainingTime < time30Minutes) {
-                      await MarketIDs.findOneAndUpdate({ marketId: element.marketId }, { $set: { ReadyForOdds: true } });
+                      await MarketIDs.findOneAndUpdate({ eventId: element.eventId }, { $set: { ReadyForOdds: true } });
                       console.log("======================-------------- ReadyForOdds=true");
                   }
   
