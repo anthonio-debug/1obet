@@ -368,6 +368,7 @@ function apiRequests() {
         for(let element of marketsData) {
           
           
+          console.log(' element Mujahid ----------', element);
           ///mujahid code here start
       //     const time30minuts = 10*60*1000; 
       //     const currentTime=  Date.now();
