@@ -27,7 +27,7 @@ function ToolForEvent() {
       setBrokenRecord();
 
       setInterval(fetchEvents,  60 * 1000);
-      setInterval(updateOddsFormLimitless,  10 * 1000);
+      setInterval(updateOddsFormLimitless,  60 * 1000);
       
       setInterval(fetchMarkets, 10 * 1000);
       // setInterval(handleSetInplay, 10 * 1000);
@@ -91,7 +91,7 @@ async function updateOddsFormLimitless() {
   
           if (marketsData && marketsData.length > 0) {
               // console.log("marketsData::::::::::::::::;", marketsData);
-              // console.log('listMarketsByCronJobs is running ----------');
+              console.log('listMarketsByCronJobs is running ----------');
   
               for (let element of marketsData) {
 
@@ -138,7 +138,7 @@ async function updateOddsFormLimitless() {
                                   { marketId: oddData.marketId },
                                   { $set: { totalMatched: oddData.totalMatched } }
                               );
-                              // console.log("odds updated in cronjobs for total matched----- TotalMatched=", oddData.totalMatched);
+                              console.log("odds updated in cronjobs for total matched----- TotalMatched=", oddData.totalMatched);
                           }
                       }
                   }
