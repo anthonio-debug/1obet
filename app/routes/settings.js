@@ -253,7 +253,7 @@ async function updateMatchType(req, res) {
     const updatedData = await Events.findByIdAndUpdate(
       _id, {
       $set: {
-        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancyMatch: hasFancyMatch, hasBetfairFancy: hasBetfairFancy, hasFancy: hasFancy
+          matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancyMatch: hasFancyMatch, hasBetfairFancy: hasBetfairFancy, hasFancy: hasFancy, hasOverbyOverOddEven: hasOverbyOverOddEven
       }
     }, { upsert: true, new: true }).exec();
 
@@ -2246,7 +2246,6 @@ const getWaitingBetsForManuel = async (req, res) => {
             eventId: eventData.Id,
             marketId: item.marketId
           });
-          console.log("marketData===================>", marketData);
 
           if (marketData) {
             groups[main_group_key].eventData.marketData = marketData;
