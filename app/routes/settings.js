@@ -217,6 +217,9 @@ async function updateMatchType(req, res) {
   try {
     const { _id, matchType, iconStatus, eventId, liveUrl, hasBetfairFancy, hasOverbyOverOddEven } = req.body;
 
+    console.log(`hasBetfairFancy============${hasBetfairFancy}`);
+    console.log(`hasOverbyOverOddEven=============${hasOverbyOverOddEven}`);
+
     const BetSecondsVal = await BetPlaceHold.findOne({ eventId: eventId }).exec();
     if (!BetSecondsVal) {
       const betseconds = new BetPlaceHold({
@@ -253,10 +256,11 @@ async function updateMatchType(req, res) {
     const updatedData = await Events.findByIdAndUpdate(
       _id, {
       $set: {
-          matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancyMatch: hasFancyMatch, hasBetfairFancy: hasBetfairFancy, hasFancy: hasFancy, hasOverbyOverOddEven: hasOverbyOverOddEven
+        matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancyMatch: hasFancyMatch, hasBetfairFancy: hasBetfairFancy, hasFancy: hasFancy, hasOverbyOverOddEven: hasOverbyOverOddEven
       }
     }, { upsert: true, new: true }).exec();
-
+    console.log(`hasBetfairFancy before send response============${hasBetfairFancy}`);
+    console.log(`hasOverbyOverOddEven before send response=============${hasOverbyOverOddEven}`);
     res.status(200).json({
       success: true,
       message: 'Updated Successfully',
@@ -1244,7 +1248,7 @@ async function bettorDashboardGames2(req, res) {
         inplay: 1,
         isShowed: 1,
         status: 1,
-        CompanySetStatus:1,
+        CompanySetStatus: 1,
         // oddsData: {
         //   $slice: ["$odds", 1]
         // }
@@ -1296,7 +1300,7 @@ async function bettorDashboardGames2(req, res) {
         inplay: 1,
         isShowed: 1,
         status: 1,
-        CompanySetStatus:1
+        CompanySetStatus: 1
       }
     ).sort({
       inplay: -1,
@@ -1348,7 +1352,7 @@ async function bettorDashboardGames2(req, res) {
         hasFancyMatch: 1,
         isShowed: 1,
         status: 1,
-        CompanySetStatus:1
+        CompanySetStatus: 1
       }
     ).sort({
       inplay: -1,
@@ -2249,7 +2253,7 @@ const getWaitingBetsForManuel = async (req, res) => {
 
           if (marketData) {
             groups[main_group_key].eventData.marketData = marketData;
-            groups[main_group_key].eventData.marketName = marketData.name; 
+            groups[main_group_key].eventData.marketName = marketData.name;
           } else {
             groups[main_group_key].eventData.marketData = null;
             groups[main_group_key].eventData.marketName = 'Unknown Market';
