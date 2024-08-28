@@ -2612,12 +2612,12 @@ async function updateLiveUrl(req, res) {
       message: 'Missing eventId'
     });
   }
-  if (!liveUrl) {
-    return res.status(400).send({
-      success: false,
-      message: 'Missing Live TV URL'
-    });
-  }
+  // if (!liveUrl) {
+  //   return res.status(400).send({
+  //     success: false,
+  //     message: 'Missing Live TV URL'
+  //   });
+  // }
 
   try {
     const updatedURL = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { liveUrl: liveUrl }, { upsert: true, new: true });
