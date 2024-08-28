@@ -2612,16 +2612,16 @@ async function updateLiveUrl(req, res) {
       message: 'Missing eventId'
     });
   }
-  // if (!liveUrl) {
-  //   return res.status(400).send({
-  //     success: false,
-  //     message: 'Missing Live TV URL'
-  //   });
-  // }
 
   try {
-    const updatedURL = await inPlayEvents.findOneAndUpdate({ Id: eventId }, { liveUrl: liveUrl }, { iconStatus: iconStatus }, { upsert: true, new: true });
+  
+    const updatedURL = await inPlayEvents.findOneAndUpdate(
+      { Id: eventId },
+      { $set: { liveUrl: liveUrl, iconStatus: iconStatus } },
+      { upsert: true, new: true }
+    );
 
+  
     if (!updatedURL) {
       return res.status(404).send({
         success: false,
@@ -2629,14 +2629,15 @@ async function updateLiveUrl(req, res) {
       });
     }
 
+  
     return res.status(200).send({
       success: true,
       updatedURL,
       message: 'Live TV URL updated'
     });
   } catch (error) {
+  
     console.error('Error updating Live TV URL:', error);
-
     return res.status(500).send({
       success: false,
       message: 'Failed to update Live TV URL',
@@ -2654,7 +2655,7 @@ async function GetAllTermsAndConditions(req, res) {
       results: response
     });
   } catch (err) {
-    //console.log("Error ${err} !", `Error ${err}`);
+  
     return res.send({
       message: `Something went wrong `
     });
