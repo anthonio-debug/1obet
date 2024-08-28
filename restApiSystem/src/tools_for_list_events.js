@@ -12,6 +12,7 @@ const config = require('../../config/default.json');
 const apiRequests = require('./api/apiRequestsTestSCT.js')();
 const { CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN } = require('../../helper/constants');
 const moment = require('moment/moment');
+const axios = require('axios');
 
 let lastType = 0;
 
