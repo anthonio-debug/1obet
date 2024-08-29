@@ -27,7 +27,7 @@ function ToolForEvent() {
       setBrokenRecord();
 
       setInterval(fetchEvents,  60 * 1000);
-      setInterval(updateOddsFormLimitless,  10 * 1000);
+      setInterval(updateOddsFormLimitless,  60 * 1000);
       
       setInterval(fetchMarkets, 10 * 1000);
       // setInterval(handleSetInplay, 10 * 1000);
@@ -86,7 +86,7 @@ async function updateOddsFormLimitless() {
     // ,
     const marketsData = await MarketIDs.find({  ReadyForOdds: false, status: 'OPEN' });
          
-    console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
+    // console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
     
   
           if (marketsData && marketsData.length > 0) {
@@ -98,7 +98,7 @@ async function updateOddsFormLimitless() {
                 const time30Minutes = 30 * 60 * 1000; 
                 const currentTime = Date.now();
                 const marketStartTime = element.openDate
-                console.log("||||||||||||||||\\\\\\ marketStartTime",marketStartTime);
+                // console.log("||||||||||||||||\\\\\\ marketStartTime",marketStartTime);
                 
                 const remainingTime = marketStartTime - currentTime;
 
@@ -106,9 +106,8 @@ async function updateOddsFormLimitless() {
                 
   
                   if (remainingTime < time30Minutes) {
-                    console.log("======================-------------- ReadyForOdds=treu block updateing");
-
-                      await MarketIDs.findOneAndUpdate({ eventId: element.eventId }, { $set: { ReadyForOdds: true } });
+                    const result=  await MarketIDs.findOneAndUpdate({ eventId: element.eventId }, { $set: { ReadyForOdds: true } });
+                    console.log("======================-------------- Result", result);
                       console.log("======================-------------- ReadyForOdds=true");
                   }
   
