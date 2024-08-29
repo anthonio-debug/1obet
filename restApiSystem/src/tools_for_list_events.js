@@ -107,7 +107,7 @@ async function updateOddsFormLimitless() {
   
                   if (remainingTime < time30Minutes) {
                       await MarketIDs.updateMany({ eventId: element.eventId }, { $set: { ReadyForOdds: true } });
-                      // console.log("======================-------------- ReadyForOdds=true");
+                      console.log("======================-------------- ReadyForOdds=true");
                   }
   
                   if (remainingTime > time30Minutes) {
