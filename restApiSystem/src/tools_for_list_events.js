@@ -86,7 +86,7 @@ async function updateOddsFormLimitless() {
     // ,
     const marketsData = await MarketIDs.find({ marketName: "Match Odds", ReadyForOdds: false, status: 'OPEN' });
          
-    console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
+    // console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
     
   
           if (marketsData && marketsData.length > 0) {
@@ -107,8 +107,8 @@ async function updateOddsFormLimitless() {
   
                   if (remainingTime < time30Minutes) {
                      const result= await MarketIDs.updateMany({ eventId: element.eventId }, { $set: { ReadyForOdds: true } });
-                      console.log("======================-------------- Result", result);
-                      console.log("======================-------------- ReadyForOdds=true");
+                      // console.log("======================-------------- Result", result);
+                      // console.log("======================-------------- ReadyForOdds=true");
                   }
   
                   if (remainingTime > time30Minutes) {
