@@ -27,7 +27,7 @@ function ToolForEvent() {
       setBrokenRecord();
 
       setInterval(fetchEvents,  60 * 1000);
-      setInterval(updateOddsFormLimitless,  60 * 1000);
+      setInterval(updateOddsFormLimitless,  10 * 1000);
       
       setInterval(fetchMarkets, 10 * 1000);
       // setInterval(handleSetInplay, 10 * 1000);
@@ -98,7 +98,7 @@ async function updateOddsFormLimitless() {
                 const time30Minutes = 30 * 60 * 1000; 
                 const currentTime = Date.now();
                 const marketStartTime = element.openDate
-                // console.log("||||||||||||||||\\\\\\ marketStartTime",marketStartTime);
+                console.log("||||||||||||||||\\\\\\ marketStartTime",marketStartTime);
                 
                 const remainingTime = marketStartTime - currentTime;
 
