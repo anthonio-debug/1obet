@@ -86,7 +86,7 @@ async function updateOddsFormLimitless() {
     // ,
     const marketsData = await MarketIDs.find({  ReadyForOdds: false, status: 'OPEN' });
          
-    // console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
+    console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
     
   
           if (marketsData && marketsData.length > 0) {
