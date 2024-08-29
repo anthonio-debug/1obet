@@ -106,8 +106,10 @@ async function updateOddsFormLimitless() {
                 
   
                   if (remainingTime < time30Minutes) {
+                    console.log("======================-------------- ReadyForOdds=treu block updateing");
+
                       await MarketIDs.findOneAndUpdate({ eventId: element.eventId }, { $set: { ReadyForOdds: true } });
-                      // console.log("======================-------------- ReadyForOdds=true");
+                      console.log("======================-------------- ReadyForOdds=true");
                   }
   
                   if (remainingTime > time30Minutes) {
