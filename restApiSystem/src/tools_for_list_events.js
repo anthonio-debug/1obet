@@ -110,7 +110,7 @@ async function updateOddsFormLimitless() {
                       // console.log("======================-------------- ReadyForOdds=true");
                   }
   
-                  if (remainingTime > time30Minutes) {
+                  if (remainingTime < time30Minutes) {
                       // console.log("cron jobs code running for updating odds ======----- ");
   
                       const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${element.sportID}&marketId=${element.marketId}`;
