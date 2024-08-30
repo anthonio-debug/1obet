@@ -1077,6 +1077,7 @@ const placeBet = async (req, res) => {
             // const response = await axios.get(url);
             // const oddsData = response.data;
             const oddsData = await apiCallForOdds(id);
+            console.log("Odds Data =======================", oddsData);
             const marketStatus = oddsData[0]?.status;
 
             if (marketStatus != 'OPEN') {
