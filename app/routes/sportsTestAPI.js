@@ -1558,7 +1558,7 @@ async function getSeriesList(req, res) {
 async function getAllMatchesList(req, res) {
   const series_id = req.params.series_id;
 
-  console.log("MMMMMMMMMMMMM sportsId--",series_id);
+  console.log("MMMMMMMMMMMMM series_id--",series_id);
   
 
   try {
@@ -1604,7 +1604,7 @@ async function getAllMatchesList(req, res) {
 async function getAllMarketList(req, res) {
   const match_id = req.params.match_id;
 
-  console.log("MMMMMMMMMMMMM sportsId--",match_id);
+  console.log("MMMMMMMMMMMMM match_id--",match_id);
   
 
   try {
@@ -1651,7 +1651,7 @@ async function getAllMarketList(req, res) {
 async function getOddsFancyBookmakerByMatchId(req, res) {
   const id = req.params.match_id;
 
-  console.log("MMMMMMMMMMMMM sportsId--",id);
+  console.log("MMMMMMMMMMMMM id--",id);
   
 
   try {
@@ -1700,7 +1700,7 @@ async function getOddsFancyBookmakerByMatchId(req, res) {
 router.get('/track-bet/getSeriesList/:sportsId', getSeriesList)
 router.get('/track-bet/getAllMatchesList/:series_id', getAllMatchesList)
 router.get('/track-bet/getAllMarketList/:match_id', getAllMarketList)
-router.get('/track-bet/getAllMarketList/:id', getOddsFancyBookmakerByMatchId)
+router.get('/track-bet/getOddsFancyBookmakerByMatchId/:id', getOddsFancyBookmakerByMatchId)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/testing', testing)
 /////////////////
