@@ -1508,15 +1508,62 @@ async function testing(req, res) {
   }
 }
 
+/////////////MMMMMMMMMMM
+async function getSeriesList(req, res) {
+  const sportsId = req.params.sportsId;
+
+  console.log("MMMMMMMMMMMMM sportsId--",sportsId);
+  
+
+  try {
+    const sportsAPIUrl = "http://sportzing.in:5505/api/getSeriesList?sport_id=4";
+    // const header = {
+    //   headers: {
+    //     accept: "application/json",
+    //     "Content-Type": "application/json",
+    //     "X-App": process.env.XAPP_NAME,
+    //     "Cache-Control": "no-cache"
+    //   },
+    // };
+    // const requestData = {
+    //   filter: {
+    //     eventIds: [eventId],
+    //   },
+    //   maxResults: 200,
+    //   marketProjection: [
+    //     "EVENT",
+    //     "EVENT_TYPE",
+    //     "MARKET_START_TIME",
+    //     "MARKET_DESCRIPTION",
+    //     "RUNNER_DESCRIPTION",
+    //   ],
+    // };
+    var url = `${sportsAPIUrl}`;
+
+    // const response = await axios.post(url,requestData, header);
+    const response = await axios.post(url);
+      console.log("MMMMMMMMMMMMMMMM--getSeriesList response ", response);
+      
+    // const marketsData = response.data;
+    const marketsData = response;
+
+    res.status(200).json({ success: true, data: marketsData });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
+  }
+}
+////////////MMMMMMMMMMMM
 
 
 // //////////////////
+router.get('/track-bet/getSeriesList/:sportsId', getSeriesList)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/testing', testing)
 /////////////////
-//////
+
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
-/////
 router.get('/track-bet/get-latest-odds/:marketId/:collectionName', getRaceLatestRecord)
 router.get('/testSports/events', listEvents)
 router.get('/temp-work/closeopenmarkets', closeOpenMarkets)
