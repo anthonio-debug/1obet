@@ -1554,11 +1554,153 @@ async function getSeriesList(req, res) {
       .json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
+//////////////////////////
+async function getAllMatchesList(req, res) {
+  const series_id = req.params.series_id;
+
+  console.log("MMMMMMMMMMMMM sportsId--",series_id);
+  
+
+  try {
+    // const sportsAPIUrl = `http://sportzing.in:5505/api/getSeriesList?sport_id=${sportsId}`;
+    const sportsAPIUrl = `http://sportzing.in:5505/api/getMatchesList?series_id=${series_id}`;
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
+      },
+    };
+    // const requestData = {
+    //   filter: {
+    //     eventIds: [eventId],
+    //   },
+    //   maxResults: 200,
+    //   marketProjection: [
+    //     "EVENT",
+    //     "EVENT_TYPE",
+    //     "MARKET_START_TIME",
+    //     "MARKET_DESCRIPTION",
+    //     "RUNNER_DESCRIPTION",
+    //   ],
+    // };
+
+    // const response = await axios.post(url,requestData, header);
+    const response = await axios.get(sportsAPIUrl, header);
+      console.log("MMMMMMMMMMMMMMMM--getAllMatchesList response ", response.data);
+      
+    // const marketsData = response.data;
+    const getSeriesList = response.data;
+
+    res.status(200).json({ success: true, data: getSeriesList });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
+  }
+}
+/////////
+async function getAllMarketList(req, res) {
+  const match_id = req.params.match_id;
+
+  console.log("MMMMMMMMMMMMM sportsId--",match_id);
+  
+
+  try {
+    // const sportsAPIUrl = `http://sportzing.in:5505/api/getSeriesList?sport_id=${sportsId}`;
+    const sportsAPIUrl = `http://sportzing.in:5505/api/getMarketList?match_id=${match_id}`;
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
+      },
+    };
+    // const requestData = {
+    //   filter: {
+    //     eventIds: [eventId],
+    //   },
+    //   maxResults: 200,
+    //   marketProjection: [
+    //     "EVENT",
+    //     "EVENT_TYPE",
+    //     "MARKET_START_TIME",
+    //     "MARKET_DESCRIPTION",
+    //     "RUNNER_DESCRIPTION",
+    //   ],
+    // };
+
+    // const response = await axios.post(url,requestData, header);
+    const response = await axios.get(sportsAPIUrl, header);
+      console.log("MMMMMMMMMMMMMMMM--getAllMarketList response ", response.data);
+      
+    // const marketsData = response.data;
+    const getAllMarketList = response.data;
+
+    res.status(200).json({ success: true, data: getAllMarketList });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
+  }
+}
+
+//////////////
+async function getOddsFancyBookmakerByMatchId(req, res) {
+  const id = req.params.match_id;
+
+  console.log("MMMMMMMMMMMMM sportsId--",id);
+  
+
+  try {
+    // const sportsAPIUrl = `http://sportzing.in:5505/api/getSeriesList?sport_id=${sportsId}`;
+    const sportsAPIUrl = `http://sportzing.in:5505/api/getOFBData?id=${id}`;
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
+      },
+    };
+    // const requestData = {
+    //   filter: {
+    //     eventIds: [eventId],
+    //   },
+    //   maxResults: 200,
+    //   marketProjection: [
+    //     "EVENT",
+    //     "EVENT_TYPE",
+    //     "MARKET_START_TIME",
+    //     "MARKET_DESCRIPTION",
+    //     "RUNNER_DESCRIPTION",
+    //   ],
+    // };
+
+    // const response = await axios.post(url,requestData, header);
+    const response = await axios.get(sportsAPIUrl, header);
+      console.log("MMMMMMMMMMMMMMMM--getOddsFancyBookmakerByMatchId response ", response.data);
+      
+    // const marketsData = response.data;
+    const getOddsFancyBookmakerByMatchId = response.data;
+
+    res.status(200).json({ success: true, data: getOddsFancyBookmakerByMatchId });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
+  }
+}
 ////////////MMMMMMMMMMMM
 
 
 // //////////////////
 router.get('/track-bet/getSeriesList/:sportsId', getSeriesList)
+router.get('/track-bet/getAllMatchesList/:series_id', getAllMatchesList)
+router.get('/track-bet/getAllMarketList/:match_id', getAllMarketList)
+router.get('/track-bet/getAllMarketList/:id', getOddsFancyBookmakerByMatchId)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/testing', testing)
 /////////////////
