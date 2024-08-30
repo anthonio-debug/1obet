@@ -360,11 +360,18 @@ const placeBet = async (req, res) => {
           message: `Bets will Allow in 1 : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
         });
       }
-      const now = new Date().getTime();
-      const remainingTimeFromMarketStart = idDetails.openDate - now;
-      if (remainingTimeFromMarketStart < 0) {
-        activeBettors.delete(userId);
-        return res.status(404).send({ message: 'Bet not allowed' });
+      if (subMarketName.toUpperCase() == 'US') {
+        const now = new Date().getTime();
+        const remainingTimeFromMarketStart = idDetails.openDate - now;
+        if (remainingTimeFromMarketStart < 0) {
+          activeBettors.delete(userId);
+          return res.status(404).send({ message: 'Bet not allowed' });
+        }
+      } else if (subMarketName.toUpperCase() == 'UK') {
+        if (latestRaceOdds[0]?.state?.status == 'SUSPENDED' || latestRaceOdds[0]?.state?.status == 'CLOSED') {
+          activeBettors.delete(userId);
+          return res.status(404).send({ message: 'Bet not allowed' });
+        }
       }
       id = idDetails.marketId;
       _3rdPartyMarketId = id;
