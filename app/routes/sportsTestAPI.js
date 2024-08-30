@@ -1612,6 +1612,7 @@ async function getOddsFancyBookmakerByMatchId(req, res) {
 
   try {
     const sportsAPIUrl = `http://sportzing.in:5505/api/getOFBData?id=${id}`;
+    console.log("------------------http://sportzing.in:5505/api/getOFBData?id=${id}")
     const header = {
       headers: {
         accept: "application/json",
