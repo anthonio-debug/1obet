@@ -1540,7 +1540,7 @@ async function getSeriesList(req, res) {
     // };
 
     // const response = await axios.post(url,requestData, header);
-    const response = await axios.get(sportsAPIUrl, headers);
+    const response = await axios.get(sportsAPIUrl, header);
       console.log("MMMMMMMMMMMMMMMM--getSeriesList response ", response.data);
       
     // const marketsData = response.data;
