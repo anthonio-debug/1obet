@@ -1541,7 +1541,7 @@ async function getSeriesList(req, res) {
     var url = `${sportsAPIUrl}`;
 
     // const response = await axios.post(url,requestData, header);
-    const response = await axios.post(url);
+    const response = await axios.get(url);
       console.log("MMMMMMMMMMMMMMMM--getSeriesList response ", response);
       
     // const marketsData = response.data;
