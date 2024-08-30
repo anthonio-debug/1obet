@@ -1605,7 +1605,7 @@ async function getAllMarketList(req, res) {
 
 //////////////
 async function getOddsFancyBookmakerByMatchId(req, res) {
-  const id = req.params.match_id;
+  const id = req.params.id;
 
   console.log("MMMMMMMMMMMMM id--",id);
   
