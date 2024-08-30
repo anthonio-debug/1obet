@@ -1516,7 +1516,7 @@ async function getSeriesList(req, res) {
   
 
   try {
-    const sportsAPIUrl = "http://sportzing.in:5505/api/getSeriesList?sport_id=4";
+    const sportsAPIUrl = `http://sportzing.in:5505/api/getSeriesList?sport_id=${sportsId}`;
     const header = {
       headers: {
         accept: "application/json",
@@ -1538,11 +1538,10 @@ async function getSeriesList(req, res) {
     //     "RUNNER_DESCRIPTION",
     //   ],
     // };
-    var url = `${sportsAPIUrl}`;
 
     // const response = await axios.post(url,requestData, header);
-    const response = await axios.post(url, header);
-      console.log("MMMMMMMMMMMMMMMM--getSeriesList response ", response);
+    const response = await axios.get(sportsAPIUrl, headers);
+      console.log("MMMMMMMMMMMMMMMM--getSeriesList response ", response.data);
       
     // const marketsData = response.data;
     const marketsData = response;
@@ -1558,8 +1557,7 @@ async function getSeriesList(req, res) {
 
 
 // //////////////////
-// router.get('/track-bet/getSeriesList/:sportsId', getSeriesList)
-router.get('/track-bet/getSeriesList', getSeriesList)
+router.get('/track-bet/getSeriesList/:sportsId', getSeriesList)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/testing', testing)
 /////////////////
