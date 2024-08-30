@@ -71,7 +71,7 @@ mongoose
   });
 
 // express.post("/update_cricket", require("./app/routes/scrapeCricket").cricketRouter);
-express.post("/update_soccer", require("./app/routes/scrapeSoccer").soccerRouter);
+// express.post("/update_soccer", require("./app/routes/scrapeSoccer").soccerRouter);
 // express.post("/update_tennis", require("./app/routes/scrapeTennis").tennisRouter);
 
 async function main() {

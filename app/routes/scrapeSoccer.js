@@ -5,7 +5,7 @@ const Score = require('../models/score')
 const inPlayEvents = require("../models/events");
 
 async function updateSoccerScore(req, res) {
-  const { type, entities } = req.body;
+  const {type, entities} = req.body;
   const io = req.io
   io.on('connected', () => {
     //console.log('connected')
@@ -18,12 +18,11 @@ async function updateSoccerScore(req, res) {
   try {
     if (type === 'initial') {
       for (const item of entities) {
-        const scoreSoccer = await Score.findOneAndUpdate(
-          { scoreKey: item.scoreKey },
-          { $set: { data: item, sportsId: '1', scoreKey: item.scoreKey } },
-          { upsert: true, new: false, setDefaultsOnInsert: true }
+        await Score.findOneAndUpdate(
+          {scoreKey: item.scoreKey},
+          {$set: {data: item, sportsId: '1', scoreKey: item.scoreKey}},
+          {upsert: true, new: false, setDefaultsOnInsert: true}
         );
-        console.log("scoreSoccer========", scoreSoccer);
       }
       return res.status(200).json({
         success: true,
@@ -32,9 +31,9 @@ async function updateSoccerScore(req, res) {
     } else if (type === 'live') {
       for (const item of entities) {
         await Score.findOneAndUpdate(
-          { scoreKey: item.scoreKey },
-          { $set: { data: item, sportsId: '1', scoreKey: item.scoreKey } },
-          { upsert: true, new: true, setDefaultsOnInsert: true }
+          {scoreKey: item.scoreKey},
+          {$set: {data: item, sportsId: '1', scoreKey: item.scoreKey}},
+          {upsert: true, new: true, setDefaultsOnInsert: true}
         );
       }
 
@@ -61,4 +60,4 @@ async function updateSoccerScore(req, res) {
 
 soccerRouter.post('/update_soccer', updateSoccerScore);
 
-module.exports = { soccerRouter };
+module.exports = {soccerRouter};
