@@ -1516,6 +1516,7 @@ async function getSeriesList(req, res) {
   
 
   try {
+    // const sportsAPIUrl = `http://sportzing.in:5505/api/getSeriesList?sport_id=${sportsId}`;
     const sportsAPIUrl = `http://sportzing.in:5505/api/getSeriesList?sport_id=${sportsId}`;
     const header = {
       headers: {
@@ -1544,9 +1545,9 @@ async function getSeriesList(req, res) {
       console.log("MMMMMMMMMMMMMMMM--getSeriesList response ", response.data);
       
     // const marketsData = response.data;
-    const marketsData = response;
+    const getSeriesList = response.data;
 
-    res.status(200).json({ success: true, data: marketsData });
+    res.status(200).json({ success: true, data: getSeriesList });
   } catch (err) {
     res
       .status(500)
