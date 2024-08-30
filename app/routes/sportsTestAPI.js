@@ -1526,21 +1526,7 @@ async function getSeriesList(req, res) {
         "Cache-Control": "no-cache"
       },
     };
-    // const requestData = {
-    //   filter: {
-    //     eventIds: [eventId],
-    //   },
-    //   maxResults: 200,
-    //   marketProjection: [
-    //     "EVENT",
-    //     "EVENT_TYPE",
-    //     "MARKET_START_TIME",
-    //     "MARKET_DESCRIPTION",
-    //     "RUNNER_DESCRIPTION",
-    //   ],
-    // };
 
-    // const response = await axios.post(url,requestData, header);
     const response = await axios.get(sportsAPIUrl, header);
       console.log("MMMMMMMMMMMMMMMM--getSeriesList response ", response.data);
       
@@ -1562,7 +1548,6 @@ async function getAllMatchesList(req, res) {
   
 
   try {
-    // const sportsAPIUrl = `http://sportzing.in:5505/api/getSeriesList?sport_id=${sportsId}`;
     const sportsAPIUrl = `http://sportzing.in:5505/api/getMatchesList?series_id=${series_id}`;
     const header = {
       headers: {
@@ -1572,21 +1557,7 @@ async function getAllMatchesList(req, res) {
         "Cache-Control": "no-cache"
       },
     };
-    // const requestData = {
-    //   filter: {
-    //     eventIds: [eventId],
-    //   },
-    //   maxResults: 200,
-    //   marketProjection: [
-    //     "EVENT",
-    //     "EVENT_TYPE",
-    //     "MARKET_START_TIME",
-    //     "MARKET_DESCRIPTION",
-    //     "RUNNER_DESCRIPTION",
-    //   ],
-    // };
 
-    // const response = await axios.post(url,requestData, header);
     const response = await axios.get(sportsAPIUrl, header);
       console.log("MMMMMMMMMMMMMMMM--getAllMatchesList response ", response.data);
       
@@ -1608,7 +1579,6 @@ async function getAllMarketList(req, res) {
   
 
   try {
-    // const sportsAPIUrl = `http://sportzing.in:5505/api/getSeriesList?sport_id=${sportsId}`;
     const sportsAPIUrl = `http://sportzing.in:5505/api/getMarketList?match_id=${match_id}`;
     const header = {
       headers: {
@@ -1618,21 +1588,7 @@ async function getAllMarketList(req, res) {
         "Cache-Control": "no-cache"
       },
     };
-    // const requestData = {
-    //   filter: {
-    //     eventIds: [eventId],
-    //   },
-    //   maxResults: 200,
-    //   marketProjection: [
-    //     "EVENT",
-    //     "EVENT_TYPE",
-    //     "MARKET_START_TIME",
-    //     "MARKET_DESCRIPTION",
-    //     "RUNNER_DESCRIPTION",
-    //   ],
-    // };
-
-    // const response = await axios.post(url,requestData, header);
+   
     const response = await axios.get(sportsAPIUrl, header);
       console.log("MMMMMMMMMMMMMMMM--getAllMarketList response ", response.data);
       
@@ -1655,7 +1611,6 @@ async function getOddsFancyBookmakerByMatchId(req, res) {
   
 
   try {
-    // const sportsAPIUrl = `http://sportzing.in:5505/api/getSeriesList?sport_id=${sportsId}`;
     const sportsAPIUrl = `http://sportzing.in:5505/api/getOFBData?id=${id}`;
     const header = {
       headers: {
@@ -1665,21 +1620,8 @@ async function getOddsFancyBookmakerByMatchId(req, res) {
         "Cache-Control": "no-cache"
       },
     };
-    // const requestData = {
-    //   filter: {
-    //     eventIds: [eventId],
-    //   },
-    //   maxResults: 200,
-    //   marketProjection: [
-    //     "EVENT",
-    //     "EVENT_TYPE",
-    //     "MARKET_START_TIME",
-    //     "MARKET_DESCRIPTION",
-    //     "RUNNER_DESCRIPTION",
-    //   ],
-    // };
+   
 
-    // const response = await axios.post(url,requestData, header);
     const response = await axios.get(sportsAPIUrl, header);
       console.log("MMMMMMMMMMMMMMMM--getOddsFancyBookmakerByMatchId response ", response.data);
       
