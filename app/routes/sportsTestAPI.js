@@ -1517,14 +1517,14 @@ async function getSeriesList(req, res) {
 
   try {
     const sportsAPIUrl = "http://sportzing.in:5505/api/getSeriesList?sport_id=4";
-    // const header = {
-    //   headers: {
-    //     accept: "application/json",
-    //     "Content-Type": "application/json",
-    //     "X-App": process.env.XAPP_NAME,
-    //     "Cache-Control": "no-cache"
-    //   },
-    // };
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
+      },
+    };
     // const requestData = {
     //   filter: {
     //     eventIds: [eventId],
@@ -1541,7 +1541,7 @@ async function getSeriesList(req, res) {
     var url = `${sportsAPIUrl}`;
 
     // const response = await axios.post(url,requestData, header);
-    const response = await axios.get(url);
+    const response = await axios.get(url, header);
       console.log("MMMMMMMMMMMMMMMM--getSeriesList response ", response);
       
     // const marketsData = response.data;
