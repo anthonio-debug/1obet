@@ -1541,7 +1541,7 @@ async function getSeriesList(req, res) {
     var url = `${sportsAPIUrl}`;
 
     // const response = await axios.post(url,requestData, header);
-    const response = await axios.get(url, header);
+    const response = await axios.post(url, header);
       console.log("MMMMMMMMMMMMMMMM--getSeriesList response ", response);
       
     // const marketsData = response.data;
@@ -1558,7 +1558,8 @@ async function getSeriesList(req, res) {
 
 
 // //////////////////
-router.get('/track-bet/getSeriesList/:sportsId', getSeriesList)
+// router.get('/track-bet/getSeriesList/:sportsId', getSeriesList)
+router.get('/track-bet/getSeriesList', getSeriesList)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/testing', testing)
 /////////////////
