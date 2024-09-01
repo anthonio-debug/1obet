@@ -11,7 +11,9 @@ async function fetchSession(eventId) {
     const response = await axios.get(url)
     
     let res = response.data;
+    
     let rest1 = res.t1[0];
+    console.log("------------------------------->>>>>>",rest1.length);
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",rest1);
     // console.log('session list: ', JSON.stringify(res))
     
