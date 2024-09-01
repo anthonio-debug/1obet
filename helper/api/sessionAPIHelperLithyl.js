@@ -15,13 +15,15 @@ async function fetchSession(eventId) {
 
 
     let fanciesArr = res.t3;
+    let oddevenArr = res.t6;
     console.log("------------------------------->>>>>>",fanciesArr.length);
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",fanciesArr);
     // console.log('session list: ', JSON.stringify(res))
     
     
     fanciesArr.forEach((element) => {
-      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeee:",element.nat);
+      console.log("gtype..........................:",element.gtype);
+      console.log("fancy name......................:",element.nat);
 
     });
     
