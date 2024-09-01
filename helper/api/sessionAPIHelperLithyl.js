@@ -14,14 +14,12 @@ async function fetchSession(eventId) {
     let rest1 = res.t1;
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1: ",res.t1);
     // console.log('session list: ', JSON.stringify(res))
-    if (isIterable(rest1)) {
-      const items = res.map((item) => {
-        return JSON.parse(item)
-      })
-      return items
-    } else {
-      return []
+    
+    for (const odd of rest1) {
+        console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:",odd.mid);
     }
+
+    
   } catch (error) {
     console.log('url: ', url)
     console.error('session api fetchSession: ', eventId, error?.data || error.message || error)
