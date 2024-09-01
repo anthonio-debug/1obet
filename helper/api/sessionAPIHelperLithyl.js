@@ -14,13 +14,13 @@ async function fetchSession(eventId) {
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: Data::::: ",res);
 
 
-    let rest1 = res.t1[0];
-    console.log("------------------------------->>>>>>",rest1.length);
-    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",rest1);
+    let fanciesArr = res.t3[0];
+    console.log("------------------------------->>>>>>",fanciesArr.length);
+    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",fanciesArr);
     // console.log('session list: ', JSON.stringify(res))
     
     
-    rest1.forEach((element) => {
+    fanciesArr.forEach((element) => {
       console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeee:",element.mid);
 
     });
