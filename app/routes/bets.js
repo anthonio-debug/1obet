@@ -28,7 +28,7 @@ const CasinoCalls = require('../models/casinoCalls');
 const { LIVE_BET_TV_URL } = require('../global/constants');
 const message_result = 'cannot place bet due to result check';
 const MarketIDS = require('../models/marketIds');
-const { fetchSession } = require('../../helper/api/sessionAPIHelper');
+const { fetchSession } = require('../../helper/api/sessionAPIHelperLithyl');
 const { fetchBookmakerOdds } = require('../../helper/api/sessionAPIHelper');
 const moment = require('moment');
 const { SCORE_API_STATUS_BLOCK_LIST } = require('../../helper/api/scoreApiHelper');
@@ -1920,7 +1920,9 @@ const placeBet = async (req, res) => {
 
           // console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
 
-          const gameStatus = apiFancyOddsRes[0]?.GameStatus;
+          //const gameStatus = apiFancyOddsRes[0]?.GameStatus; // For Rahul Api
+          const gameStatus = apiFancyOddsRes['fanciesArr']?.gstatus;
+
           // console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
           // console.log(`GameStatus==================${gameStatus}`);
 
