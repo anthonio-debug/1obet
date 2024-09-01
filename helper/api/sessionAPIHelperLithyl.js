@@ -15,6 +15,35 @@ async function fetchSession(eventId) {
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",rest1);
     // console.log('session list: ', JSON.stringify(res))
     
+    const jsonData = `[
+      [
+        {
+          "mid": "1.232257782",
+          "mstatus": "OPEN",
+          "mname": "MATCH_ODDS",
+          "iplay": "True",
+          "sid": 86360,
+          "nat": "England",
+          "b1": 1.04
+        }
+      ]
+    ]`;
+    
+    // Parse the JSON data
+    const data1 = JSON.parse(jsonData);
+
+    data1.forEach(itemList => {
+      itemList.forEach(item => {
+        console.log(`Match ID: ${item.mid}`);
+        console.log(`Market Status: ${item.mstatus}`);
+        console.log(`Market Name: ${item.mname}`);
+        console.log(`In Play: ${item.iplay}`);
+        console.log(`Outcome/Team ID: ${item.sid}`);
+        console.log(`Outcome/Team Name: ${item.nat}`);
+        console.log(`Betting Odds: ${item.b1}`);
+      });
+    });
+
     const data = JSON.parse(rest1);
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: data:: ",data);
 // Accessing and printing data
@@ -32,7 +61,7 @@ data.forEach(itemList => {
 
     
   } catch (error) {
-    console.log('url: ', url)
+   
     console.error('session api fetchSession: ', eventId, error?.data || error.message || error)
     return []
   }
