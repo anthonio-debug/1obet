@@ -13,7 +13,7 @@ const bodyParser = require("body-parser");
 const cors = require("cors");
 
 const ToolForRacing = require("./restApiSystem/src/tools_for_updated_racing.js")();
-const ToolForSessionFancy = require("./restApiSystem/src/tools_for_session_fancy")();
+const ToolForSessionFancy = require("./restApiSystem/src/tools_for_session_fancy_lathyl")();
 // const ToolForAsian = require("./restApiSystem/src/tools_for_asian.js")();
 const ToolForListEvent = require("./restApiSystem/src/tools_for_list_events.js")();
 const ToolForResult = require("./restApiSystem/src/tools_for_result")();
