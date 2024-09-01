@@ -107,7 +107,7 @@ if(bookmakerOdds!==0){
       for (const event of fancyEvents) {
         const eventId = event.Id
         
-        let fancyOdds = 0;
+        let ReqOdds = [];
          ReqOdds = await fetchSession(eventId)
          console.log("ReqOdds...........................................",ReqOdds);
 

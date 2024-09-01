@@ -11,7 +11,7 @@ async function fetchSession(eventId) {
     const response = await axios.get(url)
     
     let res = response.data;
-    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: Data::::: ",res);
+   // console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: Data::::: ",res);
     let responseRet = []
     let bookMakerArr = res.t2;
     let fanciesArr = res.t3;
@@ -22,7 +22,6 @@ async function fetchSession(eventId) {
 
     if(bookMakerArr.length>0){
       const bookMakerInnArr = bookMakerArr[0].bm1;
-      console.log("bookMakerInnArr.length------------------------------->>>>>>",bookMakerInnArr.length);
       if(bookMakerInnArr.length>0){
           
         responseRet['bookMakerArr'] = bookMakerInnArr;
