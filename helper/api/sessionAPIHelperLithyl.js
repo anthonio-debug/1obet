@@ -17,7 +17,8 @@ async function fetchSession(eventId) {
     
     
     rest1.forEach((element) => {
-      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeee:;;;",element);
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeee:",element.mid);
+
     });
     
 
