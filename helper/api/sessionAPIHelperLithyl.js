@@ -17,9 +17,12 @@ async function fetchSession(eventId) {
     let fanciesArr = res.t3;
     let oddevenArr = res.t6;
     
+    if(res.t3){
     responseRet['fanciesArr'] = res.t3;
+  }
+  if(res.t6){
     responseRet['oddevenArr'] = res.t6;
-
+  }
     if(bookMakerArr.length>0){
       const bookMakerInnArr = bookMakerArr[0].bm1;
       if(bookMakerInnArr.length>0){
