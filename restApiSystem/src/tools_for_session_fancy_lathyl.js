@@ -32,54 +32,53 @@ function ToolForSessionFancy() {
     // console.log("fancyOdds.................................::",fancyOdds);
     // console.log("oddevenOdds.................................::",oddevenOdds);
     for (const odd of fancyOdds) {
-      console.log("odd.gtype.......................:::",odd.gtype);
+      //console.log("odd.gtype.......................:::",odd.gtype);
       if (odd.gtype === 'Fancy' || odd.gtype === 'oddeven') {
         t3.push({
-          b1: odd.BackPrice1,
-          b2: odd.BackPrice2,
-          b3: odd.BackPrice3,
-          bs1: odd.BackSize1,
-          bs2: odd.BackSize2,
-          bs3: odd.BackSize3,
-          l1: odd.LayPrice1,
-          l2: odd.LayPrice2,
-          l3: odd.LayPrice3,
-          ls1: odd.LaySize1,
-          ls2: odd.LaySize2,
-          ls3: odd.LaySize3,
-          nat: odd.RunnerName,
-          gstatus: odd.GameStatus,
+          b1: odd.b1,
+          b2: 0,
+          b3: 0,
+          bs1: odd.bs1,
+          bs2: 0,
+          bs3: 0,
+          l1: odd.l1,
+          l2: 0,
+          l3: 0,
+          ls1: odd.ls1,
+          ls2: 0,
+          ls3: 0,
+          nat: odd.nat,
+          gstatus: odd.gstatus,
           gtype: odd.gtype,
-          sid: odd.SelectionId,
-          ssid: `${eventId}_${odd.SelectionId}`,
+          sid: odd.sid,
+          ssid: `${eventId}_${odd.sid}`,
         })
       }
     }
 if(bookmakerOdds!==0){
+  let bms = []
     for (const [index, odd] of bookmakerOdds.entries()) {
-      let bms = []
-      if (isIterable(odd.runners)) {
-        for (const runner of odd.runners) {
+      
+     
           bms.push({
-            b1: runner.back[0].price,
-            b2: runner.back[1].price,
-            b3: runner.back[2].price,
-            bs1: runner.back[0].size,
-            bs2: runner.back[1].size,
-            bs3: runner.back[2].size,
-            l1: runner.lay[0].price,
-            l2: runner.lay[0].price,
-            l3: runner.lay[0].price,
-            ls1: runner.lay[0].size,
-            ls2: runner.lay[0].size,
-            ls3: runner.lay[0].size,
-            s: runner.status,
-            sid: runner.selectionId,
-            ssid: odd?.marketId,
-            nat: runner.runnerName,
+            b1: odd.b1,
+            b2: 0,
+            b3: 0,
+            bs1: odd.bs1,
+            bs2: 0,
+            bs3: 0,
+            l1: odd.l1,
+            l2: 0,
+            l3: 0,
+            ls1: odd.ls1,
+            ls2: 0,
+            ls3: 0,
+            s: odd.s,
+            sid: odd.sid,
+            ssid: odd?.mid,
+            nat: odd.nat,
           })
-        }
-      }
+        
       bm[`bm${index + 1}`] = bms
     }
   }
