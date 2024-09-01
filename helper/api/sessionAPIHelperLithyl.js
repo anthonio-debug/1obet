@@ -21,7 +21,7 @@ async function fetchSession(eventId) {
     
     
     fanciesArr.forEach((element) => {
-      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeee:",element.mid);
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeee:",element.nat);
 
     });
     
