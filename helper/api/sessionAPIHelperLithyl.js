@@ -15,9 +15,16 @@ async function fetchSession(eventId) {
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1: ",res.t1);
     // console.log('session list: ', JSON.stringify(res))
     
-    for (const odd of rest1) {
-        console.log("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO:",odd.mid);
-    }
+    data = json.loads(rest1)
+    data.forEach(item => {
+      console.log(`Match ID: ${item.mid}`);
+      console.log(`Market Status: ${item.mstatus}`);
+      console.log(`Market Name: ${item.mname}`);
+      console.log(`In Play: ${item.iplay}`);
+      console.log(`Outcome/Team ID: ${item.sid}`);
+      console.log(`Outcome/Team Name: ${item.nat}`);
+      console.log(`Betting Odds: ${item.b1}`);
+    });
 
     
   } catch (error) {
