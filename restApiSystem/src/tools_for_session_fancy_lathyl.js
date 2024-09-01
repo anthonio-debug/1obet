@@ -25,9 +25,12 @@ function ToolForSessionFancy() {
     getSessionFancyOdds()
   }
 
-  function buildFancyStructure2(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId) {
+  function buildFancyStructure2( bookmakerOdds, fancyOdds,oddevenOdds, eventId) {
     let t3 = []
     let bm = {}
+    console.log("bookmakerOdds.................................::",bookmakerOdds);
+    console.log("fancyOdds.................................::",fancyOdds);
+    console.log("oddevenOdds.................................::",oddevenOdds);
     for (const odd of fancyOdds) {
       if (odd.gtype === 'session' || odd.gtype === 'oddeven') {
         t3.push({
@@ -108,12 +111,23 @@ if(bookmakerOdds!==0){
         const eventId = event.Id
         
         let ReqOdds = [];
+        
          ReqOdds = await fetchSession(eventId)
          console.log("ReqOdds...........................................",ReqOdds);
-
+        let bookmakerOdds = 0;
+        let fancyOdds = 0;
+        let oddevenOdds = 0;
         let bookmakerMarketList = [];
         let bookmakerMarketIds = []
+        if(ReqOdds['oddevenArr'] && ReqOdds['oddevenArr'].length>0){
+          oddevenOdds = ReqOdds['fanciesArr'];
+        }
+        if(ReqOdds['fanciesArr'] && ReqOdds['fanciesArr'].length>0){
+          fancyOdds = ReqOdds['fanciesArr'];
+
+        }
         if(ReqOdds['bookMakerArr'] && ReqOdds['bookMakerArr'].length>0){
+          bookmakerOdds = ReqOdds['bookMakerArr'];
           bookmakerMarketList = ReqOdds['bookMakerArr'];
           let runners = []
           let Bmarketid;
@@ -153,7 +167,7 @@ if(bookmakerOdds!==0){
 
 
          
-         const fancyData = buildFancyStructure2(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
+         const fancyData = buildFancyStructure2( bookmakerOdds, fancyOdds,oddevenOdds, eventId)
            // console.log('fancy oddsssssssssssssss returned',fancyData);
             if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
               FancyOddsMap.set(eventId, fancyData)
