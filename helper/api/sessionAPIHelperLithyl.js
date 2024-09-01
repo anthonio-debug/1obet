@@ -6,9 +6,10 @@ async function fetchSession(eventId) {
   // const eventId = '33002177'
   // http://142.93.36.1/api/v2/getSessions?EventTypeID=4&matchId=33061168
   const url = `${SESSION_API_URI}/getOFBData?id=${eventId}`
-   console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",url);
+   
   try {
     const response = await axios.get(url)
+    console.log("::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::...",response);
     let res = response.data;
     // console.log('session list: ', JSON.stringify(res))
     if (isIterable(res)) {
