@@ -26,6 +26,12 @@ async function fetchSession(eventId) {
       console.log("fancy name......................:",element.nat);
 
     });
+    oddevenArr.forEach((element) => {
+      console.log("gtype..........................:",element.gtype);
+      console.log("fancy name......................:",element.nat);
+
+    });
+
     
 
 
