@@ -28,11 +28,12 @@ function ToolForSessionFancy() {
   function buildFancyStructure2( bookmakerOdds, fancyOdds,oddevenOdds, eventId) {
     let t3 = []
     let bm = {}
-    console.log("bookmakerOdds.................................::",bookmakerOdds);
-    console.log("fancyOdds.................................::",fancyOdds);
-    console.log("oddevenOdds.................................::",oddevenOdds);
+    // console.log("bookmakerOdds.................................::",bookmakerOdds);
+    // console.log("fancyOdds.................................::",fancyOdds);
+    // console.log("oddevenOdds.................................::",oddevenOdds);
     for (const odd of fancyOdds) {
-      if (odd.gtype === 'session' || odd.gtype === 'oddeven') {
+      console.log("odd.gtype.......................:::",odd.gtype);
+      if (odd.gtype === 'Fancy' || odd.gtype === 'oddeven') {
         t3.push({
           b1: odd.BackPrice1,
           b2: odd.BackPrice2,
