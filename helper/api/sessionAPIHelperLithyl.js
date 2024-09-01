@@ -12,27 +12,16 @@ async function fetchSession(eventId) {
     
     let res = response.data;
     
-    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: RES::::: ",res);
-
-    let bookmakersArr = res.t2[0];
-    let fanciesArr = res.t3[0];
-    let oddevenArr = res.t6[0];
-    // console.log("bookmakersArr------------------------------->>>>>>",bookmakersArr.length);
-    // console.log("fanciesArr------------------------------->>>>>>",fanciesArr.length);
-    // console.log("oddevenArr------------------------------->>>>>>",oddevenArr.length);
-
-    
+    let rest1 = res.t2[0];
+    console.log("------------------------------->>>>>>",rest1.length);
+    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",rest1);
     // console.log('session list: ', JSON.stringify(res))
     
-    if(bookmakersArr.length>0){
-
-      bookmakersArr.forEach((element) => {
-        console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeee:",element.mid);
-  
-      });
-
-    }
     
+    rest1.forEach((element) => {
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeee:",element.mid);
+
+    });
     
 
 
