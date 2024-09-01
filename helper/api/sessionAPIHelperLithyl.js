@@ -15,16 +15,18 @@ async function fetchSession(eventId) {
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",rest1);
     // console.log('session list: ', JSON.stringify(res))
     
-    data = json.loads(rest1)
-    data.forEach(item => {
-      console.log(`Match ID: ${item.mid}`);
-      console.log(`Market Status: ${item.mstatus}`);
-      console.log(`Market Name: ${item.mname}`);
-      console.log(`In Play: ${item.iplay}`);
-      console.log(`Outcome/Team ID: ${item.sid}`);
-      console.log(`Outcome/Team Name: ${item.nat}`);
-      console.log(`Betting Odds: ${item.b1}`);
-    });
+    const data = JSON.parse(rest1);
+
+// Accessing and printing data
+data.forEach(item => {
+  console.log(`Match ID: ${item.mid}`);
+  console.log(`Market Status: ${item.mstatus}`);
+  console.log(`Market Name: ${item.mname}`);
+  console.log(`In Play: ${item.iplay}`);
+  console.log(`Outcome/Team ID: ${item.sid}`);
+  console.log(`Outcome/Team Name: ${item.nat}`);
+  console.log(`Betting Odds: ${item.b1}`);
+});
 
     
   } catch (error) {
