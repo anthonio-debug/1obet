@@ -114,8 +114,8 @@ if(bookmakerOdds!==0){
         
           let bookmakerMarketList = await fetchBookmakerList(eventId)
           let bookmakerMarketIds = []
-          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',bookmakerMarketList.length);
-          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds.length);
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'......',bookmakerMarketList.length);
+          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'......',fancyOdds.length);
           if(bookmakerMarketList.length>0){
           for (const [index, market] of bookmakerMarketList.entries()) {
             if (market?.marketName === 'Bookmaker') {
