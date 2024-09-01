@@ -16,6 +16,9 @@ async function fetchSession(eventId) {
     // console.log('session list: ', JSON.stringify(res))
     
     
+    rest1.forEach((element) => {
+      console.log("eeeeeeeeeeeeeeeeeeeeeeeeeeeeee:;;;",element);
+    });
     
 
 
