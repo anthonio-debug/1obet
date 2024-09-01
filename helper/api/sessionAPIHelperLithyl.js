@@ -19,7 +19,16 @@ async function fetchSession(eventId) {
     console.log("bookMakerArr length------------------------------->>>>>>",bookMakerArr.length);
     if(bookMakerArr.length>0){
       const bookMakerInnArr = bookMakerArr[0].bm1;
-      console.log("bookMakerInnArr------------------------------->>>>>>",bookMakerInnArr);
+      console.log("bookMakerInnArr.length------------------------------->>>>>>",bookMakerInnArr.length);
+      if(bookMakerInnArr.length>0){
+          
+        bookMakerInnArr.forEach((element) => {
+              console.log("market:..........................:",element.mid);
+              console.log("fancy name......................:",element.nat);
+
+            });
+            
+      }
     }
     // console.log('session list: ', JSON.stringify(res))
     
