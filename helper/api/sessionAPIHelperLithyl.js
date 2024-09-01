@@ -16,7 +16,11 @@ async function fetchSession(eventId) {
     let bookMakerArr = res.t2;
     let fanciesArr = res.t3;
     let oddevenArr = res.t6;
-    console.log("bookMakerArr------------------------------->>>>>>",bookMakerArr.length);
+    console.log("bookMakerArr length------------------------------->>>>>>",bookMakerArr.length);
+    if(bookMakerArr.length>0){
+      const bookMakerInnArr = bookMakerArr[0].bm1;
+      console.log("bookMakerInnArr------------------------------->>>>>>",bookMakerInnArr);
+    }
     // console.log('session list: ', JSON.stringify(res))
     
     
