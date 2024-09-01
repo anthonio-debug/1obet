@@ -13,11 +13,10 @@ async function fetchSession(eventId) {
     let res = response.data;
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: Data::::: ",res);
 
-
+    let bookMakerArr = res.t2;
     let fanciesArr = res.t3;
     let oddevenArr = res.t6;
-    console.log("------------------------------->>>>>>",fanciesArr.length);
-    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",fanciesArr);
+    console.log("bookMakerArr------------------------------->>>>>>",bookMakerArr.length);
     // console.log('session list: ', JSON.stringify(res))
     
     
