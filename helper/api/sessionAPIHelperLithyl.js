@@ -18,14 +18,16 @@ async function fetchSession(eventId) {
     const data = JSON.parse(rest1);
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: data:: ",data);
 // Accessing and printing data
-data.forEach(item => {
-  console.log(`Match ID: ${item.mid}`);
-  console.log(`Market Status: ${item.mstatus}`);
-  console.log(`Market Name: ${item.mname}`);
-  console.log(`In Play: ${item.iplay}`);
-  console.log(`Outcome/Team ID: ${item.sid}`);
-  console.log(`Outcome/Team Name: ${item.nat}`);
-  console.log(`Betting Odds: ${item.b1}`);
+data.forEach(itemList => {
+  itemList.forEach(item => {
+    console.log(`Match ID: ${item.mid}`);
+    console.log(`Market Status: ${item.mstatus}`);
+    console.log(`Market Name: ${item.mname}`);
+    console.log(`In Play: ${item.iplay}`);
+    console.log(`Outcome/Team ID: ${item.sid}`);
+    console.log(`Outcome/Team Name: ${item.nat}`);
+    console.log(`Betting Odds: ${item.b1}`);
+  });
 });
 
     
