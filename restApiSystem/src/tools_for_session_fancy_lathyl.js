@@ -25,7 +25,7 @@ function ToolForSessionFancy() {
     getSessionFancyOdds()
   }
 
-  function buildFancyStructure(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId) {
+  function buildFancyStructure2(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId) {
     let t3 = []
     let bm = {}
     for (const odd of fancyOdds) {
@@ -108,27 +108,68 @@ if(bookmakerOdds!==0){
         const eventId = event.Id
         
         let fancyOdds = 0;
-         fancyOdds = await fetchSession(eventId)
-         console.log("fancyOdds...........................................",fancyOdds);
-          console.log("fancyOdds.length...........................................",fancyOdds.length);
-        
-         console.log("fancyOdds.data.t1...........................................",fancyOdds.data.t1);
-        let bookmakerMarketList;
-         if(fancyOdds.length>0){
-          if(fancyOdds.data.t1){
+         ReqOdds = await fetchSession(eventId)
+         console.log("ReqOdds...........................................",ReqOdds);
 
-          }
+        let bookmakerMarketList = [];
+        let bookmakerMarketIds = []
+        if(ReqOdds['bookMakerArr'] && ReqOdds['bookMakerArr'].length>0){
+          bookmakerMarketList = ReqOdds['bookMakerArr'];
+          for (const [index, market] of bookmakerMarketList.entries()) {
+            
+              bookmakerMarketIds.push(market?.mid)
+              let runners = []
+             
+                runners.push({
+                  SelectionId: market.sid,
+                  runnerName: market.nat,
+                })
+              }
+              await MarketIDS.findOneAndUpdate(
+                {
+                  eventId: eventId,
+                  marketId: market.mid,
+                }, {
+                eventId: eventId,
+                marketId: market.mid,
+                marketName: 'Bookmaker',
+                sportID: 4,
+                // status: '',
+                runners: runners,
+                inPlay: true
+              },
+                { upsert: true, new: true, setDefaultsOnInsert: true }
+              );
+            
+          
+
+
+        }
+          
+
+
          
+         const fancyData = buildFancyStructure2(bookmakerMarketList, bookmakerOdds, fancyOdds, eventId)
+           // console.log('fancy oddsssssssssssssss returned',fancyData);
+            if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+              FancyOddsMap.set(eventId, fancyData)
+              let newFancyOdds = new FancyOdds({
+                eventId: eventId,
+                marketId: eventId,
+                data: fancyData,
+              })
+              
+              await newFancyOdds.save();
+              
+              io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
+            }
 
 
 
-         }
-        
-          //let bookmakerMarketList = await fetchBookmakerList(eventId)
-          let bookmakerMarketIds = []
-          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======...',bookmakerMarketList.length);
-          console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======....',fancyOdds.length);
-       
+
+         
+         
+         
 
         // console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",eventId,'======',fancyOdds);
         
