@@ -35,8 +35,8 @@ function ToolForSessionFancy() {
       //console.log("odd.gtype.......................:::",odd.gtype);
       if (odd.gtype === 'Fancy' || odd.gtype === 'oddeven') {
         let gtype = 'session';
-        if(odd.gtype === 'oddeven')
-          gtype = odd.gtype;
+        if(odd.gtype == 'oddeven')
+          gtype = 'oddeven';
         t3.push({
           b1: odd.b1,
           b2: 0,
