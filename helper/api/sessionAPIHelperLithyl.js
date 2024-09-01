@@ -11,7 +11,7 @@ async function fetchSession(eventId) {
     const response = await axios.get(url)
     
     let res = response.data;
-    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1: ",res.t1);
+    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1: ",res.t1.md);
     // console.log('session list: ', JSON.stringify(res))
     if (isIterable(res)) {
       const items = res.map((item) => {
