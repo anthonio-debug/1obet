@@ -115,23 +115,27 @@ if(bookmakerOdds!==0){
         let bookmakerMarketIds = []
         if(ReqOdds['bookMakerArr'] && ReqOdds['bookMakerArr'].length>0){
           bookmakerMarketList = ReqOdds['bookMakerArr'];
+          let runners = []
+          let Bmarketid;
           for (const [index, market] of bookmakerMarketList.entries()) {
             
               bookmakerMarketIds.push(market?.mid)
-              let runners = []
-             
+              
+              Bmarketid = market.mid;
                 runners.push({
                   SelectionId: market.sid,
                   runnerName: market.nat,
                 })
+              
               }
+              
               await MarketIDS.findOneAndUpdate(
                 {
                   eventId: eventId,
-                  marketId: market.mid,
+                  marketId: Bmarketid,
                 }, {
                 eventId: eventId,
-                marketId: market.mid,
+                marketId: Bmarketid,
                 marketName: 'Bookmaker',
                 sportID: 4,
                 // status: '',
