@@ -17,9 +17,9 @@ async function fetchSession(eventId) {
     let bookmakersArr = res.t2[0];
     let fanciesArr = res.t3[0];
     let oddevenArr = res.t6[0];
-    console.log("bookmakersArr------------------------------->>>>>>",bookmakersArr.length);
-    console.log("fanciesArr------------------------------->>>>>>",fanciesArr.length);
-    console.log("oddevenArr------------------------------->>>>>>",oddevenArr.length);
+    // console.log("bookmakersArr------------------------------->>>>>>",bookmakersArr.length);
+    // console.log("fanciesArr------------------------------->>>>>>",fanciesArr.length);
+    // console.log("oddevenArr------------------------------->>>>>>",oddevenArr.length);
 
     
     // console.log('session list: ', JSON.stringify(res))
