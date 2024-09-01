@@ -12,6 +12,8 @@ async function fetchSession(eventId) {
     
     let res = response.data;
     
+    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: RES::::: ",res);
+
     let bookmakersArr = res.t2[0];
     let fanciesArr = res.t3[0];
     let oddevenArr = res.t6[0];
@@ -19,7 +21,7 @@ async function fetchSession(eventId) {
     console.log("fanciesArr------------------------------->>>>>>",fanciesArr.length);
     console.log("oddevenArr------------------------------->>>>>>",oddevenArr.length);
 
-    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",bookmakersArr);
+    
     // console.log('session list: ', JSON.stringify(res))
     
     if(bookmakersArr.length>0){
