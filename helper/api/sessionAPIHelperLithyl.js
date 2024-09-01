@@ -16,9 +16,23 @@ async function fetchSession(eventId) {
     let bookMakerArr = res.t2;
     let fanciesArr = res.t3;
     let oddevenArr = res.t6;
-    responseRet['bookMakerArr'] = res.t2;
+    
     responseRet['fanciesArr'] = res.t3;
     responseRet['oddevenArr'] = res.t6;
+
+    if(bookMakerArr.length>0){
+      const bookMakerInnArr = bookMakerArr[0].bm1;
+      console.log("bookMakerInnArr.length------------------------------->>>>>>",bookMakerInnArr.length);
+      if(bookMakerInnArr.length>0){
+          
+        responseRet['bookMakerArr'] = bookMakerInnArr;
+            
+      }
+    }
+
+
+
+
     return responseRet;
     console.log("bookMakerArr length------------------------------->>>>>>",bookMakerArr.length);
     if(bookMakerArr.length>0){
