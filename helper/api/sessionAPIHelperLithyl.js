@@ -16,7 +16,7 @@ async function fetchSession(eventId) {
     // console.log('session list: ', JSON.stringify(res))
     
     const data = JSON.parse(rest1);
-
+    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: data:: ",data);
 // Accessing and printing data
 data.forEach(item => {
   console.log(`Match ID: ${item.mid}`);
