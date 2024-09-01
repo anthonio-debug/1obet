@@ -14,7 +14,7 @@ async function fetchSession(eventId) {
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: Data::::: ",res);
 
 
-    let fanciesArr = res.t3[0];
+    let fanciesArr = res.t3;
     console.log("------------------------------->>>>>>",fanciesArr.length);
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",fanciesArr);
     // console.log('session list: ', JSON.stringify(res))
