@@ -15,49 +15,35 @@ async function fetchSession(eventId) {
     console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",rest1);
     // console.log('session list: ', JSON.stringify(res))
     
-    const jsonData = `[
-      [
-        {
-          "mid": "1.232257782",
-          "mstatus": "OPEN",
-          "mname": "MATCH_ODDS",
-          "iplay": "True",
-          "sid": 86360,
-          "nat": "England",
-          "b1": 1.04
-        }
-      ]
-    ]`;
     
-    // Parse the JSON data
-    const data1 = JSON.parse(jsonData);
-
-    data1.forEach(itemList => {
-      itemList.forEach(item => {
+    data.forEach(innerArray => {
+      innerArray.forEach(item => {
         console.log(`Match ID: ${item.mid}`);
         console.log(`Market Status: ${item.mstatus}`);
         console.log(`Market Name: ${item.mname}`);
         console.log(`In Play: ${item.iplay}`);
         console.log(`Outcome/Team ID: ${item.sid}`);
         console.log(`Outcome/Team Name: ${item.nat}`);
-        console.log(`Betting Odds: ${item.b1}`);
+        console.log(`Betting Odds (b1): ${item.b1}`);
+        console.log(`Betting Size (bs1): ${item.bs1}`);
+        console.log(`Betting Odds (b2): ${item.b2}`);
+        console.log(`Betting Size (bs2): ${item.bs2}`);
+        console.log(`Betting Odds (b3): ${item.b3}`);
+        console.log(`Betting Size (bs3): ${item.bs3}`);
+        console.log(`Latest Odds (l1): ${item.l1}`);
+        console.log(`Latest Size (ls1): ${item.ls1}`);
+        console.log(`Latest Odds (l2): ${item.l2}`);
+        console.log(`Latest Size (ls2): ${item.ls2}`);
+        console.log(`Latest Odds (l3): ${item.l3}`);
+        console.log(`Latest Size (ls3): ${item.ls3}`);
+        console.log(`Status: ${item.status}`);
+        console.log(`Serial Number: ${item.srno}`);
+        console.log(`Game Type: ${item.gtype}`);
+        console.log(`Update Time: ${item.utime}`);
+        console.log('--------------------------------------');
       });
     });
-
-    const data = JSON.parse(rest1);
-    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: data:: ",data);
-// Accessing and printing data
-data.forEach(itemList => {
-  itemList.forEach(item => {
-    console.log(`Match ID: ${item.mid}`);
-    console.log(`Market Status: ${item.mstatus}`);
-    console.log(`Market Name: ${item.mname}`);
-    console.log(`In Play: ${item.iplay}`);
-    console.log(`Outcome/Team ID: ${item.sid}`);
-    console.log(`Outcome/Team Name: ${item.nat}`);
-    console.log(`Betting Odds: ${item.b1}`);
-  });
-});
+    
 
     
   } catch (error) {
