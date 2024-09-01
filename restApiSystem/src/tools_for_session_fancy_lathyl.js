@@ -34,6 +34,9 @@ function ToolForSessionFancy() {
     for (const odd of fancyOdds) {
       //console.log("odd.gtype.......................:::",odd.gtype);
       if (odd.gtype === 'Fancy' || odd.gtype === 'oddeven') {
+        let gtype = 'session';
+        if(odd.gtype === 'oddeven')
+          gtype = odd.gtype;
         t3.push({
           b1: odd.b1,
           b2: 0,
@@ -49,7 +52,7 @@ function ToolForSessionFancy() {
           ls3: 0,
           nat: odd.nat,
           gstatus: odd.gstatus,
-          gtype: odd.gtype,
+          gtype: gtype,
           sid: odd.sid,
           ssid: `${eventId}_${odd.sid}`,
         })
