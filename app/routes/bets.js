@@ -1914,7 +1914,7 @@ const placeBet = async (req, res) => {
             console.error("Expected an array but got:", response);
             return;
           }
-
+          console.log("resonse......................here...........",response);
           apiFancyOddsRes = response.filter((item) => item.SelectionId === selectionId);
           // apiFancyOddsResponse.push(apiFancyOddsRes);
 
