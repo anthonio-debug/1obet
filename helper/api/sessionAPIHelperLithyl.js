@@ -12,10 +12,10 @@ async function fetchSession(eventId) {
     
     let res = response.data;
     let rest1 = res.t1;
-    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1: ",res.t1);
+    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1: ",rest1);
     // console.log('session list: ', JSON.stringify(res))
     
-    data = json.loads(rest1)
+    data = json.loads(res.t1)
     data.forEach(item => {
       console.log(`Match ID: ${item.mid}`);
       console.log(`Market Status: ${item.mstatus}`);
