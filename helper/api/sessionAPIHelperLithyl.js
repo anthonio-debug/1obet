@@ -24,7 +24,7 @@ async function fetchSession(eventId) {
           
         bookMakerInnArr.forEach((element) => {
               console.log("market:..........................:",element.mid);
-              console.log("fancy name......................:",element.nat);
+              console.log("market name......................:",element.nat);
 
             });
             
