@@ -12,11 +12,11 @@ async function fetchSession(eventId) {
     
     let res = response.data;
    // console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: Data::::: ",res);
-    let responseRet = []
+    let responseRet = ['fanciesArr','fanciesArr']
     let bookMakerArr = res.t2;
     let fanciesArr = res.t3;
     let oddevenArr = res.t6;
-    
+
     if(res.t3){
     responseRet['fanciesArr'] = res.t3;
   }
