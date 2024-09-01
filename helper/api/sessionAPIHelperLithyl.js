@@ -12,7 +12,7 @@ async function fetchSession(eventId) {
     
     let res = response.data;
     let rest1 = res.t1;
-    //console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",rest1);
+    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: T1::::: ",rest1);
     // console.log('session list: ', JSON.stringify(res))
     
     const data = JSON.parse(rest1);
