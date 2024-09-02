@@ -329,7 +329,7 @@ async function cronOdds2(eventId, sportID) {
     
     const marketsData = response.data;
     const sendMarketIds = [];
-    // console.log(marketsData, "||||||||||||||||||||");
+    console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
     if (marketsData && marketsData.length > 0) {
