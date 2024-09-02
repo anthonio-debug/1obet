@@ -247,7 +247,7 @@ async function activateEvent(req, res) {
 ////////////////////////////mmmmmmmmmmmmmmmmm
 async function saveOdds(oddData, sportsId) {
   try {
-    if (!oddData || oddData.trim() === "") {
+    if (!oddData ) {
       throw new Error("Empty or invalid oddData received");
   }
   oddData = JSON.parse(oddData);
