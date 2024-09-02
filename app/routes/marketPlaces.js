@@ -246,14 +246,12 @@ async function activateEvent(req, res) {
 
 ////////////////////////////mmmmmmmmmmmmmmmmm
 async function saveOdds(oddData, sportsId) {
-//   try {
-//     oddData = JSON.parse(oddData);
-// } catch (error) {
-//     console.error("Failed to parse oddData:", error);
-//     return;
-// }
-
-console.log("{{{{{{{{{{{{{{{{{{{----oddData",oddData)
+  try {
+    oddData = JSON.parse(oddData);
+} catch (error) {
+    console.error("Failed to parse oddData:", error);
+    return;
+}
   const runners = [];
 
   for (const runner of oddData.runners) {
@@ -308,6 +306,9 @@ async function getOdds(marketIds, sportsId) {
     // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
     
       const response = await axios.get(oddUrl);
+
+      console.log("{{{{{{{{{{{{ odds response", response);
+      
     
     if (response.data) {
       
@@ -331,7 +332,7 @@ async function cronOdds2(eventId, sportID) {
     
     const marketsData = response.data;
     const sendMarketIds = [];
-    console.log(marketsData, "||||||||||||||||||||");
+    // console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
     if (marketsData && marketsData.length > 0) {
