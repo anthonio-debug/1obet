@@ -114,9 +114,9 @@ const GetAllBets = async (req, res) => {
     let result = await Bets.aggregate(pipeline).exec()
     let cricketResult = await Crickets.findOne({ eventId: eventId }).sort({ createdAt: -1 }).exec();
     let cricketArr=cricketResult.overs.forEach(element => {
-      element.push(cricketResult.activeTeam)
-      element.push(cricketResult.team1ShortName)
-      element.push(cricketResult.team2ShortName)
+      element.activeTeam=cricketResult.activeTeam
+      element.team1ShortName=cricketResult.team1ShortName
+      element.team2ShortName=cricketResult.team2ShortName
     });
 
     // const results = result.slice((Number(page) - 1) * limit, page * limit);
