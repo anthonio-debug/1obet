@@ -329,7 +329,7 @@ async function cronOdds2(eventId, sportID) {
     
     const marketsData = response.data;
     const sendMarketIds = [];
-    // console.log(marketsData, "||||||||||||||||||||");
+    console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
     if (marketsData && marketsData.length > 0) {
@@ -365,6 +365,8 @@ async function cronOdds2(eventId, sportID) {
             console.log("Saving new market: ", newMarket);
             await newMarket.save();
           }else{
+            console.log("{{}{}}{{}{}{}}} updating market id collec for match odds");
+            
             await MarketIDS.findOneAndUpdate({eventId: eventId,marketId: element.marketId,}, {$set:{
               totalMatched:element.totalMatched,
             }} )
