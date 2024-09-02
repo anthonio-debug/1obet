@@ -125,7 +125,6 @@ const GetAllBets = async (req, res) => {
       status: true,
       message: "Bets List !",
       results: result,
-      cricket: cricketResult,
       total: result.length,
       limit: limit,
       page: page,
