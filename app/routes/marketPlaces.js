@@ -246,15 +246,14 @@ async function activateEvent(req, res) {
 
 ////////////////////////////mmmmmmmmmmmmmmmmm
 async function saveOdds(oddData, sportsId) {
-  try {
-    if (!oddData ) {
-      throw new Error("Empty or invalid oddData received");
-  }
-  oddData = JSON.parse(oddData);
-} catch (error) {
-    console.error("Failed to parse oddData:", error);
-    return;
-}
+//   try {
+//     oddData = JSON.parse(oddData);
+// } catch (error) {
+//     console.error("Failed to parse oddData:", error);
+//     return;
+// }
+
+console.log("{{{{{{{{{{{{{{{{{{{----oddData",oddData)
   const runners = [];
 
   for (const runner of oddData.runners) {
