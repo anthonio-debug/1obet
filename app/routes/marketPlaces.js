@@ -322,10 +322,17 @@ async function getOdds(marketIds, sportsId) {
 async function cronOdds2(eventId, sportID) {
   console.log("===================================================================================3");
   // const { eventId, sportID } = req.params;
-  const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=4&EventID=${eventId}`;
+  console.log(" MMMMMMMMMMM      sportID in cronOdds2 ",sportID);
+  
+  const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
+  const bookmakerUrl = `http://84.8.153.51/api/v2/getBookmakers?EventTypeID=${sportID}&EventID=${eventId}`;
+
 
   try {
     const response = await axios.get(url);
+    const bookmakerResponse = await axios.get(bookmakerUrl);
+
+    console.log("=-=-==-=--=-=-=-=-=-=-=-  bookmakerResponse", bookmakerResponse)
     
     const marketsData = response.data;
     const sendMarketIds = [];
