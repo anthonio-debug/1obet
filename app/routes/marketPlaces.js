@@ -306,9 +306,6 @@ async function getOdds(marketIds, sportsId) {
     // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
     
       const response = await axios.get(oddUrl);
-
-      console.log("{{{{{{{{{{{{ odds response", response);
-      
     
     if (response.data) {
       
