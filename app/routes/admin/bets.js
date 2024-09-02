@@ -1,5 +1,6 @@
 const Bets = require("../../models/bets");
 const CasinoCalls = require("../../models/casinoCalls");
+const Crickets = require("../../models/Crickets");
 
 const GetAllBets = async (req, res) => {
   try {
@@ -94,6 +95,7 @@ const GetAllBets = async (req, res) => {
     )
 
     let result = await Bets.aggregate(pipeline).exec()
+    let cricketResult = await Crickets.findOne({ eventId: eventId }).sort({ createdAt: -1 }).exec();
 
     // const results = result.slice((Number(page) - 1) * limit, page * limit);
 
@@ -106,6 +108,7 @@ const GetAllBets = async (req, res) => {
       status: true,
       message: "Bets List !",
       results: result,
+      cricket:cricketResult,
       total: result.length,
       limit: limit,
       page: page,
