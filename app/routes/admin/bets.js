@@ -45,6 +45,20 @@ const GetAllBets = async (req, res) => {
         as: "userParent"
       }
     })
+
+    pipeline.push({
+      $lookup: {
+        from: "crickets",
+        let: { eventId: "$eventId" },
+        pipeline: [
+          { $match: { $expr: { $eq: ["$eventId", "$$eventId"] } } },
+          { $sort: { _id: -1 } },
+          { $limit: 1 }
+        ],
+        as: "CricketData"
+      }
+    });
+
     pipeline.push({
       $unwind: {
         path: "$userParent",
@@ -74,11 +88,14 @@ const GetAllBets = async (req, res) => {
           eventId: {
             "$first": "$eventId"
           },
-          subMarketId:{
+          subMarketId: {
             "$first": "$subMarketId"
           },
-          resultData :{
+          resultData: {
             "$first": "$resultData"
+          },
+          CricketData: {
+            "$first": "$CricketData"
           },
           details: {
             $push: {
@@ -108,7 +125,7 @@ const GetAllBets = async (req, res) => {
       status: true,
       message: "Bets List !",
       results: result,
-      cricket:cricketResult,
+      cricket: cricketResult,
       total: result.length,
       limit: limit,
       page: page,
@@ -202,4 +219,4 @@ const CasinoList = async (req, res) => {
   }
 }
 
-module.exports = {GetAllBets, CasinoList}
+module.exports = { GetAllBets, CasinoList }
