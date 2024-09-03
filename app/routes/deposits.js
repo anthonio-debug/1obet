@@ -307,7 +307,7 @@ async function withDrawCashDeposit(req, res) {
     }
 
     const checkAbs = Math.abs(userToUpdate.availableBalance - lastTrans.availableBalance)
-    
+
     if (userToUpdate.role != '5' && req.body.amount > userToUpdate.cash + userToUpdate.creditRemaining) {
       //console.log('comming');
       return res.status(400).send({
@@ -620,7 +620,7 @@ function getLedgerDetails(req, res) {
           _id: {
             $cond: {
               if:
-                { $in: ["$cashOrCredit", ['Cash', 'Credit']] },
+                { $in: ["$cashOrCredit", ['Cash', 'Credit', 'Bet', 'Commission']] },
               then: "$_id",
               else: {
                 matchId: "$matchId",
@@ -663,12 +663,8 @@ function getLedgerDetails(req, res) {
 
       Cash.aggregate(cashPipeline, async (err, result) => {
         if (result[0].results && result[0].results.length > 0) {
-          console.log("check the code I'm Here 1", result)
           for (let i = 0; i < result[0].results.length; i++) {
-            console.log("check the code I'm Here")
-            //console.log()
             if (result[0].results[i].betId) {
-              console.log("check the code I'm Here12")
               try {
                 const betInfo = await Bet.findOne({
                   _id: result[0].results[i].betId
