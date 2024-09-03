@@ -3961,7 +3961,7 @@ async function getMatchedBets(req, res) {
     }
     ////////////
 
-    console.log("---------------------------------------------------------------------------------", matchedBets);
+    console.log("---------------------------------------------------------------------------------", matchedBets,"----------------------------");
 
     if (matchedBets.length > 0) {
       const promises = matchedBets.map(async (item) => {
