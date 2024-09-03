@@ -4398,24 +4398,36 @@ const profitLose = async (req, res) => {
 
 const EventWiseprofitLose = async (req, res) => {
   if (!req.query.userId || !req.query.sportsId) {
+    console.error('Invalid request: Missing userId or sportsId');
     return res.status(404).send({
       success: false,
       message: 'Invalid Request'
     });
   }
+
   try {
-    const userId = parseInt(req.query.userId);
-    const sportsId = req.query.sportsId;
+    const userId = parseInt(req.query.userId, 10);
+    const sportsId = parseInt(req.query.sportsId, 10);
+    console.log('Parsed userId:', userId);
+    console.log('Parsed sportsId:', sportsId);
+
     const currentUser = await User.findOne({ userId: userId });
+
     if (!currentUser) {
+      console.error('User not found:', userId);
       return res.status(404).send({
         success: false,
         message: 'Something Went Wrong!'
       });
     }
+
+    console.log('Current user:', currentUser);
+
     if (currentUser.role == '5') {
 
-      if (sportsId != 6) {
+      if (sportsId !== 6) {
+        console.log('Processing non-casino sportsId:', sportsId);
+
         const response = await Cash.aggregate([
           {
             $match: {
@@ -4451,13 +4463,19 @@ const EventWiseprofitLose = async (req, res) => {
             $sort: { date: -1 }
           }
         ]);
+
+        console.log('Response for non-casino sportsId:', response);
+
         return res.send({
           success: true,
           message: 'Profit Lose reports',
           results: response
         });
       }
-      if (sportsId == 6) {
+
+      if (sportsId === 6) {
+        console.log('Processing casino sportsId:', sportsId);
+
         const response = await Cash.aggregate([
           {
             $match: {
@@ -4493,6 +4511,9 @@ const EventWiseprofitLose = async (req, res) => {
             $sort: { date: -1 }
           }
         ]);
+
+        console.log('Response for casino sportsId:', response);
+
         return res.send({
           success: true,
           message: 'Profit Lose reports',
@@ -4500,20 +4521,11 @@ const EventWiseprofitLose = async (req, res) => {
         });
       }
     } else {
-      // const users       = [userId];
-      // let parents       = [userId];
-      // let childUsers;
-      // do{
-      //   childUsers     = await User.distinct("userId", {
-      //     createdBy: {
-      //       $in: parents
-      //     }
-      //   });
-      //   if(childUsers.length) users.push(...childUsers)
-      //   parents = childUsers
-      // }while (childUsers.length > 0)
+      console.log('Processing non-admin user:', userId);
 
-      if (sportsId != 6) {
+      if (sportsId !== 6) {
+        console.log('Processing non-casino sportsId for non-admin:', sportsId);
+
         const response = await Cash.aggregate([
           {
             $match: {
@@ -4545,12 +4557,19 @@ const EventWiseprofitLose = async (req, res) => {
             }
           }
         ]);
+
+        console.log('Response for non-casino sportsId for non-admin:', response);
+
         return res.send({
           success: true,
           message: 'Profit Lose Reports',
           results: response
         });
-      } if (sportsId == 6) {
+      }
+
+      if (sportsId === 6) {
+        console.log('Processing casino sportsId for non-admin:', sportsId);
+
         const response = await Cash.aggregate([
           {
             $match: {
@@ -4582,6 +4601,9 @@ const EventWiseprofitLose = async (req, res) => {
             }
           }
         ]);
+
+        console.log('Response for casino sportsId for non-admin:', response);
+
         return res.send({
           success: true,
           message: 'Profit Lose Reports',
@@ -4590,8 +4612,8 @@ const EventWiseprofitLose = async (req, res) => {
       }
     }
   } catch (error) {
-    console.warn('Catched', error);
-    return res.status(404).send({
+    console.error('Caught an error:', error);
+    return res.status(500).send({
       success: false,
       message: 'Something Went Wrong!'
     });
