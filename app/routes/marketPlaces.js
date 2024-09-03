@@ -397,13 +397,19 @@ async function cronOdds2(eventId, sportID) {
         });
 
         if (!marketID) {
+          let marketTime= element.marketStartTime
+          if (!marketTime){ 
+            marketTime=0 
+          }else{
+            marketTime= Date.parse(marketTime)
+          }
           const newBookmakerMarket = new MarketIDS({
             eventId: eventId,
             marketId: element.marketId,
             marketName: element.marketName,
             sportID: sportID,
             totalMatched: element.totalMatched,
-            // openDate: Date.parse(element.marketStartTime),
+            openDate: marketTime,
             status: marketStatus,
             index: 0,
             runners: bookmakerRunners,
