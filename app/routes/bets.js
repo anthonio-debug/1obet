@@ -4482,11 +4482,11 @@ const EventWiseprofitLose = async (req, res) => {
           },
           {
             $group: {
-              _id: { $arrayElemAt: ['$casinos.matchId', 0] },
+              _id: { $arrayElemAt: ['$casinos.game_id', 0] },
               amount: { $sum: '$amount' },
               userId: { $first: '$userId' },
               date: { $first: '$date' },
-              name: { $first: { $arrayElemAt: ['$casinos.event', 0] } }
+              name: { $first: { $arrayElemAt: ['$event', 0] } }
             }
           },
           {
@@ -4574,11 +4574,11 @@ const EventWiseprofitLose = async (req, res) => {
           },
           {
             $group: {
-              _id: { $arrayElemAt: ['$casinos.matchId', 0] },
+              _id: { $arrayElemAt: ['$casinos.game_id', 0] },
               amount: { $sum: '$amount' },
               userId: { $first: '$userId' },
               date: { $first: '$date' },
-              name: { $first: { $arrayElemAt: ['$casinos.event', 0] } }
+              name: { $first: { $arrayElemAt: ['$event', 0] } }
             }
           }
         ]);
