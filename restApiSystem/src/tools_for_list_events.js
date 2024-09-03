@@ -80,7 +80,7 @@ function ToolForEvent() {
 
 
 async function updateOddsFormLimitless() {
-  console.log("inside...................................................");
+  console.log("inside...................................................|||");
   
   try {
     // ,
@@ -102,12 +102,12 @@ async function updateOddsFormLimitless() {
                 
                 const remainingTime = marketStartTime - currentTime;
 
-                // console.log("remainingTime======", remainingTime/60000);
+                console.log("remainingTime======", remainingTime/60000);
                 
   
                   if (remainingTime < time30Minutes) {
                      const result= await MarketIDs.updateMany({ eventId: element.eventId }, { $set: { ReadyForOdds: true } });
-                      // console.log("======================-------------- Result", result);
+                      console.log("======================-------------- Result", result);
                       // console.log("======================-------------- ReadyForOdds=true");
                   }
   
