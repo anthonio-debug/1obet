@@ -260,7 +260,7 @@ function login(req, res) {
         if (err) return res.status(404).send({ message: 'Invalid username or password ' });
         if (!result) return res.status(404).send({ message: 'Invalid username or password' });
         if (user.isActive == false || user.status == 0) return res.status(404).send({ message: 'Your account is inactive' });
-        if ((req.body.isAdmin && user.role == 5) || (!req.body.isAdmin && user.role != 5)) return res.status(404).send({ message: 'Invalid username or password' });
+        // if ((req.body.isAdmin && user.role == 5) || (!req.body.isAdmin && user.role != 5)) return res.status(404).send({ message: 'Invalid username or password' });
 
         if (!user.token) {
           //console.log(' =========================  Missing token =====================  ');
@@ -351,7 +351,8 @@ function login(req, res) {
               balance: user.balance,
               defaultTheme: setting[1].defaultThemeName,
               defaultLoginPage: setting[0].defaultLoginPage,
-              user
+              user,
+              isAdmin:req.body.isAdmin
             });
           });
         });
