@@ -352,7 +352,7 @@ function login(req, res) {
               defaultTheme: setting[1].defaultThemeName,
               defaultLoginPage: setting[0].defaultLoginPage,
               user,
-              isAdmin:req.body.isAdmin
+              isAdmin:(user.role==1 ||user.role==2||user.role==3||user.role==4 )?true:false
             });
           });
         });
