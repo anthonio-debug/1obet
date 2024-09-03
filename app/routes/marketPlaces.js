@@ -433,11 +433,11 @@ async function cronOdds2(eventId, sportID) {
     }
 
     // Get odds for the bookmaker markets
-    console.log("Sending bookmaker market ids:", bookmakerMarketIds);
-    for (const marketId of bookmakerMarketIds) {
-      const bookmakerOdds = await getOdds(marketId, sportID);
-      result = [...result, ...bookmakerOdds];
-    }
+    // console.log("Sending bookmaker market ids:", bookmakerMarketIds);
+    // for (const marketId of bookmakerMarketIds) {
+    //   const bookmakerOdds = await getOdds(marketId, sportID);
+    //   result = [...result, ...bookmakerOdds];
+    // }
 
     res.json({ status: true, data: "Result: ", result });
 
