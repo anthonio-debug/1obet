@@ -27,7 +27,7 @@ function ToolForEvent() {
       setBrokenRecord();
 
       setInterval(fetchEvents,  60 * 1000);
-      setInterval(updateOddsFormLimitless,  10 * 1000);
+      setInterval(updateOddsFormLimitless,  60 * 1000);
       
       setInterval(fetchMarkets, 10 * 1000);
       // setInterval(handleSetInplay, 10 * 1000);
@@ -80,13 +80,13 @@ function ToolForEvent() {
 
 
 async function updateOddsFormLimitless() {
-  console.log("inside...................................................|||");
+  console.log("inside...................................................");
   
   try {
     // ,
     const marketsData = await MarketIDs.find({ marketName: "Match Odds", ReadyForOdds: false, status: 'OPEN' });
          
-    console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
+    // console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
     
   
           if (marketsData && marketsData.length > 0) {
@@ -102,12 +102,12 @@ async function updateOddsFormLimitless() {
                 
                 const remainingTime = marketStartTime - currentTime;
 
-                console.log("remainingTime======", remainingTime/60000);
+                // console.log("remainingTime======", remainingTime/60000);
                 
   
                   if (remainingTime < time30Minutes) {
                      const result= await MarketIDs.updateMany({ eventId: element.eventId }, { $set: { ReadyForOdds: true } });
-                      console.log("======================-------------- Result", result);
+                      // console.log("======================-------------- Result", result);
                       // console.log("======================-------------- ReadyForOdds=true");
                   }
   
