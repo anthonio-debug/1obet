@@ -324,17 +324,17 @@ async function cronOdds2(eventId, sportID) {
   console.log(" MMMMMMMMMMM      sportID in cronOdds2 ", sportID);
 
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
-  // const bookmakerUrl = `http://84.8.153.51/api/v2/getBookmakers?EventTypeID=${sportID}&EventID=${eventId}`;
+  const bookmakerUrl = `http://84.8.153.51/api/v2/getBookmakers?EventTypeID=${sportID}&EventID=${eventId}`;
 
   try {
     const response = await axios.get(url);
-    // const bookmakerResponse = await axios.get(bookmakerUrl);
+    const bookmakerResponse = await axios.get(bookmakerUrl);
 
-    // console.log("=-=-==-=--=-=-=-=-=-=-=-  bookmakerResponse", bookmakerResponse.data);
-    // const bookMakerData = bookmakerResponse.data;
+    console.log("=-=-==-=--=-=-=-=-=-=-=-  bookmakerResponse", bookmakerResponse.data);
+    const bookMakerData = bookmakerResponse.data;
     const marketsData = response.data;
     const sendMarketIds = [];
-    // const bookmakerMarketIds = [];
+    const bookmakerMarketIds = [];
     console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
@@ -382,45 +382,46 @@ async function cronOdds2(eventId, sportID) {
     }
 
     // Handle Bookmaker Data
-    // if (bookMakerData && bookMakerData.length > 0) {
-    //   for (const element of bookMakerData) {
-    //     const bookmakerRunners = element.runners.map(runner => ({
-    //       SelectionId: runner.selectionId,
-    //       runnerName: runner.runnerName,
-    //     }));
+    if (bookMakerData && bookMakerData.length > 0) {
+      for (const element of bookMakerData) {
+        const bookmakerRunners = element.runners.map(runner => ({
+          SelectionId: runner.selectionId,
+          runnerName: runner.runnerName,
+        }));
 
-    //     bookmakerMarketIds.push(element.marketId);
+        bookmakerMarketIds.push(element.marketId);
 
-    //     const marketID = await MarketIDS.findOne({
-    //       eventId: eventId,
-    //       marketId: element.marketId,
-    //     });
+        const marketID = await MarketIDS.findOne({
+          eventId: eventId,
+          marketId: element.marketId,
+        });
 
-    //     if (!marketID) {
-    //       const newBookmakerMarket = new MarketIDS({
-    //         eventId: eventId,
-    //         marketId: element.marketId,
-    //         marketName: element.marketName,
-    //         sportID: 4,
-    //         totalMatched: element.totalMatched,
-    //         openDate: Date.parse(element.marketStartTime),
-    //         status: marketStatus,
-    //         index: 0,
-    //         runners: bookmakerRunners,
-    //         inPlay: true,
-    //       });
+        if (!marketID) {
+          const newBookmakerMarket = new MarketIDS({
+            eventId: eventId,
+            marketId: element.marketId,
+            marketName: element.marketName,
+            sportID: 4,
+            totalMatched: element.totalMatched,
+            openDate: Date.parse(element.marketStartTime),
+            status: marketStatus,
+            index: 0,
+            runners: bookmakerRunners,
+            inPlay: true,
+          });
 
-    //       console.log("Saving new bookmaker market: ", newBookmakerMarket);
-    //       await newBookmakerMarket.save();
-    //     } else {
-    //       console.log("Updating market id collection for bookmaker market");
-    //       await MarketIDS.findOneAndUpdate(
-    //         { eventId: eventId, marketId: element.marketId },
-    //         { $set: { totalMatched: element.totalMatched } }
-    //       );
-    //     }
-    //   }
-    // }
+          console.log("Saving new bookmaker market: ", newBookmakerMarket);
+          await newBookmakerMarket.save();
+        } 
+        // else {
+        //   console.log("Updating market id collection for bookmaker market");
+        //   await MarketIDS.findOneAndUpdate(
+        //     { eventId: eventId, marketId: element.marketId },
+        //     { $set: { totalMatched: element.totalMatched } }
+        //   );
+        // }
+      }
+    }
 
     // Get odds for the standard markets
     let result = [];
@@ -432,13 +433,13 @@ async function cronOdds2(eventId, sportID) {
     }
 
     // Get odds for the bookmaker markets
-    // console.log("Sending bookmaker market ids:", bookmakerMarketIds);
-    // for (const marketId of bookmakerMarketIds) {
-    //   const bookmakerOdds = await getOdds(marketId, sportID);
-    //   result = [...result, ...bookmakerOdds];
-    // }
+    console.log("Sending bookmaker market ids:", bookmakerMarketIds);
+    for (const marketId of bookmakerMarketIds) {
+      const bookmakerOdds = await getOdds(marketId, sportID);
+      result = [...result, ...bookmakerOdds];
+    }
 
-    // res.json({ status: true, data: "Result: ", result });
+    res.json({ status: true, data: "Result: ", result });
 
   } catch (error) {
     console.log({ msg: "Failed to get data. Error: " + error.message });
