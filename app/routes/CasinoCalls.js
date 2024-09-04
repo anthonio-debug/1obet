@@ -61,7 +61,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let bettor_winning_amount = 0;
       let bettor_lost_amount = 0;
     */
-console.log(balance,"baaaalaaaance", payload ,"payloaaaaaad", users123,"user12333333333333333", action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
+console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
