@@ -4398,116 +4398,222 @@ const profitLose = async (req, res) => {
 
 const EventWiseprofitLose = async (req, res) => {
   if (!req.query.userId || !req.query.sportsId) {
+    console.error('Invalid request: Missing userId or sportsId');
     return res.status(404).send({
       success: false,
       message: 'Invalid Request'
     });
   }
+
   try {
     const userId = parseInt(req.query.userId);
     const sportsId = req.query.sportsId;
+    console.log('Parsed userId:', userId);
+    console.log('Parsed sportsId:', sportsId);
+
     const currentUser = await User.findOne({ userId: userId });
+
     if (!currentUser) {
+      console.error('User not found:', userId);
       return res.status(404).send({
         success: false,
         message: 'Something Went Wrong!'
       });
     }
-    if (currentUser.role == '5') {
-      const response = await Cash.aggregate([
-        {
-          $match: {
-            userId: userId,
-            sportsId: sportsId,
-            cashOrCredit: { $in: ['Bet'] },
-            ...(req.query.start && req.query.end && { date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } })
-          }
-        },
-        {
-          $addFields: {
-            betsId: { $toObjectId: '$betId' }
-          }
-        },
-        {
-          $lookup: {
-            from: 'bets',
-            localField: 'betsId',
-            foreignField: '_id',
-            as: 'bets'
-          }
-        },
-        {
-          $group: {
-            _id: { $arrayElemAt: ['$bets.matchId', 0] },
-            amount: { $sum: '$amount' },
-            userId: { $first: '$userId' },
-            date: { $first: '$date' },
-            name: { $first: { $arrayElemAt: ['$bets.event', 0] } }
-          }
-        },
-        {
-          $sort: { date: -1 }
-        }
-      ]);
-      return res.send({
-        success: true,
-        message: 'Profit Lose reports',
-        results: response
-      });
-    } else {
-      // const users       = [userId];
-      // let parents       = [userId];
-      // let childUsers;
-      // do{
-      //   childUsers     = await User.distinct("userId", {
-      //     createdBy: {
-      //       $in: parents
-      //     }
-      //   });
-      //   if(childUsers.length) users.push(...childUsers)
-      //   parents = childUsers
-      // }while (childUsers.length > 0)
 
-      const response = await Cash.aggregate([
-        {
-          $match: {
-            userId: userId,
-            sportsId: sportsId,
-            cashOrCredit: { $in: ['Bet', 'Commission', 'loosing'] }
+    console.log('Current user:', currentUser);
+
+    if (currentUser.role == '5') {
+
+      if (sportsId != "6") {
+        console.log('Processing non-casino sportsId:', sportsId);
+
+        const response = await Cash.aggregate([
+          {
+            $match: {
+              userId: userId,
+              sportsId: sportsId,
+              cashOrCredit: { $in: ['Bet'] },
+              ...(req.query.start && req.query.end && { date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } })
+            }
+          },
+          {
+            $addFields: {
+              betsId: { $toObjectId: '$betId' }
+            }
+          },
+          {
+            $lookup: {
+              from: 'bets',
+              localField: 'betsId',
+              foreignField: '_id',
+              as: 'bets'
+            }
+          },
+          {
+            $group: {
+              _id: { $arrayElemAt: ['$bets.matchId', 0] },
+              amount: { $sum: '$amount' },
+              userId: { $first: '$userId' },
+              date: { $first: '$date' },
+              name: { $first: { $arrayElemAt: ['$bets.event', 0] } }
+            }
+          },
+          {
+            $sort: { date: -1 }
           }
-        },
-        {
-          $addFields: {
-            betsId: { $toObjectId: '$betId' }
+        ]);
+
+        console.log('Response for non-casino sportsId:', response);
+
+        return res.send({
+          success: true,
+          message: 'Profit Lose reports',
+          results: response
+        });
+      }
+
+      if (sportsId == "6") {
+        console.log('Processing casino sportsId:', sportsId);
+
+        const response = await Cash.aggregate([
+          {
+            $match: {
+              userId: userId,
+              sportsId: sportsId,
+              cashOrCredit: { $in: ['Bet'] },
+              ...(req.query.start && req.query.end && { date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } })
+            }
+          },
+          {
+            $addFields: {
+              betsId: { $toObjectId: '$betId' }
+            }
+          },
+          {
+            $lookup: {
+              from: 'casinocalls',
+              localField: 'transaction_id',
+              foreignField: 'betId',
+              as: 'casinos'
+            }
+          },
+          {
+            $group: {
+              _id: { $arrayElemAt: ['$casinos.game_id', 0] },
+              amount: { $sum: '$amount' },
+              userId: { $first: '$userId' },
+              date: { $first: '$date' },
+              name: { $first: { $arrayElemAt: ['$event', 0] } }
+            }
+          },
+          {
+            $sort: { date: -1 }
           }
-        },
-        {
-          $lookup: {
-            from: 'bets',
-            localField: 'betsId',
-            foreignField: '_id',
-            as: 'bets'
+        ]);
+
+        console.log('Response for casino sportsId:', response);
+
+        return res.send({
+          success: true,
+          message: 'Profit Lose reports',
+          results: response
+        });
+      }
+    } else {
+      console.log('Processing non-admin user:', userId);
+
+      if (sportsId != "6") {
+        console.log('Processing non-casino sportsId for non-admin:', sportsId);
+
+        const response = await Cash.aggregate([
+          {
+            $match: {
+              userId: userId,
+              sportsId: sportsId,
+              cashOrCredit: { $in: ['Bet', 'Commission', 'loosing'] }
+            }
+          },
+          {
+            $addFields: {
+              betsId: { $toObjectId: '$betId' }
+            }
+          },
+          {
+            $lookup: {
+              from: 'bets',
+              localField: 'betsId',
+              foreignField: '_id',
+              as: 'bets'
+            }
+          },
+          {
+            $group: {
+              _id: { $arrayElemAt: ['$bets.matchId', 0] },
+              amount: { $sum: '$amount' },
+              userId: { $first: '$userId' },
+              date: { $first: '$date' },
+              name: { $first: { $arrayElemAt: ['$bets.event', 0] } }
+            }
           }
-        },
-        {
-          $group: {
-            _id: { $arrayElemAt: ['$bets.matchId', 0] },
-            amount: { $sum: '$amount' },
-            userId: { $first: '$userId' },
-            date: { $first: '$date' },
-            name: { $first: { $arrayElemAt: ['$bets.event', 0] } }
+        ]);
+
+        console.log('Response for non-casino sportsId for non-admin:', response);
+
+        return res.send({
+          success: true,
+          message: 'Profit Lose Reports',
+          results: response
+        });
+      }
+
+      if (sportsId == "6") {
+        console.log('Processing casino sportsId for non-admin:', sportsId);
+
+        const response = await Cash.aggregate([
+          {
+            $match: {
+              userId: userId,
+              sportsId: sportsId,
+              cashOrCredit: { $in: ['Bet', 'Commission', 'loosing'] }
+            }
+          },
+          {
+            $addFields: {
+              betsId: { $toObjectId: '$betId' }
+            }
+          },
+          {
+            $lookup: {
+              from: 'casinocalls',
+              localField: 'transaction_id',
+              foreignField: 'betId',
+              as: 'casinos'
+            }
+          },
+          {
+            $group: {
+              _id: { $arrayElemAt: ['$casinos.game_id', 0] },
+              amount: { $sum: '$amount' },
+              userId: { $first: '$userId' },
+              date: { $first: '$date' },
+              name: { $first: { $arrayElemAt: ['$event', 0] } }
+            }
           }
-        }
-      ]);
-      return res.send({
-        success: true,
-        message: 'Profit Lose Reports',
-        results: response
-      });
+        ]);
+
+        console.log('Response for casino sportsId for non-admin:', response);
+
+        return res.send({
+          success: true,
+          message: 'Profit Lose Reports',
+          results: response
+        });
+      }
     }
   } catch (error) {
-    console.warn('Catched', error);
-    return res.status(404).send({
+    console.error('Caught an error:', error);
+    return res.status(500).send({
       success: false,
       message: 'Something Went Wrong!'
     });
