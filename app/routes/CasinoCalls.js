@@ -652,12 +652,18 @@ async function balanceFun(req, res) {
 
     const balance = user.availableBalance;
     if (balance < 0) {
+      console.log('Balance is negative:', balance); // Log for debugging
       return res.json({ status: 500, msg: 'Negative amount not allowed!' });
     }
-
+    
+    console.log('Balance before division:', balance); // Debug log
+    console.log('Casino Multiples:', casinoMultiples); // Debug log
+    const finalBalance = balance / casinoMultiples;
+    console.log('Final balance to return:', finalBalance); // Debug log
+    
     return res.json({
       status: 200,
-      balance: balance / casinoMultiples,
+      balance: finalBalance,
     });
   } catch (err) {
     console.error(err);
