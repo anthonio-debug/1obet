@@ -37,13 +37,10 @@ const users = dbClient.db(`${DBNAME}`).collection('users');
 
 const checkMarketBlocked = async (user) => {
   let parentUserIds = await getParents(user.userId);
-  console.log("UUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUU:",parentUserIds);
   const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
 
   const  anyParentCasinoBlocked= await User.find( { userId: { $in: parentUserIds }, casinoAllowed: false });
   const anyParentBettingBlocked = await User.find( { userId: { $in: parentUserIds }, bettingAllowed: false });
-  console.log('anyParentCasinoBlocked---------------------------------------->',anyParentCasinoBlocked);
-  console.log('anyParentBettingBlocked---------------------------------------->',anyParentBettingBlocked);
   const marketId = config.casinoMarketId;
   //if any of the parents hierarchy
   if (marketIds.includes(marketId) || !user.casinoAllowed || !user.bettingAllowed || anyParentCasinoBlocked.length!=0 || anyParentBettingBlocked.length!=0 ) {
@@ -64,7 +61,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let bettor_winning_amount = 0;
       let bettor_lost_amount = 0;
     */
-
+console.log(balance, payload, users123, action, res, session)
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -76,10 +73,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
 
-      /**
-       * let lastMaxWithdraw = await Cash.findOne( {userId: user.userId}).sort({ _id: -1 });
-       * ////console.log(" lastMaxWithdraw ============== ", lastMaxWithdraw);
-       */
+    
       await users.updateOne(
         { _id: user._id },
         {
@@ -95,7 +89,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       await casinoDebits.save();
       // ////console.log(" allTrans created Successfully ");
       return 0
-    } else if (action === 1) {
+    } else if (action === 1) { 
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
@@ -133,7 +127,6 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         let GameName = 'N/A';
         if(game)
           GameName = game.name;
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>............",GameName);
         // ////console.log("   ======================= difference < 0 =======================   ");
         /**
          * lose some money mean there will not be any commission only adjust the lost amount into exposure.
@@ -385,7 +378,6 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         let GameName = 'N/A';
         if(game)
           GameName = game.name;
-        console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>=======",GameName);
         //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
 
         const amount = bettor_won_amount * casinoMultiples;
@@ -653,7 +645,6 @@ async function balanceFun(req, res) {
     }
 
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
-    console.log("checkMarketBlockedResponse::::::::::::",checkMarketBlockedResponse);
     if (checkMarketBlockedResponse == 1) {
       return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
     }
@@ -735,16 +726,8 @@ async function debitFun(req, res) {
       //const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
       
 
-      console.log(user.availableBalance);  //1142
-      console.log("===========================================================");
-      console.log(user.availableBalance * casinoMultiples);//2244
-      console.log("......................................................................");
-      console.log(debitAmount); //20 was actual bet ad it was showing same as 20 in casino
       //console.log(lastMaxWithdraw.availableBalance);
       //console.log("---------------------------------------------------------");
-      console.log(payload);
-      console.log('||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||||');
-      console.log("Actual Debit:",amount);
 
       if (amount > user.availableBalance) {
         await session.abortTransaction();
@@ -1008,9 +991,6 @@ async function rollbackFun(req, res) {
 function casino(req, res) {
   const { action, remote_id } = req.query;
   if(remote_id==6896479){
-    console.log(`===========casino===========${action}=============${req.query?.amount}============`)
-    console.log(JSON.stringify(req.query, null, 2))
-    console.log(`===========casino===========${action}=============${req.query?.amount}============`)
   }
   if (!remote_id || !action) {
     return res.send({ status: '400', msg: 'Invalid Request' });
