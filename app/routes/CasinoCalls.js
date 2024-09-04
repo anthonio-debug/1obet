@@ -645,6 +645,7 @@ async function balanceFun(req, res) {
     }
 
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
+    console.log(user.availableBalance,"arham --------- balance",checkMarketBlockedResponse,"checkMarketBlockedResponse arham")
     if (checkMarketBlockedResponse == 1) {
       return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
     }
@@ -772,22 +773,15 @@ async function creditFun(req, res) {
   try {
     const payload = req.query;
     const transactionId = payload.transaction_id
-    // const sameTransaction = await CasinoDebits.countDocuments({
-    //   transaction_id: payload.transaction_id,
-    //   remote_id: parseInt(payload.remote_id),
-    //   round_id: payload.round_id,
-    //   game_id: payload.game_id,
-    //   action: "credit"
-    // })
+   
     const currentUser = await User.findOne(
       { remoteId: parseInt(payload.remote_id) }
     )
     if (!currentUser) {
-      ////console.log(" ========================= User Not Found ============= ");
       return res.json({ status: '500', msg: `Internal Error no User` });
     }
     if (transactionIdMap.has(transactionId)) {
-      ////console.log('====== same Trans already Exists', transactionId)
+
       return res.json({
         status: 200,
         balance: currentUser.availableBalance / casinoMultiples,
@@ -796,7 +790,7 @@ async function creditFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    //console.log(" credit req.query ======= ", req.query);
+    
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
