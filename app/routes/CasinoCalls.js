@@ -61,7 +61,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let bettor_winning_amount = 0;
       let bettor_lost_amount = 0;
     */
-console.log(balance, payload, users123, action, res, session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
+console.log(balance,"baaaalaaaance", payload ,"payloaaaaaad", users123,"user12333333333333333", action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -666,6 +666,7 @@ async function balanceFun(req, res) {
 
 async function debitFun(req, res) {
   const session = dbClient.startSession();
+  console.log(" arham debt" ,req.body)
   try {
     const payload = req.query;
     const transactionId = payload.transaction_id
@@ -673,11 +674,11 @@ async function debitFun(req, res) {
       { remoteId: parseInt(payload.remote_id) }
     )
     if (!currentUser) {
-      ////console.log(" ========================= User Not Found ============= ");
+
       return res.json({ status: '500', msg: `Internal Error no User` });
     }
     if (transactionIdMap.has(transactionId)) {
-      ////console.log('====== same Trans already Exists', transactionId)
+   
       return res.json({
         status: 200,
         balance: currentUser.availableBalance / casinoMultiples,
@@ -686,7 +687,7 @@ async function debitFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    //console.log(" debt req.query ============== ", req.query);
+ 
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
