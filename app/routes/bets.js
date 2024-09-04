@@ -4423,17 +4423,20 @@ const EventWiseprofitLose = async (req, res) => {
     const sportsId = req.query.sportsId;
     const startDate = req.query.start ? Number(req.query.start) : null;
     const endDate = req.query.end ? Number(req.query.end) : null;
+
     console.log('Parsed userId:', userId);
     console.log('Parsed sportsId:', sportsId);
-    
+
     const currentUser = await User.findOne({ userId: userId });
     if (!currentUser) {
       console.error('User not found:', userId);
       return res.status(404).send({
         success: false,
-        message: 'Something Went Wrong!'
+        message: 'User not found'
       });
     }
+
+    console.log('Current user role:', currentUser.role);
 
     const baseMatch = {
       userId: userId,
@@ -4441,8 +4444,10 @@ const EventWiseprofitLose = async (req, res) => {
       cashOrCredit: { $in: ['Bet'] },
       ...(startDate && endDate && { date: { $gte: startDate, $lte: endDate } })
     };
-    
-    const pipeline = [
+
+    console.log('Base Match Criteria:', baseMatch);
+
+    const nonCasinoPipeline = [
       { $match: baseMatch },
       { $addFields: { betsId: { $toObjectId: '$betId' } } },
       {
@@ -4465,12 +4470,11 @@ const EventWiseprofitLose = async (req, res) => {
       { $sort: { date: -1 } }
     ];
 
-    
     const casinoPipeline = [
       {
         $match: {
           ...baseMatch,
-          betId: { $regex: /^[a-fA-F0-9]{24}$/ } 
+          betId: { $regex: /^[a-fA-F0-9]{24}$/ }
         }
       },
       {
@@ -4504,11 +4508,11 @@ const EventWiseprofitLose = async (req, res) => {
       },
       { $sort: { date: -1 } }
     ];
-    
+
     if (currentUser.role == '5') {
       if (sportsId !== "6") {
         console.log('Processing non-casino sportsId:', sportsId);
-        const response = await Cash.aggregate(pipeline);
+        const response = await Cash.aggregate(nonCasinoPipeline);
         console.log('Response for non-casino sportsId:', response);
         return res.send({
           success: true,
@@ -4531,7 +4535,7 @@ const EventWiseprofitLose = async (req, res) => {
 
       if (sportsId !== "6") {
         console.log('Processing non-casino sportsId for non-admin:', sportsId);
-        const response = await Cash.aggregate(pipeline);
+        const response = await Cash.aggregate(nonCasinoPipeline);
         console.log('Response for non-casino sportsId for non-admin:', response);
         return res.send({
           success: true,
@@ -4557,6 +4561,7 @@ const EventWiseprofitLose = async (req, res) => {
     });
   }
 };
+
 
 const dailyMatchWiseprofitLose = async (req, res) => {
   if (!req.query.userId || !req.query.matchId) {
