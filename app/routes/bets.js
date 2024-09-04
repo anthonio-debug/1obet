@@ -4496,7 +4496,7 @@ const EventWiseprofitLose = async (req, res) => {
               sportsId: sportsId,
               cashOrCredit: { $in: ['Bet'] },
               ...(req.query.start && req.query.end && { date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } }),
-              betId: { $regex: /^[a-fA-F0-9]{24}$/ } // Ensures betId is valid ObjectId format
+              betId: { $regex: /^[a-fA-F0-9]{24}$/ }
             }
           },
           {
@@ -4505,7 +4505,7 @@ const EventWiseprofitLose = async (req, res) => {
                 $convert: {
                   input: '$betId',
                   to: 'objectId',
-                  onError: null, // Handle conversion errors
+                  onError: null,
                   onNull: null
                 }
               }
