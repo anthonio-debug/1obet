@@ -4406,8 +4406,8 @@ const EventWiseprofitLose = async (req, res) => {
   }
 
   try {
-    const userId = parseInt(req.query.userId, 10);
-    const sportsId = parseInt(req.query.sportsId, 10);
+    const userId = parseInt(req.query.userId);
+    const sportsId = parseInt(req.query.sportsId);
     console.log('Parsed userId:', userId);
     console.log('Parsed sportsId:', sportsId);
 
