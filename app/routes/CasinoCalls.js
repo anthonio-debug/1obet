@@ -631,12 +631,7 @@ async function balanceFun(req, res) {
   // ////console.log('hash:', hash);
   // ////console.log('queryString:', queryString);
 
-  if (hash !== key) {
-    return res.json({
-      status: 403,
-      msg: 'INCORRECT_KEY_VALIDATION'
-    });
-  }
+
 
   try {
     const user = await User.findOne({ remoteId: payload.remote_id }).exec();
@@ -1008,7 +1003,6 @@ function casino(req, res) {
   switch (action) {
     
     case 'balance':
-      
       return balanceFun(req, res);
     case 'debit':
       return debitFun(req, res);
