@@ -4425,7 +4425,7 @@ const EventWiseprofitLose = async (req, res) => {
 
     if (currentUser.role == '5') {
 
-      if (sportsId !== 6) {
+      if (sportsId != "6") {
         console.log('Processing non-casino sportsId:', sportsId);
 
         const response = await Cash.aggregate([
@@ -4473,7 +4473,7 @@ const EventWiseprofitLose = async (req, res) => {
         });
       }
 
-      if (sportsId === 6) {
+      if (sportsId == "6") {
         console.log('Processing casino sportsId:', sportsId);
 
         const response = await Cash.aggregate([
@@ -4523,7 +4523,7 @@ const EventWiseprofitLose = async (req, res) => {
     } else {
       console.log('Processing non-admin user:', userId);
 
-      if (sportsId !== 6) {
+      if (sportsId != "6") {
         console.log('Processing non-casino sportsId for non-admin:', sportsId);
 
         const response = await Cash.aggregate([
@@ -4567,7 +4567,7 @@ const EventWiseprofitLose = async (req, res) => {
         });
       }
 
-      if (sportsId === 6) {
+      if (sportsId == "6") {
         console.log('Processing casino sportsId for non-admin:', sportsId);
 
         const response = await Cash.aggregate([
