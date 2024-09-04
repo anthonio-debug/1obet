@@ -4419,13 +4419,14 @@ const EventWiseprofitLose = async (req, res) => {
   }
 
   try {
-    const userId = parseInt(req.query.userId);
+    const userId = parseInt(req.query.userId, 10);
     const sportsId = req.query.sportsId;
+    const startDate = req.query.start ? Number(req.query.start) : null;
+    const endDate = req.query.end ? Number(req.query.end) : null;
     console.log('Parsed userId:', userId);
     console.log('Parsed sportsId:', sportsId);
-
+    
     const currentUser = await User.findOne({ userId: userId });
-
     if (!currentUser) {
       console.error('User not found:', userId);
       return res.status(404).send({
@@ -4434,108 +4435,90 @@ const EventWiseprofitLose = async (req, res) => {
       });
     }
 
-    // console.log('Current user:', currentUser);
+    const baseMatch = {
+      userId: userId,
+      sportsId: sportsId,
+      cashOrCredit: { $in: ['Bet'] },
+      ...(startDate && endDate && { date: { $gte: startDate, $lte: endDate } })
+    };
+    
+    const pipeline = [
+      { $match: baseMatch },
+      { $addFields: { betsId: { $toObjectId: '$betId' } } },
+      {
+        $lookup: {
+          from: 'bets',
+          localField: 'betsId',
+          foreignField: '_id',
+          as: 'bets'
+        }
+      },
+      {
+        $group: {
+          _id: { $arrayElemAt: ['$bets.matchId', 0] },
+          amount: { $sum: '$amount' },
+          userId: { $first: '$userId' },
+          date: { $first: '$date' },
+          name: { $first: { $arrayElemAt: ['$bets.event', 0] } }
+        }
+      },
+      { $sort: { date: -1 } }
+    ];
 
-    if (currentUser.role == '5') {
-
-      if (sportsId != "6") {
-        console.log('Processing non-casino sportsId:', sportsId);
-
-        const response = await Cash.aggregate([
-          {
-            $match: {
-              userId: userId,
-              sportsId: sportsId,
-              cashOrCredit: { $in: ['Bet'] },
-              ...(req.query.start && req.query.end && { date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } })
+    
+    const casinoPipeline = [
+      {
+        $match: {
+          ...baseMatch,
+          betId: { $regex: /^[a-fA-F0-9]{24}$/ } 
+        }
+      },
+      {
+        $addFields: {
+          betsId: {
+            $convert: {
+              input: '$betId',
+              to: 'objectId',
+              onError: null,
+              onNull: null
             }
-          },
-          {
-            $addFields: {
-              betsId: { $toObjectId: '$betId' }
-            }
-          },
-          {
-            $lookup: {
-              from: 'bets',
-              localField: 'betsId',
-              foreignField: '_id',
-              as: 'bets'
-            }
-          },
-          {
-            $group: {
-              _id: { $arrayElemAt: ['$bets.matchId', 0] },
-              amount: { $sum: '$amount' },
-              userId: { $first: '$userId' },
-              date: { $first: '$date' },
-              name: { $first: { $arrayElemAt: ['$bets.event', 0] } }
-            }
-          },
-          {
-            $sort: { date: -1 }
           }
-        ]);
-
+        }
+      },
+      {
+        $lookup: {
+          from: 'casinocalls',
+          localField: 'roundId',
+          foreignField: 'round_id',
+          as: 'casinos'
+        }
+      },
+      {
+        $group: {
+          _id: { $arrayElemAt: ['$casinos.game_id', 0] },
+          amount: { $sum: '$amount' },
+          userId: { $first: '$userId' },
+          date: { $first: '$date' },
+          name: { $first: { $arrayElemAt: ['$event', 0] } }
+        }
+      },
+      { $sort: { date: -1 } }
+    ];
+    
+    if (currentUser.role == '5') {
+      if (sportsId !== "6") {
+        console.log('Processing non-casino sportsId:', sportsId);
+        const response = await Cash.aggregate(pipeline);
         console.log('Response for non-casino sportsId:', response);
-
         return res.send({
           success: true,
           message: 'Profit Lose reports',
           results: response
         });
-      }
-
-      if (sportsId == "6") {
+      } else {
         console.log('Processing casino sportsId:', sportsId);
-
-        const response = await Cash.aggregate([
-          {
-            $match: {
-              userId: userId,
-              sportsId: sportsId,
-              cashOrCredit: { $in: ['Bet'] },
-              ...(req.query.start && req.query.end && { date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } }),
-              betId: { $regex: /^[a-fA-F0-9]{24}$/ }
-            }
-          },
-          {
-            $addFields: {
-              betsId: {
-                $convert: {
-                  input: '$betId',
-                  to: 'objectId',
-                  onError: null,
-                  onNull: null
-                }
-              }
-            }
-          },
-          {
-            $lookup: {
-              from: 'casinocalls',
-              localField: 'round_id',
-              foreignField: 'roundId',
-              as: 'casinos'
-            }
-          },
-          {
-            $group: {
-              _id: { $arrayElemAt: ['$casinos.game_id', 0] },
-              amount: { $sum: '$amount' },
-              userId: { $first: '$userId' },
-              date: { $first: '$date' },
-              name: { $first: { $arrayElemAt: ['$event', 0] } }
-            }
-          },
-          {
-            $sort: { date: -1 }
-          }
-        ]);
-
-
+        const response = await Cash.aggregate(casinoPipeline);
         console.log('Response for casino sportsId:', response);
-
         return res.send({
           success: true,
           message: 'Profit Lose reports',
@@ -4544,88 +4527,21 @@ const EventWiseprofitLose = async (req, res) => {
       }
     } else {
       console.log('Processing non-admin user:', userId);
+      baseMatch.cashOrCredit = { $in: ['Bet', 'Commission', 'loosing'] };
 
-      if (sportsId != "6") {
+      if (sportsId !== "6") {
         console.log('Processing non-casino sportsId for non-admin:', sportsId);
-
-        const response = await Cash.aggregate([
-          {
-            $match: {
-              userId: userId,
-              sportsId: sportsId,
-              cashOrCredit: { $in: ['Bet', 'Commission', 'loosing'] }
-            }
-          },
-          {
-            $addFields: {
-              betsId: { $toObjectId: '$betId' }
-            }
-          },
-          {
-            $lookup: {
-              from: 'bets',
-              localField: 'betsId',
-              foreignField: '_id',
-              as: 'bets'
-            }
-          },
-          {
-            $group: {
-              _id: { $arrayElemAt: ['$bets.matchId', 0] },
-              amount: { $sum: '$amount' },
-              userId: { $first: '$userId' },
-              date: { $first: '$date' },
-              name: { $first: { $arrayElemAt: ['$bets.event', 0] } }
-            }
-          }
-        ]);
-
+        const response = await Cash.aggregate(pipeline);
         console.log('Response for non-casino sportsId for non-admin:', response);
-
         return res.send({
           success: true,
           message: 'Profit Lose Reports',
           results: response
         });
-      }
-
-      if (sportsId == "6") {
+      } else {
         console.log('Processing casino sportsId for non-admin:', sportsId);
-
-        const response = await Cash.aggregate([
-          {
-            $match: {
-              userId: userId,
-              sportsId: sportsId,
-              cashOrCredit: { $in: ['Bet', 'Commission', 'loosing'] }
-            }
-          },
-          {
-            $addFields: {
-              betsId: { $toObjectId: '$betId' }
-            }
-          },
-          {
-            $lookup: {
-              from: 'casinocalls',
-              localField: 'round_id',
-              foreignField: 'roundId',
-              as: 'casinos'
-            }
-          },
-          {
-            $group: {
-              _id: { $arrayElemAt: ['$casinos.game_id', 0] },
-              amount: { $sum: '$amount' },
-              userId: { $first: '$userId' },
-              date: { $first: '$date' },
-              name: { $first: { $arrayElemAt: ['$event', 0] } }
-            }
-          }
-        ]);
-
+        const response = await Cash.aggregate(casinoPipeline);
         console.log('Response for casino sportsId for non-admin:', response);
-
         return res.send({
           success: true,
           message: 'Profit Lose Reports',
@@ -4860,7 +4776,7 @@ const eventsAPICalls = async (req, res) => {
 };
 const postmanwork = async (req, res) => {
   try {
-    // const dt = new Date().getTime();
+    
     // const subTime = Number(req.body.days) * 24 * 60 * 60 * 1000;
     // const daysBefore = dt + subTime;
     // if(Number(req.body.type) === 2){
