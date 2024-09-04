@@ -1636,6 +1636,40 @@ async function getOddsFancyBookmakerByMatchId(req, res) {
       .json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
+//////////////////// getGreyHoundMatches
+async function getGreyHoundMatches(req, res) {
+  const id = req.params.id;
+
+  console.log("MMMMMMMMMMMMM id--",id);
+  
+
+  try {
+    // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
+    const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches`;
+    console.log("------------------http://sportzing.in:5505/api/getGreyHoundMatches")
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
+      },
+    };
+   
+
+    const response = await axios.get(sportsAPIUrl, header);
+      console.log("MMMMMMMMMMMMMMMM--getGreyHoundMatches response ", response.data);
+      
+    // const marketsData = response.data;
+    const GreyHoundMatches = response.data;
+
+    res.status(200).json({ success: true, data: GreyHoundMatches });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
+  }
+}
 ////////////MMMMMMMMMMMM
 
 
@@ -1644,6 +1678,7 @@ router.get('/track-bet/getSeriesList/:sportsId', getSeriesList)
 router.get('/track-bet/getAllMatchesList/:series_id', getAllMatchesList)
 router.get('/track-bet/getAllMarketList/:match_id', getAllMarketList)
 router.get('/track-bet/getOddsFancyBookmakerByMatchId/:id', getOddsFancyBookmakerByMatchId)
+router.get('/track-bet/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/testing', testing)
 /////////////////
