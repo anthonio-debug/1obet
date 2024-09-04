@@ -4514,8 +4514,8 @@ const EventWiseprofitLose = async (req, res) => {
           {
             $lookup: {
               from: 'casinocalls',
-              localField: 'transaction_id',
-              foreignField: 'betId',
+              localField: 'round_id',
+              foreignField: 'roundId',
               as: 'casinos'
             }
           },
@@ -4608,8 +4608,8 @@ const EventWiseprofitLose = async (req, res) => {
           {
             $lookup: {
               from: 'casinocalls',
-              localField: 'transaction_id',
-              foreignField: 'betId',
+              localField: 'round_id',
+              foreignField: 'roundId',
               as: 'casinos'
             }
           },
