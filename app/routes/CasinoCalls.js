@@ -615,6 +615,7 @@ function createHashKey(salt, queryString) {
 }
 
 async function balanceFun(req, res) {
+  console.log("balanceeeeeeeeeeee Arham ------------")
   const payload = req.query;
   const salt = saltKey;
   const key = payload.key;
@@ -672,6 +673,8 @@ async function balanceFun(req, res) {
 }
 
 async function debitFun(req, res) {
+  console.log("balanceeeeeeeeeeee Arham ------------")
+
   const session = dbClient.startSession();
   console.log(" arham debt" ,req.body)
   try {
@@ -775,6 +778,8 @@ async function debitFun(req, res) {
 }
 
 async function creditFun(req, res) {
+  console.log("balanceeeeeeeeeeee Arham ------------")
+
   const session = dbClient.startSession();
   try {
     const payload = req.query;
@@ -864,6 +869,8 @@ async function creditFun(req, res) {
 }
 
 async function rollbackFun(req, res) {
+  console.log("balanceeeeeeeeeeee Arham ------------")
+
   const session = dbClient.startSession();
   try {
     const payload = req.query;
@@ -999,7 +1006,9 @@ function casino(req, res) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
   switch (action) {
+    
     case 'balance':
+      
       return balanceFun(req, res);
     case 'debit':
       return debitFun(req, res);
