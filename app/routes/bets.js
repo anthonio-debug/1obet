@@ -3407,15 +3407,28 @@ async function getUserBets(req, res) {
     //     },
     //   ];
     // }
+    if (req.body.sportsId != "6") {
+      await Bets.paginate(query, { page: page, sort: { [sortValue]: sort }, limit: limit }, (err, results) => {
+        if (err) return res.status(404).send({ message: `Something went wrong  ${err} ` });
+        return res.send({
+          success: true,
+          message: 'bets list',
+          results: results
+        });
 
-    Bets.paginate(query, { page: page, sort: { [sortValue]: sort }, limit: limit }, (err, results) => {
-      if (err) return res.status(404).send({ message: `Something went wrong  ${err} ` });
-      return res.send({
-        success: true,
-        message: 'bets list',
-        results: results
       });
-    });
+    }
+    if (req.body.sportsId == "6") {
+      await CasinoCalls.paginate(query, { page: page, sort: { [sortValue]: sort }, limit: limit }, (err, results) => {
+        if (err) return res.status(404).send({ message: `Something went wrong  ${err} ` });
+        return res.send({
+          success: true,
+          message: 'bets list',
+          results: results
+        });
+
+      });
+    }
   } catch (error) {
     return res.send({
       success: false,
@@ -4421,7 +4434,7 @@ const EventWiseprofitLose = async (req, res) => {
       });
     }
 
-    console.log('Current user:', currentUser);
+    // console.log('Current user:', currentUser);
 
     if (currentUser.role == '5') {
 
@@ -4482,19 +4495,27 @@ const EventWiseprofitLose = async (req, res) => {
               userId: userId,
               sportsId: sportsId,
               cashOrCredit: { $in: ['Bet'] },
-              ...(req.query.start && req.query.end && { date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } })
+              ...(req.query.start && req.query.end && { date: { $gte: Number(req.query.start), $lte: Number(req.query.end) } }),
+              betId: { $regex: /^[a-fA-F0-9]{24}$/ }
             }
           },
           {
             $addFields: {
-              betsId: { $toObjectId: '$betId' }
+              betsId: {
+                $convert: {
+                  input: '$betId',
+                  to: 'objectId',
+                  onError: null,
+                  onNull: null
+                }
+              }
             }
           },
           {
             $lookup: {
               from: 'casinocalls',
-              localField: 'transaction_id',
-              foreignField: 'betId',
+              localField: 'round_id',
+              foreignField: 'roundId',
               as: 'casinos'
             }
           },
@@ -4511,6 +4532,7 @@ const EventWiseprofitLose = async (req, res) => {
             $sort: { date: -1 }
           }
         ]);
+
 
         console.log('Response for casino sportsId:', response);
 
@@ -4586,8 +4608,8 @@ const EventWiseprofitLose = async (req, res) => {
           {
             $lookup: {
               from: 'casinocalls',
-              localField: 'transaction_id',
-              foreignField: 'betId',
+              localField: 'round_id',
+              foreignField: 'roundId',
               as: 'casinos'
             }
           },

@@ -330,7 +330,7 @@ async function cronOdds2(eventId, sportID) {
     const response = await axios.get(url);
     const bookmakerResponse = await axios.get(bookmakerUrl);
 
-    console.log("=-=-==-=--=-=-=-=-=-=-=-  bookmakerResponse", bookmakerResponse.data);
+    console.log("=-=-==-=--=-=-=-=-=-=-=-  response", response.data);
     const bookMakerData = bookmakerResponse.data;
     const marketsData = response.data;
     const sendMarketIds = [];
