@@ -61,7 +61,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let bettor_winning_amount = 0;
       let bettor_lost_amount = 0;
     */
-console.log(balance, payload, users123, action, res, session)
+console.log(balance, payload, users123, action, res, session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -992,6 +992,8 @@ function casino(req, res) {
   const { action, remote_id } = req.query;
   if(remote_id==6896479){
   }
+
+  console.log("arham casinoooooooooo call",action, remote_id )
   if (!remote_id || !action) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
