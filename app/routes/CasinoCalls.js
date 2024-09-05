@@ -75,7 +75,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     if (action === 0) {
       
       let amount = Number(payload.amount) * casinoMultiples;
-      let UpdatedExposure =  Number((user.exposure - amount).toFixed(3))
+      let UpdatedExposure =  Number((numOfBet - amount).toFixed(3))
       console.log(numOfBet, "arham num of bet", user.exposure)
       if (numOfBet >= 6) {
         numOfBet=1
