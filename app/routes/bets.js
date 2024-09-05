@@ -4470,57 +4470,14 @@ const EventWiseprofitLose = async (req, res) => {
     ];
 
     const casinoPipeline = [
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: 'userId',
-          as: 'userData'
-        }
-      },
-      {
-        $unwind: {
-          path: '$userData',
-          preserveNullAndEmptyArrays: true
-        }
-      },
+      { $match: baseMatch },
       {
         $group: {
-          _id: '$userId',
-          remoteId: {
-            $first: {
-              $cond: {
-                if: { $isArray: '$userData.remoteId' },
-                then: { $arrayElemAt: ['$userData.remoteId', 0] },
-                else: '$userData.remoteId' // Use the value directly if it's not an array
-              }
-            }
-          }
-        }
-      },
-      {
-        $lookup: {
-          from: 'casinocalls',
-          localField: 'remoteId',
-          foreignField: 'remote_id',
-          as: 'result'
-        }
-      },
-      {
-        $unwind: {
-          path: '$result',
-          preserveNullAndEmptyArrays: true
-        }
-      },
-      {
-        $project: {
-          _id: 1,
-          userId: '$_id',
-          remoteId: 1,
-          result: 1,
-          amount: '$result.amount', // Assuming amount comes from casinocalls
-          name: '$event',    // Assuming event comes from casinocalls
-          date: '$date'      // Assuming date comes from casinocalls
+          _id: "$_id",
+          amount: { $sum: '$amount' },
+          userId: { $first: '$userId' },
+          date: { $first: '$date' },
+          name: { $first: '$event' }
         }
       }
     ];
