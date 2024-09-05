@@ -4519,8 +4519,8 @@ const EventWiseprofitLose = async (req, res) => {
           remoteId: 1,
           result: 1,
           amount: '$result.amount', // Assuming amount comes from casinocalls
-          name: '$result.event',    // Assuming event comes from casinocalls
-          date: '$result.date'      // Assuming date comes from casinocalls
+          name: '$event',    // Assuming event comes from casinocalls
+          date: '$date'      // Assuming date comes from casinocalls
         }
       }
     ];
