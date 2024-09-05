@@ -51,7 +51,7 @@ const checkMarketBlocked = async (user) => {
 }
 var numOfBet = 1
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
-  setTimeout(() => { console.log('1 second passed'); }, 1000);
+  setTimeout(() => { console.log('1 second passed'); }, 500);
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
     console.log("arham inital exposure",user.exposure)
