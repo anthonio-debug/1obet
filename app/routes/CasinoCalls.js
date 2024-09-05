@@ -97,12 +97,15 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         },
         { session }
       );
-      
+      if (updatedUserResult.modifiedCount > 0) {
+         
       // Fetch the updated user data
       const updatedUser = await users.findOne({ _id: user._id }, { session });
       console.log("updated user exposure Arham", updatedUser.exposure);
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
+      }
+     
       
       // return 0
     } else if (action === 1) { 
