@@ -4475,19 +4475,25 @@ const EventWiseprofitLose = async (req, res) => {
 
     const casinoPipeline = [
       {
-        $match: {
-          ...baseMatch,
-          betId: { $regex: /^[a-fA-F0-9]{24}$/ }
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'userId',
+          as: 'userData'
         }
       },
       {
-        $addFields: {
-          betsId: {
-            $convert: {
-              input: '$betId',
-              to: 'objectId',
-              onError: null,
-              onNull: null
+        $unwind: {
+          path: '$userData',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $group: {
+          _id: '$userId',
+          remoteId: {
+            $first: {
+              $arrayElemAt: ['$userData.remoteId', 0]
             }
           }
         }
@@ -4495,22 +4501,33 @@ const EventWiseprofitLose = async (req, res) => {
       {
         $lookup: {
           from: 'casinocalls',
-          localField: 'roundId',
-          foreignField: 'round_id',
-          as: 'casinos'
+          localField: 'remoteId',
+          foreignField: 'remote_id',
+          as: 'result'
         }
       },
       {
-        $group: {
-          _id: { $arrayElemAt: ['$casinos.game_id', 0] },
-          amount: { $sum: '$amount' },
-          userId: { $first: '$userId' },
-          date: { $first: '$date' },
-          name: { $first: { $arrayElemAt: ['$event', 0] } }
+        $unwind: {
+          path: '$result',
+          preserveNullAndEmptyArrays: true
         }
       },
-      { $sort: { date: -1 } }
-    ];
+      {
+        $project: {
+          _id: "$_id",
+          userId: 1,
+          remoteId: 1,
+          result: 1,
+          amount: { $sum: '$amount' },
+          name: { $first: { $arrayElemAt: ['$event', 0] } },
+          date: { $first: '$date' },
+        }
+      }
+    ]
+    // $group: {
+    //   _id: { $arrayElemAt: ['$casinos.game_id', 0] },
+    //   userId: { $first: '$userId' },
+    // }
 
     console.log('Casino pipeline:', JSON.stringify(casinoPipeline, null, 2));
 
@@ -4566,6 +4583,7 @@ const EventWiseprofitLose = async (req, res) => {
     });
   }
 };
+
 const dailyMatchWiseprofitLose = async (req, res) => {
   if (!req.query.userId || !req.query.matchId) {
     return res.status(404).send({
