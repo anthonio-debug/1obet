@@ -49,9 +49,9 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
-
+  
+var numOfBet=1
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
-  var numOfBet = 1
   setTimeout(() => {
     console.log('Delayed by 2 seconds');
   }, 500);
