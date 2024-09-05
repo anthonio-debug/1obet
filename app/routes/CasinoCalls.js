@@ -711,7 +711,7 @@ async function debitFun(req, res) {
       }
 
       let updatedBalance = currentUser.availableBalance - amount;
-      let updatedExposure = currentUser.exposure + amount; // Increase exposure when bet is placed
+      let updatedExposure = currentUser.exposure + amount; // Increase exposure by the bet amount
 
       if (updatedBalance < 0) {
         throw new Error("Negative balance not allowed");
@@ -748,6 +748,7 @@ async function debitFun(req, res) {
     await session.endSession();
   }
 }
+
 
 async function creditFun(req, res) {
   console.log("creditttt Arham ------------");
