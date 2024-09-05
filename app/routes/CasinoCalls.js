@@ -75,7 +75,13 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       
       let amount = Number(payload.amount) * casinoMultiples;
       let UpdatedExposure =  Number((user.exposure - amount).toFixed(3))
-      console.log(numOfBet,"arham num of bet",user.exposure)
+      console.log(numOfBet, "arham num of bet", user.exposure)
+      if (numOfBet >= 6) {
+        numOfBet=1
+      } else {
+        
+        numOfBet+=1
+      }
       console.log("updataded arham exposure", UpdatedExposure)
   
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
@@ -94,14 +100,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       // Fetch the updated user data
       const updatedUser = await users.findOne({ _id: user._id }, { session });
       console.log("updated user exposure Arham", updatedUser.exposure);
-      // const casinoDebits = new CasinoDebits(payload);
-      // await casinoDebits.save();
-      if (numOfBet >= 6) {
-        numOfBet=1
-      } else {
-        
-        numOfBet+=1
-      }
+      const casinoDebits = new CasinoDebits(payload);
+      await casinoDebits.save();
+      
       // return 0
     } else if (action === 1) { 
       const user_prev_balance = user.balance;
