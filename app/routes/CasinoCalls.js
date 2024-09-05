@@ -80,7 +80,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
   
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
       console.log("updatedavailableBalance Arham",updatedavailableBalance)
-      const updatedUser=await users.updateOne(
+      const updatedUserResult = await users.updateOne(
         { _id: user._id },
         {
           $set: {
@@ -90,7 +90,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         },
         { session }
       );
-      console.log("updated user exposer Arham",updatedUser.exposure)
+      
+      // Fetch the updated user data
+      const updatedUser = await users.findOne({ _id: user._id }, { session });
       // const casinoDebits = new CasinoDebits(payload);
       // await casinoDebits.save();
       if (numOfBet >= 6) {
