@@ -705,27 +705,28 @@ async function debitFun(req, res) {
     await session.withTransaction(async () => {
       let debitAmount = parseInt(payload.amount);
       const amount = debitAmount * casinoMultiples;
-      let updatedavailableBalance = currentUser.availableBalance - amount;
-      let updatedExposure = currentUser.exposure + amount; // Increase exposure when bet is placed
 
       if (amount > currentUser.availableBalance) {
         throw new Error("Insufficient balance");
       }
 
-      if (updatedavailableBalance < 0) {
+      let updatedBalance = currentUser.availableBalance - amount;
+      let updatedExposure = currentUser.exposure + amount; // Increase exposure when bet is placed
+
+      if (updatedBalance < 0) {
         throw new Error("Negative balance not allowed");
       }
 
       // Update user's balance and exposure
       await User.updateOne(
         { remoteId: parseInt(payload.remote_id) },
-        { $set: { availableBalance: updatedavailableBalance, exposure: updatedExposure } },
+        { $set: { availableBalance: updatedBalance, exposure: updatedExposure } },
         { session }
       );
 
       // Handle Win/Loss Management
       await WinLoseTransManagement(
-        currentUser.availableBalance / casinoMultiples,
+        updatedBalance / casinoMultiples,
         payload,
         currentUser,
         0, // 0 means debit
@@ -787,7 +788,7 @@ async function creditFun(req, res) {
 
     await session.withTransaction(async () => {
       if (parseInt(payload.amount) < 0) {
-        throw new Error("Negative bet not allowed");
+        throw new Error("Negative amount not allowed");
       }
 
       // Call Win/Lose Transaction Management
@@ -804,7 +805,7 @@ async function creditFun(req, res) {
         { remoteId: parseInt(payload.remote_id) },
         { session }
       );
-      
+
       let updatedExposure = updatedUser.exposure - (parseInt(payload.amount) * casinoMultiples); // Reduce exposure after credit
       await User.updateOne(
         { remoteId: parseInt(payload.remote_id) },
@@ -826,6 +827,7 @@ async function creditFun(req, res) {
     await session.endSession();
   }
 }
+
 
 async function rollbackFun(req, res) {
   console.log("rollback Arham ------------");
