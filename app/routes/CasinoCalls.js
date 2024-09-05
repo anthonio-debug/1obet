@@ -33,15 +33,8 @@ const transactionOptions = {
 }
 const dbClient = new MongoClient(`${DBHost}?directConnection=true`, { useUnifiedTopology: true });
 const casinoCalls = dbClient.db(`${DBNAME}`).collection('casinocalls');
-/*
-  action= 0 debit
-  action= 1 credit( decision came from casino )
-  debit = 1350
-  credit=  600 or 1350 or 1800
-  let bettor_winning_amount = 0;
-  let bettor_lost_amount = 0;
-*/
-// console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
+const users = dbClient.db(`${DBNAME}`).collection('users');
+
 const checkMarketBlocked = async (user) => {
   let parentUserIds = await getParents(user.userId);
   const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
@@ -56,15 +49,22 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
-const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
-const users = dbClient.db(`${DBNAME}`).collection('users');
-
-
 var numOfBet = 1
-
-  try { 
+const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
+  setTimeout(() => { console.log('1 second passed'); }, 1000);
+  try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
     console.log("arham inital exposure",user.exposure)
+    /*
+      action= 0 debit
+      action= 1 credit( decision came from casino )
+      debit = 1350
+      credit=  600 or 1350 or 1800
+      let bettor_winning_amount = 0;
+      let bettor_lost_amount = 0;
+    */
+    // console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
+    
 
     const now = new Date();
     const year = now.getFullYear().toString();
@@ -73,7 +73,7 @@ var numOfBet = 1
     const formattedDate = `${year}-${month}-${day}`;
    
     if (action === 0) {
-      setTimeout(() => { console.log('1 second passed'); }, 500);
+      
       let amount = Number(payload.amount) * casinoMultiples;
       let UpdatedExposure =  Number((user.exposure - amount).toFixed(3))
       console.log(numOfBet, "arham num of bet", user.exposure)
@@ -748,7 +748,7 @@ async function debitFun(req, res) {
         await session.commitTransaction();
       }
     }, transactionOptions);
-    const updatedUser = await User.findOne(
+    const updatedUser = await users.findOne(
       { remoteId: parseInt(payload.remote_id) },
       { session }
     )
