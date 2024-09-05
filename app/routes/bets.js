@@ -4424,13 +4424,8 @@ const EventWiseprofitLose = async (req, res) => {
     const startDate = req.query.start ? Number(req.query.start) : null;
     const endDate = req.query.end ? Number(req.query.end) : null;
 
-    console.log('Parsed userId:', userId);
-    console.log('Parsed sportsId:', sportsId);
-    console.log('Parsed date range:', { startDate, endDate });
-
     const currentUser = await User.findOne({ userId: userId });
     if (!currentUser) {
-      console.error('User not found:', userId);
       return res.status(404).send({
         success: false,
         message: 'User not found!'
@@ -4443,8 +4438,6 @@ const EventWiseprofitLose = async (req, res) => {
       cashOrCredit: { $in: ['Bet'] },
       ...(startDate && endDate && { date: { $gte: startDate, $lte: endDate } })
     };
-
-    console.log('Base Match Criteria:', baseMatch);
 
     const pipeline = [
       { $match: baseMatch },
@@ -4499,7 +4492,6 @@ const EventWiseprofitLose = async (req, res) => {
         });
       }
     } else {
-      console.log('Processing non-admin user:', userId);
       baseMatch.cashOrCredit = { $in: ['Bet', 'Commission', 'loosing'] };
 
       if (sportsId !== "6") {
