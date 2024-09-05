@@ -51,7 +51,7 @@ const checkMarketBlocked = async (user) => {
 }
 var numOfBet = 1
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
-  setTimeout(() => { console.log('1 second passed'); }, 500);
+  setTimeout(() => { console.log('1 second passed'); }, 1000);
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
     console.log("arham inital exposure",user.exposure)
@@ -75,7 +75,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     if (action === 0) {
       
       let amount = Number(payload.amount) * casinoMultiples;
-      let UpdatedExposure =  Number((user.exposure * amount).toFixed(3))
+      let UpdatedExposure =  Number((user.exposure - amount).toFixed(3))
       console.log(numOfBet, "arham num of bet", user.exposure)
       if (numOfBet >= 6) {
         numOfBet=1
@@ -97,9 +97,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         },
         { session }
       );
+      
       if (updatedUserResult.modifiedCount > 0) {
-         
-      // Fetch the updated user data
+         // Fetch the updated user data
       const updatedUser = await users.findOne({ _id: user._id }, { session });
       console.log("updated user exposure Arham", updatedUser.exposure);
       const casinoDebits = new CasinoDebits(payload);
