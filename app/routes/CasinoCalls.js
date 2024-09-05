@@ -705,21 +705,21 @@ async function debitFun(req, res) {
       });
     }
 
-    const user = await users.findOne({ remoteId: parseInt(payload.remote_id) }).session(session);
-    if (!user) {
-      return res.json({ status: 500, msg: 'Internal Error: no user' });
-    }
-
-    const checkMarketBlockedResponse = await checkMarketBlocked(user);
-    if (checkMarketBlockedResponse === 1) {
-      return res.json({ status: 500, msg: 'Betting is not allowed!' });
-    }
-
-    let updatedAvailableBalance = 0;
+    let user;
     await session.withTransaction(async () => {
+      user = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
+      if (!user) {
+        throw new Error('Internal Error: no user');
+      }
+
+      const checkMarketBlockedResponse = await checkMarketBlocked(user);
+      if (checkMarketBlockedResponse === 1) {
+        throw new Error('Betting is not allowed!');
+      }
+
       const debitAmount = parseInt(payload.amount);
       const amount = debitAmount * casinoMultiples;
-      updatedAvailableBalance = user.availableBalance - amount;
+      const updatedAvailableBalance = user.availableBalance - amount;
 
       if (amount > user.availableBalance) {
         throw new Error('Insufficient balance amount');
@@ -728,12 +728,19 @@ async function debitFun(req, res) {
       } else if (updatedAvailableBalance < 0) {
         throw new Error('Negative balance not allowed!');
       } else {
-        const balance = user.availableBalance / casinoMultiples;
+        const balance = updatedAvailableBalance / casinoMultiples;
         await WinLoseTransManagement(balance, payload, user, 0, res);
       }
+
+      // Update user balance in the database
+      await users.updateOne(
+        { remoteId: parseInt(payload.remote_id) },
+        { $set: { availableBalance: updatedAvailableBalance } },
+        { session }
+      );
     }, transactionOptions);
 
-    const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) }).session(session);
+    const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) });
     return res.json({
       status: 200,
       balance: updatedUser.availableBalance / casinoMultiples,
@@ -746,6 +753,7 @@ async function debitFun(req, res) {
     await session.endSession();
   }
 }
+
 
 
 async function creditFun(req, res) {
