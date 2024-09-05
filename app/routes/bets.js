@@ -4437,8 +4437,6 @@ const EventWiseprofitLose = async (req, res) => {
       });
     }
 
-    console.log('Current user found:', currentUser);
-
     const baseMatch = {
       userId: userId,
       sportsId: sportsId,
@@ -4470,8 +4468,6 @@ const EventWiseprofitLose = async (req, res) => {
       },
       { $sort: { date: -1 } }
     ];
-
-    console.log('Non-casino pipeline:', JSON.stringify(pipeline, null, 2));
 
     const casinoPipeline = [
       {
@@ -4519,7 +4515,7 @@ const EventWiseprofitLose = async (req, res) => {
           remoteId: 1,
           result: 1,
           amount: { $sum: '$amount' },
-          name: { $first: { $arrayElemAt: ['$event', 0] } },
+          name: { $first: '$event' },
           date: { $first: '$date' },
         }
       }
@@ -4528,8 +4524,6 @@ const EventWiseprofitLose = async (req, res) => {
     //   _id: { $arrayElemAt: ['$casinos.game_id', 0] },
     //   userId: { $first: '$userId' },
     // }
-
-    console.log('Casino pipeline:', JSON.stringify(casinoPipeline, null, 2));
 
     if (currentUser.role === '5') {
       if (sportsId !== "6") {
@@ -4565,7 +4559,7 @@ const EventWiseprofitLose = async (req, res) => {
           results: response
         });
       } else {
-        console.log('Processing casino sportsId for non-admin:', sportsId);
+        console.log('Processing casino sportsId', sportsId);
         const response = await Cash.aggregate(casinoPipeline);
         console.log('Response for casino sportsId for non-admin:', response);
         return res.send({
