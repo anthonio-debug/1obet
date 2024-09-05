@@ -49,7 +49,7 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
-var numOfBet=0
+
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
@@ -62,21 +62,21 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let bettor_lost_amount = 0;
     */
     // console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
-    numOfBet += 1
+    
 
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const day = now.getDate().toString().padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
-    
+    var numOfBet = 1
     if (action === 0) {
+      
       let amount = Number(payload.amount) * casinoMultiples;
       console.log(numOfBet,"arham num of bet",user.exposure)
-      let UpdatedExposure =  Number((user.exposure - amount).toFixed(3));
+      let UpdatedExposure =numOfBet*  Number((user.exposure - amount).toFixed(3));
  console.log("number of call arham exposure",UpdatedExposure)
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
-   
       await users.updateOne(
         { _id: user._id },
         {
@@ -90,7 +90,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
-
+      numOfBet+=1
       return 0
     } else if (action === 1) { 
       const user_prev_balance = user.balance;
@@ -150,7 +150,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         // remove all exposure equal to total debit money of 1500
 
         const amount = Number((debit * config.casinoMultiples).toFixed(3));
-        const UpdatedExposure = Number((user.exposure + amount).toFixed(3));
+        const UpdatedExposure =  Number((user.exposure + amount).toFixed(3));
         // console.log("arham exposureeeeeeeeeeeee winloose addiotn credit",UpdatedExposure )
         await users.updateOne(
           { _id: user?._id },
