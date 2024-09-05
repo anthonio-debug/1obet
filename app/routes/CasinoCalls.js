@@ -42,10 +42,6 @@ const casinoCalls = dbClient.db(`${DBNAME}`).collection('casinocalls');
   let bettor_lost_amount = 0;
 */
 // console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
-
-const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
-const users = dbClient.db(`${DBNAME}`).collection('users');
-
 const checkMarketBlocked = async (user) => {
   let parentUserIds = await getParents(user.userId);
   const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
@@ -60,6 +56,10 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
+const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
+const users = dbClient.db(`${DBNAME}`).collection('users');
+
+
 var numOfBet = 1
 
   try { 
