@@ -4424,20 +4424,13 @@ const EventWiseprofitLose = async (req, res) => {
     const startDate = req.query.start ? Number(req.query.start) : null;
     const endDate = req.query.end ? Number(req.query.end) : null;
 
-    console.log('Parsed userId:', userId);
-    console.log('Parsed sportsId:', sportsId);
-    console.log('Parsed date range:', { startDate, endDate });
-
     const currentUser = await User.findOne({ userId: userId });
     if (!currentUser) {
-      console.error('User not found:', userId);
       return res.status(404).send({
         success: false,
         message: 'User not found!'
       });
     }
-
-    console.log('Current user found:', currentUser);
 
     const baseMatch = {
       userId: userId,
@@ -4445,8 +4438,6 @@ const EventWiseprofitLose = async (req, res) => {
       cashOrCredit: { $in: ['Bet'] },
       ...(startDate && endDate && { date: { $gte: startDate, $lte: endDate } })
     };
-
-    console.log('Base Match Criteria:', baseMatch);
 
     const pipeline = [
       { $match: baseMatch },
@@ -4471,63 +4462,29 @@ const EventWiseprofitLose = async (req, res) => {
       { $sort: { date: -1 } }
     ];
 
-    console.log('Non-casino pipeline:', JSON.stringify(pipeline, null, 2));
-
     const casinoPipeline = [
-      {
-        $match: {
-          ...baseMatch,
-          betId: { $regex: /^[a-fA-F0-9]{24}$/ }
-        }
-      },
-      {
-        $addFields: {
-          betsId: {
-            $convert: {
-              input: '$betId',
-              to: 'objectId',
-              onError: null,
-              onNull: null
-            }
-          }
-        }
-      },
-      {
-        $lookup: {
-          from: 'casinocalls',
-          localField: 'roundId',
-          foreignField: 'round_id',
-          as: 'casinos'
-        }
-      },
+      { $match: baseMatch },
       {
         $group: {
-          _id: { $arrayElemAt: ['$casinos.game_id', 0] },
+          _id: "$_id",
           amount: { $sum: '$amount' },
           userId: { $first: '$userId' },
           date: { $first: '$date' },
-          name: { $first: { $arrayElemAt: ['$event', 0] } }
+          name: { $first: '$event' }
         }
-      },
-      { $sort: { date: -1 } }
+      }
     ];
-
-    console.log('Casino pipeline:', JSON.stringify(casinoPipeline, null, 2));
 
     if (currentUser.role === '5') {
       if (sportsId !== "6") {
-        console.log('Processing non-casino sportsId for admin:', sportsId);
         const response = await Cash.aggregate(pipeline);
-        console.log('Response for non-casino sportsId:', response);
         return res.send({
           success: true,
           message: 'Profit Lose reports',
           results: response
         });
       } else {
-        console.log('Processing casino sportsId for admin:', sportsId);
         const response = await Cash.aggregate(casinoPipeline);
-        console.log('Response for casino sportsId:', response);
         return res.send({
           success: true,
           message: 'Profit Lose reports',
@@ -4535,22 +4492,17 @@ const EventWiseprofitLose = async (req, res) => {
         });
       }
     } else {
-      console.log('Processing non-admin user:', userId);
       baseMatch.cashOrCredit = { $in: ['Bet', 'Commission', 'loosing'] };
 
       if (sportsId !== "6") {
-        console.log('Processing non-casino sportsId for non-admin:', sportsId);
         const response = await Cash.aggregate(pipeline);
-        console.log('Response for non-casino sportsId for non-admin:', response);
         return res.send({
           success: true,
           message: 'Profit Lose Reports',
           results: response
         });
       } else {
-        console.log('Processing casino sportsId for non-admin:', sportsId);
         const response = await Cash.aggregate(casinoPipeline);
-        console.log('Response for casino sportsId for non-admin:', response);
         return res.send({
           success: true,
           message: 'Profit Lose Reports',
@@ -4566,6 +4518,7 @@ const EventWiseprofitLose = async (req, res) => {
     });
   }
 };
+
 const dailyMatchWiseprofitLose = async (req, res) => {
   if (!req.query.userId || !req.query.matchId) {
     return res.status(404).send({

@@ -71,6 +71,7 @@ console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"ressssssss
     if (action === 0) {
       let amount = Number(payload.amount) * casinoMultiples;
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
+      console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
 
     
@@ -151,7 +152,7 @@ console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"ressssssss
 
         const amount = Number((debit * config.casinoMultiples).toFixed(3));
         const UpdatedExposure = Number((user.exposure + amount).toFixed(3));
-
+        console.log("arham exposureeeeeeeeeeeee winloose addiotn credit",UpdatedExposure )
         await users.updateOne(
           { _id: user?._id },
           {
@@ -390,7 +391,7 @@ console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"ressssssss
         const updatedclientPL = Number((user.clientPL + (remainingAmount)).toFixed(3));
         const updatedbalance = Number((user.balance + (remainingAmount)).toFixed(3));
         const UpdatedExposure = Number(((user.exposure) + (debit * config.casinoMultiples)).toFixed(3));
-
+        console.log("arham exposureeeeeeeeeeeee winloose addiotn debit",UpdatedExposure )
         const userResponse = await users.updateOne(
           { _id: user?._id },
           {
@@ -562,6 +563,7 @@ console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"ressssssss
         // No Win lose
         const updatedavailableBalance = Number((user.availableBalance + (debit * casinoMultiples)).toFixed(3))
         const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3))
+        console.log("arham exposureeeeeeeeeeeee winloose addiotn credit df 0",UpdatedExposure )
         await users.updateOne(
           { _id: user?._id },
           { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure } },
@@ -937,7 +939,7 @@ async function rollbackFun(req, res) {
 
           updatedBalance = user.availableBalance + (amount * casinoMultiples);
           let updatedExposureAmount = user.exposure + (amount * casinoMultiples);
-
+          console.log("arham exposureeeeeeeeeeeee roll back ",UpdatedExposure )
           await users.updateOne(
             { _id: user?._id }, { $set: { exposure: updatedExposureAmount, availableBalance: updatedBalance } },
             { session }
