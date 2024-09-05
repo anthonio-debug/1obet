@@ -49,8 +49,9 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
-var numOfBet=1
+
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
+  var numOfBet=1
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
     /*
