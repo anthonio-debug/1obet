@@ -1656,7 +1656,7 @@ async function getGreyHoundMatches(req, res) {
    
 
     const response = await axios.get(sportsAPIUrl, header);
-      console.log("MMMMMMMMMMMMMMMM--getGreyHoundMatches response ", response.data);
+      // console.log("MMMMMMMMMMMMMMMM--getGreyHoundMatches response ", response.data);
       
     // const marketsData = response.data;
     const GreyHoundMatches = response.data;
