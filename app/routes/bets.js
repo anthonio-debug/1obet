@@ -4489,7 +4489,11 @@ const EventWiseprofitLose = async (req, res) => {
           _id: '$userId',
           remoteId: {
             $first: {
-              $arrayElemAt: ['$userData.remoteId', 0]
+              $cond: {
+                if: { $isArray: '$userData.remoteId' },
+                then: { $arrayElemAt: ['$userData.remoteId', 0] },
+                else: '$userData.remoteId' // Use the value directly if it's not an array
+              }
             }
           }
         }
@@ -4510,16 +4514,17 @@ const EventWiseprofitLose = async (req, res) => {
       },
       {
         $project: {
-          _id: "$_id",
-          userId: 1,
+          _id: 1,
+          userId: '$_id',
           remoteId: 1,
           result: 1,
-          amount: { $sum: '$amount' },
-          name: { $first: '$event' },
-          date: { $first: '$date' },
+          amount: '$result.amount', // Assuming amount comes from casinocalls
+          name: '$result.event',    // Assuming event comes from casinocalls
+          date: '$result.date'      // Assuming date comes from casinocalls
         }
       }
-    ]
+    ];
+
     // $group: {
     //   _id: { $arrayElemAt: ['$casinos.game_id', 0] },
     //   userId: { $first: '$userId' },
