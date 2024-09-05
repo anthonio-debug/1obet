@@ -77,7 +77,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       if (UpdatedExposure > 0) {
         UpdatedExposure=-UpdatedExposure+Number(payload.amount) * casinoMultiples;
     }
-      await users.updateOne(
+   const updatedUser=await users.updateOne(
         { _id: user._id },
         {
           $set: {
@@ -87,9 +87,11 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         },
         { session }
       );
-
-      const casinoDebits = new CasinoDebits(payload);
-      await casinoDebits.save();
+      if (updatedUser.modifiedCount>0) {
+        const casinoDebits = new CasinoDebits(payload);
+        await casinoDebits.save();
+      }
+     
 
       return 0
     } else if (action === 1) { 
