@@ -80,17 +80,17 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
   
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
       console.log("updatedavailableBalance Arham",updatedavailableBalance)
-      // await users.updateOne(
-      //   { _id: user._id },
-      //   {
-      //     $set: {
-      //       availableBalance: updatedavailableBalance,
-      //       exposure: UpdatedExposure
-      //     }
-      //   },
-      //   { session }
-      // );
-
+      const updatedUser=await users.updateOne(
+        { _id: user._id },
+        {
+          $set: {
+            availableBalance: updatedavailableBalance,
+            exposure: UpdatedExposure
+          }
+        },
+        { session }
+      );
+      console.log("updated user exposer Arham",updatedUser.exposure)
       // const casinoDebits = new CasinoDebits(payload);
       // await casinoDebits.save();
       if (numOfBet >= 6) {
