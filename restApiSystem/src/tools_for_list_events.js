@@ -107,14 +107,14 @@ async function updateOddsFormLimitless() {
                   if (remainingTime < time30Minutes) {
                     const result= await MarketIDs.updateMany({ eventId: element.eventId , marketName:{$ne:"To Win the Toss"}}, { $set: { ReadyForOdds: true } });
 
-                    // await MarketIDs.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: false } });
+                    await MarketIDs.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: false } });
                       // console.log("======================-------------- Result", result);
                       // console.log("======================-------------- ReadyForOdds=true");
                   }
   
                   if (remainingTime > time30Minutes) {
                       // console.log("cron jobs code running for updating odds ======----- ");
-                      // const result= await MarketIDs.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: true } });
+                      const result= await MarketIDs.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: true } });
 
                       const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${element.sportID}&marketId=${element.marketId}`;
   
