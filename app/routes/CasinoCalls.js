@@ -75,7 +75,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
       console.log("arham updatedavailableBalance ",UpdatedExposure )
       if (UpdatedExposure > 0) {
-        UpdatedExposure=-(UpdatedExposure-Number(payload.amount)) * casinoMultiples;
+        UpdatedExposure=(-UpdatedExposure-Number(payload.amount)) * casinoMultiples;
     }
       await users.updateOne(
         { _id: user._id },
