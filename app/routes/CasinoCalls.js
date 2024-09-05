@@ -93,6 +93,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       
       // Fetch the updated user data
       const updatedUser = await users.findOne({ _id: user._id }, { session });
+      console.log("updated user exposure Arham", updatedUser.exposure);
       // const casinoDebits = new CasinoDebits(payload);
       // await casinoDebits.save();
       if (numOfBet >= 6) {
