@@ -1129,14 +1129,14 @@ async function cronOdds2(req, res) {
   // console.log("===================================================================================3");
   const { eventId, sportID } = req.params;
 
-  console.log ("+_+_+_++_+_++_+ SportsId +_+", sportID)
+  // console.log ("+_+_+_++_+_++_+ SportsId +_+", sportID)
 
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
 
   try {
     const response = await axios.get(url);
 
-    console.log("=-=--==---=-=--=-===--= market api response", response);
+    // console.log("=-=--==---=-=--=-===--= market api response", response);
     
     /////////////////////////
     // const response = {
@@ -1656,7 +1656,7 @@ async function getGreyHoundMatches(req, res) {
    
 
     const response = await axios.get(sportsAPIUrl, header);
-      console.log("MMMMMMMMMMMMMMMM--getGreyHoundMatches response ", response.data);
+      // console.log("MMMMMMMMMMMMMMMM--getGreyHoundMatches response ", response.data);
       
     // const marketsData = response.data;
     const GreyHoundMatches = response.data;

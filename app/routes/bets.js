@@ -4424,13 +4424,8 @@ const EventWiseprofitLose = async (req, res) => {
     const startDate = req.query.start ? Number(req.query.start) : null;
     const endDate = req.query.end ? Number(req.query.end) : null;
 
-    console.log('Parsed userId:', userId);
-    console.log('Parsed sportsId:', sportsId);
-    console.log('Parsed date range:', { startDate, endDate });
-
     const currentUser = await User.findOne({ userId: userId });
     if (!currentUser) {
-      console.error('User not found:', userId);
       return res.status(404).send({
         success: false,
         message: 'User not found!'
@@ -4443,8 +4438,6 @@ const EventWiseprofitLose = async (req, res) => {
       cashOrCredit: { $in: ['Bet'] },
       ...(startDate && endDate && { date: { $gte: startDate, $lte: endDate } })
     };
-
-    console.log('Base Match Criteria:', baseMatch);
 
     const pipeline = [
       { $match: baseMatch },
@@ -4482,25 +4475,16 @@ const EventWiseprofitLose = async (req, res) => {
       }
     ];
 
-    // $group: {
-    //   _id: { $arrayElemAt: ['$casinos.game_id', 0] },
-    //   userId: { $first: '$userId' },
-    // }
-
     if (currentUser.role === '5') {
       if (sportsId !== "6") {
-        console.log('Processing non-casino sportsId for admin:', sportsId);
         const response = await Cash.aggregate(pipeline);
-        console.log('Response for non-casino sportsId:', response);
         return res.send({
           success: true,
           message: 'Profit Lose reports',
           results: response
         });
       } else {
-        console.log('Processing casino sportsId for admin:', sportsId);
         const response = await Cash.aggregate(casinoPipeline);
-        console.log('Response for casino sportsId:', response);
         return res.send({
           success: true,
           message: 'Profit Lose reports',
@@ -4508,22 +4492,17 @@ const EventWiseprofitLose = async (req, res) => {
         });
       }
     } else {
-      console.log('Processing non-admin user:', userId);
       baseMatch.cashOrCredit = { $in: ['Bet', 'Commission', 'loosing'] };
 
       if (sportsId !== "6") {
-        console.log('Processing non-casino sportsId for non-admin:', sportsId);
         const response = await Cash.aggregate(pipeline);
-        console.log('Response for non-casino sportsId for non-admin:', response);
         return res.send({
           success: true,
           message: 'Profit Lose Reports',
           results: response
         });
       } else {
-        console.log('Processing casino sportsId', sportsId);
         const response = await Cash.aggregate(casinoPipeline);
-        console.log('Response for casino sportsId for non-admin:', response);
         return res.send({
           success: true,
           message: 'Profit Lose Reports',
