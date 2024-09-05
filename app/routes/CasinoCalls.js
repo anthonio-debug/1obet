@@ -85,7 +85,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         numOfBet=1
       } else {
         numOfBet+1
-    }
+      }
+      console.log(numOfBet,"updated exposure arham ",UpdatedExposure)
    const updatedUser=await users.updateOne(
         { _id: user._id },
         {
