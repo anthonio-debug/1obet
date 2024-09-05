@@ -63,16 +63,17 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     */
     // console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
     numOfBet += 1
-    console.log(numOfBet,"arham num of bet")
+
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const day = now.getDate().toString().padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
-
+    
     if (action === 0) {
       let amount = Number(payload.amount) * casinoMultiples;
-      let UpdatedExposure = numOfBet * Number((user.exposure - amount).toFixed(3));
+      console.log(numOfBet,"arham num of bet",user.exposure)
+      let UpdatedExposure =  Number((user.exposure - amount).toFixed(3));
  console.log("number of call arham exposure",UpdatedExposure)
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
    
