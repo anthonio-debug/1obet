@@ -49,7 +49,7 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
-
+var numOfBet=0
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
@@ -61,7 +61,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let bettor_winning_amount = 0;
       let bettor_lost_amount = 0;
     */
-// console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
+    // console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
+    numOfBet += 1
+    console.log(numOfBet,"arham num of bet")
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
