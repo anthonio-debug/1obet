@@ -74,8 +74,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       
       let amount = Number(payload.amount) * casinoMultiples;
       let UpdatedExposure =numOfBet*  Number((user.exposure - amount).toFixed(3));
-      console.log(numOfBet,"arham num of bet",user.exposure)
- console.log("number of call arham exposure",UpdatedExposure)
+//       console.log(numOfBet,"arham num of bet",user.exposure)
+//  console.log("number of call arham exposure",UpdatedExposure)
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
       await users.updateOne(
         { _id: user._id },
@@ -600,7 +600,7 @@ function createHashKey(salt, queryString) {
 }
 
 async function balanceFun(req, res) {
-  // console.log("balanceeeeeeeeeeee Arham ------------")
+  console.log("balanceeeeeeeeeeee Arham ------------1")
   const payload = req.query;
   const salt = saltKey;
   const key = payload.key;
@@ -655,7 +655,7 @@ async function balanceFun(req, res) {
 }
 
 async function debitFun(req, res) {
-  // console.log("balanceeeeeeeeeeee Arham ------------")
+  console.log("debitFun Arham ------------2")
 
   const session = dbClient.startSession();
   // console.log(" arham debt" ,req.body)
@@ -755,7 +755,7 @@ async function debitFun(req, res) {
 }
 
 async function creditFun(req, res) {
-  // console.log("balanceeeeeeeeeeee Arham ------------")
+  console.log("creditFun Arham ------------")
 
   const session = dbClient.startSession();
   try {
@@ -842,7 +842,7 @@ async function creditFun(req, res) {
 }
 
 async function rollbackFun(req, res) {
-  // console.log("balanceeeeeeeeeeee Arham ------------")
+  console.log("rollbackFun Arham ------------")
 
   const session = dbClient.startSession();
   try {
