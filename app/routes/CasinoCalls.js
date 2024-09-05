@@ -667,7 +667,7 @@ async function balanceFun(req, res) {
   }
 }
 
-async function dabitFun(req, res) {
+async function debitFun(req, res) {
   console.log("balanceeeeeeeeeeee Arham ------------")
 
   const session = dbClient.startSession();
