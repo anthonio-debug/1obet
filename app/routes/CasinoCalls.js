@@ -53,6 +53,7 @@ var numOfBet = 1
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
+    console.log("arham inital exposure")
     /*
       action= 0 debit
       action= 1 credit( decision came from casino )
@@ -73,31 +74,31 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     if (action === 0) {
       
       let amount = Number(payload.amount) * casinoMultiples;
-      let UpdatedExposure =  Number((user.exposure - amount).toFixed(3));
+      let UpdatedExposure =  Number((user.exposure - amount).toFixed(3))
       console.log(numOfBet,"arham num of bet",user.exposure)
       console.log("number of call arham exposure", UpdatedExposure)
-      numOfBet+1
-      let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
-      await users.updateOne(
-        { _id: user._id },
-        {
-          $set: {
-            availableBalance: updatedavailableBalance,
-            exposure: UpdatedExposure
-          }
-        },
-        { session }
-      );
+  
+      // let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
+      // await users.updateOne(
+      //   { _id: user._id },
+      //   {
+      //     $set: {
+      //       availableBalance: updatedavailableBalance,
+      //       exposure: UpdatedExposure
+      //     }
+      //   },
+      //   { session }
+      // );
 
-      const casinoDebits = new CasinoDebits(payload);
-      await casinoDebits.save();
-      if (numOfBet > 6) {
+      // const casinoDebits = new CasinoDebits(payload);
+      // await casinoDebits.save();
+      if (numOfBet >= 6) {
         numOfBet=1
       } else {
         
         numOfBet+=1
       }
-      return 0
+      // return 0
     } else if (action === 1) { 
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
