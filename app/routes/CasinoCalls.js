@@ -53,7 +53,7 @@ var numOfBet = 1
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
-    console.log("arham inital exposure")
+    console.log("arham inital exposure",user.exposure)
     /*
       action= 0 debit
       action= 1 credit( decision came from casino )
