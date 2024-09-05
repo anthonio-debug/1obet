@@ -767,22 +767,23 @@ async function debitFun(req, res) {
   }
 }
 
-async function creditFun(req, res) {
-  console.log("creditFun Arham ------------")
+async function debitFun(req, res) {
+  console.log("debitFun Arham ------------2")
 
   const session = dbClient.startSession();
+  // console.log(" arham debt" ,req.body)
   try {
     const payload = req.query;
     const transactionId = payload.transaction_id
-   
     const currentUser = await User.findOne(
       { remoteId: parseInt(payload.remote_id) }
     )
     if (!currentUser) {
-      return res.json({ status: '500', msg: `Internal Error no User` });
+
+      return res.json({ status: '500', msg: "Internal Error no User" });
     }
     if (transactionIdMap.has(transactionId)) {
-
+   
       return res.json({
         status: 200,
         balance: currentUser.availableBalance / casinoMultiples,
@@ -791,16 +792,15 @@ async function creditFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    
+ 
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
 
-    const queryString = Object.keys(payload).map(key => `${key}=${payload[key]}`).join('&');
-
-
+    const queryString = Object.keys(payload)
+      .map(key => `${key}`=`${payload[key]}`)
+      .join('&');
     const hash = createHashKey(salt, queryString);
-
     if (hash !== key) {
       return res.json({
         status: 403,
@@ -809,42 +809,55 @@ async function creditFun(req, res) {
     }
     const user = await users.findOne(
       { remoteId: parseInt(payload.remote_id) },
-      { session, readPreference: 'primary' }
-    );
+      { session }
+    )
     if (!user) {
       await session.abortTransaction();
-      return res.json({ status: '500', msg: `Internal Error no User` });
+      return res.json({ status: '500', msg: `Internal error no user` });
     }
 
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
     if (checkMarketBlockedResponse == 1) {
       await session.abortTransaction();
-      return res.json({ status: '500', msg: 'Batting is not allowed !' });
+      return res.json({ status: '500', msg: ' Betting is not allowed ! ' });
     }
 
-    // let updatedavailableBalance = 0
+    let updatedavailableBalance = 0
     await session.withTransaction(async () => {
-      if (parseInt(payload.amount) < 0) {
+
+      let debitAmount = parseInt(payload.amount);
+      const amount = debitAmount * casinoMultiples;
+      updatedavailableBalance = user.availableBalance - (amount);
+
+     
+      if (amount > user.availableBalance) {
         await session.abortTransaction();
         return res.json({
-          status: 500,
-          balance: user.availableBalance / casinoMultiples
+          status: 403,
+          message: "Insufficient balance amount",
         });
+      } else if (parseInt(payload.amount) < 0) {
+        await session.abortTransaction();
+        return res.json({ status: '500', msg: 'Negative bet not allowed!' });
+      } else if (updatedavailableBalance < 0) {
+        await session.abortTransaction();
+        return res.json({ status: 500, msg: 'Negative balance not allowed!' });
       } else {
-        // const amount = payload.amount * casinoMultiples;
-        const response = await WinLoseTransManagement(0, payload, user, 1, res, session);
+        let balance = user.availableBalance / casinoMultiples;
+        const resp = await WinLoseTransManagement(balance, payload, user, 0, res);
         await session.commitTransaction();
       }
     }, transactionOptions);
-
-    const updatedUser = await User.findOne(
+    const updatedUser = await users.findOne(
       { remoteId: parseInt(payload.remote_id) },
       { session }
     )
+    //console.log(" Amount Returning to Casino from Debit  ", updatedUser.availableBalance / casinoMultiples);
     return res.json({
       status: 200,
       balance: updatedUser.availableBalance / casinoMultiples
     });
+
 
   } catch (err) {
     // console.error('Error:', err);
