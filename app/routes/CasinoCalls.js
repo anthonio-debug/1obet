@@ -51,7 +51,10 @@ const checkMarketBlocked = async (user) => {
 }
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
-  var numOfBet=1
+  var numOfBet = 1
+  setTimeout(() => {
+    console.log('Delayed by 2 seconds');
+  }, 500);
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
     /*
