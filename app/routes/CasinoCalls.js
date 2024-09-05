@@ -49,7 +49,7 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
-
+var numOfBet = 1
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
@@ -69,7 +69,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
     const day = now.getDate().toString().padStart(2, '0');
     const formattedDate = `${year}-${month}-${day}`;
-    var numOfBet = 1
+   
     if (action === 0) {
       
       let amount = Number(payload.amount) * casinoMultiples;
@@ -91,7 +91,12 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
-      numOfBet+=1
+      if (numOfBet > 6) {
+        numOfBet=1
+      } else {
+        
+        numOfBet+=1
+      }
       return 0
     } else if (action === 1) { 
       const user_prev_balance = user.balance;
