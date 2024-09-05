@@ -37,7 +37,7 @@ async function getAllSportsHighlight(req, res) {
       endOfDay.setHours(23, 59, 59, 999);
       endOfDayTimestamp = endOfDay.getTime();
     } else {
-      endOfDayTimestamp = new Date(startOfDayTimestamp + (10 * 24 * 60 * 60 * 1000)).getTime(); // 5days
+      endOfDayTimestamp = new Date(startOfDayTimestamp + (5 * 24 * 60 * 60 * 1000)).getTime(); // 5days
     }
     const sportsHighlights = await inPlayEvents.aggregate([
       {
