@@ -79,7 +79,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       if (UpdatedExposure < 0) {
         UpdatedExposure = Math.abs(UpdatedExposure); // Ensure it's not negative
       }
-      
+      console.log(numOfBet+1,"updated exposure value",UpdatedExposure)
       if (numOfBet >= 6) {
         numOfBet = 1;
       } else {
