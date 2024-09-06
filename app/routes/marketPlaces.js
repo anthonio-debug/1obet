@@ -487,6 +487,8 @@ const response1={
     //////////////////////////////////////////////
     if (response1 && response1.length > 0) {
       for (const element of response1) {
+        console.log("[][][][][][][][][][][][][][][[",element);
+        
         const bookmakerRunners = element.runners.map(runner => ({
           SelectionId: runner.selectionId,
           runnerName: runner.runnerName,
