@@ -684,8 +684,11 @@ async function processQueue() {
       const payload = req.query;
       const transactionId = payload.transaction_id;
       
-  
-      // Fetch the user based on remoteId
+      if (payload.gameplay_final==1 || !payload.round_id ) {
+        await User.updateOne({ remoteId: parseInt(payload.remote_id) }, { $set: { exposure: 0 } } );
+        
+      }
+      
       const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
       if (!currentUser) {
         await session.abortTransaction();
@@ -727,36 +730,29 @@ async function processQueue() {
         await session.abortTransaction();
         return res.json({ status: 500, msg: 'Internal error: no user' });
       }
-  
-      // Check if the market is blocked
+  X
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if (checkMarketBlockedResponse == 1) {
         await session.abortTransaction();
         return res.json({ status: 500, msg: 'Betting is not allowed!' });
       }
   
-      // Update the user's available balance
+   
       let updatedAvailableBalance = user.availableBalance - (parseInt(payload.amount) * casinoMultiples);
       if (updatedAvailableBalance < 0) {
         await session.abortTransaction();
         return res.json({ status: 500, msg: 'Insufficient balance' });
       }
   
-      // Proceed with transaction logic
+     
       const balance = user.availableBalance / casinoMultiples;
       await WinLoseTransManagement(balance, payload, user, 0, res);
-  
-      // Ensure exposure is reset correctly
-      // await settleExposure(user);
+ 
   
       await session.commitTransaction();
-  
-      // Fetch the updated user information
+
       const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
-      if (payload.gameplay_final=="1") {
-        await User.updateOne({ remoteId: parseInt(payload.remote_id) }, { $set: { exposure: 0 } } );
-        
-      }
+     
       return res.json({
         status: 200,
         balance: updatedUser.availableBalance / casinoMultiples
@@ -774,8 +770,8 @@ async function processQueue() {
       }
     } finally {
       await session.endSession();
-      processing = false; // Set processing flag to false when done
-      processQueue(); // Process next request in the queue
+      processing = false; 
+      processQueue(); 
     }
   };
   
