@@ -758,7 +758,7 @@ async function settleExposure(user) {
   }
 }
 async function debitFun(req, res) {
-  requestQueue.push({ req, res }); 
+  // requestQueue.push({ req, res }); 
   // if (!processing) {
     processQueue(); 
   // }
