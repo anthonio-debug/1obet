@@ -1492,15 +1492,27 @@ async function updateUserName(req, res) {
 async function testing(req, res) {
   try {
     const currentTime = Date.now();
+    const { sportsId, marketIds } = req.params;
+
     // const formattedTime = currentTime.toLocaleTimeString();
     // console.log(currentTime, "//////");
+    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
+      },
+    };
 
+    const response = await axios.get(oddUrl, header);
+      console.log("MMMMMMMMMMMMMMMM--getOdds response toss ", response.data);
+      
+    // const marketsData = response.data;
+    const getOddsFancyBookmakerByMatchId = response.data;
 
-    res.status(200).json({
-      success: true,
-      message: 'User names updated successfully',
-
-    });
+    res.status(200).json({ success: true, data: getOddsFancyBookmakerByMatchId });
   } catch (error) {
     console.error("Error in update user name:", error);
     res.status(500).json({
@@ -1712,7 +1724,7 @@ router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFan
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
 router.get('/track-bet/updateUserName', updateUserName)
-router.get('/track-bet/testing', testing)
+router.get('/track-bet/testing/:sportsId/: marketIds', testing)
 /////////////////
 
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
