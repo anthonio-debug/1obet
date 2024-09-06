@@ -655,104 +655,104 @@ async function balanceFun(req, res) {
 }
 
 async function debitFun(req, res) {
-  // console.log("balanceeeeeeeeeeee Arham ------------")
-
   const session = dbClient.startSession();
-  // console.log(" arham debt" ,req.body)
-  try {
-    const payload = req.query;
-    const transactionId = payload.transaction_id
-    const currentUser = await User.findOne(
-      { remoteId: parseInt(payload.remote_id) }
-    )
-    if (!currentUser) {
+  const maxRetries = 3; // Maximum retry attempts
+  const retryDelay = 100; // Delay in milliseconds before retrying
 
-      return res.json({ status: '500', msg: `Internal Error no User` });
-    }
-    if (transactionIdMap.has(transactionId)) {
-   
-      return res.json({
-        status: 200,
-        balance: currentUser.availableBalance / casinoMultiples,
-      });
-    } else {
-      transactionIdMap.set(transactionId, transactionId)
-    }
+  const payload = req.query;
+  const transactionId = payload.transaction_id;
 
- 
-    const salt = saltKey;
-    const key = payload.key;
-    delete payload.key;
+  const attemptTransaction = async (retryCount = 0) => {
+    try {
+      await session.startTransaction();
+      const currentUser = await User.findOne(
+        { remoteId: parseInt(payload.remote_id) }
+      );
+      if (!currentUser) {
+        await session.abortTransaction();
+        return res.json({ status: '500', msg: `Internal Error: no User` });
+      }
+      
+      if (transactionIdMap.has(transactionId)) {
+        await session.abortTransaction();
+        return res.json({
+          status: 200,
+          balance: currentUser.availableBalance / casinoMultiples,
+        });
+      } else {
+        transactionIdMap.set(transactionId, transactionId);
+      }
 
-    const queryString = Object.keys(payload)
-      .map(key => `${key}=${payload[key]}`)
-      .join('&');
-    const hash = createHashKey(salt, queryString);
-    if (hash !== key) {
-      return res.json({
-        status: 403,
-        msg: 'INCORRECT_KEY_VALIDATION'
-      });
-    }
-    const user = await users.findOne(
-      { remoteId: parseInt(payload.remote_id) },
-      { session }
-    )
-    if (!user) {
-      await session.abortTransaction();
-      return res.json({ status: '500', msg: `Internal error no user` });
-    }
+      const salt = saltKey;
+      const key = payload.key;
+      delete payload.key;
+      const queryString = Object.keys(payload)
+        .map(key => `${key}=${payload[key]}`)
+        .join('&');
+      const hash = createHashKey(salt, queryString);
 
-    const checkMarketBlockedResponse = await checkMarketBlocked(user);
-    if (checkMarketBlockedResponse == 1) {
-      await session.abortTransaction();
-      return res.json({ status: '500', msg: ' Betting is not allowed ! ' });
-    }
-
-    let updatedavailableBalance = 0
-    await session.withTransaction(async () => {
-
-      let debitAmount = parseInt(payload.amount);
-      const amount = debitAmount * casinoMultiples;
-      updatedavailableBalance = user.availableBalance - (amount);
-
-     
-      if (amount > user.availableBalance) {
+      if (hash !== key) {
         await session.abortTransaction();
         return res.json({
           status: 403,
-          message: "Insufficient balance amount",
+          msg: 'INCORRECT_KEY_VALIDATION'
         });
-      } else if (parseInt(payload.amount) < 0) {
-        await session.abortTransaction();
-        return res.json({ status: '500', msg: 'Negative bet not allowed!' });
-      } else if (updatedavailableBalance < 0) {
-        await session.abortTransaction();
-        return res.json({ status: 500, msg: 'Negative balance not allowed!' });
-      } else {
-        let balance = user.availableBalance / casinoMultiples;
-        const resp = await WinLoseTransManagement(balance, payload, user, 0, res);
-        await session.commitTransaction();
       }
-    }, transactionOptions);
-    const updatedUser = await users.findOne(
-      { remoteId: parseInt(payload.remote_id) },
-      { session }
-    )
-    //console.log(" Amount Returning to Casino from Debit  ", updatedUser.availableBalance / casinoMultiples);
-    return res.json({
-      status: 200,
-      balance: updatedUser.availableBalance / casinoMultiples
-    });
 
+      const user = await users.findOne(
+        { remoteId: parseInt(payload.remote_id) },
+        { session }
+      );
+      if (!user) {
+        await session.abortTransaction();
+        return res.json({ status: '500', msg: `Internal error: no user` });
+      }
 
-  } catch (err) {
-    // console.error('Error:', err);
-    return res.json({ status: 500, msg: `Internal error ${err}` });
-  } finally {
-    await session.endSession();
-  }
+      const checkMarketBlockedResponse = await checkMarketBlocked(user);
+      if (checkMarketBlockedResponse == 1) {
+        await session.abortTransaction();
+        return res.json({ status: '500', msg: 'Betting is not allowed!' });
+      }
+
+      let updatedavailableBalance = user.availableBalance - (parseInt(payload.amount) * casinoMultiples);
+      if (updatedavailableBalance < 0) {
+        await session.abortTransaction();
+        return res.json({ status: 500, msg: 'Insufficient balance' });
+      }
+
+      // Proceed with further transaction logic
+      const balance = user.availableBalance / casinoMultiples;
+      await WinLoseTransManagement(balance, payload, user, 0, res);
+      await session.commitTransaction();
+
+      const updatedUser = await users.findOne(
+        { remoteId: parseInt(payload.remote_id) },
+        { session }
+      );
+
+      return res.json({
+        status: 200,
+        balance: updatedUser.availableBalance / casinoMultiples
+      });
+
+    } catch (err) {
+      if (retryCount < maxRetries) {
+        console.log(`Retry attempt ${retryCount + 1}`);
+        await session.abortTransaction();
+        await new Promise(resolve => setTimeout(resolve, retryDelay)); // Delay before retry
+        return attemptTransaction(retryCount + 1);
+      } else {
+        console.error('Transaction failed after retries:', err);
+        return res.json({ status: 500, msg: `Internal error: ${err}` });
+      }
+    } finally {
+      await session.endSession();
+    }
+  };
+
+  return attemptTransaction();
 }
+
 
 async function creditFun(req, res) {
   // console.log("balanceeeeeeeeeeee Arham ------------")
