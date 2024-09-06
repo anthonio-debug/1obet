@@ -52,9 +52,7 @@ const checkMarketBlocked = async (user) => {
   
 var numOfBet=1
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
-  setTimeout(() => {
-    console.log('Delayed by 2 seconds');
-  }, 500);
+ 
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
     /*
@@ -668,7 +666,9 @@ async function balanceFun(req, res) {
 
 async function debitFun(req, res) {
   // console.log("balanceeeeeeeeeeee Arham ------------")
-
+  setTimeout(() => {
+    console.log('Delayed by 2 seconds');
+  }, 500);
   const session = dbClient.startSession();
   // console.log(" arham debt" ,req.body)
   try {
