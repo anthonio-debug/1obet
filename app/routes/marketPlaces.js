@@ -247,11 +247,13 @@ async function activateEvent(req, res) {
 ////////////////////////////mmmmmmmmmmmmmmmmm
 async function saveOdds(oddData, sportsId) {
   try {
+    console.log("{}{}{}{}{}{}{}{{}{}{}",oddData );
+    
     oddData = JSON.parse(oddData);
-} catch (error) {
+  } catch (error) {
     console.error("Failed to parse oddData:", error);
     return;
-}
+  }
   const runners = [];
 
   for (const runner of oddData.runners) {
@@ -269,30 +271,30 @@ async function saveOdds(oddData, sportsId) {
   }
 
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
-       const response= await Odds.findOne({marketId: oddData.marketId})
-       let odd;
-       if (!response){
-         odd = {
-          eventId: oddData.eventid,
-          marketId: oddData.marketId,
-          status: oddData.status,
-          isInplay: oddData.inplay,
-          totalMatched: oddData.totalMatched,
-          isMarketDataDelayed: false,
-          sportsId,
-          numberOfRunners: runners.length,
-          numberOfActiveRunners: activeRunners.length,
-          runners,
-        };
-        
-        const odds = new Odds(odd);
-        await odds.save();
-       }else{
-            console.log("+_+_+_+_+___+_+_+_   == updating odds")
-            await Odds.findOneAndUpdate({marketId: oddData.marketId},{$set:{totalMatched:oddData.totalMatched}})
-            console.log("+_+_++_+_+_+_+_+_+_+_ odds uptdation completed");
-            
-        }
+  const response = await Odds.findOne({ marketId: oddData.marketId })
+  let odd;
+  if (!response) {
+    odd = {
+      eventId: oddData.eventid,
+      marketId: oddData.marketId,
+      status: oddData.status,
+      isInplay: oddData.inplay,
+      totalMatched: oddData.totalMatched,
+      isMarketDataDelayed: false,
+      sportsId,
+      numberOfRunners: runners.length,
+      numberOfActiveRunners: activeRunners.length,
+      runners,
+    };
+
+    const odds = new Odds(odd);
+    await odds.save();
+  } else {
+    console.log("+_+_+_+_+___+_+_+_   == updating odds")
+    await Odds.findOneAndUpdate({ marketId: oddData.marketId }, { $set: { totalMatched: oddData.totalMatched } })
+    console.log("+_+_++_+_+_+_+_+_+_+_ odds uptdation completed");
+
+  }
 
   return odd;
 }
@@ -301,14 +303,15 @@ async function saveOdds(oddData, sportsId) {
 
 async function getOdds(marketIds, sportsId) {
   return new Promise(async (resolve, reject) => {
+
     const odds = [];
     const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
-    // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
-    
-      const response = await axios.get(oddUrl);
-    
+    // const oddUrl = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
+
+    const response = await axios.get(oddUrl);
+
     if (response.data) {
-      
+
       const oddData = response.data;
       console.log("===================================================================================2");
       odds.push(await saveOdds(oddData, sportsId));
@@ -323,65 +326,22 @@ async function cronOdds2(eventId, sportID) {
   console.log("===================================================================================3");
   console.log(" MMMMMMMMMMM      sportID in cronOdds2 ", sportID);
 
-  // const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
+  const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
   const bookmakerUrl = `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
 
   try {
-    // const response = await axios.get(url);
+    const response = await axios.get(url);
     const bookmakerResponse = await axios.get(bookmakerUrl);
 
-    // console.log("=-=-==-=--=-=-=-=-=-=-=-  response", response.data);
-    const marketsData = bookmakerResponse.data;
-    // const marketsData = response.data;
+    console.log("=-=-==-=--=-=-=-=-=-=-=-  response", response.data);
+    const bookMakerData = bookmakerResponse.data;
+    const marketsData = response.data;
     const sendMarketIds = [];
-    // const bookmakerMarketIds = [];
-    console.log(marketsData, "||||||||||||||||||||");
+    const bookmakerMarketIds = [];
+    // console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
     // Handle Market Data
-    // if (marketsData && marketsData.length > 0) {
-    //   for (const element of marketsData) {
-    //     const tempRunners = element.runners.map(runner => ({
-    //       SelectionId: runner.selectionId,
-    //       runnerName: runner.runnerName,
-    //     }));
-
-    //     if (element.marketName === 'Match Odds') {
-    //       sendMarketIds.push(element.marketId);
-
-    //       const marketID = await MarketIDS.findOne({
-    //         eventId: eventId,
-    //         marketId: element.marketId,
-    //       });
-
-    //       if (!marketID) {
-    //         const newMarket = new MarketIDS({
-    //           eventId: eventId,
-    //           marketId: element.marketId,
-    //           marketName: element.marketName,
-    //           sportID: sportID,
-    //           totalMatched: element.totalMatched,
-    //           openDate: Date.parse(element.marketStartTime),
-    //           status: marketStatus,
-    //           index: 0,
-    //           runners: tempRunners,
-    //           inPlay: true,
-    //         });
-
-    //         console.log("Saving new market: ", newMarket);
-    //         await newMarket.save();
-    //       } else {
-    //         console.log("{{}{}}{{}{}{}}} updating market id collec for match odds");
-    //         await MarketIDS.findOneAndUpdate(
-    //           { eventId: eventId, marketId: element.marketId },
-    //           { $set: { totalMatched: element.totalMatched } }
-    //         );
-    //       }
-    //     }
-    //   }
-    // }
-
-    // Handle Bookmaker Data
     if (marketsData && marketsData.length > 0) {
       for (const element of marketsData) {
         const tempRunners = element.runners.map(runner => ({
@@ -389,7 +349,7 @@ async function cronOdds2(eventId, sportID) {
           runnerName: runner.runnerName,
         }));
 
-        if (element.marketName === 'Match Odds' || element.marketName === 'To Win the Toss' || element.marketName === 'Bookmaker') {
+        if (element.marketName === 'Match Odds') {
           sendMarketIds.push(element.marketId);
 
           const marketID = await MarketIDS.findOne({
@@ -397,14 +357,64 @@ async function cronOdds2(eventId, sportID) {
             marketId: element.marketId,
           });
 
-        if (!marketID) {
-          let marketTime= element.marketStartTime
-          if (!marketTime){ 
-            marketTime=0 
-          }else{
-            marketTime= Date.parse(marketTime)
+          if (!marketID) {
+            const newMarket = new MarketIDS({
+              eventId: eventId,
+              marketId: element.marketId,
+              marketName: element.marketName,
+              sportID: sportID,
+              totalMatched: element.totalMatched,
+              openDate: Date.parse(element.marketStartTime),
+              status: marketStatus,
+              index: 0,
+              runners: tempRunners,
+              inPlay: true,
+            });
+
+            console.log("Saving new market: ", newMarket);
+            await newMarket.save();
+          } else {
+            console.log("{{}{}}{{}{}{}}} updating market id collec for match odds");
+            await MarketIDS.findOneAndUpdate(
+              { eventId: eventId, marketId: element.marketId },
+              { $set: { totalMatched: element.totalMatched } }
+            );
           }
-          const newMarket = new MarketIDS({
+        }
+      }
+    }
+
+    // Handle Bookmaker Data
+
+    if (bookMakerData && bookMakerData.length > 0) {
+      for (const element of bookMakerData) {
+        const bookmakerRunners = element.runners.map(runner => ({
+          SelectionId: runner.selectionId,
+          runnerName: runner.runnerName,
+        }));
+        console.log("element.marketName===[[[[[[[[[[[", element.marketName);
+
+        // if (element.marketName === "To Win the Toss") {
+        //   sendMarketIds.push(element.marketId)
+        //   console.log("element.marketName===----", element.marketName);
+
+        // }
+
+        bookmakerMarketIds.push(element.marketId);
+
+        const marketID = await MarketIDS.findOne({
+          eventId: eventId,
+          marketId: element.marketId,
+        });
+
+        if (!marketID) {
+          let marketTime = element.marketStartTime
+          if (!marketTime) {
+            marketTime = 0
+          } else {
+            marketTime = Date.parse(marketTime)
+          }
+          const newBookmakerMarket = new MarketIDS({
             eventId: eventId,
             marketId: element.marketId,
             marketName: element.marketName,
@@ -413,22 +423,21 @@ async function cronOdds2(eventId, sportID) {
             openDate: marketTime,
             status: marketStatus,
             index: 0,
-            runners: tempRunners,
+            runners: bookmakerRunners,
             inPlay: true,
           });
 
-          console.log("Saving new bookmaker market: ", newMarket);
-          await newMarket.save();
-        } 
-        else {
-          console.log("Updating market id collection for bookmaker market");
-          await MarketIDS.findOneAndUpdate(
-            { eventId: eventId, marketId: element.marketId , marketName:"Match Odds" },
-            { $set: { totalMatched: element.totalMatched } }
-          );
+          console.log("Saving new bookmaker market: ", newBookmakerMarket);
+          await newBookmakerMarket.save();
         }
+        // else {
+        //   console.log("Updating market id collection for bookmaker market");
+        //   await MarketIDS.findOneAndUpdate(
+        //     { eventId: eventId, marketId: element.marketId },
+        //     { $set: { totalMatched: element.totalMatched } }
+        //   );
+        // }
       }
-    }
     }
 
     // Get odds for the standard markets
@@ -466,14 +475,14 @@ async function updateCompanySetStatus(req, res) {
   try {
     const data = req.query;
     await inPlayEvents.updateOne({ Id: data.Id }, { CompanySetStatus: data.status });
-    const event=await inPlayEvents.findOne({Id:data.Id})
+    const event = await inPlayEvents.findOne({ Id: data.Id })
 
 
     // console.log("=-=--=-=-=-=--=-=-====-=-= event.sportsId", event.sportsId);
     cronOdds2(data.Id, event.sportsId)
 
     // console.log("=-=--=-=-=-=--=-=-====-=-= cronOdds2");
-    
+
     return res.status(200).send({
       success: true,
       message: 'Updated successfully !'
