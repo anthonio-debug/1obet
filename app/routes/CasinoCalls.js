@@ -680,7 +680,6 @@ async function processQueue() {
   const session = dbClient.startSession();
   const maxRetries = 3; 
   const retryDelay = 100; 
-  let transactionAborted = false; 
 
   const attemptTransaction = async (retryCount) => {
     try {
@@ -688,32 +687,37 @@ async function processQueue() {
       const payload = req.query;
       const transactionId = payload.transaction_id;
 
+      // Ensure session is passed correctly
       if (!payload.round_id) {
         await User.updateOne(
           { remoteId: parseInt(payload.remote_id) },
           { $set: { exposure: 0 } },
-          { session } // Correct use of session here
+          { session }  // Correct usage
         );
         await session.commitTransaction();
         return res.json({ status: 200, msg: 'Exposure reset successfully' });
       }
 
-      const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });  // Correct session usage
+      // Fetch the user with session passed as an option
+      const currentUser = await User.findOne(
+        { remoteId: parseInt(payload.remote_id) },
+        null,
+        { session }  // Correct usage
+      );
       if (!currentUser) {
-        if (!transactionAborted) {
-          await session.abortTransaction();
-          transactionAborted = true;
-        }
+        await session.abortTransaction();
         return res.json({ status: 500, msg: 'Internal Error: no User' });
       }
 
-      // Rest of your logic...
-
-      // Commit transaction if everything succeeds
+      // Transaction logic
       await session.commitTransaction();
-
-      // Return the updated user balance
-      const updatedUser = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
+      
+      // Return updated balance
+      const updatedUser = await User.findOne(
+        { remoteId: parseInt(payload.remote_id) },
+        null,
+        { session }  // Correct usage
+      );
       return res.json({
         status: 200,
         balance: updatedUser.availableBalance / casinoMultiples
@@ -722,10 +726,7 @@ async function processQueue() {
     } catch (err) {
       if (retryCount < maxRetries) {
         console.log(`Retry attempt ${retryCount + 1}`);
-        if (!transactionAborted) {
-          await session.abortTransaction();
-          transactionAborted = true;
-        }
+        await session.abortTransaction();
         await new Promise(resolve => setTimeout(resolve, retryDelay));
         return attemptTransaction(retryCount + 1);
       } else {
@@ -734,13 +735,15 @@ async function processQueue() {
       }
     } finally {
       await session.endSession();
-      processing = false; 
+      processing = false;
       processQueue();
     }
   };
 
   return attemptTransaction(retryCount);
 }
+
+
 
 
 // Function to settle exposure for a user
