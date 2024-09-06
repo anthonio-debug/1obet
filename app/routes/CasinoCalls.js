@@ -680,6 +680,7 @@ async function processQueue() {
   const session = dbClient.startSession();
   const maxRetries = 3; // Maximum retry attempts
   const retryDelay = 100; // Delay in milliseconds before retrying
+  let transactionAborted = false; // Flag to check if transaction was aborted
 
   // Function to attempt transaction
   const attemptTransaction = async (retryCount) => {
@@ -698,21 +699,29 @@ async function processQueue() {
       // Fetch the user based on remoteId
       const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
       if (!currentUser) {
-        await session.abortTransaction();
+        if (!transactionAborted) {
+          await session.abortTransaction(); // Abort only if not already aborted
+          transactionAborted = true;
+        }
         return res.json({ status: 500, msg: 'Internal Error: no User' });
       }
 
       // Check if the transaction ID is already processed
       if (!transactionId) {
-        // Transaction ID not found, reset exposure to zero
         await settleExposure(currentUser);
-        await session.abortTransaction();
+        if (!transactionAborted) {
+          await session.abortTransaction(); // Abort only if not already aborted
+          transactionAborted = true;
+        }
         return res.json({ status: 200, msg: 'Exposure settled successfully' });
       }
 
       // Handle duplicate transaction IDs
       if (transactionIdMap.has(transactionId)) {
-        await session.abortTransaction();
+        if (!transactionAborted) {
+          await session.abortTransaction(); // Abort only if not already aborted
+          transactionAborted = true;
+        }
         return res.json({ status: 200, balance: currentUser.availableBalance / casinoMultiples });
       } else {
         transactionIdMap.set(transactionId, transactionId);
@@ -729,28 +738,40 @@ async function processQueue() {
 
       // Validate the key
       if (hash !== key) {
-        await session.abortTransaction();
+        if (!transactionAborted) {
+          await session.abortTransaction(); // Abort only if not already aborted
+          transactionAborted = true;
+        }
         return res.json({ status: 403, msg: 'INCORRECT_KEY_VALIDATION' });
       }
 
       // Fetch the user again for the transaction
       const user = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
       if (!user) {
-        await session.abortTransaction();
+        if (!transactionAborted) {
+          await session.abortTransaction(); // Abort only if not already aborted
+          transactionAborted = true;
+        }
         return res.json({ status: 500, msg: 'Internal error: no user' });
       }
 
       // Check if the market is blocked
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if (checkMarketBlockedResponse === 1) {
-        await session.abortTransaction();
+        if (!transactionAborted) {
+          await session.abortTransaction(); // Abort only if not already aborted
+          transactionAborted = true;
+        }
         return res.json({ status: 500, msg: 'Betting is not allowed!' });
       }
 
       // Update user's available balance
       let updatedAvailableBalance = user.availableBalance - (parseInt(payload.amount) * casinoMultiples);
       if (updatedAvailableBalance < 0) {
-        await session.abortTransaction();
+        if (!transactionAborted) {
+          await session.abortTransaction(); // Abort only if not already aborted
+          transactionAborted = true;
+        }
         return res.json({ status: 500, msg: 'Insufficient balance' });
       }
 
@@ -774,7 +795,10 @@ async function processQueue() {
     } catch (err) {
       if (retryCount < maxRetries) {
         console.log(`Retry attempt ${retryCount + 1}`);
-        await session.abortTransaction();
+        if (!transactionAborted) {
+          await session.abortTransaction(); // Abort only if not already aborted
+          transactionAborted = true;
+        }
         await new Promise(resolve => setTimeout(resolve, retryDelay)); // Delay before retry
         return attemptTransaction(retryCount + 1);
       } else {
@@ -790,7 +814,6 @@ async function processQueue() {
 
   return attemptTransaction(retryCount);
 }
-
 // Function to settle exposure for a user
 async function settleExposure(user) {
   try {
