@@ -73,37 +73,36 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     const formattedDate = `${year}-${month}-${day}`;
 
     if (action === 0) {
-      let amount = Number(payload.amount) * casinoMultiples;
+       amount = Number(payload.amount) * casinoMultiples;
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
-      console.log(numOfBet,"arham initial exposureeeeeeeeeeeee ",UpdatedExposure )
-      let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
-      console.log(numOfBet,"arham UpdatedExposure availableBalance ",UpdatedExposure )
-      if (UpdatedExposure > 0) {
-        UpdatedExposure=-Number(payload.amount) * casinoMultiples;
+      
+      if (UpdatedExposure < 0) {
+        UpdatedExposure = Math.abs(UpdatedExposure); // Ensure it's not negative
       }
-      if (numOfBet >=6) {
-        numOfBet=1
+      
+      if (numOfBet >= 6) {
+        numOfBet = 1;
       } else {
-        numOfBet+1
+        numOfBet += 1;
       }
-      console.log(numOfBet,"updated exposure arham ",UpdatedExposure)
-   const updatedUser=await users.updateOne(
+      
+      const updatedUser = await users.findOneAndUpdate(
         { _id: user._id },
         {
           $set: {
-            availableBalance: updatedavailableBalance,
+            availableBalance: Number((user.availableBalance - amount).toFixed(3)),
             exposure: UpdatedExposure
           }
         },
-        { session }
+        { session, returnDocument: 'after' }
       );
-      if (updatedUser.modifiedCount>0) {
+      
+      if (updatedUser.value) {
         const casinoDebits = new CasinoDebits(payload);
         await casinoDebits.save();
       }
-     
-
-      return 0
+      
+      return 0;
     } else if (action === 1) { 
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
