@@ -686,8 +686,10 @@ async function processQueue() {
       const transactionId = payload.transaction_id;
   
       const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
-      if (payload.gameplay_final == 1 || !payload.remote_id) {
-        await User.updateOne({remoteId:currentUser.remote_id},{$set:{exposure:0}})
+      if (payload.gameplay_final == 0 || !payload.remote_id) {
+        const u = await User.updateOne({ remoteId: currentUser.remote_id }, { $set: { exposure: 0 } })
+        console.log(u,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu Arham")
+       
       }
       if (!currentUser) {
         if (session.inTransaction()) {
