@@ -1709,7 +1709,6 @@ async function tossOdds(req, res) {
   try {
     // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
     const sportsAPIUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${market_id}`;
-    console.log("------------------http://sportzing.in:5505/api/getMarketsOdds")
     const header = {
       headers: {
         accept: "application/json",
@@ -1718,6 +1717,7 @@ async function tossOdds(req, res) {
         "Cache-Control": "no-cache"
       },
     };
+    console.log("------------------http://sportzing.in:5505/api/getMarketsOdds")
    
 
     const response = await axios.get(sportsAPIUrl, header);
