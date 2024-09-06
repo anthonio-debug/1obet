@@ -695,20 +695,7 @@ async function processQueue() {
         return res.json({ status: 500, msg: 'Internal Error: no User' });
       }
   
-      // Check if the transaction ID is already processed
-      if (!transactionId) {
-        // Transaction ID is not found, reset exposure to zero
-        await settleExposure(currentUser);
-  
-        // Abort the transaction since the transaction ID does not exist
-        await session.abortTransaction();
-  
-        // Return response indicating successful processing
-        // return res.json({
-        //   status: 200,
-        //   balance: currentUser.availableBalance / casinoMultiples
-        // });
-      }
+     
   
       if (transactionIdMap.has(transactionId)) {
         await session.abortTransaction();
