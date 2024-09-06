@@ -56,7 +56,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     if (payload.gameplay_final == 0 || !payload.remote_id) {
       const u = await User.updateOne({ remoteId: currentUser.remote_id }, { $set: { exposure: 0 } })
       console.log(u,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu Arham")
-     return
+    
     }
     /*
       action= 0 debit
