@@ -651,20 +651,20 @@ async function balanceFun(req, res) {
     return res.json({ status: 500, msg: `Internal error ${err}` });
   }
 }
-async function calculateExposure(userId) {
-  try {
-    // Fetch all bets related to the user
-    const bets = await casinoCalls.find({ remoteId: userId });
+// async function calculateExposure(userId) {
+//   try {
+//     // Fetch all bets related to the user
+//     const bets = await casinoCalls.find({ remoteId: userId });
 
-    // Calculate the total exposure
-    const totalExposure = bets.reduce((acc, bet) => acc + bet.exposure, 0);
+//     // Calculate the total exposure
+//     const totalExposure = bets.reduce((acc, bet) => acc + bet.exposure, 0);
 
-    return totalExposure;
-  } catch (err) {
-    console.error('Failed to calculate exposure:', err);
-    throw new Error('Error calculating exposure');
-  }
-}
+//     return totalExposure;
+//   } catch (err) {
+//     console.error('Failed to calculate exposure:', err);
+//     throw new Error('Error calculating exposure');
+//   }
+// }
 const requestQueue = []; // Queue to hold incoming requests
 let processing = false;  // Flag to indicate if a request is being processed
 
@@ -750,7 +750,7 @@ async function processQueue() {
       await WinLoseTransManagement(balance, payload, user, 0, res);
   
       // Ensure exposure is reset correctly
-      await settleExposure(user);
+      // await settleExposure(user);
   
       await session.commitTransaction();
   
@@ -783,19 +783,19 @@ async function processQueue() {
   return attemptTransaction(retryCount);
 }
 
-async function settleExposure(user) {
-  try {
-    const exposure = await calculateExposure(user.remoteId);
-    if (exposure > 0) {
-      await User.updateOne(
-        { remoteId: user.remoteId },
-        { $set: { exposure: 0 } } 
-      );
-    }
-  } catch (err) {
-    console.error('Failed to settle exposure:', err);
-  }
-}
+// async function settleExposure(user) {
+//   try {
+//     const exposure = await calculateExposure(user.remoteId);
+//     if (exposure > 0) {
+//       await User.updateOne(
+//         { remoteId: user.remoteId },
+//         { $set: { exposure: 0 } } 
+//       );
+//     }
+//   } catch (err) {
+//     console.error('Failed to settle exposure:', err);
+//   }
+// }
 async function debitFun(req, res) {
   console.log("debitttttttttttttttttttttttt fun arhammmmmmmmmmmmmmm")
   requestQueue.push({ req, res }); 
