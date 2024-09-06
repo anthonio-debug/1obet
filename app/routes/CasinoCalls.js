@@ -657,7 +657,7 @@ async function calculateExposure(userId) {
     const bets = await casinoCalls.find({ remoteId: userId });
 
     // Calculate the total exposure
-    const totalExposure = bets.reduce((acc, bet) => acc + bet.exposure, 0);
+    const totalExposure = casinoCalls.reduce((acc, bet) => acc + bet.exposure, 0);
 
     return totalExposure;
   } catch (err) {
