@@ -382,8 +382,111 @@ async function cronOdds2(eventId, sportID) {
     }
 
     // Handle Bookmaker Data
-    if (bookMakerData && bookMakerData.length > 0) {
-      for (const element of bookMakerData) {
+
+///////////////////////////////////////////////////
+const response1={
+  "success": true,
+  "data": [
+    {
+      "marketId": "1.232545946",
+      "marketName": "Match Odds",
+      "marketStartTime": "2024-09-06T10:00:00.000Z",
+      "totalMatched": 613589.47,
+      "runners": [
+        {
+          "selectionId": 10301,
+          "runnerName": "England",
+          "handicap": 0,
+          "sortPriority": 1,
+          "metadata": {
+            "runnerId": "10301"
+          }
+        },
+        {
+          "selectionId": 7337,
+          "runnerName": "Sri Lanka",
+          "handicap": 0,
+          "sortPriority": 2,
+          "metadata": {
+            "runnerId": "7337"
+          }
+        },
+        {
+          "selectionId": 60443,
+          "runnerName": "The Draw",
+          "handicap": 0,
+          "sortPriority": 3,
+          "metadata": {
+            "runnerId": "60443"
+          }
+        }
+      ],
+      "eventType": {
+        "id": "4",
+        "name": "Cricket"
+      },
+      "competition": {
+        "id": "11365612",
+        "name": "Test Matches"
+      },
+      "event": {
+        "id": "33546678",
+        "name": "England v Sri Lanka",
+        "countryCode": "GB",
+        "timezone": "GMT",
+        "openDate": "2024-09-06T10:00:00.000Z"
+      }
+    },
+    {
+      "marketId": "1.232545953",
+      "marketName": "To Win the Toss",
+      "marketStartTime": "2024-09-06T10:00:00.000Z",
+      "totalMatched": 3898.22,
+      "runners": [
+        {
+          "selectionId": 10301,
+          "runnerName": "England",
+          "handicap": 0,
+          "sortPriority": 1,
+          "metadata": {
+            "runnerId": "10301"
+          }
+        },
+        {
+          "selectionId": 7337,
+          "runnerName": "Sri Lanka",
+          "handicap": 0,
+          "sortPriority": 2,
+          "metadata": {
+            "runnerId": "7337"
+          }
+        }
+      ],
+      "eventType": {
+        "id": "4",
+        "name": "Cricket"
+      },
+      "competition": {
+        "id": "11365612",
+        "name": "Test Matches"
+      },
+      "event": {
+        "id": "33546678",
+        "name": "England v Sri Lanka",
+        "countryCode": "GB",
+        "timezone": "GMT",
+        "openDate": "2024-09-06T10:00:00.000Z"
+      }
+    }
+  ]
+}
+
+
+
+
+    //////////////////////////////////////////////
+    if (response1 && response1.length > 0) {
+      for (const element of response1) {
         const bookmakerRunners = element.runners.map(runner => ({
           SelectionId: runner.selectionId,
           runnerName: runner.runnerName,
