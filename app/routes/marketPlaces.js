@@ -303,10 +303,14 @@ async function getOdds(marketIds, sportsId) {
   return new Promise(async (resolve, reject) => {
     
     const odds = [];
-    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+    // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+    const oddUrl = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
     // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
     
       const response = await axios.get(oddUrl);
+
+      console.log("IDDDDDDDDDOODODODODODO",response);
+      
     
     if (response.data) {
       
@@ -334,9 +338,9 @@ async function cronOdds2(eventId, sportID) {
     console.log("=-=-==-=--=-=-=-=-=-=-=-  response", response.data);
     const bookMakerData = bookmakerResponse.data;
     const marketsData = response.data;
-    const sendMarketIds = [];
+    const sendMarketIds = ["1.232545953"];
     const bookmakerMarketIds = [];
-    console.log(marketsData, "||||||||||||||||||||");
+    // console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
     // Handle Market Data
