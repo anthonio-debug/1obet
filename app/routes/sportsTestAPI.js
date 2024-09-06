@@ -1131,157 +1131,43 @@ async function cronOdds2(req, res) {
 
   // console.log ("+_+_+_++_+_++_+ SportsId +_+", sportID)
 
-  // const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
-
-  // try {
-  //   const response = await axios.get(url);
-
-  //   // console.log("=-=--==---=-=--=-===--= market api response", response);
-    
-  //   /////////////////////////
-  //   // const response = {
-  //   //   "success": true,
-  //   //   "data": [
-  //   //     {
-  //   //       "marketId": "1.232001727",
-  //   //       "marketName": "Match Odds",
-  //   //       "marketStartTime": "2024-08-21T23:00:00.000Z",
-  //   //       "totalMatched": "417.55",
-  //   //       "runners": [
-  //   //         {
-  //   //           "selectionId": 47674067,
-  //   //           "runnerName": "Barbados Royals W",
-  //   //           "sortPriority": 1
-  //   //         },
-  //   //         {
-  //   //           "selectionId": 47674068,
-  //   //           "runnerName": "Guyana Amazon Warriors W",
-  //   //           "sortPriority": 2
-  //   //         }
-  //   //       ]
-  //   //     }
-  //   //   ]
-  //   // };
-  //   ///////////////////////////
-  //   const marketsData = response.data;
-  //   const sendMarketIds = [];
-  //   // console.log(marketsData, "||||||||||||||||||||");
-  //   const marketStatus = 'OPEN';
-
-  //   if (marketsData && marketsData.length > 0) {
-  //     for (const element of marketsData) {
-  //       const tempRunners = element.runners.map(runner => ({
-  //         SelectionId: runner.selectionId,
-  //         runnerName: runner.runnerName,
-  //       }));
-
-  //       if (element.marketName === 'Match Odds') {
-          
-  //         sendMarketIds.push(element.marketId);
-          
-  //         const marketID = await MarketIDS.findOne({
-  //           eventId: eventId,
-  //           marketId: element.marketId,
-  //         });
-
-  //         if (!marketID) {
-  //           const newMarket = new MarketIDS({
-  //             eventId: eventId,
-  //             marketId: element.marketId,
-  //             marketName: element.marketName,
-  //             sportID: '4',
-  //             totalMatched: element.totalMatched,
-  //             status: marketStatus,
-  //             index: 0,
-  //             runners: tempRunners,
-  //             inPlay: true,
-  //           });
-
-  //           // console.log("Saving new market: ", newMarket);
-  //           await newMarket.save();
-  //         }else{
-  //           await MarketIDS.findOneAndUpdate({eventId: eventId,marketId: element.marketId,}, {$set:{
-  //             totalMatched:element.totalMatched,
-  //           }} )
-  //         }
-  //       }
-  //     }
-  //   }
-
-    
-  //   // const sendMarketIds = ["1.232001727"];
-
-  //   let result = [];
-  //   // console.log(result,"=-=-=---=-=---=--=");
-    
-  //   console.log("Sending market ids:", sendMarketIds);
-  //   for (const marketId of sendMarketIds) {
-  //     // console.log("===================================================================================5");
-  //     const odds = await getOdds(marketId, sportID);
-  //     result = [...result, ...odds];
-  //   }
-
-  //   res.json({ status: true, data: "Result: " , result });
-
-  // } 
-  const bookmakerUrl = `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
+  const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
 
   try {
-    // const response = await axios.get(url);
-    const bookmakerResponse = await axios.get(bookmakerUrl);
+    const response = await axios.get(url);
 
-    // console.log("=-=-==-=--=-=-=-=-=-=-=-  response", response.data);
-    const marketsData = bookmakerResponse.data;
-    // const marketsData = response.data;
+    // console.log("=-=--==---=-=--=-===--= market api response", response);
+    
+    /////////////////////////
+    // const response = {
+    //   "success": true,
+    //   "data": [
+    //     {
+    //       "marketId": "1.232001727",
+    //       "marketName": "Match Odds",
+    //       "marketStartTime": "2024-08-21T23:00:00.000Z",
+    //       "totalMatched": "417.55",
+    //       "runners": [
+    //         {
+    //           "selectionId": 47674067,
+    //           "runnerName": "Barbados Royals W",
+    //           "sortPriority": 1
+    //         },
+    //         {
+    //           "selectionId": 47674068,
+    //           "runnerName": "Guyana Amazon Warriors W",
+    //           "sortPriority": 2
+    //         }
+    //       ]
+    //     }
+    //   ]
+    // };
+    ///////////////////////////
+    const marketsData = response.data;
     const sendMarketIds = [];
-    // const bookmakerMarketIds = [];
     // console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
-    // Handle Market Data
-    // if (marketsData && marketsData.length > 0) {
-    //   for (const element of marketsData) {
-    //     const tempRunners = element.runners.map(runner => ({
-    //       SelectionId: runner.selectionId,
-    //       runnerName: runner.runnerName,
-    //     }));
-
-    //     if (element.marketName === 'Match Odds') {
-    //       sendMarketIds.push(element.marketId);
-
-    //       const marketID = await MarketIDS.findOne({
-    //         eventId: eventId,
-    //         marketId: element.marketId,
-    //       });
-
-    //       if (!marketID) {
-    //         const newMarket = new MarketIDS({
-    //           eventId: eventId,
-    //           marketId: element.marketId,
-    //           marketName: element.marketName,
-    //           sportID: sportID,
-    //           totalMatched: element.totalMatched,
-    //           openDate: Date.parse(element.marketStartTime),
-    //           status: marketStatus,
-    //           index: 0,
-    //           runners: tempRunners,
-    //           inPlay: true,
-    //         });
-
-    //         console.log("Saving new market: ", newMarket);
-    //         await newMarket.save();
-    //       } else {
-    //         console.log("{{}{}}{{}{}{}}} updating market id collec for match odds");
-    //         await MarketIDS.findOneAndUpdate(
-    //           { eventId: eventId, marketId: element.marketId },
-    //           { $set: { totalMatched: element.totalMatched } }
-    //         );
-    //       }
-    //     }
-    //   }
-    // }
-
-    // Handle Bookmaker Data
     if (marketsData && marketsData.length > 0) {
       for (const element of marketsData) {
         const tempRunners = element.runners.map(runner => ({
@@ -1289,70 +1175,55 @@ async function cronOdds2(req, res) {
           runnerName: runner.runnerName,
         }));
 
-        if (element.marketName === 'Match Odds' || element.marketName === 'To Win the Toss' || element.marketName === 'Bookmaker') {
-          sendMarketIds.push(element.marketId);
-
-          console.log("element.marketName=-=-=-=-=-", element.marketName);
+        if (element.marketName === 'Match Odds') {
           
-
+          sendMarketIds.push(element.marketId);
+          
           const marketID = await MarketIDS.findOne({
             eventId: eventId,
             marketId: element.marketId,
           });
 
-        if (!marketID) {
-          let marketTime= element.marketStartTime
-          if (!marketTime){ 
-            marketTime=0 
-          }else{
-            marketTime= Date.parse(marketTime)
-          }
-          const newMarket = new MarketIDS({
-            eventId: eventId,
-            marketId: element.marketId,
-            marketName: element.marketName,
-            sportID: sportID,
-            totalMatched: element.totalMatched,
-            openDate: marketTime,
-            status: marketStatus,
-            index: 0,
-            runners: tempRunners,
-            inPlay: true,
-          });
+          if (!marketID) {
+            const newMarket = new MarketIDS({
+              eventId: eventId,
+              marketId: element.marketId,
+              marketName: element.marketName,
+              sportID: '4',
+              totalMatched: element.totalMatched,
+              status: marketStatus,
+              index: 0,
+              runners: tempRunners,
+              inPlay: true,
+            });
 
-          console.log("Saving new bookmaker market: ", newMarket);
-          await newMarket.save();
-        } 
-        else {
-          console.log("Updating market id collection for bookmaker market");
-          await MarketIDS.findOneAndUpdate(
-            { eventId: eventId, marketId: element.marketId , marketName:"Match Odds" },
-            { $set: { totalMatched: element.totalMatched } }
-          );
+            // console.log("Saving new market: ", newMarket);
+            await newMarket.save();
+          }else{
+            await MarketIDS.findOneAndUpdate({eventId: eventId,marketId: element.marketId,}, {$set:{
+              totalMatched:element.totalMatched,
+            }} )
+          }
         }
       }
     }
-    }
 
-    // Get odds for the standard markets
+    
+    // const sendMarketIds = ["1.232001727"];
+
     let result = [];
+    // console.log(result,"=-=-=---=-=---=--=");
+    
     console.log("Sending market ids:", sendMarketIds);
     for (const marketId of sendMarketIds) {
-      console.log("===================================================================================5");
+      // console.log("===================================================================================5");
       const odds = await getOdds(marketId, sportID);
       result = [...result, ...odds];
     }
 
-    // Get odds for the bookmaker markets
-    // console.log("Sending bookmaker market ids:", bookmakerMarketIds);
-    // for (const marketId of bookmakerMarketIds) {
-    //   const bookmakerOdds = await getOdds(marketId, sportID);
-    //   result = [...result, ...bookmakerOdds];
-    // }
+    res.json({ status: true, data: "Result: " , result });
 
-    res.json({ status: true, data: "Result: ", result });
-
-  }catch (error) {
+  } catch (error) {
     res.status(500).json({ success: false, msg: "Failed to get data. Error: " + error.message });
   }
 }
@@ -1789,6 +1660,7 @@ async function getGreyHoundMatches(req, res) {
       
     // const marketsData = response.data;
     const GreyHoundMatches = response.data;
+
     res.status(200).json({ success: true, data: GreyHoundMatches });
   } catch (err) {
     res
@@ -1796,6 +1668,7 @@ async function getGreyHoundMatches(req, res) {
       .json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
+
 async function getHorseRaceMatches(req, res) {  
 
   try {
@@ -1857,38 +1730,6 @@ async function getOddsFromlithylAPI(req, res) {
       .json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
-async function tossOdds(req, res) {
-  const market_id = req.params.market_id;
-
-  console.log("=====- id--",market_id);
-  
-  try {
-    // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
-    const sportsAPIUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${market_id}`;
-    const header = {
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-        "X-App": process.env.XAPP_NAME,
-        "Cache-Control": "no-cache"
-      },
-    };
-    console.log("------------------http://sportzing.in:5505/api/getMarketsOdds")
-   
-
-    const response = await axios.get(sportsAPIUrl, header);
-      console.log("MMMMMMMMMMMMMMMM--toss odds response ", response.data);
-      
-    // const marketsData = response.data;
-    const oddsData = response.data;
-
-    res.status(200).json({ success: true, data: oddsData });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, msg: "Failed to get Error: " + err.message });
-  }
-}
 ////////////MMMMMMMMMMMM
 
 
@@ -1900,7 +1741,6 @@ router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFan
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
-router.get('/track-bet/lithylAPI/tossOdds/:market_id', tossOdds)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/testing', testing)
 /////////////////

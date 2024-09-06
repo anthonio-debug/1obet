@@ -324,7 +324,7 @@ async function cronOdds2(eventId, sportID) {
   console.log(" MMMMMMMMMMM      sportID in cronOdds2 ", sportID);
 
   // const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
-  const bookmakerUrl = `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
+  const url = `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
 
   try {
     // const response = await axios.get(url);
