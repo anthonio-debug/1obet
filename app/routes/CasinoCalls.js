@@ -673,21 +673,21 @@ async function processQueue() {
   processing = true;
 
   const { req, res, retryCount = 0 } = requestQueue.shift(); // Get the next request from the queue
-
+  const payload = req.query;
   const session = dbClient.startSession();
   const maxRetries = 3; // Maximum retry attempts
   const retryDelay = 100; // Delay in milliseconds before retrying
-
+  if (payload.gameplay_final==1 || !payload.round_id ) {
+    await User.updateOne({ remoteId: parseInt(payload.remote_id) }, { $set: { exposure: 0 } } );
+    
+  }
   const attemptTransaction = async (retryCount) => {
     try {
       await session.startTransaction();
-      const payload = req.query;
+     
       const transactionId = payload.transaction_id;
       
-      if (payload.gameplay_final==1 || !payload.round_id ) {
-        await User.updateOne({ remoteId: parseInt(payload.remote_id) }, { $set: { exposure: 0 } } );
-        
-      }
+      
       
       const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
       if (!currentUser) {
