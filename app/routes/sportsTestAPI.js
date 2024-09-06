@@ -1701,39 +1701,38 @@ async function getOddsFromlithylAPI(req, res) {
       .json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
-// const axios = require('axios'); // Make sure Axios is imported
-
 async function tossOdds(req, res) {
   const market_id = req.params.market_id;
 
-  console.log("=====- market_id:", market_id);
-
+  console.log("=====- id--",market_id);
+  
   try {
+    // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
     const sportsAPIUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${market_id}`;
-    
-    const headers = {
-      accept: "application/json",
-      "Content-Type": "application/json",
-      "X-App": process.env.XAPP_NAME || 'default-value', // Use a default value for testing
-      "Cache-Control": "no-cache"
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
+      },
     };
-
-    console.log("Fetching from:", sportsAPIUrl);
+    console.log("------------------http://sportzing.in:5505/api/getMarketsOdds")
    
-    const response = await axios.get(sportsAPIUrl, { headers });
-    console.log("Received toss odds response:", response.data);
-    
+
+    const response = await axios.get(sportsAPIUrl, header);
+      console.log("MMMMMMMMMMMMMMMM--toss odds response ", response.data);
+      
+    // const marketsData = response.data;
     const oddsData = response.data;
 
     res.status(200).json({ success: true, data: oddsData });
   } catch (err) {
-    console.error("Error in tossOdds:", err);
-    res.status(500).json({ success: false, msg: "Failed to get odds: " + err.message });
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
-
-module.exports = tossOdds;
-
 ////////////MMMMMMMMMMMM
 
 
