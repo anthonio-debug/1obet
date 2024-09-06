@@ -1492,21 +1492,15 @@ async function updateUserName(req, res) {
 async function testing(req, res) {
   try {
     const currentTime = Date.now();
-    const { sportsId, marketIds } = req.params;
-console.log("testing running ")
     // const formattedTime = currentTime.toLocaleTimeString();
     // console.log(currentTime, "//////");
-    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
-   
-  
 
-    const response = await axios.get(oddUrl);
-      console.log("MMMMMMMMMMMMMMMM--getOdds response toss ", response.data);
-      
-    // const marketsData = response.data;
-    const getOddsFancyBookmakerByMatchId = response.data;
 
-    res.status(200).json({ success: true, data: getOddsFancyBookmakerByMatchId });
+    res.status(200).json({
+      success: true,
+      message: 'User names updated successfully',
+
+    });
   } catch (error) {
     console.error("Error in update user name:", error);
     res.status(500).json({
@@ -1707,6 +1701,38 @@ async function getOddsFromlithylAPI(req, res) {
       .json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
+async function tossOdds(req, res) {
+  const market_id = req.params.market_id;
+
+  console.log("MMMMMMMMMMMMM id--",market_id);
+  
+  try {
+    // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
+    const sportsAPIUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${market_id}`;
+    console.log("------------------http://sportzing.in:5505/api/getGreyHoundMatches")
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
+      },
+    };
+   
+
+    const response = await axios.get(sportsAPIUrl, header);
+      console.log("MMMMMMMMMMMMMMMM--toss odds response ", response.data);
+      
+    // const marketsData = response.data;
+    const oddsData = response.data;
+
+    res.status(200).json({ success: true, data: oddsData });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
+  }
+}
 ////////////MMMMMMMMMMMM
 
 
@@ -1717,8 +1743,9 @@ router.get('/track-bet/lithylAPI/getAllMarketList/:match_id', getAllMarketList)
 router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFancyBookmakerByMatchId)
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
+router.get('/track-bet/lithylAPI/getOdds/:market_id', tossOdds)
 router.get('/track-bet/updateUserName', updateUserName)
-router.get('/track-bet/testing/: marketIds', testing)
+router.get('/track-bet/testing', testing)
 /////////////////
 
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
