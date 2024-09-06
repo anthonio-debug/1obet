@@ -683,39 +683,37 @@ async function processQueue() {
       await session.startTransaction();
       const payload = req.query;
       const transactionId = payload.transaction_id;
+      const remoteId = parseInt(payload.remote_id);
   
       // Fetch the user based on remoteId
-      const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
+      const currentUser = await User.findOne({ remoteId });
       if (!currentUser) {
         await session.abortTransaction();
         return res.json({ status: 500, msg: 'Internal Error: no User' });
       }
   
-      // Check if the transaction ID is already processed
-      if (!transactionId) {
-        // Transaction ID is not found, reset exposure to zero
-        await User.updateOne({ remoteId: parseInt(payload.remote_id) }, {
-           $set: { exposure: 0 } 
-        })
-  
-        // Abort the transaction since the transaction ID does not exist
-        await session.abortTransaction();
-  
-        // Return response indicating successful processing
-        // return res.json({
-        //   status: 200,
-        //   balance: currentUser.availableBalance / casinoMultiples
-        // });
-      }
-  
-      if (transactionIdMap.has(transactionId)) {
+      // Check if the transaction ID has been processed
+      if (transactionId && transactionIdMap.has(transactionId)) {
         await session.abortTransaction();
         return res.json({
           status: 200,
           balance: currentUser.availableBalance / casinoMultiples,
         });
       } else {
-        transactionIdMap.set(transactionId, transactionId);
+        // If transaction ID does not exist, reset exposure to zero
+        if (transactionId) {
+          transactionIdMap.set(transactionId, transactionId);
+        }
+        await User.updateOne({ remoteId }, { $set: { exposure: 0 } });
+  
+        // Abort the transaction since the transaction ID does not exist
+        await session.abortTransaction();
+  
+        // Return response indicating successful processing
+        return res.json({
+          status: 200,
+          balance: currentUser.availableBalance / casinoMultiples
+        });
       }
   
       const salt = saltKey;
@@ -736,7 +734,7 @@ async function processQueue() {
       }
   
       // Fetch the user again for the transaction
-      const user = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
+      const user = await users.findOne({ remoteId }, { session });
       if (!user) {
         await session.abortTransaction();
         return res.json({ status: 500, msg: 'Internal error: no user' });
@@ -766,7 +764,7 @@ async function processQueue() {
       await session.commitTransaction();
   
       // Fetch the updated user information
-      const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
+      const updatedUser = await users.findOne({ remoteId }, { session });
   
       return res.json({
         status: 200,
@@ -789,6 +787,7 @@ async function processQueue() {
       processQueue(); // Process next request in the queue
     }
   };
+  
   
 
   return attemptTransaction(retryCount);
