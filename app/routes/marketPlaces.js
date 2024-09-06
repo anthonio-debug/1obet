@@ -247,12 +247,9 @@ async function activateEvent(req, res) {
 ////////////////////////////mmmmmmmmmmmmmmmmm
 async function saveOdds(oddData, sportsId) {
   try {
+    console.log("{}{}{}{}{}{}{}{{}{}{}",oddData );
     
-    
-    if (typeof oddData === 'string') {
-      oddData = JSON.parse(oddData);
-      console.log("{}{}{}{}{}{}{}{{}{}{}",oddData );
-    }
+    oddData = JSON.parse(oddData);
   } catch (error) {
     console.error("Failed to parse oddData:", error);
     return;
@@ -308,9 +305,8 @@ async function getOdds(marketIds, sportsId) {
   return new Promise(async (resolve, reject) => {
 
     const odds = [];
-    // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
-    const oddUrl = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
-    // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
+    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+    // const oddUrl = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
 
     const response = await axios.get(oddUrl);
 
