@@ -683,19 +683,19 @@ async function processQueue() {
       await session.startTransaction();
       const payload = req.query;
       const transactionId = payload.transaction_id;
-      
   
-      
       const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
       if (!currentUser) {
-        await session.abortTransaction();
+        if (session.inTransaction()) {
+          await session.abortTransaction();
+        }
         return res.json({ status: 500, msg: 'Internal Error: no User' });
       }
   
-     
-  
       if (transactionIdMap.has(transactionId)) {
-        await session.abortTransaction();
+        if (session.inTransaction()) {
+          await session.abortTransaction();
+        }
         return res.json({
           status: 200,
           balance: currentUser.availableBalance / casinoMultiples,
@@ -714,7 +714,9 @@ async function processQueue() {
   
       // Validate the key
       if (hash !== key) {
-        await session.abortTransaction();
+        if (session.inTransaction()) {
+          await session.abortTransaction();
+        }
         return res.json({
           status: 403,
           msg: 'INCORRECT_KEY_VALIDATION'
@@ -724,41 +726,49 @@ async function processQueue() {
       // Fetch the user again for the transaction
       const user = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
       if (!user) {
-        await session.abortTransaction();
+        if (session.inTransaction()) {
+          await session.abortTransaction();
+        }
         return res.json({ status: 500, msg: 'Internal error: no user' });
       }
-  X
+  
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if (checkMarketBlockedResponse == 1) {
-        await session.abortTransaction();
+        if (session.inTransaction()) {
+          await session.abortTransaction();
+        }
         return res.json({ status: 500, msg: 'Betting is not allowed!' });
       }
   
-   
       let updatedAvailableBalance = user.availableBalance - (parseInt(payload.amount) * casinoMultiples);
       if (updatedAvailableBalance < 0) {
-        await session.abortTransaction();
+        if (session.inTransaction()) {
+          await session.abortTransaction();
+        }
         return res.json({ status: 500, msg: 'Insufficient balance' });
       }
   
-     
       const balance = user.availableBalance / casinoMultiples;
       await WinLoseTransManagement(balance, payload, user, 0, res);
- 
   
       await session.commitTransaction();
-
+      
       const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
-     
       return res.json({
         status: 200,
         balance: updatedUser.availableBalance / casinoMultiples
       });
   
     } catch (err) {
+      if (session.inTransaction()) {
+        try {
+          await session.abortTransaction();
+        } catch (abortErr) {
+          console.error('Error aborting transaction:', abortErr);
+        }
+      }
       if (retryCount < maxRetries) {
         console.log(`Retry attempt ${retryCount + 1}`);
-        await session.abortTransaction();
         await new Promise(resolve => setTimeout(resolve, retryDelay)); // Delay before retry
         return attemptTransaction(retryCount + 1);
       } else {
@@ -771,10 +781,10 @@ async function processQueue() {
       processQueue(); 
     }
   };
-  
 
   return attemptTransaction(retryCount);
 }
+
 
 // async function settleExposure(user) {
 //   try {
