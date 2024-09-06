@@ -74,9 +74,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
       console.log("arham updatedavailableBalance ",UpdatedExposure )
-      if (UpdatedExposure > 0) {
-        UpdatedExposure=-UpdatedExposure
-    }
+      
       await users.updateOne(
         { _id: user._id },
         {
@@ -654,25 +652,31 @@ async function balanceFun(req, res) {
   }
 }
 
-async function debitFun(req, res) {
+const requestQueue = []; // Queue to hold incoming requests
+let processing = false;  // Flag to indicate if a request is being processed
+
+async function processQueue() {
+  if (processing || requestQueue.length === 0) return;
+  processing = true;
+
+  const { req, res, retryCount = 0 } = requestQueue.shift(); // Get the next request from the queue
+
   const session = dbClient.startSession();
   const maxRetries = 3; // Maximum retry attempts
   const retryDelay = 100; // Delay in milliseconds before retrying
 
-  const payload = req.query;
-  const transactionId = payload.transaction_id;
-
-  const attemptTransaction = async (retryCount = 0) => {
+  const attemptTransaction = async (retryCount) => {
     try {
       await session.startTransaction();
-      const currentUser = await User.findOne(
-        { remoteId: parseInt(payload.remote_id) }
-      );
+      const payload = req.query;
+      const transactionId = payload.transaction_id;
+
+      const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
       if (!currentUser) {
         await session.abortTransaction();
-        return res.json({ status: '500', msg: `Internal Error: no User` });
+        return res.json({ status: 500, msg: 'Internal Error: no User' });
       }
-      
+
       if (transactionIdMap.has(transactionId)) {
         await session.abortTransaction();
         return res.json({
@@ -699,23 +703,20 @@ async function debitFun(req, res) {
         });
       }
 
-      const user = await users.findOne(
-        { remoteId: parseInt(payload.remote_id) },
-        { session }
-      );
+      const user = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
       if (!user) {
         await session.abortTransaction();
-        return res.json({ status: '500', msg: `Internal error: no user` });
+        return res.json({ status: 500, msg: 'Internal error: no user' });
       }
 
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if (checkMarketBlockedResponse == 1) {
         await session.abortTransaction();
-        return res.json({ status: '500', msg: 'Betting is not allowed!' });
+        return res.json({ status: 500, msg: 'Betting is not allowed!' });
       }
 
-      let updatedavailableBalance = user.availableBalance - (parseInt(payload.amount) * casinoMultiples);
-      if (updatedavailableBalance < 0) {
+      let updatedAvailableBalance = user.availableBalance - (parseInt(payload.amount) * casinoMultiples);
+      if (updatedAvailableBalance < 0) {
         await session.abortTransaction();
         return res.json({ status: 500, msg: 'Insufficient balance' });
       }
@@ -725,10 +726,7 @@ async function debitFun(req, res) {
       await WinLoseTransManagement(balance, payload, user, 0, res);
       await session.commitTransaction();
 
-      const updatedUser = await users.findOne(
-        { remoteId: parseInt(payload.remote_id) },
-        { session }
-      );
+      const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
 
       return res.json({
         status: 200,
@@ -747,11 +745,21 @@ async function debitFun(req, res) {
       }
     } finally {
       await session.endSession();
+      processing = false; // Set processing flag to false when done
+      processQueue(); // Process next request in the queue
     }
   };
 
-  return attemptTransaction();
+  return attemptTransaction(retryCount);
 }
+
+async function debitFun(req, res) {
+  requestQueue.push({ req, res }); // Add request to the queue
+  if (!processing) {
+    processQueue(); // Start processing if not already
+  }
+}
+
 
 
 async function creditFun(req, res) {
