@@ -683,6 +683,9 @@ async function processQueue() {
       await session.startTransaction();
       const payload = req.query;
       const transactionId = payload.transaction_id;
+      if (!payload.round_id) {
+        return 
+      }
   
       // Fetch the user based on remoteId
       const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
