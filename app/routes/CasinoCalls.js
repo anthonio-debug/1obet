@@ -822,15 +822,17 @@ async function creditFun(req, res) {
     const payload = req.query;
     const transactionId = payload.transaction_id
 
-      if (payload.gameplay_final == 1 || !payload.remote_id) {
-        await User.updateOne({ remoteId: currentUser.remote_id }, { $set: { exposure: 0 } })
-        return
-      }
+    
     const currentUser = await User.findOne(
       { remoteId: parseInt(payload.remote_id) }
     )
+   
     if (!currentUser) {
       return res.json({ status: '500', msg: `Internal Error no User` });
+    }
+    if (payload.gameplay_final == 0 || !payload.remote_id) {
+      await User.updateOne({ remoteId: currentUser.remote_id }, { $set: { exposure: 0 } })
+     
     }
     if (transactionIdMap.has(transactionId)) {
 
