@@ -724,6 +724,10 @@ async function processQueue() {
       // Proceed with further transaction logic
       const balance = user.availableBalance / casinoMultiples;
       await WinLoseTransManagement(balance, payload, user, 0, res);
+
+      // Ensure exposure is reset correctly
+      await settleExposure(user);
+
       await session.commitTransaction();
 
       const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
@@ -753,12 +757,28 @@ async function processQueue() {
   return attemptTransaction(retryCount);
 }
 
+// Function to settle exposure at the end of the game
+async function settleExposure(user) {
+  try {
+    const exposure = await calculateExposure(user.remoteId);
+    if (exposure > 0) {
+      await User.updateOne(
+        { remoteId: user.remoteId },
+        { $set: { exposure: 0 } } // Set exposure to zero
+      );
+    }
+  } catch (err) {
+    console.error('Failed to settle exposure:', err);
+  }
+}
+
 async function debitFun(req, res) {
   requestQueue.push({ req, res }); // Add request to the queue
   if (!processing) {
     processQueue(); // Start processing if not already
   }
 }
+
 
 
 
