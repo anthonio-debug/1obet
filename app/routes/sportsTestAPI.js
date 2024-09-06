@@ -1235,7 +1235,7 @@ async function cronOdds2(req, res) {
     // const marketsData = response.data;
     const sendMarketIds = [];
     // const bookmakerMarketIds = [];
-    console.log(marketsData, "||||||||||||||||||||");
+    // console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
     // Handle Market Data
@@ -1801,7 +1801,7 @@ async function getHorseRaceMatches(req, res) {
   try {
     // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
     const sportsAPIUrl = `https://sportzing.in:5505/api/getHorseRaceMatches`;
-    console.log("------------------http://sportzing.in:5505/api/getGreyHoundMatches")
+    console.log("------------------http://sportzing.in:5505/api/getHorseRaceMatches")
     const header = {
       headers: {
         accept: "application/json",
@@ -1813,7 +1813,7 @@ async function getHorseRaceMatches(req, res) {
    
 
     const response = await axios.get(sportsAPIUrl, header);
-      // console.log("MMMMMMMMMMMMMMMM--getGreyHoundMatches response ", response.data);
+      console.log("MMMMMMMMMMMMMMMM--getHorseRaceMatches response ", response.data);
       
     // const marketsData = response.data;
     const horseRaceMatches = response.data;
