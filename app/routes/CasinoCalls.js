@@ -53,11 +53,6 @@ const checkMarketBlocked = async (user) => {
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
-    if (payload.gameplay_final == 0 || !payload.remote_id) {
-      const u = await User.updateOne({ remoteId: currentUser.remote_id }, { $set: { exposure: 0 } })
-      console.log(u,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu Arham")
-    
-    }
     /*
       action= 0 debit
       action= 1 credit( decision came from casino )
@@ -691,7 +686,9 @@ async function processQueue() {
       const transactionId = payload.transaction_id;
   
       const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
-     
+      if (payload.gameplay_final == 1 || !payload.remote_id) {
+        await User.updateOne({remoteId:currentUser.remote_id},{$set:{exposure:0}})
+      }
       if (!currentUser) {
         if (session.inTransaction()) {
           await session.abortTransaction();
@@ -824,16 +821,13 @@ async function creditFun(req, res) {
   try {
     const payload = req.query;
     const transactionId = payload.transaction_id
-
-    
+   
     const currentUser = await User.findOne(
       { remoteId: parseInt(payload.remote_id) }
     )
-   
     if (!currentUser) {
       return res.json({ status: '500', msg: `Internal Error no User` });
     }
-   
     if (transactionIdMap.has(transactionId)) {
 
       return res.json({
