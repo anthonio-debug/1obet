@@ -639,8 +639,8 @@ async function calculateExposure(userId) {
 }
 
 async function processQueue() {
-  if (processing || requestQueue.length === 0) return;
-  processing = true;
+  // if (processing || requestQueue.length === 0) return;
+  // processing = true;
 
 
   const session = dbClient.startSession();
