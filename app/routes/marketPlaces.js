@@ -333,7 +333,7 @@ async function cronOdds2(eventId, sportID) {
     const bookMakerData = bookmakerResponse.data;
     const marketsData = response.data;
     const bookmakerMarketIds = []; // Array to store relevant market IDs
-    console.log(marketsData, "||||||||||||||||||||");
+    // console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
     // Handle Market Data (for "Match Odds" and "To Win the Toss")
