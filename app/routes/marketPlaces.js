@@ -388,9 +388,12 @@ async function cronOdds2(eventId, sportID) {
           SelectionId: runner.selectionId,
           runnerName: runner.runnerName,
         }));
+        console.log("element.marketName===[[[[[[[[[[[",element.marketName);
 
         if (element.marketName==="To Win the Toss"){
           sendMarketIds.push(element.marketId)
+          console.log("element.marketName===----",element.marketName);
+          
         }
 
         bookmakerMarketIds.push(element.marketId);
