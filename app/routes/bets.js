@@ -4466,7 +4466,7 @@ const EventWiseprofitLose = async (req, res) => {
       { $match: baseMatch },
       {
         $group: {
-          _id: "$_id",
+          _id: "$matchId",
           amount: { $sum: '$amount' },
           userId: { $first: '$userId' },
           date: { $first: '$date' },
