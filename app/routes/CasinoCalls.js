@@ -810,6 +810,7 @@ async function settleExposure(user) {
   }
 }
 async function debitFun(req, res) {
+  console.log("debitttttttttttttttttttttttt fun arhammmmmmmmmmmmmmm")
   requestQueue.push({ req, res }); 
   if (!processing) {
     processQueue(); 
