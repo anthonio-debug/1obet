@@ -391,7 +391,7 @@ async function cronOdds2(eventId, sportID) {
         }));
         console.log("element.marketName===[[[[[[[[[[[",element.marketName);
 
-        if (element.marketName==="Tied Match"){
+        if (element.marketName==="To Win the Toss"){
           sendMarketIds.push(element.marketId)
           console.log("element.marketName===----",element.marketName);
           
