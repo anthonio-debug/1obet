@@ -247,9 +247,9 @@ async function activateEvent(req, res) {
 ////////////////////////////mmmmmmmmmmmmmmmmm
 async function saveOdds(oddData, sportsId) {
   try {
+    console.log("{}{}{}{}{}{}{}{{}{}{}",oddData );
+    
     oddData = JSON.parse(oddData);
-
-    console.log("IDDDDDDDDDOODODODODODO",oddData);
   } catch (error) {
     console.error("Failed to parse oddData:", error);
     return;
@@ -337,7 +337,7 @@ async function cronOdds2(eventId, sportID) {
     console.log("=-=-==-=--=-=-=-=-=-=-=-  response", response.data);
     const bookMakerData = bookmakerResponse.data;
     const marketsData = response.data;
-    const sendMarketIds = ["1.232545953"];
+    const sendMarketIds = [];
     const bookmakerMarketIds = [];
     // console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
