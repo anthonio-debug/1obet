@@ -54,7 +54,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
     if (payload.gameplay_final == 0 || !payload.remote_id) {
-      const u = await User.updateOne({ remoteId: currentUser.remote_id }, { $set: { exposure: 0 } })
+      // const u = await User.updateOne({ remoteId: currentUser.remote_id }, { $set: { exposure: 0 } })
       console.log(u,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu Arham")
     
     }
