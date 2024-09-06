@@ -742,6 +742,7 @@ async function processQueue() {
   return attemptTransaction(retryCount);
 }
 
+
 // Function to settle exposure for a user
 async function settleExposure(user) {
   try {
