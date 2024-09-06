@@ -831,7 +831,8 @@ async function creditFun(req, res) {
       return res.json({ status: '500', msg: `Internal Error no User` });
     }
     if (payload.gameplay_final == 0 || !payload.remote_id) {
-      await User.updateOne({ remoteId: currentUser.remote_id }, { $set: { exposure: 0 } })
+      const u = await User.updateOne({ remoteId: currentUser.remote_id }, { $set: { exposure: 0 } })
+      console.log(u,"uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu Arham")
      
     }
     if (transactionIdMap.has(transactionId)) {
