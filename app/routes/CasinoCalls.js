@@ -49,10 +49,8 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
-  
-var numOfBet=1
+
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
- 
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
     /*
@@ -73,19 +71,13 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     if (action === 0) {
       let amount = Number(payload.amount) * casinoMultiples;
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
-      console.log(numOfBet,"arham initial exposureeeeeeeeeeeee ",UpdatedExposure )
+      console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
-      console.log(numOfBet,"arham UpdatedExposure availableBalance ",UpdatedExposure )
+      console.log("arham updatedavailableBalance ",UpdatedExposure )
       if (UpdatedExposure > 0) {
-        UpdatedExposure=-Number(payload.amount) * casinoMultiples;
-      }
-      if (numOfBet >=6) {
-        numOfBet=1
-      } else {
-        numOfBet+1
-      }
-      console.log(numOfBet,"updated exposure arham ",UpdatedExposure)
-   const updatedUser=await users.updateOne(
+        UpdatedExposure=-UpdatedExposure
+    }
+      await users.updateOne(
         { _id: user._id },
         {
           $set: {
@@ -95,11 +87,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         },
         { session }
       );
-      if (updatedUser.modifiedCount>0) {
-        const casinoDebits = new CasinoDebits(payload);
-        await casinoDebits.save();
-      }
-     
+
+      const casinoDebits = new CasinoDebits(payload);
+      await casinoDebits.save();
 
       return 0
     } else if (action === 1) { 
@@ -666,9 +656,7 @@ async function balanceFun(req, res) {
 
 async function debitFun(req, res) {
   // console.log("balanceeeeeeeeeeee Arham ------------")
-  setTimeout(() => {
-    console.log('Delayed by 2 seconds');
-  }, 500);
+
   const session = dbClient.startSession();
   // console.log(" arham debt" ,req.body)
   try {
