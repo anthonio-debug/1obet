@@ -1235,7 +1235,7 @@ async function cronOdds2(req, res) {
     // const marketsData = response.data;
     const sendMarketIds = [];
     // const bookmakerMarketIds = [];
-    console.log(marketsData, "||||||||||||||||||||");
+    // console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
     // Handle Market Data
@@ -1789,8 +1789,35 @@ async function getGreyHoundMatches(req, res) {
       
     // const marketsData = response.data;
     const GreyHoundMatches = response.data;
-
     res.status(200).json({ success: true, data: GreyHoundMatches });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
+  }
+}
+async function getHorseRaceMatches(req, res) {  
+
+  try {
+    // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
+    const sportsAPIUrl = `https://sportzing.in:5505/api/getHorseRaceMatches`;
+    console.log("------------------http://sportzing.in:5505/api/getHorseRaceMatches")
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
+      },
+    };
+   
+
+    const response = await axios.get(sportsAPIUrl, header);
+      console.log("MMMMMMMMMMMMMMMM--getHorseRaceMatches response ", response.data);
+      
+    // const marketsData = response.data;
+    const horseRaceMatches = response.data;
+    res.status(200).json({ success: true, data: horseRaceMatches });
   } catch (err) {
     res
       .status(500)
@@ -1871,6 +1898,7 @@ router.get('/track-bet/lithylAPI/getAllMatchesList/:series_id', getAllMatchesLis
 router.get('/track-bet/lithylAPI/getAllMarketList/:match_id', getAllMarketList)
 router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFancyBookmakerByMatchId)
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
+router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
 router.get('/track-bet/lithylAPI/tossOdds/:market_id', tossOdds)
 router.get('/track-bet/updateUserName', updateUserName)
