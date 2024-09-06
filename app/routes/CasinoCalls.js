@@ -53,6 +53,7 @@ const checkMarketBlocked = async (user) => {
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
+  
     /*
       action= 0 debit
       action= 1 credit( decision came from casino )
@@ -94,7 +95,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
-
+      if (payload.amount == 0) {
+        await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
+        return
+      }
       const gamesList = await SelectedCasino.findOne(
         { "games.id": payload.game_id },
         { "games.$": 1 }
