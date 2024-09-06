@@ -249,7 +249,9 @@ async function saveOdds(oddData, sportsId) {
   try {
     console.log("{}{}{}{}{}{}{}{{}{}{}",oddData );
     
-    oddData = JSON.parse(oddData);
+    if (typeof oddData === 'string') {
+      oddData = JSON.parse(oddData);
+    }
   } catch (error) {
     console.error("Failed to parse oddData:", error);
     return;
