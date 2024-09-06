@@ -1705,10 +1705,10 @@ async function tossOdds(req, res) {
   const market_id = req.params.market_id;
 
   console.log("=====- id--",market_id);
-  
+  const id=4
   try {
     // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
-    const sportsAPIUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${market_id}`;
+    const sportsAPIUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${id}&marketId=${market_id}`;
     console.log("------------------http://sportzing.in:5505/api/getMarketsOdds")
     const header = {
       headers: {
