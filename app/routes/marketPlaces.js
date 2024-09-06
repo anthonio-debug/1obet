@@ -301,9 +301,9 @@ async function saveOdds(oddData, sportsId) {
 
 async function getOdds(marketIds, sportsId) {
   return new Promise(async (resolve, reject) => {
-    const marketId2= "1.232545953"
+    
     const odds = [];
-    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketId2}`;
+    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
     // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
     
       const response = await axios.get(oddUrl);
