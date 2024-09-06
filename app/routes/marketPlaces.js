@@ -389,6 +389,10 @@ async function cronOdds2(eventId, sportID) {
           runnerName: runner.runnerName,
         }));
 
+        if (element.marketName==="To Win the Toss"){
+          sendMarketIds.push(element.marketId)
+        }
+
         bookmakerMarketIds.push(element.marketId);
 
         const marketID = await MarketIDS.findOne({
