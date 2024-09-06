@@ -683,7 +683,7 @@ async function processQueue() {
       await session.startTransaction();
       const payload = req.query;
       const transactionId = payload.transaction_id;
-      if (!payload.round_id) {
+      if (payload.gameplay_final=="1") {
         await User.updateOne({ remoteId: parseInt(payload.remote_id) }, { $set: { exposure: 0 } } );
         return 
       }
