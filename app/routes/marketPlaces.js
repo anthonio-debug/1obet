@@ -247,10 +247,11 @@ async function activateEvent(req, res) {
 ////////////////////////////mmmmmmmmmmmmmmmmm
 async function saveOdds(oddData, sportsId) {
   try {
-    console.log("{}{}{}{}{}{}{}{{}{}{}",oddData );
+    
     
     if (typeof oddData === 'string') {
       oddData = JSON.parse(oddData);
+      console.log("{}{}{}{}{}{}{}{{}{}{}",oddData );
     }
   } catch (error) {
     console.error("Failed to parse oddData:", error);
