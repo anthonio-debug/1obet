@@ -3419,7 +3419,7 @@ async function getUserBets(req, res) {
       });
     }
     if (req.body.sportsId == "6") {
-      await CasinoCalls.paginate(query, { page: page, sort: { [sortValue]: sort }, limit: limit }, (err, results) => {
+      await Cash.paginate(query, { page: page, sort: { [sortValue]: sort }, limit: limit }, (err, results) => {
         if (err) return res.status(404).send({ message: `Something went wrong  ${err} ` });
         return res.send({
           success: true,
