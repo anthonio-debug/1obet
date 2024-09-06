@@ -691,28 +691,26 @@ async function processQueue() {
         return res.json({ status: 500, msg: 'Internal Error: no User' });
       }
   
-      // Check if the transaction ID is present and processed
+      // Check if the transaction ID is already processed
       if (!transactionId) {
         // Transaction ID is not found, reset exposure to zero
-        await User.updateOne({ remoteId: parseInt(payload.remote_id) }, {
-          $set: { exposure: 0 }
-        });
+        await settleExposure(currentUser);
   
         // Abort the transaction since the transaction ID does not exist
         await session.abortTransaction();
   
         // Return response indicating successful processing
-        return res.json({
-          status: 200,
-          balance: currentUser.availableBalance / casinoMultiples
-        });
+        // return res.json({
+        //   status: 200,
+        //   balance: currentUser.availableBalance / casinoMultiples
+        // });
       }
   
       if (transactionIdMap.has(transactionId)) {
         await session.abortTransaction();
         return res.json({
           status: 200,
-          balance: currentUser.availableBalance / casinoMultiples
+          balance: currentUser.availableBalance / casinoMultiples,
         });
       } else {
         transactionIdMap.set(transactionId, transactionId);
@@ -736,7 +734,7 @@ async function processQueue() {
       }
   
       // Fetch the user again for the transaction
-      const user = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
+      const user = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
       if (!user) {
         await session.abortTransaction();
         return res.json({ status: 500, msg: 'Internal error: no user' });
@@ -766,7 +764,7 @@ async function processQueue() {
       await session.commitTransaction();
   
       // Fetch the updated user information
-      const updatedUser = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
+      const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
   
       return res.json({
         status: 200,
@@ -794,19 +792,19 @@ async function processQueue() {
   return attemptTransaction(retryCount);
 }
 
-// async function settleExposure(user) {
-//   try {
-//     const exposure = await calculateExposure(user.remoteId);
-//     if (exposure > 0) {
-//       await User.updateOne(
-//         { remoteId: user.remoteId },
-//         { $set: { exposure: 0 } } 
-//       );
-//     }
-//   } catch (err) {
-//     console.error('Failed to settle exposure:', err);
-//   }
-// }
+async function settleExposure(user) {
+  try {
+    const exposure = await calculateExposure(user.remoteId);
+    if (exposure > 0) {
+      await User.updateOne(
+        { remoteId: user.remoteId },
+        { $set: { exposure: 0 } } 
+      );
+    }
+  } catch (err) {
+    console.error('Failed to settle exposure:', err);
+  }
+}
 async function debitFun(req, res) {
   requestQueue.push({ req, res }); 
   if (!processing) {
