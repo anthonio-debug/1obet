@@ -1292,6 +1292,9 @@ async function cronOdds2(req, res) {
         if (element.marketName === 'Match Odds' || element.marketName === 'To Win the Toss' || element.marketName === 'Bookmaker') {
           sendMarketIds.push(element.marketId);
 
+          console.log("element.marketName=-=-=-=-=-", element.marketName);
+          
+
           const marketID = await MarketIDS.findOne({
             eventId: eventId,
             marketId: element.marketId,
