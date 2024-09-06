@@ -683,10 +683,7 @@ async function processQueue() {
       await session.startTransaction();
       const payload = req.query;
       const transactionId = payload.transaction_id;
-      if (!payload.round_id) {
-        await User.updateOne({ remoteId: parseInt(payload.remote_id) }, { $set: { exposure: 0 } } );
-        return 
-      }
+      
   
       // Fetch the user based on remoteId
       const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
@@ -756,7 +753,10 @@ async function processQueue() {
   
       // Fetch the updated user information
       const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
-  
+      if (payload.gameplay_final=="1") {
+        await User.updateOne({ remoteId: parseInt(payload.remote_id) }, { $set: { exposure: 0 } } );
+        
+      }
       return res.json({
         status: 200,
         balance: updatedUser.availableBalance / casinoMultiples
