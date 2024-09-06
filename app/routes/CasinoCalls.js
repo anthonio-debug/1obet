@@ -694,7 +694,9 @@ async function processQueue() {
       // Check if the transaction ID is already processed
       if (!transactionId) {
         // Transaction ID is not found, reset exposure to zero
-        await settleExposure(currentUser);
+        await User.updateOne({ remoteId: parseInt(payload.remote_id) }, {
+           $set: { exposure: 0 } 
+        })
   
         // Abort the transaction since the transaction ID does not exist
         await session.abortTransaction();
@@ -792,19 +794,19 @@ async function processQueue() {
   return attemptTransaction(retryCount);
 }
 
-async function settleExposure(user) {
-  try {
-    const exposure = await calculateExposure(user.remoteId);
-    if (exposure > 0) {
-      await User.updateOne(
-        { remoteId: user.remoteId },
-        { $set: { exposure: 0 } } 
-      );
-    }
-  } catch (err) {
-    console.error('Failed to settle exposure:', err);
-  }
-}
+// async function settleExposure(user) {
+//   try {
+//     const exposure = await calculateExposure(user.remoteId);
+//     if (exposure > 0) {
+//       await User.updateOne(
+//         { remoteId: user.remoteId },
+//         { $set: { exposure: 0 } } 
+//       );
+//     }
+//   } catch (err) {
+//     console.error('Failed to settle exposure:', err);
+//   }
+// }
 async function debitFun(req, res) {
   requestQueue.push({ req, res }); 
   if (!processing) {
