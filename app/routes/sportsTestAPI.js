@@ -1743,7 +1743,7 @@ router.get('/track-bet/lithylAPI/getAllMarketList/:match_id', getAllMarketList)
 router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFancyBookmakerByMatchId)
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
-router.get('/track-bet/lithylAPI/getOdds/:market_id', tossOdds)
+router.get('/track-bet/lithylAPI/tossOdds/:market_id', tossOdds)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/testing', testing)
 /////////////////
