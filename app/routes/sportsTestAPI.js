@@ -1131,6 +1131,8 @@ async function cronOdds2(req, res) {
 
   // console.log ("+_+_+_++_+_++_+ SportsId +_+", sportID)
 
+  const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
+
   const bookmakerUrl = `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
 
   try {
