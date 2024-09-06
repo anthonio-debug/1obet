@@ -598,7 +598,7 @@ function createHashKey(salt, queryString) {
 }
 
 async function balanceFun(req, res) {
-  // console.log("balanceeeeeeeeeeee Arham ------------")
+  console.log("balanceeeeeeeeeeee Arham ------------")
   const payload = req.query;
   const salt = saltKey;
   const key = payload.key;
@@ -816,7 +816,7 @@ async function debitFun(req, res) {
 
 async function creditFun(req, res) {
   
-
+  console.log("crediiiiiiiiiiiiiiiit arham ")
   const session = dbClient.startSession();
   try {
     const payload = req.query;
@@ -903,7 +903,7 @@ async function creditFun(req, res) {
 
 async function rollbackFun(req, res) {
   
-
+  console.log("rooooooooooooooooolllllllback arham ")
   const session = dbClient.startSession();
   try {
     const payload = req.query;
