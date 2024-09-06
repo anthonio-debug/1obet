@@ -638,7 +638,7 @@ async function calculateExposure(userId) {
   }
 }
 
-const requestQueue = []; 
+// const requestQueue = []; 
 let processing = false; 
 async function processQueue() {
   if (processing || requestQueue.length === 0) return;
