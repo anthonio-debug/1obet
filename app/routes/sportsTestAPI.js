@@ -1493,20 +1493,14 @@ async function testing(req, res) {
   try {
     const currentTime = Date.now();
     const { sportsId, marketIds } = req.params;
-
+console.log("testing running ")
     // const formattedTime = currentTime.toLocaleTimeString();
     // console.log(currentTime, "//////");
-    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
-    const header = {
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-        "X-App": process.env.XAPP_NAME,
-        "Cache-Control": "no-cache"
-      },
-    };
+    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
+   
+  
 
-    const response = await axios.get(oddUrl, header);
+    const response = await axios.get(oddUrl);
       console.log("MMMMMMMMMMMMMMMM--getOdds response toss ", response.data);
       
     // const marketsData = response.data;
@@ -1724,7 +1718,7 @@ router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFan
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
 router.get('/track-bet/updateUserName', updateUserName)
-router.get('/track-bet/testing/:sportsId/: marketIds', testing)
+router.get('/track-bet/testing/: marketIds', testing)
 /////////////////
 
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
