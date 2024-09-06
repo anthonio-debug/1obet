@@ -1704,12 +1704,12 @@ async function getOddsFromlithylAPI(req, res) {
 async function tossOdds(req, res) {
   const market_id = req.params.market_id;
 
-  console.log("MMMMMMMMMMMMM id--",market_id);
+  console.log("=====- id--",market_id);
   
   try {
     // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
     const sportsAPIUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${market_id}`;
-    console.log("------------------http://sportzing.in:5505/api/getGreyHoundMatches")
+    console.log("------------------http://sportzing.in:5505/api/getMarketsOdds")
     const header = {
       headers: {
         accept: "application/json",
