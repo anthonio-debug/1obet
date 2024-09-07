@@ -95,7 +95,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
-     
+      if (payload.amount == 0) {
+        await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
+       
+      }
       const gamesList = await SelectedCasino.findOne(
         { "games.id": payload.game_id },
         { "games.$": 1 }
@@ -163,10 +166,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           },
           { session }
         );
-        if (payload.amount == 0) {
-          await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
-         console.log("exposssssssssssssssssssssssssssssssssssssssssssssure 0 Arham")
-        }
+
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
         console.log("My log ---------------------------", lastMaxWithdraw)
         //divide lost money to all share holders.
