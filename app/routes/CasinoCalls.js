@@ -178,7 +178,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               description: `Casino (${GameName})`,
               date: now.getTime(),
               createdAt: formattedDate,
-              amount: -bettor_lost_amount,
+              amount: -bettor_lost_amount,  
               balance,
               availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
               maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
