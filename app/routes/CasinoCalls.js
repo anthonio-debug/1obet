@@ -95,10 +95,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
-      if (payload.amount == 0) {
-        await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
-       
-      }
+     
       const gamesList = await SelectedCasino.findOne(
         { "games.id": payload.game_id },
         { "games.$": 1 }
@@ -159,7 +156,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           {
             $set: {
               availableBalance: updatedavailableBalance,
-              exposure: 0,
+              exposure: UpdatedExposure,
               clientPL: updatedclientPL,
               balance: updatedbalance
             }
@@ -306,7 +303,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               $set: {
                 availableBalance: availableBalance,
                 clientPL: clientPL,
-                balance: balance
+                balance: balance,
+                exposure:0
               }
             },
             { session }
@@ -349,6 +347,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         //end of code to give lost money to all share holders
         const casinoDebits = new CasinoDebits(payload);
         await casinoDebits.save();
+        await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
+       
       } else if (difference > 0) {
         // Win some Amount
 
