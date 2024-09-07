@@ -826,7 +826,7 @@ async function saveOdds(oddData, sportsId) {
     return;
 }
 
-  // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
+  console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
   const runners = [];
 
   for (const runner of oddData.runners) {
@@ -844,7 +844,7 @@ async function saveOdds(oddData, sportsId) {
   }
   // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-  runners",runners)
 
-  // console.log("=-=-==-=-=-====-=- saveodds runig");
+  console.log("=-=-==-=-=-====-=- saving odds");
  
   
   // console.log("????????????????",oddData.eventid);
@@ -905,7 +905,8 @@ async function getOdds(marketIds, sportsId) {
      const oddUrl = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
     
       const response = await axios.get(oddUrl);
-      // console.log(response, "================///============");
+
+      console.log("================///============", response);
       
       
     // console.log("+=-=--=-=-=-=-=-=--=-=-==- get Odds limitless markets",oddUrl);
@@ -1139,7 +1140,7 @@ async function cronOdds2(req, res) {
     const response = await axios.get(url);
     const bookmakerResponse = await axios.get(bookmakerUrl);
 
-    console.log("=-=-==-=--=-=-=-=-=-=-=-  response", response.data);
+    console.log("=-=-==-=--=-=-=-=-=-=-=-  bookmakerResponse", bookmakerResponse.data);
     const bookMakerData = bookmakerResponse.data;
     const marketsData = response.data;
     const sendMarketIds = [];
@@ -1200,7 +1201,7 @@ async function cronOdds2(req, res) {
         }));
         console.log("element.marketName===[[[[[[[[[[[", element.marketName);
 
-        if (element.marketName === "To Win the Toss") {
+        if (element.marketName === "To Win the Toss" || element.marketName === "Tied Match") {
           sendMarketIds.push(element.marketId)
           console.log("element.marketName===----", element.marketName);
 
