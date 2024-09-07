@@ -819,12 +819,13 @@ async function getRelatedMarkets(req, res) {
   }
 }
 async function saveOdds(oddData, sportsId) {
-  try {
-    oddData = JSON.parse(oddData);
-} catch (error) {
-    console.error("Failed to parse oddData:", error);
-    return;
-}
+  console.log("MM befor parsing-=-=-=-=-=-=-",oddData)
+//   try {
+//     oddData = JSON.parse(oddData);
+// } catch (error) {
+//     console.error("Failed to parse oddData:", error);
+//     return;
+// }
 
   console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
   const runners = [];
@@ -1055,7 +1056,7 @@ async function cronOdds2(req, res) {
     const response = await axios.get(url);
     const bookmakerResponse = await axios.get(bookmakerUrl);
 
-    console.log("=-=-==-=--=-=-=-=-=-=-=-  bookmakerResponse", bookmakerResponse.data);
+    // console.log("=-=-==-=--=-=-=-=-=-=-=-  bookmakerResponse", bookmakerResponse.data);
     const bookMakerData = bookmakerResponse.data;
     const marketsData = response.data;
     const sendMarketIds = [];
