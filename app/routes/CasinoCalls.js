@@ -97,7 +97,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const user_prev_exposure = user.exposure;
       if (payload.amount == 0) {
         await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
-        return
+       
       }
       const gamesList = await SelectedCasino.findOne(
         { "games.id": payload.game_id },
