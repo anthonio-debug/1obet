@@ -49,6 +49,141 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
+async function processCasinoDebits(payload, session) {
+  var gamesList = await SelectedCasino.findOne(
+    { "games.id": payload.game_id },
+    { "games.$": 1 }
+  );
+
+  var game = gamesList?.games[0];
+
+  var lastDebits = await CasinoDebits.find({
+    action: 'debit',
+    game_id: payload.game_id,
+    round_id: payload.round_id,
+    remote_id: Number(payload.remote_id)
+  });
+
+  var debit = 0;
+  for (var lastDebit of lastDebits) {
+    debit += Number(lastDebit.amount);
+  }
+
+  var credit = Number(payload.amount);
+  var difference = credit - debit;
+  var allTrans = [];
+  var betTime = new Date().getTime();
+
+  if (difference < 0) {
+    var GameName = game ? game.name : 'N/A';
+
+    var updatedavailableBalance = user.availableBalance + (credit * casinoMultiples);
+    var updatedclientPL = Number((user.clientPL + (difference * casinoMultiples)).toFixed(3));
+    var updatedbalance = Number((user.balance + (difference * casinoMultiples)).toFixed(3));
+    var bettor_lost_amount = Number(((debit - credit) * casinoMultiples).toFixed(3));
+
+    await users.updateOne(
+      { _id: user?._id },
+      {
+        $set: {
+          availableBalance: updatedavailableBalance,
+          clientPL: updatedclientPL,
+          balance: updatedbalance
+        }
+      },
+      { session }
+    );
+
+    var lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
+    var balance = lastMaxWithdraw ? lastMaxWithdraw.balance - bettor_lost_amount : -bettor_lost_amount;
+
+    if (balance < 0) {
+      log(
+        JSON.stringify({
+          userId: user.userId,
+          description: `Casino (${GameName})`,
+          amount: -bettor_lost_amount,
+          balance: balance
+        }),
+        path.join(__dirname, '../../../', 'log1.log')
+      );
+    } else {
+      log(
+        JSON.stringify({
+          userId: user.userId,
+          description: `Casino (${GameName})`,
+          amount: -bettor_lost_amount,
+          balance: balance
+        }),
+        path.join(__dirname, '../../../', 'log2.log')
+      );
+    }
+
+    var BettorLostTran = {
+      userId: user.userId,
+      description: `Casino (${GameName})`,
+      amount: -bettor_lost_amount,
+      balance: balance
+    };
+    allTrans.push(BettorLostTran);
+
+    var parentUserIds = [];
+    var currentUserId = user.userId;
+    while (currentUserId) {
+      var parentUser = await users.findOne({ userId: currentUserId }, { session });
+      if (parentUser.role == "0") break;
+      parentUserIds.push(parentUser.createdBy);
+      currentUserId = parentUser.createdBy;
+    }
+
+    var parentUsers = await users.find({ userId: { $in: parentUserIds }, isDeleted: false }).sort({ role: -1 }).toArray();
+    if (!parentUsers) return res.json({ status: '500', msg: `Internal Server Error` });
+
+    var commissionFrom = user.userId;
+    var upMovingAmount = bettor_lost_amount;
+    var prev = 0;
+
+    for (var parentUser of parentUsers) {
+      var current = parentUser.downLineShare;
+      parentUser["commission"] = current - prev;
+      prev = current;
+    }
+
+    for (var parentUser of parentUsers) {
+      var availableBalance = Number((parentUser.availableBalance + (parentUser.commission / 100) * bettor_lost_amount).toFixed(3));
+      var balance = Number((parentUser.balance + (parentUser.commission / 100) * bettor_lost_amount).toFixed(3));
+      var clientPL = parentUser.clientPL - parentUser.downLineShare !== 100 ? Number((parentUser.clientPL - ((100 - parentUser.downLineShare) / 100) * bettor_lost_amount).toFixed(3)) : 0;
+
+      await users.updateOne(
+        { _id: parentUser?._id },
+        {
+          $set: {
+            availableBalance: availableBalance,
+            clientPL: clientPL,
+            balance: balance
+          }
+        },
+        { session }
+      );
+
+      var lastMaxWithdraw = await Cash.findOne({ userId: parentUser.userId }).sort({ _id: -1 });
+      var betTransaction = {
+        userId: parentUser.userId,
+        description: `Casino (${GameName})`,
+        amount: (parentUser.commission / 100) * bettor_lost_amount,
+        balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (parentUser.commission / 100) * bettor_lost_amount : (parentUser.commission / 100) * bettor_lost_amount
+      };
+
+      allTrans.push(betTransaction);
+      upMovingAmount = Number((upMovingAmount - (parentUser.commission / 100) * bettor_lost_amount).toFixed(3));
+      commissionFrom = parentUser.userId;
+    }
+
+    await Cash.insertMany(allTrans);
+    var casinoDebits = new CasinoDebits(payload);
+    await casinoDebits.save();
+  }
+}
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
@@ -95,7 +230,11 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
-     
+      if (payload.amount == 0) {
+        await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
+        processCasinoDebits(payload,session)
+        return
+      }
       const gamesList = await SelectedCasino.findOne(
         { "games.id": payload.game_id },
         { "games.$": 1 }
@@ -165,17 +304,17 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         );
 
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-        console.log("My log ---------------------------", lastMaxWithdraw)
+
         //divide lost money to all share holders.
         const balance = lastMaxWithdraw ? lastMaxWithdraw.balance - bettor_lost_amount : -bettor_lost_amount
         if (balance < 0) {
           log(
             `${JSON.stringify({
-              userId: user.userId,   
+              userId: user.userId,
               description: `Casino (${GameName})`,
               date: now.getTime(),
-              createdAt: formattedDate,  
-              amount: -bettor_lost_amount,  
+              createdAt: formattedDate,
+              amount: -bettor_lost_amount,
               balance,
               availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
               maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
@@ -303,8 +442,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               $set: {
                 availableBalance: availableBalance,
                 clientPL: clientPL,
-                balance: balance,
-                exposure:0
+                balance: balance
               }
             },
             { session }
@@ -347,8 +485,6 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         //end of code to give lost money to all share holders
         const casinoDebits = new CasinoDebits(payload);
         await casinoDebits.save();
-        await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
-       
       } else if (difference > 0) {
         // Win some Amount
 
