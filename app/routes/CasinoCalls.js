@@ -231,7 +231,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
       if (payload.amount == 0) {
-        await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
+        await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } },{session})
         processCasinoDebits(payload,session,user)
         return
       }
