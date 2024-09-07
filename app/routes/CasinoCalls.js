@@ -390,7 +390,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               availableBalance: updatedavailableBalance,
               clientPL: updatedclientPL,
               balance: updatedbalance,
-              exposure: UpdatedExposure,
+              exposure: 0,
             }
           },
           { session }
@@ -556,7 +556,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         // console.log("arham exposureeeeeeeeeeeee winloose addiotn credit df 0",UpdatedExposure )
         await users.updateOne(
           { _id: user?._id },
-          { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure } },
+          { $set: { availableBalance: updatedavailableBalance, exposure: 0 } },
           { session }
         );
 
