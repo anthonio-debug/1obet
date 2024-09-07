@@ -165,7 +165,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         );
         if (payload.amount == 0) {
           await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
-         
+         console.log("exposssssssssssssssssssssssssssssssssssssssssssssure 0 Arham")
         }
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
         console.log("My log ---------------------------", lastMaxWithdraw)
