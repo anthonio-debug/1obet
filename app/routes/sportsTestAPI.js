@@ -1710,7 +1710,6 @@ async function getHorseRaceMatches(req, res) {
   try {
     // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
     const sportsAPIUrl = `http://sportzing.in:5505/api/getHorseRaceMatches`;
-    // const sportsAPIUrl2 = `http://sportzing.in:5505/api/getHorseRaceMatches`;
     
     console.log("------------------http://sportzing.in:5505/api/getHorseRaceMatches")
     const header = {
