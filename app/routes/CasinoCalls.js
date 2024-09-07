@@ -129,7 +129,7 @@ async function processCasinoDebits(payload, session,user) {
     var parentUserIds = [];
     var currentUserId = user.userId;
     while (currentUserId) {
-      var parentUser = await users.findOne({ userId: currentUserId }, { session });
+      var parentUser = await users.findOne({ userId: currentUserId });
       if (parentUser.role == "0") break;
       parentUserIds.push(parentUser.createdBy);
       currentUserId = parentUser.createdBy;
