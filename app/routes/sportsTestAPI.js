@@ -1721,7 +1721,7 @@ async function getHorseRaceMatches(req, res) {
     };
    
 
-    const response = await axios.get(sportsAPIUrl, header);
+    const response = await axios.get(sportsAPIUrl);
       console.log("MMMMMMMMMMMMMMMM--getHorseRaceMatches response ", response.data);
       
     // const marketsData = response.data;
