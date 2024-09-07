@@ -168,16 +168,16 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         );
 
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-
+        console.log("My log ---------------------------", lastMaxWithdraw)
         //divide lost money to all share holders.
         const balance = lastMaxWithdraw ? lastMaxWithdraw.balance - bettor_lost_amount : -bettor_lost_amount
         if (balance < 0) {
           log(
             `${JSON.stringify({
-              userId: user.userId,
+              userId: user.userId,   
               description: `Casino (${GameName})`,
               date: now.getTime(),
-              createdAt: formattedDate,
+              createdAt: formattedDate,  
               amount: -bettor_lost_amount,  
               balance,
               availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
