@@ -394,11 +394,11 @@ async function cronOdds2(eventId, sportID) {
         }));
         console.log("element.marketName===[[[[[[[[[[[", element.marketName);
 
-        // if (element.marketName === "To Win the Toss") {
-        //   sendMarketIds.push(element.marketId)
-        //   console.log("element.marketName===----", element.marketName);
+        if (element.marketName === "To Win the Toss") {
+          sendMarketIds.push(element.marketId)
+          console.log("element.marketName===----", element.marketName);
 
-        // }
+        }
 
         bookmakerMarketIds.push(element.marketId);
 

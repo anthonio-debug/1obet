@@ -900,8 +900,9 @@ async function saveOdds(oddData, sportsId) {
 async function getOdds(marketIds, sportsId) {
   return new Promise(async (resolve, reject) => {
     const odds = [];
-    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+    // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
     // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
+     const oddUrl = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
     
       const response = await axios.get(oddUrl);
       // console.log(response, "================///============");
@@ -1132,17 +1133,21 @@ async function cronOdds2(req, res) {
   // console.log ("+_+_+_++_+_++_+ SportsId +_+", sportID)
 
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
+  const bookmakerUrl = `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
 
   try {
     const response = await axios.get(url);
+    const bookmakerResponse = await axios.get(bookmakerUrl);
 
-    // console.log("=-=--==---=-=--=-===--= market api response", response);
-    
+    console.log("=-=-==-=--=-=-=-=-=-=-=-  response", response.data);
+    const bookMakerData = bookmakerResponse.data;
     const marketsData = response.data;
     const sendMarketIds = [];
+    const bookmakerMarketIds = [];
     // console.log(marketsData, "||||||||||||||||||||");
     const marketStatus = 'OPEN';
 
+    // Handle Market Data
     if (marketsData && marketsData.length > 0) {
       for (const element of marketsData) {
         const tempRunners = element.runners.map(runner => ({
@@ -1151,9 +1156,8 @@ async function cronOdds2(req, res) {
         }));
 
         if (element.marketName === 'Match Odds') {
-          
           sendMarketIds.push(element.marketId);
-          
+
           const marketID = await MarketIDS.findOne({
             eventId: eventId,
             marketId: element.marketId,
@@ -1164,44 +1168,184 @@ async function cronOdds2(req, res) {
               eventId: eventId,
               marketId: element.marketId,
               marketName: element.marketName,
-              sportID: '4',
+              sportID: sportID,
               totalMatched: element.totalMatched,
+              openDate: Date.parse(element.marketStartTime),
               status: marketStatus,
               index: 0,
               runners: tempRunners,
               inPlay: true,
             });
 
-            // console.log("Saving new market: ", newMarket);
+            console.log("Saving new market: ", newMarket);
             await newMarket.save();
-          }else{
-            await MarketIDS.findOneAndUpdate({eventId: eventId,marketId: element.marketId,}, {$set:{
-              totalMatched:element.totalMatched,
-            }} )
+          } else {
+            console.log("{{}{}}{{}{}{}}} updating market id collec for match odds");
+            await MarketIDS.findOneAndUpdate(
+              { eventId: eventId, marketId: element.marketId },
+              { $set: { totalMatched: element.totalMatched } }
+            );
           }
         }
       }
     }
 
-    
-    // const sendMarketIds = ["1.232001727"];
+    // Handle Bookmaker Data
 
+    if (bookMakerData && bookMakerData.length > 0) {
+      for (const element of bookMakerData) {
+        const bookmakerRunners = element.runners.map(runner => ({
+          SelectionId: runner.selectionId,
+          runnerName: runner.runnerName,
+        }));
+        console.log("element.marketName===[[[[[[[[[[[", element.marketName);
+
+        if (element.marketName === "To Win the Toss") {
+          sendMarketIds.push(element.marketId)
+          console.log("element.marketName===----", element.marketName);
+
+        }
+
+        bookmakerMarketIds.push(element.marketId);
+
+        const marketID = await MarketIDS.findOne({
+          eventId: eventId,
+          marketId: element.marketId,
+        });
+
+        if (!marketID) {
+          let marketTime = element.marketStartTime
+          if (!marketTime) {
+            marketTime = 0
+          } else {
+            marketTime = Date.parse(marketTime)
+          }
+          const newBookmakerMarket = new MarketIDS({
+            eventId: eventId,
+            marketId: element.marketId,
+            marketName: element.marketName,
+            sportID: sportID,
+            totalMatched: element.totalMatched,
+            openDate: marketTime,
+            status: marketStatus,
+            index: 0,
+            runners: bookmakerRunners,
+            inPlay: true,
+          });
+
+          console.log("Saving new bookmaker market: ", newBookmakerMarket);
+          await newBookmakerMarket.save();
+        }
+        // else {
+        //   console.log("Updating market id collection for bookmaker market");
+        //   await MarketIDS.findOneAndUpdate(
+        //     { eventId: eventId, marketId: element.marketId },
+        //     { $set: { totalMatched: element.totalMatched } }
+        //   );
+        // }
+      }
+    }
+
+    // Get odds for the standard markets
     let result = [];
-    // console.log(result,"=-=-=---=-=---=--=");
-    
     console.log("Sending market ids:", sendMarketIds);
     for (const marketId of sendMarketIds) {
-      // console.log("===================================================================================5");
+      console.log("===================================================================================5");
       const odds = await getOdds(marketId, sportID);
       result = [...result, ...odds];
     }
 
-    res.json({ status: true, data: "Result: " , result });
+    // Get odds for the bookmaker markets
+    // console.log("Sending bookmaker market ids:", bookmakerMarketIds);
+    // for (const marketId of bookmakerMarketIds) {
+    //   const bookmakerOdds = await getOdds(marketId, sportID);
+    //   result = [...result, ...bookmakerOdds];
+    // }
+
+    res.json({ status: true, data: "Result: ", result });
 
   } catch (error) {
-    res.status(500).json({ success: false, msg: "Failed to get data. Error: " + error.message });
+    console.log({ msg: "Failed to get data. Error: " + error.message });
   }
 }
+////////////////// today end
+// async function cronOdds2(req, res) {
+//   // console.log("===================================================================================3");
+//   const { eventId, sportID } = req.params;
+
+//   // console.log ("+_+_+_++_+_++_+ SportsId +_+", sportID)
+
+//   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
+
+//   try {
+//     const response = await axios.get(url);
+
+//     // console.log("=-=--==---=-=--=-===--= market api response", response);
+    
+//     const marketsData = response.data;
+//     const sendMarketIds = [];
+//     // console.log(marketsData, "||||||||||||||||||||");
+//     const marketStatus = 'OPEN';
+
+//     if (marketsData && marketsData.length > 0) {
+//       for (const element of marketsData) {
+//         const tempRunners = element.runners.map(runner => ({
+//           SelectionId: runner.selectionId,
+//           runnerName: runner.runnerName,
+//         }));
+
+//         if (element.marketName === 'Match Odds') {
+          
+//           sendMarketIds.push(element.marketId);
+          
+//           const marketID = await MarketIDS.findOne({
+//             eventId: eventId,
+//             marketId: element.marketId,
+//           });
+
+//           if (!marketID) {
+//             const newMarket = new MarketIDS({
+//               eventId: eventId,
+//               marketId: element.marketId,
+//               marketName: element.marketName,
+//               sportID: '4',
+//               totalMatched: element.totalMatched,
+//               status: marketStatus,
+//               index: 0,
+//               runners: tempRunners,
+//               inPlay: true,
+//             });
+
+//             // console.log("Saving new market: ", newMarket);
+//             await newMarket.save();
+//           }else{
+//             await MarketIDS.findOneAndUpdate({eventId: eventId,marketId: element.marketId,}, {$set:{
+//               totalMatched:element.totalMatched,
+//             }} )
+//           }
+//         }
+//       }
+//     }
+
+    
+//     // const sendMarketIds = ["1.232001727"];
+
+//     let result = [];
+//     // console.log(result,"=-=-=---=-=---=--=");
+    
+//     console.log("Sending market ids:", sendMarketIds);
+//     for (const marketId of sendMarketIds) {
+//       // console.log("===================================================================================5");
+//       const odds = await getOdds(marketId, sportID);
+//       result = [...result, ...odds];
+//     }
+
+//     res.json({ status: true, data: "Result: " , result });
+
+//   } catch (error) {
+//     res.status(500).json({ success: false, msg: "Failed to get data. Error: " + error.message });
+//   }
+// }
 
 async function getTheSportsMatchScoreEvents(req, res) {
 
