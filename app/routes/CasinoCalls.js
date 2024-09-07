@@ -49,7 +49,7 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
-async function processCasinoDebits(payload, session) {
+async function processCasinoDebits(payload, session,user) {
   var gamesList = await SelectedCasino.findOne(
     { "games.id": payload.game_id },
     { "games.$": 1 }
@@ -232,7 +232,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const user_prev_exposure = user.exposure;
       if (payload.amount == 0) {
         await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
-        processCasinoDebits(payload,session)
+        processCasinoDebits(payload,session,user)
         return
       }
       const gamesList = await SelectedCasino.findOne(
