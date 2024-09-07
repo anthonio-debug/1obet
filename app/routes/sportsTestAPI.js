@@ -6,6 +6,7 @@ const MarketIDS = require("../models/marketIds")
 const Odds = require('../models/odds');
 const RaceOdds = require('../models/raceOdds');
 const FancyOdds = require('../models/fancyOdds');
+const inPlayEventsLithylapi = require('../models/inPlayEventsLithylapi');
 const axios = require('axios');
 const User = require('../models/user');
 const { fetchSession } = require("../../helper/api/sessionAPIHelper");
@@ -819,7 +820,7 @@ async function getRelatedMarkets(req, res) {
   }
 }
 async function saveOdds(oddData, sportsId) {
-  console.log("MM befor parsing-=-=-=-=-=-=-",oddData)
+  // console.log("MM befor parsing-=-=-=-=-=-=-",oddData)
   try {
     oddData = JSON.parse(oddData);
 } catch (error) {
@@ -827,7 +828,7 @@ async function saveOdds(oddData, sportsId) {
     return;
 }
 
-  console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
+  // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
   const runners = [];
 
   for (const runner of oddData.runners) {
@@ -1675,12 +1676,10 @@ async function getOddsFancyBookmakerByMatchId(req, res) {
   }
 }
 //////////////////// getGreyHoundMatches
-async function getGreyHoundMatches(req, res) {  
-
+async function getGreyHoundMatches(req, res) {
   try {
-    // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
     const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches`;
-    console.log("------------------http://sportzing.in:5505/api/getGreyHoundMatches")
+
     const header = {
       headers: {
         accept: "application/json",
@@ -1689,19 +1688,42 @@ async function getGreyHoundMatches(req, res) {
         "Cache-Control": "no-cache"
       },
     };
-   
 
     const response = await axios.get(sportsAPIUrl, header);
-      // console.log("MMMMMMMMMMMMMMMM--getGreyHoundMatches response ", response.data);
-      
-    // const marketsData = response.data;
+
     const GreyHoundMatches = response.data;
+
+    for (const match of GreyHoundMatches) {
+      const eventDocument = {
+        sportsId: match.marketId,
+        sport: match.marketName,
+        competitionId: match.event.id,
+        competitionName: match.event.name,
+        Id: match.event.id,
+        name: match.event.name,
+        countryCode: match.event.countryCode,
+        timezone: match.event.timezone,
+        openDate: new Date(match.event.openDate).getTime(),
+        inplay: false,
+        inplayFromServer: false,
+        lastCheckMarket: 0,
+        isShowed: false,
+        status: "OPEN",
+        marketIds: [match.marketId],
+        type: 1,
+        venue: match.event.venue,
+        countryCodes: match.event.countryCode,
+        meetingName: match.event.name,
+        meetingOpenDate: match.event.openDate
+      };
+
+      const savedEvent = await inPlayEventsLithylapi.create(eventDocument);
+      console.log('Event saved successfully:', savedEvent);
+    }
 
     res.status(200).json({ success: true, data: GreyHoundMatches });
   } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, msg: "Failed to get Error: " + err.message });
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
 
