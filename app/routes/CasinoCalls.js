@@ -149,7 +149,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         // remove all exposure equal to total debit money of 1500
 
         const amount = Number((debit * config.casinoMultiples).toFixed(3));
-        const UpdatedExposure = Number((user.exposure + amount).toFixed(3));
+        const UpdatedExposure =0
         // //console.log("arham exposureeeeeeeeeeeee winloose addiotn credit",UpdatedExposure )
         await users.updateOne(
           { _id: user?._id },
@@ -163,10 +163,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           },
           { session }
         );
-        if (payload.amount == 0) {
-          await User.updateOne({ remoteId: user.remoteId }, { $set: { exposure: 0 } })
-         
-        }
+       
+     
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
         //console.log("My log ---------------------------", lastMaxWithdraw)
         //divide lost money to all share holders.
