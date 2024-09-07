@@ -90,8 +90,7 @@ async function processCasinoDebits(payload, session,user) {
           clientPL: updatedclientPL,
           balance: updatedbalance
         }
-      },
-      { session }
+      }
     );
 
     var lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
@@ -162,8 +161,7 @@ async function processCasinoDebits(payload, session,user) {
             clientPL: clientPL,
             balance: balance
           }
-        },
-        { session }
+        }
       );
 
       var lastMaxWithdraw = await Cash.findOne({ userId: parentUser.userId }).sort({ _id: -1 });
@@ -233,8 +231,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       if (payload.amount == 0) {
         await User.updateOne(
           { remoteId: user.remoteId },
-          { $set: { exposure: 0 } },
-          { session } 
+          { $set: { exposure: 0 } }
+         
         );
         processCasinoDebits(payload,session,user)
         return
