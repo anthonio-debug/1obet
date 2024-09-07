@@ -17,6 +17,7 @@ const Session = require('../models/Session');
 const inPlayEvents = require('../models/events');
 const userBetSizes = require('../models/userBetSizes');
 const BetLimits = require('../models/betLimits');
+const fancyOdds = require('../models/fancyOdds');
 
 require('dotenv').config()
 // console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -730,6 +731,7 @@ async function deleteOdds(req, res) {
   try {
     await Odds.deleteMany({  });
     await RaceOdds.deleteMany({  });
+    await fancyOdds.deleteMany({  });
     //await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
    // await MarketIDS.updateMany({ eventId: eventId }, { $set: { ReadyForOdds: true } });
     const response = await MarketIDS.aggregate([{ $project: { name: "$marketName" } }]);
