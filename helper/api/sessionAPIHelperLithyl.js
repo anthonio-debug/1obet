@@ -8,8 +8,26 @@ async function fetchSession(eventId) {
   const url = `${SESSION_API_URI}/getOFBData?id=${eventId}`
    
   try {
-    const response = await axios.get(url)
     
+    
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
+      },
+    };
+   
+
+    const response = await axios.get(url, header);
+
+
+
+
+
+
+
     let res = response.data;
     //console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: Data::::: ",res);
     let responseRet = ['fanciesArr','fanciesArr']
