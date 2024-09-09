@@ -1918,9 +1918,9 @@ const placeBet = async (req, res) => {
           apiFancyOddsRes = response.filter((item) => item.SelectionId === selectionId);
           // apiFancyOddsResponse.push(apiFancyOddsRes);
 
-          // console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
+           console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
 
-          const gameStatus = apiFancyOddsRes[0]?.GameStatus;
+          const gameStatus = apiFancyOddsRes[0]?.gstatus;
            console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
           // console.log(`GameStatus==================${gameStatus}`);
 
