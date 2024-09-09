@@ -6,7 +6,7 @@ async function fetchSession(eventId) {
   // const eventId = '33002177'
   // http://142.93.36.1/api/v2/getSessions?EventTypeID=4&matchId=33061168
   const url = `${SESSION_API_URI}/getOFBData?id=${eventId}`
-   console.log("Event for fancies is about to be fetched....................>>>>>>>>>>>>>>>>>>>",eventId);
+   
   try {
     
     
@@ -43,6 +43,11 @@ async function fetchSession(eventId) {
     responseRet['fanciesArr'] = res.t3;
   }
   if(res.t6){
+    if(eventId=="33557249"){
+      console.log("res.t6....................>>>>>>>>>>>>>>>>>>>",res.t6);
+    }
+    
+
     responseRet['oddevenArr'] = res.t6;
   }
     if(bookMakerArr.length>0){
