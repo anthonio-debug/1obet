@@ -28,11 +28,11 @@ function ToolForSessionFancy() {
   function buildFancyStructure2( bookmakerOdds, fancyOdds,oddevenOdds, eventId) {
     let t3 = []
     let bm = {}
-     console.log("bookmakerOdds.................................::",bookmakerOdds);
-     console.log("fancyOdds.................................::",fancyOdds);
-     console.log("oddevenOdds.................................::",oddevenOdds);
+    
      console.log("fancyOdds length.................................>>",fancyOdds.length);
      console.log("oddevenOdds length.................................>>",oddevenOdds.length);
+     console.log("bookmakerOdds length.................................>>",bookmakerOdds);
+
      
     if(oddevenOdds.length>0){
      for (const odd of oddevenOdds) {
