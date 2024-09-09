@@ -650,7 +650,7 @@ async function getOddsLimitlessByMarketId(req, res) {
    url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
   try {
     let response = await axios.get(url);
-    if(!response){
+    if(!response|| !response.data){
      url =`http://sportzing.in:5505/api/getOdds?market_id=${marketId}`
       response = await axios.get(url);
     }
