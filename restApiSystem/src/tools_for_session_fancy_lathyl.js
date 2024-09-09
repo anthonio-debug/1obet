@@ -29,7 +29,7 @@ function ToolForSessionFancy() {
     let t3 = []
     let bm = {}
     
-     console.log("fancyOdds length................",fancyOdds,".................>>",fancyOdds.length);
+     console.log("fancyOdds length................",oddevenOdds,".................>>",fancyOdds.length);
      console.log("oddevenOdds length...............",oddevenOdds,"..................>>",oddevenOdds.length);
      console.log("bookmakerOdds length.................................>>",bookmakerOdds);
 
