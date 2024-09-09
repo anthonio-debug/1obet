@@ -11,7 +11,7 @@ async function fetchSession(eventId) {
     const response = await axios.get(url)
     
     let res = response.data;
-    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: Data::::: ",res);
+    //console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: Data::::: ",res);
     let responseRet = ['fanciesArr','fanciesArr']
     let bookMakerArr = res.t2;
     let fanciesArr = res.t3;
