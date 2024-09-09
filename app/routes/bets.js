@@ -1921,7 +1921,7 @@ const placeBet = async (req, res) => {
           // console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
 
           const gameStatus = apiFancyOddsRes[0]?.GameStatus;
-          // console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
+           console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
           // console.log(`GameStatus==================${gameStatus}`);
 
           if (gameStatus === 'SUSPENDED' || gameStatus === 'Ball Running') {
