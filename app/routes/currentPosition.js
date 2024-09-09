@@ -364,8 +364,8 @@ const getHighlights = async (req, res) => {
                 $expr: {
                   $and: [
                     { $eq: ["$Id", "$$eventId"] },
-                    { $eq: ["$isShowed", true] },
                     { $eq: ["$CompanySetStatus", "OPEN"] },
+                    { $eq: ["$isShowed", true] }
                   ]
                 }
               }
@@ -387,6 +387,8 @@ const getHighlights = async (req, res) => {
           _id: "$_id",
           eventName: { $first: { $arrayElemAt: ["$inplayData.name", 0] } },
           openDate: { $first: { $arrayElemAt: ["$inplayData.openDate", 0] } },
+          CompanySetStatus: { $first: { $arrayElemAt: ["$inplayData.CompanySetStatus", 0] } },
+          isShowed: { $first: { $arrayElemAt: ["$inplayData.isShowed", 0] } },
           totalMatched: {
             $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] },
           },
@@ -397,27 +399,30 @@ const getHighlights = async (req, res) => {
           eventId: { $first: "$eventId" },
           sportID: { $first: "$sportID" }
         },
-      }],
-      (err, currentPositionData) => {
+      }
+    ])
+      .exec((err, currentPositionData) => {
         if (err) {
-          res.send({
+          console.error("Aggregation Error: ", err);
+          res.status(500).send({
             success: false,
             message: "Failed to get data",
-            error: err,
+            error: err.message,
           });
         } else {
+          console.log("Debug Inplay Data: ", currentPositionData.map(data => data.debug_inplayData));
           res.send({ success: true, message: "highlights records", results: currentPositionData });
         }
-      }
-    );
+      });
+
   } catch (err) {
-    res.send({
+    console.error("Error in getHighlights: ", err);
+    res.status(500).send({
       success: false,
       message: `Error: ${err.message}`,
     });
   }
 };
-
 const battorcurrentPosition = async (req, res) => {
   try {
     const userId = req.decoded.userId;
