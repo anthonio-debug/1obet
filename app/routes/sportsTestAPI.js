@@ -1199,7 +1199,9 @@ async function cronOdds2(req, res) {
   const { eventId, sportID } = req.params;
 
   // console.log ("+_+_+_++_+_++_+ SportsId +_+", sportID)
-
+  if (sportID !=="4"){
+    return res.status(401).send({ message: 'you can only fetch cricket Odds' });
+   }
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
 
   try {
