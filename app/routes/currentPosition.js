@@ -399,6 +399,22 @@ const getHighlights = async (req, res) => {
           eventId: { $first: "$eventId" },
           sportID: { $first: "$sportID" }
         },
+      },
+      {
+        $addFields: {
+          openDate: {
+            $dateToString: {
+              format: "%Y-%m-%d %H:%M:%S",  // Format the date as needed
+              date: { $toDate: "$openDate" },  // Convert timestamp to Date object
+              timezone: "UTC"  // Optional: specify timezone if necessary
+            }
+          }
+        }
+      },
+      {
+        $sort: {
+          openDate: -1
+        }
       }
     ])
       .exec((err, currentPositionData) => {
@@ -410,7 +426,6 @@ const getHighlights = async (req, res) => {
             error: err.message,
           });
         } else {
-          console.log("Debug Inplay Data: ", currentPositionData.map(data => data.debug_inplayData));
           res.send({ success: true, message: "highlights records", results: currentPositionData });
         }
       });
