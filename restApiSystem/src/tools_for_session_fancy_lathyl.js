@@ -64,7 +64,7 @@ function ToolForSessionFancy() {
     }
   }
 
-  if(fancyOdds!=0){
+  if(fancyOdds && fancyOdds!=0){
     for (const odd of fancyOdds) {
      //console.log("odd.gtype.......................:::",odd.gtype);
      
