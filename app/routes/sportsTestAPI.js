@@ -646,9 +646,14 @@ async function getBookmakersLimitlessByEventId(req, res) {
 
 async function getOddsLimitlessByMarketId(req, res) {
   const marketId = req.params.marketId;
-  const url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
+  let url;
+   url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
   try {
-    const response = await axios.get(url);
+    let response = await axios.get(url);
+    if(!response){
+     url =`http://sportzing.in:5505/api/getOdds?market_id=${marketId}`
+      response = await axios.get(url);
+    }
     res.status(200).json({ success: true, data: JSON.parse(response.data) });
   } catch (error) {
     res
@@ -1699,7 +1704,7 @@ async function getGreyHoundMatches(req, res) {
       const eventDocument = {
         sportsId: match.marketId,
         sport: match.marketName,
-        competitionId: match.event.id,
+        Id: match.event.id,
         competitionName: match.event.name,
         Id: match.event.id,
         name: match.event.name,
