@@ -18,6 +18,8 @@ const inPlayEvents = require('../models/events');
 const userBetSizes = require('../models/userBetSizes');
 const BetLimits = require('../models/betLimits');
 const fancyOdds = require('../models/fancyOdds');
+const Deposits = require('../models/deposits.js');
+const CasinoCalls = require('../models/casinoCalls.js');
 
 require('dotenv').config()
 // console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -770,6 +772,28 @@ async function deleteOdds(req, res) {
     console.error('Error updating odds:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
+}
+
+async function deleteDepositsAndCasinoCalls(req, res) {
+  const userId = req.params.userId
+  await Deposits.deleteMany({
+    userId: userId,
+    description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
+  })
+  .then(result => {
+    console.log(`${result.deletedCount} deposit(s) deleted.`);
+    
+  })
+  .catch(err => {
+    console.error("Error deleting deposits:", err);
+  });
+ 
+  await CasinoCalls.deleteMany({
+    username:"user_"+userId
+  })
+
+  return res.status(200).json({message:`${userId} records deleted in casino and deposits`})
+
 }
 
 async function getRelatedMarkets(req, res) {
@@ -1820,6 +1844,7 @@ router.get('/testSports/events', listEvents);
 router.get('/testSports/marketbooks/:ids', listMarketBook);
 router.get('/trackstuck/activeusers', activeUserExposure);
 router.get('/trackstuck/inactiveusers', inActiveUserExposure);
+router.get('/trackstuck/deposits-casinocalls-deletion/:userId', deleteDepositsAndCasinoCalls);
 router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
 
 router.get('/track-bet/testAPI/:marketId', testAPI)
