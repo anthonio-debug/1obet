@@ -29,12 +29,12 @@ function ToolForSessionFancy() {
     let t3 = []
     let bm = {}
     
-     console.log("fancyOdds length................",fancyOdds,".................>>",fancyOdds.length);
-     console.log("oddevenOdds length...............",oddevenOdds,"..................>>",oddevenOdds.length);
-     console.log("bookmakerOdds length.................................>>",bookmakerOdds);
+    //  console.log("fancyOdds length................",fancyOdds,".................>>",fancyOdds.length);
+    //  console.log("oddevenOdds length...............",oddevenOdds,"..................>>",oddevenOdds.length);
+    //  console.log("bookmakerOdds length.................................>>",bookmakerOdds);
 
      
-    if(oddevenOdds.length>0){
+    if(oddevenOdds!=0){
      for (const odd of oddevenOdds) {
       //console.log("odd.gtype.......................:::",odd.gtype);
       
@@ -63,7 +63,7 @@ function ToolForSessionFancy() {
     }
   }
 
-  if(fancyOdds.length>0){
+  if(fancyOdds!=0){
     for (const odd of fancyOdds) {
      //console.log("odd.gtype.......................:::",odd.gtype);
      
