@@ -1909,7 +1909,7 @@ const placeBet = async (req, res) => {
           await new Promise(resolve => setTimeout(resolve, 500));
           console.log("set time ", i)
           const response = await fetchSession(eventDetail.Id);
-          console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", response['fanciesArr']);
+          
           if (!Array.isArray(response['fanciesArr'])) {
             console.error("Expected an array but got:", response['fanciesArr']);
             return;
@@ -1918,7 +1918,7 @@ const placeBet = async (req, res) => {
           apiFancyOddsRes = response['fanciesArr'].filter((item) => item.sid === selectionId);
           // apiFancyOddsResponse.push(apiFancyOddsRes);
 
-           console.log("outside response..........................................:", apiFancyOddsRes);
+          
 
           const gameStatus = apiFancyOddsRes[0]?.gstatus;
            console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
@@ -2199,7 +2199,7 @@ const placeBet = async (req, res) => {
       }
       // const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
       let bookmakerOddsRes = await fetchBookmakerOdds(selectedMarketId);
-
+      console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:", bookmakerOddsRes);
       if (bookmakerOddsRes.length === 0) {
         activeBettors.delete(userId);
         return res.status(404).send({
