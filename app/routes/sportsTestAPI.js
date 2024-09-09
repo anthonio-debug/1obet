@@ -648,22 +648,22 @@ async function getBookmakersLimitlessByEventId(req, res) {
 
 async function getOddsLimitlessByMarketId(req, res) {
   const marketId = req.params.marketId;
-  let url;
-   url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
+  let url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
+  
   try {
     let response = await axios.get(url);
-    if(!response|| !response.data){
-      console.log("lithyl api code is running-=--=-===-=-");
-     url =`http://sportzing.in:5505/api/getOdds?market_id=${marketId}`
+    
+    if (!response || !response.data) {
+      url = `http://sportzing.in:5505/api/getOdds?market_id =${marketId}`;
       response = await axios.get(url);
     }
+    
     res.status(200).json({ success: true, data: JSON.parse(response.data) });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, msg: "Failed to get Error: " + error.message });
+    res.status(500).json({ success: false, msg: "Failed to get odds: " + error.message });
   }
 }
+
 async function getScoreLimitlessByEventId(req, res) {
   const eventId = req.params.eventId;
 
