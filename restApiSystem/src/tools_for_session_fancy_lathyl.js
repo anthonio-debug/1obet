@@ -34,8 +34,8 @@ function ToolForSessionFancy() {
     //  console.log("bookmakerOdds length.................................>>",bookmakerOdds);
 
      
-    if(oddevenOdds!=0){
-      console.log("oddevenOdds length...............",oddevenOdds,"..................>>",oddevenOdds);
+    if(oddevenOdds && oddevenOdds!=0){
+      console.log("oddevenOdds length...............",oddevenOdds,"..................",oddevenOdds);
      for (const odd of oddevenOdds) {
       //console.log("odd.gtype.......................:::",odd.gtype);
       
