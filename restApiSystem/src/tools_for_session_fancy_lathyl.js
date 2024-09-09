@@ -31,13 +31,15 @@ function ToolForSessionFancy() {
      console.log("bookmakerOdds.................................::",bookmakerOdds);
      console.log("fancyOdds.................................::",fancyOdds);
      console.log("oddevenOdds.................................::",oddevenOdds);
-     console.log("oddevenOdds.................................::",fancyOdds.length);
-    for (const odd of fancyOdds) {
+     console.log("fancyOdds length.................................>>",fancyOdds.length);
+     console.log("oddevenOdds length.................................>>",oddevenOdds.length);
+     
+    if(oddevenOdds.length>0){
+     for (const odd of oddevenOdds) {
       //console.log("odd.gtype.......................:::",odd.gtype);
-      if (odd.gtype === 'Fancy' || odd.gtype === 'oddeven') {
-        let gtype = 'session';
-        if(odd.gtype == 'oddeven')
-          gtype = 'oddeven';
+      
+        let gtype = 'oddeven';
+        
         t3.push({
           b1: odd.b1,
           b2: 0,
@@ -57,8 +59,41 @@ function ToolForSessionFancy() {
           sid: odd.sid,
           ssid: `${eventId}_${odd.sid}`,
         })
-      }
+      
     }
+  }
+
+  if(fancyOdds.length>0){
+    for (const odd of fancyOdds) {
+     //console.log("odd.gtype.......................:::",odd.gtype);
+     
+       let gtype = 'session';
+       
+       t3.push({
+         b1: odd.b1,
+         b2: 0,
+         b3: 0,
+         bs1: odd.bs1,
+         bs2: 0,
+         bs3: 0,
+         l1: odd.l1,
+         l2: 0,
+         l3: 0,
+         ls1: odd.ls1,
+         ls2: 0,
+         ls3: 0,
+         nat: odd.nat,
+         gstatus: odd.gstatus,
+         gtype: gtype,
+         sid: odd.sid,
+         ssid: `${eventId}_${odd.sid}`,
+       })
+     
+   }
+ }
+
+
+
 if(bookmakerOdds!==0){
   let bms = []
     for (const [index, odd] of bookmakerOdds.entries()) {
