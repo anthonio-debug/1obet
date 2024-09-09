@@ -1876,21 +1876,21 @@ const placeBet = async (req, res) => {
         let odds = [];
         for (const odd of apiFancyOddsRes) {
           odds.push({
-            b1: odd.BackPrice1,
-            b2: odd.BackPrice2,
-            b3: odd.BackPrice3,
-            bs1: odd.BackSize1,
-            bs2: odd.BackSize2,
-            bs3: odd.BackSize3,
-            l1: odd.LayPrice1,
-            l2: odd.LayPrice2,
-            l3: odd.LayPrice3,
-            ls1: odd.LaySize1,
-            ls2: odd.LaySize2,
-            ls3: odd.LaySize3,
-            nat: odd.RunnerName,
-            gstatus: odd.GameStatus,
-            sid: odd.SelectionId
+            b1: odd.b1,
+            b2: 0,
+            b3: 0,
+            bs1: odd.bs1,
+            bs2: 0,
+            bs3: 0,
+            l1: odd.l1,
+            l2: 0,
+            l3: 0,
+            ls1: odd.ls1,
+            ls2: 0,
+            ls3: 0,
+            nat: odd.nat,
+            gstatus: odd.gstatus,
+            sid: odd.sid
           });
         }
         return odds;
@@ -1915,7 +1915,7 @@ const placeBet = async (req, res) => {
             return;
           }
 
-          apiFancyOddsRes = response['fanciesArr'].filter((item) => item.sid === sid);
+          apiFancyOddsRes = response['fanciesArr'].filter((item) => item.sid === selectionId);
           // apiFancyOddsResponse.push(apiFancyOddsRes);
 
            console.log("outside response..........................................:", apiFancyOddsRes);
@@ -1930,7 +1930,7 @@ const placeBet = async (req, res) => {
             if (!hasError) { // Send response only once
               hasError = true;
               res.status(404).send({
-                message: `Status not available for selected team ${sid}-11`
+                message: `Status not available for selected team ${selectionId}-11`
               });
             }
             return; // Exit early to stop further processing
@@ -1948,13 +1948,13 @@ const placeBet = async (req, res) => {
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
 
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
-        const apiSelectedOdds = apiFancyOdds.find((runner) => runner.sid == sid);
-        const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid == sid);
+        const apiSelectedOdds = apiFancyOdds.find((runner) => runner.sid == selectionId);
+        const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid == selectionId);
 
         if (!apiSelectedOdds || !dbSelectedOdds) {
           activeBettors.delete(userId);
           return res.status(404).send({
-            message: `Odds not available for the selected team ${sid}1-`
+            message: `Odds not available for the selected team ${selectionId}1-`
           });
         }
         // Get the runner name from the 'nat' field
@@ -2023,7 +2023,7 @@ const placeBet = async (req, res) => {
       } else {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Odds not available for the selected team ${req.body.sid}-2`
+          message: `Odds not available for the selected team ${req.body.selectionId}-2`
         });
       }
     }
