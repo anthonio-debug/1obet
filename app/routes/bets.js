@@ -28,8 +28,8 @@ const CasinoCalls = require('../models/casinoCalls');
 const { LIVE_BET_TV_URL } = require('../global/constants');
 const message_result = 'cannot place bet due to result check';
 const MarketIDS = require('../models/marketIds');
-const { fetchSession } = require('../../helper/api/sessionAPIHelper');
-const { fetchBookmakerOdds } = require('../../helper/api/sessionAPIHelper');
+const { fetchSession } = require('../../helper/api/sessionAPIHelperLithyl');
+const { fetchBookmakerOdds } = require('../../helper/api/sessionAPIHelperLithyl');
 const moment = require('moment');
 const { SCORE_API_STATUS_BLOCK_LIST } = require('../../helper/api/scoreApiHelper');
 const { GetAllBets, CasinoList } = require('./admin/bets');
@@ -1876,21 +1876,21 @@ const placeBet = async (req, res) => {
         let odds = [];
         for (const odd of apiFancyOddsRes) {
           odds.push({
-            b1: odd.BackPrice1,
-            b2: odd.BackPrice2,
-            b3: odd.BackPrice3,
-            bs1: odd.BackSize1,
-            bs2: odd.BackSize2,
-            bs3: odd.BackSize3,
-            l1: odd.LayPrice1,
-            l2: odd.LayPrice2,
-            l3: odd.LayPrice3,
-            ls1: odd.LaySize1,
-            ls2: odd.LaySize2,
-            ls3: odd.LaySize3,
-            nat: odd.RunnerName,
-            gstatus: odd.GameStatus,
-            sid: odd.SelectionId
+            b1: odd.b1,
+            b2: 0,
+            b3: 0,
+            bs1: odd.bs1,
+            bs2: 0,
+            bs3: 0,
+            l1: odd.l1,
+            l2: 0,
+            l3: 0,
+            ls1: odd.ls1,
+            ls2: 0,
+            ls3: 0,
+            nat: odd.nat,
+            gstatus: odd.gstatus,
+            sid: odd.sid
           });
         }
         return odds;
@@ -1909,19 +1909,19 @@ const placeBet = async (req, res) => {
           await new Promise(resolve => setTimeout(resolve, 500));
           console.log("set time ", i)
           const response = await fetchSession(eventDetail.Id);
-
-          if (!Array.isArray(response)) {
-            console.error("Expected an array but got:", response);
+          
+          if (!Array.isArray(response['fanciesArr'])) {
+            console.error("Expected an array but got:", response['fanciesArr']);
             return;
           }
 
-          apiFancyOddsRes = response.filter((item) => item.SelectionId === selectionId);
+          apiFancyOddsRes = response['fanciesArr'].filter((item) => item.sid === selectionId);
           // apiFancyOddsResponse.push(apiFancyOddsRes);
 
-          // console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
+          
 
-          const gameStatus = apiFancyOddsRes[0]?.GameStatus;
-          // console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
+          const gameStatus = apiFancyOddsRes[0]?.gstatus;
+           console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
           // console.log(`GameStatus==================${gameStatus}`);
 
           if (gameStatus === 'SUSPENDED' || gameStatus === 'Ball Running') {
@@ -2199,7 +2199,7 @@ const placeBet = async (req, res) => {
       }
       // const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
       let bookmakerOddsRes = await fetchBookmakerOdds(selectedMarketId);
-
+      console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:", bookmakerOddsRes);
       if (bookmakerOddsRes.length === 0) {
         activeBettors.delete(userId);
         return res.status(404).send({
