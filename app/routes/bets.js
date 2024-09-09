@@ -1909,13 +1909,13 @@ const placeBet = async (req, res) => {
           await new Promise(resolve => setTimeout(resolve, 500));
           console.log("set time ", i)
           const response = await fetchSession(eventDetail.Id);
-          console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", response);
-          if (!Array.isArray(response)) {
-            console.error("Expected an array but got:", response);
+          console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", response['fanciesArr']);
+          if (!Array.isArray(response['fanciesArr'])) {
+            console.error("Expected an array but got:", response['fanciesArr']);
             return;
           }
 
-          apiFancyOddsRes = response.filter((item) => item.SelectionId === selectionId);
+          apiFancyOddsRes = response['fanciesArr'].filter((item) => item.SelectionId === selectionId);
           // apiFancyOddsResponse.push(apiFancyOddsRes);
 
            console.log("outside response..........................................:", apiFancyOddsRes);
