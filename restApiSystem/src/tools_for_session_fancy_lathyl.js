@@ -150,7 +150,7 @@ if(bookmakerOdds!==0){
         const eventId = event.Id
         
         let ReqOdds = [];
-        
+        console.log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII:::",eventId);
          ReqOdds = await fetchSession(eventId)
         // console.log("ReqOdds...........................................",ReqOdds);
         let bookmakerOdds = 0;
