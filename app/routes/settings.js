@@ -2258,8 +2258,6 @@ const getWaitingBetsForManuel = async (req, res) => {
             groups[main_group_key].eventData.marketData = null;
             groups[main_group_key].eventData.marketName = 'Unknown Market';
           }
-        } else {
-          console.log(`No event data found for matchId: ${item.matchId}`);
         }
       }
 
@@ -2273,19 +2271,16 @@ const getWaitingBetsForManuel = async (req, res) => {
       if (item.betSession !== null) {
         const session = await Session.findOne({ sessionNo: Number(item.betSession), eventId: Number(item.eventId) });
         item.session = session || 'Unknown Session';
-        console.log('Session data:', item.session);
       }
 
       groups[main_group_key].bets.push(item);
     }
 
-    console.log('Final groups:', JSON.stringify(groups, null, 2));
     return res.status(200).send({
       success: true,
       results: groups
     });
   } catch (error) {
-    console.error('Error occurred:', error);
     return res.status(500).send({
       success: false,
       message: 'Something went wrong!'
