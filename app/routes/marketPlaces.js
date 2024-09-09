@@ -324,8 +324,10 @@ async function getOdds(marketIds, sportsId) {
 
 async function cronOdds2(eventId, sportID) {
   console.log("===================================================================================3");
-  console.log(" MMMMMMMMMMM      sportID in cronOdds2 ", sportID);
-
+  // console.log(" MMMMMMMMMMM      sportID in cronOdds2 ", sportID);
+   if (sportID !=="4"){
+    return res.status(401).send({ message: 'you can only fetch cricket Odds' });
+   }
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
   // const bookmakerUrl = `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
 
