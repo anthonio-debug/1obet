@@ -653,6 +653,7 @@ async function getOddsLimitlessByMarketId(req, res) {
   try {
     let response = await axios.get(url);
     if(!response|| !response.data){
+      console.log("lithyl api code is running-=--=-===-=-");
      url =`http://sportzing.in:5505/api/getOdds?market_id=${marketId}`
       response = await axios.get(url);
     }
