@@ -407,7 +407,7 @@ async function cronOdds2(eventId, sportID) {
           marketId: element.marketId,
         });
 
-        if (!marketID) {
+        if (!marketID && element.marketName ==="Match Odds") {
           let marketTime = element.marketStartTime
           if (!marketTime) {
             marketTime = 0
