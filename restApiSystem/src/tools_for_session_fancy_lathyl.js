@@ -35,6 +35,9 @@ function ToolForSessionFancy() {
 
      
     if(oddevenOdds && oddevenOdds!=0){
+      if(eventId=='33557249'){
+        console.log("oddevenOdds listed below............................................",oddevenOdds);
+      }
       //console.log("oddevenOdds length...............",oddevenOdds,"..................",oddevenOdds);
      for (const odd of oddevenOdds) {
       //console.log("odd.gtype.......................:::",odd.gtype);
@@ -65,8 +68,11 @@ function ToolForSessionFancy() {
   }
 
   if(fancyOdds && fancyOdds!=0){
+    if(eventId=='33557249'){
+      console.log("fancyOdds listed below............................................",fancyOdds);
+    }
     for (const odd of fancyOdds) {
-     //console.log("odd.gtype.......................:::",odd.gtype);
+      
      
        let gtype = 'session';
        
