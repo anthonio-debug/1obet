@@ -155,7 +155,7 @@ if(bookmakerOdds!==0){
         // console.log("ReqOdds...........................................",ReqOdds);
         let bookmakerOdds = 0;
         let fancyOdds = [];
-        let oddevenOdds = [];
+        let oddevenOdds = 0;
         let bookmakerMarketList = [];
         let bookmakerMarketIds = []
         if(ReqOdds['oddevenArr'] && ReqOdds['oddevenArr'].length>0){
