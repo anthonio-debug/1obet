@@ -1199,26 +1199,27 @@ async function cronOdds2(req, res) {
   const { eventId, sportID } = req.params;
 
   // console.log ("+_+_+_++_+_++_+ SportsId +_+", sportID)
-  if (sportID =="4"){
+  if (sportID !=="4"){
+    return res.status(401).send({ message: 'you can only fetch cricket Odds' });
+   }
+  const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
+
+  try {
+    const response = await axios.get(url);
+
+    // console.log("=-=--==---=-=--=-===--= market api response", response);
     
-    const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
-    
-    try {
-      const response = await axios.get(url);
-      
-      // console.log("=-=--==---=-=--=-===--= market api response", response);
-      
-      const marketsData = response.data;
-      const sendMarketIds = [];
-      // console.log(marketsData, "||||||||||||||||||||");
-      const marketStatus = 'OPEN';
-      
-      if (marketsData && marketsData.length > 0) {
-        for (const element of marketsData) {
-          const tempRunners = element.runners.map(runner => ({
-            SelectionId: runner.selectionId,
-            runnerName: runner.runnerName,
-          }));
+    const marketsData = response.data;
+    const sendMarketIds = [];
+    // console.log(marketsData, "||||||||||||||||||||");
+    const marketStatus = 'OPEN';
+
+    if (marketsData && marketsData.length > 0) {
+      for (const element of marketsData) {
+        const tempRunners = element.runners.map(runner => ({
+          SelectionId: runner.selectionId,
+          runnerName: runner.runnerName,
+        }));
 
         if (element.marketName === 'Match Odds') {
           
@@ -1241,7 +1242,7 @@ async function cronOdds2(req, res) {
               runners: tempRunners,
               inPlay: true,
             });
-            
+
             // console.log("Saving new market: ", newMarket);
             await newMarket.save();
           }else{
@@ -1252,10 +1253,10 @@ async function cronOdds2(req, res) {
         }
       }
     }
-    
+
     
     // const sendMarketIds = ["1.232001727"];
-    
+
     let result = [];
     // console.log(result,"=-=-=---=-=---=--=");
     
@@ -1267,16 +1268,15 @@ async function cronOdds2(req, res) {
     }
 
     res.json({ status: true, data: "Result: " , result });
-    
+
   } catch (error) {
     res.status(500).json({ success: false, msg: "Failed to get data. Error: " + error.message });
   }
-}//
 }
 
 async function getTheSportsMatchScoreEvents(req, res) {
 
-  
+
   const { sportsId } = req.params;
   const inplays = await inPlayEvents.find({ sportsId });
   let sportsName = 'cricket';
