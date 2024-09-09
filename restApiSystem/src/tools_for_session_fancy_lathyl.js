@@ -152,7 +152,7 @@ if(bookmakerOdds!==0){
         let ReqOdds = [];
         
          ReqOdds = await fetchSession(eventId)
-         console.log("ReqOdds...........................................",ReqOdds);
+        // console.log("ReqOdds...........................................",ReqOdds);
         let bookmakerOdds = 0;
         let fancyOdds = 0;
         let oddevenOdds = 0;

@@ -6,7 +6,7 @@ async function fetchSession(eventId) {
   // const eventId = '33002177'
   // http://142.93.36.1/api/v2/getSessions?EventTypeID=4&matchId=33061168
   const url = `${SESSION_API_URI}/getOFBData?id=${eventId}`
-   
+   console.log("Event for fancies is about to be fetched....................>>>>>>>>>>>>>>>>>>>",eventId);
   try {
     
     
