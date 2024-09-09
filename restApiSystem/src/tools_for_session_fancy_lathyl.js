@@ -151,12 +151,12 @@ if(bookmakerOdds!==0){
         const eventId = event.Id
         
         let ReqOdds = [];
-        console.log("IIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIIII:::",eventId);
+        
          ReqOdds = await fetchSession(eventId)
         // console.log("ReqOdds...........................................",ReqOdds);
-        let bookmakerOdds = 0;
-        let fancyOdds = 0;
-        let oddevenOdds = 0;
+        let bookmakerOdds = [];
+        let fancyOdds = [];
+        let oddevenOdds = [];
         let bookmakerMarketList = [];
         let bookmakerMarketIds = []
         if(ReqOdds['oddevenArr'] && ReqOdds['oddevenArr'].length>0){
