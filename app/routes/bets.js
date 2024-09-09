@@ -1909,19 +1909,19 @@ const placeBet = async (req, res) => {
           await new Promise(resolve => setTimeout(resolve, 500));
           console.log("set time ", i)
           const response = await fetchSession(eventDetail.Id);
-
-          if (!Array.isArray(response)) {
-            console.error("Expected an array but got:", response);
+          console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", response['fanciesArr']);
+          if (!Array.isArray(response['fanciesArr'])) {
+            console.error("Expected an array but got:", response['fanciesArr']);
             return;
           }
 
-          apiFancyOddsRes = response.filter((item) => item.SelectionId === selectionId);
+          apiFancyOddsRes = response['fanciesArr'].filter((item) => item.sid === sid);
           // apiFancyOddsResponse.push(apiFancyOddsRes);
 
-          // console.log("FFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFF:", apiFancyOddsRes);
+           console.log("outside response..........................................:", apiFancyOddsRes);
 
-          const gameStatus = apiFancyOddsRes[0]?.GameStatus;
-          // console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
+          const gameStatus = apiFancyOddsRes[0]?.gstatus;
+           console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
           // console.log(`GameStatus==================${gameStatus}`);
 
           if (gameStatus === 'SUSPENDED' || gameStatus === 'Ball Running') {
@@ -1930,7 +1930,7 @@ const placeBet = async (req, res) => {
             if (!hasError) { // Send response only once
               hasError = true;
               res.status(404).send({
-                message: `Status not available for selected team ${selectionId}-11`
+                message: `Status not available for selected team ${sid}-11`
               });
             }
             return; // Exit early to stop further processing
@@ -1948,13 +1948,13 @@ const placeBet = async (req, res) => {
       const dbFancyOdds = DBOddDetails?.data?.data?.t3;
 
       if (apiFancyOdds?.length && dbFancyOdds?.length) {
-        const apiSelectedOdds = apiFancyOdds.find((runner) => runner.sid == selectionId);
-        const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid == selectionId);
+        const apiSelectedOdds = apiFancyOdds.find((runner) => runner.sid == sid);
+        const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid == sid);
 
         if (!apiSelectedOdds || !dbSelectedOdds) {
           activeBettors.delete(userId);
           return res.status(404).send({
-            message: `Odds not available for the selected team ${selectionId}1-`
+            message: `Odds not available for the selected team ${sid}1-`
           });
         }
         // Get the runner name from the 'nat' field
@@ -2023,7 +2023,7 @@ const placeBet = async (req, res) => {
       } else {
         activeBettors.delete(userId);
         return res.status(404).send({
-          message: `Odds not available for the selected team ${req.body.selectionId}-2`
+          message: `Odds not available for the selected team ${req.body.sid}-2`
         });
       }
     }
