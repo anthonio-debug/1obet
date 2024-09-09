@@ -29,8 +29,8 @@ function ToolForSessionFancy() {
     let t3 = []
     let bm = {}
     
-     console.log("fancyOdds length.................................>>",fancyOdds.length);
-     console.log("oddevenOdds length.................................>>",oddevenOdds.length);
+     console.log("fancyOdds length................",fancyOdds,".................>>",fancyOdds.length);
+     console.log("oddevenOdds length...............",oddevenOdds,"..................>>",oddevenOdds.length);
      console.log("bookmakerOdds length.................................>>",bookmakerOdds);
 
      
@@ -155,7 +155,7 @@ if(bookmakerOdds!==0){
         // console.log("ReqOdds...........................................",ReqOdds);
         let bookmakerOdds = 0;
         let fancyOdds = [];
-        let oddevenOdds = 0;
+        let oddevenOdds = [];
         let bookmakerMarketList = [];
         let bookmakerMarketIds = []
         if(ReqOdds['oddevenArr'] && ReqOdds['oddevenArr'].length>0){
