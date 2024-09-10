@@ -647,12 +647,13 @@ async function getBookmakersLimitlessByEventId(req, res) {
 }
 
 async function getOddsLimitlessByMarketId(req, res) {
+  console.log("getOddsLimitlessByMarketId =-=-=-=-==- function called");
   const marketId = req.params.marketId;
   let url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
   
   try {
     let response = await axios.get(url);
-    console.log("getOddsLimitlessByMarketId =-=-=-=-==-response =",response);
+    console.log("getOddsLimitlessByMarketId =-=-=-=-==-response =",response.data);
     
     if (!response || !response.data) {
       url = `http://sportzing.in:5505/api/getOdds?market_id =${marketId}`;
