@@ -652,7 +652,7 @@ async function getOddsLimitlessByMarketId(req, res) {
   const url2 = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
 
   try {
-    
+
     let response = await axios.get(url1);
     console.log("Response from first API:", JSON.stringify(response.data, null, 2));
 
@@ -661,15 +661,15 @@ async function getOddsLimitlessByMarketId(req, res) {
       response = await axios.get(url2);
     }
 
-    res.status(200).json({ success: true,message:"response from lithyl api", data: response.data });
+    res.status(200).json({ success: true, message: "response from lithyl api", data: response.data });
 
   } catch (error) {
     console.error("Error from first API:", error.message);
-// Second API call
+    // Second API call
     try {
       let response = await axios.get(url2);
       // console.log("Response from second API after first API failure:", JSON.stringify(response.data, null, 2));
-      res.status(200).json({ success: true, message:"response from lithyl api", data: response.data });
+      res.status(200).json({ success: true, message: "response from lithyl api", data: response.data });
 
     } catch (error2) {
       console.error("Error from second API:", error2.message);
@@ -752,11 +752,11 @@ async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
 
   try {
-    await Odds.deleteMany({  });
-    await RaceOdds.deleteMany({  });
-    await fancyOdds.deleteMany({  });
+    await Odds.deleteMany({});
+    await RaceOdds.deleteMany({});
+    await fancyOdds.deleteMany({});
     //await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
-   // await MarketIDS.updateMany({ eventId: eventId }, { $set: { ReadyForOdds: true } });
+    // await MarketIDS.updateMany({ eventId: eventId }, { $set: { ReadyForOdds: true } });
     const response = await MarketIDS.aggregate([{ $project: { name: "$marketName" } }]);
 
     const totalMarkets = await MarketIDS.countDocuments({ sportID: 4 });
@@ -796,19 +796,19 @@ async function deleteDepositsAndCasinoCalls(req, res) {
     userId: userId,
     description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
   })
-  .then(result => {
-    console.log(`${result.deletedCount} deposit(s) deleted.`);
-    
-  })
-  .catch(err => {
-    console.error("Error deleting deposits:", err);
-  });
- 
+    .then(result => {
+      console.log(`${result.deletedCount} deposit(s) deleted.`);
+
+    })
+    .catch(err => {
+      console.error("Error deleting deposits:", err);
+    });
+
   await CasinoCalls.deleteMany({
-    username:"user_"+userId
+    username: "user_" + userId
   })
 
-  return res.status(200).json({message:`${userId} records deleted in casino and deposits`})
+  return res.status(200).json({ message: `${userId} records deleted in casino and deposits` })
 
 }
 
@@ -867,34 +867,34 @@ async function getRelatedMarkets(req, res) {
   }
 }
 async function saveOdds(oddData, sportsId) {
-  console.log("MM befor parsing-=-=-=-=-=-=-",oddData)
-//   try {
-//     oddData = JSON.parse(oddData);
-// } catch (error) {
-//     console.error("Failed to parse oddData:", error);
-//     return;
-// }
-if (Array.isArray(oddData) && oddData.length > 0) {
-  oddData = oddData[0];
-} else {
-  console.error("Invalid oddData format:", oddData);
-  return;
-}
+  console.log("MM befor parsing-=-=-=-=-=-=-", oddData)
+  //   try {
+  //     oddData = JSON.parse(oddData);
+  // } catch (error) {
+  //     console.error("Failed to parse oddData:", error);
+  //     return;
+  // }
+  if (Array.isArray(oddData) && oddData.length > 0) {
+    oddData = oddData[0];
+  } else {
+    console.error("Invalid oddData format:", oddData);
+    return;
+  }
 
-  console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData.marketId)
+  console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-", oddData.marketId)
 
-  const oddDataMarket =await MarketIDS.findOne({marketId:oddData.marketId})
+  const oddDataMarket = await MarketIDS.findOne({ marketId: oddData.marketId })
   const runnerNameMap = new Map();
   for (const runner of oddDataMarket.runners) {
     runnerNameMap.set(runner.SelectionId, runner.runnerName);
   }
-  
-  
+
+
 
   const runners = [];
 
   for (const runner of oddData.runners) {
-    console.log("oddDataMarket.runners.runnerName",runnerNameMap.get(runner.selectionId));
+    console.log("oddDataMarket.runners.runnerName", runnerNameMap.get(runner.selectionId));
     runners.push({
       SelectionId: runner.selectionId,
       runnerName: runnerNameMap.get(runner.selectionId),
@@ -909,11 +909,11 @@ if (Array.isArray(oddData) && oddData.length > 0) {
   }
   // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-  runners",runners)
 
-  
-  
+
+
   // console.log("????????????????",oddData.eventid);
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
-  
+
   const odd = {
     eventId: oddData.eventid,
     marketId: oddData.marketId,
@@ -926,7 +926,7 @@ if (Array.isArray(oddData) && oddData.length > 0) {
     numberOfActiveRunners: activeRunners.length,
     runners,
   };
-  
+
   const odds = new Odds(odd);
   console.log("=-=-==-=-=-====-=- odds saved");
   await odds.save();
@@ -966,37 +966,37 @@ async function getOdds(marketIds, sportsId) {
   return new Promise(async (resolve, reject) => {
     const odds = [];
     const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
-     const oddUrl2 = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
+    const oddUrl2 = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
     try {
       const response = await axios.get(oddUrl);
 
       console.log("================///============", response.data);
-    
-    if (response.data) {      
-      const oddData = response.data;
-      // console.log("===================================================================================2");
-      odds.push(await saveOdds(oddData, sportsId));
-    }
 
-    // Resolve the promise with the collected odds
-    resolve(odds);
-      
+      if (response.data) {
+        const oddData = response.data;
+        // console.log("===================================================================================2");
+        odds.push(await saveOdds(oddData, sportsId));
+      }
+
+      // Resolve the promise with the collected odds
+      resolve(odds);
+
     } catch (error) {
       // res.status(500).json({ success: false, msg: "Failed to get odds from limitless. Error: " + error.message })
       // saving odds from lithyl API
       try {
         const response = await axios.get(oddUrl2);
-  
+
         // console.log("================///============Odds from lithyl", JSON.stringify(response.data));
-      
-      if (response.data) {      
-        const oddData = response.data;
-        odds.push(await saveOdds(oddData, sportsId));
-      }
-  
-      // Resolve the promise with the collected odds
-      resolve(odds);
-        
+
+        if (response.data) {
+          const oddData = response.data;
+          odds.push(await saveOdds(oddData, sportsId));
+        }
+
+        // Resolve the promise with the collected odds
+        resolve(odds);
+
       } catch (error2) {
         res.status(500).json({ success: false, msg: "Failed to get Odds from limitless. Error: " + error2.message })
       }
@@ -1004,7 +1004,7 @@ async function getOdds(marketIds, sportsId) {
     //   const response = await axios.get(oddUrl);
 
     //   console.log("================///============", response.data);
-    
+
     // if (response.data) {      
     //   const oddData = response.data;
     //   // console.log("===================================================================================2");
@@ -1287,16 +1287,16 @@ async function cronOdds2(req, res) {
   const { eventId, sportID } = req.params;
 
   // console.log ("+_+_+_++_+_++_+ SportsId +_+", sportID)
-  if (sportID !=="4"){
+  if (sportID !== "4") {
     return res.status(401).send({ message: 'you can only fetch cricket Odds' });
-   }
+  }
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
-  const url2= `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
+  const url2 = `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
   try {
     const response = await axios.get(url);
 
     console.log("=-=--==---=-=--=-===--= market api response", response.data);
-    
+
     const marketsData = response.data;
     const sendMarketIds = [];
     // console.log(marketsData, "||||||||||||||||||||");
@@ -1310,9 +1310,9 @@ async function cronOdds2(req, res) {
         }));
 
         if (element.marketName === 'Match Odds') {
-          
+
           sendMarketIds.push(element.marketId);
-          
+
           const marketID = await MarketIDS.findOne({
             eventId: eventId,
             marketId: element.marketId,
@@ -1333,21 +1333,23 @@ async function cronOdds2(req, res) {
 
             // console.log("Saving new market: ", newMarket);
             await newMarket.save();
-          }else{
-            await MarketIDS.findOneAndUpdate({eventId: eventId,marketId: element.marketId,}, {$set:{
-              totalMatched:element.totalMatched,
-            }} )
+          } else {
+            await MarketIDS.findOneAndUpdate({ eventId: eventId, marketId: element.marketId, }, {
+              $set: {
+                totalMatched: element.totalMatched,
+              }
+            })
           }
         }
       }
     }
 
-    
+
     // const sendMarketIds = ["1.232001727"];
 
     let result = [];
     // console.log(result,"=-=-=---=-=---=--=");
-    
+
     console.log("Sending market ids:", sendMarketIds);
     for (const marketId of sendMarketIds) {
       // console.log("===================================================================================5");
@@ -1355,7 +1357,7 @@ async function cronOdds2(req, res) {
       result = [...result, ...odds];
     }
 
-    res.json({ status: true, data: "Result: " , result });
+    res.json({ status: true, data: "Result: ", result });
 
   } catch (error) {
     // res.status(500).json({ success: false, msg: "Failed to get data from limitless. Error: " + error.message });
@@ -1363,30 +1365,30 @@ async function cronOdds2(req, res) {
     // fetch markets from lithyl API
     try {
       const response = await axios.get(url2);
-  
+
       // console.log("=-=--==---=-=--=-===--= market api response", response.data);
-      
+
       const marketsData = response.data;
       const sendMarketIds = [];
       // console.log(marketsData, "||||||||||||||||||||");
       const marketStatus = 'OPEN';
-  
+
       if (marketsData && marketsData.length > 0) {
         for (const element of marketsData) {
           const tempRunners = element.runners.map(runner => ({
             SelectionId: runner.selectionId,
             runnerName: runner.runnerName,
           }));
-  
+
           if (element.marketName === 'Match Odds') {
-            
+
             sendMarketIds.push(element.marketId);
-            
+
             const marketID = await MarketIDS.findOne({
               eventId: eventId,
               marketId: element.marketId,
             });
-  
+
             if (!marketID) {
               const newMarket = new MarketIDS({
                 eventId: eventId,
@@ -1399,37 +1401,39 @@ async function cronOdds2(req, res) {
                 runners: tempRunners,
                 inPlay: true,
               });
-  
+
               // console.log("Saving new market: ", newMarket);
               await newMarket.save();
-            }else{
-              await MarketIDS.findOneAndUpdate({eventId: eventId,marketId: element.marketId,}, {$set:{
-                totalMatched:element.totalMatched,
-              }} )
+            } else {
+              await MarketIDS.findOneAndUpdate({ eventId: eventId, marketId: element.marketId, }, {
+                $set: {
+                  totalMatched: element.totalMatched,
+                }
+              })
             }
           }
         }
       }
-  
-      
+
+
       // const sendMarketIds = ["1.232001727"];
-  
+
       let result = [];
       // console.log(result,"=-=-=---=-=---=--=");
-      
+
       console.log("Sending market ids:", sendMarketIds);
       for (const marketId of sendMarketIds) {
         // console.log("===================================================================================5");
         const odds = await getOdds(marketId, sportID);
         result = [...result, ...odds];
       }
-  
-      res.json({ status: true, data: "Result: " , result });
-  
+
+      res.json({ status: true, data: "Result: ", result });
+
     } catch (error2) {
       res.status(500).json({ success: false, msg: "Failed to get data from lithyl. Error: " + error2.message });
-  
-      
+
+
     }
   }
 }
@@ -1720,8 +1724,8 @@ async function testing(req, res) {
 async function getSeriesList(req, res) {
   const sportsId = req.params.sportsId;
 
-  console.log("MMMMMMMMMMMMM sportsId--",sportsId);
-  
+  console.log("MMMMMMMMMMMMM sportsId--", sportsId);
+
 
   try {
     // const sportsAPIUrl = `http://sportzing.in:5505/api/getSeriesList?sport_id=${sportsId}`;
@@ -1736,8 +1740,8 @@ async function getSeriesList(req, res) {
     };
 
     const response = await axios.get(sportsAPIUrl, header);
-      console.log("MMMMMMMMMMMMMMMM--getSeriesList response ", response.data);
-      
+    console.log("MMMMMMMMMMMMMMMM--getSeriesList response ", response.data);
+
     // const marketsData = response.data;
     const getSeriesList = response.data;
 
@@ -1752,8 +1756,8 @@ async function getSeriesList(req, res) {
 async function getAllMatchesList(req, res) {
   const series_id = req.params.series_id;
 
-  console.log("MMMMMMMMMMMMM series_id--",series_id);
-  
+  console.log("MMMMMMMMMMMMM series_id--", series_id);
+
 
   try {
     const sportsAPIUrl = `http://sportzing.in:5505/api/getMatchesList?series_id=${series_id}`;
@@ -1767,8 +1771,8 @@ async function getAllMatchesList(req, res) {
     };
 
     const response = await axios.get(sportsAPIUrl, header);
-      console.log("MMMMMMMMMMMMMMMM--getAllMatchesList response ", response.data);
-      
+    console.log("MMMMMMMMMMMMMMMM--getAllMatchesList response ", response.data);
+
     // const marketsData = response.data;
     const getSeriesList = response.data;
 
@@ -1783,8 +1787,8 @@ async function getAllMatchesList(req, res) {
 async function getAllMarketList(req, res) {
   const match_id = req.params.match_id;
 
-  console.log("MMMMMMMMMMMMM match_id--",match_id);
-  
+  console.log("MMMMMMMMMMMMM match_id--", match_id);
+
 
   try {
     const sportsAPIUrl = `http://sportzing.in:5505/api/getMarketList?match_id=${match_id}`;
@@ -1796,10 +1800,10 @@ async function getAllMarketList(req, res) {
         "Cache-Control": "no-cache"
       },
     };
-   
+
     const response = await axios.get(sportsAPIUrl, header);
-      console.log("MMMMMMMMMMMMMMMM--getAllMarketList response ", response.data);
-      
+    console.log("MMMMMMMMMMMMMMMM--getAllMarketList response ", response.data);
+
     // const marketsData = response.data;
     const getAllMarketList = response.data;
 
@@ -1815,8 +1819,8 @@ async function getAllMarketList(req, res) {
 async function getOddsFancyBookmakerByMatchId(req, res) {
   const id = req.params.id;
 
-  console.log("MMMMMMMMMMMMM id--",id);
-  
+  console.log("MMMMMMMMMMMMM id--", id);
+
 
   try {
     const sportsAPIUrl = `http://sportzing.in:5505/api/getOFBData?id=${id}`;
@@ -1829,11 +1833,11 @@ async function getOddsFancyBookmakerByMatchId(req, res) {
         "Cache-Control": "no-cache"
       },
     };
-   
+
 
     const response = await axios.get(sportsAPIUrl, header);
-      console.log("MMMMMMMMMMMMMMMM--getOddsFancyBookmakerByMatchId response ", response.data);
-      
+    console.log("MMMMMMMMMMMMMMMM--getOddsFancyBookmakerByMatchId response ", response.data);
+
     // const marketsData = response.data;
     const getOddsFancyBookmakerByMatchId = response.data;
 
@@ -1896,12 +1900,12 @@ async function getGreyHoundMatches(req, res) {
   }
 }
 
-async function getHorseRaceMatches(req, res) {  
+async function getHorseRaceMatches(req, res) {
 
   try {
     // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
     const sportsAPIUrl = `http://sportzing.in:5505/api/getHorseRaceMatches`;
-    
+
     console.log("------------------http://sportzing.in:5505/api/getHorseRaceMatches")
     const header = {
       headers: {
@@ -1911,11 +1915,11 @@ async function getHorseRaceMatches(req, res) {
         "Cache-Control": "no-cache"
       },
     };
-   
+
 
     const response = await axios.get(sportsAPIUrl, header);
-      console.log("MMMMMMMMMMMMMMMM--getHorseRaceMatches response ", response.data);
-      
+    console.log("MMMMMMMMMMMMMMMM--getHorseRaceMatches response ", response.data);
+
     // const marketsData = response.data;
     const horseRaceMatches = response.data;
     res.status(200).json({ success: true, data: horseRaceMatches });
@@ -1929,8 +1933,8 @@ async function getHorseRaceMatches(req, res) {
 async function getOddsFromlithylAPI(req, res) {
   const market_id = req.params.market_id;
 
-  console.log("MMMMMMMMMMMMM id--",market_id);
-  
+  console.log("MMMMMMMMMMMMM id--", market_id);
+
   try {
     // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
     const sportsAPIUrl = `http://sportzing.in:5505/api/getOdds?market_id=${market_id}`;
@@ -1943,11 +1947,11 @@ async function getOddsFromlithylAPI(req, res) {
         "Cache-Control": "no-cache"
       },
     };
-   
+
 
     const response = await axios.get(sportsAPIUrl, header);
-      console.log("MMMMMMMMMMMMMMMM--getGreyHoundMatches response ", response.data);
-      
+    console.log("MMMMMMMMMMMMMMMM--getGreyHoundMatches response ", response.data);
+
     // const marketsData = response.data;
     const oddsData = response.data;
 
@@ -1962,13 +1966,19 @@ async function getOddsFromlithylAPI(req, res) {
 function checkMultiResponse(rates, odds) {
   if (Array.isArray(rates) && Array.isArray(odds)) {
     const ratesSet = new Set(rates);
+    let lowestMatch = null;
 
     for (const element of odds) {
       if (ratesSet.has(element)) {
-        return element;
+        if (lowestMatch === null || element < lowestMatch) {
+          lowestMatch = element;
+        }
       }
     }
 
+    return lowestMatch;
+  } else {
+    console.log('Both inputs must be arrays.');
     return null;
   }
 }
