@@ -755,6 +755,10 @@ async function deleteOdds(req, res) {
     await Odds.deleteMany({});
     await RaceOdds.deleteMany({});
     await fancyOdds.deleteMany({});
+    await MarketIDS.deleteMany({
+      marketName: { $in: ["Overs Line", "Runs Line"] }
+    });
+    
     //await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
     // await MarketIDS.updateMany({ eventId: eventId }, { $set: { ReadyForOdds: true } });
     const response = await MarketIDS.aggregate([{ $project: { name: "$marketName" } }]);
