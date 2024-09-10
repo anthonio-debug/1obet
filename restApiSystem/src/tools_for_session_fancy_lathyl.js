@@ -195,7 +195,7 @@ if(bookmakerOdds!==0){
                   marketId: Bmarketid,
                 }, {
                 eventId: eventId,
-                marketId: Bmarketid,
+                marketId: Bmarketid+'bm',
                 marketName: 'Bookmaker',
                 sportID: 4,
                 // status: '',
