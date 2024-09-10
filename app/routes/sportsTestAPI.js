@@ -670,7 +670,7 @@ async function getOddsLimitlessByMarketId(req, res) {
     try {
       let response = await axios.get(url2);
       console.log("Response from second API after first API failure:", JSON.stringify(response.data, null, 2));
-      res.status(200).json({ success: true, data: response.data });
+      res.status(200).json({ success: true, message:"response from lithyl api", data: response.data });
 
     } catch (error2) {
       console.error("Error from second API:", error2.message);
