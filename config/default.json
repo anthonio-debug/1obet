@@ -55,7 +55,7 @@
   "overUnder": 14,
   "raceOpenBefore": 240000,
   "ukRaceOpenBefore": 300000,
-  "sportsOpenBefore": 600000,
+  "sportsOpenBefore": 360000000,
   "tossCloseTime": 2700000,
   "raceEventsAllowedCount": 20,
   "raceEventsMarketAllowedCount": 8,
