@@ -1977,9 +1977,6 @@ function checkMultiResponse(rates, odds) {
     }
 
     return lowestMatch;
-  } else {
-    console.log('Both inputs must be arrays.');
-    return null;
   }
 }
 
