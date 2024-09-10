@@ -69,7 +69,7 @@ function ToolForSessionFancy() {
 
   if(fancyOdds && fancyOdds!=0){
     if(eventId=='33570584'){
-      console.log("fancyOdds listed below............................................",fancyOdds);
+      //console.log("fancyOdds listed below............................................",fancyOdds);
     }
     for (const odd of fancyOdds) {
       
