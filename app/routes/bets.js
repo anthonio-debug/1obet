@@ -2290,7 +2290,7 @@ const placeBet = async (req, res) => {
 
       if (apiBookmakerOdds.length) {
         const apiSelectedOdds = apiBookmakerOdds.find((runner) => runners.sid === selectionId);
-        console.log("apiSelectedOdds.b1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",apiSelectedOdds.b1);
+        console.log("apiSelectedOdds.b1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.......",apiSelectedOdds);
         const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid === selectionId);
 
        
