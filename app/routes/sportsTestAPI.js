@@ -756,7 +756,7 @@ async function deleteOdds(req, res) {
     await RaceOdds.deleteMany({});
     await fancyOdds.deleteMany({});
     await MarketIDS.deleteMany({
-      marketName: { $in: ["Overs Line", "Runs Line"] }
+      marketName: { $regex: /Overs Line|Runs Line/ }
     });
     
     //await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
