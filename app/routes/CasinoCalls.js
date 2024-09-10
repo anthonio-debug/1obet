@@ -168,7 +168,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
         const userAvaiableBalance = await User.findOne({ userId: user.userId }).sort({ _id: -1 });
       
-        const balance = -(userAvaiableBalance.balance - bettor_lost_amount) 
+        const balance = lastMaxWithdraw ? lastMaxWithdraw.balance - bettor_lost_amount : -bettor_lost_amount
+        const balance1 = userAvaiableBalance.balance - bettor_lost_amount
         if (balance < 0) {
           log(
             `${JSON.stringify({
@@ -178,7 +179,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               createdAt: formattedDate,  
               amount: -bettor_lost_amount,  
               balance,
-              availableBalance: balance,
+              availableBalance: balance1,
               maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
               cash: lastMaxWithdraw?.cash || 0,
               credit: lastMaxWithdraw?.credit || 0,
@@ -206,7 +207,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               createdAt: formattedDate,
               amount: -bettor_lost_amount,
               balance,
-              availableBalance: balance,
+              availableBalance: balance1,
               maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
               cash: lastMaxWithdraw?.cash || 0,
               credit: lastMaxWithdraw?.credit || 0,
