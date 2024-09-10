@@ -341,12 +341,13 @@ const getCurrentPosition2 = async (req, res) => {
     res.send(response);
   }
 }
+
 const getHighlights = async (req, res) => {
   try {
     const userId = req.decoded.userId;
-    const matchId = req.query.matchId;
+    const matchId = req.query.matchId; 
 
-    MarketId.aggregate([
+    const currentPositionData = await MarketId.aggregate([
       {
         $match: {
           status: "OPEN",
@@ -364,14 +365,15 @@ const getHighlights = async (req, res) => {
                   $and: [
                     { $eq: ["$Id", "$$eventId"] },
                     { $eq: ["$CompanySetStatus", "OPEN"] },
-                    { $eq: ["$isShowed", true] }
-                  ]
-                }
-              }
-            }
+                    { $eq: ["$isShowed", true] },
+                    { $eq: ["$status", "OPEN"] },
+                  ],
+                },
+              },
+            },
           ],
-          as: "inplayData"
-        }
+          as: "inplayData",
+        },
       },
       {
         $lookup: {
@@ -388,46 +390,32 @@ const getHighlights = async (req, res) => {
           openDate: { $first: { $arrayElemAt: ["$inplayData.openDate", 0] } },
           CompanySetStatus: { $first: { $arrayElemAt: ["$inplayData.CompanySetStatus", 0] } },
           isShowed: { $first: { $arrayElemAt: ["$inplayData.isShowed", 0] } },
-          totalMatched: {
-            $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] },
-          },
-          inplay: {
-            $first: { $arrayElemAt: ["$oddsData.isInplay", 0] },
-          },
+          totalMatched: { $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] } },
+          inplay: { $first: { $arrayElemAt: ["$oddsData.isInplay", 0] } },
           marketName: { $first: "$marketName" },
           eventId: { $first: "$eventId" },
-          sportID: { $first: "$sportID" }
+          sportID: { $first: "$sportID" },
         },
       },
       {
         $addFields: {
           openDate: {
             $dateToString: {
-              format: "%Y-%m-%d %H:%M:%S",  // Format the date as needed
-              date: { $toDate: "$openDate" },  // Convert timestamp to Date object
-              timezone: "UTC"  // Optional: specify timezone if necessary
-            }
-          }
-        }
+              format: "%Y-%m-%d %H:%M:%S",
+              date: { $toDate: "$openDate" },
+              timezone: "UTC",
+            },
+          },
+        },
       },
       {
         $sort: {
-          openDate: -1
-        }
-      }
-    ])
-      .exec((err, currentPositionData) => {
-        if (err) {
-          console.error("Aggregation Error: ", err);
-          res.status(500).send({
-            success: false,
-            message: "Failed to get data",
-            error: err.message,
-          });
-        } else {
-          res.send({ success: true, message: "highlights records", results: currentPositionData });
-        }
-      });
+          openDate: -1,
+        },
+      },
+    ]);
+
+    res.send({ success: true, message: "highlights records", results: currentPositionData });
 
   } catch (err) {
     console.error("Error in getHighlights: ", err);
@@ -437,6 +425,8 @@ const getHighlights = async (req, res) => {
     });
   }
 };
+
+
 const battorcurrentPosition = async (req, res) => {
   try{
     const userId = req.decoded.userId;
