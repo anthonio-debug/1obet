@@ -53,7 +53,7 @@ const checkMarketBlocked = async (user) => {
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
-  
+
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -109,9 +109,12 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const allTrans = [];
 
       const betTime = new Date().getTime(); 
+      
+      // Prevent multiple transactions within 500 milliseconds
       const depositLastBetTime = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
-      if (depositLastBetTime[depositLastBetTime.length - 1] && (betTime - depositLastBetTime[depositLastBetTime.length - 1].betTime) < 500) {
-        return;
+      if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[0].betDateTime) < 500) {
+        console.log('Transaction occurred too quickly, skipping...');
+        return; // Skip transaction
       }
 
       if (difference < 0) {
