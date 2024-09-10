@@ -123,7 +123,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const betTime = new Date().getTime(); 
       const depositLastBetTime=await Cash.findOne({userId:user.userId}).sort({_id:-1})
       if (depositLastBetTime && (betTime - depositLastBetTime.betTime) < 500) {
-        // If the difference is less than 1 second, return
+    console.log("heeeeeeeeeeeeeeeeeeeeeereeeeeeeeeeeeeeeeeeee arham leessssss then 1 sec")
         return;
       }
       if (difference < 0) {
