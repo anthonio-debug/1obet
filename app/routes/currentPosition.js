@@ -341,79 +341,92 @@ const getCurrentPosition2 = async (req, res) => {
     res.send(response);
   }
 }
+
 const getHighlights = async (req, res) => {
   try {
     const userId = req.decoded.userId;
-    const matchId = req.query.matchId;
-    MarketId.aggregate(
-      [
-        {
-          $match: {
-            status: "OPEN",
-            marketName: "Match Odds",
-          },
-        },
+    const matchId = req.query.matchId; 
 
-        {
-          $lookup: {
-            from: "inplayevents",
-            localField: "eventId",
-            foreignField: "Id",
-            as: "inplayData",
-          },
+    const currentPositionData = await MarketId.aggregate([
+      {
+        $match: {
+          status: "OPEN",
+          marketName: "Match Odds",
         },
-        {
-          $lookup: {
-            from: "odds",
-            localField: "eventId",
-            foreignField: "eventId",
-            as: "oddsData",
-          },
-        },
-        {
-          $group: {
-            _id: "$_id",
-            eventName: { $first: { $arrayElemAt: ["$inplayData.name", 0] } },
-            openDate: { $first: { $arrayElemAt: ["$inplayData.openDate", 0] } },
-            totalMatched: {
-              $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] },
+      },
+      {
+        $lookup: {
+          from: "inplayevents",
+          let: { eventId: "$eventId" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$Id", "$$eventId"] },
+                    { $eq: ["$CompanySetStatus", "OPEN"] },
+                    { $eq: ["$isShowed", true] },
+                    { $eq: ["$status", "OPEN"] },
+                  ],
+                },
+              },
             },
-            inplay: {
-              $first: { $arrayElemAt: ["$oddsData.isInplay", 0] },
+          ],
+          as: "inplayData",
+        },
+      },
+      {
+        $lookup: {
+          from: "odds",
+          localField: "eventId",
+          foreignField: "eventId",
+          as: "oddsData",
+        },
+      },
+      {
+        $group: {
+          _id: "$_id",
+          eventName: { $first: { $arrayElemAt: ["$inplayData.name", 0] } },
+          openDate: { $first: { $arrayElemAt: ["$inplayData.openDate", 0] } },
+          CompanySetStatus: { $first: { $arrayElemAt: ["$inplayData.CompanySetStatus", 0] } },
+          isShowed: { $first: { $arrayElemAt: ["$inplayData.isShowed", 0] } },
+          totalMatched: { $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] } },
+          inplay: { $first: { $arrayElemAt: ["$oddsData.isInplay", 0] } },
+          marketName: { $first: "$marketName" },
+          eventId: { $first: "$eventId" },
+          sportID: { $first: "$sportID" },
+        },
+      },
+      {
+        $addFields: {
+          openDate: {
+            $dateToString: {
+              format: "%Y-%m-%d %H:%M:%S",
+              date: { $toDate: "$openDate" },
+              timezone: "UTC",
             },
-            marketName: { $first: "$marketName" },
-            eventId: { $first: "$eventId" },
-            sportID: { $first: "$sportID" }
           },
         },
-      ],
-      (err, currentPositionData) => {
-        if (err) {
-          const response = {
-            success: false,
-            message: "Failed to get data",
-            error: err,
-          };
-          res.send(response);
-        } else {
-          const response = {
-            success: true,
-            message: "hilights records",
-            results: currentPositionData,
-          };
-          res.send(response);
-        }
-      }
-    );
+      },
+      {
+        $sort: {
+          openDate: -1,
+        },
+      },
+    ]);
+
+    res.send({ success: true, message: "highlights records", results: currentPositionData });
+
   } catch (err) {
-    // //console.log("current positiion Error ============= ", err);
-    const response = {
-      success: true,
-      message: ` error ${err}`,
-    };
-    res.send(response);
+    console.error("Error in getHighlights: ", err);
+    res.status(500).send({
+      success: false,
+      message: `Error: ${err.message}`,
+    });
   }
 };
+
+
 const battorcurrentPosition = async (req, res) => {
   try{
     const userId = req.decoded.userId;
