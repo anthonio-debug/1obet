@@ -648,24 +648,36 @@ async function getBookmakersLimitlessByEventId(req, res) {
 
 async function getOddsLimitlessByMarketId(req, res) {
   const marketId = req.params.marketId;
-  let url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
-  let url2 = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
-  
+  const url1 = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
+  const url2 = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
+
   try {
-    let response = await axios.get(url);
-    console.log("getOddsLimitlessByMarketId =-=-=-=-==-response url=",JSON.stringify(response.data, null, 2));
-    // console.log('response-=-=--=-=-',response?.data  )
-    if (!response || !response.data || Object.keys(response.data).length === 0) {
-      // url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
-      response = await axios.get(url2);
-      console.log("getOddsLimitlessByMarketId =-=-=-=-==-response =",JSON.stringify(response.data, null, 2));
-    }
     
-    res.status(200).json({ success: true, data:  response.data  });
+    let response = await axios.get(url1);
+    console.log("Response from first API:", JSON.stringify(response.data, null, 2));
+
+    if (!response || !response.data || Object.keys(response.data).length === 0) {
+      console.log("No data from first API, calling second API...");
+      response = await axios.get(url2);
+    }
+
+    res.status(200).json({ success: true,message:"response from lithyl api", data: response.data });
+
   } catch (error) {
-    res.status(500).json({ success: false, msg: "Failed to get odds: " + error.message });
+    console.error("Error from first API:", error.message);
+// Second API call
+    try {
+      let response = await axios.get(url2);
+      // console.log("Response from second API after first API failure:", JSON.stringify(response.data, null, 2));
+      res.status(200).json({ success: true, message:"response from lithyl api", data: response.data });
+
+    } catch (error2) {
+      console.error("Error from second API:", error2.message);
+      res.status(500).json({ success: false, msg: "Failed to get odds: " + error2.message });
+    }
   }
 }
+
 
 async function getScoreLimitlessByEventId(req, res) {
   const eventId = req.params.eventId;
