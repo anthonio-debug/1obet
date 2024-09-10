@@ -2220,7 +2220,7 @@ const placeBet = async (req, res) => {
         });
       }
       
-      console.log("----------------------------------->",bookmakerOddsRes['bookMakerArr'].sid);
+      console.log("----------------------------------->",bookmakerOddsRes['bookMakerArr'][0].sid);
 
 
       console.log("Some items steatus...............",bookmakerStatus);
