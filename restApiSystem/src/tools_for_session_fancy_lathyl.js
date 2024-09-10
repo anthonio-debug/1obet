@@ -179,9 +179,9 @@ if(bookmakerOdds!==0){
           let Bmarketid;
           for (const [index, market] of bookmakerMarketList.entries()) {
             
-              bookmakerMarketIds.push(market?.mid)
+              bookmakerMarketIds.push(market?.mid+'bm')
               
-              Bmarketid = market.mid;
+              Bmarketid = market.mid+'bm';
                 runners.push({
                   SelectionId: market.sid,
                   runnerName: market.nat,
@@ -195,7 +195,7 @@ if(bookmakerOdds!==0){
                   marketId: Bmarketid,
                 }, {
                 eventId: eventId,
-                marketId: Bmarketid+'bm',
+                marketId: Bmarketid,
                 marketName: 'Bookmaker',
                 sportID: 4,
                 // status: '',
