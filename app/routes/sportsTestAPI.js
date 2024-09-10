@@ -971,7 +971,7 @@ async function getOdds(marketIds, sportsId) {
       try {
         const response = await axios.get(oddUrl2);
   
-        console.log("================///============Odds from lithyl", response.data);
+        console.log("================///============Odds from lithyl", JSON.stringify(response.data, null, 2));
       
       if (response.data) {      
         const oddData = response.data;
