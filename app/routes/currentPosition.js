@@ -366,7 +366,7 @@ const getHighlights = async (req, res) => {
       {
         $lookup: {
           from: "odds",
-          localField: "Id",
+          localField: "Id",  
           foreignField: "eventId",
           as: "oddsData",
         },
@@ -374,15 +374,15 @@ const getHighlights = async (req, res) => {
       {
         $group: {
           _id: "$_id",
-          eventName: { $first: "$name" },
+          eventName: { $first: "$name" },  
           openDate: { $first: "$openDate" },
-          CompanySetStatus: { $first: "$CompanySetStatus" },
-          isShowed: { $first: "$isShowed" },
+        CompanySetStatus: { $first: "$CompanySetStatus" },
+        isShowed: { $first: "$isShowed" },  
           totalMatched: { $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] } },
           inplay: { $first: { $arrayElemAt: ["$oddsData.isInplay", 0] } },
-          marketName: { $first: { $arrayElemAt: ["$marketData.marketName", 0] } },
-          eventId: { $first: "$eventId" },
-          sportID: { $first: "$sportID" }
+          marketName: { $first: { $arrayElemAt: ["$marketData.marketName", 0] } },  
+          eventId: { $first: { $arrayElemAt: ["$marketData.eventId", 0] } },  
+          sportID: { $first: { $arrayElemAt: ["$marketData.sportID", 0] } }   
         },
       }
     ])
