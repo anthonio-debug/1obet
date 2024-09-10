@@ -2201,6 +2201,7 @@ const placeBet = async (req, res) => {
       let bookmakerOddsRes = await fetchSession(eventDetail.Id);
       if(bookmakerOddsRes['bookMakerArr'] && bookmakerOddsRes['bookMakerArr'].length>0){
         console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:", bookmakerOddsRes['bookMakerArr']);
+        console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB length:", bookmakerOddsRes['bookMakerArr'].length);
 
       }else{
         activeBettors.delete(userId);
@@ -2212,26 +2213,25 @@ const placeBet = async (req, res) => {
      
 
       const bookmakerStatus = bookmakerOddsRes['bookMakerArr']?.some((item) => item?.s === 'ACTIVE');
-      const SUSPENDED = bookmakerOddsRes['bookMakerArr']?.some((item) => item?.s === 'SUSPENDED');
-      const SUSPENDED1 = bookmakerOddsRes['bookMakerArr']?.some((item) => item?.s === 'SUSPENDED1');
-      const SOMEACTIVE1 = bookmakerOddsRes['bookMakerArr']?.some((item) => item?.s === 'ACTIVE1');
-      console.log("Some items steatus...............",bookmakerStatus);
-      console.log("Some items SUSPENDED...............",SUSPENDED);
-      console.log("Some items SUSPENDED1...............",SUSPENDED1);
-      console.log("Some items SOMEACTIVE1...............",SOMEACTIVE1);
-
-      const bookmakerBallRunningStatus = bookmakerOddsRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status));
-      const bookmakerSuspendedStatus = bookmakerOddsRes[0]?.runners.every((item) => item?.status === 'SUSPENDED');
-      statusForRes.bookmakerStatus = bookmakerStatus;
-      statusForRes.bookmakerBallRunningStatus = bookmakerBallRunningStatus;
-      statusForRes.bookmakerSuspendedStatus = bookmakerSuspendedStatus;
-      statusForRes.bookmakerBMCheckTime = moment().format('YYYY/MM/DD HH:mm:ss');
+      const bookmakerSuspendedStatus = bookmakerOddsRes['bookMakerArr']?.every((item) => item?.s === 'SUSPENDED');
       if (bookmakerSuspendedStatus) {
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Bookmaker all runners are in SUSPENDED status for selected team ${selectionId}`
         });
       }
+      let bookmakerResponse = bookmakerOddsRes['bookMakerArr'][0];
+      console.log("----------------------------------->....",bookmakerResponse.sid);
+
+
+      console.log("Some items steatus...............",bookmakerStatus);
+      const bookmakerBallRunningStatus = bookmakerOddsRes['bookMakerArr']?.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status));
+      
+      statusForRes.bookmakerStatus = bookmakerStatus;
+      statusForRes.bookmakerBallRunningStatus = bookmakerBallRunningStatus;
+      statusForRes.bookmakerSuspendedStatus = bookmakerSuspendedStatus;
+      statusForRes.bookmakerBMCheckTime = moment().format('YYYY/MM/DD HH:mm:ss');
+      
       if (bookmakerBallRunningStatus) {
         activeBettors.delete(userId);
         return res.status(404).send({
