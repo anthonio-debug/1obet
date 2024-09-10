@@ -867,13 +867,14 @@ async function getRelatedMarkets(req, res) {
   }
 }
 async function saveOdds(oddData, sportsId) {
-  // console.log("MM befor parsing-=-=-=-=-=-=-",oddData)
-//   try {
-//     oddData = JSON.parse(oddData);
-// } catch (error) {
-//     console.error("Failed to parse oddData:", error);
-//     return;
-// }
+  
+  console.log("MM befor parsing-=-=-=-=-=-=-",oddData)
+  try {
+    oddData = JSON.parse(oddData);
+} catch (error) {
+    console.error("Failed to parse oddData:", error);
+    return;
+}
 
   // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
   const runners = [];
@@ -971,10 +972,10 @@ async function getOdds(marketIds, sportsId) {
       try {
         const response = await axios.get(oddUrl2);
   
-        console.log("================///============Odds from lithyl", JSON.stringify(response.data, null, 2));
+        // console.log("================///============Odds from lithyl", JSON.stringify(response.data, null, 2));
       
       if (response.data) {      
-        const oddData = response.data;
+        const oddData = JSON.stringify(response.data, null, 2)
         odds.push(await saveOdds(oddData, sportsId));
       }
   
