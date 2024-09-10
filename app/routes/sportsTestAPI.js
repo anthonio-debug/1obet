@@ -649,15 +649,16 @@ async function getBookmakersLimitlessByEventId(req, res) {
 async function getOddsLimitlessByMarketId(req, res) {
   const marketId = req.params.marketId;
   let url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
-  // let url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
+  let url2 = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
   
   try {
     let response = await axios.get(url);
-    // console.log("getOddsLimitlessByMarketId =-=-=-=-==-response =",JSON.stringify(response.data, null, 2));
-    console.log('response-=-=--=-=-',response?.data  )
-    if (!response || !response.data) {
-      url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
-      response = await axios.get(url);
+    console.log("getOddsLimitlessByMarketId =-=-=-=-==-response url=",JSON.stringify(response.data, null, 2));
+    // console.log('response-=-=--=-=-',response?.data  )
+    if (!response || !response.data || Object.keys(response.data).length === 0) {
+      // url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
+      response = await axios.get(url2);
+      console.log("getOddsLimitlessByMarketId =-=-=-=-==-response =",JSON.stringify(response.data, null, 2));
     }
     
     res.status(200).json({ success: true, data:  response.data  });
