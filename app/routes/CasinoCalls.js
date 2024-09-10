@@ -120,7 +120,12 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const difference = credit - debit;
       const allTrans = [];
       // lose some Amount 
-      const betTime = new Date().getTime();
+      const betTime = new Date().getTime(); 
+      const depositLastBetTime=await Cash.findOne({userId:user.userId}).sort({_id:-1})
+      if (depositLastBetTime && (betTime - depositLastBetTime.betTime) < 500) {
+    console.log("heeeeeeeeeeeeeeeeeeeeeereeeeeeeeeeeeeeeeeeee arham leessssss then 1 sec")
+        return;
+      }
       if (difference < 0) {
        
           console.log("diff less 0 Arham================")
@@ -166,9 +171,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
        
      
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-        //console.log("My log ---------------------------", lastMaxWithdraw)
-        //divide lost money to all share holders.
+        const userAvaiableBalance = await User.findOne({ userId: user.userId }).sort({ _id: -1 });
+      
         const balance = lastMaxWithdraw ? lastMaxWithdraw.balance - bettor_lost_amount : -bettor_lost_amount
+        const balance1 = userAvaiableBalance.balance - bettor_lost_amount
         if (balance < 0) {
           log(
             `${JSON.stringify({
@@ -177,8 +183,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               date: now.getTime(),
               createdAt: formattedDate,  
               amount: -bettor_lost_amount,  
-              balance,
-              availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
+              balance:updatedavailableBalance,
+              availableBalance: updatedavailableBalance,
               maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
               cash: lastMaxWithdraw?.cash || 0,
               credit: lastMaxWithdraw?.credit || 0,
@@ -205,8 +211,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               date: now.getTime(),
               createdAt: formattedDate,
               amount: -bettor_lost_amount,
-              balance,
-              availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
+              balance:updatedavailableBalance,
+              availableBalance: updatedavailableBalance,
               maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
               cash: lastMaxWithdraw?.cash || 0,
               credit: lastMaxWithdraw?.credit || 0,
@@ -322,8 +328,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             betDateTime: betTime,
             casinoBetAmount: debit,
             amount: (user.commission / 100) * bettor_lost_amount,
-            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * bettor_lost_amount : (user.commission / 100) * bettor_lost_amount,
-            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * bettor_lost_amount : (user.commission / 100) * bettor_lost_amount,
+            balance:availableBalance,
+            availableBalance: availableBalance,
             maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * bettor_lost_amount : 0,  // max withdraw cant be negative
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
             credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
@@ -410,8 +416,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           betDateTime: betTime,
           casinoBetAmount: debit,
           amount: remainingAmount,
-          balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
-          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
+          balance: updatedavailableBalance,
+          availableBalance:updatedavailableBalance,
           maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
           cashOrCredit: "Bet",
           cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
@@ -491,8 +497,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             betDateTime: betTime,
             casinoBetAmount: debit,
             amount: -(user.commission / 100) * amount,
-            balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
-            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
+            balance: availableBalance,
+            availableBalance: availableBalance,
             maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * amount : 0,
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
             credit: lastMaxWithdraw?.credit || 0,
@@ -522,8 +528,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             casinoBetAmount: debit,
             commissionFrom: commissionFrom,
             amount: (user.commission / 100) * commissionAmount,
-            balance: prevBalance + (user.commission / 100) * commissionAmount,
-            availableBalance: prevAvailableBalance + (user.commission / 100) * commissionAmount,
+            balance:availableBalance,
+            availableBalance: availableBalance,
             maxWithdraw: prevMaxWithdraw + (user.commission / 100) * commissionAmount,
             // balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
             // availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
