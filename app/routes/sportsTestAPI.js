@@ -867,13 +867,13 @@ async function getRelatedMarkets(req, res) {
   }
 }
 async function saveOdds(oddData, sportsId) {
-  // console.log("MM befor parsing-=-=-=-=-=-=-",oddData)
-  try {
-    oddData = JSON.parse(oddData);
-} catch (error) {
-    console.error("Failed to parse oddData:", error);
-    return;
-}
+  console.log("MM befor parsing-=-=-=-=-=-=-",oddData)
+//   try {
+//     oddData = JSON.parse(oddData);
+// } catch (error) {
+//     console.error("Failed to parse oddData:", error);
+//     return;
+// }
 
   // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
   const runners = [];
