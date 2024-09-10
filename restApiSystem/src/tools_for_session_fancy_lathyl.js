@@ -121,7 +121,7 @@ if(bookmakerOdds!==0){
             ls3: 0,
             s: odd.s,
             sid: odd.sid,
-            ssid: odd?.mid,
+            ssid: odd?.mid+'bm',
             nat: odd.nat,
           })
         
