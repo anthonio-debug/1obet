@@ -184,8 +184,9 @@ async function fetchBookmakerOdds(eventId) {
     // http://142.93.36.1/api/v2/getBookmakerOdds?EventTypeID=4&marketId=9991.225522065_bm1
 
     const response = await axios.get(url)
-    // console.log('session list: ', JSON.stringify(res))
+     
     const res = response.data
+    console.log('bookmaker response.............: ', res)
     if (isIterable(res)) {
       const items = res.map((item) => {
         return JSON.parse(item)
