@@ -3839,7 +3839,7 @@ async function getMatchedBets(req, res) {
           const sportid = +eventId.sportsId
           const events = await MarketIDS.aggregate([
             {
-              $match: { sportID: sportid, openDate: { $gt: marketOpendate } }
+              $match: { sportID: sportid,status: { $ne: "CLOSED" }, openDate: { $gt: marketOpendate } }
             },
             {
               $lookup: {
