@@ -998,7 +998,7 @@ async function getOdds(marketIds, sportsId) {
       resolve(odds);
         
       } catch (error2) {
-        // res.status(500).json({ success: false, msg: "Failed to get Odds from limitless. Error: " + error2.message })
+        res.status(500).json({ success: false, msg: "Failed to get Odds from limitless. Error: " + error2.message })
       }
     }
     //   const response = await axios.get(oddUrl);
@@ -1358,7 +1358,7 @@ async function cronOdds2(req, res) {
     res.json({ status: true, data: "Result: " , result });
 
   } catch (error) {
-    res.status(500).json({ success: false, msg: "Failed to get data from limitless. Error: " + error.message });
+    // res.status(500).json({ success: false, msg: "Failed to get data from limitless. Error: " + error.message });
 
     // fetch markets from lithyl API
     try {
