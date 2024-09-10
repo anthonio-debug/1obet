@@ -874,6 +874,12 @@ async function saveOdds(oddData, sportsId) {
 //     console.error("Failed to parse oddData:", error);
 //     return;
 // }
+if (Array.isArray(oddData) && oddData.length > 0) {
+  oddData = oddData[0];
+} else {
+  console.error("Invalid oddData format:", oddData);
+  return;
+}
 
   console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData.marketId)
 
