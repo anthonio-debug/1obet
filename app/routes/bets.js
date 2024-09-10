@@ -2193,9 +2193,9 @@ const placeBet = async (req, res) => {
       const selectedMarketId = dbFancyOdds[0]?.ssid;
       if (!selectedMarketId) {
         activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bookmaker Odds not available for the selected team ${selectionId}`
-        });
+        // return res.status(404).send({
+        //   message: `Bookmaker Odds not available for the selected team ${selectionId}`
+        // });
       }
       // const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
       let bookmakerOddsRes = await fetchSession(eventDetail.Id);
@@ -2246,6 +2246,16 @@ const placeBet = async (req, res) => {
             ssid: runner.mid,
             nat: runner.nat
           });
+       
+          if(runner.s != 'ACTIVE' && runner.sid == selectionId){
+           
+              activeBettors.delete(userId);
+              return res.status(404).send({
+                message: `Bookmaker runner is in Ball Running status for selected team ${runner.nat}`
+              });
+            
+          }
+       
         }
         return odds;
       };
@@ -2269,39 +2279,21 @@ const placeBet = async (req, res) => {
       statusForRes.bookmakerSuspendedStatus = bookmakerSuspendedStatus;
       statusForRes.bookmakerBMCheckTime = moment().format('YYYY/MM/DD HH:mm:ss');
       
-      if (bookmakerBallRunningStatus) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bookmaker runner is in Ball Running status for selected team ${selectionId}`
-        });
-      }
-      if (!bookmakerStatus) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bookmaker runner not available for selected team ${selectionId}`
-        });
-      }
+      
 
     
 
       let runners = dbFancyOdds;
       // _3rdPartyMarketId = "Bookmaker";
       _3rdPartyMarketId = selectedMarketId;
-      runnerForSaveInbets = runners.map((runner) => ({
-        runner: runner.sid,
-        amount: 0
-      }));
+      runnerForSaveInbets = '';
 
-      if (apiBookmakerOdds.length && dbFancyOdds.length) {
-        const apiSelectedOdds = apiBookmakerOdds.find((runner) => runner.sid === selectionId);
+      if (apiBookmakerOdds.length) {
+        const apiSelectedOdds = apiBookmakerOdds.find((runner) => sid === selectionId);
+        console.log("apiSelectedOdds,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,",apiSelectedOdds);
         const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid === selectionId);
 
-        if (!apiSelectedOdds || !dbSelectedOdds) {
-          activeBettors.delete(userId);
-          return res.status(404).send({
-            message: `Odds not available for the selected team ${selectionId}-4`
-          });
-        }
+       
         fancyData = null;
         runnerName = dbSelectedOdds.nat;
         if (req.body.type == 0) {
