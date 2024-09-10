@@ -152,7 +152,7 @@ if(bookmakerOdds!==0){
         openDate: { $lte: from },
         status: 'OPEN'
       }, { Id: 1 }).exec();
-
+      console.log("list of sligibale events..............................................................",fancyEvents);
       for (const event of fancyEvents) {
         const eventId = event.Id
         
