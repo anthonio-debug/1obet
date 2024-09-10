@@ -2198,16 +2198,23 @@ const placeBet = async (req, res) => {
         });
       }
       // const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
-      let bookmakerOddsRes = await fetchBookmakerOdds(eventDetail.Id);
-      console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:", bookmakerOddsRes);
-      if (bookmakerOddsRes.length === 0) {
+      let bookmakerOddsRes = await fetchSession(eventDetail.Id);
+      if(bookmakerOddsRes['bookMakerArr'] && bookmakerOddsRes['bookMakerArr'].length>0){
+        console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:", bookmakerOddsRes['bookMakerArr']);
+
+      }else{
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Bookmaker Odds not available for the selected team ${selectionId}`
         });
       }
+      
+     
 
-      const bookmakerStatus = bookmakerOddsRes[0]?.runners.some((item) => item?.status === 'ACTIVE');
+      const bookmakerStatus = bookmakerOddsRes['bookMakerArr']?.some((item) => item?.s === 'ACTIVE');
+
+      console.log("Some items steatus...............",bookmakerStatus);
+
       const bookmakerBallRunningStatus = bookmakerOddsRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status));
       const bookmakerSuspendedStatus = bookmakerOddsRes[0]?.runners.every((item) => item?.status === 'SUSPENDED');
       statusForRes.bookmakerStatus = bookmakerStatus;
