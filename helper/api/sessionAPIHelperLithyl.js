@@ -176,7 +176,7 @@ async function fetchBookmakerList(eventId) {
   }
 }
 
-async function fetchBookmakerOdds(marketIds) {
+async function fetchBookmakerOdds(eventId) {
   const url = `${SESSION_API_URI}/getOFBData?id=${eventId}`
   try {
     // const marketId = '1.166536383'
@@ -184,8 +184,9 @@ async function fetchBookmakerOdds(marketIds) {
     // http://142.93.36.1/api/v2/getBookmakerOdds?EventTypeID=4&marketId=9991.225522065_bm1
 
     const response = await axios.get(url)
-    // console.log('session list: ', JSON.stringify(res))
+     
     const res = response.data
+    console.log('bookmaker response.............: ', res)
     if (isIterable(res)) {
       const items = res.map((item) => {
         return JSON.parse(item)
