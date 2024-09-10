@@ -43,9 +43,7 @@ async function fetchSession(eventId) {
     responseRet['fanciesArr'] = res.t3;
   }
   if(res.t6){
-    if(eventId=="33557249"){
-      console.log("res.t6....................>>>>>>>>>>>>>>>>>>>",res.t6);
-    }
+  
     
 
     responseRet['oddevenArr'] = res.t6;
