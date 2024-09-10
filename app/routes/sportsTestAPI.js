@@ -867,7 +867,7 @@ async function getRelatedMarkets(req, res) {
   }
 }
 async function saveOdds(oddData, sportsId) {
-  // console.log("MM befor parsing-=-=-=-=-=-=-",oddData)
+  console.log("MM befor parsing-=-=-=-=-=-=-",oddData)
 //   try {
 //     oddData = JSON.parse(oddData);
 // } catch (error) {
