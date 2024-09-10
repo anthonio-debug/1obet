@@ -219,7 +219,7 @@ if(bookmakerOdds!==0){
          
          }
          
-         //if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+         if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
               FancyOddsMap.set(eventId, fancyData)
               let newFancyOdds = new FancyOdds({
                 eventId: eventId,
@@ -230,7 +230,7 @@ if(bookmakerOdds!==0){
               await newFancyOdds.save();
               
               io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
-            
+            }
 
 
 
