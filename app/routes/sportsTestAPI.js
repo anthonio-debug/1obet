@@ -1958,7 +1958,20 @@ async function getOddsFromlithylAPI(req, res) {
       .json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
-////////////MMMMMMMMMMMM
+////////////
+function checkMultiResponse(rates, odds) {
+  if (Array.isArray(rates) && Array.isArray(odds)) {
+    const ratesSet = new Set(rates);
+
+    for (const element of odds) {
+      if (ratesSet.has(element)) {
+        return element;
+      }
+    }
+
+    return null;
+  }
+}
 
 
 // //////////////////
@@ -1971,6 +1984,7 @@ router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/testing', testing)
+router.get('/track-bet/multi-response', checkMultiResponse)
 /////////////////
 
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
