@@ -62,8 +62,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     const betTime = new Date().getTime(); 
       
     // Prevent multiple transactions within 500 milliseconds
-    const depositLastBetTime = await Cash.find({ userId: user.userId,  description: { $regex: "Casino (Casino Hold'em)", $options: "i" } }).sort({ _id: -1 });
-    if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[0].betDateTime) < 1000) {
+    const depositLastBetTime = await Cash.find({ userId: user.userId,  description: "Casino (Casino Hold'em)" }).sort({ _id: -1 });
+    if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[depositLastBetTime.length-1].betDateTime) < 1000) {
       console.log('Transaction occurred too quickly, skipping...');
       return; // Skip transaction
     }
@@ -119,7 +119,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       if (difference < 0) {
         let GameName = game ? game.name : 'N/A';
-
+        console.log("diff lesss then 0 arham")
         const updatedavailableBalance = user.availableBalance + (credit * casinoMultiples);
         const updatedclientPL = Number((user.clientPL + (difference * casinoMultiples)).toFixed(3));
         const updatedbalance = Number((user.balance + (difference * casinoMultiples)).toFixed(3));
