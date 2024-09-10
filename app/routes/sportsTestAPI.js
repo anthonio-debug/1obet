@@ -976,6 +976,8 @@ async function getOdds(marketIds, sportsId) {
       
       if (response.data) {      
         const oddData = JSON.stringify(response.data, null, 2)
+        console.log("OOOOOOOOOOpPPPPPPPPPPPPP---oddData",oddData);
+        
         odds.push(await saveOdds(oddData, sportsId));
       }
   
