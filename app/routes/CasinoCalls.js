@@ -178,7 +178,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               createdAt: formattedDate,  
               amount: -bettor_lost_amount,  
               balance,
-              availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
+              availableBalance: balance,
               maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
               cash: lastMaxWithdraw?.cash || 0,
               credit: lastMaxWithdraw?.credit || 0,
