@@ -323,8 +323,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             betDateTime: betTime,
             casinoBetAmount: debit,
             amount: (user.commission / 100) * bettor_lost_amount,
-            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * bettor_lost_amount : (user.commission / 100) * bettor_lost_amount,
-            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * bettor_lost_amount : (user.commission / 100) * bettor_lost_amount,
+            balance:availableBalance,
+            availableBalance: availableBalance,
             maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * bettor_lost_amount : 0,  // max withdraw cant be negative
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
             credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
