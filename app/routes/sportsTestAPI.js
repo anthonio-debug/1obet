@@ -1243,11 +1243,11 @@ async function cronOdds2(req, res) {
     return res.status(401).send({ message: 'you can only fetch cricket Odds' });
    }
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
-
+  const url2= `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
   try {
     const response = await axios.get(url);
 
-    // console.log("=-=--==---=-=--=-===--= market api response", response);
+    console.log("=-=--==---=-=--=-===--= market api response", response.data);
     
     const marketsData = response.data;
     const sendMarketIds = [];
@@ -1311,6 +1311,8 @@ async function cronOdds2(req, res) {
 
   } catch (error) {
     res.status(500).json({ success: false, msg: "Failed to get data. Error: " + error.message });
+
+    
   }
 }
 
