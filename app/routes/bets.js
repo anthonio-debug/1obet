@@ -2201,6 +2201,7 @@ const placeBet = async (req, res) => {
       let bookmakerOddsRes = await fetchSession(eventDetail.Id);
       if(bookmakerOddsRes['bookMakerArr'] && bookmakerOddsRes['bookMakerArr'].length>0){
         console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:", bookmakerOddsRes['bookMakerArr']);
+        console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB length:", bookmakerOddsRes['bookMakerArr'].length);
 
       }else{
         activeBettors.delete(userId);
