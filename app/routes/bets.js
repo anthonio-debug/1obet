@@ -2219,8 +2219,8 @@ const placeBet = async (req, res) => {
           message: `Bookmaker all runners are in SUSPENDED status for selected team ${selectionId}`
         });
       }
-      
-      console.log("----------------------------------->",bookmakerOddsRes['bookMakerArr'][0].sid);
+      let bookmakerResponse = bookmakerOddsRes['bookMakerArr'][0];
+      console.log("----------------------------------->....",bookmakerResponse.sid);
 
 
       console.log("Some items steatus...............",bookmakerStatus);
