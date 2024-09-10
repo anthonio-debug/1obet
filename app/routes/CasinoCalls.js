@@ -120,7 +120,11 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const difference = credit - debit;
       const allTrans = [];
       // lose some Amount 
-      const betTime = new Date().getTime();
+      const betTime = new Date().getTime(); 
+      const depositLastBetTime=await Cash.findOne({userId:user.userId}).sort({_id:-1})
+      if (depositLastBetTime.betTime == betTime) {
+        return 
+      }
       if (difference < 0) {
        
           console.log("diff less 0 Arham================")
@@ -411,8 +415,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           betDateTime: betTime,
           casinoBetAmount: debit,
           amount: remainingAmount,
-          balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
-          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
+          balance: updatedavailableBalance,
+          availableBalance:updatedavailableBalance,
           maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
           cashOrCredit: "Bet",
           cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
@@ -492,8 +496,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             betDateTime: betTime,
             casinoBetAmount: debit,
             amount: -(user.commission / 100) * amount,
-            balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
-            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * amount : -(user.commission / 100) * amount,
+            balance: availableBalance,
+            availableBalance: availableBalance,
             maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * amount : 0,
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
             credit: lastMaxWithdraw?.credit || 0,
