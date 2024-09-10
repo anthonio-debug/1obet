@@ -654,7 +654,7 @@ async function getOddsLimitlessByMarketId(req, res) {
   try {
     let response = await axios.get(url);
     // console.log("getOddsLimitlessByMarketId =-=-=-=-==-response =",JSON.stringify(response.data, null, 2));
-    
+    console.log('response-=-=--=-=-',response?.data  )
     if (!response || !response.data) {
       url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
       response = await axios.get(url);
