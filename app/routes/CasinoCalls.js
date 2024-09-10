@@ -112,7 +112,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       
       // Prevent multiple transactions within 500 milliseconds
       const depositLastBetTime = await Cash.find({ userId: user.userId }).sort({ _id: -1 });
-      if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[0].betDateTime) < 500) {
+      if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[0].betDateTime) < 1000) {
         console.log('Transaction occurred too quickly, skipping...');
         return; // Skip transaction
       }
