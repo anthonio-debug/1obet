@@ -2220,11 +2220,48 @@ const placeBet = async (req, res) => {
           message: `Bookmaker all runners are in SUSPENDED status for selected team ${selectionId}`
         });
       }
-      let bookmakerResponse = bookmakerOddsRes['bookMakerArr'][0];
-      console.log("----------------------------------->....",bookmakerResponse.sid);
+      let bookmakerTeam1 = bookmakerOddsRes['bookMakerArr'][0];
+      console.log("----------------------------------->....",bookmakerTeam1.sid);
+      
+
+      const buildBookmakerOdd = (bookmakerOddsRes) => {
+        let odds = [];
+        const bookmakerOdd = bookmakerOddsRes['bookMakerArr'];
+        for (const runner of bookmakerOdd) {
+          odds.push({
+            b1: runner.b1,
+            b2: 0,
+            b3: 0,
+            bs1: runner.bs1,
+            bs2: 0,
+            bs3: 0,
+            l1: runner.l1,
+            l2: 0,
+            l3: 0,
+            ls1: runner.ls1,
+            ls2: 0,
+            ls3: 0,
+            s: runner.s,
+            sid: runner.sid,
+            ssid: runner.mid,
+            nat: runner.nat
+          });
+        }
+        return odds;
+      };
+      const apiBookmakerOdds = buildBookmakerOdd(bookmakerOddsRes);
 
 
-      console.log("Some items steatus...............",bookmakerStatus);
+      console.log("apiBookmakerOdds elngth=================================>>>>>",apiBookmakerOdds.length)
+
+
+
+
+
+
+
+
+     
       const bookmakerBallRunningStatus = bookmakerOddsRes['bookMakerArr']?.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status));
       
       statusForRes.bookmakerStatus = bookmakerStatus;
@@ -2245,32 +2282,7 @@ const placeBet = async (req, res) => {
         });
       }
 
-      const buildBookmakerOdd = (bookmakerOddsRes) => {
-        let odds = [];
-        const bookmakerOdd = bookmakerOddsRes[0];
-        for (const runner of bookmakerOdd.runners) {
-          odds.push({
-            b1: runner.back[0].price,
-            b2: runner.back[1].price,
-            b3: runner.back[2].price,
-            bs1: runner.back[0].size,
-            bs2: runner.back[1].size,
-            bs3: runner.back[2].size,
-            l1: runner.lay[0].price,
-            l2: runner.lay[0].price,
-            l3: runner.lay[0].price,
-            ls1: runner.lay[0].size,
-            ls2: runner.lay[0].size,
-            ls3: runner.lay[0].size,
-            s: runner.status,
-            sid: runner.selectionId,
-            ssid: bookmakerOdd?.marketId,
-            nat: runner.runnerName
-          });
-        }
-        return odds;
-      };
-      const apiBookmakerOdds = buildBookmakerOdd(bookmakerOddsRes);
+    
 
       let runners = dbFancyOdds;
       // _3rdPartyMarketId = "Bookmaker";
