@@ -950,9 +950,8 @@ async function getOdds(marketIds, sportsId) {
   return new Promise(async (resolve, reject) => {
     const odds = [];
     const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
-    // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketIds}`;
-    //  const oddUrl = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
-    
+     const oddUrl2 = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
+    try {
       const response = await axios.get(oddUrl);
 
       console.log("================///============", response.data);
@@ -965,6 +964,39 @@ async function getOdds(marketIds, sportsId) {
 
     // Resolve the promise with the collected odds
     resolve(odds);
+      
+    } catch (error) {
+      res.status(500).json({ success: false, msg: "Failed to get odds from limitless. Error: " + error.message })
+      // saving odds from lithyl API
+      try {
+        const response = await axios.get(oddUrl2);
+  
+        console.log("================///============Odds from lithyl", response.data);
+      
+      if (response.data) {      
+        const oddData = response.data;
+        odds.push(await saveOdds(oddData, sportsId));
+      }
+  
+      // Resolve the promise with the collected odds
+      resolve(odds);
+        
+      } catch (error2) {
+        res.status(500).json({ success: false, msg: "Failed to get Odds from limitless. Error: " + error2.message })
+      }
+    }
+    //   const response = await axios.get(oddUrl);
+
+    //   console.log("================///============", response.data);
+    
+    // if (response.data) {      
+    //   const oddData = response.data;
+    //   // console.log("===================================================================================2");
+    //   odds.push(await saveOdds(oddData, sportsId));
+    // }
+
+    // // Resolve the promise with the collected odds
+    // resolve(odds);
   });
 }
 
@@ -1316,7 +1348,7 @@ async function cronOdds2(req, res) {
     try {
       const response = await axios.get(url2);
   
-      console.log("=-=--==---=-=--=-===--= market api response", response.data);
+      // console.log("=-=--==---=-=--=-===--= market api response", response.data);
       
       const marketsData = response.data;
       const sendMarketIds = [];
