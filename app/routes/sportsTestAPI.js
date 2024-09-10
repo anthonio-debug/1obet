@@ -966,7 +966,7 @@ async function getOdds(marketIds, sportsId) {
     resolve(odds);
       
     } catch (error) {
-      res.status(500).json({ success: false, msg: "Failed to get odds from limitless. Error: " + error.message })
+      // res.status(500).json({ success: false, msg: "Failed to get odds from limitless. Error: " + error.message })
       // saving odds from lithyl API
       try {
         const response = await axios.get(oddUrl2);
