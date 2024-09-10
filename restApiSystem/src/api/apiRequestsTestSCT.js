@@ -522,7 +522,7 @@ function apiRequests() {
           })
         });
         //sorting end      
-        console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
+       // console.log("I am sorted:::::::::::::::::::::::::::::::", marketIds.length);
 
         sortedarrMarketIds.indexOf("Apple");
 
@@ -569,14 +569,12 @@ function apiRequests() {
             }
           } else {
             const newmarkets2 = await MarketIDS.findOneAndUpdate({ eventId: ev, marketId: marketIds[index].id + '' }, { status: marketIds[index].status });
-            console.log(`newmarkets2=========================${newmarkets2}`)
+            //console.log(`newmarkets2=========================${newmarkets2}`)
           }
         }
-        console.log(`marketIds==========================${marketIds}`);
-        console.log(`eventId==========================${eventId}`);
-        console.log(`eventId==========================${typeof (eventId)}`);
+       
         const checkevent = await inPlayEvents.updateOne({ Id: eventId }, { marketIds: marketIds })
-        console.log(`checkevent======================${checkevent}`);
+        
       }
     } catch (error) {
       console.error(error);
