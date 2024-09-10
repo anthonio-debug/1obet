@@ -2283,14 +2283,18 @@ const placeBet = async (req, res) => {
 
     
 
+     
       let runners = dbFancyOdds;
       // _3rdPartyMarketId = "Bookmaker";
       _3rdPartyMarketId = selectedMarketId;
-      runnerForSaveInbets = '';
+      runnerForSaveInbets = runners.map((runner) => ({
+        runner: runner.sid,
+        amount: 0
+      }));
 
       if (apiBookmakerOdds.length) {
         const apiSelectedOdds = apiBookmakerOdds.find((runner) => runner.sid === selectionId);
-        console.log("apiSelectedOdds.b1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.......",apiSelectedOdds);
+        console.log("apiSelectedOdds.b1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.......",apiSelectedOdds.b1);
         const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid === selectionId);
 
        
