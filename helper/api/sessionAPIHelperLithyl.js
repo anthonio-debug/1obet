@@ -176,7 +176,7 @@ async function fetchBookmakerList(eventId) {
   }
 }
 
-async function fetchBookmakerOdds(marketIds) {
+async function fetchBookmakerOdds(eventId) {
   const url = `${SESSION_API_URI}/getOFBData?id=${eventId}`
   try {
     // const marketId = '1.166536383'

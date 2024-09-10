@@ -2198,7 +2198,7 @@ const placeBet = async (req, res) => {
         });
       }
       // const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
-      let bookmakerOddsRes = await fetchBookmakerOdds(selectedMarketId);
+      let bookmakerOddsRes = await fetchBookmakerOdds(eventDetail.Id);
       console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:", bookmakerOddsRes);
       if (bookmakerOddsRes.length === 0) {
         activeBettors.delete(userId);
