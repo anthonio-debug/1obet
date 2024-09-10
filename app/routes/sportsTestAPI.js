@@ -875,19 +875,29 @@ async function saveOdds(oddData, sportsId) {
 //     return;
 // }
 
-  // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData)
+  console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-",oddData.marketId)
+
+  const oddDataMarket =await MarketIDS.findOne({marketId:oddData.marketId})
+  const runnerNameMap = new Map();
+  for (const runner of oddDataMarket.runners) {
+    runnerNameMap.set(runner.SelectionId, runner.runnerName);
+  }
+  
+  
+
   const runners = [];
 
   for (const runner of oddData.runners) {
+    console.log("oddDataMarket.runners.runnerName",runnerNameMap.get(runner.selectionId));
     runners.push({
       SelectionId: runner.selectionId,
-      runnerName: runner.runner,
+      runnerName: runnerNameMap.get(runner.selectionId),
       Status: runner.status,
       LastPriceTraded: runner.lastPriceTraded,
       TotalMatched: 0,
       ExchangePrices: {
-        AvailableToBack: runner.back,
-        AvailableToLay: runner.lay,
+        AvailableToBack: runner.ex?.availableToBack,
+        AvailableToLay: runner.ex?.availableToLay,
       },
     });
   }
