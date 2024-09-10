@@ -909,8 +909,7 @@ if (Array.isArray(oddData) && oddData.length > 0) {
   }
   // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-  runners",runners)
 
-  console.log("=-=-==-=-=-====-=- saving odds");
- 
+  
   
   // console.log("????????????????",oddData.eventid);
   const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
@@ -929,6 +928,7 @@ if (Array.isArray(oddData) && oddData.length > 0) {
   };
   
   const odds = new Odds(odd);
+  console.log("=-=-==-=-=-====-=- odds saved");
   await odds.save();
   return odd;
 }
