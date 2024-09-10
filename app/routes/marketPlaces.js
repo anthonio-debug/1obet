@@ -190,6 +190,7 @@ async function getMarketsBySportsId(req, res) {
 async function getMarketsByEventId(req, res) {
   try {
     const eventId = req.params.eventId;
+     await MarketIDS.updateMany({eventId: eventId},{$set:{ReadyForOdds:true}})
     const marketData = await MarketIDS.aggregate([
       {
         $match: { eventId: eventId }
@@ -214,6 +215,7 @@ async function getMarketsByEventId(req, res) {
         }
       }
     ]);
+
 
     res.status(200).json({ success: true, data: marketData });
   } catch (err) {

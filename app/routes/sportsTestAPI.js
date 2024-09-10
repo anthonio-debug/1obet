@@ -647,10 +647,8 @@ async function getBookmakersLimitlessByEventId(req, res) {
 }
 
 async function getOddsLimitlessByMarketId(req, res) {
-  console.log("getOddsLimitlessByMarketId =-=-=-=-==- function called");
   const marketId = req.params.marketId;
-  // let url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
-  let url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
+  let url = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=4&marketId=${marketId}`;
   
   try {
     let response = await axios.get(url);
@@ -661,7 +659,7 @@ async function getOddsLimitlessByMarketId(req, res) {
       response = await axios.get(url);
     }
     
-    res.status(200).json({ success: true, data: JSON.parse(response.data) });
+    res.status(200).json({ success: true, data:  response.data  });
   } catch (error) {
     res.status(500).json({ success: false, msg: "Failed to get odds: " + error.message });
   }
