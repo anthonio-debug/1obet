@@ -652,24 +652,23 @@ async function getOddsLimitlessByMarketId(req, res) {
   const url2 = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
 
   try {
-    // First API call
+    
     let response = await axios.get(url1);
     console.log("Response from first API:", JSON.stringify(response.data, null, 2));
 
     if (!response || !response.data || Object.keys(response.data).length === 0) {
       console.log("No data from first API, calling second API...");
       response = await axios.get(url2);
-      console.log("Response from second API:", JSON.stringify(response.data, null, 2));
     }
 
-    res.status(200).json({ success: true, data: response.data });
+    res.status(200).json({ success: true,message:"response from lithyl api", data: response.data });
 
   } catch (error) {
     console.error("Error from first API:", error.message);
-
+// Second API call
     try {
       let response = await axios.get(url2);
-      console.log("Response from second API after first API failure:", JSON.stringify(response.data, null, 2));
+      // console.log("Response from second API after first API failure:", JSON.stringify(response.data, null, 2));
       res.status(200).json({ success: true, message:"response from lithyl api", data: response.data });
 
     } catch (error2) {
