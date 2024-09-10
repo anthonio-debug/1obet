@@ -2212,8 +2212,13 @@ const placeBet = async (req, res) => {
      
 
       const bookmakerStatus = bookmakerOddsRes['bookMakerArr']?.some((item) => item?.s === 'ACTIVE');
-
+      const SUSPENDED = bookmakerOddsRes['bookMakerArr']?.some((item) => item?.s === 'SUSPENDED');
+      const SUSPENDED1 = bookmakerOddsRes['bookMakerArr']?.some((item) => item?.s === 'SUSPENDED1');
+      const SOMEACTIVE1 = bookmakerOddsRes['bookMakerArr']?.some((item) => item?.s === 'ACTIVE1');
       console.log("Some items steatus...............",bookmakerStatus);
+      console.log("Some items SUSPENDED...............",SUSPENDED);
+      console.log("Some items SUSPENDED1...............",SUSPENDED1);
+      console.log("Some items SOMEACTIVE1...............",SOMEACTIVE1);
 
       const bookmakerBallRunningStatus = bookmakerOddsRes[0]?.runners.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status));
       const bookmakerSuspendedStatus = bookmakerOddsRes[0]?.runners.every((item) => item?.status === 'SUSPENDED');
