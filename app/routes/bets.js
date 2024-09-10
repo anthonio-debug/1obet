@@ -2198,8 +2198,12 @@ const placeBet = async (req, res) => {
         });
       }
       // const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
-      let bookmakerOddsRes = await fetchBookmakerOdds(eventDetail.Id);
-      console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:", bookmakerOddsRes);
+      let bookmakerOddsRes = await fetchSession(eventDetail.Id);
+      if(bookmakerOddsRes['bookMakerArr'] && bookmakerOddsRes['bookMakerArr'].length>0){
+        console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:", bookmakerOddsRes['bookMakerArr']);
+
+      }
+      
       if (bookmakerOddsRes.length === 0) {
         activeBettors.delete(userId);
         return res.status(404).send({
