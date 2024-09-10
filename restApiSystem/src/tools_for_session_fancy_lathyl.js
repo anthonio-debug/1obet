@@ -36,7 +36,7 @@ function ToolForSessionFancy() {
      
     if(oddevenOdds && oddevenOdds!=0){
       if(eventId=='33570584'){
-        console.log("oddevenOdds listed below............................................",oddevenOdds);
+       // console.log("oddevenOdds listed below............................................",oddevenOdds);
       }
       //console.log("oddevenOdds length...............",oddevenOdds,"..................",oddevenOdds);
      for (const odd of oddevenOdds) {
