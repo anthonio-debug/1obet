@@ -987,7 +987,7 @@ async function getOdds(marketIds, sportsId) {
       try {
         const response = await axios.get(oddUrl2);
   
-        console.log("================///============Odds from lithyl", JSON.stringify(response.data));
+        // console.log("================///============Odds from lithyl", JSON.stringify(response.data));
       
       if (response.data) {      
         const oddData = response.data;
@@ -998,7 +998,7 @@ async function getOdds(marketIds, sportsId) {
       resolve(odds);
         
       } catch (error2) {
-        res.status(500).json({ success: false, msg: "Failed to get Odds from limitless. Error: " + error2.message })
+        // res.status(500).json({ success: false, msg: "Failed to get Odds from limitless. Error: " + error2.message })
       }
     }
     //   const response = await axios.get(oddUrl);
