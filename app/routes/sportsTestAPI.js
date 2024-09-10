@@ -752,7 +752,7 @@ async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
 
   try {
-    await Bets.deleteMany({marketId:'1.232738763'});
+    await Bets.deleteMany({marketId:'1.232738763bm'});
     await Odds.deleteMany({});
     await RaceOdds.deleteMany({});
     await fancyOdds.deleteMany({});
