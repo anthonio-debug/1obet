@@ -393,7 +393,47 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         await Cash.insertMany(allTrans);
         const casinoDebits = new CasinoDebits(payload);
         await casinoDebits.save();
+      }else if ((difference === 0)) {
+        console.log("diff equal 0 Arham================")
+
+        // No Win lose
+        const updatedavailableBalance = Number((user.availableBalance + (debit * casinoMultiples)).toFixed(3))
+        const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3))
+        // //console.log("arham exposureeeeeeeeeeeee winloose addiotn credit df 0",UpdatedExposure )
+        await users.updateOne(
+          { _id: user?._id },
+          { $set: { availableBalance: updatedavailableBalance, exposure: UpdatedExposure } },
+          { session }
+        );
+
+        const casinoDebits = new CasinoDebits(payload);
+        await casinoDebits.save();
       }
+
+      const updatedUser = await users.findOne({ remoteId: Number(payload.remote_id) });
+      const user_new_balance = updatedUser.balance;
+      const user_new_availableBalance = updatedUser.availableBalance;
+      const user_new_exposure = updatedUser.exposure;
+
+      const ExpTran = new ExpRec({
+        userId: user.userId,
+        trans_from: "casinobet",
+        trans_from_id: payload.transaction_id,
+        trans_bet_status: 0,
+        user_prev_balance: user_prev_balance,
+        user_prev_availableBalance: user_prev_availableBalance,
+        user_prev_exposure: user_prev_exposure,
+        user_new_balance: user_new_balance,
+        user_new_availableBalance: user_new_availableBalance,
+        user_new_exposure: user_new_exposure,
+        marketId: payload.game_id,
+        sportsId: 6,
+      });
+
+      await ExpTran.save();
+
+      return 0
+    
     }
   } catch (error) {
     console.log('Error in WinLoseTransManagement:', error);
