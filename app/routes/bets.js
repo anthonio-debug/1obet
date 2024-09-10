@@ -2254,7 +2254,7 @@ const placeBet = async (req, res) => {
 
       console.log("apiBookmakerOdds elngth=================================>>>>>",apiBookmakerOdds.length)
 
-
+      console.log("apiBookmakerOdds runners.....=================================>>>>>",apiBookmakerOdds)
 
 
 
