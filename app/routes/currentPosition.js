@@ -1,7 +1,8 @@
 const express = require('express');
 const currentPosition = require('../models/CurrentPosition');
 const Bets = require('../models/bets');
-const MarketId = require("./../models/marketIds")
+const MarketId = require("./../models/marketIds");
+const inPlayEvents = require('../models/events');
 const loginRouter = express.Router();
 
 function getCurrentPosition(req, res) {
@@ -347,73 +348,76 @@ const getHighlights = async (req, res) => {
     const userId = req.decoded.userId;
     const matchId = req.query.matchId;
 
-    MarketId.aggregate([
+    await inPlayEvents.aggregate([
       {
         $match: {
-          status: "OPEN",
-          marketName: "Match Odds",
+          CompanySetStatus: "OPEN",
+          isShowed: true,
+          status: "OPEN"
         },
       },
       {
         $lookup: {
-          from: "inplayevents",
-          let: { eventId: "$eventId" },
-          pipeline: [
-            {
-              $match: {
-                $expr: {
-                  $and: [
-                    { $eq: ["$Id", "$$eventId"] },
-                    { $eq: ["$CompanySetStatus", "OPEN"] },
-                    { $eq: ["$isShowed", true] }
-                  ]
-                }
-              }
-            }
-          ],
-          as: "inplayData"
+          from: "MarketId",
+          localField: "Id", 
+          foreignField: "eventId",
+          as: "marketData",
+        },
+      },
+      {
+        $unwind: {
+          path: "$marketData",
+          preserveNullAndEmptyArrays: true 
+        }
+      },
+      {
+        $match: {
+          "marketData.status": "OPEN", 
+          "marketData.marketName": "Match Odds",
         }
       },
       {
         $lookup: {
           from: "odds",
-          localField: "eventId",
+          localField: "Id", 
           foreignField: "eventId",
           as: "oddsData",
         },
       },
       {
+        $unwind: {
+          path: "$oddsData",
+          preserveNullAndEmptyArrays: true 
+        }
+      },
+      {
         $group: {
           _id: "$_id",
-          eventName: { $first: { $arrayElemAt: ["$inplayData.name", 0] } },
-          openDate: { $first: { $arrayElemAt: ["$inplayData.openDate", 0] } },
-          CompanySetStatus: { $first: { $arrayElemAt: ["$inplayData.CompanySetStatus", 0] } },
-          isShowed: { $first: { $arrayElemAt: ["$inplayData.isShowed", 0] } },
-          totalMatched: {
-            $first: { $arrayElemAt: ["$oddsData.totalMatched", 0] },
-          },
-          inplay: {
-            $first: { $arrayElemAt: ["$oddsData.isInplay", 0] },
-          },
-          marketName: { $first: "$marketName" },
-          eventId: { $first: "$eventId" },
-          sportID: { $first: "$sportID" }
+          eventName: { $first: "$name" },
+          openDate: { $first: "$openDate" },
+          CompanySetStatus: { $first: "$CompanySetStatus" },
+          isShowed: { $first: "$isShowed" },
+          totalMatched: { $first: "$oddsData.totalMatched" },
+          inplay: { $first: "$oddsData.isInplay" },
+          marketName: { $first: "$marketData.marketName" },
+          eventId: { $first: "$marketData.eventId" },
+          sportID: { $first: "$marketData.sportID" }
         },
       },
       {
         $addFields: {
           openDate: {
             $dateToString: {
-              format: "%Y-%m-%d %H:%M:%S",  // Format the date as needed
-              date: { $toDate: "$openDate" },  // Convert timestamp to Date object
-              timezone: "UTC"  // Optional: specify timezone if necessary
+              format: "%Y-%m-%d %H:%M:%S", 
+              date: { $toDate: "$openDate" }, 
+              timezone: "UTC" 
             }
           }
         }
       },
       {
         $sort: {
-          openDate: -1
+          openDate: -1 
         }
       }
     ])
