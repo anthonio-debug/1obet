@@ -1310,9 +1310,79 @@ async function cronOdds2(req, res) {
     res.json({ status: true, data: "Result: " , result });
 
   } catch (error) {
-    res.status(500).json({ success: false, msg: "Failed to get data. Error: " + error.message });
+    res.status(500).json({ success: false, msg: "Failed to get data from limitless. Error: " + error.message });
 
-    
+    // fetch markets from lithyl API
+    try {
+      const response = await axios.get(url2);
+  
+      console.log("=-=--==---=-=--=-===--= market api response", response.data);
+      
+      const marketsData = response.data;
+      const sendMarketIds = [];
+      // console.log(marketsData, "||||||||||||||||||||");
+      const marketStatus = 'OPEN';
+  
+      if (marketsData && marketsData.length > 0) {
+        for (const element of marketsData) {
+          const tempRunners = element.runners.map(runner => ({
+            SelectionId: runner.selectionId,
+            runnerName: runner.runnerName,
+          }));
+  
+          if (element.marketName === 'Match Odds') {
+            
+            sendMarketIds.push(element.marketId);
+            
+            const marketID = await MarketIDS.findOne({
+              eventId: eventId,
+              marketId: element.marketId,
+            });
+  
+            if (!marketID) {
+              const newMarket = new MarketIDS({
+                eventId: eventId,
+                marketId: element.marketId,
+                marketName: element.marketName,
+                sportID: '4',
+                totalMatched: element.totalMatched,
+                status: marketStatus,
+                index: 0,
+                runners: tempRunners,
+                inPlay: true,
+              });
+  
+              // console.log("Saving new market: ", newMarket);
+              await newMarket.save();
+            }else{
+              await MarketIDS.findOneAndUpdate({eventId: eventId,marketId: element.marketId,}, {$set:{
+                totalMatched:element.totalMatched,
+              }} )
+            }
+          }
+        }
+      }
+  
+      
+      // const sendMarketIds = ["1.232001727"];
+  
+      let result = [];
+      // console.log(result,"=-=-=---=-=---=--=");
+      
+      console.log("Sending market ids:", sendMarketIds);
+      for (const marketId of sendMarketIds) {
+        // console.log("===================================================================================5");
+        const odds = await getOdds(marketId, sportID);
+        result = [...result, ...odds];
+      }
+  
+      res.json({ status: true, data: "Result: " , result });
+  
+    } catch (error2) {
+      res.status(500).json({ success: false, msg: "Failed to get data from lithyl. Error: " + error2.message });
+  
+      
+    }
   }
 }
 
