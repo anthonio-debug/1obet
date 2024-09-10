@@ -362,8 +362,7 @@ function apiRequests() {
         let marketIds = [];
         let arrMarketIds = [];
         let cntrl = 0;
-        console.log("marketsData::::::::::::::::;",marketsData);
-        console.log('listMarketsByCronJobs is running ----------');
+        
         
         for(let element of marketsData) {
           

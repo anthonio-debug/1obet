@@ -36,7 +36,7 @@ function ToolForSessionFancy() {
      
     if(oddevenOdds && oddevenOdds!=0){
       if(eventId=='33570584'){
-        console.log("oddevenOdds listed below............................................",oddevenOdds);
+       // console.log("oddevenOdds listed below............................................",oddevenOdds);
       }
       //console.log("oddevenOdds length...............",oddevenOdds,"..................",oddevenOdds);
      for (const odd of oddevenOdds) {
@@ -69,7 +69,7 @@ function ToolForSessionFancy() {
 
   if(fancyOdds && fancyOdds!=0){
     if(eventId=='33570584'){
-      console.log("fancyOdds listed below............................................",fancyOdds);
+      //console.log("fancyOdds listed below............................................",fancyOdds);
     }
     for (const odd of fancyOdds) {
       
@@ -214,12 +214,14 @@ if(bookmakerOdds!==0){
 
          
          const fancyData = buildFancyStructure2( bookmakerOdds, fancyOdds,oddevenOdds, eventId)
-         if(eventId == '33548312')  {
-          console.log('fancy oddsssssssssssssss returned',fancyData);
          
+
+         if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+          console.log('fancy oddsssssssssssssss returned',fancyData);
          }
          
-         if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+        // if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+          console.log('fancy oddsssssssssssssss data returned for ',eventId);
               FancyOddsMap.set(eventId, fancyData)
               let newFancyOdds = new FancyOdds({
                 eventId: eventId,
@@ -230,7 +232,7 @@ if(bookmakerOdds!==0){
               await newFancyOdds.save();
               
               io.to('#' + eventId).emit('fancy_odds', newFancyOdds);
-            }
+          //  }
 
 
 
