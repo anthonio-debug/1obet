@@ -214,8 +214,12 @@ if(bookmakerOdds!==0){
 
          
          const fancyData = buildFancyStructure2( bookmakerOdds, fancyOdds,oddevenOdds, eventId)
-           // console.log('fancy oddsssssssssssssss returned',fancyData);
-            if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
+         if(eventId == '33548312')  {
+          console.log('fancy oddsssssssssssssss returned',fancyData);
+         
+         }
+         
+         if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
               FancyOddsMap.set(eventId, fancyData)
               let newFancyOdds = new FancyOdds({
                 eventId: eventId,
