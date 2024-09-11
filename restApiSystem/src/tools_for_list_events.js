@@ -265,7 +265,7 @@ function ToolForEvent() {
             
             ReadyForOdds:true,
             status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
-            marketName: { $ne: ['Bookmaker'] },
+            marketName: { $ne: 'Bookmaker' },
 
             $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]
           }
