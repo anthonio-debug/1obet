@@ -647,7 +647,7 @@ function apiRequests() {
             const marketId = odds.marketId
             
         
-              console.log("Again Market for which I am fetching..................>",element.marketId);
+              console.log("Again Market for which I am fetching..................>",marketId);
               
             
 
