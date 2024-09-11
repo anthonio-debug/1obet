@@ -265,6 +265,7 @@ function ToolForEvent() {
             
             ReadyForOdds:true,
             status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED'] },
+            marketName: { $ne: 'Bookmaker' },
 
             $or: [{ sportID: 1 }, { sportID: 2 }, { sportID: 4 }]
           }
@@ -305,10 +306,11 @@ function ToolForEvent() {
       ]).exec();
 
       let marketIds = [];
-      //console.log("==============>>>>",documents.length);
+      console.log("documents length.............=====================================>>>>",documents.length);
       if (documents.length > 0) {
         documents.forEach((element) => {
           marketIds.push(element.marketId);
+          console.log("event .............=====================================>>>>",element.marketId, "--Name: " ,element.marketName);
         });
       }
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);

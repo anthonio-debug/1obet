@@ -121,7 +121,7 @@ if(bookmakerOdds!==0){
             ls3: 0,
             s: odd.s,
             sid: odd.sid,
-            ssid: odd?.mid,
+            ssid: odd?.mid+'bm',
             nat: odd.nat,
           })
         
@@ -179,9 +179,9 @@ if(bookmakerOdds!==0){
           let Bmarketid;
           for (const [index, market] of bookmakerMarketList.entries()) {
             
-              bookmakerMarketIds.push(market?.mid)
+              bookmakerMarketIds.push(market?.mid+'bm')
               
-              Bmarketid = market.mid;
+              Bmarketid = market.mid+'bm';
                 runners.push({
                   SelectionId: market.sid,
                   runnerName: market.nat,
