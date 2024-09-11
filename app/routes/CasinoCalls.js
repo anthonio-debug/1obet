@@ -155,8 +155,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         // remove all exposure equal to total debit money of 1500
 
         const amount = Number((debit * config.casinoMultiples).toFixed(3));
-        const UpdatedExposure =0
-        console.log("updateeeeeeeeeeeeeeeeeeeeeeeeeeeeeed exposure",UpdatedExposure)
+        const UpdatedExposure = 0
+        console.log("updateeeeeeeeeeeeeeeeeeeeeeeeeeeeeed exposure",UpdatedExposure,debit)
         
         // //console.log("arham exposureeeeeeeeeeeee winloose addiotn credit",UpdatedExposure )
         await users.updateOne(
