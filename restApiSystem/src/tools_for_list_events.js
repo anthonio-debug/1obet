@@ -305,10 +305,11 @@ function ToolForEvent() {
       ]).exec();
 
       let marketIds = [];
-      console.log("=====================================>>>>",documents.length);
+      console.log("documents length.............=====================================>>>>",documents.length);
       if (documents.length > 0) {
         documents.forEach((element) => {
           marketIds.push(element.marketId);
+          console.log("event .............=====================================>>>>",element.eventId);
         });
       }
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
