@@ -360,7 +360,7 @@ const placeBet = async (req, res) => {
           message: `Bets will Allow in 1 : ${Math.ceil(remainingTimeFromEvent / 60000)} min`
         });
       }
-      if (subMarketName.toUpperCase() == 'US') {
+      if (subMarketName.toUpperCase() != 'UK') {
         const now = new Date().getTime();
         const remainingTimeFromMarketStart = idDetails.openDate - now;
         if (remainingTimeFromMarketStart < 0) {
