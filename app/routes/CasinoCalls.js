@@ -75,7 +75,11 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       //console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
       //console.log("arham updatedavailableBalance ",UpdatedExposure )
-      
+      const depositLastBetTime = await Cash.find({ userId: user.userId,  description: "Casino (Casino Hold'em)" }).sort({ _id: -1 });
+      if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[depositLastBetTime.length-1].betDateTime) < 1000) {
+        console.log('Transaction occurred too quickly, skipping...');
+        return; // Skip transaction
+      }
       await users.updateOne(
         { _id: user._id },
         {
