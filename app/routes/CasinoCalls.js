@@ -71,6 +71,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
     if (action === 0) {
       let amount = Number(payload.amount) * casinoMultiples;
+      console.log("hereeeeeeeeeeeeeeeeeeeeeeee 1")
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
       //console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
@@ -90,7 +91,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         },
         { session }
       );
-
+      console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
 
@@ -685,7 +686,7 @@ async function processQueue() {
   processing = true;
 
   const { req, res, retryCount = 0 } = requestQueue.shift(); // Get the next request from the queue
-
+  console.log("hereeeeeeeeeeee 1")
   const session = dbClient.startSession();
   const maxRetries = 3; // Maximum retry attempts
   const retryDelay = 100; // Delay in milliseconds before retrying
