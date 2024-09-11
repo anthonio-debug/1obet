@@ -74,8 +74,8 @@ function ToolForResult() {
         sportID: {$in: [4339, 7]},
         winnerInfo: null
       }).sort({lastResultCheckTime: 1}).limit(10).exec();
-      console.log("races results calculations................................................................",racingMarkets);
-      
+      //console.log("races results calculations................................................................",racingMarkets);
+
         
       if (racingMarkets.length > 0)
         await apiRequestResult.getRacingResult(racingMarkets);
