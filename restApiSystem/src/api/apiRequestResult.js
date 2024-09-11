@@ -139,6 +139,9 @@ function apiRequestResult() {
           //console.log('Record not found');
           continue;
         }
+        if(result.marketId=='1.232879479'){
+          console.log("market id for which I am checking for results and got it....",result.marketId,"--------Status::",result.status;
+        }
         responseMarketIDs.push(result.marketId)
 
         const market = markets[marketIndex];
