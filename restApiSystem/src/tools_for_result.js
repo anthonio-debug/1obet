@@ -73,7 +73,7 @@ function ToolForResult() {
         status: {$in:['INACTIVE','OPEN','SUSPENDED','CLOSED']},
         sportID: {$in: [4339, 7]},
         winnerInfo: null
-      }).sort({lastResultCheckTime: 1}).limit(10).exec();
+      }).sort({lastResultCheckTime: 1}).limit(20).exec();
       //console.log("races results calculations................................................................",racingMarkets);
 
         
