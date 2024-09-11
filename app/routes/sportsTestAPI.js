@@ -759,7 +759,7 @@ async function deleteOdds(req, res) {
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });
-    await MarketIDS.deleteMany({marketId:'1.232738763bm',eventId:'33564157',marketName:'Bookmaker'});
+    await MarketIDS.deleteMany({winnerInfo: null,sportID:7});
 
     
     //await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
