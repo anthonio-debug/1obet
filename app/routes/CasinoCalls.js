@@ -61,7 +61,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     const betTime = now.getTime(); // Timestamp for bet
 
     // Throttling mechanism: prevent multiple transactions within 1000 ms (1 second)
-    const depositLastBetTime = await Cash.find({ userId: user.userId, description: "Casino (Casino Hold'em)" }).sort({ _id: -1 });
+    // const depositLastBetTime = await Cash.find({ userId: user.userId, description: "Casino (Casino Hold'em)" }).sort({ _id: -1 });
     // if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[depositLastBetTime.length - 1].betDateTime) < 1000) {
     //   console.log('Transaction occurred too quickly, skipping...');
     //   return; // Skip the transaction
@@ -127,7 +127,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const updatedClientPL = Number((user.clientPL + (difference * casinoMultiples)).toFixed(3));
         const updatedBalance = Number((user.balance + (difference * casinoMultiples)).toFixed(3));
         const UpdatedExposure = 0;
-
+console.log("diff less than 00=====================================")
         // Update user's available balance and exposure
         await users.updateOne(
           { _id: user._id },
@@ -165,6 +165,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         await casinoDebits.save();
 
       } else if (difference > 0) {
+        console.log("diff greater than 00=====================================")
+
         // Player won, distribute the winnings
         const bettor_won_amount = credit - debit;
         const amount = bettor_won_amount * casinoMultiples;
@@ -212,6 +214,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       } else if (difference === 0) {
         // No win or loss (equal amounts)
+        console.log("diff equal than 00=====================================")
 
         const updatedAvailableBalance = Number((user.availableBalance + (debit * casinoMultiples)).toFixed(3));
         // const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3));
