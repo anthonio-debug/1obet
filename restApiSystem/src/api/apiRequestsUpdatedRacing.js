@@ -645,6 +645,14 @@ function apiRequests() {
               runners: tempRunners,
             }
             const marketId = odds.marketId
+            if(marketId=='1.232829466'){
+        
+              console.log("Again Market for which I am fetching..................>",element.marketId);
+              
+            }
+
+
+
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
               RacingOddsMap.set(marketId, frontOdds)
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
