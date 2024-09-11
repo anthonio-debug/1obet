@@ -346,7 +346,7 @@ console.log("diff less than 00=====================================")
             },
             { session }
           );
-
+          let GameName = game ? game.name : 'N/A';
           let betTransaction = {
             userId: user.userId,
             description: `Casino (${GameName})`,
