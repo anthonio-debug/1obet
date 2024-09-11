@@ -217,7 +217,7 @@ if(bookmakerOdds!==0){
          
 
          if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
-          console.log('fancy oddsssssssssssssss returned',fancyData);
+          //console.log('fancy oddsssssssssssssss returned',fancyData);
           console.log("-------------------------------------------->>>>>>>>>>>>>>>",eventId);
          
          
