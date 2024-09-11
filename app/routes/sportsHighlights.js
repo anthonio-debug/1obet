@@ -90,7 +90,8 @@ async function getAllSportsHighlight(req, res) {
     ]);
     
     let marketData = [];
-
+    console.log("sportsHighlights====", sportsHighlights);
+    
     if (sportsHighlights.length > 0) {
       for (let i = 0; i < sportsHighlights.length; i++) {
         marketData = await marketIds.aggregate([
@@ -115,7 +116,6 @@ async function getAllSportsHighlight(req, res) {
         sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
         sportsHighlights[i].serverTime = serverTime;
 
-        console.log(" ======== CHECK BEOFRE LOG", marketData);
       }
     }
     
