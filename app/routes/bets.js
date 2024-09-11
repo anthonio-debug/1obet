@@ -551,7 +551,7 @@ const placeBet = async (req, res) => {
               }
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             }
-          }, 1000 * i);
+          }, 1000 * 1);
         }
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
@@ -718,7 +718,7 @@ const placeBet = async (req, res) => {
               }
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             }
-          }, 1000 * i);
+          }, 1000 * 1);
         }
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
@@ -1298,7 +1298,7 @@ const placeBet = async (req, res) => {
               }
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             }
-          }, 1000 * i);
+          }, 1000 * 1);
         }
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
@@ -1493,7 +1493,7 @@ const placeBet = async (req, res) => {
               }
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             }
-          }, 1000 * i);
+          }, 1000 * 1);
         }
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
