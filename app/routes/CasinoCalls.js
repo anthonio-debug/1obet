@@ -254,7 +254,7 @@ console.log("diff less than 00=====================================")
       } else if (difference > 0) {
         console.log("diff greater than 00=====================================")
 
-        let bettor_won_amount = credit - debit;
+       let bettor_won_amount = credit - debit;
         let GameName = 'N/A';
         if(game)
           GameName = game.name;
@@ -278,9 +278,9 @@ console.log("diff less than 00=====================================")
           { _id: user._id },
           {
             $set: {
-              availableBalance: updatedAvailableBalance,
-              clientPL: updatedClientPL,
-              balance: updatedBalance,
+              availableBalance: updatedavailableBalance,
+              clientPL: updatedclientPL,
+              balance: updatedbalance,
               exposure: UpdatedExposure
             }
           },
@@ -294,8 +294,8 @@ console.log("diff less than 00=====================================")
           date: betTime,
           createdAt: formattedDate,
           amount: remainingAmount,
-          balance: updatedAvailableBalance,
-          availableBalance: updatedAvailableBalance,
+          balance: updatedavailableBalance,
+          availableBalance: updatedavailableBalance,
           // Additional fields for withdrawal, credits, etc.
         };
 
@@ -355,7 +355,7 @@ console.log("diff less than 00=====================================")
             },
             { session }
           );
-          // let GameName = game ? game.name : 'N/A';
+          let GameName = game ? game.name : 'N/A';
           let betTransaction = {
             userId: user.userId,
             description: `Casino (${GameName})`,
