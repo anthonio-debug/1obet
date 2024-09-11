@@ -254,14 +254,23 @@ console.log("diff less than 00=====================================")
       } else if (difference > 0) {
         console.log("diff greater than 00=====================================")
 
-        // Player won, distribute the winnings
-        const bettor_won_amount = credit - debit;
+        let bettor_won_amount = credit - debit;
+        let GameName = 'N/A';
+        if(game)
+          GameName = game.name;
+        //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
+
         const amount = bettor_won_amount * casinoMultiples;
         const remainingAmount = Number(((amount / 100) * (100 - config.commission)).toFixed(3));
-        const updatedAvailableBalance = Number((user.availableBalance + remainingAmount).toFixed(3));
-        const updatedClientPL = Number((user.clientPL + remainingAmount).toFixed(3));
-        const updatedBalance = Number((user.balance + remainingAmount).toFixed(3));
-        const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3));
+        const commissionAmount = Number(((amount / 100) * config.commission).toFixed(3));
+        let upMovingAmount = Number(amount.toFixed(3));
+        let commissionFrom = user.userId;
+        let upMovingCommAmount = Number(commissionAmount.toFixed(3));
+
+        const updatedavailableBalance = Number((user.availableBalance + (remainingAmount) + debit * config.casinoMultiples).toFixed(3));
+        const updatedclientPL = Number((user.clientPL + (remainingAmount)).toFixed(3));
+        const updatedbalance = Number((user.balance + (remainingAmount)).toFixed(3));
+        const UpdatedExposure = Number(((user.exposure) + (debit * config.casinoMultiples)).toFixed(3));
         // const UpdatedExposure = 0;
 
         // Update user balance, clientPL, and exposure
@@ -346,7 +355,7 @@ console.log("diff less than 00=====================================")
             },
             { session }
           );
-          let GameName = game ? game.name : 'N/A';
+          // let GameName = game ? game.name : 'N/A';
           let betTransaction = {
             userId: user.userId,
             description: `Casino (${GameName})`,
