@@ -188,9 +188,15 @@ const getRaceMarketIds = async (sportsId) => {
   if (documents.length > 0) {
     documents.forEach(element => {
       marketIds.push(element.marketId);
+      if(element.marketId=='1.232829466'){
+        
+        console.log("Market for which I am fetching..................>",element.marketId);
+        
+      }
+      
     });
   }
-  console.log("I promise I am fetching......................................Races:",marketIds);
+  //console.log("I promise I am fetching......................................Races:",marketIds);
   return marketIds;
 }
 
