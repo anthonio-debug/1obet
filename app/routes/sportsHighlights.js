@@ -90,6 +90,7 @@ async function getAllSportsHighlight(req, res) {
     ]);
     
     let marketData = [];
+    console.log("sportsHighlight", sportsHighlights)
     
     if (sportsHighlights.length > 0) {
       for (let i = 0; i < sportsHighlights.length; i++) {
