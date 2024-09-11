@@ -190,7 +190,7 @@ const getRaceMarketIds = async (sportsId) => {
       marketIds.push(element.marketId);
       
         
-        console.log("Market for which I am fetching..............=====....>",element.marketId);
+        //console.log("Market for which I am fetching..............=====....>",element.marketId);
         
       
       
