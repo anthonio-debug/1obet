@@ -261,8 +261,8 @@ console.log("diff less than 00=====================================")
         const updatedAvailableBalance = Number((user.availableBalance + remainingAmount).toFixed(3));
         const updatedClientPL = Number((user.clientPL + remainingAmount).toFixed(3));
         const updatedBalance = Number((user.balance + remainingAmount).toFixed(3));
-        // const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3));
-        const UpdatedExposure = 0;
+        const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3));
+        // const UpdatedExposure = 0;
 
         // Update user balance, clientPL, and exposure
         await users.updateOne(
