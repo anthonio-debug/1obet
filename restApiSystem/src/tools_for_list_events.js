@@ -309,7 +309,7 @@ function ToolForEvent() {
       if (documents.length > 0) {
         documents.forEach((element) => {
           marketIds.push(element.marketId);
-          console.log("event .............=====================================>>>>",element.marketId);
+          console.log("event .............=====================================>>>>",element.marketId, "--Name: " ,element.marketName);
         });
       }
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
