@@ -67,13 +67,16 @@ function ToolForResult() {
 
   async function fetchRacingResult() {
     try {
-      console.log("races results calculations................................................................");
+      
       const racingMarkets = await MarketIDs.find({
         readyForScore: true,
         status: {$in:['INACTIVE','OPEN','SUSPENDED','CLOSED']},
         sportID: {$in: [4339, 7]},
         winnerInfo: null
-      }).sort({lastResultCheckTime: 1}).limit(10).exec();
+      }).sort({lastResultCheckTime: 1}).limit(20).exec();
+      //console.log("races results calculations................................................................",racingMarkets);
+
+        
       if (racingMarkets.length > 0)
         await apiRequestResult.getRacingResult(racingMarkets);
     } catch (error) {

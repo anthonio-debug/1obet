@@ -188,11 +188,11 @@ const getRaceMarketIds = async (sportsId) => {
   if (documents.length > 0) {
     documents.forEach(element => {
       marketIds.push(element.marketId);
-      if(element.marketId=='1.232829466'){
+      
         
-        console.log("Market for which I am fetching..................>",element.marketId);
+        //console.log("Market for which I am fetching..............=====....>",element.marketId);
         
-      }
+      
       
     });
   }
@@ -645,11 +645,11 @@ function apiRequests() {
               runners: tempRunners,
             }
             const marketId = odds.marketId
-            if(marketId=='1.232829466'){
+            
         
-              console.log("Again Market for which I am fetching..................>",element.marketId);
+              //console.log("Again Market for which I am fetching..................>",marketId);
               
-            }
+            
 
 
 
