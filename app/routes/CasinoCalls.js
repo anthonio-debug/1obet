@@ -157,7 +157,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
         const amount = Number((debit * config.casinoMultiples).toFixed(3));
         const UpdatedExposure =0
-        // //console.log("arham exposureeeeeeeeeeeee winloose addiotn credit",UpdatedExposure )
+        console.log("arham exposureeeeeeeeeeeee winloose temp exposureeeeeeeeeeeeeeeeeeees",user.tempExposure )
         await users.updateOne(
           { _id: user?._id },
           {
