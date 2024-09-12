@@ -54,28 +54,57 @@ app.use(bodyParser.urlencoded({extended: false})); //support encoded bodies
 app.use(bodyParser.json({strict: false}));
 
 
-const allowedOrigins = [
-  'https://1obet.com',
-  'https://www.1obet.com',
-  'https://admin.1obet.com',
-  'https://www.admin.1obet.com',
-  'https://production.1obet.net',
-  "http://locahost:3000"
-];
+
+// const allowedOrigin = 'https://dev.bookofblack.com';
+// const allowedAdminOrigin = 'https://socket.bookofblack.com';
+// const allowedAPI = 'https://api.bookofblack.com';
+
+
+
+// Configure CORS options
+// const allowedOrigin = 'https://1obet.com';
+// const allowedAdminOrigin = 'https://admin.1obet.com';
+// const allowedAPI = 'https://production.1obet.net';
+
+
+// const corsOptions = {
+//   origin: function(origin, callback) {
+//     if (origin === allowedAPI || origin === allowedAdminOrigin || origin === allowedOrigin || !origin) {
+//       // Allow requests with no origin (like mobile apps or curl requests)
+//       callback(null, true);
+//     } else {
+//       // Disallow requests from other origins
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+// };
 
 const corsOptions = {
-  origin: (origin, callback) => {
-   
-    if (!origin || allowedOrigins.includes(origin)) {
-      console.log("origeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeen",origin)
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true, 
-  optionsSuccessStatus: 200 
+  origin: true,
+  credentials: true,
+  optionsSuccessStatus: 200,
 };
+
+// const allowedOrigins = [
+//   'https://1obet.com',
+//   'https://www.1obet.com',
+//   'https://admin.1obet.com',
+//   'https://www.admin.1obet.com',
+//   'https://production.1obet.net'
+// ];
+
+// const corsOptions = {
+//   origin: (origin, callback) => {
+   
+//     if (!origin || allowedOrigins.includes(origin)) {
+//       callback(null, true);
+//     } else {
+//       callback(new Error('Not allowed by CORS'));
+//     }
+//   },
+//   credentials: true, 
+//   optionsSuccessStatus: 200 
+// };
 
 app.use(cors(corsOptions));
 
