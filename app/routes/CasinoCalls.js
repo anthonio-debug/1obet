@@ -390,7 +390,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const updatedavailableBalance = Number((user.availableBalance + (remainingAmount) + debit * config.casinoMultiples).toFixed(3));
         const updatedclientPL = Number((user.clientPL + (remainingAmount)).toFixed(3));
         const updatedbalance = Number((user.balance + (remainingAmount)).toFixed(3));
-        const UpdatedExposure = Number(((user.exposure) + (debit * config.casinoMultiples)).toFixed(3));
+        const UpdatedExposure = 0
         // //console.log("arham exposureeeeeeeeeeeee winloose addiotn debit",UpdatedExposure )
         const userResponse = await users.updateOne(
           { _id: user?._id },
