@@ -38,6 +38,7 @@ const userSchema = new Schema({
   creditLimit: { type: Number, default: 0 },
   availableBalance: { type: Number, default: 0 },
   exposure: { type: Number, default: 0 },
+  tempExposure:{type:Number,default:0},
   blockedMarketPlaces: { type: Array },
   blockedSubMarkets: { type: Array },
   blockedSubMarketsByParent: { type: Array },
