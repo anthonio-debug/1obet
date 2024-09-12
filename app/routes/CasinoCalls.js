@@ -73,6 +73,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let amount = Number(payload.amount) * casinoMultiples;
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 1")
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
+      let tempExposure=Number((user.tempExposure - amount).toFixed(3));
       //console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
       //console.log("arham updatedavailableBalance ",UpdatedExposure )
