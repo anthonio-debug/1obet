@@ -75,7 +75,7 @@ function ToolForResult() {
       //   winnerInfo: null
       // }).sort({lastResultCheckTime: 1}).limit(20).exec();
 
-      const racingMarkets = await MarketIDS.aggregate([
+      const racingMarkets = await MarketIDs.aggregate([
         {
           $match: {
             readyForScore: true,
