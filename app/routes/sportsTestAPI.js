@@ -1871,7 +1871,7 @@ async function getGreyHoundMatches(req, res) {
         sportsId: match.marketId,
         sport: match.marketName,
         Id: match.event.id,
-        competitionName: match.event.name,
+        // competitionName: match.event.name,
         Id: match.event.id,
         name: match.event.name,
         countryCode: match.event.countryCode,
