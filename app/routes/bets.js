@@ -1909,7 +1909,7 @@ const placeBet = async (req, res) => {
           await new Promise(resolve => setTimeout(resolve, 500));
           console.log("set time ", i)
           const response = await fetchSession(eventDetail.Id);
-          
+
           if (!Array.isArray(response['fanciesArr'])) {
             console.error("Expected an array but got:", response['fanciesArr']);
             return;
@@ -1918,10 +1918,10 @@ const placeBet = async (req, res) => {
           apiFancyOddsRes = response['fanciesArr'].filter((item) => item.sid === selectionId);
           // apiFancyOddsResponse.push(apiFancyOddsRes);
 
-          
+
 
           const gameStatus = apiFancyOddsRes[0]?.gstatus;
-           console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
+          console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
           // console.log(`GameStatus==================${gameStatus}`);
 
           if (gameStatus === 'SUSPENDED' || gameStatus === 'Ball Running') {
@@ -2199,18 +2199,18 @@ const placeBet = async (req, res) => {
       }
       // const bookmakerOddsRes = await getBookmakerOdds([selectedMarketId])
       let bookmakerOddsRes = await fetchSession(eventDetail.Id);
-      if(bookmakerOddsRes['bookMakerArr'] && bookmakerOddsRes['bookMakerArr'].length>0){
+      if (bookmakerOddsRes['bookMakerArr'] && bookmakerOddsRes['bookMakerArr'].length > 0) {
         console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB:", bookmakerOddsRes['bookMakerArr']);
         console.log("BBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBBB length:", bookmakerOddsRes['bookMakerArr'].length);
 
-      }else{
+      } else {
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Bookmaker Odds not available for the selected team ${selectionId}`
         });
       }
-      
-     
+
+
 
       const bookmakerStatus = bookmakerOddsRes['bookMakerArr']?.some((item) => item?.s === 'ACTIVE');
       const bookmakerSuspendedStatus = bookmakerOddsRes['bookMakerArr']?.every((item) => item?.s === 'SUSPENDED');
@@ -2221,8 +2221,8 @@ const placeBet = async (req, res) => {
         });
       }
       let bookmakerTeam1 = bookmakerOddsRes['bookMakerArr'][0];
-      console.log("----------------------------------->....",bookmakerTeam1.sid);
-      
+      console.log("----------------------------------->....", bookmakerTeam1.sid);
+
 
       const buildBookmakerOdd = (bookmakerOddsRes) => {
         let odds = [];
@@ -2246,44 +2246,44 @@ const placeBet = async (req, res) => {
             ssid: runner.mid,
             nat: runner.nat
           });
-       
-          if(runner.s != 'ACTIVE' && runner.sid == selectionId){
-           
-              activeBettors.delete(userId);
-              return res.status(404).send({
-                message: `Bookmaker runner is in Ball Running status for selected team ${runner.nat}`
-              });
-            
+
+          if (runner.s != 'ACTIVE' && runner.sid == selectionId) {
+
+            activeBettors.delete(userId);
+            return res.status(404).send({
+              message: `Bookmaker runner is in Ball Running status for selected team ${runner.nat}`
+            });
+
           }
-       
+
         }
         return odds;
       };
       const apiBookmakerOdds = buildBookmakerOdd(bookmakerOddsRes);
 
 
-      console.log("apiBookmakerOdds elngth=================================>>>>>",apiBookmakerOdds.length)
+      console.log("apiBookmakerOdds elngth=================================>>>>>", apiBookmakerOdds.length)
 
-      console.log("apiBookmakerOdds runners.....=================================>>>>>",apiBookmakerOdds)
-
-
+      console.log("apiBookmakerOdds runners.....=================================>>>>>", apiBookmakerOdds)
 
 
 
 
-     
+
+
+
       const bookmakerBallRunningStatus = bookmakerOddsRes['bookMakerArr']?.some((item) => ['Ball Running', 'BALL_RUNNING'].includes(item?.status));
-      
+
       statusForRes.bookmakerStatus = bookmakerStatus;
       statusForRes.bookmakerBallRunningStatus = bookmakerBallRunningStatus;
       statusForRes.bookmakerSuspendedStatus = bookmakerSuspendedStatus;
       statusForRes.bookmakerBMCheckTime = moment().format('YYYY/MM/DD HH:mm:ss');
-      
-      
 
-    
 
-     
+
+
+
+
       let runners = dbFancyOdds;
       // _3rdPartyMarketId = "Bookmaker";
       _3rdPartyMarketId = selectedMarketId;
@@ -2294,10 +2294,10 @@ const placeBet = async (req, res) => {
 
       if (apiBookmakerOdds.length) {
         const apiSelectedOdds = apiBookmakerOdds.find((runner) => runner.sid === selectionId);
-        console.log("apiSelectedOdds.b1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.......",apiSelectedOdds.b1);
+        console.log("apiSelectedOdds.b1,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,,.......", apiSelectedOdds.b1);
         const dbSelectedOdds = dbFancyOdds.find((runner) => runner.sid === selectionId);
 
-       
+
         fancyData = null;
         runnerName = dbSelectedOdds.nat;
         if (req.body.type == 0) {
@@ -3839,7 +3839,7 @@ async function getMatchedBets(req, res) {
           const sportid = +eventId.sportsId
           const events = await MarketIDS.aggregate([
             {
-              $match: { sportID: sportid,status: { $ne: "CLOSED" }, openDate: { $gt: marketOpendate } }
+              $match: { sportID: sportid, status: { $ne: "CLOSED" }, openDate: { $gt: marketOpendate } }
             },
             {
               $lookup: {
@@ -4486,7 +4486,7 @@ const EventWiseprofitLose = async (req, res) => {
       { $match: baseMatch },
       {
         $group: {
-          _id: "$matchId",
+          _id: "$roundId",
           amount: { $sum: '$amount' },
           userId: { $first: '$userId' },
           date: { $first: '$date' },
