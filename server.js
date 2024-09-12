@@ -79,13 +79,30 @@ app.use(bodyParser.json({strict: false}));
 //   },
 // };
 
+// const corsOptions = {
+//   origin: true,
+//   credentials: true,
+//   optionsSuccessStatus: 200,
+// };
+
+
+const allowedOrigins = [
+  'https://1obet.com',
+  'https://admin.1obet.com',
+  'https://production.1obet.net'
+];
+
 const corsOptions = {
-  origin: true,
-  credentials: true,
-  optionsSuccessStatus: 200, // some legacy browsers (IE11, various SmartTVs) choke on 204
+  origin: (origin, callback) => {
+    if (allowedOrigins.includes(origin) || !origin) {
+      callback(null, true);
+    } else {
+      callback(new Error('Not allowed by CORS'));
+    }
+  },
+  credentials: true, // Allow cookies and credentials
+  optionsSuccessStatus: 200 // Set a success status for OPTIONS preflight responses
 };
-
-
 
 
 
