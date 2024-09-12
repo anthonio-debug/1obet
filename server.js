@@ -60,7 +60,7 @@ const allowedOrigins = [
   'https://admin.1obet.com',
   'https://www.admin.1obet.com',
   'https://production.1obet.net',
-  "https://locahost:3000"
+  "http://locahost:3000"
 ];
 
 const corsOptions = {
