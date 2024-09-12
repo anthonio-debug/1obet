@@ -10,7 +10,7 @@ const GREY_HOUND_ID = '4339'
 const apiRequestResult = require("./api/apiRequestResult")();
 
 function ToolForResult() {
-  return {init};
+  return { init };
 
   async function init(_io, express) {
     apiRequestResult.init(_io, express);
@@ -25,9 +25,9 @@ function ToolForResult() {
       const eventMarkets = await MarketIDs.find({
         readyForScore: true,
         status: 'CLOSED',
-        sportID: {$in: [1, 2, 4]},
+        sportID: { $in: [1, 2, 4] },
         winnerInfo: null
-      }).sort({lastResultCheckTime: 1}).limit(10).exec();
+      }).sort({ lastResultCheckTime: 1 }).limit(10).exec();
 
       if (eventMarkets.length > 0) {
         await apiRequestResult.getEventResult(eventMarkets);
@@ -45,11 +45,11 @@ function ToolForResult() {
   async function fetchRacingResult_old() {
     try {
       for (const id of sportsIds) {
-        const documents = await inPlayEvents.find({status: 'CLOSED', sportsId: id})
-          .sort({lastCheckMarket: 1})
+        const documents = await inPlayEvents.find({ status: 'CLOSED', sportsId: id })
+          .sort({ lastCheckMarket: 1 })
           .limit(10)
           .exec();
-        console.log("Check if the fetchRacingResult_old is in use or not......................");
+
         for (const document of documents) {
           if (document) {
             await apiRequestResult.getRacingResult(document.Id, document.sportsId, document.competitionId);
@@ -67,16 +67,45 @@ function ToolForResult() {
 
   async function fetchRacingResult() {
     try {
-      
-      const racingMarkets = await MarketIDs.find({
-        readyForScore: true,
-        status: {$in:['INACTIVE','OPEN','SUSPENDED','CLOSED']},
-        sportID: {$in: [4339, 7]},
-        winnerInfo: null
-      }).sort({lastResultCheckTime: 1}).limit(20).exec();
+
+      // const racingMarkets = await MarketIDs.find({
+      //   readyForScore: true,
+      //   status: {$in:['INACTIVE','OPEN','SUSPENDED','CLOSED']},
+      //   sportID: {$in: [4339, 7]},
+      //   winnerInfo: null
+      // }).sort({lastResultCheckTime: 1}).limit(20).exec();
+
+      const racingMarkets = await MarketIDS.aggregate([
+        {
+          $match: {
+            readyForScore: true,
+            status: { $in: ['INACTIVE', 'OPEN', 'SUSPENDED', 'CLOSED'] },
+            sportID: { $in: [4339, 7] },
+            winnerInfo: null
+          }
+        },
+        {
+          $lookup: {
+            from: "bets",
+            localField: "marketId",
+            foreignField: "marketId",
+            as: "betData"
+          }
+        },
+        {
+          $match: {
+            $expr: { $gt: [{ $size: "$betData" }, 0] }
+          }
+        },
+        {
+          $sort: { lastResultCheckTime: 1 }
+        },
+        {
+          $limit: 20
+        }
+      ])
       //console.log("races results calculations................................................................",racingMarkets);
 
-        
       if (racingMarkets.length > 0)
         await apiRequestResult.getRacingResult(racingMarkets);
     } catch (error) {
