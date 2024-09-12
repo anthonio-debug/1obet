@@ -87,21 +87,23 @@ app.use(bodyParser.json({strict: false}));
 
 const allowedOrigins = [
   'https://1obet.com',
+  'https://www.1obet.com',
   'https://admin.1obet.com',
+  'https://www.admin.1obet.com',
   'https://production.1obet.net'
 ];
 
 const corsOptions = {
   origin: (origin, callback) => {
-    // Allow requests with no origin (like server-to-server or Postman requests) or from allowed origins
+   
     if (!origin || allowedOrigins.includes(origin)) {
       callback(null, true);
     } else {
       callback(new Error('Not allowed by CORS'));
     }
   },
-  credentials: true, // Allow cookies and credentials
-  optionsSuccessStatus: 200 // Set a success status for OPTIONS preflight responses
+  credentials: true, 
+  optionsSuccessStatus: 200 
 };
 
 app.use(cors(corsOptions));
