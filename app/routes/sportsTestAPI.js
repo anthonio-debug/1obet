@@ -2098,12 +2098,12 @@ async function updateOddsFormLimitless() {
                       if (oddsResponse) {
                           let oddData = oddsResponse.data;
   
-                          try {
-                              oddData = JSON.parse(oddData);
-                          } catch (error) {
-                              console.error("Failed to parse oddData:", error);
-                              return;
-                          }
+                          // try {
+                          //     oddData = JSON.parse(oddData);
+                          // } catch (error) {
+                          //     console.error("Failed to parse oddData:", error);
+                          //     return;
+                          // }
   
                           const marketResp = await Odds.findOne({ marketId: oddData.marketId });
   
