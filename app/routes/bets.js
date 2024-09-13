@@ -168,35 +168,22 @@ function checkRunsOrOvers(inputString) {
   return subMarket.test(inputString);
 }
 
-function checkMultiResponse(odds, rates) {
+function checkMultiResponse(rates, odds) {
   if (Array.isArray(rates) && Array.isArray(odds)) {
-    const ratesSet = new Set(rates);
+    const oddsSet = new Set(odds);
     let lastMatched = null;
-    const epsilon = 0.00001; // Tolerance level for floating-point comparison
 
-    console.log("Rates:", rates);
-    console.log("Odds:", odds);
-    console.log("Rates Set:", ratesSet);
-
-    for (const element of odds) {
-      console.log("Checking element:", element);
-      for (const rate of ratesSet) {
-        // Compare with a tolerance to handle floating-point precision issues
-        if (Math.abs(rate - element) < epsilon) {
-          console.log("Matched element:", element);
-          lastMatched = element;
-        }
+    for (const element of rates) {
+      for (const odd of oddsSet) {
+        lastMatched = element;
       }
     }
-
-    if (lastMatched === null) {
-      console.log("No matches found.");
-    }
-    return lastMatched;
-  } else {
-    console.log('Both inputs must be arrays.');
-    return null;
   }
+
+  if (lastMatched === null) {
+    console.log("No matches found.");
+  }
+  return lastMatched;
 }
 
 const placeBet = async (req, res) => {
