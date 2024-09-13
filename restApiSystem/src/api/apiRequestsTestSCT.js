@@ -468,7 +468,8 @@ function apiRequests() {
                 cntrl++;
 
               }
-
+              console.log("------------------------- element.marketStartTime",element.marketStartTime);
+              
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
