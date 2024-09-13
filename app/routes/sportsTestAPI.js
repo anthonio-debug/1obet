@@ -951,7 +951,8 @@ async function saveOdds(oddData, sportsId) {
   // console.log("=-=-==-=-=-====-=- odds saved");
   return odd;
 }else{
-  const updatedOdds=  await Odds.findOne({marketId: oddData.marketId }, {$set:{totalMatched: oddData.totalMatched,}})
+  const odd=  await Odds.findOneAndUpdate({marketId: oddData.marketId }, {$set:{totalMatched: oddData.totalMatched,}})
+  return odd
 }
 
 
