@@ -2108,7 +2108,7 @@ async function updateOddsFormLimitless() {
   
                           const marketResp = await Odds.findOne({ marketId: oddData.marketId });
   
-                          // console.log("response in cronjobs of odds----- ", marketResp);
+                          console.log("response in cronjobs of odds----- ", marketResp);
   
                           if (marketResp) {
                             console.log("odds updated in cronjobs for total matched----- TotalMatched=", oddData.totalMatched);
