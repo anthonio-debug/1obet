@@ -368,7 +368,6 @@ async function activateEvent(req, res) {
 //   await odds.save();
 //   return odd;
 // }
-
 async function saveOdds(oddData, sportsId) {
   console.log("MM befor parsing-=-=-=-=-=-=-", oddData)
   //   try {
@@ -386,16 +385,22 @@ async function saveOdds(oddData, sportsId) {
 
   console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-", oddData.marketId)
 
+
   const oddDataMarket = await MarketIDS.findOne({ marketId: oddData.marketId })
   const runnerNameMap = new Map();
+  
   for (const runner of oddDataMarket.runners) {
     runnerNameMap.set(runner.SelectionId, runner.runnerName);
   }
 
-
-
+  
   const runners = [];
-
+  const oddsExist=  await Odds.findOne({marketId: oddData.marketId })
+  
+  console.log("---------------oddsExist------------",oddsExist);
+  if(!oddsExist){
+    console.log("---------------oddsExist------------ iff block runnig");
+    
   for (const runner of oddData.runners) {
     console.log("oddDataMarket.runners.runnerName", runnerNameMap.get(runner.selectionId));
     runners.push({
@@ -431,9 +436,24 @@ async function saveOdds(oddData, sportsId) {
   };
 
   const odds = new Odds(odd);
-  console.log("=-=-==-=-=-====-=- odds saved");
-  await odds.save();
+  await odds.save()
+  
+  // .then(result => {
+  //   console.log("RRRRRRRrrrr result", result);
+
+  // }).catch(err => {
+  //   console.log("EEEEEEEEEEEr errror", err);
+
+  // })
+  // console.log("=-=-==-=-=-====-=- odds saved");
   return odd;
+}else{
+  console.log("{{{{{{{{ updating marketPlce odds")
+  const odd=  await Odds.findOneAndUpdate({marketId: oddData.marketId }, {$set:{totalMatched: oddData.totalMatched,}})
+  return odd
+}
+
+
 }
 ///get odds
 
