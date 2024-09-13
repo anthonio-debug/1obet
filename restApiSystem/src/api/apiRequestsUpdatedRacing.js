@@ -188,9 +188,15 @@ const getRaceMarketIds = async (sportsId) => {
   if (documents.length > 0) {
     documents.forEach(element => {
       marketIds.push(element.marketId);
+      
+        
+        //console.log("Market for which I am fetching..............=====....>",element.marketId);
+        
+      
+      
     });
   }
-  console.log("I promise I am fetching......................................Races:",marketIds);
+  //console.log("I promise I am fetching......................................Races:",marketIds);
   return marketIds;
 }
 
@@ -639,6 +645,14 @@ function apiRequests() {
               runners: tempRunners,
             }
             const marketId = odds.marketId
+            
+        
+              //console.log("Again Market for which I am fetching..................>",marketId);
+              
+            
+
+
+
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
               RacingOddsMap.set(marketId, frontOdds)
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {

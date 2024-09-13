@@ -88,9 +88,10 @@ async function getAllSportsHighlight(req, res) {
         },
       },
     ]);
-
+    
     let marketData = [];
-
+    console.log("sportsHighlight", sportsHighlights)
+    
     if (sportsHighlights.length > 0) {
       for (let i = 0; i < sportsHighlights.length; i++) {
         marketData = await marketIds.aggregate([
@@ -115,9 +116,11 @@ async function getAllSportsHighlight(req, res) {
         sportsHighlights[i].totalMatched = marketData[0] ? marketData[0].totalMatched : 0
         sportsHighlights[i].serverTime = serverTime;
 
+        console.log("MarketData", marketData)
+
       }
     }
-
+    
     const ids = await inPlayEvents.distinct("Id", {
       sportsId: sportId,
       openDate: {
@@ -127,7 +130,7 @@ async function getAllSportsHighlight(req, res) {
     })
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
 
-    //console.log(" ======== ids ", ids);
+    console.log(" ======== ids  ", ids);
 
     return res.send({
       success: true,

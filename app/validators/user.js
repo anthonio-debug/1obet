@@ -43,13 +43,13 @@ module.exports.validate = (method) => {
     }
     case 'login': {
       return [
-        body('userName', 'userName is required')
+        body('NUsrNme', 'userName is required')
           .exists()
           .isString()
           .withMessage(' userName must be string')
           .notEmpty()
           .withMessage('userName cannot be null'),
-        body('password', 'password is required')
+        body('PaswrdUsr', 'password is required') 
           .exists()
           .isString()
           .withMessage('password must be string')

@@ -32,6 +32,7 @@ function apiRequestResult() {
   }
 
   async function getEventResult(markets) {
+    console.log("getting results for races for markets========================>>>>>>>>>>>>>",markets);
     const currentTime = new Date().getTime();
     let marketIdList = [];
     for (const market of markets) {
@@ -119,7 +120,7 @@ function apiRequestResult() {
         "marketIds": marketIds
       }
 
-      //console.log("apiRequestResults.js marketIdssssssssssssssssssssssssssssssssssssssssssssssssssssss",marketIds);
+      console.log("apiRequestResults.js marketIdssssssssssssssssssssssssssssssssssssssssssssssssssssss for results....",marketIds);
       const url = `${config.newThirdURL}/listMarketBook`;
       let response = await axios.post(
         url,
@@ -137,6 +138,9 @@ function apiRequestResult() {
         if (marketIndex === -1) {
           //console.log('Record not found');
           continue;
+        }
+        if(result.marketId=='1.232879479'){
+          console.log("market id for which I am checking for results and got it....",result.marketId,"--------Status::",result.status);
         }
         responseMarketIDs.push(result.marketId)
 

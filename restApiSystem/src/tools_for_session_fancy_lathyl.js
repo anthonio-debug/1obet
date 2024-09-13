@@ -121,7 +121,7 @@ if(bookmakerOdds!==0){
             ls3: 0,
             s: odd.s,
             sid: odd.sid,
-            ssid: odd?.mid,
+            ssid: odd?.mid+'bm',
             nat: odd.nat,
           })
         
@@ -152,7 +152,7 @@ if(bookmakerOdds!==0){
         openDate: { $lte: from },
         status: 'OPEN'
       }, { Id: 1 }).exec();
-      console.log("list of sligibale events..............................................................",fancyEvents);
+      //console.log("list of sligibale events..............................................................",fancyEvents);
       for (const event of fancyEvents) {
         const eventId = event.Id
         
@@ -179,9 +179,9 @@ if(bookmakerOdds!==0){
           let Bmarketid;
           for (const [index, market] of bookmakerMarketList.entries()) {
             
-              bookmakerMarketIds.push(market?.mid)
+              bookmakerMarketIds.push(market?.mid+'bm')
               
-              Bmarketid = market.mid;
+              Bmarketid = market.mid+'bm';
                 runners.push({
                   SelectionId: market.sid,
                   runnerName: market.nat,
@@ -217,7 +217,7 @@ if(bookmakerOdds!==0){
          
 
          if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
-          console.log('fancy oddsssssssssssssss returned',fancyData);
+          //console.log('fancy oddsssssssssssssss returned',fancyData);
           console.log("-------------------------------------------->>>>>>>>>>>>>>>",eventId);
          
          
