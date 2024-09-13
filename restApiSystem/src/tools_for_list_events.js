@@ -79,81 +79,81 @@ function ToolForEvent() {
   }
 
 
-// async function updateOddsFormLimitless() {
-//   console.log("inside...................................................");
+async function updateOddsFormLimitless() {
+  console.log("inside...................................................");
   
-//   try {
-//     // ,
-//     const marketsData = await MarketIDs.find({ marketName: "Match Odds", ReadyForOdds: false, status: 'OPEN' });
+  try {
+    // ,
+    const marketsData = await MarketIDs.find({ marketName: "Match Odds", ReadyForOdds: false, status: 'OPEN' });
          
-//     // console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
+    // console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
     
   
-//           if (marketsData && marketsData.length > 0) {
-//               // console.log("marketsData::::::::::::::::;", marketsData);
-//               console.log('listMarketsByCronJobs is running ----------');
+          if (marketsData && marketsData.length > 0) {
+              // console.log("marketsData::::::::::::::::;", marketsData);
+              console.log('listMarketsByCronJobs is running ----------');
   
-//               for (let element of marketsData) {
+              for (let element of marketsData) {
 
-//                 const time30Minutes = 30 * 60 * 1000; 
-//                 const currentTime = Date.now();
-//                 const marketStartTime = element.openDate
-//                 // console.log("||||||||||||||||\\\\\\ marketStartTime",marketStartTime);
+                const time30Minutes = 30 * 60 * 1000; 
+                const currentTime = Date.now();
+                const marketStartTime = element.openDate
+                // console.log("||||||||||||||||\\\\\\ marketStartTime",marketStartTime);
                 
-//                 const remainingTime = marketStartTime - currentTime;
+                const remainingTime = marketStartTime - currentTime;
 
-//                 // console.log("remainingTime======", remainingTime/60000);
+                // console.log("remainingTime======", remainingTime/60000);
                 
-//                   if (remainingTime < time30Minutes) {
-//                     const result= await MarketIDs.updateMany({ eventId: element.eventId , marketName:{$ne:"To Win the Toss"}}, { $set: { ReadyForOdds: true } });
+                  if (remainingTime < time30Minutes) {
+                    const result= await MarketIDs.updateMany({ eventId: element.eventId , marketName:{$ne:"To Win the Toss"}}, { $set: { ReadyForOdds: true } });
 
-//                     await MarketIDs.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: false } });
-//                       // console.log("======================-------------- Result", result);
-//                       // console.log("======================-------------- ReadyForOdds=true");
-//                   }
+                    await MarketIDs.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: false } });
+                      // console.log("======================-------------- Result", result);
+                      // console.log("======================-------------- ReadyForOdds=true");
+                  }
   
-//                   if (remainingTime > time30Minutes) {
-//                       // console.log("cron jobs code running for updating odds ======----- ");
-//                       const result= await MarketIDs.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: true } });
+                  if (remainingTime > time30Minutes) {
+                      // console.log("cron jobs code running for updating odds ======----- ");
+                      const result= await MarketIDs.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: true } });
 
-//                       const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${element.sportID}&marketId=${element.marketId}`;
+                      const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${element.sportID}&marketId=${element.marketId}`;
   
-//                       const oddsResponse = await axios.get(oddUrl);
+                      const oddsResponse = await axios.get(oddUrl);
   
-//                       // console.log("cron jobs response ======----- ", oddsResponse.data);
+                      // console.log("cron jobs response ======----- ", oddsResponse.data);
   
-//                       if (oddsResponse) {
-//                           let oddData = oddsResponse.data;
+                      if (oddsResponse) {
+                          let oddData = oddsResponse.data;
   
-//                           try {
-//                               oddData = JSON.parse(oddData);
-//                           } catch (error) {
-//                               console.error("Failed to parse oddData:", error);
-//                               return;
-//                           }
+                          try {
+                              oddData = JSON.parse(oddData);
+                          } catch (error) {
+                              console.error("Failed to parse oddData:", error);
+                              return;
+                          }
   
-//                           const marketResp = await Odds.findOne({ marketId: oddData.marketId });
+                          const marketResp = await Odds.findOne({ marketId: oddData.marketId });
   
-//                           // console.log("response in cronjobs of odds----- ", marketResp);
+                          // console.log("response in cronjobs of odds----- ", marketResp);
   
-//                           if (marketResp) {
-//                               await Odds.findOneAndUpdate(
-//                                   { marketId: oddData.marketId },
-//                                   { $set: { totalMatched: oddData.totalMatched } }
-//                               );
-//                               console.log("odds updated in cronjobs for total matched----- TotalMatched=", oddData.totalMatched);
-//                           }
-//                       }
-//                   }
-//               }
-//           }
-//       } catch (error) {
-//           console.error("Error updating odds:", error);
-//       }
-//   }
+                          if (marketResp) {
+                              await Odds.findOneAndUpdate(
+                                  { marketId: oddData.marketId },
+                                  { $set: { totalMatched: oddData.totalMatched } }
+                              );
+                              console.log("odds updated in cronjobs for total matched----- TotalMatched=", oddData.totalMatched);
+                          }
+                      }
+                  }
+              }
+          }
+      } catch (error) {
+          console.error("Error updating odds:", error);
+      }
+  }
   
 
-///////////////////////////////////////
+/////////////////////////////////////
 
   async function fetchMarkets() {
     try {
@@ -300,7 +300,7 @@ function ToolForEvent() {
           $sort: { lastCheck: 1 }
         },
         {
-          $limit: 30
+          $limit: 20
         }
       ]).exec();
 

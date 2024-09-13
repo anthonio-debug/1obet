@@ -2048,7 +2048,82 @@ function checkMultiResponse(rates, odds) {
     return lowestMatch;
   }
 }
+//////////////////////////////////////////
+async function updateOddsFormLimitless() {
+  console.log("inside...................................................");
+  
+  try {
+    // ,
+    const marketsData = await MarketIDS.find({ marketName: "Match Odds", ReadyForOdds: false, status: 'OPEN' });
+         
+    // console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
+    
+  
+          if (marketsData && marketsData.length > 0) {
+              // console.log("marketsData::::::::::::::::;", marketsData);
+              console.log('listMarketsByCronJobs is running ----------');
+  
+              for (let element of marketsData) {
 
+                const time30Minutes = 30 * 60 * 1000; 
+                const currentTime = Date.now();
+                const marketStartTime = element.openDate
+                // console.log("||||||||||||||||\\\\\\ marketStartTime",marketStartTime);
+                
+                const remainingTime = marketStartTime - currentTime;
+
+                // console.log("remainingTime======", remainingTime/60000);
+                
+                  if (remainingTime < time30Minutes) {
+                    const result= await MarketIDS.updateMany({ eventId: element.eventId , marketName:{$ne:"To Win the Toss"}}, { $set: { ReadyForOdds: true } });
+
+                    await MarketIDs.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: false } });
+                      // console.log("======================-------------- Result", result);
+                      // console.log("======================-------------- ReadyForOdds=true");
+                  }
+  
+                  if (remainingTime > time30Minutes) {
+                      // console.log("cron jobs code running for updating odds ======----- ");
+                      const result= await MarketIDS.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: true } });
+
+                      // const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${element.sportID}&marketId=${element.marketId}`;
+                      const oddUrl = `http://sportzing.in:5505/api/getOdds?market_id=${element.marketId}`;
+
+  
+                      const oddsResponse = await axios.get(oddUrl);
+  
+                      console.log("cron jobs response ======----- ", oddsResponse.data);
+  
+                      if (oddsResponse) {
+                          let oddData = oddsResponse.data;
+  
+                          try {
+                              oddData = JSON.parse(oddData);
+                          } catch (error) {
+                              console.error("Failed to parse oddData:", error);
+                              return;
+                          }
+  
+                          const marketResp = await Odds.findOne({ marketId: oddData.marketId });
+  
+                          // console.log("response in cronjobs of odds----- ", marketResp);
+  
+                          if (marketResp) {
+                              await Odds.findOneAndUpdate(
+                                  { marketId: oddData.marketId },
+                                  { $set: { totalMatched: oddData.totalMatched } }
+                              );
+                              console.log("odds updated in cronjobs for total matched----- TotalMatched=", oddData.totalMatched);
+                          }
+                      }
+                  }
+              }
+          }
+      } catch (error) {
+          console.error("Error updating odds:", error);
+      }
+  }
+//////////////////////////////////////////
 
 // //////////////////
 router.get('/track-bet/lithylAPI/getSeriesList/:sportsId', getSeriesList)
@@ -2059,7 +2134,7 @@ router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
 router.get('/track-bet/updateUserName', updateUserName)
-router.get('/track-bet/testing', testing)
+router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
 /////////////////
 
