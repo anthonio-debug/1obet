@@ -929,7 +929,7 @@ async function saveOdds(oddData, sportsId) {
 
   const odds = new Odds(odd);
   console.log("=-=-==-=-=-====-=- odds saved");
-  await odds.save();
+  await Odds.save();
   return odd;
 }
 
