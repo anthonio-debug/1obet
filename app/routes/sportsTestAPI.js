@@ -2106,7 +2106,7 @@ async function updateOddsFormLimitless() {
                           //     return;
                           // }
   
-                          const marketResp = await Odds.findOne({ marketId: oddData.marketId });
+                          const marketResp = await Odds.findOne({ marketId: oddData[0].marketId });
   
                           console.log("response in cronjobs of odds----- ", marketResp);
   
