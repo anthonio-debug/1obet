@@ -438,11 +438,9 @@ async function cronOdds2(eventId, sportID) {
   //     message: 'Updated successfully !'
   //   });
   //  }
-  console.log("eventId[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]",eventId);
   
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
   // const bookmakerUrl = `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
-  // const url2 = `http://sportzing.in:5505/api/getMarketList?match_id=${"33580404"}`;
   const url2 = `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
 
   try {
