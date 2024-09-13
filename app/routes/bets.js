@@ -66,20 +66,6 @@ const getParents = async (userId) => {
   return parentUserIds;
 };
 
-function checkMultiResponse(rates, odds) {
-  if (Array.isArray(rates) && Array.isArray(odds)) {
-    const ratesSet = new Set(rates);
-    let lastMatched = null;
-
-    for (const element of odds) {
-      if (ratesSet.has(element)) {
-        lastMatched = element;
-      }
-    }
-    return lastMatched;
-  }
-}
-
 const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = '0', subMarketId = '0') => {
   const parentUser = await User.find({
     userId: {
@@ -202,8 +188,6 @@ const placeBet = async (req, res) => {
     let { selectionId, betAmount, betRate, matchId, subMarketName, type, oddsId, fancyRate, overunderMarketId, selectedAmount, asianOdd, roundId, asianMarketId, rates, partnerValue, timer } = req.body;
     let randomStr = uuidv4();
 
-    // we are getting rates in the array
-
     // if (parseInt(betRate) > 50) {
     //   return res.status(404).send({
     //     message: `Winning amount can not be more than 50 times than loosing amount`,
@@ -314,20 +298,20 @@ const placeBet = async (req, res) => {
 
       if (!eventDetail.betAllowed) {
         activeBettors.delete(userId);
-        return res.status(404).send({ message: 'Betting Not Allowed on this Match', data: eventDetail.betAllowed });
+        return res.status(404).send({ message: 'Betting Not Allowd on this Match', data: eventDetail.betAllowed });
       }
       if (eventDetail.status.toUpperCase() != 'OPEN') {
         activeBettors.delete(userId);
-        return res.status(404).send({ message: 'Betting Not Allowed on this Match', data: eventDetail.status.toUpperCase() });
+        return res.status(404).send({ message: 'Betting Not Allowd on this Match', data: eventDetail.status.toUpperCase() });
       }
       if (eventDetail.matchStopStatus) {
         activeBettors.delete(userId);
-        return res.status(404).send({ message: 'Betting Not Allowed on this Match3', data: eventDetail.matchStopStatus });
+        return res.status(404).send({ message: 'Betting Not Allowd on this Match3', data: eventDetail.matchStopStatus });
       }
 
       if (eventDetail.matchStopStatus) {
         activeBettors.delete(userId);
-        return res.status(404).send({ message: 'Betting Not Allowed on this Match' });
+        return res.status(404).send({ message: 'Betting Not Allowd on this Match' });
       }
 
       marketId = eventDetail?.sportsId;
@@ -430,6 +414,7 @@ const placeBet = async (req, res) => {
       const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == thirdPartyMarketName);
       id = currentMarket?.id;
       _3rdPartyMarketId = id;
+      console.log("_3rdPartyMarketId================= after cup", id, "and", _3rdPartyMarketId, "idDetails.marketId");
 
       subMarketDetail = await SubMarketType.findOne({
         name: subMarketName,
@@ -568,7 +553,6 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * 1);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -613,7 +597,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
           setTimeout(async () => {
@@ -638,7 +621,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       }
     }
 
@@ -738,7 +720,6 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * 1);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -790,7 +771,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
+
         // LAY:
         // BetRate: 33
         // SelectedRate: 30
@@ -831,7 +812,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       }
     }
 
@@ -901,8 +881,10 @@ const placeBet = async (req, res) => {
         for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
           setTimeout(async () => {
             const oddsData = await apiCallForOdds(id);
+            console.log("oddsData = await apiCallForOdds", id);
 
             const marketStatus = oddsData[0]?.status;
+            console.log("oddsData =========", marketStatus);
 
             if (marketStatus != 'OPEN') {
               activeBettors.delete(userId);
@@ -935,7 +917,6 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * 1);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -981,7 +962,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
+
         // LAY:
         // BetRate: 33
         // SelectedRate: 30
@@ -1026,7 +1007,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
+
         // Selected Rate: 30
         // BetRate      : 27
 
@@ -1135,7 +1116,6 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1183,7 +1163,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
+
         // LAY:
         // BetRate: 33
         // SelectedRate: 30
@@ -1226,7 +1206,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       }
     }
 
@@ -1321,7 +1300,6 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * 1);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1366,7 +1344,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
+
         // LAY:
         // BetRate: 33
         // SelectedRate: 30
@@ -1400,7 +1378,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
 
         // Selected Rate: 30
         // BetRate      : 27
@@ -1518,7 +1495,6 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * 1);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1558,7 +1534,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       } else if (type == 0 && selectedBetRate != betRate) {
         // activeBettors.delete(userId)
         // return res.status(404).send({
@@ -1588,7 +1563,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       }
     }
 
@@ -1679,7 +1653,6 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1714,7 +1687,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
           setTimeout(async () => {
@@ -1739,7 +1711,6 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       }
     }
 
@@ -1826,7 +1797,6 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * i);
         }
-        betRate = checkMultiResponse(multipeResponse, rates)
       } else {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -2057,6 +2027,7 @@ const placeBet = async (req, res) => {
         });
       }
     }
+
 
     // For Betfair Fancy 
     else if (subMarketDetail.Id == config.BetfairFancy) {
