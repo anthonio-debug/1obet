@@ -168,6 +168,20 @@ function checkRunsOrOvers(inputString) {
   return subMarket.test(inputString);
 }
 
+function checkMultiResponse(rates, odds) {
+  if (Array.isArray(rates) && Array.isArray(odds)) {
+    const ratesSet = new Set(rates);
+    let lastMatched = null;
+
+    for (const element of odds) {
+      if (ratesSet.has(element)) {
+        lastMatched = element;
+      }
+    }
+    return lastMatched;
+  }
+}
+
 const placeBet = async (req, res) => {
   const errors = validationResult(req);
   let statusForRes = {
@@ -881,10 +895,8 @@ const placeBet = async (req, res) => {
         for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
           setTimeout(async () => {
             const oddsData = await apiCallForOdds(id);
-            console.log("oddsData = await apiCallForOdds", id);
 
             const marketStatus = oddsData[0]?.status;
-            console.log("oddsData =========", marketStatus);
 
             if (marketStatus != 'OPEN') {
               activeBettors.delete(userId);
@@ -917,6 +929,8 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * 1);
         }
+        const number = checkMultiResponse(multipeResponse, rates)
+        console.log(`Check Numbers ${number}`)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -962,7 +976,9 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-
+        const checkNumber = checkMultiResponse(multipeResponse, rates)
+        console.log(`Check Numbers 
+          ${checkNumber}`)
         // LAY:
         // BetRate: 33
         // SelectedRate: 30
@@ -1007,7 +1023,8 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-
+        const number2 = checkMultiResponse(multipeResponse, rates)
+        console.log(`Check Numbers2 ${number2}`)
         // Selected Rate: 30
         // BetRate      : 27
 
