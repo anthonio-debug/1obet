@@ -929,7 +929,7 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * 1);
         }
-        const number = checkMultiResponse(multipeResponse, rates)
+        let number = checkMultiResponse(multipeResponse, rates)
         console.log(`Check Numbers ${number}`)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
@@ -976,9 +976,8 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        const checkNumber = checkMultiResponse(multipeResponse, rates)
-        console.log(`Check Numbers 
-          ${checkNumber}`)
+        let checkNumber = checkMultiResponse(multipeResponse, rates)
+        console.log(`Check Numbers23 ${checkNumber}`)
         // LAY:
         // BetRate: 33
         // SelectedRate: 30
@@ -1023,7 +1022,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }, 1000 * i);
         }
-        const number2 = checkMultiResponse(multipeResponse, rates)
+        let number2 = checkMultiResponse(multipeResponse, rates)
         console.log(`Check Numbers2 ${number2}`)
         // Selected Rate: 30
         // BetRate      : 27
