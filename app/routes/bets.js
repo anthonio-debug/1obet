@@ -1010,7 +1010,8 @@ const placeBet = async (req, res) => {
 
               // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
               // const response = await axios.get(url);
-              // const oddsData = response.data;              const oddsData = await apiCallForOdds(id);
+              // const oddsData = response.data;             
+              const oddsData = await apiCallForOdds(id);
               const marketStatus = oddsData[0]?.status;
 
               if (marketStatus != 'OPEN') {
