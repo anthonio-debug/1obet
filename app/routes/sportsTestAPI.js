@@ -928,7 +928,13 @@ async function saveOdds(oddData, sportsId) {
   };
 
   const odds = new Odds(odd);
-  await odds.save();
+  await odds.save().then(result=>{
+    console.log("RRRRRRRrrrr result", result);
+    
+  }).catch(err=>{
+    console.log("EEEEEEEEEEEr errror", err);
+
+  })
   console.log("=-=-==-=-=-====-=- odds saved");
   return odd;
 }
