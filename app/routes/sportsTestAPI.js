@@ -2049,7 +2049,7 @@ function checkMultiResponse(rates, odds) {
   }
 }
 //////////////////////////////////////////
-async function updateOddsFormLimitless() {
+async function updateOddsFormLimitless(req, res) {
   console.log("inside...................................................");
   
   try {
@@ -2123,7 +2123,7 @@ async function updateOddsFormLimitless() {
                   }
               }
           }
-          res.status(200).json({ success: true, message:"total matched updated sucessfully" });
+          res.status(200).json({ success: true, message: "Total matched updated successfully" });
       } catch (error) {
           console.error("Error updating odds:", error);
       }
