@@ -592,6 +592,8 @@ async function cronOdds2(eventId, sportID) {
           }));
 
           console.log("------------------------- element.marketStartTime",element.marketStartTime);
+          const openDate= Date.parse(element.marketStartTime)
+          console.log("------------------------- element.openDate", openDate);
           
 
           if (element.marketName === 'Match Odds') {
