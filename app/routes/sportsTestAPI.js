@@ -2054,9 +2054,10 @@ async function updateOddsFormLimitless() {
   
   try {
     // ,
-    const marketsData = await MarketIDS.find({ marketName: "Match Odds", ReadyForOdds: false, status: 'OPEN' });
+    // const marketsData = await MarketIDS.find({ marketName: "Match Odds", ReadyForOdds: false, status: 'OPEN' });
+    const marketsData = await MarketIDS.find({ marketI: "1.232931464" });
          
-    // console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
+    console.log("===+++++++++++++++++++++ marketsData= ",marketsData);
     
   
           if (marketsData && marketsData.length > 0) {
