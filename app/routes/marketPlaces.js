@@ -438,6 +438,8 @@ async function cronOdds2(eventId, sportID) {
   //     message: 'Updated successfully !'
   //   });
   //  }
+  console.log("eventId[[[[[[[[[[[[[[[[[[[[[[[]]]]]]]]]]]]]]]]]]",eventId);
+  
   const url = `http://84.8.153.51/api/v2/getMarkets?EventTypeID=${sportID}&EventID=${eventId}`;
   // const bookmakerUrl = `http://sportzing.in:5505/api/getMarketList?match_id=${eventId}`;
   const url2 = `http://sportzing.in:5505/api/getMarketList?match_id=${"33580404"}`;
@@ -577,7 +579,7 @@ async function cronOdds2(eventId, sportID) {
     try {
       const response = await axios.get(url2);
 
-      console.log("=-=--==---=-=--=-===--= market api response marketplace", response);
+      // console.log("=-=--==---=-=--=-===--= market api response marketplace", response);
 
       const marketsData = response.data;
       const sendMarketIds = [];
