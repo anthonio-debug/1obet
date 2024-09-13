@@ -664,7 +664,8 @@ async function updateCompanySetStatus(req, res) {
 
 
     // console.log("=-=--=-=-=-=--=-=-====-=-= event.sportsId", event.sportsId);
-    cronOdds2(data.Id, event.sportsId)
+    // cronOdds2(data.Id, event.sportsId)
+    cronOdds2(data.Id, "4")
 
     // console.log("=-=--=-=-=-=--=-=-====-=-= cronOdds2");
 
