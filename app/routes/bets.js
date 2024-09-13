@@ -168,7 +168,7 @@ function checkRunsOrOvers(inputString) {
   return subMarket.test(inputString);
 }
 
-function checkMultiResponse(rates, odds) {
+function checkMultiResponse(odds, rates) {
   if (Array.isArray(rates) && Array.isArray(odds)) {
     const ratesSet = new Set(rates);
     let lastMatched = null;
