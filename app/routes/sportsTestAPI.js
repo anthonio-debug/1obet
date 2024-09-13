@@ -890,16 +890,20 @@ async function saveOdds(oddData, sportsId) {
 
   console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-", oddData.marketId)
 
+
   const oddDataMarket = await MarketIDS.findOne({ marketId: oddData.marketId })
   const runnerNameMap = new Map();
+  
   for (const runner of oddDataMarket.runners) {
     runnerNameMap.set(runner.SelectionId, runner.runnerName);
   }
 
-
-
+  
   const runners = [];
-
+  const oddsExist=  await Odds.findOne({marketId: oddData.marketId })
+  if(!oddsExist){
+    
+  
   for (const runner of oddData.runners) {
     console.log("oddDataMarket.runners.runnerName", runnerNameMap.get(runner.selectionId));
     runners.push({
@@ -935,15 +939,22 @@ async function saveOdds(oddData, sportsId) {
   };
 
   const odds = new Odds(odd);
-  await odds.save().then(result => {
-    console.log("RRRRRRRrrrr result", result);
+  await odds.save()
+  
+  // .then(result => {
+  //   console.log("RRRRRRRrrrr result", result);
 
-  }).catch(err => {
-    console.log("EEEEEEEEEEEr errror", err);
+  // }).catch(err => {
+  //   console.log("EEEEEEEEEEEr errror", err);
 
-  })
-  console.log("=-=-==-=-=-====-=- odds saved");
+  // })
+  // console.log("=-=-==-=-=-====-=- odds saved");
   return odd;
+}else{
+  const updatedOdds=  await Odds.findOne({marketId: oddData.marketId }, {$set:{totalMatched: oddData.totalMatched,}})
+}
+
+
 }
 
 // async function getOdds(marketIds, sportsId) {
