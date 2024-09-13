@@ -939,7 +939,6 @@ const placeBet = async (req, res) => {
 
         console.log("Check the rates are coming", rates);
         console.log("Check the multipeResponse are coming", multipeResponse);
-
         let number = checkMultiResponse(multipeResponse, rates);
         console.log(`Check Numbers ${number}`);
       } else if (type == 1 && betRate < selectedBetRate) {
@@ -980,6 +979,8 @@ const placeBet = async (req, res) => {
         }
 
         await Promise.all(promises);
+        console.log("Check the rates are coming", rates);
+        console.log("Check the multipeResponse are coming", multipeResponse);
         let checkNumber = checkMultiResponse(multipeResponse, rates);
         console.log(`Check Numbers23 ${checkNumber}`);
         // LAY:
@@ -1035,6 +1036,8 @@ const placeBet = async (req, res) => {
         }
 
         await Promise.all(promises);
+        console.log("Check the rates are coming", rates);
+        console.log("Check the multipeResponse are coming", multipeResponse);
         let number2 = checkMultiResponse(multipeResponse, rates);
         console.log(`Check Numbers2 ${number2}`);
         // Selected Rate: 30
