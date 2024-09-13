@@ -397,9 +397,9 @@ async function saveOdds(oddData, sportsId) {
   const runners = [];
   const oddsExist=  await Odds.findOne({marketId: oddData.marketId })
   
-  console.log("---------------oddsExist------------",oddsExist);
+  // console.log("---------------oddsExist------------",oddsExist);
   if(!oddsExist){
-    console.log("---------------oddsExist------------ iff block runnig");
+    // console.log("---------------oddsExist------------ iff block runnig");
     
   for (const runner of oddData.runners) {
     console.log("oddDataMarket.runners.runnerName", runnerNameMap.get(runner.selectionId));
