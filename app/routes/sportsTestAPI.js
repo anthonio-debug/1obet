@@ -2078,7 +2078,7 @@ async function updateOddsFormLimitless() {
                   if (remainingTime < time30Minutes) {
                     const result= await MarketIDS.updateMany({ eventId: element.eventId , marketName:{$ne:"To Win the Toss"}}, { $set: { ReadyForOdds: true } });
 
-                    await MarketIDs.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: false } });
+                    await MarketIDS.updateMany({ eventId: element.eventId , marketName:"To Win the Toss", ReadyForOdds:false}, { $set: { ReadyForOdds: false } });
                       // console.log("======================-------------- Result", result);
                       // console.log("======================-------------- ReadyForOdds=true");
                   }
