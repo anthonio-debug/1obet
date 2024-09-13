@@ -2093,10 +2093,11 @@ async function updateOddsFormLimitless() {
   
                       const oddsResponse = await axios.get(oddUrl);
   
-                      console.log("cron jobs response ======----- ", oddsResponse.data);
-  
+                      // console.log("cron jobs response ======----- ", oddsResponse.data);
+                      
                       if (oddsResponse) {
-                          let oddData = oddsResponse.data;
+                        let oddData = oddsResponse.data;
+                        console.log("cron jobs response ======-----oddData ", oddData);
   
                           // try {
                           //     oddData = JSON.parse(oddData);
