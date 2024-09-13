@@ -249,7 +249,6 @@ const placeBet = async (req, res) => {
 
     if (checkRunsOrOvers(subMarketName)) { subMarketName = "Betfair Fancy" }
     else { subMarketName }
-    console.log("Check the rates are coming", rates)
 
     /* ====================================================================== */
 
@@ -947,6 +946,7 @@ const placeBet = async (req, res) => {
             }
           }, 1000 * 1);
         }
+        console.log("Check the rates are coming", rates)
         let number = checkMultiResponse(multipeResponse, rates)
         console.log(`Check Numbers ${number}`)
       } else if (type == 1 && betRate < selectedBetRate) {
