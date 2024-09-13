@@ -1372,7 +1372,7 @@ async function cronOdds2(req, res) {
     try {
       const response = await axios.get(url2);
 
-      // console.log("=-=--==---=-=--=-===--= market api response", response.data);
+      console.log("=-=--==---=-=--=-===--= market api response in sportsTest", response.data);
 
       const marketsData = response.data;
       const sendMarketIds = [];
