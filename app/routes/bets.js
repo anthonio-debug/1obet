@@ -180,10 +180,7 @@ function checkMultiResponse(odds, rates) {
       }
     }
 
-    return lastMatched; // Return the last matched element, or null if none
-  } else {
-    console.log('Both inputs must be arrays.');
-    return null; // Return null if the inputs are not arrays
+    return lastMatched;
   }
 }
 
@@ -935,6 +932,7 @@ const placeBet = async (req, res) => {
           }, 1000 * 1);
         }
         console.log("Check the rates are coming", rates)
+        console.log("Check the multipeResponse are coming", multipeResponse)
         let number = checkMultiResponse(multipeResponse, rates)
         console.log(`Check Numbers ${number}`)
       } else if (type == 1 && betRate < selectedBetRate) {
