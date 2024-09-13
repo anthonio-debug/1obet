@@ -591,6 +591,9 @@ async function cronOdds2(eventId, sportID) {
             runnerName: runner.runnerName,
           }));
 
+          console.log("------------------------- element.marketStartTime",element.marketStartTime);
+          
+
           if (element.marketName === 'Match Odds') {
 
             sendMarketIds.push(element.marketId);
@@ -607,6 +610,7 @@ async function cronOdds2(eventId, sportID) {
                 marketName: element.marketName,
                 sportID: '4',
                 totalMatched: element.totalMatched,
+                openDate: Date.parse(element.marketStartTime),
                 status: marketStatus,
                 index: 0,
                 runners: tempRunners,
