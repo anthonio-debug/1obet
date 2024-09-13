@@ -928,8 +928,8 @@ async function saveOdds(oddData, sportsId) {
   };
 
   const odds = new Odds(odd);
-  console.log("=-=-==-=-=-====-=- odds saved");
   await odds.save();
+  console.log("=-=-==-=-=-====-=- odds saved");
   return odd;
 }
 
