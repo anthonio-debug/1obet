@@ -659,8 +659,6 @@ async function updateCompanySetStatus(req, res) {
   }
   try {
     const data = req.query;
-    console.log("dddddddddddd", data);
-    
     await inPlayEvents.updateOne({ Id: data.Id }, { CompanySetStatus: data.status });
     const event = await inPlayEvents.findOne({ Id: data.Id })
 
