@@ -172,10 +172,20 @@ function checkMultiResponse(rates, odds) {
   if (Array.isArray(rates) && Array.isArray(odds)) {
     const ratesSet = new Set(rates);
     let lastMatched = null;
+    const epsilon = 0.00001; // Tolerance level for floating-point comparison
+
+    console.log("Rates:", rates);
+    console.log("Odds:", odds);
+    console.log("Rates Set:", ratesSet);
 
     for (const element of odds) {
-      if (ratesSet.has(element)) {
-        lastMatched = element;
+      console.log("Checking element:", element);
+      for (const rate of ratesSet) {
+        // Compare with a tolerance to handle floating-point precision issues
+        if (Math.abs(rate - element) < epsilon) {
+          console.log("Matched element:", element);
+          lastMatched = element;
+        }
       }
     }
 
@@ -188,7 +198,6 @@ function checkMultiResponse(rates, odds) {
     return null;
   }
 }
-
 
 const placeBet = async (req, res) => {
   const errors = validationResult(req);
