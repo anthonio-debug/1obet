@@ -169,9 +169,9 @@ function checkRunsOrOvers(inputString) {
 }
 
 function checkMultiResponse(rates, odds) {
+  let lastMatched = null;
   if (Array.isArray(rates) && Array.isArray(odds)) {
     const oddsSet = new Set(odds);
-    let lastMatched = null;
 
     for (const element of rates) {
       for (const odd of oddsSet) {
