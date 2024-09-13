@@ -247,7 +247,7 @@ function login(req, res) {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const userNameLower = req.body.userName.toLowerCase()
+  const userNameLower = req.body.NUsrNme.toLowerCase()
   User.findOne(
     {
       userName: userNameLower,
@@ -256,7 +256,7 @@ function login(req, res) {
     (err, user) => {
       if (err || !user) return res.status(404).send({ message: 'Invalid username or password' });
       // check if user password is matched or not.
-      bcrypt.compare(req.body.password, user.password, function (err, result) {
+      bcrypt.compare(req.body.PaswrdUsr, user.password, function (err, result) {
         if (err) return res.status(404).send({ message: 'Invalid username or password ' });
         if (!result) return res.status(404).send({ message: 'Invalid username or password' });
         if (user.isActive == false || user.status == 0) return res.status(404).send({ message: 'Your account is inactive' });
