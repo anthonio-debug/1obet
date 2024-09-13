@@ -178,9 +178,17 @@ function checkMultiResponse(rates, odds) {
         lastMatched = element;
       }
     }
+
+    if (lastMatched === null) {
+      console.log("No matches found.");
+    }
     return lastMatched;
+  } else {
+    console.log('Both inputs must be arrays.');
+    return null;
   }
 }
+
 
 const placeBet = async (req, res) => {
   const errors = validationResult(req);
