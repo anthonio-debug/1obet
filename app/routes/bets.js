@@ -913,7 +913,7 @@ const placeBet = async (req, res) => {
 
       /*end of code by qaiser*/
       delay = (BetPlaceData.secondsValue + delayAddition) * 1000 + 200;
-      if (selectedBetRate == betRate ||selectedBetRate!=betRate) {
+      if (selectedBetRate == betRate || selectedBetRate!=betRate) {
         for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           const oddsData = await apiCallForOdds(id);
@@ -929,24 +929,22 @@ const placeBet = async (req, res) => {
           const runnerFromAPI = oddsData[0]?.runners?.find((runner) => runner.selectionId == selectionId);
           let selectedOddsValue = 0;
           if (type == 0) {
+            multipeResponse.push(selectedOddsValue);
             const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
             }
 
-            if (selectedOddsValue != 0 && betRate <= selectedOddsValue) {
-              multipeResponse.push(selectedOddsValue);
-            }
+           
 
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           } else if (type == 1) {
+            multipeResponse.push(selectedOddsValue);
             const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
             }
-            if (selectedOddsValue != 0 && betRate >= selectedOddsValue) {
-              multipeResponse.push(selectedOddsValue);
-            }
+          
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           };
         }
@@ -1060,14 +1058,7 @@ const placeBet = async (req, res) => {
         // ELSE
         // mismatch.....
       }
-      console.log(matchedResponse,"===================matchhhhhh res>>>>>>>>>>>>>>>>>>>>>>")
-        if (matchedResponse) {
-         var updatedbetRate=matchedResponse
-        } else {
-          return res.status(404).send({
-            message: `Bet miss match `
-          });
-        }
+     
     }
 
     // GH HR Match Odds
