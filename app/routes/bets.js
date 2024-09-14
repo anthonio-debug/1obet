@@ -176,7 +176,7 @@ function checkMultiResponse(odds, rates) {
       lastMatched = odds[rates.length - 1]
 }
     
-      return res.status(404).send({ message: `Bet not allowed ${lastMatched}` });
+      return res.status(404).send({ message: `Bet mismatch ${lastMatched}` });
 
     // for (const element of odds) {
     //   for (const rate of rates) {
