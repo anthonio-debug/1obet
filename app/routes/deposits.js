@@ -677,6 +677,7 @@ function getLedgerDetails(req, res) {
                 result[0].results[i].fancyData = betInfo?.fancyData;
                 result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
                 result[0].results[i].roundId = betInfo?.roundId;
+                result[0].results[i].marketId = betInfo?.subMarketId;
               } catch (err) {
                 continue;
               }
