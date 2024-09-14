@@ -173,7 +173,7 @@ function checkMultiResponse(odds, rates,res) {
     let lastMatched = null;
     console.log(rates.length,"rate length=================>>>>>>") 
     console.log(odds.length,"odds length=================>>>>>>") 
-    console.log(oddsodds[odds.length - 1],"odds[odds.length - 1] length=================>>>>>>") 
+    console.log(odds[odds.length - 1],"odds[odds.length - 1] length=================>>>>>>") 
     if (rates.includes(odds[odds.length - 1])) {
   
       lastMatched = odds[odds.length - 1]
