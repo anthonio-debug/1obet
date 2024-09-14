@@ -169,9 +169,11 @@ function checkRunsOrOvers(inputString) {
 }
 
 function checkMultiResponse(odds, rates,res) {
-  if (Array.isArray(odds) && Array.isArray(rates)) {
+  if (Array.isArray(odds) && Array.isArray(rates) && rates.length>0) {
     let lastMatched = null;
-    
+    console.log(rates.length,"rate length=================>>>>>>") 
+    console.log(odds.length,"odds length=================>>>>>>") 
+    console.log(oddsodds[odds.length - 1],"odds[odds.length - 1] length=================>>>>>>") 
     if (rates.includes(odds[odds.length - 1])) {
   
       lastMatched = odds[odds.length - 1]
@@ -179,7 +181,7 @@ function checkMultiResponse(odds, rates,res) {
       return lastMatched = odds[odds.length - 1]
     } else {
       lastMatched = odds[odds.length - 1]
-      res.status(404).send({ message: `Bet mismatch ${lastMatched}` });
+     return res.status(404).send({ message: `Bet mismatch ${lastMatched}` });
 }
     
   }
