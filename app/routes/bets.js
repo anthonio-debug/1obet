@@ -170,21 +170,17 @@ function checkRunsOrOvers(inputString) {
 
 function checkMultiResponse(odds, rates,res) {
   if (Array.isArray(odds) && Array.isArray(rates) && rates.length>0) {
-    let lastMatched = null;
     console.log(rates.length,"rate length=================>>>>>>") 
     console.log(rates,"rate =================>>>>>>") 
     console.log(odds,"odds =================>>>>>>") 
     console.log(odds.length,"odds length=================>>>>>>") 
     console.log(odds[odds.length - 1],"odds[odds.length - 1] length=================>>>>>>") 
     if (rates.includes(odds[odds.length - 1])) {
-  
-      lastMatched = odds[odds.length - 1]
       console.log("last matched valueeeeeeeeeee============",odds[odds.length - 1])
-      return lastMatched = odds[odds.length - 1]
+      return odds[odds.length - 1];
     } else {
-      lastMatched = odds[odds.length - 1]
-     return res.status(404).send({ message: `Bet mismatch ${lastMatched}` });
-}
+      return 0;
+    }
     
   }
  
@@ -643,8 +639,16 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
+       
       }
+      matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        if (matchedResponse) {
+         var updatedbetRate=matchedResponse
+        } else {
+          return res.status(404).send({
+            message: `Bet miss match `
+          });
+        }
     }
 
     // Tennis Match Odds
@@ -701,7 +705,7 @@ const placeBet = async (req, res) => {
       runnerName = OddDetailsTeam?.runnerName;
 
       console.log ("===============selectedBetRate",selectedBetRate ,"===============betRate", betRate,"teeeeeeeeeeeenis")
-      if (selectedBetRate == betRate) {
+      if (selectedBetRate == betRate ) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -743,7 +747,8 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
+        
+        
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -794,7 +799,14 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        if (matchedResponse) {
+         var updatedbetRate=matchedResponse
+        } else {
+          return res.status(404).send({
+            message: `Bet miss match AK `
+          });
+        }
 
         // LAY:
         // BetRate: 33
@@ -983,7 +995,14 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        if (matchedResponse) {
+         var updatedbetRate=matchedResponse
+        } else {
+          return res.status(404).send({
+            message: `Bet miss match `
+          });
+        }
 
         // LAY:
         // BetRate: 33
@@ -1398,7 +1417,14 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        if (matchedResponse) {
+         var updatedbetRate=matchedResponse
+        } else {
+          return res.status(404).send({
+            message: `Bet miss match `
+          });
+        }
 
         // Selected Rate: 30
         // BetRate      : 27
@@ -3065,7 +3091,7 @@ const placeBet = async (req, res) => {
         runnerName: runnerName || 0,
         userId,
         betAmount: betAmount || 0,
-        betRate: Number(betRate) || 0,
+        betRate: updatedbetRate?updatedbetRate: Number(betRate) || 0,
         matchType: eventDetail?.matchType,
         matchStatus: matchStatus,
         matchLastUpdate: matchLastUpdate,
