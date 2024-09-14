@@ -355,6 +355,8 @@ function apiRequests() {
       const response = await axios.post(url, requestData, header);
       const openDateFromInplay=await inPlayEvents.find({Id:eventId}).select({ "openDate": 1, "_id": 0})
 
+      console.log(openDateFromInplay.openDate,"=============openDateFromInplay");
+
       const marketsData = response.data.result;
       let marketStatus = 'OPEN';
 
