@@ -913,7 +913,7 @@ const placeBet = async (req, res) => {
 
       /*end of code by qaiser*/
       delay = (BetPlaceData.secondsValue + delayAddition) * 1000 + 200;
-      if (selectedBetRate == betRate) {
+      if (selectedBetRate == betRate ||selectedBetRate!=betRate) {
         for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           const oddsData = await apiCallForOdds(id);
@@ -998,14 +998,7 @@ const placeBet = async (req, res) => {
         matchedResponse = checkMultiResponse(multipeResponse, rates, res)
 
 
-        console.log(matchedResponse,"===================matchhhhhh res>>>>>>>>>>>>>>>>>>>>>>")
-        if (matchedResponse) {
-         var updatedbetRate=matchedResponse
-        } else {
-          return res.status(404).send({
-            message: `Bet miss match `
-          });
-        }
+        
 
         // LAY:
         // BetRate: 33
@@ -1067,6 +1060,14 @@ const placeBet = async (req, res) => {
         // ELSE
         // mismatch.....
       }
+      console.log(matchedResponse,"===================matchhhhhh res>>>>>>>>>>>>>>>>>>>>>>")
+        if (matchedResponse) {
+         var updatedbetRate=matchedResponse
+        } else {
+          return res.status(404).send({
+            message: `Bet miss match `
+          });
+        }
     }
 
     // GH HR Match Odds
