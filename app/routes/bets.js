@@ -173,7 +173,7 @@ function checkMultiResponse(odds, rates,res) {
     let lastMatched = null;
     console.log(rates.length,"rate length=================>>>>>>") 
     console.log(rates,"rate =================>>>>>>") 
-    console.log(odds,"odds length=================>>>>>>") 
+    console.log(odds,"odds =================>>>>>>") 
     console.log(odds.length,"odds length=================>>>>>>") 
     console.log(odds[odds.length - 1],"odds[odds.length - 1] length=================>>>>>>") 
     if (rates.includes(odds[odds.length - 1])) {
@@ -700,6 +700,7 @@ const placeBet = async (req, res) => {
 
       runnerName = OddDetailsTeam?.runnerName;
 
+      console.log ("===============selectedBetRate",selectedBetRate ,"===============betRate", betRate,"teeeeeeeeeeeenis")
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
