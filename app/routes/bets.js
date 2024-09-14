@@ -1506,7 +1506,7 @@ const placeBet = async (req, res) => {
       });
       delay = BetPlaceData.secondsValue * 1000 + 200;
 
-      if (selectedBetRate == betRate) {
+      if (selectedBetRate == betRate && selectedBetRate != betRate) {
         for (let i = 1; i < 5; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
