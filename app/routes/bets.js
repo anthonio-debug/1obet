@@ -939,7 +939,6 @@ const placeBet = async (req, res) => {
           };
         }
         matchedResponse = checkMultiResponse(multipeResponse, rates)
-
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1029,7 +1028,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        checkMultiResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates)
         // Selected Rate: 30
         // BetRate      : 27
 

@@ -29,7 +29,8 @@ async function fetchSession(eventId) {
 
 
     let res = response.data;
-    //console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: Data::::: ",res);
+    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: Data::::: ",res);
+    console.log(":::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: EventID::::: ",eventId);
     let responseRet = ['fanciesArr','fanciesArr']
     let bookMakerArr = [];
     if(res.t2){
