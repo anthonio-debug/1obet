@@ -343,7 +343,7 @@ async function updateOddsFormLimitless() {
           $sort: { lastCheck: 1 }
         },
         {
-          $limit: 20
+          $limit: 1000
         }
       ]).exec();
 
@@ -352,7 +352,7 @@ async function updateOddsFormLimitless() {
       if (documents.length > 0) {
         documents.forEach((element) => {
           marketIds.push(element.marketId);
-          console.log("event .............=====================================>>>>",element.marketId, "--Name: " ,element.marketName,"eventname","eventId",element.eventId);
+          console.log("event .............=====================================>>>>", element.marketId, "--Name: ", element.marketName, "eventname", "==eventId=", element.eventId, "===eventtime===", Date(element.openDate),"===sportID===",element.sportID);
         });
       }
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
