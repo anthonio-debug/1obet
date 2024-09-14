@@ -171,11 +171,13 @@ function checkRunsOrOvers(inputString) {
 function checkMultiResponse(odds, rates,res) {
   if (Array.isArray(odds) && Array.isArray(rates)) {
     let lastMatched = null;
+    
     if (rates.includes(odds[odds.length - 1])) {
   
-  
+      lastMatched = odds[odds.length - 1]
       return lastMatched = odds[odds.length - 1]
     } else {
+      lastMatched = odds[odds.length - 1]
     return  res.status(404).send({ message: `Bet mismatch ${lastMatched}` });
 }
     
