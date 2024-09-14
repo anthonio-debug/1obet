@@ -1214,7 +1214,7 @@ const placeBet = async (req, res) => {
         // ELSE
         // mistmatch.....
       } else if (type == 0 && selectedBetRate != betRate) {
-        for (let i = 0; i < 4 + delayAddition; i++) {
+        for (let i = 0; i < 3 + delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -1950,8 +1950,6 @@ const placeBet = async (req, res) => {
 
           apiFancyOddsRes = response['fanciesArr'].filter((item) => item.sid === selectionId);
           // apiFancyOddsResponse.push(apiFancyOddsRes);
-
-
 
           const gameStatus = apiFancyOddsRes[0]?.gstatus;
           console.log(`apiFancyOddsRes[0]?.GameStatus==================${gameStatus}`);
