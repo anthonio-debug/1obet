@@ -352,7 +352,7 @@ async function updateOddsFormLimitless() {
       if (documents.length > 0) {
         documents.forEach((element) => {
           marketIds.push(element.marketId);
-          console.log("event .............=====================================>>>>",element.marketId, "--Name: " ,element.marketName,"eventname","==eventId=",element.eventId,"===eventtime===",Date(openDate));
+          console.log("event .............=====================================>>>>", element.marketId, "--Name: ", element.marketName, "eventname", "==eventId=", element.eventId, "===eventtime===", Date(element.openDate));
         });
       }
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);
