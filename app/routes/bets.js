@@ -173,10 +173,12 @@ function checkMultiResponse(odds, rates,res) {
     let lastMatched = null;
     if (rates.includes(odds[odds.length - 1])) {
   
-      lastMatched = odds[odds.length - 1]
+  
+      return lastMatched = odds[odds.length - 1]
+    } else {
+    return  res.status(404).send({ message: `Bet mismatch ${lastMatched}` });
 }
     
-      return res.status(404).send({ message: `Bet mismatch ${lastMatched}` });
   }
  
 }
