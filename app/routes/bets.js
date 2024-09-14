@@ -178,7 +178,7 @@ function checkMultiResponse(odds, rates,res) {
       return lastMatched = odds[odds.length - 1]
     } else {
       lastMatched = odds[odds.length - 1]
-    return  res.status(404).send({ message: `Bet mismatch ${lastMatched}` });
+      res.status(404).send({ message: `Bet mismatch ${lastMatched}` });
 }
     
   }
