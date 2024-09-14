@@ -171,24 +171,14 @@ function checkRunsOrOvers(inputString) {
 function checkMultiResponse(odds, rates,res) {
   if (Array.isArray(odds) && Array.isArray(rates)) {
     let lastMatched = null;
-    if (rates.includes(odds[rates.length - 1])) {
+    if (rates.includes(odds[odds.length - 1])) {
   
-      lastMatched = odds[rates.length - 1]
+      lastMatched = odds[odds.length - 1]
 }
     
       return res.status(404).send({ message: `Bet mismatch ${lastMatched}` });
-
-    // for (const element of odds) {
-    //   for (const rate of rates) {
-    //     if (rate === element) {
-    //       lastMatched = element;
-    //     }
-    //   }
-    // }
-
-    return lastMatched !== null ? lastMatched : null;
   }
-  return null;
+ 
 }
 
 const placeBet = async (req, res) => {
