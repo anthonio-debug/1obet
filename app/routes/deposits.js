@@ -556,7 +556,6 @@ function getLedgerDetails(req, res) {
     let sort = -1;
     let sortValue = '_id';
     let limit = config.pageSize;
-    //console.log('limit:', limit);
     if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
     if (req.body.sortValue) sortValue = req.body.sortValue;
     if (req.body.sort) sort = Number(req.body.sort);
@@ -581,7 +580,6 @@ function getLedgerDetails(req, res) {
       }];
 
       const userRole = user.role;
-      console.log("user role", user);
 
       if (userRole !== '5' && req.body.type) {
         cashPipeline.push({ $match: { cashOrCredit: req.body.type }, });
@@ -677,6 +675,7 @@ function getLedgerDetails(req, res) {
                 result[0].results[i].fancyData = betInfo?.fancyData;
                 result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
                 result[0].results[i].roundId = betInfo?.roundId;
+                result[0].results[i].subMarketId = betInfo?.subMarketId;
               } catch (err) {
                 continue;
               }
