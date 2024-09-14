@@ -180,8 +180,9 @@ function checkMultiResponse(odds, rates) {
       }
     }
 
-    return lastMatched;
+    return lastMatched !== null ? lastMatched : null;
   }
+  return null;
 }
 
 const placeBet = async (req, res) => {
@@ -1110,7 +1111,7 @@ const placeBet = async (req, res) => {
       }));
 
       if (selectedBetRate == betRate) {
-        for (let i = 1; i < 5 + delayAddition; i++) {
+        for (let i = 1; i < 3 + delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -1146,7 +1147,7 @@ const placeBet = async (req, res) => {
               }
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             }
-          }, 1000 * i);
+          }, 1000 * 1);
         }
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
@@ -1169,7 +1170,7 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched-17 `
         });
       } else if (type == 1 && selectedBetRate != betRate) {
-        for (let i = 0; i < 4 + delayAddition; i++) {
+        for (let i = 0; i < 3 + delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -1193,7 +1194,7 @@ const placeBet = async (req, res) => {
               multipeResponse.push(selectedOddsValue);
             }
             multipeResponseForSecurityCheck.push(selectedOddsValue);
-          }, 1000 * i);
+          }, 1000 * 1);
         }
 
         // LAY:
@@ -1236,7 +1237,7 @@ const placeBet = async (req, res) => {
               multipeResponse.push(selectedOddsValue);
             }
             multipeResponseForSecurityCheck.push(selectedOddsValue);
-          }, 1000 * i);
+          }, 1000 * 1);
         }
       }
     }
