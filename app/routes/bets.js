@@ -996,6 +996,9 @@ const placeBet = async (req, res) => {
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
         matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+
+
+        console.log(matchedResponse,"===================matchhhhhh res>>>>>>>>>>>>>>>>>>>>>>")
         if (matchedResponse) {
          var updatedbetRate=matchedResponse
         } else {
