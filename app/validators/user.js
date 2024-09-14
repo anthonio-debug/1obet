@@ -44,7 +44,7 @@ module.exports.validate = (method) => {
     case 'login': {
       return [
         body('NUsrNme', 'userName is required')
-          .exists()
+          .exists()    
           .isString()
           .withMessage(' userName must be string')
           .notEmpty()
