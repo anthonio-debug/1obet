@@ -997,7 +997,7 @@ const placeBet = async (req, res) => {
         }
         matchedResponse = checkMultiResponse(multipeResponse, rates, res)
         if (matchedResponse) {
-         var updatedbetRate=1111111111
+         var updatedbetRate=matchedResponse
         } else {
           return res.status(404).send({
             message: `Bet miss match `
