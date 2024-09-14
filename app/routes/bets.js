@@ -168,7 +168,7 @@ function checkRunsOrOvers(inputString) {
   return subMarket.test(inputString);
 }
 
-function checkMultiResponse(odds, rates) {
+function checkMultiResponse(odds, rates,res) {
   if (Array.isArray(odds) && Array.isArray(rates)) {
     let lastMatched = null;
     if (rates.includes(odds[rates.length - 1])) {
@@ -576,7 +576,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(res,multipeResponse, rates)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -620,7 +620,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -644,7 +644,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
     }
 
@@ -743,7 +743,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -794,7 +794,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
 
         // LAY:
         // BetRate: 33
@@ -835,7 +835,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
     }
 
@@ -938,7 +938,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           };
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -983,7 +983,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
 
         // LAY:
         // BetRate: 33
@@ -1028,7 +1028,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
         // Selected Rate: 30
         // BetRate      : 27
 
@@ -1136,7 +1136,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1183,7 +1183,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
 
         // LAY:
         // BetRate: 33
@@ -1226,7 +1226,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
     }
 
@@ -1320,7 +1320,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1398,7 +1398,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
 
         // Selected Rate: 30
         // BetRate      : 27
@@ -1515,7 +1515,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1554,7 +1554,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 0 && selectedBetRate != betRate) {
         // activeBettors.delete(userId)
         // return res.status(404).send({
@@ -1583,7 +1583,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
     }
 
@@ -1670,7 +1670,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1704,7 +1704,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1728,7 +1728,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
     }
 
@@ -1814,7 +1814,7 @@ const placeBet = async (req, res) => {
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -2149,7 +2149,7 @@ const placeBet = async (req, res) => {
               console.error("Error during API call:", error);
             }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
       else {
         activeBettors.delete(userId);
