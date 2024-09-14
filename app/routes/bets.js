@@ -1147,7 +1147,7 @@ const placeBet = async (req, res) => {
               }
               multipeResponseForSecurityCheck.push(selectedOddsValue);
             }
-          }, 1000 * i);
+          }, 1000 * 1);
         }
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
@@ -1194,7 +1194,7 @@ const placeBet = async (req, res) => {
               multipeResponse.push(selectedOddsValue);
             }
             multipeResponseForSecurityCheck.push(selectedOddsValue);
-          }, 1000 * i);
+          }, 1000 * 1);
         }
 
         // LAY:
@@ -1214,7 +1214,7 @@ const placeBet = async (req, res) => {
         // ELSE
         // mistmatch.....
       } else if (type == 0 && selectedBetRate != betRate) {
-        for (let i = 0; i < 3 + delayAddition; i++) {
+        for (let i = 0; i < 4 + delayAddition; i++) {
           setTimeout(async () => {
             // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
             // const response = await axios.get(url);
@@ -1237,7 +1237,7 @@ const placeBet = async (req, res) => {
               multipeResponse.push(selectedOddsValue);
             }
             multipeResponseForSecurityCheck.push(selectedOddsValue);
-          }, 1000 * i);
+          }, 1000 * 1);
         }
       }
     }
