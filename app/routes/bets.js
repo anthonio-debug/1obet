@@ -171,14 +171,20 @@ function checkRunsOrOvers(inputString) {
 function checkMultiResponse(odds, rates) {
   if (Array.isArray(odds) && Array.isArray(rates)) {
     let lastMatched = null;
+    if (rates.includes(odds[rates.length - 1])) {
+  
+      lastMatched = odds[rates.length - 1]
+}
+    
+      return res.status(404).send({ message: `Bet not allowed ${lastMatched}` });
 
-    for (const element of odds) {
-      for (const rate of rates) {
-        if (rate === element) {
-          lastMatched = element;
-        }
-      }
-    }
+    // for (const element of odds) {
+    //   for (const rate of rates) {
+    //     if (rate === element) {
+    //       lastMatched = element;
+    //     }
+    //   }
+    // }
 
     return lastMatched !== null ? lastMatched : null;
   }
