@@ -930,6 +930,7 @@ const placeBet = async (req, res) => {
           }
           const runnerFromAPI = oddsData[0]?.runners?.find((runner) => runner.selectionId == selectionId);
           let selectedOddsValue = 0;
+          multipeResponse.push(selectedOddsValue);
           if (type == 0) {
             multipeResponse.push(selectedOddsValue);
             const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
@@ -990,6 +991,7 @@ const placeBet = async (req, res) => {
            */
 
           let selectedOddsValue = ApiResponseOdds[0]?.price;
+          multipeResponse.push(selectedOddsValue);
           if (selectedOddsValue <= betRate) {
             multipeResponse.push(selectedOddsValue);
           }
@@ -1038,6 +1040,7 @@ const placeBet = async (req, res) => {
           const runnerFromAPI = oddsData[0]?.runners?.find((runner) => runner.selectionId == selectionId);
           ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
           let selectedOddsValue = ApiResponseOdds[0]?.price;
+          multipeResponse.push(selectedOddsValue);
           if (selectedOddsValue >= betRate) {
             multipeResponse.push(selectedOddsValue);
           }
@@ -1132,6 +1135,7 @@ const placeBet = async (req, res) => {
           }
           const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
           let selectedOddsValue = 0;
+          multipeResponse.push(selectedOddsValue);
           if (type == 0) {
             const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
@@ -1194,6 +1198,7 @@ const placeBet = async (req, res) => {
           const ApiResponseOdds = runnerFromAPI?.ex?.availableToLay;
 
           let selectedOddsValue = ApiResponseOdds[0]?.price;
+          multipeResponse.push(selectedOddsValue);
           if (selectedOddsValue <= betRate) {
             multipeResponse.push(selectedOddsValue);
           }
@@ -1237,6 +1242,7 @@ const placeBet = async (req, res) => {
           const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
 
           let selectedOddsValue = ApiResponseOdds[0]?.price;
+          multipeResponse.push(selectedOddsValue);
           if (selectedOddsValue >= betRate) {
             multipeResponse.push(selectedOddsValue);
           }
@@ -1244,6 +1250,7 @@ const placeBet = async (req, res) => {
         }
         matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
+      console.log("multiresponse======================================================Arham",multipeResponse)
     }
 
     // Soccer Over Under
