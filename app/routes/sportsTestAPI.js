@@ -8,7 +8,7 @@ const RaceOdds = require('../models/raceOdds');
 const FancyOdds = require('../models/fancyOdds');
 const inPlayEventsLithylapi = require('../models/inPlayEventsLithylapi');
 const useragent = require('express-useragent');
-
+const Cash = require('../../app/models/deposits');
 const axios = require('axios');
 const { SCORE_API_STATUS_BLOCK_LIST } = require('../../helper/api/scoreApiHelper');
 const User = require('../models/user');
@@ -3245,7 +3245,7 @@ const placeBet = async (req, res) => {
           await ExpTran.save();
           console.log('Exposure transaction saved');
 
-          await updateParentUserBalance(parentUserIds, winningAmount, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id);
+          // await updateParentUserBalance(parentUserIds, winningAmount, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id);
           console.log('Parent user balance updated');
 
           activeBettors.delete(userId);
