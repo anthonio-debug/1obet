@@ -951,6 +951,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           };
         }
+        console.log("multiresponse1======================================================Arham",multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
@@ -999,7 +1000,7 @@ const placeBet = async (req, res) => {
         }
         matchedResponse = checkMultiResponse(multipeResponse, rates, res)
 
-
+        console.log("multiresponse2======================================================Arham",multipeResponse)
         
 
         // LAY:
@@ -1046,7 +1047,8 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        console.log("multiresponse3======================================================Arham",multipeResponse)
         // Selected Rate: 30
         // BetRate      : 27
 
@@ -1144,6 +1146,7 @@ const placeBet = async (req, res) => {
             if (selectedOddsValue != 0 && betRate <= selectedOddsValue) {
               multipeResponse.push(selectedOddsValue);
             }
+            
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           } else if (type == 1) {
             const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
@@ -1156,6 +1159,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
+        console.log("multiresponsee4======================================================Arham",multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
@@ -1205,7 +1209,7 @@ const placeBet = async (req, res) => {
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
         matchedResponse = checkMultiResponse(multipeResponse, rates,res)
-
+        console.log("multiresponse5======================================================Arham",multipeResponse)
         // LAY:
         // BetRate: 33
         // SelectedRate: 30
@@ -1248,9 +1252,10 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        console.log("multiresponse5======================================================Arham",multipeResponse)
       }
-      console.log("multiresponse======================================================Arham",multipeResponse)
+     
     }
 
     // Soccer Over Under
