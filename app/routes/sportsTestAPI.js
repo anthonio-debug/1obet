@@ -4208,7 +4208,7 @@ async function saveOdds(oddData, sportsId) {
 // }
 
 //////////////////////////////////////////////////////////////////////////////////////
-async function getOdds(marketIds, sportsId) {
+async function getOdds(req, res) {
   // return new Promise(async (resolve, reject) => {
   //   const odds = [];
   //   const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
@@ -4262,32 +4262,44 @@ async function getOdds(marketIds, sportsId) {
   // });
   try {
     // Make an Axios request to another API
-    const dataToSend = {
-      "matchId": "66e3147de0ccfa3f8d82e6b6",
-      "subMarketName": "Match Odds",
-      "betAmount": 100,
-      "betRate": 5.2,
-      "rates": [
-          5.2
-      ],
-      "partnerValue": 5,
-      "selectedAmount": 5.2,
-      "type": 1,
-      "selectedTime": "2024-09-15T14:20:46.625Z",
-      "selectionId": 7157896,
-      "sportsId": "4",
-      "oddsId": "66e6ed3d58b00a283105c526",
-      "fancyRate": 105.43,
-      "timer": 2
-  };
-    const response = await axios.post('https://production.1obet.net/api/track-bet/lithylAPI/getHorseRaceMatches',dataToSend);
+    axios.post('https://production.1obet.net/api/track-bet/lithylAPI/getHorseRaceMatches', {
+      matchId: "66e3147de0ccfa3f8d82e6b6",
+      subMarketName: "Match Odds",
+      betAmount: 100,
+      betRate: 5.2,
+      rates: [5.2],
+      partnerValue: 5,
+      selectedAmount: 5.2,
+      type: 1,
+      selectedTime: "2024-09-15T14:20:46.625Z",
+      selectionId: 7157896,
+      sportsId: "4",
+      oddsId: "66e6ed3d58b00a283105c526",
+      fancyRate: 105.43,
+      timer: 2
+    }, {
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIxNTEzLCJjcmVhdGVkQnkiOjExMDAwLCJyb2xlIjoiNSIsImV4cHIiOjE3MjY0NDU2ODE5MDUsImlhdCI6MTcyNjQwMjQ4MSwiZXhwIjoxNzI4MTcyMDg0Mzg2fQ.wo35RDvb7kCg6jY021fta66gInyYCzPfCeFlbMZ-fBc' // Include if required
+      }
+    })
+    .then(response => {
+      console.log('Response Data:', response.data);
+    })
+    .catch(error => {
+      console.error('Error making Axios request:', {
+        message: error.message,
+        response: error.response ? error.response.data : 'No response data',
+        config: error.config
+      });
+    });
 
     // Send the data from the Axios request back to the client
-    res.json(response.data);
+    // res.json(response.data);
   } catch (error) {
     // Handle errors
     console.error('Error making Axios request:', error);
-    res.status(500).send('Internal Server Error');
+    // res.status(500).send('Internal Server Error');
   }
 }
 
