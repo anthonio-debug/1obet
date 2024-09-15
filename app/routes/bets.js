@@ -180,6 +180,7 @@ function checkMultiResponse(odds, rates,res) {
       console.log("last matched valueeeeeeeeeee============",odds[odds.length - 1])
       return odds[odds.length - 1];
     } else {
+      console.log("last didnt matchedddddddddddddddddddd valueeeeeeeeeee  bet misss matched ============",odds[odds.length - 1])
       return 0;
     }
     
@@ -957,6 +958,7 @@ const placeBet = async (req, res) => {
           
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           };
+          checkMultiResponse(multipeResponse,rates)
         }
         console.log("multiresponse1======================================================Arham",multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates,res)
