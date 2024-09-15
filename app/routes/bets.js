@@ -930,7 +930,7 @@ const placeBet = async (req, res) => {
           }
           const runnerFromAPI = oddsData[0]?.runners?.find((runner) => runner.selectionId == selectionId);
           let selectedOddsValue = 0;
-          multipeResponse.push(selectedOddsValue);
+   
           if (type == 0) {
             multipeResponse.push(selectedOddsValue);
             const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
