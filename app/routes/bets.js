@@ -557,19 +557,23 @@ const placeBet = async (req, res) => {
             const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
+              console.log(selectedOddsValue,"===============================selected oofffddd valueee arham")
+              if (selectedOddsValue > 0) {
+               multipeResponse.push(selectedOddsValue)
+             }
             }
-            if (selectedOddsValue != 0 && betRate <= selectedOddsValue) {
-              multipeResponse.push(selectedOddsValue);
-            }
+           
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           } else if (type == 1) {
             const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
+              console.log(selectedOddsValue,"===============================selected oofffddd valueee arham")
+              if (selectedOddsValue > 0) {
+               multipeResponse.push(selectedOddsValue)
+             }
             }
-            if (selectedOddsValue != 0 && betRate >= selectedOddsValue) {
-              multipeResponse.push(selectedOddsValue);
-            }
+         
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
