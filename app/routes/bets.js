@@ -535,7 +535,7 @@ const placeBet = async (req, res) => {
       }
       runnerName = OddDetailsTeam?.runnerName;
 
-      if (selectedBetRate == betRate) {
+      if (selectedBetRate == betRate && selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           const oddsData = await apiCallForOdds(id);
