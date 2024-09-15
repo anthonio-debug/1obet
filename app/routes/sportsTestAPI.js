@@ -46,7 +46,7 @@ const apiCallForOdds = async (marketId,counter) => {
 async function testingOddsForCricket(req, res) { 
   // const DBOddDetails = await Odds.findById(oddsId);
   const BetPlaceData = await BetPlaceHold.findOne({
-    eventId: req.params.eventId
+    eventId: req.params.market_id
   });
   const arr = []
   for (let i = 1; i < BetPlaceData.secondsValue ; i++) {
@@ -2201,7 +2201,7 @@ router.get('/track-bet/lithylAPI/getAllMarketList/:match_id', getAllMarketList)
 router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFancyBookmakerByMatchId)
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
-router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
+router.get('/track-bet/lithylAPI/getOdds/:market_id', testingOddsForCricket)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
