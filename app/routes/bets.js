@@ -170,7 +170,7 @@ function checkRunsOrOvers(inputString) {
 }
 
 function checkMultiResponse(odds, rates,res) {
-  if (Array.isArray(odds) && Array.isArray(rates) && rates.length>0) {
+  if (Array.isArray(odds) && Array.isArray(rates) && rates.length>0 &&odds.lenght) {
     console.log(rates.length,"rate length=================>>>>>>") 
     console.log(rates,"rate =================>>>>>>") 
     console.log(odds,"odds =================>>>>>>") 
