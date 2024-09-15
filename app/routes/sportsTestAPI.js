@@ -4262,7 +4262,7 @@ async function getOdds(req, res) {
   // });
   try {
     // Make an Axios request to another API
-    axios.post('https://production.1obet.net/api/track-bet/lithylAPI/getHorseRaceMatches', {
+    axios.post('https://production.1obet.net/api/track-bet/lithylAPI/getOdds', {
       matchId: "66e3147de0ccfa3f8d82e6b6",
       subMarketName: "Match Odds",
       betAmount: 100,
