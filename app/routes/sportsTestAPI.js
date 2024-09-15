@@ -123,7 +123,7 @@ const getParents = async (userId) => {
   }
   return parentUserIds;
 };
-const apiCallForOdds = async (marketId,counter) => {
+const apiCallForOdds = async (marketId,counter,selectionId) => {
   const url = `${config.sportsAPIUrl}/listMarketBook`;
   const data = { marketIds: [marketId] };
   const header = {
@@ -493,7 +493,7 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
-          const oddsData = await apiCallForOdds(id);
+          const oddsData = await apiCallForOdds(id,i,req.body.selectionId);
 
           const marketStatus = oddsData[0]?.status;
 
