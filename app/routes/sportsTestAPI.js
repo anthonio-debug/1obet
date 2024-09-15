@@ -4260,29 +4260,35 @@ async function getOdds(marketIds, sportsId) {
   //   // // Resolve the promise with the collected odds
   //   // resolve(odds);
   // });
-  const BetPlaceData = await BetPlaceHold.findOne({
-    eventId: req.params.eventId
-  });
-  const arr = []
-  for (let i = 1; i < BetPlaceData.secondsValue ; i++) {
-    await new Promise(resolve => setTimeout(resolve, 1000));
-    const oddsData = await apiCallForOdds(id,i);
-    
+  try {
+    // Make an Axios request to another API
+    const dataToSend = {
+      "matchId": "66e3147de0ccfa3f8d82e6b6",
+      "subMarketName": "Match Odds",
+      "betAmount": 100,
+      "betRate": 5.2,
+      "rates": [
+          5.2
+      ],
+      "partnerValue": 5,
+      "selectedAmount": 5.2,
+      "type": 1,
+      "selectedTime": "2024-09-15T14:20:46.625Z",
+      "selectionId": 7157896,
+      "sportsId": "4",
+      "oddsId": "66e6ed3d58b00a283105c526",
+      "fancyRate": 105.43,
+      "timer": 2
+  };
+    const response = await axios.post('/track-bet/lithylAPI/getOdds',dataToSend);
 
- 
-
-    
-    const runnerFromAPI = oddsData[0]?.runners?.find((runner) => runner.selectionId == selectionId);
-  
-    const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
-    
-    console.log(ApiResponseOdds[0].price, "ApiResponseOdds[0].price>==================")
-   
-    arr.push(ApiResponseOdds[0].price)
-  
-    
+    // Send the data from the Axios request back to the client
+    res.json(response.data);
+  } catch (error) {
+    // Handle errors
+    console.error('Error making Axios request:', error);
+    res.status(500).send('Internal Server Error');
   }
-  res.json({arr:arr})
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
@@ -5371,8 +5377,8 @@ router.get('/track-bet/lithylAPI/getAllMatchesList/:series_id', getAllMatchesLis
 router.get('/track-bet/lithylAPI/getAllMarketList/:match_id', getAllMarketList)
 router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFancyBookmakerByMatchId)
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
-router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
-router.post('/track-bet/lithylAPI/getOdds/:market_id', placeBet)
+router.get('/track-bet/lithylAPI/getHorseRaceMatches', getOdds)
+router.post('/track-bet/lithylAPI/getOdds', placeBet)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
