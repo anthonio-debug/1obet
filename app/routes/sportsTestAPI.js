@@ -139,7 +139,7 @@ const apiCallForOdds = async (marketId,counter,selectionId) => {
   const oddsData=response?.data?.result
   const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
   const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
- var  selectedOddsValue = ApiResponseOdds[0].price;
+  var  selectedOddsValue = ApiResponseOdds[0].price;
   console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmmoddddddddddddddddddddddddds", selectedOddsValue)
   return response?.data?.result;
 };
@@ -493,7 +493,7 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
-          const oddsData = await apiCallForOdds(id,i,req.body.selectionId);
+          const oddsData = await apiCallForOdds(id,i,selectionId);
 
           const marketStatus = oddsData[0]?.status;
 
