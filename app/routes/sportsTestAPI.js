@@ -490,7 +490,7 @@ const placeBet = async (req, res) => {
       }
       runnerName = OddDetailsTeam?.runnerName;
 
-      if (selectedBetRate == betRate) {
+      if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           const oddsData = await apiCallForOdds(id,i,selectionId);
@@ -528,7 +528,10 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        if(!matchedResponse) return res.status(404).send({
+          message: `Bet Miss Matched AK `
+        });
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({

@@ -577,7 +577,10 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        if (!matchedResponse) {
+          return
+        }
       }
       // else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
       //   activeBettors.delete(userId);
