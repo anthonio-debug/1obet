@@ -578,12 +578,14 @@ const placeBet = async (req, res) => {
           }
         }
         matchedResponse = checkMultiResponse(multipeResponse, rates,res)
-      } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-3 ${multipeResponse[multipeResponse.length-1]} `
-        });
-      } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
+      }
+      // else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-3 ${multipeResponse[multipeResponse.length-1]} `
+      //   });
+      // }
+      else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Bet Miss Matched-4 `
