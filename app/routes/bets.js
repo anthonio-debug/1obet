@@ -937,6 +937,7 @@ const placeBet = async (req, res) => {
             console.log("ApiResponseOdds===============?>Arham",ApiResponseOdds)
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
+              console.log(selectedOddsValue,"===============================selected oofffddd valueee arham")
               ApiResponseOdds[0].price>0 &&  multipeResponse.push(selectedOddsValue)
             }
 
