@@ -29,6 +29,7 @@ const { v4: uuidv4 } = require('uuid');
 let config = require('config');
 const SubMarketType = require('../models/subMarketTypes.js');
 const Crickets = require('../models/Crickets.js');
+const CurrentPosition = require('../models/CurrentPosition.js');
 
 require('dotenv').config()
 // console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -3169,7 +3170,7 @@ const placeBet = async (req, res) => {
         try {
           console.log('Start placing bet');
 
-          const position = new currentPosition({
+          const position = new CurrentPosition({
             userId: userId,
             amount: -Number(loosingAmount.toFixed(3)),
             matchsId: matchId,
