@@ -20,10 +20,55 @@ const BetLimits = require('../models/betLimits');
 const fancyOdds = require('../models/fancyOdds');
 const Deposits = require('../models/deposits.js');
 const CasinoCalls = require('../models/casinoCalls.js');
+const BetPlaceHold = require('../models/betaPlaceHold.js');
 
 require('dotenv').config()
 // console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
 
+
+
+
+const apiCallForOdds = async (marketId,counter) => {
+  const url = `${config.sportsAPIUrl}/listMarketBook`;
+  const data = { marketIds: [marketId] };
+  const header = {
+    headers: {
+      accept: 'application/json',
+      'Content-Type': 'application/json',
+      'X-App': process.env.XAPP_NAME
+    }
+  };
+  const response = await axios.post(url, data, header);
+  console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", response?.data?.result);
+  console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", counter);
+  return response?.data?.result;
+};
+async function testingOddsForCricket(req, res) { 
+  // const DBOddDetails = await Odds.findById(oddsId);
+  const BetPlaceData = await BetPlaceHold.findOne({
+    eventId: req.params.eventId
+  });
+  const arr = []
+  for (let i = 1; i < BetPlaceData.secondsValue ; i++) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    const oddsData = await apiCallForOdds(id,i);
+    
+
+ 
+
+    
+    const runnerFromAPI = oddsData[0]?.runners?.find((runner) => runner.selectionId == selectionId);
+  
+    const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
+    
+    console.log(ApiResponseOdds[0].price, "ApiResponseOdds[0].price>==================")
+   
+    arr.push(ApiResponseOdds[0].price)
+  
+    
+  }
+  res.json({arr:arr})
+}
 async function listEvents(req, res) {
   try {
 
@@ -2174,6 +2219,7 @@ router.get('/track-bet/get-relatedmarkets/:marketId/:sportid', getRelatedMarkets
 router.get('/track-bet/test-trial/:eventId', TestTrial)
 router.get('/match-events/:sportsId', getMatchEvents)
 router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
+router.get('/test-odds-for-cricket/:eventId', testingOddsForCricket)
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
