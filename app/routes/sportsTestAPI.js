@@ -57,6 +57,41 @@ const stopbetStatusChecker = async (id) => {
     return 200;
   }
 };
+async function calculateExposure(marketId, userId, type, selectedRunner, loosingAmount, winningAmount, expoisureType, matchId) {
+  let lastBet = await Bets.find({
+    marketId: marketId,
+    userId: userId,
+    matchId: matchId,
+    status: 1
+  })
+    .sort({ _id: -1 })
+    .limit(1);
+  const lastrunnersPosition = lastBet[0].runnersPosition;
+  let newPosition;
+  if (type == 0) {
+    newPosition = lastrunnersPosition.map((item) => {
+      if (item.runner == selectedRunner) {
+        item.amount = Number((item.amount + Number(winningAmount.toFixed(3))).toFixed(3));
+      } else {
+        item.amount = Number((item.amount - Number(loosingAmount.toFixed(3))).toFixed(3));
+      }
+      return item;
+    });
+  } else if (type == 1) {
+    newPosition = lastrunnersPosition.map((item) => {
+      if (item.runner == selectedRunner) {
+        item.amount = Number((item.amount - Number(loosingAmount.toFixed(3))).toFixed(3));
+      } else {
+        item.amount = Number((item.amount + Number(winningAmount.toFixed(3))).toFixed(3));
+      }
+      return item;
+    });
+  }
+  return {
+    runnersPosition: newPosition,
+    prevExpAmount: lastBet[0].exposureAmount
+  };
+}
 const handleLimitValue = async (selectedRate, marketId) => {
   if (selectedRate?.toString()?.split('.')?.length == 1 && selectedRate >= 30) return 6;
   else if (selectedRate?.toString()?.split('.')?.length == 1 && selectedRate >= 20) return 3;
