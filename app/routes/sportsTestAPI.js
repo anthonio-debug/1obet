@@ -136,6 +136,7 @@ const apiCallForOdds = async (marketId,counter) => {
   const response = await axios.post(url, data, header);
   console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm", response?.data?.result);
   console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm", counter);
+  const oddsData=response?.data?.result
   const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
   const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
  var  selectedOddsValue = ApiResponseOdds[0].price;
