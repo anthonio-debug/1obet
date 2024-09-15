@@ -4280,7 +4280,7 @@ async function getOdds(marketIds, sportsId) {
       "fancyRate": 105.43,
       "timer": 2
   };
-    const response = await axios.post('/track-bet/lithylAPI/getOdds',dataToSend);
+    const response = await axios.post('https://production.1obet.net/api/track-bet/lithylAPI/getHorseRaceMatches',dataToSend);
 
     // Send the data from the Axios request back to the client
     res.json(response.data);
