@@ -184,6 +184,8 @@ function checkMultiResponse(odds, rates,res) {
       return 0;
     }
     
+  } else {
+    return true
   }
  
 }
