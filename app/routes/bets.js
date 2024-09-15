@@ -937,6 +937,7 @@ const placeBet = async (req, res) => {
             console.log("ApiResponseOdds===============?>Arham",ApiResponseOdds)
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
+              multipeResponse.push(selectedOddsValue)
             }
 
            
@@ -947,6 +948,7 @@ const placeBet = async (req, res) => {
             const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
+              multipeResponse.push(selectedOddsValue)
             }
           
             multipeResponseForSecurityCheck.push(selectedOddsValue);
