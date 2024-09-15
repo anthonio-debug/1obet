@@ -1,5 +1,7 @@
 const express = require('express');
 const Bets = require("../models/bets")
+const Exposure = require('../models/ExpRec');
+
 const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
 const MarketIDS = require("../models/marketIds")
