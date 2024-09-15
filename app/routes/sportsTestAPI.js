@@ -2219,7 +2219,7 @@ router.get('/track-bet/get-relatedmarkets/:marketId/:sportid', getRelatedMarkets
 router.get('/track-bet/test-trial/:eventId', TestTrial)
 router.get('/match-events/:sportsId', getMatchEvents)
 router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
-router.get('/track-bet/test-odds-for-cricket/:eventId', testingOddsForCricket)
+router.get('/test-odds-for-cricket/:eventId', testingOddsForCricket)
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
