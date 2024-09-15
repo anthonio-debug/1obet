@@ -115,7 +115,7 @@ const ValidateMarketStatus = async (marketStatus) => {
 
 //function to validate marketStatus for odds END
 
-const apiCallForOdds = async (marketId) => {
+const apiCallForOdds = async (marketId,counter) => {
   const url = `${config.sportsAPIUrl}/listMarketBook`;
   const data = { marketIds: [marketId] };
   const header = {
@@ -126,7 +126,8 @@ const apiCallForOdds = async (marketId) => {
     }
   };
   const response = await axios.post(url, data, header);
-  // console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", response);
+  console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", response?.data?.result);
+  console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]", counter);
   return response?.data?.result;
 };
 
@@ -917,6 +918,7 @@ const placeBet = async (req, res) => {
         for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           const oddsData = await apiCallForOdds(id);
+          
 
           const marketStatus = oddsData[0]?.status;
 
