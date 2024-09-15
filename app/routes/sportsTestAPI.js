@@ -1038,57 +1038,80 @@ async function saveOdds(oddData, sportsId) {
 
 //////////////////////////////////////////////////////////////////////////////////////
 async function getOdds(marketIds, sportsId) {
-  return new Promise(async (resolve, reject) => {
-    const odds = [];
-    const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
-    const oddUrl2 = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
-    try {
-      const response = await axios.get(oddUrl);
+  // return new Promise(async (resolve, reject) => {
+  //   const odds = [];
+  //   const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportsId}&marketId=${marketIds}`;
+  //   const oddUrl2 = `http://sportzing.in:5505/api/getOdds?market_id=${marketIds}`;
+  //   try {
+  //     const response = await axios.get(oddUrl);
 
-      console.log("================///============", response.data);
+  //     console.log("================///============", response.data);
 
-      if (response.data) {
-        const oddData = response.data;
-        // console.log("===================================================================================2");
-        odds.push(await saveOdds(oddData, sportsId));
-      }
+  //     if (response.data) {
+  //       const oddData = response.data;
+  //       // console.log("===================================================================================2");
+  //       odds.push(await saveOdds(oddData, sportsId));
+  //     }
 
-      // Resolve the promise with the collected odds
-      resolve(odds);
+  //     // Resolve the promise with the collected odds
+  //     resolve(odds);
 
-    } catch (error) {
-      // res.status(500).json({ success: false, msg: "Failed to get odds from limitless. Error: " + error.message })
-      // saving odds from lithyl API
-      try {
-        const response = await axios.get(oddUrl2);
+  //   } catch (error) {
+  //     // res.status(500).json({ success: false, msg: "Failed to get odds from limitless. Error: " + error.message })
+  //     // saving odds from lithyl API
+  //     try {
+  //       const response = await axios.get(oddUrl2);
 
-        // console.log("================///============Odds from lithyl", JSON.stringify(response.data));
+  //       // console.log("================///============Odds from lithyl", JSON.stringify(response.data));
 
-        if (response.data) {
-          const oddData = response.data;
-          odds.push(await saveOdds(oddData, sportsId));
-        }
+  //       if (response.data) {
+  //         const oddData = response.data;
+  //         odds.push(await saveOdds(oddData, sportsId));
+  //       }
 
-        // Resolve the promise with the collected odds
-        resolve(odds);
+  //       // Resolve the promise with the collected odds
+  //       resolve(odds);
 
-      } catch (error2) {
-        res.status(500).json({ success: false, msg: "Failed to get Odds from limitless. Error: " + error2.message })
-      }
-    }
-    //   const response = await axios.get(oddUrl);
+  //     } catch (error2) {
+  //       res.status(500).json({ success: false, msg: "Failed to get Odds from limitless. Error: " + error2.message })
+  //     }
+  //   }
+  //   //   const response = await axios.get(oddUrl);
 
-    //   console.log("================///============", response.data);
+  //   //   console.log("================///============", response.data);
 
-    // if (response.data) {      
-    //   const oddData = response.data;
-    //   // console.log("===================================================================================2");
-    //   odds.push(await saveOdds(oddData, sportsId));
-    // }
+  //   // if (response.data) {
+  //   //   const oddData = response.data;
+  //   //   // console.log("===================================================================================2");
+  //   //   odds.push(await saveOdds(oddData, sportsId));
+  //   // }
 
-    // // Resolve the promise with the collected odds
-    // resolve(odds);
+  //   // // Resolve the promise with the collected odds
+  //   // resolve(odds);
+  // });
+  const BetPlaceData = await BetPlaceHold.findOne({
+    eventId: req.params.eventId
   });
+  const arr = []
+  for (let i = 1; i < BetPlaceData.secondsValue ; i++) {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    const oddsData = await apiCallForOdds(id,i);
+    
+
+ 
+
+    
+    const runnerFromAPI = oddsData[0]?.runners?.find((runner) => runner.selectionId == selectionId);
+  
+    const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
+    
+    console.log(ApiResponseOdds[0].price, "ApiResponseOdds[0].price>==================")
+   
+    arr.push(ApiResponseOdds[0].price)
+  
+    
+  }
+  res.json({arr:arr})
 }
 
 ///////////////////////////////////////////////////////////////////////////////////////
