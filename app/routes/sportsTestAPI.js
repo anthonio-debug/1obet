@@ -4024,9 +4024,9 @@ async function deleteOdds(req, res) {
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });
-    await MarketIDS.deleteMany({sportID:1,status:'CLOSED'});
-    await MarketIDS.deleteMany({sportID:2,status:'CLOSED'});
-    await MarketIDS.deleteMany({sportID:4,status:'CLOSED'});
+    // await MarketIDS.deleteMany({sportID:1,status:'CLOSED'});
+    // await MarketIDS.deleteMany({sportID:2,status:'CLOSED'});
+    // await MarketIDS.deleteMany({sportID:4,status:'CLOSED'});
     //await MarketIDS.deleteMany({sportID:4339});
     
     //await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
