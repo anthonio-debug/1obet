@@ -3529,7 +3529,7 @@ async function getMarketsByEventId(req, res) {
     };
     var url = `${sportsAPIUrl}/listMarketCatalogue`;
 
-    const response = await axios.post(url, requestData, header);
+    const response = await axios.post(url, JSON.stringify(requestData), header);
 
     const marketsData = response.data;
 
