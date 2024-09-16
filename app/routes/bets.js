@@ -974,17 +974,19 @@ const placeBet = async (req, res) => {
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
-      } else if (type == 1 && betRate < selectedBetRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-11 `
-        });
-      } else if (type == 0 && betRate > selectedBetRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-2 `
-        });
-      } else if (type == 1 && selectedBetRate != betRate) {
+      } 
+      // else if (type == 1 && betRate < selectedBetRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-11 `
+      //   });
+      // } else if (type == 0 && betRate > selectedBetRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-2 `
+      //   });
+      // }
+       else if (type == 1 && selectedBetRate != betRate) {
         // activeBettors.delete(userId)
         // return res.status(404).send({
         //   message: `Bet Miss Matched `,
