@@ -951,7 +951,7 @@ const placeBet = async (req, res) => {
             }
             console.log("2nd if for selectedOddsValue outside if", selectedOddsValue)
 
-            if (selectedOddsValue != 0 && betRate <= selectedOddsValue) {
+            if (selectedOddsValue != 0) {
               multipeResponse.push(selectedOddsValue);
               console.log("multiresponse1======================================================Arham", multipeResponse)
             }
@@ -962,7 +962,7 @@ const placeBet = async (req, res) => {
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
             }
-            if (selectedOddsValue != 0 && betRate >= selectedOddsValue) {
+            if (selectedOddsValue != 0) {
               multipeResponse.push(selectedOddsValue);
               console.log("2nd if for selectedOddsValue lay", selectedOddsValue)
             }
