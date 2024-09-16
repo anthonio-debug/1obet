@@ -1063,6 +1063,7 @@ const placeBet = async (req, res) => {
           if (selectedOddsValue >= betRate) {
             multipeResponse.push(selectedOddsValue);
             ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
+            console.log("multipeResponse for rates not equal", selectedOddsValue)
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
