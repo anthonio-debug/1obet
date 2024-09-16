@@ -572,6 +572,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
+        console.log("multiresponse soccer======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -624,6 +625,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
+        console.log("multiresponse Soccer 2======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -652,8 +654,8 @@ const placeBet = async (req, res) => {
           multipeResponse.push(selectedOddsValue);
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-
       }
+      console.log("multiresponse Soccer 3======================================================Arham", multipeResponse)
       matchedResponse = checkMultiResponse(multipeResponse, rates)
       if (matchedResponse) {
         betRate = matchedResponse
@@ -753,18 +755,18 @@ const placeBet = async (req, res) => {
               console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
               ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
             }
-
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
           console.log("multiresponse1======================================================Arham", multipeResponse)
         }
+        console.log("multiresponse Tennis======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
-      } 
+      }
       // else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
       //   activeBettors.delete(userId);
       //   return res.status(404).send({
@@ -816,6 +818,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
+        console.log("multiresponse Tennis 2======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -861,6 +864,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
+        console.log("multiresponse Tennis 4======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -956,7 +960,7 @@ const placeBet = async (req, res) => {
 
             if (selectedOddsValue != 0) {
               multipeResponse.push(selectedOddsValue);
-              console.log("multiresponse1======================================================Arham", multipeResponse)
+              console.log("multiresponse cricket======================================================Arham", multipeResponse)
             }
 
             multipeResponseForSecurityCheck.push(selectedOddsValue);
@@ -1369,17 +1373,17 @@ const placeBet = async (req, res) => {
               selectedOddsValue = ApiResponseOdds[0]?.price;
               ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
             }
-
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
+        console.log("multiresponse OverUnder======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
-      } 
+      }
       // else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
       //   activeBettors.delete(userId);
       //   return res.status(404).send({
@@ -1422,6 +1426,7 @@ const placeBet = async (req, res) => {
           ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
+        console.log("multiresponse OverUnder 2======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -1458,6 +1463,7 @@ const placeBet = async (req, res) => {
           ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
+        console.log("multiresponse OverUnder 3======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -1578,6 +1584,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
+        console.log("multiresponse Tied Match======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -1620,6 +1627,7 @@ const placeBet = async (req, res) => {
           ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
+        console.log("multiresponse Tied Match 1======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -1652,6 +1660,7 @@ const placeBet = async (req, res) => {
           ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
+        console.log("multiresponse Tied Match 2======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -1869,7 +1878,6 @@ const placeBet = async (req, res) => {
               selectedOddsValue = ApiResponseOdds[0].price;
               ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
             }
-
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           } else if (type == 1) {
             const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
@@ -1877,10 +1885,10 @@ const placeBet = async (req, res) => {
               selectedOddsValue = ApiResponseOdds[0]?.price;
               ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
             }
-
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
+        console.log("multiresponse Tied Match 4======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
