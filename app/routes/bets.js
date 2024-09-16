@@ -957,9 +957,11 @@ const placeBet = async (req, res) => {
             const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
+              console.log("first If for selectedOddsValue", selectedOddsValue)
             }
             if (selectedOddsValue != 0 && betRate >= selectedOddsValue) {
               multipeResponse.push(selectedOddsValue);
+              console.log("2nd If for selectedOddsValue", selectedOddsValue)
             }
 
             multipeResponseForSecurityCheck.push(selectedOddsValue);
