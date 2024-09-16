@@ -429,7 +429,7 @@ function apiRequests() {
       const url = `${config.newThirdURL}/listMarketCatalogue`;
       let response = await axios.post(
         url,
-        JSON.stringify(requestData),
+        requestData,
         header
       );
 
