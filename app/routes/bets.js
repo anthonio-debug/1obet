@@ -947,28 +947,31 @@ const placeBet = async (req, res) => {
             const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
+              console.log("2nd if for selectedOddsValue", selectedOddsValue)
             }
-
+            console.log("2nd if for selectedOddsValue outside if", selectedOddsValue)
+            
             if (selectedOddsValue != 0 && betRate <= selectedOddsValue) {
               multipeResponse.push(selectedOddsValue);
+              console.log("multiresponse1======================================================Arham", multipeResponse)
             }
-
+            
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           } else if (type == 1) {
             const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
-              console.log("first if for selectedOddsValue", selectedOddsValue)
             }
             if (selectedOddsValue != 0 && betRate >= selectedOddsValue) {
               multipeResponse.push(selectedOddsValue);
-              console.log("2nd if for selectedOddsValue", selectedOddsValue)
+              console.log("2nd if for selectedOddsValue lay", selectedOddsValue)
             }
-
+            console.log("2nd if for selectedOddsValue outside if for lay", selectedOddsValue)
+            console.log("multiresponse1======================================================Arham", multipeResponse)
+            
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           };
         }
-        console.log("multiresponse1======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates)
         if (matchedResponse) {
           betRate = matchedResponse
