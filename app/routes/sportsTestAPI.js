@@ -5187,55 +5187,6 @@ async function getOddsFancyBookmakerByMatchId(req, res) {
 //////////////////// getGreyHoundMatches
 async function getGreyHoundMatches(req, res) {
   ////////////////////////////
-  // try {
-  //   const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches`;
-
-  //   const header = {
-  //     headers: {
-  //       accept: "application/json",
-  //       "Content-Type": "application/json",
-  //       "X-App": process.env.XAPP_NAME,
-  //       "Cache-Control": "no-cache"
-  //     },
-  //   };
-
-  //   const response = await axios.get(sportsAPIUrl, header);
-
-  //   const GreyHoundMatches = response.data;
-
-  //   for (const match of GreyHoundMatches) {
-  //     const eventDocument = {
-  //       // sportsId: match.marketId,
-  //       sport: match.marketName,
-  //       Id: match.event.id,
-  //       // competitionName: match.event.name,
-  //       Id: match.event.id,
-  //       name: match.event.name,
-  //       countryCode: match.event.countryCode,
-  //       timezone: match.event.timezone,
-  //       openDate: new Date(match.event.openDate).getTime(),
-  //       inplay: false,
-  //       inplayFromServer: false,
-  //       lastCheckMarket: 0,
-  //       isShowed: false,
-  //       status: "OPEN",
-  //       marketIds: [match.marketId],
-  //       type: 0,
-  //       venue: match.event.venue,
-  //       // countryCodes: match.event.countryCode,
-  //       // meetingName: match.event.name,
-  //       // meetingOpenDate: match.event.openDate
-  //     };
-
-  //     const savedEvent = await inPlayEventsLithylapi.create(eventDocument);
-  //     console.log('Event saved successfully:', savedEvent);
-  //   }
-
-  //   res.status(200).json({ success: true, data: GreyHoundMatches });
-  // } catch (err) {
-  //   res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message });
-  // }
-  ///////////////////////////
   try {
     const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches`;
 
@@ -5250,52 +5201,101 @@ async function getGreyHoundMatches(req, res) {
 
     const response = await axios.get(sportsAPIUrl, header);
 
-    //   const GreyHoundMatches = response.data;
-    // const url = `${config.horseRaceUrl}/meetings/today/${sportsId}`;
-    // const response = await axios.get(url);
-    const meetings = response.data;
-    let racesBulkOperation = [];
-    let races = [];
-    meetings.map((meeting) => {
-      meeting.races.map((race) => {
-        race.name = race.marketName;
-        race.Id = race.raceId;
-        race.marketIds = [race.marketId];
-        race.openDate = Date.parse(race.startTime);
-        race.meetingId = meeting.meetingId;
-        race.meetingName = meeting.name;
-        race.countryCode = meeting.countryCode;
-        race.meetingOpenDate = meeting.openDate;
-        race.venue = meeting.venue;
-        race.meetingGoing = meeting.meetingGoing;
-        race.sportsId = sportsId;
-        races.push(race);
-        racesBulkOperation.push({
-          updateOne: {
-            filter: { Id: race.Id },
-            update: { $set: race },
-            upsert: true,
-          },
-        });
-      });
-    });
-    //console.log(races);
-    const res = await Event.bulkWrite(racesBulkOperation);
-    res.status(200).json({ success: true, data: meetings });
-    // return ({
-    //   success: true,
-    //   message: 'Race Records list',
-    //   results: races,
-    //   eventIds:res?.result?.upserted
-    // });
-  } catch (error) {
-    console.error(error);
-    return {
-      success: false,
-      message: 'Failed to get or save inplay events',
-      error: error.message,
-    };
+    const GreyHoundMatches = response.data;
+
+    for (const match of GreyHoundMatches) {
+      const eventDocument = {
+        // sportsId: match.marketId,
+        sport: match.marketName,
+        Id: match.event.id,
+        // competitionName: match.event.name,
+        Id: match.event.id,
+        name: match.event.name,
+        countryCode: match.event.countryCode,
+        timezone: match.event.timezone,
+        openDate: new Date(match.event.openDate).getTime(),
+        inplay: false,
+        inplayFromServer: false,
+        lastCheckMarket: 0,
+        isShowed: false,
+        status: "OPEN",
+        marketIds: [match.marketId],
+        type: 0,
+        venue: match.event.venue,
+        // countryCodes: match.event.countryCode,
+        // meetingName: match.event.name,
+        // meetingOpenDate: match.event.openDate
+      };
+
+      const savedEvent = await inPlayEventsLithylapi.create(eventDocument);
+      console.log('Event saved successfully:', savedEvent);
+    }
+
+    res.status(200).json({ success: true, data: GreyHoundMatches });
+  } catch (err) {
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message });
   }
+  /////////////////////////
+  // try {
+  //   const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches`;
+
+  //   const header = {
+  //     headers: {
+  //       accept: "application/json",
+  //       "Content-Type": "application/json",
+  //       "X-App": process.env.XAPP_NAME,
+  //       "Cache-Control": "no-cache"
+  //     },
+  //   };
+
+  //   const response = await axios.get(sportsAPIUrl, header);
+
+  //   //   const GreyHoundMatches = response.data;
+  //   // const url = `${config.horseRaceUrl}/meetings/today/${sportsId}`;
+  //   // const response = await axios.get(url);
+  //   const meetings = response.data;
+  //   let racesBulkOperation = [];
+  //   let races = [];
+  //   meetings.map((meeting) => {
+  //     meeting.races.map((race) => {
+  //       race.name = race.marketName;
+  //       race.Id = race.raceId;
+  //       race.marketIds = [race.marketId];
+  //       race.openDate = Date.parse(race.startTime);
+  //       race.meetingId = meeting.meetingId;
+  //       race.meetingName = meeting.name;
+  //       race.countryCode = meeting.countryCode;
+  //       race.meetingOpenDate = meeting.openDate;
+  //       race.venue = meeting.venue;
+  //       race.meetingGoing = meeting.meetingGoing;
+  //       race.sportsId = sportsId;
+  //       races.push(race);
+  //       racesBulkOperation.push({
+  //         updateOne: {
+  //           filter: { Id: race.Id },
+  //           update: { $set: race },
+  //           upsert: true,
+  //         },
+  //       });
+  //     });
+  //   });
+  //   //console.log(races);
+  //   const res = await Event.bulkWrite(racesBulkOperation);
+  //   res.status(200).json({ success: true, data: meetings });
+  //   // return ({
+  //   //   success: true,
+  //   //   message: 'Race Records list',
+  //   //   results: races,
+  //   //   eventIds:res?.result?.upserted
+  //   // });
+  // } catch (error) {
+  //   console.error(error);
+  //   return {
+  //     success: false,
+  //     message: 'Failed to get or save inplay events',
+  //     error: error.message,
+  //   };
+  // }
 
 }
 
@@ -5438,8 +5438,10 @@ router.get('/track-bet/lithylAPI/getAllMatchesList/:series_id', getAllMatchesLis
 router.get('/track-bet/lithylAPI/getAllMarketList/:match_id', getAllMarketList)
 router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFancyBookmakerByMatchId)
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
-router.get('/track-bet/lithylAPI/getHorseRaceMatches', getOdds)
-router.post('/track-bet/lithylAPI/getOdds', placeBet)
+router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
+router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
+router.get('/track-bet/lithylAPI/getOdd', getOdds)
+router.post('/track-bet/lithylAPI/placeBet', placeBet)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
