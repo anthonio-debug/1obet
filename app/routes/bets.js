@@ -170,6 +170,7 @@ function checkRunsOrOvers(inputString) {
 }
 
 function checkMultiResponse(odds, rates) {
+  console.log("rates==============", rates)
   if (Array.isArray(odds) && Array.isArray(rates) && rates.length > 0 && odds.length > 0) {
     if (rates.includes(odds[odds.length - 1])) {
       return odds[odds.length - 1];
@@ -974,7 +975,7 @@ const placeBet = async (req, res) => {
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
-      } 
+      }
       // else if (type == 1 && betRate < selectedBetRate) {
       //   activeBettors.delete(userId);
       //   return res.status(404).send({
@@ -986,7 +987,7 @@ const placeBet = async (req, res) => {
       //     message: `Bet Miss Matched-2 `
       //   });
       // }
-       else if (type == 1 && selectedBetRate != betRate) {
+      else if (type == 1 && selectedBetRate != betRate) {
         // activeBettors.delete(userId)
         // return res.status(404).send({
         //   message: `Bet Miss Matched `,
