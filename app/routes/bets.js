@@ -585,22 +585,23 @@ const placeBet = async (req, res) => {
       //     message: `Bet Miss Matched-3 ${multipeResponse[multipeResponse.length-1]} `
       //   });
       // }
-      else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-4 `
-        });
-      } else if (type == 1 && betRate < selectedBetRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-5 `
-        });
-      } else if (type == 0 && betRate > selectedBetRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-6 `
-        });
-      } else if (type == 1 && selectedBetRate != betRate) {
+      // else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-4 `
+      //   });
+      // } else if (type == 1 && betRate < selectedBetRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-5 `
+      //   });
+      // } else if (type == 0 && betRate > selectedBetRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-6 `
+      //   });
+      // } 
+      else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -763,27 +764,29 @@ const placeBet = async (req, res) => {
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
-      } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-7 `
-        });
-      } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-8 `
-        });
-      } else if (type == 1 && betRate < selectedBetRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-9 `
-        });
-      } else if (type == 0 && betRate > selectedBetRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-10 `
-        });
-      } else if (type == 1 && selectedBetRate != betRate) {
+      } 
+      // else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-7 `
+      //   });
+      // } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-8 `
+      //   });
+      // } else if (type == 1 && betRate < selectedBetRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-9 `
+      //   });
+      // } else if (type == 0 && betRate > selectedBetRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-10 `
+      //   });
+      // } 
+      else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -1376,27 +1379,29 @@ const placeBet = async (req, res) => {
         } else {
           return res.status(404).send({ message: `Bet Miss Matched (${matchedResponse})` })
         }
-      } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-18 `
-        });
-      } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-19 `
-        });
-      } else if (type == 1 && betRate < selectedBetRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-20 `
-        });
-      } else if (type == 0 && betRate > selectedBetRate) {
-        activeBettors.delete(userId);
-        return res.status(404).send({
-          message: `Bet Miss Matched-21 `
-        });
-      } else if (type == 1 && selectedBetRate != betRate) {
+      } 
+      // else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-18 `
+      //   });
+      // } else if (type == 0 && selectedBetRate < betRate && selectedBetRate - Digitaddition > betRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-19 `
+      //   });
+      // } else if (type == 1 && betRate < selectedBetRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-20 `
+      //   });
+      // } else if (type == 0 && betRate > selectedBetRate) {
+      //   activeBettors.delete(userId);
+      //   return res.status(404).send({
+      //     message: `Bet Miss Matched-21 `
+      //   });
+      // } 
+      else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
