@@ -5438,8 +5438,10 @@ router.get('/track-bet/lithylAPI/getAllMatchesList/:series_id', getAllMatchesLis
 router.get('/track-bet/lithylAPI/getAllMarketList/:match_id', getAllMarketList)
 router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFancyBookmakerByMatchId)
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
-router.get('/track-bet/lithylAPI/getHorseRaceMatches', getOdds)
-router.post('/track-bet/lithylAPI/getOdds', placeBet)
+router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
+router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
+router.get('/track-bet/lithylAPI/getOdd', getOdds)
+router.post('/track-bet/lithylAPI/placeBet', placeBet)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
