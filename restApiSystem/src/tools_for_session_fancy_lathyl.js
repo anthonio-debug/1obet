@@ -75,7 +75,7 @@ function ToolForSessionFancy() {
       
      
        let gtype = 'session';
-       if(odd.gtype=='session'){
+       if(odd.gtype=='Fancy'){
        t3.push({
          b1: odd.b1,
          b2: 0,
