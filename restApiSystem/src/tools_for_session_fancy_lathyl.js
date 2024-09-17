@@ -153,7 +153,8 @@ if(bookmakerOdds!==0){
         openDate: { $lte: from },
         status: 'OPEN'
       }, { Id: 1 }).exec();
-      console.log("list of sligibale events..............................................................",fancyEvents);
+      // console.log("list of sligibale events..............................................................",fancyEvents);
+
       for (const event of fancyEvents) {
         const eventId = event.Id
         
@@ -219,11 +220,11 @@ if(bookmakerOdds!==0){
 
          if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
           //console.log('fancy oddsssssssssssssss returned',fancyData);
-          console.log("fancyDatauuuuuu-------------------------------------------->>>>>>>>>>>>>>>",fancyData);
+          // console.log("fancyDatauuuuuu-------------------------------------------->>>>>>>>>>>>>>>",fancyData);
          
          
         // if (!FancyOddsMap.has(eventId) || !isObjectEqual(FancyOddsMap.get(eventId), fancyData)) {
-          console.log('fancy oddsssssssssssssss data returned for ',fancyData);
+          // console.log('fancy oddsssssssssssssss data returned for ',fancyData);
               FancyOddsMap.set(eventId, fancyData)
               let newFancyOdds = new FancyOdds({
                 eventId: eventId,

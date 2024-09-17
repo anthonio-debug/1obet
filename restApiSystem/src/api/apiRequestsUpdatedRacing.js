@@ -436,7 +436,7 @@ function apiRequests() {
       const eventsData = response.data.result;
 
 
-      console.log("response.data.result>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>==========CronJob   listMarketsByCronJob",response.data.result)
+      // console.log("response.data.result>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>==========CronJob   listMarketsByCronJob",response.data.result)
       let marketIds = [];
       // Create an instance of the raceMarkets model
       for (let j = 0; j < eventsData.length; j++) {
