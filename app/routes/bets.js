@@ -1228,7 +1228,7 @@ const placeBet = async (req, res) => {
         });
       } else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 3 + delayAddition; i++) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 100));
           // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
@@ -1269,7 +1269,7 @@ const placeBet = async (req, res) => {
         // mistmatch.....
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 3 + delayAddition; i++) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 100));
           // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
