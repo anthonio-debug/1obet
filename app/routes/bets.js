@@ -1116,6 +1116,8 @@ const placeBet = async (req, res) => {
 
     // GH HR Match Odds
     else if (config.raceMarkets.includes(marketId)) {
+
+      console.log("raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeess Arham Test=nnnnnnnnnnnn")
       if (betRate > 50) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1167,7 +1169,7 @@ const placeBet = async (req, res) => {
 
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 3 + delayAddition; i++) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          // await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
