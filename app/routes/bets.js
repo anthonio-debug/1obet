@@ -1169,45 +1169,94 @@ const placeBet = async (req, res) => {
         amount: 0
       }));
 
+      // if (selectedBetRate == betRate || selectedBetRate != betRate) {
+      //   for (let i = 1; i < 3 + delayAddition; i++) {
+      //     console.log("raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeess Arham Test=nnnnnnnnnnnn",i)
+      //     // await new Promise(resolve => setTimeout(resolve, 1000));
+      //     // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
+      //     // const response = await axios.get(url);
+      //     // const oddsData = response.data;
+      //     const oddsData = await apiCallForOdds(id);
+      //     console.log("Odds Data =======================", oddsData);
+      //     const marketStatus = oddsData[0]?.status;
+
+      //     if (marketStatus != 'OPEN') {
+      //       activeBettors.delete(userId);
+      //       return res.status(404).send({
+      //         message: `Betting is CLOSED.`
+      //       });
+      //     }
+      //     const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
+      //     let selectedOddsValue = 0;
+      //     multipeResponse.push(selectedOddsValue);
+      //     if (type == 0) {
+      //       const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
+      //       if (ApiResponseOdds && ApiResponseOdds.length > 0) {
+      //         selectedOddsValue = ApiResponseOdds[0].price;
+      //         ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
+      //       }
+
+      //       multipeResponseForSecurityCheck.push(selectedOddsValue);
+      //     } else if (type == 1) {
+      //       const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
+      //       if (ApiResponseOdds && ApiResponseOdds.length > 0) {
+      //         selectedOddsValue = ApiResponseOdds[0].price;
+      //         ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
+      //       }
+      //       multipeResponseForSecurityCheck.push(selectedOddsValue);
+      //     }
+      //   }
+      //   console.log("multiresponsee4======================================================Arham", multipeResponse)
+      // }
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
-        for (let i = 1; i < 3 + delayAddition; i++) {
-          console.log("raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeess Arham Test=nnnnnnnnnnnn",i)
-          // await new Promise(resolve => setTimeout(resolve, 1000));
-          // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
-          // const response = await axios.get(url);
-          // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
-          console.log("Odds Data =======================", oddsData);
-          const marketStatus = oddsData[0]?.status;
-
-          if (marketStatus != 'OPEN') {
-            activeBettors.delete(userId);
-            return res.status(404).send({
-              message: `Betting is CLOSED.`
-            });
-          }
-          const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
-          let selectedOddsValue = 0;
-          multipeResponse.push(selectedOddsValue);
-          if (type == 0) {
-            const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
-            if (ApiResponseOdds && ApiResponseOdds.length > 0) {
-              selectedOddsValue = ApiResponseOdds[0].price;
-              ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
+        const fetchOddsData = async () => {
+            console.log("Fetching odds data...");
+            const oddsData = await apiCallForOdds(id);
+            console.log("Odds Data =======================", oddsData);
+            return oddsData;
+        };
+    
+        const processOddsData = (oddsData) => {
+            const marketStatus = oddsData[0]?.status;
+    
+            if (marketStatus != 'OPEN') {
+                activeBettors.delete(userId);
+                return res.status(404).send({
+                    message: `Betting is CLOSED.`
+                });
             }
-
-            multipeResponseForSecurityCheck.push(selectedOddsValue);
-          } else if (type == 1) {
-            const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
-            if (ApiResponseOdds && ApiResponseOdds.length > 0) {
-              selectedOddsValue = ApiResponseOdds[0].price;
-              ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
+    
+            let selectedOddsValue = 0;
+            if (type == 0) {
+                const ApiResponseOdds = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId)?.ex?.availableToBack;
+                if (ApiResponseOdds && ApiResponseOdds.length > 0) {
+                    selectedOddsValue = ApiResponseOdds[0].price;
+                    if (selectedOddsValue > 0) multipeResponse.push(selectedOddsValue);
+                }
+            } else if (type == 1) {
+                const ApiResponseOdds = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId)?.ex?.availableToLay;
+                if (ApiResponseOdds && ApiResponseOdds.length > 0) {
+                    selectedOddsValue = ApiResponseOdds[0].price;
+                    if (selectedOddsValue > 0) multipeResponse.push(selectedOddsValue);
+                }
             }
+    
             multipeResponseForSecurityCheck.push(selectedOddsValue);
-          }
+        };
+    
+        for (let i = 0; i < 2 + delayAddition; i++) {
+            // Fetch odds data and process it
+            const oddsData = await fetchOddsData();
+            processOddsData(oddsData);
+    
+            // Wait for 1 second before the next iteration
+            // await new Promise(resolve => setTimeout(resolve, 1000));
         }
-        console.log("multiresponsee4======================================================Arham", multipeResponse)
-      } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
+    
+        console.log("multiresponsee4======================================================Arham", multipeResponse);
+    }
+    
+      else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Bet Miss Matched-14 `
