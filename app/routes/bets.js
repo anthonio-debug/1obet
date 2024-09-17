@@ -530,7 +530,7 @@ const placeBet = async (req, res) => {
       }
       runnerName = OddDetailsTeam?.runnerName;
 
-      if (selectedBetRate == betRate && selectedBetRate != betRate) {
+      if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           const oddsData = await apiCallForOdds(id);
@@ -717,7 +717,7 @@ const placeBet = async (req, res) => {
 
       runnerName = OddDetailsTeam?.runnerName;
       console.log("===============selectedBetRate", selectedBetRate, "===============betRate", betRate, "teeeeeeeeeeeenis")
-      if (selectedBetRate == betRate) {
+      if (selectedBetRate == betRate && selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -1164,7 +1164,7 @@ const placeBet = async (req, res) => {
         amount: 0
       }));
 
-      if (selectedBetRate == betRate) {
+      if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 3 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
@@ -1340,7 +1340,7 @@ const placeBet = async (req, res) => {
       }
 
       runnerName = OddDetailsTeam?.runnerName;
-      if (selectedBetRate == betRate) {
+      if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
@@ -1546,7 +1546,7 @@ const placeBet = async (req, res) => {
       });
       delay = BetPlaceData.secondsValue * 1000 + 200;
 
-      if (selectedBetRate == betRate && selectedBetRate != betRate) {
+      if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
