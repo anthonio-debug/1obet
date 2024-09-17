@@ -1171,6 +1171,7 @@ const placeBet = async (req, res) => {
 
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 3 + delayAddition; i++) {
+          console.log("raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeess Arham Test=nnnnnnnnnnnn",i)
           // await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
