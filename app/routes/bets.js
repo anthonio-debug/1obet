@@ -3418,13 +3418,13 @@ const placeBet = async (req, res) => {
 
       //     activeBettors.delete(userId);
 
-      //     return res.send({
-      //       success: true,
-      //       message: `Bet placed successfully(${matchedResponse})!`,
-      //       results: result,
-      //       statusForRes,
-      //       delay: delayAddition
-      //     });
+           return res.send({
+             success: true,
+             message: `Bet placed successfully(${matchedResponse})!`,
+           results: result,
+             statusForRes,
+             delay: delayAddition
+           });
       //   } catch (error) {
       //     console.warn('error', error);
       //     activeBettors.delete(userId);
