@@ -4024,18 +4024,17 @@ async function deleteOdds(req, res) {
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
     const count5 = await MarketIDS.countDocuments({ sportID: 7 });
 
-    return res.json({"{status:'CLOSED',sportID:4339 count":count1,"{{ status: 'CLOSED', sportID: 7 } count":count3,"{{ sportID: 4339 } count":count4,"{{ sportID: 7 } count":count5})
+    // return res.json({"{status:'CLOSED',sportID:4339 count":count1,"{{ status: 'CLOSED', sportID: 7 } count":count3,"{{ sportID: 4339 } count":count4,"{{ sportID: 7 } count":count5})
 
     // await RaceOdds.deleteMany({});
     // await fancyOdds.deleteMany({});
-    // await MarketIDS.deleteMany({
-    //   $or: [
-    //     { status: 'CLOSED', sportID: 4339 },
-    //     { status: 'CLOSED', sportID: 7 },
-    //     { sportID: 4339 },
-    //     { sportID: 7 }
-    //   ]
-    // });
+    await MarketIDS.deleteMany({
+      $or: [
+        { status: 'CLOSED', sportID: 4339 },
+        { status: 'CLOSED', sportID: 7 },
+
+      ]
+    });
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });
