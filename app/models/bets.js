@@ -66,7 +66,12 @@ const betSchema = new mongoose.Schema({
   gameStatus: { type: String },
   vpn: { type: Boolean, default: false }
 });
-
+betSchema.index({ userId: 1 });
+betSchema.index({ createdAt: -1 });
+betSchema.index({ updatedAt: -1 });
+betSchema.index({ userId: 1, sportsId: 1 });
+betSchema.index({ status: 1 });
+betSchema.index({ event: 1, matchId: 1 });
 betSchema.pre('save', function (next) {
   var now = new Date().getTime();
   if (!this.createdAt) {
