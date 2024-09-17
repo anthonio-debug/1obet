@@ -4021,6 +4021,14 @@ async function deleteOdds(req, res) {
     await Odds.deleteMany({});
     await RaceOdds.deleteMany({});
     await fancyOdds.deleteMany({});
+    await MarketIDS.deleteMany({
+      $or: [
+        { status: 'CLOSED', sportID: 4339 },
+        { status: 'CLOSED', sportID: 7 },
+        { sportID: 4339 },
+        { sportID: 7 }
+      ]
+    });
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });

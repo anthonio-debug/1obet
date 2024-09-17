@@ -69,7 +69,7 @@ function ToolForSessionFancy() {
 
   if(fancyOdds && fancyOdds!=0){
    
-      console.log("fancyOdds listed belowssss............................................",fancyOdds);
+      // console.log("fancyOdds listed belowssss............................................",fancyOdds);
     
     for (const odd of fancyOdds) {
       
