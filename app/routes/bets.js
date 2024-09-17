@@ -482,6 +482,7 @@ const placeBet = async (req, res) => {
 
     // Soccer Match Odds
     if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
+      console.log(selectedOddsValue, "===============================selected oofffddd valueee arham tttttttttttttttttttttttttttttt")
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId
@@ -1343,7 +1344,7 @@ const placeBet = async (req, res) => {
       }
 
       runnerName = OddDetailsTeam?.runnerName;
-      console.log("selectedBetRate == betRate || selectedBetRate != betRateaveforeeeeeeeeeeeeeeeeeeeeeeeeeeeer")
+  
 
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
 
