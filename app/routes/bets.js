@@ -3198,51 +3198,51 @@ const placeBet = async (req, res) => {
         });
       }
 
-      const bet = new Bets({
-        marketId: _3rdPartyMarketId || 0,
-        sportsId: marketId || 0,
-        runnerName: runnerName || 0,
-        userId,
-        betAmount: betAmount || 0,
-        betRate: updatedbetRate ? updatedbetRate : Number(betRate) || 0,
-        matchType: eventDetail?.matchType,
-        matchStatus: matchStatus,
-        matchLastUpdate: matchLastUpdate,
-        eventId: eventDetail?.Id,
-        selectedBetRate: selectedBetRate || 0,
-        TargetScore: TargetScore || 0,
-        matchId: matchId || null,
-        loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
-        winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
-        subMarketId: subMarketDetail ? subMarketDetail.Id : 0,
-        betSession: currentSession ? currentSession : null,
-        runner: selectionId ? selectionId : '',
-        type: type || 0,
-        status: 1,
-        event: eventDetail ? eventDetail.name : oddsId,
-        isfancyOrbookmaker: isFancyOrBookMaker,
-        fancyData: fancyData,
-        fancyRate: fancyRate,
-        exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
-        runnersPosition: runnersPosition ? runnersPosition : [],
-        ratesRecord: multipeResponseForSecurityCheck ? multipeResponseForSecurityCheck : [],
-        betTime: BetTime,
-        multipeResponse: multipeResponse ? multipeResponse : [],
-        isManuel: isManuel,
-        roundId: roundId,
-        asianTableName: asianTableName,
-        asianTableId: oddsId,
-        randomStr: randomStr,
-        locationData: geo,
-        ipAddress: realIP,
-        device: device,
-        timer: timer,
-        gameStatus: gameStatus,
-        backFancyRate,
-        layFancyRate,
-        rates,
-        partnerValue
-      });
+      // const bet = new Bets({
+      //   marketId: _3rdPartyMarketId || 0,
+      //   sportsId: marketId || 0,
+      //   runnerName: runnerName || 0,
+      //   userId,
+      //   betAmount: betAmount || 0,
+      //   betRate: updatedbetRate ? updatedbetRate : Number(betRate) || 0,
+      //   matchType: eventDetail?.matchType,
+      //   matchStatus: matchStatus,
+      //   matchLastUpdate: matchLastUpdate,
+      //   eventId: eventDetail?.Id,
+      //   selectedBetRate: selectedBetRate || 0,
+      //   TargetScore: TargetScore || 0,
+      //   matchId: matchId || null,
+      //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
+      //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
+      //   subMarketId: subMarketDetail ? subMarketDetail.Id : 0,
+      //   betSession: currentSession ? currentSession : null,
+      //   runner: selectionId ? selectionId : '',
+      //   type: type || 0,
+      //   status: 1,
+      //   event: eventDetail ? eventDetail.name : oddsId,
+      //   isfancyOrbookmaker: isFancyOrBookMaker,
+      //   fancyData: fancyData,
+      //   fancyRate: fancyRate,
+      //   exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0,
+      //   runnersPosition: runnersPosition ? runnersPosition : [],
+      //   ratesRecord: multipeResponseForSecurityCheck ? multipeResponseForSecurityCheck : [],
+      //   betTime: BetTime,
+      //   multipeResponse: multipeResponse ? multipeResponse : [],
+      //   isManuel: isManuel,
+      //   roundId: roundId,
+      //   asianTableName: asianTableName,
+      //   asianTableId: oddsId,
+      //   randomStr: randomStr,
+      //   locationData: geo,
+      //   ipAddress: realIP,
+      //   device: device,
+      //   timer: timer,
+      //   gameStatus: gameStatus,
+      //   backFancyRate,
+      //   layFancyRate,
+      //   rates,
+      //   partnerValue
+      // });
 
       let nowUser = await User.findOne({ userId }).exec();
       const lastMaxWithdraw = await Cash.findOne({ userId: userId }).sort({ _id: -1 });
@@ -3252,185 +3252,185 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: ' Insufficient balance amount ' });
       }
 
-      if (config.FancyOddEven.includes(subMarketDetail.Id)) {
-        await Bets.updateMany(
-          {
-            marketId: _3rdPartyMarketId,
-            userId: req.decoded.userId,
-            matchId: matchId,
-            fancyData: fancyData,
-            status: 1
-          },
-          { calculateExp: false }
-        );
-      }
+      // if (config.FancyOddEven.includes(subMarketDetail.Id)) {
+      //   await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       fancyData: fancyData,
+      //       status: 1
+      //     },
+      //     { calculateExp: false }
+      //   );
+      // }
 
-      else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
-        let setCalculateExpFalse = await Bets.updateMany(
-          {
-            marketId: _3rdPartyMarketId,
-            userId: req.decoded.userId,
-            matchId: matchId,
-            betSession: currentSession,
-            status: 1
-          },
-          { calculateExp: false }
-        );
-        // const latestPreviousbet = await Bets.find({
-        //     marketId: _3rdPartyMarketId,
-        //     userId: req.decoded.userId,
-        //     matchId: matchId,
-        //     betSession: currentSession,
-        //     status: 1,
-        //   }
-        // ).sort({_id: -1}).limit(1);
-        // await Exposure.deleteOne({trans_from_id: latestPreviousbet._id})
-      } else if (config.asianSubMarket.includes(subMarketDetail.Id)) {
-        await Bets.updateMany(
-          {
-            marketId: _3rdPartyMarketId,
-            userId: req.decoded.userId,
-            matchId: matchId,
-            roundId: roundId,
-            status: 1,
-            runner: selectionId
-          },
-          { calculateExp: false }
-        );
-        // const latestPreviousbet = await Bets.find(
-        //   {
-        //     marketId: _3rdPartyMarketId,
-        //     userId: req.decoded.userId,
-        //     matchId: matchId,
-        //     roundId: roundId,
-        //     status: 1,
-        //     runner: selectionId
-        //   }
-        // ).sort({_id: -1}).limit(1);
-      } else {
-        await Bets.updateMany(
-          {
-            marketId: _3rdPartyMarketId,
-            userId: req.decoded.userId,
-            matchId: matchId,
-            status: 1
-          },
-          { calculateExp: false }
-        );
-        // const latestPreviousbet = await Bets.find(
-        //   {
-        //     marketId: _3rdPartyMarketId,
-        //     userId: req.decoded.userId,
-        //     matchId: matchId,
-        //     status: 1,
-        //   }
-        // ).sort({_id: -1}).limit(1);
-        // await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
-      }
+      // else if (config.FigureEvenOddSmallBig.includes(subMarketDetail.Id)) {
+      //   let setCalculateExpFalse = await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       betSession: currentSession,
+      //       status: 1
+      //     },
+      //     { calculateExp: false }
+      //   );
+      //   // const latestPreviousbet = await Bets.find({
+      //   //     marketId: _3rdPartyMarketId,
+      //   //     userId: req.decoded.userId,
+      //   //     matchId: matchId,
+      //   //     betSession: currentSession,
+      //   //     status: 1,
+      //   //   }
+      //   // ).sort({_id: -1}).limit(1);
+      //   // await Exposure.deleteOne({trans_from_id: latestPreviousbet._id})
+      // } else if (config.asianSubMarket.includes(subMarketDetail.Id)) {
+      //   await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       roundId: roundId,
+      //       status: 1,
+      //       runner: selectionId
+      //     },
+      //     { calculateExp: false }
+      //   );
+      //   // const latestPreviousbet = await Bets.find(
+      //   //   {
+      //   //     marketId: _3rdPartyMarketId,
+      //   //     userId: req.decoded.userId,
+      //   //     matchId: matchId,
+      //   //     roundId: roundId,
+      //   //     status: 1,
+      //   //     runner: selectionId
+      //   //   }
+      //   // ).sort({_id: -1}).limit(1);
+      // } else {
+      //   await Bets.updateMany(
+      //     {
+      //       marketId: _3rdPartyMarketId,
+      //       userId: req.decoded.userId,
+      //       matchId: matchId,
+      //       status: 1
+      //     },
+      //     { calculateExp: false }
+      //   );
+      //   // const latestPreviousbet = await Bets.find(
+      //   //   {
+      //   //     marketId: _3rdPartyMarketId,
+      //   //     userId: req.decoded.userId,
+      //   //     matchId: matchId,
+      //   //     status: 1,
+      //   //   }
+      //   // ).sort({_id: -1}).limit(1);
+      //   // await Exposure.deleteOne({trans_from_id: latestPreviousbet._id});
+      // }
 
-      bet.save(async (err, result) => {
-        if (err) {
-          console.warn('Error : ', err);
-          activeBettors.delete(userId);
-          return res.status(404).send({ message: `Something went wrong !` });
-        }
-        try {
-          console.log('Start placing bet');
+      // bet.save(async (err, result) => {
+      //   if (err) {
+      //     console.warn('Error : ', err);
+      //     activeBettors.delete(userId);
+      //     return res.status(404).send({ message: `Something went wrong !` });
+      //   }
+      //   try {
+      //     console.log('Start placing bet');
 
-          const position = new currentPosition({
-            userId: userId,
-            amount: -Number(loosingAmount.toFixed(3)),
-            matchsId: matchId,
-            betId: result._id
-          });
-          await position.save();
-          console.log('Position saved', position);
+      //     const position = new currentPosition({
+      //       userId: userId,
+      //       amount: -Number(loosingAmount.toFixed(3)),
+      //       matchsId: matchId,
+      //       betId: result._id
+      //     });
+      //     await position.save();
+      //     console.log('Position saved', position);
 
-          const nowUser = await User.findOne({ userId }).exec();
-          //console.log("User fetched", nowUser);
+      //     const nowUser = await User.findOne({ userId }).exec();
+      //     //console.log("User fetched", nowUser);
 
-          const user_prev_balance = nowUser.balance;
-          const user_prev_availableBalance = nowUser.availableBalance;
-          const user_prev_exposure = nowUser.exposure;
+      //     const user_prev_balance = nowUser.balance;
+      //     const user_prev_availableBalance = nowUser.availableBalance;
+      //     const user_prev_exposure = nowUser.exposure;
 
-          const totalExpAmount = expAmount - prevExpAmount;
-          const UserExpAmountFix = nowUser.exposure + prevExpAmount - expAmount;
-          const UserExpAmount = Number(UserExpAmountFix.toFixed(3));
-          const UserAvlBalAmountAmt = nowUser.availableBalance + prevExpAmount - expAmount;
-          const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(3));
+      //     const totalExpAmount = expAmount - prevExpAmount;
+      //     const UserExpAmountFix = nowUser.exposure + prevExpAmount - expAmount;
+      //     const UserExpAmount = Number(UserExpAmountFix.toFixed(3));
+      //     const UserAvlBalAmountAmt = nowUser.availableBalance + prevExpAmount - expAmount;
+      //     const UserAvlBalAmount = Number(UserAvlBalAmountAmt.toFixed(3));
 
-          await User.findOneAndUpdate(
-            { userId: userId },
-            {
-              exposure: UserExpAmount,
-              availableBalance: UserAvlBalAmount
-            }
-          );
-          console.log('User balance updated');
-          // Uncomment and debug if necessary
-          // let newDeposit = new Cash({
-          //   userId: userId,
-          //   description: `Bet Place`,
-          //   betId: randomStr,
-          //   addedExpoisureAmount: expAmount ? expAmount.toFixed(3) : 0,
-          //   UserPrevexposure: user.exposure,
-          //   UpdatedExposure: UserExpAmount,
-          //   sourceCodeBlock: 'Bet Place',
-          //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
-          //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
-          //   amount: betAmount || 0,
-          //   balance: user.balance,
-          //   availableBalance: UserAvlBalAmount,
-          //   cashOrCredit: "Bet",
-          //   marketId: _3rdPartyMarketId || 0,
-          //   sportsId: marketId || 0,
-          //   matchId: matchId || null,
-          //   betType: type || 0,
-          //   betDateTime: BetTime,
-          // });
-          // await newDeposit.save();
-          // console.log("New deposit saved");
+      //     await User.findOneAndUpdate(
+      //       { userId: userId },
+      //       {
+      //         exposure: UserExpAmount,
+      //         availableBalance: UserAvlBalAmount
+      //       }
+      //     );
+      //     console.log('User balance updated');
+      //     // Uncomment and debug if necessary
+      //     // let newDeposit = new Cash({
+      //     //   userId: userId,
+      //     //   description: `Bet Place`,
+      //     //   betId: randomStr,
+      //     //   addedExpoisureAmount: expAmount ? expAmount.toFixed(3) : 0,
+      //     //   UserPrevexposure: user.exposure,
+      //     //   UpdatedExposure: UserExpAmount,
+      //     //   sourceCodeBlock: 'Bet Place',
+      //     //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
+      //     //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
+      //     //   amount: betAmount || 0,
+      //     //   balance: user.balance,
+      //     //   availableBalance: UserAvlBalAmount,
+      //     //   cashOrCredit: "Bet",
+      //     //   marketId: _3rdPartyMarketId || 0,
+      //     //   sportsId: marketId || 0,
+      //     //   matchId: matchId || null,
+      //     //   betType: type || 0,
+      //     //   betDateTime: BetTime,
+      //     // });
+      //     // await newDeposit.save();
+      //     // console.log("New deposit saved");
 
 
-          const ExpTran = new Exposure({
-            userId: userId,
-            trans_from: 'Bet Place',
-            trans_from_id: randomStr,
-            user_prev_balance: user_prev_balance,
-            user_prev_availableBalance: user_prev_availableBalance,
-            user_prev_exposure: user_prev_exposure,
-            user_new_balance: nowUser.balance,
-            user_new_availableBalance: UserAvlBalAmount,
-            user_new_exposure: UserExpAmount,
-            marketId: _3rdPartyMarketId || 0,
-            sportsId: marketId || 0,
-            calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
-            DateTime: new Date(),
-            calculateExp: 1,
-            exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0
-          });
+      //     const ExpTran = new Exposure({
+      //       userId: userId,
+      //       trans_from: 'Bet Place',
+      //       trans_from_id: randomStr,
+      //       user_prev_balance: user_prev_balance,
+      //       user_prev_availableBalance: user_prev_availableBalance,
+      //       user_prev_exposure: user_prev_exposure,
+      //       user_new_balance: nowUser.balance,
+      //       user_new_availableBalance: UserAvlBalAmount,
+      //       user_new_exposure: UserExpAmount,
+      //       marketId: _3rdPartyMarketId || 0,
+      //       sportsId: marketId || 0,
+      //       calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
+      //       DateTime: new Date(),
+      //       calculateExp: 1,
+      //       exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0
+      //     });
 
-          await ExpTran.save();
-          console.log('Exposure transaction saved');
+      //     await ExpTran.save();
+      //     console.log('Exposure transaction saved');
 
-          await updateParentUserBalance(parentUserIds, winningAmount, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id);
-          console.log('Parent user balance updated');
+      //     await updateParentUserBalance(parentUserIds, winningAmount, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id);
+      //     console.log('Parent user balance updated');
 
-          activeBettors.delete(userId);
+      //     activeBettors.delete(userId);
 
-          return res.send({
-            success: true,
-            message: `Bet placed successfully(${matchedResponse})!`,
-            results: result,
-            statusForRes,
-            delay: delayAddition
-          });
-        } catch (error) {
-          console.warn('error', error);
-          activeBettors.delete(userId);
-          return res.status(404).send({ message: 'Error updating user balance' });
-        }
-      });
+      //     return res.send({
+      //       success: true,
+      //       message: `Bet placed successfully(${matchedResponse})!`,
+      //       results: result,
+      //       statusForRes,
+      //       delay: delayAddition
+      //     });
+      //   } catch (error) {
+      //     console.warn('error', error);
+      //     activeBettors.delete(userId);
+      //     return res.status(404).send({ message: 'Error updating user balance' });
+      //   }
+      // });
 
       /* -------------- */
     }, delay);
