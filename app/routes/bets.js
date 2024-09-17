@@ -1343,7 +1343,12 @@ const placeBet = async (req, res) => {
       }
 
       runnerName = OddDetailsTeam?.runnerName;
+      console.log("selectedBetRate == betRate || selectedBetRate != betRateaveforeeeeeeeeeeeeeeeeeeeeeeeeeeeer")
+
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
+
+
+        console.log("selectedBetRate == betRate || selectedBetRate != betRateafteeeeeeeeeeeeeeeeeeeeeeeeer")
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
