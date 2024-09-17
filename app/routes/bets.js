@@ -481,8 +481,9 @@ const placeBet = async (req, res) => {
     /* ================================== Market Specific Checks ================================== */
 
     // Soccer Match Odds
+    console.log(selectedOddsValue, "===============================selected oofffddd valueee arham tttttttttttttttttttttttttttttt","config.soccerOdds",config.soccerOdds,"subMarketDetail.Id",subMarketDetail.Id,"marketId",marketId)
     if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
-      console.log(selectedOddsValue, "===============================selected oofffddd valueee arham tttttttttttttttttttttttttttttt")
+      
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId
