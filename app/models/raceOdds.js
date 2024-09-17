@@ -10,7 +10,7 @@ const raceOddsSchema = new mongoose.Schema({
   isMarketDataVirtual: Boolean,
   createdAt: { type: Date, default: new Date().getTime() }
 });
-
+raceOddsSchema.index({ marketId: 1 });
 const RaceOdds = mongoose.model('RaceOdds', raceOddsSchema);
 
 module.exports = RaceOdds;

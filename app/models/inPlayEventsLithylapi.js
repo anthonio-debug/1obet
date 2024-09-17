@@ -60,7 +60,7 @@ const inPlayEventsLithylapiSchema = new mongoose.Schema({
 
 inPlayEventsLithylapiSchema.plugin(Global.paginate);
 inPlayEventsLithylapiSchema.plugin(Global.aggregatePaginate);
-
+inPlayEventsLithylapiSchema.index({ Id: 1 });
 // Create the model
 inPlayEventsLithylapiSchema.index({ inplay: 1, sportsId: 1 })
 inPlayEventsLithylapiSchema.index({ sportsId: 1, openDate: 1 });

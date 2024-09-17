@@ -55,7 +55,7 @@ const userSchema = new Schema({
   digitVerification: { type: String, default: null },
   blockStatus: { type: Boolean, default: false }
 });
-
+userSchema.index({ userId: 1 });
 userSchema.methods.hashPass = function (next) {
   // add some stuff to the users name
   bcrypt.hash(this.password, saltrounds, function (error, hash) {
