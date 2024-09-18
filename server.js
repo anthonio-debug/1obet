@@ -62,6 +62,36 @@ const header = {
     'X-App': process.env.XAPP_NAME
   }
 };
+function getMatchType(
+  // competitionName,
+  name,
+  sportsId
+) {
+  const keywords = /(T20|twenty20|Twenty20|twenty 20|Twenty 20|ODI|One Day|one day|T10|Ten10||ten 10|Ten 10|Test|TEST)/i;
+  if (sportsId == '4') {
+    const nameMatch = name.match(keywords);
+    // const competitionNameMatch =
+    //   competitionName && competitionName.match(keywords);
+    let returnMatch = '';
+    if (nameMatch) {
+      returnMatch = nameMatch[0];
+    }
+    // else if (competitionNameMatch) {
+    //   returnMatch = competitionNameMatch[0];
+    // }
+
+    if (['ODI', 'One Day', 'one day'].includes(returnMatch)) {
+      returnMatch = 'ODI';
+    } else if (['Test', 'test'].includes(returnMatch)) {
+      returnMatch = 'TEST';
+    } else if (['twenty20', 'Twenty20', 'Twenty 20', 'twenty 20'].includes(returnMatch)) {
+      returnMatch = 'T20';
+    } else if (['T10', 'Ten10', 'ten 10', 'Ten 10'].includes(returnMatch)) {
+      returnMatch = 'T10';
+    }
+    return returnMatch;
+  }
+}
 async function fetchEvents() {
   function isValidDate(d) {
     return new Date(d).toString() !== 'Invalid Date';
