@@ -57,7 +57,7 @@ async function fetchEvents() {
   function isValidDate(d) {
     return new Date(d).toString() !== 'Invalid Date';
   }
-
+console.log("here")
   let from = new Date();
   let to = new Date(from);
   to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
