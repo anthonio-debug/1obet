@@ -426,7 +426,7 @@ function apiRequests() {
         "marketProjection": ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
       }
       //console.log("eventId to fetch markets for: ", eventId);
-      const url = `${config.newThirdURL}/listMarketCatalogue`;
+      const url = `http://185.58.225.212:8080/api/listMarketCatalogue`;
       let response = await axios.post(
         url,
         JSON.stringify(requestData),
@@ -434,6 +434,9 @@ function apiRequests() {
       );
 
       const eventsData = response.data.result;
+
+
+      // console.log("response.data.result>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>==========CronJob   listMarketsByCronJob",response.data.result)
       let marketIds = [];
       // Create an instance of the raceMarkets model
       for (let j = 0; j < eventsData.length; j++) {

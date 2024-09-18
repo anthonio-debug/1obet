@@ -22,7 +22,9 @@ const MarketIDsSchema = new mongoose.Schema({
   totalMatched: { type: String, default: "0" },
 
 });
-
+MarketIDsSchema.index({ marketId: 1 });
+MarketIDsSchema.index({ sportID: 1 });
+MarketIDsSchema.index({ openDate: 1 });
 MarketIDsSchema.index({ eventId: 1, marketName: 1 });
 MarketIDsSchema.index({ status: 1 });
 

@@ -191,6 +191,7 @@ const placeBet = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
   try {
+    
     if (req.decoded.login.role != '5') {
       return res.status(401).send({ message: 'You are not allowed to bet' });
     }
@@ -480,7 +481,9 @@ const placeBet = async (req, res) => {
     /* ================================== Market Specific Checks ================================== */
 
     // Soccer Match Odds
+    console.log( "===============================selected oofffddd valueee arham tttttttttttttttttttttttttttttt","config.soccerOdds",config.soccerOdds,"subMarketDetail.Id",subMarketDetail.Id,"marketId",marketId)
     if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
+      
       const userMaxBetSize = await userBetSizes.findOne({
         userId: userId,
         sportsId: marketId
@@ -530,7 +533,7 @@ const placeBet = async (req, res) => {
       }
       runnerName = OddDetailsTeam?.runnerName;
 
-      if (selectedBetRate == betRate && selectedBetRate != betRate) {
+      if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           const oddsData = await apiCallForOdds(id);
@@ -717,7 +720,7 @@ const placeBet = async (req, res) => {
 
       runnerName = OddDetailsTeam?.runnerName;
       console.log("===============selectedBetRate", selectedBetRate, "===============betRate", betRate, "teeeeeeeeeeeenis")
-      if (selectedBetRate == betRate) {
+      if (selectedBetRate == betRate && selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -1115,6 +1118,8 @@ const placeBet = async (req, res) => {
 
     // GH HR Match Odds
     else if (config.raceMarkets.includes(marketId)) {
+
+      console.log("raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeess Arham Test=nnnnnnnnnnnn")
       if (betRate > 50) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1164,9 +1169,10 @@ const placeBet = async (req, res) => {
         amount: 0
       }));
 
-      if (selectedBetRate == betRate) {
+      if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 3 + delayAddition; i++) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          console.log("raceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeess Arham Test=nnnnnnnnnnnn",i)
+          // await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
@@ -1223,7 +1229,7 @@ const placeBet = async (req, res) => {
         });
       } else if (type == 1 && selectedBetRate != betRate) {
         for (let i = 0; i < 3 + delayAddition; i++) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 100));
           // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
@@ -1264,7 +1270,7 @@ const placeBet = async (req, res) => {
         // mistmatch.....
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 3 + delayAddition; i++) {
-          await new Promise(resolve => setTimeout(resolve, 1000));
+          await new Promise(resolve => setTimeout(resolve, 100));
           // const url = `${config.horseRaceUrl}/odds/?ids=${id}`;
           // const response = await axios.get(url);
           // const oddsData = response.data;
@@ -1340,7 +1346,12 @@ const placeBet = async (req, res) => {
       }
 
       runnerName = OddDetailsTeam?.runnerName;
-      if (selectedBetRate == betRate) {
+  
+
+      if (selectedBetRate == betRate || selectedBetRate != betRate) {
+
+
+        console.log("selectedBetRate == betRate || selectedBetRate != betRateafteeeeeeeeeeeeeeeeeeeeeeeeer")
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${overunderMarketId}`;
@@ -1546,7 +1557,7 @@ const placeBet = async (req, res) => {
       });
       delay = BetPlaceData.secondsValue * 1000 + 200;
 
-      if (selectedBetRate == betRate && selectedBetRate != betRate) {
+      if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -4105,6 +4116,129 @@ async function getMatchedBets(req, res) {
   }
 }
 ////////////////////////////
+/// optimization 
+// async function getMatchedBets(req, res) {
+//     const errors = validationResult(req);
+//     if (!errors.isEmpty()) {
+//         return res.status(400).send({ errors: errors.array() });
+//     }
+
+//     try {
+//         const loginUser = await User.findOne({ userId: req.decoded.userId });
+//         if (!loginUser) {
+//             return res.status(404).send({ message: 'User not found' });
+//         }
+
+//         const userOfLoginUser = await User.find({ createdBy: loginUser.userId });
+//         const createdByIDs = userOfLoginUser.map((user) => user.userId);
+//         const userIDs = await getAllUserIDs([...createdByIDs, loginUser.userId]);
+
+//         let matchId = req.query.id;
+//         let marketId = req.query.marketId || '';
+//         let eventId;
+
+//         if (marketId) {
+//             const market = await MarketIDS.findOne({ marketId: marketId });
+//             if (!market) {
+//                 return res.status(404).send({ message: 'Market not found' });
+//             }
+//             eventId = await Events.findOne({ Id: market.eventId });
+//         } else {
+//             eventId = await Events.findById(matchId);
+//         }
+
+//         if (!eventId) {
+//             return res.status(404).send({ message: 'Event not found' });
+//         }
+
+//         const sportsId = eventId.sportsId;
+
+//         // Match Bets
+//         const matchedBetsPromise = Bets.aggregate([
+//             { $match: { userId: { $in: userIDs }, status: 1, matchId, marketId } },
+//             { $lookup: { from: 'users', localField: 'userId', foreignField: 'userId', as: 'userDetails' } },
+//             { $unwind: '$userDetails' },
+//             { $lookup: { from: 'users', localField: 'userDetails.createdBy', foreignField: 'userId', as: 'masterDetails' } },
+//             { $project: {
+//                 _id: 0,
+//                 price: '$betRate',
+//                 runnersPosition: '$runnersPosition',
+//                 calculateExp: '$calculateExp',
+//                 runnerId: '$runnerName',
+//                 createdAt: '$createdAt',
+//                 size: '$betAmount',
+//                 runner: '$runner',
+//                 marketId: '$marketId',
+//                 betRate: '$betRate',
+//                 type: '$type',
+//                 isfancyOrbookmaker: '$isfancyOrbookmaker',
+//                 fancyData: '$fancyData',
+//                 bettor: '$userDetails.userName',
+//                 bettorId: '$userDetails.userId',
+//                 fancyRate: '$fancyRate',
+//                 betSession: '$betSession',
+//                 roundId: '$roundId',
+//                 master: {
+//                     $cond: [
+//                         { $eq: [loginUser.role, '5'] },
+//                         loginUser.userName,
+//                         { $ifNull: [{ $arrayElemAt: ['$masterDetails.userName', 0] }, ''] }
+//                     ]
+//                 }
+//             }},
+//             { $sort: { _id: -1 } }
+//         ]).exec();
+
+//         // Related Events
+//         const relatedEventsPromise = sportsId === "7" || sportsId === "4339" ? MarketIDS.aggregate([
+//             { $match: { sportID: +sportsId, status: { $ne: "CLOSED" } } },
+//             { $lookup: { from: 'raceodds', localField: 'marketId', foreignField: 'marketId', as: 'oddsData' } },
+//             { $lookup: { from: 'inplayevents', localField: 'eventId', foreignField: 'Id', as: 'event' } },
+//             { $project: {
+//                 _id: 1,
+//                 sportsId: { $toString: "$sportID" },
+//                 Id: "$eventId",
+//                 marketIds: "$marketId",
+//                 name: "$event.name",
+//                 countryCode: { $first: '$event.countryCode' },
+//                 openDate: 1,
+//                 status: 1,
+//                 totalMatched: { $arrayElemAt: ['$oddsData.totalMatched', 0] }
+//             }},
+//             { $sort: { openDate: 1 } },
+//             { $limit: 5 }
+//         ]).exec() : Events.find({
+//             sportsId,
+//             status: "OPEN",
+//             Id: { $ne: eventId.Id },
+//             isShowed: true,
+//             CompanySetStatus: "OPEN"
+//         }).sort({ openDate: 1 }).limit(5).exec();
+
+//         const [matchedBets, relatedEvents] = await Promise.all([matchedBetsPromise, relatedEventsPromise]);
+
+//         if (matchedBets.length > 0) {
+//             const promises = matchedBets.map(async (item) => {
+//                 const multiplier = await getPercentageSharing(item.bettorId, loginUser.userId);
+//                 return {
+//                     ...item,
+//                     percentage: multiplier
+//                 };
+//             });
+//             matchedBets = await Promise.all(promises);
+//         }
+
+//         return res.send({
+//             success: true,
+//             message: 'Matched bets record found',
+//             data: matchedBets,
+//             events: relatedEvents
+//         });
+//     } catch (err) {
+//         console.warn('Error:', err);
+//         return res.status(500).send({ message: 'Error retrieving matched bets', error: err });
+//     }
+// }
 
 async function FakeBetsList(req, res) {
   try {

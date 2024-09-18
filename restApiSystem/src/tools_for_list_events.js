@@ -21,7 +21,7 @@ function ToolForEvent() {
 
   async function init(_io, express) {
     apiRequests.init(_io, express);
-    console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",config.activeProvider);
+    // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",config.activeProvider);
     if (config.activeProvider === 'NEW') {
       fetchEvents();
       setBrokenRecord();
@@ -200,7 +200,7 @@ async function updateOddsFormLimitless() {
   async function fetchMarkets() {
     try {
       for (const id of sportsIds) {
-        console.log('==============documents 1st..=======================')
+        // console.log('==============documents 1st..=======================')
         let documents = null;
         if (id === '4') {
           documents = await inPlayEvents
@@ -288,7 +288,7 @@ async function updateOddsFormLimitless() {
       await MarketIDs.updateMany({ marketId: { $in: marketIds } }, { $set: { lastCheck: Date.now() } });
 
       if (marketIds.length > 0) {
-        console.log("17777777777777777777777777777777777777777777777777777");
+        // console.log("17777777777777777777777777777777777777777777777777777");
         apiRequests.getOddsFromProvider(documents, eventId);
       }
     } catch (error) {
@@ -348,11 +348,11 @@ async function updateOddsFormLimitless() {
       ]).exec();
 
       let marketIds = [];
-      console.log("documents length.............=====================================>>>>",documents.length);
+      // console.log("documents length.............=====================================>>>>",documents.length);
       if (documents.length > 0) {
         documents.forEach((element) => {
           marketIds.push(element.marketId);
-          console.log("event .............=====================================>>>>", element.marketId, "--Name: ", element.marketName, "eventname", "==eventId=", element.eventId, "===eventtime===", Date(element.openDate),"===sportID===",element.sportID);
+          // console.log("event .............=====================================>>>>", element.marketId, "--Name: ", element.marketName, "eventname", "==eventId=", element.eventId, "===eventtime===", Date(element.openDate),"===sportID===",element.sportID);
         });
       }
       //console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM:",marketIds);

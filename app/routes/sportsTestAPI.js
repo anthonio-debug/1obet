@@ -3529,7 +3529,7 @@ async function getMarketsByEventId(req, res) {
     };
     var url = `${sportsAPIUrl}/listMarketCatalogue`;
 
-    const response = await axios.post(url, requestData, header);
+    const response = await axios.post(url, JSON.stringify(requestData), header);
 
     const marketsData = response.data;
 
@@ -4019,8 +4019,25 @@ async function deleteOdds(req, res) {
   try {
     //await Bets.deleteMany({marketId:'1.232738763bm',eventId:'33564157',marketName:'Bookmaker'});
     await Odds.deleteMany({});
-    await RaceOdds.deleteMany({});
-    await fancyOdds.deleteMany({});
+   
+
+  
+
+    // await RaceOdds.deleteMany({});
+    // await fancyOdds.deleteMany({});
+    await MarketIDS.deleteMany({
+      $or: [
+        { status: 'CLOSED', sportID: 4339 },
+        { status: 'CLOSED', sportID: 7 },
+
+      ]
+    });
+    const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
+    const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
+    const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
+    const count5 = await MarketIDS.countDocuments({ sportID: 7 });
+    const betCountFotprevios2month=await Bets.countDocuments({betTime:{$lt:1711180800000}})
+      return res.json({"{status:'CLOSED',sportID:4339 count":count1,"{{ status: 'CLOSED', sportID: 7 } count":count3,"{{ sportID: 4339 } count":count4,"{{ sportID: 7 } count":count5,"betCountFotprevios2month":betCountFotprevios2month})
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });

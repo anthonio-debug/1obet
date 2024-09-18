@@ -57,7 +57,11 @@ const inPlayEventsSchema = new mongoose.Schema({
   hasBookmaker: { type: Boolean, default: false },
   hasFancyMatch: { type: Boolean, default: false }
 });
-
+inPlayEventsSchema.index({ sportsId: 1 });
+inPlayEventsSchema.index({ Id: 1 });
+inPlayEventsSchema.index({ status: 1 });
+inPlayEventsSchema.index({ isShowed: 1 });
+inPlayEventsSchema.index({ CompanySetStatus: 1 });
 inPlayEventsSchema.plugin(Global.paginate);
 inPlayEventsSchema.plugin(Global.aggregatePaginate);
 
