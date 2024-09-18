@@ -3503,6 +3503,8 @@ async function testAPI(req, res) {
   }
 }
 
+
+
 async function getMarketsByEventId(req, res) {
   const eventId = req.params.eventId;
 
@@ -3513,7 +3515,7 @@ async function getMarketsByEventId(req, res) {
         accept: "application/json",
         "Content-Type": "application/json",
         "X-App": process.env.XAPP_NAME,
-        "Cache-Control": "no-cache"
+        "Cache-Control": "no-cache",
       },
     };
     const requestData = {
@@ -3529,19 +3531,18 @@ async function getMarketsByEventId(req, res) {
         "RUNNER_DESCRIPTION",
       ],
     };
-    var url = `${sportsAPIUrl}/listMarketCatalogue`;
+    const url = `${sportsAPIUrl}/listMarketCatalogue`;
 
-    const response = await axios.post(url, JSON.stringify(requestData), header);
-
+    const response = await axios.post(url, requestData, header);
     const marketsData = response.data;
 
     res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, msg: "Failed to get Error: " + err.message });
+    console.error(err); // Log the full error
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
+
 
 async function getEventsBySportsId(req, res) {
   const sportsId = req.params.sportsId;
