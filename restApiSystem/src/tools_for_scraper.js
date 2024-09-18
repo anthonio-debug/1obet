@@ -111,7 +111,7 @@ function ToolForScraper() {
     } catch (error) {
       console.error('Error fetchCricketScoreFromApi:', error);
     } finally {
-      setTimeout(fetchCricketScoreFromApi, 3000);
+      setTimeout(fetchCricketScoreFromApi, 1000);
     }
   }
 
