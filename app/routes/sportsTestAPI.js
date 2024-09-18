@@ -5498,7 +5498,7 @@ async function eventsBySupportJobs(req,res) {
       });
 
       for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
-        const existingDoc = await InPlayEvents.findOne({Id: events[k].event.id});
+        const existingDoc = await inplayeventsraces.findOne({Id: events[k].event.id});
 
         if (existingDoc && existingDoc.isCanceled === true) {
           continue;
@@ -5509,7 +5509,7 @@ async function eventsBySupportJobs(req,res) {
         //   // //console.log(event.inplay);
         // }
 
-        await inplayeventsraces.findOneAndUpdate(
+        await RACESinplayeventsracesraces.findOneAndUpdate(
           {Id: events[k].event.id},
           {
             $set: {
@@ -5545,7 +5545,7 @@ async function eventsBySupportJobs(req,res) {
       }
 
       let allIDS = [];
-      const currentEvents = await inplayeventsraces.find(
+      const currentEvents = await RACESinplayeventsracesraces.find(
         {status: 'OPEN', sportsId: sportsId + ""},
         {Id: 1}
       );
