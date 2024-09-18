@@ -36,7 +36,7 @@ function ToolForSessionFancy() {
      
     if(oddevenOdds && oddevenOdds!=0){
    
-      console.log("oddevenOdds lengthsssssss...............",oddevenOdds,"..................",oddevenOdds);
+      // console.log("oddevenOdds lengthsssssss...............",oddevenOdds,"..................",oddevenOdds);
      for (const odd of oddevenOdds) {
       //console.log("odd.gtype.......................:::",odd.gtype);
       
