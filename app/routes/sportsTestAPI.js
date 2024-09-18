@@ -5456,6 +5456,13 @@ async function updateOddsFormLimitless(req, res) {
     console.error("Error updating odds:", error);
   }
 }
+const header = {
+  headers: {
+    'accept': 'application/json',
+    'Content-Type': 'application/json',
+    'X-App': process.env.XAPP_NAME
+  },
+}
 //////////////////////////////////////////
 async function eventsBySupportJobs(req,res) {
   function isValidDate(d) {
