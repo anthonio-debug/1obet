@@ -80,7 +80,7 @@ function ToolForEvent() {
     let from = new Date();
     let to = new Date(from);
     to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
-
+ const sportsId=4339
     const requestData = {
       filter: {
         eventTypeIds: [sportsId]
@@ -145,7 +145,7 @@ function ToolForEvent() {
         }
 
         let dbEventIdS = [];
-        const currentEvents = await inPlayEvents.find({ status: 'OPEN', sportsId: `${sportsId}` }, { Id: 1 });
+        const currentEvents = await inplayeventsraces.find({ status: 'OPEN', sportsId: `${sportsId}` }, { Id: 1 });
 
         for (const event of currentEvents) {
           dbEventIdS.push(event.Id);
@@ -171,7 +171,7 @@ function ToolForEvent() {
           );
         
         }
-
+          
         return {
           success: true,
           message: 'Events retrieved and saved successfully',
