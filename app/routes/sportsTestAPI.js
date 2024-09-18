@@ -3504,7 +3504,6 @@ async function testAPI(req, res) {
 }
 
 
-
 async function getMarketsByEventId(req, res) {
   const eventId = req.params.eventId;
 
@@ -3532,14 +3531,20 @@ async function getMarketsByEventId(req, res) {
       ],
     };
     const url = `${sportsAPIUrl}/listMarketCatalogue`;
-console.log("Arham third party test ==================== ")
-    const response = await axios.post(url, requestData, header);
+    
+    console.log("Sending request to:", url);
+    const response = await axios.post(url, requestData, { ...header, timeout: 10000 });
     const marketsData = response.data;
-    console.log("Arham third party test after ====================== ")
+    console.log("Response received:", marketsData);
 
     res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    console.error(err); // Log the full error
+    console.error("Error occurred:", err.message);
+    if (err.response) {
+      console.error("Response data:", err.response.data);
+    } else if (err.request) {
+      console.error("Request was made but no response received:", err.request);
+    }
     res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
