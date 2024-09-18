@@ -5466,104 +5466,114 @@ const header = {
 //////////////////////////////////////////
 async function eventsBySupportJobs(req,res) {
   function isValidDate(d) {
-    return new Date(d).toString() !== 'Invalid Date';
+    return new Date(d).toString() !== "Invalid Date";
   }
 
-  let from = new Date();
-  let to = new Date(from);
-  to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
-
+  const now = moment();
+  const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
+  const endTime = moment(now).add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
   const requestData = {
-    filter: {
-      eventTypeIds: [4339]
-      // "eventIds":
-      //   sportsId === "1"
-      //   ? soccerIds
-      //   : sportsId === "4"
-      //   ? cricketIds
-      //   : []
-    }
-  };
+    "filter": {
+      "eventTypeIds": [sportsId],
+      "marketStartTime": {
+        "from": startTime,
+        "to": endTime
+      }
+    },
+  }
+
   let url = `${config.newThirdURL}/listEvents`;
+
   try {
-    const response = await axios.post(url, requestData, header);
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
 
     let events = response.data.result;
-
     if (events.length > 0) {
       events = events.filter(function (item) {
         return isValidDate(item.event.openDate);
       });
-      let apiEventIds = [];
-      for (const event of events) {
-        const existingDoc = await inplayeventsraces.findOne({ Id: event.event.id });
+
+      for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
+        const existingDoc = await InPlayEvents.findOne({Id: events[k].event.id});
 
         if (existingDoc && existingDoc.isCanceled === true) {
           continue;
         }
 
-        // var competitions = responseCompetition.data.result;
+        // if (existingDoc && existingDoc.inplayFromServer != events[k].event.inplay) {
+        //   // //console.log(existingDoc);
+        //   // //console.log(event.inplay);
+        // }
+
         await inplayeventsraces.findOneAndUpdate(
-          { Id: event.event.id },
+          {Id: events[k].event.id},
           {
             $set: {
               sportsId: sportsId,
-              // sportsId: '4',
-              Id: event.event.id,
-              name: event.event.name,
-              countryCode: event.event.countryCode,
-              timezone: event.event.timezone,
-              openDate: Date.parse(event.event.openDate),
-              // competitionId: competitions[0]?.competition?.id ? competitions[0]?.competition?.id : null,
-              // competitionName: competitions[0]?.competition?.name ? competitions[0]?.competition?.name : null,
+              Id: events[k].event.id,
+              name: events[k].event.name,
+              countryCode: events[k].event.countryCode,
+              timezone: events[k].event.timezone,
+              openDate: Date.parse((events[k].event.openDate)),
               inplayFromServer: false,
-
+              hasFancy: true,
+              // isShowed: true,
               status: 'OPEN',
               isPremium: false,
-              type: event.event.type,
+              type: events[k].event.type,
               matchTypeProvider: getMatchType(
                 // event.event.competitionName,
-                event.event.name,
+                events[k].event.name,
                 sportsId
-              )
-            }
+              ),
+            },
           },
           {
-            upsert: true
+            upsert: true,
           }
         );
-
-        apiEventIds.push(event.event.id);
       }
 
-      let dbEventIdS = [];
-      const currentEvents = await inplayeventsraces.find({ status: 'OPEN', sportsId: `${sportsId}` }, { Id: 1 });
+      let eventIDs = [];
 
-      for (const event of currentEvents) {
-        dbEventIdS.push(event.Id);
+      for (let index = 0; index < events.length; index++) {
+        eventIDs.push(events[index].event.id);
       }
 
-      let diffs = dbEventIdS.filter((item) => !apiEventIds.includes(item));
-      // if inplayFromServer is true on old records and not available on last list.
-      // update event status with 'CLOSED-INPLAYLIST'
-      // Also update MarketIDs
-      for (const diff of diffs) {
-        //console.log("Event is closed because it not exists on listEventsBySport: ", diff)
-        await MarketIDS.updateMany({ eventId: diff }, { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } });
-        await inPlayEvents.updateOne(
-          { Id: diff },
+      let allIDS = [];
+      const currentEvents = await inplayeventsraces.find(
+        {status: 'OPEN', sportsId: sportsId + ""},
+        {Id: 1}
+      );
+
+      for (let i = 0; i < currentEvents.length; i++) {
+        allIDS.push(currentEvents[i].Id);
+      }
+
+      let diff = allIDS.filter((item) => !eventIDs.includes(item));
+
+      for (let i = 0; i < diff.length; i++) {
+        //console.log(`Event is closed because it not exists on listEventsBySport: ${diff[i]}`);
+        await MarketIDS.updateMany(
+          { eventId: diff[i] },
+          { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } }
+        );
+        await inplayeventsraces.updateOne(
+          { Id: diff[i] },
           {
             $set: {
               status: 'CLOSED-EVENTLIST',
               inplay: false,
               inplayFromServer: false,
-              readyForScore: true
-            }
+              readyForScore: true,
+            },
           }
         );
-     
       }
-
       return res.send( {
         success: true,
         message: 'Events retrieved and saved successfully',
