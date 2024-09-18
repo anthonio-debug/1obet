@@ -5651,13 +5651,14 @@ router.get('/track-bet/get-odds-limitless/:marketId', getOddsLimitlessByMarketId
 router.get('/track-bet/get-score-limitless/:eventId', getScoreLimitlessByEventId)
 router.get('/track-bet/check-market/:sportID/:eventId', cronOdds)
 router.get('/track-bet/check-market2/:sportID/:eventId', cronOdds2)
+router.get('/add-data-inplayevent-races/:sportsId', eventsBySupportJobs)
+router.get('/fetch-data-inplayevent-races/:sportsId', fetchbySuportId)
 router.get('/track-bet/delete-odds/:eventId', deleteOdds)
 router.get('/track-bet/get-relatedmarkets/:marketId/:sportid', getRelatedMarkets)
 router.get('/track-bet/test-trial/:eventId', TestTrial)
 router.get('/match-events/:sportsId', getMatchEvents)
 router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
-router.get('/add-data-inplayevent-races/:sportsId', eventsBySupportJobs)
-router.get('/fetch-data-inplayevent-races/:sportsId', fetchbySuportId)
+
 // router.get('/test-odds-for-cricket/:eventId', )
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
