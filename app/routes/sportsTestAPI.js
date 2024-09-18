@@ -5469,7 +5469,7 @@ async function eventsBySupportJobs() {
   const endTime = moment(now).add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
   const requestData = {
     "filter": {
-      "eventTypeIds": [req.query.sportsId],
+      "eventTypeIds": [req.params.sportsId],
       "marketStartTime": {
         "from": startTime,
         "to": endTime
