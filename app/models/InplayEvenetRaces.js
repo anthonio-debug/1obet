@@ -69,7 +69,7 @@ inPlayEventsSchemaraces.plugin(Global.aggregatePaginate);
 inPlayEventsSchemaraces.index({ inplay: 1, sportsId: 1 })
 inPlayEventsSchemaraces.index({ sportsId: 1, openDate: 1 });
 inPlayEventsSchemaraces.index({ sportsId: 1, openDate: 1, inplay: 1, iconStatus: 1 });
-const inPlayEvents = mongoose.model('inplayeventsraces', inPlayEventsSchemaraces);
+const inplayeventsraces = mongoose.model('inplayeventsraces', inPlayEventsSchemaraces);
 
-inPlayEvents.createIndexes();
-module.exports = inPlayEvents;
+inplayeventsraces.createIndexes();
+module.exports = inplayeventsraces;

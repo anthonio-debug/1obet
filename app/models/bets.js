@@ -84,5 +84,7 @@ betSchema.pre('save', function (next) {
 
 betSchema.plugin(Global.aggregatePaginate);
 betSchema.plugin(Global.paginate);
+
 const Bets = mongoose.model('bet', betSchema);
+Bets.createIndexes()
 module.exports = Bets;

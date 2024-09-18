@@ -33,6 +33,7 @@ const SubMarketType = require('../models/subMarketTypes.js');
 const Crickets = require('../models/Crickets.js');
 const CurrentPosition = require('../models/CurrentPosition.js');
 const inPlayEventsRaces = require('../models/events');
+const inplayeventsraces = require('../models/InplayEvenetRaces.js');
 
 require('dotenv').config()
 // console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -3578,7 +3579,7 @@ async function getEventsBySportsId(req, res) {
       });
 
       for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
-        const existingDoc = await inPlayEventsRaces.findOne({Id: events[k].event.id});
+        const existingDoc = await inplayeventsraces.findOne({Id: events[k].event.id});
 
         if (existingDoc && existingDoc.isCanceled === true) {
           continue;
@@ -3589,7 +3590,7 @@ async function getEventsBySportsId(req, res) {
         //   // //console.log(event.inplay);
         // }
 
-        await inPlayEventsRaces.findOneAndUpdate(
+        await inplayeventsraces.findOneAndUpdate(
           {Id: events[k].event.id},
           {
             $set: {
@@ -3625,7 +3626,7 @@ async function getEventsBySportsId(req, res) {
       }
 
       let allIDS = [];
-      const currentEvents = await InPlayEvents.find(
+      const currentEvents = await inplayeventsraces.find(
         {status: 'OPEN', sportsId: sportsId + ""},
         {Id: 1}
       );
@@ -3642,7 +3643,7 @@ async function getEventsBySportsId(req, res) {
           {eventId: diff[i]},
           {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}
         );
-        await InPlayEvents.updateOne(
+        await inplayeventsraces.updateOne(
           {Id: diff[i]},
           {
             $set: {
@@ -3657,7 +3658,7 @@ async function getEventsBySportsId(req, res) {
       }
 
      
-        const data = await inPlayEventsRaces.find({})
+        const data = await inplayeventsraces.find({})
         res.send({data})
       
     } else {
