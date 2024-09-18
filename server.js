@@ -92,128 +92,128 @@ function getMatchType(
     return returnMatch;
   }
 }
-async function fetchEvents() {
-  function isValidDate(d) {
-    return new Date(d).toString() !== 'Invalid Date';
-  }
-console.log("here")
-  let from = new Date();
-  let to = new Date(from);
-  to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
-const sportsId=4339
-  const requestData = {
-    filter: {
-      eventTypeIds: [sportsId]
-      // "eventIds":
-      //   sportsId === "1"
-      //   ? soccerIds
-      //   : sportsId === "4"
-      //   ? cricketIds
-      //   : []
-    }
-  };
-  let url = `${config.newThirdURL}/listEvents`;
-  try {
-    const response = await axios.post(url, requestData, header);
+// async function fetchEvents() {
+//   function isValidDate(d) {
+//     return new Date(d).toString() !== 'Invalid Date';
+//   }
+// console.log("here")
+//   let from = new Date();
+//   let to = new Date(from);
+//   to.setTime(to.getTime() + 2 * 24 * 60 * 60 * 1000);
+// const sportsId=4339
+//   const requestData = {
+//     filter: {
+//       eventTypeIds: [sportsId]
+//       // "eventIds":
+//       //   sportsId === "1"
+//       //   ? soccerIds
+//       //   : sportsId === "4"
+//       //   ? cricketIds
+//       //   : []
+//     }
+//   };
+//   let url = `${config.newThirdURL}/listEvents`;
+//   try {
+//     const response = await axios.post(url, requestData, header);
 
-    let events = response.data.result;
+//     let events = response.data.result;
 
-    if (events.length > 0) {
-      events = events.filter(function (item) {
-        return isValidDate(item.event.openDate);
-      });
-      let apiEventIds = [];
-      for (const event of events) {
-        const existingDoc = await inplayeventsraces.findOne({ Id: event.event.id });
+//     if (events.length > 0) {
+//       events = events.filter(function (item) {
+//         return isValidDate(item.event.openDate);
+//       });
+//       let apiEventIds = [];
+//       for (const event of events) {
+//         const existingDoc = await inplayeventsraces.findOne({ Id: event.event.id });
 
-        if (existingDoc && existingDoc.isCanceled === true) {
-          continue;
-        }
+//         if (existingDoc && existingDoc.isCanceled === true) {
+//           continue;
+//         }
 
-        // var competitions = responseCompetition.data.result;
-        await inplayeventsraces.findOneAndUpdate(
-          { Id: event.event.id },
-          {
-            $set: {
-              sportsId: sportsId,
-              // sportsId: '4',
-              Id: event.event.id,
-              name: event.event.name,
-              countryCode: event.event.countryCode,
-              timezone: event.event.timezone,
-              openDate: Date.parse(event.event.openDate),
-              // competitionId: competitions[0]?.competition?.id ? competitions[0]?.competition?.id : null,
-              // competitionName: competitions[0]?.competition?.name ? competitions[0]?.competition?.name : null,
-              inplayFromServer: false,
+//         // var competitions = responseCompetition.data.result;
+//         await inplayeventsraces.findOneAndUpdate(
+//           { Id: event.event.id },
+//           {
+//             $set: {
+//               sportsId: sportsId,
+//               // sportsId: '4',
+//               Id: event.event.id,
+//               name: event.event.name,
+//               countryCode: event.event.countryCode,
+//               timezone: event.event.timezone,
+//               openDate: Date.parse(event.event.openDate),
+//               // competitionId: competitions[0]?.competition?.id ? competitions[0]?.competition?.id : null,
+//               // competitionName: competitions[0]?.competition?.name ? competitions[0]?.competition?.name : null,
+//               inplayFromServer: false,
 
-              status: 'OPEN',
-              isPremium: false,
-              type: event.event.type,
-              matchTypeProvider: getMatchType(
-                // event.event.competitionName,
-                event.event.name,
-                sportsId
-              )
-            }
-          },
-          {
-            upsert: true
-          }
-        );
+//               status: 'OPEN',
+//               isPremium: false,
+//               type: event.event.type,
+//               matchTypeProvider: getMatchType(
+//                 // event.event.competitionName,
+//                 event.event.name,
+//                 sportsId
+//               )
+//             }
+//           },
+//           {
+//             upsert: true
+//           }
+//         );
 
-        apiEventIds.push(event.event.id);
-      }
+//         apiEventIds.push(event.event.id);
+//       }
 
-      let dbEventIdS = [];
-      const currentEvents = await inplayeventsraces.find({ status: 'OPEN', sportsId: `${sportsId}` }, { Id: 1 });
+//       let dbEventIdS = [];
+//       const currentEvents = await inplayeventsraces.find({ status: 'OPEN', sportsId: `${sportsId}` }, { Id: 1 });
 
-      for (const event of currentEvents) {
-        dbEventIdS.push(event.Id);
-      }
+//       for (const event of currentEvents) {
+//         dbEventIdS.push(event.Id);
+//       }
 
-      let diffs = dbEventIdS.filter((item) => !apiEventIds.includes(item));
-      // if inplayFromServer is true on old records and not available on last list.
-      // update event status with 'CLOSED-INPLAYLIST'
-      // Also update MarketIDs
-      for (const diff of diffs) {
-        //console.log("Event is closed because it not exists on listEventsBySport: ", diff)
-        await MarketIDS.updateMany({ eventId: diff }, { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } });
-        await inplayeventsraces.updateOne(
-          { Id: diff },
-          {
-            $set: {
-              status: 'CLOSED-EVENTLIST',
-              inplay: false,
-              inplayFromServer: false,
-              readyForScore: true
-            }
-          }
-        );
+//       let diffs = dbEventIdS.filter((item) => !apiEventIds.includes(item));
+//       // if inplayFromServer is true on old records and not available on last list.
+//       // update event status with 'CLOSED-INPLAYLIST'
+//       // Also update MarketIDs
+//       for (const diff of diffs) {
+//         //console.log("Event is closed because it not exists on listEventsBySport: ", diff)
+//         await MarketIDS.updateMany({ eventId: diff }, { $set: { inPlay: false, status: 'CLOSED', readyForScore: true } });
+//         await inplayeventsraces.updateOne(
+//           { Id: diff },
+//           {
+//             $set: {
+//               status: 'CLOSED-EVENTLIST',
+//               inplay: false,
+//               inplayFromServer: false,
+//               readyForScore: true
+//             }
+//           }
+//         );
       
-      }
+//       }
         
-      return {
-        success: true,
-        message: 'Events retrieved and saved successfully',
-        events: events
-      };
-    } else {
-      return {
-        success: false,
-        message: 'Events empty'
-      };
-    }
-  }catch (error) {
-    //console.log("Problem on taking event list");
-    console.error(error);
-    return {
-      success: false,
-      message: 'Failed to get or save events',
-      error: error.message
-    };
-  }
-}
-setInterval(fetchEvents,1000)
+//       return {
+//         success: true,
+//         message: 'Events retrieved and saved successfully',
+//         events: events
+//       };
+//     } else {
+//       return {
+//         success: false,
+//         message: 'Events empty'
+//       };
+//     }
+//   }catch (error) {
+//     //console.log("Problem on taking event list");
+//     console.error(error);
+//     return {
+//       success: false,
+//       message: 'Failed to get or save events',
+//       error: error.message
+//     };
+//   }
+// }
+// setInterval(fetchEvents,1000)
 
 // const allowedOrigin = 'https://dev.bookofblack.com';
 // const allowedAdminOrigin = 'https://socket.bookofblack.com';
