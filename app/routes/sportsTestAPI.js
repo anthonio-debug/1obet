@@ -3532,9 +3532,10 @@ async function getMarketsByEventId(req, res) {
       ],
     };
     const url = `${sportsAPIUrl}/listMarketCatalogue`;
-
+console.log("Arham third party test ==================== ")
     const response = await axios.post(url, requestData, header);
     const marketsData = response.data;
+    console.log("Arham third party test after ====================== ")
 
     res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
