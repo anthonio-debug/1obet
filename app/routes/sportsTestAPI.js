@@ -3505,47 +3505,136 @@ async function testAPI(req, res) {
 
 
 async function getMarketsByEventId(req, res) {
-  const eventId = req.params.eventId;
+  function isValidDate(d) {
+    return new Date(d).toString() !== "Invalid Date";
+  }
+
+  const now = moment();
+  const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
+  const endTime = moment(now).add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+  const requestData = {
+    "filter": {
+      "eventTypeIds": [sportsId],
+      "marketStartTime": {
+        "from": startTime,
+        "to": endTime
+      }
+    },
+  }
+
+  let url = `${config.newThirdURL}/listEvents`;
 
   try {
-    const sportsAPIUrl = "http://185.58.225.212:8080/api";
-    const header = {
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-        "X-App": process.env.XAPP_NAME,
-        "Cache-Control": "no-cache",
-      },
-    };
-    const requestData = {
-      filter: {
-        eventIds: [eventId],
-      },
-      maxResults: 200,
-      marketProjection: [
-        "EVENT",
-        "EVENT_TYPE",
-        "MARKET_START_TIME",
-        "MARKET_DESCRIPTION",
-        "RUNNER_DESCRIPTION",
-      ],
-    };
-    const url = `${sportsAPIUrl}/listMarketCatalogue`;
-    
-    console.log("Sending request to:", url);
-    const response = await axios.post(url, requestData, { ...header, timeout: 10000 });
-    const marketsData = response.data;
-    console.log("Response received:", marketsData);
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
 
-    res.status(200).json({ success: true, data: marketsData });
-  } catch (err) {
-    console.error("Error occurred:", err.message);
-    if (err.response) {
-      console.error("Response data:", err.response.data);
-    } else if (err.request) {
-      console.error("Request was made but no response received:", err.request);
+    let events = response.data.result;
+    if (events.length > 0) {
+      events = events.filter(function (item) {
+        return isValidDate(item.event.openDate);
+      });
+
+      for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
+        const existingDoc = await inplayeventsraces.findOne({Id: events[k].event.id});
+
+        if (existingDoc && existingDoc.isCanceled === true) {
+          continue;
+        }
+
+        // if (existingDoc && existingDoc.inplayFromServer != events[k].event.inplay) {
+        //   // //console.log(existingDoc);
+        //   // //console.log(event.inplay);
+        // }
+
+        await inplayeventsraces.findOneAndUpdate(
+          {Id: events[k].event.id},
+          {
+            $set: {
+              sportsId: sportsId,
+              Id: events[k].event.id,
+              name: events[k].event.name,
+              countryCode: events[k].event.countryCode,
+              timezone: events[k].event.timezone,
+              openDate: Date.parse((events[k].event.openDate)),
+              inplayFromServer: false,
+              hasFancy: true,
+              // isShowed: true,
+              status: 'OPEN',
+              isPremium: false,
+              type: events[k].event.type,
+              matchTypeProvider: getMatchType(
+                // event.event.competitionName,
+                events[k].event.name,
+                sportsId
+              ),
+            },
+          },
+          {
+            upsert: true,
+          }
+        );
+      }
+
+      let eventIDs = [];
+
+      for (let index = 0; index < events.length; index++) {
+        eventIDs.push(events[index].event.id);
+      }
+
+      let allIDS = [];
+      const currentEvents = await inplayeventsraces.find(
+        {status: 'OPEN', sportsId: sportsId + ""},
+        {Id: 1}
+      );
+
+      for (let i = 0; i < currentEvents.length; i++) {
+        allIDS.push(currentEvents[i].Id);
+      }
+
+      let diff = allIDS.filter((item) => !eventIDs.includes(item));
+
+      for (let i = 0; i < diff.length; i++) {
+        //console.log(`Event is closed because it not exists on listEventsBySport: ${diff[i]}`);
+        await MarketIDS.updateMany(
+          {eventId: diff[i]},
+          {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}
+        );
+        await inplayeventsraces.updateOne(
+          {Id: diff[i]},
+          {
+            $set: {
+              status: 'CLOSED-EVENTLIST',
+              inplay: false,
+              inplayFromServer: false,
+              readyForScore: true,
+            },
+          }
+        );
+       
+      }
+
+      return {
+        success: true,
+        message: "Events retrieved and saved successfully",
+        events: events,
+      };
+    } else {
+      return {
+        success: false,
+        message: "Events empty",
+      };
     }
-    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message });
+  } catch (error) {
+    //console.log("Problem on taking event list");
+    // console.error(error);
+    return {
+      success: false,
+      message: "Failed to get or save events",
+      error: error.message,
+    };
   }
 }
 
