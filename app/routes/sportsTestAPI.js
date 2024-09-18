@@ -3653,19 +3653,13 @@ async function getEventsBySportsId(req, res) {
             },
           }
         );
-        io.emit("inplay", {eventID: diff[i], inplay: false});
-        io.to("eventStatusChange").emit("event_status", {
-          eventId: diff[i],
-          status: 'CLOSED-EVENTLIST',
-        });
+       
       }
 
-      try {
+     
         const data = await inPlayEventsRaces.find({})
         res.send({data})
-      } catch (error) {
-        res.send({error})
-      }
+      
     } else {
       return {
         success: false,
