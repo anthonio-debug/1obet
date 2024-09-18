@@ -5457,7 +5457,7 @@ async function updateOddsFormLimitless(req, res) {
   }
 }
 //////////////////////////////////////////
-async function eventsBySupportJobs(sportsId) {
+async function eventsBySupportJobs(req,res) {
   function isValidDate(d) {
     return new Date(d).toString() !== 'Invalid Date';
   }
@@ -5557,25 +5557,25 @@ async function eventsBySupportJobs(sportsId) {
      
       }
 
-      return {
+      return res.send( {
         success: true,
         message: 'Events retrieved and saved successfully',
         events: events
-      };
+      });
     } else {
-      return {
+      return res.send({
         success: false,
         message: 'Events empty'
-      };
+      });
     }
   } catch (error) {
     //console.log("Problem on taking event list");
     // console.error(error);
-    return {
+    return res.send({
       success: false,
       message: 'Failed to get or save events',
       error: error.message
-    };
+    });
   }
 }
 // //////////////////
