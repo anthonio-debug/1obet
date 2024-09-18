@@ -7,6 +7,7 @@ const Market = require('../models/marketTypes');
 const Events = require('../models/events');
 const SubMarket = require('../models/subMarketTypes');
 const { getAllUserIDs } = require("./bets.js");
+const { eventsBySupportJobs } = require('./sportsTestAPI.js');
 const loginRouter = express.Router();
 
 async function addBetLock(req, res) {
@@ -272,6 +273,7 @@ async function updateBlockUsers(req, res) {
 
 loginRouter.get("/getblockusers", gettingBlockUsers)
 loginRouter.post("/updateblockusers", updateBlockUsers)
+loginRouter.get("/eventsBySupportJobs", eventsBySupportJobs)
 loginRouter.post(
   '/addBetLock',
   betLockValidator.validate('addBetLock'),
