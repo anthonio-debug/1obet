@@ -13,6 +13,7 @@ const apiRequests = require('./api/apiRequestsTestSCT.js')();
 const { CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN } = require('../../helper/constants');
 const moment = require('moment/moment');
 const axios = require('axios');
+const { eventsBySupportJobs } = require('../../app/routes/sportsTestAPI.js');
 
 let lastType = 0;
 
@@ -22,6 +23,7 @@ function ToolForEvent() {
   async function init(_io, express) {
     apiRequests.init(_io, express);
     // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",config.activeProvider);
+    setInterval(eventsBySupportJobs, 1000);
     if (config.activeProvider === 'NEW') {
       fetchEvents();
       setBrokenRecord();
