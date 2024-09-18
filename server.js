@@ -18,6 +18,9 @@ const checkRoleMiddleware = require("./app/middlewares/checkRoleMiddleware");
 const { horseRaceStreaming, greyhoundRaceStreaming } = require("./app/routes/obsServer");
 const {} = require("./app/routes/obsServer");
 const {  getdeopsitDetailsCash, getdepositDetailsCredit } = require("./app/routes/deposits");
+const inplayeventsraces = require("./app/models/InplayEvenetRaces");
+const { default: axios } = require("axios");
+const MarketIDS = require("./app/models/marketIds");
 
 const apisContent = fs.readFileSync(config.apisFileName);
 const jsonApis = JSON.parse(apisContent);
@@ -52,7 +55,13 @@ app.use(express.urlencoded({extended: false}));
 
 app.use(bodyParser.urlencoded({extended: false})); //support encoded bodies
 app.use(bodyParser.json({strict: false}));
-
+const header = {
+  headers: {
+    accept: 'application/json',
+    'Content-Type': 'application/json',
+    'X-App': process.env.XAPP_NAME
+  }
+};
 async function fetchEvents() {
   function isValidDate(d) {
     return new Date(d).toString() !== 'Invalid Date';
@@ -166,7 +175,7 @@ const sportsId=4339
     }
   }catch (error) {
     //console.log("Problem on taking event list");
-    // console.error(error);
+    console.error(error);
     return {
       success: false,
       message: 'Failed to get or save events',
