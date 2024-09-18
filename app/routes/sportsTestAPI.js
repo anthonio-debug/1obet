@@ -3514,7 +3514,7 @@ async function getMarketsByEventId(req, res) {
   const endTime = moment(now).add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
   const requestData = {
     "filter": {
-      "eventTypeIds": [sportsId],
+      "eventTypeIds": [4339],
       "marketStartTime": {
         "from": startTime,
         "to": endTime
