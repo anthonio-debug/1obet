@@ -32,6 +32,7 @@ let config = require('config');
 const SubMarketType = require('../models/subMarketTypes.js');
 const Crickets = require('../models/Crickets.js');
 const CurrentPosition = require('../models/CurrentPosition.js');
+const inPlayEventsRaces = require('../models/events');
 
 require('dotenv').config()
 // console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -5455,6 +5456,154 @@ async function updateOddsFormLimitless(req, res) {
     console.error("Error updating odds:", error);
   }
 }
+
+
+// add races event in inplayraces collection testing
+async function eventsBySupportJobs() {
+  function isValidDate(d) {
+    return new Date(d).toString() !== "Invalid Date";
+  }
+
+  const now = moment();
+  const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
+  const endTime = moment(now).add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
+  const requestData = {
+    "filter": {
+      "eventTypeIds": [req.query.sportsId],
+      "marketStartTime": {
+        "from": startTime,
+        "to": endTime
+      }
+    },
+  }
+
+  let url = `${config.newThirdURL}/listEvents`;
+
+  try {
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+
+    let events = response.data.result;
+    if (events.length > 0) {
+      events = events.filter(function (item) {
+        return isValidDate(item.event.openDate);
+      });
+
+      for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
+        const existingDoc = await inPlayEventsRaces.findOne({Id: events[k].event.id});
+
+        if (existingDoc && existingDoc.isCanceled === true) {
+          continue;
+        }
+
+        // if (existingDoc && existingDoc.inplayFromServer != events[k].event.inplay) {
+        //   // //console.log(existingDoc);
+        //   // //console.log(event.inplay);
+        // }
+
+        await inPlayEventsRaces.findOneAndUpdate(
+          {Id: events[k].event.id},
+          {
+            $set: {
+              sportsId: sportsId,
+              Id: events[k].event.id,
+              name: events[k].event.name,
+              countryCode: events[k].event.countryCode,
+              timezone: events[k].event.timezone,
+              openDate: Date.parse((events[k].event.openDate)),
+              inplayFromServer: false,
+              hasFancy: true,
+              // isShowed: true,
+              status: 'OPEN',
+              isPremium: false,
+              type: events[k].event.type,
+              matchTypeProvider: getMatchType(
+                // event.event.competitionName,
+                events[k].event.name,
+                sportsId
+              ),
+            },
+          },
+          {
+            upsert: true,
+          }
+        );
+      }
+
+      let eventIDs = [];
+
+      for (let index = 0; index < events.length; index++) {
+        eventIDs.push(events[index].event.id);
+      }
+
+      let allIDS = [];
+      const currentEvents = await InPlayEvents.find(
+        {status: 'OPEN', sportsId: sportsId + ""},
+        {Id: 1}
+      );
+
+      for (let i = 0; i < currentEvents.length; i++) {
+        allIDS.push(currentEvents[i].Id);
+      }
+
+      let diff = allIDS.filter((item) => !eventIDs.includes(item));
+
+      for (let i = 0; i < diff.length; i++) {
+        //console.log(`Event is closed because it not exists on listEventsBySport: ${diff[i]}`);
+        await MarketIDS.updateMany(
+          {eventId: diff[i]},
+          {$set: {inPlay: false, status: 'CLOSED', readyForScore: true}}
+        );
+        await InPlayEvents.updateOne(
+          {Id: diff[i]},
+          {
+            $set: {
+              status: 'CLOSED-EVENTLIST',
+              inplay: false,
+              inplayFromServer: false,
+              readyForScore: true,
+            },
+          }
+        );
+        io.emit("inplay", {eventID: diff[i], inplay: false});
+        io.to("eventStatusChange").emit("event_status", {
+          eventId: diff[i],
+          status: 'CLOSED-EVENTLIST',
+        });
+      }
+
+      return {
+        success: true,
+        message: "Events retrieved and saved successfully",
+        events: events,
+      };
+    } else {
+      return {
+        success: false,
+        message: "Events empty",
+      };
+    }
+  } catch (error) {
+    //console.log("Problem on taking event list");
+    // console.error(error);
+    return {
+      success: false,
+      message: "Failed to get or save events",
+      error: error.message,
+    };
+  }
+}
+async function fetchbySuportId() {
+  try {
+    const data = await inPlayEventsRaces.find({})
+    res.send({data})
+  } catch (error) {
+    res.send({error})
+  }
+}
 //////////////////////////////////////////
 
 // //////////////////
@@ -5486,7 +5635,7 @@ router.get('/track-bet/bet-statistic/:userId', betStatisticsByUserId)
 
 router.get('/track-bet/testAPI/:marketId', testAPI)
 router.get('/track-bet/get-markets/:eventId', getMarketsByEventId)
-router.get('/track-bet/get-events/:sportsId', getEventsBySportsId)
+router.get('/track-bet/get-events/:sportsId', getEventsBySportsId)// get evenety
 router.get('/track-bet/get-today-events/:sportsId', getTodayEventsBySportsId)
 router.get('/track-bet/get-odds/:marketId', getOddsByMarketId)
 router.get('/track-bet/get-odds2/:marketId', getOddsByMarketId2)
@@ -5507,6 +5656,8 @@ router.get('/track-bet/get-relatedmarkets/:marketId/:sportid', getRelatedMarkets
 router.get('/track-bet/test-trial/:eventId', TestTrial)
 router.get('/match-events/:sportsId', getMatchEvents)
 router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
+router.get('/add-data-inplayevent-races/:sportsId', eventsBySupportJobs)
+router.get('/fetch-data-inplayevent-races/:sportsId', fetchbySuportId)
 // router.get('/test-odds-for-cricket/:eventId', )
 /*admin dashboard*/
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
