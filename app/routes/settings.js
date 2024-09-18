@@ -217,9 +217,6 @@ async function updateMatchType(req, res) {
   try {
     const { _id, matchType, iconStatus, eventId, liveUrl, hasBetfairFancy, hasOverbyOverOddEven } = req.body;
 
-    console.log(`hasBetfairFancy============${hasBetfairFancy}`);
-    console.log(`hasOverbyOverOddEven=============${hasOverbyOverOddEven}`);
-
     const BetSecondsVal = await BetPlaceHold.findOne({ eventId: eventId }).exec();
     if (!BetSecondsVal) {
       const betseconds = new BetPlaceHold({
@@ -250,7 +247,10 @@ async function updateMatchType(req, res) {
         }
       }
 
-      if (hasFancyMatch || hasBookmaker) { hasFancy = true }
+      if (hasBetfairFancy || hasOverbyOverOddEven) { hasFancy = true }
+      else {
+        hasFancy = false
+      }
     }
 
     const updatedData = await Events.findByIdAndUpdate(
@@ -259,8 +259,6 @@ async function updateMatchType(req, res) {
         matchType: matchType, iconStatus: iconStatus, liveUrl: liveUrl, hasBookmaker: hasBookmaker, hasFancyMatch: hasFancyMatch, hasBetfairFancy: hasBetfairFancy, hasFancy: hasFancy, hasOverbyOverOddEven: hasOverbyOverOddEven
       }
     }, { upsert: true, new: true }).exec();
-    console.log(`hasBetfairFancy before send response============${hasBetfairFancy}`);
-    console.log(`hasOverbyOverOddEven before send response=============${hasOverbyOverOddEven}`);
     res.status(200).json({
       success: true,
       message: 'Updated Successfully',
