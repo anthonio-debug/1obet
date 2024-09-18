@@ -3525,10 +3525,18 @@ async function getMarketsByEventId(req, res) {
   let url = `${config.newThirdURL}/listEvents`;
 
   try {
+    
     const response = await axios.post(
       url,
       requestData,
-      header
+   
+       {
+          accept: "application/json",
+          "Content-Type": "application/json",
+          "X-App": process.env.XAPP_NAME,
+         "Cache-Control": "no-cache",
+         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjExMDAwLCJjcmVhdGVkQnkiOjAsInJvbGUiOiIwIiwiZXhwciI6MTcyNjY5ODEwNzczMSwiaWF0IjoxNzI2NjU0OTA3LCJleHAiOjE3Mjg0MjQ3NjI2Mzh9.PQqC_uhdM-s2fTm1nN70IquYXhD80UjyXhFHeZty5ug',
+        },
     );
 
     let events = response.data.result;
