@@ -229,6 +229,8 @@ async function getMarketsByEventId(req, res) {
 async function activateEvent(req, res) {
   try {
     const eventId = req.params.eventId;
+    console.log(">>>>>>>>>>>>>>>>>>eventId ",eventId);
+    
     const event = await inPlayEvents.findOne({ Id: eventId });
     event.status = 'OPEN';
     event.lastCheckMarket = Date.now();
