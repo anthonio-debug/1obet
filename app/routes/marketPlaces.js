@@ -738,7 +738,7 @@ async function cronOdds2(eventId, sportID) {
       res.json({ status: true, data: "Result: ", result });
 
     } catch (error2) {
-      res.status(500).json({ success: false, msg: "Failed to get data from lithyl. Error: " + error2.message });
+      // res.status(500).json({ success: false, msg: "Failed to get data from lithyl. Error: " + error2.message });
 
 
     }
@@ -761,8 +761,8 @@ async function updateCompanySetStatus(req, res) {
 
 
     // console.log("=-=--=-=-=-=--=-=-====-=-= event.sportsId", event.sportsId);
-    // cronOdds2(data.Id, event.sportsId)
-    cronOdds2(data.Id, "4")
+    cronOdds2(data.Id, event.sportsId)
+    // cronOdds2(data.Id, "4")
 
     // console.log("=-=--=-=-=-=--=-=-====-=-= cronOdds2");
 
