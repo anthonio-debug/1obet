@@ -2971,26 +2971,26 @@ async function unblockCasinoGames(req, res) {
   }
 }
 
-// async function getBlockCasinoGames(req, res) {
-//   const role = req.decoded.role;
+async function getBlockCasinoGames(req, res) {
+  const role = req.decoded.role;
 
-//   if (role !== "0") {
-//     return res.status(400).send({ message: "Only company can access!" });
-//   }
+  if (role !== "0") {
+    return res.status(400).send({ message: "Only company can access!" });
+  }
 
-//   try {
+  try {
 
-//     // const getBlockGames = await SelectedCasino.find({ "games.[].isAllowed": true });
+    const getBlockGames = await SelectedCasino.find({ games: { $elemMatch: { isAllowed: false } } });
 
-//     return res.status(200).json({ result: getBlockGames });
-//   } catch (error) {
-//     console.error("Error:", error.message);
+    return res.status(200).json({ result: getBlockGames });
+  } catch (error) {
+    console.error("Error:", error.message);
 
-//     return res.status(500).send({ message: `Error during unblocking games: ${error.message}` });
-//   }
-// }
+    return res.status(500).send({ message: `Error during unblocking games: ${error.message}` });
+  }
+}
 
-// loginRouter.get('/get-block-games', getBlockCasinoGames);
+loginRouter.get('/get-block-games', getBlockCasinoGames);
 loginRouter.post('/block-games', blockCasinoGames);
 loginRouter.post('/unblock-games', unblockCasinoGames);
 loginRouter.post('/updateDefaultTheme', settingsValidation.validate('updateDefaultTheme'), updateDefaultTheme);

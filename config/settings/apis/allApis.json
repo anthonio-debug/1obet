@@ -237,5 +237,7 @@
   "eventsBySupportJobs",
   "bets-records",
   "updateUserBetSizesColec",
-  "block-games"
+  "block-games",
+  "get-block-games",
+  "unblock-games"
   ]
