@@ -837,6 +837,7 @@ async function debitFun(req, res) {
     { "games.id": payload.game_id },
     { "games.$": 1 }
   );
+  console.log("Payload============", payload)
 
   const game = gamesList?.games[0];
   console.log("")
