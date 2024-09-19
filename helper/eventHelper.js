@@ -5,6 +5,8 @@ const inPlayEvents = require("../app/models/events");
 const {SPORT_SOCCER, SPORT_TENNIS, SPORT_CRICKET} = require('./constants')
 
 const fetchMarket = async (event) => {
+  console.log(">>>>>>>>>>>>>>>>>>event--- ",event);
+
   const eventId = event.Id
   const sportsId = event.sportsId
   try {
