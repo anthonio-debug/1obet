@@ -13,6 +13,8 @@ const fetchMarket = async (event) => {
       {$set: {lastCheckMarket: Date.now()}}
     );
     const marketsData = await listMarketCatalogue(eventId);
+    console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData", marketsData);
+    
     if (!marketsData.length) return;
 
     let marketStatus = 'PENDING';

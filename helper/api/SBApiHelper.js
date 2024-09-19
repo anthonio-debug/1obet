@@ -10,7 +10,7 @@ const header = {
   },
 }
 
-const listMarketCatalogue = async (eventId) => {
+const listMarketCatalogue = async (eventId) => {  
   const requestData = {
     "filter": {
       "eventIds": [eventId],

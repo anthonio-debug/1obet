@@ -231,11 +231,11 @@ async function activateEvent(req, res) {
     const eventId = req.params.eventId;
     const event = await inPlayEvents.findOne({ Id: eventId });
     event.status = 'OPEN';
-    event.CompanySetStatus = 'OPEN';
-    event.isShowed = true;
     event.lastCheckMarket = Date.now();
     await event.save();
     await fetchMarket(event);
+    event.CompanySetStatus = 'OPEN';
+    event.isShowed = true;
 
     res.status(200).json({ success: true, message: 'Event updated successfully' });
   } catch (err) {
