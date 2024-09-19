@@ -110,6 +110,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       );
 
       const game = gamesList?.games[0];
+      console.log("")
+      if (game.isAllowed === false) {
+        return res.status(400).send({ message: "This game is not allowed!!" })
+      }
 
       const lastDebits = await CasinoDebits.find({
         action: 'debit',
@@ -639,17 +643,7 @@ async function balanceFun(req, res) {
       msg: 'INCORRECT_KEY_VALIDATION'
     });
   }
-  const gamesList = await SelectedCasino.findOne(
-    { "games.id": payload.game_id },
-    { "games.$": 1 }
-  );
 
-  const game = gamesList?.games[0];
-
-  if (game.isAllowed === false) {
-    return res.status(400).send({ message: "This game is not allowed!!" })
-  }
-  
   try {
     const user = await User.findOne({ remoteId: payload.remote_id }).exec();
 
@@ -838,6 +832,16 @@ async function processQueue() {
 async function debitFun(req, res) {
   //console.log("debitttttttttttttttttttttttt fun arhammmmmmmmmmmmmmm")
   requestQueue.push({ req, res });
+  const gamesList = await SelectedCasino.findOne(
+    { "games.id": payload.game_id },
+    { "games.$": 1 }
+  );
+
+  const game = gamesList?.games[0];
+  console.log("")
+  if (game.isAllowed === false) {
+    return res.status(400).send({ message: "This game is not allowed!!" })
+  }
   if (!processing) {
     processQueue();
   }
