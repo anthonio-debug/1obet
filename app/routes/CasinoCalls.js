@@ -831,6 +831,7 @@ async function processQueue() {
 // }
 async function debitFun(req, res) {
   //console.log("debitttttttttttttttttttttttt fun arhammmmmmmmmmmmmmm")
+  const payload = req.query;
   requestQueue.push({ req, res });
   const gamesList = await SelectedCasino.findOne(
     { "games.id": payload.game_id },
