@@ -2929,24 +2929,14 @@ async function blockCasinoGames(req, res) {
   const { blockedGames } = req.body;
 
   try {
-    let updateResult;
 
     if (blockedGames.length > 0) {
       const matchCondition = { "games.id": { $in: blockedGames } };
       const updateOperation = { $set: { "games.$[i].isAllowed": false } };
       const options = { arrayFilters: [{ "i.id": { $in: blockedGames } }] };
-      updateResult = await SelectedCasino.updateMany(matchCondition, updateOperation, options);
+      await SelectedCasino.updateMany(matchCondition, updateOperation, options);
 
-      return res.status(200).json({ response: updateResult, message: "Selected games blocked successfully!" });
-
-    } else {
-      const matchCondition = { "games.id": { $nin: blockedGames } };
-      const updateOperation = { $set: { "games.$[i].isAllowed": true } };
-      const options = { arrayFilters: [{ "i.id": { $nin: blockedGames } }] };
-      updateResult = await SelectedCasino.updateMany(matchCondition, updateOperation, options);
-
-      return res.status(200).json({ response: updateResult, message: "All games allowed successfully!" });
-
+      return res.status(200).json({ message: "Selected games blocked successfully!" });
     }
   } catch (error) {
     console.error("Error:", error.message);
@@ -2955,7 +2945,54 @@ async function blockCasinoGames(req, res) {
   }
 }
 
+async function unblockCasinoGames(req, res) {
+  const role = req.decoded.role;
+
+  if (role !== "0") {
+    return res.status(400).send({ message: "Only company can access!" });
+  }
+
+  const { unBlockedGames } = req.body;
+
+  try {
+
+    if (unBlockedGames.length > 0) {
+      const matchCondition = { "games.id": { $in: unBlockedGames } };
+      const updateOperation = { $set: { "games.$[i].isAllowed": true } };
+      const options = { arrayFilters: [{ "i.id": { $in: unBlockedGames } }] };
+      await SelectedCasino.updateMany(matchCondition, updateOperation, options);
+
+      return res.status(200).send({ message: "Selected games unblocked successfully!" });
+    }
+  } catch (error) {
+    console.error("Error:", error.message);
+
+    return res.status(500).send({ message: `Error during unblocking games: ${error.message}` });
+  }
+}
+
+// async function getBlockCasinoGames(req, res) {
+//   const role = req.decoded.role;
+
+//   if (role !== "0") {
+//     return res.status(400).send({ message: "Only company can access!" });
+//   }
+
+//   try {
+
+//     // const getBlockGames = await SelectedCasino.find({ "games.[].isAllowed": true });
+
+//     return res.status(200).json({ result: getBlockGames });
+//   } catch (error) {
+//     console.error("Error:", error.message);
+
+//     return res.status(500).send({ message: `Error during unblocking games: ${error.message}` });
+//   }
+// }
+
+// loginRouter.get('/get-block-games', getBlockCasinoGames);
 loginRouter.post('/block-games', blockCasinoGames);
+loginRouter.post('/unblock-games', unblockCasinoGames);
 loginRouter.post('/updateDefaultTheme', settingsValidation.validate('updateDefaultTheme'), updateDefaultTheme);
 loginRouter.post('/updateDefaultLoginPage', settingsValidation.validate('updateDefaultLoginPage'), updateDefaultLoginPage);
 loginRouter.post('/addTermsAndConditions', settingsValidation.validate('addTermsAndConditions'), addTermsAndConditions);
