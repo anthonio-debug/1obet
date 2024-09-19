@@ -12,6 +12,7 @@ const fetchMarket = async (event) => {
       {Id: eventId},
       {$set: {lastCheckMarket: Date.now()}}
     );
+    console.log("eventId=-=-=-=-=-=-=-=-=-= eventId", marketsData);
     const marketsData = await listMarketCatalogue(eventId);
     console.log("marketsData=-=-=-=-=-=-=-=-=-= marketsData", marketsData);
     
