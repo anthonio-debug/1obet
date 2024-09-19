@@ -2607,29 +2607,23 @@ async function updateLiveUrl(req, res) {
   }
 
   try {
-  
     const updatedURL = await inPlayEvents.findOneAndUpdate(
       { Id: eventId },
       { $set: { liveUrl: liveUrl, iconStatus: iconStatus } },
       { upsert: true, new: true }
     );
-
-  
     if (!updatedURL) {
       return res.status(404).send({
         success: false,
         message: 'Event not found'
       });
     }
-
-  
     return res.status(200).send({
       success: true,
       updatedURL,
       message: 'Live TV URL updated'
     });
   } catch (error) {
-  
     console.error('Error updating Live TV URL:', error);
     return res.status(500).send({
       success: false,
@@ -2648,7 +2642,6 @@ async function GetAllTermsAndConditions(req, res) {
       results: response
     });
   } catch (err) {
-  
     return res.send({
       message: `Something went wrong `
     });
@@ -2926,6 +2919,43 @@ async function getSetting(req, res) {
   }
 }
 
+async function blockCasinoGames(req, res) {
+  const role = req.decoded.role;
+
+  if (role !== "0") {
+    return res.status(400).json({ message: "Only company can access!" });
+  }
+
+  const { blockedGames } = req.body;
+
+  try {
+    let updateResult;
+
+    if (blockedGames.length > 0) {
+      const matchCondition = { "games.id": { $in: blockedGames } };
+      const updateOperation = { $set: { "games.$[i].isAllowed": false } };
+      const options = { arrayFilters: [{ "i.id": { $in: blockedGames } }] };
+      updateResult = await SelectedCasino.updateMany(matchCondition, updateOperation, options);
+
+      return res.status(200).json({ response: updateResult, message: "Selected games blocked successfully!" });
+
+    } else {
+      const matchCondition = { "games.id": { $nin: blockedGames } };
+      const updateOperation = { $set: { "games.$[i].isAllowed": true } };
+      const options = { arrayFilters: [{ "i.id": { $nin: blockedGames } }] };
+      updateResult = await SelectedCasino.updateMany(matchCondition, updateOperation, options);
+
+      return res.status(200).json({ response: updateResult, message: "All games allowed successfully!" });
+
+    }
+  } catch (error) {
+    console.error("Error:", error.message);
+
+    return res.status(500).json({ message: `Error during blocking games: ${error.message}` });
+  }
+}
+
+loginRouter.post('/block-games', blockCasinoGames);
 loginRouter.post('/updateDefaultTheme', settingsValidation.validate('updateDefaultTheme'), updateDefaultTheme);
 loginRouter.post('/updateDefaultLoginPage', settingsValidation.validate('updateDefaultLoginPage'), updateDefaultLoginPage);
 loginRouter.post('/addTermsAndConditions', settingsValidation.validate('addTermsAndConditions'), addTermsAndConditions);

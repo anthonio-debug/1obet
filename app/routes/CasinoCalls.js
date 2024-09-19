@@ -39,11 +39,11 @@ const checkMarketBlocked = async (user) => {
   let parentUserIds = await getParents(user.userId);
   const marketIds = await User.distinct("blockedMarketPlaces", { userId: { $in: parentUserIds }, isDeleted: false });
 
-  const  anyParentCasinoBlocked= await User.find( { userId: { $in: parentUserIds }, casinoAllowed: false });
-  const anyParentBettingBlocked = await User.find( { userId: { $in: parentUserIds }, bettingAllowed: false });
+  const anyParentCasinoBlocked = await User.find({ userId: { $in: parentUserIds }, casinoAllowed: false });
+  const anyParentBettingBlocked = await User.find({ userId: { $in: parentUserIds }, bettingAllowed: false });
   const marketId = config.casinoMarketId;
   //if any of the parents hierarchy
-  if (marketIds.includes(marketId) || !user.casinoAllowed || !user.bettingAllowed || anyParentCasinoBlocked.length!=0 || anyParentBettingBlocked.length!=0 ) {
+  if (marketIds.includes(marketId) || !user.casinoAllowed || !user.bettingAllowed || anyParentCasinoBlocked.length != 0 || anyParentBettingBlocked.length != 0) {
     return 1;
   } else {
     return 0;
@@ -53,7 +53,7 @@ const checkMarketBlocked = async (user) => {
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
-  
+
     /*
       action= 0 debit
       action= 1 credit( decision came from casino )
@@ -62,7 +62,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let bettor_winning_amount = 0;
       let bettor_lost_amount = 0;
     */
-// //console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
+    // //console.log( payload ,"payloaaaaaad",  action,"actionsssssssss", res,"resssssssss", session,"arhamteeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeest")
     const now = new Date();
     const year = now.getFullYear().toString();
     const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -73,18 +73,18 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let amount = Number(payload.amount) * casinoMultiples;
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 1")
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
-      let tempExposure=Number((user.tempExposure + amount).toFixed(3));
+      let tempExposure = Number((user.tempExposure + amount).toFixed(3));
       //console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
       //console.log("arham updatedavailableBalance ",UpdatedExposure )
-      
+
       await users.updateOne(
         { _id: user._id },
         {
           $set: {
             availableBalance: updatedavailableBalance,
             exposure: UpdatedExposure,
-            tempExposure:tempExposure
+            tempExposure: tempExposure
           }
         },
         { session }
@@ -94,7 +94,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       await casinoDebits.save();
 
       return 0
-    } else if (action === 1) { 
+    } else if (action === 1) {
       // const depositLastBetTime = await Cash.find({ userId: user.userId,  description: "Casino (Casino Hold'em)" }).sort({ _id: -1 });
       // if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[depositLastBetTime.length-1].betDateTime) < 500) {
       //   console.log('Transaction occurred too quickly, skipping...');
@@ -103,14 +103,17 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
-     
+
       const gamesList = await SelectedCasino.findOne(
         { "games.id": payload.game_id },
         { "games.$": 1 }
       );
 
       const game = gamesList?.games[0];
-
+      console.log("")
+      if (game.isAllowed === false) {
+        return res.status(400).send({ message: "This game is not allowed!!" })
+      }
 
       const lastDebits = await CasinoDebits.find({
         action: 'debit',
@@ -130,10 +133,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       // lose some Amount 
       const betTime = new Date().getTime();
       if (difference < 0) {
-       
-          console.log("diff less 0 Arham================")
+
+        console.log("diff less 0 Arham================")
         let GameName = 'N/A';
-        if(game)
+        if (game)
           GameName = game.name;
         /**
          * lose some money mean there will not be any commission only adjust the lost amount into exposure.
@@ -157,36 +160,36 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         // remove all exposure equal to total debit money of 1500
 
         const amount = Number((debit * config.casinoMultiples).toFixed(3));
-        const UpdatedExposure =0
-        console.log("arham exposureeeeeeeeeeeee winloose temp exposureeeeeeeeeeeeeeeeeeees",user.tempExposure )
+        const UpdatedExposure = 0
+        console.log("arham exposureeeeeeeeeeeee winloose temp exposureeeeeeeeeeeeeeeeeeees", user.tempExposure)
         await users.updateOne(
           { _id: user?._id },
           {
             $set: {
               availableBalance: updatedavailableBalance,
-              exposure: user.exposure+user.tempExposure ,
-              tempExposure:0,
+              exposure: user.exposure + user.tempExposure,
+              tempExposure: 0,
               clientPL: updatedclientPL,
               balance: updatedbalance
             }
           },
           { session }
         );
-       
-     
+
+
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
         const userAvaiableBalance = await User.findOne({ userId: user.userId }).sort({ _id: -1 });
-      
-        const balance = -userAvaiableBalance.balance - bettor_lost_amount 
+
+        const balance = -userAvaiableBalance.balance - bettor_lost_amount
         if (balance < 0) {
           log(
             `${JSON.stringify({
-              userId: user.userId,   
+              userId: user.userId,
               description: `Casino (${GameName})`,
               date: now.getTime(),
-              createdAt: formattedDate,  
-              amount: -bettor_lost_amount,  
-              balance:updatedavailableBalance,
+              createdAt: formattedDate,
+              amount: -bettor_lost_amount,
+              balance: updatedavailableBalance,
               availableBalance: updatedavailableBalance,
               maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
               cash: lastMaxWithdraw?.cash || 0,
@@ -241,7 +244,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           date: now.getTime(),
           createdAt: formattedDate,
           amount: -bettor_lost_amount,
-          balance:updatedavailableBalance,
+          balance: updatedavailableBalance,
           availableBalance: updatedavailableBalance,
           maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
           cash: lastMaxWithdraw?.cash || 0,
@@ -320,7 +323,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           );
 
           const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-      
+
           let betTransaction = {
             userId: user.userId,
             description: `Casino (${GameName})`,
@@ -379,7 +382,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
         let bettor_won_amount = credit - debit;
         let GameName = 'N/A';
-        if(game)
+        if (game)
           GameName = game.name;
         //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
 
@@ -403,7 +406,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               clientPL: updatedclientPL,
               balance: updatedbalance,
               exposure: user.exposure + user.tempExposure,
-              tempExposure:0,
+              tempExposure: 0,
             }
           },
           { session }
@@ -446,7 +449,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             { session }
           );
           if (parentUser.role == "0") {
-            
+
             break;
           }
           parentUserIds.push(parentUser.createdBy);
@@ -459,7 +462,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
 
         if (!parentUser) {
-  
+
           return res.json({ status: '500', msg: `Internal Server Error` });
         }
 
@@ -470,12 +473,12 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           prev = current;
         }
 
-      
+
 
         for (const user of parentUser) {
 
           const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-       
+
 
           let availableBalance = Number((user.balance - (user.commission / 100) * remainingAmount).toFixed(3));
           let Balancebalance = Number((user.balance - (user.commission / 100) * remainingAmount).toFixed(3));
@@ -483,12 +486,12 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
           let userResponse = await users.updateOne(
             { _id: user?._id }, {
-              $set: {
-                availableBalance: availableBalance,
-                clientPL: clientPL,
-                balance: Balancebalance
-              }
-            },
+            $set: {
+              availableBalance: availableBalance,
+              clientPL: clientPL,
+              balance: Balancebalance
+            }
+          },
             { session }
           );
 
@@ -571,8 +574,12 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         // //console.log("arham exposureeeeeeeeeeeee winloose addiotn credit df 0",UpdatedExposure )
         await users.updateOne(
           { _id: user?._id },
-          { $set: { availableBalance: updatedavailableBalance,    exposure: user.exposure + user.tempExposure,
-            tempExposure:0, } },
+          {
+            $set: {
+              availableBalance: updatedavailableBalance, exposure: user.exposure + user.tempExposure,
+              tempExposure: 0,
+            }
+          },
           { session }
         );
 
@@ -655,12 +662,12 @@ async function balanceFun(req, res) {
       // //console.log('Balance is negative:', balance); // Log for debugging
       return res.json({ status: 500, msg: 'Negative amount not allowed!' });
     }
-    
+
     // //console.log('Balance before division:', balance); // Debug log
     // //console.log('Casino Multiples:', casinoMultiples); // Debug log
     const finalBalance = balance / casinoMultiples;
     // //console.log('Final balance to return:', finalBalance); // Debug log
-    
+
     return res.json({
       status: 200,
       balance: finalBalance,
@@ -697,16 +704,16 @@ async function processQueue() {
   const maxRetries = 3; // Maximum retry attempts
   const retryDelay = 100; // Delay in milliseconds before retrying
   const payload = req.query;
- 
+
   const attemptTransaction = async (retryCount) => {
     try {
       await session.startTransaction();
-      
+
       const transactionId = payload.transaction_id;
-  
+
       const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
       if (payload.gameplay_final == 1 || !payload.remote_id) {
-        await User.updateOne({remoteId:currentUser.remote_id},{$set:{exposure:0}})
+        await User.updateOne({ remoteId: currentUser.remote_id }, { $set: { exposure: 0 } })
       }
       if (!currentUser) {
         if (session.inTransaction()) {
@@ -714,7 +721,7 @@ async function processQueue() {
         }
         return res.json({ status: 500, msg: 'Internal Error: no User' });
       }
-  
+
       if (transactionIdMap.has(transactionId)) {
         if (session.inTransaction()) {
           await session.abortTransaction();
@@ -726,7 +733,7 @@ async function processQueue() {
       } else {
         transactionIdMap.set(transactionId, transactionId);
       }
-  
+
       const salt = saltKey;
       const key = payload.key;
       delete payload.key;
@@ -734,7 +741,7 @@ async function processQueue() {
         .map(key => `${key}=${payload[key]}`)
         .join('&');
       const hash = createHashKey(salt, queryString);
-  
+
       // Validate the key
       if (hash !== key) {
         if (session.inTransaction()) {
@@ -745,7 +752,7 @@ async function processQueue() {
           msg: 'INCORRECT_KEY_VALIDATION'
         });
       }
-  
+
       // Fetch the user again for the transaction
       const user = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
       if (!user) {
@@ -754,7 +761,7 @@ async function processQueue() {
         }
         return res.json({ status: 500, msg: 'Internal error: no user' });
       }
-  
+
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if (checkMarketBlockedResponse == 1) {
         if (session.inTransaction()) {
@@ -762,7 +769,7 @@ async function processQueue() {
         }
         return res.json({ status: 500, msg: 'Betting is not allowed!' });
       }
-  
+
       let updatedAvailableBalance = user.availableBalance - (parseInt(payload.amount) * casinoMultiples);
       if (updatedAvailableBalance < 0) {
         if (session.inTransaction()) {
@@ -770,18 +777,18 @@ async function processQueue() {
         }
         return res.json({ status: 500, msg: 'Insufficient balance' });
       }
-  
+
       const balance = user.availableBalance / casinoMultiples;
       await WinLoseTransManagement(balance, payload, user, 0, res);
-  
+
       await session.commitTransaction();
-      
+
       const updatedUser = await users.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
       return res.json({
         status: 200,
         balance: updatedUser.availableBalance / casinoMultiples
       });
-  
+
     } catch (err) {
       if (session.inTransaction()) {
         try {
@@ -800,8 +807,8 @@ async function processQueue() {
       }
     } finally {
       await session.endSession();
-      processing = false; 
-      processQueue(); 
+      processing = false;
+      processQueue();
     }
   };
 
@@ -824,9 +831,19 @@ async function processQueue() {
 // }
 async function debitFun(req, res) {
   //console.log("debitttttttttttttttttttttttt fun arhammmmmmmmmmmmmmm")
-  requestQueue.push({ req, res }); 
+  requestQueue.push({ req, res });
+  const gamesList = await SelectedCasino.findOne(
+    { "games.id": payload.game_id },
+    { "games.$": 1 }
+  );
+
+  const game = gamesList?.games[0];
+  console.log("")
+  if (game.isAllowed === false) {
+    return res.status(400).send({ message: "This game is not allowed!!" })
+  }
   if (!processing) {
-    processQueue(); 
+    processQueue();
   }
 }
 
@@ -834,13 +851,13 @@ async function debitFun(req, res) {
 
 
 async function creditFun(req, res) {
-  
+
   //console.log("crediiiiiiiiiiiiiiiit arham ")
   const session = dbClient.startSession();
   try {
     const payload = req.query;
     const transactionId = payload.transaction_id
-   
+
     const currentUser = await User.findOne(
       { remoteId: parseInt(payload.remote_id) }
     )
@@ -857,7 +874,7 @@ async function creditFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    
+
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
@@ -897,7 +914,7 @@ async function creditFun(req, res) {
           balance: user.availableBalance / casinoMultiples
         });
       } else {
-     
+
         const response = await WinLoseTransManagement(0, payload, user, 1, res, session);
         await session.commitTransaction();
       }
@@ -913,7 +930,7 @@ async function creditFun(req, res) {
     });
 
   } catch (err) {
- 
+
     return res.json({ status: 500, msg: `Internal error ${err}` });
   } finally {
     await session.endSession();
@@ -921,7 +938,7 @@ async function creditFun(req, res) {
 }
 
 async function rollbackFun(req, res) {
-  
+
   //console.log("rooooooooooooooooolllllllback arham ")
   const session = dbClient.startSession();
   try {
@@ -980,14 +997,14 @@ async function rollbackFun(req, res) {
           );
 
           let amount = 0;
-     
+
           const action = rollbackTransaction.action;
 
           if (action === "credit") {
             amount = -parseInt(rollbackTransaction.amount);
           } else if (action === "debit") {
             amount = parseInt(rollbackTransaction.amount);
-            
+
           } else if (action === 'rollback') {
             await session.abortTransaction();
             return res.json({
@@ -998,7 +1015,7 @@ async function rollbackFun(req, res) {
 
           updatedBalance = user.availableBalance + (amount * casinoMultiples);
           let updatedExposureAmount = user.exposure + (amount * casinoMultiples);
-         
+
           await users.updateOne(
             { _id: user?._id }, { $set: { exposure: updatedExposureAmount, availableBalance: updatedBalance } },
             { session }
@@ -1036,7 +1053,7 @@ async function rollbackFun(req, res) {
     }
   } catch (err) {
     await session.abortTransaction();
-   
+
     return res.json({
       status: 500,
       msg: `Internal error ${err}`
@@ -1048,7 +1065,7 @@ async function rollbackFun(req, res) {
 
 function casino(req, res) {
   const { action, remote_id } = req.query;
-  if(remote_id==6896479){
+  if (remote_id == 6896479) {
   }
 
   // //console.log("arham casinoooooooooo call",action, remote_id )
@@ -1056,7 +1073,7 @@ function casino(req, res) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
   switch (action) {
-    
+
     case 'balance':
       return balanceFun(req, res);
     case 'debit':
