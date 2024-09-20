@@ -123,6 +123,7 @@ function scoreChecker() {
 
         await newRecord.save();
         //Sports Results Saved
+        //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
         if (result.winnerSelectionId == -1) {
