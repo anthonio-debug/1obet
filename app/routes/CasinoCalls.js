@@ -584,7 +584,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           { _id: user?._id },
           {
             $set: {
-              availableBalance: updatedavailableBalance, exposure: user.exposure + user.tempExposure,
+              availableBalance: updatedavailableBalance, exposure:0,
               tempExposure: 0,
             }
           },
