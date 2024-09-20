@@ -3819,8 +3819,8 @@ async function getMatchedBets(req, res) {
     let marketOpendate;
     if (marketId !== '') {
       const market = await MarketIDS.findOne({ marketId: marketId })
-      //console.log("-----------------", market);
-      marketOpendate = market.openDate;
+      console.log("-----------------", market);
+      // marketOpendate = market.openDate;
       eventId = await Events.findOne({ Id: market.eventId })
 
 
