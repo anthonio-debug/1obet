@@ -5623,16 +5623,17 @@ async function getDuplicateEntries(req, res) {
         $project: {
           _id: 1 ,
           betInfoCount:1 ,
-          betInfo:1
+          // betInfo:1
         }
       },
       {$limit:20}
     ])
+    console.log (">>>>>>>>>>> record >>>>>>>>>>", record)
     res.status(200).json({
       success: true,
       message: 'Duplicate entries fetched successfully',
       data:record
-
+      
     });
   } catch (error) {
     console.error("Error in getDuplicateEntries:", error);
