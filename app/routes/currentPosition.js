@@ -348,9 +348,9 @@ const getHighlights = async (req, res) => {
     const matchId = req.query.matchId;
     const role = req.decoded.role;
 
-    if (role != "0" || role != "5") {
-      return res.status(400).send({ message: "Only Dealer Can Access" })
-    }
+    // if (role != "0" || role != "5") {
+    //   return res.status(400).send({ message: "Only Dealer Can Access" })
+    // }
 
     const currentPositionData = await MarketId.aggregate([
       {
