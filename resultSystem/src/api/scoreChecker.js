@@ -124,7 +124,8 @@ function scoreChecker() {
         // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
 
         // if (checkEventMarket.status == "CLOSED") {
-        //   await inPlayEvents.updateOne({ Id: betData.eventId },{ $set: { inplay: false } })}
+        //   await inPlayEvents.updateOne({ Id: betData.eventId },{ $set: { inplay: false } })
+        //}
 
 
         await newRecord.save();
