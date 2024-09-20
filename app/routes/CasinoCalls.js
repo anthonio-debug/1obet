@@ -167,7 +167,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           {
             $set: {
               availableBalance: updatedavailableBalance,
-              exposure: user.exposure + Math.sign(user.tempExposure) ? -user.tempExposure : user.tempExposure,
+              exposure: user.exposure + Math.sign(user.tempExposure)?-user.tempExposure:user.tempExposure,
               tempExposure: 0,
               clientPL: updatedclientPL,
               balance: updatedbalance
@@ -192,7 +192,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               balance: updatedavailableBalance,
               availableBalance: updatedavailableBalance,
               maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
-              prevmaxWithdraw: updatedavailableBalance,
+              prevmaxWithdraw:updatedavailableBalance,
               cash: lastMaxWithdraw?.cash || 0,
               credit: lastMaxWithdraw?.credit || 0,
               creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
@@ -221,7 +221,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               balance,
               availableBalance: updatedavailableBalance,
               maxWithdraw: updatedavailableBalance,
-              prevmaxWithdraw: updatedavailableBalance,
+              prevmaxWithdraw:updatedavailableBalance,
               cash: lastMaxWithdraw?.cash || 0,
               credit: lastMaxWithdraw?.credit || 0,
               creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
@@ -249,7 +249,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           balance: updatedavailableBalance,
           availableBalance: updatedavailableBalance,
           maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
-          prevmaxWithdraw: updatedavailableBalance,
+          prevmaxWithdraw:updatedavailableBalance,
           cash: lastMaxWithdraw?.cash || 0,
           credit: lastMaxWithdraw?.credit || 0,
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
@@ -340,7 +340,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             balance: availableBalance,
             availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * bettor_lost_amount : (user.commission / 100) * bettor_lost_amount,
             maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * bettor_lost_amount : 0,  // max withdraw cant be negative
-            prevmaxWithdraw: availableBalance,
+            prevmaxWithdraw:availableBalance,
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
             credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
             creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
@@ -409,7 +409,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               availableBalance: updatedavailableBalance,
               clientPL: updatedclientPL,
               balance: updatedbalance,
-              exposure: user.exposure + Math.sign(user.tempExposure) ? -user.tempExposure : user.tempExposure,
+              exposure: user.exposure + Math.sign(user.tempExposure)?-user.tempExposure:user.tempExposure,
 
               tempExposure: 0,
             }
@@ -431,7 +431,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           balance: updatedavailableBalance,
           availableBalance: updatedavailableBalance,
           maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
-          prevmaxWithdraw: updatedavailableBalance,
+          prevmaxWithdraw:updatedavailableBalance,
           cashOrCredit: "Bet",
           cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
           credit: lastMaxWithdraw?.credit || 0,
@@ -513,7 +513,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             balance: availableBalance,
             availableBalance: availableBalance,
             maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * amount : 0,
-            prevmaxWithdraw: availableBalance,
+            prevmaxWithdraw:availableBalance,
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
             credit: lastMaxWithdraw?.credit || 0,
             creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
@@ -545,7 +545,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             balance: maxWithdraw,
             availableBalance: availableBalance,
             maxWithdraw: prevMaxWithdraw + (user.commission / 100) * commissionAmount,
-            prevmaxWithdraw: availableBalance,
+            prevmaxWithdraw:availableBalance,
             // balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
             // availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
             // maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
@@ -579,12 +579,12 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         // No Win lose
         const updatedavailableBalance = Number((user.availableBalance + (debit * casinoMultiples)).toFixed(3))
         const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3))
-        console.log("arham exposureeeeeeeeeeeee  sar pa sar winloose addiotn credit df 0", UpdatedExposure)
+        console.log("arham exposureeeeeeeeeeeee  sar pa sar winloose addiotn credit df 0",UpdatedExposure )
         await users.updateOne(
           { _id: user?._id },
           {
             $set: {
-              availableBalance: updatedavailableBalance, exposure: user.exposure + Math.sign(user.tempExposure) ? -user.tempExposure : user.tempExposure,
+              availableBalance: updatedavailableBalance,   exposure: user.exposure + Math.sign(user.tempExposure)?-user.tempExposure:user.tempExposure,
               tempExposure: 0,
             }
           },
@@ -840,20 +840,19 @@ async function processQueue() {
 async function debitFun(req, res) {
   //console.log("debitttttttttttttttttttttttt fun arhammmmmmmmmmmmmmm")
   requestQueue.push({ req, res });
-  const payload = req.query;
-  const gamesList = await SelectedCasino.findOne(
-    { "games.id": payload.game_id },
-    { "games.$": 1 }
-  );
+  // const payload = req.query;
+  // const gamesList = await SelectedCasino.findOne(
+  //   { "games.id": payload.game_id },
+  //   { "games.$": 1 }
+  // );
 
-  const game = gamesList?.games[0];
-  console.log("")
-  if (game.isAllowed === false) {
-    return res.status(400).send({ message: "This game is not allowed!!" })
-  } else {
-    if (!processing) {
-      processQueue();
-    }
+  // const game = gamesList?.games[0];
+  // console.log("")
+  // if (game.isAllowed === false) {
+  //   return res.status(400).send({ message: "This game is not allowed!!" })
+  // }else{}
+  if (!processing) {
+    processQueue();
   }
 }
 
