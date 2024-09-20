@@ -601,7 +601,7 @@ async function betsRecords(req, res) {
       },
       {
         $sort: {
-          "depositInfo.date": -1
+          "depositInfo._id": -1
         }
       },
       {

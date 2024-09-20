@@ -649,7 +649,7 @@ function getLedgerDetails(req, res) {
 
       cashPipeline.push(
         {
-          $sort: { date: 1 },
+          $sort: { _id: 1 },
         },
         {
           $facet: {
