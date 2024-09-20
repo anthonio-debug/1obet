@@ -553,9 +553,15 @@ function getLedgerDetails(req, res) {
 
     const query = { userId: req.body.userId };
     let page = 1;
+    let sort = -1;
+    let sortValue = '_id';
     let limit = config.pageSize;
-
-    if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
+    
+    if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) {
+      limit = Number(req.body.numRecords);
+    }
+    if (req.body.sortValue) sortValue = req.body.sortValue;
+    if (req.body.sort) sort = Number(req.body.sort);
     if (req.body.page) page = Number(req.body.page);
 
     User.findOne(query, (err, user) => {
@@ -595,10 +601,10 @@ function getLedgerDetails(req, res) {
       cashPipeline.push(
         {
           $lookup: {
-            from: 'bets',
-            localField: 'betId',
-            foreignField: '_id',
-            as: 'betInfo'
+            from: 'bets', // Name of the bets collection
+            localField: 'betId', // Field from cash collection
+            foreignField: '_id', // Field from bets collection
+            as: 'betInfo' // Name of the new array field
           }
         },
         {
@@ -608,16 +614,19 @@ function getLedgerDetails(req, res) {
           }
         },
         {
-          $match: {
-            betId: { $ne: null } // Ensure we only get deposits that have a valid betId
-          }
-        },
-        {
-          $sort: { createdAt: -1 } // Sort to get the latest deposits first
-        },
-        {
           $group: {
-            _id: '$betId', // Group by betId
+            _id: {
+              $cond: {
+                if: { $in: ["$cashOrCredit", ['Cash', 'Credit', 'Bet', 'Commission']] },
+                then: "$_id",
+                else: {
+                  matchId: "$matchId",
+                  marketId: "$marketId",
+                  betSession: "$betSession",
+                  roundId: "$roundId"
+                }
+              }
+            },
             originalId: { $first: "$_id" },
             description: { $first: "$description" },
             amount: { $sum: "$amount" },
@@ -631,10 +640,11 @@ function getLedgerDetails(req, res) {
             sportsId: { $first: "$sportsId" },
             marketId: { $first: "$marketId" },
             roundId: { $first: "$roundId" },
+            betId: { $first: "$betId" }, // Include betId in the response
             userId: { $first: "$userId" },
             matchId: { $first: "$matchId" },
-            betSession: { $first: "$betInfo.betSession" },
-            matchType: { $first: "$betInfo.matchType" },
+            betSession: { $first: "$betInfo.betSession" }, // Extracting from the joined bets data
+            matchType: { $first: "$betInfo.matchType" }, // Extracting matchType from betInfo
             winnerRunnerData: { $first: "$betInfo.winnerRunnerData" },
             fancyData: { $first: "$betInfo.fancyData" },
             isfancyOrbookmaker: { $first: "$betInfo.isfancyOrbookmaker" },
@@ -646,7 +656,7 @@ function getLedgerDetails(req, res) {
 
       cashPipeline.push(
         {
-          $sort: { date: 1 }
+          $sort: { date: 1 },
         },
         {
           $facet: {
@@ -656,7 +666,7 @@ function getLedgerDetails(req, res) {
         }
       );
 
-      Cash.aggregate(cashPipeline, (err, result) => {
+      Cash.aggregate(cashPipeline, async (err, result) => {
         if (err || !result || result.length === 0 || result[0].results.length === 0) {
           return res.status(200).send({ message: 'Deposit record not found' });
         }
@@ -668,7 +678,7 @@ function getLedgerDetails(req, res) {
             total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
             limit: limit ? limit : 0,
             page: page ? page : 0,
-            pages: limit && result[0].metadata[0].total ? Math.ceil(result[0].metadata[0].total / limit) : 0,
+            pages: limit && result[0].metadata[0].total ? Number((result[0].metadata[0].total / limit).toFixed(0)) : 0,
           },
         };
 
