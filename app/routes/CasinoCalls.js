@@ -840,17 +840,17 @@ async function processQueue() {
 async function debitFun(req, res) {
   //console.log("debitttttttttttttttttttttttt fun arhammmmmmmmmmmmmmm")
   requestQueue.push({ req, res });
-  const payload = req.query;
-  const gamesList = await SelectedCasino.findOne(
-    { "games.id": payload.game_id },
-    { "games.$": 1 }
-  );
+  // const payload = req.query;
+  // const gamesList = await SelectedCasino.findOne(
+  //   { "games.id": payload.game_id },
+  //   { "games.$": 1 }
+  // );
 
-  const game = gamesList?.games[0];
-  console.log("")
-  if (game.isAllowed === false) {
-    return res.status(400).send({ message: "This game is not allowed!!" })
-  }
+  // const game = gamesList?.games[0];
+  // console.log("")
+  // if (game.isAllowed === false) {
+  //   return res.status(400).send({ message: "This game is not allowed!!" })
+  // }else{}
   if (!processing) {
     processQueue();
   }
