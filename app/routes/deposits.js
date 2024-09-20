@@ -615,7 +615,7 @@ function getLedgerDetails(req, res) {
           $group: {
             _id: {
               $cond: {
-                if: { $eq: ["$sportsId", 6] },
+                if: { $eq: ["$sportsId", "6"] },
                 then: "$marketId",
                 else: "$betId"
               },
