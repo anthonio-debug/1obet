@@ -553,15 +553,11 @@ function getLedgerDetails(req, res) {
 
     const query = { userId: req.body.userId };
     let page = 1;
-    let sort = -1;
-    let sortValue = '_id';
     let limit = config.pageSize;
-    
+
     if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) {
       limit = Number(req.body.numRecords);
     }
-    if (req.body.sortValue) sortValue = req.body.sortValue;
-    if (req.body.sort) sort = Number(req.body.sort);
     if (req.body.page) page = Number(req.body.page);
 
     User.findOne(query, (err, user) => {
@@ -580,7 +576,6 @@ function getLedgerDetails(req, res) {
       }];
 
       const userRole = user.role;
-
       if (userRole !== '5' && req.body.type) {
         cashPipeline.push({ $match: { cashOrCredit: req.body.type } });
       }
@@ -614,19 +609,11 @@ function getLedgerDetails(req, res) {
           }
         },
         {
+          $sort: { createdAt: -1 } // Sort by createdAt to get the latest deposits first
+        },
+        {
           $group: {
-            _id: {
-              $cond: {
-                if: { $in: ["$cashOrCredit", ['Cash', 'Credit', 'Bet', 'Commission']] },
-                then: "$_id",
-                else: {
-                  matchId: "$matchId",
-                  marketId: "$marketId",
-                  betSession: "$betSession",
-                  roundId: "$roundId"
-                }
-              }
-            },
+            _id: "$betId", // Group by betId to ensure distinct entries
             originalId: { $first: "$_id" },
             description: { $first: "$description" },
             amount: { $sum: "$amount" },
@@ -640,11 +627,10 @@ function getLedgerDetails(req, res) {
             sportsId: { $first: "$sportsId" },
             marketId: { $first: "$marketId" },
             roundId: { $first: "$roundId" },
-            betId: { $first: "$betId" }, // Include betId in the response
             userId: { $first: "$userId" },
             matchId: { $first: "$matchId" },
-            betSession: { $first: "$betInfo.betSession" }, // Extracting from the joined bets data
-            matchType: { $first: "$betInfo.matchType" }, // Extracting matchType from betInfo
+            betSession: { $first: "$betInfo.betSession" },
+            matchType: { $first: "$betInfo.matchType" },
             winnerRunnerData: { $first: "$betInfo.winnerRunnerData" },
             fancyData: { $first: "$betInfo.fancyData" },
             isfancyOrbookmaker: { $first: "$betInfo.isfancyOrbookmaker" },
@@ -655,9 +641,6 @@ function getLedgerDetails(req, res) {
       );
 
       cashPipeline.push(
-        {
-          $sort: { date: 1 },
-        },
         {
           $facet: {
             metadata: [{ $count: 'total' }],
