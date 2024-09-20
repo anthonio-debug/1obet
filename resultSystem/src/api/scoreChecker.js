@@ -121,7 +121,7 @@ function scoreChecker() {
           status: 1
         });
 
-        // const checkEventMarket = await MarketIDs.find({ eventId: betData.eventId, marketName: "Match Odds" })
+        // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" })
         // if (checkEventMarket.status == "CLOSED") {
         //   await inPlayEvents.updateOne({ Id: betData.eventId }, { $set: { inplay: false } })
         // }
