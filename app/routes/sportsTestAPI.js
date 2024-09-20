@@ -5601,33 +5601,39 @@ async function getDuplicateEntries(req, res) {
   try {
     console.log (">>>>>>>>>>> getDuplicateEntries is running >>>>>>>>>>")
     const record =await Bets.aggregate([
-      {
-        $lookup: {
-          from: 'deposits',
-          localField: '_id',
-          foreignField: 'betId',
-          as: 'betInfo'
-        }
-      },
-      {
-        $addFields: {
-          betInfoCount: { $size: '$betInfo' }
-        }
-      },
-      // {
-      //   $match: {
-      //     betInfoCount: { $gte: 2 }
-      //   }
-      // },
-      {
-        $project: {
-          _id: 1 ,
-          betInfoCount:1 ,
-          // betInfo:1
-        }
-      },
-      {$limit:20}
-    ])
+      { $sort: { createdAt: -1 } },
+       { $limit: 2000 },
+       {
+         $lookup: {
+           from: 'deposits',
+           localField: '_id',
+           foreignField: 'betId',
+           as: 'betInfo'
+         }
+       },
+       {
+         $addFields: {
+           betInfoCount: { $size: '$betInfo' }
+         }
+       },
+       {
+         $project: {
+           _id: 1,
+           betInfoCount: 1,
+           dateinDeposits: {
+             $map: {
+               input: "$betInfo.betDateTime",
+               as: "dateInMillis",
+               in: { $toDate: "$$dateInMillis" }
+             }
+           },
+           dateInBets: { $toDate: "$createdAt" }
+         }
+       },
+        
+     
+     ]
+     )
     // console.log (">>>>>>>>>>> record >>>>>>>>>>", record)
     res.status(200).json({
       success: true,
