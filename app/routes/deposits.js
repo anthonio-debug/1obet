@@ -645,9 +645,10 @@ function getLedgerDetails(req, res) {
         {
           $facet: {
             metadata: [{ $count: 'total' }],
-            results: [{ $skip: (page - 1) * limit }, { $limit: limit }]
+            results: [{ $sort: { createdAt: -1 } }, { $skip: (page - 1) * limit }, { $limit: limit }]
           }
-        }
+        },
+        
       );
 
       Cash.aggregate(cashPipeline, async (err, result) => {
