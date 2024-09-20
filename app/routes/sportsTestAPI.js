@@ -3961,13 +3961,13 @@ async function createMissingSessions(req, res) {
   totalSession = 20;
 
 
-  for (let i = 8; i < totalSession; i++) {
+  for (let i = 1; i < totalSession; i++) {
     const session = new Session({
       sessionNo: i,
-      eventId: 33347567,
-      Id: '666c4091a8b2218c182e8379',
-      createdAt: 1718399592994,
-      updatedAt: 1718399592994,
+      eventId: 33598814,
+      Id: '66e941dde0ccfa3f8d2a2515',
+      createdAt: 1726833212980,
+      updatedAt: 1726833212980,
       manuelSave: false
     });
     session.save();
@@ -4019,20 +4019,35 @@ async function deleteOdds(req, res) {
 
   try {
     //await Bets.deleteMany({marketId:'1.232738763bm',eventId:'33564157',marketName:'Bookmaker'});
-    await Odds.deleteMany({});
+    totalSession = 20;
+
+
+    // for (let i = 1; i < totalSession; i++) {
+    //   const session = new Session({
+    //     sessionNo: i,
+    //     eventId: 33598814,
+    //     Id: '66e941dde0ccfa3f8d2a2515',
+    //     createdAt: 1726833212980,
+    //     updatedAt: 1726833212980,
+    //     manuelSave: false
+    //   });
+    //   session.save();
+    // }
+
+    //await Odds.deleteMany({});
    
 
   
 
     // await RaceOdds.deleteMany({});
     // await fancyOdds.deleteMany({});
-    await MarketIDS.deleteMany({
-      $or: [
-        { status: 'CLOSED', sportID: 4339 },
-        { status: 'CLOSED', sportID: 7 },
+    // await MarketIDS.deleteMany({
+    //   $or: [
+    //     { status: 'CLOSED', sportID: 4339 },
+    //     { status: 'CLOSED', sportID: 7 },
 
-      ]
-    });
+    //   ]
+    // });
     const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
     const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
@@ -5595,6 +5610,61 @@ async function eventsBySupportJobs(req,res) {
     });
   }
 }
+
+
+async function getDuplicateEntries(req, res) {
+  try {
+    console.log (">>>>>>>>>>> getDuplicateEntries is running >>>>>>>>>>")
+    const record =await Bets.aggregate([
+      { $sort: { createdAt: -1 } },
+       { $limit: 2000 },
+       {
+         $lookup: {
+           from: 'deposits',
+           localField: '_id',
+           foreignField: 'betId',
+           as: 'betInfo'
+         }
+       },
+       {
+         $addFields: {
+           betInfoCount: { $size: '$betInfo' }
+         }
+       },
+       {
+         $project: {
+           _id: 1,
+           betInfoCount: 1,
+           dateinDeposits: {
+             $map: {
+               input: "$betInfo.betDateTime",
+               as: "dateInMillis",
+               in: { $toDate: "$$dateInMillis" }
+             }
+           },
+           dateInBets: { $toDate: "$createdAt" }
+         }
+       },
+        
+     
+     ]
+     )
+    // console.log (">>>>>>>>>>> record >>>>>>>>>>", record)
+    res.status(200).json({
+      success: true,
+      message: 'Duplicate entries fetched successfully',
+      data:record
+      
+    });
+  } catch (error) {
+    console.error("Error in getDuplicateEntries:", error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+
 // //////////////////
 router.get('/track-bet/lithylAPI/getSeriesList/:sportsId', getSeriesList)
 router.get('/track-bet/lithylAPI/getAllMatchesList/:series_id', getAllMatchesList)
@@ -5606,6 +5676,7 @@ router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
 router.get('/track-bet/lithylAPI/getOdd', getOdds)
 router.post('/track-bet/lithylAPI/placeBet', placeBet)
 router.get('/track-bet/updateUserName', updateUserName)
+router.get('/track-bet/getDuplicateEntries', getDuplicateEntries)
 router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
 /////////////////

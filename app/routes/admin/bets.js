@@ -53,7 +53,25 @@ const GetAllBets = async (req, res) => {
         pipeline: [
           { $match: { $expr: { $eq: ["$eventId", "$$eventId"] } } },
           { $sort: { _id: -1 } },
-          { $limit: 1 }
+          { $limit: 1 },
+          {
+            $addFields: {
+              totalScore1: {
+                $toInt: {
+                  $arrayElemAt: [
+                    { $split: ["$score1", "/"] }, 0
+                  ]
+                }
+              },
+              totalScore2: {
+                $toInt: {
+                  $arrayElemAt: [
+                    { $split: ["$score2", "/"] }, 0 
+                  ]
+                }
+              }
+            }
+          }
         ],
         as: "CricketData"
       }

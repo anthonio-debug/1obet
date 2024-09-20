@@ -324,10 +324,10 @@ async function withDrawCashDeposit(req, res) {
       return res.status(400).send({
         message: `Something went wrong. Contact Support.`,
       });
-    } else if (userToUpdate.role === '5' && checkAbs >= 1) {
-      return res.status(400).send({
-        message: `Something went wrong. Contact Support.`,
-      });
+    // } else if (userToUpdate.role === '5' && checkAbs >= 1) {
+    //   return res.status(400).send({
+    //     message: `Something went wrong. Contact Support.`,
+    //   });
     }
 
     const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
