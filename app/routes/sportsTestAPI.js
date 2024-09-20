@@ -3961,13 +3961,13 @@ async function createMissingSessions(req, res) {
   totalSession = 20;
 
 
-  for (let i = 8; i < totalSession; i++) {
+  for (let i = 1; i < totalSession; i++) {
     const session = new Session({
       sessionNo: i,
-      eventId: 33347567,
-      Id: '666c4091a8b2218c182e8379',
-      createdAt: 1718399592994,
-      updatedAt: 1718399592994,
+      eventId: 33598814,
+      Id: '66e941dde0ccfa3f8d2a2515',
+      createdAt: 1726833212980,
+      updatedAt: 1726833212980,
       manuelSave: false
     });
     session.save();
