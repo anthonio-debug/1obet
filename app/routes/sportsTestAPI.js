@@ -4019,7 +4019,22 @@ async function deleteOdds(req, res) {
 
   try {
     //await Bets.deleteMany({marketId:'1.232738763bm',eventId:'33564157',marketName:'Bookmaker'});
-    await Odds.deleteMany({});
+    totalSession = 20;
+
+
+    for (let i = 1; i < totalSession; i++) {
+      const session = new Session({
+        sessionNo: i,
+        eventId: 33598814,
+        Id: '66e941dde0ccfa3f8d2a2515',
+        createdAt: 1726833212980,
+        updatedAt: 1726833212980,
+        manuelSave: false
+      });
+      session.save();
+    }
+    
+    //await Odds.deleteMany({});
    
 
   
