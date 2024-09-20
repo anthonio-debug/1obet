@@ -596,25 +596,26 @@ function getLedgerDetails(req, res) {
       cashPipeline.push(
         {
           $lookup: {
-            from: 'bets', // Name of the bets collection
-            localField: 'betId', // Field from cash collection
-            foreignField: '_id', // Field from bets collection
-            as: 'betInfo' // Name of the new array field
+            from: 'bets',
+            localField: 'betId',
+            foreignField: '_id',
+            as: 'betInfo'
           }
         },
         {
           $unwind: {
             path: '$betInfo',
-            preserveNullAndEmptyArrays: true // Change to false if you only want deposits with matching bets
+            preserveNullAndEmptyArrays: true
           }
         },
         {
-          $sort: { createdAt: -1 } // Sort by createdAt to get the latest deposits first
+          $sort: { createdAt: -1 }
         },
         {
           $group: {
-            _id: "$betId", // Group by betId to ensure distinct entries
+            _id: "$betId", // Group by betId for distinct entries
             originalId: { $first: "$_id" },
+            betId: { $first: "$betId" }, // Include betId from the deposit schema
             description: { $first: "$description" },
             amount: { $sum: "$amount" },
             balance: { $last: "$balance" },
