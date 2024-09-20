@@ -121,10 +121,10 @@ function scoreChecker() {
           status: 1
         });
 
-        // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" })
-        // if (checkEventMarket.status == "CLOSED") {
-        //   await inPlayEvents.updateOne({ Id: betData.eventId }, { $set: { inplay: false } })
-        // }
+        const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({_id:-1})
+        if (checkEventMarket.status == "CLOSED") {
+          await inPlayEvents.updateOne({ Id: betData.eventId }, { $set: { inplay: false } })
+        }
 
         await newRecord.save();
         //Sports Results Saved
