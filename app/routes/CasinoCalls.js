@@ -579,12 +579,12 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         // No Win lose
         const updatedavailableBalance = Number((user.availableBalance + (debit * casinoMultiples)).toFixed(3))
         const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3))
-        // //console.log("arham exposureeeeeeeeeeeee winloose addiotn credit df 0",UpdatedExposure )
+        console.log("arham exposureeeeeeeeeeeee  sar pa sar winloose addiotn credit df 0",UpdatedExposure )
         await users.updateOne(
           { _id: user?._id },
           {
             $set: {
-              availableBalance: updatedavailableBalance, exposure:0,
+              availableBalance: updatedavailableBalance,   exposure: user.exposure + Math.sign(user.tempExposure)?-user.tempExposure:user.tempExposure,
               tempExposure: 0,
             }
           },
