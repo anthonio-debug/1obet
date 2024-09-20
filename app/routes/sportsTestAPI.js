@@ -5595,6 +5595,54 @@ async function eventsBySupportJobs(req,res) {
     });
   }
 }
+
+
+async function getDuplicateEntries(req, res) {
+  try {
+    console.log (">>>>>>>>>>> getDuplicateEntries is running >>>>>>>>>>")
+    const record =await Bets.aggregate([
+      {
+        $lookup: {
+          from: 'deposits',
+          localField: '_id',
+          foreignField: 'betId',
+          as: 'betInfo'
+        }
+      },
+      {
+        $addFields: {
+          betInfoCount: { $size: '$betInfo' }
+        }
+      },
+      // {
+      //   $match: {
+      //     betInfoCount: { $gte: 2 }
+      //   }
+      // },
+      {
+        $project: {
+          _id: 1 ,
+          betInfoCount:1 ,
+          betInfo:1
+        }
+      },
+      {$limit:20}
+    ])
+    res.status(200).json({
+      success: true,
+      message: 'Duplicate entries fetched successfully',
+      data:record
+
+    });
+  } catch (error) {
+    console.error("Error in getDuplicateEntries:", error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+
 // //////////////////
 router.get('/track-bet/lithylAPI/getSeriesList/:sportsId', getSeriesList)
 router.get('/track-bet/lithylAPI/getAllMatchesList/:series_id', getAllMatchesList)
@@ -5606,6 +5654,7 @@ router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
 router.get('/track-bet/lithylAPI/getOdd', getOdds)
 router.post('/track-bet/lithylAPI/placeBet', placeBet)
 router.get('/track-bet/updateUserName', updateUserName)
+router.get('/track-bet/getDuplicateEntries', getDuplicateEntries)
 router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
 /////////////////
