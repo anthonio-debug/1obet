@@ -324,10 +324,10 @@ async function withDrawCashDeposit(req, res) {
       return res.status(400).send({
         message: `Something went wrong. Contact Support.`,
       });
-      // } else if (userToUpdate.role === '5' && checkAbs >= 1) {
-      //   return res.status(400).send({
-      //     message: `Something went wrong. Contact Support.`,
-      //   });
+    // } else if (userToUpdate.role === '5' && checkAbs >= 1) {
+    //   return res.status(400).send({
+    //     message: `Something went wrong. Contact Support.`,
+    //   });
     }
 
     const cUserRes = await Cash.find({ userId: userToUpdate.userId }).sort({ _id: -1 }).limit(1);
@@ -613,15 +613,9 @@ function getLedgerDetails(req, res) {
         },
         {
           $group: {
-            _id: {
-              $cond: {
-                if: { $eq: ["$sportsId", "6"] },
-                then: "$matchId",
-                else: "$betId"
-              },
-            },
+            _id: "$betId", // Group by betId for distinct entries
             originalId: { $first: "$_id" },
-            betId: { $first: "$betId" },
+            betId: { $first: "$betId" }, // Include betId from the deposit schema
             description: { $first: "$description" },
             amount: { $sum: "$amount" },
             balance: { $last: "$balance" },
@@ -654,10 +648,10 @@ function getLedgerDetails(req, res) {
         {
           $facet: {
             metadata: [{ $count: 'total' }],
-            results: [{ $skip: (page - 1) * limit }, { $limit: limit }]
+            results: [ { $skip: (page - 1) * limit }, { $limit: limit }]
           }
         },
-
+        
       );
 
       Cash.aggregate(cashPipeline, async (err, result) => {
