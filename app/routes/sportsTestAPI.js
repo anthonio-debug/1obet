@@ -5616,7 +5616,7 @@ async function getDuplicateEntries(req, res) {
   try {
     console.log (">>>>>>>>>>> getDuplicateEntries is running >>>>>>>>>>")
     const record =await Bets.aggregate([
-      { $sort: { betDateTime: -1 } },
+      { $sort: { createdAt: -1 } },
        { $limit: 20 },
        {
          $lookup: {
