@@ -167,7 +167,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           {
             $set: {
               availableBalance: updatedavailableBalance,
-              exposure: user.exposure + Math.sign(user.tempExposure)?-user.tempExposure:user.tempExposure,
+              exposure: user.exposure + user.tempExposure>0?user.exposure + (-user.tempExposure):user.exposure +user.tempExposure,
               tempExposure: 0,
               clientPL: updatedclientPL,
               balance: updatedbalance
@@ -409,7 +409,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               availableBalance: updatedavailableBalance,
               clientPL: updatedclientPL,
               balance: updatedbalance,
-              exposure: user.exposure + Math.sign(user.tempExposure)?-user.tempExposure:user.tempExposure,
+              exposure: user.exposure + user.tempExposure>0?user.exposure + (-user.tempExposure):user.exposure +user.tempExposure,
 
               tempExposure: 0,
             }
@@ -584,7 +584,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           { _id: user?._id },
           {
             $set: {
-              availableBalance: updatedavailableBalance,   exposure: user.exposure + Math.sign(user.tempExposure)?-user.tempExposure:user.tempExposure,
+              availableBalance: updatedavailableBalance,   exposure: user.exposure + user.tempExposure>0?user.exposure + (-user.tempExposure):user.exposure +user.tempExposure,
               tempExposure: 0,
             }
           },
