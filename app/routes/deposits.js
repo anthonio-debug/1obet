@@ -604,7 +604,7 @@ function getLedgerDetails(req, res) {
         {
           $unwind: {
             path: '$betInfo',
-            preserveNullAndEmptyArrays: false // Change to false if you only want deposits with matching bets
+            preserveNullAndEmptyArrays: true // Change to false if you only want deposits with matching bets
           }
         },
         {
