@@ -554,6 +554,7 @@ function getLedgerDetails(req, res) {
     const query = { userId: req.body.userId };
     let page = 1;
     let limit = config.pageSize;
+
     if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
     if (req.body.page) page = Number(req.body.page);
 
@@ -603,26 +604,20 @@ function getLedgerDetails(req, res) {
         {
           $unwind: {
             path: '$betInfo',
-            preserveNullAndEmptyArrays: true
+            preserveNullAndEmptyArrays: true // Change to false if you only want deposits with matching bets
           }
         },
         {
-          $sort: { createdAt: -1 } // Sort by createdAt to get the latest deposit
+          $match: {
+            betId: { $ne: null } // Ensure we only get deposits that have a valid betId
+          }
+        },
+        {
+          $sort: { createdAt: -1 } // Sort to get the latest deposits first
         },
         {
           $group: {
-            _id: {
-              $cond: {
-                if: { $in: ["$cashOrCredit", ['Cash', 'Credit', 'Bet', 'Commission']] },
-                then: "$_id",
-                else: {
-                  matchId: "$matchId",
-                  marketId: "$marketId",
-                  betSession: "$betSession",
-                  roundId: "$roundId"
-                }
-              }
-            },
+            _id: '$betId', // Group by betId
             originalId: { $first: "$_id" },
             description: { $first: "$description" },
             amount: { $sum: "$amount" },
@@ -636,7 +631,6 @@ function getLedgerDetails(req, res) {
             sportsId: { $first: "$sportsId" },
             marketId: { $first: "$marketId" },
             roundId: { $first: "$roundId" },
-            betId: { $first: "$betId" },
             userId: { $first: "$userId" },
             matchId: { $first: "$matchId" },
             betSession: { $first: "$betInfo.betSession" },
