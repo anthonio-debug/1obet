@@ -90,13 +90,13 @@ function scoreChecker() {
           ];
         }
       } else {
-        
+
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]
         };
         const response = await axios.post(url, requestData, header);
-        if(!response?.data?.result) return;
+        if (!response?.data?.result) return;
         const resData = response.data.result;
         results = [
           {
@@ -120,6 +120,11 @@ function scoreChecker() {
           sportsId: betData.sportsId,
           status: 1
         });
+
+        // const checkEventMarket = await MarketIDs.find({ eventId: betData.eventId, marketName: "Match Odds" })
+        // if (checkEventMarket.status == "CLOSED") {
+        //   await inPlayEvents.updateOne({ Id: betData.eventId }, { $set: { inplay: false } })
+        // }
 
         await newRecord.save();
         //Sports Results Saved
@@ -192,7 +197,7 @@ function scoreChecker() {
             }
           ];
       } else {
-        
+
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]
@@ -400,7 +405,7 @@ function scoreChecker() {
         eventId: event.Id,
         winnerRunnerData: { $ne: null }
       });
-      
+
       if (manuelRecord) {
         if (typeof manuelRecord.manuelClose !== undefined)
           results = [
@@ -425,18 +430,18 @@ function scoreChecker() {
         let result = fancyOdds[0]?.result;
         results = [{ manuelClose: false, result: result }];
       }
-      
+
       if (results.length > 0) {
         const result = results[0];
-        
+
         if (result.result == null) return;
 
         let FindInMe = result.result;
         let findMe = FindInMe.search("Adv");
-        
 
 
-        if(result.result=='Abandoned' || findMe != -1){
+
+        if (result.result == 'Abandoned' || findMe != -1) {
           await Bets.updateMany(
             {
               matchId: event._id.toString(),
@@ -450,9 +455,9 @@ function scoreChecker() {
             }
           );
         }
-        console.log("RE...........................................ult>>>",result);
-        
-        
+        console.log("RE...........................................ult>>>", result);
+
+
         let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: fancyName,
