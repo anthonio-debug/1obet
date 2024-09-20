@@ -645,7 +645,7 @@ function getLedgerDetails(req, res) {
         {
           $facet: {
             metadata: [{ $count: 'total' }],
-            results: [{ $sort: { createdAt: -1 } }, { $skip: (page - 1) * limit }, { $limit: limit }]
+            results: [{ $sort: { createdAt: 1 } }, { $skip: (page - 1) * limit }, { $limit: limit }]
           }
         },
         
