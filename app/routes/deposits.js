@@ -643,9 +643,12 @@ function getLedgerDetails(req, res) {
 
       cashPipeline.push(
         {
+          $sort: { date: 1 },
+        },
+        {
           $facet: {
             metadata: [{ $count: 'total' }],
-            results: [{ $sort: { createdAt: 1 } }, { $skip: (page - 1) * limit }, { $limit: limit }]
+            results: [ { $skip: (page - 1) * limit }, { $limit: limit }]
           }
         },
         
