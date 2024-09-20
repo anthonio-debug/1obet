@@ -5628,7 +5628,7 @@ async function getDuplicateEntries(req, res) {
       },
       {$limit:20}
     ])
-    console.log (">>>>>>>>>>> record >>>>>>>>>>", record)
+    // console.log (">>>>>>>>>>> record >>>>>>>>>>", record)
     res.status(200).json({
       success: true,
       message: 'Duplicate entries fetched successfully',
