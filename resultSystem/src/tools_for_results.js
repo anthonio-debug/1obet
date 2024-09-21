@@ -23,11 +23,12 @@ function ToolForResults() {
   async function getBetForEvents(targetArray) {
     const currentTime = new Date().getTime();
     var results =[]
+    var results1 =[]
     try {
       const userId = await User.find({  userId: 21680})
-      if (userId.length>0) {
+      if (userId.length > 0) {
         
-        results = await Bets.aggregate([
+        results1 = await Bets.aggregate([
           {
             $match: {
               sportsId: { $in: targetArray },
@@ -83,7 +84,7 @@ function ToolForResults() {
       }
     
 
-      for (const result of results) {
+      for (const result of results1) {
         const checkActive = await checkActiveBettors(result.betDocument);
         if (checkActive) continue;
         await Bets.updateMany(
