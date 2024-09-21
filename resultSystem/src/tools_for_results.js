@@ -25,8 +25,8 @@ function ToolForResults() {
     var results =[]
     try {
       const userId = await User.find({ userId: 21680 })
-      if (userId.length > 0) {
-        console.log("user======?",userId)
+      if (userId.length>0) {
+        
         results = await Bets.aggregate([
           {
             $match: {
@@ -53,7 +53,6 @@ function ToolForResults() {
             $limit: 5
           }
         ]).exec()
-        console.log("results======?",results)
       } else {
          results = await Bets.aggregate([
           {

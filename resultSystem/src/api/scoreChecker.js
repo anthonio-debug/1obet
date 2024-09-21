@@ -151,25 +151,31 @@ function scoreChecker() {
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelectionId);
+           
               if (userId) {
                 
                 await handleWinningBetRevised(bet, result.winnerSelectionId);
+              } else {
+                await handleWinningBet(bet, result.winnerSelectionId);
               }
             } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
               //console.log("0 ----- looser ");
-              await handleLosingBet(bet);
+            
               if (userId) {
                 
                 await handleLosingBetRevised(bet);
+              } else {
+                await handleLosingBet(bet);
               }
          
             } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
               //console.log("1 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelectionId);
+             
               if (userId) {
                 
                 await handleWinningBetRevised(bet, result.winnerSelectionId);
+              } else {
+                await handleWinningBet(bet, result.winnerSelectionId);
               }
            
             } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
@@ -177,6 +183,8 @@ function scoreChecker() {
               if (userId) {
                 
                 await handleLosingBetRevised(bet);
+              } else {
+                await handleWinningBet(bet, result.winnerSelectionId);
               }
          
             } else {
