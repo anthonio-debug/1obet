@@ -152,7 +152,7 @@ function scoreChecker() {
             await handleDrawBet(bet);
           }
         } else {
-          //console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
+          console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
