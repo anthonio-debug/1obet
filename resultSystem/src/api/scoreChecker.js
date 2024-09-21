@@ -159,9 +159,9 @@ function scoreChecker() {
           for (const bet of bets) {
 
             console.log("blockageeeeeeeeeeeeeeeeeeeee",bet.isManuel,"result.manuelClose",result.manuelClose)
-            if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
-              continue;
-            }
+            // if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
+            //   continue;
+            // }
 
 
             console.log("here1111111111111111111111111111111111111111111111111111111")
