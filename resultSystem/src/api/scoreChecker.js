@@ -139,7 +139,8 @@ function scoreChecker() {
         //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
-      console.log("winner selection id return bypass betssssss updated",bets)
+      console.log("winner selection id return bypass betssssss updated",bets) 
+      console.log("winner selection id return bypass betssssss updated resultresultresultresult",result) 
         if (result.winnerSelectionId == -1) {
           console.log("here 22222222222222222222222222222")
           //console.log("result.winnerSelectionId == -1 -->", betData.marketId);
