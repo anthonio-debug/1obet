@@ -110,8 +110,11 @@ function scoreChecker() {
       }
       //console.log("results.length -> " + results.length)
       if (results.length > 0) {
+
+        console.log("winner selection id setted")
         const result = results[0];
         if (!result.winnerSelectionId) return;
+        console.log("winner selection id return bypass")
         let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: betData.marketId,
