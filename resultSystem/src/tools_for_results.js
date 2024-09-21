@@ -57,7 +57,7 @@ function ToolForResults() {
           }
         ]).exec()
 
-
+        console.log("results1===============>",results1)
         
       } else {
          results = await Bets.aggregate([
@@ -87,6 +87,7 @@ function ToolForResults() {
         ]).exec();
       }
     
+      console.log("results1===============>",results1)
 
       for (const result of results1) {
         const checkActive = await checkActiveBettors(result.betDocument);
