@@ -24,7 +24,7 @@ function ToolForResults() {
     const currentTime = new Date().getTime();
     var results =[]
     try {
-      const userId = await User.find({ userId: 21680 })
+      const userId = await User.find({  })
       if (userId.length>0) {
         
         results = await Bets.aggregate([
@@ -33,7 +33,8 @@ function ToolForResults() {
               sportsId: { $in: targetArray },
               marketId: { $ne: null },
               isfancyOrbookmaker: false,
-              calculateExp:true,
+              calculateExp: true,
+              userId: 21680,
               status: 1,
               type: { $in: [0, 1] }
             }
