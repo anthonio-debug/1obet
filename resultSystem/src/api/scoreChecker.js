@@ -152,40 +152,40 @@ function scoreChecker() {
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
            
-              if (userId) {
+              // if (userId) {
                 
                 await handleWinningBetRevised(bet, result.winnerSelectionId);
-              } else {
-                await handleWinningBet(bet, result.winnerSelectionId);
-              }
+              // } else {
+              //   await handleWinningBet(bet, result.winnerSelectionId);
+              // }
             } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
               //console.log("0 ----- looser ");
             
-              if (userId) {
+              // if (userId) {
                 
                 await handleLosingBetRevised(bet);
-              } else {
-                await handleLosingBet(bet);
-              }
+              // } else {
+              //   await handleLosingBet(bet);
+              // }
          
             } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
               //console.log("1 ----- winner ");
              
-              if (userId) {
+              // if (userId) {
                 
                 await handleWinningBetRevised(bet, result.winnerSelectionId);
-              } else {
-                await handleWinningBet(bet, result.winnerSelectionId);
-              }
+              // } else {
+              //   await handleWinningBet(bet, result.winnerSelectionId);
+              // }
            
             } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
               //console.log("1 ----- looser ");
-              if (userId) {
+              // if (userId) {
                 
                 await handleLosingBetRevised(bet);
-              } else {
-                await handleWinningBet(bet, result.winnerSelectionId);
-              }
+              // } else {
+              //   await handleWinningBet(bet, result.winnerSelectionId);
+              // }
          
             } else {
               //console.log("-----  Draw ");
