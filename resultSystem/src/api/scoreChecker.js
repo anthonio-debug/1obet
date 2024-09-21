@@ -90,9 +90,9 @@ function scoreChecker() {
           ];
         }
 
-        console.log("scorechecker result undefied")
+        console.log("scorechecker result undefied",results)
       } else {
-        console.log("scorechecker result defied")
+        console.log("scorechecker result defied",results)
 
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
