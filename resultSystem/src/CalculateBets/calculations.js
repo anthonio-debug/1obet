@@ -88,7 +88,8 @@ async function getAllBets(Id) {
 }
 
 async function handleLosingBet(bet) {
-  
+  console.log("nooooooooooooothandleWinningBetRevised===================>s",bet)
+
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -1262,6 +1263,8 @@ async function handleWinningBetRevised(bet, winner) {
 }
 
 const handleDrawBet = async (bet, status = 0) => {
+  console.log("draw===================>s",bet)
+
   try {
     if (bet.status == 1) {
       const betStatus = await Bets.findById(bet._id);
