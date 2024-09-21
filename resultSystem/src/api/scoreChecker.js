@@ -13,7 +13,7 @@ const FancyOdds = require('../../../app/models/fancyOdds');
 const { API_DOMAIN } = require('../../../app/global/constants');
 const { checkActiveBettors } = require('../../../helper/bet');
 const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
-const { handleLosingBet, handleWinningBet, handleDrawBet } = require('../CalculateBets/calculations');
+const { handleLosingBet, handleWinningBet, handleDrawBet, handleLosingBetRevised, handleWinningBetRevised } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
 // const sportsAPIUrl = "http://209.250.242.175:33332";
@@ -62,7 +62,7 @@ function scoreChecker() {
     return winnerSelectionId;
   }
 
-  async function eventsResult(betData) {
+  async function eventsResult(betData,userId) {
     //console.log("Result checking event for ", betData.marketId);
     try {
       let results;
@@ -152,15 +152,33 @@ function scoreChecker() {
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
+              if (userId) {
+                
+                await handleWinningBetRevised(bet, result.winnerSelectionId);
+              }
             } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
               //console.log("0 ----- looser ");
               await handleLosingBet(bet);
+              if (userId) {
+                
+                await handleLosingBetRevised(bet);
+              }
+         
             } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
               //console.log("1 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
+              if (userId) {
+                
+                await handleWinningBetRevised(bet, result.winnerSelectionId);
+              }
+           
             } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
               //console.log("1 ----- looser ");
-              await handleLosingBet(bet);
+              if (userId) {
+                
+                await handleLosingBetRevised(bet);
+              }
+         
             } else {
               //console.log("-----  Draw ");
               await handleDrawBet(bet);

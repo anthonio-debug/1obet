@@ -3,6 +3,7 @@ module.exports = ToolForResults;
 const sportsIdsForRacing = ['4339', '7'];
 const sportsIds = ['4', '2', '1'];
 const Bets = require('../../app/models/bets');
+const User = require('../../app/models/user');
 const { checkActiveBettors } = require('../../helper/bet');
 const scoreChecker = require('./api/scoreChecker')();
 
@@ -21,32 +22,64 @@ function ToolForResults() {
 
   async function getBetForEvents(targetArray) {
     const currentTime = new Date().getTime();
+    const results =[]
     try {
-      const results = await Bets.aggregate([
-        {
-          $match: {
-            sportsId: { $in: targetArray },
-            marketId: { $ne: null },
-            isfancyOrbookmaker: false,
-            status: 1,
-            type: { $in: [0, 1] }
+      const userId = await User.find({ userId: 21680 })
+      if (userId.length>0) {
+        results = await Bets.aggregate([
+          {
+            $match: {
+              sportsId: { $in: targetArray },
+              marketId: { $ne: null },
+              isfancyOrbookmaker: false,
+              calculateExp:true,
+              status: 1,
+              type: { $in: [0, 1] }
+            }
+          },
+          {
+            $group: {
+              _id: '$marketId',
+              betDocument: { $first: '$$ROOT' }
+            }
+          },
+          {
+            $sort: {
+              lastCheckResult: 1
+            }
+          },
+          {
+            $limit: 5
           }
-        },
-        {
-          $group: {
-            _id: '$marketId',
-            betDocument: { $first: '$$ROOT' }
+        ]).exec()
+      } else {
+         results = await Bets.aggregate([
+          {
+            $match: {
+              sportsId: { $in: targetArray },
+              marketId: { $ne: null },
+              isfancyOrbookmaker: false,
+              status: 1,
+              type: { $in: [0, 1] }
+            }
+          },
+          {
+            $group: {
+              _id: '$marketId',
+              betDocument: { $first: '$$ROOT' }
+            }
+          },
+          {
+            $sort: {
+              lastCheckResult: 1
+            }
+          },
+          {
+            $limit: 5
           }
-        },
-        {
-          $sort: {
-            lastCheckResult: 1
-          }
-        },
-        {
-          $limit: 5
-        }
-      ]).exec();
+        ]).exec();
+      }
+    
 
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
@@ -63,7 +96,7 @@ function ToolForResults() {
         if (!result.betDocument) continue;
 
         if (result.betDocument.sportsId === '1' || result.betDocument.sportsId === '2' || result.betDocument.sportsId === '4') {
-          await scoreChecker.eventsResult(result.betDocument);
+          await scoreChecker.eventsResult(result.betDocument,userId);
         } else if (result.betDocument.sportsId === '7' || result.betDocument.sportsId === '4339') {
           await scoreChecker.racingResult(result.betDocument);
         } else {
