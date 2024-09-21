@@ -35,7 +35,7 @@ function ToolForResults() {
               marketId: { $ne: null },
               isfancyOrbookmaker: false,
               calculateExp: true,
-              marketId:"1.232805759",
+              // marketId:"1.232805759",
               userId: 21680,
               status: 1,
               type: { $in: [0, 1] }
