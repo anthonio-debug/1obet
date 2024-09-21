@@ -22,7 +22,7 @@ function ToolForResults() {
 
   async function getBetForEvents(targetArray) {
     const currentTime = new Date().getTime();
-    const results =[]
+    var results =[]
     try {
       const userId = await User.find({ userId: 21680 })
       if (userId.length>0) {
