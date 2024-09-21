@@ -72,9 +72,11 @@ function scoreChecker() {
       });
       console.log(userId,"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm:",manuelRecord,"------------------->>>>>>",betData.marketId);
       if (manuelRecord) {
-        //console.log("Inside manual");
+        console.log("Inside manual");
 
         if (typeof manuelRecord.manuelClose !== undefined) {
+          console.log("Inside manual is  defined");
+
           results = [
             {
               winnerSelectionId: manuelRecord.winnerRunnerData,
@@ -82,6 +84,7 @@ function scoreChecker() {
             }
           ];
         } else {
+          console.log("Inside manual is not defined");
           results = [
             {
               winnerSelectionId: manuelRecord.winnerRunnerData,
