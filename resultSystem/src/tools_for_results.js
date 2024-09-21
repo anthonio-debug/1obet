@@ -24,7 +24,7 @@ function ToolForResults() {
     const currentTime = new Date().getTime();
     var results =[]
     try {
-      const userId = await User.find({  })
+      const userId = await User.find({  userId: 21680})
       if (userId.length>0) {
         
         results = await Bets.aggregate([
