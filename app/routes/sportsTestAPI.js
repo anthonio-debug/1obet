@@ -4034,12 +4034,12 @@ async function deleteOdds(req, res) {
     //   session.save();
     // }
 
-    //await Odds.deleteMany({});
+    await Odds.deleteMany({});
    
 
   
 
-    // await RaceOdds.deleteMany({});
+    await RaceOdds.deleteMany({});
     // await fancyOdds.deleteMany({});
     // await MarketIDS.deleteMany({
     //   $or: [
