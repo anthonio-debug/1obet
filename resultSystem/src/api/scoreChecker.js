@@ -89,7 +89,10 @@ function scoreChecker() {
             }
           ];
         }
+
+        console.log("scorechecker result undefied")
       } else {
+        console.log("scorechecker result defied")
 
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
