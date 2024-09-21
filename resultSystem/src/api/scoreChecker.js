@@ -70,7 +70,7 @@ function scoreChecker() {
         marketId: betData.marketId,
         winnerRunnerData: { $ne: null }
       });
-      console.log("mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm:",manuelRecord);
+      console.log(userId,"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm:",manuelRecord);
       if (manuelRecord) {
         //console.log("Inside manual");
 
