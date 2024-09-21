@@ -581,7 +581,6 @@ function getLedgerDetails(req, res) {
       }];
 
       const userRole = user.role;
-      console.log("user role", user);
 
       if (userRole !== '5' && req.body.type) {
         cashPipeline.push({ $match: { cashOrCredit: req.body.type }, });
@@ -663,12 +662,8 @@ function getLedgerDetails(req, res) {
 
       Cash.aggregate(cashPipeline, async (err, result) => {
         if (result[0].results && result[0].results.length > 0) {
-          console.log("check the code I'm Here 1", result)
           for (let i = 0; i < result[0].results.length; i++) {
-            console.log("check the code I'm Here")
-            //console.log()
             if (result[0].results[i].betId) {
-              console.log("check the code I'm Here12")
               try {
                 const betInfo = await Bet.findOne({
                   _id: result[0].results[i].betId
