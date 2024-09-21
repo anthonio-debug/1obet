@@ -581,6 +581,7 @@ async function handleLosingBetRevised(bet) {
 }
 
 async function handleWinningBet(bet, winner) {
+  console.log("noooooooooooothandleWinningBetRevised===================>s",bet)
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -920,7 +921,7 @@ async function handleWinningBet(bet, winner) {
 }
 async function handleWinningBetRevised(bet, winner) {
 
-  console.log("handleWinningBetRevised===================>s")
+  console.log("handleWinningBetRevised===================>s",bet)
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
