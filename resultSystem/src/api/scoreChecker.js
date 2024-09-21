@@ -148,6 +148,9 @@ function scoreChecker() {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
+
+
+            console.log("here1111111111111111111111111111111111111111111111111111111")
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
