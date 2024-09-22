@@ -302,7 +302,7 @@ function scoreChecker() {
               await handleWinningBetRevised(bet, result.winnerSelectionId);
             } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
               //console.log("1 ----- looser ");
-              await handleLosingBetRevised(bet);
+              await handleLosingBetRevised(bet)
             } else {
               //console.log("-----  Draw ");
               await handleDrawBet(bet);

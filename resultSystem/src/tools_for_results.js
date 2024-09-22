@@ -126,6 +126,7 @@ function ToolForResults() {
       const betData = await Bets.findOne({
         sportsId: '4',
         isfancyOrbookmaker: true,
+      
         status: 1
       })
         .sort({
