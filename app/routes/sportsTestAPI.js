@@ -3546,6 +3546,8 @@ async function getEventsBySportsId(req, res) {
   const sportsId = req.params.sportsId;
 
   try {
+
+    console.log("here1  11111")
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
     const header = {
       headers: {
@@ -3565,9 +3567,14 @@ async function getEventsBySportsId(req, res) {
       url,
       requestData,
       header
-    );
-
+    ).then((res) => {
+      console.log(res)
+    }).catch((err) => {
+      console.log(err)
+    });
+    
     const marketsData = response.data;
+    console.log("here1  2122222222",marketsData)
 
     res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
