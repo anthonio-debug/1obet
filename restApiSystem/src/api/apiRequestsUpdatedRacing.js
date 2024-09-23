@@ -657,12 +657,14 @@ console.log("looooooooooooop=============> odds",odds.marketId)
             
 
 
-
+console.log(!RacingOddsMap.has(marketId),!isObjectEqual(RacingOddsMap.get(marketId), frontOdds),"ifffffff first condition")
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
               RacingOddsMap.set(marketId, frontOdds)
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
+                console.log(typeof odds.status === 'undefined' , odds.status !== 'OPEN',"ifffffff second condition")
                 //console.log(odds.marketId, " this market has no odds.....");
                 if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
+                  console.log(odds.status === 'CLOSED' || odds.status === 'SUSPENDED',"ifffffff third condition")
                   await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
                   const result = await RaceOdds.collection.insertOne(json);
                   odds._id = result.insertedId;
