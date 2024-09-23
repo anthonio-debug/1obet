@@ -78,7 +78,7 @@ function ToolForResults() {
         if (!result.betDocument) continue;
 
         if (result.betDocument.sportsId === '1' || result.betDocument.sportsId === '2' || result.betDocument.sportsId === '4') {
-          await scoreChecker.eventsResult(result.betDocument,userId);
+          await scoreChecker.eventsResult(result.betDocument);
         } else if (result.betDocument.sportsId === '7' || result.betDocument.sportsId === '4339') {
           await scoreChecker.racingResult(result.betDocument);
         } else {
