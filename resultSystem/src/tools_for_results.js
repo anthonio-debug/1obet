@@ -26,7 +26,7 @@ function ToolForResults() {
     var results1 =[]
     try {
       const userId = await User.find({  userId: 21680})
-      if (userId.length > 0) {
+     
         
         results1 = await Bets.aggregate([
           {
@@ -59,33 +59,7 @@ function ToolForResults() {
 
     
         
-      } else {
-         results = await Bets.aggregate([
-          {
-            $match: {
-              sportsId: { $in: targetArray },
-              marketId: { $ne: null },
-              isfancyOrbookmaker: false,
-              status: 1,
-              type: { $in: [0, 1] }
-            }
-          },
-          {
-            $group: {
-              _id: '$marketId',
-              betDocument: { $first: '$$ROOT' }
-            }
-          },
-          {
-            $sort: {
-              lastCheckResult: 1
-            }
-          },
-          {
-            $limit: 5
-          }
-        ]).exec();
-      }
+      
     
       console.log("==========length=========",results1.length)
 
