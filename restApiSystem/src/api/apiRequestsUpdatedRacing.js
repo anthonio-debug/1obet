@@ -680,6 +680,7 @@ console.log(!RacingOddsMap.has(marketId),!isObjectEqual(RacingOddsMap.get(market
                 console.log("json=================>",json)
                 const result = await RaceOdds.collection.insertOne(json);
                 odds._id = result.insertedId;
+                console.log(result,"result insertionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
 
                 io.to('$' + odds.marketId).emit('odds', json);
               }
