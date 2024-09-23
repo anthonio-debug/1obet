@@ -347,6 +347,8 @@ const getHighlights = async (req, res) => {
     const userId = req.decoded.userId;
     const matchId = req.query.matchId;
 
+    if (req.decoded.role == "0" || req.decoded.role == "5") return
+
     const currentPositionData = await MarketId.aggregate([
       {
         $match: {
