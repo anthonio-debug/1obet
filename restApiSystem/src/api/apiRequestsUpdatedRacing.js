@@ -566,8 +566,8 @@ function apiRequests() {
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
-      //console.log("Odds Data ----------->", oddsData?.length)
-
+      console.log("Odds Data ----------->", oddsData?.length)
+// console.log()
       let responsedMarketIDs = [];
       let marketIds_index = 0;
       let numberOfVisits = 0;
