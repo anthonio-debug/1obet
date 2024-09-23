@@ -3544,10 +3544,8 @@ async function getMarketsByEventId(req, res) {
 
 async function getEventsBySportsId(req, res) {
   const sportsId = req.params.sportsId;
-
   try {
-
-    console.log("here1  11111")
+    console.log("Fetching events for sportsId: ", sportsId);
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
     const header = {
       headers: {
@@ -3555,31 +3553,23 @@ async function getEventsBySportsId(req, res) {
         'Content-Type': 'application/json',
         'X-App': process.env.XAPP_NAME
       },
-    }
+    };
     const requestData = {
       "filter": {
         eventTypeIds: [sportsId]
-      },
-    }
+      }
+    };
     var url = `${sportsAPIUrl}/listEvents`;
-    console.log("url", url)
-    console.log("process.env.XAPP_NAME", process.env.XAPP_NAME)
-    const response = await axios.post(
-      url,
-      requestData,
-      header
-    ).then((res) => {
-      console.log(res)
-    }).catch((err) => {
-      console.log(err)
-    });
-    
-    const marketsData = response.data;
-    console.log("here1  2122222222",marketsData)
+    console.log("Request URL:", url);
 
+    const response = await axios.post(url, requestData, header);
+    const marketsData = response.data;
+
+    console.log("Market Data:", marketsData);
     res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
+    console.error(`Failed to fetch events for sportsId: ${sportsId}`, err.response?.status, err.message);
+    res.status(500).json({ success: false, msg: "Error fetching events: " + err.message });
   }
 }
 
