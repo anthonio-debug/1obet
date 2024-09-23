@@ -25,8 +25,8 @@ function ToolForResults() {
     var results =[]
     var results1 =[]
     try {
-      const userId = await User.find({  userId: 21680})
      
+     console.log("targetar=========================",targetArray)
         
         results1 = await Bets.aggregate([
           {
