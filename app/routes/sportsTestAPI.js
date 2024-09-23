@@ -3528,7 +3528,9 @@ async function getMarketsByEventId(req, res) {
         "RUNNER_DESCRIPTION",
       ],
     };
+    console.log("check before Url")
     var url = `${sportsAPIUrl}/listMarketCatalogue`;
+    console.log("check after Url")
 
     const response = await axios.post(url, JSON.stringify(requestData), header);
 
