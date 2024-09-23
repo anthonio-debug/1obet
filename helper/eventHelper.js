@@ -46,6 +46,14 @@ const fetchMarket = async (event) => {
           status: marketStatus,
           runners
         });
+      } else {
+        marketIds.push({
+          id: market.marketId,
+          marketName: market.marketName,
+          openDate:Date.parse((market.marketStartTime)),
+          status: marketStatus,
+          runners
+        });
       }
     });
 
