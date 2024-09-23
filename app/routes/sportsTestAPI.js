@@ -3533,8 +3533,10 @@ async function getMarketsByEventId(req, res) {
     
     const response = await axios.post(url, JSON.stringify(requestData), header);
     console.log("check after Url")
-
+    
     const marketsData = response.data;
+    console.log("marketsData", marketsData)
+    
 
     res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
