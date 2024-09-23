@@ -3562,7 +3562,8 @@ async function getEventsBySportsId(req, res) {
       },
     }
     var url = `${sportsAPIUrl}/listEvents`;
-
+    console.log("url", url)
+    console.log("process.env.XAPP_NAME", process.env.XAPP_NAME)
     const response = await axios.post(
       url,
       requestData,
