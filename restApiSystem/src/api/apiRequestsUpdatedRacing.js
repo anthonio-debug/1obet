@@ -563,6 +563,8 @@ function apiRequests() {
       const requestData = {
         "marketIds": marketIds
       }
+      console.log("marketid=============",marketIds);
+      
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
@@ -574,7 +576,7 @@ function apiRequests() {
       if (oddsData.length > 0) {
         for (const odds of oddsData) {
           numberOfVisits++;
-
+console.log("looooooooooooop=============> odds",odds.marketId)
           if (odds) {
             odds.createdAt = new Date().getTime()
 
