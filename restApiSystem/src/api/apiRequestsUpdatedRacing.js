@@ -675,7 +675,7 @@ console.log("looooooooooooop=============> odds",odds.marketId)
                 }
               } else {
                 //console.log(odds.marketId, " This market has odds found");
-
+                console.log("json=================>",json)
                 const result = await RaceOdds.collection.insertOne(json);
                 odds._id = result.insertedId;
 
