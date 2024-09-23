@@ -46,7 +46,7 @@ const fetchMarket = async (event) => {
           status: marketStatus,
           runners
         });
-      } else {
+      } else if (market?.description?.marketType === "WIN")  {
         marketIds.push({
           id: market.marketId,
           marketName: market.marketName,
