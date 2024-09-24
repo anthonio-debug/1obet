@@ -5663,6 +5663,35 @@ async function getDuplicateEntries(req, res) {
   }
 }
 
+async function saveRaceOddsLithyl(oddsData) {
+  try {
+    if (oddsData.success && oddsData.data.length > 0) {
+      const marketData = oddsData.data[0];
+
+      const raceOdds = new RaceOdds({
+        update: marketData.updateTime,
+        lastUpdate: new Date(marketData.updateTime).getTime(),
+        marketId: marketData.marketId,
+        isMarketDataDelayed: false,
+        state: {
+          status: marketData.status,
+          inplay: marketData.inplay,
+          totalMatched: marketData.totalMatched
+        },
+        runners: marketData.runners,
+        isMarketDataVirtual: false
+      });
+
+      await raceOdds.save();
+      console.log('Odds data saved successfully!');
+    } else {
+      console.log('No valid odds data to save.');
+    }
+  } catch (error) {
+    console.error('Error saving odds data:', error);
+  }
+}
+
 // //////////////////
 router.get('/track-bet/lithylAPI/getSeriesList/:sportsId', getSeriesList)
 router.get('/track-bet/lithylAPI/getAllMatchesList/:series_id', getAllMatchesList)
@@ -5671,6 +5700,7 @@ router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFan
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
+router.get('/track-bet/lithylAPI/saveRaceOddsLithyl/:markets_id', saveRaceOddsLithyl)
 router.get('/track-bet/lithylAPI/getOdd', getOdds)
 router.post('/track-bet/lithylAPI/placeBet', placeBet)
 router.get('/track-bet/updateUserName', updateUserName)
