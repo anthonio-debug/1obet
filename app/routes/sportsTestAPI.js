@@ -7,8 +7,10 @@ const InPlayEvents = require("../models/events")
 const MarketIDS = require("../models/marketIds")
 const Odds = require('../models/odds');
 const RaceOdds = require('../models/raceOdds');
-const FancyOdds = require('../models/fancyOdds');
 const inPlayEventsLithylapi = require('../models/inPlayEventsLithylapi');
+const raceMarketsLithylapi = require('../models/raceMarketsLithylapi');
+const raceOddsLithylapi = require('../models/raceOddsLithylapi');
+const FancyOdds = require('../models/fancyOdds');
 const useragent = require('express-useragent');
 const Cash = require('../../app/models/deposits');
 const axios = require('axios');
@@ -5665,25 +5667,71 @@ async function getDuplicateEntries(req, res) {
 
 async function saveRaceOddsLithyl(oddsData) {
   try {
-    if (oddsData.success && oddsData.data.length > 0) {
-      const marketData = oddsData.data[0];
+    if (oddsData.length > 0) {
+      for (const odds of oddsData) {
+        let tempRunners = [];
+        for (let n = 0; n < odds.runners?.length; n++) {
+          let tempElement = {
+            selectionId: odds?.runners[n]?.selectionId,
+            handicap: odds?.runners[n]?.handicap,
+            state: {
+              status: odds.runners[n]?.status,
+              lastPriceTraded: odds.runners[n]?.lastPriceTraded,
+              totalMatched: odds.runners[n]?.totalMatched,
+            },
+            exchange: {
+              availableToBack: [
+                {
+                  price: odds.runners[n]?.ex.availableToBack[0]?.price,
+                  size: odds.runners[n]?.ex.availableToBack[0]?.size
+                },
+                {
+                  price: odds.runners[n]?.ex.availableToBack[1]?.price,
+                  size: odds.runners[n]?.ex.availableToBack[1]?.size
+                },
+                {
+                  price: odds.runners[n]?.ex.availableToBack[2]?.price,
+                  size: odds.runners[n]?.ex.availableToBack[2]?.size
+                },
+              ],
+              availableToLay: [
+                {
+                  price: odds.runners[n]?.ex.availableToLay[0]?.price,
+                  size: odds.runners[n]?.ex.availableToLay[0]?.size
+                },
+                {
+                  price: odds.runners[n]?.ex.availableToLay[1]?.price,
+                  size: odds.runners[n]?.ex.availableToLay[1]?.size
+                },
+                {
+                  price: odds.runners[n]?.ex.availableToLay[2]?.price,
+                  size: odds.runners[n]?.ex.availableToLay[2]?.size
+                },
+              ]
+            }
+          }
 
-      const raceOdds = new RaceOdds({
-        update: marketData.updateTime,
-        lastUpdate: new Date(marketData.updateTime).getTime(),
-        marketId: marketData.marketId,
-        isMarketDataDelayed: false,
-        state: {
-          status: marketData.status,
-          inplay: marketData.inplay,
-          totalMatched: marketData.totalMatched
-        },
-        runners: marketData.runners,
-        isMarketDataVirtual: false
-      });
+          tempRunners.push(tempElement)
+        }
 
-      await raceOdds.save();
-      console.log('Odds data saved successfully!');
+        let isMarketDataDelayed = false;
+
+        let json = {
+          marketId: odds.marketId,
+          isMarketDataDelayed: isMarketDataDelayed,
+          state: {
+            numberOfRunners: tempRunners?.length,
+            totalMatched: odds?.totalMatched,
+            inplay: odds?.inplay,
+            status: odds?.status
+          },
+          runners: tempRunners,
+          createdAt: new Date().getTime(),
+        }
+
+        const result = await raceOddsLithylapi.collection.insertOne(json);
+        console.log('Odds data saved successfully for market:', odds.marketId);
+      }
     } else {
       console.log('No valid odds data to save.');
     }
