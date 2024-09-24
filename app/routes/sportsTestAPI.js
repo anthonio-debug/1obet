@@ -5720,6 +5720,9 @@ async function raceMarketsLithylapi(eventId, sportsId, competitionId) {
 
     const url=`http://sportzing.in:5505/api/getHorseRaceMatches`
     let response = await axios.post(url, JSON.stringify(requestData), header);
+
+    console.log("-=-=--=-=-=-=--==-=- lithyl markets response -=-=-=-=-=-=-=-",response);
+    
     const eventsData = response.data;
 
     let marketIds = [];
