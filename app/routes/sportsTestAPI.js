@@ -5665,39 +5665,39 @@ async function getDuplicateEntries(req, res) {
   }
 }
 
-async function raceMarketsLithylapi(req, res) {
+// async function raceMarketsLithylapi(req, res) {
 
-  try {
-    // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
-    const sportsAPIUrl = `http://sportzing.in:5505/api/getHorseRaceMatches`;
+//   try {
+//     // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
+//     const sportsAPIUrl = `http://sportzing.in:5505/api/getHorseRaceMatches`;
 
-    console.log("------------------http://sportzing.in:5505/api/getHorseRaceMatches")
-    const header = {
-      headers: {
-        accept: "application/json",
-        "Content-Type": "application/json",
-        "X-App": process.env.XAPP_NAME,
-        "Cache-Control": "no-cache"
-      },
-    };
+//     console.log("------------------http://sportzing.in:5505/api/getHorseRaceMatches")
+//     const header = {
+//       headers: {
+//         accept: "application/json",
+//         "Content-Type": "application/json",
+//         "X-App": process.env.XAPP_NAME,
+//         "Cache-Control": "no-cache"
+//       },
+//     };
 
 
-    const response = await axios.get(sportsAPIUrl, header);
-    console.log("MMMMMMMMMMMMMMMM--getHorseRaceMatches response ", response.data);
+//     const response = await axios.get(sportsAPIUrl, header);
+//     console.log("MMMMMMMMMMMMMMMM--getHorseRaceMatches response ", response.data);
 
-    ///////////////////////////////////////////
+//     ///////////////////////////////////////////
 
-    ////////////////////////////////////////////
+//     ////////////////////////////////////////////
 
-    // const marketsData = response.data;
-    const horseRaceMatches = response.data;
-    res.status(200).json({ success: true, data: horseRaceMatches });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, msg: "Failed to get Error: " + err.message });
-  }
-}
+//     // const marketsData = response.data;
+//     const horseRaceMatches = response.data;
+//     res.status(200).json({ success: true, data: horseRaceMatches });
+//   } catch (err) {
+//     res
+//       .status(500)
+//       .json({ success: false, msg: "Failed to get Error: " + err.message });
+//   }
+// }
 
 async function raceMarketsLithylapi(eventId, sportsId, competitionId) {
   try {
@@ -5712,23 +5712,20 @@ async function raceMarketsLithylapi(eventId, sportsId, competitionId) {
     };
 
     const url = `http://sportzing.in:5505/api/getHorseRaceMatches`;
-    
-    console.log("------------------http://sportzing.in:5505/api/getHorseRaceMatches")
     let response = await axios.post(url, JSON.stringify(requestData), header);
-    const eventsData = response.data.result;
+    const eventsData = response.data;
 
     let marketIds = [];
 
     for (let j = 0; j < eventsData.length; j++) {
       let eventData = eventsData[j];
-      if (eventData.description?.marketType === "WIN") {
+      if (eventData.marketName) {
         marketIds.push(eventData.marketId);
 
-        // Upsert raceMarkets collection
         await raceMarkets.findOneAndUpdate(
           {
             marketId: eventData.marketId,
-            eventTypeId: eventData.eventType.id,
+            eventTypeId: eventData.event.eventTypeId,
             "eventNodes.eventId": eventData.event.id,
             "eventNodes.event.eventName": eventData.event.name,
             "eventNodes.event.countryCode": eventData.event.countryCode,
@@ -5736,7 +5733,7 @@ async function raceMarketsLithylapi(eventId, sportsId, competitionId) {
           {
             $set: {
               marketId: eventData.marketId,
-              eventTypeId: eventData.eventType.id,
+              eventTypeId: eventData.event.eventTypeId,
               eventNodes: {
                 eventId: eventData.event.id,
                 event: {
@@ -5775,17 +5772,15 @@ async function raceMarketsLithylapi(eventId, sportsId, competitionId) {
           }, {upsert: true, new: true}
         );
 
-        // Create runners array
         let runners = eventData.runners.map(runner => ({
-          SelectionId: runner.selectionId,
+          selectionId: runner.selectionId,
           runnerName: runner.runnerName
         }));
 
-        // Upsert MarketIDS collection
-        await MarketIDS.findOneAndUpdate(
+        await raceMarketsLithylapi.findOneAndUpdate(
           {
             marketId: eventData.marketId,
-            sportID: eventData.eventType.id,
+            sportID: eventData.event.eventTypeId,
             eventId: eventId,
           },
           {
@@ -5801,8 +5796,7 @@ async function raceMarketsLithylapi(eventId, sportsId, competitionId) {
       }
     }
 
-    // Update InPlayEvents with marketIds
-    await InPlayEvents.findOneAndUpdate(
+    await inPlayEventsLithylapi.findOneAndUpdate(
       {Id: eventId},
       {$set: {marketIds: marketIds}},
       {upsert: true, new: true}
@@ -5812,6 +5806,7 @@ async function raceMarketsLithylapi(eventId, sportsId, competitionId) {
     console.error('Market data Problem', error);
   }
 }
+
 
 
 async function saveRaceOddsLithyl(oddsData) {
