@@ -5665,6 +5665,155 @@ async function getDuplicateEntries(req, res) {
   }
 }
 
+async function raceMarketsLithylapi(req, res) {
+
+  try {
+    // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
+    const sportsAPIUrl = `http://sportzing.in:5505/api/getHorseRaceMatches`;
+
+    console.log("------------------http://sportzing.in:5505/api/getHorseRaceMatches")
+    const header = {
+      headers: {
+        accept: "application/json",
+        "Content-Type": "application/json",
+        "X-App": process.env.XAPP_NAME,
+        "Cache-Control": "no-cache"
+      },
+    };
+
+
+    const response = await axios.get(sportsAPIUrl, header);
+    console.log("MMMMMMMMMMMMMMMM--getHorseRaceMatches response ", response.data);
+
+    ///////////////////////////////////////////
+
+    ////////////////////////////////////////////
+
+    // const marketsData = response.data;
+    const horseRaceMatches = response.data;
+    res.status(200).json({ success: true, data: horseRaceMatches });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
+  }
+}
+
+async function raceMarketsLithylapi(eventId, sportsId, competitionId) {
+  try {
+    const requestData = {
+      filter: {
+        eventIds: [eventId],
+        eventTypeIds: [sportsId],
+        marketTypes: ['WIN'],
+      },
+      maxResults: 100,
+      marketProjection: ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
+    };
+
+    const url = `http://sportzing.in:5505/api/getHorseRaceMatches`;
+    
+    console.log("------------------http://sportzing.in:5505/api/getHorseRaceMatches")
+    let response = await axios.post(url, JSON.stringify(requestData), header);
+    const eventsData = response.data.result;
+
+    let marketIds = [];
+
+    for (let j = 0; j < eventsData.length; j++) {
+      let eventData = eventsData[j];
+      if (eventData.description?.marketType === "WIN") {
+        marketIds.push(eventData.marketId);
+
+        // Upsert raceMarkets collection
+        await raceMarkets.findOneAndUpdate(
+          {
+            marketId: eventData.marketId,
+            eventTypeId: eventData.eventType.id,
+            "eventNodes.eventId": eventData.event.id,
+            "eventNodes.event.eventName": eventData.event.name,
+            "eventNodes.event.countryCode": eventData.event.countryCode,
+          },
+          {
+            $set: {
+              marketId: eventData.marketId,
+              eventTypeId: eventData.eventType.id,
+              eventNodes: {
+                eventId: eventData.event.id,
+                event: {
+                  eventName: eventData.event.name,
+                  countryCode: eventData.event.countryCode,
+                  timezone: eventData.event.timezone,
+                  venue: eventData.event.venue,
+                  openDate: new Date(eventData.event.openDate)
+                },
+                marketNodes: {
+                  marketId: eventData.marketId,
+                  state: {
+                    startTime: new Date(eventData.marketStartTime),
+                    numberOfRunners: eventData.runners?.length,
+                    totalMatched: eventData.totalMatched,
+                    status: "PENDING"
+                  },
+                  description: {
+                    marketName: eventData.marketName,
+                    marketTime: new Date(eventData.marketStartTime),
+                  },
+                  runners: eventData.runners.map(runner => ({
+                    selectionId: runner.selectionId,
+                    handicap: runner.handicap,
+                    description: {
+                      runnerName: runner.runnerName,
+                      metadata: runner.metadata
+                    },
+                    state: {
+                      sortPriority: runner.sortPriority,
+                    }
+                  })),
+                },
+              },
+            }
+          }, {upsert: true, new: true}
+        );
+
+        // Create runners array
+        let runners = eventData.runners.map(runner => ({
+          SelectionId: runner.selectionId,
+          runnerName: runner.runnerName
+        }));
+
+        // Upsert MarketIDS collection
+        await MarketIDS.findOneAndUpdate(
+          {
+            marketId: eventData.marketId,
+            sportID: eventData.eventType.id,
+            eventId: eventId,
+          },
+          {
+            $set: {
+              runners: runners,
+              marketName: eventData.marketName,
+              marketType: eventData.description?.marketType,
+              status: 'OPEN',
+              openDate: Date.parse(eventData.marketStartTime)
+            }
+          }, {upsert: true, new: true}
+        );
+      }
+    }
+
+    // Update InPlayEvents with marketIds
+    await InPlayEvents.findOneAndUpdate(
+      {Id: eventId},
+      {$set: {marketIds: marketIds}},
+      {upsert: true, new: true}
+    );
+
+  } catch (error) {
+    console.error('Market data Problem', error);
+  }
+}
+
+
 async function saveRaceOddsLithyl(oddsData) {
   try {
     if (oddsData.length > 0) {
@@ -5749,6 +5898,7 @@ router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
 router.get('/track-bet/lithylAPI/saveRaceOddsLithyl/:markets_id', saveRaceOddsLithyl)
+router.get('/track-bet/lithylAPI/raceMarketsLithylapi', raceMarketsLithylapi)
 router.get('/track-bet/lithylAPI/getOdd', getOdds)
 router.post('/track-bet/lithylAPI/placeBet', placeBet)
 router.get('/track-bet/updateUserName', updateUserName)
