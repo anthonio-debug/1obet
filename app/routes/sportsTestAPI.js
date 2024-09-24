@@ -5710,8 +5710,15 @@ async function raceMarketsLithylapi(eventId, sportsId, competitionId) {
       maxResults: 100,
       marketProjection: ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
     };
+    // let url;
+    // if(sportsId=='7'){
+    //   url = `http://sportzing.in:5505/api/getHorseRaceMatches`;
 
-    const url = `http://sportzing.in:5505/api/getHorseRaceMatches`;
+    // }else{
+    //   url = `http://sportzing.in:5505/api/getGreyHoundMatches`;
+    // }
+
+    const url=`http://sportzing.in:5505/api/getHorseRaceMatches`
     let response = await axios.post(url, JSON.stringify(requestData), header);
     const eventsData = response.data;
 
