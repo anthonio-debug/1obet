@@ -5702,7 +5702,7 @@ async function getDuplicateEntries(req, res) {
 //   }
 // }
 
-async function raceMarketsLithylapi(eventId, sportsId, competitionId) {
+async function raceMarketsByLithylapi(eventId, sportsId, competitionId) {
   try {
     const requestData = {
       filter: {
@@ -5960,7 +5960,7 @@ router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
 router.get('/track-bet/lithylAPI/saveRaceOddsLithyl/:markets_id', saveRaceOddsLithyl)
-router.get('/track-bet/lithylAPI/raceMarketsLithylapi', raceMarketsLithylapi)
+router.get('/track-bet/lithylAPI/raceMarketsLithylapi', raceMarketsByLithylapi)
 router.get('/track-bet/lithylAPI/getOdd', getOdds)
 router.post('/track-bet/lithylAPI/placeBet', placeBet)
 router.get('/track-bet/updateUserName', updateUserName)
