@@ -16,14 +16,12 @@ const getDailyPLReport = async (req, res) => {
   const role = req.decoded.role;
   const childUsers = await User.distinct("userId", { createdBy: userId });
   const users = [userId, ...childUsers]
-  const cashOrCredit = role === "5" ? ["Bet"] : ["Bet", "Commission", "loosing"];
   const pipeline = [
     {
       $match: {
         userId: {
           $in: users
         },
-        cashOrCredit: { $in: cashOrCredit },
         $and: [
           {
             createdAt: { $gte: req.query.startDate }
@@ -40,6 +38,22 @@ const getDailyPLReport = async (req, res) => {
         localField: 'userId',
         foreignField: 'userId',
         as: 'userInfo'
+      }
+    },
+    {
+      $addFields: {
+        cashOrCreditFilter: {
+          $cond: {
+            if: { $eq: ['$userInfo.role', '5'] },
+            then: ['Bet'],  
+            else: ['Bet', 'Commission', 'loosing']  
+          }
+        }
+      }
+    },
+    {
+      $match: {
+        $expr: { $in: ['$cashOrCredit', '$cashOrCreditFilter'] }
       }
     },
     {

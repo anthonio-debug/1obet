@@ -5,29 +5,23 @@ const User = require('../models/user');
 const Events = require('../models/events');
 const loginRouter = express.Router();
 
-const getDailyReport = async(req, res) => {
-
-  const userId      = parseInt(req.decoded.userId)
-  const currentUser = await User.findOne({ userId: userId});
-  const users       = [userId];
-  let parents       = [userId];
+const getDailyReport = async (req, res) => {
+  const userId = parseInt(req.decoded.userId);
+  const currentUser = await User.findOne({ userId: userId });
+  const users = [userId];
+  let parents = [userId];
   let childUsers = [];
 
-  do{
-    childUsers     = await User.distinct("userId", {
-      createdBy: {
-        $in: parents
-      }
+  // Fetch child users recursively
+  do {
+    childUsers = await User.distinct("userId", {
+      createdBy: { $in: parents }
     });
-    // //console.log(" child users ======= ", childUsers);
-    if(childUsers.length) users.push(...childUsers)
-    parents = childUsers
-  }while (childUsers.length > 0)
+    if (childUsers.length) users.push(...childUsers);
+    parents = childUsers;
+  } while (childUsers.length > 0);
 
-  //console.log(" users list  ======== ", users);
-
-  var sportsIdQuery = {$ne: null};
-
+  var sportsIdQuery = { $ne: null };
   if (req.query.sportId) {
     sportsIdQuery = req.query.sportId;
   }
@@ -37,14 +31,9 @@ const getDailyReport = async(req, res) => {
       $match: {
         userId: { $in: users },
         sportsId: sportsIdQuery,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
+          { createdAt: { $gte: req.query.startDate } },
+          { createdAt: { $lte: req.query.endDate } }
         ]
       }
     },
@@ -55,29 +44,44 @@ const getDailyReport = async(req, res) => {
         foreignField: 'userId',
         as: 'userInfo'
       }
-    }, 
+    },
     {
-      $group:{
+      $unwind: '$userInfo'
+    },
+    {
+      $addFields: {
+        cashOrCreditFilter: {
+          $cond: {
+            if: { $eq: ['$userInfo.role', '5'] },
+            then: ['Bet'],  
+            else: ['Bet', 'Commission', 'loosing']  
+          }
+        }
+      }
+    },
+    {
+      $match: {
+        $expr: { $in: ['$cashOrCredit', '$cashOrCreditFilter'] }
+      }
+    },
+    {
+      $group: {
         _id: "$userId",
-        amount: { $sum: "$amount"},
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+        amount: { $sum: { $round: "$amount" } },
+        name: { $first: "$userInfo.userName" }
       }
     }
   ]);
 
   const parentResponse = await CashDeposit.aggregate([
-    {  
+    {
       $match: {
-        userId: currentUser.createdBy ,
+        userId: currentUser.createdBy,
         commissionFrom: currentUser.userId,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
-          {
-            createdAt: {$gte: req.query.startDate}
-          },
-          {
-            createdAt: {$lte: req.query.endDate}
-          }
+          { createdAt: { $gte: req.query.startDate } },
+          { createdAt: { $lte: req.query.endDate } }
         ]
       }
     },
@@ -88,12 +92,11 @@ const getDailyReport = async(req, res) => {
         foreignField: 'userId',
         as: 'userInfo'
       }
-    }, 
+    },
     {
-      $group:{
+      $group: {
         _id: "$userId",
-        // parent: true,
-        amount: { $sum: "$upLineAmount"},
+        amount: { $sum: { $round: "$upLineAmount" } },
         name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
       }
     }
@@ -104,7 +107,6 @@ const getDailyReport = async(req, res) => {
     message: 'Daily reports',
     results: response?.concat(parentResponse),
   });
-
 }
 
 const dailySportsWiseReport = async (req, res) => {
