@@ -5978,7 +5978,8 @@ async function getUsers(req, res) {
       },
       {
         "$match": {
-          "userBets.status": { "$ne": 1 }
+          "userBets.status": { "$ne": 1 },
+          "userBets.createdAt": { "$gt": last5days }
             }
       },
       {
