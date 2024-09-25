@@ -5899,107 +5899,58 @@ async function saveRaceOddsLithyl(oddsData) {
 console.log();
 
 
-// async function getUsers(req, res) {
-
-//   try {
-//     const currentTime = Date.now()
-//     const time5days = 120 * 60 * 60 * 1000
-//     const last5days = currentTime - time5days
-//     const userData = await Users.aggregate([
-//       {
-//         "$match": {
-//           "exposure": { "$ne": 0 }
-//         }
-//       },
-//       {
-//         "$lookup": {
-//           "from": "bets",
-//           "localField": "userId",
-//           "foreignField": "userId",
-//           "as": "userBets"
-//         }
-//       },
-//       {
-//         "$unwind": "$userBets"
-//       },
-//       {
-//         "$match": {
-//           "userBets.status": { "$ne": 1 },
-//           "userBets.createdAt": { "$gt": last5days }
-//         }
-//       },
-//       {
-//         "$sort": {
-//           "userBets._id": -1
-//         }
-//       },
-//       {
-//         "$group": {
-//           "_id": "$_id",
-//           "userDetails": { "$first": "$$ROOT" }
-//         }
-//       }
-//     ])
-
-//     console.log("---------userData-----------", userData);
-    
-//     res.status(200).json({ success: true, data: userData });
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .json({ success: false, msg: "Failed to get Error: " + err.message });
-//   }
-// }
-
 async function getUsers(req, res) {
-  try {
-    const currentTime = Date.now();
-    const time5days = 5 * 24 * 60 * 60 * 1000;
-    const last5days = currentTime - time5days;
 
-    const userData = await Bets.aggregate([
+  try {
+    const currentTime = Date.now()
+    const time5days = 120 * 60 * 60 * 1000
+    const last5days = currentTime - time5days
+    const userData = await Users.aggregate([
       {
         "$match": {
-          "status": { "$ne": 1 },
-          "createdAt": { "$gt": last5days }
+          "exposure": { "$ne": 0 }
         }
       },
       {
         "$lookup": {
-          "from": "Users",
+          "from": "bets",
           "localField": "userId",
           "foreignField": "userId",
-          "as": "userDetails"
+          "as": "userBets"
         }
       },
       {
-        "$unwind": "$userDetails"
+        "$unwind": "$userBets"
       },
       {
         "$match": {
-          "userDetails.exposure": { "$ne": 0 }
+          "userBets.status": { "$ne": 1 },
+          "userBets.createdAt": { "$gt": last5days }
         }
       },
       {
         "$sort": {
-          "_id": -1
+          "userBets._id": -1
         }
       },
       {
         "$group": {
-          "_id": "$userDetails._id",
-          "userDetails": { "$first": "$userDetails" }
+          "_id": "$_id",
+          "userDetails": { "$first": "$$ROOT" }
         }
       }
-    ]);
+    ])
 
     console.log("---------userData-----------", userData);
     
     res.status(200).json({ success: true, data: userData });
   } catch (err) {
-    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message });
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
   }
 }
+
 
 
 
