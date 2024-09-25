@@ -2263,7 +2263,7 @@ const getWaitingBetsForManuel = async (req, res) => {
       const parent = await User.findOne({ userId: u1?.createdBy }, { userName: 1 });
       item.userName = u1 ? u1.userName : 'Unknown User';
       item.parentName = parent ? parent.userName : 'Unknown Parent';
-      console.log('User data:', { userName: item.userName, parentName: item.parentName });
+      // console.log('User data:', { userName: item.userName, parentName: item.parentName });
 
       // Fetch session data
       if (item.betSession !== null) {
