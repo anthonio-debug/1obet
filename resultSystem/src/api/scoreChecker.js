@@ -178,7 +178,8 @@ function scoreChecker() {
             } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
               //console.log("0 ----- looser ");
             
-              // if (userId) {
+              // if (userId) { /// amout ari h 
+              
                 
                 await handleLosingBetRevised(bet);
               // } else {
