@@ -5899,6 +5899,57 @@ async function saveRaceOddsLithyl(oddsData) {
 console.log();
 
 
+// async function getUsers(req, res) {
+
+//   try {
+//     const currentTime = Date.now()
+//     const time5days = 120 * 60 * 60 * 1000
+//     const last5days = currentTime - time5days
+//     const userData = await Users.aggregate([
+//       {
+//         "$match": {
+//           "exposure": { "$ne": 0 }
+//         }
+//       },
+//       {
+//         "$lookup": {
+//           "from": "bets",
+//           "localField": "userId",
+//           "foreignField": "userId",
+//           "as": "userBets"
+//         }
+//       },
+//       {
+//         "$unwind": "$userBets"
+//       },
+//       {
+//         "$match": {
+//           "userBets.status": { "$ne": 1 },
+//           "userBets.createdAt": { "$gt": last5days }
+//         }
+//       },
+//       {
+//         "$sort": {
+//           "userBets._id": -1
+//         }
+//       },
+//       {
+//         "$group": {
+//           "_id": "$_id",
+//           "userDetails": { "$first": "$$ROOT" }
+//         }
+//       }
+//     ])
+
+//     console.log("---------userData-----------", userData);
+    
+//     res.status(200).json({ success: true, data: userData });
+//   } catch (err) {
+//     res
+//       .status(500)
+//       .json({ success: false, msg: "Failed to get Error: " + err.message });
+//   }
+// }
 async function getUsers(req, res) {
 
   try {
@@ -5920,12 +5971,28 @@ async function getUsers(req, res) {
         }
       },
       {
-        "$unwind": "$userBets"
+        "$unwind": {
+          "path": "$userBets",
+          "preserveNullAndEmptyArrays": true 
+        }
       },
       {
         "$match": {
-          "userBets.status": { "$ne": 1 },
-          "userBets.createdAt": { "$gt": last5days }
+          "userBets.status": { "$ne": 1 }
+            }
+      },
+      {
+        "$lookup": {
+          "from": "users",
+          "localField": "userId",
+          "foreignField": "userId",
+          "as": "userDetails"
+        }
+      },
+      {
+        "$unwind": {
+          "path": "$userDetails",
+          "preserveNullAndEmptyArrays": true
         }
       },
       {
@@ -5936,10 +6003,22 @@ async function getUsers(req, res) {
       {
         "$group": {
           "_id": "$_id",
-          "userDetails": { "$first": "$$ROOT" }
+          "userId": { "$first": "$userId" },
+          "userName": { "$first": "$userDetails.userName" },
+          "exposure": { "$first": "$exposure" },
+          "userBets": { "$push": "$userBets" } 
+        }
+      },
+      {
+        "$project": {
+          "userId": 1,
+          "userName": 1,
+          "exposure": 1,
+          "userBets": 1
         }
       }
-    ])
+    ]
+    )
 
     console.log("---------userData-----------", userData);
     
