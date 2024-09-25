@@ -6049,7 +6049,7 @@ router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/getDuplicateEntries', getDuplicateEntries)
 router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
-router.get('/track-bet/lithylAPI/getUsers', getUsers)
+router.get('/track-bet/getUsers', getUsers)
 /////////////////
 
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
