@@ -88,7 +88,7 @@ async function getAllBets(Id) {
 }
 
 async function AkhandleLosingBet(bet) {
-  console.log("nooooooooooooothandleWinningBetRevised===================>s",bet)
+  console.log("nooooooooooooothandleWinningBetRevised===================>s", bet)
 
   const now = new Date();
   const year = now.getFullYear().toString();
@@ -336,7 +336,7 @@ async function AkhandleLosingBet(bet) {
 }
 
 async function handleLosingBet(bet) {
-  console.log("nooooooooooooothandleWinningBetRevised===================>s",bet)
+  console.log("nooooooooooooothandleWinningBetRevised===================>s", bet)
 
   const now = new Date();
   const year = now.getFullYear().toString();
@@ -366,6 +366,7 @@ async function handleLosingBet(bet) {
             sportsId: bet.sportsId,
             matchId: bet.matchId
           });
+
           if (exists) {
             console.log('=====================handleLosingBet exists=====================');
             console.log(bet._id, bet.status);
@@ -380,6 +381,7 @@ async function handleLosingBet(bet) {
             // await CurrentPosition.deleteMany({ betId: betIdString });
             return;
           }
+
           const user_prev_balance = userToUpdate.balance;
           const user_prev_availableBalance = userToUpdate.availableBalance;
           const user_prev_exposure = userToUpdate.exposure;
@@ -450,6 +452,9 @@ async function handleLosingBet(bet) {
           } else {
             const remainingAmount = Number(bet.winningAmount.toFixed(3));
             const TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
+
+            console.log("TotalLoosingAmount", TotalLoosingAmount)
+            console.log("remainingAmount", remainingAmount)
             let prev = 0;
             for (const user of parentUser) {
               let current = user.downLineShare;
@@ -464,6 +469,12 @@ async function handleLosingBet(bet) {
               const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
               const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount).toFixed(3)) : 0;
               const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(3));
+
+
+              console.log("totalExpoisure", totalExpoisure)
+              console.log("totalavailableBalance", totalavailableBalance)
+              console.log("totalClientPLAmount", totalClientPLAmount)
+              console.log("user Exposure", user.exposure)
 
               await User.updateOne(
                 {
@@ -595,7 +606,7 @@ async function handleLosingBetRevised(bet) {
       if (betStatus.status == 1) {
         let calculatedExp = 0;
         const userId = bet.userId;
-        const loosingAmount =Number(bet.exposureAmount.toFixed(3));
+        const loosingAmount = Number(bet.exposureAmount.toFixed(3));
         const userToUpdate = await User.findOne({
           userId: userId,
           isDeleted: false
@@ -830,7 +841,7 @@ async function handleLosingBetRevised(bet) {
 }
 
 async function handleWinningBet(bet, winner) {
-  console.log("noooooooooooothandleWinningBetRevised===================>s",bet)
+  console.log("noooooooooooothandleWinningBetRevised===================>s", bet)
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -967,7 +978,7 @@ async function handleWinningBet(bet, winner) {
             }
           );
           const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
-          
+
           await Deposits.create({
             userId: userToUpdate.userId,
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -1170,7 +1181,7 @@ async function handleWinningBet(bet, winner) {
 }
 async function handleWinningBetRevised(bet, winner) {
 
-  console.log("handleWinningBetRevised===================>s",bet)
+  console.log("handleWinningBetRevised===================>s", bet)
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -1228,7 +1239,7 @@ async function handleWinningBetRevised(bet, winner) {
           isDeleted: false
         });
         TotalLose = bet.exposureAmount
-        
+
         if (!userToUpdate) {
           console.error('Error: user not found Location:(_handle winning bet)');
           return;
@@ -1240,10 +1251,10 @@ async function handleWinningBetRevised(bet, winner) {
           let upMovingAmount;
           let upMovingCommAmount;
           if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.overByOver && bet.subMarketId != config.BookMaker && (TotalWin > TotalLose || Number(bet.sportsId) == 8)) {
-            const absouteWin =TotalWin
+            const absouteWin = TotalWin
             const totalCooission = Number((absouteWin * 0.02).toFixed(3));
             commissionAmount = Number((totalCooission / TotalWin).toFixed(3));
-            if (Number(bet.sportsId) == 8) commissionAmount = Number((TotalWin* 0.02).toFixed(3));
+            if (Number(bet.sportsId) == 8) commissionAmount = Number((TotalWin * 0.02).toFixed(3));
             remainingAmount = Number((TotalWin - commissionAmount).toFixed(3));
             totalRemainingAmount = Number(TotalWin.toFixed(3));
             TotalLoosingAmount = Number(TotalLose.toFixed(3));
@@ -1511,7 +1522,7 @@ async function handleWinningBetRevised(bet, winner) {
 }
 
 const handleDrawBet = async (bet, status = 0) => {
-  console.log("draw===================>s",bet)
+  console.log("draw===================>s", bet)
 
   try {
     if (bet.status == 1) {
@@ -1630,5 +1641,5 @@ module.exports = {
   getEndedMatches,
   handleLosingBet,
   handleWinningBet,
-  handleLosingBetRevised,handleWinningBetRevised,AkhandleLosingBet
+  handleLosingBetRevised, handleWinningBetRevised, AkhandleLosingBet
 };
