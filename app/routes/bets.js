@@ -173,15 +173,18 @@ function checkMultiResponse(odds, rates,selectedBetRate,type) {
 
   if (Array.isArray(odds) && Array.isArray(rates) && rates.length > 0 && odds.length > 0) {
     
-
+    console.log(
+      "arhaaaaaaaaaaaaaaaaaaam rates",rates
+    )
     if (type === 0) {
       rates = rates.filter(rate => rate <= selectedBetRate);
     } else if (type === 1) {
       rates = rates.filter(rate => rate >= selectedBetRate);
     }
     console.log(
-      "arhaaaaaaaaaaaaaaaaaaam rates",rates
+      "arhaaaaaaaaaaaaaaaaaaam filter rates",rates
     )
+   
     if (rates.includes(odds[odds.length - 1])) {
       return odds[odds.length - 1];
     } else if (type === 0 && odds[odds.length - 1] > selectedBetRate) {
