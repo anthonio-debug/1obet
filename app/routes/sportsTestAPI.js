@@ -6996,6 +6996,7 @@ const checkActiveBettors = async (bet) => {
 };
 
 async function getBetForEvents(targetArray) {
+  console.log("LLLLLLLLLLLLLLLLLLLLLL code is running getBetForEvents",newRecord);
   const currentTime = new Date().getTime();
   try {
     const results = await Bets.aggregate([
@@ -7023,6 +7024,7 @@ async function getBetForEvents(targetArray) {
         $limit: 5
       }
     ]).exec();
+    console.log("LLLLLLLLLLLLLLLLLLLLLL code is running getBetForEvents results",results);
 
     for (const result of results) {
       const checkActive = await checkActiveBettors(result.betDocument);
