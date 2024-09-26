@@ -593,6 +593,7 @@ async function handleLosingBet(bet) {
     return;
   }
 }
+
 async function handleLosingBetRevised(bet) {
   console.log("handleLosingBetReviseds===================>s",)
   const now = new Date();

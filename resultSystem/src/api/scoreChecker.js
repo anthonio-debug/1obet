@@ -289,7 +289,10 @@ function scoreChecker() {
             // if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
             //   continue;
             // }
+            let i = 0
+            i=i+1
             // if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            console.log("check log the loop", i)
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               // await handleWinningBet(bet, result.winnerSelectionId);
