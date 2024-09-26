@@ -7066,7 +7066,7 @@ async function getWinnigLossing(req, res) {
     getBetForEvents(targetArray);
     // console.log("---------data-----------", data);
     
-    res.status(200).json({ success: true, data: data });
+    // res.status(200).json({ success: true, data: data });
   } catch (err) {
     res
       .status(500)
