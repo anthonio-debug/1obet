@@ -6103,6 +6103,8 @@ async function getUsers(req, res) {
 
 
         await newRecord.save();
+
+
         //Sports Results Saved
         //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
@@ -6141,6 +6143,8 @@ async function getUsers(req, res) {
             }
           }
         }
+
+        return newRecord
       }
     } catch (error) {
       console.error(error);
@@ -6240,6 +6244,8 @@ async function getUsers(req, res) {
             }
           }
         }
+
+        return newRecord
       }
     } catch (error) {
       console.error(error);
@@ -7033,9 +7039,11 @@ async function getBetForEvents(targetArray) {
       if (!result.betDocument) continue;
 
       if (result.betDocument.sportsId === '1' || result.betDocument.sportsId === '2' || result.betDocument.sportsId === '4') {
-        await scoreChecker.eventsResult(result.betDocument);
+       const reslt= await eventsResult(result.betDocument);
+        return reslt;
       } else if (result.betDocument.sportsId === '7' || result.betDocument.sportsId === '4339') {
-        await scoreChecker.racingResult(result.betDocument);
+        const reslt=await racingResult(result.betDocument);
+        return reslt;
       } else {
         //console.log("Undefined sports type ", result.betDocument);
       }
@@ -7058,10 +7066,10 @@ async function getWinnigLossing(req, res) {
 
   try {
     
-    getBetForEvents(targetArray);
-    console.log("---------userData-----------", userData);
+   const data= getBetForEvents(targetArray);
+    console.log("---------data-----------", data);
     
-    res.status(200).json({ success: true, data: userData });
+    res.status(200).json({ success: true, data: data });
   } catch (err) {
     res
       .status(500)
