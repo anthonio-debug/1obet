@@ -6996,7 +6996,7 @@ const checkActiveBettors = async (bet) => {
 };
 
 async function getBetForEvents(targetArray) {
-  console.log("LLLLLLLLLLLLLLLLLLLLLL code is running getBetForEvents",newRecord);
+  console.log("LLLLLLLLLLLLLLLLLLLLLL code is running getBetForEvents");
   const currentTime = new Date().getTime();
   try {
     const results = await Bets.aggregate([
