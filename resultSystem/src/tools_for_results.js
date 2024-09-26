@@ -63,28 +63,28 @@ function ToolForResults() {
     
       console.log("==========length=========",results1.length)
 
-      // for (const result of results1) {
-      //   const checkActive = await checkActiveBettors(result.betDocument);
-      //   if (checkActive) continue;
-      //   await Bets.updateMany(
-      //     {
-      //       _id: { $in: result.documentIds }
-      //     },
-      //     {
-      //       $set: { lastCheckResult: currentTime }
-      //     }
-      //   ).catch((e) => console.error(e));
+      for (const result of results1) {
+        const checkActive = await checkActiveBettors(result.betDocument);
+        if (checkActive) continue;
+        await Bets.updateMany(
+          {
+            _id: { $in: result.documentIds }
+          },
+          {
+            $set: { lastCheckResult: currentTime }
+          }
+        ).catch((e) => console.error(e));
 
-      //   if (!result.betDocument) continue;
+        if (!result.betDocument) continue;
 
-      //   if (result.betDocument.sportsId === '1' || result.betDocument.sportsId === '2' || result.betDocument.sportsId === '4') {
-      //     await scoreChecker.eventsResult(result.betDocument);
-      //   } else if (result.betDocument.sportsId === '7' || result.betDocument.sportsId === '4339') {
-      //     await scoreChecker.racingResult(result.betDocument);
-      //   } else {
-      //     //console.log("Undefined sports type ", result.betDocument);
-      //   }
-      // }
+        if (result.betDocument.sportsId === '1' || result.betDocument.sportsId === '2' || result.betDocument.sportsId === '4') {
+          await scoreChecker.eventsResult(result.betDocument);
+        } else if (result.betDocument.sportsId === '7' || result.betDocument.sportsId === '4339') {
+          await scoreChecker.racingResult(result.betDocument);
+        } else {
+          //console.log("Undefined sports type ", result.betDocument);
+        }
+      }
     } catch (error) {
       console.error('Error:', error);
     } finally {
