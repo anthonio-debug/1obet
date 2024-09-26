@@ -170,19 +170,29 @@ function checkRunsOrOvers(inputString) {
 }
 
 function checkMultiResponse(odds, rates,selectedBetRate,type) {
-  console.log("rates==============", rates)
+
   if (Array.isArray(odds) && Array.isArray(rates) && rates.length > 0 && odds.length > 0) {
+    
+
+    if (type === 0) {
+      rates = rates.filter(rate => rate <= selectedBetRate);
+    } else if (type === 1) {
+      rates = rates.filter(rate => rate >= selectedBetRate);
+    }
+    console.log(
+      "arhaaaaaaaaaaaaaaaaaaam rates",rates
+    )
     if (rates.includes(odds[odds.length - 1])) {
       return odds[odds.length - 1];
-    } else if(type == 0 && odds[odds.length - 1] > selectedBetRate){
-		return selectedBetRate;
-	} else if(type == 1 && odds[odds.length - 1] < selectedBetRate){
-		return selectedBetRate;
-	} else {
-      return false
+    } else if (type === 0 && odds[odds.length - 1] > selectedBetRate) {
+      return selectedBetRate;
+    } else if (type === 1 && odds[odds.length - 1] < selectedBetRate) {
+      return selectedBetRate;
+    } else {
+      return false;
     }
   } else {
-    return true
+    return true; 
   }
 }
 
