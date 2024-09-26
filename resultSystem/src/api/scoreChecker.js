@@ -171,7 +171,7 @@ function scoreChecker() {
            
               // if (userId) {
                 
-                await handleWinningBetRevised(bet, result.winnerSelectionId);
+                await handleWinningBet(bet, result.winnerSelectionId);
               // } else {
               //   await handleWinningBet(bet, result.winnerSelectionId);
               // }
@@ -181,7 +181,7 @@ function scoreChecker() {
               // if (userId) { /// amout ari h 
               
                 
-                await handleLosingBetRevised(bet);
+                await handleLosingBet(bet);
               // } else {
               //   await handleLosingBet(bet);
               // }
@@ -191,7 +191,7 @@ function scoreChecker() {
              
               // if (userId) {
                 
-                await handleWinningBetRevised(bet, result.winnerSelectionId);
+                await handleWinningBet(bet, result.winnerSelectionId);
               // } else {
               //   await handleWinningBet(bet, result.winnerSelectionId);
               // }
@@ -200,7 +200,7 @@ function scoreChecker() {
               //console.log("1 ----- looser ");
               // if (userId) {
                 
-                await handleLosingBetRevised(bet);
+                await handleLosingBet(bet);
               // } else {
               //   await handleWinningBet(bet, result.winnerSelectionId);
               // }
@@ -296,17 +296,17 @@ function scoreChecker() {
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               // await handleWinningBet(bet, result.winnerSelectionId);
-              await handleWinningBetRevised(bet, result.winnerSelectionId);
+              await handleWinningBet(bet, result.winnerSelectionId);
             } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
               //console.log("0 ----- looser ");
               // await handleLosingBet(bet);
-              await handleLosingBetRevised(bet);
+              await handleLosingBet(bet);
             } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
               //console.log("1 ----- winner ");
-              await handleWinningBetRevised(bet, result.winnerSelectionId);
+              await handleWinningBet(bet, result.winnerSelectionId);
             } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
               //console.log("1 ----- looser ");
-              await handleLosingBetRevised(bet)
+              await handleLosingBet(bet)
             } else {
               //console.log("-----  Draw ");
               await handleDrawBet(bet);
