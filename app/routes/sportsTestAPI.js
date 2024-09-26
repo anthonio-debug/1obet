@@ -6032,6 +6032,89 @@ async function getUsers(req, res) {
 }
 
 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+async function getBetForEvents(targetArray) {
+  const currentTime = new Date().getTime();
+  try {
+    const results = await Bets.aggregate([
+      {
+        $match: {
+          sportsId: { $in: targetArray },
+          marketId: { $ne: null },
+          isfancyOrbookmaker: false,
+          status: 1,
+          type: { $in: [0, 1] }
+        }
+      },
+      {
+        $group: {
+          _id: '$marketId',
+          betDocument: { $first: '$$ROOT' }
+        }
+      },
+      {
+        $sort: {
+          lastCheckResult: 1
+        }
+      },
+      {
+        $limit: 5
+      }
+    ]).exec();
+
+    for (const result of results) {
+      const checkActive = await checkActiveBettors(result.betDocument);
+      if (checkActive) continue;
+      await Bets.updateMany(
+        {
+          _id: { $in: result.documentIds }
+        },
+        {
+          $set: { lastCheckResult: currentTime }
+        }
+      ).catch((e) => console.error(e));
+
+      if (!result.betDocument) continue;
+
+      if (result.betDocument.sportsId === '1' || result.betDocument.sportsId === '2' || result.betDocument.sportsId === '4') {
+        await scoreChecker.eventsResult(result.betDocument);
+      } else if (result.betDocument.sportsId === '7' || result.betDocument.sportsId === '4339') {
+        await scoreChecker.racingResult(result.betDocument);
+      } else {
+        //console.log("Undefined sports type ", result.betDocument);
+      }
+    }
+  } catch (error) {
+    console.error('Error:', error);
+  } finally {
+    setTimeout(() => {
+      getBetForEvents(targetArray);
+    }, 4 * 1000);
+  }
+}
+
+
+
+
+
+
+async function getWinnigLossing(req, res) {
+
+  try {
+    
+    getBetForEvents(targetArray);
+    console.log("---------userData-----------", userData);
+    
+    res.status(200).json({ success: true, data: userData });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ success: false, msg: "Failed to get Error: " + err.message });
+  }
+}
+
 
 
 // //////////////////
@@ -6051,6 +6134,7 @@ router.get('/track-bet/getDuplicateEntries', getDuplicateEntries)
 router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
 router.get('/track-bet/getUsers', getUsers)
+router.get('/track-bet/getWinnigLossing', getWinnigLossing)
 /////////////////
 
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
