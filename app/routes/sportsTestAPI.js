@@ -6143,7 +6143,7 @@ async function getUsers(req, res) {
             }
           }
         }
-
+        console.log("yyyyyyyyyyyyyyyyyyy--=-=--=newRecord",newRecord);
         return newRecord
       }
     } catch (error) {
@@ -6244,7 +6244,7 @@ async function getUsers(req, res) {
             }
           }
         }
-
+        console.log("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx--=-=--=newRecord",newRecord);
         return newRecord
       }
     } catch (error) {
@@ -7040,6 +7040,8 @@ async function getBetForEvents(targetArray) {
 
       if (result.betDocument.sportsId === '1' || result.betDocument.sportsId === '2' || result.betDocument.sportsId === '4') {
        const reslt= await eventsResult(result.betDocument);
+       console.log("ZZZZZZZZZZZZZZZZZZZZZ--=-=--=",reslt);
+       
         return reslt;
       } else if (result.betDocument.sportsId === '7' || result.betDocument.sportsId === '4339') {
         const reslt=await racingResult(result.betDocument);
