@@ -7065,7 +7065,7 @@ async function getBetForEvents(targetArray) {
 async function getWinnigLossing(req, res) {
 
   try {
-    
+    const targetArray=["1", "2","4"]
    const data= getBetForEvents(targetArray);
     console.log("---------data-----------", data);
     
