@@ -7019,7 +7019,7 @@ async function getBetForEvents(targetArray) {
       {
         $limit: 5
       }
-    ])
+    ]).exec();
     console.log("LLLLLLLLLLLLLLLLLLLLLL code is running getBetForEvents results",results)
 
     for (const result of results) {
