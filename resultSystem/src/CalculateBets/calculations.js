@@ -86,6 +86,7 @@ async function getAllBets(Id) {
     return [];
   }
 }
+
 async function AkhandleLosingBet(bet) {
   console.log("nooooooooooooothandleWinningBetRevised===================>s",bet)
 
@@ -333,6 +334,7 @@ async function AkhandleLosingBet(bet) {
     return;
   }
 }
+
 async function handleLosingBet(bet) {
   console.log("nooooooooooooothandleWinningBetRevised===================>s",bet)
 
