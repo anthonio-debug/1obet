@@ -13,7 +13,7 @@ const FancyOdds = require('../../../app/models/fancyOdds');
 const { API_DOMAIN } = require('../../../app/global/constants');
 const { checkActiveBettors } = require('../../../helper/bet');
 const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
-const { handleLosingBet, handleWinningBet, handleDrawBet, handleLosingBetRevised, handleWinningBetRevised } = require('../CalculateBets/calculations');
+const { handleLosingBet, handleWinningBet, handleDrawBet } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
 // const sportsAPIUrl = "http://209.250.242.175:33332";
@@ -62,7 +62,7 @@ function scoreChecker() {
     return winnerSelectionId;
   }
 
-  async function eventsResult(betData,userId) {
+  async function eventsResult(betData) {
     //console.log("Result checking event for ", betData.marketId);
     try {
       let results;
@@ -70,13 +70,11 @@ function scoreChecker() {
         marketId: betData.marketId,
         winnerRunnerData: { $ne: null }
       });
-      // console.log(userId,"mmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmmm:",manuelRecord,"------------------->>>>>>",betData.marketId);
+
       if (manuelRecord) {
-        console.log("Inside manual");
+        //console.log("Inside manual");
 
         if (typeof manuelRecord.manuelClose !== undefined) {
-          console.log("Inside manual is  defined");
-
           results = [
             {
               winnerSelectionId: manuelRecord.winnerRunnerData,
@@ -84,7 +82,6 @@ function scoreChecker() {
             }
           ];
         } else {
-          console.log("Inside manual is not defined");
           results = [
             {
               winnerSelectionId: manuelRecord.winnerRunnerData,
@@ -92,10 +89,7 @@ function scoreChecker() {
             }
           ];
         }
-
-        console.log("scorechecker result undefied",results)
       } else {
-        console.log("scorechecker result defied",results)
 
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
@@ -113,11 +107,8 @@ function scoreChecker() {
       }
       //console.log("results.length -> " + results.length)
       if (results.length > 0) {
-
-        console.log("winner selection id setted")
         const result = results[0];
         if (!result.winnerSelectionId) return;
-        console.log("winner selection id return bypass")
         let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: betData.marketId,
@@ -129,7 +120,7 @@ function scoreChecker() {
           sportsId: betData.sportsId,
           status: 1
         });
-        console.log("winner selection id return bypass betssssss",bets)
+
         // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
 
         // if (checkEventMarket.status == "CLOSED") {
@@ -142,10 +133,7 @@ function scoreChecker() {
         //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
-      console.log("winner selection id return bypass betssssss updated",bets) 
-      console.log("winner selection id return bypass betssssss updated resultresultresultresult",result) 
         if (result.winnerSelectionId == -1) {
-          console.log("here 22222222222222222222222222222")
           //console.log("result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
@@ -155,56 +143,24 @@ function scoreChecker() {
             await handleDrawBet(bet);
           }
         } else {
-          console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
+          //console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
-
-            console.log("blockageeeeeeeeeeeeeeeeeeeee",bet.isManuel,"result.manuelClose",result.manuelClose)
-              // if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
-              //   continue;
-              // }
-
-
-            console.log("here1111111111111111111111111111111111111111111111111111111")
+            if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
+              continue;
+            }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
-           
-              // if (userId) {
-                
-                await handleWinningBetRevised(bet, result.winnerSelectionId);
-              // } else {
-              //   await handleWinningBet(bet, result.winnerSelectionId);
-              // }
+              await handleWinningBet(bet, result.winnerSelectionId);
             } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
               //console.log("0 ----- looser ");
-            
-              // if (userId) { /// amout ari h 
-              
-                
-                await handleLosingBetRevised(bet);
-              // } else {
-              //   await handleLosingBet(bet);
-              // }
-         
+              await handleLosingBet(bet);
             } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
               //console.log("1 ----- winner ");
-             
-              // if (userId) {
-                
-                await handleWinningBetRevised(bet, result.winnerSelectionId);
-              // } else {
-              //   await handleWinningBet(bet, result.winnerSelectionId);
-              // }
-           
+              await handleWinningBet(bet, result.winnerSelectionId);
             } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
               //console.log("1 ----- looser ");
-              // if (userId) {
-                
-                await handleLosingBetRevised(bet);
-              // } else {
-              //   await handleWinningBet(bet, result.winnerSelectionId);
-              // }
-         
+              await handleLosingBet(bet);
             } else {
               //console.log("-----  Draw ");
               await handleDrawBet(bet);
@@ -286,27 +242,22 @@ function scoreChecker() {
           }
         } else {
           for (const bet of bets) {
-            // if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
-            //   continue;
-            // }
-            let i = 0
-            i++
-            // if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            console.log("check log the loop", i)
+            if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
+              continue;
+            }
+            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
-              // await handleWinningBet(bet, result.winnerSelectionId);
-              await handleWinningBetRevised(bet, result.winnerSelectionId);
+              await handleWinningBet(bet, result.winnerSelectionId);
             } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
               //console.log("0 ----- looser ");
-              // await handleLosingBet(bet);
-              await handleLosingBetRevised(bet);
+              await handleLosingBet(bet);
             } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
               //console.log("1 ----- winner ");
-              await handleWinningBetRevised(bet, result.winnerSelectionId);
+              await handleWinningBet(bet, result.winnerSelectionId);
             } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
               //console.log("1 ----- looser ");
-              await handleLosingBetRevised(bet)
+              await handleLosingBet(bet);
             } else {
               //console.log("-----  Draw ");
               await handleDrawBet(bet);

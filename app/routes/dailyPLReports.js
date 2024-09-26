@@ -6,28 +6,29 @@ const User = require('../models/user');
 const Events = require('../models/events');
 const loginRouter = express.Router();
 
-const getDailyPLReport = async (req, res) => {
+const getDailyPLReport = async(req, res) =>{
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId = req.decoded.userId;
-  const role = req.decoded.role;
-  const childUsers = await User.distinct("userId", { createdBy: userId });
-  const users = [userId, ...childUsers]
-  const pipeline = [
-    {
+  const userId      = req.decoded.userId;
+  const childUsers  = await User.distinct("userId", { createdBy:  userId });
+  const users       = [userId, ...childUsers]
+
+  const response = await CashDeposit.aggregate([
+    {  
       $match: {
         userId: {
           $in: users
         },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
-            createdAt: { $gte: req.query.startDate }
+            createdAt: {$gte: req.query.startDate}
           },
           {
-            createdAt: { $lte: req.query.endDate }
+            createdAt: {$lte: req.query.endDate}
           }
         ]
       }
@@ -39,39 +40,15 @@ const getDailyPLReport = async (req, res) => {
         foreignField: 'userId',
         as: 'userInfo'
       }
-    },
+    }, 
     {
-      $addFields: {
-        cashOrCreditFilter: {
-          $cond: {
-            if: { $eq: ['$userInfo.role', '5'] },
-            then: ['Bet'],  
-            else: ['Bet', 'Commission', 'loosing']  
-          }
-        }
-      }
-    },
-    {
-      $match: {
-        $expr: { $in: ['$cashOrCredit', '$cashOrCreditFilter'] }
-      }
-    },
-    {
-      $group: {
+      $group:{
         _id: "$userId",
-        amount: { $sum: { $round: ["$amount", 0] } },
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
-        role: { $first: { $arrayElemAt: ["$userInfo.role", 0] } }
-      }
-    },
-    {
-      $sort: {
-        role: -1
+        amount: { $sum: "$amount"},
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
       }
     }
-  ]
-  const response = await CashDeposit.aggregate(pipeline);
-  console.log(response)
+  ]);
 
   return res.send({
     success: true,

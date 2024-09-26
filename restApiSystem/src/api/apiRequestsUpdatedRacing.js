@@ -563,20 +563,18 @@ function apiRequests() {
       const requestData = {
         "marketIds": marketIds
       }
-      console.log("marketid=============",marketIds);
-      
       const url = `${config.newThirdURL}/listMarketBook`;
       const response = await axios.post(url, requestData, header);
       const oddsData = response.data.result;
-      console.log("Odds Data ----------->", oddsData?.length)
-// console.log()
+      //console.log("Odds Data ----------->", oddsData?.length)
+
       let responsedMarketIDs = [];
       let marketIds_index = 0;
       let numberOfVisits = 0;
       if (oddsData.length > 0) {
         for (const odds of oddsData) {
           numberOfVisits++;
-// console.log("looooooooooooop=============> odds",odds.marketId)
+
           if (odds) {
             odds.createdAt = new Date().getTime()
 
@@ -657,14 +655,12 @@ function apiRequests() {
             
 
 
-// console.log(!RacingOddsMap.has(marketId),!isObjectEqual(RacingOddsMap.get(marketId), frontOdds),"ifffffff first condition")
+
             if (!RacingOddsMap.has(marketId) || !isObjectEqual(RacingOddsMap.get(marketId), frontOdds)) {
               RacingOddsMap.set(marketId, frontOdds)
               if (typeof odds.status === 'undefined' || odds.status !== 'OPEN') {
-                // console.log(typeof odds.status === 'undefined' , odds.status !== 'OPEN',"ifffffff second condition")
                 //console.log(odds.marketId, " this market has no odds.....");
                 if (odds.status === 'CLOSED' || odds.status === 'SUSPENDED') {
-                  // console.log(odds.status === 'CLOSED' || odds.status === 'SUSPENDED',"ifffffff third condition")
                   await MarketIDS.updateOne({marketId: odds.marketId}, {$set: {status: odds.status, readyForScore: true}});
                   const result = await RaceOdds.collection.insertOne(json);
                   odds._id = result.insertedId;
@@ -677,10 +673,9 @@ function apiRequests() {
                 }
               } else {
                 //console.log(odds.marketId, " This market has odds found");
-                // console.log("json=================>",json)
+
                 const result = await RaceOdds.collection.insertOne(json);
                 odds._id = result.insertedId;
-                // console.log(result,"result insertionnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn")
 
                 io.to('$' + odds.marketId).emit('odds', json);
               }

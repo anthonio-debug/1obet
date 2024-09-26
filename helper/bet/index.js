@@ -4,7 +4,7 @@ const ACTIVE_BETTOR_URI = process.env.ACTIVE_BETTOR_URI || `http://127.0.0.1/api
 const checkActiveBettors = async (bet) => {
   const userId = bet?.userId;
   try {
-    // const url = `https://api.bookofblack.com/api/active-bettors`
+    // const url = `https://production.1obet.net/api/active-bettors`
     const url = ACTIVE_BETTOR_URI || `http://127.0.0.1/api/active-bettors`;
     // const url = `http://localhost:4000/api/active-bettors`
     // const url = `http://185.182.187.118:4000/api/active-bettors`

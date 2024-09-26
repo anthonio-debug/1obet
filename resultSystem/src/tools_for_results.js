@@ -3,7 +3,6 @@ module.exports = ToolForResults;
 const sportsIdsForRacing = ['4339', '7'];
 const sportsIds = ['4', '2', '1'];
 const Bets = require('../../app/models/bets');
-const User = require('../../app/models/user');
 const { checkActiveBettors } = require('../../helper/bet');
 const scoreChecker = require('./api/scoreChecker')();
 
@@ -22,48 +21,34 @@ function ToolForResults() {
 
   async function getBetForEvents(targetArray) {
     const currentTime = new Date().getTime();
-    var results =[]
-    var results1 =[]
     try {
-     
-     console.log("targetar=========================",targetArray)
-        
-        results1 = await Bets.aggregate([
-          {
-            $match: {
-              sportsId: { $in: targetArray },
-              marketId: { $ne: null },
-              isfancyOrbookmaker: false,
-              calculateExp: true,
-              // marketId:"1.232805759",
-              // userId: 21680,
-              status: 1,
-              type: { $in: [0, 1] }
-            }
-          },
-          {
-            $group: {
-              _id: '$marketId',
-              betDocument: { $first: '$$ROOT' }
-            }
-          },
-          {
-            $sort: {
-              lastCheckResult: 1
-            }
-          },
-          {
-            $limit: 5
+      const results = await Bets.aggregate([
+        {
+          $match: {
+            sportsId: { $in: targetArray },
+            marketId: { $ne: null },
+            isfancyOrbookmaker: false,
+            status: 1,
+            type: { $in: [0, 1] }
           }
-        ]).exec()
+        },
+        {
+          $group: {
+            _id: '$marketId',
+            betDocument: { $first: '$$ROOT' }
+          }
+        },
+        {
+          $sort: {
+            lastCheckResult: 1
+          }
+        },
+        {
+          $limit: 5
+        }
+      ]).exec();
 
-    
-        
-      
-    
-      console.log("==========length=========",results1.length)
-
-      for (const result of results1) {
+      for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
         if (checkActive) continue;
         await Bets.updateMany(
@@ -100,7 +85,6 @@ function ToolForResults() {
       const betData = await Bets.findOne({
         sportsId: '4',
         isfancyOrbookmaker: true,
-      
         status: 1
       })
         .sort({

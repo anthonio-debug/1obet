@@ -32,7 +32,7 @@ function apiRequestResult() {
   }
 
   async function getEventResult(markets) {
-    // console.log("getting results for races for markets========================>>>>>>>>>>>>>",markets);
+    console.log("getting results for races for markets========================>>>>>>>>>>>>>",markets);
     const currentTime = new Date().getTime();
     let marketIdList = [];
     for (const market of markets) {

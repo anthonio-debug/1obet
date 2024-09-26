@@ -31,7 +31,7 @@ async function getAllSportsHighlight(req, res) {
     let endOfDayTimestamp
 
     const sportId = req.query.sport;
-    // console.log("sportId", sportId)
+    console.log("sportId", sportId)
     if (sportId == '1' || sportId == '2') {
       let endOfDay = new Date(now);
       endOfDay.setHours(23, 59, 59, 999);
@@ -90,7 +90,7 @@ async function getAllSportsHighlight(req, res) {
     ]);
     
     let marketData = [];
-    // console.log("sportsHighlight", sportsHighlights)
+    console.log("sportsHighlight", sportsHighlights)
     
     if (sportsHighlights.length > 0) {
       for (let i = 0; i < sportsHighlights.length; i++) {
@@ -130,7 +130,7 @@ async function getAllSportsHighlight(req, res) {
     })
     const totalOpenMarkets = await marketIds.countDocuments({ status: "OPEN", eventId: { $in: ids } })
 
-    // console.log(" ======== ids  ", ids);
+    console.log(" ======== ids  ", ids);
 
     return res.send({
       success: true,

@@ -7,10 +7,8 @@ const InPlayEvents = require("../models/events")
 const MarketIDS = require("../models/marketIds")
 const Odds = require('../models/odds');
 const RaceOdds = require('../models/raceOdds');
-const inPlayEventsLithylapi = require('../models/inPlayEventsLithylapi');
-const raceMarketsLithylapi = require('../models/raceMarketsLithylapi');
-const raceOddsLithylapi = require('../models/raceOddsLithylapi');
 const FancyOdds = require('../models/fancyOdds');
+const inPlayEventsLithylapi = require('../models/inPlayEventsLithylapi');
 const useragent = require('express-useragent');
 const Cash = require('../../app/models/deposits');
 const axios = require('axios');
@@ -35,7 +33,6 @@ const SubMarketType = require('../models/subMarketTypes.js');
 const Crickets = require('../models/Crickets.js');
 const CurrentPosition = require('../models/CurrentPosition.js');
 const inplayeventsraces = require('../models/InplayEvenetRaces.js');
-const { log } = require('async');
 
 require('dotenv').config()
 // console.log("haaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
@@ -127,7 +124,7 @@ const getParents = async (userId) => {
   }
   return parentUserIds;
 };
-const apiCallForOdds = async (marketId, counter, selectionId) => {
+const apiCallForOdds = async (marketId,counter,selectionId) => {
   const url = `${config.sportsAPIUrl}/listMarketBook`;
   const data = { marketIds: [marketId] };
   const header = {
@@ -140,10 +137,10 @@ const apiCallForOdds = async (marketId, counter, selectionId) => {
   const response = await axios.post(url, data, header);
   console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm", response?.data?.result);
   console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm", counter);
-  const oddsData = response?.data?.result
+  const oddsData=response?.data?.result
   const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
   const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
-  var selectedOddsValue = ApiResponseOdds[0].price;
+  var  selectedOddsValue = ApiResponseOdds[0].price;
   console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmmoddddddddddddddddddddddddds", selectedOddsValue)
   return response?.data?.result;
 };
@@ -497,7 +494,7 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate || selectedBetRate != betRate) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
-          const oddsData = await apiCallForOdds(id, i, selectionId);
+          const oddsData = await apiCallForOdds(id,i,selectionId);
 
           const marketStatus = oddsData[0]?.status;
 
@@ -533,7 +530,7 @@ const placeBet = async (req, res) => {
           }
         }
         matchedResponse = checkMultiResponse(multipeResponse, rates, res)
-        if (!matchedResponse) return res.status(404).send({
+        if(!matchedResponse) return res.status(404).send({
           message: `Bet Miss Matched AK `
         });
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
@@ -579,7 +576,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -603,16 +600,16 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-
+       
       }
       matchedResponse = checkMultiResponse(multipeResponse, rates, res)
-      if (matchedResponse) {
-        var updatedbetRate = matchedResponse
-      } else {
-        return res.status(404).send({
-          message: `Bet miss match `
-        });
-      }
+        if (matchedResponse) {
+         var updatedbetRate=matchedResponse
+        } else {
+          return res.status(404).send({
+            message: `Bet miss match `
+          });
+        }
     }
 
     // Tennis Match Odds
@@ -668,8 +665,8 @@ const placeBet = async (req, res) => {
 
       runnerName = OddDetailsTeam?.runnerName;
 
-      console.log("===============selectedBetRate", selectedBetRate, "===============betRate", betRate, "teeeeeeeeeeeenis")
-      if (selectedBetRate == betRate) {
+      console.log ("===============selectedBetRate",selectedBetRate ,"===============betRate", betRate,"teeeeeeeeeeeenis")
+      if (selectedBetRate == betRate ) {
         for (let i = 1; i < 5 + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
@@ -711,8 +708,8 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-
-
+        
+        
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -765,7 +762,7 @@ const placeBet = async (req, res) => {
         }
         matchedResponse = checkMultiResponse(multipeResponse, rates, res)
         if (matchedResponse) {
-          var updatedbetRate = matchedResponse
+         var updatedbetRate=matchedResponse
         } else {
           return res.status(404).send({
             message: `Bet miss match AK `
@@ -811,7 +808,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
     }
 
@@ -877,11 +874,11 @@ const placeBet = async (req, res) => {
 
       /*end of code by qaiser*/
       delay = (BetPlaceData.secondsValue + delayAddition) * 1000 + 200;
-      if (selectedBetRate == betRate || selectedBetRate != betRate) {
+      if (selectedBetRate == betRate || selectedBetRate!=betRate) {
         for (let i = 1; i < BetPlaceData.secondsValue + delayAddition; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
           const oddsData = await apiCallForOdds(id);
-
+          
 
           const marketStatus = oddsData[0]?.status;
 
@@ -900,7 +897,7 @@ const placeBet = async (req, res) => {
               selectedOddsValue = ApiResponseOdds[0].price;
             }
 
-
+           
 
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           } else if (type == 1) {
@@ -909,11 +906,11 @@ const placeBet = async (req, res) => {
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
             }
-
+          
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           };
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -961,7 +958,7 @@ const placeBet = async (req, res) => {
         matchedResponse = checkMultiResponse(multipeResponse, rates, res)
 
 
-
+        
 
         // LAY:
         // BetRate: 33
@@ -1006,7 +1003,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
         // Selected Rate: 30
         // BetRate      : 27
 
@@ -1023,7 +1020,7 @@ const placeBet = async (req, res) => {
         // ELSE
         // mismatch.....
       }
-
+     
     }
 
     // GH HR Match Odds
@@ -1115,7 +1112,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1162,7 +1159,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
 
         // LAY:
         // BetRate: 33
@@ -1205,7 +1202,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
     }
 
@@ -1299,7 +1296,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate > selectedBetRate && betRate - Digitaddition > selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1379,7 +1376,7 @@ const placeBet = async (req, res) => {
         }
         matchedResponse = checkMultiResponse(multipeResponse, rates, res)
         if (matchedResponse) {
-          var updatedbetRate = matchedResponse
+         var updatedbetRate=matchedResponse
         } else {
           return res.status(404).send({
             message: `Bet miss match `
@@ -1501,7 +1498,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1540,7 +1537,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 0 && selectedBetRate != betRate) {
         // activeBettors.delete(userId)
         // return res.status(404).send({
@@ -1569,7 +1566,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
     }
 
@@ -1656,7 +1653,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 1 && betRate < selectedBetRate) {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -1690,7 +1687,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else if (type == 0 && selectedBetRate != betRate) {
         for (let i = 0; i < 4; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
@@ -1714,7 +1711,7 @@ const placeBet = async (req, res) => {
           }
           multipeResponseForSecurityCheck.push(selectedOddsValue);
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
     }
 
@@ -1766,41 +1763,41 @@ const placeBet = async (req, res) => {
       if (selectedBetRate == betRate) {
         for (let i = 1; i < 5; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
-          // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
-          // const response = await axios.get(url);
-          // const oddsData = response.data;
-          const oddsData = await apiCallForOdds(id);
-          const marketStatus = oddsData[0]?.status;
+            // const url = `${config.sportsAPIUrl}/odds/?ids=${id}`;
+            // const response = await axios.get(url);
+            // const oddsData = response.data;
+            const oddsData = await apiCallForOdds(id);
+            const marketStatus = oddsData[0]?.status;
 
-          if (marketStatus != 'OPEN') {
-            activeBettors.delete(userId);
-            return res.status(404).send({
-              message: `Betting is CLOSED.`
-            });
-          }
-          const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
-          let selectedOddsValue = 0;
-          if (type == 0) {
-            const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
-            if (ApiResponseOdds && ApiResponseOdds.length > 0) {
-              selectedOddsValue = ApiResponseOdds[0].price;
+            if (marketStatus != 'OPEN') {
+              activeBettors.delete(userId);
+              return res.status(404).send({
+                message: `Betting is CLOSED.`
+              });
             }
-            if (selectedOddsValue != 0 && betRate <= selectedOddsValue) {
-              multipeResponse.push(selectedOddsValue);
+            const runnerFromAPI = oddsData[0]?.runners.find((runner) => runner.selectionId == selectionId);
+            let selectedOddsValue = 0;
+            if (type == 0) {
+              const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
+              if (ApiResponseOdds && ApiResponseOdds.length > 0) {
+                selectedOddsValue = ApiResponseOdds[0].price;
+              }
+              if (selectedOddsValue != 0 && betRate <= selectedOddsValue) {
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+            } else if (type == 1) {
+              const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
+              if (ApiResponseOdds && ApiResponseOdds.length > 0) {
+                selectedOddsValue = ApiResponseOdds[0]?.price;
+              }
+              if (selectedOddsValue != 0 && betRate >= selectedOddsValue) {
+                multipeResponse.push(selectedOddsValue);
+              }
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
             }
-            multipeResponseForSecurityCheck.push(selectedOddsValue);
-          } else if (type == 1) {
-            const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
-            if (ApiResponseOdds && ApiResponseOdds.length > 0) {
-              selectedOddsValue = ApiResponseOdds[0]?.price;
-            }
-            if (selectedOddsValue != 0 && betRate >= selectedOddsValue) {
-              multipeResponse.push(selectedOddsValue);
-            }
-            multipeResponseForSecurityCheck.push(selectedOddsValue);
-          }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       } else {
         activeBettors.delete(userId);
         return res.status(404).send({
@@ -2099,43 +2096,43 @@ const placeBet = async (req, res) => {
 
         for (let i = 1; i < 5; i++) {
           await new Promise(resolve => setTimeout(resolve, 1000));
-          try {
-            const oddsData = await apiCallForOdds(id);
+            try {
+              const oddsData = await apiCallForOdds(id);
 
-            const marketStatus = oddsData[0]?.status;
-            if (marketStatus !== 'OPEN') {
-              activeBettors.delete(userId);
-              return res.status(400).send({ message: `Betting is CLOSED.` });
+              const marketStatus = oddsData[0]?.status;
+              if (marketStatus !== 'OPEN') {
+                activeBettors.delete(userId);
+                return res.status(400).send({ message: `Betting is CLOSED.` });
+              }
+
+              const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
+
+              if (!runnerFromAPI) {
+                console.log("Runner not found.");
+                return;
+              }
+
+              let selectedOddsValue = 0;
+              const ApiResponseOdds = type === 0 ? runnerFromAPI?.ex?.availableToBack : runnerFromAPI?.ex?.availableToLay;
+              console.log(`Available to ${type === 0 ? 'Back' : 'Lay'}:`, ApiResponseOdds);
+
+              if (ApiResponseOdds && ApiResponseOdds.length > 0) {
+                selectedOddsValue = ApiResponseOdds[0].price;
+              }
+
+              if ((type === 0 && betRate <= selectedOddsValue) || (type === 1 && betRate >= selectedOddsValue)) {
+                multipeResponse.push(selectedOddsValue);
+              }
+
+              multipeResponseForSecurityCheck.push(selectedOddsValue);
+
+              console.log(`selectedOddsValue: ${selectedOddsValue}`);
+
+            } catch (error) {
+              console.error("Error during API call:", error);
             }
-
-            const runnerFromAPI = oddsData[0]?.runners.find(runner => runner.selectionId == selectionId);
-
-            if (!runnerFromAPI) {
-              console.log("Runner not found.");
-              return;
-            }
-
-            let selectedOddsValue = 0;
-            const ApiResponseOdds = type === 0 ? runnerFromAPI?.ex?.availableToBack : runnerFromAPI?.ex?.availableToLay;
-            console.log(`Available to ${type === 0 ? 'Back' : 'Lay'}:`, ApiResponseOdds);
-
-            if (ApiResponseOdds && ApiResponseOdds.length > 0) {
-              selectedOddsValue = ApiResponseOdds[0].price;
-            }
-
-            if ((type === 0 && betRate <= selectedOddsValue) || (type === 1 && betRate >= selectedOddsValue)) {
-              multipeResponse.push(selectedOddsValue);
-            }
-
-            multipeResponseForSecurityCheck.push(selectedOddsValue);
-
-            console.log(`selectedOddsValue: ${selectedOddsValue}`);
-
-          } catch (error) {
-            console.error("Error during API call:", error);
-          }
         }
-        matchedResponse = checkMultiResponse(multipeResponse, rates, res)
+        matchedResponse = checkMultiResponse(multipeResponse, rates,res)
       }
       else {
         activeBettors.delete(userId);
@@ -3051,7 +3048,7 @@ const placeBet = async (req, res) => {
         runnerName: runnerName || 0,
         userId,
         betAmount: betAmount || 0,
-        betRate: updatedbetRate ? updatedbetRate : Number(betRate) || 0,
+        betRate: updatedbetRate?updatedbetRate: Number(betRate) || 0,
         matchType: eventDetail?.matchType,
         matchStatus: matchStatus,
         matchLastUpdate: matchLastUpdate,
@@ -3287,7 +3284,7 @@ const placeBet = async (req, res) => {
     activeBettors.delete(userId);
     return res.status(404).send({ message: `Something went wrong !-1` });
   } finally {
-    const userId = 21513;
+    const userId =21513;
     activeBettors.delete(userId);
     await User.findOneAndUpdate({ userId: userId }, { activeBetPlacing: false });
   }
@@ -3547,8 +3544,8 @@ async function getMarketsByEventId(req, res) {
 
 async function getEventsBySportsId(req, res) {
   const sportsId = req.params.sportsId;
+
   try {
-    console.log("Fetching events for sportsId: ", sportsId);
     const sportsAPIUrl = "http://185.58.225.212:8080/api";
     const header = {
       headers: {
@@ -3556,23 +3553,25 @@ async function getEventsBySportsId(req, res) {
         'Content-Type': 'application/json',
         'X-App': process.env.XAPP_NAME
       },
-    };
+    }
     const requestData = {
       "filter": {
         eventTypeIds: [sportsId]
-      }
-    };
+      },
+    }
     var url = `${sportsAPIUrl}/listEvents`;
-    console.log("Request URL:", url);
 
-    const response = await axios.post(url, requestData, header);
+    const response = await axios.post(
+      url,
+      requestData,
+      header
+    );
+
     const marketsData = response.data;
 
-    console.log("Market Data:", marketsData);
     res.status(200).json({ success: true, data: marketsData });
   } catch (err) {
-    console.error(`Failed to fetch events for sportsId: ${sportsId}`, err.response?.status, err.message);
-    res.status(500).json({ success: false, msg: "Error fetching events: " + err.message });
+    res.status(500).json({ success: false, msg: "Failed to get Error: " + err.message })
   }
 }
 
@@ -4036,25 +4035,25 @@ async function deleteOdds(req, res) {
     // }
 
     await Odds.deleteMany({});
+   
 
+  
 
+     await RaceOdds.deleteMany({});
+     await fancyOdds.deleteMany({});
+     await MarketIDS.deleteMany({
+       $or: [
+         { status: 'CLOSED', sportID: 4339 },
+         { status: 'CLOSED', sportID: 7 },
 
-
-    await RaceOdds.deleteMany({});
-    // await fancyOdds.deleteMany({});
-    // await MarketIDS.deleteMany({
-    //   $or: [
-    //     { status: 'CLOSED', sportID: 4339 },
-    //     { status: 'CLOSED', sportID: 7 },
-
-    //   ]
-    // });
+       ]
+     });
     const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
     const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
     const count5 = await MarketIDS.countDocuments({ sportID: 7 });
-    const betCountFotprevios2month = await Bets.countDocuments({ betTime: { $lt: 1711180800000 } })
-    return res.json({ "{status:'CLOSED',sportID:4339 count": count1, "{{ status: 'CLOSED', sportID: 7 } count": count3, "{{ sportID: 4339 } count": count4, "{{ sportID: 7 } count": count5, "betCountFotprevios2month": betCountFotprevios2month })
+    const betCountFotprevios2month=await Bets.countDocuments({betTime:{$lt:1711180800000}})
+      return res.json({"{status:'CLOSED',sportID:4339 count":count1,"{{ status: 'CLOSED', sportID: 7 } count":count3,"{{ sportID: 4339 } count":count4,"{{ sportID: 7 } count":count5,"betCountFotprevios2month":betCountFotprevios2month})
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });
@@ -4062,7 +4061,7 @@ async function deleteOdds(req, res) {
     // await MarketIDS.deleteMany({sportID:2,status:'CLOSED'});
     // await MarketIDS.deleteMany({sportID:4,status:'CLOSED'});
     //await MarketIDS.deleteMany({sportID:4339});
-
+    
     //await InPlayEvents.updateMany({ Id: eventId }, { $set: { hasFancy: true } });
     // await MarketIDS.updateMany({ eventId: eventId }, { $set: { ReadyForOdds: true } });
     const response = await MarketIDS.aggregate([{ $project: { name: "$marketName" } }]);
@@ -4194,70 +4193,70 @@ async function saveOdds(oddData, sportsId) {
 
   const oddDataMarket = await MarketIDS.findOne({ marketId: oddData.marketId })
   const runnerNameMap = new Map();
-
+  
   for (const runner of oddDataMarket.runners) {
     runnerNameMap.set(runner.SelectionId, runner.runnerName);
   }
 
-
+  
   const runners = [];
-  const oddsExist = await Odds.findOne({ marketId: oddData.marketId })
-
-  console.log("---------------oddsExist------------", oddsExist);
-  if (!oddsExist) {
+  const oddsExist=  await Odds.findOne({marketId: oddData.marketId })
+  
+  console.log("---------------oddsExist------------",oddsExist);
+  if(!oddsExist){
     console.log("---------------oddsExist------------ iff block runnig");
-
-    for (const runner of oddData.runners) {
-      console.log("oddDataMarket.runners.runnerName", runnerNameMap.get(runner.selectionId));
-      runners.push({
-        SelectionId: runner.selectionId,
-        runnerName: runnerNameMap.get(runner.selectionId),
-        Status: runner.status,
-        LastPriceTraded: runner.lastPriceTraded,
-        TotalMatched: 0,
-        ExchangePrices: {
-          AvailableToBack: runner.ex?.availableToBack,
-          AvailableToLay: runner.ex?.availableToLay,
-        },
-      });
-    }
-    // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-  runners",runners)
-
-
-
-    // console.log("????????????????",oddData.eventid);
-    const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
-
-    const odd = {
-      eventId: oddData.eventid,
-      marketId: oddData.marketId,
-      status: oddData.status,
-      isInplay: oddData.inplay,
-      totalMatched: oddData.totalMatched,
-      isMarketDataDelayed: false,
-      sportsId,
-      numberOfRunners: runners.length,
-      numberOfActiveRunners: activeRunners.length,
-      runners,
-    };
-
-    const odds = new Odds(odd);
-    await odds.save()
-
-    // .then(result => {
-    //   console.log("RRRRRRRrrrr result", result);
-
-    // }).catch(err => {
-    //   console.log("EEEEEEEEEEEr errror", err);
-
-    // })
-    // console.log("=-=-==-=-=-====-=- odds saved");
-    return odd;
-  } else {
-    console.log("{{{{{{{{ updating marketPlce odds")
-    const odd = await Odds.findOneAndUpdate({ marketId: oddData.marketId }, { $set: { totalMatched: oddData.totalMatched, } })
-    return odd
+    
+  for (const runner of oddData.runners) {
+    console.log("oddDataMarket.runners.runnerName", runnerNameMap.get(runner.selectionId));
+    runners.push({
+      SelectionId: runner.selectionId,
+      runnerName: runnerNameMap.get(runner.selectionId),
+      Status: runner.status,
+      LastPriceTraded: runner.lastPriceTraded,
+      TotalMatched: 0,
+      ExchangePrices: {
+        AvailableToBack: runner.ex?.availableToBack,
+        AvailableToLay: runner.ex?.availableToLay,
+      },
+    });
   }
+  // console.log("MMMMMMMMMMMMMMM-=-=-=-=-=-=-  runners",runners)
+
+
+
+  // console.log("????????????????",oddData.eventid);
+  const activeRunners = runners.filter((e) => e.Status === "ACTIVE");
+
+  const odd = {
+    eventId: oddData.eventid,
+    marketId: oddData.marketId,
+    status: oddData.status,
+    isInplay: oddData.inplay,
+    totalMatched: oddData.totalMatched,
+    isMarketDataDelayed: false,
+    sportsId,
+    numberOfRunners: runners.length,
+    numberOfActiveRunners: activeRunners.length,
+    runners,
+  };
+
+  const odds = new Odds(odd);
+  await odds.save()
+  
+  // .then(result => {
+  //   console.log("RRRRRRRrrrr result", result);
+
+  // }).catch(err => {
+  //   console.log("EEEEEEEEEEEr errror", err);
+
+  // })
+  // console.log("=-=-==-=-=-====-=- odds saved");
+  return odd;
+}else{
+  console.log("{{{{{{{{ updating marketPlce odds")
+  const odd=  await Odds.findOneAndUpdate({marketId: oddData.marketId }, {$set:{totalMatched: oddData.totalMatched,}})
+  return odd
+}
 
 
 }
@@ -4345,7 +4344,7 @@ async function getOdds(req, res) {
   // });
   try {
     // Make an Axios request to another API
-    axios.post('https://api.bookofblack.com/api/track-bet/lithylAPI/getOdds', {
+    axios.post('https://production.1obet.net/api/track-bet/lithylAPI/getOdds', {
       matchId: "66e3147de0ccfa3f8d82e6b6",
       subMarketName: "Match Odds",
       betAmount: 100,
@@ -4366,16 +4365,16 @@ async function getOdds(req, res) {
         'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOjIxNTEzLCJjcmVhdGVkQnkiOjExMDAwLCJyb2xlIjoiNSIsImV4cHIiOjE3MjY0NDU2ODE5MDUsImlhdCI6MTcyNjQwMjQ4MSwiZXhwIjoxNzI4MTcyMDg0Mzg2fQ.wo35RDvb7kCg6jY021fta66gInyYCzPfCeFlbMZ-fBc' // Include if required
       }
     })
-      .then(response => {
-        console.log('Response Data:', response.data);
-      })
-      .catch(error => {
-        console.error('Error making Axios request:', {
-          message: error.message,
-          response: error.response ? error.response.data : 'No response data',
-          config: error.config
-        });
+    .then(response => {
+      console.log('Response Data:', response.data);
+    })
+    .catch(error => {
+      console.error('Error making Axios request:', {
+        message: error.message,
+        response: error.response ? error.response.data : 'No response data',
+        config: error.config
       });
+    });
 
     // Send the data from the Axios request back to the client
     // res.json(response.data);
@@ -5480,11 +5479,11 @@ const header = {
   },
 }
 //////////////////////////////////////////
-async function eventsBySupportJobs(req, res) {
+async function eventsBySupportJobs(req,res) {
   function isValidDate(d) {
     return new Date(d).toString() !== "Invalid Date";
   }
-  const sportsId = "4339"
+  const sportsId ="4339"
   const now = moment();
   const startTime = now.format('YYYY-MM-DDTHH:mm:ss[Z]');
   const endTime = moment(now).add(24, 'hours').format('YYYY-MM-DDTHH:mm:ss[Z]');
@@ -5514,7 +5513,7 @@ async function eventsBySupportJobs(req, res) {
       });
 
       for (let k = 0; k < (events?.length > config.raceEventsAllowedCount ? config.raceEventsAllowedCount : events?.length); k++) {
-        const existingDoc = await inplayeventsraces.findOne({ Id: events[k].event.id });
+        const existingDoc = await inplayeventsraces.findOne({Id: events[k].event.id});
 
         if (existingDoc && existingDoc.isCanceled === true) {
           continue;
@@ -5526,7 +5525,7 @@ async function eventsBySupportJobs(req, res) {
         // }
 
         await RACESinplayeventsracesraces.findOneAndUpdate(
-          { Id: events[k].event.id },
+          {Id: events[k].event.id},
           {
             $set: {
               sportsId: sportsId,
@@ -5562,8 +5561,8 @@ async function eventsBySupportJobs(req, res) {
 
       let allIDS = [];
       const currentEvents = await RACESinplayeventsracesraces.find(
-        { status: 'OPEN', sportsId: sportsId + "" },
-        { Id: 1 }
+        {status: 'OPEN', sportsId: sportsId + ""},
+        {Id: 1}
       );
 
       for (let i = 0; i < currentEvents.length; i++) {
@@ -5590,7 +5589,7 @@ async function eventsBySupportJobs(req, res) {
           }
         );
       }
-      return res.send({
+      return res.send( {
         success: true,
         message: 'Events retrieved and saved successfully',
         events: events
@@ -5615,49 +5614,47 @@ async function eventsBySupportJobs(req, res) {
 
 async function getDuplicateEntries(req, res) {
   try {
-    console.log(">>>>>>>>>>> getDuplicateEntries is running >>>>>>>>>>")
-    // const totalDocuments = await Bets.countDocuments({});
-    // const skip = totalDocuments > 50 ? totalDocuments - 50 : 0;
-    const record = await Bets.aggregate([
+    console.log (">>>>>>>>>>> getDuplicateEntries is running >>>>>>>>>>")
+    const record =await Bets.aggregate([
       { $sort: { _id: -1 } },
-      { $limit: 20 },
-      {
-        $lookup: {
-          from: 'deposits',
-          localField: '_id',
-          foreignField: 'betId',
-          as: 'betInfo'
-        }
-      },
-      {
-        $addFields: {
-          betInfoCount: { $size: '$betInfo' }
-        }
-      },
-      {
-        $project: {
-          _id: 1,
-          betInfoCount: 1,
-          dateinDeposits: {
-            $map: {
-              input: "$betInfo.betDateTime",
-              as: "dateInMillis",
-              in: { $toDate: "$$dateInMillis" }
-            }
-          },
-          dateInBets: { $toDate: "$createdAt" }
-        }
-      },
-
-
-    ]
-    )
-    console.log(">>>>>>>>>>> record >>>>>>>>>>>", record)
+       { $limit: 20 },
+       {
+         $lookup: {
+           from: 'deposits',
+           localField: '_id',
+           foreignField: 'betId',
+           as: 'betInfo'
+         }
+       },
+       {
+         $addFields: {
+           betInfoCount: { $size: '$betInfo' }
+         }
+       },
+       {
+         $project: {
+           _id: 1,
+           betInfoCount: 1,
+           dateinDeposits: {
+             $map: {
+               input: "$betInfo.betDateTime",
+               as: "dateInMillis",
+               in: { $toDate: "$$dateInMillis" }
+             }
+           },
+           dateInBets: { $toDate: "$createdAt" }
+         }
+       },
+        
+     
+     ]
+     )
+    // console.log (">>>>>>>>>>> record >>>>>>>>>>", record)
     res.status(200).json({
       success: true,
       message: 'Duplicate entries fetched successfully',
-      data: record
-
+      data:record
+      
     });
   } catch (error) {
     console.error("Error in getDuplicateEntries:", error);
@@ -5668,1414 +5665,6 @@ async function getDuplicateEntries(req, res) {
   }
 }
 
-// async function raceMarketsLithylapi(req, res) {
-
-//   try {
-//     // const sportsAPIUrl = `http://sportzing.in:5505/api/getGreyHoundMatches?id=${id}`;
-//     const sportsAPIUrl = `http://sportzing.in:5505/api/getHorseRaceMatches`;
-
-//     console.log("------------------http://sportzing.in:5505/api/getHorseRaceMatches")
-//     const header = {
-//       headers: {
-//         accept: "application/json",
-//         "Content-Type": "application/json",
-//         "X-App": process.env.XAPP_NAME,
-//         "Cache-Control": "no-cache"
-//       },
-//     };
-
-
-//     const response = await axios.get(sportsAPIUrl, header);
-//     console.log("MMMMMMMMMMMMMMMM--getHorseRaceMatches response ", response.data);
-
-//     ///////////////////////////////////////////
-
-//     ////////////////////////////////////////////
-
-//     // const marketsData = response.data;
-//     const horseRaceMatches = response.data;
-//     res.status(200).json({ success: true, data: horseRaceMatches });
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .json({ success: false, msg: "Failed to get Error: " + err.message });
-//   }
-// }
-
-async function raceMarketsByLithylapi(eventId, sportsId, competitionId) {
-  try {
-    const requestData = {
-      filter: {
-        eventIds: [eventId],
-        eventTypeIds: [sportsId],
-        marketTypes: ['WIN'],
-      },
-      maxResults: 100,
-      marketProjection: ["EVENT", "EVENT_TYPE", "MARKET_START_TIME", "MARKET_DESCRIPTION", "RUNNER_DESCRIPTION", "RUNNER_METADATA"]
-    };
-    // let url;
-    // if(sportsId=='7'){
-    //   url = `http://sportzing.in:5505/api/getHorseRaceMatches`;
-
-    // }else{
-    //   url = `http://sportzing.in:5505/api/getGreyHoundMatches`;
-    // }
-
-    const url = `http://sportzing.in:5505/api/getHorseRaceMatches`
-    let response = await axios.post(url, JSON.stringify(requestData), header);
-
-    console.log("-=-=--=-=-=-=--==-=- lithyl markets response -=-=-=-=-=-=-=-", response);
-
-    const eventsData = response.data;
-
-    let marketIds = [];
-
-    for (let j = 0; j < eventsData.length; j++) {
-      let eventData = eventsData[j];
-      if (eventData.marketName) {
-        marketIds.push(eventData.marketId);
-
-        await raceMarkets.findOneAndUpdate(
-          {
-            marketId: eventData.marketId,
-            eventTypeId: eventData.event.eventTypeId,
-            "eventNodes.eventId": eventData.event.id,
-            "eventNodes.event.eventName": eventData.event.name,
-            "eventNodes.event.countryCode": eventData.event.countryCode,
-          },
-          {
-            $set: {
-              marketId: eventData.marketId,
-              eventTypeId: eventData.event.eventTypeId,
-              eventNodes: {
-                eventId: eventData.event.id,
-                event: {
-                  eventName: eventData.event.name,
-                  countryCode: eventData.event.countryCode,
-                  timezone: eventData.event.timezone,
-                  venue: eventData.event.venue,
-                  openDate: new Date(eventData.event.openDate)
-                },
-                marketNodes: {
-                  marketId: eventData.marketId,
-                  state: {
-                    startTime: new Date(eventData.marketStartTime),
-                    numberOfRunners: eventData.runners?.length,
-                    totalMatched: eventData.totalMatched,
-                    status: "PENDING"
-                  },
-                  description: {
-                    marketName: eventData.marketName,
-                    marketTime: new Date(eventData.marketStartTime),
-                  },
-                  runners: eventData.runners.map(runner => ({
-                    selectionId: runner.selectionId,
-                    handicap: runner.handicap,
-                    description: {
-                      runnerName: runner.runnerName,
-                      metadata: runner.metadata
-                    },
-                    state: {
-                      sortPriority: runner.sortPriority,
-                    }
-                  })),
-                },
-              },
-            }
-          }, { upsert: true, new: true }
-        );
-
-        let runners = eventData.runners.map(runner => ({
-          selectionId: runner.selectionId,
-          runnerName: runner.runnerName
-        }));
-
-        await raceMarketsLithylapi.findOneAndUpdate(
-          {
-            marketId: eventData.marketId,
-            sportID: eventData.event.eventTypeId,
-            eventId: eventId,
-          },
-          {
-            $set: {
-              runners: runners,
-              marketName: eventData.marketName,
-              marketType: eventData.description?.marketType,
-              status: 'OPEN',
-              openDate: Date.parse(eventData.marketStartTime)
-            }
-          }, { upsert: true, new: true }
-        );
-      }
-    }
-
-    await inPlayEventsLithylapi.findOneAndUpdate(
-      { Id: eventId },
-      { $set: { marketIds: marketIds } },
-      { upsert: true, new: true }
-    );
-
-  } catch (error) {
-    console.error('Market data Problem', error);
-  }
-}
-
-
-
-async function saveRaceOddsLithyl(oddsData) {
-  try {
-    if (oddsData.length > 0) {
-      for (const odds of oddsData) {
-        let tempRunners = [];
-        for (let n = 0; n < odds.runners?.length; n++) {
-          let tempElement = {
-            selectionId: odds?.runners[n]?.selectionId,
-            handicap: odds?.runners[n]?.handicap,
-            state: {
-              status: odds.runners[n]?.status,
-              lastPriceTraded: odds.runners[n]?.lastPriceTraded,
-              totalMatched: odds.runners[n]?.totalMatched,
-            },
-            exchange: {
-              availableToBack: [
-                {
-                  price: odds.runners[n]?.ex.availableToBack[0]?.price,
-                  size: odds.runners[n]?.ex.availableToBack[0]?.size
-                },
-                {
-                  price: odds.runners[n]?.ex.availableToBack[1]?.price,
-                  size: odds.runners[n]?.ex.availableToBack[1]?.size
-                },
-                {
-                  price: odds.runners[n]?.ex.availableToBack[2]?.price,
-                  size: odds.runners[n]?.ex.availableToBack[2]?.size
-                },
-              ],
-              availableToLay: [
-                {
-                  price: odds.runners[n]?.ex.availableToLay[0]?.price,
-                  size: odds.runners[n]?.ex.availableToLay[0]?.size
-                },
-                {
-                  price: odds.runners[n]?.ex.availableToLay[1]?.price,
-                  size: odds.runners[n]?.ex.availableToLay[1]?.size
-                },
-                {
-                  price: odds.runners[n]?.ex.availableToLay[2]?.price,
-                  size: odds.runners[n]?.ex.availableToLay[2]?.size
-                },
-              ]
-            }
-          }
-
-          tempRunners.push(tempElement)
-        }
-
-        let isMarketDataDelayed = false;
-
-        let json = {
-          marketId: odds.marketId,
-          isMarketDataDelayed: isMarketDataDelayed,
-          state: {
-            numberOfRunners: tempRunners?.length,
-            totalMatched: odds?.totalMatched,
-            inplay: odds?.inplay,
-            status: odds?.status
-          },
-          runners: tempRunners,
-          createdAt: new Date().getTime(),
-        }
-
-        const result = await raceOddsLithylapi.collection.insertOne(json);
-        console.log('Odds data saved successfully for market:', odds.marketId);
-      }
-    } else {
-      console.log('No valid odds data to save.');
-    }
-  } catch (error) {
-    console.error('Error saving odds data:', error);
-  }
-}
-console.log();
-
-
-// async function getUsers(req, res) {
-
-//   try {
-//     const currentTime = Date.now()
-//     const time5days = 120 * 60 * 60 * 1000
-//     const last5days = currentTime - time5days
-//     const userData = await Users.aggregate([
-//       {
-//         "$match": {
-//           "exposure": { "$ne": 0 }
-//         }
-//       },
-//       {
-//         "$lookup": {
-//           "from": "bets",
-//           "localField": "userId",
-//           "foreignField": "userId",
-//           "as": "userBets"
-//         }
-//       },
-//       {
-//         "$unwind": "$userBets"
-//       },
-//       {
-//         "$match": {
-//           "userBets.status": { "$ne": 1 },
-//           "userBets.createdAt": { "$gt": last5days }
-//         }
-//       },
-//       {
-//         "$sort": {
-//           "userBets._id": -1
-//         }
-//       },
-//       {
-//         "$group": {
-//           "_id": "$_id",
-//           "userDetails": { "$first": "$$ROOT" }
-//         }
-//       }
-//     ])
-
-//     console.log("---------userData-----------", userData);
-    
-//     res.status(200).json({ success: true, data: userData });
-//   } catch (err) {
-//     res
-//       .status(500)
-//       .json({ success: false, msg: "Failed to get Error: " + err.message });
-//   }
-// }
-async function getUsers(req, res) {
-
-  try {
-    const currentTime = Date.now()
-    const time5days = 120 * 60 * 60 * 1000
-    const last5days = currentTime - time5days
-    const userData = await Users.aggregate([
-      {
-        "$match": {
-          "exposure": { "$ne": 0 }
-        }
-      },
-      {
-        "$lookup": {
-          "from": "bets",
-          "localField": "userId",
-          "foreignField": "userId",
-          "as": "userBets"
-        }
-      },
-      {
-        "$unwind": {
-          "path": "$userBets",
-          "preserveNullAndEmptyArrays": true 
-        }
-      },
-      {
-        "$match": {
-          "userBets.status": { "$ne": 1 },
-          "userBets.createdAt": { "$gt": last5days }
-            }
-      },
-      {
-        "$lookup": {
-          "from": "users",
-          "localField": "userId",
-          "foreignField": "userId",
-          "as": "userDetails"
-        }
-      },
-      {
-        "$unwind": {
-          "path": "$userDetails",
-          "preserveNullAndEmptyArrays": true
-        }
-      },
-      {
-        "$sort": {
-          "userBets._id": -1
-        }
-      },
-      {
-        "$group": {
-          "_id": "$_id",
-          "userId": { "$first": "$userId" },
-          "userName": { "$first": "$userDetails.userName" },
-          "exposure": { "$first": "$exposure" },
-          "userBets": { "$push": "$userBets" } 
-        }
-      },
-      {
-        "$project": {
-          "userId": 1,
-          "userName": 1,
-          "exposure": 1,
-          "userBets": 1
-        }
-      }
-    ]
-    )
-
-    console.log("---------userData-----------", userData);
-    
-    res.status(200).json({ success: true, data: userData });
-  } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, msg: "Failed to get Error: " + err.message });
-  }
-}
-
-
-/////////////////////////////////////////////////////////////////////////////////////////////////
-
-//------------------- from scoreChaker ---------------------
-
-  async function eventsResult(betData) {
-    //console.log("Result checking event for ", betData.marketId);
-    try {
-      let results;
-      const manuelRecord = await MarketIDs.findOne({
-        marketId: betData.marketId,
-        winnerRunnerData: { $ne: null }
-      });
-
-      if (manuelRecord) {
-        //console.log("Inside manual");
-
-        if (typeof manuelRecord.manuelClose !== undefined) {
-          results = [
-            {
-              winnerSelectionId: manuelRecord.winnerRunnerData,
-              manuelClose: manuelRecord.manuelClose
-            }
-          ];
-        } else {
-          results = [
-            {
-              winnerSelectionId: manuelRecord.winnerRunnerData,
-              manuelClose: false
-            }
-          ];
-        }
-      } else {
-
-        const url = `${sportsAPIUrl}/listMarketBook`;
-        const requestData = {
-          marketIds: [betData.marketId]
-        };
-        const response = await axios.post(url, requestData, header);
-        if (!response?.data?.result) return;
-        const resData = response.data.result;
-        results = [
-          {
-            winnerSelectionId: getWinnerSelectionId(resData[0]),
-            manuelClose: false
-          }
-        ];
-      }
-      //console.log("results.length -> " + results.length)
-      if (results.length > 0) {
-        const result = results[0];
-        if (!result.winnerSelectionId) return;
-        let newRecord = new resultRecords({
-          eventId: betData.matchId,
-          marketData: betData.marketId,
-          resultData: result.winnerSelectionId
-        });
-
-        const bets = await Bets.find({
-          marketId: betData.marketId,
-          sportsId: betData.sportsId,
-          status: 1
-        });
-
-        // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
-
-        // if (checkEventMarket.status == "CLOSED") {
-        //   await inPlayEvents.updateOne({ Id: betData.eventId },{ $set: { inplay: false } })
-        //}
-
-
-        await newRecord.save();
-
-     
-        //Sports Results Saved
-        //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
-        await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
-
-        if (result.winnerSelectionId == -1) {
-          //console.log("result.winnerSelectionId == -1 -->", betData.marketId);
-          for (const bet of bets) {
-            if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
-              continue;
-            }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            await handleDrawBet(bet);
-          }
-        } else {
-          //console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
-          for (const bet of bets) {
-            if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
-              continue;
-            }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
-              //console.log("0 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelectionId);
-            } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
-              //console.log("0 ----- looser ");
-              await handleLosingBet(bet);
-            } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
-              //console.log("1 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelectionId);
-            } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
-              //console.log("1 ----- looser ");
-              await handleLosingBet(bet);
-            } else {
-              //console.log("-----  Draw ");
-              await handleDrawBet(bet);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-//----------------------------------------------------////////////////////
-
-  async function racingResult(betData) {
-    //console.log("Result checking racing with " + betData.marketId);
-
-    try {
-      let results;
-      const manuelRecord = await MarketIDs.findOne({
-        marketId: betData.marketId,
-        winnerRunnerData: { $ne: null }
-      });
-
-      if (manuelRecord) {
-        if (typeof manuelRecord.manuelClose !== undefined)
-          results = [
-            {
-              winnerSelectionId: manuelRecord.winnerRunnerData,
-              manuelClose: manuelRecord.manuelClose
-            }
-          ];
-        else
-          results = [
-            {
-              winnerSelectionId: manuelRecord.winnerRunnerData,
-              manuelClose: false
-            }
-          ];
-      } else {
-
-        const url = `${sportsAPIUrl}/listMarketBook`;
-        const requestData = {
-          marketIds: [betData.marketId]
-        };
-        const response = await axios.post(url, requestData, header);
-        const resData = response.data.result;
-        results = [
-          {
-            winnerSelectionId: getWinnerSelectionId(resData[0]),
-            manuelClose: false
-          }
-        ];
-      }
-      if (results.length > 0) {
-        const result = results[0];
-        if (!result.winnerSelectionId) return;
-        let newRecord = new resultRecords({
-          eventId: betData.matchId,
-          marketData: betData.marketId,
-          resultData: result.winnerSelectionId
-        });
-
-        const bets = await Bets.find({
-          marketId: betData.marketId,
-          sportsId: betData.sportsId,
-          status: 1
-        });
-
-        await newRecord.save();
-        await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
-
-        if (result.winnerSelectionId == -1) {
-          for (const bet of bets) {
-            if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
-              continue;
-            }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            //console.log("handle bet draw");
-            await handleDrawBet(bet);
-          }
-        } else {
-          for (const bet of bets) {
-            if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
-              continue;
-            }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
-              //console.log("0 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelectionId);
-            } else if (bet.type == 0 && bet.runner != result.winnerSelectionId) {
-              //console.log("0 ----- looser ");
-              await handleLosingBet(bet);
-            } else if (bet.type == 1 && bet.runner != result.winnerSelectionId) {
-              //console.log("1 ----- winner ");
-              await handleWinningBet(bet, result.winnerSelectionId);
-            } else if (bet.type == 1 && bet.runner == result.winnerSelectionId) {
-              //console.log("1 ----- looser ");
-              await handleLosingBet(bet);
-            } else {
-              //console.log("-----  Draw ");
-              await handleDrawBet(bet);
-            }
-          }
-        }
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-
-
-
-////////////////////////////////////////////////////////////////////////////////
-
- function getWinnerSelectionId(listMarketBookResult) {
-    if (!listMarketBookResult) return null;
-    let winnerSelectionId = null;
-    const runners = listMarketBookResult.runners || [];
-    for (const runner of runners) {
-      if (runner.status === 'WINNER') {
-        winnerSelectionId = runner.selectionId;
-        break;
-      }
-    }
-    return winnerSelectionId;
-  }
-
-///////////////////////////////////////////////////////////////
-
-const handleDrawBet = async (bet, status = 0) => {
-  try {
-    if (bet.status == 1) {
-      const betStatus = await Bets.findById(bet._id);
-      if (betStatus.status == 1) {
-        let calculatedExp = 0;
-        const totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
-        const userId = bet.userId;
-        const userToUpdate = await User.findOne({
-          userId: userId,
-          isDeleted: false
-        });
-        if (!userToUpdate) {
-          console.error('Error: User Not Found Location:(_handle draw bet)');
-          return;
-        } else {
-          const user_prev_balance = userToUpdate.balance;
-          const user_prev_availableBalance = userToUpdate.availableBalance;
-          const user_prev_exposure = userToUpdate.exposure;
-
-          const updatedUserAvlBalance = Number((userToUpdate.availableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-          const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-
-          if (bet.calculateExp === true) {
-            calculatedExp = 1;
-            await User.updateOne(
-              {
-                userId: userId,
-                isDeleted: false
-              },
-              {
-                availableBalance: updatedUserAvlBalance,
-                exposure: updatedUserExp
-              }
-            );
-          }
-
-          const parentUserIds = await getParents(userId);
-          const parentUser = await User.find({
-            userId: { $in: [...parentUserIds] },
-            isDeleted: false
-          }).sort({ role: -1 });
-          if (!parentUser) {
-            console.error(' Error : Parent User Not Found Location:(_handle Draw bet ) ');
-            return;
-          } else {
-            let prev = 0;
-            for (const user of parentUser) {
-              let current = user.downLineShare;
-              user['commission'] = current - prev;
-              prev = current;
-            }
-            for (const user of parentUser) {
-              const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-              const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-              await User.updateOne(
-                {
-                  _id: user._id
-                },
-                {
-                  exposure: amountToBeAddedExp,
-                  availableBalance: amountToBeAddedAvlBalance
-                }
-              );
-            }
-            await Bets.updateOne(
-              { _id: bet._id },
-              {
-                position: 0,
-                status: status,
-                iscalculatedExp: calculatedExp,
-                updatedAt: new Date().getTime()
-              }
-            );
-            const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString });
-            const updatedUser = await User.findOne({
-              userId: userId,
-              isDeleted: false
-            });
-            const user_new_balance = updatedUser.balance;
-            if (bet.calculateExp) {
-              await ExpRec.create({
-                userId: updatedUser.userId,
-                trans_from: 'BetDrawOrCanceled',
-                trans_from_id: bet._id,
-                trans_bet_status: status,
-                user_prev_balance: user_prev_balance,
-                user_prev_availableBalance: user_prev_availableBalance,
-                user_prev_exposure: user_prev_exposure,
-                user_new_balance: user_new_balance,
-                user_new_availableBalance: updatedUserAvlBalance,
-                user_new_exposure: updatedUserExp,
-                marketId: bet.marketId,
-                sportsId: bet.sportsId,
-                calculatedExp: calculatedExp,
-                DateTime: new Date(),
-                calculateExp: calculatedExp,
-                position: bet.position,
-                exposureAmount: bet.exposureAmount
-              });
-            }
-          }
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error: Draw Bet_', error);
-    return;
-  }
-};
-
-/////////////////////////////////////////////////////////////
-
-async function handleWinningBet(bet, winner) {
-  const now = new Date();
-  const year = now.getFullYear().toString();
-  const month = (now.getMonth() + 1).toString().padStart(2, '0');
-  const day = now.getDate().toString().padStart(2, '0');
-  const formattedDate = `${year}-${month}-${day}`;
-  try {
-    if (bet.status == 1) {
-      const betStatus = await Bets.findById(bet._id);
-      if (betStatus.status == 1) {
-        let calculatedExp = 0;
-        const userId = bet.userId;
-        let TotalWin = 0;
-        let TotalLose = 0;
-        if (Number(bet.sportsId) != 8) {
-          const winnings = await Bets.find(
-            {
-              sportsId: bet.sportsId,
-              marketId: bet.marketId,
-              matchId: bet.matchId,
-              userId: bet.userId,
-              subMarketId: { $ne: '7' },
-              $or: [
-                { type: 0, runner: winner },
-                { type: 1, runner: { $ne: winner } }
-              ]
-            },
-            { winningAmount: 1, _id: 0 }
-          );
-          const loosings = await Bets.find(
-            {
-              sportsId: bet.sportsId,
-              marketId: bet.marketId,
-              matchId: bet.matchId,
-              userId: bet.userId,
-              subMarketId: { $ne: '7' },
-              $or: [
-                { type: 1, runner: winner },
-                { type: 0, runner: { $ne: winner } }
-              ]
-            },
-            { loosingAmount: 1, _id: 0 }
-          );
-
-          for (const singleWin of winnings) {
-            TotalWin = Number((TotalWin + singleWin.winningAmount).toFixed(3));
-          }
-
-          for (const singleLose of loosings) {
-            TotalLose = Number((TotalLose + singleLose.loosingAmount).toFixed(3));
-          }
-        }
-
-        const userToUpdate = await User.findOne({
-          userId: userId,
-          isDeleted: false
-        });
-
-        if (!userToUpdate) {
-          console.error('Error: user not found Location:(_handle winning bet)');
-          return;
-        } else {
-          let remainingAmount;
-          let commissionAmount;
-          let totalRemainingAmount;
-          let TotalLoosingAmount;
-          let upMovingAmount;
-          let upMovingCommAmount;
-          if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.overByOver && bet.subMarketId != config.BookMaker && (TotalWin > TotalLose || Number(bet.sportsId) == 8)) {
-            const absouteWin = Number((TotalWin - TotalLose).toFixed(3));
-            const totalCooission = Number((absouteWin * 0.02).toFixed(3));
-            commissionAmount = Number(((totalCooission / TotalWin) * bet.winningAmount).toFixed(3));
-            if (Number(bet.sportsId) == 8) commissionAmount = Number((bet.winningAmount * 0.02).toFixed(3));
-            remainingAmount = Number((bet.winningAmount - commissionAmount).toFixed(3));
-            totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
-            TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
-            upMovingAmount = totalRemainingAmount;
-            upMovingCommAmount = commissionAmount;
-          } else {
-            remainingAmount = Number(bet.winningAmount.toFixed(3));
-            commissionAmount = 0;
-            totalRemainingAmount = Number(bet.winningAmount.toFixed(3));
-            TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
-            upMovingAmount = totalRemainingAmount;
-            upMovingCommAmount = commissionAmount;
-          }
-
-          const user_prev_balance = userToUpdate.balance;
-          const user_prev_availableBalance = userToUpdate.availableBalance;
-          const user_prev_exposure = userToUpdate.exposure;
-
-          const UpdatedBalance = Number((userToUpdate.balance + remainingAmount).toFixed(3));
-          const UpdatedclientPL = Number((userToUpdate.clientPL + remainingAmount).toFixed(3));
-          let userToUpdateAvailableBalance = remainingAmount;
-          let addExposureAmount = 0;
-          if (bet.calculateExp) {
-            userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-            addExposureAmount = Number(bet.exposureAmount.toFixed(3));
-            calculatedExp = 1;
-          }
-          const UpdatedExposure = Number((userToUpdate.exposure + addExposureAmount).toFixed(3));
-          const UpdatedAvailableBalance = Number((userToUpdate.availableBalance + Number(userToUpdateAvailableBalance.toFixed(3))).toFixed(3));
-          const exists = await Deposits.findOne({
-            userId: userToUpdate.userId,
-            betId: bet._id,
-            amount: remainingAmount,
-            marketId: bet.marketId,
-            sportsId: bet.sportsId,
-            matchId: bet.matchId
-          });
-          if (exists) {
-            console.log('=====================handleWinningBet exists=====================');
-            console.log(bet._id, bet.status);
-            console.log('=====================handleWinningBet exists=====================');
-            // await Bets.updateOne(
-            //   { _id: bet._id },
-            //   {
-            //     status: 0,
-            //     updatedAt: new Date().getTime()
-            //   }
-            // );
-            // await CurrentPosition.deleteMany({ betId: betIdString });
-            return;
-          }
-          await User.updateOne(
-            {
-              userId: userId,
-              isDeleted: false
-            },
-            {
-              balance: UpdatedBalance,
-              clientPL: UpdatedclientPL,
-              exposure: UpdatedExposure,
-              availableBalance: UpdatedAvailableBalance
-            }
-          );
-          const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
-
-          await Deposits.create({
-            userId: userToUpdate.userId,
-            description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-            betId: bet._id,
-            createdBy: 0,
-            amount: remainingAmount,
-            balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
-            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
-            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
-            cashOrCredit: 'Bet',
-            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-            credit: lastMaxWithdraw?.credit || 0,
-            creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-            marketId: bet.marketId,
-            sportsId: bet.sportsId,
-            matchId: bet.matchId,
-            betType: bet.type,
-            betDateTime: bet.betTime,
-            date: new Date().getTime(),
-            createdAt: formattedDate,
-            betSession: bet.betSession,
-            roundId: bet.roundId,
-            addedExpoisureAmount: addExposureAmount,
-            UserPrevexposure: userToUpdate.exposure,
-            UpdatedExposure: UpdatedExposure,
-            sourceCodeBlock: 'handleWinningBet',
-            userAvailableBalanceBFTrans: user_prev_availableBalance,
-            userAvailableBalanceAFTrans: UpdatedAvailableBalance,
-            UserBalanceBFTrans: user_prev_balance,
-            UserBalanceAFTrans: UpdatedBalance
-          });
-          const parentUserIds = await getParents(userId);
-          const parentUser = await User.find({
-            userId: {
-              $in: [...parentUserIds]
-            },
-            isDeleted: false
-          }).sort({ userId: -1 });
-          if (!parentUser) {
-            console.error(' Error: Parent Users Not Found Location:(_handle Winning  bet) ');
-            return;
-          } else {
-            let prev = 0;
-            for (const user of parentUser) {
-              let current = user.downLineShare;
-              user['commission'] = current - prev;
-              prev = current;
-            }
-            let commissionFrom = userToUpdate.userId;
-            for (const user of parentUser) {
-              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-              const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
-              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-              const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-              await User.updateOne(
-                {
-                  userId: user.userId,
-                  isDeleted: false
-                },
-                {
-                  balance: totalBalance,
-                  exposure: totalExpoisure,
-                  availableBalance: totalavailableBalance,
-                  clientPL: totalClientPL
-                }
-              );
-
-              const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-              await Deposits.create({
-                userId: user.userId,
-                description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-                createdBy: 0,
-                amount: -(user.commission / 100) * totalRemainingAmount,
-                balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                marketId: bet.marketId,
-                credit: lastMaxWithdraw?.credit || 0,
-                creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-                cashOrCredit: 'Bet',
-                commissionFrom: commissionFrom,
-                sportsId: bet.sportsId,
-                upLineAmount: -upMovingAmount,
-                betId: bet._id,
-                matchId: bet.matchId,
-                betType: bet.type,
-                betDateTime: bet.betTime,
-                date: new Date().getTime(),
-                createdAt: formattedDate,
-                betSession: bet.betSession,
-                roundId: bet.roundId,
-
-                addedExpoisureAmount: Number(((user.commission / 100) * totalRemainingAmount).toFixed(3)),
-                UserPrevexposure: user.exposure,
-                UpdatedExposure: totalExpoisure,
-                exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
-                sourceCodeBlock: 'handleWinningBet'
-              });
-              upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
-
-              if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
-                const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-
-                await Deposits.create({
-                  userId: user.userId,
-                  description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
-                  createdBy: 0,
-                  commissionFrom: commissionFrom,
-                  amount: (user.commission / 100) * commissionAmount,
-                  balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                  availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                  maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                  cashOrCredit: 'Commission',
-                  betId: bet._id,
-                  cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                  marketId: bet.marketId,
-                  sportsId: bet.sportsId,
-                  credit: lastMaxWithdraw?.credit || 0,
-                  creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-                  upLineAmount: upMovingCommAmount,
-                  matchId: bet.matchId,
-                  betType: bet.type,
-                  betDateTime: bet.betTime,
-                  date: new Date().getTime(),
-                  createdAt: formattedDate,
-                  betSession: bet.betSession,
-                  roundId: bet.roundId
-                });
-
-                upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
-              }
-              commissionFrom = user.userId;
-            }
-
-            let winnerRunnerData = 0;
-            let SessionScore = 0;
-            if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-              const marketInfo = await MarketIDS.findOne({
-                sportID: bet.sportsId,
-                marketId: bet.marketId
-              });
-              winnerRunnerData = marketInfo?.winnerRunnerData;
-            } else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
-              const match = await Events.findById(bet.matchId);
-              const marketInfo = await Sessions.findOne({
-                eventId: Number(match.Id),
-                sessionNo: bet.betSession
-              });
-              SessionScore = marketInfo?.score;
-            }
-            await Bets.updateOne(
-              { _id: bet._id },
-              {
-                status: 0,
-                position: Number(bet.winningAmount.toFixed(3)),
-                iscalculatedExp: calculatedExp,
-                winnerRunnerData: winnerRunnerData,
-                SessionScore: SessionScore,
-                updatedAt: new Date().getTime()
-              }
-            );
-            const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString });
-
-            const updatedUser = await User.findOne({
-              userId: userId,
-              isDeleted: false
-            });
-            if (bet.calculateExp) {
-              await ExpRec.create({
-                userId: updatedUser.userId,
-                trans_from: 'BetWin',
-                trans_from_id: bet._id,
-                trans_bet_status: 0,
-                user_prev_balance: user_prev_balance,
-                user_prev_availableBalance: user_prev_availableBalance,
-                user_prev_exposure: user_prev_exposure,
-                user_new_balance: UpdatedBalance,
-                user_new_availableBalance: UpdatedAvailableBalance,
-                user_new_exposure: UpdatedExposure,
-                marketId: bet.marketId,
-                sportsId: bet.sportsId,
-                calculatedExp: calculatedExp,
-                DateTime: new Date(),
-                calculateExp: calculatedExp,
-                position: bet.position,
-                exposureAmount: bet.exposureAmount
-              });
-            }
-          }
-        }
-      }
-    }
-  } catch (error) {
-    console.error(' Error: Handle Winning Bet ', error);
-    return;
-  }
-}
-
-///////////////////////////////////////////
-
-async function handleLosingBet(bet) {
-  const now = new Date();
-  const year = now.getFullYear().toString();
-  const month = (now.getMonth() + 1).toString().padStart(2, '0');
-  const day = now.getDate().toString().padStart(2, '0');
-  const formattedDate = `${year}-${month}-${day}`;
-  try {
-    if (bet.status == 1) {
-      const betStatus = await Bets.findById(bet._id);
-      if (betStatus.status == 1) {
-        let calculatedExp = 0;
-        const userId = bet.userId;
-        const loosingAmount = Number(bet.loosingAmount.toFixed(3));
-        const userToUpdate = await User.findOne({
-          userId: userId,
-          isDeleted: false
-        });
-        if (!userToUpdate) {
-          console.error('Error: User Not Found Location:(_handle losing bet)');
-          return;
-        } else {
-          const exists = await Deposits.findOne({
-            userId: userToUpdate.userId,
-            betId: bet._id,
-            amount: -loosingAmount,
-            marketId: bet.marketId,
-            sportsId: bet.sportsId,
-            matchId: bet.matchId
-          });
-          if (exists) {
-            console.log('=====================handleLosingBet exists=====================');
-            console.log(bet._id, bet.status);
-            console.log('=====================handleLosingBet exists=====================');
-            // await Bets.updateOne(
-            //   { _id: bet._id },
-            //   {
-            //     status: 0,
-            //     updatedAt: new Date().getTime()
-            //   }
-            // );
-            // await CurrentPosition.deleteMany({ betId: betIdString });
-            return;
-          }
-          const user_prev_balance = userToUpdate.balance;
-          const user_prev_availableBalance = userToUpdate.availableBalance;
-          const user_prev_exposure = userToUpdate.exposure;
-
-          const updatedBalance = Number((userToUpdate.balance - loosingAmount).toFixed(3));
-          const updatedClientPL = Number((userToUpdate.clientPL - loosingAmount).toFixed(3));
-          let userToUpdateAvailableBalance = -loosingAmount;
-          let addExposureAmount = 0;
-          if (bet.calculateExp === true) {
-            userToUpdateAvailableBalance = Number((userToUpdateAvailableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
-            addExposureAmount = Number(bet.exposureAmount.toFixed(3));
-            calculatedExp = 1;
-          }
-          const expAmount = Number((userToUpdate.exposure + addExposureAmount).toFixed(3));
-          const updatedAvailableBalance = Number(userToUpdate.availableBalance + Number(userToUpdateAvailableBalance.toFixed(3)));
-          await User.updateOne(
-            {
-              userId: userId,
-              isDeleted: false
-            },
-            {
-              balance: updatedBalance,
-              clientPL: updatedClientPL,
-              exposure: expAmount,
-              availableBalance: updatedAvailableBalance
-            }
-          );
-          const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
-          await Deposits.create({
-            userId: userToUpdate.userId,
-            description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-            amount: -loosingAmount,
-            balance: lastMaxWithdraw ? lastMaxWithdraw.balance - loosingAmount : -loosingAmount,
-            availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - loosingAmount : -loosingAmount,
-            maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - loosingAmount : loosingAmount,
-            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-            credit: lastMaxWithdraw?.credit || 0,
-            creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-            createdBy: 0,
-            cashOrCredit: 'Bet',
-            marketId: bet.marketId,
-            sportsId: bet.sportsId,
-            matchId: bet.matchId,
-            betId: bet._id,
-            betType: bet.type,
-            betDateTime: bet.betTime,
-            date: new Date().getTime(),
-            createdAt: formattedDate,
-            betSession: bet.betSession,
-            roundId: bet.roundId,
-            addedExpoisureAmount: addExposureAmount,
-            UserPrevexposure: userToUpdate.exposure,
-            UpdatedExposure: expAmount,
-            sourceCodeBlock: 'handleLosingBet',
-            userAvailableBalanceBFTrans: user_prev_availableBalance,
-            userAvailableBalanceAFTrans: updatedAvailableBalance,
-            UserBalanceBFTrans: user_prev_balance,
-            UserBalanceAFTrans: updatedBalance
-          });
-          const parentUserIds = await getParents(userId);
-          const parentUser = await User.find({
-            userId: { $in: parentUserIds },
-            isDeleted: false
-          }).sort({ userId: -1 });
-          if (!parentUser) {
-            console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
-            return;
-          } else {
-            const remainingAmount = Number(bet.winningAmount.toFixed(3));
-            const TotalLoosingAmount = Number(bet.loosingAmount.toFixed(3));
-            let prev = 0;
-            for (const user of parentUser) {
-              let current = user.downLineShare;
-              user['commission'] = current - prev;
-              prev = current;
-            }
-            let commissionFrom = userToUpdate.userId;
-            let upMovingAmount = TotalLoosingAmount;
-            for (const user of parentUser) {
-              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
-              const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
-              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount).toFixed(3)) : 0;
-              const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(3));
-
-              await User.updateOne(
-                {
-                  _id: user?._id
-                },
-                {
-                  balance: totalBalance,
-                  clientPL: totalClientPL,
-                  exposure: totalExpoisure,
-                  availableBalance: totalavailableBalance
-                }
-              );
-
-              const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-
-              await Deposits.create({
-                userId: user.userId,
-                description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
-                createdBy: 0,
-                amount: (user.commission / 100) * TotalLoosingAmount,
-                balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
-                availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
-                maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * TotalLoosingAmount : (user.commission / 100) * TotalLoosingAmount,
-                commissionFrom: commissionFrom,
-                cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-                creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
-                cashOrCredit: 'loosing',
-                marketId: bet.marketId,
-                sportsId: bet.sportsId,
-                upLineAmount: upMovingAmount,
-                betId: bet._id,
-                matchId: bet.matchId,
-                betType: bet.type,
-                betDateTime: bet.betTime,
-                date: new Date().getTime(),
-                createdAt: formattedDate,
-                betSession: bet.betSession,
-                roundId: bet.roundId,
-                addedExpoisureAmount: Number(((user.commission / 100) * remainingAmount).toFixed(3)),
-                UserPrevexposure: user.exposure,
-                UpdatedExposure: totalExpoisure,
-                exposure: 'Number(((user.commission / 100) * remainingAmount).toFixed(3))',
-                sourceCodeBlock: 'handleLosingBet'
-              });
-
-              upMovingAmount = Number((upMovingAmount - Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
-              commissionFrom = user.userId;
-            }
-
-            let winnerRunnerData = 0;
-            let SessionScore = 0;
-
-            if (bet.isfancyOrbookmaker && bet.fancyData != null) {
-              const marketInfo = await MarketIDS.findOne({
-                sportID: bet.sportsId,
-                marketId: bet.marketId
-              });
-              winnerRunnerData = marketInfo?.winnerRunnerData;
-            } else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
-              const match = await Events.findById(bet.matchId);
-              const marketInfo = await Sessions.findOne({
-                eventId: Number(match.Id),
-                sessionNo: bet.betSession
-              });
-              SessionScore = marketInfo?.score;
-            }
-            await Bets.updateOne(
-              {
-                _id: bet._id
-              },
-              {
-                status: 0,
-                position: bet.loosingAmount * -1,
-                iscalculatedExp: calculatedExp,
-                winnerRunnerData: winnerRunnerData,
-                SessionScore: SessionScore,
-                updatedAt: new Date().getTime()
-              }
-            );
-            const betIdString = bet._id.toString();
-            await CurrentPosition.deleteMany({ betId: betIdString });
-            const updatedUser = await User.findOne({
-              userId: userId,
-              isDeleted: false
-            });
-            if (bet.calculateExp) {
-              await ExpRec.create({
-                userId: updatedUser.userId,
-                trans_from: 'BetLose',
-                trans_from_id: bet._id,
-                trans_bet_status: 0,
-                user_prev_balance: user_prev_balance,
-                user_prev_availableBalance: user_prev_availableBalance,
-                user_prev_exposure: user_prev_exposure,
-                user_new_balance: updatedBalance,
-                user_new_availableBalance: updatedAvailableBalance,
-                user_new_exposure: expAmount,
-                marketId: bet.marketId,
-                sportsId: bet.sportsId,
-                calculatedExp: calculatedExp,
-                DateTime: new Date(),
-                calculateExp: calculatedExp,
-                position: bet.position,
-                exposureAmount: bet.exposureAmount,
-                betSession: bet.betSession,
-                roundId: bet.roundId
-              });
-            }
-          }
-        }
-      }
-    }
-  } catch (error) {
-    console.error('Error: Handle Losing Bet ', error);
-    return;
-  }
-}
-
-
-
-///////--------------------====================
-
-const ACTIVE_BETTOR_URI = process.env.ACTIVE_BETTOR_URI || `http://127.0.0.1/api/active-bettors`;
-const checkActiveBettors = async (bet) => {
-  const userId = bet?.userId;
-  try {
-    // const url = `https://production.1obet.net/api/active-bettors`
-    const url = ACTIVE_BETTOR_URI || `http://127.0.0.1/api/active-bettors`;
-    // const url = `http://localhost:4000/api/active-bettors`
-    // const url = `http://185.182.187.118:4000/api/active-bettors`
-
-    const activeBettorsRes = await axios.get(url);
-    const activeBettors = new Map(Object.entries(activeBettorsRes?.data?.results));
-    // console.log('checkActiveBettors: ', userId);
-    return activeBettors.has(`${userId}`);
-  } catch (error) {
-    // console.error('checkActiveBettors: ', userId, error?.data || error.message || error);
-    return false;
-  }
-};
-
-async function getBetForEvents(targetArray) {
-  console.log("LLLLLLLLLLLLLLLLLLLLLL code is running getBetForEvents");
-  const currentTime = new Date().getTime();
-  try {
-    const results = await Bets.aggregate([
-      {
-        $match: {
-          sportsId: { $in: targetArray },
-          marketId: { $ne: null },
-          isfancyOrbookmaker: false,
-          status: 1,
-          type: { $in: [0, 1] }
-        }
-      },
-      {
-        $group: {
-          _id: '$marketId',
-          betDocument: { $first: '$$ROOT' }
-        }
-      },
-      {
-        $sort: {
-          lastCheckResult: 1
-        }
-      },
-      {
-        $limit: 5
-      }
-    ]).exec();
-    console.log("LLLLLLLLLLLLLLLLLLLLLL code is running getBetForEvents results",results)
-
-    for (const result of results) {
-      const checkActive = await checkActiveBettors(result.betDocument);
-      if (checkActive) continue;
-      await Bets.updateMany(
-        {
-          _id: { $in: result.documentIds }
-        },
-        {
-          $set: { lastCheckResult: currentTime }
-        }
-      ).catch((e) => console.error(e));
-
-      if (!result.betDocument) continue;
-
-      if (result.betDocument.sportsId === '1' || result.betDocument.sportsId === '2' || result.betDocument.sportsId === '4') {
-       await eventsResult(result.betDocument);
-
-      } else if (result.betDocument.sportsId === '7' || result.betDocument.sportsId === '4339') {
-        await racingResult(result.betDocument);
-      } else {
-        //console.log("Undefined sports type ", result.betDocument);
-      }
-    }
-  } catch (error) {
-    console.error('Error:', error);
-  } finally {
-    setTimeout(() => {
-      getBetForEvents(targetArray);
-    }, 4 * 1000);
-  }
-}
-
-
-
-
-
-
-async function getWinnigLossing(req, res) {
-
-  try {
-    const targetArray=["1", "2","4"]
-    getBetForEvents(targetArray);
-    // console.log("---------data-----------", data);
-    
-    res.status(200).json({ success: true});
-  } catch (err) {
-    res
-      .status(500)
-      .json({ success: false, msg: "Failed to get Error: " + err.message });
-  }
-}
-
-
-
 // //////////////////
 router.get('/track-bet/lithylAPI/getSeriesList/:sportsId', getSeriesList)
 router.get('/track-bet/lithylAPI/getAllMatchesList/:series_id', getAllMatchesList)
@@ -7084,16 +5673,12 @@ router.get('/track-bet/lithylAPI/getOddsFancyBookmakerByMatchId/:id', getOddsFan
 router.get('/track-bet/lithylAPI/getGreyHoundMatches', getGreyHoundMatches)
 router.get('/track-bet/lithylAPI/getHorseRaceMatches', getHorseRaceMatches)
 router.get('/track-bet/lithylAPI/getOdds/:market_id', getOddsFromlithylAPI)
-router.get('/track-bet/lithylAPI/saveRaceOddsLithyl/:markets_id', saveRaceOddsLithyl)
-router.get('/track-bet/lithylAPI/raceMarketsByLithylapi', raceMarketsByLithylapi)
 router.get('/track-bet/lithylAPI/getOdd', getOdds)
 router.post('/track-bet/lithylAPI/placeBet', placeBet)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/getDuplicateEntries', getDuplicateEntries)
 router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
-router.get('/track-bet/getUsers', getUsers)
-router.get('/track-bet/getWinnigLossing', getWinnigLossing)
 /////////////////
 
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
@@ -7138,4 +5723,4 @@ router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 router.post('/list-events', getEventList)
 router.post('/list-addraceevetn', getEventList)
 
-module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore, eventsBySupportJobs };
+module.exports = { router, listEvents, listMarketBook, activeUserExposure, inActiveUserExposure, getCricketScore ,eventsBySupportJobs};
