@@ -3177,7 +3177,8 @@ const placeBet = async (req, res) => {
           }
         }
       }
-      console.log("multipeResponseForSecurityCheck============",multipeResponseForSecurityCheck)
+      console.log("multipeResponseForSecurityCheck============", multipeResponseForSecurityCheck)
+      console.log(_3rdPartyMarketId,"_3rdPartyMarketId============",disableSecurityCheck)
       if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(_3rdPartyMarketId)) {
        
         activeBettors.delete(userId);
