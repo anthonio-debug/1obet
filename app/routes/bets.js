@@ -2756,9 +2756,9 @@ const placeBet = async (req, res) => {
     /* ============================================================ =============== */
 
     const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.Fancy, config.overByOver, config.BetfairFancy, config.BookMaker, config.Toss];
-    const disableSecurityCheck = ["4", "1", "6", "13", "14","15", ...config.raceMarkets, config.Figure];
+    const disableSecurityCheck = ["4", "1", "6", "13", "14","15", "7","4339", config.Figure];
     
-	console.log("---------------delay before............................>>>>>",delay);
+	//console.log("---------------delay before............................>>>>>",delay);
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
       if (subMarketDetail.Id == config.Fancy || subMarketDetail.Id == config.BookMaker) {
@@ -2768,7 +2768,7 @@ const placeBet = async (req, res) => {
       //delay += delayAddition * 1000;
       delay += 500;
     }
-	console.log("---------------delay............................>>>>>",delay);
+	//console.log("---------------delay............................>>>>>",delay);
     setTimeout(async () => {
       if (multipeResponse.length == 0 && !delayExcludedMarkets.includes(subMarketDetail.Id)) {
         activeBettors.delete(userId);
@@ -3062,8 +3062,8 @@ const placeBet = async (req, res) => {
           status: 1
         });
 
-        console.log("_3rdpartymarketId", _3rdPartyMarketId);
-        console.log("matchId", matchId);
+        //console.log("_3rdpartymarketId", _3rdPartyMarketId);
+        //console.log("matchId", matchId);
 
         if (lastBetsCount) {
           const resp = await calculateExposure(_3rdPartyMarketId, req.decoded.userId, type, selectionId, loosingAmount, winningAmount, expoisureType, matchId);
@@ -3081,8 +3081,8 @@ const placeBet = async (req, res) => {
               return item;
             });
             runnersPosition = runnerCurrentPosition;
-            console.log("resp======", runnersPosition);
-            console.log("runnerForSaveInbets======", runnerForSaveInbets);
+            //console.log("resp======", runnersPosition);
+            //console.log("runnerForSaveInbets======", runnerForSaveInbets);
           } else if (type == 1) {
             const runnerCurrentPosition = runnerForSaveInbets.map((item) => {
               if (item.runner == selectionId) {
@@ -3102,9 +3102,9 @@ const placeBet = async (req, res) => {
         expAmount = expAmount.amount;
         expAmount = expAmount < 0 ? Math.abs(expAmount) : 0;
       }
-      console.log("expAmount1", expAmount)
-      console.log("winningAmount", winningAmount)
-      console.log("loosingAmount", loosingAmount)
+      //console.log("expAmount1", expAmount)
+      //console.log("winningAmount", winningAmount)
+      //console.log("loosingAmount", loosingAmount)
 
       let source = req.headers['user-agent'];
       let ua = useragent.parse(source);
