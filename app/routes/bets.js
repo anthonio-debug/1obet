@@ -414,6 +414,7 @@ const placeBet = async (req, res) => {
       console.log("Check the marketId", id, "and", _3rdPartyMarketId, "idDetails.marketId", idDetails.marketId);
 
       subMarketDetail = await SubMarketType.findOne({ countryCode: subMarketName, marketId: marketId }).exec();
+      console.log("subMarketDetailsubMarketDetailsubMarketDetailsubMarketDetail",subMarketDetail)
       if (!subMarketDetail) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: 'Bet not allowed' });
