@@ -187,9 +187,9 @@ function checkMultiResponse(odds, rates,selectedBetRate,type) {
    
     if (rates.includes(odds[odds.length - 1])) {
       return odds[odds.length - 1];
-    } else if (type === 0 && odds[odds.length - 1] > selectedBetRate) {
+    } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate)) {
       return selectedBetRate;
-    } else if (type === 1 && odds[odds.length - 1] < selectedBetRate) {
+    } else if (type === 1 && parseFloat(odds[odds.length - 1]) < parseFloat(selectedBetRate)) {
       return selectedBetRate;
     } else {
       return false;
