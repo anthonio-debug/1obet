@@ -184,7 +184,7 @@ function checkMultiResponse(odds, rates,selectedBetRate,type) {
     console.log(
       "arhaaaaaaaaaaaaaaaaaaam filter rates",rates
     )
-   
+    console.log("============== initialss   selectedbetrate",selectedBetRate)
     if (rates.includes(odds[odds.length - 1])) {
       return odds[odds.length - 1];
     } else if (type === 0 && parseFloat(odds[odds.length - 1]) > parseFloat(selectedBetRate)) {
