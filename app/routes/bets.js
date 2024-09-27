@@ -2755,7 +2755,7 @@ const placeBet = async (req, res) => {
     /* ============================================================ =============== */
 
     const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.Fancy, config.overByOver, config.BetfairFancy, config.BookMaker, config.Toss];
-    const disableSecurityCheck=[config.cricketOdds,config.soccerOdds,config.overByOver,config.overUnder,config.tennisOdds,...raceMarkets,config.Figure];
+    const disableSecurityCheck=[config.cricketOdds,config.soccerOdds,config.overByOver,config.overUnder,config.tennisOdds,...config.raceMarkets,config.Figure];
 	console.log("---------------delay before............................>>>>>",delay);
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
       delay = 1;
