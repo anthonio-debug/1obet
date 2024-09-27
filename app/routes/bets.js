@@ -3179,10 +3179,8 @@ const placeBet = async (req, res) => {
           }
         }
       }
-      console.log("multipeResponseForSecurityCheck============", multipeResponseForSecurityCheck)
       console.log(marketId, "_3rdPartyMarketId============", disableSecurityCheck)
       console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Id",subMarketDetail.Id)
-      console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Idddddddddddddddd", marketId)
       console.log(!disableSecurityCheck.includes(JSON.stringify(subMarketId.Id)),"!disableSecurityCheck.includes(JSON.stringify(subMarketId.Id))")
       if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(JSON.stringify(subMarketId.Id))) {
        
