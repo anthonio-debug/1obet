@@ -3174,8 +3174,9 @@ const placeBet = async (req, res) => {
           }
         }
       }
-
+      console.log("multipeResponseForSecurityCheck============",multipeResponseForSecurityCheck)
       if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e))) {
+       
         activeBettors.delete(userId);
         return res.status(404).send({
           message: `Bet Miss Matched-42 `
