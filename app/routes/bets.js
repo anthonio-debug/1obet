@@ -3182,7 +3182,7 @@ const placeBet = async (req, res) => {
       console.log(_3rdPartyMarketId, "_3rdPartyMarketId============", disableSecurityCheck)
       console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Id",subMarketDetail.Id)
       console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Idddddddddddddddd",marketId)
-      if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(_3rdPartyMarketId)) {
+      if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(marketId)) {
        
         activeBettors.delete(userId);
         return res.status(404).send({
