@@ -3179,13 +3179,12 @@ const placeBet = async (req, res) => {
           }
         }
       }
-      const subMarketIdString = JSON.stringify(subMarketId.Id); // This should give you a string.
-      console.log(subMarketId.Id,"subMarketId.Id"); // Check the value and type
-console.log(subMarketIdString,"subMarketIdString"); // Should be the string representation
-      console.log(disableSecurityCheck,"disableSecurityCheck");
-      console.log(!disableSecurityCheck.includes(subMarketIdString,"!disableSecurityCheck.includes(JSON.stringify(subMarketId.Id)"));
-      
-      if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(JSON.stringify(subMarketId.Id))) {
+
+      console.log( "disableSecurityCheck============", disableSecurityCheck)
+      console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Id",subMarketDetail.Id)
+      console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Id",subMarketDetail.Id)
+
+      if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(JSON.stringify(subMarketDetail.Id))) {
        
         activeBettors.delete(userId);
         return res.status(404).send({
