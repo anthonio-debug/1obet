@@ -2756,7 +2756,7 @@ const placeBet = async (req, res) => {
     /* ============================================================ =============== */
 
     const delayExcludedMarkets = [...config.FigureEvenOddSmallBig, ...config.asianSubMarket, config.Fancy, config.overByOver, config.BetfairFancy, config.BookMaker, config.Toss];
-    const disableSecurityCheck = [config.cricketOdds, config.soccerOdds, config.overByOver, config.overUnder, config.tennisOdds, ...config.raceMarkets, config.Figure];
+    const disableSecurityCheck = ["4", "1", "6", "13", "14", ...config.raceMarkets, config.Figure];
     
 	console.log("---------------delay before............................>>>>>",delay);
     if (delayExcludedMarkets.includes(subMarketDetail.Id)) {
@@ -3183,7 +3183,7 @@ const placeBet = async (req, res) => {
       console.log(marketId, "_3rdPartyMarketId============", disableSecurityCheck)
       console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Id",subMarketDetail.Id)
       console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Idddddddddddddddd",marketId)
-      if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(marketId)) {
+      if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(subMarketId.Id)) {
        
         activeBettors.delete(userId);
         return res.status(404).send({
