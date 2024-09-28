@@ -182,9 +182,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
 
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-        const userAvaiableBalance = await User.findOne({ userId: user.userId }).sort({ _id: -1 });
+        // const userAvaiableBalance = await User.findOne({ userId: user.userId }).sort({ _id: -1 });
         
-        const balance = -userAvaiableBalance.balance - bettor_lost_amount
+        const balance = lastMaxWithdraw.userAvaiableBalance - bettor_lost_amount
         
         if (balance < 0) {
           log(
