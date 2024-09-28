@@ -544,130 +544,183 @@ async function withDrawCashDeposit(req, res) {
   }
 }
 
-async function getLedgerDetails(req, res) {
+function getLedgerDetails(req, res) {
   try {
-    // Validate request
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
       return res.status(400).send({ errors: errors.errors });
     }
 
-    // Fetch pagination and sorting parameters from request
     const query = { userId: req.body.userId };
-    let page = req.body.page || 1;
-    let sort = req.body.sort || -1;
-    let sortValue = req.body.sortValue || '_id';
-    let limit = config.pageSize || 10;
+    let page = 1;
+    let sort = -1;
+    let sortValue = '_id';
+    let limit = config.pageSize;
+    //console.log('limit:', limit);
+    if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
+    if (req.body.sortValue) sortValue = req.body.sortValue;
+    if (req.body.sort) sort = Number(req.body.sort);
+    if (req.body.page) page = Number(req.body.page);
 
-    if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) {
-      limit = Number(req.body.numRecords);
-    }
-
-    // Find user by ID
-    const user = await User.findOne(query);
-    if (!user) {
-      return res.status(404).send({ message: 'User not found' });
-    }
-
-    // Build aggregation pipeline
-    let cashPipeline = [
-      {
+    User.findOne(query, (err, user) => {
+      if (err || !user) {
+        return res.status(404).send({ message: 'User not found' });
+      }
+      let cashPipeline = [{
         $match: {
           userId: Number(req.body.userId),
-          createdAt: {
-            $gte: req.body.startDate,
-            $lte: req.body.endDate
-          }
-        }
-      }
-    ];
-
-    // Apply filter based on user role and cash/credit type
-    if (user.role !== '5' && req.body.type) {
-      cashPipeline.push({
-        $match: { cashOrCredit: req.body.type }
-      });
-    }
-
-    // Apply search filter
-    if (req.body.searchValue) {
-      const searchRegex = new RegExp(req.body.searchValue, 'i');
-      cashPipeline.push({
-        $match: {
-          $or: [
-            { description: { $regex: searchRegex } },
+          $and: [
             {
-              $expr: {
-                $regexMatch: {
-                  input: { $toString: '$amount' },
-                  regex: searchRegex
-                }
-              }
+              createdAt: { $gte: req.body.startDate }
+            },
+            {
+              createdAt: { $lte: req.body.endDate }
             }
           ]
         }
+      }];
+
+      const userRole = user.role;
+      console.log("user role", user);
+
+      if (userRole !== '5' && req.body.type) {
+        cashPipeline.push({ $match: { cashOrCredit: req.body.type }, });
+      }
+
+      if (req.body.searchValue) {
+        const searchRegex = new RegExp(req.body.searchValue, 'i');
+        cashPipeline.push({
+          $match: {
+            $or: [
+              { description: { $regex: searchRegex } },
+              {
+                $expr: {
+                  $regexMatch: {
+                    input: { $toString: '$amount' },
+                    regex: searchRegex,
+                  },
+                },
+              },
+              {
+                $expr: {
+                  $regexMatch: {
+                    input: { $toString: '$maxWithdraw' },
+                    regex: searchRegex,
+                  },
+                },
+              },
+            ],
+          },
+        });
+      }
+
+      cashPipeline.push({
+        $group: {
+          // _id: "$_id",
+          _id: {
+            $cond: {
+              if:
+                { $in: ["$cashOrCredit", ['Cash', 'Credit']] },
+              then: "$_id",
+              else: {
+                matchId: "$matchId",
+                marketId: "$marketId",
+                betSession: "$betSession",
+                roundId: "$roundId"
+              }
+            }
+          },
+          originalId: { $first: "$_id" },
+          description: { $first: "$description" },
+          amount: { $sum: "$amount" },
+          balance: { $last: "$balance" },
+          availableBalance: { $last: "$availableBalance" },
+          maxWithdraw: { $last: "$maxWithdraw" },
+          betTime: { $first: "$betDateTime" },
+          cashOrCredit: { $first: "$cashOrCredit" },
+          date: { $first: "$date" },
+          createdAt: { $first: "$createdAt" },
+          sportsId: { $first: "$sportsId" },
+          marketId: { $first: "$marketId" },
+          roundId: { $first: "$roundId" },
+          betId: { $first: "$betId" },
+          userId: { $first: "$userId" },
+          matchId: { $first: "$matchId" },
+        },
+      })
+
+      cashPipeline.push(
+        {
+          $sort: { date: 1 },
+        },
+        {
+          $facet: {
+            metadata: [{ $count: 'total' }],
+            results: [{ $skip: (page - 1) * limit }, { $limit: limit }],
+          },
+        }
+      );
+
+      Cash.aggregate(cashPipeline, async (err, result) => {
+        if (result[0].results && result[0].results.length > 0) {
+          console.log("check the code I'm Here 1", result)
+          for (let i = 0; i < result[0].results.length; i++) {
+            console.log("check the code I'm Here")
+            //console.log()
+            if (result[0].results[i].betId) {
+              console.log("check the code I'm Here12")
+              try {
+                const betInfo = await Bet.findOne({
+                  _id: result[0].results[i].betId
+                })
+                result[0].results[i].betSession = betInfo?.betSession;
+                result[0].results[i].matchType = betInfo?.matchType;
+                result[0].results[i].matchId = betInfo?.matchId;
+                result[0].results[i].SessionScore = betInfo?.SessionScore;
+                result[0].results[i].winnerRunnerData = betInfo?.winnerRunnerData;
+                result[0].results[i].fancyData = betInfo?.fancyData;
+                result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
+                result[0].results[i].roundId = betInfo?.roundId;
+              } catch (err) {
+                continue;
+              }
+            }
+          }
+        }
+
+        if (
+          err ||
+          !result ||
+          result.length === 0 ||
+          result[0].results.length === 0
+        ) {
+          return res.status(200).send({ message: 'Deposit record not found' });
+        }
+
+        const responseData = {
+          message: 'Deposit Records',
+
+          results: {
+            docs: result[0].results,
+            total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
+            limit: limit ? limit : 0,
+            page: page ? page : 0,
+            pages:
+              limit && result[0].metadata[0].total
+                ? Number((result[0].metadata[0].total / limit).toFixed(0))
+                : 0,
+          },
+        };
+
+        return res.send(responseData);
       });
-    }
 
-    // Group by transactions and fetch required fields
-    cashPipeline.push({
-      $group: {
-        _id: "$_id",
-        description: { $first: "$description" },
-        amount: { $first: "$amount" },
-        date: { $first: "$createdAt" },
-        createdAt: { $first: "$createdAt" }
-      }
+
     });
-
-    // Sort transactions by creation date
-    cashPipeline.push({ $sort: { createdAt: 1 } });
-
-    // Apply pagination
-    cashPipeline.push({
-      $facet: {
-        metadata: [{ $count: 'total' }],
-        results: [{ $skip: (page - 1) * limit }, { $limit: limit }]
-      }
-    });
-
-    // Execute aggregation
-    const result = await Cash.aggregate(cashPipeline);
-
-    // Handle empty result
-    if (!result || result.length === 0 || result[0].results.length === 0) {
-      return res.status(200).send({ message: 'Deposit record not found' });
-    }
-
-    // Calculate running balance (starting from an initial balance)
-    let initialBalance = 10000; // This should come from user data or other logic
-    let runningBalance = initialBalance;
-    const ledgerRecords = result[0].results.map((entry) => {
-      runningBalance += entry.amount; // Adjust the running balance
-      return {
-        ...entry,
-        runningBalance: runningBalance // Attach the running balance to the entry
-      };
-    });
-
-    // Build response data
-    const responseData = {
-      message: 'Deposit Records',
-      results: {
-        docs: ledgerRecords,
-        total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
-        limit: limit,
-        page: page,
-        pages: Math.ceil((result[0].metadata[0]?.total || 0) / limit)
-      }
-    };
-
-    return res.status(200).send(responseData);
-
   } catch (err) {
-    console.error(err);
-    return res.status(500).json({ success: false, message: "Failed to get Ledger Detail info" });
+    res.status(500).json({ success: false, msg: "Failed to get Ledger Detail info" })
   }
+
 }
 
 function getLedgerDetails2(req, res) {
@@ -842,122 +895,7 @@ function getLedgerDetails2(req, res) {
     res.status(500).json({ success: false, msg: "Failed to get Ledger Detail info" })
   }
 
-  function getLedgerDetails(req, res) {
-    try {
-      // Validate request
-      const errors = validationResult(req);
-      if (!errors.isEmpty()) {
-        return res.status(400).send({ errors: errors.errors });
-      }
-  
-      const query = { userId: req.body.userId };
-      let page = 1;
-      let sort = -1;
-      let sortValue = '_id';
-      let limit = config.pageSize;
-  
-      if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
-      if (req.body.sortValue) sortValue = req.body.sortValue;
-      if (req.body.sort) sort = Number(req.body.sort);
-      if (req.body.page) page = Number(req.body.page);
-  
-      User.findOne(query, (err, user) => {
-        if (err || !user) {
-          return res.status(404).send({ message: 'User not found' });
-        }
-  
-        let cashPipeline = [{
-          $match: {
-            userId: Number(req.body.userId),
-            $and: [
-              {
-                createdAt: { $gte: req.body.startDate }
-              },
-              {
-                createdAt: { $lte: req.body.endDate }
-              }
-            ]
-          }
-        }];
-  
-        if (user.role !== '5' && req.body.type) {
-          cashPipeline.push({ $match: { cashOrCredit: req.body.type } });
-        }
-  
-        if (req.body.searchValue) {
-          const searchRegex = new RegExp(req.body.searchValue, 'i');
-          cashPipeline.push({
-            $match: {
-              $or: [
-                { description: { $regex: searchRegex } },
-                {
-                  $expr: {
-                    $regexMatch: {
-                      input: { $toString: '$amount' },
-                      regex: searchRegex,
-                    },
-                  },
-                }
-              ]
-            },
-          });
-        }
-  
-        cashPipeline.push({
-          $group: {
-            _id: "$_id",
-            description: { $first: "$description" },
-            amount: { $first: "$amount" },
-            date: { $first: "$createdAt" },
-            createdAt: { $first: "$createdAt" }
-          }
-        });
-  
-        cashPipeline.push({ $sort: { createdAt: 1 } });
-  
-        cashPipeline.push({
-          $facet: {
-            metadata: [{ $count: 'total' }],
-            results: [{ $skip: (page - 1) * limit }, { $limit: limit }]
-          }
-        });
-  
-        Cash.aggregate(cashPipeline, async (err, result) => {
-          if (result[0].results && result[0].results.length > 0) {
-            let initialBalance = 10000; // You can dynamically set the starting balance
-            let runningBalance = initialBalance;
-            let ledgerRecords = result[0].results.map((entry) => {
-              runningBalance += entry.amount; // Adjust running balance
-              return {
-                ...entry,
-                runningBalance: runningBalance // Attach running balance
-              };
-            });
-  
-            const responseData = {
-              message: 'Deposit Records',
-              results: {
-                docs: ledgerRecords,
-                total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
-                limit: limit,
-                page: page,
-                pages: Math.ceil((result[0].metadata[0]?.total || 0) / limit)
-              }
-            };
-  
-            return res.status(200).send(responseData);
-          }
-  
-          if (err || !result || result.length === 0 || result[0].results.length === 0) {
-            return res.status(200).send({ message: 'Deposit record not found' });
-          }
-        });
-      });
-    } catch (err) {
-      res.status(500).json({ success: false, msg: "Failed to get Ledger Detail info" });
-    }
-  }
-}  
+}
 // function getdeopsitDetailsCash(req, res) {
 //   try {
 //     const errors = validationResult(req);
