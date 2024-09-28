@@ -3180,7 +3180,7 @@ const placeBet = async (req, res) => {
         }
       }
 
-      console.log( "disableSecurityCheck============", disableSecurityCheck)
+      console.log( "disableSecurityCheck===============================================================================", disableSecurityCheck)
       console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Id",subMarketDetail.Id)
       console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Id",subMarketDetail.Id)
 
