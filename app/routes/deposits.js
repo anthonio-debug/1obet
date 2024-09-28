@@ -653,7 +653,7 @@ function getLedgerDetails(req, res) {
               betTime: entry.betTime,
               cashOrCredit: entry.cashOrCredit,
               date: new Date(entry.date).getTime(), // Convert to timestamp
-              createdAt: entry.createdAt.toISOString().split('T')[0], // Format date as YYYY-MM-DD
+              createdAt: entry.createdAt, // Format date as YYYY-MM-DD
               sportsId: entry.sportsId,
               marketId: entry.marketId,
               roundId: entry.roundId,
