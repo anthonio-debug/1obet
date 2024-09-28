@@ -129,8 +129,6 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       const credit = Number(payload.amount);
       const difference = credit - debit;
-      console.log("debit==============>?",debit)
-      console.log("credit==============>?",credit)
       const allTrans = [];
       // lose some Amount 
       const betTime = new Date().getTime();
