@@ -170,7 +170,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               exposure: user.exposure + user.tempExposure,
               tempExposure: 0,
               clientPL: updatedclientPL,
-              balance: updatedbalance
+              balance: updatedavailableBalance
             }
           },
           { session }
@@ -404,7 +404,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             $set: {
               availableBalance: updatedavailableBalance,
               clientPL: updatedclientPL,
-              balance: updatedbalance,
+              balance: updatedavailableBalance,
               exposure: user.exposure + user.tempExposure,
               tempExposure: 0,
             }
