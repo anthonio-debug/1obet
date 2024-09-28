@@ -154,8 +154,6 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
          *
          */
         const updatedavailableBalance = user.availableBalance + (credit * casinoMultiples);
-        console.log("user updated balance =============>?",updatedavailableBalance)
-
         const updatedclientPL = Number((user.clientPL + (difference * casinoMultiples)).toFixed(3));
         const updatedbalance = Number((user.balance + (difference * casinoMultiples)).toFixed(3));
         const bettor_lost_amount = Number(((debit - credit) * casinoMultiples).toFixed(3));
@@ -182,20 +180,19 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
 
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-        // const userAvaiableBalance = await User.findOne({ userId: user.userId }).sort({ _id: -1 });
-        
-        const balance = lastMaxWithdraw.userAvaiableBalance - bettor_lost_amount
-        
+        const userAvaiableBalance = await User.findOne({ userId: user.userId }).sort({ _id: -1 });
+
+        const balance = -userAvaiableBalance.balance - bettor_lost_amount
         if (balance < 0) {
           log(
             `${JSON.stringify({
               userId: user.userId,
-              description: `Casino <<<<<(${GameName})`,
+              description: `Casino (${GameName})`,
               date: now.getTime(),
               createdAt: formattedDate,
               amount: -bettor_lost_amount,
-              balance,
-              availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
+              balance: updatedavailableBalance,
+              availableBalance: updatedavailableBalance,
               maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
               cash: lastMaxWithdraw?.cash || 0,
               credit: lastMaxWithdraw?.credit || 0,
@@ -218,13 +215,13 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           log(
             `${JSON.stringify({
               userId: user.userId,
-              description: `Casino >>>>(${GameName})`, //my case
+              description: `Casino (${GameName})`,
               date: now.getTime(),
               createdAt: formattedDate,
               amount: -bettor_lost_amount,
               balance,
-              availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
-              maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
+              availableBalance: updatedavailableBalance,
+              maxWithdraw: updatedavailableBalance,
               cash: lastMaxWithdraw?.cash || 0,
               credit: lastMaxWithdraw?.credit || 0,
               creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
@@ -249,8 +246,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           date: now.getTime(),
           createdAt: formattedDate,
           amount: -bettor_lost_amount,
-          balance,
-          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - bettor_lost_amount : -bettor_lost_amount,
+          balance: updatedavailableBalance,
+          availableBalance: updatedavailableBalance,
           maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - bettor_lost_amount : 0,
           cash: lastMaxWithdraw?.cash || 0,
           credit: lastMaxWithdraw?.credit || 0,
@@ -428,8 +425,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           betDateTime: betTime,
           casinoBetAmount: debit,
           amount: remainingAmount,
-          balance: lastMaxWithdraw ? lastMaxWithdraw.balance + remainingAmount : remainingAmount,
-          availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
+          balance: updatedavailableBalance,
+          availableBalance: updatedavailableBalance,
           maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
           cashOrCredit: "Bet",
           cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
