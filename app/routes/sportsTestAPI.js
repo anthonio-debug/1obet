@@ -6010,7 +6010,7 @@ console.log(user_id,"---------------------", market_id, "+++++++++++++", isCasin
 ]
 )
 }else{
-  [
+  userData=await Deposits.aggregate( [
     {
       "$match": {
         // "status": { "$ne": 1 },
@@ -6094,7 +6094,7 @@ console.log(user_id,"---------------------", market_id, "+++++++++++++", isCasin
         "user_new_availableBalance": { "$arrayElemAt": ["$exposureDetails.user_new_availableBalance", 0] }
       }
     }
-  ]
+  ])
 }
 
     // console.log("---------userData-----------", userData);
