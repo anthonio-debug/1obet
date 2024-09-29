@@ -5899,23 +5899,26 @@ console.log();
 
 async function getUserBetsRecords(req, res) {
 //:user_id/:market_id
-const {user_id, market_id} =req.body
+const {user_id, market_id, isCasino} =req.body
 // const id=+user_id
-console.log(user_id,"---------------------", market_id);
+console.log(user_id,"---------------------", market_id, "+++++++++++++", isCasino);
 
   try {
     const currentTime = Date.now()
     const time5days = 120 * 60 * 60 * 1000
     const last5days = currentTime - time5days
-    const userData = await Bets.aggregate([
-  {
-    "$match": {
-      "status": { "$ne": 1 },
-      "userId":  user_id,  
-      "marketId":market_id
+    let userData;
+  if(isCasino==false){
+     userData = await Bets.aggregate([
+      {
+        "$match": {
+          "status": { "$ne": 1 },
+          "userId":  user_id,  
+          "marketId":market_id
     }
   },
   {
+      
     "$sort": {
       "_id": -1
     }
@@ -5956,27 +5959,7 @@ console.log(user_id,"---------------------", market_id);
       ],
       "as": "depositsDetails"
     }
-  },
-  
-  // {
-  //   "$lookup": {
-  //     "from": "deposits",
-  //     "let": { local_id_str: { $toString: "$_id" }, local_userId: "$userId", },
-  //     "pipeline": [
-  //       {
-  //         "$match": {
-  //           "$expr": {
-  //             "$and": [
-  //               { "$eq": ["$betId", "$$local_id_str"] },
-  //               { "$eq": ["$userId", "$$local_userId"] }
-  //             ]
-  //           }
-  //         }
-  //       }
-  //     ],
-  //     "as": "depositsDetails"
-  //   }
-  // },
+  },  
   {
     "$lookup": {
       "from": "exposures",
@@ -6026,6 +6009,93 @@ console.log(user_id,"---------------------", market_id);
   }
 ]
 )
+}else{
+  userData=await Deposits.aggregate( [
+    {
+      "$match": {
+        // "status": { "$ne": 1 },
+        "userId":  user_id,   
+        "marketId":market_id
+      }
+    },
+    {
+      "$sort": {
+        "_id": -1
+      }
+    },
+    {
+      "$lookup": {
+        "from": "users",
+        "localField": "userId",
+        "foreignField": "userId",
+        "as": "userDetails"
+      }
+    },
+   
+    {
+      "$lookup": {
+        "from": "exposures",
+        "let": {
+          "local_id_str": { "$toString": "$betId" },
+          "local_userId": "$userId",
+          "local_marketId": "$marketId"
+        },
+        "pipeline": [
+          {
+            "$match": {
+              "$expr": {
+                "$and": [
+                  { "$eq": ["$trans_from_id", "$$local_id_str"] },
+                  { "$eq": ["$userId", "$$local_userId"] },
+                  { "$eq": ["$marketId", "$$local_marketId"] }
+                ]
+              }
+            }
+          }
+        ],
+        "as": "exposureDetails"
+      }
+    },
+    {
+      "$project": {
+        "userId": 1,
+        "marketId": 1,
+        "_id": 1,
+        "exposureAmount": 1,
+        "calculateExp":1,
+        "iscalculatedExp": 1,
+        "position":1,
+        "status":1,
+        "amount":1,
+      "betTime": {
+        "$toDate": {
+          "$convert": {
+            "input": "$betTime",
+            "to": "date",
+            "onError": null        }
+        }
+      },
+          "SatteledTime": {
+        "$toDate": {
+          "$convert": {
+            "input": "$date",
+            "to": "date",
+            "onError": null
+          }
+        }
+      },
+        "userName": { "$arrayElemAt": ["$userDetails.userName", 0] },
+        "exposure": { "$arrayElemAt": ["$userDetails.exposure", 0] },
+        "user_prev_balance": { "$arrayElemAt": ["$exposureDetails.user_prev_balance", 0] },
+        "user_prev_exposure": { "$arrayElemAt": ["$exposureDetails.user_prev_exposure", 0] },
+        "user_new_balance": { "$arrayElemAt": ["$exposureDetails.user_new_balance", 0] },
+        "user_new_exposure": { "$arrayElemAt": ["$exposureDetails.user_new_exposure", 0] },
+        "user_prev_availableBalance": { "$arrayElemAt": ["$exposureDetails.user_prev_availableBalance", 0] },
+        "user_new_availableBalance": { "$arrayElemAt": ["$exposureDetails.user_new_availableBalance", 0] }
+      }
+    }
+  ])
+}
 
     // console.log("---------userData-----------", userData);
     
