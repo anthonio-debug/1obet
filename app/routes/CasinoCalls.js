@@ -1003,13 +1003,13 @@ async function rollbackFun(req, res) {
           );
 
           let amount = 0;
-          var tempExp = 0;
+     
 
           const action = rollbackTransaction.action;
 
           if (action === "credit") {
             amount = -parseInt(rollbackTransaction.amount);
-      
+    
           } else if (action === "debit") {
             amount = parseInt(rollbackTransaction.amount);
          
@@ -1022,13 +1022,13 @@ async function rollbackFun(req, res) {
           }
 
           updatedBalance = user.availableBalance + (amount * casinoMultiples);
-          let updatedExposureAmount = user.exposure + (amount * casinoMultiples);
+          let updatedExposureAmount = user.exposure + (Number(user.tempExposure) * casinoMultiples);
           console.log("rollllll back   transaction ============>",rollbackTransaction)
           console.log("rollllll back   updatedExposureAmount ============>",updatedExposureAmount)
           console.log("rollllll back   amount ============>",amount)
 
           await users.updateOne(
-            { _id: user?._id }, { $set: { exposure: updatedExposureAmount+tempExp, availableBalance: updatedBalance,tempExposure:0 } },
+            { _id: user?._id }, { $set: { exposure: updatedExposureAmount, availableBalance: updatedBalance,tempExposure:0 } },
             { session }
           );
 
