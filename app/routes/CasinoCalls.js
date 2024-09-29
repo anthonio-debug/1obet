@@ -107,9 +107,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         username: payload.username,
         action:"credit"
       })
-      console.log("creditCheck.length====================>",creditCheck.length)
       console.log(payload.username,"=======user========",payload.round_id,"=======round=========",payload.remote_id,"=======remote=========",payload.game_id,"=======game_id=========",payload.action,"=======action=========")
-      if (creditCheck.length>0) {
+      if (creditCheck) {
   
         return
       } 
