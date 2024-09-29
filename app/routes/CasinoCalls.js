@@ -1009,10 +1009,10 @@ async function rollbackFun(req, res) {
 
           if (action === "credit") {
             amount = -parseInt(rollbackTransaction.amount);
-         
+         tempExp=user.tempExposure
           } else if (action === "debit") {
             amount = parseInt(rollbackTransaction.amount);
-
+            tempExp=-user.tempExposure
           } else if (action === 'rollback') {
             await session.abortTransaction();
             return res.json({
@@ -1028,7 +1028,7 @@ async function rollbackFun(req, res) {
           console.log("rollllll back   amount ============>",amount)
 
           await users.updateOne(
-            { _id: user?._id }, { $set: { exposure: updatedExposureAmount+user.tempExposure, availableBalance: updatedBalance,tempExposure:0 } },
+            { _id: user?._id }, { $set: { exposure: updatedExposureAmount+tempExp, availableBalance: updatedBalance,tempExposure:0 } },
             { session }
           );
 
