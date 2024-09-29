@@ -945,21 +945,7 @@ async function creditFun(req, res) {
 async function rollbackFun(req, res) {
 
   console.log("rooooooooooooooooolllllllback arham ")
-  const ExpTran = new ExpRec({
-    userId: 1111,
-    trans_from: "rollback",
-    trans_from_id: "444",
-    trans_bet_status: 0,
-    user_prev_balance: 123,
-    user_prev_availableBalance: 213,
-    user_prev_exposure: 222,
-    user_new_balance: 22,
-    user_new_availableBalance: 222,
-    user_new_exposure: 222,
-    marketId: "4444",
-    sportsId: 6,
-  });
-  await ExpTran.save();
+  
   const session = dbClient.startSession();
   try {
     const payload = req.query;
@@ -997,62 +983,17 @@ async function rollbackFun(req, res) {
           return res.json({ status: '500', msg: `Internal error User Not Found` });
         } else if (sameTransId === 0) {
           await session.abortTransaction();
-          const ExpTran = new ExpRec({
-            userId: 1111,
-            trans_from: "rollback1",
-            trans_from_id: "444",
-            trans_bet_status: 0,
-            user_prev_balance: 123,
-            user_prev_availableBalance: 213,
-            user_prev_exposure: 222,
-            user_new_balance: 22,
-            user_new_availableBalance: 222,
-            user_new_exposure: 222,
-            marketId: "4444",
-            sportsId: 6,
-          });
-          await ExpTran.save();
           return res.json({
             status: 404,
             balance: user.availableBalance / casinoMultiples,
           });
         } else if (sameTransId > 1) {
           await session.abortTransaction();
-          const ExpTran = new ExpRec({
-            userId: 1111,
-            trans_from: "rollback2",
-            trans_from_id: "444",
-            trans_bet_status: 0,
-            user_prev_balance: 123,
-            user_prev_availableBalance: 213,
-            user_prev_exposure: 222,
-            user_new_balance: 22,
-            user_new_availableBalance: 222,
-            user_new_exposure: 222,
-            marketId: "4444",
-            sportsId: 6,
-          });
-          await ExpTran.save();
           return res.json({
             status: 200,
             balance: user.availableBalance / casinoMultiples,
           });
         } else {
-          const ExpTran = new ExpRec({
-            userId: 1111,
-            trans_from: "rollback3",
-            trans_from_id: "444",
-            trans_bet_status: 0,
-            user_prev_balance: 123,
-            user_prev_availableBalance: 213,
-            user_prev_exposure: 222,
-            user_new_balance: 22,
-            user_new_availableBalance: 222,
-            user_new_exposure: 222,
-            marketId: "4444",
-            sportsId: 6,
-          });
-          await ExpTran.save();
           const rollbackTransaction = await casinoCalls.findOne(
             {
               transaction_id: payload.transaction_id,
@@ -1066,57 +1007,12 @@ async function rollbackFun(req, res) {
           const action = rollbackTransaction.action;
 
           if (action === "credit") {
-            const ExpTran = new ExpRec({
-              userId: 1111,
-              trans_from: "rollback credirt",
-              trans_from_id: "444",
-              trans_bet_status: 0,
-              user_prev_balance: 123,
-              user_prev_availableBalance: 213,
-              user_prev_exposure: 222,
-              user_new_balance: 22,
-              user_new_availableBalance: 222,
-              user_new_exposure: 222,
-              marketId: "4444",
-              sportsId: 6,
-            });
-            await ExpTran.save();
             amount = -parseInt(rollbackTransaction.amount);
           } else if (action === "debit") {
-            const ExpTran = new ExpRec({
-              userId: 1111,
-              trans_from: "rollback debit",
-              trans_from_id: "444",
-              trans_bet_status: 0,
-              user_prev_balance: 123,
-              user_prev_availableBalance: 213,
-              user_prev_exposure: 222,
-              user_new_balance: 22,
-              user_new_availableBalance: 222,
-              user_new_exposure: 222,
-              marketId: "4444",
-              sportsId: 6,
-            });
-            await ExpTran.save();
             amount = parseInt(rollbackTransaction.amount);
 
           } else if (action === 'rollback') {
             await session.abortTransaction();
-            const ExpTran = new ExpRec({
-              userId: 1111,
-              trans_from: "rollbackbottom",
-              trans_from_id: "444",
-              trans_bet_status: 0,
-              user_prev_balance: 123,
-              user_prev_availableBalance: 213,
-              user_prev_exposure: 222,
-              user_new_balance: 22,
-              user_new_availableBalance: 222,
-              user_new_exposure: 222,
-              marketId: "4444",
-              sportsId: 6,
-            });
-            await ExpTran.save();
             return res.json({
               status: 404,
               balance: user.availableBalance / casinoMultiples
@@ -1130,7 +1026,7 @@ async function rollbackFun(req, res) {
           console.log("rollllll back   amount ============>",amount)
 
           await users.updateOne(
-            { _id: user?._id }, { $set: { exposure: updatedExposureAmount, availableBalance: updatedBalance } },
+            { _id: user?._id }, { $set: { exposure: updatedExposureAmount-user.tempExposure, availableBalance: updatedBalance,tempExposure:0 } },
             { session }
           );
 
@@ -1152,21 +1048,6 @@ async function rollbackFun(req, res) {
       }, transactionOptions);
       await session.endSession();
     } else {
-      const ExpTran = new ExpRec({
-        userId: 1111,
-        trans_from: "rollbackbottomlast",
-        trans_from_id: "444",
-        trans_bet_status: 0,
-        user_prev_balance: 123,
-        user_prev_availableBalance: 213,
-        user_prev_exposure: 222,
-        user_new_balance: 22,
-        user_new_availableBalance: 222,
-        user_new_exposure: 222,
-        marketId: "4444",
-        sportsId: 6,
-      });
-      await ExpTran.save();
       const newUpdatedUser = await users.findOne(
         { remoteId: parseInt(payload.remote_id) }
       );
