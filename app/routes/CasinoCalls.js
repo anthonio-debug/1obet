@@ -1009,10 +1009,10 @@ async function rollbackFun(req, res) {
 
           if (action === "credit") {
             amount = -parseInt(rollbackTransaction.amount);
-            tempExp=user.tempExposure
+      
           } else if (action === "debit") {
             amount = parseInt(rollbackTransaction.amount);
-            tempExp=-user.tempExposure
+         
           } else if (action === 'rollback') {
             await session.abortTransaction();
             return res.json({
