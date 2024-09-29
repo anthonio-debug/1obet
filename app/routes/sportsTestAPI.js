@@ -5901,14 +5901,14 @@ async function getUserBetsRecords(req, res) {
 //:user_id/:market_id
 const {user_id, market_id, isCasino} =req.body
 // const id=+user_id
-console.log(user_id,"---------------------", market_id);
+console.log(user_id,"---------------------", market_id, "+++++++++++++", isCasino);
 
   try {
     const currentTime = Date.now()
     const time5days = 120 * 60 * 60 * 1000
     const last5days = currentTime - time5days
 
-  if(!isCasino){
+  if(isCasino==false){
     const userData = await Bets.aggregate([
       {
         "$match": {
