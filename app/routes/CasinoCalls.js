@@ -108,10 +108,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         action:"credit"
       })
       console.log(payload.username,"=======user========",payload.round_id,"=======round=========",payload.remote_id,"=======remote=========",payload.game_id,"=======game_id=========",payload.action,"=======action=========")
-      if (!creditCheck) {
+      if (creditCheck) {
   
- 
-       
+        // return
+      } 
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
@@ -628,8 +628,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       await ExpTran.save();
 
       return 0
-      }
-    };
+    }
   } catch (err) {
     // console.warn(`Error in Calculation ${err}`);
     return 1;
