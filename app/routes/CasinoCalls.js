@@ -542,6 +542,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             balance: availableBalance,
             availableBalance: availableBalance,
             maxWithdraw: prevMaxWithdraw + (user.commission / 100) * commissionAmount,
+            calledArea: "difference > 0-win2",
             // balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
             // availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
             // maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
