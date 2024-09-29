@@ -881,15 +881,20 @@ async function creditFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    // const creditCheck = await casinoCalls.find({
-    //   game_id: payload.game_id,
-    //   remote_id: payload.remote_id,
-    //   round_id: payload.round_id,
-    //   username:payload.username
-    // })
-    // if (creditCheck) {
-    //   return
-    // }
+    const creditCheck = await casinoCalls.find({
+      game_id: payload.game_id,
+      remote_id: payload.remote_id,
+      round_id: payload.round_id,
+      username: payload.username,
+      action:"credit"
+    })
+    if (creditCheck) {
+
+      console.log(payload.username,"=======user========",payload.round_id,"=======round=========",payload.remote_id,"=======remote=========",payload.game_id,"=======game_id=========",payload.action,"=======action=========")
+      // return
+    } else {
+      console.log(payload.username,"=======user.......========",payload.round_id,"=======round=========",payload.remote_id,"=======remote=========",payload.game_id,"=======game_id=========",payload.action,"=======action=========",)
+    }
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
