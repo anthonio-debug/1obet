@@ -4097,7 +4097,26 @@ async function deleteOdds(req, res) {
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
 }
+async function groupByroundId (req, res) {
+  const { username } = req.params;
 
+  try {
+      const groups = await CasinoCalls.aggregate([
+          { $match: { username } },
+        {
+          $group: {
+            _id: '$round_id',
+            count: { $sum: 1 },
+            documents: { $push: "$$ROOT" }} 
+          },
+      ]);
+
+      res.status(200).json(groups);
+  } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+  }
+}
 async function deleteDepositsAndCasinoCalls(req, res) {
   const userId = req.params.userId
   await Deposits.deleteMany({
@@ -7239,6 +7258,7 @@ async function getWinnigLossing(req, res) {
 
 
 // //////////////////
+router.get('/track-bet/groups/:username',groupByroundId)
 router.get('/track-bet/lithylAPI/getSeriesList/:sportsId', getSeriesList)
 router.get('/track-bet/lithylAPI/getAllMatchesList/:series_id', getAllMatchesList)
 router.get('/track-bet/lithylAPI/getAllMarketList/:match_id', getAllMarketList)
