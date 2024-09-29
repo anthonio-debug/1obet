@@ -5907,7 +5907,7 @@ console.log(user_id,"---------------------", market_id, "+++++++++++++", isCasin
     const currentTime = Date.now()
     const time5days = 120 * 60 * 60 * 1000
     const last5days = currentTime - time5days
-    const userData
+    let userData;
   if(isCasino==false){
      userData = await Bets.aggregate([
       {
