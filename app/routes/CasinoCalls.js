@@ -944,7 +944,7 @@ async function creditFun(req, res) {
 
 async function rollbackFun(req, res) {
 
-  console.log("rooooooooooooooooolllllllback arham ")
+  console.log("rooooooooooooooooolllllllback arham =========================")
   
   const session = dbClient.startSession();
   try {
@@ -1003,11 +1003,13 @@ async function rollbackFun(req, res) {
           );
 
           let amount = 0;
+          var tempExp = 0;
 
           const action = rollbackTransaction.action;
 
           if (action === "credit") {
             amount = -parseInt(rollbackTransaction.amount);
+         
           } else if (action === "debit") {
             amount = parseInt(rollbackTransaction.amount);
 
@@ -1026,7 +1028,7 @@ async function rollbackFun(req, res) {
           console.log("rollllll back   amount ============>",amount)
 
           await users.updateOne(
-            { _id: user?._id }, { $set: { exposure: updatedExposureAmount-user.tempExposure, availableBalance: updatedBalance,tempExposure:0 } },
+            { _id: user?._id }, { $set: { exposure: updatedExposureAmount+user.tempExposure, availableBalance: updatedBalance,tempExposure:0 } },
             { session }
           );
 
