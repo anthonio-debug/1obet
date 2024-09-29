@@ -881,15 +881,15 @@ async function creditFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    const creditCheck = await casinoCalls.find({
-      game_id: payload.game_id,
-      remote_id: payload.remote_id,
-      round_id: payload.round_id,
-      username:payload.username
-    })
-    if (creditCheck) {
-      return
-    }
+    // const creditCheck = await casinoCalls.find({
+    //   game_id: payload.game_id,
+    //   remote_id: payload.remote_id,
+    //   round_id: payload.round_id,
+    //   username:payload.username
+    // })
+    // if (creditCheck) {
+    //   return
+    // }
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
