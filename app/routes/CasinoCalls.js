@@ -568,6 +568,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       } else if ((difference === 0)) {
         console.log("diff equal 0 Arham================")
 
+
+        console.log("rolll back testinnnnnnnnnnnnnnnnnnnnnnnnnng");
+        
+
         // No Win lose
         const updatedavailableBalance = Number((user.availableBalance + (debit * casinoMultiples)).toFixed(3))
         const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3))
@@ -1016,6 +1020,9 @@ async function rollbackFun(req, res) {
 
           updatedBalance = user.availableBalance + (amount * casinoMultiples);
           let updatedExposureAmount = user.exposure + (amount * casinoMultiples);
+          console.log("rollllll back   transaction ============>",rollbackTransaction)
+          console.log("rollllll back   updatedExposureAmount ============>",updatedExposureAmount)
+          console.log("rollllll back   amount ============>",amount)
 
           await users.updateOne(
             { _id: user?._id }, { $set: { exposure: updatedExposureAmount, availableBalance: updatedBalance } },
