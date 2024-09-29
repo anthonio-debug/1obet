@@ -153,9 +153,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
          * its mean User lose 1100
          *
          */
-        const updatedavailableBalance = user.availableBalance + (credit * casinoMultiples);
-        const updatedclientPL = Number((user.clientPL + (difference * casinoMultiples)).toFixed(3));
-        const updatedbalance = Number((user.balance + (difference * casinoMultiples)).toFixed(3));
+        const user1 = await users.findOne({ remoteId: Number(payload.remote_id) });
+        const updatedavailableBalance = user1.availableBalance + (credit * casinoMultiples);
+        const updatedclientPL = Number((user1.clientPL + (difference * casinoMultiples)).toFixed(3));
+        const updatedbalance = Number((user1.balance + (difference * casinoMultiples)).toFixed(3));
         const bettor_lost_amount = Number(((debit - credit) * casinoMultiples).toFixed(3));
         const allTrans = [];
 
@@ -186,7 +187,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         if (balance < 0) {
           log(
             `${JSON.stringify({
-              userId: user.userId,
+              userId: user1.userId,
               description: `Casino (${GameName})`,
               date: now.getTime(),
               createdAt: formattedDate,
@@ -214,7 +215,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         } else {
           log(
             `${JSON.stringify({
-              userId: user.userId,
+              userId: user1.userId,
               description: `Casino (${GameName})`,
               date: now.getTime(),
               createdAt: formattedDate,
@@ -241,7 +242,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           );
         }
         let BettorLostTran = {
-          userId: user.userId,
+          userId: user1.userId,
           description: `Casino (${GameName})`,
           date: now.getTime(),
           createdAt: formattedDate,
@@ -382,7 +383,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
          * Winning Amount 100
          *
          */
-
+        const user1 = await users.findOne({ remoteId: Number(payload.remote_id) });
         let bettor_won_amount = credit - debit;
         let GameName = 'N/A';
         if (game)
@@ -393,12 +394,12 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const remainingAmount = Number(((amount / 100) * (100 - config.commission)).toFixed(3));
         const commissionAmount = Number(((amount / 100) * config.commission).toFixed(3));
         let upMovingAmount = Number(amount.toFixed(3));
-        let commissionFrom = user.userId;
+        let commissionFrom = user1.userId;
         let upMovingCommAmount = Number(commissionAmount.toFixed(3));
 
-        const updatedavailableBalance = Number((user.availableBalance + (remainingAmount) + debit * config.casinoMultiples).toFixed(3));
-        const updatedclientPL = Number((user.clientPL + (remainingAmount)).toFixed(3));
-        const updatedbalance = Number((user.balance + (remainingAmount)).toFixed(3));
+        const updatedavailableBalance = Number((user1.availableBalance + (remainingAmount) + debit * config.casinoMultiples).toFixed(3));
+        const updatedclientPL = Number((user1.clientPL + (remainingAmount)).toFixed(3));
+        const updatedbalance = Number((user1.balance + (remainingAmount)).toFixed(3));
         const UpdatedExposure = 0
         // //console.log("arham exposureeeeeeeeeeeee winloose addiotn debit",UpdatedExposure )
         const userResponse = await users.updateOne(
@@ -418,7 +419,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
 
         let UserWinBetTrans = {
-          userId: user.userId,
+          userId: user1.userId,
           description: `Casino (${GameName})`,
           date: now.getTime(),
           createdAt: formattedDate,
