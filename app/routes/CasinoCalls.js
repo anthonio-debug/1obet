@@ -100,6 +100,19 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       //   console.log('Transaction occurred too quickly, skipping...');
       //   return; // Skip transaction
       // }
+      const creditCheck = await casinoCalls.find({
+        game_id: payload.game_id,
+        remote_id: payload.remote_id,
+        round_id: payload.round_id,
+        username: payload.username,
+        action:"credit"
+      })
+      console.log("creditCheck.length====================>",creditCheck.length)
+      console.log(payload.username,"=======user========",payload.round_id,"=======round=========",payload.remote_id,"=======remote=========",payload.game_id,"=======game_id=========",payload.action,"=======action=========")
+      if (creditCheck.length>0) {
+  
+        return
+      } 
       const user_prev_balance = user.balance;
       const user_prev_availableBalance = user.availableBalance;
       const user_prev_exposure = user.exposure;
@@ -881,20 +894,7 @@ async function creditFun(req, res) {
       transactionIdMap.set(transactionId, transactionId)
     }
 
-    const creditCheck = await casinoCalls.find({
-      game_id: payload.game_id,
-      remote_id: payload.remote_id,
-      round_id: payload.round_id,
-      username: payload.username,
-      action:"credit"
-    })
-    if (creditCheck) {
-
-      console.log(payload.username,"=======user========",payload.round_id,"=======round=========",payload.remote_id,"=======remote=========",payload.game_id,"=======game_id=========",payload.action,"=======action=========")
-      // return
-    } else {
-      console.log(payload.username,"=======user.......========",payload.round_id,"=======round=========",payload.remote_id,"=======remote=========",payload.game_id,"=======game_id=========",payload.action,"=======action=========",)
-    }
+    
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
