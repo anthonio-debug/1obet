@@ -7298,7 +7298,7 @@ async function getUserParents(req, res) {
     // const user_id=req.body.user_id
      const user_id =20243
     let parentUserIds = await getParents(user_id);
-    console.lgo("-=-=-=-=-=-=--=-=-= parentUserIds ",parentUserIds)
+    console.log("-=-=-=-=-=-=--=-=-= parentUserIds ",parentUserIds)
     let parentUsers = await User.find(
       { userId: { $in: parentUserIds } },
       { userName: 1, _id: 0 }
