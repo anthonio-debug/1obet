@@ -164,7 +164,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const amount = Number((debit * config.casinoMultiples).toFixed(3));
         const UpdatedExposure = 0
         console.log("arham exposureeeeeeeeeeeee winloose temp exposureeeeeeeeeeeeeeeeeeees", user.tempExposure)
-        await users.updateOne(
+     const updateUser=   await users.updateOne(
           { _id: user?._id },
           {
             $set: {
@@ -177,7 +177,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           },
           { session }
         );
-
+        if (updateUser) {
+          
+       
 
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
         const userAvaiableBalance = await User.findOne({ userId: user.userId }).sort({ _id: -1 });
@@ -360,7 +362,8 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         await Cash.insertMany(allTrans);
         //end of code to give lost money to all share holders
         const casinoDebits = new CasinoDebits(payload);
-        await casinoDebits.save();
+          await casinoDebits.save();
+        }
       } else if (difference > 0) {
         console.log("diff greater 0 Arham================")
 
@@ -413,7 +416,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           },
           { session }
         );
-
+        if (userResponse) {
+          
+     
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
 
         let UserWinBetTrans = {
@@ -612,7 +617,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       await ExpTran.save();
 
       return 0
-    }
+    }   }
   } catch (err) {
     // console.warn(`Error in Calculation ${err}`);
     return 1;
