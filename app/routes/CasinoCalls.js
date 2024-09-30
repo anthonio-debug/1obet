@@ -153,7 +153,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
          * its mean User lose 1100
          *
          */
-        const updatedavailableBalance = user.availableBalance + (credit * casinoMultiples);
+        const updatedavailableBalance = user.availableBalance - (debit * casinoMultiples);
         const updatedclientPL = Number((user.clientPL + (difference * casinoMultiples)).toFixed(3));
         const updatedbalance = Number((user.balance + (difference * casinoMultiples)).toFixed(3));
         const bettor_lost_amount = Number(((debit - credit) * casinoMultiples).toFixed(3));
