@@ -5899,7 +5899,7 @@ console.log();
 
 async function getUserBetsRecords(req, res) {
   //:user_id/:market_id
-  const { user_id, market_id, isCasino } = req.body
+  const { user_id, market_id, isCasino, sortOrder } = req.body
   // const id=+user_id
   console.log(user_id, "---------------------", market_id, "+++++++++++++", isCasino);
 
@@ -5920,7 +5920,7 @@ async function getUserBetsRecords(req, res) {
         {
 
           "$sort": {
-            "_id": -1
+            "_id": sortOrder
           }
         },
         {
