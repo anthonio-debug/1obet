@@ -390,19 +390,18 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         let GameName = 'N/A';
         if (game)
           GameName = game.name;
-        //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
-
-        const amount = bettor_won_amount+user.tempExposure;
+      
+        const amount = bettor_won_amount;
         const remainingAmount = Number(((amount / 100) * (100 - config.commission)).toFixed(3));
         const commissionAmount = Number(((amount / 100) * config.commission).toFixed(3));
         let upMovingAmount = Number(amount.toFixed(3));
         let commissionFrom = user.userId;
         let upMovingCommAmount = Number(commissionAmount.toFixed(3));
         
-        // Ensure that only remainingAmount is added to the balance
+     
         const updatedavailableBalance = Number((user.availableBalance + remainingAmount).toFixed(3));
 
-        // const updatedavailableBalance = Number((user.availableBalance + (remainingAmount) + debit * config.casinoMultiples).toFixed(3));
+       
         const updatedclientPL = Number((user.clientPL + (remainingAmount)).toFixed(3));
         const updatedbalance = Number((user.balance + (remainingAmount)).toFixed(3));
         const UpdatedExposure = 0
