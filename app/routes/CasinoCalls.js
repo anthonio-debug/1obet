@@ -948,7 +948,8 @@ async function processCreditQueue() {
           return res.json({ status: '500', msg: 'Betting is not allowed!' });
       }
 
-      console.log("Calling WinLoseTransManagement with payload:", payload);  // Log payload before calling
+      console.log("Calling WinLoseTransManagement with payload:", payload);
+      // Call WinLoseTransManagement and ensure no session is passed back or used incorrectly
       await session.withTransaction(async () => {
           if (parseInt(payload.amount) < 0) {
               console.log("Negative amount received, aborting transaction");
@@ -958,12 +959,12 @@ async function processCreditQueue() {
                   balance: user.availableBalance / casinoMultiples,
               });
           } else {
-              // Call WinLoseTransManagement and await its completion
+              // Ensure no session is passed to any response or logged unnecessarily
               try {
                   const response = await WinLoseTransManagement(0, payload, user, 1, res, session);
-                  console.log("Response from WinLoseTransManagement:", response);  // Log response
+                  console.log("Response from WinLoseTransManagement:", response);
               } catch (err) {
-                  console.error("Error in WinLoseTransManagement:", err);  // Log any error thrown
+                  console.error("Error in WinLoseTransManagement:", err);
                   await session.abortTransaction();
                   return res.json({ status: 500, msg: `Internal error in WinLoseTransManagement: ${err.message}` });
               }
@@ -982,7 +983,7 @@ async function processCreditQueue() {
       });
 
   } catch (err) {
-      console.error("Error in processCreditQueue:", err);  // Log the error
+      console.error("Error in processCreditQueue:", err);
       await session.abortTransaction();  // Abort on error
       return res.json({ status: 500, msg: `Internal error: ${err.message}` });
   } finally {
@@ -998,6 +999,7 @@ async function processCreditQueue() {
       }
   }
 }
+
 
 
 
