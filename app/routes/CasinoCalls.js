@@ -837,6 +837,7 @@ async function processQueue() {
 // }
 async function debitFun(req, res) {
   //console.log("debitttttttttttttttttttttttt fun arhammmmmmmmmmmmmmm")
+  const user=await User.findOne({remote_id:payload.remote_id})
   requestQueue.push({ req, res });
   const payload = req.query;
   const gamesList = await SelectedCasino.findOne(
@@ -846,7 +847,7 @@ async function debitFun(req, res) {
 
   const game = gamesList?.games[0];
   console.log("")
-  if (game.isAllowed === false) {
+  if (game.isAllowed === false || user.tempExposure>0) {
     return res.status(400).send({ message: "This game is not allowed!!" })
   }
   if (!processing) {
