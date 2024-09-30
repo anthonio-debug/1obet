@@ -193,7 +193,8 @@ async function handleLosingBet(bet) {
             currentBetWinningAmount:bet.winningAmount,
             currentBetPosition:bet.position,
             areaCalled:'1',
-            calculateExp:bet.calculateExp
+            calculateExp:bet.calculateExp,
+            betExpAmount:bet.betExpAmount
           });
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
@@ -512,7 +513,8 @@ async function handleWinningBet(bet, winner) {
             currentBetWinningAmount:bet.winningAmount,
             currentBetPosition:bet.position,
             areaCalled:'1',
-            calculateExp:bet.calculateExp
+            calculateExp:bet.calculateExp,
+            betExpAmount:bet.betExpAmount
           });
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
