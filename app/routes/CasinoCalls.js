@@ -866,112 +866,114 @@ const creditRequestQueue = [];
 
 
 async function processCreditQueue() {
-  
+  console.log("Processing credit queue...");
+
   if (creditRequestQueue.length === 0) {
-      creditProcessing = false;
-      return;
+    console.log("Credit request queue is empty, setting processing to false.");
+    creditProcessing = false;
+    return;
   }
 
   creditProcessing = true;
   const { req, res } = creditRequestQueue.shift();
+  console.log("Credit request dequeued:", req.query);
 
-
-  const session = dbClient.startSession(); 
-
+  const session = dbClient.startSession();
 
   try {
-      session.startTransaction();
-      console.log("Transaction started");
+    session.startTransaction();
+    console.log("Transaction started");
 
-      const payload = req.query; x
-      const transactionId = payload.transaction_id;
+    const payload = req.query;
+    const transactionId = payload.transaction_id;
+    console.log("Payload received:", payload);
 
-      const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
-      
-      if (!currentUser) {
-        x
-          await session.abortTransaction();
-          return res.json({ status: 500, msg: `Internal Error: User not found` });
-      }
+    const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
+    
+    if (!currentUser) {
+      console.log("User not found, aborting transaction");
+      await session.abortTransaction();
+      return res.json({ status: 500, msg: `Internal Error: User not found` });
+    }
+    console.log("Current user found:", currentUser);
 
-      if (transactionIdMap.has(transactionId)) {
-          console.log("Transaction ID already processed:", transactionId);
-          await session.commitTransaction();
-          return res.json({
-              status: 200,
-              balance: currentUser.availableBalance / casinoMultiples,
-          });
-      } else {
-          transactionIdMap.set(transactionId, transactionId);
-          console.log("Transaction ID added to map:", transactionId);
-      }
-
-      const salt = saltKey;
-      const key = payload.key;
-      delete payload.key; 
-
-      const queryString = Object.keys(payload).map(key => `${key}=${payload[key]}`).join('&');
-      const hash = createHashKey(salt, queryString);
-  
-
-      if (hash !== key) {
-        
-          await session.abortTransaction();
-          return res.json({ status: 403, msg: 'INCORRECT_KEY_VALIDATION' });
-      }
-
-      const user = await User.findOne(
-          { remoteId: parseInt(payload.remote_id) },
-         
-      );
-x
-
-      if (!user) {
-          console.log("User not found, aborting transaction");
-          await session.abortTransaction();
-          return res.json({ status: 500, msg: `Internal Error: User not found` });
-      }
-
-      const checkMarketBlockedResponse = await checkMarketBlocked(user);
-      console.log("Market block check response:", checkMarketBlockedResponse);
-
-      if (checkMarketBlockedResponse === 1) {
-          console.log("Market is blocked for this user, aborting transaction");
-          await session.abortTransaction();
-          return res.json({ status: 500, msg: 'Betting is not allowed!' });
-      }
-
-      
-      const response = await WinLoseTransManagement(0, payload, user, 1, res);
-      
-
-      await session.commitTransaction(); 
-      
-      const updatedUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
-      console.log("Updated user retrieved:", updatedUser);
-      
+    if (transactionIdMap.has(transactionId)) {
+      console.log("Transaction ID already processed:", transactionId);
+      await session.commitTransaction();
       return res.json({
-          status: 200,
-          balance: updatedUser.availableBalance / casinoMultiples,
+        status: 200,
+        balance: currentUser.availableBalance / casinoMultiples,
       });
+    } else {
+      transactionIdMap.set(transactionId, transactionId);
+      console.log("Transaction ID added to map:", transactionId);
+    }
+
+    const salt = saltKey;
+    const key = payload.key;
+    delete payload.key;
+
+    const queryString = Object.keys(payload).map(key => `${key}=${payload[key]}`).join('&');
+    const hash = createHashKey(salt, queryString);
+    console.log("Generated hash:", hash);
+
+    if (hash !== key) {
+      console.log("Key validation failed, aborting transaction");
+      await session.abortTransaction();
+      return res.json({ status: 403, msg: 'INCORRECT_KEY_VALIDATION' });
+    }
+
+    const user = await User.findOne({ remoteId: parseInt(payload.remote_id) });
+    console.log("User found for key validation:", user);
+
+    if (!user) {
+      console.log("User not found, aborting transaction");
+      await session.abortTransaction();
+      return res.json({ status: 500, msg: `Internal Error: User not found` });
+    }
+
+    const checkMarketBlockedResponse = await checkMarketBlocked(user);
+    console.log("Market block check response:", checkMarketBlockedResponse);
+
+    if (checkMarketBlockedResponse === 1) {
+      console.log("Market is blocked for this user, aborting transaction");
+      await session.abortTransaction();
+      return res.json({ status: 500, msg: 'Betting is not allowed!' });
+    }
+
+    console.log("Proceeding with WinLoseTransManagement...");
+    const response = await WinLoseTransManagement(0, payload, user, 1, res);
+    console.log("WinLoseTransManagement response:", response);
+
+    await session.commitTransaction();
+    console.log("Transaction committed");
+
+    const updatedUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
+    console.log("Updated user retrieved:", updatedUser);
+
+    return res.json({
+      status: 200,
+      balance: updatedUser.availableBalance / casinoMultiples,
+    });
 
   } catch (err) {
-      
-      await session.abortTransaction(); 
-      return res.json({ status: 500, msg: `Internal error: ${err.message}` });
+    console.error("Error occurred:", err);
+    await session.abortTransaction();
+    return res.json({ status: 500, msg: `Internal error: ${err.message}` });
   } finally {
-      await session.endSession();
-      
+    await session.endSession();
+    console.log("Session ended");
 
-      if (creditRequestQueue.length > 0) {
-        ;
-          processCreditQueue(); 
-      } else {
-         x
-          creditProcessing = false;
-      }
+    if (creditRequestQueue.length > 0) {
+      console.log("More credit requests in queue, processing next request...");
+      processCreditQueue();
+    } else {
+      console.log("No more credit requests in queue, setting processing to false.");
+      creditProcessing = false;
+    }
   }
 }
+
 
 
 
