@@ -866,6 +866,7 @@ let creditProcessing = false;
 const creditRequestQueue = [];
 
 // Function to process the credit request queue
+// Function to process the credit request queue
 async function processCreditQueue() {
   if (creditRequestQueue.length === 0) {
     creditProcessing = false;
@@ -874,19 +875,22 @@ async function processCreditQueue() {
 
   creditProcessing = true;
   const { req, res } = creditRequestQueue.shift();
-console.log("ccredooooooooooooooooooooooooooofun")
+
+  const session = dbClient.startSession();  // Start session here
+
   try {
-    const session = dbClient.startSession();
-    session.startTransaction();
+    session.startTransaction();  // Begin transaction within session
     const payload = req.query;
     const transactionId = payload.transaction_id;
 
     const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
     if (!currentUser) {
+      await session.abortTransaction();
       return res.json({ status: '500', msg: `Internal Error: User not found` });
     }
 
     if (transactionIdMap.has(transactionId)) {
+      await session.commitTransaction();
       return res.json({
         status: 200,
         balance: currentUser.availableBalance / casinoMultiples,
@@ -903,6 +907,7 @@ console.log("ccredooooooooooooooooooooooooooofun")
     const hash = createHashKey(salt, queryString);
 
     if (hash !== key) {
+      await session.abortTransaction();
       return res.json({ status: 403, msg: 'INCORRECT_KEY_VALIDATION' });
     }
 
@@ -942,9 +947,11 @@ console.log("ccredooooooooooooooooooooooooooofun")
     });
 
   } catch (err) {
+    await session.abortTransaction();  // Abort on error
     return res.json({ status: 500, msg: `Internal error: ${err}` });
   } finally {
-    await session.endSession();
+    await session.endSession();  // End session after processing
+
     if (creditRequestQueue.length > 0) {
       processCreditQueue();  // Process the next request in the queue
     } else {
@@ -952,6 +959,7 @@ console.log("ccredooooooooooooooooooooooooooofun")
     }
   }
 }
+
 
 // Main Credit Function
 async function creditFun(req, res) {
