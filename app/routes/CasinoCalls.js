@@ -156,7 +156,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const updatedavailableBalance = user.availableBalance - (debit * casinoMultiples);
         const updatedclientPL = Number((user.clientPL + (difference * casinoMultiples)).toFixed(3));
         const updatedbalance = Number((user.balance + (difference * casinoMultiples)).toFixed(3));
-        const bettor_lost_amount = Number(((debit - credit) * casinoMultiples).toFixed(3));
+        const bettor_lost_amount = Number(((debit - credit) * casinoMultiples).toFixed(3));marketShares
         const allTrans = [];
 
         // remove all exposure equal to total debit money of 1500
@@ -198,7 +198,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               cash: lastMaxWithdraw?.cash || 0,
               credit: lastMaxWithdraw?.credit || 0,
               creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-              calledArea: " difference < 0 ",
+              calledArea: " difference < --loose 10 ",
               createdBy: 0,
               casinoBetAmount: debit,
               event: GameName,
@@ -226,7 +226,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               cash: lastMaxWithdraw?.cash || 0,
               credit: lastMaxWithdraw?.credit || 0,
               creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-              calledArea: " difference < 0 ",
+              calledArea: " difference < --loose 2 0 ",
               createdBy: 0,
               casinoBetAmount: debit,
               event: GameName,
@@ -253,7 +253,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           cash: lastMaxWithdraw?.cash || 0,
           credit: lastMaxWithdraw?.credit || 0,
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-          calledArea: " difference < 0 ",
+          calledArea: " difference < 3 0 ",
           createdBy: 0,
           casinoBetAmount: debit,
           event: GameName,
@@ -322,7 +322,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
                 balance: balance
               }
             },
-            { session }
+           
           );
 
           const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
@@ -343,6 +343,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
             credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
             creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+            calledArea: " parent ",
             betId: payload.transaction_id,
             cashOrCredit: "Bet",
             sportsId: "6",
@@ -413,7 +414,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               tempExposure: 0,
             }
           },
-          { session }
+         
         );
         if (userResponse) {
           
@@ -438,7 +439,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
           betId: payload.transaction_id,
           roundId: payload.round_id,
-          calledArea: "difference > 0",
+          calledArea: "difference > win 1 0",
           event: GameName,
           sportsId: "6",
           marketId: payload.game_id,
@@ -498,7 +499,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               balance: Balancebalance
             }
           },
-            { session }
+          
           );
 
           let betTransaction = {
@@ -515,6 +516,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * amount : 0,
             cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
             credit: lastMaxWithdraw?.credit || 0,
+            calledArea: " parent win ",
             creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
             cashOrCredit: "Bet",
             sportsId: "6",
@@ -586,7 +588,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               tempExposure: 0,
             }
           },
-          { session }
+        
         );
 
         const casinoDebits = new CasinoDebits(payload);
@@ -837,7 +839,6 @@ async function processQueue() {
 // }
 async function debitFun(req, res) {
   //console.log("debitttttttttttttttttttttttt fun arhammmmmmmmmmmmmmm")
-  const user=await User.findOne({remote_id:payload.remote_id})
   requestQueue.push({ req, res });
   const payload = req.query;
   const gamesList = await SelectedCasino.findOne(
@@ -847,7 +848,7 @@ async function debitFun(req, res) {
 
   const game = gamesList?.games[0];
   console.log("")
-  if (game.isAllowed === false || user.tempExposure>0) {
+  if (game.isAllowed === false) {
     return res.status(400).send({ message: "This game is not allowed!!" })
   }
   if (!processing) {
