@@ -607,6 +607,8 @@ function getLedgerDetails(req, res) {
       }
 
       cashPipeline.push({ $sort: { date: 1 } });
+      cashPipeline.push({ $skip: (page - 1) * limit });
+      cashPipeline.push({ $limit: limit });
 
       Cash.aggregate(cashPipeline, async (err, results) => {
         if (err || !results || results.length === 0) {
@@ -641,7 +643,7 @@ function getLedgerDetails(req, res) {
           message: 'Deposit Records',
           results: {
             docs: results,
-            total: results.length,
+            total: results.length, // Total number of results returned
             limit: limit,
             page: page,
             pages: limit ? Math.ceil(results.length / limit) : 0,
