@@ -935,6 +935,7 @@ async function processCreditQueue() {
           balance: user.availableBalance / casinoMultiples,
         });
       } else {
+        console.log("winlossss creditr funcc==============")
         const response = await WinLoseTransManagement(0, payload, user, 1, res, session);
         await session.commitTransaction();
       }
