@@ -7295,8 +7295,8 @@ async function getWinnigLossing(req, res) {
 
 async function getUserParents(req, res) {
   try {
-    const user_id=req.body.user_id
-    //  const user_id =20243
+    // const user_id=req.body.user_id
+     const user_id =20243
     let parentUserIds = await getParents(user_id);
     // console.log("-=-=-=-=-=-=--=-=-= parentUserIds ",parentUserIds)
     let parentUsers = await User.find(
