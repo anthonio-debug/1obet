@@ -7332,7 +7332,7 @@ router.get('/track-bet/lithylAPI/getOdd', getOdds)
 router.post('/track-bet/lithylAPI/placeBet', placeBet)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/getDuplicateEntries', getDuplicateEntries)
-router.get('/track-bet/getUserParents', getUserParents)
+router.post('/track-bet/getUserParents', getUserParents)
 router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
 // router.get('/track-bet/getUserBetsRecords/:user_id/:market_id', getUserBetsRecords)
