@@ -11,7 +11,6 @@ let depositsSchema = new Schema({
   balance: { type: Number, required: false, default: 0 },
   availableBalance: { type: Number , default: 0},
   maxWithdraw: { type: Number, default: 0 },
-  prevmaxWithdraw: { type: Number, default: 0 },
   cash: { type : Number, default: 0 },
   credit: { type : Number, default: 0 },
   creditRemaining: { type : Number, default: 0 },

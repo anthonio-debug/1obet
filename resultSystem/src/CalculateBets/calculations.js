@@ -44,11 +44,10 @@ const config = {
   commissionLessSubMarkets: [2, 3, 4],
   balls: ['1', '2', '3', '4', '5', '6'],
   matchTypes: ['T10', 'T20', 'ODI', 'TEST'],
-  ExcludedBackLay: [7, 8, 70, 100],
+  ExcludedBackLay: [7, 8],
   soccerOdds: 13,
   tennisOdds: 15,
   cricketOdds: 6,
-  overByOver: 70,
   Fancy: 7,
   BookMaker: 8,
   Figure: 9,
@@ -401,7 +400,7 @@ async function handleWinningBet(bet, winner) {
           let TotalLoosingAmount;
           let upMovingAmount;
           let upMovingCommAmount;
-          if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.overByOver && bet.subMarketId != config.BookMaker && (TotalWin > TotalLose || Number(bet.sportsId) == 8)) {
+          if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && (TotalWin > TotalLose || Number(bet.sportsId) == 8)) {
             const absouteWin = Number((TotalWin - TotalLose).toFixed(3));
             const totalCooission = Number((absouteWin * 0.02).toFixed(3));
             commissionAmount = Number(((totalCooission / TotalWin) * bet.winningAmount).toFixed(3));
