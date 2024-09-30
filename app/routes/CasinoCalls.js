@@ -174,8 +174,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               clientPL: updatedclientPL,
               balance: updatedbalance
             }
-          },
-          { session }
+          }
         );
         if (updateUser) {
           
