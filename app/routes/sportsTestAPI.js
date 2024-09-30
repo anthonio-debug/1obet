@@ -7303,6 +7303,8 @@ async function getUserParents(req, res) {
       { userId: { $in: parentUserIds } },
       { userName: 1, _id: 0 }
     );
+
+    let parentUserNames = parentUsers.map(user => user.userName);
     res.status(200).json({
       success: true,
       message: 'parent users fetched successfully',
@@ -7332,7 +7334,7 @@ router.get('/track-bet/lithylAPI/getOdd', getOdds)
 router.post('/track-bet/lithylAPI/placeBet', placeBet)
 router.get('/track-bet/updateUserName', updateUserName)
 router.get('/track-bet/getDuplicateEntries', getDuplicateEntries)
-router.post('/track-bet/getUserParents', getUserParents)
+router.get('/track-bet/getUserParents', getUserParents)
 router.get('/track-bet/updateOddsFormLimitless', updateOddsFormLimitless) ///// temp
 router.get('/track-bet/multi-response', checkMultiResponse)
 // router.get('/track-bet/getUserBetsRecords/:user_id/:market_id', getUserBetsRecords)
