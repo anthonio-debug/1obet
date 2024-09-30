@@ -383,7 +383,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
          *
          */
 
-        let bettor_won_amount = credit - debit* casinoMultiples;
+        let bettor_won_amount = (credit - debit) * casinoMultiples;
+        console.log("bettor won amount ==================",bettor_won_amount)
+        console.log("bettor won credit ==================",credit)
+        console.log("bettor won debit ==================",debit)
         let GameName = 'N/A';
         if (game)
           GameName = game.name;
