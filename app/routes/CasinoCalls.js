@@ -867,8 +867,9 @@ const creditRequestQueue = [];
 
 
 async function processCreditQueue() {
-  console.log("creditRequestQueue.length       ========".creditRequestQueue.length)
+  console.log("creditRequestQueue.length       ========",creditRequestQueue.length)
   if (creditRequestQueue.length === 0) {
+    console.log("creditRequestQueue.length    falseeee   ========",creditRequestQueue.length)
     creditProcessing = false;
     return;
   }
