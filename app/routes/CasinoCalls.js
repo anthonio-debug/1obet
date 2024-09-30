@@ -865,8 +865,7 @@ async function debitFun(req, res) {
 let creditProcessing = false;
 const creditRequestQueue = [];
 
-// Function to process the credit request queue
-// Function to process the credit request queue
+
 async function processCreditQueue() {
   console.log("creditRequestQueue.length       ========".creditRequestQueue.length)
   if (creditRequestQueue.length === 0) {
@@ -968,6 +967,7 @@ async function creditFun(req, res) {
   creditRequestQueue.push({ req, res });
 console.log("credit fun 222222222222222222222222222")
   if (!creditProcessing) {
+    console.log("credit fun 3333333333333333")
     processCreditQueue();
   }
 }
