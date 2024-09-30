@@ -927,7 +927,7 @@ async function processCreditQueue() {
 
       const user = await User.findOne(
           { remoteId: parseInt(payload.remote_id) },
-          { session, readPreference: 'primary' }
+         
       );
       console.log("User retrieved:", user);
 
