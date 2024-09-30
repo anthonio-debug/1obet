@@ -553,13 +553,9 @@ function getLedgerDetails(req, res) {
 
     const query = { userId: req.body.userId };
     let page = 1;
-    let sort = -1;
-    let sortValue = '_id';
     let limit = config.pageSize;
 
     if (req.body.numRecords && req.body.numRecords > 0 && !isNaN(req.body.numRecords)) limit = Number(req.body.numRecords);
-    if (req.body.sortValue) sortValue = req.body.sortValue;
-    if (req.body.sort) sort = Number(req.body.sort);
     if (req.body.page) page = Number(req.body.page);
 
     User.findOne(query, (err, user) => {
@@ -636,6 +632,9 @@ function getLedgerDetails(req, res) {
               continue; // Handle the error silently
             }
           }
+
+          // Ensure depositId is included in the results
+          results[i].depositId = results[i]._id; // Assuming _id is the depositId
         }
 
         const responseData = {
