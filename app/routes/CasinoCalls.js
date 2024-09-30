@@ -926,7 +926,7 @@ async function processCreditQueue() {
       await session.abortTransaction();
       return res.json({ status: '500', msg: 'Betting is not allowed!' });
     }
-
+    console.log("winlossss creditr funcc==============")
     await session.withTransaction(async () => {
       if (parseInt(payload.amount) < 0) {
         await session.abortTransaction();
@@ -935,7 +935,7 @@ async function processCreditQueue() {
           balance: user.availableBalance / casinoMultiples,
         });
       } else {
-        console.log("winlossss creditr funcc==============")
+    
         const response = await WinLoseTransManagement(0, payload, user, 1, res, session);
         await session.commitTransaction();
       }
