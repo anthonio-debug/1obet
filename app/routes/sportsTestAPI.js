@@ -5994,6 +5994,8 @@ async function getUserBetsRecords(req, res) {
             "iscalculatedExp": 1,
             "position": 1,
             "status": 1,
+            "winningAmount":1,
+            "loosingAmount":1,
             "betTime": { $toDate: "$betTime" },
             "betSatteledTime": { $toDate: { $arrayElemAt: ["$depositsDetails.date", 0] } },
             "userName": { "$arrayElemAt": ["$userDetails.userName", 0] },
