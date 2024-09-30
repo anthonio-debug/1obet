@@ -874,7 +874,7 @@ async function processCreditQueue() {
 
   creditProcessing = true;
   const { req, res } = creditRequestQueue.shift();
-
+console.log("ccredooooooooooooooooooooooooooofun")
   try {
     const session = dbClient.startSession();
     session.startTransaction();
