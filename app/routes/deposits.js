@@ -612,7 +612,7 @@ function getLedgerDetails(req, res) {
 
       cashPipeline.push(
         {
-          $sort: { [sortValue]: sort },
+          $sort: { date: 1 },
         },
         {
           $facet: {
