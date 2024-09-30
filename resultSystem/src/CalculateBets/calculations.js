@@ -183,10 +183,17 @@ async function handleLosingBet(bet) {
             UserPrevexposure: userToUpdate.exposure,
             UpdatedExposure: expAmount,
             sourceCodeBlock: 'handleLosingBet',
-            userAvailableBalanceBFTrans: user_prev_availableBalance,
-            userAvailableBalanceAFTrans: updatedAvailableBalance,
-            UserBalanceBFTrans: user_prev_balance,
-            UserBalanceAFTrans: updatedBalance
+            userAvailableBalanceBFTrans: userToUpdate.availableBalance,
+            userAvailableBalanceAFTrans: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - loosingAmount : -loosingAmount,
+            UserBalanceBFTrans: userToUpdate.balance,
+            UserBalanceAFTrans: updatedBalance,
+            
+            currentBetAmount:bet.betAmount,
+            currentBetLoosingAmount:bet.loosingAmount,
+            currentBetWinningAmount:bet.winningAmount,
+            currentBetPosition:bet.position,
+            areaCalled:'1',
+            calculateExp:bet.calculateExp
           });
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
@@ -496,10 +503,16 @@ async function handleWinningBet(bet, winner) {
             UserPrevexposure: userToUpdate.exposure,
             UpdatedExposure: UpdatedExposure,
             sourceCodeBlock: 'handleWinningBet',
-            userAvailableBalanceBFTrans: user_prev_availableBalance,
-            userAvailableBalanceAFTrans: UpdatedAvailableBalance,
+            userAvailableBalanceBFTrans: userToUpdate.availableBalance,
+            userAvailableBalanceAFTrans: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
             UserBalanceBFTrans: user_prev_balance,
-            UserBalanceAFTrans: UpdatedBalance
+            UserBalanceAFTrans: UpdatedBalance,
+            currentBetAmount:bet.betAmount,
+            currentBetLoosingAmount:bet.loosingAmount,
+            currentBetWinningAmount:bet.winningAmount,
+            currentBetPosition:bet.position,
+            areaCalled:'1',
+            calculateExp:bet.calculateExp
           });
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({

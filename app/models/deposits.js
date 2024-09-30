@@ -44,6 +44,16 @@ let depositsSchema = new Schema({
   userAvailableBalanceAFTrans:{ type: Number , default: 0 },
   UserBalanceBFTrans:{ type: Number , default: 0 },
   UserBalanceAFTrans:{ type: Number , default: 0 },
+  
+  
+  currentBetAmount:{ type: Number , default: 0 },
+  currentBetLoosingAmount:{ type: Number , default: 0 },
+  currentBetWinningAmount:{ type: Number , default: 0 },
+  currentBetPosition:{ type: Number , default: 0 },
+  areaCalled:{ type: String , default: ""},
+  calculateExp:{ type: String , default: ""}
+
+
 });
 
 depositsSchema.plugin(Global.aggregatePaginate);
