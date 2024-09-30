@@ -862,93 +862,105 @@ async function debitFun(req, res) {
 
 
 
-async function creditFun(req, res) {
+let creditProcessing = false;
+const creditRequestQueue = [];
 
-  //console.log("crediiiiiiiiiiiiiiiit arham ")
-  const session = dbClient.startSession();
+// Function to process the credit request queue
+async function processCreditQueue() {
+  if (creditRequestQueue.length === 0) {
+    creditProcessing = false;
+    return;
+  }
+
+  creditProcessing = true;
+  const { req, res } = creditRequestQueue.shift();
+
   try {
+    const session = dbClient.startSession();
+    session.startTransaction();
     const payload = req.query;
-    const transactionId = payload.transaction_id
+    const transactionId = payload.transaction_id;
 
-    const currentUser = await User.findOne(
-      { remoteId: parseInt(payload.remote_id) }
-    )
+    const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
     if (!currentUser) {
-      return res.json({ status: '500', msg: `Internal Error no User` });
+      return res.json({ status: '500', msg: `Internal Error: User not found` });
     }
-    if (transactionIdMap.has(transactionId)) {
 
+    if (transactionIdMap.has(transactionId)) {
       return res.json({
         status: 200,
         balance: currentUser.availableBalance / casinoMultiples,
       });
     } else {
-      transactionIdMap.set(transactionId, transactionId)
+      transactionIdMap.set(transactionId, transactionId);
     }
-
 
     const salt = saltKey;
     const key = payload.key;
     delete payload.key;
 
     const queryString = Object.keys(payload).map(key => `${key}=${payload[key]}`).join('&');
-
-
     const hash = createHashKey(salt, queryString);
 
     if (hash !== key) {
-      return res.json({
-        status: 403,
-        msg: 'INCORRECT_KEY_VALIDATION'
-      });
+      return res.json({ status: 403, msg: 'INCORRECT_KEY_VALIDATION' });
     }
-    const user = await users.findOne(
+
+    const user = await User.findOne(
       { remoteId: parseInt(payload.remote_id) },
       { session, readPreference: 'primary' }
     );
+
     if (!user) {
       await session.abortTransaction();
-      return res.json({ status: '500', msg: `Internal Error no User` });
+      return res.json({ status: '500', msg: `Internal Error: User not found` });
     }
 
     const checkMarketBlockedResponse = await checkMarketBlocked(user);
-    if (checkMarketBlockedResponse == 1) {
+    if (checkMarketBlockedResponse === 1) {
       await session.abortTransaction();
-      return res.json({ status: '500', msg: 'Batting is not allowed !' });
+      return res.json({ status: '500', msg: 'Betting is not allowed!' });
     }
-
 
     await session.withTransaction(async () => {
       if (parseInt(payload.amount) < 0) {
         await session.abortTransaction();
         return res.json({
           status: 500,
-          balance: user.availableBalance / casinoMultiples
+          balance: user.availableBalance / casinoMultiples,
         });
       } else {
-
         const response = await WinLoseTransManagement(0, payload, user, 1, res, session);
         await session.commitTransaction();
       }
-    }, transactionOptions);
+    });
 
-    const updatedUser = await users.findOne(
-      { remoteId: parseInt(payload.remote_id) },
-      { session }
-    )
+    const updatedUser = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
     return res.json({
       status: 200,
-      balance: updatedUser.availableBalance / casinoMultiples
+      balance: updatedUser.availableBalance / casinoMultiples,
     });
 
   } catch (err) {
-
-    return res.json({ status: 500, msg: `Internal error ${err}` });
+    return res.json({ status: 500, msg: `Internal error: ${err}` });
   } finally {
     await session.endSession();
+    if (creditRequestQueue.length > 0) {
+      processCreditQueue();  // Process the next request in the queue
+    } else {
+      creditProcessing = false;
+    }
   }
 }
 
+// Main Credit Function
+async function creditFun(req, res) {
+  creditRequestQueue.push({ req, res });
+
+  if (!creditProcessing) {
+    processCreditQueue();
+  }
+}
 async function rollbackFun(req, res) {
 
   //console.log("rooooooooooooooooolllllllback arham ")
