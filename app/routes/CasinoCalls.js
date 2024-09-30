@@ -383,7 +383,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
          *
          */
 
-        let bettor_won_amount = (credit+user.tempExposure - debit) * casinoMultiples ;
+        let bettor_won_amount = (credit - debit) * casinoMultiples ;
         console.log("bettor won amount ==================",bettor_won_amount)
         console.log("bettor won credit ==================",credit)
         console.log("bettor won debit ==================",debit)
@@ -392,7 +392,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           GameName = game.name;
         //deduct commission amount from above bettor_won_amount, and UpdatedAvailableBalance ( debit + wonAmountAfterCommission )
 
-        const amount = bettor_won_amount;
+        const amount = bettor_won_amount+user.tempExposure;
         const remainingAmount = Number(((amount / 100) * (100 - config.commission)).toFixed(3));
         const commissionAmount = Number(((amount / 100) * config.commission).toFixed(3));
         let upMovingAmount = Number(amount.toFixed(3));
