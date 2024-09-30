@@ -87,7 +87,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             tempExposure: tempExposure
           }
         },
-        { session }
+       
       );
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
       const casinoDebits = new CasinoDebits(payload);
@@ -867,34 +867,30 @@ const creditRequestQueue = [];
 
 
 async function processCreditQueue() {
-  console.log("Starting processCreditQueue");
-  console.log("creditRequestQueue.length ========", creditRequestQueue.length);
-
+  
   if (creditRequestQueue.length === 0) {
-      console.log("creditRequestQueue is empty, setting creditProcessing to false");
       creditProcessing = false;
       return;
   }
 
   creditProcessing = true;
-  const { req, res } = creditRequestQueue.shift(); // Get the next request from the queue
-  console.log("Processing request:", req.query);
+  const { req, res } = creditRequestQueue.shift();
 
-  const session = dbClient.startSession(); // Start session here
-  console.log("Started a new database session");
+
+  const session = dbClient.startSession(); 
+
 
   try {
-      session.startTransaction(); // Begin transaction within session
+      session.startTransaction();
       console.log("Transaction started");
 
-      const payload = req.query; // Get the payload
+      const payload = req.query; x
       const transactionId = payload.transaction_id;
 
       const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
-      console.log("Current user retrieved:", currentUser);
-
+      
       if (!currentUser) {
-          console.log("User not found, aborting transaction");
+        x
           await session.abortTransaction();
           return res.json({ status: 500, msg: `Internal Error: User not found` });
       }
@@ -913,14 +909,14 @@ async function processCreditQueue() {
 
       const salt = saltKey;
       const key = payload.key;
-      delete payload.key; // Remove key for validation
+      delete payload.key; 
 
       const queryString = Object.keys(payload).map(key => `${key}=${payload[key]}`).join('&');
       const hash = createHashKey(salt, queryString);
-      console.log("Generated hash for validation:", hash);
+  
 
       if (hash !== key) {
-          console.log("Hash validation failed, aborting transaction");
+        
           await session.abortTransaction();
           return res.json({ status: 403, msg: 'INCORRECT_KEY_VALIDATION' });
       }
@@ -929,7 +925,7 @@ async function processCreditQueue() {
           { remoteId: parseInt(payload.remote_id) },
          
       );
-      console.log("User retrieved:", user);
+x
 
       if (!user) {
           console.log("User not found, aborting transaction");
@@ -946,13 +942,12 @@ async function processCreditQueue() {
           return res.json({ status: 500, msg: 'Betting is not allowed!' });
       }
 
-      // Call WinLoseTransManagement without passing the session
+      
       const response = await WinLoseTransManagement(0, payload, user, 1, res);
-      console.log("Response from WinLoseTransManagement:", response);
+      
 
-      await session.commitTransaction(); // Commit the transaction after processing
-      console.log("Transaction committed successfully");
-
+      await session.commitTransaction(); 
+      
       const updatedUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
       console.log("Updated user retrieved:", updatedUser);
       
@@ -962,18 +957,18 @@ async function processCreditQueue() {
       });
 
   } catch (err) {
-      console.error("Error in processCreditQueue:", err);
-      await session.abortTransaction(); // Abort on error
+      
+      await session.abortTransaction(); 
       return res.json({ status: 500, msg: `Internal error: ${err.message}` });
   } finally {
-      await session.endSession(); // End session after processing
-      console.log("Session ended");
+      await session.endSession();
+      
 
       if (creditRequestQueue.length > 0) {
-          console.log("More requests in the queue, processing the next one");
-          processCreditQueue(); // Process the next request in the queue
+        ;
+          processCreditQueue(); 
       } else {
-          console.log("No more requests in the queue, setting creditProcessing to false");
+         x
           creditProcessing = false;
       }
   }
