@@ -7308,7 +7308,7 @@ async function getUserParents(req, res) {
     res.status(200).json({
       success: true,
       message: 'parent users fetched successfully',
-      data: parentUsers
+      data: parentUserNames
 
     });
   } catch (error) {
