@@ -7299,10 +7299,14 @@ async function getUserParents(req, res) {
      const user_id =20243
     let parentUserIds = await getParents(user.userId);
     console.lgo("-=-=-=-=-=-=--=-=-= parentUserIds ",parentUserIds)
+    let parentUsers = await User.find(
+      { userId: { $in: parentUserIds } },
+      { userName: 1, _id: 0 }
+    );
     res.status(200).json({
       success: true,
       message: 'Duplicate entries fetched successfully',
-      data: parentUserIds
+      data: parentUsers
 
     });
   } catch (error) {
