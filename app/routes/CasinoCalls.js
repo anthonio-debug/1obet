@@ -953,7 +953,7 @@ async function processCreditQueue() {
       await session.commitTransaction(); // Commit the transaction after processing
       console.log("Transaction committed successfully");
 
-      const updatedUser = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
+      const updatedUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
       console.log("Updated user retrieved:", updatedUser);
       
       return res.json({
