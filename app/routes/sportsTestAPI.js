@@ -7305,7 +7305,7 @@ async function getUserParents(req, res) {
     );
     res.status(200).json({
       success: true,
-      message: 'Duplicate entries fetched successfully',
+      message: 'parent users fetched successfully',
       data: parentUsers
 
     });
