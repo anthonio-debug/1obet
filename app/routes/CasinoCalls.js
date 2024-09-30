@@ -868,6 +868,7 @@ const creditRequestQueue = [];
 // Function to process the credit request queue
 // Function to process the credit request queue
 async function processCreditQueue() {
+  console.log("creditRequestQueue.length       ========".creditRequestQueue.length)
   if (creditRequestQueue.length === 0) {
     creditProcessing = false;
     return;
