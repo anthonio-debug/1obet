@@ -6233,7 +6233,6 @@ async function eventsResult(betData) {
       
       if (!response?.data?.result) return;
       const resData = response.data.result;
-      console.log("----------------------- resData --------------------->> ",resData);
       results = [
         {
           winnerSelectionId: getWinnerSelectionId(resData[0]),
@@ -6244,6 +6243,7 @@ async function eventsResult(betData) {
     }
     //console.log("results.length -> " + results.length)
     if (results.length > 0) {
+      console.log("----------------------- results.length --------------------->> ");
       const result = results[0];
       if (!result.winnerSelectionId) return;
       let newRecord = new resultRecords({
@@ -6266,6 +6266,8 @@ async function eventsResult(betData) {
 
 
       await newRecord.save();
+      console.log("[[[[[[[[[[[[[[ newRecord ]]]]]]]]]]]]]]]", newRecord);
+      
       //Sports Results Saved
       //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
       await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
@@ -6415,7 +6417,6 @@ async function racingResult(betData) {
 ////////////////////////////////////////////////////////////////////////////////
 
 function getWinnerSelectionId(listMarketBookResult) {
-  console.log("get winnig selectin id  ------------===-==---=-=");
   
   if (!listMarketBookResult) return null;
   let winnerSelectionId = null;
