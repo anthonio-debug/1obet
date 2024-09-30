@@ -6225,7 +6225,9 @@ async function eventsResult(betData) {
 
       const url = `${config.sportsAPIUrl}/listMarketBook`;
       const requestData = {
-        marketIds: [betData.marketId]
+        // marketIds: [betData.marketId]
+        marketIds: "1.233735651"
+
       };
       const response = await axios.post(url, requestData, header);
       console.log("----------------------- response.data --------------------->> ",response.data);
