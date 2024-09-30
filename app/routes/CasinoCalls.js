@@ -431,7 +431,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           amount: remainingAmount,
           balance: updatedavailableBalance,
           availableBalance: updatedavailableBalance,
-          maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + remainingAmount : remainingAmount,
+          maxWithdraw: updatedavailableBalance,
           calledArea: " difference < 2 win 0 ",
           cashOrCredit: "Bet",
           cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
