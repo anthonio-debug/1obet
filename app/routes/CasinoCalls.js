@@ -884,16 +884,14 @@ async function processCreditQueue() {
       const payload = req.query;
       const transactionId = payload.transaction_id;
 
-      // Find the user with the session
       const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
       if (!currentUser) {
           await session.abortTransaction();
           return res.json({ status: '500', msg: `Internal Error: User not found` });
       }
 
-      // Check if the transaction ID is already processed
       if (transactionIdMap.has(transactionId)) {
-          await session.commitTransaction(); // Commit if it's already processed
+          await session.commitTransaction();
           return res.json({
               status: 200,
               balance: currentUser.availableBalance / casinoMultiples,
@@ -914,7 +912,6 @@ async function processCreditQueue() {
           return res.json({ status: 403, msg: 'INCORRECT_KEY_VALIDATION' });
       }
 
-      // Check if user is still valid
       const user = await User.findOne(
           { remoteId: parseInt(payload.remote_id) },
           { session, readPreference: 'primary' }
@@ -925,16 +922,14 @@ async function processCreditQueue() {
           return res.json({ status: '500', msg: `Internal Error: User not found` });
       }
 
-      // Check if betting is allowed
       const checkMarketBlockedResponse = await checkMarketBlocked(user);
       if (checkMarketBlockedResponse === 1) {
           await session.abortTransaction();
           return res.json({ status: '500', msg: 'Betting is not allowed!' });
       }
-console.log("hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
-      // Process the credit transaction
+
+      console.log("Calling WinLoseTransManagement with payload:", payload); // Add this log
       await session.withTransaction(async () => {
-          // Check the amount validity
           if (parseInt(payload.amount) < 0) {
               await session.abortTransaction();
               return res.json({
@@ -942,16 +937,14 @@ console.log("hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
                   balance: user.availableBalance / casinoMultiples,
               });
           } else {
-              // Call the WinLoseTransManagement function
+              // Ensure you are awaiting this call if it's an async function
               const response = await WinLoseTransManagement(0, payload, user, 1, res, session);
-              // The commitTransaction is moved to the end of this block
+              console.log("Response from WinLoseTransManagement:", response); // Log the response
           }
       });
 
-      // Commit the transaction only if everything went well
       await session.commitTransaction();
 
-      // Retrieve updated user data
       const updatedUser = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
       return res.json({
           status: 200,
@@ -971,6 +964,7 @@ console.log("hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee")
       }
   }
 }
+
 
 
 
