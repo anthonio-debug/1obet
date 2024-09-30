@@ -992,7 +992,6 @@ function getLedgerDetails2(req, res) {
 
 // }
 
-
 function getdeopsitDetailsCash(req, res) {
   try {
     const errors = validationResult(req);
@@ -1023,12 +1022,8 @@ function getdeopsitDetailsCash(req, res) {
           userId: Number(req.decoded.userId),
           cashOrCredit: "Cash",
           $and: [
-            {
-              createdAt: { $gte: req.body.startDate }
-            },
-            {
-              createdAt: { $lte: req.body.endDate }
-            }
+            { createdAt: { $gte: req.body.startDate } },
+            { createdAt: { $lte: req.body.endDate } }
           ]
         }
       }];
@@ -1036,7 +1031,7 @@ function getdeopsitDetailsCash(req, res) {
       const userRole = user.role;
 
       if (userRole !== '5' && req.body.type) {
-        cashPipeline.push({ $match: { cashOrCredit: req.body.type }, });
+        cashPipeline.push({ $match: { cashOrCredit: req.body.type } });
       }
 
       if (req.body.searchValue) {
@@ -1068,18 +1063,7 @@ function getdeopsitDetailsCash(req, res) {
 
       cashPipeline.push({
         $group: {
-          _id: {
-            $cond: {
-              if: { $in: ["$cashOrCredit", ['Cash']] },
-              then: "$_id",
-              else: {
-                matchId: "$matchId",
-                marketId: "$marketId",
-                betSession: "$betSession",
-                roundId: "$roundId"
-              }
-            }
-          },
+          _id: "$_id",  // Use the original ID directly
           originalId: { $first: "$_id" },
           description: { $first: "$description" },
           amount: { $sum: "$amount" },
@@ -1096,6 +1080,7 @@ function getdeopsitDetailsCash(req, res) {
           betId: { $first: "$betId" },
           userId: { $first: "$userId" },
           matchId: { $first: "$matchId" },
+          // Add other fields as necessary
         },
       });
 
@@ -1123,6 +1108,7 @@ function getdeopsitDetailsCash(req, res) {
                 result[0].results[i].fancyData = betInfo?.fancyData;
                 result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
                 result[0].results[i].roundId = betInfo?.roundId;
+                result[0].results[i].subMarketId = betInfo?.subMarketId;
               } catch (err) {
                 continue;
               }
@@ -1130,16 +1116,9 @@ function getdeopsitDetailsCash(req, res) {
           }
         }
 
-        if (
-          err ||
-          !result ||
-          result.length === 0 ||
-          result[0].results.length === 0
-        ) {
+        if (err || !result || result.length === 0 || result[0].results.length === 0) {
           console.log('Error:', err);
           console.log('Result:', result);
-          console.log('Result length:', result ? result.length : 'result is null or undefined');
-          console.log('First result\'s results length:', result && result[0] ? result[0].results.length : 'first result is null or undefined');
           return res.status(200).send({ message: 'Deposit record not found' });
         }
 
@@ -1161,8 +1140,6 @@ function getdeopsitDetailsCash(req, res) {
     res.status(500).json({ success: false, msg: "Failed to get Ledger Detail info" });
   }
 }
-
-
 
 function getdepositDetailsCredit(req, res) {
   try {
