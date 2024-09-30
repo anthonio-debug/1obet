@@ -439,7 +439,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
           betId: payload.transaction_id,
           roundId: payload.round_id,
-          calledArea: "difference > 0",
+          
           event: GameName,
           sportsId: "6",
           marketId: payload.game_id,
