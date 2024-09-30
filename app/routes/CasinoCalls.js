@@ -891,7 +891,7 @@ async function processCreditQueue() {
       console.log("Payload received:", payload);
       const transactionId = payload.transaction_id;
 
-      const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) }, { session });
+      const currentUser = await User.findOne({ remoteId: parseInt(payload.remote_id) });
       console.log("Current user retrieved:", currentUser);
 
       if (!currentUser) {
