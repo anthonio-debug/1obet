@@ -6239,24 +6239,24 @@ async function eventsResult(betData) {
           manuelClose: false
         }
       ];
-      console.log("----------------------- results --------------------->> ",results);
     }
     //console.log("results.length -> " + results.length)
     if (results.length > 0) {
-      console.log("----------------------- results.length --------------------->> ");
       const result = results[0];
+      console.log("----------------------- results --------------------->> ",result);
       if (!result.winnerSelectionId) return;
       let newRecord = new resultRecords({
         eventId: betData.matchId,
         marketData: betData.marketId,
         resultData: result.winnerSelectionId
       });
-
+      
       const bets = await Bets.find({
         marketId: betData.marketId,
         sportsId: betData.sportsId,
         status: 1
       });
+      console.log("----------------------- bets --------------------->> ",bets);
 
       // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
 
