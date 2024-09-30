@@ -6230,16 +6230,17 @@ async function eventsResult(betData) {
 
       };
       const response = await axios.post(url, requestData, header);
-      console.log("----------------------- response.data --------------------->> ",response.data.result[0]);
       
       if (!response?.data?.result) return;
       const resData = response.data.result;
+      console.log("----------------------- resData --------------------->> ",resData);
       results = [
         {
           winnerSelectionId: getWinnerSelectionId(resData[0]),
           manuelClose: false
         }
       ];
+      console.log("----------------------- results --------------------->> ",results);
     }
     //console.log("results.length -> " + results.length)
     if (results.length > 0) {
@@ -6414,9 +6415,12 @@ async function racingResult(betData) {
 ////////////////////////////////////////////////////////////////////////////////
 
 function getWinnerSelectionId(listMarketBookResult) {
+  console.log("get winnig selectin id  ------------===-==---=-=");
+  
   if (!listMarketBookResult) return null;
   let winnerSelectionId = null;
   const runners = listMarketBookResult.runners || [];
+  console.log("runners  ------------===-==---=-=", runners);
   for (const runner of runners) {
     if (runner.status === 'WINNER') {
       winnerSelectionId = runner.selectionId;
