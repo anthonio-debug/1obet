@@ -5914,7 +5914,7 @@ async function getUserBetsRecords(req, res) {
           "$match": {
             "status": { "$ne": 1 },
             "userId": user_id,
-            "marketId": market_id
+            ...(market_id ? { "marketId": market_id } : {})
           }
         },
         {
@@ -5998,6 +5998,8 @@ async function getUserBetsRecords(req, res) {
             "betSatteledTime": { $toDate: { $arrayElemAt: ["$depositsDetails.date", 0] } },
             "userName": { "$arrayElemAt": ["$userDetails.userName", 0] },
             "exposure": { "$arrayElemAt": ["$userDetails.exposure", 0] },
+            "balanceInUserColec": { "$arrayElemAt": ["$userDetails.balance", 0] },
+            "avlbleBalanceInUserColec": { "$arrayElemAt": ["$userDetails.availableBalance", 0] },
             "amount": { "$arrayElemAt": ["$depositsDetails.amount", 0] },
             "user_prev_balance": { "$arrayElemAt": ["$exposureDetails.user_prev_balance", 0] },
             "user_prev_exposure": { "$arrayElemAt": ["$exposureDetails.user_prev_exposure", 0] },
