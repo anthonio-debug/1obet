@@ -6230,7 +6230,7 @@ async function eventsResult(betData) {
 
       };
       const response = await axios.post(url, requestData, header);
-      console.log("----------------------- response.data --------------------->> ",response.data[0]);
+      console.log("----------------------- response.data --------------------->> ",response.data.result[0]);
       
       if (!response?.data?.result) return;
       const resData = response.data.result;
