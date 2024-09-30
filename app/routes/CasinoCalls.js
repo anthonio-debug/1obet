@@ -418,7 +418,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
               tempExposure: 0,
             }
           },
-          { session }
+     
         );
 
         const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
