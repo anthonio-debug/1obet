@@ -122,7 +122,7 @@ async function findAndProcessTransactions(user) {
       // Check if tran._id is already a valid ObjectId
       let tranId;
       if (mongoose.Types.ObjectId.isValid(tran._id)) {
-        tranId = tran._id instanceof mongoose.Types.ObjectId ? tran._id : mongoose.Types.ObjectId(tran._id);
+        tranId = tran._id instanceof mongoose.Types.ObjectId ? tran._id.toString() : mongoose.Types.ObjectId(tran._id);
       } else {
         console.error(`Invalid ObjectId for transaction: ${tran._id}`);
         continue; // Skip this iteration if tran._id is not a valid ObjectId
