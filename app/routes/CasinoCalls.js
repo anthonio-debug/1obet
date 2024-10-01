@@ -12,6 +12,7 @@ const { getParents } = require("./bets");
 const SelectedCasino = require("../models/selectedCasino");
 const path = require('path');
 const log = require('log-to-file');
+const CasinoCalls = require('../models/casinoCalls');
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const saltKey = process.env.saltKey;
@@ -49,9 +50,50 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
+async function findAndProcessTransactions(payload) {
+  try {
+    const groupedTransactions = await CasinoCalls.aggregate([
+      { $match: { gameplay_final: 1 } },
 
+      {
+        $group: {
+          _id: "$round_id", 
+        }
+      }
+    ]);  
+
+    if (!transactions || transactions.length === 0) {
+      console.log('No transactions found for the given round_id and username.');
+      return;
+    }
+
+    let totalCreditAmount = 0;
+    let totalDebitAmount = 0;
+
+    for (const transaction of groupedTransactions) {
+      const roundIds = await CasinoCalls.find({ round_id: transaction._id });
+  
+      roundIds.forEach(rounds => {
+        if (rounds.action === 'credit') {
+          totalCreditAmount += rounds.amount;
+        }
+        if (rounds.action === 'debit') {
+          totalDebitAmount += rounds.amount;
+        }
+      });
+    }
+
+    console.log('Total credit amount:', totalCreditAmount);
+    console.log('Total debit amount:', totalDebitAmount);
+  } catch (error) {
+    console.error('Error processing transactions:', error);
+  }
+}
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
+
+
+    findAndProcessTransactions(payload)
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
 
     /*
