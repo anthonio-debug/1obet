@@ -73,7 +73,7 @@ async function findAndProcessTransactions(user) {
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
-     
+      return;
     }
 
     let totalCreditAmount = 0;
@@ -82,9 +82,9 @@ async function findAndProcessTransactions(user) {
 
     for (const tran of groupedTransactions) {
       const roundIds = await CasinoCalls.find({ round_id: tran._id });
-  
-      console.log("rouuuuuuuuuuuuuuuuuuuundID=========",tran._id.toString())
-    
+
+      console.log("rouuuuuuuuuuuuuuuuuuuundID=========", tran._id.toString());
+
       for (const rounds of roundIds) {
         console.log("userName=========", rounds.username);
         
@@ -97,39 +97,47 @@ async function findAndProcessTransactions(user) {
         if (rounds.action === 'rollback') {
           totalRollBackAmount += Number(rounds.amount);
         }
-        
-        
       }
+
       const user = await users.findOne({ remoteId: Number(tran.remote_id) });
       
-        adjustedNewExposure = user.exposure + totalDebitAmount;
-        adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
-  
-        await users.updateOne(
-          { _id: user._id },
-          {
-            $set: {
-             // availableBalance: updatedavailableBalance,
-              exposure: adjustedNewExposure,
-              tempExposure: adjustedNewTempExposure
-            }
-          }
-        );
-     
+      if (!user) {
+        console.log(`User not found for remoteId: ${tran.remote_id}`);
+        continue;
+      }
 
-        const tranId = tran._id instanceof mongoose.Types.ObjectId ? tran._id : mongoose.Types.ObjectId(tran._id);
-        console.log("=========>tranId==========",tranId)
-        await CasinoCalls.updateMany(
-          { round_id: tran._id.toString() },
-          { $set: { isProcessing: false } } 
-        );
-        
+      const adjustedNewExposure = user.exposure + totalDebitAmount;
+      const adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
+
+      await users.updateOne(
+        { _id: user._id },
+        {
+          $set: {
+            exposure: adjustedNewExposure,
+            tempExposure: adjustedNewTempExposure
+          }
+        }
+      );
+
+      // Check if tran._id is already a valid ObjectId
+      let tranId;
+      if (mongoose.Types.ObjectId.isValid(tran._id)) {
+        tranId = tran._id instanceof mongoose.Types.ObjectId ? tran._id : mongoose.Types.ObjectId(tran._id);
+      } else {
+        console.error(`Invalid ObjectId for transaction: ${tran._id}`);
+        continue; // Skip this iteration if tran._id is not a valid ObjectId
+      }
+
+      console.log("=========>tranId==========", tranId);
+      await CasinoCalls.updateMany(
+        { round_id: tran._id.toString() }, // Using toString in case round_id is not ObjectId
+        { $set: { isProcessing: false } }
+      );
+
       console.log('Total credit amount:', totalCreditAmount);
       console.log('Total debit amount:', totalDebitAmount);
       console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
       console.log('Total adjustedNewTempExposure amount:', adjustedNewTempExposure);
-    
-
     }
 
   } catch (error) {
