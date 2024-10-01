@@ -99,10 +99,10 @@ async function findAndProcessTransactions(user) {
         if (rounds.action === 'rollback') {
           totalRollBackAmount += Number(rounds.amount);
         }
-        const user = await users.findOne({ remoteId: Number(rounds.remote_id) });
         
-      
+        
       }
+      const user = await users.findOne({ remoteId: Number(tran.remote_id) });
       
       
         adjustedNewExposure = user.exposure + totalDebitAmount;
