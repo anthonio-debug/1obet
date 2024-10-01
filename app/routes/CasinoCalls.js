@@ -50,7 +50,7 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
-async function findAndProcessTransactions(payload) {
+async function findAndProcessTransactions(user) {
   try {
     const groupedTransactions = await CasinoCalls.aggregate([
       { $match: { gameplay_final: 1 ,isProcessing:true} },
@@ -69,6 +69,7 @@ async function findAndProcessTransactions(payload) {
 
     let totalCreditAmount = 0;
     let totalDebitAmount = 0;
+    let totalRollBackAmount = 0;
 
     for (const tran of groupedTransactions) {
       const roundIds = await CasinoCalls.find({ round_id: tran._id });
@@ -83,10 +84,17 @@ async function findAndProcessTransactions(payload) {
         if (rounds.action === 'debit') {
           totalDebitAmount += Number(rounds.amount);
         }
+        if (rounds.action === 'rollback') {
+          totalRollBackAmount += Number(rounds.amount);
+        }
+
       });
+      
+
       // await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
       console.log('Total credit amount:', totalCreditAmount);
       console.log('Total debit amount:', totalDebitAmount);
+      console.log('Total totalRollBackAmount amount:', totalRollBackAmount);
       console.log('Total difference credit and debit amount:', totalCreditAmount-totalDebitAmount);
     
 
@@ -144,7 +152,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       return 0
     } else if (action === 1) {
-      await findAndProcessTransactions(payload)
+      await findAndProcessTransactions(user)
       console.log("userid=========================>",user.userId)
       // const depositLastBetTime = await Cash.find({ userId: user.userId,  description: "Casino (Casino Hold'em)" }).sort({ _id: -1 });
       // if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[depositLastBetTime.length-1].betDateTime) < 500) {
