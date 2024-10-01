@@ -176,9 +176,13 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         return res.status(400).send({ message: "This game is not allowed!!" })
       }
 
-      const payload1 = payload
-      const c = await new CasinoCallsPayload(payload1)
-      c.save()
+
+      const casinoDebits = new CasinoDebits(payload);
+          await casinoDebits.save();
+
+
+
+     
 
 
 
@@ -670,9 +674,9 @@ async function  casino (req, res) {
   if (!remote_id || !action) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
-  // const payload1 = req.query
-  // const c = await new CasinoCallsPayload(payload1)
-  // c.save()
+  const payload1 = req.query
+  const c = await new CasinoCallsPayload(payload1)
+  c.save()
 
   switch (action) {
 
