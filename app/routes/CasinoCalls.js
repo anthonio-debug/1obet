@@ -15,6 +15,7 @@ const log = require('log-to-file');
 const CasinoCalls = require('../models/casinoCalls');
 const CasinoCallsPAyload = require('../models/casinoCallsPayload');
 const CasinoCallsPayload = require('../models/casinoCallsPayload');
+const { default: mongoose } = require('mongoose');
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const saltKey = process.env.saltKey;
