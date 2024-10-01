@@ -135,6 +135,10 @@ async function findAndProcessTransactions(user) {
         let NewDepositsAvailableBalance = LastDepositsAailableBalance + AmountDeposits
         
         let NewDepositsWithdraw = LastDepositsWithdraw + AmountDeposits
+        console.log('Total AmountDeposits amount:', AmountDeposits);
+        console.log('Total NewDepositsBalance amount:', NewDepositsBalance);
+        console.log('Total NewDepositsAvailableBalance amount:', NewDepositsAvailableBalance);
+        console.log('Total NewDepositsWithdraw amount:', NewDepositsWithdraw);
 
 
 
