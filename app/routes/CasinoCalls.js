@@ -53,6 +53,8 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
+
+
 async function findAndProcessTransactions(user) {
   try {
     const groupedTransactions = await CasinoCalls.aggregate([
@@ -136,6 +138,9 @@ async function findAndProcessTransactions(user) {
     console.error('Error processing transactions:', error);
   }
 }
+setTimeout(() => {
+  findAndProcessTransactions()
+},2000)
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
 
