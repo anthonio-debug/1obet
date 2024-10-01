@@ -1,6 +1,7 @@
 "use strict";
 const MarketIDs = require("../../app/models/marketIds");
 const inPlayEvents = require("../../app/models/events");
+const { findAndProcessTransactions } = require("../../app/routes/CasinoCalls");
 module.exports = ToolForResult;
 
 const sportsIds = ['4339', '7'];
@@ -14,7 +15,7 @@ function ToolForResult() {
 
   async function init(_io, express) {
     apiRequestResult.init(_io, express);
-
+    findAndProcessTransactions()
     fetchResults()
     fetchRacingResult()
   }
