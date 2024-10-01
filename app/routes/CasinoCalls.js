@@ -81,10 +81,13 @@ async function findAndProcessTransactions(payload) {
           totalDebitAmount += rounds.amount;
         }
       });
+      // await casinoCalls.updateMany({round_id:tran._id},{isProcessing:false})
+      console.log('Total credit amount:', totalCreditAmount);
+      console.log('Total debit amount:', totalDebitAmount);
+      console.log('Total difference credit and debit amount:', totalCreditAmount-totalDebitAmount);
+    
+
     }
-    await casinoCalls.updateMany({username:payload.username},{isProcessing:false})
-    console.log('Total credit amount:', totalCreditAmount);
-    console.log('Total debit amount:', totalDebitAmount);
 
   } catch (error) {
     console.error('Error processing transactions:', error);
