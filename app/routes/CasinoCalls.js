@@ -119,14 +119,12 @@ async function findAndProcessTransactions(user) {
         }
       );
 
-      // Check if tran._id is already a valid ObjectId
-      
-
-      console.log("=========>tranId==========", tranId);
-      await CasinoCalls.updateMany(
-        { round_id: tran.round_id}, // Using toString in case round_id is not ObjectId
-        { $set: { isProcessing: false } }
-      );
+  
+   console.log( " tran.round_id tran.round_id tran.round_id",tran.round_id)
+      // await CasinoCalls.updateMany(
+      //   { round_id: tran.round_id}, 
+      //   { $set: { isProcessing: false } }
+      // );
 
       console.log('Total credit amount:', totalCreditAmount);
       console.log('Total debit amount:', totalDebitAmount);
