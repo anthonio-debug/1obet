@@ -115,7 +115,7 @@ async function findAndProcessTransactions(user) {
       Updatedbalance=user.balance+(totalCreditAmount *  casinoMultiples)
       updatedClientPL = user.client + (totalCreditAmount * casinoMultiples)
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-        if(user.userId==22027){
+    
           console.log('Total credit amount:', totalCreditAmount*  casinoMultiples);
         console.log('Total debit amount:', totalDebitAmount*  casinoMultiples);
         console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
@@ -197,7 +197,7 @@ async function findAndProcessTransactions(user) {
 
         // console.log('Total lastMaxWithdraw amount:', lastMaxWithdraw);
       
-        }
+        
         await users.updateOne(
           { _id: user._id },
           {
