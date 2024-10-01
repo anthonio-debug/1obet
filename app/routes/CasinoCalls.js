@@ -75,10 +75,10 @@ async function findAndProcessTransactions(payload) {
   
       roundIds.forEach(rounds => {
         if (rounds.action === 'credit') {
-          totalCreditAmount += rounds.amount;
+          totalCreditAmount += Number(rounds.amount);
         }
         if (rounds.action === 'debit') {
-          totalDebitAmount += rounds.amount;
+          totalDebitAmount += Number(rounds.amount);
         }
       });
       // await casinoCalls.updateMany({round_id:tran._id},{isProcessing:false})
