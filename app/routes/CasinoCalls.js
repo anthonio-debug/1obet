@@ -130,11 +130,11 @@ async function findAndProcessTransactions(user) {
         let AmountDeposits = (totalCreditAmount * casinoMultiples )- (totalDebitAmount * casinoMultiples)
 
 
-        let NewDepositsBalance = LastDepositsBalance + AmountDeposits;
+        let NewDepositsBalance = lastMaxWithdraw.balance + AmountDeposits;
         
-        let NewDepositsAvailableBalance = LastDepositsAailableBalance + AmountDeposits
+        let NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + AmountDeposits
         
-        let NewDepositsWithdraw = LastDepositsWithdraw + AmountDeposits
+        let NewDepositsWithdraw = lastMaxWithdraw.maxWithdraw + AmountDeposits
         console.log('Total AmountDeposits amount:', AmountDeposits);
         console.log('Total NewDepositsBalance amount:', NewDepositsBalance);
         console.log('Total NewDepositsAvailableBalance amount:', NewDepositsAvailableBalance);
