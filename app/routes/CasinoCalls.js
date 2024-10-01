@@ -55,14 +55,20 @@ const checkMarketBlocked = async (user) => {
 async function findAndProcessTransactions(user) {
   try {
     const groupedTransactions = await CasinoCalls.aggregate([
-      { $match: { gameplay_final: 1 ,isProcessing:true} },
-
+      { 
+        $match: { 
+          gameplay_final: 1, 
+          isProcessing: true 
+        } 
+      },
       {
         $group: {
-          _id: "$round_id", 
+          _id: "$round_id",
+          remote_id: { $first: "$remote_id" }, 
+          username: { $first: "$username" }    
         }
       }
-    ]);  
+    ]);
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
@@ -95,7 +101,7 @@ async function findAndProcessTransactions(user) {
       
       }
       
-      adjustedNewExposure = user.exposure + totalDebitAmount;
+        adjustedNewExposure = user.exposure + totalDebitAmount;
         adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
   
         await users.updateOne(
