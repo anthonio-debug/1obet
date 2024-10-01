@@ -116,7 +116,13 @@ async function findAndProcessTransactions(user) {
         );
      
 
-      await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
+        const tranId = tran._id instanceof mongoose.Types.ObjectId ? tran._id : mongoose.Types.ObjectId(tran._id);
+        console.log("=========>tranId==========",tranId)
+        await casinoCalls.updateMany(
+          { round_id: tranId.toString() }, // Match the `round_id` with the proper formatting
+          { $set: { isProcessing: false } } // Make sure to use $set to update fields
+        );
+        
       console.log('Total credit amount:', totalCreditAmount);
       console.log('Total debit amount:', totalDebitAmount);
       console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
