@@ -74,7 +74,9 @@ async function findAndProcessTransactions(payload) {
       const roundIds = await CasinoCalls.find({ round_id: tran._id });
   
       console.log("rouuuuuuuuuuuuuuuuuuuundID=========",tran._id.toString())
+    
       roundIds.forEach(rounds => {
+        console.log("userNAme=========",rounds.username)
         if (rounds.action === 'credit') {
           totalCreditAmount += Number(rounds.amount);
         }
