@@ -91,7 +91,11 @@ async function findAndProcessTransactions(user) {
           totalRollBackAmount += Number(rounds.amount);
         }
         const user = await users.findOne({ remoteId: Number(rounds.remote_id) });
-        adjustedNewExposure = user.exposure + totalDebitAmount;
+        
+      
+      }
+      
+      adjustedNewExposure = user.exposure + totalDebitAmount;
         adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
   
         await users.updateOne(
@@ -105,17 +109,13 @@ async function findAndProcessTransactions(user) {
           },
           { session }
         );
-      
-      }
-      
-      
      
 
       await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
       console.log('Total credit amount:', totalCreditAmount);
       console.log('Total debit amount:', totalDebitAmount);
-      console.log('Total totalRollBackAmount amount:', totalRollBackAmount);
-      console.log('Total difference credit and debit amount:', totalCreditAmount-totalDebitAmount);
+      console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
+      console.log('Total adjustedNewTempExposure amount:', adjustedNewTempExposure);
     
 
     }
