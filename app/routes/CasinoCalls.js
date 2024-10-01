@@ -107,8 +107,8 @@ async function findAndProcessTransactions(user) {
       const user = await users.findOne({ remoteId: Number(tran.remote_id) });
       
       
-        adjustedNewExposure = user.exposure + totalDebitAmount;
-        adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
+        adjustedNewExposure = user.exposure + (totalDebitAmount* casinoMultiples);
+        adjustedNewTempExposure = user.tempExposure - (totalDebitAmount *  casinoMultiples);
         if(user.userId==22027){
           console.log('Total credit amount:', totalCreditAmount);
         console.log('Total debit amount:', totalDebitAmount);
