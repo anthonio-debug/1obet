@@ -62,7 +62,7 @@ async function findAndProcessTransactions(payload) {
       }
     ]);  
 
-    if (!transactions || transactions.length === 0) {
+    if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
       return;
     }
@@ -70,8 +70,8 @@ async function findAndProcessTransactions(payload) {
     let totalCreditAmount = 0;
     let totalDebitAmount = 0;
 
-    for (const groupedTransactions of groupedTransactions) {
-      const roundIds = await CasinoCalls.find({ round_id: groupedTransactions._id });
+    for (const tran of groupedTransactions) {
+      const roundIds = await CasinoCalls.find({ round_id: tran._id });
   
       roundIds.forEach(rounds => {
         if (rounds.action === 'credit') {
