@@ -121,10 +121,10 @@ async function findAndProcessTransactions(user) {
 
   
    console.log( " tran.round_id tran.round_id tran.round_id",tran._id.toString())
-      // await CasinoCalls.updateMany(
-      //   { round_id: tran._id.toString()}, 
-      //   { $set: { isProcessing: false } }
-      // );
+      await CasinoCalls.updateMany(
+        { round_id: tran._id.toString()}, 
+        { $set: { isProcessing: false } }
+      );
 
       console.log('Total credit amount:', totalCreditAmount);
       console.log('Total debit amount:', totalDebitAmount);
