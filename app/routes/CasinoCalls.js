@@ -68,7 +68,9 @@ async function findAndProcessTransactions(user) {
         $group: {
           _id: "$round_id",
           remote_id: { $first: "$remote_id" }, 
-          username: { $first: "$username" }    
+          username: { $first: "$username" },
+          game_id: { $first: "$username" },
+         
         }
       }
     ]);
@@ -144,7 +146,15 @@ async function findAndProcessTransactions(user) {
         if(AmountDeposits<0){
           upMovingAmount = Number(AmountDeposits);
         }
-
+        const gamesList = await SelectedCasino.findOne(
+          { "games.id": tran.game_id },
+          { "games.$": 1 }
+        );
+  
+          const game = gamesList?.games[0];
+          let GameName = 'N/A';
+        if (game)
+          GameName = game.name
 
         const now = new Date();
         const year = now.getFullYear().toString();
@@ -169,17 +179,17 @@ async function findAndProcessTransactions(user) {
           cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
           credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
           creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
-          betId: payload.transaction_id,
           cashOrCredit: "Bet",
           sportsId: "6",
           event: GameName,
-          roundId: payload.round_id,
-          marketId: payload.game_id,
-          matchId: payload.game_id,
+          roundId: tran.round_id,
+          marketId: tran.game_id,
+          matchId: tran.game_id,
           upLineAmount: upMovingAmount
         }
 
-        allTrans.push(betTransaction);
+          const deposit = new Cash(betTransaction)
+          deposit.save();
 
 
         
