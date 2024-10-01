@@ -111,7 +111,7 @@ async function findAndProcessTransactions(user) {
       adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples);
       updatedavailableBalance=user.availableBalance+(totalCreditAmount *  casinoMultiples)
       Updatedbalance=user.balance+(totalCreditAmount *  casinoMultiples)
-      updatedClientPL = user.clientPL + (totalCreditAmount * casinoMultiples)
+      updatedClientPL = user.client + (totalCreditAmount * casinoMultiples)
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
         if(user.userId==22027){
           console.log('Total credit amount:', totalCreditAmount*  casinoMultiples);
@@ -140,7 +140,49 @@ async function findAndProcessTransactions(user) {
         console.log('Total NewDepositsAvailableBalance amount:', NewDepositsAvailableBalance);
         console.log('Total NewDepositsWithdraw amount:', NewDepositsWithdraw);
 
+        const upMovingAmount = 0;
+        if(AmountDeposits<0){
+          upMovingAmount = Number(AmountDeposits);
+        }
 
+
+        const now = new Date();
+        const year = now.getFullYear().toString();
+        const month = (now.getMonth() + 1).toString().padStart(2, '0');
+        const day = now.getDate().toString().padStart(2, '0');
+        const formattedDate = `${year}-${month}-${day}`;
+        let commissionFrom = user.userId;
+        const betTime = new Date().getTime();
+        let betTransaction = {
+          userId: user.userId,
+          description: `Casino (${GameName})`,
+          date: now.getTime(),
+          createdAt: formattedDate,
+          commissionFrom: commissionFrom,
+          createdBy: 0,
+          betDateTime: betTime,
+          casinoBetAmount: totalDebitAmount,
+          amount: AmountDeposits,
+          balance: NewDepositsBalance,
+          availableBalance: NewDepositsAvailableBalance,
+          maxWithdraw: NewDepositsWithdraw,  // max withdraw cant be negative
+          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+          credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+          creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+          betId: payload.transaction_id,
+          cashOrCredit: "Bet",
+          sportsId: "6",
+          event: GameName,
+          roundId: payload.round_id,
+          marketId: payload.game_id,
+          matchId: payload.game_id,
+          upLineAmount: upMovingAmount
+        }
+
+        allTrans.push(betTransaction);
+
+
+        
 
 
         // console.log('Total lastMaxWithdraw amount:', lastMaxWithdraw);
