@@ -110,7 +110,7 @@ async function findAndProcessTransactions(user) {
         { session }
       );
 
-      // await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
+      await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
       console.log('Total credit amount:', totalCreditAmount);
       console.log('Total debit amount:', totalDebitAmount);
       console.log('Total totalRollBackAmount amount:', totalRollBackAmount);
