@@ -53,7 +53,7 @@ const checkMarketBlocked = async (user) => {
 async function findAndProcessTransactions(payload) {
   try {
     const groupedTransactions = await CasinoCalls.aggregate([
-      { $match: { gameplay_final: 1 } },
+      { $match: { gameplay_final: 1 ,game_id:payload.game_id} },
 
       {
         $group: {
