@@ -211,7 +211,8 @@ async function findAndProcessTransactions(user) {
         );
      
 
-      await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
+      await casinoCalls.updateMany({ round_id: tran._id.toString() },
+        {$set: {isProcessing: false} })
       
     
 
