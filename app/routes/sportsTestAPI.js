@@ -5901,7 +5901,7 @@ async function getUserBetsRecords(req, res) {
   //:user_id/:market_id
   const { user_id, market_id, isCasino, sortOrder } = req.body
   // const id=+user_id
-  console.log(user_id, "---------------------", market_id, "+++++++++++++", isCasino);
+  console.log(user_id, "---------------------", market_id, "+++++++++++++", sortOrder);
 
   try {
     const currentTime = Date.now()
@@ -6019,12 +6019,12 @@ async function getUserBetsRecords(req, res) {
           "$match": {
             // "status": { "$ne": 1 },
             "userId": user_id,
-            "marketId": market_id
+            ...(market_id ? { "marketId": market_id } : {})
           }
         },
         {
           "$sort": {
-            "_id": -1
+            "_id": sortOrder
           }
         },
         {
