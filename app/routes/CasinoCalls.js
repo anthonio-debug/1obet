@@ -1146,8 +1146,8 @@ async function  casino (req, res) {
   if (!remote_id || !action) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
-  const payload = req.query
-  const c = await new CasinoCallsPayload(payload)
+  const payload1 = req.query
+  const c = await new CasinoCallsPayload(payload1)
   c.save()
 
   switch (action) {
