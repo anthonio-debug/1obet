@@ -99,7 +99,7 @@ async function findAndProcessTransactions(user) {
         
         
       }
-      const user = await users.findOne({ remoteId: Number(rounds.remote_id) });
+      const user = await users.findOne({ remoteId: Number(tran.remote_id) });
       
         adjustedNewExposure = user.exposure + totalDebitAmount;
         adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
