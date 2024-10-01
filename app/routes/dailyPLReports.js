@@ -6,18 +6,19 @@ const User = require('../models/user');
 const Events = require('../models/events');
 const loginRouter = express.Router();
 
-const getDailyPLReport = async(req, res) =>{
+const getDailyPLReport = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId      = req.decoded.userId;
-  const childUsers  = await User.distinct("userId", { createdBy:  userId });
-  const users       = [userId, ...childUsers]
+  const userId = req.decoded.userId;
+  const childUsers = await User.distinct("userId", { createdBy: userId });
+  const { createdBy } = await User.findOne({ userId: userId })
+  const users = [userId, ...childUsers, createdBy]
 
   const response = await CashDeposit.aggregate([
-    {  
+    {
       $match: {
         userId: {
           $in: users
@@ -25,10 +26,10 @@ const getDailyPLReport = async(req, res) =>{
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
-            createdAt: {$gte: req.query.startDate}
+            createdAt: { $gte: req.query.startDate }
           },
           {
-            createdAt: {$lte: req.query.endDate}
+            createdAt: { $lte: req.query.endDate }
           }
         ]
       }
@@ -40,16 +41,22 @@ const getDailyPLReport = async(req, res) =>{
         foreignField: 'userId',
         as: 'userInfo'
       }
-    }, 
+    },
     {
-      $group:{
+      $group: {
         _id: "$userId",
-        amount: { $sum: "$amount"},
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
+        amount: { $sum: "$amount" },
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
+        role: { $first: { $arrayElemAt: ["$userInfo.role", 0] } },
+        userId: { $first: { $arrayElemAt: ["$userInfo.userId", 0] } }
+      }
+    },
+    {
+      $sort: {
+        role: -1
       }
     }
   ]);
-
   return res.send({
     success: true,
     message: 'Commission reports',
