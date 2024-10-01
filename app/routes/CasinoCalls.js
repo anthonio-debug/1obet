@@ -130,7 +130,7 @@ async function findAndProcessTransactions(user) {
 
       console.log("=========>tranId==========", tranId);
       await CasinoCalls.updateMany(
-        { round_id: tran._id.toString() }, // Using toString in case round_id is not ObjectId
+        { round_id: tranId}, // Using toString in case round_id is not ObjectId
         { $set: { isProcessing: false } }
       );
 
