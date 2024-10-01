@@ -118,7 +118,7 @@ async function findAndProcessTransactions(user) {
 
         const tranId = tran._id instanceof mongoose.Types.ObjectId ? tran._id : mongoose.Types.ObjectId(tran._id);
         console.log("=========>tranId==========",tranId)
-        await casinoCalls.updateMany(
+        await CasinoCalls.updateMany(
           { round_id: tran._id.toString() },
           { $set: { isProcessing: false } } 
         );
