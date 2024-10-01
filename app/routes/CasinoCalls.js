@@ -78,8 +78,9 @@ async function findAndProcessTransactions(user) {
   
       console.log("rouuuuuuuuuuuuuuuuuuuundID=========",tran._id.toString())
     
-      roundIds.forEach(rounds => {
-        console.log("userNAme=========",rounds.username)
+      for (const rounds of roundIds) {
+        console.log("userName=========", rounds.username);
+        
         if (rounds.action === 'credit') {
           totalCreditAmount += Number(rounds.amount);
         }
@@ -89,9 +90,10 @@ async function findAndProcessTransactions(user) {
         if (rounds.action === 'rollback') {
           totalRollBackAmount += Number(rounds.amount);
         }
+      
         const user = await users.findOne({ remoteId: Number(rounds.remote_id) });
-
-      });
+      }
+      
       
       adjustedNewExposure = user.exposure + totalDebitAmount;
       adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
