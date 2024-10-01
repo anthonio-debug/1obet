@@ -64,7 +64,7 @@ async function findAndProcessTransactions(user) {
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
-      return;
+     
     }
 
     let totalCreditAmount = 0;
