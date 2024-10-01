@@ -142,7 +142,7 @@ async function findAndProcessTransactions(user) {
         console.log('Total NewDepositsAvailableBalance amount:', NewDepositsAvailableBalance);
         console.log('Total NewDepositsWithdraw amount:', NewDepositsWithdraw);
 
-        const upMovingAmount = 0;
+        var upMovingAmount = 0;
         if(AmountDeposits<0){
           upMovingAmount = Number(AmountDeposits);
         }
