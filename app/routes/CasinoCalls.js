@@ -93,7 +93,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
   try {
 
 
-    findAndProcessTransactions(payload)
+   await findAndProcessTransactions(payload)
     const user = await users.findOne({ remoteId: Number(payload.remote_id) });
 
     /*
