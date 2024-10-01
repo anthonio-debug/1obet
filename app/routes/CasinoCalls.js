@@ -70,8 +70,8 @@ async function findAndProcessTransactions(payload) {
     let totalCreditAmount = 0;
     let totalDebitAmount = 0;
 
-    for (const transaction of groupedTransactions) {
-      const roundIds = await CasinoCalls.find({ round_id: transaction._id });
+    for (const groupedTransactions of groupedTransactions) {
+      const roundIds = await CasinoCalls.find({ round_id: groupedTransactions._id });
   
       roundIds.forEach(rounds => {
         if (rounds.action === 'credit') {
