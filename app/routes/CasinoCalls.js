@@ -13,6 +13,7 @@ const SelectedCasino = require("../models/selectedCasino");
 const path = require('path');
 const log = require('log-to-file');
 const CasinoCalls = require('../models/casinoCalls');
+const CasinoCallsPAyload = require('../models/casinoCallsPayload');
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const saltKey = process.env.saltKey;
@@ -152,7 +153,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       return 0
     } else if (action === 1) {
-      await findAndProcessTransactions(user)
+      // await findAndProcessTransactions(user)
       console.log("userid=========================>",user.userId)
       // const depositLastBetTime = await Cash.find({ userId: user.userId,  description: "Casino (Casino Hold'em)" }).sort({ _id: -1 });
       // if (depositLastBetTime.length > 0 && (betTime - depositLastBetTime[depositLastBetTime.length-1].betDateTime) < 500) {
@@ -714,6 +715,7 @@ async function balanceFun(req, res) {
 
   try {
     const user = await User.findOne({ remoteId: payload.remote_id }).exec();
+   
 
     if (!user) {
       return res.json({ status: 500, msg: 'Internal error no user' });
@@ -1132,8 +1134,10 @@ async function rollbackFun(req, res) {
   }
 }
 
-function casino(req, res) {
+async function  casino (req, res) {
   const { action, remote_id } = req.query;
+  
+
   if (remote_id == 6896479) {
   }
 
@@ -1141,6 +1145,12 @@ function casino(req, res) {
   if (!remote_id || !action) {
     return res.send({ status: '400', msg: 'Invalid Request' });
   }
+  const payload = {
+    remote_id,
+    action,
+    jsonData:JSON.stringify(req.query)
+   }
+   const casinocallPayload= await new CasinoCallsPAyload(payload)
   switch (action) {
 
     case 'balance':
