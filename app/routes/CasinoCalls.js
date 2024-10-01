@@ -119,6 +119,9 @@ async function findAndProcessTransactions(user) {
         console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
         console.log('Total adjustedNewTempExposure amount:', adjustedNewTempExposure);
         console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
+        console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
+        console.log('Total Updatedbalance amount:', Updatedbalance);
+        console.log('Total lastMaxWithdraw amount:', lastMaxWithdraw);
         }
         // await users.updateOne(
         //   { _id: user._id },
