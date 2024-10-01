@@ -101,6 +101,7 @@ async function findAndProcessTransactions(user) {
 
       const user = await users.findOne({ remoteId: Number(tran.remote_id) });
       
+      
       if (!user) {
         console.log(`User not found for remoteId: ${tran.remote_id}`);
         continue;
@@ -109,7 +110,7 @@ async function findAndProcessTransactions(user) {
       adjustedNewExposure = user.exposure + (totalDebitAmount*casinoMultiples);
       adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples)
       
-      
+
 
       // await users.updateOne(
       //   { _id: user._id },
