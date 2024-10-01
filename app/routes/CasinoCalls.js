@@ -80,6 +80,8 @@ async function findAndProcessTransactions(user) {
     let totalRollBackAmount = 0;
 
     for (const tran of groupedTransactions) {
+      let adjustedNewExposure = 0;
+      let adjustedNewTempExposure = 0;
       const roundIds = await CasinoCalls.find({ round_id: tran._id });
   
       console.log("rouuuuuuuuuuuuuuuuuuuundID=========",tran._id.toString())
@@ -96,32 +98,40 @@ async function findAndProcessTransactions(user) {
         if (rounds.action === 'rollback') {
           totalRollBackAmount += Number(rounds.amount);
         }
+        const user = await users.findOne({ remoteId: Number(rounds.remote_id) });
         
-        
-      }
-      const user = await users.findOne({ remoteId: Number(tran.remote_id) });
       
-        adjustedNewExposure = user.exposure + totalDebitAmount;
-        adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
-  
-        await users.updateOne(
-          { _id: user._id },
-          {
-            $set: {
-             // availableBalance: updatedavailableBalance,
-              exposure: adjustedNewExposure,
-              tempExposure: adjustedNewTempExposure
-            }
-          },
-         
-        );
-     
-
-      await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
-      console.log('Total credit amount:', totalCreditAmount);
+      }
+      
+      if(user._id==22027){
+        console.log('Total credit amount:', totalCreditAmount);
       console.log('Total debit amount:', totalDebitAmount);
       console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
       console.log('Total adjustedNewTempExposure amount:', adjustedNewTempExposure);
+      }
+        adjustedNewExposure = user.exposure + totalDebitAmount;
+        adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
+        if(user._id==22027){
+          console.log('Total credit amount:', totalCreditAmount);
+        console.log('Total debit amount:', totalDebitAmount);
+        console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
+        console.log('Total adjustedNewTempExposure amount:', adjustedNewTempExposure);
+        }
+        // await users.updateOne(
+        //   { _id: user._id },
+        //   {
+        //     $set: {
+        //      // availableBalance: updatedavailableBalance,
+        //       exposure: adjustedNewExposure,
+        //       tempExposure: adjustedNewTempExposure
+        //     }
+        //   },
+        //   { session }
+        // );
+     
+
+      //await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
+      
     
 
     }
