@@ -106,8 +106,8 @@ async function findAndProcessTransactions(user) {
         continue;
       }
 
-      const adjustedNewExposure = user.exposure + totalDebitAmount;
-      const adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
+      adjustedNewExposure = user.exposure + (totalDebitAmount*casinoMultiples);
+      adjustedNewTempExposure = user.tempExposure - (totalDebitAmount*casinoMultiples)
 
       await users.updateOne(
         { _id: user._id },
@@ -120,9 +120,9 @@ async function findAndProcessTransactions(user) {
       );
 
   
-   console.log( " tran.round_id tran.round_id tran.round_id",tran.round_id)
+   console.log( " tran.round_id tran.round_id tran.round_id",tran._id.toString())
       // await CasinoCalls.updateMany(
-      //   { round_id: tran.round_id}, 
+      //   { round_id: tran._id.toString()}, 
       //   { $set: { isProcessing: false } }
       // );
 
