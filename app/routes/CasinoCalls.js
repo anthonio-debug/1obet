@@ -112,8 +112,7 @@ async function findAndProcessTransactions(user) {
               exposure: adjustedNewExposure,
               tempExposure: adjustedNewTempExposure
             }
-          },
-         
+          }
         );
      
 
