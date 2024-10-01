@@ -198,20 +198,20 @@ async function findAndProcessTransactions(user) {
         // console.log('Total lastMaxWithdraw amount:', lastMaxWithdraw);
       
         }
-        // await users.updateOne(
-        //   { _id: user._id },
-        //   {
-        //     $set: {
-        //      // availableBalance: updatedavailableBalance,
-        //       exposure: adjustedNewExposure,
-        //       tempExposure: adjustedNewTempExposure
-        //     }
-        //   },
-        //   { session }
-        // );
+        await users.updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              availableBalance: updatedavailableBalance,
+              exposure: adjustedNewExposure,
+              tempExposure: adjustedNewTempExposure
+            }
+          },
+          { session }
+        );
      
 
-      //await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
+      await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
       
     
 
