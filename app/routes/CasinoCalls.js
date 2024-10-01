@@ -107,17 +107,19 @@ async function findAndProcessTransactions(user) {
       }
 
       adjustedNewExposure = user.exposure + (totalDebitAmount*casinoMultiples);
-      adjustedNewTempExposure = user.tempExposure - (totalDebitAmount*casinoMultiples)
+      adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples)
+      
+      
 
-      await users.updateOne(
-        { _id: user._id },
-        {
-          $set: {
-            exposure: adjustedNewExposure,
-            tempExposure: adjustedNewTempExposure
-          }
-        }
-      );
+      // await users.updateOne(
+      //   { _id: user._id },
+      //   {
+      //     $set: {
+      //       exposure: adjustedNewExposure,
+      //       tempExposure: adjustedNewTempExposure
+      //     }
+      //   }
+      // );
 
   
  
