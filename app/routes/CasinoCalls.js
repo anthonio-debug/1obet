@@ -1275,7 +1275,7 @@ async function  casino (req, res) {
     case 'debit':
       return debitFun(req, res);
     case 'credit':
-      return creditFun(req, res,payload);
+      return creditFun(req, res);
     case 'rollback':
       return rollbackFun(req, res);
     default:
