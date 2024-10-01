@@ -4021,7 +4021,7 @@ async function deleteOdds(req, res) {
   try {
     //await Bets.deleteMany({marketId:'1.232738763bm',eventId:'33564157',marketName:'Bookmaker'});
     totalSession = 20;
-
+    await CasinoCalls.updateMany({},{isProcessing:false})
 
     // for (let i = 1; i < totalSession; i++) {
     //   const session = new Session({

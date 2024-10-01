@@ -53,7 +53,7 @@ const checkMarketBlocked = async (user) => {
 async function findAndProcessTransactions(payload) {
   try {
     const groupedTransactions = await CasinoCalls.aggregate([
-      { $match: { gameplay_final: 1 ,game_id:payload.game_id} },
+      { $match: { gameplay_final: 1 ,isProcessing:true} },
 
       {
         $group: {
@@ -82,9 +82,10 @@ async function findAndProcessTransactions(payload) {
         }
       });
     }
-
+    await casinoCalls.updateMany({username:payload.username},{isProcessing:false})
     console.log('Total credit amount:', totalCreditAmount);
     console.log('Total debit amount:', totalDebitAmount);
+
   } catch (error) {
     console.error('Error processing transactions:', error);
   }

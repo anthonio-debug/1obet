@@ -33,7 +33,8 @@ const casinoCallsSchema = new mongoose.Schema({
   jackpot_win_ids: { type: Array, required: false }, // New field: jackpot_win_ids
   jackpot_win_in_amount: { type: Number, required: false }, // New field: jackpot_win_in_amount
   createdAt: { type: Number },
-  updatedAt:  { type: Number },
+  updatedAt: { type: Number },
+  isProcessing:{type:Boolean,default:true}
 });
 
 casinoCallsSchema.pre('save', function (next) {
