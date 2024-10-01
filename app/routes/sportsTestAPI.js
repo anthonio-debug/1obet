@@ -5918,9 +5918,9 @@ console.log();
 
 async function getUserBetsRecords(req, res) {
   //:user_id/:market_id
-  const { user_id, market_id, isCasino } = req.body
+  const { user_id, market_id, isCasino, sortOrder } = req.body
   // const id=+user_id
-  console.log(user_id, "---------------------", market_id, "+++++++++++++", isCasino);
+  console.log(user_id, "---------------------", market_id, "+++++++++++++", sortOrder);
 
   try {
     const currentTime = Date.now()
@@ -5939,7 +5939,7 @@ async function getUserBetsRecords(req, res) {
         {
 
           "$sort": {
-            "_id": -1
+            "_id": sortOrder
           }
         },
         {
@@ -6038,12 +6038,12 @@ async function getUserBetsRecords(req, res) {
           "$match": {
             // "status": { "$ne": 1 },
             "userId": user_id,
-            "marketId": market_id
+            ...(market_id ? { "marketId": market_id } : {})
           }
         },
         {
           "$sort": {
-            "_id": -1
+            "_id": sortOrder
           }
         },
         {
@@ -7317,8 +7317,6 @@ async function getWinnigLossing(req, res) {
 async function getUserParents(req, res) {
   try {
     const user_id=req.body.userId
-    //  const user_id =20243
-    console.log("-=-=-=-=-=-=--=-=-= parentUserIds ",user_id)
     let parentUserIds = await getParents(user_id);
     let parentUsers = await User.find(
       { userId: { $in: parentUserIds } },
