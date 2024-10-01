@@ -133,8 +133,8 @@ async function findAndProcessTransactions(user) {
     }
 
   } catch (error) {
-    console.error('Error processing transactions:', error);
-  }
+    console.error('Error processing transactions:', error);
+  }
 }
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
