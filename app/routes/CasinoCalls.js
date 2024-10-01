@@ -14,6 +14,7 @@ const path = require('path');
 const log = require('log-to-file');
 const CasinoCalls = require('../models/casinoCalls');
 const CasinoCallsPAyload = require('../models/casinoCallsPayload');
+const CasinoCallsPayload = require('../models/casinoCallsPayload');
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const saltKey = process.env.saltKey;
@@ -1150,7 +1151,7 @@ async function  casino (req, res) {
     action,
     jsonData:JSON.stringify(req.query)
    }
-   const casinocallPayload= await new CasinoCallsPAyload(payload)
+   const casinocallPayload= await new CasinoCallsPayload(payload)
   switch (action) {
 
     case 'balance':
