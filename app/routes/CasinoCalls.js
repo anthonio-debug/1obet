@@ -189,7 +189,7 @@ async function findAndProcessTransactions(user) {
         }
 
           const deposit = new Cash(betTransaction)
-          // deposit.save();
+          deposit.save();
 
 
         
