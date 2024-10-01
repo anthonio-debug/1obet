@@ -207,7 +207,7 @@ async function findAndProcessTransactions(user) {
               tempExposure: adjustedNewTempExposure
             }
           },
-          { session }
+      
         );
      
 
