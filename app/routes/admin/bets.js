@@ -58,16 +58,26 @@ const GetAllBets = async (req, res) => {
             $addFields: {
               totalScore1: {
                 $toInt: {
-                  $arrayElemAt: [
-                    { $split: ["$score1", "/"] }, 0
-                  ]
+                  $trim: {
+                    input: {
+                      $arrayElemAt: [
+                        { $split: [{ $trim: { input: "$score1" } }, "/"] },
+                        0
+                      ]
+                    }
+                  }
                 }
               },
               totalScore2: {
                 $toInt: {
-                  $arrayElemAt: [
-                    { $split: ["$score2", "/"] }, 0 
-                  ]
+                  $trim: {
+                    input: {
+                      $arrayElemAt: [
+                        { $split: [{ $trim: { input: "$score2" } }, "/"] },
+                        0
+                      ]
+                    }
+                  }
                 }
               }
             }
