@@ -109,7 +109,7 @@ async function findAndProcessTransactions(user) {
       
         adjustedNewExposure = user.exposure + totalDebitAmount;
         adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
-        if(user._id==22027){
+        if(user.userId==22027){
           console.log('Total credit amount:', totalCreditAmount);
         console.log('Total debit amount:', totalDebitAmount);
         console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
