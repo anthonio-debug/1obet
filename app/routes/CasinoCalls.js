@@ -73,8 +73,8 @@ async function findAndProcessTransactions(payload) {
     for (const tran of groupedTransactions) {
       const roundIds = await CasinoCalls.find({ round_id: tran._id });
   
+      console.log("rouuuuuuuuuuuuuuuuuuuundID=========",tran._id.toString())
       roundIds.forEach(rounds => {
-        console.log("rouuuuuuuuuuuuuuuuuuuundID=========",rounds._id)
         if (rounds.action === 'credit') {
           totalCreditAmount += Number(rounds.amount);
         }
@@ -82,7 +82,7 @@ async function findAndProcessTransactions(payload) {
           totalDebitAmount += Number(rounds.amount);
         }
       });
-      // await casinoCalls.updateMany({round_id:tran._id},{isProcessing:false})
+      // await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
       console.log('Total credit amount:', totalCreditAmount);
       console.log('Total debit amount:', totalDebitAmount);
       console.log('Total difference credit and debit amount:', totalCreditAmount-totalDebitAmount);
