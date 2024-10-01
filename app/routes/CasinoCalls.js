@@ -1151,7 +1151,9 @@ async function  casino (req, res) {
     action,
     jsonData:JSON.stringify(req.query)
    }
-  await new CasinoCallsPayload(payload)
+  const c = await new CasinoCallsPayload(payload)
+  c.save()
+
   switch (action) {
 
     case 'balance':
