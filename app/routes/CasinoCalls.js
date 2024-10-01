@@ -118,10 +118,15 @@ async function findAndProcessTransactions(user) {
         console.log('Total debit amount:', totalDebitAmount*  casinoMultiples);
         console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
         console.log('Total adjustedNewTempExposure amount:', adjustedNewTempExposure);
-        console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
+          // console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
+          console.log('Total lastMaxWithdraw balance amount:', lastMaxWithdraw.balance);
+          console.log('Total lastMaxWithdraw availableBalance amount:', lastMaxWithdraw.availableBalance);
+          console.log('Total lastMaxWithdraw maxWithdraw amount:', lastMaxWithdraw.maxWithdraw);
         console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
         console.log('Total Updatedbalance amount:', Updatedbalance);
-        console.log('Total lastMaxWithdraw amount:', lastMaxWithdraw);
+        console.log('Total updatedClientPL amount:', updatedClientPL);
+        // console.log('Total lastMaxWithdraw amount:', lastMaxWithdraw);
+      
         }
         // await users.updateOne(
         //   { _id: user._id },
