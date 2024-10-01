@@ -15,6 +15,7 @@ const log = require('log-to-file');
 const CasinoCalls = require('../models/casinoCalls');
 const CasinoCallsPAyload = require('../models/casinoCallsPayload');
 const CasinoCallsPayload = require('../models/casinoCallsPayload');
+const { default: mongoose } = require('mongoose');
 const DBNAME = process.env.DB_NAME;
 const DBHost = process.env.DBHost;
 const saltKey = process.env.saltKey;
@@ -72,7 +73,7 @@ async function findAndProcessTransactions(user) {
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
-     
+      return;
     }
 
     let totalCreditAmount = 0;
@@ -83,9 +84,9 @@ async function findAndProcessTransactions(user) {
       let adjustedNewExposure = 0;
       let adjustedNewTempExposure = 0;
       const roundIds = await CasinoCalls.find({ round_id: tran._id });
-  
-      console.log("rouuuuuuuuuuuuuuuuuuuundID=========",tran._id.toString())
-    
+
+      console.log("rouuuuuuuuuuuuuuuuuuuundID=========", tran._id.toString());
+
       for (const rounds of roundIds) {
         console.log("userName=========", rounds.username);
         
@@ -103,12 +104,7 @@ async function findAndProcessTransactions(user) {
       
       }
       
-      if(user._id==22027){
-        console.log('Total credit amount:', totalCreditAmount);
-      console.log('Total debit amount:', totalDebitAmount);
-      console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
-      console.log('Total adjustedNewTempExposure amount:', adjustedNewTempExposure);
-      }
+      
         adjustedNewExposure = user.exposure + totalDebitAmount;
         adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
         if(user._id==22027){
