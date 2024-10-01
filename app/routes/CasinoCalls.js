@@ -215,18 +215,18 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const amount = Number((debit * config.casinoMultiples).toFixed(3));
         const UpdatedExposure = 0
         console.log("arham exposureeeeeeeeeeeee winloose temp exposureeeeeeeeeeeeeeeeeeees", user.tempExposure)
-     const updateUser=   await users.updateOne(
-          { _id: user?._id },
-          {
-            $set: {
-              availableBalance: updatedavailableBalance,
-              exposure: user.exposure + user.tempExposure,
-              tempExposure: 0,
-              clientPL: updatedclientPL,
-              balance: updatedbalance
-            }
-          }
-        );
+    //  const updateUser=   await users.updateOne(
+    //       { _id: user?._id },
+    //       {
+    //         $set: {
+    //           availableBalance: updatedavailableBalance,
+    //           exposure: user.exposure + user.tempExposure,
+    //           tempExposure: 0,
+    //           clientPL: updatedclientPL,
+    //           balance: updatedbalance
+    //         }
+    //       }
+    //     );
         if (updateUser) {
           
        
@@ -364,17 +364,17 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           const availableBalance = Number((user.availableBalance + (user.commission / 100) * bettor_lost_amount).toFixed(3));
           const balance = Number((user.balance + (user.commission / 100) * bettor_lost_amount).toFixed(3));
           const clientPL = user.clientPL - user.downLineShare !== 100 ? Number((user.clientPL - ((100 - user.downLineShare) / 100) * bettor_lost_amount).toFixed(3)) : 0;
-          const userResponse = await users.updateOne(
-            { _id: user?._id },
-            {
-              $set: {
-                availableBalance: availableBalance,
-                clientPL: clientPL,
-                balance: balance
-              }
-            },
-            { session }
-          );
+          // const userResponse = await users.updateOne(
+          //   { _id: user?._id },
+          //   {
+          //     $set: {
+          //       availableBalance: availableBalance,
+          //       clientPL: clientPL,
+          //       balance: balance
+          //     }
+          //   },
+          //   { session }
+          // );
 
           const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
 
@@ -453,19 +453,19 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const updatedbalance = Number((user.balance + (remainingAmount)).toFixed(3));
         const UpdatedExposure = 0
         // //console.log("arham exposureeeeeeeeeeeee winloose addiotn debit",UpdatedExposure )
-        const userResponse = await users.updateOne(
-          { _id: user?._id },
-          {
-            $set: {
-              availableBalance: updatedavailableBalance,
-              clientPL: updatedclientPL,
-              balance: updatedbalance,
-              exposure: user.exposure + user.tempExposure,
-              tempExposure: 0,
-            }
-          },
-          { session }
-        );
+        // const userResponse = await users.updateOne(
+        //   { _id: user?._id },
+        //   {
+        //     $set: {
+        //       availableBalance: updatedavailableBalance,
+        //       clientPL: updatedclientPL,
+        //       balance: updatedbalance,
+        //       exposure: user.exposure + user.tempExposure,
+        //       tempExposure: 0,
+        //     }
+        //   },
+        //   { session }
+        // );
         if (userResponse) {
           
      
@@ -542,16 +542,16 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           let Balancebalance = Number((user.balance - (user.commission / 100) * remainingAmount).toFixed(3));
           let clientPL = user.downLineShare !== 100 ? Number((user.clientPL + ((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
 
-          let userResponse = await users.updateOne(
-            { _id: user?._id }, {
-            $set: {
-              availableBalance: availableBalance,
-              clientPL: clientPL,
-              balance: Balancebalance
-            }
-          },
-            { session }
-          );
+          // let userResponse = await users.updateOne(
+          //   { _id: user?._id }, {
+          //   $set: {
+          //     availableBalance: availableBalance,
+          //     clientPL: clientPL,
+          //     balance: Balancebalance
+          //   }
+          // },
+          //   { session }
+          // );
 
           let betTransaction = {
             userId: user.userId,
@@ -632,16 +632,16 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         const updatedavailableBalance = Number((user.availableBalance + (debit * casinoMultiples)).toFixed(3))
         const UpdatedExposure = Number((user.exposure + (debit * casinoMultiples)).toFixed(3))
         // //console.log("arham exposureeeeeeeeeeeee winloose addiotn credit df 0",UpdatedExposure )
-        await users.updateOne(
-          { _id: user?._id },
-          {
-            $set: {
-              availableBalance: updatedavailableBalance, exposure: user.exposure + user.tempExposure,
-              tempExposure: 0,
-            }
-          },
-          { session }
-        );
+        // await users.updateOne(
+        //   { _id: user?._id },
+        //   {
+        //     $set: {
+        //       availableBalance: updatedavailableBalance, exposure: user.exposure + user.tempExposure,
+        //       tempExposure: 0,
+        //     }
+        //   },
+        //   { session }
+        // );
 
         const casinoDebits = new CasinoDebits(payload);
         await casinoDebits.save();
@@ -1077,10 +1077,10 @@ async function rollbackFun(req, res) {
           updatedBalance = user.availableBalance + (amount * casinoMultiples);
           let updatedExposureAmount = user.exposure + (Number(user.tempExposure) * casinoMultiples);
 
-          await users.updateOne(
-            { _id: user?._id }, { $set: { exposure: updatedExposureAmount, availableBalance: updatedBalance,tempExposure:0 } },
-            { session }
-          );
+          // await users.updateOne(
+          //   { _id: user?._id }, { $set: { exposure: updatedExposureAmount, availableBalance: updatedBalance,tempExposure:0 } },
+          //   { session }
+          // );
 
           const casinoDebits = new CasinoDebits(payload);
           await casinoDebits.save();
