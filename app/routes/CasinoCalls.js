@@ -89,9 +89,24 @@ async function findAndProcessTransactions(user) {
         if (rounds.action === 'rollback') {
           totalRollBackAmount += Number(rounds.amount);
         }
+        const user = await users.findOne({ remoteId: Number(rounds.remote_id) });
 
       });
       
+      adjustedNewExposure = user.exposure + totalDebitAmount;
+      adjustedNewTempExposure = user.tempExposure - totalDebitAmount;
+
+      await users.updateOne(
+        { _id: user._id },
+        {
+          $set: {
+           // availableBalance: updatedavailableBalance,
+            exposure: adjustedNewExposure,
+            tempExposure: adjustedNewTempExposure
+          }
+        },
+        { session }
+      );
 
       // await casinoCalls.updateMany({round_id:tran._id.toString()},{isProcessing:false})
       console.log('Total credit amount:', totalCreditAmount);
