@@ -181,9 +181,9 @@ async function findAndProcessTransactions(user) {
         betDateTime: betTime,
         casinoBetAmount: totalDebitAmount,
         amount: AmountDeposits,
-        balance: newDepositsBalance,
-        availableBalance: newDepositsAvailableBalance,
-        maxWithdraw: newDepositsWithdraw,
+        balance: NewDepositsBalance,
+        availableBalance: NewDepositsAvailableBalance,
+        maxWithdraw: NewDepositsWithdraw,
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
         credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
         creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
@@ -207,9 +207,9 @@ async function findAndProcessTransactions(user) {
         { _id: user._id },
         {
           $set: {
-            clientPL: newDepositsAvailableBalance,
-            balance: newDepositsAvailableBalance,
-            availableBalance: newDepositsAvailableBalance,
+            clientPL: NewDepositsAvailableBalance,
+            balance: NewDepositsAvailableBalance,
+            availableBalance: NewDepositsAvailableBalance,
             exposure: adjustedNewExposure,
             tempExposure: adjustedNewTempExposure
           }
