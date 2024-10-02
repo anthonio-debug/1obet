@@ -119,7 +119,7 @@ async function findAndProcessTransactions(user) {
   const user = await users.findOne(
     { remoteId: Number(tran.remote_id) }
  
-  ).session(session);
+  )
       
       console.log("exposureeeeeeeeeeeeeeeeeeee=>",user.exposure)
 
