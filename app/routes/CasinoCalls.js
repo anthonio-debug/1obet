@@ -281,7 +281,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         { session }
       );
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
-      const casinoDebits = new CasinoDebits({...payload,AddedExposure:Number(tempExposure),userPrevExposure:Number(user.exposure),userUpdatedExposure:Number(UpdatedExposure)});
+      const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
 
       return 0
@@ -566,7 +566,7 @@ async function debitFun(req, res) {
 
   const game = gamesList?.games[0];
   console.log("")
-  if (game?.isAllowed === false) {
+  if (game.isAllowed === false) {
     return res.status(400).send({ message: "This game is not allowed!!" })
   }
   if (!processing) {
