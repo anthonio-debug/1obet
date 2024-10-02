@@ -110,7 +110,7 @@ async function findAndProcessTransactions(user) {
           totalRollBackAmount += Number(rounds.amount);
         }
       }
-      differenceDbCr = totalCreditAmount - totalDebitAmount;
+      differenceDbCr = (totalCreditAmount - totalDebitAmount) *casinoMultiples;
       //const session = await mongoose.startSession();
 //session.startTransaction();
 
