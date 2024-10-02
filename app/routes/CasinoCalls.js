@@ -180,7 +180,7 @@ async function findAndProcessTransactions(user) {
         createdBy: 0,
         betDateTime: betTime,
         casinoBetAmount: totalDebitAmount,
-        amount: amountDeposits,
+        amount: AmountDeposits,
         balance: newDepositsBalance,
         availableBalance: newDepositsAvailableBalance,
         maxWithdraw: newDepositsWithdraw,
