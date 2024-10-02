@@ -80,7 +80,7 @@ async function findAndProcessTransactions(user) {
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
       await session.abortTransaction();  // Abort the transaction if no records found
-      //session.endSession();
+      session.endSession();
       return;
     }
 
@@ -109,7 +109,30 @@ async function findAndProcessTransactions(user) {
         }
       }
 
-      const user = await users.findOne({ remoteId: Number(tran.remote_id) }).session(session);
+      const session = await mongoose.startSession();
+session.startTransaction();
+
+try {
+  // Find the user with the specified remote ID using the session
+  const user = await users.findOne(
+    { remoteId: Number(tran.remote_id) },
+    null,
+    { session }
+  );
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  
+
+  await session.commitTransaction(); // Commit the transaction
+} catch (error) {
+  await session.abortTransaction(); // Rollback on error
+  throw error; // Handle the error as needed
+} finally {
+  session.endSession(); // Clean up the session
+}
 
       adjustedNewExposure = user.exposure + (totalDebitAmount * casinoMultiples);
       adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples);
