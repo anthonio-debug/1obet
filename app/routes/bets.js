@@ -3519,13 +3519,14 @@ async function getUserBets(req, res) {
   if (errors.errors.length != 0) {
     return res.status(400).send({ errors: errors.errors });
   }
+
   try {
-    // Initialize variables with default values
     let query = {};
     let page = 1;
     let sort = -1;
-    let sortValue = 'createdAt';
+    let sortValue = "createdAt";
     let limit = config.pageSize;
+
     if (req.body.numRecords || isNaN(req.body.numRecords) || req.body.numRecords > 0) {
       limit = Number(req.body.numRecords);
     }
@@ -3533,66 +3534,52 @@ async function getUserBets(req, res) {
     if (req.body.sort) sort = Number(req.body.sort);
     if (req.body.page) page = Number(req.body.page);
     if (req.body.startDate && req.body.endDate) {
-      const startTimestamp = new Date(req.body.startDate).getTime();
-      const endTimestamp = new Date(req.body.endDate).getTime();
+      const startDate = new Date(req.body.startDate);
+      const endDate = new Date(req.body.endDate);
+      endDate.setHours(23, 59, 59, 999);
       query.createdAt = {
-        $gte: startTimestamp,
-        $lte: endTimestamp
+        $gte: startDate,
+        $lte: endDate
       };
     }
+
     query.status = req.body.status;
-    if (req.decoded.role != '5') query.userId = req.body.userId;
-    else if (req.decoded.role == '5') query.userId = req.decoded.userId;
+    if (req.decoded.role != '5') {
+      query.userId = req.body.userId;
+    } else if (req.decoded.role == '5') {
+      query.userId = req.decoded.userId;
+    }
 
     if (req.body.status) query.status = req.body.status;
     if (req.body.sportsId) query.sportsId = req.body.sportsId;
     if (req.body.searchValue) query.event = { $regex: req.body.searchValue, $options: 'i' };
 
-    // if (req.body.searchValue) {
-    //   const searchRegex = new RegExp(req.body.searchValue, 'i');
-    //   query.$or = [
-    //     { name: { $regex: searchRegex } },
-    //     {
-    //       $expr: {
-    //         $regexMatch: { input: { $toString: '$betRate' }, regex: searchRegex },
-    //       },
-    //     },
-    //     {
-    //       $expr: {
-    //         $regexMatch: {
-    //           input: { $toString: '$betAmount' },
-    //           regex: searchRegex,
-    //         },
-    //       },
-    //     },
-    //   ];
-    // }
+    const paginateOptions = { page: page, sort: { [sortValue]: sort }, limit: limit };
+
     if (req.body.sportsId != "6") {
-      await Bets.paginate(query, { page: page, sort: { [sortValue]: sort }, limit: limit }, (err, results) => {
+      await Bets.paginate(query, paginateOptions, (err, results) => {
         if (err) return res.status(404).send({ message: `Something went wrong  ${err} ` });
         return res.send({
           success: true,
           message: 'bets list',
           results: results
         });
-
       });
     }
     if (req.body.sportsId == "6") {
-      await Cash.paginate(query, { page: page, sort: { [sortValue]: sort }, limit: limit }, (err, results) => {
+      await Cash.paginate(query, paginateOptions, (err, results) => {
         if (err) return res.status(404).send({ message: `Something went wrong  ${err} ` });
         return res.send({
           success: true,
           message: 'bets list',
           results: results
         });
-
       });
     }
   } catch (error) {
-    return res.send({
+    return res.status(500).send({
       success: false,
-      message: 'Something goes wrong catched'
+      message: `Something goes wrong catched: ${error}`
     });
   }
 }
