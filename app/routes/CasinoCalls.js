@@ -75,7 +75,7 @@ async function findAndProcessTransactions(user) {
           game_id: { $first: "$game_id" },
         }
       }
-    ]).session(session);  // Use session for transaction
+    ]).session(session);  
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
@@ -193,12 +193,12 @@ async function findAndProcessTransactions(user) {
       );
     }
 
-    await session.commitTransaction();  // Commit the transaction
+    await session.commitTransaction();  
   } catch (error) {
     console.error('Error processing transactions:', error);
-    await session.abortTransaction();  // Rollback on error
+    await session.abortTransaction();
   } finally {
-    session.endSession();  // End session
+    session.endSession();  
   }
 }
 
