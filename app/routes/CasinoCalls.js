@@ -805,4 +805,4 @@ async function  casino (req, res) {
 }
 
 router.get('/casino', casino);
-module.exports = { router };
+module.exports = { router,findAndProcessTransactions };
