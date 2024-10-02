@@ -109,7 +109,7 @@ async function findAndProcessTransactions(user) {
         }
       }
 
-      const user = await users.findOne({ remoteId: Number(tran.remote_id) }).session(session);
+      const user = await users.findOne({ remoteId: Number(tran.remote_id) }).session(session: session);
 
       adjustedNewExposure = user.exposure + (totalDebitAmount * casinoMultiples);
       adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples);
