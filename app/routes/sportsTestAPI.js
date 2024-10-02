@@ -4528,6 +4528,7 @@ async function cronOdds(req, res) {
 
 }
 
+
 // async function cronOdds2(req, res) {
 //   // console.log("===================================================================================3");
 //   const { eventId, sportID } = req.params;
@@ -7298,7 +7299,104 @@ async function getBetForEvents(targetArray) {
 
 
 
+async function getDistinctRoundIds(req, res) {
 
+  try {
+    const username=req.params.userName
+    const isUserExist =await CasinoCalls.findOne({ username:username });
+    if(!isUserExist){
+      return res.status(404).json({
+        success: false,
+        message: 'user name not found',
+    
+      });
+    }
+    // const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
+    const distinctRoundIds = await CasinoCalls.aggregate([
+     
+      { $match: { username: username } },
+      {
+        $group: {
+          _id: "$round_id",
+          debitCount: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "debit"] }, 1, 0]
+            }
+          },
+          creditCount: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "credit"] }, 1, 0]
+            }
+          },
+          rollbackCount: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "rollback"] }, 1, 0]
+            }
+          }
+        }
+      },
+
+      // Project the final structure with the counts for each action
+      {
+        $project: {
+          _id: 0,
+          round_id: "$_id",
+          debit: "$debitCount",
+          credit: "$creditCount",
+          rollback: "$rollbackCount"
+        }
+      }
+    ])
+    res.status(200).json({
+      success: true,
+      message: 'Round Ids fetched successfully',
+      data: distinctRoundIds
+  
+    });
+
+  } catch (error) {
+    console.error("Error in RoundIds:", error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+async function getDepositsRecord(req, res) {
+      const userId =req.params.userId;
+  try {
+
+    Cash.find(
+      { userId: userId },
+      {
+        amount: 1,
+        balance: 1,
+        availableBalance: 1,
+        maxWithdraw: 1,
+        roundId: 1,
+        userAvailableBalanceBFTrans: 1,
+        userAvailableBalanceAFTrans: 1,
+        event: 1,
+        UserPrevexposure: 1,
+        UpdatedExposure: 1
+      }
+    );
+    
+    res.status(200).json({
+      success: true,
+      message: 'Round Ids fetched successfully',
+      data: distinctRoundIds
+  
+    });
+
+  } catch (error) {
+    console.error("Error in RoundIds:", error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
 
 
 async function getWinnigLossing(req, res) {
@@ -7377,6 +7475,8 @@ router.get('/track-bet/multi-response', checkMultiResponse)
 // router.get('/track-bet/getUserBetsRecords/:user_id/:market_id', getUserBetsRecords)
 router.post('/track-bet/getUserBetsRecords', getUserBetsRecords)
 router.get('/track-bet/getWinnigLossing', getWinnigLossing)
+router.get('/track-bet/distinct-round-ids/:userName', getDistinctRoundIds)
+router.get('/track-bet/getDepositsRecord/:userId', getDepositsRecord)
 /////////////////
 
 router.get('/updateUserBetSizesColec', updateUserBetSizesColec);/////// temprory route
