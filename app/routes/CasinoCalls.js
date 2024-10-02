@@ -109,8 +109,24 @@ async function findAndProcessTransactions(user) {
         }
       }
 
-      const user = await users.findOne({ remoteId: Number(tran.remote_id) }).session(session: session);
-
+      const session = await mongoose.startSession();
+      session.startTransaction();
+      
+      try {
+        const user = await users.findOne({ remoteId: Number(tran.remote_id) }, null, { session });
+        
+        // Proceed with your logic using the retrieved user...
+        
+        // Don't forget to save any changes within the transaction
+        await deposit.save({ session }); // Example of saving within the same session
+      
+        await session.commitTransaction(); // Commit if everything is successful
+      } catch (error) {
+        await session.abortTransaction(); // Rollback on error
+        throw error; // Handle the error as needed
+      } finally {
+        session.endSession(); // Clean up
+      }
       adjustedNewExposure = user.exposure + (totalDebitAmount * casinoMultiples);
       adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples);
       const updatedAvailableBalance = user.availableBalance + (totalCreditAmount * casinoMultiples);
