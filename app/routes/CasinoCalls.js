@@ -195,7 +195,7 @@ async function findAndProcessTransactions(user) {
         matchId: tran.game_id,
         upLineAmount: upMovingAmount,
         userAvailableBalanceBFTrans: user.availableBalance,
-        userAvailableBalanceAFTrans: updatedAvailableBalance,
+        userAvailableBalanceAFTrans: updatedavailableBalance,
         userPrevExposure: user.exposure,
         updatedExposure: adjustedNewExposure
       };
