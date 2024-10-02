@@ -7313,8 +7313,9 @@ async function getDistinctRoundIds(req, res) {
     }
     // const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
     const distinctRoundIds = await CasinoCalls.aggregate([
-     
-      { $match: { username: username } },
+      {
+        $match: { username: username }
+      },
       {
         $group: {
           _id: "$round_id",
@@ -7332,18 +7333,34 @@ async function getDistinctRoundIds(req, res) {
             $sum: {
               $cond: [{ $eq: ["$action", "rollback"] }, 1, 0]
             }
+          },
+          debitAmountSum: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "debit"] }, { $toDouble: "$amount" }, 0]
+            }
+          },
+          creditAmountSum: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "credit"] }, { $toDouble: "$amount" }, 0]
+            }
+          },
+          rollbackAmountSum: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0]
+            }
           }
         }
       },
-
-      // Project the final structure with the counts for each action
       {
         $project: {
           _id: 0,
           round_id: "$_id",
-          debit: "$debitCount",
-          credit: "$creditCount",
-          rollback: "$rollbackCount"
+          debitCount: 1,
+          creditCount: 1,
+          rollbackCount: 1,
+          debitAmountSum: 1,
+          creditAmountSum: 1,
+          rollbackAmountSum: 1
         }
       }
     ])
