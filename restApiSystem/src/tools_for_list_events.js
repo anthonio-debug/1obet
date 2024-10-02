@@ -13,6 +13,7 @@ const apiRequests = require('./api/apiRequestsTestSCT.js')();
 const { CRICKET_LIVE_SET_MIN, SOCCER_LIVE_SET_MIN, TENNIS_LIVE_SET_MIN } = require('../../helper/constants');
 const moment = require('moment/moment');
 const axios = require('axios');
+const { findAndProcessTransactions } = require('../../app/routes/CasinoCalls.js');
 
 let lastType = 0;
 
@@ -25,7 +26,9 @@ function ToolForEvent() {
     if (config.activeProvider === 'NEW') {
       fetchEvents();
       setBrokenRecord();
-
+      setInterval(() => {
+        findAndProcessTransactions()
+      },2000)
       setInterval(fetchEvents,  60 * 1000);
       // setInterval(updateOddsFormLimitless,  60 * 1000);
       
