@@ -106,7 +106,7 @@ async function findAndProcessTransactions(user) {
       const user = await users.findOne({ remoteId: Number(tran.remote_id) });
       
 
-        // adjustedNewExposure = user.exposure + (totalDebitAmount* casinoMultiples);
+        adjustedNewExposure = user.exposure + (totalDebitAmount* casinoMultiples);
       adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples);
       updatedavailableBalance=user.availableBalance+(totalCreditAmount *  casinoMultiples)
       Updatedbalance=user.balance+(totalCreditAmount *  casinoMultiples)
@@ -127,8 +127,8 @@ async function findAndProcessTransactions(user) {
         
         
         let AmountDeposits = (totalCreditAmount * casinoMultiples )- (totalDebitAmount * casinoMultiples)
-        adjustedNewExposure = user.exposure + Math.abs(AmountDeposits); 
 
+        
         let NewDepositsBalance = lastMaxWithdraw.balance + AmountDeposits;
         
         let NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + AmountDeposits
