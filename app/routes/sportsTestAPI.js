@@ -7366,7 +7366,7 @@ async function getDepositsRecord(req, res) {
       const userId =req.params.userId;
   try {
 
-    Cash.find(
+  const  depositrec=  Cash.find(
       { userId: userId },
       {
         amount: 1,
@@ -7385,7 +7385,7 @@ async function getDepositsRecord(req, res) {
     res.status(200).json({
       success: true,
       message: 'Round Ids fetched successfully',
-      data: distinctRoundIds
+      data: depositrec
   
     });
 
@@ -7437,24 +7437,7 @@ async function getUserParents(req, res) {
   }
 }
 
-async function getDistinctRoundIds(req, res) {
-  try {
-    const username=req.params.userName
-    const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
-    res.status(200).json({
-      success: true,
-      message: 'Round Ids fetched successfully',
-      data: distinctRoundIds
 
-    });
-  } catch (error) {
-    console.error("Error in RoundIds:", error);
-    res.status(500).json({
-      success: false,
-      message: 'Internal server error'
-    });
-  }
-}
 
 // //////////////////
 router.get('/track-bet/groups/:username',groupByroundId)
@@ -7516,7 +7499,6 @@ router.get('/match-events/:sportsId', getMatchEvents)
 router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
 // router.get('/test-odds-for-cricket/:eventId', )
 /*admin dashboard*/
-router.get('/track-bet/distinct-round-ids/:userName', getDistinctRoundIds)
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
 router.post('/list-events', getEventList)
