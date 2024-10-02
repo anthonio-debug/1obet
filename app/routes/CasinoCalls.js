@@ -155,8 +155,8 @@ async function findAndProcessTransactions(user) {
         console.log('Total NewDepositsWithdraw amount:', NewDepositsWithdraw);
 
       var upMovingAmount = 0;
-      if (amountDeposits < 0) {
-        upMovingAmount = Number(amountDeposits);
+      if (AmountDeposits < 0) {
+        upMovingAmount = Number(AmountDeposits);
       }
 
       const gamesList = await SelectedCasino.findOne(
@@ -207,9 +207,9 @@ async function findAndProcessTransactions(user) {
         { _id: user._id },
         {
           $set: {
-            clientPL: updatedAvailableBalance,
-            balance: updatedAvailableBalance,
-            availableBalance: updatedAvailableBalance,
+            clientPL: newDepositsAvailableBalance,
+            balance: newDepositsAvailableBalance,
+            availableBalance: newDepositsAvailableBalance,
             exposure: adjustedNewExposure,
             tempExposure: adjustedNewTempExposure
           }
