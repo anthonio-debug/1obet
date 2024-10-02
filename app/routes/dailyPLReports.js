@@ -14,8 +14,7 @@ const getDailyPLReport = async (req, res) => {
 
   const userId = req.decoded.userId;
   const childUsers = await User.distinct("userId", { createdBy: userId });
-  const { createdBy } = await User.findOne({ userId: userId })
-  const users = [userId, ...childUsers, createdBy]
+  const users = [userId, ...childUsers]
 
   const response = await CashDeposit.aggregate([
     {
@@ -64,25 +63,25 @@ const getDailyPLReport = async (req, res) => {
   });
 }
 
-const dailyPlSportWiseReports =  async (req, res) => {
+const dailyPlSportWiseReports = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const Id        =  parseInt(req.query.userId)
+  const Id = parseInt(req.query.userId)
   //console.log(" Id ========== ", Id);
 
   const response = await CashDeposit.aggregate([
-    {  
+    {
       $match: {
         userId: Id,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
-            createdAt: {$gte: req.query.startDate}
+            createdAt: { $gte: req.query.startDate }
           },
           {
-            createdAt: {$lte: req.query.endDate}
+            createdAt: { $lte: req.query.endDate }
           }
         ]
       }
@@ -94,11 +93,11 @@ const dailyPlSportWiseReports =  async (req, res) => {
         foreignField: 'Id',
         as: 'marketInfo'
       }
-    }, 
+    },
     {
-      $group:{
+      $group: {
         _id: "$sportsId",
-        amount: { $sum: "$amount"},
+        amount: { $sum: "$amount" },
         userId: { $first: "$userId" },
         name: { $first: { $arrayElemAt: ["$marketInfo.name", 0] } }
       }
@@ -118,48 +117,48 @@ const dailyPLMatchWiseReport = async (req, res) => {
   }
   const userId = req.decoded.userId
   //console.log(" userId ====== ", userId);
-  const Id =  parseInt(req.query.userId)
+  const Id = parseInt(req.query.userId)
   let response = [];
-  if(req.query.sportsId == 6){
+  if (req.query.sportsId == 6) {
     response = await CashDeposit.aggregate([
-      {  
+      {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
           cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           $and: [
             {
-              createdAt: {$gte: req.query.startDate}
+              createdAt: { $gte: req.query.startDate }
             },
             {
-              createdAt: {$lte: req.query.endDate}
+              createdAt: { $lte: req.query.endDate }
             }
           ]
         }
       },
       {
-        $group:{
+        $group: {
           _id: "$marketId",
-          amount: { $sum: "$amount"},
+          amount: { $sum: "$amount" },
           userId: { $first: "$userId" },
           date: { $first: "$date" },
           name: { $first: "$event" }
         }
       }
     ]);
-  }else {
+  } else {
     response = await CashDeposit.aggregate([
-      {  
+      {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
           cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           $and: [
             {
-              createdAt: {$gte: req.query.startDate}
+              createdAt: { $gte: req.query.startDate }
             },
             {
-              createdAt: {$lte: req.query.endDate}
+              createdAt: { $lte: req.query.endDate }
             }
           ]
         }
@@ -176,11 +175,11 @@ const dailyPLMatchWiseReport = async (req, res) => {
           foreignField: '_id',
           as: 'bets'
         }
-      }, 
+      },
       {
-        $group:{
-          _id: {$arrayElemAt: ["$bets.matchId", 0]},
-          amount: { $sum: "$amount"},
+        $group: {
+          _id: { $arrayElemAt: ["$bets.matchId", 0] },
+          amount: { $sum: "$amount" },
           userId: { $first: "$userId" },
           date: { $first: "$date" },
           name: { $first: { $arrayElemAt: ["$bets.event", 0] } }
@@ -196,23 +195,23 @@ const dailyPLMatchWiseReport = async (req, res) => {
 
 }
 
-const dailyPLMatchWiseDetailedReport = async(req, res) =>{
+const dailyPLMatchWiseDetailedReport = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const userId      = Number(req.query.userId);
+  const userId = Number(req.query.userId);
 
-  const matchId     = req.query.matchId;
-  const currentUser = await User.findOne({ userId: userId});
+  const matchId = req.query.matchId;
+  const currentUser = await User.findOne({ userId: userId });
 
-  if(currentUser.role == 5){
+  if (currentUser.role == 5) {
     //console.log(" =========================== -5- =========================== ");
     let match = null;
     matchId.length > 10 ? match = await Events.findOne(matchId) : '';
-    const parent = await User.findOne({ userId: currentUser.createdBy});
+    const parent = await User.findOne({ userId: currentUser.createdBy });
     let response;
-    if(match){
+    if (match) {
       //console.log(" =============================== Includes Part  =========================== ");
       response = await CashDeposit.aggregate([
         {
@@ -228,7 +227,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
                 }
                 ]
               },
-              {       
+              {
                 cashOrCredit: { $in: ["Commission"] }
               }
             ]
@@ -246,11 +245,11 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
             foreignField: '_id',
             as: 'betsDetails'
           }
-        }, 
-        { 
-          $group:{
+        },
+        {
+          $group: {
             _id: "$_id",
-            pl: { $sum: "$amount"},
+            pl: { $sum: "$amount" },
             sattledAt: { $first: "$date" },
             sportsId: { $first: { $arrayElemAt: ["$betsDetails.sportsId", 0] } },
             price: { $first: { $arrayElemAt: ["$betsDetails.betAmount", 0] } },
@@ -260,7 +259,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
             type: { $first: { $arrayElemAt: ["$betsDetails.type", 0] } },
             fancyData: { $first: { $arrayElemAt: ["$betsDetails.fancyData", 0] } },
             isfancyOrbookmaker: { $first: { $arrayElemAt: ["$betsDetails.isfancyOrbookmaker", 0] } }
-  
+
           }
         }
       ]);
@@ -281,7 +280,7 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
                 }
                 ]
               },
-              {       
+              {
                 cashOrCredit: { $in: ["Commission"] }
               }
             ]
@@ -293,17 +292,17 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
             size: 1
           }
         },
-        { 
-          $group:{
+        {
+          $group: {
             _id: "$betId",
-            pl: { $sum: "$amount"},
+            pl: { $sum: "$amount" },
             sattledAt: { $first: "$date" },
             sportsId: { $first: "$sportsId" },
             event: { $first: "$event" },
             price: { $first: "$casinoBetAmount" },
             type: { $first: "$type" }, // Use an accumulator here
             size: { $first: "$size" },
-            createdAt: { $first: "$betTime" }  
+            createdAt: { $first: "$betTime" }
           }
         }
       ]);
@@ -321,12 +320,12 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
   }
   else {
     //console.log(" =============================== 5 =========================== ");
-    const childUsers  = await User.distinct("userId", { createdBy:  userId });
-    const users       = [userId, ...childUsers];
+    const childUsers = await User.distinct("userId", { createdBy: userId });
+    const users = [userId, ...childUsers];
     //console.log(" users ===================  ", users);
 
     const response = await CashDeposit.aggregate([
-      {  
+      {
         $match: {
           userId: {
             $in: users
@@ -342,11 +341,11 @@ const dailyPLMatchWiseDetailedReport = async(req, res) =>{
           foreignField: 'userId',
           as: 'userInfo'
         }
-      }, 
+      },
       {
-        $group:{
+        $group: {
           _id: "$userId",
-          amount: { $sum: "$amount"},
+          amount: { $sum: "$amount" },
           name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
         }
       }
