@@ -110,7 +110,7 @@ async function findAndProcessTransactions(user) {
       adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples);
       updatedavailableBalance=user.availableBalance+(totalCreditAmount *  casinoMultiples)
       Updatedbalance=user.balance+(totalCreditAmount *  casinoMultiples)
-      updatedClientPL = user.client + (totalCreditAmount * casinoMultiples)
+      updatedClientPL = user.clientPL + (totalCreditAmount * casinoMultiples)
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
     
           console.log('Total credit amount:', totalCreditAmount*  casinoMultiples);
