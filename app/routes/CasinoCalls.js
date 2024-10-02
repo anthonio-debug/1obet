@@ -84,13 +84,12 @@ async function findAndProcessTransactions(user) {
       return;
     }
 
-  
+ 
 
     for (const tran of groupedTransactions) {
       let totalCreditAmount = 0;
       let totalDebitAmount = 0;
       let totalRollBackAmount = 0;
-
       let adjustedNewExposure = 0;
       let adjustedNewTempExposure = 0;
       const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
