@@ -174,7 +174,8 @@ async function findAndProcessTransactions(user) {
       const now = new Date();
       const formattedDate = now.toISOString().split('T')[0];
       const betTime = now.getTime();
-
+console.log("deposit entry user exposure==============>",user.exposure)
+console.log("deposit entry user adjustedNewExposure==============>",adjustedNewExposure)
       let betTransaction = {
         userId: user.userId,
         description: `Casino (${gameName})`,
