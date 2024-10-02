@@ -84,12 +84,12 @@ async function findAndProcessTransactions(user) {
       return;
     }
 
+  
 
     for (const tran of groupedTransactions) {
-    let totalCreditAmount = 0;
-    let totalDebitAmount = 0;
-    let totalRollBackAmount = 0;
-    let differenceDbCr = 0;
+      let totalCreditAmount = 0;
+      let totalDebitAmount = 0;
+      let totalRollBackAmount = 0;
 
       let adjustedNewExposure = 0;
       let adjustedNewTempExposure = 0;
@@ -110,7 +110,7 @@ async function findAndProcessTransactions(user) {
           totalRollBackAmount += Number(rounds.amount);
         }
       }
-      differenceDbCr = totalCreditAmount - totalDebitAmount;
+
       //const session = await mongoose.startSession();
 //session.startTransaction();
 
@@ -121,44 +121,44 @@ async function findAndProcessTransactions(user) {
  
   );
 
-      let AccumulativeDebit = totalDebitAmount * casinoMultiples;
-      let AccumulativeCredit = totalCreditAmount * casinoMultiples;
-      adjustedNewExposure = user.exposure + AccumulativeDebit;
-      adjustedNewTempExposure = user.tempExposure - AccumulativeDebit;
-      updatedavailableBalance=user.availableBalance+AccumulativeCredit
-      Updatedbalance=user.balance+AccumulativeCredit
-      updatedClientPL = user.client + AccumulativeCredit
+  
+
+      adjustedNewExposure = user.exposure + (totalDebitAmount * casinoMultiples);
+      adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples);
+      updatedavailableBalance=user.availableBalance+(totalCreditAmount *  casinoMultiples)
+      Updatedbalance=user.balance+(totalCreditAmount *  casinoMultiples)
+      updatedClientPL = user.client + (totalCreditAmount * casinoMultiples)
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
     
-          console.log('Total credit amount:', AccumulativeCredit);
-        console.log('Total debit amount:', AccumulativeDebit);
+          console.log('Total credit amount:', totalCreditAmount*  casinoMultiples);
+        console.log('Total debit amount:', totalDebitAmount*  casinoMultiples);
         console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
         console.log('Total adjustedNewTempExposure amount:', adjustedNewTempExposure);
           // console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
           console.log('Total lastMaxWithdraw balance amount:', lastMaxWithdraw.balance);
           console.log('Total lastMaxWithdraw availableBalance amount:', lastMaxWithdraw.availableBalance);
+          console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
           console.log('Total lastMaxWithdraw maxWithdraw amount:', lastMaxWithdraw.maxWithdraw);
-        console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
-        console.log('Total Updatedbalance amount:', Updatedbalance);
+          console.log('Total Updatedbalance amount:', Updatedbalance);
         console.log('Total updatedClientPL amount:', updatedClientPL);
         
         
-        
+        let AmountDeposits = (totalCreditAmount * casinoMultiples )- (totalDebitAmount * casinoMultiples)
 
         
-        let NewDepositsBalance = lastMaxWithdraw.balance + differenceDbCr;
+        let NewDepositsBalance = lastMaxWithdraw.balance + AmountDeposits;
         
-        let NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + differenceDbCr
+        let NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + AmountDeposits
         
-        let NewDepositsWithdraw = lastMaxWithdraw.maxWithdraw + differenceDbCr
-        console.log('Total differenceDbCr amount:', differenceDbCr);
+        let NewDepositsWithdraw = lastMaxWithdraw.maxWithdraw + AmountDeposits
+        console.log('Total AmountDeposits amount:', AmountDeposits);
         console.log('Total NewDepositsBalance amount:', NewDepositsBalance);
         console.log('Total NewDepositsAvailableBalance amount:', NewDepositsAvailableBalance);
         console.log('Total NewDepositsWithdraw amount:', NewDepositsWithdraw);
 
       var upMovingAmount = 0;
-      if (differenceDbCr < 0) {
-        upMovingAmount = Number(differenceDbCr);
+      if (AmountDeposits < 0) {
+        upMovingAmount = Number(AmountDeposits);
       }
 
       const gamesList = await SelectedCasino.findOne(
@@ -182,7 +182,7 @@ async function findAndProcessTransactions(user) {
         createdBy: 0,
         betDateTime: betTime,
         casinoBetAmount: totalDebitAmount,
-        amount: differenceDbCr,
+        amount: AmountDeposits,
         balance: NewDepositsBalance,
         availableBalance: NewDepositsAvailableBalance,
         maxWithdraw: NewDepositsWithdraw,
@@ -209,9 +209,9 @@ async function findAndProcessTransactions(user) {
         { _id: user._id },
         {
           $set: {
-            clientPL: updatedavailableBalance,
-            balance: updatedavailableBalance,
-            availableBalance: updatedavailableBalance,
+            clientPL: NewDepositsAvailableBalance,
+            balance: NewDepositsAvailableBalance,
+            availableBalance: NewDepositsAvailableBalance,
             exposure: adjustedNewExposure,
             tempExposure: adjustedNewTempExposure
           }
