@@ -13,24 +13,17 @@ const getDailyPLReport = async (req, res) => {
   }
 
   const userId = req.decoded.userId;
+  const startDate = new Date(req.query.startDate);
+  const endDate = new Date(req.query.endDate);
   const childUsers = await User.distinct("userId", { createdBy: userId });
   const users = [userId, ...childUsers]
 
   const response = await CashDeposit.aggregate([
     {
       $match: {
-        userId: {
-          $in: users
-        },
+        userId: { $in: users },
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        $and: [
-          {
-            createdAt: { $gte: req.query.startDate }
-          },
-          {
-            createdAt: { $lte: req.query.endDate }
-          }
-        ]
+        createdAt: { $gte: startDate, $lte: endDate }
       }
     },
     {
@@ -56,6 +49,7 @@ const getDailyPLReport = async (req, res) => {
       }
     }
   ]);
+
   return res.send({
     success: true,
     message: 'Commission reports',
