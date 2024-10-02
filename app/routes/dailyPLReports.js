@@ -12,18 +12,29 @@ const getDailyPLReport = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId = req.decoded.userId;
-  const startDate = req.query.startDate;
-  const endDate = req.query.endDate;
-  const childUsers = await User.distinct("userId", { createdBy: userId });
-  const users = [userId, ...childUsers]
+  const userId = parseInt(req.decoded.userId)
+  const currentUser = await User.findOne({ userId: userId });
+  const users = [userId];
+  let parents = [userId];
+  let childUsers = [];
+  let sportsIdQuery = { $ne: null };
 
+  do {
+    childUsers = await User.distinct("userId", {
+      createdBy: {
+        $in: parents
+      }
+    });
+    if (childUsers.length) users.push(...childUsers)
+    parents = childUsers
+  } while (childUsers.length > 0)
   const response = await CashDeposit.aggregate([
     {
       $match: {
         userId: { $in: users },
+        sportsId: sportsIdQuery,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        createdAt: { $gte: startDate, $lte: endDate }
+        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
     {
@@ -38,14 +49,7 @@ const getDailyPLReport = async (req, res) => {
       $group: {
         _id: "$userId",
         amount: { $sum: "$amount" },
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } },
-        role: { $first: { $arrayElemAt: ["$userInfo.role", 0] } },
-        userId: { $first: { $arrayElemAt: ["$userInfo.userId", 0] } }
-      }
-    },
-    {
-      $sort: {
-        role: -1
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
       }
     }
   ]);
@@ -54,6 +58,7 @@ const getDailyPLReport = async (req, res) => {
     success: true,
     message: 'Commission reports',
     results: response,
+    total: response.length
   });
 }
 
