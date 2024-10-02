@@ -179,8 +179,8 @@ async function findAndProcessTransactions(user) {
           cashOrCredit: "Bet",
           sportsId: "6",
           event: GameName,
-          roundId: tran.round_id,
-          marketId: tran.game_id,
+          roundId: tran._id,
+          marketId: tran._id,
           matchId: tran.game_id,
           upLineAmount: upMovingAmount
         }
