@@ -171,6 +171,23 @@ async function findAndProcessTransactions(user) {
 
       const deposit = new Cash(betTransaction);
       await deposit.save({ session });
+      await session.commitTransaction();
+      // await users.updateOne(
+      //   { _id: user._id },
+      //   {
+      //     $set: {
+      //       clientPL: updatedAvailableBalance,
+      //       balance: updatedAvailableBalance,
+      //       availableBalance: updatedAvailableBalance,
+      //       exposure: adjustedNewExposure,
+      //       tempExposure: adjustedNewTempExposure
+      //     }
+      //   },
+      //   { session }
+      // );
+
+
+
 
       await users.updateOne(
         { _id: user._id },
@@ -183,8 +200,11 @@ async function findAndProcessTransactions(user) {
             tempExposure: adjustedNewTempExposure
           }
         },
-        { session }
+        { session: session } // Make sure to pass the session correctly
       );
+
+
+
 
       await casinoCalls.updateMany(
         { round_id: tran._id.toString() },
