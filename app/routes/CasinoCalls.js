@@ -109,7 +109,7 @@ async function findAndProcessTransactions(user) {
         }
       }
 
-      const session = await mongoose.startSession();
+      //const session = await mongoose.startSession();
 session.startTransaction();
 
 try {
