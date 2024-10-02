@@ -52,8 +52,14 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
+const mongoose = require('mongoose');
+
 async function findAndProcessTransactions(user) {
+  const session = await mongoose.startSession();
+
   try {
+    session.startTransaction();
+
     const groupedTransactions = await CasinoCalls.aggregate([
       { 
         $match: { 
@@ -67,13 +73,14 @@ async function findAndProcessTransactions(user) {
           remote_id: { $first: "$remote_id" }, 
           username: { $first: "$username" },
           game_id: { $first: "$game_id" },
-         
         }
       }
-    ]);
+    ]).session(session);  // Use session for transaction
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
+      await session.abortTransaction();  // Abort the transaction if no records found
+      session.endSession();
       return;
     }
 
@@ -84,7 +91,7 @@ async function findAndProcessTransactions(user) {
     for (const tran of groupedTransactions) {
       let adjustedNewExposure = 0;
       let adjustedNewTempExposure = 0;
-      const roundIds = await CasinoCalls.find({ round_id: tran._id });
+      const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
 
       console.log("rouuuuuuuuuuuuuuuuuuuundID=========", tran._id.toString());
 
@@ -100,133 +107,101 @@ async function findAndProcessTransactions(user) {
         if (rounds.action === 'rollback') {
           totalRollBackAmount += Number(rounds.amount);
         }
-        
-        
       }
-      const user = await users.findOne({ remoteId: Number(tran.remote_id) });
-      
 
-        adjustedNewExposure = user.exposure + (totalDebitAmount* casinoMultiples);
+      const user = await users.findOne({ remoteId: Number(tran.remote_id) }).session(session);
+
+      adjustedNewExposure = user.exposure + (totalDebitAmount * casinoMultiples);
       adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples);
-      updatedavailableBalance=user.availableBalance+(totalCreditAmount *  casinoMultiples)
-      Updatedbalance=user.balance+(totalCreditAmount *  casinoMultiples)
-      updatedClientPL = user.client + (totalCreditAmount * casinoMultiples)
-      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-    
-          console.log('Total credit amount:', totalCreditAmount*  casinoMultiples);
-        console.log('Total debit amount:', totalDebitAmount*  casinoMultiples);
-        console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
-        console.log('Total adjustedNewTempExposure amount:', adjustedNewTempExposure);
-          // console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
-          console.log('Total lastMaxWithdraw balance amount:', lastMaxWithdraw.balance);
-          console.log('Total lastMaxWithdraw availableBalance amount:', lastMaxWithdraw.availableBalance);
-          console.log('Total lastMaxWithdraw maxWithdraw amount:', lastMaxWithdraw.maxWithdraw);
-        console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
-        console.log('Total Updatedbalance amount:', Updatedbalance);
-        console.log('Total updatedClientPL amount:', updatedClientPL);
-        
-        
-        let AmountDeposits = (totalCreditAmount * casinoMultiples )- (totalDebitAmount * casinoMultiples)
+      const updatedAvailableBalance = user.availableBalance + (totalCreditAmount * casinoMultiples);
+      const updatedBalance = user.balance + (totalCreditAmount * casinoMultiples);
+      const updatedClientPL = user.client + (totalCreditAmount * casinoMultiples);
+      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
 
-        
-        let NewDepositsBalance = lastMaxWithdraw.balance + AmountDeposits;
-        
-        let NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + AmountDeposits
-        
-        let NewDepositsWithdraw = lastMaxWithdraw.maxWithdraw + AmountDeposits
-        console.log('Total AmountDeposits amount:', AmountDeposits);
-        console.log('Total NewDepositsBalance amount:', NewDepositsBalance);
-        console.log('Total NewDepositsAvailableBalance amount:', NewDepositsAvailableBalance);
-        console.log('Total NewDepositsWithdraw amount:', NewDepositsWithdraw);
+      let amountDeposits = (totalCreditAmount * casinoMultiples) - (totalDebitAmount * casinoMultiples);
+      let newDepositsBalance = lastMaxWithdraw.balance + amountDeposits;
+      let newDepositsAvailableBalance = lastMaxWithdraw.availableBalance + amountDeposits;
+      let newDepositsWithdraw = lastMaxWithdraw.maxWithdraw + amountDeposits;
 
-        var upMovingAmount = 0;
-        if(AmountDeposits<0){
-          upMovingAmount = Number(AmountDeposits);
-        }
-        const gamesList = await SelectedCasino.findOne(
-          { "games.id": tran.game_id },
-          { "games.$": 1 }
-        );
-  
-          const game = gamesList?.games[0];
-          let GameName = 'N/A';
-        if (game)
-          GameName = game.name
+      var upMovingAmount = 0;
+      if (amountDeposits < 0) {
+        upMovingAmount = Number(amountDeposits);
+      }
 
-        const now = new Date();
-        const year = now.getFullYear().toString();
-        const month = (now.getMonth() + 1).toString().padStart(2, '0');
-        const day = now.getDate().toString().padStart(2, '0');
-        const formattedDate = `${year}-${month}-${day}`;
-        let commissionFrom = user.userId;
-        const betTime = new Date().getTime();
-        let betTransaction = {
-          userId: user.userId,
-          description: `Casino (${GameName})`,
-          date: now.getTime(),
-          createdAt: formattedDate,
-          commissionFrom: commissionFrom,
-          createdBy: 0,
-          betDateTime: betTime,
-          casinoBetAmount: totalDebitAmount,
-          amount: AmountDeposits,
-          balance: NewDepositsBalance,
-          availableBalance: NewDepositsAvailableBalance,
-          maxWithdraw: NewDepositsWithdraw,  // max withdraw cant be negative
-          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-          credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-          creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
-          cashOrCredit: "Bet",
-          sportsId: "6",
-          event: GameName,
-          roundId: tran._id,
-          marketId: tran._id,
-          matchId: tran.game_id,
-          upLineAmount: upMovingAmount,
-          userAvailableBalanceBFTrans:user.availableBalance,
-          userAvailableBalanceAFTrans:updatedavailableBalance,
-          UserPrevexposure:user.exposure,
-          UpdatedExposure:adjustedNewExposure
+      const gamesList = await SelectedCasino.findOne(
+        { "games.id": tran.game_id },
+        { "games.$": 1 }
+      ).session(session);
 
+      const game = gamesList?.games[0];
+      let gameName = game ? game.name : 'N/A';
 
-        }
+      const now = new Date();
+      const formattedDate = now.toISOString().split('T')[0];
+      const betTime = now.getTime();
 
-          const deposit = new Cash(betTransaction)
-          deposit.save();
+      let betTransaction = {
+        userId: user.userId,
+        description: `Casino (${gameName})`,
+        date: now.getTime(),
+        createdAt: formattedDate,
+        commissionFrom: user.userId,
+        createdBy: 0,
+        betDateTime: betTime,
+        casinoBetAmount: totalDebitAmount,
+        amount: amountDeposits,
+        balance: newDepositsBalance,
+        availableBalance: newDepositsAvailableBalance,
+        maxWithdraw: newDepositsWithdraw,
+        cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+        credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+        creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+        cashOrCredit: "Bet",
+        sportsId: "6",
+        event: gameName,
+        roundId: tran._id,
+        marketId: tran._id,
+        matchId: tran.game_id,
+        upLineAmount: upMovingAmount,
+        userAvailableBalanceBFTrans: user.availableBalance,
+        userAvailableBalanceAFTrans: updatedAvailableBalance,
+        userPrevExposure: user.exposure,
+        updatedExposure: adjustedNewExposure
+      };
 
+      const deposit = new Cash(betTransaction);
+      await deposit.save({ session });
 
-        
+      await users.updateOne(
+        { _id: user._id },
+        {
+          $set: {
+            clientPL: updatedAvailableBalance,
+            balance: updatedAvailableBalance,
+            availableBalance: updatedAvailableBalance,
+            exposure: adjustedNewExposure,
+            tempExposure: adjustedNewTempExposure
+          }
+        },
+        { session }
+      );
 
-
-        // console.log('Total lastMaxWithdraw amount:', lastMaxWithdraw);
-      
-        
-        await users.updateOne(
-          { _id: user._id },
-          {
-            $set: {
-              clientPL: updatedavailableBalance,
-              balance: updatedavailableBalance,
-              availableBalance: updatedavailableBalance,
-              exposure: adjustedNewExposure,
-              tempExposure: adjustedNewTempExposure
-            }
-          },
-      
-        );
-     
-
-      await casinoCalls.updateMany({ round_id: tran._id.toString() },
-        {$set: {isProcessing: false} })
-      
-    
-
+      await casinoCalls.updateMany(
+        { round_id: tran._id.toString() },
+        { $set: { isProcessing: false } },
+        { session }
+      );
     }
 
+    await session.commitTransaction();  // Commit the transaction
   } catch (error) {
-    console.error('Error processing transactions:', error);
-  }
+    console.error('Error processing transactions:', error);
+    await session.abortTransaction();  // Rollback on error
+  } finally {
+    session.endSession();  // End session
+  }
 }
+
 setTimeout(() => {
   findAndProcessTransactions()
 },2000)
