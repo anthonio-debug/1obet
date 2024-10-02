@@ -115,9 +115,8 @@ async function findAndProcessTransactions(user) {
 
   // Find the user with the specified remote ID using the session
   const user = await users.findOne(
-    { remoteId: Number(tran.remote_id) },
-    null,
-    { session }
+    { remoteId: Number(tran.remote_id) }
+ 
   );
 
   
