@@ -106,7 +106,7 @@ async function findAndProcessTransactions(user) {
       const user = await users.findOne({ remoteId: Number(tran.remote_id) });
       
 
-        adjustedNewExposure = user.exposure + (totalDebitAmount* casinoMultiples);
+        // adjustedNewExposure = user.exposure + (totalDebitAmount* casinoMultiples);
       adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples);
       updatedavailableBalance=user.availableBalance+(totalCreditAmount *  casinoMultiples)
       Updatedbalance=user.balance+(totalCreditAmount *  casinoMultiples)
@@ -127,7 +127,7 @@ async function findAndProcessTransactions(user) {
         
         
         let AmountDeposits = (totalCreditAmount * casinoMultiples )- (totalDebitAmount * casinoMultiples)
-
+        adjustedNewExposure = user.exposure + Math.abs(AmountDeposits); 
 
         let NewDepositsBalance = lastMaxWithdraw.balance + AmountDeposits;
         
@@ -182,7 +182,13 @@ async function findAndProcessTransactions(user) {
           roundId: tran._id,
           marketId: tran._id,
           matchId: tran.game_id,
-          upLineAmount: upMovingAmount
+          upLineAmount: upMovingAmount,
+          userAvailableBalanceBFTrans:user.availableBalance,
+          userAvailableBalanceAFTrans:updatedavailableBalance,
+          UserPrevexposure:user.exposure,
+          UpdatedExposure:adjustedNewExposure
+
+
         }
 
           const deposit = new Cash(betTransaction)
@@ -199,6 +205,8 @@ async function findAndProcessTransactions(user) {
           { _id: user._id },
           {
             $set: {
+              clientPL: updatedavailableBalance,
+              balance: updatedavailableBalance,
               availableBalance: updatedavailableBalance,
               exposure: adjustedNewExposure,
               tempExposure: adjustedNewTempExposure
