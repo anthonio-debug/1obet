@@ -279,7 +279,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         { session }
       );
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
-      const casinoDebits = new CasinoDebits({...payload,AddedExposure:tempExposure,userPrevExposure:user.exposure,userUpdatedExposure:UpdatedExposure});
+      const casinoDebits = new CasinoDebits({...payload,AddedExposure:Number(tempExposure),userPrevExposure:Number(user.exposure),userUpdatedExposure:Number(UpdatedExposure)});
       await casinoDebits.save();
 
       return 0
