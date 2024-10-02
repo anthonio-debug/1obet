@@ -13,8 +13,8 @@ const getDailyPLReport = async (req, res) => {
   }
 
   const userId = req.decoded.userId;
-  const startDate = new Date(req.query.startDate);
-  const endDate = new Date(req.query.endDate);
+  const startDate = req.query.startDate;
+  const endDate = req.query.endDate;
   const childUsers = await User.distinct("userId", { createdBy: userId });
   const users = [userId, ...childUsers]
 
