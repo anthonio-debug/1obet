@@ -4131,19 +4131,18 @@ async function deleteDepositsAndCasinoCalls(req, res) {
       console.error("Error deleting deposits:", err);
     });
 
-  await CasinoCalls.deleteMany({
-    username: "user_" + userId
-  })
+
   const user = await User.find({ userId })
+
   const userUpdate = await User.updateOne({ userId }, {
     $set: {
-      balance:user.availableBalance,
-      availableBalance:user.availableBalance,
-      clientPL:user.availableBalance
+      balance:10000,
+      availableBalance:10000,
+      clientPL:10000
     }
   })
 
-  const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_" + userId }, {
+  const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_" + userId ,gameplay_final:1}, {
     isProcessing:true
   })
 
