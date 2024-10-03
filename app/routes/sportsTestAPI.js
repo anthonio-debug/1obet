@@ -4140,10 +4140,7 @@ async function groupByroundId (req, res) {
             _id: '$round_id',
             count: { $sum: 1 },
             documents: { $push: "$$ROOT" }} 
-        },
-        {
-          $sort:{_id:-1}
-        }
+          },
       ]);
 
       res.status(200).json(groups);
@@ -4166,19 +4163,8 @@ async function deleteDepositsAndCasinoCalls(req, res) {
       console.error("Error deleting deposits:", err);
     });
 
-
-  const user = await User.find({ userId })
-
-  const userUpdate = await User.updateOne({ userId }, {
-    $set: {
-      balance:10000,
-      availableBalance:10000,
-      clientPL:10000
-    }
-  })
-
-  const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_" + userId ,gameplay_final:1}, {
-    isProcessing:true
+  await CasinoCalls.deleteMany({
+    username: "user_" + userId
   })
 
   return res.status(200).json({ message: `${userId} records deleted in casino and deposits` })
@@ -7349,8 +7335,7 @@ async function getDistinctRoundIds(req, res) {
 
   try {
     const username=req.params.userName
-    const {userId}=await User.findOne({userName:username})
-    const isUserExist =await CasinoCalls.findOne({ username:"user_"+userId });
+    const isUserExist =await CasinoCalls.findOne({ username:username });
     if(!isUserExist){
       return res.status(404).json({
         success: false,
@@ -7361,7 +7346,7 @@ async function getDistinctRoundIds(req, res) {
     // const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
     const distinctRoundIds = await CasinoCalls.aggregate([
       {
-        $match: { username: "user_"+userId }
+        $match: { username: username }
       },
       {
         $group: {
@@ -7396,11 +7381,7 @@ async function getDistinctRoundIds(req, res) {
               $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0]
             }
           }
-          
         }
-      },
-      {
-        $sort: { createdAt: 1 },
       },
       {
         $project: {
