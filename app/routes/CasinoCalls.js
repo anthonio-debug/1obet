@@ -59,7 +59,8 @@ async function findAndProcessTransactions() {
   const BACKOFF_TIME = 1000; // Backoff time in milliseconds
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-      const session = await mongoose.startSession();
+    const session = await mongoose.startSession();
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
       try {
           session.startTransaction(); // Start transaction
@@ -93,10 +94,6 @@ async function findAndProcessTransactions() {
               session.endSession();
               return;
           }
-
-          // Prepare bulk operations
-          const cashOperations = [];
-          const userUpdates = [];
 
           // Process each transaction in the grouped result
           for (const tran of groupedTransactions) {
@@ -146,24 +143,24 @@ async function findAndProcessTransactions() {
                       roundId: tran._id,
                   };
 
-                  cashOperations.push(new Cash(betTransaction));
+                  const deposit = new Cash(betTransaction);
+                  await deposit.save({ session });
               }
 
-              // Prepare user update operation
-              userUpdates.push({
-                  updateOne: {
-                      filter: { _id: user._id },
-                      update: {
-                          $set: {
-                              clientPL: updatedAvailableBalance,
-                              balance: updatedAvailableBalance,
-                              availableBalance: updatedAvailableBalance,
-                              exposure: adjustedNewExposure,
-                              tempExposure: adjustedNewTempExposure
-                          }
+              // Update user balances and exposure
+              await users.updateOne(
+                  { _id: user._id },
+                  {
+                      $set: {
+                          clientPL: 111,
+                          balance: updatedAvailableBalance,
+                          availableBalance: updatedAvailableBalance,
+                          exposure: adjustedNewExposure,
+                          tempExposure: adjustedNewTempExposure
                       }
-                  }
-              });
+                  },
+                  { session }
+              );
 
               // Mark the transaction as processed
               await CasinoCalls.updateMany(
@@ -173,17 +170,7 @@ async function findAndProcessTransactions() {
               );
           }
 
-          // Insert all cash operations in bulk
-          if (cashOperations.length > 0) {
-              await Cash.insertMany(cashOperations, { session });
-          }
-
-          // Bulk update users
-          if (userUpdates.length > 0) {
-              await users.bulkWrite(userUpdates, { session });
-          }
-
-          // Commit the transaction after processing all deposits and updates
+          // Commit the transaction after processing all deposits
           await session.commitTransaction();
           console.log('Transaction committed successfully');
           return; // Exit the function after successful execution
