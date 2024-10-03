@@ -4021,7 +4021,7 @@ async function deleteOdds(req, res) {
   try {
     //await Bets.deleteMany({marketId:'1.232738763bm',eventId:'33564157',marketName:'Bookmaker'});
     totalSession = 20;
-    await CasinoCalls.updateMany({},{isProcessing:false})
+    //await CasinoCalls.updateMany({},{isProcessing:false})
 
     // for (let i = 1; i < totalSession; i++) {
     //   const session = new Session({
@@ -4034,6 +4034,34 @@ async function deleteOdds(req, res) {
     //   });
     //   session.save();
     // }
+
+
+    await Deposits.deleteMany({
+      userId: 22089,
+      description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
+    })
+      .then(result => {
+        console.log(`${result.deletedCount} deposit(s) deleted.`);
+  
+      })
+      .catch(err => {
+        console.error("Error deleting deposits:", err);
+      });
+  
+  
+  
+  
+    const userUpdate = await User.updateOne({ 22089 }, {
+      $set: {
+        balance:10000,
+        availableBalance:10000,
+        clientPL:10000
+      }
+    })
+
+
+
+
     const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_22089"  ,gameplay_final:1}, {
       isProcessing:true
     })
