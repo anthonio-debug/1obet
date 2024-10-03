@@ -214,8 +214,8 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
         const deposit = new Cash(betTransaction);
         await deposit.save()
          
-      
-  
+      }
+  ;
   console.log("deposit entry user updatedavailableBalance..........................>",updatedavailableBalance)
   console.log("deposit entry user adjustedNewExposure..........................>",adjustedNewExposure)
   console.log("deposit entry user adjustedNewTempExposure..........................>",adjustedNewTempExposure)
@@ -240,7 +240,7 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
       
       );
     
-    }
+        
   
     }
 
