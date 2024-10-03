@@ -102,6 +102,8 @@ async function findAndProcessTransactions(casinoMultiples) {
         // Find all entries by round_id
         const roundEntries = await CasinoCalls.find({ round_id: tran._id }).session(session);
 
+        console.log("roundEntriessssssssssss",roundEntries)
+
         for (const rounds of roundEntries) {
           if (rounds.action === 'credit') {
             totalCreditAmount += Number(rounds.amount);
