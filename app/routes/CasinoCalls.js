@@ -54,47 +54,51 @@ const checkMarketBlocked = async (user) => {
 }
 const mongoose = require('mongoose');
 
-async function findAndProcessTransactions() {
+async function findAndProcessTransactions(user) {
   const session = await mongoose.startSession();
 
   try {
     session.startTransaction();
 
     const groupedTransactions = await CasinoCalls.aggregate([
-      {
-        $match: {
-          gameplay_final: 1,
-          isProcessing: true
-        }
+      { 
+        $match: { 
+          gameplay_final: 1, 
+          isProcessing: true 
+        } 
       },
       {
         $group: {
           _id: "$round_id",
-          remote_id: { $first: "$remote_id" },
+          remote_id: { $first: "$remote_id" }, 
           username: { $first: "$username" },
           game_id: { $first: "$game_id" },
         }
       }
-    ]).session(session);
+    ]).session(session);  
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
-      await session.abortTransaction(); // Abort the transaction if no records found
+      await session.abortTransaction();  // Abort the transaction if no records found
       session.endSession();
       return;
     }
 
-    for (const tran of groupedTransactions) {
-      let totalCreditAmount = 0;
-      let totalDebitAmount = 0;
-      let totalRollBackAmount = 0;
 
+    for (const tran of groupedTransactions) {
+    let totalCreditAmount = 0;
+    let totalDebitAmount = 0;
+    let totalRollBackAmount = 0;
+    let differenceDbCr = 0;
+
+      let adjustedNewExposure = 0;
+      let adjustedNewTempExposure = 0;
       const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
 
-      console.log("Processing roundID:", tran._id.toString());
+      console.log("rouuuuuuuuuuuuuuuuuuuundID=========", tran._id.toString());
 
       for (const rounds of roundIds) {
-        console.log("UserName:", rounds.username);
+        console.log("userName=========", rounds.username);
         
         if (rounds.action === 'credit') {
           totalCreditAmount += Number(rounds.amount);
@@ -106,34 +110,58 @@ async function findAndProcessTransactions() {
           totalRollBackAmount += Number(rounds.amount);
         }
       }
+      differenceDbCr = (totalCreditAmount - totalDebitAmount) *casinoMultiples;
+      //const session = await mongoose.startSession();
+//session.startTransaction();
 
-      const differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
-      // Find the user with the specified remote ID using the session
-      const user = await users.findOne(
-        { remoteId: Number(tran.remote_id) }
-      ).session(session);
-
-      console.log("User Exposure before update:", user.exposure);
-
-      const updatedAvailableBalance = user.availableBalance + (totalCreditAmount * casinoMultiples) - (totalDebitAmount * casinoMultiples);
-      const adjustedNewExposure = user.exposure + (totalDebitAmount * casinoMultiples);
-      const adjustedNewTempExposure = user.tempExposure - (totalDebitAmount * casinoMultiples);
-
-      console.log("Updated Available Balance:", updatedAvailableBalance);
-
-      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
+  // Find the user with the specified remote ID using the session
+  const user = await users.findOne(
+    { remoteId: Number(tran.remote_id) }
+ 
+  )
       
-      console.log('Last Max Withdraw:', lastMaxWithdraw);
+      console.log("exposureeeeeeeeeeeeeeeeeeee=>",user.exposure)
 
-      let NewDepositsBalance = lastMaxWithdraw.balance + differenceDbCr;
-      let NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + differenceDbCr;
-      let NewDepositsWithdraw = lastMaxWithdraw.maxWithdraw + differenceDbCr;
+      let AccumulativeDebit = totalDebitAmount * casinoMultiples;
+      let AccumulativeCredit = totalCreditAmount * casinoMultiples;
+      adjustedNewExposure = user.exposure + AccumulativeDebit;
+      adjustedNewTempExposure = user.tempExposure - AccumulativeDebit;
+      updatedavailableBalance=user.availableBalance+AccumulativeCredit
+      Updatedbalance=user.balance+AccumulativeCredit
+      updatedClientPL = user.client + AccumulativeCredit
+      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
+    
+          console.log('Total credit amount:', AccumulativeCredit);
+        console.log('Total debit amount:', AccumulativeDebit);
+        console.log('Total adjustedNewExposure amount:', adjustedNewExposure);
+        console.log('Total adjustedNewTempExposure amount:', adjustedNewTempExposure);
+          // console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
+          console.log('Total lastMaxWithdraw balance amount:', lastMaxWithdraw.balance);
+          console.log('Total lastMaxWithdraw availableBalance amount:', lastMaxWithdraw.availableBalance);
+          console.log('Total lastMaxWithdraw maxWithdraw amount:', lastMaxWithdraw.maxWithdraw);
+        console.log('Total updatedavailableBalance amount:', updatedavailableBalance);
+        console.log('Total Updatedbalance amount:', Updatedbalance);
+        console.log('Total updatedClientPL amount:', updatedClientPL);
+        
+        
+        
 
-      console.log('Difference (DbCr):', differenceDbCr);
-      console.log('New Deposits Balance:', NewDepositsBalance);
-      console.log('New Deposits Available Balance:', NewDepositsAvailableBalance);
-      console.log('New Deposits Withdraw:', NewDepositsWithdraw);
+        
+        let NewDepositsBalance = lastMaxWithdraw.balance + differenceDbCr;
+        
+        let NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + differenceDbCr
+        
+        let NewDepositsWithdraw = lastMaxWithdraw.maxWithdraw + differenceDbCr
+        console.log('Total differenceDbCr amount:', differenceDbCr);
+        console.log('Total NewDepositsBalance amount:', NewDepositsBalance);
+        console.log('Total NewDepositsAvailableBalance amount:', NewDepositsAvailableBalance);
+        console.log('Total NewDepositsWithdraw amount:', NewDepositsWithdraw);
+
+      var upMovingAmount = 0;
+      if (differenceDbCr < 0) {
+        upMovingAmount = Number(differenceDbCr);
+      }
 
       const gamesList = await SelectedCasino.findOne(
         { "games.id": tran.game_id },
@@ -146,7 +174,8 @@ async function findAndProcessTransactions() {
       const now = new Date();
       const formattedDate = now.toISOString().split('T')[0];
       const betTime = now.getTime();
-
+console.log("deposit entry user exposure==============>",user.exposure)
+console.log("deposit entry user adjustedNewExposure==============>",adjustedNewExposure)
       let betTransaction = {
         userId: user.userId,
         description: `Casino (${gameName})`,
@@ -169,8 +198,9 @@ async function findAndProcessTransactions() {
         roundId: tran._id,
         marketId: tran._id,
         matchId: tran.game_id,
+        upLineAmount: upMovingAmount,
         userAvailableBalanceBFTrans: user.availableBalance,
-        userAvailableBalanceAFTrans: updatedAvailableBalance,
+        userAvailableBalanceAFTrans: updatedavailableBalance,
         userPrevExposure: user.exposure,
         updatedExposure: adjustedNewExposure
       };
@@ -182,7 +212,9 @@ async function findAndProcessTransactions() {
         { _id: user._id },
         {
           $set: {
-            availableBalance: updatedAvailableBalance,
+            clientPL: updatedavailableBalance,
+            balance: updatedavailableBalance,
+            availableBalance: updatedavailableBalance,
             exposure: adjustedNewExposure,
             tempExposure: adjustedNewTempExposure
           }
@@ -190,24 +222,21 @@ async function findAndProcessTransactions() {
         { session }
       );
 
-      await CasinoCalls.updateMany(
+      await casinoCalls.updateMany(
         { round_id: tran._id.toString() },
         { $set: { isProcessing: false } },
         { session }
       );
-
-      console.log(`Transaction processed for roundID: ${tran._id.toString()}`);
     }
 
-    await session.commitTransaction();
+    await session.commitTransaction();  
   } catch (error) {
     console.error('Error processing transactions:', error);
     await session.abortTransaction();
   } finally {
-    session.endSession();
+    session.endSession();  
   }
 }
-
 
 setTimeout(() => {
   findAndProcessTransactions()
