@@ -155,9 +155,9 @@ async function findAndProcessTransactions(user) {
         
 
         
-        let NewDepositsBalance = lastMaxWithdraw.balance + differenceDbCr;
+        let NewDepositsBalance = user.balance + differenceDbCr;
         
-        let NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + differenceDbCr
+        let NewDepositsAvailableBalance = user.availableBalance + differenceDbCr
         
         let NewDepositsWithdraw = lastMaxWithdraw.maxWithdraw + differenceDbCr
         console.log('Total differenceDbCr amount:', differenceDbCr);
