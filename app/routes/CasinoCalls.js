@@ -89,7 +89,7 @@ async function findAndProcessTransactions(user) {
 
    
     for (const tran of groupedTransactions) {
-       await new Promise(resolve => setTimeout(resolve, 300));
+       await new Promise(resolve => setTimeout(resolve, 1000));
     let totalCreditAmount = 0;
     let totalDebitAmount = 0;
     let totalRollBackAmount = 0;
