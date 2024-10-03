@@ -97,7 +97,7 @@ async function findAndProcessTransactions(user) {
 
       let adjustedNewExposure = 0;
       let adjustedNewTempExposure = 0;
-      const roundIds = await CasinoCalls.find({ round_id: tran._id }).distinct();
+      const roundIds = await CasinoCalls.find({ round_id: tran._id })
 
       console.log("rouuuuuuuuuuuuuuuuuuuundID=========", tran._id.toString());
 
