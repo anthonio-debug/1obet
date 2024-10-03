@@ -216,6 +216,9 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
         return 
       }
   ;
+  console.log("deposit entry user updatedavailableBalance..........................>",updatedavailableBalance)
+  console.log("deposit entry user adjustedNewExposure..........................>",adjustedNewExposure)
+  console.log("deposit entry user adjustedNewTempExposure..........................>",adjustedNewTempExposure)
 
       await users.updateOne(
         { _id: user._id },
