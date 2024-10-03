@@ -7315,7 +7315,7 @@ async function getDistinctRoundIds(req, res) {
     // const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
     const distinctRoundIds = await CasinoCalls.aggregate([
       {
-        $match: { username: username }
+        $match: { username: "user_"+userId }
       },
       {
         $group: {
