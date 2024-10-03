@@ -76,7 +76,8 @@ async function findAndProcessTransactions(user) {
         }
       }
     ]).session(session);  
-
+    console.log("groupedTransactions=========>",groupedTransactions)
+    console.log("groupedTransactions.length=========>",groupedTransactions.length)
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
       await session.abortTransaction();  // Abort the transaction if no records found
