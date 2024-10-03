@@ -53,8 +53,12 @@ const checkMarketBlocked = async (user) => {
   }
 }
 const mongoose = require('mongoose');
-
+var critiCalCondition=true
 async function findAndProcessTransactions(user) {
+  while (critiCalCondition) {
+    critiCalCondition=false
+    
+  
   const session = await mongoose.startSession();
 
   try {
@@ -210,7 +214,7 @@ const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toS
       };
 
       const deposit = new Cash(betTransaction);
-      await deposit.save({ session });
+    const r1=  await deposit.save({ session });
       console.log("deposit entry user updatedavailableBalance..........................>",updatedavailableBalance)
   console.log("deposit entry user adjustedNewExposure..........................>",adjustedNewExposure)
   console.log("deposit entry user adjustedNewTempExposure..........................>",adjustedNewTempExposure)
@@ -228,13 +232,15 @@ const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toS
         { session }
       );
 
-      await casinoCalls.updateMany(
+     const r2=     await casinoCalls.updateMany(
         { round_id: tran._id.toString() },
         { $set: { isProcessing: false } },
         { session }
       );
     }
-
+      if (r1 && r2) {
+  critiCalCondition=true
+}
     await session.commitTransaction();  
     }
   } catch (error) {
@@ -243,6 +249,7 @@ const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toS
   } finally {
     session.endSession();  
   }
+}
 }
 
 setTimeout(() => {
