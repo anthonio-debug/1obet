@@ -82,8 +82,7 @@ async function findAndProcessTransactions(user) {
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
-      await session.abortTransaction();  // Abort the transaction if no records found
-      session.endSession();
+    
       return;
     }
 
@@ -97,7 +96,7 @@ async function findAndProcessTransactions(user) {
 
       let adjustedNewExposure = 0;
       let adjustedNewTempExposure = 0;
-      const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
+      const roundIds = await CasinoCalls.find({ round_id: tran._id })
 
       console.log("rouuuuuuuuuuuuuuuuuuuundID=========", tran._id.toString());
 
