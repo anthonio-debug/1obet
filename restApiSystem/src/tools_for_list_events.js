@@ -22,13 +22,13 @@ function ToolForEvent() {
 
   async function init(_io, express) {
     apiRequests.init(_io, express);
-    // console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",config.activeProvider);
+     console.log("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:",config.activeProvider);
     if (config.activeProvider === 'NEW') {
       fetchEvents();
       setBrokenRecord();
       setInterval(() => {
         findAndProcessTransactions()
-      },4000)
+      },20000)
       setInterval(fetchEvents,  60 * 1000);
       // setInterval(updateOddsFormLimitless,  60 * 1000);
       
