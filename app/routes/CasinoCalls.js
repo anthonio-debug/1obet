@@ -209,7 +209,7 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
         userPrevExposure: user.exposure,
         updatedExposure: adjustedNewExposure
       };
-      const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id })
+      const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toString() })
       if (!checkForExistingRoundIdInDeposit.length > 0) {
         const deposit = new Cash(betTransaction);
         await deposit.save()
