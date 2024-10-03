@@ -15,7 +15,6 @@ function ToolForResult() {
 
   async function init(_io, express) {
     apiRequestResult.init(_io, express);
-    findAndProcessTransactions()
     fetchResults()
     fetchRacingResult()
   }

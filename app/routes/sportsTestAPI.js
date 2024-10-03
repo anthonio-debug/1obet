@@ -4065,20 +4065,20 @@ async function deleteOdds(req, res) {
     const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_22089"  ,gameplay_final:1}, {
       isProcessing:true
     })
-    await Odds.deleteMany({});
+    // await Odds.deleteMany({});
 
 
 
 
-    await RaceOdds.deleteMany({});
-    await fancyOdds.deleteMany({});
-    await MarketIDS.deleteMany({
-      $or: [
-        { status: 'CLOSED', sportID: 4339 },
-        { status: 'CLOSED', sportID: 7 },
+    // await RaceOdds.deleteMany({});
+    // await fancyOdds.deleteMany({});
+    // await MarketIDS.deleteMany({
+    //   $or: [
+    //     { status: 'CLOSED', sportID: 4339 },
+    //     { status: 'CLOSED', sportID: 7 },
 
-      ]
-    });
+    //   ]
+    // });
     const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
     const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });

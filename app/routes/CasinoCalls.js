@@ -89,6 +89,7 @@ async function findAndProcessTransactions(user) {
 
 
     for (const tran of groupedTransactions) {
+        setTimeout(async() => {
     let totalCreditAmount = 0;
     let totalDebitAmount = 0;
     let totalRollBackAmount = 0;
@@ -231,9 +232,9 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
         { $set: { isProcessing: false } },
         { session }
       );
-      setTimeout(() => {
+    
         
-      },2000)
+    },200)
     }
 
     await session.commitTransaction();  
