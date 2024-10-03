@@ -238,9 +238,8 @@ const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toS
         { session }
       );
     }
-      if (r1 && r2) {
   critiCalCondition=true
-}
+
     await session.commitTransaction();  
     }
   } catch (error) {
