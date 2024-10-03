@@ -2253,11 +2253,6 @@ const placeBet = async (req, res) => {
       const apiBookmakerOdds = buildBookmakerOdd(bookmakerOddsRes);
 
 
-      console.log("apiBookmakerOdds elngth=================================>>>>>", apiBookmakerOdds.length)
-
-      console.log("apiBookmakerOdds runners.....=================================>>>>>", apiBookmakerOdds)
-
-
 
 
 
@@ -4128,7 +4123,7 @@ async function deleteOdds(req, res) {
     console.error('Error updating odds:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
-  
+
 }
 async function groupByroundId (req, res) {
   const { username } = req.params;
