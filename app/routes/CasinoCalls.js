@@ -97,9 +97,9 @@ async function findAndProcessTransactions(user) {
 
       let adjustedNewExposure = 0;
       let adjustedNewTempExposure = 0;
-      const roundIds = await CasinoCalls.distinct('round_id', { round_id: tran._id });
+      const roundIds = await CasinoCalls.find({ round_id: tran._id }).distinct();
 
-      console.log("rouuuuuuuuuuuuuuuuuuuundID=========", roundIds);
+      console.log("rouuuuuuuuuuuuuuuuuuuundID=========", tran._id.toString());
 
       for (const rounds of roundIds) {
         console.log("userName=========", rounds.username);
@@ -209,9 +209,13 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
         userPrevExposure: user.exposure,
         updatedExposure: adjustedNewExposure
       };
-
-      const deposit = new Cash(betTransaction);
-      await deposit.save();
+      const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id })
+      if (!checkForExistingRoundIdInDeposit.length > 0) {
+        const deposit = new Cash(betTransaction);
+        await deposit.save()
+        return 
+      }
+  ;
 
       await users.updateOne(
         { _id: user._id },
