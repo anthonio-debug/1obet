@@ -4034,7 +4034,9 @@ async function deleteOdds(req, res) {
     //   });
     //   session.save();
     // }
-
+    const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_" + userId ,gameplay_final:1}, {
+      isProcessing:true
+    })
     await Odds.deleteMany({});
 
 
