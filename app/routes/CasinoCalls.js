@@ -100,7 +100,7 @@ async function findAndProcessTransactions() {
       let adjustedNewTempExposure = 0;
 
       // Find all entries by round_id
-      const roundEntries = await CasinoCalls.find({ round_id: tran._id });
+      const roundEntries = await CasinoCalls.find({ round_id: tran._id }).session(session); // Passing session in find query
 
       for (const rounds of roundEntries) {
         if (rounds.action === 'credit') {
@@ -116,7 +116,7 @@ async function findAndProcessTransactions() {
 
       differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
-      // Find user by remote ID
+      // Find user by remote ID with session
       const user = await users.findOne({ remoteId: Number(tran.remote_id) }).session(session);
       if (!user) {
         console.log('User not found for remote_id:', tran.remote_id);
@@ -169,14 +169,14 @@ async function findAndProcessTransactions() {
             tempExposure: adjustedNewTempExposure
           }
         },
-        { session }
+        { session } // Pass session here
       );
 
       // Mark the transaction as processed
       await CasinoCalls.updateMany(
         { round_id: tran._id.toString() },
         { $set: { isProcessing: false } },
-        { session }
+        { session } // Pass session here
       );
     }
 
@@ -191,6 +191,7 @@ async function findAndProcessTransactions() {
     session.endSession();
   }
 }
+
 
 
 
