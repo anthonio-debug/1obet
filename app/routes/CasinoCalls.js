@@ -75,9 +75,7 @@ async function findAndProcessTransactions(user) {
           game_id: { $first: "$game_id" },
         }
       },
-      {
-        sort:-1
-      }
+      
     ]).session(session);  
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
