@@ -224,7 +224,7 @@ function getMatchType(
 // Configure CORS options
 // const allowedOrigin = 'https://1obet.com';
 // const allowedAdminOrigin = 'https://admin.1obet.com';
-// const allowedAPI = 'https://api.bookofblack.com';
+// const allowedAPI = 'https://production.1obet.net';
 
 
 // const corsOptions = {
@@ -250,7 +250,7 @@ const corsOptions = {
 //   'https://www.1obet.com',
 //   'https://admin.1obet.com',
 //   'https://www.admin.1obet.com',
-//   'https://api.bookofblack.com'
+//   'https://production.1obet.net'
 // ];
 
 // const corsOptions = {
