@@ -151,7 +151,9 @@ async function findAndProcessTransactions() {
                       roundId: tran._id,
                   };
 
-                  betTransactions.push(betTransaction); // Add to the array of transactions
+                betTransactions.push(betTransaction);
+                console.log(betTransaction)
+                // Add to the array of transactions
               }
 
               // Prepare user update
