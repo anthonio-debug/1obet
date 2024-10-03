@@ -74,6 +74,11 @@ async function findAndProcessTransactions(user) {
           username: { $first: "$username" },
           game_id: { $first: "$game_id" },
         }
+      },
+      {
+        $sort: {
+          _id:-1
+        }
       }
     ]).session(session);  
 
