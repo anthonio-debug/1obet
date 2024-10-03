@@ -115,7 +115,10 @@ async function findAndProcessTransactions() {
                   }
               }
 
-              const differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
+            const differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
+            
+            console.log("totalCreditAmount================>".totalCreditAmount)
+            console.log("totalDebitAmount================>".totalDebitAmount)
 
               // Find user by remote ID with session
               const user = await users.findOne({ remoteId: Number(tran.remote_id) })
