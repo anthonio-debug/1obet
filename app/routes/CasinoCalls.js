@@ -132,7 +132,8 @@ async function findAndProcessTransactions() {
               // Calculate updated available balance
               const adjustedNewExposure = user.exposure + totalDebitAmount * casinoMultiples;
               const adjustedNewTempExposure = user.tempExposure - totalDebitAmount * casinoMultiples;
-              const updatedAvailableBalance = user.availableBalance + differenceDbCr;
+            const updatedAvailableBalance = user.availableBalance + differenceDbCr;
+            console.log("updatedAvailableBalance DB/CR: ", updatedAvailableBalance);
 
               // Prepare bet transaction
               const betTransaction = {
