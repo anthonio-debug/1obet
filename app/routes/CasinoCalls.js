@@ -54,7 +54,7 @@ const checkMarketBlocked = async (user) => {
 }
 const mongoose = require('mongoose');
 
-async function findAndProcessTransactions(casinoMultiples) {
+async function findAndProcessTransactions() {
   const MAX_RETRIES = 5; // Maximum number of retries for transaction
   const BACKOFF_TIME = 1000; // Backoff time in milliseconds
 
