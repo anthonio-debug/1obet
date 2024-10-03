@@ -7350,7 +7350,11 @@ async function getDistinctRoundIds(req, res) {
               $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0]
             }
           }
+          
         }
+      },
+      {
+        $sort: { createdAt: 1 },
       },
       {
         $project: {
