@@ -74,6 +74,9 @@ async function findAndProcessTransactions(user) {
           username: { $first: "$username" },
           game_id: { $first: "$game_id" },
         }
+      },
+      {
+        sort:-1
       }
     ]).session(session);  
 
@@ -150,7 +153,7 @@ async function findAndProcessTransactions(user) {
         
         let NewDepositsBalance = lastMaxWithdraw.balance + differenceDbCr;
         
-        let NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + differenceDbCr
+        let NewDepositsAvailableBalance = user.availableBalance + differenceDbCr
         
         let NewDepositsWithdraw = lastMaxWithdraw.maxWithdraw + differenceDbCr
         console.log('Total differenceDbCr amount:', differenceDbCr);
