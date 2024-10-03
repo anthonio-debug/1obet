@@ -89,7 +89,7 @@ async function findAndProcessTransactions(user) {
 
 
     for (const tran of groupedTransactions) {
-        setTimeout(async() => {
+      await new Promise(resolve => setTimeout(resolve, 1000));
     let totalCreditAmount = 0;
     let totalDebitAmount = 0;
     let totalRollBackAmount = 0;
@@ -234,7 +234,7 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
       );
     
         
-    },200)
+  
     }
 
     await session.commitTransaction();  
