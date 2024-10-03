@@ -54,7 +54,7 @@ const checkMarketBlocked = async (user) => {
 }
 const mongoose = require('mongoose');
 
-async function findAndProcessTransactions(casinoMultiples) {
+async function findAndProcessTransactions() {
   const MAX_RETRIES = 3; // Maximum number of retries for transaction
   let attempt = 0;
 
@@ -148,8 +148,8 @@ async function findAndProcessTransactions(casinoMultiples) {
             roundId: tran._id,
           };
           console.log("avail;albel=================================>",updatedAvailableBalance)
-          // const deposit = new Cash(betTransaction);
-          // await deposit.save({ session });
+          const deposit = new Cash(betTransaction);
+          await deposit.save({ session });
         }
 
         // Update user balances and exposure
