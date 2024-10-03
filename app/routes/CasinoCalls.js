@@ -89,7 +89,7 @@ async function findAndProcessTransactions(user) {
 
    
     for (const tran of groupedTransactions) {
-       await new Promise(resolve => setTimeout(resolve, 1000));
+       await new Promise(resolve => setTimeout(resolve, 800));
     let totalCreditAmount = 0;
     let totalDebitAmount = 0;
     let totalRollBackAmount = 0;
@@ -253,9 +253,7 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
   }
 }
 
-setTimeout(() => {
-  findAndProcessTransactions()
-},2000)
+
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
 
