@@ -53,7 +53,6 @@ const checkMarketBlocked = async (user) => {
   }
 }
 const mongoose = require('mongoose');
-
 async function findAndProcessTransactions() {
   const MAX_RETRIES = 5; // Maximum number of retries for transaction
   const BACKOFF_TIME = 1000; // Backoff time in milliseconds
@@ -117,8 +116,11 @@ async function findAndProcessTransactions() {
 
               const differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
+              // Debugging logs
+              console.log("Round ID:", tran._id);
               console.log("Total Credit Amount: ", totalCreditAmount);
               console.log("Total Debit Amount: ", totalDebitAmount);
+              console.log("Difference DB/CR: ", differenceDbCr);
 
               // Find user by remote ID with session
               const user = await users.findOne({ remoteId: Number(tran.remote_id) }).session(session);
@@ -127,10 +129,33 @@ async function findAndProcessTransactions() {
                   continue; // Skip to the next transaction if user not found
               }
 
-              // Calculate updated available balance directly
+              // Calculate updated available balance
+              const adjustedNewExposure = user.exposure + totalDebitAmount * casinoMultiples;
+              const adjustedNewTempExposure = user.tempExposure - totalDebitAmount * casinoMultiples;
               const updatedAvailableBalance = user.availableBalance + differenceDbCr;
 
-              // Prepare user update only once at the end of processing for this transaction
+              // Prepare bet transaction
+              const betTransaction = {
+                  userId: user.userId,
+                  description: `Casino (${tran.game_id})`,
+                  date: Date.now(),
+                  createdAt: new Date().toISOString().split('T')[0],
+                  amount: differenceDbCr,
+                  balance: updatedAvailableBalance, // Use the updated value
+                  availableBalance: updatedAvailableBalance, // Use the updated value
+                  exposure: adjustedNewExposure,
+                  tempExposure: adjustedNewTempExposure,
+                  roundId: tran._id,
+              };
+
+              // Check for existing deposit entry
+              const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
+              if (!existingDeposit) {
+                  betTransactions.push(betTransaction);
+                  console.log("Bet Transaction:", betTransaction); // Log the bet transaction
+              }
+
+              // Prepare user update
               userUpdates.push({
                   updateOne: {
                       filter: { _id: user._id },
@@ -139,32 +164,12 @@ async function findAndProcessTransactions() {
                               clientPL: updatedAvailableBalance,
                               balance: updatedAvailableBalance,
                               availableBalance: updatedAvailableBalance,
-                              exposure: user.exposure + totalDebitAmount * casinoMultiples,
-                              tempExposure: user.tempExposure - totalDebitAmount * casinoMultiples
+                              exposure: adjustedNewExposure,
+                              tempExposure: adjustedNewTempExposure
                           }
                       }
                   }
               });
-
-              // Check for existing deposit entry
-              const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
-              if (!existingDeposit) {
-                  const betTransaction = {
-                      userId: user.userId,
-                      description: `Casino (${tran.game_id})`,
-                      date: Date.now(),
-                      createdAt: new Date().toISOString().split('T')[0],
-                      amount: differenceDbCr,
-                      balance: updatedAvailableBalance, // Use the updated value
-                      availableBalance: updatedAvailableBalance, // Use the updated value
-                      exposure: user.exposure + totalDebitAmount * casinoMultiples,
-                      tempExposure: user.tempExposure - totalDebitAmount * casinoMultiples,
-                      roundId: tran._id,
-                  };
-
-                  betTransactions.push(betTransaction);
-                  console.log(betTransaction); // Log the bet transaction
-              }
 
               // Prepare update for CasinoCalls
               casinoCallsUpdates.push({
