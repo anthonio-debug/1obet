@@ -4138,7 +4138,10 @@ async function groupByroundId (req, res) {
             _id: '$round_id',
             count: { $sum: 1 },
             documents: { $push: "$$ROOT" }} 
-          },
+        },
+        {
+          $sort:{_id:-1}
+        }
       ]);
 
       res.status(200).json(groups);
