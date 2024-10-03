@@ -79,10 +79,12 @@ async function findAndProcessTransactions(user) {
           game_id: { $first: "$game_id" },
         }
       },
+      // Moved sort to a new stage
       {
-        sort:{_id:-1}
+        $sort: { _id: -1 } // Change 'id' to '_id' to sort by the grouped field
       }
-    ]).session(session);  
+    ]).session(session);
+    
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
