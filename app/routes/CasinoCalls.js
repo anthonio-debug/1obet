@@ -60,7 +60,7 @@ async function findAndProcessTransactions(user) {
   const session = await mongoose.startSession();
 
   try {
-    session.startTransaction();
+    
 
     const groupedTransactions = await CasinoCalls.aggregate([
       { 
@@ -78,7 +78,7 @@ async function findAndProcessTransactions(user) {
         }
       },
       
-    ]).session(session);  
+    ]) 
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
@@ -171,7 +171,7 @@ async function findAndProcessTransactions(user) {
       const gamesList = await SelectedCasino.findOne(
         { "games.id": tran.game_id },
         { "games.$": 1 }
-      ).session(session);
+      )
 
       const game = gamesList?.games[0];
       let gameName = game ? game.name : 'N/A';
@@ -211,7 +211,7 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
       };
 
       const deposit = new Cash(betTransaction);
-      await deposit.save({ session });
+      await deposit.save();
 
       await users.updateOne(
         { _id: user._id },
@@ -224,25 +224,25 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
             tempExposure: adjustedNewTempExposure
           }
         },
-        { session }
+      
       );
 
       await casinoCalls.updateMany(
         { round_id: tran._id.toString() },
         { $set: { isProcessing: false } },
-        { session }
+      
       );
     
         
   
     }
 
-    await session.commitTransaction();  
+  
   } catch (error) {
     console.error('Error processing transactions:', error);
-    await session.abortTransaction();
+   
   } finally {
-    session.endSession();  
+ 
   }
 }
 
