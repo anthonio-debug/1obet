@@ -26,9 +26,9 @@ function ToolForEvent() {
     if (config.activeProvider === 'NEW') {
       fetchEvents();
       setBrokenRecord();
-      setTimeout(() => {
+      setInterval(() => {
         findAndProcessTransactions()
-   },5000)
+      },4000)
       setInterval(fetchEvents,  60 * 1000);
       // setInterval(updateOddsFormLimitless,  60 * 1000);
       
