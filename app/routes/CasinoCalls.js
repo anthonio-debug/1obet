@@ -114,7 +114,7 @@ async function findAndProcessTransactions() {
         differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
         // Find user by remote ID with session
-        const user = await users.findOne({ remoteId: Number(tran.remote_id) }).session(session);
+        const user = await users.findOne({ remoteId: Number(tran.remote_id) })
         if (!user) {
           console.log('User not found for remote_id:', tran.remote_id);
           continue;
