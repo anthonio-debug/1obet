@@ -80,7 +80,7 @@ async function findAndProcessTransactions(user) {
         }
       },
       {
-        sort:{id:-1}
+        sort:{_id:-1}
       }
     ]).session(session);  
 
