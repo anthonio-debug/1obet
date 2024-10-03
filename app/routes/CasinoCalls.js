@@ -55,6 +55,8 @@ const checkMarketBlocked = async (user) => {
 const mongoose = require('mongoose');
 
 async function findAndProcessTransactions(user) {
+
+  
   const session = await mongoose.startSession();
 
   try {
@@ -110,6 +112,7 @@ async function findAndProcessTransactions(user) {
         if (rounds.action === 'rollback') {
           totalRollBackAmount += Number(rounds.amount);
         }
+
       }
       differenceDbCr = (totalCreditAmount - totalDebitAmount) *casinoMultiples;
       //const session = await mongoose.startSession();
@@ -228,6 +231,9 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
         { $set: { isProcessing: false } },
         { session }
       );
+      setTimeout(() => {
+        
+      },2000)
     }
 
     await session.commitTransaction();  
