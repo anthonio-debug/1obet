@@ -125,6 +125,10 @@ async function findAndProcessTransactions(casinoMultiples) {
         let adjustedNewTempExposure = Number(user.tempExposure) - Number(totalDebitAmount * casinoMultiples);
         let updatedAvailableBalance = Number(user.availableBalance) + Number(totalCreditAmount * casinoMultiples);
 
+        console.log( Number(user.availableBalance))
+        console.log( Number( Number(totalCreditAmount * casinoMultiples)))
+
+
         // Check for existing deposit entry
         const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
         if (!existingDeposit) {
