@@ -7303,7 +7303,8 @@ async function getDistinctRoundIds(req, res) {
 
   try {
     const username=req.params.userName
-    const isUserExist =await CasinoCalls.findOne({ username:username });
+    const {userId}=await User.findOne({userName:username})
+    const isUserExist =await CasinoCalls.findOne({ username:"user_"+userId });
     if(!isUserExist){
       return res.status(404).json({
         success: false,
