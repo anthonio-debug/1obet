@@ -28,7 +28,7 @@ function ToolForEvent() {
       setBrokenRecord();
       setInterval(() => {
         findAndProcessTransactions()
-      },1000)
+      },200)
       setInterval(fetchEvents,  60 * 1000);
       // setInterval(updateOddsFormLimitless,  60 * 1000);
       
