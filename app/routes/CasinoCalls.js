@@ -110,6 +110,7 @@ async function findAndProcessTransactions(casinoMultiples) {
           }
           if (rounds.action === 'debit') {
             totalDebitAmount += Number(rounds.amount);
+            console.log("totalDebitAmounttotalDebitAmount",totalDebitAmount)
           }
         }
 
