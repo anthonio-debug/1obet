@@ -54,28 +54,28 @@ const checkMarketBlocked = async (user) => {
 }
 const mongoose = require('mongoose');
 
-async function findAndProcessTransactions() {
-  const MAX_RETRIES = 3; // Set the maximum number of retries
+async function findAndProcessTransactions(casinoMultiples) {
+  const MAX_RETRIES = 3; // Maximum number of retries for transaction
   let attempt = 0;
 
   while (attempt < MAX_RETRIES) {
     const session = await mongoose.startSession();
-    
+
     try {
       session.startTransaction(); // Start transaction
 
       // Group and filter transactions with `isProcessing: true`
       const groupedTransactions = await CasinoCalls.aggregate([
-        { 
-          $match: { 
-            gameplay_final: 1, 
-            isProcessing: true 
-          } 
+        {
+          $match: {
+            gameplay_final: 1,
+            isProcessing: true
+          }
         },
         {
           $group: {
             _id: "$round_id",
-            remote_id: { $first: "$remote_id" }, 
+            remote_id: { $first: "$remote_id" },
             username: { $first: "$username" },
             game_id: { $first: "$game_id" },
           }
@@ -85,7 +85,7 @@ async function findAndProcessTransactions() {
             _id: -1
           }
         }
-      ]);
+      ]).session(session);
 
       if (!groupedTransactions || groupedTransactions.length === 0) {
         console.log('No transactions found for the given round_id and username.');
@@ -117,14 +117,30 @@ async function findAndProcessTransactions() {
         const user = await users.findOne({ remoteId: Number(tran.remote_id) })
         if (!user) {
           console.log('User not found for remote_id:', tran.remote_id);
-          continue;
+          continue; // Skip to the next transaction if user not found
         }
 
-        // Prepare transaction data and update user and cash records as before...
+        // Prepare transaction data
+        let adjustedNewExposure = user.exposure + totalDebitAmount * casinoMultiples;
+        let adjustedNewTempExposure = user.tempExposure - totalDebitAmount * casinoMultiples;
+        let updatedAvailableBalance = user.availableBalance + totalCreditAmount * casinoMultiples;
 
-        // Check if round_id has already been processed
+        // Check for existing deposit entry
         const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
         if (!existingDeposit) {
+          const betTransaction = {
+            userId: user.userId,
+            description: `Casino (${tran.game_id})`,
+            date: Date.now(),
+            createdAt: new Date().toISOString().split('T')[0],
+            amount: differenceDbCr,
+            balance: updatedAvailableBalance,
+            availableBalance: updatedAvailableBalance,
+            exposure: adjustedNewExposure,
+            tempExposure: adjustedNewTempExposure,
+            roundId: tran._id,
+          };
+
           const deposit = new Cash(betTransaction);
           await deposit.save({ session });
         }
@@ -166,7 +182,7 @@ async function findAndProcessTransactions() {
         continue; // Retry the transaction
       }
     } finally {
-      session.endSession();
+      session.endSession(); // End the session
     }
   }
 
