@@ -111,7 +111,7 @@ async function findAndProcessTransactions(casinoMultiples) {
           }
         }
 
-        differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
+        differenceDbCr =Number(totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
         // Find user by remote ID with session
         const user = await users.findOne({ remoteId: Number(tran.remote_id) })
@@ -140,9 +140,9 @@ async function findAndProcessTransactions(casinoMultiples) {
             tempExposure: adjustedNewTempExposure,
             roundId: tran._id,
           };
-
-          const deposit = new Cash(betTransaction);
-          await deposit.save({ session });
+          console.log("avail;albel=================================>",updatedAvailableBalance)
+          // const deposit = new Cash(betTransaction);
+          // await deposit.save({ session });
         }
 
         // Update user balances and exposure
