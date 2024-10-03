@@ -54,7 +54,7 @@ const checkMarketBlocked = async (user) => {
 }
 const mongoose = require('mongoose');
 
-async function findAndProcessTransactions() {
+async function findAndProcessTransactions(casinoMultiples) {
   const MAX_RETRIES = 5; // Maximum number of retries for transaction
   const BACKOFF_TIME = 1000; // Backoff time in milliseconds
 
@@ -95,6 +95,7 @@ async function findAndProcessTransactions() {
           }
 
           const betTransactions = []; // Array to hold bet transactions
+          const userUpdates = []; // Array to hold user updates
           const casinoCallsUpdates = []; // Array to hold updates for CasinoCalls
 
           // Process each transaction in the grouped result
@@ -117,7 +118,7 @@ async function findAndProcessTransactions() {
               const differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
               // Find user by remote ID with session
-              const user = await users.findOne({ remoteId: Number(tran.remote_id) })
+              const user = await users.findOne({ remoteId: Number(tran.remote_id) }).session(session);
               if (!user) {
                   console.log('User not found for remote_id:', tran.remote_id);
                   continue; // Skip to the next transaction if user not found
@@ -148,7 +149,7 @@ async function findAndProcessTransactions() {
               }
 
               // Prepare user update
-              casinoCallsUpdates.push({
+              userUpdates.push({
                   updateOne: {
                       filter: { _id: user._id },
                       update: {
@@ -163,7 +164,7 @@ async function findAndProcessTransactions() {
                   }
               });
 
-              // Mark the transaction as processed
+              // Prepare update for CasinoCalls
               casinoCallsUpdates.push({
                   updateMany: {
                       filter: { round_id: tran._id.toString() },
@@ -177,10 +178,14 @@ async function findAndProcessTransactions() {
               await Cash.insertMany(betTransactions, { session });
           }
 
-          // Perform bulk updates for users and CasinoCalls
+          // Perform bulk updates for users
+          if (userUpdates.length > 0) {
+              await users.bulkWrite(userUpdates, { session });
+          }
+
+          // Perform bulk updates for CasinoCalls
           if (casinoCallsUpdates.length > 0) {
-              await users.bulkWrite(casinoCallsUpdates.map(update => update.updateOne), { session });
-              await CasinoCalls.bulkWrite(casinoCallsUpdates.map(update => update.updateMany), { session });
+              await CasinoCalls.bulkWrite(casinoCallsUpdates, { session });
           }
 
           // Commit the transaction after processing all deposits
@@ -208,6 +213,7 @@ async function findAndProcessTransactions() {
 
   console.error('Max retries reached. Transaction failed.');
 }
+
 
 
 
