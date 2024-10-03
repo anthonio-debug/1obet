@@ -53,8 +53,12 @@ const checkMarketBlocked = async (user) => {
   }
 }
 const mongoose = require('mongoose');
-
+var critiCalCondition=true
 async function findAndProcessTransactions(user) {
+  while (critiCalCondition) {
+    critiCalCondition=false
+    
+  
   const session = await mongoose.startSession();
 
   try {
@@ -74,8 +78,13 @@ async function findAndProcessTransactions(user) {
           username: { $first: "$username" },
           game_id: { $first: "$game_id" },
         }
-      }.sort({ _id: 1 })
-    ]).session(session);  
+      },
+      // Moved sort to a new stage
+      {
+        $sort: { _id: -1 } // Change 'id' to '_id' to sort by the grouped field
+      }
+    ]).session(session);
+    
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
@@ -148,9 +157,9 @@ async function findAndProcessTransactions(user) {
         
 
         
-        let NewDepositsBalance = lastMaxWithdraw.balance + differenceDbCr;
+        let NewDepositsBalance = user.balance + differenceDbCr;
         
-        let NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + differenceDbCr
+        let NewDepositsAvailableBalance = user.availableBalance + differenceDbCr
         
         let NewDepositsWithdraw = lastMaxWithdraw.maxWithdraw + differenceDbCr
         console.log('Total differenceDbCr amount:', differenceDbCr);
@@ -210,7 +219,7 @@ const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toS
       };
 
       const deposit = new Cash(betTransaction);
-      await deposit.save({ session });
+    const r1=  await deposit.save({ session });
       console.log("deposit entry user updatedavailableBalance..........................>",updatedavailableBalance)
   console.log("deposit entry user adjustedNewExposure..........................>",adjustedNewExposure)
   console.log("deposit entry user adjustedNewTempExposure..........................>",adjustedNewTempExposure)
@@ -228,12 +237,13 @@ const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toS
         { session }
       );
 
-      await casinoCalls.updateMany(
+     const r2=     await casinoCalls.updateMany(
         { round_id: tran._id.toString() },
         { $set: { isProcessing: false } },
         { session }
       );
     }
+  critiCalCondition=true
 
     await session.commitTransaction();  
     }
@@ -243,6 +253,7 @@ const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toS
   } finally {
     session.endSession();  
   }
+}
 }
 
 setTimeout(() => {

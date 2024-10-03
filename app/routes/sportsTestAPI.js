@@ -2253,6 +2253,11 @@ const placeBet = async (req, res) => {
       const apiBookmakerOdds = buildBookmakerOdd(bookmakerOddsRes);
 
 
+      console.log("apiBookmakerOdds elngth=================================>>>>>", apiBookmakerOdds.length)
+
+      console.log("apiBookmakerOdds runners.....=================================>>>>>", apiBookmakerOdds)
+
+
 
 
 
@@ -4051,8 +4056,8 @@ async function deleteOdds(req, res) {
         balance:10000,
         availableBalance:10000,
         clientPL: 10000,
-        exposure: -21600,
-        tempExposure:21600
+        exposure: 0,
+        tempExposure:0
       }
     })
 
@@ -4123,7 +4128,6 @@ async function deleteOdds(req, res) {
     console.error('Error updating odds:', error);
     res.status(500).json({ success: false, message: 'Internal server error' });
   }
-
 }
 async function groupByroundId (req, res) {
   const { username } = req.params;
@@ -4136,7 +4140,10 @@ async function groupByroundId (req, res) {
             _id: '$round_id',
             count: { $sum: 1 },
             documents: { $push: "$$ROOT" }} 
-          },
+        },
+        {
+          $sort:{_id:-1}
+        }
       ]);
 
       res.status(200).json(groups);
@@ -4159,8 +4166,19 @@ async function deleteDepositsAndCasinoCalls(req, res) {
       console.error("Error deleting deposits:", err);
     });
 
-  await CasinoCalls.deleteMany({
-    username: "user_" + userId
+
+  const user = await User.find({ userId })
+
+  const userUpdate = await User.updateOne({ userId }, {
+    $set: {
+      balance:10000,
+      availableBalance:10000,
+      clientPL:10000
+    }
+  })
+
+  const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_" + userId ,gameplay_final:1}, {
+    isProcessing:true
   })
 
   return res.status(200).json({ message: `${userId} records deleted in casino and deposits` })
@@ -7331,7 +7349,8 @@ async function getDistinctRoundIds(req, res) {
 
   try {
     const username=req.params.userName
-    const isUserExist =await CasinoCalls.findOne({ username:username });
+    const {userId}=await User.findOne({userName:username})
+    const isUserExist =await CasinoCalls.findOne({ username:"user_"+userId });
     if(!isUserExist){
       return res.status(404).json({
         success: false,
@@ -7342,7 +7361,7 @@ async function getDistinctRoundIds(req, res) {
     // const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
     const distinctRoundIds = await CasinoCalls.aggregate([
       {
-        $match: { username: username }
+        $match: { username: "user_"+userId }
       },
       {
         $group: {
@@ -7377,7 +7396,11 @@ async function getDistinctRoundIds(req, res) {
               $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0]
             }
           }
+          
         }
+      },
+      {
+        $sort: { createdAt: 1 },
       },
       {
         $project: {
