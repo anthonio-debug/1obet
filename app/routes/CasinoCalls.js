@@ -213,7 +213,7 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
       if (!checkForExistingRoundIdInDeposit.length > 0) {
         const deposit = new Cash(betTransaction);
         await deposit.save()
-         
+        return 
       }
   ;
   console.log("deposit entry user updatedavailableBalance..........................>",updatedavailableBalance)
