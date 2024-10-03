@@ -59,7 +59,8 @@ async function findAndProcessTransactions() {
   const BACKOFF_TIME = 1000; // Backoff time in milliseconds
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-      const session = await mongoose.startSession();
+    const session = await mongoose.startSession();
+    await new Promise(resolve => setTimeout(resolve, 1000));
 
       try {
           session.startTransaction(); // Start transaction
