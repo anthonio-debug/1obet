@@ -60,7 +60,7 @@ async function findAndProcessTransactions() {
 
   for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
     const session = await mongoose.startSession();
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
       try {
           session.startTransaction(); // Start transaction
