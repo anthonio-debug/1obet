@@ -129,8 +129,11 @@ async function findAndProcessTransactions() {
 
               // Prepare transaction data
               const adjustedNewExposure = user.exposure + totalDebitAmount * casinoMultiples;
-              const adjustedNewTempExposure = user.tempExposure - totalDebitAmount * casinoMultiples;
-              const updatedAvailableBalance = user.availableBalance + differenceDbCr;
+            const adjustedNewTempExposure = user.tempExposure - totalDebitAmount * casinoMultiples;
+            var updatedAvailableBalance=0
+            const updateAvailableBalance = (user, differenceDbCr) => Promise.resolve(user.availableBalance + differenceDbCr).then((updatedAvailableBalance) => {
+              updatedAvailableBalance=updatedAvailableBalance
+             });
 
               // Check for existing deposit entry
               const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
