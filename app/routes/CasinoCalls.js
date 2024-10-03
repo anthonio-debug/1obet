@@ -56,6 +56,7 @@ const mongoose = require('mongoose');
 
 async function findAndProcessTransactions() {
   const MAX_RETRIES = 3; // Maximum number of retries for transaction
+  const BACKOFF_TIME = 1000; // Backoff time in milliseconds
   let attempt = 0;
 
   while (attempt < MAX_RETRIES) {
@@ -100,9 +101,7 @@ async function findAndProcessTransactions() {
         let differenceDbCr = 0;
 
         // Find all entries by round_id
-        const roundEntries = await CasinoCalls.find({ round_id: tran._id.toString() }).session(session);
-
-        console.log("roundEntriessssssssssss",roundEntries)
+        const roundEntries = await CasinoCalls.find({ round_id: tran._id }).session(session);
 
         for (const rounds of roundEntries) {
           if (rounds.action === 'credit') {
@@ -110,11 +109,10 @@ async function findAndProcessTransactions() {
           }
           if (rounds.action === 'debit') {
             totalDebitAmount += Number(rounds.amount);
-            console.log("totalDebitAmounttotalDebitAmount",totalDebitAmount)
           }
         }
 
-        differenceDbCr =Number(totalCreditAmount - totalDebitAmount) * casinoMultiples;
+        differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
         // Find user by remote ID with session
         const user = await users.findOne({ remoteId: Number(tran.remote_id) })
@@ -124,13 +122,9 @@ async function findAndProcessTransactions() {
         }
 
         // Prepare transaction data
-        let adjustedNewExposure = Number(user.exposure + totalDebitAmount * casinoMultiples);
-        let adjustedNewTempExposure = Number(user.tempExposure) - Number(totalDebitAmount * casinoMultiples);
-        let updatedAvailableBalance = Number(user.availableBalance) + Number(totalCreditAmount * casinoMultiples);
-
-        console.log( Number(user.availableBalance))
-        console.log( Number( Number(totalCreditAmount * casinoMultiples)))
-
+        let adjustedNewExposure = user.exposure + totalDebitAmount * casinoMultiples;
+        let adjustedNewTempExposure = user.tempExposure - totalDebitAmount * casinoMultiples;
+        let updatedAvailableBalance = user.availableBalance + totalCreditAmount * casinoMultiples;
 
         // Check for existing deposit entry
         const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
@@ -147,7 +141,7 @@ async function findAndProcessTransactions() {
             tempExposure: adjustedNewTempExposure,
             roundId: tran._id,
           };
-          console.log("avail;albel=================================>",updatedAvailableBalance)
+
           const deposit = new Cash(betTransaction);
           await deposit.save({ session });
         }
@@ -186,6 +180,7 @@ async function findAndProcessTransactions() {
       if (error.code === 11207) { // Write conflict error code
         console.log('Write conflict detected, retrying transaction...');
         attempt++;
+        await new Promise(resolve => setTimeout(resolve, BACKOFF_TIME * attempt)); // Backoff before retrying
         continue; // Retry the transaction
       }
     } finally {
