@@ -55,145 +55,140 @@ const checkMarketBlocked = async (user) => {
 const mongoose = require('mongoose');
 
 async function findAndProcessTransactions() {
-  const MAX_RETRIES = 5; // Maximum number of retries for transaction
-  const BACKOFF_TIME = 1000; // Backoff time in milliseconds
+    const MAX_RETRIES = 5; // Maximum number of retries for transaction
+    const BACKOFF_TIME = 1000; // Backoff time in milliseconds
 
-  for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
-    const session = await mongoose.startSession();
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+        const session = await mongoose.startSession();
+        try {
+            session.startTransaction(); // Start transaction
 
-      try {
-          session.startTransaction(); // Start transaction
+            // Group and filter transactions with `isProcessing: true`
+            const groupedTransactions = await CasinoCalls.aggregate([
+                {
+                    $match: {
+                        gameplay_final: 1,
+                        isProcessing: true
+                    }
+                },
+                {
+                    $group: {
+                        _id: "$round_id",
+                        remote_id: { $first: "$remote_id" },
+                        username: { $first: "$username" },
+                        game_id: { $first: "$game_id" },
+                    }
+                },
+                {
+                    $sort: {
+                        _id: -1
+                    }
+                }
+            ]).session(session);
 
-          // Group and filter transactions with `isProcessing: true`
-          const groupedTransactions = await CasinoCalls.aggregate([
-              {
-                  $match: {
-                      gameplay_final: 1,
-                      isProcessing: true
-                  }
-              },
-              {
-                  $group: {
-                      _id: "$round_id",
-                      remote_id: { $first: "$remote_id" },
-                      username: { $first: "$username" },
-                      game_id: { $first: "$game_id" },
-                  }
-              },
-              {
-                  $sort: {
-                      _id: -1
-                  }
-              }
-          ]).session(session);
+            if (!groupedTransactions || groupedTransactions.length === 0) {
+                console.log('No transactions found for the given round_id and username.');
+                await session.abortTransaction();
+                continue; // Continue to next attempt
+            }
 
-          if (!groupedTransactions || groupedTransactions.length === 0) {
-              console.log('No transactions found for the given round_id and username.');
-              await session.abortTransaction();
-              session.endSession();
-              return;
-          }
+            // Process each transaction in the grouped result
+            for (const tran of groupedTransactions) {
+                let totalCreditAmount = 0;
+                let totalDebitAmount = 0;
 
-          // Process each transaction in the grouped result
-          for (const tran of groupedTransactions) {
-              let totalCreditAmount = 0;
-              let totalDebitAmount = 0;
-              let differenceDbCr = 0;
+                // Find all entries by round_id
+                const roundEntries = await CasinoCalls.find({ round_id: tran._id }).session(session);
 
-              // Find all entries by round_id
-              const roundEntries = await CasinoCalls.find({ round_id: tran._id }).session(session);
+                for (const rounds of roundEntries) {
+                    if (rounds.action === 'credit') {
+                        totalCreditAmount += Number(rounds.amount);
+                    } else if (rounds.action === 'debit') {
+                        totalDebitAmount += Number(rounds.amount);
+                    }
+                }
 
-              for (const rounds of roundEntries) {
-                  if (rounds.action === 'credit') {
-                      totalCreditAmount += Number(rounds.amount);
-                  }
-                  if (rounds.action === 'debit') {
-                      totalDebitAmount += Number(rounds.amount);
-                  }
-              }
+                const differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
-              differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
+                // Find user by remote ID with session
+                const user = await users.findOne({ remoteId: Number(tran.remote_id) });
+                if (!user) {
+                    console.log('User not found for remote_id:', tran.remote_id);
+                    continue; // Skip to the next transaction if user not found
+                }
 
-              // Find user by remote ID with session
-              const user = await users.findOne({ remoteId: Number(tran.remote_id) })
-              if (!user) {
-                  console.log('User not found for remote_id:', tran.remote_id);
-                  continue; // Skip to the next transaction if user not found
-              }
+                // Prepare updated balances
+                const adjustedNewExposure = user.exposure + totalDebitAmount * casinoMultiples;
+                const adjustedNewTempExposure = user.tempExposure - totalDebitAmount * casinoMultiples;
+                const updatedAvailableBalance = user.availableBalance + totalCreditAmount * casinoMultiples;
 
-              // Prepare transaction data
-              let adjustedNewExposure = user.exposure + totalDebitAmount * casinoMultiples;
-              let adjustedNewTempExposure = user.tempExposure - totalDebitAmount * casinoMultiples;
-              let updatedAvailableBalance = user.availableBalance + totalCreditAmount * casinoMultiples;
+                // Check for existing deposit entry
+                const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
+                if (!existingDeposit) {
+                    const betTransaction = {
+                        userId: user.userId,
+                        description: `Casino (${tran.game_id})`,
+                        date: Date.now(),
+                        createdAt: new Date().toISOString().split('T')[0],
+                        amount: differenceDbCr,
+                        balance: updatedAvailableBalance,
+                        availableBalance: updatedAvailableBalance,
+                        exposure: adjustedNewExposure,
+                        tempExposure: adjustedNewTempExposure,
+                        roundId: tran._id,
+                    };
 
-              // Check for existing deposit entry
-              const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
-              if (!existingDeposit) {
-                  const betTransaction = {
-                      userId: user.userId,
-                      description: `Casino (${tran.game_id})`,
-                      date: Date.now(),
-                      createdAt: new Date().toISOString().split('T')[0],
-                      amount: differenceDbCr,
-                      balance: updatedAvailableBalance,
-                      availableBalance: updatedAvailableBalance,
-                      exposure: adjustedNewExposure,
-                      tempExposure: adjustedNewTempExposure,
-                      roundId: tran._id,
-                  };
+                    const deposit = new Cash(betTransaction);
+                    await deposit.save({ session });
+                }
 
-                  const deposit = new Cash(betTransaction);
-                  await deposit.save({ session });
-              }
+                // Update user balances and exposure
+                await users.updateOne(
+                    { _id: user._id },
+                    {
+                        $set: {
+                            clientPL: updatedAvailableBalance, // Adjusted for the specific use case
+                            balance: updatedAvailableBalance,
+                            availableBalance: updatedAvailableBalance,
+                            exposure: adjustedNewExposure,
+                            tempExposure: adjustedNewTempExposure
+                        }
+                    },
+                    { session }
+                );
 
-              // Update user balances and exposure
-              await users.updateOne(
-                  { _id: user._id },
-                  {
-                      $set: {
-                          clientPL: 111,
-                          balance: updatedAvailableBalance,
-                          availableBalance: updatedAvailableBalance,
-                          exposure: adjustedNewExposure,
-                          tempExposure: adjustedNewTempExposure
-                      }
-                  },
-                  { session }
-              );
+                // Mark the transaction as processed
+                await CasinoCalls.updateMany(
+                    { round_id: tran._id.toString() },
+                    { $set: { isProcessing: false } },
+                    { session }
+                );
+            }
 
-              // Mark the transaction as processed
-              await CasinoCalls.updateMany(
-                  { round_id: tran._id.toString() },
-                  { $set: { isProcessing: false } },
-                  { session }
-              );
-          }
+            // Commit the transaction after processing all deposits
+            await session.commitTransaction();
+            console.log('Transaction committed successfully');
+            return; // Exit the function after successful execution
 
-          // Commit the transaction after processing all deposits
-          await session.commitTransaction();
-          console.log('Transaction committed successfully');
-          return; // Exit the function after successful execution
+        } catch (error) {
+            console.error('Error processing transactions:', error);
+            await session.abortTransaction(); // Rollback on failure
+            if (error.code === 11207) { // Write conflict error code
+                console.log('Write conflict detected, retrying transaction...');
+            } else {
+                break; // For any other error, break the loop
+            }
+        } finally {
+            session.endSession(); // End the session
+        }
 
-      } catch (error) {
-          console.error('Error processing transactions:', error);
-          await session.abortTransaction(); // Rollback on failure
-          if (error.code === 11207) { // Write conflict error code
-              console.log('Write conflict detected, retrying transaction...');
-          } else {
-              break; // For any other error, break the loop
-          }
-      } finally {
-          session.endSession(); // End the session
-      }
+        // Wait before retrying the transaction
+        if (attempt < MAX_RETRIES - 1) {
+            await new Promise(resolve => setTimeout(resolve, BACKOFF_TIME * Math.pow(2, attempt))); // Exponential backoff
+        }
+    }
 
-      // Wait before retrying the transaction
-      if (attempt < MAX_RETRIES - 1) {
-          await new Promise(resolve => setTimeout(resolve, BACKOFF_TIME * Math.pow(2, attempt))); // Exponential backoff
-      }
-  }
-
-  console.error('Max retries reached. Transaction failed.');
+    console.error('Max retries reached. Transaction failed.');
 }
 
 
