@@ -4051,7 +4051,7 @@ async function deleteOdds(req, res) {
   
   
   
-    const userUpdate = await User.updateOne({ 22089 }, {
+    const userUpdate = await User.updateOne({ userId:22089 }, {
       $set: {
         balance:10000,
         availableBalance:10000,
