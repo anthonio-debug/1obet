@@ -100,7 +100,7 @@ async function findAndProcessTransactions(casinoMultiples) {
         let differenceDbCr = 0;
 
         // Find all entries by round_id
-        const roundEntries = await CasinoCalls.find({ round_id: tran._id }).session(session);
+        const roundEntries = await CasinoCalls.find({ round_id: tran._id.toString() }).session(session);
 
         console.log("roundEntriessssssssssss",roundEntries)
 
