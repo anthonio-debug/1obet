@@ -126,52 +126,81 @@ async function findAndProcessTransactions(casinoMultiples) {
         let updatedAvailableBalance = Number(user.availableBalance) + Number(totalCreditAmount * casinoMultiples);
 
         // Check for existing deposit entry
-        const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
-        if (!existingDeposit) {
-          const betTransaction = {
-            userId: user.userId,
-            description: `Casino (${tran.game_id})`,
-            date: Date.now(),
-            createdAt: new Date().toISOString().split('T')[0],
-            amount: differenceDbCr,
-            balance: updatedAvailableBalance,
-            availableBalance: updatedAvailableBalance,
-            exposure: adjustedNewExposure,
-            tempExposure: adjustedNewTempExposure,
-            roundId: tran._id,
-          };
+        
+        
+        const mongoose = require('mongoose');
 
-          const deposit = new Cash(betTransaction);
-          await deposit.save({ session });
-        }
+async function processTransaction(tran, user, updatedAvailableBalance, adjustedNewExposure, adjustedNewTempExposure, differenceDbCr) {
+  const session = await mongoose.startSession();
+  session.startTransaction();
 
-        // Update user balances and exposure
-        await users.updateOne(
-          { _id: user._id },
-          {
-            $set: {
-              clientPL: updatedAvailableBalance,
-              balance: updatedAvailableBalance,
-              availableBalance: updatedAvailableBalance,
-              exposure: adjustedNewExposure,
-              tempExposure: adjustedNewTempExposure
-            }
-          },
-          { session }
-        );
+  try {
+    // Check if an existing deposit exists
+    const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
+    
+    // If no existing deposit, create a new one
+    if (!existingDeposit) {
+      const betTransaction = {
+        userId: user.userId,
+        description: `Casino (${tran.game_id})`,
+        date: Date.now(),
+        createdAt: new Date().toISOString().split('T')[0],
+        amount: differenceDbCr,
+        balance: updatedAvailableBalance,
+        availableBalance: updatedAvailableBalance,
+        exposure: adjustedNewExposure,
+        tempExposure: adjustedNewTempExposure,
+        roundId: tran._id,
+      };
 
-        // Mark the transaction as processed
-        await CasinoCalls.updateMany(
-          { round_id: tran._id.toString() },
-          { $set: { isProcessing: false } },
-          { session }
-        );
+      const deposit = new Cash(betTransaction);
+      await deposit.save({ session }); // Save using the session
+    }
+
+    // Update the user's balances
+    await users.updateOne(
+      { _id: user._id },
+      {
+        $set: {
+          clientPL: updatedAvailableBalance,
+          balance: updatedAvailableBalance,
+          availableBalance: updatedAvailableBalance,
+          exposure: adjustedNewExposure,
+          tempExposure: adjustedNewTempExposure,
+        },
+      },
+      { session } // Include the session here
+    );
+
+    // Mark the transaction as processed
+    await CasinoCalls.updateMany(
+      { round_id: tran._id.toString() },
+      { $set: { isProcessing: false } },
+      { session } // Include the session here
+    );
+
+    // Commit the transaction if all operations were successful
+    await session.commitTransaction();
+  } catch (error) {
+    // Rollback the transaction in case of error
+    await session.abortTransaction();
+    console.error("Error processing transaction:", error);
+    throw error; // Handle the error as needed
+  } finally {
+    // Always end the session
+    session.endSession();
+  }
+}
+
+// Call the function with appropriate parameters
+processTransaction(tran, user, updatedAvailableBalance, adjustedNewExposure, adjustedNewTempExposure, differenceDbCr)
+  .catch(console.error);
       }
 
       // Commit the transaction after processing all deposits
-      await session.commitTransaction();
-      console.log('Transaction committed successfully');
-      return; // Exit the function after successful execution
+      //await session.commitTransaction();
+      //console.log('Transaction committed successfully');
+      //return; // Exit the function after successful execution
 
     } catch (error) {
       console.error('Error processing transactions:', error);
