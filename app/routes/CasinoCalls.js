@@ -116,12 +116,12 @@ async function findAndProcessTransactions() {
               }
 
               const differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
-              
+
               console.log("Total Credit Amount: ", totalCreditAmount);
               console.log("Total Debit Amount: ", totalDebitAmount);
 
               // Find user by remote ID with session
-              const user = await users.findOne({ remoteId: Number(tran.remote_id) });
+              const user = await users.findOne({ remoteId: Number(tran.remote_id) }).session(session);
               if (!user) {
                   console.log('User not found for remote_id:', tran.remote_id);
                   continue; // Skip to the next transaction if user not found
@@ -129,8 +129,22 @@ async function findAndProcessTransactions() {
 
               // Calculate updated available balance directly
               const updatedAvailableBalance = user.availableBalance + differenceDbCr;
-              const adjustedNewExposure = user.exposure + totalDebitAmount * casinoMultiples;
-              const adjustedNewTempExposure = user.tempExposure - totalDebitAmount * casinoMultiples;
+
+              // Prepare user update only once at the end of processing for this transaction
+              userUpdates.push({
+                  updateOne: {
+                      filter: { _id: user._id },
+                      update: {
+                          $set: {
+                              clientPL: updatedAvailableBalance,
+                              balance: updatedAvailableBalance,
+                              availableBalance: updatedAvailableBalance,
+                              exposure: user.exposure + totalDebitAmount * casinoMultiples,
+                              tempExposure: user.tempExposure - totalDebitAmount * casinoMultiples
+                          }
+                      }
+                  }
+              });
 
               // Check for existing deposit entry
               const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
@@ -143,30 +157,14 @@ async function findAndProcessTransactions() {
                       amount: differenceDbCr,
                       balance: updatedAvailableBalance, // Use the updated value
                       availableBalance: updatedAvailableBalance, // Use the updated value
-                      exposure: adjustedNewExposure,
-                      tempExposure: adjustedNewTempExposure,
+                      exposure: user.exposure + totalDebitAmount * casinoMultiples,
+                      tempExposure: user.tempExposure - totalDebitAmount * casinoMultiples,
                       roundId: tran._id,
                   };
 
                   betTransactions.push(betTransaction);
                   console.log(betTransaction); // Log the bet transaction
               }
-
-              // Prepare user update
-              userUpdates.push({
-                  updateOne: {
-                      filter: { _id: user._id },
-                      update: {
-                          $set: {
-                              clientPL: updatedAvailableBalance,
-                              balance: updatedAvailableBalance,
-                              availableBalance: updatedAvailableBalance,
-                              exposure: adjustedNewExposure,
-                              tempExposure: adjustedNewTempExposure
-                          }
-                      }
-                  }
-              });
 
               // Prepare update for CasinoCalls
               casinoCallsUpdates.push({
@@ -217,6 +215,7 @@ async function findAndProcessTransactions() {
 
   console.error('Max retries reached. Transaction failed.');
 }
+
 
 
 
