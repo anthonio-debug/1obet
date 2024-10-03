@@ -4134,6 +4134,18 @@ async function deleteDepositsAndCasinoCalls(req, res) {
   await CasinoCalls.deleteMany({
     username: "user_" + userId
   })
+  const user = await User.find({ userId })
+  const userUpdate = await User.updateOne({ userId }, {
+    $set: {
+      balance:user.availableBalance,
+      availableBalance:user.availableBalance,
+      clientPL:user.availableBalance
+    }
+  })
+
+  const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_" + userId }, {
+    isProcessing:true
+  })
 
   return res.status(200).json({ message: `${userId} records deleted in casino and deposits` })
 
