@@ -4055,7 +4055,9 @@ async function deleteOdds(req, res) {
       $set: {
         balance:10000,
         availableBalance:10000,
-        clientPL:10000
+        clientPL: 10000,
+        exposure: 0,
+        tempExposure:0
       }
     })
 
