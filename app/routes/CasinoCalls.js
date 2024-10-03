@@ -121,17 +121,22 @@ async function processTransactionQueue(remoteId) {
       userAvailableBalanceBFTrans: user.availableBalance,
       userAvailableBalanceAFTrans: updatedavailableBalance,
       userPrevExposure: user.exposure,
-      updatedExposure: adjustedNewExposure
+      updatedExposure: adjustedNewExposure,
+      roundId: tran._id,
+      gameId: tran.game_id,
+      createdAt: new Date(),
     };
 
-    // Save to the Cash collection if round_id does not already exist
-    const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toString() });
-    if (!checkForExistingRoundIdInDeposit.length > 0) {
+    // Save each transaction result to the Cash collection as a separate entry
+    const checkForExistingRoundIdInDeposit = await Cash.findOne({ roundId: tran._id.toString() });
+    if (!checkForExistingRoundIdInDeposit) {
       const deposit = new Cash(betTransaction);
-      await deposit.save();
+      await deposit.save(); // Save each transaction separately
+    } else {
+      console.log(`Transaction for roundId ${tran._id} already exists in deposits.`);
     }
 
-    // Update user balance and exposure
+    // Update user balance and exposure after the transaction
     await users.updateOne(
       { _id: user._id },
       {
@@ -151,7 +156,7 @@ async function processTransactionQueue(remoteId) {
       { $set: { isProcessing: false } }
     );
 
-    console.log("Transaction completed successfully.");
+    console.log("Transaction processed and logged successfully.");
 
     // Remove the processed transaction from the queue
     queue.shift();
@@ -220,6 +225,7 @@ async function findAndProcessTransactions() {
     console.error('Error finding transactions:', error);
   }
 }
+
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
