@@ -4056,8 +4056,8 @@ async function deleteOdds(req, res) {
         balance:10000,
         availableBalance:10000,
         clientPL: 10000,
-        exposure: -9600,
-        tempExposure:9600
+        exposure: 0,
+        tempExposure:0
       }
     })
 
