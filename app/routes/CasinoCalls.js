@@ -60,22 +60,33 @@ async function findAndProcessTransactions(user) {
   try {
     session.startTransaction();
 
-    const groupedTransactions = await CasinoCalls.aggregate([
-      { 
-        $match: { 
-          gameplay_final: 1, 
-          isProcessing: true 
-        } 
-      },
-      {
-        $group: {
-          _id: "$round_id",
-          remote_id: { $first: "$remote_id" }, 
-          username: { $first: "$username" },
-          game_id: { $first: "$game_id" },
-        }
-      }
-    ]).session(session);  
+    const limitValue = 1; // Set your desired limit here
+
+const groupedTransactions = await CasinoCalls.aggregate([
+  {
+    $match: {
+      gameplay_final: 1,
+      isProcessing: true
+    }
+  },
+  {
+    $group: {
+      _id: "$round_id",
+      remote_id: { $first: "$remote_id" },
+      username: { $first: "$username" },
+      game_id: { $first: "$game_id" }
+    }
+  },
+  {
+    $sort: {
+      _id: 1 // Sort by round_id (ascending)
+      // You can use -1 for descending order, e.g., { _id: -1 }
+    }
+  },
+  {
+    $limit: limitValue // Limit the number of results returned
+  }
+]).session(session);  
 
     if (!groupedTransactions || groupedTransactions.length === 0) {
       console.log('No transactions found for the given round_id and username.');
