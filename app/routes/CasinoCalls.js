@@ -154,7 +154,7 @@ async function findAndProcessTransactions() {
       const existingDeposit = await Cash.findOne({ roundId: tran._id.toString() }).session(session);
       if (!existingDeposit) {
         const deposit = new Cash(betTransaction);
-        await deposit.save({ session });
+        await deposit.save();
       }
 
       // Update user balances and exposure
