@@ -77,7 +77,11 @@ async function findAndProcessTransactions(user) {
           game_id: { $first: "$game_id" },
         }
       },
-      
+      {
+        $sort: {
+          _id:-1
+        }
+      }
     ]) 
       console.log("groupedTransactions=========>",groupedTransactions)
       console.log("groupedTransactions.length=========>",groupedTransactions.length)
