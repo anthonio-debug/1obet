@@ -114,7 +114,7 @@ async function findAndProcessTransactions(user) {
           let totalDebitAmount = 0;
           let totalRollBackAmount = 0;
           let differenceDbCr = 0;
-          let proceedIt = false;
+          //let proceedIt = false;
           
           const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
           
@@ -128,16 +128,16 @@ async function findAndProcessTransactions(user) {
             if (rounds.action === 'rollback') {
               totalRollBackAmount += Number(rounds.amount);
             }
-            if(rounds.gameplay_final===1){
-              proceedIt = true;
-            }
+            // if(rounds.gameplay_final===1){
+            //   proceedIt = true;
+            // }
           }
-          if(proceedIt===false){
+          // if(proceedIt===false){
             
-            console.log('Result not announced yet for this transaction:.',tran._id);
-            await session.abortTransaction();  // Abort the transaction if no records found
-            return;
-          }
+          //   console.log('Result not announced yet for this transaction:.',tran._id);
+          //   await session.abortTransaction();  // Abort the transaction if no records found
+          //   return;
+          // }
           totalCreditAmount += totalRollBackAmount;
           differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
