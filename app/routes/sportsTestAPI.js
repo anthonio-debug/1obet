@@ -7509,7 +7509,7 @@ router.get('/track-bet/multi-response', checkMultiResponse)
 // router.get('/track-bet/getUserBetsRecords/:user_id/:market_id', getUserBetsRecords)
 router.post('/track-bet/getUserBetsRecords', getUserBetsRecords)
 router.get('/track-bet/getWinnigLossing', getWinnigLossing)
-router.get('/track-bet/distinct-round-ids/:userName', getDistinctRoundIds)
+//router.get('/track-bet/distinct-round-ids/:userName', getDistinctRoundIds)
 router.get('/track-bet/getDepositsRecord/:userId', getDepositsRecord)
 /////////////////
 
