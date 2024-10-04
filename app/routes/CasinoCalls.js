@@ -52,6 +52,7 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
+const mongoose = require('mongoose');
 async function findAndProcessTransactions(user) {
   const session = await mongoose.startSession();
   const maxRetries = 3; // Max retries for the transaction
