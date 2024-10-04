@@ -138,6 +138,7 @@ async function findAndProcessTransactions(user) {
                proceedIt = true;
              }
           }
+          console.log("proceedIt...............................................................",proceedIt);
           // if(proceedIt===false){
             
           //   console.log('Result not announced yet for this transaction:.',tran._id);
