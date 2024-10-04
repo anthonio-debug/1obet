@@ -243,13 +243,19 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
         { session }
       );
 
-      
+      await casinoCalls.updateMany(
+        { round_id: tran._id.toString() },
+        { $set: { isProcessing: false } },
+        { session }
+      );
+    }else{
+      await casinoCalls.updateMany(
+        { round_id: tran._id.toString() },
+        { $set: { isProcessing: false } },
+        
+      );
     }
-    await casinoCalls.updateMany(
-      { round_id: tran._id.toString() },
-      { $set: { isProcessing: false } },
-      { session }
-    );
+    
     await session.commitTransaction(); 
     }
 
