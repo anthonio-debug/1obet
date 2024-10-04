@@ -98,6 +98,12 @@ const groupedTransactions = await CasinoCalls.aggregate([
 
 
     for (const tran of groupedTransactions) {
+      const existingDeposit = await Cash.findOne({
+        userId: user.userId,
+        roundId: tran._id.toString()
+      }).session(session);
+      
+      if (!existingDeposit) {
       //await new Promise(resolve => setTimeout(resolve, 800));
     let totalCreditAmount = 0;
     let totalDebitAmount = 0;
@@ -222,17 +228,10 @@ console.log("checkForExistingRoundIdInDeposit.length.....................",tran.
         updatedExposure: adjustedNewExposure
       };
 
-      const existingDeposit = await Cash.findOne({
-        userId: user.userId,
-        roundId: tran._id.toString()
-      }).session(session);
       
-      if (!existingDeposit) {
         const deposit = new Cash(betTransactionData);
         await deposit.save({ session });
-      } else {
-        console.log("Duplicate transaction found, skipping insertion.");
-      }
+      
      // const deposit = new Cash(betTransactionData);
       //await deposit.save({ session });
 
@@ -256,7 +255,9 @@ console.log("checkForExistingRoundIdInDeposit.length.....................",tran.
         },
         { session }
       );
-
+    } else {
+      console.log("Duplicate transaction found, skipping insertion.");
+    }
       await casinoCalls.updateMany(
         { round_id: tran._id.toString() },
         { $set: { isProcessing: false } },
