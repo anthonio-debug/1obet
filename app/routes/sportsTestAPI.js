@@ -7345,6 +7345,8 @@ async function getDistinctRoundIds(req, res) {
       });
     }
     // const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
+    const totalRoundCount = await CasinoCalls.countDocuments({ username: "user_"+userId});
+
     const distinctRoundIds = await CasinoCalls.aggregate([
       {
         $match: { username: "user_"+userId }
@@ -7381,6 +7383,9 @@ async function getDistinctRoundIds(req, res) {
             $sum: {
               $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0]
             }
+          },
+           totalRoundCount: {
+            $sum: 1
           }
         }
       },
@@ -7393,7 +7398,8 @@ async function getDistinctRoundIds(req, res) {
           rollbackCount: 1,
           debitAmountSum: 1,
           creditAmountSum: 1,
-          rollbackAmountSum: 1
+          rollbackAmountSum: 1,
+          totalRoundCount: 1 
         }
       }
     ]
@@ -7401,6 +7407,8 @@ async function getDistinctRoundIds(req, res) {
     res.status(200).json({
       success: true,
       message: 'Round Ids fetched successfully',
+      userId:`${userId}`,
+      TotalRoundsCount: `${totalRoundCount}`,
       data: distinctRoundIds
   
     });
