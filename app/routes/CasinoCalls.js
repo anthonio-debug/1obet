@@ -116,7 +116,7 @@ async function findAndProcessTransactions(user) {
           let totalRollBackAmount = 0;
           let differenceDbCr = 0;
           //let proceedIt = false;
-          
+          let usernameAllowed = '';
           const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
           
           for (const rounds of roundIds) {
@@ -129,6 +129,10 @@ async function findAndProcessTransactions(user) {
             if (rounds.action === 'rollback') {
               totalRollBackAmount += Number(rounds.amount);
             }
+             usernameAllowed = rounds.username;
+            
+
+            
             // if(rounds.gameplay_final===1){
             //   proceedIt = true;
             // }
