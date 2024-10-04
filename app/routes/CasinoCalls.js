@@ -211,7 +211,7 @@ async function findAndProcessTransactions(user) {
   }
 }
 setTimeout(() => {
-  findAndProcessTransactions(user)
+  findAndProcessTransactions()
 },400)
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
