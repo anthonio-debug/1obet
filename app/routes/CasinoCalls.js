@@ -194,6 +194,8 @@ async function findAndProcessTransactions(user) {
           );
         } else {
           console.log("Duplicate transaction found, skipping insertion.");
+          await session.abortTransaction();
+          return;
         }
 
         await CasinoCalls.updateMany(
