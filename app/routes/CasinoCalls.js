@@ -98,6 +98,10 @@ const groupedTransactions = await CasinoCalls.aggregate([
 
 
     for (const tran of groupedTransactions) {
+      const user = await users.findOne(
+        { remoteId: Number(tran.remote_id) }
+     
+      )
       const existingDeposit = await Cash.findOne({
         userId: user.userId,
         roundId: tran._id.toString()
@@ -136,10 +140,7 @@ const groupedTransactions = await CasinoCalls.aggregate([
 
 
   // Find the user with the specified remote ID using the session
-  const user = await users.findOne(
-    { remoteId: Number(tran.remote_id) }
- 
-  )
+  
       
       console.log("exposureeeeeeeeeeeeeeeeeeee=>",user.exposure)
 
