@@ -98,10 +98,6 @@ const groupedTransactions = await CasinoCalls.aggregate([
 
 
     for (const tran of groupedTransactions) {
-      const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toString() })
-      console.log("checkForExistingRoundIdInDeposit.length.....................",tran._id.toString(),"................................",checkForExistingRoundIdInDeposit.length);
-  
-      if (checkForExistingRoundIdInDeposit.length === 0) {
       await new Promise(resolve => setTimeout(resolve, 800));
     let totalCreditAmount = 0;
     let totalDebitAmount = 0;
@@ -194,9 +190,11 @@ const groupedTransactions = await CasinoCalls.aggregate([
       const betTime = now.getTime();
 console.log("deposit entry user exposure==============>",user.exposure)
 console.log("deposit entry user adjustedNewExposure==============>",adjustedNewExposure)
-    
+const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toString() })
+console.log("checkForExistingRoundIdInDeposit.length..........",user.userName,"...........",tran._id.toString(),"................................",checkForExistingRoundIdInDeposit.length);
+      
 
-
+if (checkForExistingRoundIdInDeposit.length  < 1) {
       let betTransaction = {
         userId: user.userId,
         description: `Casino (${gameName})`,
@@ -248,18 +246,10 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
         { $set: { isProcessing: false } },
         { session }
       );
-    }else{
-      await casinoCalls.updateMany(
-        { round_id: tran._id.toString() },
-        { $set: { isProcessing: false } },
-        
-      );
     }
-    
-    await session.commitTransaction(); 
     }
 
-     
+    await session.commitTransaction();  
 
 
 
@@ -271,7 +261,9 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
   }
 }
 
-
+setTimeout(() => {
+  findAndProcessTransactions()
+},2000)
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
 
