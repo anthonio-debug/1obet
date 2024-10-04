@@ -264,10 +264,10 @@ console.log("checkForExistingRoundIdInDeposit.length.....................",tran.
         { $set: { isProcessing: false } },
         { session }
       );
-    
+      await session.commitTransaction(); 
     }
 
-    await session.commitTransaction();  
+     
   } catch (error) {
     console.error('Error processing transactions:', error);
     await session.abortTransaction();
