@@ -103,7 +103,7 @@ const groupedTransactions = await CasinoCalls.aggregate([
      
       )
       const existingDeposit = await Cash.findOne({
-        userId: user.userId,
+        
         roundId: tran._id.toString()
       }).session(session);
       
