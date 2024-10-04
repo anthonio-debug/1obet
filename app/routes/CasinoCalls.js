@@ -95,10 +95,9 @@ async function findAndProcessTransactions(user) {
       }
 
       for (const tran of groupedTransactions) {
-        // Ensure 'users' is properly defined and imported at the top of your file
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) },
-          { session } // Pass the session as an option here
+          { session }
         );
 
         if (!userRecord) {
@@ -108,7 +107,7 @@ async function findAndProcessTransactions(user) {
 
         const existingDeposit = await Cash.findOne({
           roundId: tran._id.toString()
-        }).session(session); // Pass the session as well
+        }).session(session);
 
         if (!existingDeposit) {
           let totalCreditAmount = 0;
@@ -116,8 +115,6 @@ async function findAndProcessTransactions(user) {
           let totalRollBackAmount = 0;
           let differenceDbCr = 0;
 
-          let adjustedNewExposure = 0;
-          let adjustedNewTempExposure = 0;
           const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
 
           for (const rounds of roundIds) {
@@ -136,34 +133,20 @@ async function findAndProcessTransactions(user) {
 
           let AccumulativeDebit = totalDebitAmount * casinoMultiples;
           let AccumulativeCredit = totalCreditAmount * casinoMultiples;
-          adjustedNewExposure = userRecord.exposure + AccumulativeDebit;
-          adjustedNewTempExposure = userRecord.tempExposure - AccumulativeDebit;
           const updatedAvailableBalance = userRecord.availableBalance + AccumulativeCredit;
-          const updatedBalance = userRecord.balance + AccumulativeCredit;
-          const updatedClientPL = userRecord.client + AccumulativeCredit;
-          const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 }).session(session);
 
-          let NewDepositsBalance = lastMaxWithdraw.balance + differenceDbCr;
-          let NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + differenceDbCr;
-          let NewDepositsWithdraw = lastMaxWithdraw.maxWithdraw + differenceDbCr;
+          const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 }).session(session);
 
           const betTransactionData = {
             userId: userRecord.userId,
-            description: `Casino (${tran.game_id})`, // Assuming game_name should be fetched or defined
+            description: `Casino (${tran.game_id})`,
             date: new Date().getTime(),
-            createdAt: new Date().toISOString().split('T')[0],
             amount: differenceDbCr,
-            balance: NewDepositsBalance,
-            availableBalance: NewDepositsAvailableBalance,
-            maxWithdraw: NewDepositsWithdraw,
-            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-            credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+            balance: lastMaxWithdraw.balance + differenceDbCr,
+            availableBalance: updatedAvailableBalance,
+            maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
             roundId: tran._id,
-            upLineAmount: differenceDbCr < 0 ? Number(differenceDbCr) : 0,
-            userAvailableBalanceBFTrans: userRecord.availableBalance,
-            userAvailableBalanceAFTrans: updatedAvailableBalance,
-            userPrevExposure: userRecord.exposure,
-            updatedExposure: adjustedNewExposure
+            updatedExposure: userRecord.exposure + AccumulativeDebit
           };
 
           const deposit = new Cash(betTransactionData);
@@ -173,14 +156,11 @@ async function findAndProcessTransactions(user) {
             { _id: userRecord._id },
             {
               $set: {
-                clientPL: updatedAvailableBalance,
                 balance: updatedAvailableBalance,
-                availableBalance: updatedAvailableBalance,
-                exposure: adjustedNewExposure,
-                tempExposure: adjustedNewTempExposure
+                exposure: betTransactionData.updatedExposure
               }
             },
-            { session } // Pass the session here as well
+            { session }
           );
         } else {
           console.log("Duplicate transaction found, skipping insertion.");
@@ -193,13 +173,16 @@ async function findAndProcessTransactions(user) {
         );
       }
 
-      await session.commitTransaction(); 
+      await session.commitTransaction();
       return; // Exit the function successfully after committing
 
     } catch (error) {
       console.error('Error processing transactions:', error);
       await session.abortTransaction();
-      if (attempt === maxRetries - 1) {
+      if (attempt < maxRetries - 1) {
+        // Delay before retrying
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
+      } else {
         throw error; // Re-throw the error after max retries
       }
     } finally {
