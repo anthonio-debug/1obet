@@ -115,8 +115,9 @@ async function findAndProcessTransactions(user) {
           let totalDebitAmount = 0;
           let totalRollBackAmount = 0;
           let differenceDbCr = 0;
-          //let proceedIt = false;
+          let proceedIt = false;
           let usernameAllowed = '';
+          
           const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
           
           for (const rounds of roundIds) {
@@ -133,9 +134,9 @@ async function findAndProcessTransactions(user) {
             
 
             
-            // if(rounds.gameplay_final===1){
-            //   proceedIt = true;
-            // }
+             if(rounds.gameplay_final===1){
+               proceedIt = true;
+             }
           }
           // if(proceedIt===false){
             
