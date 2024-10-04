@@ -114,8 +114,7 @@ async function findAndProcessTransactions(user) {
           let totalDebitAmount = 0;
           let totalRollBackAmount = 0;
           let differenceDbCr = 0;
-          let adjustedNewExposure = 0;
-          let adjustedNewTempExposure = 0;
+
           const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
 
           for (const rounds of roundIds) {
@@ -135,9 +134,8 @@ async function findAndProcessTransactions(user) {
           let AccumulativeDebit = totalDebitAmount * casinoMultiples;
           let AccumulativeCredit = totalCreditAmount * casinoMultiples;
           const updatedAvailableBalance = userRecord.availableBalance + AccumulativeCredit;
+
           const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 }).session(session);
-          const NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + differenceDbCr;
-          
 
           const betTransactionData = {
             userId: userRecord.userId,
@@ -145,11 +143,10 @@ async function findAndProcessTransactions(user) {
             date: new Date().getTime(),
             amount: differenceDbCr,
             balance: lastMaxWithdraw.balance + differenceDbCr,
-            availableBalance: NewDepositsAvailableBalance,
+            availableBalance: updatedAvailableBalance,
             maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
             roundId: tran._id,
-            updatedExposure: userRecord.exposure + AccumulativeDebit,
-            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+            updatedExposure: userRecord.exposure + AccumulativeDebit
           };
 
           const deposit = new Cash(betTransactionData);
