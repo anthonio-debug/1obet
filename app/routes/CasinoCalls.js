@@ -165,6 +165,7 @@ async function findAndProcessTransactions(user) {
             {
               $set: {
                 balance: updatedAvailableBalance,
+                availableBalance: updatedAvailableBalance,
                 exposure: betTransactionData.updatedExposure
               }
             },
