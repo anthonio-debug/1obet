@@ -115,7 +115,6 @@ async function findAndProcessTransactions(user) {
           let totalDebitAmount = 0;
           let totalRollBackAmount = 0;
           let differenceDbCr = 0;
-          let usernameAllowed = '';
           //let proceedIt = false;
           
           const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
@@ -130,23 +129,16 @@ async function findAndProcessTransactions(user) {
             if (rounds.action === 'rollback') {
               totalRollBackAmount += Number(rounds.amount);
             }
-             usernameAllowed = rounds.username;
-            
-
-            
             // if(rounds.gameplay_final===1){
             //   proceedIt = true;
             // }
           }
-          console.log("Aloowed username isssssssssssssssssssssssssssssssssssssssssssssssssssssssssss:",usernameAllowed);
-          if(usernameAllowed==='user_22155'){
           // if(proceedIt===false){
             
           //   console.log('Result not announced yet for this transaction:.',tran._id);
           //   await session.abortTransaction();  // Abort the transaction if no records found
           //   return;
           // }
-          
           totalCreditAmount += totalRollBackAmount;
           differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
@@ -199,7 +191,6 @@ async function findAndProcessTransactions(user) {
           { $set: { isProcessing: false } },
           { session }
         );
-      }
       }
 
       await session.commitTransaction();
