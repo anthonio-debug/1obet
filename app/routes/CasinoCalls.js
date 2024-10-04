@@ -133,7 +133,7 @@ const groupedTransactions = await CasinoCalls.aggregate([
   const user = await users.findOne(
     { remoteId: Number(tran.remote_id) }
  
-  );
+  )
       
       console.log("exposureeeeeeeeeeeeeeeeeeee=>",user.exposure)
 
