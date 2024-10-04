@@ -97,8 +97,9 @@ async function findAndProcessTransactions(user) {
       for (const tran of groupedTransactions) {
         // Ensure 'users' is properly defined and imported at the top of your file
         const userRecord = await users.findOne(
-          { remoteId: Number(tran.remote_id) }
-        ).session(session);
+          { remoteId: Number(tran.remote_id) },
+          { session } // Pass the session as an option here
+        );
 
         if (!userRecord) {
           console.log(`User not found for remoteId: ${tran.remote_id}`);
@@ -107,8 +108,8 @@ async function findAndProcessTransactions(user) {
 
         const existingDeposit = await Cash.findOne({
           roundId: tran._id.toString()
-        }).session(session);
-        
+        }).session(session); // Pass the session as well
+
         if (!existingDeposit) {
           let totalCreditAmount = 0;
           let totalDebitAmount = 0;
@@ -179,7 +180,7 @@ async function findAndProcessTransactions(user) {
                 tempExposure: adjustedNewTempExposure
               }
             },
-            { session }
+            { session } // Pass the session here as well
           );
         } else {
           console.log("Duplicate transaction found, skipping insertion.");
