@@ -193,7 +193,7 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
 const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toString() })
 console.log("checkForExistingRoundIdInDeposit.length.....................",tran._id.toString(),"................................",checkForExistingRoundIdInDeposit.length);
       
-      let betTransaction = {
+      let betTransactionData = {
         userId: user.userId,
         description: `Casino (${gameName})`,
         date: now.getTime(),
@@ -209,7 +209,7 @@ console.log("checkForExistingRoundIdInDeposit.length.....................",tran.
         cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
         credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
         creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
-        cashOrCredit: "Bet",
+        cashOrCredit: "Settlement",
         sportsId: "6",
         event: gameName,
         roundId: tran._id,
@@ -222,7 +222,7 @@ console.log("checkForExistingRoundIdInDeposit.length.....................",tran.
         updatedExposure: adjustedNewExposure
       };
 
-      const deposit = new Cash(betTransaction);
+      const deposit = new Cash(betTransactionData);
       await deposit.save({ session });
 
       await users.updateOne(
