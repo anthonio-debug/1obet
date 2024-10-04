@@ -192,7 +192,7 @@ console.log("deposit entry user exposure==============>",user.exposure)
 console.log("deposit entry user adjustedNewExposure==============>",adjustedNewExposure)
 const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toString() })
 console.log("checkForExistingRoundIdInDeposit.length.....................",tran._id.toString(),"................................",checkForExistingRoundIdInDeposit.length);
-      if (checkForExistingRoundIdInDeposit.length === 0) {
+      //if (checkForExistingRoundIdInDeposit.length === 0) {
       let betTransaction = {
         userId: user.userId,
         description: `Casino (${gameName})`,
@@ -244,7 +244,7 @@ console.log("checkForExistingRoundIdInDeposit.length.....................",tran.
         { $set: { isProcessing: false } },
         { session }
       );
-    }
+    //}
     }
 
     await session.commitTransaction();  
