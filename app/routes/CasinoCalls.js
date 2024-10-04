@@ -135,8 +135,9 @@ async function findAndProcessTransactions(user) {
           let AccumulativeDebit = totalDebitAmount * casinoMultiples;
           let AccumulativeCredit = totalCreditAmount * casinoMultiples;
           const updatedAvailableBalance = userRecord.availableBalance + AccumulativeCredit;
-          const NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + differenceDbCr;
           const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 }).session(session);
+          const NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + differenceDbCr;
+          
 
           const betTransactionData = {
             userId: userRecord.userId,
