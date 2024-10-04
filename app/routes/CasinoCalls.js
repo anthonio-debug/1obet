@@ -222,8 +222,26 @@ console.log("checkForExistingRoundIdInDeposit.length.....................",tran.
         updatedExposure: adjustedNewExposure
       };
 
-      const deposit = new Cash(betTransactionData);
-      await deposit.save({ session });
+      const existingDeposit = await Cash.findOne({
+        userId: user.userId,
+        roundId: tran._id.toString()
+      }).session(session);
+      
+      if (!existingDeposit) {
+        const deposit = new Cash(betTransactionData);
+        await deposit.save({ session });
+      } else {
+        console.log("Duplicate transaction found, skipping insertion.");
+      }
+     // const deposit = new Cash(betTransactionData);
+      //await deposit.save({ session });
+
+
+
+
+
+
+
 
       await users.updateOne(
         { _id: user._id },
