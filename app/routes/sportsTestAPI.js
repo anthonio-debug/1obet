@@ -7345,7 +7345,9 @@ async function getDistinctRoundIds(req, res) {
       });
     }
     // const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
-    const totalRoundCount = await CasinoCalls.countDocuments({ username: "user_"+userId});
+    // const totalRoundCount = await CasinoCalls.countDocuments({ username: "user_"+userId});
+    const distinctRoundId = await CasinoCalls.distinct("round_id", { username: "user_"+userId });
+const distinctRoundCounts = distinctRoundId.length;
 
     const distinctRoundIds = await CasinoCalls.aggregate([
       {
@@ -7408,7 +7410,7 @@ async function getDistinctRoundIds(req, res) {
       success: true,
       message: 'Round Ids fetched successfully',
       userId:`${userId}`,
-      TotalRoundsCount: `${totalRoundCount}`,
+      distinctRoundsCount: `${distinctRoundCounts}`,
       data: distinctRoundIds
   
     });
