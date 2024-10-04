@@ -4037,7 +4037,7 @@ async function deleteOdds(req, res) {
 
 
     await Deposits.deleteMany({
-      userId: 22141,
+      userId: 20046,
       description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
     })
       .then(result => {
@@ -4051,7 +4051,7 @@ async function deleteOdds(req, res) {
   
   
   
-    const userUpdate = await User.updateOne({ userId:22141 }, {
+    const userUpdate = await User.updateOne({ userId:20046 }, {
       $set: {
         balance:10000,
         availableBalance:10000,
@@ -4064,7 +4064,7 @@ async function deleteOdds(req, res) {
 
 
 
-    const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_22141"  ,gameplay_final:1}, {
+    const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_20046"  ,gameplay_final:1}, {
       isProcessing:true
     })
     // await Odds.deleteMany({});
