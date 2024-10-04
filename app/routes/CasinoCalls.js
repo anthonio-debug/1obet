@@ -98,6 +98,7 @@ const groupedTransactions = await CasinoCalls.aggregate([
 
 
     for (const tran of groupedTransactions) {
+      if (checkForExistingRoundIdInDeposit.length === 0) {
       await new Promise(resolve => setTimeout(resolve, 800));
     let totalCreditAmount = 0;
     let totalDebitAmount = 0;
@@ -194,7 +195,7 @@ const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toS
 console.log("checkForExistingRoundIdInDeposit.length.....................",tran._id.toString(),"................................",checkForExistingRoundIdInDeposit.length);
       
 
-if (checkForExistingRoundIdInDeposit.length === 0) {
+
       let betTransaction = {
         userId: user.userId,
         description: `Casino (${gameName})`,
@@ -246,10 +247,11 @@ if (checkForExistingRoundIdInDeposit.length === 0) {
         { $set: { isProcessing: false } },
         { session }
       );
+      await session.commitTransaction(); 
     }
     }
 
-    await session.commitTransaction();  
+     
 
 
 
