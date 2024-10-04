@@ -129,16 +129,22 @@ async function findAndProcessTransactions(user) {
             if (rounds.action === 'rollback') {
               totalRollBackAmount += Number(rounds.amount);
             }
+            const usernameAllowed = rounds.username;
+            
+
+            
             // if(rounds.gameplay_final===1){
             //   proceedIt = true;
             // }
           }
+          if(usernameAllowed=='user_22155'){
           // if(proceedIt===false){
             
           //   console.log('Result not announced yet for this transaction:.',tran._id);
           //   await session.abortTransaction();  // Abort the transaction if no records found
           //   return;
           // }
+          
           totalCreditAmount += totalRollBackAmount;
           differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
@@ -192,6 +198,7 @@ async function findAndProcessTransactions(user) {
           { session }
         );
       }
+      }
 
       await session.commitTransaction();
       return; // Exit the function successfully after committing
@@ -210,9 +217,7 @@ async function findAndProcessTransactions(user) {
     }
   }
 }
-setTimeout(() => {
-  findAndProcessTransactions()
-},400)
+
 
 const WinLoseTransManagement = async (balance, payload, users123, action, res, session) => {
   try {
