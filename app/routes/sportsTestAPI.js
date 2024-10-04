@@ -7334,7 +7334,23 @@ async function getBetForEvents(targetArray) {
 async function getDistinctRoundIds(req, res) {
 
   try {
-    const username=req.params.userName
+
+    const userRecord = await users.findOne(
+      { userName: req.params.userName }
+      
+    );
+
+    if (!userRecord) {
+      return res.status(404).json({
+    success: false,
+    message: 'user not found',
+
+  });
+    }
+
+
+
+    const username="user_"+userRecod.userId;
     const isUserExist =await CasinoCalls.findOne({ username:username });
     if(!isUserExist){
       return res.status(404).json({
