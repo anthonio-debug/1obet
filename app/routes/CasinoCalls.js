@@ -194,7 +194,7 @@ const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toS
 console.log("checkForExistingRoundIdInDeposit.length.....................",tran._id.toString(),"................................",checkForExistingRoundIdInDeposit.length);
       
 
-//if (checkForExistingRoundIdInDeposit.length === 0) {
+if (checkForExistingRoundIdInDeposit.length === 0) {
       let betTransaction = {
         userId: user.userId,
         description: `Casino (${gameName})`,
@@ -246,7 +246,7 @@ console.log("checkForExistingRoundIdInDeposit.length.....................",tran.
         { $set: { isProcessing: false } },
         { session }
       );
-    //}
+    }
     }
 
     await session.commitTransaction();  
