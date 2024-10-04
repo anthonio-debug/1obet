@@ -190,6 +190,8 @@ const groupedTransactions = await CasinoCalls.aggregate([
       const betTime = now.getTime();
 console.log("deposit entry user exposure==============>",user.exposure)
 console.log("deposit entry user adjustedNewExposure==============>",adjustedNewExposure)
+const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toString() })
+      if (!checkForExistingRoundIdInDeposit.length > 0) {
       let betTransaction = {
         userId: user.userId,
         description: `Casino (${gameName})`,
@@ -241,6 +243,7 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
         { $set: { isProcessing: false } },
         { session }
       );
+    }
     }
 
     await session.commitTransaction();  
