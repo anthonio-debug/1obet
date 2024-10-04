@@ -67,7 +67,11 @@ async function findAndProcessTransactions(user) {
       const groupedTransactions = await CasinoCalls.aggregate([
         {
           $match: {
-            isProcessing: true
+            isProcessing: true,
+            $or: [
+              { gameplay_final: 1 },
+              { action: 'rollback' }
+                ]
           }
         },
         {
