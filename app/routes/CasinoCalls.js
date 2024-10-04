@@ -129,6 +129,7 @@ async function findAndProcessTransactions(user) {
             }
             if (rounds.action === 'rollback') {
               totalRollBackAmount += Number(rounds.amount);
+              proceedIt = true;
             }
              usernameAllowed = rounds.username;
             
@@ -138,7 +139,10 @@ async function findAndProcessTransactions(user) {
                proceedIt = true;
              }
           }
-          console.log("proceedIt...............................................................",proceedIt);
+          if(proceedIt===true){
+            console.log("proceedIt...............................................................",proceedIt);
+          }
+          
           // if(proceedIt===false){
             
           //   console.log('Result not announced yet for this transaction:.',tran._id);
