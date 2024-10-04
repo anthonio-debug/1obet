@@ -7331,88 +7331,88 @@ async function getBetForEvents(targetArray) {
 
 
 
-// async function getDistinctRoundIds(req, res) {
+async function getDistinctRoundIds(req, res) {
 
-//   try {
-//     const username=req.params.userName
-//     const {userId} = await Users.findOne({userName:username})
-//     // const isUserExist =await CasinoCalls.findOne({ username:username });
-//     if(!userId){
-//       return res.status(404).json({
-//         success: false,
-//         message: 'user not found',
+  try {
+    const username=req.params.userName
+    const {userId} = await Users.findOne({userName:username})
+    // const isUserExist =await CasinoCalls.findOne({ username:username });
+    if(!userId){
+      return res.status(404).json({
+        success: false,
+        message: 'user not found',
     
-//       });
-//     }
-//     // const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
-//     const distinctRoundIds = await CasinoCalls.aggregate([
-//       {
-//         $match: { username: "user_"+userId }
-//       },
-//       {
-//         $group: {
-//           _id: "$round_id",
-//           debitCount: {
-//             $sum: {
-//               $cond: [{ $eq: ["$action", "debit"] }, 1, 0]
-//             }
-//           },
-//           creditCount: {
-//             $sum: {
-//               $cond: [{ $eq: ["$action", "credit"] }, 1, 0]
-//             }
-//           },
-//           rollbackCount: {
-//             $sum: {
-//               $cond: [{ $eq: ["$action", "rollback"] }, 1, 0]
-//             }
-//           },
-//           debitAmountSum: {
-//             $sum: {
-//               $cond: [{ $eq: ["$action", "debit"] }, { $toDouble: "$amount" }, 0]
-//             }
-//           },
-//           creditAmountSum: {
-//             $sum: {
-//               $cond: [{ $eq: ["$action", "credit"] }, { $toDouble: "$amount" }, 0]
-//             }
-//           },
-//           rollbackAmountSum: {
-//             $sum: {
-//               $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0]
-//             }
-//           }
-//         }
-//       },
-//       {
-//         $project: {
-//           _id: 0,
-//           round_id: "$_id",
-//           debitCount: 1,
-//           creditCount: 1,
-//           rollbackCount: 1,
-//           debitAmountSum: 1,
-//           creditAmountSum: 1,
-//           rollbackAmountSum: 1
-//         }
-//       }
-//     ]
-//     )
-//     res.status(200).json({
-//       success: true,
-//       message: 'Round Ids fetched successfully',
-//       data: distinctRoundIds
+      });
+    }
+    // const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
+    const distinctRoundIds = await CasinoCalls.aggregate([
+      {
+        $match: { username: "user_"+userId }
+      },
+      {
+        $group: {
+          _id: "$round_id",
+          debitCount: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "debit"] }, 1, 0]
+            }
+          },
+          creditCount: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "credit"] }, 1, 0]
+            }
+          },
+          rollbackCount: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "rollback"] }, 1, 0]
+            }
+          },
+          debitAmountSum: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "debit"] }, { $toDouble: "$amount" }, 0]
+            }
+          },
+          creditAmountSum: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "credit"] }, { $toDouble: "$amount" }, 0]
+            }
+          },
+          rollbackAmountSum: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0]
+            }
+          }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          round_id: "$_id",
+          debitCount: 1,
+          creditCount: 1,
+          rollbackCount: 1,
+          debitAmountSum: 1,
+          creditAmountSum: 1,
+          rollbackAmountSum: 1
+        }
+      }
+    ]
+    )
+    res.status(200).json({
+      success: true,
+      message: 'Round Ids fetched successfully',
+      data: distinctRoundIds
   
-//     });
+    });
 
-//   } catch (error) {
-//     console.error("Error in RoundIds:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: 'Internal server error'
-//     });
-//   }
-// }
+  } catch (error) {
+    console.error("Error in RoundIds:", error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
 async function getDepositsRecord(req, res) {
       const userId =req.params.userId;
   try {
@@ -7509,7 +7509,7 @@ router.get('/track-bet/multi-response', checkMultiResponse)
 // router.get('/track-bet/getUserBetsRecords/:user_id/:market_id', getUserBetsRecords)
 router.post('/track-bet/getUserBetsRecords', getUserBetsRecords)
 router.get('/track-bet/getWinnigLossing', getWinnigLossing)
-//router.get('/track-bet/distinct-round-ids/:userName', getDistinctRoundIds)
+router.get('/track-bet/distinct-round-ids/:userName', getDistinctRoundIds)
 router.get('/track-bet/getDepositsRecord/:userId', getDepositsRecord)
 /////////////////
 
