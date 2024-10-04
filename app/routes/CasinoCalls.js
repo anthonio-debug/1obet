@@ -144,9 +144,17 @@ async function findAndProcessTransactions(user) {
             amount: differenceDbCr,
             balance: lastMaxWithdraw.balance + differenceDbCr,
             availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
-            maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
+            maxWithdraw: lastMaxWithdraw.availableBalance + differenceDbCr,
             roundId: tran._id,
-            updatedExposure: userRecord.exposure + AccumulativeDebit
+            updatedExposure: userRecord.exposure + AccumulativeDebit,
+            credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+            creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+            cashOrCredit: "Settlement",
+            sportsId: "6",
+            //event: gameName,
+            roundId: tran._id,
+            marketId: tran._id,
+            //matchId: tran.game_id,
           };
 
           const deposit = new Cash(betTransactionData);
