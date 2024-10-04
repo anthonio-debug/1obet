@@ -191,6 +191,7 @@ const groupedTransactions = await CasinoCalls.aggregate([
 console.log("deposit entry user exposure==============>",user.exposure)
 console.log("deposit entry user adjustedNewExposure==============>",adjustedNewExposure)
 const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toString() })
+console.log("checkForExistingRoundIdInDeposit.length.....................................................",checkForExistingRoundIdInDeposit.length);
       if (checkForExistingRoundIdInDeposit.length === 0) {
       let betTransaction = {
         userId: user.userId,
