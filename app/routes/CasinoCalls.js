@@ -143,7 +143,7 @@ async function findAndProcessTransactions(user) {
             date: new Date().getTime(),
             amount: differenceDbCr,
             balance: lastMaxWithdraw.balance + differenceDbCr,
-            availableBalance: updatedAvailableBalance,
+            availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
             maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
             roundId: tran._id,
             updatedExposure: userRecord.exposure + AccumulativeDebit
