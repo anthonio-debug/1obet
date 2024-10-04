@@ -7334,36 +7334,20 @@ async function getBetForEvents(targetArray) {
 async function getDistinctRoundIds(req, res) {
 
   try {
-
-    const userRecord = await users.findOne(
-      { userName: req.params.userName }
-      
-    );
-
-    if (!userRecord) {
-      return res.status(404).json({
-    success: false,
-    message: 'user not found',
-
-  });
-    }
-
-
-
-    const username="user_"+userRecod.userId;
-    const isUserExist =await CasinoCalls.findOne({ username:username });
-    if(!isUserExist){
+    const username=req.params.userName
+    const {userId} = await Users.findOne({userName:username})
+    // const isUserExist =await CasinoCalls.findOne({ username:username });
+    if(!userId){
       return res.status(404).json({
         success: false,
-        message: 'user name not found',
+        message: 'user not found',
     
       });
     }
     // const distinctRoundIds = await CasinoCalls.distinct('round_id',{ username });
     const distinctRoundIds = await CasinoCalls.aggregate([
-      {
-        $match: { username: username }
-      },
+     
+      { $match: { username: "user_"+userId } },
       {
         $group: {
           _id: "$round_id",
@@ -7381,34 +7365,18 @@ async function getDistinctRoundIds(req, res) {
             $sum: {
               $cond: [{ $eq: ["$action", "rollback"] }, 1, 0]
             }
-          },
-          debitAmountSum: {
-            $sum: {
-              $cond: [{ $eq: ["$action", "debit"] }, { $toDouble: "$amount" }, 0]
-            }
-          },
-          creditAmountSum: {
-            $sum: {
-              $cond: [{ $eq: ["$action", "credit"] }, { $toDouble: "$amount" }, 0]
-            }
-          },
-          rollbackAmountSum: {
-            $sum: {
-              $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0]
-            }
           }
         }
       },
+
+      // Project the final structure with the counts for each action
       {
         $project: {
           _id: 0,
           round_id: "$_id",
-          debitCount: 1,
-          creditCount: 1,
-          rollbackCount: 1,
-          debitAmountSum: 1,
-          creditAmountSum: 1,
-          rollbackAmountSum: 1
+          debit: "$debitCount",
+          credit: "$creditCount",
+          rollback: "$rollbackCount"
         }
       }
     ])
