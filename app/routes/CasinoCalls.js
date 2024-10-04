@@ -133,7 +133,7 @@ const groupedTransactions = await CasinoCalls.aggregate([
   const user = await users.findOne(
     { remoteId: Number(tran.remote_id) }
  
-  )
+  ).session(session);
       
       console.log("exposureeeeeeeeeeeeeeeeeeee=>",user.exposure)
 
@@ -144,7 +144,7 @@ const groupedTransactions = await CasinoCalls.aggregate([
       updatedavailableBalance=user.availableBalance+AccumulativeCredit
       Updatedbalance=user.balance+AccumulativeCredit
       updatedClientPL = user.client + AccumulativeCredit
-      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
+      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
     
           console.log('Total credit amount:', AccumulativeCredit);
         console.log('Total debit amount:', AccumulativeDebit);
