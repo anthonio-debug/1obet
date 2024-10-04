@@ -98,7 +98,7 @@ async function findAndProcessTransactions(user) {
         // Ensure 'users' is properly defined and imported at the top of your file
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) }
-        )
+        ).session(session);
 
         if (!userRecord) {
           console.log(`User not found for remoteId: ${tran.remote_id}`);
