@@ -98,7 +98,7 @@ const groupedTransactions = await CasinoCalls.aggregate([
 
 
     for (const tran of groupedTransactions) {
-      await new Promise(resolve => setTimeout(resolve, 800));
+      //await new Promise(resolve => setTimeout(resolve, 800));
     let totalCreditAmount = 0;
     let totalDebitAmount = 0;
     let totalRollBackAmount = 0;
