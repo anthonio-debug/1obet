@@ -114,7 +114,8 @@ async function findAndProcessTransactions(user) {
           let totalDebitAmount = 0;
           let totalRollBackAmount = 0;
           let differenceDbCr = 0;
-
+          let adjustedNewExposure = 0;
+          let adjustedNewTempExposure = 0;
           const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
 
           for (const rounds of roundIds) {
@@ -134,7 +135,7 @@ async function findAndProcessTransactions(user) {
           let AccumulativeDebit = totalDebitAmount * casinoMultiples;
           let AccumulativeCredit = totalCreditAmount * casinoMultiples;
           const updatedAvailableBalance = userRecord.availableBalance + AccumulativeCredit;
-
+          const NewDepositsAvailableBalance = lastMaxWithdraw.availableBalance + differenceDbCr;
           const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 }).session(session);
 
           const betTransactionData = {
@@ -143,10 +144,24 @@ async function findAndProcessTransactions(user) {
             date: new Date().getTime(),
             amount: differenceDbCr,
             balance: lastMaxWithdraw.balance + differenceDbCr,
-            availableBalance: updatedAvailableBalance,
+            availableBalance: NewDepositsAvailableBalance,
             maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
             roundId: tran._id,
-            updatedExposure: userRecord.exposure + AccumulativeDebit
+            updatedExposure: userRecord.exposure + AccumulativeDebit,
+            cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+            credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+        creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+        cashOrCredit: "Settlement",
+        sportsId: "6",
+       // event: gameName,
+        roundId: tran._id,
+        marketId: tran._id,
+        //matchId: tran.game_id,
+        upLineAmount: upMovingAmount,
+        userAvailableBalanceBFTrans: userRecord.availableBalance,
+        userAvailableBalanceAFTrans: updatedAvailableBalance,
+        userPrevExposure: userRecord.exposure,
+        updatedExposure: adjustedNewExposure
           };
 
           const deposit = new Cash(betTransactionData);
