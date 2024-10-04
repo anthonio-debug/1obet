@@ -52,8 +52,6 @@ const checkMarketBlocked = async (user) => {
     return 0;
   }
 }
-const mongoose = require('mongoose');
-
 async function findAndProcessTransactions(user) {
   const session = await mongoose.startSession();
   const maxRetries = 3; // Max retries for the transaction
@@ -96,10 +94,16 @@ async function findAndProcessTransactions(user) {
       }
 
       for (const tran of groupedTransactions) {
+        // Ensure 'users' is properly defined and imported at the top of your file
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) }
         ).session(session);
-        
+
+        if (!userRecord) {
+          console.log(`User not found for remoteId: ${tran.remote_id}`);
+          continue; // Skip if user not found
+        }
+
         const existingDeposit = await Cash.findOne({
           roundId: tran._id.toString()
         }).session(session);
@@ -143,7 +147,7 @@ async function findAndProcessTransactions(user) {
 
           const betTransactionData = {
             userId: userRecord.userId,
-            description: `Casino (${gameName})`,
+            description: `Casino (${tran.game_id})`, // Assuming game_name should be fetched or defined
             date: new Date().getTime(),
             createdAt: new Date().toISOString().split('T')[0],
             amount: differenceDbCr,
@@ -185,7 +189,6 @@ async function findAndProcessTransactions(user) {
           { $set: { isProcessing: false } },
           { session }
         );
-
       }
 
       await session.commitTransaction(); 
