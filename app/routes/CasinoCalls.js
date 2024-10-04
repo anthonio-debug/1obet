@@ -114,7 +114,7 @@ async function findAndProcessTransactions(user) {
           let totalDebitAmount = 0;
           let totalRollBackAmount = 0;
           let differenceDbCr = 0;
-          const proceedIt = false;
+          let proceedIt = false;
           
           const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
           
