@@ -65,7 +65,7 @@ async function findAndProcessTransactions(user) {
 const groupedTransactions = await CasinoCalls.aggregate([
   {
     $match: {
-      gameplay_final: 1,
+      //gameplay_final: 1,
       isProcessing: true
     }
   },
@@ -74,7 +74,8 @@ const groupedTransactions = await CasinoCalls.aggregate([
       _id: "$round_id",
       remote_id: { $first: "$remote_id" },
       username: { $first: "$username" },
-      game_id: { $first: "$game_id" }
+      game_id: { $first: "$game_id" },
+      gameplay_final: { $first: "$gameplay_final" }
     }
   },
   {
@@ -122,6 +123,7 @@ const groupedTransactions = await CasinoCalls.aggregate([
           totalRollBackAmount += Number(rounds.amount);
         }
       }
+      totalCreditAmount += totalRollBackAmount
       differenceDbCr = (totalCreditAmount - totalDebitAmount) *casinoMultiples;
       //const session = await mongoose.startSession();
 //session.startTransaction();
