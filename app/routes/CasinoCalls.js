@@ -143,7 +143,7 @@ const groupedTransactions = await CasinoCalls.aggregate([
       adjustedNewTempExposure = user.tempExposure - AccumulativeDebit;
       updatedavailableBalance=user.availableBalance+AccumulativeCredit
       Updatedbalance=user.balance+AccumulativeCredit
-      updatedClientPL = user.client + AccumulativeCredit
+      updatedClientPL = user.clientPL + AccumulativeCredit
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
     
           console.log('Total credit amount:', AccumulativeCredit);
