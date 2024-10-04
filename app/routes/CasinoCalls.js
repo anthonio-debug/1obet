@@ -53,7 +53,7 @@ const checkMarketBlocked = async (user) => {
   }
 }
 
-
+const mongoose = require('mongoose');
 async function findAndProcessTransactions(user) {
   const session = await mongoose.startSession();
 
@@ -193,7 +193,7 @@ console.log("deposit entry user adjustedNewExposure==============>",adjustedNewE
 const checkForExistingRoundIdInDeposit = await Cash.find({ roundId: tran._id.toString() })
 console.log("checkForExistingRoundIdInDeposit.length.....................",tran._id.toString(),"................................",checkForExistingRoundIdInDeposit.length);
       
-const mongoose = require('mongoose');
+
 //if (checkForExistingRoundIdInDeposit.length === 0) {
       let betTransaction = {
         userId: user.userId,
