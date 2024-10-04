@@ -169,7 +169,7 @@ async function findAndProcessTransactions(user) {
             amount: differenceDbCr,
             balance: lastMaxWithdraw.balance + differenceDbCr,
             availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
-            maxWithdraw: lastMaxWithdraw.availableBalance + differenceDbCr,
+            maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
             roundId: tran._id,
             updatedExposure: userRecord.exposure + AccumulativeDebit,
             credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
