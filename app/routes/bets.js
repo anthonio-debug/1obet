@@ -83,10 +83,16 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
   }
 
   for (const user of parentUser) {
+    console.log("user id......................................................>",user.userId);
+
+    console.log("winningAmount......................................................>",winningAmount);
     const amountToBeSub = (user.commission / 100) * winningAmount;
     const finalAmount = Number(amountToBeSub.toFixed(3));
+    console.log("amountToBeSub......................................................>",amountToBeSub);
+    console.log("finalAmount......................................................>",finalAmount);
     user.exposure -= finalAmount;
     user.availableBalance -= finalAmount;
+    
     await user.save();
     if (matchId != 0) {
       let position = await new currentPosition({
