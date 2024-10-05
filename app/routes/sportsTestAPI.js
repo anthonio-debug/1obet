@@ -7423,6 +7423,82 @@ const distinctRoundCounts = distinctRoundId.length;
     });
   }
 }
+
+async function betresultRecords(req, res) {
+  try {
+    const { userId } = await User.findOne({ userName: req.params.userName });
+
+    const betResultRec = await Bets.aggregate([
+      {
+        $match: {
+          userId: userId,
+          calculateExp: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'resultrecords',
+          let: { resultId: "$resultId" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: [{ $toString: "$_id" }, "$$resultId"]
+                }
+              }
+            }
+          ],
+          as: 'betResultData'
+        }
+      },
+      {
+        $unwind: {
+          path: '$betResultData',
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          _id: { $toString: "$_id" },
+          betRate: 1,
+          betAmount: 1,
+          calculateExp: 1,
+          event: 1,
+          type: 1,
+          resultData: "$betResultData.resultData",
+          createdAt: {
+            $dateToString: {
+              format: "%Y-%m-%d %H:%M:%S",
+              date: { $toDate: "$createdAt" },
+              timezone: "UTC"
+            }
+          },
+          updatedAt: {
+            $dateToString: {
+              format: "%Y-%m-%d %H:%M:%S",
+              date: { $toDate: "$updatedAt" },
+              timezone: "UTC"
+            }
+          }
+        }
+      }
+    ]);
+
+    return res.status(200).send({
+      success: true,
+      message: 'Bets with result records',
+      results: betResultRec
+    });
+
+  } catch (error) {
+    return res.status(500).send({
+      success: false,
+      message: 'An error occurred',
+      error: error.message
+    });
+  }
+}
+
 async function getDepositsRecord(req, res) {
       const userId =req.params.userId;
   try {
@@ -7560,6 +7636,7 @@ router.get('/match-events/:sportsId', getMatchEvents)
 router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
 // router.get('/test-odds-for-cricket/:eventId', )
 /*admin dashboard*/
+router.get('/track-bet/result-records/:userName', betresultRecords)
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
 router.post('/list-events', getEventList)

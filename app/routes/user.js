@@ -45,6 +45,10 @@ async function registerUser(req, res) {
 
   //console.log(' User Is creatting   ');
   const userNameLowerNext = req.body.userName.toLowerCase()
+  const checkDuplicateuser = await User.findOne({ userName: userNameLowerNext })
+  if (checkDuplicateuser){
+    res.status(400).send({message:"Username is already taken."})
+  }
   if (req.decoded.role == '5') {
     return res.status(404).send({ message: 'you are not allowed to do this ' });
   }

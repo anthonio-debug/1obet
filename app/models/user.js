@@ -13,7 +13,7 @@ const saltrounds = config.saltRounds;
  */
 
 const userSchema = new Schema({
-  userName: { type: String, required: true, unique: false },
+  userName: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   reference: { type: String, required: false },
   phone: { type: String, required: false },
