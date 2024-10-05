@@ -7428,11 +7428,16 @@ async function betresultRecords(req, res) {
   try {
     const { userId } = await User.findOne({ userName: req.params.userName });
 
+    const searchKeyword = req.params.eventName
     const betResultRec = await Bets.aggregate([
       {
         $match: {
           userId: userId,
-          calculateExp: true
+          calculateExp: true,
+          event: {
+            $regex: searchKeyword,
+            $options: "i"
+          }
         }
       },
       {
@@ -7465,6 +7470,10 @@ async function betresultRecords(req, res) {
           calculateExp: 1,
           event: 1,
           type: 1,
+          marketId: 1,
+          subMarketId: 1,
+          winningAmount: 1,
+          loosingAmount: 1,
           resultData: "$betResultData.resultData",
           createdAt: {
             $dateToString: {
@@ -7636,7 +7645,7 @@ router.get('/match-events/:sportsId', getMatchEvents)
 router.get('/match-events-details/:sportsId', getTheSportsMatchScoreEvents)
 // router.get('/test-odds-for-cricket/:eventId', )
 /*admin dashboard*/
-router.get('/track-bet/result-records/:userName', betresultRecords)
+router.get('/track-bet/result-records/:eventName/:userName', betresultRecords)
 router.get('/admin-dashboard/fetch-events/:sportsId', fetchEvents)
 
 router.post('/list-events', getEventList)
