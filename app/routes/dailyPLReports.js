@@ -13,35 +13,25 @@ const getDailyPLReport = async (req, res) => {
   }
 
   const userId = parseInt(req.decoded.userId);
-  const currentUser = await User.findOne({ userId: userId });
-  const users = new Set([userId]);  // Use a Set to avoid duplicates
+  const users = new Set([userId]);  // Start with the logged-in user
   let parents = [userId];
   let childUsers = [];
   let sportsIdQuery = { $ne: null };
 
   do {
-    // Fetch child users with distinct userId and filter by createdBy and role
+    // Fetch child users, filtering by createdBy and role
     childUsers = await User.distinct("userId", {
-      $or: [
-        { createdBy: { $in: parents }, role: { $ne: 5 } },
-        { role: 5, createdBy: userId }
-      ]
+      createdBy: { $in: parents },
+      role: { $ne: 5 }  // Exclude role 5 users
     });
 
-    // Remove child users that are already in the users Set to avoid duplicates
-    const newChildUsers = childUsers.filter(user => !users.has(user));
-
-    // If there are new child users, add them to the users Set and parents array
-    if (newChildUsers.length) {
-      newChildUsers.forEach(user => users.add(user));
-      parents = newChildUsers;  // Update parents with new child users
-    } else {
-      // Exit the loop if there are no new users to process
-      break;
-    }
+    // Add new child users to the users Set
+    childUsers.forEach(user => users.add(user));
+    parents = childUsers;  // Update parents with new child users
 
   } while (childUsers.length > 0);
 
+  // Prepare the aggregation query
   const response = await CashDeposit.aggregate([
     {
       $match: {
@@ -60,21 +50,36 @@ const getDailyPLReport = async (req, res) => {
       }
     },
     { 
-      $unwind: "$userInfo"
+      $unwind: "$userInfo"  // Unwind userInfo to access fields
     },
     {
       $match: {
         $or: [
-          { "userInfo.role": { $ne: 5 } },
-          { "userInfo.createdBy": userId }
+          { "userInfo.role": { $ne: 5 } },  // Exclude users with role 5
+          { "userInfo.createdBy": userId }  // Include users created by the logged-in user
         ]
       }
     },
     {
       $group: {
-        _id: "$userId",
-        amount: { $sum: "$amount" },
-        name: { $first: "$userInfo.userName" }
+        _id: { userId: "$userId", createdBy: "$userInfo.createdBy" }, // Group by userId and createdBy
+        totalAmount: { $sum: "$amount" },  // Calculate total amount
+        name: { $first: "$userInfo.userName" }  // Get the user name
+      }
+    },
+    {
+      $group: {
+        _id: "$_id.createdBy",  // Group by creator to accumulate totals
+        totalAmount: { $sum: "$totalAmount" },  // Accumulate amounts for all children and the logged-in user
+        users: { $push: { userId: "$_id.userId", name: "$name", amount: "$totalAmount" } } // Collect user data
+      }
+    },
+    {
+      $project: {
+        _id: 0,  // Exclude _id field
+        userId: "$_id",  // Include the userId of the creator
+        totalAmount: 1,  // Include total amount
+        users: 1  // Include individual user data
       }
     }
   ]);
@@ -86,6 +91,7 @@ const getDailyPLReport = async (req, res) => {
     total: response.length
   });
 };
+
 
 
 const dailyPlSportWiseReports = async (req, res) => {
