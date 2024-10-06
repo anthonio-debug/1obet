@@ -66,7 +66,7 @@ function scoreChecker() {
   }
 
   async function eventsResult(betData) {
-    //console.log("Result checking event for ", betData.marketId);
+    console.log("Result checking event for ", betData.marketId);
     try {
       let results;
       const manuelRecord = await MarketIDs.findOne({
@@ -108,7 +108,7 @@ function scoreChecker() {
           }
         ];
       }
-      //console.log("results.length -> " + results.length)
+      console.log("results.length -> " + results.length)
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
