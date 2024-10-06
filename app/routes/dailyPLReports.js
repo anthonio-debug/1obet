@@ -27,32 +27,45 @@ const getDailyPLReport = async (req, res) => {
     });
     if (childUsers.length) users.push(...childUsers)
     parents = childUsers
-  } while (childUsers.length > 0)
-  const response = await CashDeposit.aggregate([
-    {
-      $match: {
-        userId: { $in: users },
-        sportsId: sportsIdQuery,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
+  }
+  while (childUsers.length > 0)
+    const response = await CashDeposit.aggregate([
+      {
+        $match: {
+          userId: { $in: users },
+          sportsId: sportsIdQuery,
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'userId',
+          as: 'userInfo'
+        }
+      },
+      { 
+        $unwind: "$userInfo"
+      },
+      {
+        $match: {
+          $or: [
+            { "userInfo.role": { $ne: 5 } },  
+            { "userInfo.createdBy": userId }  
+          ]
+        }
+      },
+      {
+        $group: {
+          _id: "$userId",
+          amount: { $sum: "$amount" },
+          name: { $first: "$userInfo.userName" }
+        }
       }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'userInfo'
-      }
-    },
-    {
-      $group: {
-        _id: "$userId",
-        amount: { $sum: "$amount" },
-        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
-      }
-    }
-  ]);
+    ]);
+    
 
   return res.send({
     success: true,
