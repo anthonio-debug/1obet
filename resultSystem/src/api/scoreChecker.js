@@ -154,9 +154,9 @@ function scoreChecker() {
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
             console.log("bet.userId..................................-------------->",bet.userId);
             console.log("bet.calculateExp..................................-------------->",bet.calculateExp);
-            if (bet.calculateExp && bet.userId==22204) {
-            const WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
-            }
+            // if (bet.calculateExp && bet.userId==22204) {
+            // const WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
+            // }
 
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
