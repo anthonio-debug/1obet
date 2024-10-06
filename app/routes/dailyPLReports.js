@@ -14,39 +14,37 @@ const getDailyPLReport = async (req, res) => {
 
   const userId = parseInt(req.decoded.userId);
   const currentUser = await User.findOne({ userId: userId });
-  const users = new Set([userId]);  // Use a Set to avoid duplicates
-  let parents = [userId];
-  let childUsers = [];
-  let sportsIdQuery = { $ne: null };
 
-  do {
-    // Fetch child users with distinct userId and filter by createdBy and role
-    childUsers = await User.distinct("userId", {
-      $or: [
-        { createdBy: { $in: parents }, role: { $ne: 5 } },
-        { role: 5, createdBy: userId }
-      ]
+  // Set to store unique user IDs
+  const users = new Set([userId]);  
+  let firstChildUserId = null;
+
+  // Fetch the first child user
+  const childUsers = await User.find({
+    createdBy: userId,
+    role: { $ne: 5 } // Exclude role 5
+  }).limit(1); // Limit to the first child user
+
+  // If a child user is found, add them to the Set
+  if (childUsers.length > 0) {
+    firstChildUserId = childUsers[0].userId;
+    users.add(firstChildUserId);
+  }
+
+  // If there is a first child user, fetch their sub-child users
+  let subChildUsers = [];
+  if (firstChildUserId) {
+    subChildUsers = await User.find({
+      createdBy: firstChildUserId,
+      role: { $ne: 5 } // Exclude role 5
     });
+  }
 
-    // Remove child users that are already in the users Set to avoid duplicates
-    const newChildUsers = childUsers.filter(user => !users.has(user));
-
-    // If there are new child users, add them to the users Set and parents array
-    if (newChildUsers.length) {
-      newChildUsers.forEach(user => users.add(user));
-      parents = newChildUsers;  // Update parents with new child users
-    } else {
-      // Exit the loop if there are no new users to process
-      break;
-    }
-
-  } while (childUsers.length > 0);
-
+  // Fetch amounts for the first child user and their sub-child users
   const response = await CashDeposit.aggregate([
     {
       $match: {
         userId: { $in: Array.from(users) },  // Convert Set to Array
-        sportsId: sportsIdQuery,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
@@ -59,7 +57,7 @@ const getDailyPLReport = async (req, res) => {
         as: 'userInfo'
       }
     },
-    { 
+    {
       $unwind: "$userInfo"
     },
     {
@@ -79,6 +77,51 @@ const getDailyPLReport = async (req, res) => {
     }
   ]);
 
+  // Now, sum up the amounts for sub-child users and assign it to the first child user
+  const subChildResponse = await CashDeposit.aggregate([
+    {
+      $match: {
+        userId: { $in: subChildUsers.map(user => user.userId) }, // Include only sub-child users
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        totalAmount: { $sum: "$amount" }
+      }
+    }
+  ]);
+
+  // Find the response entry for the first child user
+  const firstChildEntry = response.find(entry => entry._id === firstChildUserId);
+  
+  // If the first child user exists in the response, add the totalAmount
+  if (firstChildEntry) {
+    firstChildEntry.amount += subChildResponse.length > 0 ? subChildResponse[0].totalAmount : 0; // Add sub-child amounts
+
+    // Check if the first child user was created directly by the current user
+    const isDirectChild = childUsers.length > 0 && childUsers[0].createdBy === userId;
+
+    // Include role if created directly by the current user
+    if (isDirectChild) {
+      const firstChildUserInfo = await User.findOne({ userId: firstChildUserId });
+      firstChildEntry.role = firstChildUserInfo.role; // Include role if direct child
+    }
+  } else {
+    // If no first child entry was found, create one with the sub-child total
+    const totalAmount = subChildResponse.length > 0 ? subChildResponse[0].totalAmount : 0;
+    const firstChildUserInfo = await User.findOne({ userId: firstChildUserId });
+
+    response.push({
+      _id: firstChildUserId,
+      amount: totalAmount,
+      name: firstChildUserId, // You can also add user info if needed
+      role: firstChildUserInfo.createdBy === userId ? firstChildUserInfo.role : undefined // Include role if direct child
+    });
+  }
+
   return res.send({
     success: true,
     message: 'Commission reports',
@@ -86,6 +129,7 @@ const getDailyPLReport = async (req, res) => {
     total: response.length
   });
 };
+
 
 
 const dailyPlSportWiseReports = async (req, res) => {
