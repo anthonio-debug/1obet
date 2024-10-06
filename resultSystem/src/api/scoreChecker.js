@@ -224,8 +224,13 @@ function scoreChecker() {
         ];
       }
       console.log("results.length for races -> " + results.length)
+
+      console.log("betData user id ...................................................",betData.userId);
+      //let WinnLooseDecision = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+      
       if (results.length > 0) {
         const result = results[0];
+        
         if (!result.winnerSelectionId) return;
         let newRecord = new resultRecords({
           eventId: betData.matchId,
