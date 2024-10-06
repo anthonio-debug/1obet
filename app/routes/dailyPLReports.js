@@ -27,6 +27,7 @@ const getDailyPLReport = async (req, res) => {
     });
     if (childUsers.length) users.push(...childUsers)
     parents = childUsers
+    console.log("userIDDDDDDDddddddddddddddddakakak",userId)
   }
   while (childUsers.length > 0)
     const response = await CashDeposit.aggregate([
