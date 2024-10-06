@@ -1,4 +1,4 @@
-
+const Bets = require('../../../app/models/bets');
 function getAmountOfWinner(bet, selectionId) {
     console.log("Reached inside the function..............................");
 
@@ -34,7 +34,7 @@ let TotalLose = 0;
     console.log("userIDdddddddddddddddddddddddddddd AK-------------------",bet.userId)
 return amount 
 }
-function getAmountOfWinnerTemp(bet, selectionId) {
+async function getAmountOfWinnerTemp(betId, selectionId) {
     console.log("Reached inside the function..............................");
 
     const now = new Date();
@@ -48,6 +48,12 @@ const userId = bet.userId;
 let TotalWin = 0;
 let TotalLose = 0;
 
+
+const bet = await Bets.findOne({
+    _id: betId
+  });
+  
+  console.log("debt insdie...................................",bet);
     const runnerPosition = bet?.runnersPosition
     var amount = 0
     var winnerRunner = '';

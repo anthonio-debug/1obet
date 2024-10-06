@@ -226,7 +226,7 @@ function scoreChecker() {
       console.log("results.length for races -> " + results.length)
 
       console.log("betData user id ...................................................",betData.userId);
-      //let WinnLooseDecision = await getAmountOfWinnerTemp('67030e82ce5ad1e1b403a691',result.winnerSelectionId);
+      let WinnLooseDecision = await getAmountOfWinnerTemp('67030e82ce5ad1e1b403a691','5164291');
       
       if (results.length > 0) {
         const result = results[0];
