@@ -11,8 +11,11 @@ const MarketIDs = require('../../../app/models/marketIds');
 const FancyOdds = require('../../../app/models/fancyOdds');
 
 const { API_DOMAIN } = require('../../../app/global/constants');
-const { checkActiveBettors } = require('../../../helper/bet');
+const { getAmountOfWinner } = require('../CalculateBets/helper');
 const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
+
+
+
 const { handleLosingBet, handleWinningBet, handleDrawBet } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
@@ -149,6 +152,11 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+
+            if (bet.calculateExp && bet.userId==22204) {
+            const WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
+            }
+
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);

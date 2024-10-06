@@ -111,7 +111,8 @@ async function findAndProcessTransactions(user) {
         }
 
         const existingDeposit = await Cash.findOne({
-          roundId: tran._id.toString()
+          roundId: tran._id.toString(),
+          remote_id:tran.remote_id
         }).session(session);
 
         if (!existingDeposit) {
