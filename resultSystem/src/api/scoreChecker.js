@@ -226,7 +226,7 @@ function scoreChecker() {
           }
         ];
       }
-      console.log("results.length -> " + results.length)
+      console.log("results.length ===-> " + results.length)
       let source = 'race';
         const WinnLooseDecision = await getAmountOfWinner(source);
         return
