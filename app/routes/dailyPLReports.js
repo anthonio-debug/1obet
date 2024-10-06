@@ -18,28 +18,37 @@ const getDailyPLReport = async (req, res) => {
   const users = new Set([userId]);
   let firstChildUserId = null;
 
-  // Fetch the first child user
+  // Fetch the first child user (excluding role 5)
   const childUsers = await User.find({
     createdBy: userId,
     role: { $ne: 5 } // Exclude role 5
   }).limit(1);
 
-  console.log("Child Users:", childUsers); // Debugging log
+  // Fetch role 5 users created by the current user
+  const role5ChildUsers = await User.find({
+    createdBy: userId,
+    role: 5 // Include role 5
+  });
 
   if (childUsers.length > 0) {
     firstChildUserId = childUsers[0].userId;
     users.add(firstChildUserId);
   }
 
+  // Include role 5 users created by the current user in the users set
+  role5ChildUsers.forEach(child => {
+    users.add(child.userId);
+  });
+
   let subChildUsers = [];
   if (firstChildUserId) {
     subChildUsers = await User.find({
       createdBy: firstChildUserId,
-      role: { $ne: 5 } // Exclude role 5
+      role: { $ne: 5 } // Exclude role 5 for sub-child users
     });
-    console.log("Sub-Child Users:", subChildUsers); // Debugging log
   }
 
+  // Fetch amounts for the first child user and their sub-child users
   const response = await CashDeposit.aggregate([
     {
       $match: {
@@ -93,6 +102,7 @@ const getDailyPLReport = async (req, res) => {
     }
   ]);
 
+  // Add total amounts for the first child user
   const firstChildEntry = response.find(entry => entry._id === firstChildUserId);
   
   // If found, add the total amount
@@ -112,9 +122,37 @@ const getDailyPLReport = async (req, res) => {
       _id: firstChildUserId,
       amount: totalAmount,
       name: firstChildUserId,
-      role: firstChildUserInfo?.createdBy === userId ? firstChildUserInfo.role : undefined
+      role: firstChildUserInfo.createdBy === userId ? firstChildUserInfo.role : undefined
     });
   }
+
+  // Include role 5 users created by the current user in the response
+  await Promise.all(role5ChildUsers.map(async (user) => {
+    const userDeposit = await CashDeposit.aggregate([
+      {
+        $match: {
+          userId: user.userId,
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          totalAmount: { $sum: "$amount" }
+        }
+      }
+    ]);
+
+    const totalAmount = userDeposit.length > 0 ? userDeposit[0].totalAmount : 0;
+
+    response.push({
+      _id: user.userId,
+      amount: totalAmount,
+      name: user.userName,
+      role: user.role // Directly include role
+    });
+  }));
 
   return res.send({
     success: true,
@@ -123,6 +161,7 @@ const getDailyPLReport = async (req, res) => {
     total: response.length
   });
 };
+
 
 
 
