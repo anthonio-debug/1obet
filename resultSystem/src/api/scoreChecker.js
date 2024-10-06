@@ -121,6 +121,7 @@ function scoreChecker() {
         const bets = await Bets.find({
           marketId: betData.marketId,
           sportsId: betData.sportsId,
+          calculateExp:true,
           status: 1
         });
 
