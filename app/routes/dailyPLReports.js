@@ -26,13 +26,13 @@ const getDailyPLReport = async (req, res) => {
     let roleQuery = {};
     switch (role) {
       case 1: // Super Admin
-        roleQuery = { role: { $in: [1, 2] } }; // Admin and Super Master
+        roleQuery = { role: { $in: [3, 4] } }; // Admin and Super Master
         break;
       case 3: // Admin
-        roleQuery = { role: { $in: [3, 4] } }; // Super Master and Master
+        roleQuery = { role: { $in: [4, 5] } }; // Super Master and Master
         break;
       case 4: // Super Master
-        roleQuery = { role: { $in: [5] } }; // Master and Bettor
+        roleQuery = { role: { $in: [5, 6] } }; // Master and Bettor
         break;
       case 5: // Master
         roleQuery = { role: 6 }; // Bettor only
