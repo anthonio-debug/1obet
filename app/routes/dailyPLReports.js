@@ -14,30 +14,58 @@ const getDailyPLReport = async (req, res) => {
 
   const userId = parseInt(req.decoded.userId);
   const currentUser = await User.findOne({ userId: userId });
-  const users = new Set([userId]);  // Use a Set to avoid duplicates
+  
+  const role = currentUser.role;
+  const users = new Set([userId]);
   let parents = [userId];
   let childUsers = [];
   let sportsIdQuery = { $ne: null };
 
   do {
-    // Fetch child users with distinct userId and filter by createdBy and role
-    childUsers = await User.distinct("userId", {
-      $or: [
-        { createdBy: { $in: parents }, role: { $ne: 5 } },
-        { role: 5, createdBy: userId }
-      ]
-    });
+    // Determine which roles to include based on the current user's role
+    let roleQuery = {};
+    switch (role) {
+      case 1: // Super Admin
+        roleQuery = { role: { $in: [1, 2] } }; // Admin and Super Master
+        break;
+      case 3: // Admin
+        roleQuery = { role: { $in: [3, 4] } }; // Super Master and Master
+        break;
+      case 4: // Super Master
+        roleQuery = { role: { $in: [5] } }; // Master and Bettor
+        break;
+      case 5: // Master
+        roleQuery = { role: 6 }; // Bettor only
+        break;
+      case 6: // Bettor
+        // No child users for Bettor
+        break;
+      default:
+        break;
+    }
 
-    // Remove child users that are already in the users Set to avoid duplicates
-    const newChildUsers = childUsers.filter(user => !users.has(user));
+    // Fetch child users based on the role query
+    if (Object.keys(roleQuery).length > 0) {
+      childUsers = await User.distinct("userId", {
+        $or: [
+          { createdBy: { $in: parents }, ...roleQuery },
+          { role: 5, createdBy: userId } // Include Master for the logged-in user
+        ]
+      });
 
-    // If there are new child users, add them to the users Set and parents array
-    if (newChildUsers.length) {
-      newChildUsers.forEach(user => users.add(user));
-      parents = newChildUsers;  // Update parents with new child users
+      // Remove child users that are already in the users Set to avoid duplicates
+      const newChildUsers = childUsers.filter(user => !users.has(user));
+
+      // If there are new child users, add them to the users Set and parents array
+      if (newChildUsers.length) {
+        newChildUsers.forEach(user => users.add(user));
+        parents = newChildUsers;  // Update parents with new child users
+      } else {
+        // Exit the loop if there are no new users to process
+        break;
+      }
     } else {
-      // Exit the loop if there are no new users to process
-      break;
+      break; // No roles to query for, exit the loop
     }
 
   } while (childUsers.length > 0);
@@ -45,7 +73,7 @@ const getDailyPLReport = async (req, res) => {
   const response = await CashDeposit.aggregate([
     {
       $match: {
-        userId: { $in: Array.from(users) },  // Convert Set to Array
+        userId: { $in: Array.from(users) },
         sportsId: sportsIdQuery,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
@@ -79,13 +107,22 @@ const getDailyPLReport = async (req, res) => {
     }
   ]);
 
+  // Adjust response for specific roles if necessary
+  const formattedResponse = response.map(item => ({
+    userId: item._id,
+    name: item.name,
+    amount: item.amount,
+    role: currentUser.role // Include the current user's role in the response
+  }));
+
   return res.send({
     success: true,
     message: 'Commission reports',
-    results: response,
-    total: response.length
+    results: formattedResponse,
+    total: formattedResponse.length
   });
 };
+
 
 
 const dailyPlSportWiseReports = async (req, res) => {
