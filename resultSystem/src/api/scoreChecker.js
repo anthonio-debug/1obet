@@ -405,6 +405,7 @@ function scoreChecker() {
   }
 
   async function fancyResult(betData, fancyName) {
+    return
     try {
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(betData.matchId) }, { Id: 1 });
 
