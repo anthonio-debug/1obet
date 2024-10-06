@@ -13,8 +13,7 @@ const getDailyPLReport = async (req, res) => {
   }
 
   const userId = parseInt(req.decoded.userId);
-  const currentUser = await User.findOne({ userId: userId });
-
+  
   // Start with the current user
   const users = new Set([userId]);
   let firstChildUserId = null;
@@ -54,11 +53,14 @@ const getDailyPLReport = async (req, res) => {
     users.add(user.userId);
   });
 
+  // Convert Set to Array for aggregation
+  const userIdsArray = Array.from(users);
+
   // Fetch amounts for the relevant users
   const response = await CashDeposit.aggregate([
     {
       $match: {
-        userId: { $in: Array.from(users) },
+        userId: { $in: userIdsArray },
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
@@ -76,8 +78,8 @@ const getDailyPLReport = async (req, res) => {
     },
     {
       $match: {
-        // Ensure that we are only including child users in the results
-        userId: { $in: Array.from(users) }
+        // Ensure we only include child users in the results
+        userId: { $in: userIdsArray }
       }
     },
     {
@@ -146,18 +148,18 @@ const getDailyPLReport = async (req, res) => {
     }
   ]);
 
-  // // Add role 5 users to response
-  // await Promise.all(role5Response.map(async (userDeposit) => {
-  //   const userInfo = role5ChildUsers.find(user => user.userId === userDeposit._id);
-  //   if (userInfo) {
-  //     response.push({
-  //       _id: userInfo.userId,
-  //       amount: userDeposit.totalAmount,
-  //       name: userInfo.userName,
-  //       role: userInfo.role // Directly include role
-  //     });
-  //   }
-  // }));
+  // Adding role 5 users to response
+  role5Response.forEach(userDeposit => {
+    const userInfo = role5ChildUsers.find(user => user.userId === userDeposit._id);
+    if (userInfo) {
+      response.push({
+        _id: userInfo.userId,
+        amount: userDeposit.totalAmount,
+        name: userInfo.userName,
+        role: userInfo.role // Directly include role
+      });
+    }
+  });
 
   return res.send({
     success: true,
@@ -166,6 +168,7 @@ const getDailyPLReport = async (req, res) => {
     total: response.length
   });
 };
+
 ;
 
 
