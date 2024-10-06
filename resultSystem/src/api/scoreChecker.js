@@ -108,7 +108,7 @@ function scoreChecker() {
           }
         ];
       }
-      //console.log("results.length -> " + results.length)
+      console.log("results.length for races................... -> " + results.length)
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
