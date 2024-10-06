@@ -13,21 +13,20 @@ const getDailyPLReport = async (req, res) => {
   }
 
   const userId = parseInt(req.decoded.userId);
-  
-  // Start with the current user
+
   const users = new Set([userId]);
   let firstChildUserId = null;
 
-  // Fetch the first child user (excluding role 5)
+
   const childUsers = await User.find({
     createdBy: userId,
-    role: { $ne: 5 } // Exclude role 5
+    role: { $ne: 5 } 
   }).limit(1);
 
-  // Fetch role 5 users created by the current user
+ 
   const role5ChildUsers = await User.find({
     createdBy: userId,
-    role: 5 // Include role 5
+    role: 5 
   });
 
   if (childUsers.length > 0) {
@@ -35,7 +34,6 @@ const getDailyPLReport = async (req, res) => {
     users.add(firstChildUserId);
   }
 
-  // Include role 5 users created by the current user in the users set
   role5ChildUsers.forEach(child => {
     users.add(child.userId);
   });
@@ -44,19 +42,18 @@ const getDailyPLReport = async (req, res) => {
   if (firstChildUserId) {
     subChildUsers = await User.find({
       createdBy: firstChildUserId,
-      role: { $ne: 5 } // Exclude role 5 for sub-child users
+      role: { $ne: 5 }
     });
   }
 
-  // Include sub-child user IDs in the users set
+
   subChildUsers.forEach(user => {
     users.add(user.userId);
   });
 
-  // Convert Set to Array for aggregation
+
   const userIdsArray = Array.from(users);
 
-  // Fetch amounts for the relevant users
   const response = await CashDeposit.aggregate([
     {
       $match: {
@@ -78,7 +75,6 @@ const getDailyPLReport = async (req, res) => {
     },
     {
       $match: {
-        // Ensure we only include child users in the results
         userId: { $in: userIdsArray }
       }
     },
@@ -91,7 +87,6 @@ const getDailyPLReport = async (req, res) => {
     }
   ]);
 
-  // Sum amounts for sub-child users
   const subChildResponse = await CashDeposit.aggregate([
     {
       $match: {
@@ -108,7 +103,6 @@ const getDailyPLReport = async (req, res) => {
     }
   ]);
 
-  // Add total amounts for the first child user
   const firstChildEntry = response.find(entry => entry._id === firstChildUserId);
   
   if (firstChildEntry) {
@@ -131,7 +125,6 @@ const getDailyPLReport = async (req, res) => {
     });
   }
 
-  // Fetch total amounts for role 5 users created by the current user
   const role5Response = await CashDeposit.aggregate([
     {
       $match: {
@@ -148,7 +141,7 @@ const getDailyPLReport = async (req, res) => {
     }
   ]);
 
-  // Adding role 5 users to response
+
   role5Response.forEach(userDeposit => {
     const userInfo = role5ChildUsers.find(user => user.userId === userDeposit._id);
     if (userInfo) {
