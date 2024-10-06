@@ -12,36 +12,27 @@ const getDailyPLReport = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId = parseInt(req.decoded.userId);
+  const userId = parseInt(req.decoded.userId)
   const currentUser = await User.findOne({ userId: userId });
-
-  if (!currentUser) {
-    return res.status(403).send({ message: 'Unauthorized access' });
-  }
-
-  // Get users created by the logged-in dealer
   const users = [userId];
   let parents = [userId];
   let childUsers = [];
+  let sportsIdQuery = { $ne: null };
 
   do {
     childUsers = await User.distinct("userId", {
-      createdBy: { $in: parents }
+      createdBy: {
+        $in: parents
+      }
     });
-    if (childUsers.length) users.push(...childUsers);
-    parents = childUsers;
-  } while (childUsers.length > 0);
-
-  // Construct the aggregation query
+    if (childUsers.length) users.push(...childUsers)
+    parents = childUsers
+  } while (childUsers.length > 0)
   const response = await CashDeposit.aggregate([
     {
       $match: {
-        $or: [
-          { userId: { $in: users } },  // All users under the dealer's downline
-          { role: 5 },                 // Any bettors (role 5)
-          { role: { $ne: 5 } }         // Include all other dealers (role != 5)
-        ],
-        sportsId: { $ne: null },
+        userId: { $in: users },
+        sportsId: sportsIdQuery,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
@@ -69,7 +60,7 @@ const getDailyPLReport = async (req, res) => {
     results: response,
     total: response.length
   });
-};
+}
 
 const dailyPlSportWiseReports = async (req, res) => {
   const errors = validationResult(req);
