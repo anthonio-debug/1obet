@@ -12,8 +12,14 @@ const getDailyPLReport = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId = parseInt(req.decoded.userId)
+  const userId = parseInt(req.decoded.userId);
   const currentUser = await User.findOne({ userId: userId });
+  
+  if (!currentUser || !currentUser.isDealer) {
+    return res.status(403).send({ message: 'Unauthorized access' });
+  }
+
+  // Only include users created by or under the logged-in dealer
   const users = [userId];
   let parents = [userId];
   let childUsers = [];
@@ -25,13 +31,15 @@ const getDailyPLReport = async (req, res) => {
         $in: parents
       }
     });
-    if (childUsers.length) users.push(...childUsers)
-    parents = childUsers
-  } while (childUsers.length > 0)
+    if (childUsers.length) users.push(...childUsers);
+    parents = childUsers;
+  } while (childUsers.length > 0);
+
+  // Query to match users created by the current dealer or downline
   const response = await CashDeposit.aggregate([
     {
       $match: {
-        userId: { $in: users },
+        userId: { $in: users },  // Match only users under this dealer
         sportsId: sportsIdQuery,
         cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
@@ -60,7 +68,7 @@ const getDailyPLReport = async (req, res) => {
     results: response,
     total: response.length
   });
-}
+};
 
 const dailyPlSportWiseReports = async (req, res) => {
   const errors = validationResult(req);
