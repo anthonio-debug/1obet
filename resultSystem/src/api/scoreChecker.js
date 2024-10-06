@@ -73,9 +73,9 @@ function scoreChecker() {
         marketId: betData.marketId,
         winnerRunnerData: { $ne: null }
       });
-
+    
       if (manuelRecord) {
-        //console.log("Inside manual");
+        console.log("Inside manual");
 
         if (typeof manuelRecord.manuelClose !== undefined) {
           results = [
