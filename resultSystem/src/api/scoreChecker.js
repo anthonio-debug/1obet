@@ -108,7 +108,7 @@ function scoreChecker() {
           }
         ];
       }
-      console.log("results.length for races................... -> " + results.length)
+      //console.log("results.length -> " + results.length)
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
@@ -152,8 +152,12 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            const WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
+            console.log("Inside ready for sports function next....................");
+            let WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
+            return;
 
+
+           
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
@@ -251,10 +255,10 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            console.log("Inside ready for function next....................");
+            let WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
+            return;
 
-            const WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
-            
-            return
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
