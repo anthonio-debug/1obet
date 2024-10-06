@@ -11,8 +11,11 @@ const MarketIDs = require('../../../app/models/marketIds');
 const FancyOdds = require('../../../app/models/fancyOdds');
 
 const { API_DOMAIN } = require('../../../app/global/constants');
-const { checkActiveBettors } = require('../../../helper/bet');
+const { getAmountOfWinner } = require('../CalculateBets/helper');
 const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
+
+
+
 const { handleLosingBet, handleWinningBet, handleDrawBet } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
@@ -129,6 +132,8 @@ function scoreChecker() {
 
 
         await newRecord.save();
+        const WinnLooseDecision = await getAmountOfWinner();
+        return
         //Sports Results Saved
         //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
@@ -149,6 +154,8 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+
+            
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);

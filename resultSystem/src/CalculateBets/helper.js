@@ -1,16 +1,9 @@
 
 
-function getAmountOfWinner(bet, selectionId) {
-  
-    const runnerPosition = bet?.runnersPosition
-    var amount = null
-    runnerPosition?.forEach(winner => {
-        if (winner.runner == selectionId) {
-            amount=winner.amount
-        }
-    });
+function getAmountOfWinner() {
+  let amount = 20;
     console.log("amountttttttttttttttttttttt AK-------------------",amount)
-    console.log("userIDdddddddddddddddddddddddddddd AK-------------------",bet.userId)
+    console.log("userIDdddddddddddddddddddddddddddd AK-------------------",3232323)
     if(amount<0)
         console.log("You have lost by...........................>",amount);
     if(amount>0)
