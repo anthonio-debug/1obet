@@ -21,10 +21,11 @@ const getDailyPLReport = async (req, res) => {
 
   do {
     childUsers = await User.distinct("userId", {
-      createdBy: {
-        $in: parents
-      }
-    });
+      $or: [
+          { createdBy: { $in: parents }, role: { $ne: 5 } },
+          { role: 5, createdBy: userId } // Adjusted to reflect 'createdBy'
+      ]
+  });
     if (childUsers.length) users.push(...childUsers)
     parents = childUsers
     console.log("userIDDDDDDDddddddddddddddddakakak",userId)
