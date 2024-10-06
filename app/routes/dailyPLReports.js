@@ -12,102 +12,70 @@ const getDailyPLReport = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId = parseInt(req.decoded.userId);
+  const userId = parseInt(req.decoded.userId)
   const currentUser = await User.findOne({ userId: userId });
-  
-  const role = currentUser.role;
-  const users = new Set([userId]);  // Start with the logged-in user
+  const users = [userId];
+  let parents = [userId];
   let childUsers = [];
   let sportsIdQuery = { $ne: null };
 
-  // Fetch child users based on the current user's role
-  let roleQuery = {};
-
-  switch (role) {
-    case 1: // Super Admin
-      roleQuery = { role: { $in: [3, 4] } }; // Admin and Super Master
-      break;
-    case 3: // Admin
-      roleQuery = { role: { $in: [4, 5] } }; // Super Master and Master
-      break;
-    case 4: // Super Master
-      roleQuery = { role: { $in: [5, 6] } }; // Master and Bettor
-      break;
-    case 5: // Master
-      roleQuery = { role: 6 }; // Bettor only
-      break;
-    case 6: // Bettor
-      // No child users for Bettor
-      break;
-    default:
-      return res.status(403).send({ success: false, message: 'Unauthorized access.' });
+  do {
+    childUsers = await User.distinct("userId", {
+      $or: [
+          { createdBy: { $in: parents }, role: { $ne: 5 } },
+          { role: 5, createdBy: userId } 
+      ]
+  });
+    if (childUsers.length) users.push(...childUsers)
+    parents = childUsers
+    console.log("userIDDDDDDDddddddddddddddddakakak",userId)
   }
-
-  // Fetch child users based on the role query
-  if (Object.keys(roleQuery).length > 0) {
-    childUsers = await User.find({
-      createdBy: userId,
-      ...roleQuery
-    }).select("userId").lean(); // Get userId of child users
-
-    // Add child users to the users Set
-    childUsers.forEach(user => users.add(user.userId));
-  }
-
-  const response = await CashDeposit.aggregate([
-    {
-      $match: {
-        userId: { $in: Array.from(users) }, // Convert Set to Array
-        sportsId: sportsIdQuery,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
+  while (childUsers.length > 0)
+    const response = await CashDeposit.aggregate([
+      {
+        $match: {
+          userId: { $in: users },
+          sportsId: sportsIdQuery,
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
+        }
+      },
+      {
+        $lookup: {
+          from: 'users',
+          localField: 'userId',
+          foreignField: 'userId',
+          as: 'userInfo'
+        }
+      },
+      { 
+        $unwind: "$userInfo"
+      },
+      {
+        $match: {
+          $or: [
+            { "userInfo.role": { $ne: 5 } },  
+            { "userInfo.createdBy": userId }  
+          ]
+        }
+      },
+      {
+        $group: {
+          _id: "$userId",
+          amount: { $sum: "$amount" },
+          name: { $first: "$userInfo.userName" }
+        }
       }
-    },
-    {
-      $lookup: {
-        from: 'users',
-        localField: 'userId',
-        foreignField: 'userId',
-        as: 'userInfo'
-      }
-    },
-    { 
-      $unwind: "$userInfo"
-    },
-    {
-      $match: {
-        $or: [
-          { "userInfo.role": { $ne: 5 } },
-          { "userInfo.createdBy": userId }
-        ]
-      }
-    },
-    {
-      $group: {
-        _id: "$userId",
-        amount: { $sum: "$amount" },
-        name: { $first: "$userInfo.userName" }
-      }
-    }
-  ]);
-
-  // Format response
-  const formattedResponse = response.map(item => ({
-    userId: item._id,
-    name: item.name,
-    amount: item.amount,
-    role: currentUser.role // Include the current user's role in the response
-  }));
+    ]);
+    
 
   return res.send({
     success: true,
     message: 'Commission reports',
-    results: formattedResponse,
-    total: formattedResponse.length
+    results: response,
+    total: response.length
   });
-};
-
-
+}
 
 const dailyPlSportWiseReports = async (req, res) => {
   const errors = validationResult(req);
