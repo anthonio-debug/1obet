@@ -15,6 +15,7 @@ const getDailyPLReport = async (req, res) => {
   const userId = parseInt(req.decoded.userId);
   const currentUser = await User.findOne({ userId: userId });
 
+  // Start with the current user
   const users = new Set([userId]);
   let firstChildUserId = null;
 
@@ -48,7 +49,12 @@ const getDailyPLReport = async (req, res) => {
     });
   }
 
-  // Fetch amounts for the first child user and their sub-child users
+  // Include sub-child user IDs in the users set
+  subChildUsers.forEach(user => {
+    users.add(user.userId);
+  });
+
+  // Fetch amounts for the relevant users
   const response = await CashDeposit.aggregate([
     {
       $match: {
@@ -70,10 +76,8 @@ const getDailyPLReport = async (req, res) => {
     },
     {
       $match: {
-        $or: [
-          { "userInfo.role": { $ne: 5 } },
-          { "userInfo.createdBy": userId }
-        ]
+        // Ensure that we are only including child users in the results
+        userId: { $in: Array.from(users) }
       }
     },
     {
@@ -105,7 +109,6 @@ const getDailyPLReport = async (req, res) => {
   // Add total amounts for the first child user
   const firstChildEntry = response.find(entry => entry._id === firstChildUserId);
   
-  // If found, add the total amount
   if (firstChildEntry) {
     firstChildEntry.amount += subChildResponse.length > 0 ? subChildResponse[0].totalAmount : 0;
     const isDirectChild = childUsers.length > 0 && childUsers[0].createdBy === userId;
@@ -143,7 +146,7 @@ const getDailyPLReport = async (req, res) => {
     }
   ]);
 
-  // Add role 5 users to response
+  // // Add role 5 users to response
   // await Promise.all(role5Response.map(async (userDeposit) => {
   //   const userInfo = role5ChildUsers.find(user => user.userId === userDeposit._id);
   //   if (userInfo) {
@@ -163,6 +166,7 @@ const getDailyPLReport = async (req, res) => {
     total: response.length
   });
 };
+;
 
 
 
