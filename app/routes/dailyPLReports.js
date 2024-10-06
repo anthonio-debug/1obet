@@ -112,7 +112,7 @@ const getDailyPLReport = async (req, res) => {
       _id: firstChildUserId,
       amount: totalAmount,
       name: firstChildUserId,
-      role: firstChildUserInfo.createdBy === userId ? firstChildUserInfo.role : undefined
+      role: firstChildUserInfo?.createdBy === userId ? firstChildUserInfo.role : undefined
     });
   }
 
