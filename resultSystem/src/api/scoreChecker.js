@@ -11,11 +11,8 @@ const MarketIDs = require('../../../app/models/marketIds');
 const FancyOdds = require('../../../app/models/fancyOdds');
 
 const { API_DOMAIN } = require('../../../app/global/constants');
-const { getAmountOfWinner } = require('../CalculateBets/helper');
+const { checkActiveBettors } = require('../../../helper/bet');
 const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
-
-
-
 const { handleLosingBet, handleWinningBet, handleDrawBet } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
@@ -66,7 +63,7 @@ function scoreChecker() {
   }
 
   async function eventsResult(betData) {
-    console.log("Result checking event for ", betData.marketId);
+    //console.log("Result checking event for ", betData.marketId);
     try {
       let results;
       const manuelRecord = await MarketIDs.findOne({
@@ -108,7 +105,7 @@ function scoreChecker() {
           }
         ];
       }
-      console.log("results.length -> " + results.length)
+      //console.log("results.length -> " + results.length)
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
@@ -135,9 +132,9 @@ function scoreChecker() {
         //Sports Results Saved
         //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
-        console.log("result.winnerSelectionId..............................................",result.winnerSelectionId);
+
         if (result.winnerSelectionId == -1) {
-          console.log("result.winnerSelectionId == -1 -->>>>>>>>>>>>>>>>>>>>>>>>>", betData.marketId);
+          //console.log("result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
@@ -146,18 +143,12 @@ function scoreChecker() {
             await handleDrawBet(bet);
           }
         } else {
-          console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
+          //console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            console.log("bet.userId..................................-------------->",bet.userId);
-            console.log("bet.calculateExp..................................-------------->",bet.calculateExp);
-            // if (bet.calculateExp && bet.userId==22204) {
-            // const WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
-            // }
-
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
@@ -405,7 +396,6 @@ function scoreChecker() {
   }
 
   async function fancyResult(betData, fancyName) {
-    return
     try {
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(betData.matchId) }, { Id: 1 });
 
