@@ -115,6 +115,7 @@ function scoreChecker() {
         const result = results[0];
         console.log("result sports-----> " + result)
         if (!result.winnerSelectionId) return;
+        console.log("length is found...........");
         let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: betData.marketId,
