@@ -48,7 +48,7 @@ function ToolForResults() {
           $limit: 5
         }
       ]).exec();
-
+      console.log("results after I am here..........",results);
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
         if (checkActive) continue;
