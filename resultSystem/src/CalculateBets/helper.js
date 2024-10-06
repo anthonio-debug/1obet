@@ -14,11 +14,13 @@ let TotalWin = 0;
 let TotalLose = 0;
 
     const runnerPosition = bet?.runnersPosition
-    var amount = null
+    var amount = 0
+    var winnerRunner = '';
     runnerPosition?.forEach(winner => {
         console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
         if (winner.runner == selectionId) {
             amount=winner.amount
+            winnerRunner = winner.runner
         }
     });
     if(amount>0){
