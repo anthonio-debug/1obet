@@ -108,7 +108,7 @@ function scoreChecker() {
           }
         ];
       }
-      //console.log("results.length -> " + results.length)
+      console.log("results.length -> " + results.length)
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
@@ -132,7 +132,8 @@ function scoreChecker() {
 
 
         await newRecord.save();
-        const WinnLooseDecision = await getAmountOfWinner();
+        let source = 'sports';
+        const WinnLooseDecision = await getAmountOfWinner(source);
         return
         //Sports Results Saved
         //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
@@ -220,6 +221,7 @@ function scoreChecker() {
           }
         ];
       }
+      console.log("results.length -> " + results.length)
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
@@ -236,6 +238,9 @@ function scoreChecker() {
         });
 
         await newRecord.save();
+        let source = 'race';
+        const WinnLooseDecision = await getAmountOfWinner(source);
+        return
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
         if (result.winnerSelectionId == -1) {

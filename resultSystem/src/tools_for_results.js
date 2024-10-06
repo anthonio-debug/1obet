@@ -15,7 +15,7 @@ function ToolForResults() {
       getBetForEvents(sportsIdsForRacing);
     }, 2000);
     getBetForFancy();
-    getBetForAsianOdd();
+    //getBetForAsianOdd();
     manuelBetChecker();
   }
 
