@@ -59,7 +59,7 @@ const getDailyPLReport = async (req, res) => {
         as: 'userInfo'
       }
     },
-    { 
+    {
       $unwind: "$userInfo"
     },
     {
@@ -72,20 +72,63 @@ const getDailyPLReport = async (req, res) => {
     },
     {
       $group: {
-        _id: "$userId",
-        amount: { $sum: "$amount" },
-        name: { $first: "$userInfo.userName" }
+        _id: "$userId",  // Group by userId
+        totalAmount: { $sum: "$amount" },  // Sum amounts for each user
+        name: { $first: "$userInfo.userName" },
+        role: { $first: "$userInfo.role" }  // Get the role of the user
       }
-    }
+    },
+    {
+      $group: {
+        _id: null,  // Combine all entries
+        results: {
+          $push: {
+            userId: "$_id",
+            name: "$name",
+            totalAmount: {
+              $cond: {
+                if: { $eq: "$role", 1 },  // If super admin
+                then: "$totalAmount",      // Show their actual amount
+                else: "$totalAmount"       // For others (including admins), add amounts of their children in the final result
+              }
+            }
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        results: {
+          $reduce: {
+            input: "$results",
+            initialValue: [],
+            in: {
+              $concatArrays: [
+                "$$value",
+                {
+                  $cond: [
+                    { $eq: { $arrayElemAt: ["$$this.role", 0] }, 2 },  // Check if role is admin
+                    [{ userId: "$$this.userId", name: "$$this.name", totalAmount: { $sum: [{ $ifNull: ["$$this.totalAmount", 0] }, { $ifNull: ["$$this.totalAmount", 0] }] } }],  // Sum up for admins
+                    [{ userId: "$$this.userId", name: "$$this.name", totalAmount: "$$this.totalAmount" }] // For super admin, keep actual amount
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
   ]);
 
   return res.send({
     success: true,
     message: 'Commission reports',
-    results: response,
-    total: response.length
+    results: response[0]?.results || [],
+    total: response[0]?.results?.length || 0
   });
 };
+
 
 
 const dailyPlSportWiseReports = async (req, res) => {
