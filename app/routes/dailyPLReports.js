@@ -126,32 +126,34 @@ const getDailyPLReport = async (req, res) => {
     });
   }
 
-  // Include role 5 users created by the current user in the response
-  await Promise.all(role5ChildUsers.map(async (user) => {
-    const userDeposit = await CashDeposit.aggregate([
-      {
-        $match: {
-          userId: user.userId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-          createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
-        }
-      },
-      {
-        $group: {
-          _id: null,
-          totalAmount: { $sum: "$amount" }
-        }
+  // Fetch total amounts for role 5 users created by the current user
+  const role5Response = await CashDeposit.aggregate([
+    {
+      $match: {
+        userId: { $in: role5ChildUsers.map(user => user.userId) },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
-    ]);
+    },
+    {
+      $group: {
+        _id: "$userId",
+        totalAmount: { $sum: "$amount" }
+      }
+    }
+  ]);
 
-    const totalAmount = userDeposit.length > 0 ? userDeposit[0].totalAmount : 0;
-
-    response.push({
-      _id: user.userId,
-      amount: totalAmount,
-      name: user.userName,
-      role: user.role // Directly include role
-    });
+  // Add role 5 users to response
+  await Promise.all(role5Response.map(async (userDeposit) => {
+    const userInfo = role5ChildUsers.find(user => user.userId === userDeposit._id);
+    if (userInfo) {
+      response.push({
+        _id: userInfo.userId,
+        amount: userDeposit.totalAmount,
+        name: userInfo.userName,
+        role: userInfo.role // Directly include role
+      });
+    }
   }));
 
   return res.send({
@@ -161,6 +163,7 @@ const getDailyPLReport = async (req, res) => {
     total: response.length
   });
 };
+
 
 
 
