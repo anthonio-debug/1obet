@@ -137,7 +137,7 @@ function scoreChecker() {
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
         if (result.winnerSelectionId == -1) {
-          //console.log("result.winnerSelectionId == -1 -->", betData.marketId);
+          console.log("result.winnerSelectionId == -1 -->>>>>>>>>>>>>>>>>>>>>>>>>", betData.marketId);
           for (const bet of bets) {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
