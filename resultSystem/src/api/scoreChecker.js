@@ -108,7 +108,7 @@ function scoreChecker() {
           }
         ];
       }
-      console.log("results.length sports-> " + results.length)
+      console.log("results.length sports-----> " + results.length)
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
