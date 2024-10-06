@@ -109,10 +109,11 @@ function scoreChecker() {
         ];
       }
       
-      console.log("results.length sports-----> " + results)
+      
       console.log("results.length sports-----> " + results.length)
       if (results.length > 0) {
         const result = results[0];
+        console.log("result sports-----> " + result)
         if (!result.winnerSelectionId) return;
         let newRecord = new resultRecords({
           eventId: betData.matchId,
