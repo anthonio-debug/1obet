@@ -16,6 +16,7 @@ let TotalLose = 0;
     const runnerPosition = bet?.runnersPosition
     var amount = null
     runnerPosition?.forEach(winner => {
+        console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
         if (winner.runner == selectionId) {
             amount=winner.amount
         }
