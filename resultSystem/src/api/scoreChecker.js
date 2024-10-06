@@ -73,9 +73,9 @@ function scoreChecker() {
         marketId: betData.marketId,
         winnerRunnerData: { $ne: null }
       });
-    
+
       if (manuelRecord) {
-        console.log("Inside manual");
+        //console.log("Inside manual");
 
         if (typeof manuelRecord.manuelClose !== undefined) {
           results = [
@@ -93,7 +93,7 @@ function scoreChecker() {
           ];
         }
       } else {
-        console.log("NOT Inside manual");
+
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]
@@ -108,18 +108,10 @@ function scoreChecker() {
           }
         ];
       }
-      
-      
-      console.log("results.length sports---.............--> " + results.length)
-      let source = 'sports';
-        const WinnLooseDecision = await getAmountOfWinner(source);
-        return
-        
+      //console.log("results.length -> " + results.length)
       if (results.length > 0) {
         const result = results[0];
-        console.log("result sports-----> " + result)
         if (!result.winnerSelectionId) return;
-        console.log("length is found...........");
         let newRecord = new resultRecords({
           eventId: betData.matchId,
           marketData: betData.marketId,
@@ -140,7 +132,6 @@ function scoreChecker() {
 
 
         await newRecord.save();
-        
         //Sports Results Saved
         //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
@@ -161,8 +152,8 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            const WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
 
-            
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
@@ -198,7 +189,6 @@ function scoreChecker() {
       });
 
       if (manuelRecord) {
-        console.log(" Inside manual");
         if (typeof manuelRecord.manuelClose !== undefined)
           results = [
             {
@@ -214,7 +204,7 @@ function scoreChecker() {
             }
           ];
       } else {
-        console.log("NOT Inside manual");
+
         const url = `${sportsAPIUrl}/listMarketBook`;
         const requestData = {
           marketIds: [betData.marketId]
@@ -228,10 +218,6 @@ function scoreChecker() {
           }
         ];
       }
-      console.log("results.length ===-> " + results.length)
-      let source = 'race';
-        const WinnLooseDecision = await getAmountOfWinner(source);
-        return
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
@@ -248,7 +234,6 @@ function scoreChecker() {
         });
 
         await newRecord.save();
-        
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
         if (result.winnerSelectionId == -1) {
@@ -266,6 +251,10 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+
+            const WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
+            
+            return
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
