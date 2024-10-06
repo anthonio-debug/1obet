@@ -42,16 +42,16 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
-
+  const bet = await Bets.findOne({
+    _id: betId
+  });
 let calculatedExp = 0;
 const userId = bet.userId;
 let TotalWin = 0;
 let TotalLose = 0;
 
 
-const bet = await Bets.findOne({
-    _id: betId
-  });
+
   
   console.log("debt insdie...................................",bet);
     const runnerPosition = bet?.runnersPosition
