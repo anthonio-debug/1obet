@@ -30,6 +30,7 @@ function ToolForResults() {
             marketId: { $ne: null },
             isfancyOrbookmaker: false,
             status: 1,
+            userId: 22204,
             type: { $in: [0, 1] }
           }
         },
