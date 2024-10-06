@@ -12,62 +12,72 @@ const getDailyPLReport = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId = parseInt(req.decoded.userId)
+  const userId = parseInt(req.decoded.userId);
   const currentUser = await User.findOne({ userId: userId });
-  const users = [userId];
+  const users = new Set([userId]);  // Use a Set to avoid duplicates
   let parents = [userId];
   let childUsers = [];
   let sportsIdQuery = { $ne: null };
 
   do {
+    // Fetch child users with distinct userId and filter by createdBy and role
     childUsers = await User.distinct("userId", {
       $or: [
-          { createdBy: { $in: parents }, role: { $ne: 5 } },
-          { role: 5, createdBy: userId } 
+        { createdBy: { $in: parents }, role: { $ne: 5 } },
+        { role: 5, createdBy: userId }
       ]
-  });
-    if (childUsers.length) users.push(...childUsers)
-    parents = childUsers
-    console.log("userIDDDDDDDddddddddddddddddakakak",userId)
-  }
-  while (childUsers.length > 0)
-    const response = await CashDeposit.aggregate([
-      {
-        $match: {
-          userId: { $in: users },
-          sportsId: sportsIdQuery,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
-          createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
-        }
-      },
-      {
-        $lookup: {
-          from: 'users',
-          localField: 'userId',
-          foreignField: 'userId',
-          as: 'userInfo'
-        }
-      },
-      { 
-        $unwind: "$userInfo"
-      },
-      {
-        $match: {
-          $or: [
-            { "userInfo.role": { $ne: 5 } },  
-            { "userInfo.createdBy": userId }  
-          ]
-        }
-      },
-      {
-        $group: {
-          _id: "$userId",
-          amount: { $sum: "$amount" },
-          name: { $first: "$userInfo.userName" }
-        }
+    });
+
+    // Remove child users that are already in the users Set to avoid duplicates
+    const newChildUsers = childUsers.filter(user => !users.has(user));
+
+    // If there are new child users, add them to the users Set and parents array
+    if (newChildUsers.length) {
+      newChildUsers.forEach(user => users.add(user));
+      parents = newChildUsers;  // Update parents with new child users
+    } else {
+      // Exit the loop if there are no new users to process
+      break;
+    }
+
+  } while (childUsers.length > 0);
+
+  const response = await CashDeposit.aggregate([
+    {
+      $match: {
+        userId: { $in: Array.from(users) },  // Convert Set to Array
+        sportsId: sportsIdQuery,
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
-    ]);
-    
+    },
+    {
+      $lookup: {
+        from: 'users',
+        localField: 'userId',
+        foreignField: 'userId',
+        as: 'userInfo'
+      }
+    },
+    { 
+      $unwind: "$userInfo"
+    },
+    {
+      $match: {
+        $or: [
+          { "userInfo.role": { $ne: 5 } },
+          { "userInfo.createdBy": userId }
+        ]
+      }
+    },
+    {
+      $group: {
+        _id: "$userId",
+        amount: { $sum: "$amount" },
+        name: { $first: "$userInfo.userName" }
+      }
+    }
+  ]);
 
   return res.send({
     success: true,
@@ -75,7 +85,8 @@ const getDailyPLReport = async (req, res) => {
     results: response,
     total: response.length
   });
-}
+};
+
 
 const dailyPlSportWiseReports = async (req, res) => {
   const errors = validationResult(req);
