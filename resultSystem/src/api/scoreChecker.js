@@ -110,7 +110,11 @@ function scoreChecker() {
       }
       
       
-      console.log("results.length sports-----> " + results.length)
+      console.log("results.length sports---.............--> " + results.length)
+      let source = 'sports';
+        const WinnLooseDecision = await getAmountOfWinner(source);
+        return
+        
       if (results.length > 0) {
         const result = results[0];
         console.log("result sports-----> " + result)
@@ -136,9 +140,7 @@ function scoreChecker() {
 
 
         await newRecord.save();
-        let source = 'sports';
-        const WinnLooseDecision = await getAmountOfWinner(source);
-        return
+        
         //Sports Results Saved
         //update inplayevents where betData.matchId if this market is match odds for soccer,tennis,cricket
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
