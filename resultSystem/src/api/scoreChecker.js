@@ -152,7 +152,8 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-
+            console.log("bet.userId..................................-------------->",bet.userId);
+            console.log("bet.calculateExp..................................-------------->",bet.calculateExp);
             if (bet.calculateExp && bet.userId==22204) {
             const WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
             }
@@ -404,6 +405,7 @@ function scoreChecker() {
   }
 
   async function fancyResult(betData, fancyName) {
+    return
     try {
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(betData.matchId) }, { Id: 1 });
 

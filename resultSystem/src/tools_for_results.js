@@ -20,6 +20,7 @@ function ToolForResults() {
   }
 
   async function getBetForEvents(targetArray) {
+    console.log('------------------------------------------------------------> I am called');
     const currentTime = new Date().getTime();
     try {
       const results = await Bets.aggregate([
@@ -44,10 +45,10 @@ function ToolForResults() {
           }
         },
         {
-          $limit: 5
+          $limit: 10
         }
       ]).exec();
-
+      console.log("results after I am here..........",results);
       for (const result of results) {
         const checkActive = await checkActiveBettors(result.betDocument);
         if (checkActive) continue;

@@ -20,7 +20,7 @@ function ToolForResult() {
   }
 
   async function fetchResults() {
-    // //console.log("running fetch results")
+    console.log("running fetch results")
     try {
       const eventMarkets = await MarketIDs.find({
         readyForScore: true,
