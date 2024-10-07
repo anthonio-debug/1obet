@@ -14,29 +14,27 @@ const getDailyPLReport = async (req, res) => {
 
   const userId = parseInt(req.decoded.userId);
 
-  const users = new Set([userId]);
+  const users = new Set([userId]); // Ensure current user is included
   let firstChildUserId = null;
 
-
+  // Fetch users created by the current user with roles other than 5
   const childUsers = await User.find({
     createdBy: userId,
-    role: { $ne: "5" } 
-  })
+    role: { $ne: "5" }
+  });
 
+  // Fetch users with role 5 created by the current user
   const role5ChildUsers = await User.find({
     createdBy: userId,
-    role: "5" 
+    role: "5"
   });
- 
-console.log(childUsers,"console.,...........................childuser")
+
   if (childUsers.length > 0) {
     firstChildUserId = childUsers[0].userId;
     users.add(firstChildUserId);
   }
-  console.log("userssssss ==================> dailypl",users)
-  console.log(role5ChildUsers,"role5cchilduser====================")
+
   role5ChildUsers.forEach(child => {
-    console.log(child.userId,"childdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
     users.add(child.userId);
   });
 
@@ -48,19 +46,13 @@ console.log(childUsers,"console.,...........................childuser")
     });
   }
 
-  console.log("userssssss ==================> dailyp2222222l",users)
-
   subChildUsers.forEach(user => {
     users.add(user.userId);
   });
 
-
   const userIdsArray = Array.from(users);
 
-
-  
-
-
+  // Fetch deposit data for current user and all relevant users
   const response = await CashDeposit.aggregate([
     {
       $match: {
@@ -79,11 +71,6 @@ console.log(childUsers,"console.,...........................childuser")
     },
     {
       $unwind: "$userInfo"
-    },
-    {
-      $match: {
-        userId: { $in: userIdsArray }
-      }
     },
     {
       $group: {
@@ -110,28 +97,21 @@ console.log(childUsers,"console.,...........................childuser")
     }
   ]);
 
+  // Adjust amount for the first child user if they exist
   const firstChildEntry = response.find(entry => entry._id === firstChildUserId);
-  
   if (firstChildEntry) {
     firstChildEntry.amount += subChildResponse.length > 0 ? subChildResponse[0].totalAmount : 0;
-    const isDirectChild = childUsers.length > 0 && childUsers[0].createdBy === userId;
-
-    if (isDirectChild) {
-      const firstChildUserInfo = await User.findOne({ userId: firstChildUserId });
-      firstChildEntry.role = firstChildUserInfo.role; // Add role if direct child
-    }
   } else {
     const totalAmount = subChildResponse.length > 0 ? subChildResponse[0].totalAmount : 0;
-    const firstChildUserInfo = await User.findOne({ userId: userId });
-
+    const firstChildUserInfo = await User.findOne({ userId: firstChildUserId });
     response.push({
       _id: firstChildUserId,
       amount: totalAmount,
-      name: firstChildUserInfo?.userName,
-      role: firstChildUserInfo?.createdBy === userId ? firstChildUserInfo.role : undefined
+      name: firstChildUserInfo?.userName
     });
   }
 
+  // Handle role 5 users
   const role5Response = await CashDeposit.aggregate([
     {
       $match: {
@@ -148,7 +128,6 @@ console.log(childUsers,"console.,...........................childuser")
     }
   ]);
 
-
   role5Response.forEach(userDeposit => {
     const userInfo = role5ChildUsers.find(user => user.userId === userDeposit._id);
     if (userInfo) {
@@ -156,10 +135,37 @@ console.log(childUsers,"console.,...........................childuser")
         _id: userInfo.userId,
         amount: userDeposit.totalAmount,
         name: userInfo.userName,
-        role: userInfo.role // Directly include role
+        role: userInfo.role
       });
     }
   });
+
+  // Add current user to response if not already included
+  if (!response.find(entry => entry._id === userId)) {
+    const currentUserDeposits = await CashDeposit.aggregate([
+      {
+        $match: {
+          userId: userId,
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
+          createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
+        }
+      },
+      {
+        $group: {
+          _id: "$userId",
+          amount: { $sum: "$amount" }
+        }
+      }
+    ]);
+
+    const currentUserInfo = await User.findOne({ userId });
+
+    response.push({
+      _id: userId,
+      amount: currentUserDeposits.length > 0 ? currentUserDeposits[0].amount : 0,
+      name: currentUserInfo?.userName
+    });
+  }
 
   return res.send({
     success: true,
