@@ -33,6 +33,7 @@ console.log(childUsers,"console.,...........................childuser")
     firstChildUserId = childUsers[0].userId;
     users.add(firstChildUserId);
   }
+  console.log("userssssss ==================> dailypl",users)
 
   role5ChildUsers.forEach(child => {
     users.add(child.userId);
@@ -53,7 +54,7 @@ console.log(childUsers,"console.,...........................childuser")
 
 
   const userIdsArray = Array.from(users);
-  console.log("userssssss ==================> dailypl",users)
+
 
   const response = await CashDeposit.aggregate([
     {
