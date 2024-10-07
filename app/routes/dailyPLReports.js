@@ -33,7 +33,7 @@ const getDailyPLReport = async (req, res) => {
       $match: {
         userId: { $in: users },
         sportsId: sportsIdQuery,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing","Settlement"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
@@ -74,7 +74,7 @@ const dailyPlSportWiseReports = async (req, res) => {
     {
       $match: {
         userId: Id,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing","Settlement"] },
         $and: [
           {
             createdAt: { $gte: req.query.startDate }
@@ -124,7 +124,7 @@ const dailyPLMatchWiseReport = async (req, res) => {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing","Settlement"] },
           $and: [
             {
               createdAt: { $gte: req.query.startDate }
@@ -151,7 +151,7 @@ const dailyPLMatchWiseReport = async (req, res) => {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing","Settlement"] },
           $and: [
             {
               createdAt: { $gte: req.query.startDate }
@@ -330,7 +330,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
             $in: users
           },
           matchId: matchId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] }
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing","Settlement"] }
         }
       },
       {
