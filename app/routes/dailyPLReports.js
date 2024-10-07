@@ -122,7 +122,7 @@ console.log(childUsers,"console.,...........................childuser")
     }
   } else {
     const totalAmount = subChildResponse.length > 0 ? subChildResponse[0].totalAmount : 0;
-    const firstChildUserInfo = await User.findOne({ userId: firstChildUserId });
+    const firstChildUserInfo = await User.findOne({ userId: userId });
 
     response.push({
       _id: firstChildUserId,
