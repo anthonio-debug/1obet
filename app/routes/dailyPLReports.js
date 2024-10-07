@@ -53,6 +53,7 @@ console.log(childUsers,"console.,...........................childuser")
 
 
   const userIdsArray = Array.from(users);
+  console.log("userssssss ==================> dailypl",users)
 
   const response = await CashDeposit.aggregate([
     {
