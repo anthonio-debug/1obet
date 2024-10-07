@@ -11,11 +11,8 @@ const MarketIDs = require('../../../app/models/marketIds');
 const FancyOdds = require('../../../app/models/fancyOdds');
 
 const { API_DOMAIN } = require('../../../app/global/constants');
-const { getAmountOfWinner } = require('../CalculateBets/helper');
+const { checkActiveBettors } = require('../../../helper/bet');
 const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
-
-
-
 const { handleLosingBet, handleWinningBet, handleDrawBet } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
@@ -226,38 +223,16 @@ function scoreChecker() {
         });
 
         const bets = await Bets.find({
-          //marketId: betData.marketId,
-          marketId: '1.233997861',
+          marketId: betData.marketId,
           sportsId: betData.sportsId,
-          calculateExp:true,
-          //status: 1
-          
+          status: 1
         });
 
-
         await newRecord.save();
-        
-        
-        
-        
-        
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
-
-
-
-        for (const bet of bets) {
-
-          let winningsCalculate = await getAmountOfWinnerTemp(bet,275533);
-          
-        }
-        return;
-
 
         if (result.winnerSelectionId == -1) {
           for (const bet of bets) {
-
-            let winningsCalculate = await getAmountOfWinnerTemp(bet,selectionId);
-            
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
