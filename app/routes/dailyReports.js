@@ -33,7 +33,7 @@ const getDailyReport = async (req, res) => {
       $match: {
         userId: { $in: users },
         sportsId: sportsIdQuery,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
@@ -59,7 +59,7 @@ const getDailyReport = async (req, res) => {
       $match: {
         userId: currentUser.createdBy,
         commissionFrom: currentUser.userId,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
@@ -101,7 +101,7 @@ const dailySportsWiseReport = async (req, res) => {
       {  
         $match: {
           userId: Id,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
           $and: [
             {
               createdAt: {$gte: req.query.startDate}
@@ -153,7 +153,7 @@ const dailyMatchWiseReports = async (req, res) => {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
           $and: [
             {
               createdAt: {$gte: req.query.startDate}
@@ -180,7 +180,7 @@ const dailyMatchWiseReports = async (req, res) => {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
           $and: [
             {
               createdAt: {$gte: req.query.startDate}
@@ -363,7 +363,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
         $match: {
           userId: { $in: users },
           matchId: matchId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
         }
       },
       {
@@ -388,7 +388,7 @@ const dailyMatchWiseDetailedReports = async(req, res) => {
         $match: {
           userId: currentUser.createdBy ,
           commissionFrom: currentUser.userId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
         }
       },
       {
