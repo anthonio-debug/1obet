@@ -127,7 +127,7 @@ console.log(childUsers,"console.,...........................childuser")
     response.push({
       _id: firstChildUserId,
       amount: totalAmount,
-      name: firstChildUserId,
+      name: firstChildUserInfo.userName,
       role: firstChildUserInfo?.createdBy === userId ? firstChildUserInfo.role : undefined
     });
   }
