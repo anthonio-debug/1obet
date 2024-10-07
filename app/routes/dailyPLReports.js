@@ -28,7 +28,7 @@ const getDailyPLReport = async (req, res) => {
     createdBy: userId,
     role: 5 
   });
-
+console.log(childUsers,"console.,...........................childuser")
   if (childUsers.length > 0) {
     firstChildUserId = childUsers[0].userId;
     users.add(firstChildUserId);
@@ -58,7 +58,7 @@ const getDailyPLReport = async (req, res) => {
     {
       $match: {
         userId: { $in: userIdsArray },
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
@@ -91,7 +91,7 @@ const getDailyPLReport = async (req, res) => {
     {
       $match: {
         userId: { $in: subChildUsers.map(user => user.userId) },
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
@@ -129,7 +129,7 @@ const getDailyPLReport = async (req, res) => {
     {
       $match: {
         userId: { $in: role5ChildUsers.map(user => user.userId) },
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
