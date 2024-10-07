@@ -152,7 +152,6 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
@@ -229,14 +228,34 @@ function scoreChecker() {
         const bets = await Bets.find({
           marketId: betData.marketId,
           sportsId: betData.sportsId,
+          calculateExp:true,
           status: 1
         });
 
+
         await newRecord.save();
+        
+        
+        
+        
+        
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
+
+
+
+        for (const bet of bets) {
+
+          let winningsCalculate = await getAmountOfWinnerTemp(bet,selectionId);
+          
+        }
+        return;
+
 
         if (result.winnerSelectionId == -1) {
           for (const bet of bets) {
+
+            let winningsCalculate = await getAmountOfWinnerTemp(bet,selectionId);
+            
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
