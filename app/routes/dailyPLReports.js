@@ -35,10 +35,10 @@ console.log(childUsers,"console.,...........................childuser")
   }
   console.log("userssssss ==================> dailypl",users)
   console.log(role5ChildUsers,"role5cchilduser====================")
-  role5ChildUsers.forEach(child => {
-    console.log(child.userId,"childdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
-    users.add(child.userId);
-  });
+  // role5ChildUsers.forEach(child => {
+  //   console.log(child.userId,"childdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
+  //   users.add(child.userId);
+  // });
 
   let subChildUsers = [];
   if (firstChildUserId) {
