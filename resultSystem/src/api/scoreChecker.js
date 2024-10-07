@@ -11,11 +11,8 @@ const MarketIDs = require('../../../app/models/marketIds');
 const FancyOdds = require('../../../app/models/fancyOdds');
 
 const { API_DOMAIN } = require('../../../app/global/constants');
-const { getAmountOfWinner,getAmountOfWinnerTemp } = require('../CalculateBets/helper');
+const { checkActiveBettors } = require('../../../helper/bet');
 const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
-
-
-
 const { handleLosingBet, handleWinningBet, handleDrawBet } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
@@ -108,7 +105,7 @@ function scoreChecker() {
           }
         ];
       }
-      console.log("results.length for sports -> " + results.length)
+      //console.log("results.length -> " + results.length)
       if (results.length > 0) {
         const result = results[0];
         if (!result.winnerSelectionId) return;
@@ -121,7 +118,6 @@ function scoreChecker() {
         const bets = await Bets.find({
           marketId: betData.marketId,
           sportsId: betData.sportsId,
-          calculateExp:true,
           status: 1
         });
 
@@ -153,12 +149,6 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            console.log("Inside ready for sports function next....................");
-            //let WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
-            //return;
-
-
-           
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
@@ -223,17 +213,8 @@ function scoreChecker() {
           }
         ];
       }
-      console.log("results.length for races -> " + results.length)
-
-      console.log("betData user id ...................................................",betData.userId);
-      if(betData.userId==22232){
-        let WinnLooseDecisionTemp = await getAmountOfWinnerTemp('67030e82ce5ad1e1b403a691','5164291');
-        return;
-      }
-      
       if (results.length > 0) {
         const result = results[0];
-        
         if (!result.winnerSelectionId) return;
         let newRecord = new resultRecords({
           eventId: betData.matchId,
@@ -265,10 +246,6 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            console.log("Inside ready for function next....................");
-           // let WinnLooseDecision = await getAmountOfWinner(bet,result.winnerSelectionId);
-           // return;
-
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);

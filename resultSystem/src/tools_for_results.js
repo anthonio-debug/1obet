@@ -15,7 +15,7 @@ function ToolForResults() {
       getBetForEvents(sportsIdsForRacing);
     }, 2000);
     getBetForFancy();
-    //getBetForAsianOdd();
+    getBetForAsianOdd();
     manuelBetChecker();
   }
 
@@ -29,7 +29,6 @@ function ToolForResults() {
             marketId: { $ne: null },
             isfancyOrbookmaker: false,
             status: 1,
-            calculateExp:true,
             type: { $in: [0, 1] }
           }
         },

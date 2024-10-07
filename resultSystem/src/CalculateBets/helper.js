@@ -45,11 +45,25 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   const bet = await Bets.findOne({
     _id: betId
   });
+  const userToUpdate = await User.findOne({
+    userId: bet.userId,
+    isDeleted: false
+  });
+  if (!userToUpdate) {
+    console.error('Error: User Not Found');
+    return;
+  }
+
 let calculatedExp = 0;
 const userId = bet.userId;
 let TotalWin = 0;
 let TotalLose = 0;
-
+let user_Exposure = userToUpdate.exposure;
+let loosingRunnerAmount= 0;
+let betCalculateExp = bet.calculateExp;
+let betexposureAmount = bet.exposureAmount;
+let AmountAddedBacktoUserAB = 0;
+let diff = 0;
 
 
   
@@ -67,7 +81,9 @@ let TotalLose = 0;
     if(amount>0){
 
     }else if(amount<0){
-
+        loosingRunnerAmount = amount;
+        AmountAddedBacktoUserAB = betexposureAmount + loosingRunnerAmount  // 400 + ( -45 ) = 355
+        diff = loosingRunnerAmount;
     }else{
 
     }
