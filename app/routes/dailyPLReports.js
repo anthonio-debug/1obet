@@ -12,57 +12,28 @@ const getDailyPLReport = async (req, res) => {
     return res.status(400).send({ errors: errors.errors });
   }
 
-  const userId = parseInt(req.decoded.userId);
+  const userId = parseInt(req.decoded.userId)
+  const currentUser = await User.findOne({ userId: userId });
+  const users = [userId];
+  let parents = [userId];
+  let childUsers = [];
+  let sportsIdQuery = { $ne: null };
 
-  const users = new Set([userId]);
-  let firstChildUserId = null;
-
-
-  const childUsers = await User.find({
-    createdBy: userId,
-    role: { $ne: "5" } 
-  })
-
-  const role5ChildUsers = await User.find({
-    createdBy: userId,
-    role: "5" 
-  });
- 
-console.log(childUsers,"console.,...........................childuser")
-  if (childUsers.length > 0) {
-    firstChildUserId = childUsers[0].userId;
-    users.add(firstChildUserId);
-  }
-  console.log("userssssss ==================> dailypl",users)
-  console.log(role5ChildUsers,"role5cchilduser====================")
-  role5ChildUsers.forEach(child => {
-    console.log(child.userId,"childdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
-    users.add(child.userId);
-  });
-
-  let subChildUsers = [];
-  if (firstChildUserId) {
-    subChildUsers = await User.find({
-      createdBy: firstChildUserId,
-      role: { $ne: 5 }
+  do {
+    childUsers = await User.distinct("userId", {
+      createdBy: {
+        $in: parents
+      }
     });
-  }
-
-  console.log("userssssss ==================> dailyp2222222l",users)
-
-  subChildUsers.forEach(user => {
-    users.add(user.userId);
-  });
-
-
-  const userIdsArray = Array.from(users);
-
-
+    if (childUsers.length) users.push(...childUsers)
+    parents = childUsers
+  } while (childUsers.length > 0)
   const response = await CashDeposit.aggregate([
     {
       $match: {
-        userId: { $in: userIdsArray },
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
+        userId: { $in: users },
+        sportsId: sportsIdQuery,
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
       }
     },
@@ -75,88 +46,13 @@ console.log(childUsers,"console.,...........................childuser")
       }
     },
     {
-      $unwind: "$userInfo"
-    },
-    {
-      $match: {
-        userId: { $in: userIdsArray }
-      }
-    },
-    {
       $group: {
         _id: "$userId",
         amount: { $sum: "$amount" },
-        name: { $first: "$userInfo.userName" }
+        name: { $first: { $arrayElemAt: ["$userInfo.userName", 0] } }
       }
     }
   ]);
-
-  const subChildResponse = await CashDeposit.aggregate([
-    {
-      $match: {
-        userId: { $in: subChildUsers.map(user => user.userId) },
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
-        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
-      }
-    },
-    {
-      $group: {
-        _id: null,
-        totalAmount: { $sum: "$amount" }
-      }
-    }
-  ]);
-
-  const firstChildEntry = response.find(entry => entry._id === firstChildUserId);
-  
-  if (firstChildEntry) {
-    firstChildEntry.amount += subChildResponse.length > 0 ? subChildResponse[0].totalAmount : 0;
-    const isDirectChild = childUsers.length > 0 && childUsers[0].createdBy === userId;
-
-    if (isDirectChild) {
-      const firstChildUserInfo = await User.findOne({ userId: firstChildUserId });
-      firstChildEntry.role = firstChildUserInfo.role; // Add role if direct child
-    }
-  } else {
-    const totalAmount = subChildResponse.length > 0 ? subChildResponse[0].totalAmount : 0;
-    const firstChildUserInfo = await User.findOne({ userId: firstChildUserId });
-
-    response.push({
-      _id: firstChildUserId,
-      amount: totalAmount,
-      name: firstChildUserId,
-      role: firstChildUserInfo?.createdBy === userId ? firstChildUserInfo.role : undefined
-    });
-  }
-
-  const role5Response = await CashDeposit.aggregate([
-    {
-      $match: {
-        userId: { $in: role5ChildUsers.map(user => user.userId) },
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
-        createdAt: { $gte: req.query.startDate, $lte: req.query.endDate }
-      }
-    },
-    {
-      $group: {
-        _id: "$userId",
-        totalAmount: { $sum: "$amount" }
-      }
-    }
-  ]);
-
-
-  role5Response.forEach(userDeposit => {
-    const userInfo = role5ChildUsers.find(user => user.userId === userDeposit._id);
-    if (userInfo) {
-      response.push({
-        _id: userInfo.userId,
-        amount: userDeposit.totalAmount,
-        name: userInfo.userName,
-        role: userInfo.role // Directly include role
-      });
-    }
-  });
 
   return res.send({
     success: true,
@@ -164,8 +60,7 @@ console.log(childUsers,"console.,...........................childuser")
     results: response,
     total: response.length
   });
-};
-
+}
 
 const dailyPlSportWiseReports = async (req, res) => {
   const errors = validationResult(req);
@@ -179,7 +74,7 @@ const dailyPlSportWiseReports = async (req, res) => {
     {
       $match: {
         userId: Id,
-        cashOrCredit: { $in: ["Bet", "Commission", "loosing", ""] },
+        cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
         $and: [
           {
             createdAt: { $gte: req.query.startDate }
@@ -229,7 +124,7 @@ const dailyPLMatchWiseReport = async (req, res) => {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", ""] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           $and: [
             {
               createdAt: { $gte: req.query.startDate }
@@ -256,7 +151,7 @@ const dailyPLMatchWiseReport = async (req, res) => {
         $match: {
           userId: Id,
           sportsId: req.query.sportsId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", ""] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
           $and: [
             {
               createdAt: { $gte: req.query.startDate }
@@ -435,7 +330,7 @@ const dailyPLMatchWiseDetailedReport = async (req, res) => {
             $in: users
           },
           matchId: matchId,
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", ""] }
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] }
         }
       },
       {
