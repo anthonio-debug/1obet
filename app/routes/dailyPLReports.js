@@ -27,14 +27,14 @@ const getDailyPLReport = async (req, res) => {
     createdBy: userId,
     role: "5" 
   });
-  console.log(role5ChildUsers,"role5cchilduser====================")
+ 
 console.log(childUsers,"console.,...........................childuser")
   if (childUsers.length > 0) {
     firstChildUserId = childUsers[0].userId;
     users.add(firstChildUserId);
   }
   console.log("userssssss ==================> dailypl",users)
-
+  console.log(role5ChildUsers,"role5cchilduser====================")
   role5ChildUsers.forEach(child => {
     console.log(child.userId,"childdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
     users.add(child.userId);
