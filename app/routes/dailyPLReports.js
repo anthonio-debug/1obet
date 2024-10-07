@@ -17,6 +17,7 @@ const getDailyPLReport = async (req, res) => {
   const userIds = await User.find({ createdBy: userId }, { userId: 1, _id: 0 })
   const users = userIds.map(user => { return user.userId });
   users.push(userId)
+  console.log("users===========", users)
   const response = await CashDeposit.aggregate([
     {
       $match: {
