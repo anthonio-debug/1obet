@@ -663,12 +663,9 @@ function getLedgerDetails(req, res) {
 
       Cash.aggregate(cashPipeline, async (err, result) => {
         if (result[0].results && result[0].results.length > 0) {
-          
           for (let i = 0; i < result[0].results.length; i++) {
-           
             //console.log()
             if (result[0].results[i].betId) {
-            
               try {
                 const betInfo = await Bet.findOne({
                   _id: result[0].results[i].betId
@@ -681,6 +678,7 @@ function getLedgerDetails(req, res) {
                 result[0].results[i].fancyData = betInfo?.fancyData;
                 result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
                 result[0].results[i].roundId = betInfo?.roundId;
+                result[0].results[i].subMarketId = betInfo?.subMarketId;
               } catch (err) {
                 continue;
               }
