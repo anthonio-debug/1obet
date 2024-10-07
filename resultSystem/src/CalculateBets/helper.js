@@ -43,7 +43,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
   const bet = await Bets.findOne({
-    _id: betId
+    _id: betId._id
   });
   const userToUpdate = await User.findOne({
     userId: bet.userId,

@@ -226,10 +226,12 @@ function scoreChecker() {
         });
 
         const bets = await Bets.find({
-          marketId: betData.marketId,
+          //marketId: betData.marketId,
+          marketId: '1.233997861',
           sportsId: betData.sportsId,
           calculateExp:true,
-          status: 1
+          //status: 1
+          
         });
 
 
@@ -245,7 +247,7 @@ function scoreChecker() {
 
         for (const bet of bets) {
 
-          let winningsCalculate = await getAmountOfWinnerTemp('67030e75ce5ad1e1b403a636',62912931);
+          let winningsCalculate = await getAmountOfWinnerTemp(bet,275533);
           
         }
         return;
