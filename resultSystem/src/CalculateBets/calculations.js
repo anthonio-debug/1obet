@@ -576,6 +576,9 @@ async function handleWinningBet(bet, winner) {
                 betDateTime: bet.betTime,
                 date: new Date().getTime(),
                 createdAt: formattedDate,
+                totalRemainingAmount: totalRemainingAmount,
+                commissionAmount: commissionAmount,
+                remainingAmount: remainingAmount,
                 betSession: bet.betSession,
                 roundId: bet.roundId,
 

@@ -45,6 +45,10 @@ let depositsSchema = new Schema({
   UserBalanceBFTrans:{ type: Number , default: 0 },
   UserBalanceAFTrans:{ type: Number , default: 0 },
   
+  totalRemainingAmount:{ type: Number , default: 0 },
+  commissionAmount:{ type: Number , default: 0 },
+  remainingAmount:{ type: Number , default: 0 },
+
   betExpAmount:{ type: Number , default: 0 },
   currentBetAmount:{ type: Number , default: 0 },
   currentBetLoosingAmount:{ type: Number , default: 0 },
