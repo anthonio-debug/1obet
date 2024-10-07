@@ -146,17 +146,17 @@ console.log(childUsers,"console.,...........................childuser")
   ]);
 
 
-  // role5Response.forEach(userDeposit => {
-  //   const userInfo = role5ChildUsers.find(user => user.userId === userDeposit._id);
-  //   if (userInfo) {
-  //     response.push({
-  //       _id: userInfo.userId,
-  //       amount: userDeposit.totalAmount,
-  //       name: userInfo.userName,
-  //       role: userInfo.role // Directly include role
-  //     });
-  //   }
-  // });
+  role5Response.forEach(userDeposit => {
+    const userInfo = role5ChildUsers.find(user => user.userId === userDeposit._id);
+    if (userInfo) {
+      response.push({
+        _id: userInfo.userId,
+        amount: userDeposit.totalAmount,
+        name: userInfo.userName,
+        role: userInfo.role // Directly include role
+      });
+    }
+  });
 
   return res.send({
     success: true,
