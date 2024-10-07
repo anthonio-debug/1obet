@@ -36,6 +36,7 @@ console.log(childUsers,"console.,...........................childuser")
   console.log("userssssss ==================> dailypl",users)
 
   role5ChildUsers.forEach(child => {
+    console.log(child.userId,"childdddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd")
     users.add(child.userId);
   });
 
