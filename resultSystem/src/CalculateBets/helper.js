@@ -54,42 +54,29 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     return;
   }
 
-let calculatedExp = 0;
-const userId = bet.userId;
-let TotalWin = 0;
-let TotalLose = 0;
-let user_Exposure = userToUpdate.exposure;
-let loosingRunnerAmount= 0;
-let betCalculateExp = bet.calculateExp;
-let betexposureAmount = bet.exposureAmount;
-let AmountAddedBacktoUserAB = 0;
-let diff = 0;
+  let user_AvailableBalance = userToUpdate.AvailableBalance;
+	let user_Exposure = userToUpdate.exposure;
+	let AmountAddedBacktoUserAB = 0;
+	let TotalWin = 0;
+	let TotalLose = 0;
+	let betexposureAmount = bet.exposureAmount;
+	TotalLose = betexposureAmount;
 
 
   
   console.log("debt insdie...................................",bet);
-    const runnerPosition = bet?.runnersPosition
-    var amount = 0
-    var winnerRunner = '';
-    runnerPosition?.forEach(winner => {
+
+  console.log("userID insdie...................................",bet.userId);
+
+  runnerPosition?.forEach(winner => {
         console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
         if (winner.runner == selectionId) {
             amount=winner.amount
             winnerRunner = winner.runner
         }
     });
-    if(amount>0){
-
-    }else if(amount<0){
-        loosingRunnerAmount = amount;
-        AmountAddedBacktoUserAB = betexposureAmount + loosingRunnerAmount  // 400 + ( -45 ) = 355
-        diff = loosingRunnerAmount;
-    }else{
-
-    }
-    console.log("amountttttttttttttttttttttt AK-------------------",amount)
-    console.log("userIDdddddddddddddddddddddddddddd AK-------------------",bet.userId)
-return amount 
+    
+    
 }
 
 module.exports = {

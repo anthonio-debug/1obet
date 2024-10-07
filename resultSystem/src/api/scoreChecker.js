@@ -245,7 +245,7 @@ function scoreChecker() {
 
         for (const bet of bets) {
 
-          let winningsCalculate = await getAmountOfWinnerTemp(bet,selectionId);
+          let winningsCalculate = await getAmountOfWinnerTemp('67030e75ce5ad1e1b403a636',62912931);
           
         }
         return;
