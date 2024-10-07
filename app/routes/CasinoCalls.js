@@ -148,6 +148,19 @@ async function findAndProcessTransactions(user) {
             console.log("proceedIt...............................................................",proceedIt);
           }
           
+
+
+          const gamesList = await SelectedCasino.findOne(
+            { "games.id": tran.game_id },
+            { "games.$": 1 }
+          );
+    
+          const game = gamesList?.games[0];
+          
+          
+
+
+          
           // if(proceedIt===false){
             
           //   console.log('Result not announced yet for this transaction:.',tran._id);
@@ -177,10 +190,10 @@ async function findAndProcessTransactions(user) {
             creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
             cashOrCredit: "Settlement",
             sportsId: "6",
-            //event: gameName,
+            event: game.name,
             roundId: tran._id,
             marketId: tran._id,
-            //matchId: tran.game_id,
+            matchId: tran.game_id,
           };
 
           const deposit = new Cash(betTransactionData);

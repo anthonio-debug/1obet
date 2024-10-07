@@ -8,7 +8,7 @@ const Deposits = require('../../../app/models/deposits');
 function getAmountOfWinner(bet, selectionId) {
     console.log("Reached inside the function..............................");
 
-    const now = new Date();
+  const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
@@ -64,7 +64,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     let lastWithdrawalRow_balance = lastMaxWithdraw.balance;
     let lastWithdrawalRow_maxWithdraw = lastMaxWithdraw.maxWithdraw;	
     let user_AvailableBalance = userToUpdate.AvailableBalance;
-    let user_balance = userToUpdate.balance;
+    let userPrevBalance = userToUpdate.balance;
+    let userPrevClientPL = userToUpdate.clientPL;
     let user_Exposure = userToUpdate.exposure;
     let AmountAddedBacktoUserAB = 0;
     let TotalWin = 0;
@@ -114,9 +115,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           isDeleted: false
         },
         {
-          balance: userToUpdate.balance,
-          clientPL: userToUpdate.clientPL,
-          exposure: updatedavailableBalance,
+          balance: userPrevClientPL+TotalWin,
+          clientPL: userPrevClientPL+TotalWin,
+          exposure: users_exposureNewUpdated,
           availableBalance: updatedAvailableBalance
         }
       );
@@ -124,7 +125,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     await Deposits.create({
         userId: userToUpdate.userId,
         description: `Event (${bet.event}) Runner (${bet.runnerName})`,
-        amount: -loosingAmount,
+        amount: diff,
         balance: lastMaxWithdraw.balance + diff,
         availableBalance: updatedDepositsAvailableBalance,
         maxWithdraw: lastMaxWithdraw.maxWithdraw,
@@ -160,6 +161,30 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         calculateExp:bet.calculateExp,
         betExpAmount:bet.betExpAmount
       });
+
+
+      /// Follownig are assignments for commissions, downlines, uplines etc to parents...
+
+      const parentUserIds = await getParents(userToUpdate.userId);
+          const parentUser = await User.find({
+            userId: { $in: parentUserIds },
+            isDeleted: false
+          }).sort({ userId: -1 });
+          if (!parentUser) {
+            console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
+            return;
+          } else {
+            
+            let NeutralselectedRunnerAmount = Match.abs(diff);
+            if(diff<0){
+                //Bettor lost
+            }else if(diff>0){
+                //bettor won
+            }else{
+                //no win no loss
+            }
+            
+        }
 
     
     
