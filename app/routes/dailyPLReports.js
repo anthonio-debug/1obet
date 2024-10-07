@@ -20,13 +20,13 @@ const getDailyPLReport = async (req, res) => {
 
   const childUsers = await User.find({
     createdBy: userId,
-    role: { $ne: 5 } 
+    role: { $ne: "5" } 
   }).limit(1);
 
  
   const role5ChildUsers = await User.find({
     createdBy: userId,
-    role: 5 
+    role: "5" 
   });
 console.log(childUsers,"console.,...........................childuser")
   if (childUsers.length > 0) {
