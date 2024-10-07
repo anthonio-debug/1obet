@@ -30,7 +30,7 @@ const marketGainWithDuplicates = async (req, res) => {
   let depositRes;
 
   if (currentUser?.role == 5) {
-    const marketData = await MarketIDS.findOne({ 
+    const marketData = await MarketIDS.findOne({
       $or: [
         { marketId: marketId },
         { marketName: marketId },
@@ -52,6 +52,9 @@ const marketGainWithDuplicates = async (req, res) => {
             {
               cashOrCredit: { $in: ["Commission"] },
             },
+            {
+              cashOrCredit: { $in: ["Settlement"] },
+            },
           ],
         });
       } else {
@@ -68,6 +71,9 @@ const marketGainWithDuplicates = async (req, res) => {
             {
               cashOrCredit: { $in: ["Commission"] },
             },
+            {
+              cashOrCredit: { $in: ["Settlement"] },
+            },
           ],
         });
       }
@@ -81,13 +87,13 @@ const marketGainWithDuplicates = async (req, res) => {
       return res.status(404).send({ message: "Cannot find desposit" });
 
     let response = {}
- 
+
     let depositInfo = [];
 
-    for (let k = 0; k < depositRes?.length; k ++) {
+    for (let k = 0; k < depositRes?.length; k++) {
       let tempdepositInfo;
       let betInfo
-      if (sportsId == "6") { 
+      if (sportsId == "6") {
         betInfo = await CasinoCalls.findOne({
           transaction_id: depositRes[k]?.betId
         });
@@ -96,7 +102,7 @@ const marketGainWithDuplicates = async (req, res) => {
           _id: depositRes[k]?.betId
         });
       }
-      
+
       tempdepositInfo = {
         _id: depositRes[k]?.betId,
         pl: depositRes[k]?.amount,
@@ -104,10 +110,10 @@ const marketGainWithDuplicates = async (req, res) => {
         sportsId: depositRes[k]?.sportsId,
         createdAt: depositRes[k]?.createdAt,
       }
-  
-      if (depositRes[k]?.sportsId == "6"){
+
+      if (depositRes[k]?.sportsId == "6") {
         tempdepositInfo.Commission = depositRes[k]?.amount > 0 ? depositRes[k]?.amount * 0.02 : 0;
-        tempdepositInfo.netPl = depositRes[k]?.amount > 0 ? depositRes[k]?.amount *  ( 100/98 ) : depositRes[k]?.amount;
+        tempdepositInfo.netPl = depositRes[k]?.amount > 0 ? depositRes[k]?.amount * (100 / 98) : depositRes[k]?.amount;
         tempdepositInfo.result = depositRes[k]?.amount > 0 ? "WON" : "LOSS";
         tempdepositInfo.runnerName = betInfo?.username;
         tempdepositInfo.price = null;
@@ -129,7 +135,7 @@ const marketGainWithDuplicates = async (req, res) => {
 
     if (depositRes) {
       let tempTotalPL = 0;
-      for (let k = 0; k < depositRes?.length; k ++) {
+      for (let k = 0; k < depositRes?.length; k++) {
         tempTotalPL += depositRes[k]?.amount;
       }
 
@@ -148,25 +154,25 @@ const marketGainWithDuplicates = async (req, res) => {
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
-        if (!marketData?.winnerInfo){
+        if (!marketData?.winnerInfo) {
           const resultInfo = await AsianResult.findOne({ roundId: betRes[k]?.roundId })
-          if (resultInfo?.tableId == "teen20"){
+          if (resultInfo?.tableId == "teen20") {
             if (resultInfo?.result[0]?.win == "1") {
               asianWinner = "Player A Cards"
             } else {
               asianWinner = "Player B Cards"
             }
-          } else if (resultInfo?.tableId == "lucky7eu"){
-              asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
-          } else if (resultInfo?.tableId == "aaa"){
+          } else if (resultInfo?.tableId == "lucky7eu") {
             asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
-          } else if (resultInfo?.tableId == "card32eu"){
+          } else if (resultInfo?.tableId == "aaa") {
+            asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
+          } else if (resultInfo?.tableId == "card32eu") {
             const generalResult = resultInfo?.result[0]?.desc.split("|");
             asianWinner = generalResult[0]
-          } 
+          }
         }
 
-        if (marketId == "9" || marketId == "34" || marketId == "35" || marketId =="11" ) {
+        if (marketId == "9" || marketId == "34" || marketId == "35" || marketId == "11") {
           asianWinner = betRes[k]?.SessionScore
         }
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
@@ -183,36 +189,36 @@ const marketGainWithDuplicates = async (req, res) => {
           SessionScore: betRes[k]?.SessionScore,
           winnerRunnerData: betRes[k]?.winnerRunnerData,
           resultData: betRes[k]?.resultData,
-          roundId: betRes[k]?.roundId, 
+          roundId: betRes[k]?.roundId,
           winner: Winner,
           subMarketId: betRes[k].subMarketId,
-          resultData: betRes[k].resultData 
+          resultData: betRes[k].resultData
         }
         betsInfo.push(tempBet)
       }
-      response.betsInfo = betsInfo 
+      response.betsInfo = betsInfo
 
     } else if (depositRes[0]?.sportsId == "6" || depositRes[0]?.sportsId == "8") {
       const betRes = await Bets.find({ userId: userId, roundId: roundId });
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
-        if (!marketData?.winnerInfo){
+        if (!marketData?.winnerInfo) {
           const resultInfo = await AsianResult.findOne({ roundId: betRes[k]?.roundId })
-          if (resultInfo?.tableId == "teen20"){
+          if (resultInfo?.tableId == "teen20") {
             if (resultInfo?.result[0]?.win == "1") {
               asianWinner = "Player A Cards"
             } else {
               asianWinner = "Player B Cards"
             }
-          } else if (resultInfo?.tableId == "lucky7eu"){
-              asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
-          } else if (resultInfo?.tableId == "aaa"){
+          } else if (resultInfo?.tableId == "lucky7eu") {
             asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
-          } else if (resultInfo?.tableId == "card32eu"){
+          } else if (resultInfo?.tableId == "aaa") {
+            asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
+          } else if (resultInfo?.tableId == "card32eu") {
             const generalResult = resultInfo?.result[0]?.desc.split("|");
             asianWinner = generalResult[0]
-          } 
+          }
         }
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
 
@@ -228,14 +234,14 @@ const marketGainWithDuplicates = async (req, res) => {
           SessionScore: betRes[k]?.SessionScore,
           winnerRunnerData: betRes[k]?.winnerRunnerData,
           resultData: betRes[k]?.resultData,
-          roundId: betRes[k]?.roundId, 
+          roundId: betRes[k]?.roundId,
           winner: Winner,
           subMarketId: betRes[k].subMarketId,
-          resultData: betRes[k].resultData 
+          resultData: betRes[k].resultData
         }
         betsInfo.push(tempBet)
       }
-      response.betsInfo = betsInfo 
+      response.betsInfo = betsInfo
     }
 
     response.totalDespoitInfo = totalDespoitInfo
@@ -264,7 +270,7 @@ const marketGainWithDuplicates = async (req, res) => {
             $in: users,
           },
           ...condition[0],
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
         },
       },
       {
@@ -335,6 +341,9 @@ const marketGainWithDuplicates2 = async (req, res) => {
           {
             cashOrCredit: { $in: ["Commission"] },
           },
+          {
+            cashOrCredit: { $in: ["Settlement"] },
+          },
         ],
       });
     } else {
@@ -355,9 +364,9 @@ const marketGainWithDuplicates2 = async (req, res) => {
       sportsId: depositRes.sportsId,
     }
 
-    if (depositRes.sportsId == "6"){
+    if (depositRes.sportsId == "6") {
       depositInfo.Commission = depositRes?.amount > 0 ? depositRes?.amount * 0.02 : 0;
-      depositInfo.netPl = depositRes?.amount > 0 ? depositRes?.amount *  ( 100/98 ) : depositRes?.amount;
+      depositInfo.netPl = depositRes?.amount > 0 ? depositRes?.amount * (100 / 98) : depositRes?.amount;
       depositInfo.result = depositRes?.amount > 0 ? "WON" : "LOSS";
     }
 
@@ -369,22 +378,22 @@ const marketGainWithDuplicates2 = async (req, res) => {
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
-        if (!marketData?.winnerInfo){
+        if (!marketData?.winnerInfo) {
           const resultInfo = await AsianResult.findOne({ roundId: betRes[k]?.roundId })
-          if (resultInfo?.tableId == "teen20"){
+          if (resultInfo?.tableId == "teen20") {
             if (resultInfo?.result[0]?.win == "1") {
               asianWinner = "Player A Cards"
             } else {
               asianWinner = "Player B Cards"
             }
-          } else if (resultInfo?.tableId == "lucky7eu"){
-              asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
-          } else if (resultInfo?.tableId == "aaa"){
+          } else if (resultInfo?.tableId == "lucky7eu") {
             asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
-          } else if (resultInfo?.tableId == "card32eu"){
+          } else if (resultInfo?.tableId == "aaa") {
+            asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
+          } else if (resultInfo?.tableId == "card32eu") {
             const generalResult = resultInfo?.result[0]?.desc.split("|");
             asianWinner = generalResult[0]
-          } 
+          }
         }
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
 
@@ -405,28 +414,28 @@ const marketGainWithDuplicates2 = async (req, res) => {
         }
         betsInfo.push(tempBet)
       }
-      response.betsInfo = betsInfo 
+      response.betsInfo = betsInfo
     } else if (depositRes.sportsId == "6" || depositRes.sportsId == "8") {
       const betRes = await Bets.find({ userId: userId, roundId: roundId });
 
       let betsInfo = []
       for (let k = 0; k < betRes?.length; k++) {
-        if (!marketData?.winnerInfo){
+        if (!marketData?.winnerInfo) {
           const resultInfo = await AsianResult.findOne({ roundId: betRes[k]?.roundId })
-          if (resultInfo?.tableId == "teen20"){
+          if (resultInfo?.tableId == "teen20") {
             if (resultInfo?.result[0]?.win == "1") {
               asianWinner = "Player A Cards"
             } else {
               asianWinner = "Player B Cards"
             }
-          } else if (resultInfo?.tableId == "lucky7eu"){
-              asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
-          } else if (resultInfo?.tableId == "aaa"){
+          } else if (resultInfo?.tableId == "lucky7eu") {
             asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
-          } else if (resultInfo?.tableId == "card32eu"){
+          } else if (resultInfo?.tableId == "aaa") {
+            asianWinner = "Card " + " " + resultInfo?.result[0]?.cards[0]
+          } else if (resultInfo?.tableId == "card32eu") {
             const generalResult = resultInfo?.result[0]?.desc.split("|");
             asianWinner = generalResult[0]
-          } 
+          }
         }
         const Winner = marketData?.winnerInfo ? marketData?.winnerInfo : asianWinner;
 
@@ -472,7 +481,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
             $in: users,
           },
           ...condition[0],
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
         },
       },
       {
