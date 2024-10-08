@@ -239,6 +239,5 @@
   "updateUserBetSizesColec",
   "block-games",
   "get-block-games",
-  "unblock-games",
-  "logout"
+  "unblock-games"
   ]

@@ -46,8 +46,8 @@ async function registerUser(req, res) {
   //console.log(' User Is creatting   ');
   const userNameLowerNext = req.body.userName.toLowerCase()
   const checkDuplicateuser = await User.findOne({ userName: userNameLowerNext })
-  if (checkDuplicateuser) {
-    res.status(400).send({ message: "Username is already taken." })
+  if (checkDuplicateuser){
+    res.status(400).send({message:"Username is already taken."})
   }
   if (req.decoded.role == '5') {
     return res.status(404).send({ message: 'you are not allowed to do this ' });
@@ -356,30 +356,13 @@ function login(req, res) {
               defaultTheme: setting[1].defaultThemeName,
               defaultLoginPage: setting[0].defaultLoginPage,
               user,
-              isAdmin: user.role < 5 ? true : false
+              isAdmin:user.role<5?true:false
             });
           });
         });
       });
     }
   );
-}
-
-async function logout(req, res) {
-  try {
-    const userId = req.body.userId;
-
-   var token = await jwt.sign({}, secret, {
-      expiresIn: new Date().getTime()
-    });
-
-    await LoginActivity.updateOne({ userId: userId }, { $set: { token: "" } });
-
-    res.status(200).send({ message: "User Logout Successfully." });
-
-  } catch (error) {
-    res.status(500).send({ message: "Error during logout", error: error.message });
-  }
 }
 
 function saveLoginActivity(detailsForLoginActivity, _callback) {
@@ -1346,7 +1329,6 @@ const userAccountSattlement = async (req, res) => {
 };
 
 router.post('/login', userValidation.validate('login'), login);
-router.post('/logout', logout);
 loginRouter.post('/register', userValidation.validate('registerUser'), registerUser);
 
 loginRouter.get('/getAllUsers', getAllUsers);
