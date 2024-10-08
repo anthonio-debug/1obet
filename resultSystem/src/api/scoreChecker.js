@@ -273,6 +273,7 @@ function scoreChecker() {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               console.log("Inside manual 1111111111..........");
               continue;
+              console.log("Inside manual 22222..........");
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
 
