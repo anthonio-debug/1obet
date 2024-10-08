@@ -90,7 +90,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     });
 
     AmountAddedBacktoUserAB = betexposureAmount + selectedRunnerAmount  // 400 + ( -45 ) = 355, in case of winning we will set it zero
-	TotalWin = AmountAddedBacktoUserAB; // in case of winning, we will keep it same
+	TotalWin = Number(AmountAddedBacktoUserAB.toFixed(3)); // in case of winning, we will keep it same
 	
 	let diff = selectedRunnerAmount;
 	let users_exposureNewUpdated = user_Exposure + TotalLose;
