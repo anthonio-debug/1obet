@@ -66,7 +66,7 @@ const getParents = async (userId) => {
   return parentUserIds;
 };
 
-const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = '0', subMarketId = '0', runnersPosition) => {
+const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, selectionId = 0, marketId = '0', subMarketId = '0', runnersPosition,prevhighestAmount) => {
   const parentUser = await User.find({
     userId: {
       $in: [...parentUsersIds]
@@ -89,9 +89,10 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
   console.log("highestAmount====================", highestAmount)
 
   for (const user of parentUser) {
+    let reverted_userCurrentExposure
     console.log("user id......................................................>", user.userId);
 
-    console.log("winningAmount......................................................>", winningAmount);
+  
 
     console.log("user.commission......................................................>", user.commission);
 
@@ -101,6 +102,22 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     const finalAmount = Number(amountToBeSub.toFixed(3));
     console.log("amountToBeSub......................................................>", amountToBeSub);
     console.log("user.exposure......................................................>", user.exposure);
+    console.log("previous bet highest amount: ",prevhighestAmount);
+
+    // start of if bettor was in loss on all his runners in previous bet
+
+    //end of if bettor was in loss on all his runners in previous bet
+
+    console.log("previous bet highest amount: ",prevhighestAmount);
+
+    /*
+    Make a function which takes current bettor userId, current marketId, submarketId. It finds if has previous bet where calculateExp=true. 
+It gets highestAmount from runnersPosition array. ( Before saving new bet, this must already be taken )
+From this highest value, code gets his share based on his downline share which is his prevExposure. Remove this from user.exposure for this 
+parent and then add new NextExposure for this parent based on highestAmount for this new bet.
+    */
+    let userCurrentExposure = user.exposure;
+    //reverted_userCurrentExposure -= prevhighestAmount;
 
     console.log("finalAmount......................................................>", finalAmount);
     user.exposure -= finalAmount;
@@ -3209,6 +3226,24 @@ const placeBet = async (req, res) => {
         });
       }
 
+      let prevhighestAmount=false;
+      const prevBet = await Bets.findOne({ marketId: _3rdPartyMarketId,
+                                           subMarketId: subMarketDetail ? subMarketDetail.Id : 0,
+                                           userId,
+                                           calculateExp: true 
+                                          });
+      if(prevBet){
+        let prevrunnersPosition = prevBet.runnersPosition;
+        const prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
+
+      }
+      if(!prevhighestAmount){
+        console.log("No previous bet found...........");
+      }else{
+        console.log("found me prev. prevhighestAmount:",prevhighestAmount);
+      }
+      
+
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
         sportsId: marketId || 0,
@@ -3424,7 +3459,7 @@ const placeBet = async (req, res) => {
           await ExpTran.save();
           console.log('Exposure transaction saved');
 
-          await updateParentUserBalance(parentUserIds, winningAmount, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id, runnersPosition);
+          await updateParentUserBalance(parentUserIds, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id, runnersPosition,prevhighestAmount);
           console.log('Parent user balance updated');
 
           activeBettors.delete(userId);
