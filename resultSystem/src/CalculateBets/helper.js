@@ -193,7 +193,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             
             let NeutralselectedRunnerAmount = Math.abs(diff);
             let upMovingAmount = NeutralselectedRunnerAmount;
-            let totalRemainingAmount = NeutralselectedRunnerAmount;
+            let totalRemainingAmount = diff;
             let remainingAmount = NeutralselectedRunnerAmount;
             let commissionAmount = 0;
             let upMovingCommAmount = 0;
