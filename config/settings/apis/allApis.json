@@ -240,5 +240,6 @@
   "block-games",
   "get-block-games",
   "unblock-games",
-  "logout"
+  "logout",
+  "casinoListing"
   ]
