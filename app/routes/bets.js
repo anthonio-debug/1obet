@@ -73,6 +73,8 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     },
     isDeleted: false
   }).sort({ userId: -1 });
+  const highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+  
   let prev = 0;
   console.log("List of all parent Ids found..................................", parentUsersIds);
   for (const user of parentUser) {
@@ -81,7 +83,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     user['commission'] = commission;
     prev = current;
   }
-  const highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+  
 
   console.log("runnersPosition====================", runnersPosition)
   console.log("highestAmount====================", highestAmount)
@@ -95,7 +97,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
 
 
 
-    const amountToBeSub = (user.commission / 100) * winningAmount;
+    const amountToBeSub = (user.downLineShare / 100) * highestAmount;
     const finalAmount = Number(amountToBeSub.toFixed(3));
     console.log("amountToBeSub......................................................>", amountToBeSub);
     console.log("user.exposure......................................................>", user.exposure);
