@@ -78,7 +78,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   console.log("debt insdie...................................",bet);
 
   console.log("userID insdie...................................",bet.userId);
-
+  const runnerPosition = bet?.runnersPosition
+  var amount = 0
+  var winnerRunner = '';
   runnerPosition?.forEach(winner => {
         console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
         if (winner.runner == selectionId) {
@@ -333,7 +335,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               });
             }
 
-            
+
             if(diff<0){
                 //Bettor lost
             }else if(diff>0){
