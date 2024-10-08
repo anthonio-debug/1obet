@@ -268,6 +268,7 @@ function scoreChecker() {
           }
         } else {
           for (const bet of bets) {
+            console.log("Inside else bet detail..........",bet);
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
