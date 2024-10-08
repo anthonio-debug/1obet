@@ -94,7 +94,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 	
 	let diff = selectedRunnerAmount;
 	let users_exposureNewUpdated = user_Exposure + TotalLose;
-	let updatedAvailableBalance = user_AvailableBalance;
+	let updatedAvailableBalance = Number(user_AvailableBalance.toFixed(3));
 	updatedAvailableBalance = TotalWin + updatedAvailableBalance;
 
     let updatedDepositsAvailableBalance = lastWithdrawalRow_AvailableBalance+diff;
