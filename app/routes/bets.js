@@ -91,8 +91,15 @@ const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, sele
 
   for (const user of parentUser) {
     let reverted_userCurrentExposure
-    const prevamountToBeSub = (user.commission / 100) * prevhighestAmount; // this is his share in loss in prev. bet
-    const prevfinalAmount = Number(prevamountToBeSub.toFixed(3));
+    let prevamountToBeSub = 0;
+    let prevfinalAmount = 0;
+    if(prevhighestAmount!=false){
+
+       prevamountToBeSub = (user.commission / 100) * prevhighestAmount; // this is his share in loss in prev. bet
+       prevfinalAmount = Number(prevamountToBeSub.toFixed(3));
+
+    }
+
 
     console.log("prevamountToBeSub loss share......................................................>", prevamountToBeSub);
     
