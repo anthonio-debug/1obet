@@ -259,7 +259,7 @@ function scoreChecker() {
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
             for (const bet of bets) {
-
+              console.log("First------------------------------------------------------",bet.userId, "-------------", bet.marketId);
               let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
               
             }
@@ -272,6 +272,9 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+
+            console.log("Second------------------------------------------------------",bet.userId, "-------------", bet.marketId);
+
             let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
             return;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
