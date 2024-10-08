@@ -125,7 +125,7 @@ parent and then add new NextExposure for this parent based on highestAmount for 
       updatedExposure = -amountToBeSub;
     }else{
       
-      updatedExposure = user.exposure + amountToBeSub;
+      updatedExposure = user.exposure - amountToBeSub;
     }
     console.log("parent id : ",user.userId," previous  Exposure---------------------------------------------",user.exposure);
     console.log("parent id : ",user.userId," updated Exposure---------------------------------------------",updatedExposure);
