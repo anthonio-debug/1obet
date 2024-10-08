@@ -105,6 +105,8 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     console.log("finalAmount......................................................>", finalAmount);
     user.exposure -= finalAmount;
     user.availableBalance -= finalAmount;
+    let myOwnShare = (100 - user.downLineShare) / 100;
+    console.log("My actual share is----------------------------",myOwnShare);
 
     await user.save();
     if (matchId != 0) {
