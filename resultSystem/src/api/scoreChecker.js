@@ -244,11 +244,11 @@ function scoreChecker() {
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
 
-       // console.log("bets------------------------------------------------------",bets);
+        console.log("result.winnerSelectionId------------------------------------------------------",result.winnerSelectionId);
         
         
         //return;
-
+        
         if (result.winnerSelectionId == -1) {
           for (const bet of bets) {
 
