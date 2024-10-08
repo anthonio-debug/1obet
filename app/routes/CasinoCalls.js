@@ -844,27 +844,37 @@ async function casinoListing(req, res) {
   // const last24Hours = now.getTime() - (24  60  60 * 1000);
   try {
    
-        const casinoListing = await CasinoCalls.aggregate([
+    const casinoListing = await CasinoCalls.aggregate([
       {
         $match: {
-          // username: "user_" + userId 
-          createdAt:{$gte:Datetime, $lte:eDate}
+          createdAt: { $gte: Datetime, $lte: eDate }
         }
       },
       {
         $lookup: {
           from: "deposits",
-          let: { 
+          let: {
             userId: { $toInt: { $substr: ["$username", 5, -1] } },
-            local_roundid:"$round_id"
-         },
+            local_roundid: "$round_id"
+          },
           pipeline: [
             {
               $match: {
                 $expr: {
-                  $eq: ["$userId", "$$userId"],
-                  $eq:["$roundId","$$local_roundid"]
+                  $and: [
+                    { $eq: ["$userId", "$$userId"] },
+                    { $eq: ["$roundId", "$$local_roundid"] }
+                  ]
                 }
+              }
+            },
+            {
+              $project: {
+                userId: 1,
+                roundId: 1,
+                event: 1,
+                date: 1,
+                amount: 1
               }
             }
           ],
@@ -872,59 +882,41 @@ async function casinoListing(req, res) {
         }
       },
       {
-        $unwind: "$depositRec" 
+        $unwind: "$depositRec"
       },
       {
         $group: {
-          _id: {
-            round_id: "$round_id",
-            // depositId: "$depositRec.roundId"
-          },
+          _id: "$round_id",
           debitCount: {
-            $sum: {
-              $cond: [{ $eq: ["$action", "debit"] }, 1, 0]
-            }
+            $sum: { $cond: [{ $eq: ["$action", "debit"] }, 1, 0] }
           },
           creditCount: {
-            $sum: {
-              $cond: [{ $eq: ["$action", "credit"] }, 1, 0]
-            }
+            $sum: { $cond: [{ $eq: ["$action", "credit"] }, 1, 0] }
           },
           rollbackCount: {
-            $sum: {
-              $cond: [{ $eq: ["$action", "rollback"] }, 1, 0]
-            }
+            $sum: { $cond: [{ $eq: ["$action", "rollback"] }, 1, 0] }
           },
           debitAmountSum: {
-            $sum: {
-              $cond: [{ $eq: ["$action", "debit"] }, { $toDouble: "$amount" }, 0]
-            }
+            $sum: { $cond: [{ $eq: ["$action", "debit"] }, { $toDouble: "$amount" }, 0] }
           },
           creditAmountSum: {
-            $sum: {
-              $cond: [{ $eq: ["$action", "credit"] }, { $toDouble: "$amount" }, 0]
-            }
+            $sum: { $cond: [{ $eq: ["$action", "credit"] }, { $toDouble: "$amount" }, 0] }
           },
           rollbackAmountSum: {
-            $sum: {
-              $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0]
-            }
+            $sum: { $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0] }
           },
-          totalRoundCount: {
-            $sum: 1
-          },
+          totalRoundCount: { $sum: 1 },
           game_id: { $first: "$game_id" },
-          gameName: { $first: "$depositRec.event" }, 
+          gameName: { $first: "$depositRec.event" },
           userId: { $first: "$depositRec.userId" },
           date: { $first: "$depositRec.date" },
-          amount: { $first: "$depositRec.amount" } 
+          amount: { $first: "$depositRec.amount" }
         }
       },
       {
         $project: {
-          _id: 0, 
-          round_id: "$_id.round_id", 
-          depositRoundId: "$_id.depositId", 
+          _id: 0,
+          round_id: "$_id",
           game_id: 1,
           gameName: 1,
           userId: 1,
@@ -938,8 +930,9 @@ async function casinoListing(req, res) {
           rollbackAmountSum: 1,
           totalRoundCount: 1
         }
-      },
+      }
     ]);
+    
     
 
 
