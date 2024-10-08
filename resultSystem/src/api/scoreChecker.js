@@ -224,7 +224,7 @@ function scoreChecker() {
           marketData: betData.marketId,
           resultData: result.winnerSelectionId
         });
-
+        console.log("============================================>",betData.marketId);
         const bets = await Bets.find({
           marketId: betData.marketId,
           //marketId: '1.233997861',
