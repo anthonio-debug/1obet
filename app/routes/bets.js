@@ -74,7 +74,7 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     isDeleted: false
   }).sort({ userId: -1 });
   let prev = 0;
-
+  console.log("List of all parent Ids found..................................",parentUsersIds);
   for (const user of parentUser) {
     let current = user.downLineShare;
     let commission = current - prev;
@@ -86,9 +86,16 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     console.log("user id......................................................>",user.userId);
 
     console.log("winningAmount......................................................>",winningAmount);
+
+    console.log("user.commission......................................................>",user.commission);
+
+    
+
     const amountToBeSub = (user.commission / 100) * winningAmount;
     const finalAmount = Number(amountToBeSub.toFixed(3));
     console.log("amountToBeSub......................................................>",amountToBeSub);
+    console.log("user.exposure......................................................>",user.exposure);
+    
     console.log("finalAmount......................................................>",finalAmount);
     user.exposure -= finalAmount;
     user.availableBalance -= finalAmount;

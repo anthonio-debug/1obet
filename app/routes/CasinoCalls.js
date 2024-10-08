@@ -154,8 +154,14 @@ async function findAndProcessTransactions(user) {
             { "games.id": tran.game_id },
             { "games.$": 1 }
           );
-    
-          const game = gamesList?.games[0];
+          let CgameName;
+          let Cgame_id;
+          if(gamesList){
+            const game = gamesList?.games[0];
+             CgameName = game.name;
+             Cgame_id = game.game_id;
+          }
+          
           
           
 
@@ -190,10 +196,10 @@ async function findAndProcessTransactions(user) {
             creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
             cashOrCredit: "Settlement",
             sportsId: "6",
-            event: game.name,
+            event: CgameName,
             roundId: tran._id,
             marketId: tran._id,
-            matchId: tran.game_id,
+            matchId: Cgame_id,
           };
 
           const deposit = new Cash(betTransactionData);
