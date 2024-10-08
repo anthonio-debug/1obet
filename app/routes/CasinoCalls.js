@@ -914,6 +914,11 @@ async function casinoListing(req, res) {
         }
       },
       {
+        $sort: {
+          _id: 1 
+        }
+      },
+      {
         $project: {
           _id: 0,
           round_id: "$_id",
