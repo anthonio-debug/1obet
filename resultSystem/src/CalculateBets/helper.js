@@ -180,7 +180,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             return;
           } else {
             
-            let NeutralselectedRunnerAmount = Match.abs(diff);
+            let NeutralselectedRunnerAmount = Math.abs(diff);
             let totalRemainingAmount = NeutralselectedRunnerAmount;
             let remainingAmount = NeutralselectedRunnerAmount;
             let commissionAmount = 0;
