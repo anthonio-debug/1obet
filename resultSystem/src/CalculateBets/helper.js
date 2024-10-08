@@ -104,6 +104,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     
 
 	let depositsNewAmount = diff;
+    
 	console.log("Deposits Updated Amount:",depositsNewAmount);
 	
 	console.log("Deposits updatedDepositsAvailableBalance:",updatedDepositsAvailableBalance);
@@ -181,6 +182,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           } else {
             
             let NeutralselectedRunnerAmount = Math.abs(diff);
+            let upMovingAmount = NeutralselectedRunnerAmount;
             let totalRemainingAmount = NeutralselectedRunnerAmount;
             let remainingAmount = NeutralselectedRunnerAmount;
             let commissionAmount = 0;
