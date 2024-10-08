@@ -86,14 +86,15 @@ const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, sele
   
 
   console.log("runnersPosition====================", runnersPosition)
-  console.log("highestAmount====================", highestAmount)
-  console.log("prevhighestAmount====================", prevhighestAmount)  
+  console.log("Current highestAmount====================", highestAmount)
+  console.log("Prev prevhighestAmount====================", prevhighestAmount)  
 
   for (const user of parentUser) {
     let reverted_userCurrentExposure
     const prevamountToBeSub = (user.commission / 100) * prevhighestAmount; // this is his share in loss in prev. bet
     const prevfinalAmount = Number(prevamountToBeSub.toFixed(3));
 
+    console.log("prevamountToBeSub loss share......................................................>", prevamountToBeSub);
     
     console.log("user id......................................................>", user.userId);
 
@@ -105,15 +106,15 @@ const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, sele
 
     const amountToBeSub = (user.commission / 100) * highestAmount;
     const finalAmount = Number(amountToBeSub.toFixed(3));
-    console.log("amountToBeSub......................................................>", amountToBeSub);
+    console.log("amountToBeSub loss share amount......................................................>", amountToBeSub);
     
-    console.log("previous bet highest amount: ",prevhighestAmount);
+    
 
     // start of if bettor was in loss on all his runners in previous bet
 
     //end of if bettor was in loss on all his runners in previous bet
 
-    console.log("previous bet highest amount: ",prevhighestAmount);
+  
 
     /*
     Make a function which takes current bettor userId, current marketId, submarketId. It finds if has previous bet where calculateExp=true. 
