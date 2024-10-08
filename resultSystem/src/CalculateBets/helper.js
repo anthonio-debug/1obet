@@ -94,7 +94,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 	
 	let diff = selectedRunnerAmount;
 	let users_exposureNewUpdated = user_Exposure + TotalLose;
-	let updatedAvailableBalance = Number(user_AvailableBalance.toFixed(3));
+    console.log("NaN issue with user_AvailableBalance: ",user_AvailableBalance);
+    console.log("NaN issue with TotalWin: ",TotalWin);
+	let updatedAvailableBalance = user_AvailableBalance;
 	updatedAvailableBalance = TotalWin + updatedAvailableBalance;
 
     let updatedDepositsAvailableBalance = lastWithdrawalRow_AvailableBalance+diff;
