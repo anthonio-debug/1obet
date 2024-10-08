@@ -80,6 +80,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     let calculatedExp = bet.calculatedExp;
     let betexposureAmount = bet.exposureAmount;
     TotalLose = betexposureAmount;
+    let userId = bet.userId;
 
 
   
