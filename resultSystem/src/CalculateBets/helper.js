@@ -313,7 +313,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               SessionScore = marketInfo?.score;
             }
             await Bets.updateOne(
-              { _id: bet._id },
+              { marketId: bet.marketId,userId: bet.userId,sportsId: bet.sportsId },
               {
                 status: 0,
                 position: Number(bet.winningAmount.toFixed(3)),
