@@ -76,11 +76,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     let AmountAddedBacktoUserAB = 0;
     let TotalWin = 0;
     let TotalLose = 0;
+    let calculatedExp = bet.calculatedExp;
     let betexposureAmount = bet.exposureAmount;
     TotalLose = betexposureAmount;
 
 
   
+    console.log("calculatedExp insdie...................................",calculatedExp);
   console.log("debt insdie...................................",bet);
 
   console.log("userID insdie...................................",bet.userId);
@@ -193,6 +195,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             let remainingAmount = NeutralselectedRunnerAmount;
             let commissionAmount = 0;
             let upMovingCommAmount = 0;
+            
             let prev = 0;
             for (const user of parentUser) {
               let current = user.downLineShare;
