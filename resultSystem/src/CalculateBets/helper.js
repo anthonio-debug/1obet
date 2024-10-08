@@ -94,8 +94,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 	
 	let diff = selectedRunnerAmount;
 	let users_exposureNewUpdated = user_Exposure + TotalLose;
-	let updatedavailableBalance = user_AvailableBalance;
-	updatedavailableBalance = TotalWin + updatedavailableBalance;
+	let updatedAvailableBalance = user_AvailableBalance;
+	updatedAvailableBalance = TotalWin + updatedAvailableBalance;
 
     let updatedDepositsAvailableBalance = lastWithdrawalRow_AvailableBalance+diff;
     
@@ -106,7 +106,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 	
 	console.log("Deposits updatedDepositsAvailableBalance:",updatedDepositsAvailableBalance);
 	
-	console.log("Users updatedavailableBalance:",updatedavailableBalance);
+	console.log("Users updatedAvailableBalance:",updatedAvailableBalance);
 	
 	console.log("users new exposure: ",users_exposureNewUpdated);
 
