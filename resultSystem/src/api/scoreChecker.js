@@ -226,11 +226,11 @@ function scoreChecker() {
         });
 
         const bets = await Bets.find({
-          //marketId: betData.marketId,
-          marketId: '1.233997861',
+          marketId: betData.marketId,
+          //marketId: '1.233997861',
           sportsId: betData.sportsId,
           calculateExp:true,
-          //status: 1
+          status: 1
           
         });
 
@@ -244,14 +244,10 @@ function scoreChecker() {
         await Bets.updateMany({ marketId: betData.marketId, sportsId: betData.sportsId }, { $set: { resultId: newRecord._id } });
 
 
-        console.log("bets------------------------------------------------------",bets);
-        for (const bet of bets) {
-
-          let winningsCalculate = await getAmountOfWinnerTemp(bet,275533);
-          
-        }
+       // console.log("bets------------------------------------------------------",bets);
         
-        return;
+        
+        //return;
 
         if (result.winnerSelectionId == -1) {
           for (const bet of bets) {
@@ -262,8 +258,13 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            for (const bet of bets) {
+
+              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+              
+            }
             //console.log("handle bet draw");
-            await handleDrawBet(bet);
+            //await handleDrawBet(bet);
           }
         } else {
           for (const bet of bets) {
@@ -271,6 +272,8 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+            return;
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
