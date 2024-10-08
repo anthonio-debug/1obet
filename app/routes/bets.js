@@ -101,7 +101,7 @@ const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, sele
     const amountToBeSub = (user.commission / 100) * highestAmount;
     const finalAmount = Number(amountToBeSub.toFixed(3));
     console.log("amountToBeSub......................................................>", amountToBeSub);
-    console.log("user.exposure......................................................>", user.exposure);
+    
     console.log("previous bet highest amount: ",prevhighestAmount);
 
     // start of if bettor was in loss on all his runners in previous bet
@@ -120,12 +120,19 @@ parent and then add new NextExposure for this parent based on highestAmount for 
     //reverted_userCurrentExposure -= prevhighestAmount;
 
     console.log("finalAmount......................................................>", finalAmount);
-    user.exposure -= finalAmount;
-    user.availableBalance -= finalAmount;
-    let myOwnShare = (100 - user.commission) / 100;
-    console.log("My actual share is----------------------------",myOwnShare);
-
+    let updatedExposure;
+    if(user.exposure==0){
+      updatedExposure = -amountToBeSub;
+    }else{
+      
+      updatedExposure = user.exposure + amountToBeSub;
+    }
+    console.log("parent id : ",user.userId," previous  Exposure---------------------------------------------",user.exposure);
+    console.log("parent id : ",user.userId," updated Exposure---------------------------------------------",updatedExposure);
+    user.exposure = updatedExposure;
+    user.availableBalance -= amountToBeSub;
     await user.save();
+
     if (matchId != 0) {
       let position = await new currentPosition({
         userId: user.userId,
