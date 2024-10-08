@@ -46,7 +46,7 @@ async function addCredit(req, res) {
       ){
         return res
           .status(400)
-          .send({ message: `Max available credit is is ${currentUserParent.cash < 0 ? currentUserParent.creditRemaining + currentUserParent.cash : currentUserParent.creditRemaining }` });
+          .send({ message: `Max available credit is ${currentUserParent.cash < 0 ? currentUserParent.creditRemaining + currentUserParent.cash : currentUserParent.creditRemaining }` });
       }
     }
 
