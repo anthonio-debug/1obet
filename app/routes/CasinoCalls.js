@@ -956,6 +956,6 @@ async function casinoListing(req, res) {
     });
   }
 }
-router.post('/casinoListing', casinoListing)
+router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
 module.exports = { router,findAndProcessTransactions };
