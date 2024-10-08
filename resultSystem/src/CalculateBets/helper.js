@@ -197,6 +197,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             let remainingAmount = NeutralselectedRunnerAmount;
             let commissionAmount = 0;
             let upMovingCommAmount = 0;
+            console.log("-------------------------------------------------------------------------------------------------===",totalRemainingAmount);
             
             let prev = 0;
             for (const user of parentUser) {
