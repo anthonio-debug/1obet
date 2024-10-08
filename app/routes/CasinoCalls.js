@@ -829,6 +829,133 @@ async function  casino (req, res) {
       return res.send({ status: '400', msg: 'Invalid action' });
   }
 }
+async function casinoListing(req, res) {
+  const {startDate,endDate} = req.body;
+  
+  // const userId= +user
+  const Datetime = new Date(startDate).getTime();
+  const eDate = new Date(endDate).getTime();
+  if (isNaN(Datetime) || isNaN(eDate)) {
+    return res.status(400).send({ message: "Invalid date or endDate format" });
+  }
+  //  const Date = 1727736538561
+  // const userId = +game_id; // Ensure the userId is a number
+  // const now = new Date();
+  // const last24Hours = now.getTime() - (24  60  60 * 1000);
+  try {
+   
+        const casinoListing = await CasinoCalls.aggregate([
+      {
+        $match: {
+          // username: "user_" + userId 
+          createdAt:{$gte:Datetime, $lte:eDate}
+        }
+      },
+      {
+        $lookup: {
+          from: "deposits",
+          let: { 
+            userId: { $toInt: { $substr: ["$username", 5, -1] } },
+            local_roundid:"$round_id"
+         },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $eq: ["$userId", "$$userId"],
+                  $eq:["$roundId","$$local_roundid"]
+                }
+              }
+            }
+          ],
+          as: "depositRec"
+        }
+      },
+      {
+        $unwind: "$depositRec" 
+      },
+      {
+        $group: {
+          _id: {
+            round_id: "$round_id",
+            // depositId: "$depositRec.roundId"
+          },
+          debitCount: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "debit"] }, 1, 0]
+            }
+          },
+          creditCount: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "credit"] }, 1, 0]
+            }
+          },
+          rollbackCount: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "rollback"] }, 1, 0]
+            }
+          },
+          debitAmountSum: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "debit"] }, { $toDouble: "$amount" }, 0]
+            }
+          },
+          creditAmountSum: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "credit"] }, { $toDouble: "$amount" }, 0]
+            }
+          },
+          rollbackAmountSum: {
+            $sum: {
+              $cond: [{ $eq: ["$action", "rollback"] }, { $toDouble: "$amount" }, 0]
+            }
+          },
+          totalRoundCount: {
+            $sum: 1
+          },
+          game_id: { $first: "$game_id" },
+          gameName: { $first: "$depositRec.event" }, 
+          userId: { $first: "$depositRec.userId" },
+          date: { $first: "$depositRec.date" },
+          amount: { $first: "$depositRec.amount" } 
+        }
+      },
+      {
+        $project: {
+          _id: 0, 
+          round_id: "$_id.round_id", 
+          depositRoundId: "$_id.depositId", 
+          game_id: 1,
+          gameName: 1,
+          userId: 1,
+          date: 1,
+          amount: 1,
+          debitCount: 1,
+          debitAmountSum: 1,
+          creditCount: 1,
+          creditAmountSum: 1,
+          rollbackCount: 1,
+          rollbackAmountSum: 1,
+          totalRoundCount: 1
+        }
+      },
+    ]);
+    
 
+
+    res.status(200).json({
+      success: true,
+      message: 'casinoListing fetched successfully',
+      data: casinoListing
+    });
+  } catch (error) {
+    console.error("Error in casinoListing:", error);
+    res.status(500).json({
+      success: false,
+      message: 'Internal server error'
+    });
+  }
+}
+router.post('/casinoListing', casinoListing)
 router.get('/casino', casino);
 module.exports = { router,findAndProcessTransactions };
