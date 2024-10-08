@@ -66,7 +66,7 @@ const getParents = async (userId) => {
   return parentUserIds;
 };
 
-const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = '0', subMarketId = '0') => {
+const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = '0', subMarketId = '0', runnersPosition) => {
   const parentUser = await User.find({
     userId: {
       $in: [...parentUsersIds]
@@ -74,32 +74,36 @@ const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 
     isDeleted: false
   }).sort({ userId: -1 });
   let prev = 0;
-  console.log("List of all parent Ids found..................................",parentUsersIds);
+  console.log("List of all parent Ids found..................................", parentUsersIds);
   for (const user of parentUser) {
     let current = user.downLineShare;
     let commission = current - prev;
     user['commission'] = commission;
     prev = current;
   }
+  const highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+
+  console.log("runnersPosition====================", runnersPosition)
+  console.log("highestAmount====================", highestAmount)
 
   for (const user of parentUser) {
-    console.log("user id......................................................>",user.userId);
+    console.log("user id......................................................>", user.userId);
 
-    console.log("winningAmount......................................................>",winningAmount);
+    console.log("winningAmount......................................................>", winningAmount);
 
-    console.log("user.commission......................................................>",user.commission);
+    console.log("user.commission......................................................>", user.commission);
 
-    
+
 
     const amountToBeSub = (user.commission / 100) * winningAmount;
     const finalAmount = Number(amountToBeSub.toFixed(3));
-    console.log("amountToBeSub......................................................>",amountToBeSub);
-    console.log("user.exposure......................................................>",user.exposure);
-    
-    console.log("finalAmount......................................................>",finalAmount);
+    console.log("amountToBeSub......................................................>", amountToBeSub);
+    console.log("user.exposure......................................................>", user.exposure);
+
+    console.log("finalAmount......................................................>", finalAmount);
     user.exposure -= finalAmount;
     user.availableBalance -= finalAmount;
-    
+
     await user.save();
     if (matchId != 0) {
       let position = await new currentPosition({
@@ -3416,7 +3420,7 @@ const placeBet = async (req, res) => {
           await ExpTran.save();
           console.log('Exposure transaction saved');
 
-          await updateParentUserBalance(parentUserIds, winningAmount, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id);
+          await updateParentUserBalance(parentUserIds, winningAmount, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id, runnersPosition);
           console.log('Parent user balance updated');
 
           activeBettors.delete(userId);
