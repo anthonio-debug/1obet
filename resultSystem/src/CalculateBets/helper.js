@@ -330,27 +330,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               userId: userId,
               isDeleted: false
             });
-            if (bet.calculateExp) {
-              await ExpRec.create({
-                userId: updatedUser.userId,
-                trans_from: 'BetWin',
-                trans_from_id: bet._id,
-                trans_bet_status: 0,
-                user_prev_balance: user_prev_balance,
-                user_prev_availableBalance: user_prev_availableBalance,
-                user_prev_exposure: user_prev_exposure,
-                user_new_balance: UpdatedBalance,
-                user_new_availableBalance: UpdatedAvailableBalance,
-                user_new_exposure: UpdatedExposure,
-                marketId: bet.marketId,
-                sportsId: bet.sportsId,
-                calculatedExp: calculatedExp,
-                DateTime: new Date(),
-                calculateExp: calculatedExp,
-                position: bet.position,
-                exposureAmount: bet.exposureAmount
-              });
-            }
+            
 
 
             if(diff<0){
