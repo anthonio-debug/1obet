@@ -570,7 +570,7 @@ async function debitFun(req, res) {
 
   const game = gamesList?.games[0];
   console.log("")
-  if (game.isAllowed === false) {
+  if (game?.isAllowed === false) {
     return res.status(400).send({ message: "This game is not allowed!!" })
   }
   if (!processing) {
