@@ -271,6 +271,7 @@ function scoreChecker() {
             console.log("Inside else bet detail..........",bet);
             console.log("Inside else result detail..........",result);
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
+              console.log("Inside manual 1111111111..........");
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
