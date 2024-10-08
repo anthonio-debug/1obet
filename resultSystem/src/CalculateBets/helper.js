@@ -63,7 +63,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     let lastWithdrawalRow_AvailableBalance = lastMaxWithdraw.availableBalance;
     let lastWithdrawalRow_balance = lastMaxWithdraw.balance;
     let lastWithdrawalRow_maxWithdraw = lastMaxWithdraw.maxWithdraw;	
-    let user_AvailableBalance = userToUpdate.AvailableBalance;
+    let user_AvailableBalance = userToUpdate.availableBalance;
     let userPrevBalance = userToUpdate.balance;
     let userPrevClientPL = userToUpdate.clientPL;
     let user_Exposure = userToUpdate.exposure;
