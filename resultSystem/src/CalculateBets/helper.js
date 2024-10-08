@@ -3,7 +3,13 @@ const User = require('../../../app/models/user');
 const { getParents } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
-
+const config = {
+    
+    commissionLessSubMarkets: [2, 3, 4],
+    Fancy: 7,
+    BookMaker: 8,
+    FigureEvenOddSmallBig: [9, 10, 34]
+};
 
 function getAmountOfWinner(bet, selectionId) {
     console.log("Reached inside the function..............................");
@@ -291,6 +297,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 sportID: bet.sportsId,
                 marketId: bet.marketId
               });
+              
               winnerRunnerData = marketInfo?.winnerRunnerData;
             } else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
               const match = await Events.findById(bet.matchId);
