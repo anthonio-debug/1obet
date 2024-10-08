@@ -192,7 +192,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             let totalRemainingAmount = NeutralselectedRunnerAmount;
             let remainingAmount = NeutralselectedRunnerAmount;
             let commissionAmount = 0;
-            
+            let upMovingCommAmount = 0;
             let prev = 0;
             for (const user of parentUser) {
               let current = user.downLineShare;
