@@ -97,6 +97,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 	let updatedavailableBalance = user_AvailableBalance;
 	updatedavailableBalance = TotalWin + updatedavailableBalance;
 
+    let updatedDepositsAvailableBalance = lastWithdrawalRow_AvailableBalance+diff;
     
     
 
