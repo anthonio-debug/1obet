@@ -3,6 +3,7 @@ const User = require('../../../app/models/user');
 const { getParents } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
+const CurrentPosition = require('../../../app/models/CurrentPosition');
 const config = {
     
     commissionLessSubMarkets: [2, 3, 4],
