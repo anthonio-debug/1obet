@@ -269,7 +269,7 @@ async function findAndProcessTransactions(user) {
             const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
               await Cash.create({
                 userId: user.userId,
-                description: `Casino (${GameName})`,
+                description: `Casino (${CgameName})`,
                 createdBy: 0,
                 amount: -(user.commission / 100) * totalRemainingAmount,
                 balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
