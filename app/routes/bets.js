@@ -3304,7 +3304,37 @@ const placeBet = async (req, res) => {
       console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
       console.log("userId:",userId);
       
-      const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
+
+      const mongoose = require('mongoose');
+
+      
+        const session = await mongoose.startSession();
+      
+        try {
+          session.startTransaction();
+      
+          // Example database operations using the session
+          const userRecord = await User.findOne({ userId }).session(session);
+          const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true}).session(session);
+          // If needed, you can perform more operations here
+      
+          await session.commitTransaction();
+        } catch (error) {
+          console.error('An error occurred: ', error);
+          await session.abortTransaction();
+        } finally {
+          session.endSession(); // Always end the session
+        }
+      
+
+
+
+
+
+
+
+
+      
 
       
       
