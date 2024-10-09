@@ -216,11 +216,6 @@ async function findAndProcessTransactions(user) {
             },
             { session }
           );
-        
-        
-        
-        
-        
         } else {
           console.log("Duplicate transaction found, skipping insertion.");
           //await session.abortTransaction();
@@ -237,7 +232,7 @@ async function findAndProcessTransactions(user) {
 
         //START OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
 
-        //END  OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
+        //END OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
 
 
 

@@ -73,6 +73,7 @@ const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, sele
     },
     isDeleted: false
   }).sort({ userId: -1 });
+  console.log("runnersPosition--------------------------------------->>>",runnersPosition);
   const highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
   
   let prev = 0;
@@ -3244,6 +3245,7 @@ const placeBet = async (req, res) => {
       }
 
       
+      
 
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
@@ -3297,36 +3299,6 @@ const placeBet = async (req, res) => {
       if (nowUser.availableBalance < expAmount - prevExpAmount || lastMaxWithdraw.availableBalance < expAmount - prevExpAmount) {
         activeBettors.delete(userId);
         return res.status(404).send({ message: ' Insufficient balance amount ' });
-      }
-
-
-      let prevhighestAmount=false;
-      console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
-      console.log("userId:",userId);
-      
-
-
-
-
-
-
-
-      
-      const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
-
-      
-      
-      
-      if(prevBet){
-        let prevrunnersPosition = prevBet.runnersPosition;
-        console.log(prevrunnersPosition);
-        const prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
-
-      }
-      if(prevhighestAmount===false){
-        console.log("No previous bet found...........");
-      }else{
-        console.log("found me prev. prevhighestAmount:",prevhighestAmount);
       }
 
       if (config.FancyOddEven.includes(subMarketDetail.Id)) {
@@ -3385,10 +3357,7 @@ const placeBet = async (req, res) => {
         //   }
         // ).sort({_id: -1}).limit(1);
       } else {
-        //console.log("Place to update all bets to calculateExp: false...............................................");
-        
-
-
+        console.log("Place to update all bets to calculateExp: false...............................................");
         await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
