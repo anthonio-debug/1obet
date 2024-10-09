@@ -73,8 +73,11 @@ const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, sele
     },
     isDeleted: false
   }).sort({ userId: -1 });
-  const highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
-  
+  let highestAmount;
+  highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+  if(!highestAmount){
+    highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+  }
   let prev = 0;
   console.log("List of all parent Ids found..................................", parentUsersIds);
   for (const user of parentUser) {
