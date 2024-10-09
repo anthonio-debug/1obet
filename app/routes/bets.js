@@ -3301,6 +3301,7 @@ const placeBet = async (req, res) => {
 
 
       let prevhighestAmount=false;
+      let prevBet = false;
       console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
       console.log("userId:",userId);
       
