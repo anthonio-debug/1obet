@@ -509,7 +509,7 @@ const placeBet = async (req, res) => {
       const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == thirdPartyMarketName);
       id = currentMarket?.id;
       _3rdPartyMarketId = id;
-      console.log("_3rdPartyMarketId================= after cup", id, "and", _3rdPartyMarketId, "idDetails.marketId");
+      //console.log("_3rdPartyMarketId================= after cup", id, "and", _3rdPartyMarketId, "idDetails.marketId");
 
       subMarketDetail = await SubMarketType.findOne({
         name: subMarketName,
@@ -3245,7 +3245,6 @@ const placeBet = async (req, res) => {
 
       let prevhighestAmount=false;
       console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
-      console.log("subMarketId:",subMarketId);
       console.log("userId:",userId);
       const prevBet = await Bets.findOne({ marketId: _3rdPartyMarketId,
                                            //subMarketId: subMarketDetail ? subMarketDetail.Id : 0,
