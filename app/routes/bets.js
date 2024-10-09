@@ -73,6 +73,15 @@ const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, sele
     },
     isDeleted: false
   }).sort({ userId: -1 });
+  const mongoose = require('mongoose');
+
+// Assuming Id is a string representation of the ObjectId
+const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
+
+const bet = await Bets.findOne({ _id: betId });
+
+console.log("Bet detail for the object.............",bet);
+ 
   let highestAmount;
   highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
   if(!highestAmount){
@@ -80,28 +89,46 @@ const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, sele
   }
   let prev = 0;
   console.log("List of all parent Ids found..................................", parentUsersIds);
+  console.log("runnersPosition====================", runnersPosition)
+  console.log("Current highestAmount====================", highestAmount)
+  console.log("Prev prevhighestAmount====================", prevhighestAmount)  
+  
+  let prevamountToBeSub;
+  let prevfinalAmount;
+    
   for (const user of parentUser) {
     let current = user.downLineShare;
+      
+    let reversedExp = user.exposure;
+
+     prevamountToBeSub = 0;
+     prevfinalAmount = 0;
+    if(prevhighestAmount!=false){
+
+       prevamountToBeSub = (user.commission / 100) * prevhighestAmount; // this is his share in loss in prev. bet
+       prevfinalAmount = Number(prevamountToBeSub.toFixed(3));
+       reversedExp = user.exposure + prevfinalAmount;
+       //await User.findOneAndUpdate({ userId: user.userId }, { exposure: reversedExp });
+       
+
+    }
+
+
+
+
+
+
     let commission = current - prev;
     user['commission'] = commission;
     prev = current;
   }
   
 
-  console.log("runnersPosition====================", runnersPosition)
-  console.log("Current highestAmount====================", highestAmount)
-  console.log("Prev prevhighestAmount====================", prevhighestAmount)  
+  
 
   for (const user of parentUser) {
     let reverted_userCurrentExposure
-    let prevamountToBeSub = 0;
-    let prevfinalAmount = 0;
-    if(prevhighestAmount!=false){
-
-       prevamountToBeSub = (user.commission / 100) * prevhighestAmount; // this is his share in loss in prev. bet
-       prevfinalAmount = Number(prevamountToBeSub.toFixed(3));
-
-    }
+   
 
 
     console.log("prevamountToBeSub loss share......................................................>", prevamountToBeSub);
@@ -137,13 +164,14 @@ parent and then add new NextExposure for this parent based on highestAmount for 
 
     console.log("finalAmount......................................................>", finalAmount);
     let updatedExposure;
-    if(user.exposure==0){
+    if(reversedExp==0){
       updatedExposure = -amountToBeSub;
     }else{
       
-      updatedExposure = user.exposure - amountToBeSub;
+      updatedExposure = reversedExp - amountToBeSub;
     }
     console.log("parent id : ",user.userId," previous  Exposure---------------------------------------------",user.exposure);
+    console.log("parent id : ",user.userId," Reversed  Exposure---------------------------------------------",reversedExp);
     console.log("parent id : ",user.userId," updated Exposure---------------------------------------------",updatedExposure);
     user.exposure = updatedExposure;
     user.availableBalance -= amountToBeSub;
