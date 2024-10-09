@@ -3373,6 +3373,7 @@ const placeBet = async (req, res) => {
         //   }
         // ).sort({_id: -1}).limit(1);
       } else {
+        console.log("Place to update all bets to calculateExp: false...............................................");
         await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
