@@ -365,8 +365,9 @@ async function findAndProcessTransactions(user) {
       return; // Exit the function successfully after committing
 
     } catch (error) {
-      if (error instanceof MongoExpiredSessionError) {
-        console.error('Caught MongoExpiredSessionError: ', error);
+      // Check for expired session error
+      if (error.message && error.message.includes('expired')) {
+        console.error('Caught expired session error: ', error);
         // Optionally, restart the operation with a new session
         // await performDatabaseOperation(userId); // Example retry logic
       } else {
