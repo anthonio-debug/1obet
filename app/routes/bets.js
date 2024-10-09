@@ -3243,7 +3243,6 @@ const placeBet = async (req, res) => {
         });
       }
 
-      let prevhighestAmount =false ;
       
 
       const bet = new Bets({
@@ -3319,7 +3318,7 @@ const placeBet = async (req, res) => {
       }else{
         console.log("found me prev. prevhighestAmount:",prevhighestAmount);
       }
-            
+
       if (config.FancyOddEven.includes(subMarketDetail.Id)) {
         await Bets.updateMany(
           {
