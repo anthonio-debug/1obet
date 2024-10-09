@@ -267,7 +267,7 @@ async function findAndProcessTransactions(user) {
               }
             );
             const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-              await Deposits.create({
+              await Cash.create({
                 userId: user.userId,
                 description: `Casino (${GameName})`,
                 createdBy: 0,
@@ -297,7 +297,7 @@ async function findAndProcessTransactions(user) {
               });
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
               if(differenceDbCr>0){
-                await Deposits.create({
+                await Cash.create({
                   userId: user.userId,
                   description: `Commission From Casino (${GameName})`,
                   createdBy: 0,
@@ -330,7 +330,7 @@ async function findAndProcessTransactions(user) {
           }
         }
 
-        
+
         } else {
           console.log("Duplicate transaction found, skipping insertion.");
           //await session.abortTransaction();
