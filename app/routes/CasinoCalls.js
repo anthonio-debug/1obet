@@ -100,7 +100,6 @@ async function findAndProcessTransactions(user) {
       }
 
       for (const tran of groupedTransactions) {
-        const allTransData = [];
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) },
           { session }
@@ -202,10 +201,9 @@ async function findAndProcessTransactions(user) {
             marketId: tran._id,
             matchId: Cgame_id,
           };
-          allTrans.push(betTransactionData);
-          await Cash.insertMany(allTrans);
-          //const deposit = new Cash(betTransactionData);
-          //await deposit.save({ session });
+
+          const deposit = new Cash(betTransactionData);
+          await deposit.save({ session });
 
           await users.updateOne(
             { _id: userRecord._id },
@@ -233,7 +231,7 @@ async function findAndProcessTransactions(user) {
 
 
         //START OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
-
+        
         //END  OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
 
 
