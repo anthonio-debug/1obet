@@ -3300,6 +3300,26 @@ const placeBet = async (req, res) => {
         return res.status(404).send({ message: ' Insufficient balance amount ' });
       }
 
+
+      let prevhighestAmount=false;
+      console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
+      console.log("userId:",userId);
+      const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
+      
+      
+      
+      if(prevBet){
+        let prevrunnersPosition = prevBet.runnersPosition;
+        console.log(prevrunnersPosition);
+        const prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
+
+      }
+      if(prevhighestAmount===false){
+        console.log("No previous bet found...........");
+      }else{
+        console.log("found me prev. prevhighestAmount:",prevhighestAmount);
+      }
+            
       if (config.FancyOddEven.includes(subMarketDetail.Id)) {
         await Bets.updateMany(
           {
@@ -3356,36 +3376,19 @@ const placeBet = async (req, res) => {
         //   }
         // ).sort({_id: -1}).limit(1);
       } else {
-        console.log("Place to update all bets to calculateExp: false...............................................");
-        let prevhighestAmount=false;
-      console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
-      console.log("userId:",userId);
-      const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
-      
-      
-      
-      if(prevBet){
-        let prevrunnersPosition = prevBet.runnersPosition;
-        console.log(prevrunnersPosition);
-        const prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
-
-      }
-      if(prevhighestAmount===false){
-        console.log("No previous bet found...........");
-      }else{
-        console.log("found me prev. prevhighestAmount:",prevhighestAmount);
-      }
+        //console.log("Place to update all bets to calculateExp: false...............................................");
+        
 
 
-        // await Bets.updateMany(
-        //   {
-        //     marketId: _3rdPartyMarketId,
-        //     userId: req.decoded.userId,
-        //     matchId: matchId,
-        //     status: 1
-        //   },
-        //   { calculateExp: false }
-        // );
+        await Bets.updateMany(
+          {
+            marketId: _3rdPartyMarketId,
+            userId: req.decoded.userId,
+            matchId: matchId,
+            status: 1
+          },
+          { calculateExp: false }
+        );
         // const latestPreviousbet = await Bets.find(
         //   {
         //     marketId: _3rdPartyMarketId,
