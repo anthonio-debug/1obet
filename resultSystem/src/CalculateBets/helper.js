@@ -293,7 +293,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
               }
-              commissionFrom = user.userId;
+              //commissionFrom = user.userId;
             }
 
             let winnerRunnerData = 0;
