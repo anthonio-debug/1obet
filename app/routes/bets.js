@@ -166,10 +166,11 @@ parent and then add new NextExposure for this parent based on highestAmount for 
 
     console.log("finalAmount......................................................>", finalAmount);
     let updatedExposure;
-    if(reversedExp==0){
+    if(prevhighestAmount===false){
       updatedExposure = -amountToBeSub;
+      console.log("first entry check for minus::::::",updatedExposure);
     }else{
-      
+      console.log("first entry check for minus for else::::::",updatedExposure);
       updatedExposure = -(arr_userExp[user.userId] - amountToBeSub);
     }
     console.log("parent id : ",user.userId," previous  Exposure---------------------------------------------",user.exposure);
