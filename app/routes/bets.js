@@ -3246,13 +3246,13 @@ const placeBet = async (req, res) => {
       let prevhighestAmount=false;
       console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
       console.log("userId:",userId);
-      const prevBet = await Bets.find({ userId:22340,marketId:'1.234132171'
-                                          });
+      const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId});
       
       
-      console.log(prevBet);
+      
       if(prevBet){
         let prevrunnersPosition = prevBet.runnersPosition;
+        console.log(prevrunnersPosition);
         const prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
 
       }
