@@ -3318,7 +3318,7 @@ const placeBet = async (req, res) => {
           const userRecord = await User.findOne({ userId }).session(session);
           const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true}).session(session);
           // If needed, you can perform more operations here
-      
+          console.log("Inside try block..........................",prevBet);
           await session.commitTransaction();
         } catch (error) {
           console.error('An error occurred: ', error);
