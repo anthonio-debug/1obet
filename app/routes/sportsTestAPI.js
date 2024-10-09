@@ -4036,51 +4036,51 @@ async function deleteOdds(req, res) {
     // }
 
 
-    await Deposits.deleteMany({
-      userId: 20046,
-      description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
-    })
-      .then(result => {
-        console.log(`${result.deletedCount} deposit(s) deleted.`);
+    // await Deposits.deleteMany({
+    //   userId: 20046,
+    //   description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
+    // })
+    //   .then(result => {
+    //     console.log(`${result.deletedCount} deposit(s) deleted.`);
   
-      })
-      .catch(err => {
-        console.error("Error deleting deposits:", err);
-      });
-  
-  
+    //   })
+    //   .catch(err => {
+    //     console.error("Error deleting deposits:", err);
+    //   });
   
   
-    const userUpdate = await User.updateOne({ userId:20046 }, {
-      $set: {
-        balance:10000,
-        availableBalance:10000,
-        clientPL: 10000,
-        exposure: -35600,
-        tempExposure:35600
-      }
-    })
+  
+  
+    // const userUpdate = await User.updateOne({ userId:20046 }, {
+    //   $set: {
+    //     balance:10000,
+    //     availableBalance:10000,
+    //     clientPL: 10000,
+    //     exposure: -35600,
+    //     tempExposure:35600
+    //   }
+    // })
 
 
 
 
-    const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_20046"  ,gameplay_final:1}, {
-      isProcessing:true
-    })
-    // await Odds.deleteMany({});
+    // const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_20046"  ,gameplay_final:1}, {
+    //   isProcessing:true
+    // })
+     await Odds.deleteMany({});
 
 
 
 
-    // await RaceOdds.deleteMany({});
+     await RaceOdds.deleteMany({});
     // await fancyOdds.deleteMany({});
-    // await MarketIDS.deleteMany({
-    //   $or: [
-    //     { status: 'CLOSED', sportID: 4339 },
-    //     { status: 'CLOSED', sportID: 7 },
+     await MarketIDS.deleteMany({
+       $or: [
+         { status: 'CLOSED', sportID: 4339 },
+         { status: 'CLOSED', sportID: 7 },
 
-    //   ]
-    // });
+      ]
+     });
     const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
     const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
