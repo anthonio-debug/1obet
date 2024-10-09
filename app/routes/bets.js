@@ -103,6 +103,9 @@ console.log("Bet detail for the object.............",bet);
 
      prevamountToBeSub = 0;
      prevfinalAmount = 0;
+     let commission = current - prev;
+     user['commission'] = commission;
+     prev = current;
     if(prevhighestAmount!=false){
 
        prevamountToBeSub = (user.commission / 100) * prevhighestAmount; // this is his share in loss in prev. bet
@@ -119,9 +122,7 @@ console.log("Bet detail for the object.............",bet);
 
 
 
-    let commission = current - prev;
-    user['commission'] = commission;
-    prev = current;
+
   }
   
 
