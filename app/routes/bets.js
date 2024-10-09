@@ -3284,14 +3284,15 @@ const placeBet = async (req, res) => {
       
       
       
-      if(prevBet){
+      
+      if(prevBet && isFancyOrBookMaker==true && fancyData != null){
+        let prevrunnersPosition = prevBet.runnersPosition;
+        prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.position));
+      }else if(prevBet){
         let prevrunnersPosition = prevBet.runnersPosition;
         console.log(prevrunnersPosition);
          prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
 
-      }
-      if(!prevhighestAmount){
-        prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.position));
       }
       if(prevhighestAmount===false){
         console.log("No previous bet found...........");
