@@ -55,11 +55,12 @@ const checkMarketBlocked = async (user) => {
 const mongoose = require('mongoose');
 async function findAndProcessTransactions(user) {
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user);
-  const session = await mongoose.startSession();
+  
   const maxRetries = 3; // Max retries for the transaction
-
+ let session;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
+      const session = await mongoose.startSession();
       session.startTransaction();
 
       const limitValue = 1; // Set your desired limit here
@@ -364,17 +365,22 @@ async function findAndProcessTransactions(user) {
       return; // Exit the function successfully after committing
 
     } catch (error) {
-      console.error('Error processing transactions:', error);
-      await session.abortTransaction();
-      if (attempt < maxRetries - 1) {
-        // Delay before retrying
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
+      if (error instanceof MongoExpiredSessionError) {
+        console.error('Caught MongoExpiredSessionError: ', error);
+        // Optionally, restart the operation with a new session
+        // await performDatabaseOperation(userId); // Example retry logic
       } else {
-        throw error; // Re-throw the error after max retries
+        console.error('An error occurred: ', error);
+      }
+      if (session) {
+        await session.abortTransaction();
       }
     } finally {
-      session.endSession();  
+      if (session) {
+        session.endSession();
+      }
     }
+  
   }
 }
 
