@@ -3306,26 +3306,26 @@ const placeBet = async (req, res) => {
       console.log("userId:",userId);
       
 
-      const mongoose = require('mongoose');
+      // const mongoose = require('mongoose');
 
       
-        const session = await mongoose.startSession();
+      //   const session = await mongoose.startSession();
       
-        try {
-          session.startTransaction();
+      //   try {
+      //     session.startTransaction();
       
-          // Example database operations using the session
+      //     // Example database operations using the session
           
-           prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true}).session(session);
-          // If needed, you can perform more operations here
-          console.log("Inside try block..........................",prevBet);
-          await session.commitTransaction();
-        } catch (error) {
-          console.error('An error occurred: ', error);
-          await session.abortTransaction();
-        } finally {
-          session.endSession(); // Always end the session
-        }
+      //      prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true}).session(session);
+      //     // If needed, you can perform more operations here
+      //     console.log("Inside try block..........................",prevBet);
+      //     await session.commitTransaction();
+      //   } catch (error) {
+      //     console.error('An error occurred: ', error);
+      //     await session.abortTransaction();
+      //   } finally {
+      //     session.endSession(); // Always end the session
+      //   }
       
         console.log("outside try block..........................",prevBet);
 
