@@ -227,16 +227,6 @@ async function findAndProcessTransactions(user) {
           //return;
         }
 
-        await CasinoCalls.updateMany(
-          { round_id: tran._id.toString() },
-          { $set: { isProcessing: false } },
-          { session }
-        );
-
-
-
-        //START OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
-
         const parentUserIds = await getParents(userRecord.userId);
         const parentUser = await User.find({
           userId: { $in: parentUserIds },
@@ -343,6 +333,18 @@ async function findAndProcessTransactions(user) {
           
           }
         }
+        
+        await CasinoCalls.updateMany(
+          { round_id: tran._id.toString() },
+          { $set: { isProcessing: false } },
+          { session }
+        );
+
+
+
+        //START OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
+
+        
         
         //END  OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
 
