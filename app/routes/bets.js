@@ -3377,15 +3377,15 @@ const placeBet = async (req, res) => {
       }
 
 
-        await Bets.updateMany(
-          {
-            marketId: _3rdPartyMarketId,
-            userId: req.decoded.userId,
-            matchId: matchId,
-            status: 1
-          },
-          { calculateExp: false }
-        );
+        // await Bets.updateMany(
+        //   {
+        //     marketId: _3rdPartyMarketId,
+        //     userId: req.decoded.userId,
+        //     matchId: matchId,
+        //     status: 1
+        //   },
+        //   { calculateExp: false }
+        // );
         // const latestPreviousbet = await Bets.find(
         //   {
         //     marketId: _3rdPartyMarketId,
