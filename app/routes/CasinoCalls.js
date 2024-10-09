@@ -55,12 +55,11 @@ const checkMarketBlocked = async (user) => {
 const mongoose = require('mongoose');
 async function findAndProcessTransactions(user) {
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user);
-  
+  const session = await mongoose.startSession();
   const maxRetries = 3; // Max retries for the transaction
- let session;
+
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
-      const session = await mongoose.startSession();
       session.startTransaction();
 
       const limitValue = 1; // Set your desired limit here
@@ -99,11 +98,6 @@ async function findAndProcessTransactions(user) {
         await session.abortTransaction();  // Abort the transaction if no records found
         return;
       }
-      const now = new Date();
-      const year = now.getFullYear().toString();
-      const month = (now.getMonth() + 1).toString().padStart(2, '0');
-      const day = now.getDate().toString().padStart(2, '0');
-      const formattedDate = `${year}-${month}-${day}`;
 
       for (const tran of groupedTransactions) {
         const userRecord = await users.findOne(
@@ -222,123 +216,11 @@ async function findAndProcessTransactions(user) {
             },
             { session }
           );
-
-
-          const parentUserIds = await getParents(userRecord.userId);
-        const parentUser = await User.find({
-          userId: { $in: parentUserIds },
-          isDeleted: false
-        }).sort({ userId: -1 });
-        if (!parentUser) {
-          console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
-          return;
-        } else {
-          let NeutralselectedRunnerAmount = Math.abs(differenceDbCr);
-          let upMovingAmount = NeutralselectedRunnerAmount;
-          let totalRemainingAmount = differenceDbCr;
-          let remainingAmount = NeutralselectedRunnerAmount;
-          let commissionAmount = 0;
-          let upMovingCommAmount = 0;
-          console.log("-------------------------------------------------------------------------------------------------===",totalRemainingAmount);
-          
-          let prev = 0;
-          for (const user of parentUser) {
-            let current = user.downLineShare;
-            user['commission'] = current - prev;
-            prev = current;
-          }
-          let commissionFrom = userRecord.userId;
-          for (const user of parentUser) {
-            const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-            const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-            const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
-            const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-            const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-          
-            await User.updateOne(
-              {
-                userId: user.userId,
-                isDeleted: false
-              },
-              {
-                balance: totalBalance,
-                exposure: totalExpoisure,
-                availableBalance: totalavailableBalance,
-                clientPL: totalClientPL
-              }
-            );
-            const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-              await Cash.create({
-                userId: user.userId,
-                description: `Casino (${CgameName})`,
-                createdBy: 0,
-                amount: -(user.commission / 100) * totalRemainingAmount,
-                balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                marketId: tran._id,
-                credit: lastMaxWithdraw?.credit || 0,
-                creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-                cashOrCredit: 'Casino Bet',
-                commissionFrom: commissionFrom,
-                sportsId: "6",
-                upLineAmount: -upMovingAmount,
-                betId: tran._id,
-                matchId: Cgame_id,
-                
-                betDateTime: new Date().getTime(),
-                date: new Date().getTime(),
-                createdAt: formattedDate,
-                totalRemainingAmount: totalRemainingAmount,
-                commissionAmount: commissionAmount,
-                remainingAmount: remainingAmount,
-                
-                roundId: tran._id
-              });
-              upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
-              if(differenceDbCr>0){
-                await Cash.create({
-                  userId: user.userId,
-                  description: `Commission From Casino (${CgameName})`,
-                  createdBy: 0,
-                  commissionFrom: commissionFrom,
-                  amount: (user.commission / 100) * commissionAmount,
-                  balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                  availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                  maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                  cashOrCredit: 'Commission',
-                  betId: bet._id,
-                  cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                  marketId: tran._id,
-                  sportsId: "6",
-                  credit: lastMaxWithdraw?.credit || 0,
-                  creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-                  upLineAmount: upMovingCommAmount,
-                  matchId: Cgame_id,
-                 
-                  betDateTime: new Date().getTime(),
-                  date: new Date().getTime(),
-                  createdAt: formattedDate,
-                  
-                  roundId: tran._id
-                });
-
-                upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
-              }
-
-          
-          }
-        }
-
-
         } else {
           console.log("Duplicate transaction found, skipping insertion.");
           //await session.abortTransaction();
           //return;
         }
-
-        
 
         await CasinoCalls.updateMany(
           { round_id: tran._id.toString() },
@@ -350,6 +232,7 @@ async function findAndProcessTransactions(user) {
 
         //START OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
 
+        const parentUserIds = await getParents(userRecord.userId);
         
         
         //END  OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
@@ -365,23 +248,17 @@ async function findAndProcessTransactions(user) {
       return; // Exit the function successfully after committing
 
     } catch (error) {
-      // Check for expired session error
-      if (error.message && error.message.includes('expired')) {
-        console.error('Caught expired session error: ', error);
-        // Optionally, restart the operation with a new session
-        // await performDatabaseOperation(userId); // Example retry logic
+      console.error('Error processing transactions:', error);
+      await session.abortTransaction();
+      if (attempt < maxRetries - 1) {
+        // Delay before retrying
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
       } else {
-        console.error('An error occurred: ', error);
-      }
-      if (session) {
-        await session.abortTransaction();
+        throw error; // Re-throw the error after max retries
       }
     } finally {
-      if (session) {
-        session.endSession();
-      }
+      session.endSession();  
     }
-  
   }
 }
 
