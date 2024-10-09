@@ -112,7 +112,7 @@ console.log("Bet detail for the object.............",bet);
        prevfinalAmount = Number(prevamountToBeSub.toFixed(3));
        reversedExp = user.exposure + prevfinalAmount;
        //await User.findOneAndUpdate({ userId: user.userId }, { exposure: reversedExp });
-       console.log("prevamountToBeSub loss ",user.userId," share......................................................>", prevamountToBeSub);
+       console.log("prevamountToBeSub loss ",user.userId," share.................",user.downLineShare,"........",prevamountToBeSub,".........>", prevamountToBeSub);
 
     }
     arr_userExp[user.userId] = reversedExp;
