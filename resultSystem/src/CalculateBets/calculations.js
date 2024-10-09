@@ -156,7 +156,7 @@ async function handleLosingBet(bet) {
               availableBalance: updatedAvailableBalance
             }
           );
-          const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
+            
           await Deposits.create({
             userId: userToUpdate.userId,
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,

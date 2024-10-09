@@ -95,7 +95,7 @@ console.log("Bet detail for the object.............",bet);
   
   let prevamountToBeSub;
   let prevfinalAmount;
-    
+  let arr_userExp = [];
   for (const user of parentUser) {
     let current = user.downLineShare;
       
@@ -112,6 +112,7 @@ console.log("Bet detail for the object.............",bet);
        
 
     }
+    arr_userExp[user.userId] = reversedExp;
 
 
 
@@ -168,14 +169,18 @@ parent and then add new NextExposure for this parent based on highestAmount for 
       updatedExposure = -amountToBeSub;
     }else{
       
-      updatedExposure = reversedExp - amountToBeSub;
+      updatedExposure = arr_userExp[user.userId] - amountToBeSub;
     }
     console.log("parent id : ",user.userId," previous  Exposure---------------------------------------------",user.exposure);
-    console.log("parent id : ",user.userId," Reversed  Exposure---------------------------------------------",reversedExp);
+    console.log("parent id : ",user.userId," Reversed  Exposure---------------------------------------------",arr_userExp[user.userId]);
     console.log("parent id : ",user.userId," updated Exposure---------------------------------------------",updatedExposure);
     user.exposure = updatedExposure;
     user.availableBalance -= amountToBeSub;
-    await user.save();
+    
+    if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
+      await user.save();
+    }
+    
 
     if (matchId != 0) {
       let position = await new currentPosition({
