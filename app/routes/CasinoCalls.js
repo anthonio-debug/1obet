@@ -216,6 +216,115 @@ async function findAndProcessTransactions(user) {
             },
             { session }
           );
+
+
+          const parentUserIds = await getParents(userRecord.userId);
+        const parentUser = await User.find({
+          userId: { $in: parentUserIds },
+          isDeleted: false
+        }).sort({ userId: -1 });
+        if (!parentUser) {
+          console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
+          return;
+        } else {
+          let NeutralselectedRunnerAmount = Math.abs(differenceDbCr);
+          let upMovingAmount = NeutralselectedRunnerAmount;
+          let totalRemainingAmount = differenceDbCr;
+          let remainingAmount = NeutralselectedRunnerAmount;
+          let commissionAmount = 0;
+          let upMovingCommAmount = 0;
+          console.log("-------------------------------------------------------------------------------------------------===",totalRemainingAmount);
+          
+          let prev = 0;
+          for (const user of parentUser) {
+            let current = user.downLineShare;
+            user['commission'] = current - prev;
+            prev = current;
+          }
+          let commissionFrom = userRecord.userId;
+          for (const user of parentUser) {
+            const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
+            const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+            const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
+            const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+            const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+          
+            await User.updateOne(
+              {
+                userId: user.userId,
+                isDeleted: false
+              },
+              {
+                balance: totalBalance,
+                exposure: totalExpoisure,
+                availableBalance: totalavailableBalance,
+                clientPL: totalClientPL
+              }
+            );
+            const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
+              await Cash.create({
+                userId: user.userId,
+                description: `Casino (${CgameName})`,
+                createdBy: 0,
+                amount: -(user.commission / 100) * totalRemainingAmount,
+                balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+                marketId: tran._id,
+                credit: lastMaxWithdraw?.credit || 0,
+                creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+                cashOrCredit: 'Casino Bet',
+                commissionFrom: commissionFrom,
+                sportsId: "6",
+                upLineAmount: -upMovingAmount,
+                betId: tran._id,
+                matchId: Cgame_id,
+                
+                betDateTime: new Date().getTime(),
+                date: new Date().getTime(),
+                createdAt: formattedDate,
+                totalRemainingAmount: totalRemainingAmount,
+                commissionAmount: commissionAmount,
+                remainingAmount: remainingAmount,
+                
+                roundId: tran._id
+              }).session(session);
+              upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
+              if(differenceDbCr>0){
+                await Cash.create({
+                  userId: user.userId,
+                  description: `Commission From Casino (${CgameName})`,
+                  createdBy: 0,
+                  commissionFrom: commissionFrom,
+                  amount: (user.commission / 100) * commissionAmount,
+                  balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+                  availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+                  maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+                  cashOrCredit: 'Commission',
+                  betId: bet._id,
+                  cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+                  marketId: tran._id,
+                  sportsId: "6",
+                  credit: lastMaxWithdraw?.credit || 0,
+                  creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+                  upLineAmount: upMovingCommAmount,
+                  matchId: Cgame_id,
+                 
+                  betDateTime: new Date().getTime(),
+                  date: new Date().getTime(),
+                  createdAt: formattedDate,
+                  
+                  roundId: tran._id
+                }).session(session);
+
+                upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
+              }
+
+          
+          }
+        }
+
         } else {
           console.log("Duplicate transaction found, skipping insertion.");
           //await session.abortTransaction();
