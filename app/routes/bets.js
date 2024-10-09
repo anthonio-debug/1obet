@@ -3303,12 +3303,9 @@ const placeBet = async (req, res) => {
       let prevhighestAmount=false;
       console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
       console.log("userId:",userId);
-      const mongoose = require('mongoose');
-  //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user);
-  const session = await mongoose.startSession();
+      
+      const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
 
-      const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true},{ session });
-{ session }
       
       
       
@@ -3323,7 +3320,7 @@ const placeBet = async (req, res) => {
       }else{
         console.log("found me prev. prevhighestAmount:",prevhighestAmount);
       }
-      await session.abortTransaction();
+
       if (config.FancyOddEven.includes(subMarketDetail.Id)) {
         await Bets.updateMany(
           {
