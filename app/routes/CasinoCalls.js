@@ -265,8 +265,8 @@ async function findAndProcessTransactions(user) {
                 clientPL: totalClientPL
               }
             );
-            const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
-              await Cash.create([{
+            const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
+              await Cash.create({
                 userId: user.userId,
                 description: `Casino (${CgameName})`,
                 createdBy: 0,
@@ -293,10 +293,10 @@ async function findAndProcessTransactions(user) {
                 remainingAmount: remainingAmount,
                 
                 roundId: tran._id
-              }]).session(session);
+              });
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
               if(differenceDbCr>0){
-                await Cash.create([{
+                await Cash.create({
                   userId: user.userId,
                   description: `Commission From Casino (${CgameName})`,
                   createdBy: 0,
@@ -320,7 +320,7 @@ async function findAndProcessTransactions(user) {
                   createdAt: formattedDate,
                   
                   roundId: tran._id
-                }]).session(session);
+                });
 
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
               }
