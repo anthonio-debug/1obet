@@ -170,7 +170,7 @@ parent and then add new NextExposure for this parent based on highestAmount for 
       updatedExposure = -amountToBeSub;
     }else{
       
-      updatedExposure = arr_userExp[user.userId] - amountToBeSub;
+      updatedExposure = -(arr_userExp[user.userId] - amountToBeSub);
     }
     console.log("parent id : ",user.userId," previous  Exposure---------------------------------------------",user.exposure);
     console.log("parent id : ",user.userId," Reversed  Exposure---------------------------------------------",arr_userExp[user.userId]);
