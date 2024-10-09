@@ -232,12 +232,9 @@ async function findAndProcessTransactions(user) {
 
         //START OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
 
-        const parentUserIds = await getParents(userRecord.userId);
-        
-        
         //END  OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
 
-        
+
 
 
 
