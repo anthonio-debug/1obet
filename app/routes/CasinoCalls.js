@@ -221,13 +221,9 @@ async function findAndProcessTransactions(user) {
             },
             { session }
           );
-        } else {
-          console.log("Duplicate transaction found, skipping insertion.");
-          //await session.abortTransaction();
-          //return;
-        }
 
-        const parentUserIds = await getParents(userRecord.userId);
+
+          const parentUserIds = await getParents(userRecord.userId);
         const parentUser = await User.find({
           userId: { $in: parentUserIds },
           isDeleted: false
@@ -333,7 +329,16 @@ async function findAndProcessTransactions(user) {
           
           }
         }
+
         
+        } else {
+          console.log("Duplicate transaction found, skipping insertion.");
+          //await session.abortTransaction();
+          //return;
+        }
+
+        
+
         await CasinoCalls.updateMany(
           { round_id: tran._id.toString() },
           { $set: { isProcessing: false } },
