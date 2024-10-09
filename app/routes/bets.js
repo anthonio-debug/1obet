@@ -3315,8 +3315,8 @@ const placeBet = async (req, res) => {
           session.startTransaction();
       
           // Example database operations using the session
-          const userRecord = await User.findOne({ userId }).session(session);
-          const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true}).session(session);
+          
+           prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true}).session(session);
           // If needed, you can perform more operations here
           console.log("Inside try block..........................",prevBet);
           await session.commitTransaction();
@@ -3327,7 +3327,7 @@ const placeBet = async (req, res) => {
           session.endSession(); // Always end the session
         }
       
-
+        console.log("outside try block..........................",prevBet);
 
 
 
