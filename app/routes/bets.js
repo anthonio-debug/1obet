@@ -3243,24 +3243,7 @@ const placeBet = async (req, res) => {
         });
       }
 
-      let prevhighestAmount=false;
-      console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
-      console.log("userId:",userId);
-      const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
       
-      
-      
-      if(prevBet){
-        let prevrunnersPosition = prevBet.runnersPosition;
-        console.log(prevrunnersPosition);
-        const prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
-
-      }
-      if(prevhighestAmount===false){
-        console.log("No previous bet found...........");
-      }else{
-        console.log("found me prev. prevhighestAmount:",prevhighestAmount);
-      }
       
 
       const bet = new Bets({
@@ -3374,6 +3357,26 @@ const placeBet = async (req, res) => {
         // ).sort({_id: -1}).limit(1);
       } else {
         console.log("Place to update all bets to calculateExp: false...............................................");
+        let prevhighestAmount=false;
+      console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
+      console.log("userId:",userId);
+      const prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true});
+      
+      
+      
+      if(prevBet){
+        let prevrunnersPosition = prevBet.runnersPosition;
+        console.log(prevrunnersPosition);
+        const prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
+
+      }
+      if(prevhighestAmount===false){
+        console.log("No previous bet found...........");
+      }else{
+        console.log("found me prev. prevhighestAmount:",prevhighestAmount);
+      }
+
+      
         await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
