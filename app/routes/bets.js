@@ -99,7 +99,7 @@ console.log("Bet detail for the object.............",bet);
   for (const user of parentUser) {
     let current = user.downLineShare;
       
-    let reversedExp = user.exposure;
+     reversedExp = user.exposure;
 
      prevamountToBeSub = 0;
      prevfinalAmount = 0;
