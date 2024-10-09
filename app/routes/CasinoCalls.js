@@ -299,7 +299,7 @@ async function findAndProcessTransactions(user) {
               if(differenceDbCr>0){
                 await Cash.create({
                   userId: user.userId,
-                  description: `Commission From Casino (${GameName})`,
+                  description: `Commission From Casino (${CgameName})`,
                   createdBy: 0,
                   commissionFrom: commissionFrom,
                   amount: (user.commission / 100) * commissionAmount,
