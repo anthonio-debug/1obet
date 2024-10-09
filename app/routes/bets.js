@@ -3287,7 +3287,7 @@ const placeBet = async (req, res) => {
       if(prevBet){
         let prevrunnersPosition = prevBet.runnersPosition;
         console.log(prevrunnersPosition);
-        const prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
+         prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
 
       }
       if(prevhighestAmount===false){
