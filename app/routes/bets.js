@@ -184,8 +184,8 @@ const apiCallForOdds = async (marketId, counter) => {
     }
   };
   const response = await axios.post(url, data, header);
-  console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm qaiser", response?.data?.result);
-  console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm", counter);
+  //console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm qaiser", response?.data?.result);
+  ///console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm", counter);
   return response?.data?.result;
 };
 
@@ -539,7 +539,7 @@ const placeBet = async (req, res) => {
     /**
      * Is market Blocked from any Flow
      */
-    console.log("44444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
+    //console.log("44444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
     let { blockedSubMarketsByParent } = user;
     let userSubMarketId = subMarketDetail.Id;
     let userEventId = eventDetail.Id
@@ -559,7 +559,7 @@ const placeBet = async (req, res) => {
     /* ================================== Market Specific Checks ================================== */
 
     // Soccer Match Odds
-    console.log( "===============================selected oofffddd valueee arham tttttttttttttttttttttttttttttt","config.soccerOdds",config.soccerOdds,"subMarketDetail.Id",subMarketDetail.Id,"marketId",marketId)
+    //console.log( "===============================selected oofffddd valueee arham tttttttttttttttttttttttttttttt","config.soccerOdds",config.soccerOdds,"subMarketDetail.Id",subMarketDetail.Id,"marketId",marketId)
     if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
       
       const userMaxBetSize = await userBetSizes.findOne({
@@ -653,7 +653,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        console.log("multiresponse soccer======================================================Arham", multipeResponse)
+        //console.log("multiresponse soccer======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -3234,9 +3234,6 @@ const placeBet = async (req, res) => {
         }
       }
 
-      console.log( "disableSecurityCheck===============================================================================", disableSecurityCheck)
-      console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Id",subMarketDetail.Id)
-      console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Id",subMarketDetail.Id)
 
       if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(JSON.stringify(subMarketDetail.Id))) {
        
@@ -3251,7 +3248,7 @@ const placeBet = async (req, res) => {
       console.log("subMarketId:",subMarketId);
       console.log("userId:",userId);
       const prevBet = await Bets.findOne({ marketId: _3rdPartyMarketId,
-                                           subMarketId: subMarketDetail ? subMarketDetail.Id : 0,
+                                           //subMarketId: subMarketDetail ? subMarketDetail.Id : 0,
                                            userId,
                                            calculateExp: true 
                                           });
@@ -4183,7 +4180,7 @@ async function getMatchedBets(req, res) {
           },
           { $sort: { _id: -1 } }
         ]).exec();
-        console.log("matched bet {{{{{{{{{{{{{{{{{{------- ", matchedBets.size);
+        //console.log("matched bet {{{{{{{{{{{{{{{{{{------- ", matchedBets.size);
         ///////////////////////////////////////////////////
         relatedEvents = await Events.find({
           sportsId: eventId.sportsId,
