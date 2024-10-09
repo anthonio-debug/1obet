@@ -3246,10 +3246,7 @@ const placeBet = async (req, res) => {
       let prevhighestAmount=false;
       console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
       console.log("userId:",userId);
-      const prevBet = await Bets.findOne({ marketId: _3rdPartyMarketId,
-                                           //subMarketId: subMarketDetail ? subMarketDetail.Id : 0,
-                                           userId:userId,
-                                           calculateExp: true 
+      const prevBet = await Bets.findOne({ userId:22340,marketId:'1.234132171',calculateExp:true
                                           });
       if(prevBet){
         let prevrunnersPosition = prevBet.runnersPosition;
