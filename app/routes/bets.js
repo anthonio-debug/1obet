@@ -178,9 +178,9 @@ parent and then add new NextExposure for this parent based on highestAmount for 
     user.exposure = updatedExposure;
     user.availableBalance -= amountToBeSub;
     
-    if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
+    //if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
       await user.save();
-    }
+   // }
     
 
     if (matchId != 0) {
