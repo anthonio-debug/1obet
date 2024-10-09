@@ -3243,7 +3243,7 @@ const placeBet = async (req, res) => {
         });
       }
 
-      
+      let prevhighestAmount =false ;
       
 
       const bet = new Bets({
@@ -3376,7 +3376,7 @@ const placeBet = async (req, res) => {
         console.log("found me prev. prevhighestAmount:",prevhighestAmount);
       }
 
-      
+
         await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
