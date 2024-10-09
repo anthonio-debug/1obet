@@ -633,7 +633,7 @@ const placeBet = async (req, res) => {
             const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
-              console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
+             // console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
               if (selectedOddsValue > 0) {
                 multipeResponse.push(selectedOddsValue)
               }
@@ -644,7 +644,7 @@ const placeBet = async (req, res) => {
             const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
-              console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
+              //console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
               if (selectedOddsValue > 0) {
                 multipeResponse.push(selectedOddsValue)
               }
@@ -824,7 +824,7 @@ const placeBet = async (req, res) => {
 
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
-              console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
+              //console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
               ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
             }
 
@@ -834,14 +834,14 @@ const placeBet = async (req, res) => {
 
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
-              console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
+              //console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
               ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
             }
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
-          console.log("multiresponse1======================================================Arham", multipeResponse)
+          //console.log("multiresponse1======================================================Arham", multipeResponse)
         }
-        console.log("multiresponse Tennis======================================================Arham", multipeResponse)
+        //console.log("multiresponse Tennis======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
         if (matchedResponse) {
           betRate = matchedResponse
