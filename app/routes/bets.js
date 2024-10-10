@@ -108,11 +108,14 @@ console.log("Bet detail for the object.............",bet);
      prev = current;
     if(prevhighestAmount!=false){
 
-       prevamountToBeSub = (user.commission / 100) * prevhighestAmount; // this is his share in loss in prev. bet
-       prevfinalAmount = Number(prevamountToBeSub.toFixed(3));
+       
+      prevamountToBeSub = (user.commission / 100) * prevhighestAmount; // this is his share in loss in prev. bet
+      console.log("user ",user.userId," share.................",user.downLineShare,"........prevamountToBeSub:.........>", prevamountToBeSub);
+       
+      prevfinalAmount = Number(prevamountToBeSub.toFixed(3));
+      console.log("userId:",user.userId,"-------prevfinalAmount:::::",prevfinalAmount);
        reversedExp = user.exposure + prevfinalAmount;
        //await User.findOneAndUpdate({ userId: user.userId }, { exposure: reversedExp });
-       console.log("user ",user.userId," share.................",user.downLineShare,"........prevamountToBeSub:.........>", prevamountToBeSub);
        console.log("------reversedExp::::",reversedExp);
     }
     arr_userExp[user.userId] = reversedExp;
@@ -129,7 +132,7 @@ console.log("Bet detail for the object.............",bet);
   
 
   for (const user of parentUser) {
-    let reverted_userCurrentExposure
+    
    
 
 
@@ -145,10 +148,7 @@ console.log("Bet detail for the object.............",bet);
 
     const amountToBeSub = (user.commission / 100) * highestAmount;
     const finalAmount = Number(amountToBeSub.toFixed(3));
-    console.log("amountToBeSub loss share amount......................................................>", amountToBeSub);
     
-    
-
     // start of if bettor was in loss on all his runners in previous bet
 
     //end of if bettor was in loss on all his runners in previous bet
@@ -161,25 +161,25 @@ It gets highestAmount from runnersPosition array. ( Before saving new bet, this 
 From this highest value, code gets his share based on his downline share which is his prevExposure. Remove this from user.exposure for this 
 parent and then add new NextExposure for this parent based on highestAmount for this new bet.
     */
-    let userCurrentExposure = user.exposure;
-    //reverted_userCurrentExposure -= prevhighestAmount;
+    
+    
 
-    console.log("finalAmount......................................................>", finalAmount);
+    console.log("finalAmount share in loss......................................................>", finalAmount);
     let updatedExposure;
     if(prevhighestAmount===false){
-      updatedExposure = -amountToBeSub;
+      updatedExposure = -finalAmount;
       console.log("first entry check for minus::::::",updatedExposure);
     }else{
       
       console.log("arr_userExp[user.userId]--------------------",arr_userExp[user.userId]);
-      updatedExposure = -(arr_userExp[user.userId] - amountToBeSub);
+      updatedExposure = -(arr_userExp[user.userId] - finalAmount);
       console.log("first entry check for minus for else::::::",updatedExposure);
     }
     console.log("parent id : ",user.userId," previous  Exposure---------------------------------------------",user.exposure);
     console.log("parent id : ",user.userId," Reversed  Exposure---------------------------------------------",arr_userExp[user.userId]);
     console.log("parent id : ",user.userId," updated Exposure---------------------------------------------",updatedExposure);
     user.exposure = updatedExposure;
-    user.availableBalance -= amountToBeSub;
+    user.availableBalance -= finalAmount;
     
     //if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
       await user.save();
