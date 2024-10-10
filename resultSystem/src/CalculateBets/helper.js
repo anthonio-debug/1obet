@@ -173,6 +173,11 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             }
             let commissionFrom = userToUpdate.userId;
             for (const user of parentUser) {
+
+              let winningsShareAmount = Number(((user.commission / 100) * totalRemainingAmount).toFixed(3));
+              let UpdatedExposureAmount = user.exposure + winningsShare;
+             
+
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
@@ -185,7 +190,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 },
                 {
                   balance: totalBalance,
-                  exposure: totalExpoisure,
+                  exposure: UpdatedExposureAmount,
                   availableBalance: totalavailableBalance,
                   clientPL: totalClientPL
                 }
@@ -222,7 +227,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
                 addedExpoisureAmount: Number(((user.commission / 100) * totalRemainingAmount).toFixed(3)),
                 UserPrevexposure: user.exposure,
-                UpdatedExposure: totalExpoisure,
+                UpdatedExposure: UpdatedExposure,
                 exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
                 sourceCodeBlock: 'handleWinningBet'
               });
