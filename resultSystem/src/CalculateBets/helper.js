@@ -175,7 +175,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             for (const user of parentUser) {
 
               let winningsShareAmount = Number(((user.commission / 100) * totalRemainingAmount).toFixed(3));
-              let UpdatedExposureAmount = user.exposure + winningsShare;
+              let UpdatedExposureAmount = user.exposure + winningsShareAmount;
              
 
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
