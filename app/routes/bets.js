@@ -65,7 +65,90 @@ const getParents = async (userId) => {
   }
   return parentUserIds;
 };
+const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, Id = 0, runnersPosition,prevhighestAmount) => {
+  const parentUser = await User.find({
+    userId: {
+      $in: [...parentUsersIds]
+    },
+    isDeleted: false
+  }).sort({ userId: -1 });
+  const mongoose = require('mongoose');
 
+// Assuming Id is a string representation of the ObjectId
+const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
+
+const bet = await Bets.findOne({ _id: betId });
+  console.log("the details  for the bet provided............",bet);
+  let highestAmount;
+  highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+  if(!highestAmount){
+    highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+  }
+  let prev = 0;
+  let userPrevExposure = 0;
+  if(prevhighestAmount===false){
+  for (const user of parentUser) {
+    let current = user.downLineShare;
+      
+    userPrevExposure = user.exposure;
+
+
+     let commission = current - prev;
+     user['commission'] = commission;
+     prev = current;
+
+
+
+    const ShareAmountInLoss = (user.commission / 100) * highestAmount;
+    const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
+    console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
+    if(userPrevExposure==0){
+      console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
+      user.exposure = -finalShareAmountInLoss;
+    
+    }else{
+      console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
+      user.exposure = userPrevExposure-finalShareAmountInLoss;
+    
+    }
+    let UseravailableBalancePrev = user.availableBalance;
+    user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
+    
+    //if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
+      await user.save();
+
+  }
+}else{
+  for (const user of parentUser) {
+  let current = user.downLineShare;
+  userPrevExposure = user.exposure;
+  let commission = current - prev;
+   user['commission'] = commission;
+   prev = current;
+   const ShareAmountInLossPrev = (user.commission / 100) * prevhighestAmount;
+   const finalShareAmountInLossPrev = Number(ShareAmountInLoss.toFixed(3));
+   const ShareAmountInLoss = (user.commission / 100) * highestAmount;
+   const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
+   if(userPrevExposure==0){
+    user.exposure = -finalShareAmountInLoss;
+   }else{
+    let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
+    console.log("prevAdjustedExposure:::::::::::::::::::::::::::::::::::::::",prevAdjustedExposure);
+    if(prevAdjustedExposure==0){
+    user.exposure = -finalShareAmountInLoss;
+    user.availableBalance -=finalShareAmountInLoss;
+    
+   }else{
+    console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
+    user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
+    user.availableBalance -=finalShareAmountInLoss;
+   }
+   await user.save();
+  }
+   
+}
+}
+};
 const updateParentUserBalance = async (parentUsersIds, winningAmount, matchId = 0, Id = 0, selectionId = 0, marketId = '0', subMarketId = '0') => {
   const parentUser = await User.find({
     userId: {
@@ -126,8 +209,8 @@ const apiCallForOdds = async (marketId, counter) => {
     }
   };
   const response = await axios.post(url, data, header);
-  console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm qaiser", response?.data?.result);
-  console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm", counter);
+  //console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm qaiser", response?.data?.result);
+  ///console.log("}]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]Arhammmmmmmmmmmmmmmmmmmmmmmmmmmmm", counter);
   return response?.data?.result;
 };
 
@@ -451,7 +534,7 @@ const placeBet = async (req, res) => {
       const currentMarket = eventDetail?.marketIds?.find((market) => market.marketName == thirdPartyMarketName);
       id = currentMarket?.id;
       _3rdPartyMarketId = id;
-      console.log("_3rdPartyMarketId================= after cup", id, "and", _3rdPartyMarketId, "idDetails.marketId");
+      //console.log("_3rdPartyMarketId================= after cup", id, "and", _3rdPartyMarketId, "idDetails.marketId");
 
       subMarketDetail = await SubMarketType.findOne({
         name: subMarketName,
@@ -481,7 +564,7 @@ const placeBet = async (req, res) => {
     /**
      * Is market Blocked from any Flow
      */
-    console.log("44444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
+    //console.log("44444444444444444444444444444444444444444444444444444444444444444444444444444444444444444444");
     let { blockedSubMarketsByParent } = user;
     let userSubMarketId = subMarketDetail.Id;
     let userEventId = eventDetail.Id
@@ -501,7 +584,7 @@ const placeBet = async (req, res) => {
     /* ================================== Market Specific Checks ================================== */
 
     // Soccer Match Odds
-    console.log( "===============================selected oofffddd valueee arham tttttttttttttttttttttttttttttt","config.soccerOdds",config.soccerOdds,"subMarketDetail.Id",subMarketDetail.Id,"marketId",marketId)
+    //console.log( "===============================selected oofffddd valueee arham tttttttttttttttttttttttttttttt","config.soccerOdds",config.soccerOdds,"subMarketDetail.Id",subMarketDetail.Id,"marketId",marketId)
     if (config.sportMarkets.includes(marketId) && config.soccerOdds == subMarketDetail.Id) {
       
       const userMaxBetSize = await userBetSizes.findOne({
@@ -575,7 +658,7 @@ const placeBet = async (req, res) => {
             const ApiResponseOdds = runnerFromAPI?.ex?.availableToBack;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
-              console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
+             // console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
               if (selectedOddsValue > 0) {
                 multipeResponse.push(selectedOddsValue)
               }
@@ -586,7 +669,7 @@ const placeBet = async (req, res) => {
             const ApiResponseOdds = runnerFromAPI.ex?.availableToLay;
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
-              console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
+              //console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
               if (selectedOddsValue > 0) {
                 multipeResponse.push(selectedOddsValue)
               }
@@ -595,7 +678,7 @@ const placeBet = async (req, res) => {
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
         }
-        console.log("multiresponse soccer======================================================Arham", multipeResponse)
+        //console.log("multiresponse soccer======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -766,7 +849,7 @@ const placeBet = async (req, res) => {
 
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0].price;
-              console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
+              //console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
               ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
             }
 
@@ -776,14 +859,14 @@ const placeBet = async (req, res) => {
 
             if (ApiResponseOdds && ApiResponseOdds.length > 0) {
               selectedOddsValue = ApiResponseOdds[0]?.price;
-              console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
+              //console.log(selectedOddsValue, "===============================selected oofffddd valueee arham")
               ApiResponseOdds[0].price > 0 && multipeResponse.push(selectedOddsValue)
             }
             multipeResponseForSecurityCheck.push(selectedOddsValue);
           }
-          console.log("multiresponse1======================================================Arham", multipeResponse)
+          //console.log("multiresponse1======================================================Arham", multipeResponse)
         }
-        console.log("multiresponse Tennis======================================================Arham", multipeResponse)
+        //console.log("multiresponse Tennis======================================================Arham", multipeResponse)
         matchedResponse = checkMultiResponse(multipeResponse, rates,selectedBetRate,type)
         if (matchedResponse) {
           betRate = matchedResponse
@@ -3176,9 +3259,6 @@ const placeBet = async (req, res) => {
         }
       }
 
-      console.log( "disableSecurityCheck===============================================================================", disableSecurityCheck)
-      console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Id",subMarketDetail.Id)
-      console.log("subMarketDetail.IdsubMarketDetail.IdsubMarketDetail.Id",subMarketDetail.Id)
 
       if (rates?.length > 1 && !multipeResponseForSecurityCheck.find((e) => rates.includes(e)) && !disableSecurityCheck.includes(JSON.stringify(subMarketDetail.Id))) {
        
@@ -3187,6 +3267,61 @@ const placeBet = async (req, res) => {
           message: `Bet Miss Matched-42 `
         });
       }
+
+      let prevhighestAmount=false;
+      console.log("_3rdPartyMarketId:",_3rdPartyMarketId);
+      console.log("userId:",userId);
+
+      let prevBet;
+
+      const mongoose = require('mongoose');
+
+      
+        const session = await mongoose.startSession();
+      
+        try {
+          session.startTransaction();
+      
+          // Example database operations using the session
+          
+          prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true}).session(session);
+          // If needed, you can perform more operations here
+          console.log("Inside try block..........................",prevBet);
+          await session.commitTransaction();
+        } catch (error) {
+          console.error('An error occurred: ', error);
+          await session.abortTransaction();
+        } finally {
+          session.endSession(); // Always end the session
+        }
+
+
+
+
+
+
+
+        console.log("outside try block..........................",prevBet);
+      
+      
+      
+      
+      
+      if(prevBet && isFancyOrBookMaker==true && fancyData != null){
+        let prevrunnersPosition = prevBet.runnersPosition;
+        prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.position));
+      }else if(prevBet){
+        let prevrunnersPosition = prevBet.runnersPosition;
+        console.log(prevrunnersPosition);
+         prevhighestAmount = Math.max(...prevrunnersPosition.map(runner => runner.amount));
+
+      }
+      if(prevhighestAmount===false){
+        console.log("No previous bet found...........");
+      }else{
+        console.log("found me prev. prevhighestAmount:",prevhighestAmount);
+      }
+      
 
       const bet = new Bets({
         marketId: _3rdPartyMarketId || 0,
@@ -3298,6 +3433,7 @@ const placeBet = async (req, res) => {
         //   }
         // ).sort({_id: -1}).limit(1);
       } else {
+        console.log("Place to update all bets to calculateExp: false...............................................");
         await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
@@ -3402,8 +3538,16 @@ const placeBet = async (req, res) => {
 
           await ExpTran.save();
           console.log('Exposure transaction saved');
-
-          await updateParentUserBalance(parentUserIds, winningAmount, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id);
+          console.log("market id passed::::::::::::::::::::::::;;;",marketId);
+          if(marketId=='7' || marketId=='4339'){
+            await updateParentUserBalanceTemp(parentUserIds, matchId, result._id, runnersPosition,prevhighestAmount);
+          
+          }else{
+            await updateParentUserBalance(parentUserIds, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id, runnersPosition,prevhighestAmount);
+          
+          }
+          
+          
           console.log('Parent user balance updated');
 
           activeBettors.delete(userId);
@@ -4104,7 +4248,7 @@ async function getMatchedBets(req, res) {
           },
           { $sort: { _id: -1 } }
         ]).exec();
-        console.log("matched bet {{{{{{{{{{{{{{{{{{------- ", matchedBets.size);
+        //console.log("matched bet {{{{{{{{{{{{{{{{{{------- ", matchedBets.size);
         ///////////////////////////////////////////////////
         relatedEvents = await Events.find({
           sportsId: eventId.sportsId,
