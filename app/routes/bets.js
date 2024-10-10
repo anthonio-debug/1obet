@@ -85,17 +85,14 @@ const bet = await Bets.findOne({ _id: betId });
     highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
   }
   let prev = 0;
-  let prevamountToBeSub;
-  let prevfinalAmount;
-  let arr_userExp = [];
+  let userPrevExposure = 0;
   if(prevhighestAmount===false){
   for (const user of parentUser) {
     let current = user.downLineShare;
       
-     reversedExp = user.exposure;
+    userPrevExposure = user.exposure;
 
-     prevamountToBeSub = 0;
-     prevfinalAmount = 0;
+
      let commission = current - prev;
      user['commission'] = commission;
      prev = current;
@@ -105,7 +102,14 @@ const bet = await Bets.findOne({ _id: betId });
      const ShareAmountInLoss = (user.commission / 100) * highestAmount;
     const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
     console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
-    user.exposure = -finalShareAmountInLoss;
+    if(userPrevExposure==0){
+      user.exposure = -finalShareAmountInLoss;
+    
+    }else{
+      user.exposure = userPrevExposure-finalShareAmountInLoss;
+    
+    }
+    
     user.availableBalance -= ShareAmountInLoss;
     
     //if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
