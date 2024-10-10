@@ -103,9 +103,11 @@ const bet = await Bets.findOne({ _id: betId });
     const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
     console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
     if(userPrevExposure==0){
+      console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
       user.exposure = -finalShareAmountInLoss;
     
     }else{
+      console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
       user.exposure = userPrevExposure-finalShareAmountInLoss;
     
     }
