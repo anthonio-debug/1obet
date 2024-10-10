@@ -65,7 +65,21 @@ const getParents = async (userId) => {
   }
   return parentUserIds;
 };
+const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, Id = 0, runnersPosition,prevhighestAmount) => {
+  const parentUser = await User.find({
+    userId: {
+      $in: [...parentUsersIds]
+    },
+    isDeleted: false
+  }).sort({ userId: -1 });
+  const mongoose = require('mongoose');
 
+// Assuming Id is a string representation of the ObjectId
+const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
+
+const bet = await Bets.findOne({ _id: betId });
+
+};
 const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, selectionId = 0, marketId = '0', subMarketId = '0', runnersPosition,prevhighestAmount) => {
   const parentUser = await User.find({
     userId: {
@@ -3554,7 +3568,15 @@ const placeBet = async (req, res) => {
           await ExpTran.save();
           console.log('Exposure transaction saved');
 
-          await updateParentUserBalance(parentUserIds, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id, runnersPosition,prevhighestAmount);
+          if(userId==20126){
+            await updateParentUserBalanceTemp(parentUserIds, matchId, result._id, runnersPosition,prevhighestAmount);
+          
+          }else{
+            await updateParentUserBalance(parentUserIds, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id, runnersPosition,prevhighestAmount);
+          
+          }
+          
+          
           console.log('Parent user balance updated');
 
           activeBettors.delete(userId);
