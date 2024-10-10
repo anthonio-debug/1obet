@@ -126,7 +126,7 @@ const bet = await Bets.findOne({ _id: betId });
    user['commission'] = commission;
    prev = current;
    const ShareAmountInLossPrev = (user.commission / 100) * prevhighestAmount;
-   const finalShareAmountInLossPrev = Number(ShareAmountInLoss.toFixed(3));
+   const finalShareAmountInLossPrev = Number(ShareAmountInLossPrev.toFixed(3));
    const ShareAmountInLoss = (user.commission / 100) * highestAmount;
    const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
    if(userPrevExposure==0){
