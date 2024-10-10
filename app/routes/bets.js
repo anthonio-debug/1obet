@@ -78,7 +78,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, Id = 0, 
 const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
 
 const bet = await Bets.findOne({ _id: betId });
-
+  console.log("the details  for the bet provided............",bet);
 };
 const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, selectionId = 0, marketId = '0', subMarketId = '0', runnersPosition,prevhighestAmount) => {
   const parentUser = await User.find({
