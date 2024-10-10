@@ -111,8 +111,8 @@ const bet = await Bets.findOne({ _id: betId });
       user.exposure = userPrevExposure-finalShareAmountInLoss;
     
     }
-    
-    user.availableBalance -= ShareAmountInLoss;
+    let UseravailableBalancePrev = user.availableBalance;
+    user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
     
     //if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
       await user.save();
