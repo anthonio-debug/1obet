@@ -79,6 +79,41 @@ const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
 
 const bet = await Bets.findOne({ _id: betId });
   console.log("the details  for the bet provided............",bet);
+  let highestAmount;
+  highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+  if(!highestAmount){
+    highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+  }
+  let prev = 0;
+  let prevamountToBeSub;
+  let prevfinalAmount;
+  let arr_userExp = [];
+  if(prevhighestAmount===false){
+  for (const user of parentUser) {
+    let current = user.downLineShare;
+      
+     reversedExp = user.exposure;
+
+     prevamountToBeSub = 0;
+     prevfinalAmount = 0;
+     let commission = current - prev;
+     user['commission'] = commission;
+     prev = current;
+
+
+
+     const ShareAmountInLoss = (user.commission / 100) * highestAmount;
+    const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
+    console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
+    user.exposure = -finalShareAmountInLoss;
+    user.availableBalance -= ShareAmountInLoss;
+    
+    //if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
+      await user.save();
+
+  }
+}
+
 };
 const updateParentUserBalance = async (parentUsersIds, matchId = 0, Id = 0, selectionId = 0, marketId = '0', subMarketId = '0', runnersPosition,prevhighestAmount) => {
   const parentUser = await User.find({
