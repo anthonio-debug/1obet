@@ -86,12 +86,13 @@ const bet = await Bets.findOne({ _id: betId });
   }
   let prev = 0;
   let userPrevExposure = 0;
+  let UseravailableBalancePrev = 0;
   if(prevhighestAmount===false){
   for (const user of parentUser) {
     let current = user.downLineShare;
       
     userPrevExposure = user.exposure;
-
+    UseravailableBalancePrev = user.availableBalance;
 
      let commission = current - prev;
      user['commission'] = commission;
@@ -105,14 +106,16 @@ const bet = await Bets.findOne({ _id: betId });
     if(userPrevExposure==0){
       console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
       user.exposure = -finalShareAmountInLoss;
-    
+      user.availableBalance = -finalShareAmountInLoss;
+      
     }else{
       console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
       user.exposure = userPrevExposure-finalShareAmountInLoss;
+      
+    user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
     
     }
-    let UseravailableBalancePrev = user.availableBalance;
-    user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
+    
     
     //if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
       await user.save();
@@ -122,6 +125,7 @@ const bet = await Bets.findOne({ _id: betId });
   for (const user of parentUser) {
   let current = user.downLineShare;
   userPrevExposure = user.exposure;
+  UseravailableBalancePrev = user.availableBalance;
   let commission = current - prev;
    user['commission'] = commission;
    prev = current;
@@ -131,17 +135,19 @@ const bet = await Bets.findOne({ _id: betId });
    const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
    if(userPrevExposure==0){
     user.exposure = -finalShareAmountInLoss;
+    user.availableBalance = -finalShareAmountInLoss;
    }else{
     let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
+    let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
     console.log("prevAdjustedExposure:::::::::::::::::::::::::::::::::::::::",prevAdjustedExposure);
     if(prevAdjustedExposure==0){
     user.exposure = -finalShareAmountInLoss;
-    user.availableBalance -=finalShareAmountInLoss;
+    user.availableBalance = -finalShareAmountInLoss;
     
    }else{
     console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
-    user.availableBalance -=finalShareAmountInLoss;
+    user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
    }
    await user.save();
   }
