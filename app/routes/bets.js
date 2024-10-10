@@ -3633,7 +3633,7 @@ const placeBet = async (req, res) => {
 
           await ExpTran.save();
           console.log('Exposure transaction saved');
-
+          console.log("market id passed::::::::::::::::::::::::;;;",marketId);
           if(marketId=='7' || marketId=='4339'){
             await updateParentUserBalanceTemp(parentUserIds, matchId, result._id, runnersPosition,prevhighestAmount);
           
