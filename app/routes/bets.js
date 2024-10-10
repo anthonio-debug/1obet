@@ -3539,13 +3539,9 @@ const placeBet = async (req, res) => {
           await ExpTran.save();
           console.log('Exposure transaction saved');
           console.log("market id passed::::::::::::::::::::::::;;;",marketId);
-          if(marketId=='7' || marketId=='4339'){
+         
             await updateParentUserBalanceTemp(parentUserIds, matchId, result._id, runnersPosition,prevhighestAmount);
           
-          }else{
-            await updateParentUserBalance(parentUserIds, matchId, result._id, selectionId, _3rdPartyMarketId, subMarketDetail?.Id, runnersPosition,prevhighestAmount);
-          
-          }
           
           
           console.log('Parent user balance updated');

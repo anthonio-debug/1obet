@@ -192,11 +192,11 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   balance: totalBalance,
                   exposure: UpdatedExposureAmount,
                   availableBalance: totalavailableBalance,
-                  clientPL: totalClientPL
+                  clientPL: 
                 }
               );
 
-              const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
+              const lastMtotalClientPLaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
               await Deposits.create({
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
