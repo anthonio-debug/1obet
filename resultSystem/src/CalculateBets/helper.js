@@ -227,7 +227,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
                 addedExpoisureAmount: Number(((user.commission / 100) * totalRemainingAmount).toFixed(3)),
                 UserPrevexposure: user.exposure,
-                UpdatedExposure: UpdatedExposure,
+                UpdatedExposure: UpdatedExposureAmount,
                 exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
                 sourceCodeBlock: 'handleWinningBet'
               });
