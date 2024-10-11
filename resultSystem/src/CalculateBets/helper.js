@@ -205,7 +205,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 let totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
                 const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
                 let userBalance = totalClientPLAmount;
-                const totalBalance = Number((user.balance + (-userBalance)  ).toFixed(3));
+                let totalBalance = Number((user.balance + (-userBalance)  ).toFixed(3));
                 
               }
               console.log("totalBalance:::::::::::::::::::;",totalBalance);
