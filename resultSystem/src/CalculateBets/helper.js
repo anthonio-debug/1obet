@@ -188,8 +188,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               console.log("Difference is caclauted and I am shoiwng as hereas..................",diff);
+              let UpdatedAvailableBalance =  user.availableBalance;
               if(diff>0){ 
-                let UpdatedAvailableBalance =  user.availableBalance;
+                UpdatedAvailableBalance =  user.availableBalance;
               }else{
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
                 UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount  
