@@ -121,7 +121,8 @@ function scoreChecker() {
         const bets = await Bets.find({
           marketId: betData.marketId,
           sportsId: betData.sportsId,
-          status: 1
+          status: 1,
+          calculateExp:true,
         });
 
         // const checkEventMarket = await MarketIDs.findOne({ eventId: betData.eventId, marketName: "Match Odds" }).sort({ _id: -1 });
@@ -140,7 +141,8 @@ function scoreChecker() {
 
           //console.log("result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
-          
+            let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+            return;
           
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
@@ -151,6 +153,10 @@ function scoreChecker() {
         } else {
           //console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
+
+            let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+            return;
+
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
