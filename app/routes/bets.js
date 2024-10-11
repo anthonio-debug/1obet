@@ -135,7 +135,7 @@ const bet = await Bets.findOne({ _id: betId });
    const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
    if(userPrevExposure==0){
     user.exposure = -finalShareAmountInLoss;
-    user.availableBalance = -finalShareAmountInLoss;
+    user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
    }else{
     let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
     let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
