@@ -143,7 +143,7 @@ const bet = await Bets.findOne({ _id: betId });
     if(prevAdjustedExposure==0){
       console.log("user ID:::::: in IF Block:",user.userId);
     user.exposure = -finalShareAmountInLoss;
-    user.availableBalance = -finalShareAmountInLoss;
+    user.availableBalance = user.availableBalance-finalShareAmountInLoss;
     
    }else{
     console.log("user ID::::::Else block:",user.userId);
