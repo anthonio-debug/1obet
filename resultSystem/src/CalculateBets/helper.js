@@ -196,19 +196,26 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let userBalance;
               let totalBalance;
               let totalClientPL;
+      
               if(diff<0){ 
               
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
                 UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount  
                  totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+                 
                  userBalance = totalClientPLAmount;
+                 console.log("diff<0", "----------userBalance----------", userBalance);
                  totalBalance = Number((user.balance + userBalance ).toFixed(3));
+                 console.log("diff<0", "----------totalBalance----------", totalBalance);
                 const totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
               }else{
                  totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
                  totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
                  userBalance = totalClientPLAmount;
+                 console.log("Else", "----------userBalance----------", userBalance);
+                 
                  totalBalance = Number((user.balance + (-userBalance)  ).toFixed(3));
+                 console.log("Else::", "----------totalBalance----------", totalBalance);
                 
               }
               console.log("totalBalance:::::::::::::::::::;",totalBalance);
