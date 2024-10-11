@@ -24,6 +24,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   const bet = await Bets.findOne({
     _id: betId._id
   });
+  if(bet.calculateExp==true){
   const userToUpdate = await User.findOne({
     userId: bet.userId,
     isDeleted: false
@@ -337,6 +338,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
             
         }
+    }
 
     
     
