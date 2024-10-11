@@ -175,6 +175,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             for (const user of parentUser) {
 
                 let prevrunnersPosition = false;
+                let runnersPosition = bet.runnersPosition;
                 let highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
                 if(bet.isFancyOrBookMaker==true && bet.fancyData != null){
                     runnersPosition = bet.runnersPosition;
