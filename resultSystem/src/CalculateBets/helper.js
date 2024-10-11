@@ -197,14 +197,14 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
                 UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount  
-                const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-                const userBalance = totalClientPLAmount;
+                let totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+                let userBalance = totalClientPLAmount;
                 const totalBalance = Number((user.balance + userBalance ).toFixed(3));
                 const totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
               }else{
-                const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+                let totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
                 const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-                const userBalance = totalClientPLAmount;
+                let userBalance = totalClientPLAmount;
                 const totalBalance = Number((user.balance + (-userBalance)  ).toFixed(3));
                 
               }
