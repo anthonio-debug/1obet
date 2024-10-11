@@ -162,7 +162,6 @@ function scoreChecker() {
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
             let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
             return;
-            
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
