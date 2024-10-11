@@ -189,19 +189,26 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               console.log("Difference is caclauted and I am shoiwng as hereas..................",diff);
               let UpdatedAvailableBalance =  user.availableBalance;
-              if(diff>0){ 
-                UpdatedAvailableBalance =  user.availableBalance;
-              }else{
+              if(diff<0){ 
+              
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
                 UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount  
-
+                const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+                const userBalance = totalClientPLAmount;
+                const totalBalance = Number((user.balance + userBalance ).toFixed(3));
+                const totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
+              }else{
+                const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+                const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+                const userBalance = totalClientPLAmount;
+                const totalBalance = Number((user.balance + (-userBalance)  ).toFixed(3));
+                
               }
               console.log("UpdatedAvailableBalance:::::::::::::::::::;",UpdatedAvailableBalance);
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-              const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+              //const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
-              const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-              const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+
               await User.updateOne(
                 {
                   userId: user.userId,
