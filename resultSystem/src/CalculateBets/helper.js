@@ -192,20 +192,23 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               console.log("Difference is caclauted and I am shoiwng as hereas..................",diff);
               let UpdatedAvailableBalance =  user.availableBalance;
               
-
+              let totalClientPLAmount;
+              let userBalance;
+              let totalBalance;
+              let totalClientPL;
               if(diff<0){ 
               
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
                 UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount  
-                let totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-                let userBalance = totalClientPLAmount;
-                const totalBalance = Number((user.balance + userBalance ).toFixed(3));
+                 totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+                 userBalance = totalClientPLAmount;
+                 totalBalance = Number((user.balance + userBalance ).toFixed(3));
                 const totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
               }else{
-                let totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-                const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-                let userBalance = totalClientPLAmount;
-                let totalBalance = Number((user.balance + (-userBalance)  ).toFixed(3));
+                 totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+                 totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+                 userBalance = totalClientPLAmount;
+                 totalBalance = Number((user.balance + (-userBalance)  ).toFixed(3));
                 
               }
               console.log("totalBalance:::::::::::::::::::;",totalBalance);
