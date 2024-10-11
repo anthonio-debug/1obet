@@ -141,26 +141,28 @@ function scoreChecker() {
 
           //console.log("result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
-            let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
-            return;
+           
           
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
-            await handleDrawBet(bet);
+            let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+            return;
           }
         } else {
           //console.log("ELSE result.winnerSelectionId == -1 -->", betData.marketId);
           for (const bet of bets) {
 
-            let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
-            return;
+           
 
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel == true && result.manuelClose == false) {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel == true) continue;
+            let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+            return;
+            
             if (bet.type == 0 && bet.runner == result.winnerSelectionId) {
               //console.log("0 ----- winner ");
               await handleWinningBet(bet, result.winnerSelectionId);
