@@ -142,7 +142,7 @@ const bet = await Bets.findOne({ _id: betId });
     console.log("prevAdjustedExposure:::::::::::::::::::::::::::::::::::::::",prevAdjustedExposure);
     if(prevAdjustedExposure==0){
     user.exposure = -finalShareAmountInLoss;
-    user.availableBalance = -finalShareAmountInLoss;
+    user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
     
    }else{
     console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
