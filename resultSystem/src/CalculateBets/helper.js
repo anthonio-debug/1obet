@@ -173,11 +173,6 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             }
             let commissionFrom = userToUpdate.userId;
             for (const user of parentUser) {
-
-              let winningsShareAmount = Number(((user.commission / 100) * totalRemainingAmount).toFixed(3));
-              let UpdatedExposureAmount = user.exposure + winningsShareAmount;
-             
-
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
@@ -190,13 +185,13 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 },
                 {
                   balance: totalBalance,
-                  exposure: UpdatedExposureAmount,
+                  exposure: totalExpoisure,
                   availableBalance: totalavailableBalance,
-                  clientPL: 
+                  clientPL: totalClientPL
                 }
               );
 
-              const lastMtotalClientPLaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
+              const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
               await Deposits.create({
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -227,7 +222,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
                 addedExpoisureAmount: Number(((user.commission / 100) * totalRemainingAmount).toFixed(3)),
                 UserPrevexposure: user.exposure,
-                UpdatedExposure: UpdatedExposureAmount,
+                UpdatedExposure: totalExpoisure,
                 exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
                 sourceCodeBlock: 'handleWinningBet'
               });
