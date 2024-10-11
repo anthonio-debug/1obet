@@ -183,15 +183,15 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 }
               let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
-              
+              console.log("Difference is caclauted and I am shoiwng as hereas..................",diff);
               if(diff>0){ 
                 let UpdatedAvailableBalance =  user.availableBalance;
               }else{
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
-                UpdatedAvailableBalance +=winningsShareAmount  
+                UpdatedAvailableBalance =UpdatedAvailableBalance + winningsShareAmount  
 
               }
-              
+              console.log("UpdatedAvailableBalance:::::::::::::::::::;",UpdatedAvailableBalance);
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
