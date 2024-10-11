@@ -182,13 +182,17 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                     highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
                 }
               let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
+              let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
+              //winningsShareAmount mean when bettor WIN so it mean dealer LOST  
+              //loosingShareAmount mean when bettor LOST so it mean dealer WON
+
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               console.log("Difference is caclauted and I am shoiwng as hereas..................",diff);
               if(diff>0){ 
                 let UpdatedAvailableBalance =  user.availableBalance;
               }else{
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
-                UpdatedAvailableBalance =UpdatedAvailableBalance + winningsShareAmount  
+                UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount  
 
               }
               console.log("UpdatedAvailableBalance:::::::::::::::::::;",UpdatedAvailableBalance);
