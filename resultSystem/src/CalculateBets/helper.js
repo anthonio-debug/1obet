@@ -174,9 +174,15 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             let commissionFrom = userToUpdate.userId;
             for (const user of parentUser) {
 
-              let winningsShareAmount = Number(((user.commission / 100) * totalRemainingAmount).toFixed(3));
+                let prevrunnersPosition = false;
+                let highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+                if(bet.isFancyOrBookMaker==true && bet.fancyData != null){
+                    runnersPosition = bet.runnersPosition;
+                    highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+                }
+              let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
-             
+              let UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
 
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
@@ -191,7 +197,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 {
                   balance: totalBalance,
                   exposure: UpdatedExposureAmount,
-                  availableBalance: totalavailableBalance,
+                  availableBalance: UpdatedAvailableBalance,
                   clientPL: totalClientPL
                 }
               );
