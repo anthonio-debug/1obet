@@ -78,7 +78,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, Id = 0, 
 const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
 
 const bet = await Bets.findOne({ _id: betId });
-  console.log("the details  for the bet provided............",bet);
+  //console.log("the details  for the bet provided............",bet);
   let highestAmount;
   highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
   if(!highestAmount){
@@ -139,7 +139,7 @@ const bet = await Bets.findOne({ _id: betId });
    }else{
     let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
     let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
-    console.log("prevAdjustedExposure:::::::::::::::::::::::::::::::::::::::",prevAdjustedExposure);
+    console.log("prevAdjustedExposure:::",prevAdjustedExposure,"::",prevAdjustedAvailableBalance,"::::",user.availableBalance,"::::::::::::::",finalShareAmountInLossPrev,"::::::::::::::::..........................",prevAdjustedExposure);
     if(prevAdjustedExposure==0){
     user.exposure = -finalShareAmountInLoss;
     user.availableBalance = -finalShareAmountInLoss;
@@ -3439,7 +3439,7 @@ const placeBet = async (req, res) => {
         //   }
         // ).sort({_id: -1}).limit(1);
       } else {
-        console.log("Place to update all bets to calculateExp: false...............................................");
+        //console.log("Place to update all bets to calculateExp: false...............................................");
         await Bets.updateMany(
           {
             marketId: _3rdPartyMarketId,
@@ -3467,7 +3467,7 @@ const placeBet = async (req, res) => {
           return res.status(404).send({ message: `Something went wrong !` });
         }
         try {
-          console.log('Start placing bet');
+          //console.log('Start placing bet');
 
           const position = new currentPosition({
             userId: userId,
@@ -3476,7 +3476,7 @@ const placeBet = async (req, res) => {
             betId: result._id
           });
           await position.save();
-          console.log('Position saved', position);
+          //console.log('Position saved', position);
 
           const nowUser = await User.findOne({ userId }).exec();
           //console.log("User fetched", nowUser);
