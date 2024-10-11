@@ -145,6 +145,7 @@ const bet = await Bets.findOne({ _id: betId });
     user.availableBalance = -finalShareAmountInLoss;
     
    }else{
+    console.log("user ID::::::",user.userId);
     console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
     user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
@@ -3292,7 +3293,7 @@ const placeBet = async (req, res) => {
           
           prevBet = await Bets.findOne({ userId,marketId:_3rdPartyMarketId,calculateExp:true}).session(session);
           // If needed, you can perform more operations here
-          console.log("Inside try block..........................",prevBet);
+         // console.log("Inside try block..........................",prevBet);
           await session.commitTransaction();
         } catch (error) {
           console.error('An error occurred: ', error);
@@ -3307,7 +3308,7 @@ const placeBet = async (req, res) => {
 
 
 
-        console.log("outside try block..........................",prevBet);
+        //console.log("outside try block..........................",prevBet);
       
       
       
