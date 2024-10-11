@@ -183,12 +183,16 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 }
               let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
               let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
+              console.log("remainingAmount------------------------------------------------------->>>>>",remainingAmount);
+              console.log("loosingShareAmount------------------------------------------------------->>>>>",loosingShareAmount);    
               //winningsShareAmount mean when bettor WIN so it mean dealer LOST  
               //loosingShareAmount mean when bettor LOST so it mean dealer WON
 
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               console.log("Difference is caclauted and I am shoiwng as hereas..................",diff);
               let UpdatedAvailableBalance =  user.availableBalance;
+              
+
               if(diff<0){ 
               
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
@@ -204,7 +208,10 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 const totalBalance = Number((user.balance + (-userBalance)  ).toFixed(3));
                 
               }
+              console.log("totalBalance:::::::::::::::::::;",totalBalance);
+              console.log("UpdatedExposureAmount:::::::::::::::::::;",UpdatedExposureAmount);
               console.log("UpdatedAvailableBalance:::::::::::::::::::;",UpdatedAvailableBalance);
+              console.log("totalClientPL:::::::::::::::::::;",totalClientPL);
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               //const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
