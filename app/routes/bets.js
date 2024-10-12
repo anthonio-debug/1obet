@@ -79,7 +79,7 @@ const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
 
 const bet = await Bets.findOne({ _id: betId });
   //console.log("the details  for the bet provided............",bet);
-  let highestAmount;
+  let highestAmount = 0;
   highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
   if(!highestAmount){
     highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
