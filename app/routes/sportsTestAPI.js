@@ -4036,17 +4036,17 @@ async function deleteOdds(req, res) {
     // }
 
 
-    // await Deposits.deleteMany({
-    //   userId: 20046,
-    //   description: { $regex: "Casino", $options: "i" } // Case-insensitive search for "Casino"
-    // })
-    //   .then(result => {
-    //     console.log(`${result.deletedCount} deposit(s) deleted.`);
+    await Users.find({
+      
+      description: { $regex: "Casino" } // Case-insensitive search for "Casino"
+    })
+      .then(result => {
+        console.log(`${result} records found.`);
   
-    //   })
-    //   .catch(err => {
-    //     console.error("Error deleting deposits:", err);
-    //   });
+      })
+      .catch(err => {
+        console.error("Error deleting deposits:", err);
+      });
   
   
   
