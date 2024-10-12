@@ -29,6 +29,7 @@ function ToolForResults() {
             marketId: { $ne: null },
             isfancyOrbookmaker: false,
             status: 1,
+            calculateExp:true,
             type: { $in: [0, 1] }
           }
         },
@@ -85,7 +86,8 @@ function ToolForResults() {
       const betData = await Bets.findOne({
         sportsId: '4',
         isfancyOrbookmaker: true,
-        status: 1
+        calculateExp:true,
+        status: 1,
       })
         .sort({
           lastCheckResult: 1

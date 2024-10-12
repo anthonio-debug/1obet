@@ -315,7 +315,9 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             if (bet.isfancyOrbookmaker && bet.fancyData != null) {
               const marketInfo = await MarketIDS.findOne({
                 sportID: bet.sportsId,
-                marketId: bet.marketId
+                marketId: bet.marketId,
+                eventId: bet.eventId
+         
               });
               
               winnerRunnerData = marketInfo?.winnerRunnerData;
@@ -330,6 +332,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             await Bets.updateMany(
               { marketId: bet.marketId,
                 userId: bet.userId,
+                betSession: bet.betSession,
+                eventId: bet.eventId,
                 sportsId: bet.sportsId },
               {
                 status: 0,

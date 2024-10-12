@@ -121,6 +121,8 @@ function scoreChecker() {
         const bets = await Bets.find({
           marketId: betData.marketId,
           sportsId: betData.sportsId,
+          eventId: betData.eventId,
+          betSession: betData.betSession,
           status: 1,
           calculateExp:true,
         });
@@ -237,7 +239,8 @@ function scoreChecker() {
         console.log("============================================>",betData.marketId);
         const bets = await Bets.find({
           marketId: betData.marketId,
-          //marketId: '1.233997861',
+          eventId: betData.eventId,
+          betSession: betData.betSession,
           sportsId: betData.sportsId,
           calculateExp:true,
           status: 1
