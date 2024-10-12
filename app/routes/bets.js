@@ -151,7 +151,9 @@ const bet = await Bets.findOne({ _id: betId });
     
    }else{
     console.log("user ID::::::Else block:",user.userId);
+    let ultimatefinal = prevAdjustedExposure - finalShareAmountInLoss;
     console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
+    console.log("ultimatefinal=========>",ultimatefinal);
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
     user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
    }
