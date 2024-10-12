@@ -4038,7 +4038,7 @@ async function deleteOdds(req, res) {
 
     await Users.find({
       
-      description: { $regex: "Casino" } // Case-insensitive search for "Casino"
+      description: { $regex: "fancies" } // Case-insensitive search for "Casino"
     })
       .then(result => {
         console.log(`${result} records found.`);
