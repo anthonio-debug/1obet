@@ -89,8 +89,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 	
 	console.log("users new exposure: ",users_exposureNewUpdated);
 
-
-
+  console.log("Amount WON: : ",TotalWin);
+  console.log("userPrevClientPL updated..........................................: : ",userPrevClientPL+diff);
     await User.updateOne(
         {
           userId: bet.userId,
@@ -205,7 +205,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                  
                  userBalance = totalClientPLAmount;
                  console.log("diff<0", "----------userBalance/totalClientPLAmount----------", userBalance);
-                 totalBalance = Number((user.balance + userBalance ).toFixed(3));
+                 totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
                  console.log("diff<0", "----------totalBalance----------", totalBalance);
                  totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
               }else{
@@ -214,7 +214,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                  userBalance = totalClientPLAmount;
                  console.log("Else", "----------userBalance/totalClientPLAmount----------", userBalance);
                  
-                 totalBalance = Number((user.balance + (-userBalance)  ).toFixed(3));
+                 totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
                  console.log("Else::", "----------totalBalance----------", totalBalance);
                 
               }
