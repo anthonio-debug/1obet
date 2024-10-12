@@ -84,6 +84,7 @@ const bet = await Bets.findOne({ _id: betId });
   if(!highestAmount){
     highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
   }
+  console.log("1- highestAmount-------------------------------====",highestAmount);
   let prev = 0;
   let userPrevExposure = 0;
   let UseravailableBalancePrev = 0;
