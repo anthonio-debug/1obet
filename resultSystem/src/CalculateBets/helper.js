@@ -97,8 +97,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
           isDeleted: false
         },
         {
-          balance: userPrevClientPL+TotalWin,
-          clientPL: userPrevClientPL+TotalWin,
+          balance: userPrevClientPL+diff,
+          clientPL: userPrevClientPL+diff,
           exposure: users_exposureNewUpdated,
           availableBalance: updatedAvailableBalance
         }
