@@ -87,7 +87,7 @@ const bet = await Bets.findOne({ _id: betId });
   }
   console.log("1- highestAmount-------------------------------====",highestAmount);
   
-  if (Number.isNaN(value)) {
+  if (Number.isNaN(highestAmount)) {
     highestAmount = 0;
   }
   
