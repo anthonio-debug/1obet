@@ -76,7 +76,7 @@ function ToolForResults() {
     } finally {
       setTimeout(() => {
         getBetForEvents(targetArray);
-      }, 4 * 1000);
+      }, 10 * 1000);
     }
   }
 
