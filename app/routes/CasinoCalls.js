@@ -248,13 +248,9 @@ async function findAndProcessTransactions(user) {
           let commissionFrom = userRecord.userId;
           for (const user of parentUser) {
             let prevrunnersPosition = false;
-            let runnersPosition = bet.runnersPosition;
-            let highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
-            if(bet.isFancyOrBookMaker==true && bet.fancyData != null){
-                runnersPosition = bet.runnersPosition;
-                highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
-            }
-          let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
+            
+           
+          let winningsShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
           let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
           console.log("remainingAmount------------------------------------------------------->>>>>",remainingAmount);
           console.log("loosingShareAmount------------------------------------------------------->>>>>",loosingShareAmount);    
@@ -262,7 +258,7 @@ async function findAndProcessTransactions(user) {
           //loosingShareAmount mean when bettor LOST so it mean dealer WON
 
           let UpdatedExposureAmount = user.exposure + winningsShareAmount;
-          console.log("Difference is caclauted and I am shoiwng as hereas..................",diff);
+          console.log("Difference is caclauted and I am shoiwng as hereas..................",differenceDbCr);
           let UpdatedAvailableBalance =  user.availableBalance;
           
           let totalClientPLAmount;
@@ -270,16 +266,16 @@ async function findAndProcessTransactions(user) {
           let totalBalance;
           let totalClientPL;
   
-          if(diff<0){ 
+          if(differenceDbCr<0){ 
           
             UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
             UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount  
              totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
              
              userBalance = totalClientPLAmount;
-             console.log("diff<0", "----------userBalance/totalClientPLAmount----------", userBalance);
+             console.log("differenceDbCr<0", "----------userBalance/totalClientPLAmount----------", userBalance);
              totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-             console.log("diff<0", "----------totalBalance----------", totalBalance);
+             console.log("differenceDbCr<0", "----------totalBalance----------", totalBalance);
              totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
           }else{
              totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
@@ -353,7 +349,7 @@ async function findAndProcessTransactions(user) {
                   availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                   maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                   cashOrCredit: 'Commission',
-                  betId: bet._id,
+                 // betId: bet._id,
                   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
                   marketId: tran._id,
                   sportsId: "6",
