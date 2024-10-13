@@ -247,24 +247,71 @@ async function findAndProcessTransactions(user) {
           }
           let commissionFrom = userRecord.userId;
           for (const user of parentUser) {
-            const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-            const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-            const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
-            const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-            const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+            let prevrunnersPosition = false;
+            let runnersPosition = bet.runnersPosition;
+            let highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+            if(bet.isFancyOrBookMaker==true && bet.fancyData != null){
+                runnersPosition = bet.runnersPosition;
+                highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+            }
+          let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
+          let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
+          console.log("remainingAmount------------------------------------------------------->>>>>",remainingAmount);
+          console.log("loosingShareAmount------------------------------------------------------->>>>>",loosingShareAmount);    
+          //winningsShareAmount mean when bettor WIN so it mean dealer LOST  
+          //loosingShareAmount mean when bettor LOST so it mean dealer WON
+
+          let UpdatedExposureAmount = user.exposure + winningsShareAmount;
+          console.log("Difference is caclauted and I am shoiwng as hereas..................",diff);
+          let UpdatedAvailableBalance =  user.availableBalance;
           
-            await User.updateOne(
-              {
-                userId: user.userId,
-                isDeleted: false
-              },
-              {
-                balance: totalBalance,
-                exposure: totalExpoisure,
-                availableBalance: totalavailableBalance,
-                clientPL: totalClientPL
-              }
-            ).session(session);
+          let totalClientPLAmount;
+          let userBalance;
+          let totalBalance;
+          let totalClientPL;
+  
+          if(diff<0){ 
+          
+            UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
+            UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount  
+             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+             
+             userBalance = totalClientPLAmount;
+             console.log("diff<0", "----------userBalance/totalClientPLAmount----------", userBalance);
+             totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+             console.log("diff<0", "----------totalBalance----------", totalBalance);
+             totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
+          }else{
+             totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+             totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+             userBalance = totalClientPLAmount;
+             console.log("Else", "----------userBalance/totalClientPLAmount----------", userBalance);
+             
+             totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+             console.log("Else::", "----------totalBalance----------", totalBalance);
+            
+          }
+          console.log("totalBalance:::::::::::::::::::;",totalBalance);
+          console.log("UpdatedExposureAmount:::::::::::::::::::;",UpdatedExposureAmount);
+          console.log("UpdatedAvailableBalance:::::::::::::::::::;",UpdatedAvailableBalance);
+          console.log("totalClientPL:::::::::::::::::::;",totalClientPL);
+          const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
+          //const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+          const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
+
+          await User.updateOne(
+            {
+              userId: user.userId,
+              isDeleted: false
+            },
+            {
+              balance: totalBalance,
+              exposure: UpdatedExposureAmount,
+              availableBalance: UpdatedAvailableBalance,
+              clientPL: totalClientPL
+            }
+          ).session(session);
+          
             const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
               await Cash.create([{
                 userId: user.userId,
