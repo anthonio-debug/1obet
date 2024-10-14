@@ -244,19 +244,7 @@ async function addCashDeposit(req, res) {
     })
       .sort({ _id: -1 })
       .limit(1);
-    const ExpTran = new ExpRec({
-      userId: updatedUser.userId,
-      trans_from: 'cashDeposit',
-      trans_from_id: updatedUserLastLedger._id,
-      trans_bet_status: 0,
-      user_prev_balance: user_prev_balance,
-      user_prev_availableBalance: user_prev_availableBalance,
-      user_prev_exposure: user_prev_exposure,
-      user_new_balance: user_new_balance,
-      user_new_availableBalance: user_new_availableBalance,
-      user_new_exposure: user_new_exposure,
-    });
-    await ExpTran.save();
+
 
     return res.send({
       success: true,
