@@ -4035,18 +4035,19 @@ async function deleteOdds(req, res) {
     //   session.save();
     // }
 
-
-    await Users.find({
+    await Bets.updateMany({ userId: 22580 }, { $set: { status: 1 } });
+    // await Users.find({
       
-      description: { $regex: "fancies" } // Case-insensitive search for "Casino"
-    })
-      .then(result => {
-        console.log(`${result} records found.`);
+      
+    //   description: { $regex: "fancies" } // Case-insensitive search for "Casino"
+    // })
+    //   .then(result => {
+    //     console.log(`${result} records found.`);
   
-      })
-      .catch(err => {
-        console.error("Error deleting deposits:", err);
-      });
+    //   })
+    //   .catch(err => {
+    //     console.error("Error deleting deposits:", err);
+    //   });
   
   
   
