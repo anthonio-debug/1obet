@@ -104,6 +104,7 @@ async function findAndProcessTransactions(user) {
       }
 
       for (const tran of groupedTransactions) {
+        session.startTransaction();
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) },
           { session }
@@ -111,6 +112,8 @@ async function findAndProcessTransactions(user) {
 
         if (!userRecord) {
           console.log(`User not found for remoteId: ${tran.remote_id}`);
+          await session.commitTransaction();
+          await session.abortTransaction();
           continue; // Skip if user not found
         }
 
@@ -350,11 +353,11 @@ async function findAndProcessTransactions(user) {
 
 
 
-
+        await session.commitTransaction();
 
       }
 
-      await session.commitTransaction();
+      
       return; // Exit the function successfully after committing
 
     } catch (error) {
