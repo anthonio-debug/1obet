@@ -112,8 +112,8 @@ async function findAndProcessTransactions(user) {
 
         if (!userRecord) {
           console.log(`User not found for remoteId: ${tran.remote_id}`);
-          await session.commitTransaction();
-          await session.abortTransaction();
+          //await session.commitTransaction();
+          //await session.abortTransaction();
           continue; // Skip if user not found
         }
 
