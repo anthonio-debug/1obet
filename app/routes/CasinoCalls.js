@@ -357,7 +357,7 @@ async function findAndProcessTransactions(user) {
 
       }
 
-      
+      await session.abortTransaction();
       return; // Exit the function successfully after committing
 
     } catch (error) {
