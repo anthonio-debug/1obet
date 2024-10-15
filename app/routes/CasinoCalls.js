@@ -205,7 +205,7 @@ async function findAndProcessTransactions(user) {
 
 
           console.log("--------------------------------------------------->>>>>>",differenceDbCr);
-          try {
+          
             session.startTransaction(); 
             const betTransactionData = {
               userId: userRecord.userId,
@@ -375,12 +375,7 @@ async function findAndProcessTransactions(user) {
 
 
 
-        } catch (error) {
-            await session.abortTransaction();
-            console.error("Transaction error:", error);
-        } finally {
-            session.endSession();
-        }
+        
 
 
 
@@ -435,9 +430,12 @@ async function findAndProcessTransactions(user) {
 
         //await session.commitTransaction();
 
-      }
+      }//transloop end(); 
 
-      //session.endSession(); 
+
+
+
+      
       return; // Exit the function successfully after committing
 
     } catch (error) {
@@ -449,6 +447,9 @@ async function findAndProcessTransactions(user) {
       } else {
         throw error; // Re-throw the error after max retries
       }
+    }finally {
+      // End the session
+      session.endSession();
     } 
   }
 }
