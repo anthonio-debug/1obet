@@ -232,10 +232,7 @@ async function findAndProcessTransactions(user) {
   
             const deposit = new Cash(betTransactionData);
             await deposit.save({ session });
-            await session.commitTransaction();
-
-
-            session.startTransaction();
+            
             await users.updateOne(
               { _id: userRecord._id },
               {
