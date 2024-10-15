@@ -107,9 +107,9 @@ async function findAndProcessTransactions(user) {
        session.endSession();
         return;
       }
-
+      let i=0;
       for (const tran of groupedTransactions) {
-        
+        i++;
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) },
           { session }
@@ -222,7 +222,7 @@ async function findAndProcessTransactions(user) {
               updatedExposure: userRecord.exposure + AccumulativeDebit,
               credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
               creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
-              cashOrCredit: "Settlement",
+              cashOrCredit: "Settlement"+i,
               sportsId: "6",
               event: CgameName,
               roundId: tran._id,
@@ -456,6 +456,7 @@ async function findAndProcessTransactions(user) {
       session.endSession();
     } 
   }
+  session.endSession();
 }
 
 
