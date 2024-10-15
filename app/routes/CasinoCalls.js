@@ -243,7 +243,8 @@ async function findAndProcessTransactions(user) {
               },
               { session }
             );
-            session.startTransaction();
+            await session.commitTransaction();
+            
 
             const parentUserIds = await getParents(userRecord.userId);
             const parentUser = await User.find({
