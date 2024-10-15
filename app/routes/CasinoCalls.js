@@ -146,12 +146,7 @@ async function findAndProcessTransactions(user) {
       }
 
       for (const tran of groupedTransactions) {
-        console.log("--------------------here....................");
-        await CasinoCalls.updateMany(
-          { round_id: tran._id.toString() },
-          { $set: { isProcessing: false } },
-          { session }
-        );
+        
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) },
           { session }
@@ -397,8 +392,21 @@ async function findAndProcessTransactions(user) {
 
           
           }
+          console.log("--------------------here....................");
+        await CasinoCalls.updateMany(
+          { round_id: tran._id.toString() },
+          { $set: { isProcessing: false } },
+          { session }
+        );
+        }catch (error) {
+          // Abort the transaction in case of error
+          await session.abortTransaction();
+          console.error("Transaction error:", error);
+        } finally {
+          // End the session
+          session.endSession();
         }
-       
+        
             //await deposit.save({ session });
         } 
 
