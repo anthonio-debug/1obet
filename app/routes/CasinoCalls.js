@@ -62,12 +62,13 @@ async function findAndProcessTransactions(user) {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
+  session.startTransaction(); 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
       
 
       const limitValue = 1; // Set your desired limit here
-      session.startTransaction(); 
+      
       const groupedTransactions = await CasinoCalls.aggregate([
         {
           $match: {
@@ -98,7 +99,7 @@ async function findAndProcessTransactions(user) {
       ]).session(session);  
 
 
-
+     
 
       
       if (!groupedTransactions || groupedTransactions.length === 0) {
