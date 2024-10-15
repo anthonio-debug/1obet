@@ -402,6 +402,11 @@ async function handleWinningBet(bet, winner) {
           console.error('Error: user not found Location:(_handle winning bet)');
           return;
         } else {
+          
+          const mongoose = require('mongoose');
+          const session = await mongoose.startSession();
+          const maxRetries = 3; // Max retries for the transaction
+          session.startTransaction();
           let remainingAmount;
           let commissionAmount;
           let totalRemainingAmount;
@@ -680,7 +685,21 @@ async function handleWinningBet(bet, winner) {
               });
             }
           }
+      
+      
+      
+      
+      
+      
+          await session.commitTransaction();
+          await session.abortTransaction();
+          session.endSession();
         }
+      
+      
+      
+      
+      
       }
     }
   } catch (error) {
