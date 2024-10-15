@@ -293,7 +293,7 @@ async function findAndProcessTransactions(user) {
 
                 session.startTransaction();
                 const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-                  await Cash.create({
+                  await Cash.create([{
                     userId: user.userId,
                     description: `Casino (${CgameName})`,
                     createdBy: 0,
@@ -320,7 +320,7 @@ async function findAndProcessTransactions(user) {
                     remainingAmount: remainingAmount,
                     
                     roundId: tran._id
-                  },{ session });
+                  }],{ session });
                   await session.commitTransaction();
 
                   upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
