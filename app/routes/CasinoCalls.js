@@ -431,7 +431,7 @@ async function findAndProcessTransactions(user) {
 
 
 
-
+        session.endSession();
         //await session.commitTransaction();
 
       }//transloop end(); 
