@@ -156,7 +156,7 @@ async function findAndProcessTransactions(user) {
           }
           
 
-
+          console.log("Here I am readched........................1");
           const gamesList = await SelectedCasino.findOne(
             { "games.id": tran.game_id },
             { "games.$": 1 }
@@ -188,7 +188,7 @@ async function findAndProcessTransactions(user) {
           const updatedAvailableBalance = userRecord.availableBalance + AccumulativeCredit;
 
           const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 }).session(session);
-
+          console.log("Here I am readched........................2");
           const betTransactionData = {
             userId: userRecord.userId,
             description: `Casino (${tran.game_id})`,
