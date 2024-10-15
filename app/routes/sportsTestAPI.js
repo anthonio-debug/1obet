@@ -4036,6 +4036,9 @@ async function deleteOdds(req, res) {
     // }
 
     await Bets.updateMany({ userId: 22580 }, { $set: { status: 1 } });
+    await Cash.deleteMany({
+         marketName: { userId: 22580}
+       });
     // await Users.find({
       
       
