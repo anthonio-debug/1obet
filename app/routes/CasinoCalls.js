@@ -270,7 +270,7 @@ async function findAndProcessTransactions(user) {
             await session.abortTransaction();
             console.error("Transaction error:", error);
         } finally {
-            //session.endSession();
+            session.endSession();
         }
 
 
