@@ -68,6 +68,26 @@ async function findAndProcessTransactions(user) {
 
       const limitValue = 1; // Set your desired limit here
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      
+
+      try {
       const groupedTransactions = await CasinoCalls.aggregate([
         {
           $match: {
@@ -95,7 +115,29 @@ async function findAndProcessTransactions(user) {
         {
           $limit: limitValue // Limit the number of results returned
         }
-      ]).session(session);  
+      ]);  
+   
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
       if (!groupedTransactions || groupedTransactions.length === 0) {
         console.log('No transactions found for the given round_id and username.');
@@ -104,7 +146,7 @@ async function findAndProcessTransactions(user) {
       }
 
       for (const tran of groupedTransactions) {
-        session.startTransaction();
+        
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) },
           { session }
@@ -187,30 +229,78 @@ async function findAndProcessTransactions(user) {
           let AccumulativeCredit = totalCreditAmount * casinoMultiples;
           const updatedAvailableBalance = userRecord.availableBalance + AccumulativeCredit;
 
-          const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 }).session(session);
+          const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
           console.log("Here I am readched........................2");
-          const betTransactionData = {
-            userId: userRecord.userId,
-            description: `Casino (${tran.game_id})`,
-            date: new Date().getTime(),
-            amount: differenceDbCr,
-            balance: lastMaxWithdraw.balance + differenceDbCr,
-            availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
-            maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
-            roundId: tran._id,
-            updatedExposure: userRecord.exposure + AccumulativeDebit,
-            credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-            creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
-            cashOrCredit: "Settlement",
-            sportsId: "6",
-            event: CgameName,
-            roundId: tran._id,
-            marketId: tran._id,
-            matchId: Cgame_id,
-          };
 
-          const deposit = new Cash(betTransactionData);
-          await deposit.save({ session });
+
+
+
+
+
+
+
+
+          session.startTransaction(); 
+          try {
+            const betTransactionData = {
+              userId: userRecord.userId,
+              description: `Casino (${tran.game_id})`,
+              date: new Date().getTime(),
+              amount: differenceDbCr,
+              balance: lastMaxWithdraw.balance + differenceDbCr,
+              availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
+              maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
+              roundId: tran._id,
+              updatedExposure: userRecord.exposure + AccumulativeDebit,
+              credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+              creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+              cashOrCredit: "Settlement",
+              sportsId: "6",
+              event: CgameName,
+              roundId: tran._id,
+              marketId: tran._id,
+              matchId: Cgame_id,
+            };
+  
+            const deposit = new Cash(betTransactionData);
+            await deposit.save({ session });
+            await session.commitTransaction();
+            //await deposit.save({ session });
+        } catch (error) {
+            await session.abortTransaction();
+            console.error("Transaction error:", error);
+        } finally {
+            //session.endSession();
+        }
+
+
+
+
+
+          
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
           await users.updateOne(
             { _id: userRecord._id },
