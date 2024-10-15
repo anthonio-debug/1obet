@@ -400,13 +400,7 @@ async function findAndProcessTransactions(user) {
           { session }
         );
             //await deposit.save({ session });
-        } catch (error) {
-            await session.abortTransaction();
-            console.error("Transaction error:", error);
-        } finally {
-            session.endSession();
-        }
-
+        } 
 
 
 
