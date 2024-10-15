@@ -67,7 +67,7 @@ async function findAndProcessTransactions(user) {
       
 
       const limitValue = 1; // Set your desired limit here
-      session.startTransaction(); 
+      //session.startTransaction(); 
       const groupedTransactions = await CasinoCalls.aggregate([
         {
           $match: {
@@ -104,12 +104,12 @@ async function findAndProcessTransactions(user) {
       if (!groupedTransactions || groupedTransactions.length === 0) {
         console.log('No transactions found for the given round_id and username.');
        // await session.abortTransaction();  // Abort the transaction if no records found
-       session.endSession();
+      // session.endSession();
         return;
       }
       let i=0;
       for (const tran of groupedTransactions) {
-        session.startTransaction(); 
+       // session.startTransaction(); 
         i++;
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) },
@@ -118,7 +118,7 @@ async function findAndProcessTransactions(user) {
 
         if (!userRecord) {
           console.log(`User not found for remoteId: ${tran.remote_id}`);
-          session.endSession();
+          //session.endSession();
           //await session.commitTransaction();
           //await session.abortTransaction();
           continue; // Skip if user not found
@@ -411,7 +411,7 @@ async function findAndProcessTransactions(user) {
         
 
         } else {
-          session.endSession();
+         // session.endSession();
           console.log("Duplicate transaction found, skipping insertion.");
           //await session.abortTransaction();
           //return;
@@ -426,8 +426,7 @@ async function findAndProcessTransactions(user) {
         //END OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
 
 
-        await session.commitTransaction();
-        session.endSession();
+      
         //await session.commitTransaction();
 
       }//transloop end(); 
