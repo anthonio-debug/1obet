@@ -242,7 +242,7 @@ async function findAndProcessTransactions(user) {
 
           session.startTransaction(); 
           try {
-            const betTransactionData = {
+            let betTransactionData = {
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
               date: new Date().getTime(),
