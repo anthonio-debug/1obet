@@ -201,11 +201,12 @@ async function findAndProcessTransactions(user) {
 
 
 
-          session.startTransaction(); 
+          
 
 
           console.log("--------------------------------------------------->>>>>>",differenceDbCr);
           try {
+            session.startTransaction(); 
             const betTransactionData = {
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
@@ -244,7 +245,13 @@ async function findAndProcessTransactions(user) {
               { session }
             );
             await session.commitTransaction();
-            
+            session.startTransaction();
+            await CasinoCalls.updateMany(
+              { round_id: tran._id.toString() },
+              { $set: { isProcessing: false } },
+              { session }
+            );
+            await session.commitTransaction();
 
             const parentUserIds = await getParents(userRecord.userId);
             const parentUser = await User.find({
@@ -360,13 +367,7 @@ async function findAndProcessTransactions(user) {
               }
             }
 
-            session.startTransaction();
-            await CasinoCalls.updateMany(
-              { round_id: tran._id.toString() },
-              { $set: { isProcessing: false } },
-              { session }
-            );
-            await session.commitTransaction();
+            
 
 
 
