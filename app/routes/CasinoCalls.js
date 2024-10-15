@@ -87,7 +87,7 @@ async function findAndProcessTransactions(user) {
 
       
 
-      try {
+     
       const groupedTransactions = await CasinoCalls.aggregate([
         {
           $match: {
