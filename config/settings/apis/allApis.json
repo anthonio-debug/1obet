@@ -241,5 +241,6 @@
   "get-block-games",
   "unblock-games",
   "logout",
-  "/track-bet/casinoListing"
+  "/track-bet/casinoListing",
+  "get-fancy-result"
   ]

@@ -2989,6 +2989,77 @@ async function getBlockCasinoGames(req, res) {
     return res.status(500).send({ message: `Error during unblocking games: ${error.message}` });
   }
 }
+async function getFancyResults(req, res) {
+  const eventId = req.body.eventId;
+
+  try {
+    const fancyResults = await Bets.aggregate([
+      {
+        $match: {
+          eventId: eventId,
+          subMarketId: "7"
+        }
+      },
+      {
+        $project: {
+          eventId: 1,
+          event: 1,
+          resultId: 1
+        }
+      },
+      {
+        $addFields: {
+          resultIdObject: { $toObjectId: "$resultId" }
+        }
+      },
+      {
+        $lookup: {
+          from: "resultrecords",
+          localField: "resultIdObject",
+          foreignField: "_id",
+          as: "betResultData"
+        }
+      },
+      {
+        $unwind: {
+          path: "$betResultData",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
+        $project: {
+          _id: { $toString: "$_id" },
+          eventId: 1,
+          event: 1,
+          resultId: 1,
+          resultData: { $ifNull: ["$betResultData.resultData", null] }
+        }
+      },
+      {
+        $sort: {
+          _id: -1
+        }
+      }
+    ]);
+
+    if (!fancyResults || fancyResults.length === 0) {
+      return res.status(400).send({ message: "Fancy results not found" });
+    }
+
+    return res.status(200).send({
+      result: fancyResults,
+      message: "Fancy Results fetched Successfully."
+    });
+  } catch (error) {
+    console.error("Error fetching fancy results:", error);
+    return res.status(500).send({
+      result: [],
+      message: "Fancy Results not be able to fetch."
+    });
+  }
+}
+
+
 
 loginRouter.get('/get-block-games', getBlockCasinoGames);
 loginRouter.post('/block-games', blockCasinoGames);
@@ -3054,6 +3125,9 @@ router.get('/active-bettors', getActiveBettors);
 loginRouter.post('/update-setting', updateSetting);
 loginRouter.post('/get-setting', getSetting);
 loginRouter.post('/bets-records', betsRecords);
+loginRouter.post('/get-fancy-result', getFancyResults);
+
+
 
 
 module.exports = { loginRouter, router, listOddsAPI };
