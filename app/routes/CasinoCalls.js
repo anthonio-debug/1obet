@@ -302,17 +302,78 @@ async function findAndProcessTransactions(user) {
 
 
 
-          await users.updateOne(
-            { _id: userRecord._id },
-            {
-              $set: {
-                balance: updatedAvailableBalance,
-                availableBalance: updatedAvailableBalance,
-                exposure: userRecord.exposure + AccumulativeDebit
-              }
-            },
-            { session }
-          );
+
+
+        session.startTransaction();
+
+try {
+  // Update the user balance
+  await users.updateOne(
+    { _id: userRecord._id },
+    {
+      $set: {
+        balance: updatedAvailableBalance,
+        availableBalance: updatedAvailableBalance,
+        exposure: userRecord.exposure + AccumulativeDebit
+      }
+    },
+    { session }
+  );
+
+  // Commit the transaction
+  await session.commitTransaction();
+} catch (error) {
+  // Abort the transaction in case of error
+  await session.abortTransaction();
+  console.error("Transaction error:", error);
+} finally {
+  // End the session
+  session.endSession();
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
           const parentUserIds = await getParents(userRecord.userId);
