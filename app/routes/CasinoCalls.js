@@ -104,6 +104,7 @@ async function findAndProcessTransactions(user) {
       if (!groupedTransactions || groupedTransactions.length === 0) {
         console.log('No transactions found for the given round_id and username.');
        // await session.abortTransaction();  // Abort the transaction if no records found
+       session.endSession();
         return;
       }
 
@@ -116,6 +117,7 @@ async function findAndProcessTransactions(user) {
 
         if (!userRecord) {
           console.log(`User not found for remoteId: ${tran.remote_id}`);
+          session.endSession();
           //await session.commitTransaction();
           //await session.abortTransaction();
           continue; // Skip if user not found
@@ -413,6 +415,7 @@ async function findAndProcessTransactions(user) {
         
 
         } else {
+          session.endSession();
           console.log("Duplicate transaction found, skipping insertion.");
           //await session.abortTransaction();
           //return;
@@ -437,7 +440,7 @@ async function findAndProcessTransactions(user) {
 
 
       
-      return; // Exit the function successfully after committing
+     // return; // Exit the function successfully after committing
 
     } catch (error) {
       console.error('Error processing transactions:', error);
