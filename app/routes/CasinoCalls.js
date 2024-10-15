@@ -212,7 +212,11 @@ async function findAndProcessTransactions(user) {
           }
           
           
-          
+          await CasinoCalls.updateMany(
+            { round_id: tran._id.toString() },
+            { $set: { isProcessing: false } },
+            { session }
+          );
 
 
           
