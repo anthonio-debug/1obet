@@ -67,7 +67,7 @@ async function findAndProcessTransactions(user) {
       
 
       const limitValue = 1; // Set your desired limit here
-
+      session.startTransaction(); 
       const groupedTransactions = await CasinoCalls.aggregate([
         {
           $match: {
@@ -98,6 +98,7 @@ async function findAndProcessTransactions(user) {
       ]).session(session);  
 
 
+      await session.commitTransaction();
 
       
       if (!groupedTransactions || groupedTransactions.length === 0) {
