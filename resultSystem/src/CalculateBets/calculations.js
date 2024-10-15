@@ -454,7 +454,7 @@ async function handleWinningBet(bet, winner) {
             marketId: bet.marketId,
             sportsId: bet.sportsId,
             matchId: bet.matchId
-          });
+          }).session(session);
           if (exists) {
             console.log('=====================handleWinningBet exists=====================');
             console.log(bet._id, bet.status);
