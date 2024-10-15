@@ -98,7 +98,7 @@ async function findAndProcessTransactions(user) {
       ]).session(session);  
 
 
-      await session.commitTransaction();
+
 
       
       if (!groupedTransactions || groupedTransactions.length === 0) {
@@ -209,7 +209,7 @@ async function findAndProcessTransactions(user) {
 
           console.log("--------------------------------------------------->>>>>>",differenceDbCr);
           
-            session.startTransaction(); 
+            
             const betTransactionData = {
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
