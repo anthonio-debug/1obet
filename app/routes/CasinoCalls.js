@@ -265,118 +265,27 @@ async function findAndProcessTransactions(user) {
             const deposit = new Cash(betTransactionData);
             await deposit.save({ session });
             await session.commitTransaction();
-            //await deposit.save({ session });
-        } catch (error) {
-            await session.abortTransaction();
-            console.error("Transaction error:", error);
-        } finally {
-            session.endSession();
-        }
 
-
-
-
-
+            await users.updateOne(
+              { _id: userRecord._id },
+              {
+                $set: {
+                  balance: updatedAvailableBalance,
+                  availableBalance: updatedAvailableBalance,
+                  exposure: userRecord.exposure + AccumulativeDebit
+                }
+              },
+              { session }
+            );
           
-          
+            // Commit the transaction
+            await session.commitTransaction();
 
 
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        session.startTransaction();
-
-try {
-  // Update the user balance
-  await users.updateOne(
-    { _id: userRecord._id },
-    {
-      $set: {
-        balance: updatedAvailableBalance,
-        availableBalance: updatedAvailableBalance,
-        exposure: userRecord.exposure + AccumulativeDebit
-      }
-    },
-    { session }
-  );
-
-  // Commit the transaction
-  await session.commitTransaction();
-} catch (error) {
-  // Abort the transaction in case of error
-  await session.abortTransaction();
-  console.error("Transaction error:", error);
-} finally {
-  // End the session
-  session.endSession();
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-        
-          
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-          const parentUserIds = await getParents(userRecord.userId);
+            const parentUserIds = await getParents(userRecord.userId);
         const parentUser = await User.find({
           userId: { $in: parentUserIds },
           isDeleted: false
@@ -406,7 +315,7 @@ try {
             const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
             const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
             const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-          
+            session.startTransaction(); 
             await User.updateOne(
               {
                 userId: user.userId,
@@ -417,8 +326,10 @@ try {
                 exposure: totalExpoisure,
                 availableBalance: totalavailableBalance,
                 clientPL: totalClientPL
-              }
+              },
+              { session }
             );
+            await session.commitTransaction();
             const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
               await Cash.create({
                 userId: user.userId,
@@ -482,6 +393,92 @@ try {
           
           }
         }
+
+            //await deposit.save({ session });
+        } catch (error) {
+            await session.abortTransaction();
+            console.error("Transaction error:", error);
+        } finally {
+            session.endSession();
+        }
+
+
+
+
+
+          
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          
 
         } else {
           console.log("Duplicate transaction found, skipping insertion.");
