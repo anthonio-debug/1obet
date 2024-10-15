@@ -98,7 +98,7 @@ async function findAndProcessTransactions(user) {
       ]).session(session);  
 
 
-     // await session.commitTransaction();
+      
 
       
       if (!groupedTransactions || groupedTransactions.length === 0) {
@@ -109,6 +109,7 @@ async function findAndProcessTransactions(user) {
       }
       let i=0;
       for (const tran of groupedTransactions) {
+        session.startTransaction(); 
         i++;
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) },
@@ -244,14 +245,14 @@ async function findAndProcessTransactions(user) {
               },
               { session }
             );
-            await session.commitTransaction();
-            session.startTransaction();
+          
             await CasinoCalls.updateMany(
               { round_id: tran._id.toString() },
               { $set: { isProcessing: false } },
               { session }
             );
-            await session.commitTransaction();
+ 
+            
 
             const parentUserIds = await getParents(userRecord.userId);
             const parentUser = await User.find({
@@ -283,7 +284,7 @@ async function findAndProcessTransactions(user) {
                 const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
                 const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
                 const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-                session.startTransaction();
+                
                 await User.updateOne(
                   {
                     userId: user.userId,
@@ -296,9 +297,7 @@ async function findAndProcessTransactions(user) {
                     clientPL: totalClientPL
                   },{ session }
                 );
-                await session.commitTransaction();
-
-                session.startTransaction();
+           
                 const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
                   await Cash.create([{
                     userId: user.userId,
@@ -328,11 +327,11 @@ async function findAndProcessTransactions(user) {
                     
                     roundId: tran._id
                   }],{ session });
-                  await session.commitTransaction();
+                 
 
                   upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
                   if(differenceDbCr>0){
-                    session.startTransaction();
+                  
                     await Cash.create({
                       userId: user.userId,
                       description: `Commission From Casino (${CgameName})`,
@@ -358,8 +357,8 @@ async function findAndProcessTransactions(user) {
                       
                       roundId: tran._id
                     },{ session });
-                    session.startTransaction();
-                    await session.commitTransaction();
+                   
+                   
                     upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
                   }
     
@@ -427,7 +426,7 @@ async function findAndProcessTransactions(user) {
         //END OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
 
 
-
+        await session.commitTransaction();
         session.endSession();
         //await session.commitTransaction();
 
