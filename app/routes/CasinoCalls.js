@@ -64,7 +64,7 @@ async function findAndProcessTransactions(user) {
   const formattedDate = `${year}-${month}-${day}`;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
-      
+      session.startTransaction();
 
       const limitValue = 1; // Set your desired limit here
 
