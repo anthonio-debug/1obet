@@ -393,7 +393,12 @@ async function findAndProcessTransactions(user) {
           
           }
         }
-
+        console.log("--------------------here....................");
+        await CasinoCalls.updateMany(
+          { round_id: tran._id.toString() },
+          { $set: { isProcessing: false } },
+          { session }
+        );
             //await deposit.save({ session });
         } catch (error) {
             await session.abortTransaction();
@@ -486,11 +491,7 @@ async function findAndProcessTransactions(user) {
           //return;
         }
 
-        await CasinoCalls.updateMany(
-          { round_id: tran._id.toString() },
-          { $set: { isProcessing: false } },
-          { session }
-        );
+        
 
 
 
