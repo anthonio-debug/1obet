@@ -214,9 +214,11 @@ async function findAndProcessTransactions(user) {
           
 
 
-          console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
-          i++;
+          
+          
           await session.startTransaction();
+          i++;
+          console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
             const betTransactionData = {
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
