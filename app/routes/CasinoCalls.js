@@ -163,7 +163,7 @@ async function findAndProcessTransactions(user) {
           }
           if(proceedIt===true){
             console.log("proceedIt...............................................................",proceedIt);
-          }
+          
           
 
           console.log("Here I am readched........................1");
@@ -416,19 +416,20 @@ async function findAndProcessTransactions(user) {
 
 
 
-
+          }//if proceed true ends
           
 
 
         
 
-        } else {
+        }//ends if deposits not have entry
+         else {
          // session.endSession();
           console.log("Duplicate transaction found, skipping insertion.");
           //await session.abortTransaction();
           //return;
         }
-
+      
         
 
 
