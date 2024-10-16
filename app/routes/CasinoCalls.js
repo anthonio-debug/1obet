@@ -1035,7 +1035,7 @@ async function  casino (req, res) {
   const payload1 = req.query
   const c = await new CasinoCallsPayload(payload1)
   c.save()
-
+  findAndProcessTransactions()
   switch (action) {
 
     case 'balance':
@@ -1049,7 +1049,7 @@ async function  casino (req, res) {
     default:
       return res.send({ status: '400', msg: 'Invalid action' });
   }
-  findAndProcessTransactions()
+  
 }
 async function casinoListing(req, res) {
   const {startDate,endDate} = req.body;
