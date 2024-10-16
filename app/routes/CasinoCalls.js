@@ -63,6 +63,7 @@ async function findAndProcessTransactions(user) {
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
   for (let attempt = 0; attempt < maxRetries; attempt++) {
+    let i=0;
     try {
       
 
@@ -108,7 +109,7 @@ async function findAndProcessTransactions(user) {
        session.endSession();
         return;
       }
-      let i=0;
+      
       for (const tran of groupedTransactions) {
        // session.startTransaction(); 
         
