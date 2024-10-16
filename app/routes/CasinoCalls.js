@@ -214,7 +214,7 @@ async function findAndProcessTransactions(user) {
           
 
 
-          console.log("--------------------------------------------------->>>>>>",differenceDbCr);
+          console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
           
           await session.startTransaction();
             const betTransactionData = {
