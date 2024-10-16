@@ -68,6 +68,7 @@ async function findAndProcessTransactions(user) {
 
       const limitValue = 1; // Set your desired limit here
       session.startTransaction(); 
+      session.endSession();
       const groupedTransactions = await CasinoCalls.aggregate([
         {
           $match: {
@@ -104,7 +105,7 @@ async function findAndProcessTransactions(user) {
       if (!groupedTransactions || groupedTransactions.length === 0) {
         console.log('No transactions found for the given round_id and username.');
        // await session.abortTransaction();  // Abort the transaction if no records found
-      // session.endSession();
+       session.endSession();
         return;
       }
       let i=0;
@@ -118,9 +119,10 @@ async function findAndProcessTransactions(user) {
 
         if (!userRecord) {
           console.log(`User not found for remoteId: ${tran.remote_id}`);
-          //session.endSession();
+          session.endSession();
           //await session.commitTransaction();
           //await session.abortTransaction();
+          
           continue; // Skip if user not found
         }
 
