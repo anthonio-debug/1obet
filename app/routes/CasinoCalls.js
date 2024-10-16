@@ -62,7 +62,7 @@ async function findAndProcessTransactions(user) {
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
   const day = now.getDate().toString().padStart(2, '0');
   const formattedDate = `${year}-${month}-${day}`;
-  for (let attempt = 0; attempt < maxRetries; attempt++) {
+  
     let i=0;
     try {
       
@@ -464,8 +464,7 @@ async function findAndProcessTransactions(user) {
       // End the session
       session.endSession();
     } 
-  }
-  session.endSession();
+  
 }
 
 
