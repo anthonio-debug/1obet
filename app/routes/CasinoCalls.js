@@ -1035,7 +1035,7 @@ async function  casino (req, res) {
   const payload1 = req.query
   const c = await new CasinoCallsPayload(payload1)
   c.save()
-  findAndProcessTransactions()
+  
   switch (action) {
 
     case 'balance':
