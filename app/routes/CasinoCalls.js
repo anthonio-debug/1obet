@@ -1049,6 +1049,7 @@ async function  casino (req, res) {
     default:
       return res.send({ status: '400', msg: 'Invalid action' });
   }
+  findAndProcessTransactions()
 }
 async function casinoListing(req, res) {
   const {startDate,endDate} = req.body;
