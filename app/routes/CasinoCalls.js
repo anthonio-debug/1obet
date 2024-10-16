@@ -111,7 +111,7 @@ async function findAndProcessTransactions(user) {
       let i=0;
       for (const tran of groupedTransactions) {
        // session.startTransaction(); 
-        i++;
+        
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) },
           { session }
@@ -215,7 +215,7 @@ async function findAndProcessTransactions(user) {
 
 
           console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
-          
+          i++;
           await session.startTransaction();
             const betTransactionData = {
               userId: userRecord.userId,
