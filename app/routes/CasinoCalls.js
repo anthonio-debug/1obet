@@ -98,7 +98,7 @@ async function findAndProcessTransactions(user) {
         }
       ]).session(session);  
 
-
+      await session.commitTransaction();
       
 
       
@@ -125,12 +125,12 @@ async function findAndProcessTransactions(user) {
           
           continue; // Skip if user not found
         }
-
+        await session.startTransaction();
         const existingDeposit = await Cash.findOne({
           roundId: tran._id.toString(),
           remote_id:tran.remote_id
         }).session(session);
-
+        await session.commitTransaction();
         if (!existingDeposit) {
           let totalCreditAmount = 0;
           let totalDebitAmount = 0;
@@ -138,9 +138,9 @@ async function findAndProcessTransactions(user) {
           let differenceDbCr = 0;
           let proceedIt = false;
           let usernameAllowed = '';
-          
+          await session.startTransaction();
           const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
-          
+          await session.commitTransaction();
           for (const rounds of roundIds) {
             const session = await mongoose.startSession();
             if (rounds.action === 'credit') {
@@ -167,6 +167,7 @@ async function findAndProcessTransactions(user) {
           
 
           console.log("Here I am readched........................1");
+          await session.startTransaction();
           const gamesList = await SelectedCasino.findOne(
             { "games.id": tran.game_id },
             { "games.$": 1 }
@@ -178,7 +179,7 @@ async function findAndProcessTransactions(user) {
              CgameName = game.name;
              Cgame_id = game.game_id;
           }
-          
+          await session.commitTransaction();
           
           
 
@@ -197,7 +198,9 @@ async function findAndProcessTransactions(user) {
           let AccumulativeCredit = totalCreditAmount * casinoMultiples;
           const updatedAvailableBalance = userRecord.availableBalance + AccumulativeCredit;
 
+          await session.startTransaction();
           const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
+          await session.commitTransaction();
           console.log("Here I am readched........................2");
 
 
@@ -213,7 +216,7 @@ async function findAndProcessTransactions(user) {
 
           console.log("--------------------------------------------------->>>>>>",differenceDbCr);
           
-            
+          await session.startTransaction();
             const betTransactionData = {
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
@@ -233,10 +236,11 @@ async function findAndProcessTransactions(user) {
               marketId: tran._id,
               matchId: Cgame_id,
             };
-  
+            
             const deposit = new Cash(betTransactionData);
             await deposit.save({ session });
-            
+            await session.commitTransaction();
+            await session.startTransaction();
             await users.updateOne(
               { _id: userRecord._id },
               {
@@ -248,13 +252,14 @@ async function findAndProcessTransactions(user) {
               },
               { session }
             );
-          
+            await session.commitTransaction();
+            await session.startTransaction();
             await CasinoCalls.updateMany(
               { round_id: tran._id.toString() },
               { $set: { isProcessing: false } },
               { session }
             );
- 
+            await session.commitTransaction();
             
 
             const parentUserIds = await getParents(userRecord.userId);
