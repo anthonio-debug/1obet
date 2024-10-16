@@ -100,7 +100,7 @@ async function findAndProcessTransactions(user) {
 
       await session.commitTransaction();
       
-
+      console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
       
       if (!groupedTransactions || groupedTransactions.length === 0) {
         console.log('No transactions found for the given round_id and username.');
@@ -163,7 +163,7 @@ async function findAndProcessTransactions(user) {
           }
           if(proceedIt===true){
             console.log("proceedIt...............................................................",proceedIt);
-          
+          }
           
 
           console.log("Here I am readched........................1");
@@ -416,7 +416,7 @@ async function findAndProcessTransactions(user) {
 
 
 
-          }//if proceed true ends
+
           
 
 
@@ -429,7 +429,7 @@ async function findAndProcessTransactions(user) {
           //await session.abortTransaction();
           //return;
         }
-      
+
         
 
 
