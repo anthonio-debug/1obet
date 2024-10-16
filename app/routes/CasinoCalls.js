@@ -256,13 +256,12 @@ async function findAndProcessTransactions(user) {
               },
               { session }
             );
-            await session.commitTransaction();
-            await session.startTransaction();
             await CasinoCalls.updateMany(
               { round_id: tran._id.toString() },
               { $set: { isProcessing: false } },
               { session }
             );
+           
             await session.commitTransaction();
             
 
