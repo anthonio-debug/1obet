@@ -56,7 +56,7 @@ const mongoose = require('mongoose');
 async function findAndProcessTransactions(user) {
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user);
   const session = await mongoose.startSession();
-  const maxRetries = 3; // Max retries for the transaction
+  const maxRetries = 1; // Max retries for the transaction
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -240,6 +240,7 @@ async function findAndProcessTransactions(user) {
             const deposit = new Cash(betTransactionData);
             await deposit.save({ session });
             await session.commitTransaction();
+
             await session.startTransaction();
             await users.updateOne(
               { _id: userRecord._id },
