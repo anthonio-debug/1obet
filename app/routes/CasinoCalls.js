@@ -142,6 +142,7 @@ async function findAndProcessTransactions(user) {
           const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
           
           for (const rounds of roundIds) {
+            const session = await mongoose.startSession();
             if (rounds.action === 'credit') {
               totalCreditAmount += Number(rounds.amount);
             }
