@@ -190,6 +190,7 @@ async function getMarketsBySportsId(req, res) {
 async function getMarketsByEventId(req, res) {
   try {
     const eventId = req.params.eventId;
+    console.log("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk");return;
      await MarketIDS.updateMany({eventId: eventId},{$set:{ReadyForOdds:true}})
     const marketData = await MarketIDS.aggregate([
       {
