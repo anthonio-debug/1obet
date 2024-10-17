@@ -1215,7 +1215,6 @@ const insertMissingTransactions = async () => {
     if (!matchedDocs  || matchedDocs .length === 0) {
       console.log('No transactions found for the given round_id and username.');
       await session.abortTransaction();
-      return;
     }
     for (const doc of matchedDocs) {
       const newCasinoCall = new CasinoCalls({
@@ -1261,20 +1260,8 @@ const insertMissingTransactions = async () => {
       await newCasinoCall.save({ session })
     }
     await session.commitTransaction();
-    return res.status(200).json({
-      success: true,
-      message: 'Missing transactions successfully inserted.',
-      data: matchedDocs
-
-    });
-    // console.log('Missing transactions successfully inserted.');
   } catch (error) {
     await session.abortTransaction();
-    return res.status(500).json({
-      success: false,
-      message: 'Error inserting missing transactions.',
-      error: error.message
-    });
   }finally {
     session.endSession();  
   }
