@@ -510,7 +510,7 @@ function apiRequests() {
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
-                openDate: openDateFromInplay,
+                openDate: openDateFromInplayOpenDate,
                 status: marketStatus,
                 runners: tempRunners
               });
