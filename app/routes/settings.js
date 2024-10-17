@@ -2989,6 +2989,7 @@ async function getBlockCasinoGames(req, res) {
     return res.status(500).send({ message: `Error during unblocking games: ${error.message}` });
   }
 }
+
 async function getFancyResults(req, res) {
   const eventId = req.body.eventId;
 
@@ -3004,7 +3005,8 @@ async function getFancyResults(req, res) {
         $project: {
           eventId: 1,
           event: 1,
-          resultId: 1
+          resultId: 1,
+          marketId: 1
         }
       },
       {
@@ -3032,12 +3034,23 @@ async function getFancyResults(req, res) {
           eventId: 1,
           event: 1,
           resultId: 1,
+          marketId: 1,
           resultData: { $ifNull: ["$betResultData.resultData", null] }
         }
       },
       {
+        $group: {
+          _id: "$resultId",
+          eventId: { $first: "$eventId" },
+          event: { $first: "$event" },
+          marketId: { $first: "$marketId" },
+          resultData: { $first: "$resultData" },
+          _idObj: { $first: "$_id" }
+        }
+      },
+      {
         $sort: {
-          _id: -1
+          _idObj: -1
         }
       }
     ]);
