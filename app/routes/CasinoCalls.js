@@ -1179,6 +1179,8 @@ const insertMissingTransactions = async () => {
   const session = await mongoose.startSession();
   console.log("here man I am here reach..............................................");
   try {
+    console.log("here man I am here reach insdie try..............................................");
+    
     await session.startTransaction();
 
     const matchedDocs = await CasinoCalls.aggregate([
