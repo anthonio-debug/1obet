@@ -1210,8 +1210,8 @@ const insertMissingTransactions = async () => {
       },
       {
         $match: {
-          "transaction_id": { $exists: false },
-          "matchedCasinoCallsPayload.transaction_id": { $exists: true }
+          "round_id": { $exists: false },
+          "matchedCasinoCallsPayload.round_id": { $exists: true }
         }
       }
     ]).session(session);
