@@ -482,7 +482,7 @@ function apiRequests() {
                 id: element.marketId,
                 marketName: element.marketName,
                 sort: 1,
-                openDate: openDateFromInplay,
+                openDate: openDateFromInplayOpenDate,
                 status: marketStatus,
                 hasbetfairFancy: hasbetfairFancy,
                 runners: tempRunners
@@ -493,7 +493,7 @@ function apiRequests() {
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
-                openDate: openDateFromInplay,
+                openDate: openDateFromInplayOpenDate,
                 status: marketStatus,
                 runners: tempRunners
               });
