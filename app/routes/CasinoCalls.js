@@ -1174,6 +1174,115 @@ async function casinoListing(req, res) {
     });
   }
 }
+Mujahid what are task results
+const insertMissingTransactions = async () => {
+  const session = await mongoose.startSession();
+  try {
+
+     await session.startTransaction();
+    const matchedDocs = await CasinoCalls.aggregate([
+      {
+        $match: {
+          isProcessing: true
+        }
+      },
+      {
+        $lookup: {
+          from: 'casinocallspayloads',
+          let: { roundId: "$round_id", username: "$username" },
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $eq: ["$round_id", "$$roundId"] },
+                    { $eq: ["$username", "$$username"] }
+                  ]
+                }
+              }
+            }
+          ],
+          as: 'matchedCasinoCallsPayload'
+        }
+      },
+      {
+        $match: {
+          "transaction_id": { $exists: false },
+          "matchedCasinoCallsPayload.transaction_id": { $exists: true }
+        }
+      }
+    ]).session(session);
+    if (!matchedDocs  || matchedDocs .length === 0) {
+      console.log('No transactions found for the given round_id and username.');
+      await session.abortTransaction();
+      return;
+    }
+    for (const doc of matchedDocs) {
+      const newCasinoCall = new CasinoCalls({
+        action: doc.action,
+        callerId: doc.callerId,
+        callerPassword: doc.callerPassword,
+        callerPrefix: doc.callerPrefix,
+        username: doc.username,
+        remote_id: doc.remote_id,
+        amount: doc.amount,
+        provider: doc.provider,
+        game_id: doc.game_id,
+        transaction_id: doc.matchedCasinoCallsPayload[0].transaction_id || null,
+        gameplay_final: doc.gameplay_final,
+        round_id: doc.round_id,
+        session_id: doc.session_id,
+        key: doc.key,
+        gamesession_id: doc.gamesession_id,
+        fee: doc.fee,
+        tip_in_amount: doc.tip_in_amount,
+        is_freeround_bet: doc.is_freeround_bet,
+        freeround_id: doc.freeround_id,
+        odd_factor: doc.odd_factor,
+        jackpot_contribution_in_amount: doc.jackpot_contribution_in_amount,
+        jackpot_contribution_ids: doc.jackpot_contribution_ids,
+        jackpot_contribution_per_id: doc.jackpot_contribution_per_id,
+        game_id_hash: doc.game_id_hash,
+        is_freeround_win: doc.is_freeround_win,
+        freeround_spins_remaining: doc.freeround_spins_remaining,
+        freeround_completed: doc.freeround_completed,
+        is_promo_win: doc.is_promo_win,
+        is_jackpot_win: doc.is_jackpot_win,
+        jackpot_win_ids: doc.jackpot_win_ids,
+        jackpot_win_in_amount: doc.jackpot_win_in_amount,
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt,
+        userPrevExposure: doc.userPrevExposure,
+        AddedExposure: doc.AddedExposure,
+        userUpdatedExposure: doc.userUpdatedExposure,
+        isProcessing: true
+      });
+
+      await newCasinoCall.save({ session })
+    }
+    await session.commitTransaction();
+    return res.status(200).json({
+      success: true,
+      message: 'Missing transactions successfully inserted.',
+      data: matchedDocs
+
+    });
+    // console.log('Missing transactions successfully inserted.');
+  } catch (error) {
+    await session.abortTransaction();
+    return res.status(500).json({
+      success: false,
+      message: 'Error inserting missing transactions.',
+      error: error.message
+    });
+  }finally {
+    session.endSession();  
+  }
+};
 router.post('/track-bet/casinoListing', casinoListing)
 router.get('/casino', casino);
 module.exports = { router,findAndProcessTransactions };
+router.get('/insertMissingTransactions', insertMissingTransactions)
+
+
+
