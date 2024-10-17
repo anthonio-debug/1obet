@@ -1177,6 +1177,7 @@ async function casinoListing(req, res) {
 }
 const insertMissingTransactions = async () => {
   const session = await mongoose.startSession();
+  console.log("here man I am here reach..............................................");
   try {
     await session.startTransaction();
 
