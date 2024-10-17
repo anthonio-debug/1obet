@@ -354,8 +354,13 @@ function apiRequests() {
     try {
       const response = await axios.post(url, requestData, header);
       const openDateFromInplay=await inPlayEvents.find({Id:eventId}).select({ "openDate": 1, "_id": 0})
+      let openDateFromInplayOpenDate;
 
-      console.log(openDateFromInplay.openDate,"=============openDateFromInplay");
+      if(openDateFromInplay){
+        openDateFromInplayOpenDate  = openDateFromInplay.openDate;
+        console.log(openDateFromInplay.openDate,"=============openDateFromInplay");
+      }
+      
 
       const marketsData = response.data.result;
       let marketStatus = 'OPEN';
@@ -477,7 +482,7 @@ function apiRequests() {
                 id: element.marketId,
                 marketName: element.marketName,
                 sort: 1,
-                openDate: openDateFromInplay.openDate,
+                openDate: openDateFromInplay,
                 status: marketStatus,
                 hasbetfairFancy: hasbetfairFancy,
                 runners: tempRunners
@@ -488,7 +493,7 @@ function apiRequests() {
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
-                openDate: openDateFromInplay.openDate,
+                openDate: openDateFromInplay,
                 status: marketStatus,
                 runners: tempRunners
               });
@@ -505,7 +510,7 @@ function apiRequests() {
               marketIds.push({
                 id: element.marketId,
                 marketName: element.marketName,
-                openDate: openDateFromInplay.openDate,
+                openDate: openDateFromInplay,
                 status: marketStatus,
                 runners: tempRunners
               });
