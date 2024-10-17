@@ -1178,13 +1178,13 @@ async function casinoListing(req, res) {
 const insertMissingTransactions = async () => {
   const session = await mongoose.startSession();
   try {
+    await session.startTransaction();
 
-     await session.startTransaction();
     const matchedDocs = await CasinoCalls.aggregate([
       {
         $match: {
-          isProcessing: true
-        }
+          isProcessing: true,
+        },
       },
       {
         $lookup: {
@@ -1212,58 +1212,51 @@ const insertMissingTransactions = async () => {
         }
       }
     ]).session(session);
-    if (!matchedDocs  || matchedDocs .length === 0) {
+
+    if (!matchedDocs || matchedDocs.length === 0) {
       console.log('No transactions found for the given round_id and username.');
       await session.abortTransaction();
+      return;
     }
+    console.log("++++++++++++++++++++++++ going to save data in casinocalls");
+    
     for (const doc of matchedDocs) {
+      const matchedPayload = doc.matchedCasinoCallsPayload[0];
       const newCasinoCall = new CasinoCalls({
-        action: doc.action,
-        callerId: doc.callerId,
-        callerPassword: doc.callerPassword,
-        callerPrefix: doc.callerPrefix,
-        username: doc.username,
-        remote_id: doc.remote_id,
-        amount: doc.amount,
-        provider: doc.provider,
-        game_id: doc.game_id,
-        transaction_id: doc.matchedCasinoCallsPayload[0].transaction_id || null,
-        gameplay_final: doc.gameplay_final,
-        round_id: doc.round_id,
-        session_id: doc.session_id,
-        key: doc.key,
-        gamesession_id: doc.gamesession_id,
-        fee: doc.fee,
-        tip_in_amount: doc.tip_in_amount,
-        is_freeround_bet: doc.is_freeround_bet,
-        freeround_id: doc.freeround_id,
-        odd_factor: doc.odd_factor,
-        jackpot_contribution_in_amount: doc.jackpot_contribution_in_amount,
-        jackpot_contribution_ids: doc.jackpot_contribution_ids,
-        jackpot_contribution_per_id: doc.jackpot_contribution_per_id,
-        game_id_hash: doc.game_id_hash,
-        is_freeround_win: doc.is_freeround_win,
-        freeround_spins_remaining: doc.freeround_spins_remaining,
-        freeround_completed: doc.freeround_completed,
-        is_promo_win: doc.is_promo_win,
-        is_jackpot_win: doc.is_jackpot_win,
-        jackpot_win_ids: doc.jackpot_win_ids,
-        jackpot_win_in_amount: doc.jackpot_win_in_amount,
-        createdAt: doc.createdAt,
-        updatedAt: doc.updatedAt,
-        userPrevExposure: doc.userPrevExposure,
-        AddedExposure: doc.AddedExposure,
-        userUpdatedExposure: doc.userUpdatedExposure,
+        action: matchedPayload.action,
+        callerId: matchedPayload.callerId,
+        callerPassword: matchedPayload.callerPassword,
+        callerPrefix: matchedPayload.callerPrefix,
+        username: matchedPayload.username,
+        remote_id: matchedPayload.remote_id,
+        amount: matchedPayload.amount,
+        provider: matchedPayload.provider,
+        game_id: matchedPayload.game_id,
+        transaction_id: matchedPayload.transaction_id,
+        gameplay_final: matchedPayload.gameplay_final,
+        round_id: matchedPayload.round_id,
+        session_id: matchedPayload.session_id,
+        gamesession_id: matchedPayload.gamesession_id,
+        is_freeround_bet: matchedPayload.is_freeround_bet,
+        jackpot_contribution_in_amount: matchedPayload.jackpot_contribution_in_amount,
+        jackpot_contribution_ids: matchedPayload.jackpot_contribution_ids || [],
+        jackpot_contribution_per_id: matchedPayload.jackpot_contribution_per_id || [],
+        game_id_hash: matchedPayload.game_id_hash,
+        jackpot_win_ids: matchedPayload.jackpot_win_ids || [],
+        createdAt: matchedPayload.createdAt,
         isProcessing: true
       });
 
-      await newCasinoCall.save({ session })
+      await newCasinoCall.save({ session });
     }
+
     await session.commitTransaction();
+    console.log('Missing transactions successfully inserted.');
   } catch (error) {
+    console.error('Error inserting missing transactions:', error);
     await session.abortTransaction();
-  }finally {
-    session.endSession();  
+  } finally {
+    session.endSession();
   }
 };
 
