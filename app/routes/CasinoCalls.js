@@ -1215,7 +1215,7 @@ const insertMissingTransactions = async () => {
         }
       }
     ]).session(session);
-
+    console.log("------------------------------------------------------------------->",matchedDocs);
     if (!matchedDocs || matchedDocs.length === 0) {
       console.log('No transactions found for the given round_id and username.');
       await session.abortTransaction();
