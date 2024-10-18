@@ -1099,7 +1099,7 @@ function scoreChecker() {
         }
         console.log("--",bet.score,"--",bet.betData._id,"----figures------------>>>>",correctScore);
         
-        //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
+        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
 
 
 
@@ -1166,7 +1166,7 @@ function scoreChecker() {
         }
 
 
-        //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
+        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
 
 
         console.log("--",bet.score,"--",bet.betData._id,"------KALLI,JOTTA------------>>>>",correctScore);
@@ -1226,7 +1226,7 @@ function scoreChecker() {
         }
         console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA AFTER------------>>>>",selectionId);
         
-        //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,selectionId);
+        let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,selectionId);
 
 
 
