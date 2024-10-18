@@ -1175,19 +1175,14 @@ async function casinoListing(req, res) {
     });
   }
 }
-const insertMissingTransactions = async () => {
-  const session = await mongoose.startSession();
-  console.log("here man I am here reach..............................................");
-  try {
-    console.log("here man I am here reach insdie try..............................................");
-    
-    await session.startTransaction();
 
+const insertMissingTransactions = async (req, res) => {
+  try {
     const matchedDocs = await CasinoCalls.aggregate([
       {
         $match: {
-          isProcessing: true,
-        },
+          isProcessing: true
+        }
       },
       {
         $lookup: {
@@ -1209,23 +1204,69 @@ const insertMissingTransactions = async () => {
         }
       },
       {
+        $unwind: {
+          path: "$matchedCasinoCallsPayload",
+          preserveNullAndEmptyArrays: true
+        }
+      },
+      {
         $match: {
-          "transaction_id": { $exists: false },
-          "matchedCasinoCallsPayload.transaction_id": { $exists: true }
+          $expr: {
+            $ne: ["$matchedCasinoCallsPayload.transaction_id", "$transaction_id"]
+          }
+        }
+      },
+      {
+        $project: {
+          transaction_id: "$matchedCasinoCallsPayload.transaction_id",
+          round_id: "$matchedCasinoCallsPayload.round_id",
+          action: "$matchedCasinoCallsPayload.action",
+          callerId: "$matchedCasinoCallsPayload.callerId",
+          callerPassword: "$matchedCasinoCallsPayload.callerPassword",
+          callerPrefix: "$matchedCasinoCallsPayload.callerPrefix",
+          username: "$matchedCasinoCallsPayload.username",
+          remote_id: "$matchedCasinoCallsPayload.remote_id",
+          amount: "$matchedCasinoCallsPayload.amount",
+          provider: "$matchedCasinoCallsPayload.provider",
+          game_id: "$matchedCasinoCallsPayload.game_id",
+          gameplay_final: "$matchedCasinoCallsPayload.gameplay_final",
+          session_id: "$matchedCasinoCallsPayload.session_id",
+          gamesession_id: "$matchedCasinoCallsPayload.gamesession_id",
+          is_freeround_bet: "$matchedCasinoCallsPayload.is_freeround_bet",
+          jackpot_contribution_in_amount: "$matchedCasinoCallsPayload.jackpot_contribution_in_amount",
+          jackpot_contribution_ids: "$matchedCasinoCallsPayload.jackpot_contribution_ids",
+          jackpot_contribution_per_id: "$matchedCasinoCallsPayload.jackpot_contribution_per_id",
+          game_id_hash: "$matchedCasinoCallsPayload.game_id_hash",
+          jackpot_win_ids: "$matchedCasinoCallsPayload.jackpot_win_ids",
+          createdAt: "$matchedCasinoCallsPayload.createdAt",
+          isProcessing: "$matchedCasinoCallsPayload.isProcessing"
         }
       }
-    ]).session(session);
-    console.log("------------------------------------------------------------------->",matchedDocs);
+    ]);
+
+    // console.log("!!!!!!!!!!!!!!!!!!!!11", matchedDocs)
     if (!matchedDocs || matchedDocs.length === 0) {
       console.log('No transactions found for the given round_id and username.');
-      await session.abortTransaction();
       return;
     }
+
     console.log("++++++++++++++++++++++++ going to save data in casinocalls");
-    
     for (const doc of matchedDocs) {
-      const matchedPayload = doc.matchedCasinoCallsPayload[0];
-      const newCasinoCall = new CasinoCalls({
+      const matchedPayload = doc;
+      if (!matchedPayload) {
+        console.log('No matching payload found for:', doc);
+        continue;
+      }
+      const idExists = await CasinoCalls.findOne({ transaction_id: matchedPayload.transaction_id })
+      if (idExists) {
+        continue;
+      }
+
+      console.log("++===================== going to save data in casinocalls", matchedPayload);
+
+      const newCasinoCall = await new CasinoCalls({
+        transaction_id: matchedPayload.transaction_id,
+        round_id: matchedPayload.round_id,
         action: matchedPayload.action,
         callerId: matchedPayload.callerId,
         callerPassword: matchedPayload.callerPassword,
@@ -1235,31 +1276,32 @@ const insertMissingTransactions = async () => {
         amount: matchedPayload.amount,
         provider: matchedPayload.provider,
         game_id: matchedPayload.game_id,
-        transaction_id: matchedPayload.transaction_id,
         gameplay_final: matchedPayload.gameplay_final,
-        round_id: matchedPayload.round_id,
         session_id: matchedPayload.session_id,
         gamesession_id: matchedPayload.gamesession_id,
-        is_freeround_bet: matchedPayload.is_freeround_bet,
-        jackpot_contribution_in_amount: matchedPayload.jackpot_contribution_in_amount,
         jackpot_contribution_ids: matchedPayload.jackpot_contribution_ids || [],
         jackpot_contribution_per_id: matchedPayload.jackpot_contribution_per_id || [],
         game_id_hash: matchedPayload.game_id_hash,
         jackpot_win_ids: matchedPayload.jackpot_win_ids || [],
-        createdAt: matchedPayload.createdAt,
-        isProcessing: true
+        isProcessing: matchedPayload.isProcessing
       });
 
-      await newCasinoCall.save({ session });
+      console.log('Inserting new casino call:', newCasinoCall);
+      await newCasinoCall.save().then(() => {
+
+        console.log('Inserted CasinoCall:', newCasinoCall);
+      });
     }
 
-    await session.commitTransaction();
-    console.log('Missing transactions successfully inserted.');
+    return;
+    // return res.status(200).json({
+    //   success: true,
+    //   message: 'missing entries inserted successfully',
+    //   data: matchedDocs
+    // })
+    // console.log('Missing transactions successfully inserted.');
   } catch (error) {
     console.error('Error inserting missing transactions:', error);
-    await session.abortTransaction();
-  } finally {
-    session.endSession();
   }
 };
 
