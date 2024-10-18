@@ -548,6 +548,7 @@ async function updateUser(req, res) {
       reference: req.body.reference,
       notes: req.body.notes,
       updatedBy: req.decoded.userId,
+      limitAmount: req.body.limitAmount,
       status
     };
 
@@ -621,6 +622,7 @@ function updateUserData(user, updateData, res, isDigitUpdate = false) {
       fourToken: isDigitUpdate ? getNonExpiringTokenfourDigit(user.userId, user.createdBy, user.role, updateData.isActive) : null,
       isActive: updateData.isActive,
       createdBy: user.createdBy,
+      limitAmount: updateData.limitAmount,
       updatedAt: new Date().getTime()
     };
 

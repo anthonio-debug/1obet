@@ -1192,13 +1192,14 @@ const insertMissingTransactions = async () => {
       {
         $lookup: {
           from: 'casinocallspayloads',
-          let: { roundId: "$round_id"},
+          let: { roundId: "$round_id", username: "$username" },
           pipeline: [
             {
               $match: {
                 $expr: {
                   $and: [
-                    { $eq: ["$round_id", "$$roundId"] }
+                    { $eq: ["$round_id", "$$roundId"] },
+                    { $eq: ["$username", "$$username"] }
                   ]
                 }
               }
