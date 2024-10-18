@@ -1153,8 +1153,9 @@ function scoreChecker() {
         if (bet.score == -1) {
           correctScore = bet.score;
         }else{
-          correctScore = bet.score % 2;
           
+          correctScore = bet.score % 2;
+          console.log("================================",correctScore);
         }
 
         console.log("--",bet.score,"--",bet.betData._id,"------before--KALLI,JOTTA------------>>>>",correctScore);
@@ -1164,7 +1165,7 @@ function scoreChecker() {
           correctScore =1
         }
 
-        
+
         //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
 
 
