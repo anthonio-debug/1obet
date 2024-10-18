@@ -4,6 +4,7 @@ const { getParents } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
 const Deposits = require('../../../app/models/deposits');
 const CurrentPosition = require('../../../app/models/CurrentPosition');
+const Sessions = require('../../../app/models/Session');
 const config = {
     
     commissionLessSubMarkets: [2, 3, 4],
