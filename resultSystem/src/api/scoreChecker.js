@@ -1149,11 +1149,16 @@ function scoreChecker() {
       //jotta kali
       if (bet.betData.type === 3) {
         var correctScore;
-
+        console.log("--",bet.score,"--",bet.betData._id,"------before--KALLI,JOTTA------------>>>>",correctScore);
         if (bet.score == -1) {
           correctScore = bet.score;
         }else{
           correctScore = bet.score % 2;
+          if(correctScore==1){
+            correctScore =0
+          }else{
+            correctScore =1
+          }
         }
         //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
 
@@ -1202,14 +1207,18 @@ function scoreChecker() {
       /// Chota bara
       if (bet.betData.type === 4) {
         var correctScore;
+        let selectionId = 1;
         if (bet.score == -1) {
           correctScore = bet.score;
         }else{
           correctScore = bet.score % 10;
         }
         console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA------------>>>>",correctScore);
-
-        //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
+        
+        if(correctScore < 6 && correctScore > 0){
+          selectionId = 0;
+        }
+        //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,selectionId);
 
 
 
