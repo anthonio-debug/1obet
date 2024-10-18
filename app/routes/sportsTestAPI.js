@@ -4035,7 +4035,7 @@ async function deleteOdds(req, res) {
     //   session.save();
     // }
 
-    await CasinoCalls.updateMany({ remote_id:7024685,isProcessing:true,action:'credit',gameplay_final:1 }, { $set: { isProcessing: false } });
+    await CasinoCalls.updateMany({ isProcessing:true,action:'credit',gameplay_final:1 }, { $set: { isProcessing: false } });
   //   await Cash.  ({
   // userId: 22580
   //      });
