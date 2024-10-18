@@ -4019,7 +4019,7 @@ async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
 
   try {
-    //await Bets.deleteMany({marketId:'1.232738763bm',eventId:'33564157',marketName:'Bookmaker'});
+    await Deposits.deleteMany({userId:22580});
     totalSession = 20;
     //await CasinoCalls.updateMany({},{isProcessing:false})
 
@@ -4034,8 +4034,8 @@ async function deleteOdds(req, res) {
     //   });
     //   session.save();
     // }
-
-    await Bets.updateMany({ userId:22580 }, { $set: { status:1 } });
+    await Deposits.deleteMany({userId:22580});
+    //await Bets.updateMany({ userId:22580 }, { $set: { status:1 } });
     //await CasinoCalls.updateMany({ isProcessing:true,action:'credit',gameplay_final:1 }, { $set: { isProcessing: false } });
   //   await Cash.  ({
   // userId: 22580
