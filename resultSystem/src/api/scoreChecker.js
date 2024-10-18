@@ -1149,17 +1149,22 @@ function scoreChecker() {
       //jotta kali
       if (bet.betData.type === 3) {
         var correctScore;
-        console.log("--",bet.score,"--",bet.betData._id,"------before--KALLI,JOTTA------------>>>>",correctScore);
+        
         if (bet.score == -1) {
           correctScore = bet.score;
         }else{
           correctScore = bet.score % 2;
-          if(correctScore==1){
-            correctScore =0
-          }else{
-            correctScore =1
-          }
+          
         }
+
+        console.log("--",bet.score,"--",bet.betData._id,"------before--KALLI,JOTTA------------>>>>",correctScore);
+        if(correctScore==1){
+          correctScore =0
+        }else{
+          correctScore =1
+        }
+
+        
         //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
 
 
