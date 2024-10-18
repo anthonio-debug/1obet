@@ -432,15 +432,15 @@ const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _i
 
 
 
-  console.log("calculatedExp insdie...................................",calculatedExp);
-console.log("debt insdie...................................",bet);
+  //console.log("calculatedExp insdie...................................",calculatedExp);
+//console.log("debt insdie...................................",bet);
 
-console.log("userID insdie...................................",bet.userId);
+//console.log("userID insdie...................................",bet.userId);
 const runnerPosition = bet?.runnersPosition
 var amount = 0
 var winnerRunner = '';
 runnerPosition?.forEach(winner => {
-      console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
+      //console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
       if (winner.runner == selectionId) {
           selectedRunnerAmount=winner.amount
           winnerRunner = winner.runner
@@ -452,8 +452,8 @@ TotalWin = Number(AmountAddedBacktoUserAB.toFixed(3)); // in case of winning, we
 
 let diff = selectedRunnerAmount;
 let users_exposureNewUpdated = user_Exposure + TotalLose;
-  console.log("NaN issue with user_AvailableBalance: ",user_AvailableBalance);
-  console.log("NaN issue with TotalWin: ",TotalWin);
+  //console.log("NaN issue with user_AvailableBalance: ",user_AvailableBalance);
+  //console.log("NaN issue with TotalWin: ",TotalWin);
 let updatedAvailableBalance = user_AvailableBalance;
 updatedAvailableBalance = TotalWin + updatedAvailableBalance;
 
@@ -462,8 +462,10 @@ updatedAvailableBalance = TotalWin + updatedAvailableBalance;
   
 
 let depositsNewAmount = diff;
-  
-console.log("Deposits Updated Amount:",depositsNewAmount);
+
+
+if(betId._id=='670bf374a178765b82b95aa0'){
+  console.log("Deposits Updated Amount:",depositsNewAmount);
 
 console.log("Deposits updatedDepositsAvailableBalance:",updatedDepositsAvailableBalance);
 
@@ -473,6 +475,13 @@ console.log("users new exposure: ",users_exposureNewUpdated);
 
 console.log("Amount WON: : ",TotalWin);
 console.log("userPrevClientPL updated..........................................: : ",userPrevClientPL+diff);
+
+}
+  
+
+
+
+
   await User.updateOne(
       {
         userId: bet.userId,

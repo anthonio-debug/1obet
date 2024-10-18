@@ -1097,7 +1097,7 @@ function scoreChecker() {
         }else{
           correctScore = bet.score % 10;
         }
-        console.log("--",bet.score,"--",bet.betData._id,"----figures------------>>>>",correctScore);
+        //console.log("--",bet.score,"--",bet.betData._id,"----figures------------>>>>",correctScore);
         
         let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
 
@@ -1155,10 +1155,10 @@ function scoreChecker() {
         }else{
           
           correctScore = bet.score % 2;
-          console.log("================================",correctScore);
+         // console.log("================================",correctScore);
         }
 
-        console.log("--",bet.score,"--",bet.betData._id,"------before--KALLI,JOTTA------------>>>>",correctScore);
+        //console.log("--",bet.score,"--",bet.betData._id,"------before--KALLI,JOTTA------------>>>>",correctScore);
         if(correctScore==1){
           correctScore =0
         }else{
@@ -1169,7 +1169,7 @@ function scoreChecker() {
         let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
 
 
-        console.log("--",bet.score,"--",bet.betData._id,"------KALLI,JOTTA------------>>>>",correctScore);
+        //console.log("--",bet.score,"--",bet.betData._id,"------KALLI,JOTTA------------>>>>",correctScore);
         
         // if (bet.score == -1) {
         //   await handleDrawBet(bet.betData);
@@ -1219,12 +1219,16 @@ function scoreChecker() {
         }else{
           correctScore = bet.score % 10;
         }
+        if(bet.betData._id=='670bf374a178765b82b95aa0'){
         console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA BEFORE------------>>>>",correctScore);
-        
+        }
         if(correctScore < 6 && correctScore > 0){
           selectionId = 0;
         }
-        console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA AFTER------------>>>>",selectionId);
+        if(bet.betData._id=='670bf374a178765b82b95aa0'){
+          console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA AFTER------------>>>>",selectionId);
+        }
+        
         
         let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,selectionId);
 
