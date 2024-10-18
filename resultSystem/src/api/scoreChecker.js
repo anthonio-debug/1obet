@@ -11,7 +11,7 @@ const MarketIDs = require('../../../app/models/marketIds');
 const FancyOdds = require('../../../app/models/fancyOdds');
 
 const { API_DOMAIN } = require('../../../app/global/constants');
-const { getAmountOfWinnerTemp } = require('../CalculateBets/helper');
+const { getAmountOfWinnerTemp,getAmountOfWinnerFigures } = require('../CalculateBets/helper');
 const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../helper/api/sessionAPIHelper');
 
 
@@ -1088,22 +1088,39 @@ function scoreChecker() {
      // if (checkActive) continue;
       //figure bets
       const event = await inPlayEvents.findOne({ _id: mongoose.Types.ObjectId(bet.betData.matchId) }, { Id: 1 });
-
+      
       if (bet.betData.type == 2) {
         var correctScore;
+        
         if (bet.score == -1) {
-          await handleDrawBet(bet.betData);
-          correctScore = -1;
-        } else {
+          correctScore = bet.score;
+        }else{
           correctScore = bet.score % 10;
-          if (bet.betData.runner == correctScore) {
-            //console.log("0 ----- winner ");
-            await handleWinningBet(bet.betData);
-          } else {
-            //console.log("0 ----- looser ");
-            await handleLosingBet(bet.betData);
-          }
         }
+        console.log("correctScore-----------------------------------------figures------------>>>>",correctScore);
+        //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
+
+
+
+
+
+
+
+        // if (bet.score == -1) {
+        //   await handleDrawBet(bet.betData);
+        //   correctScore = -1;
+        // } else {
+        //   correctScore = bet.score % 10;
+          
+        //   console.log("correctScore for figures...........................",correctScore);
+        //   if (bet.betData.runner == correctScore) {
+        //     //console.log("0 ----- winner ");
+        //     await handleWinningBet(bet.betData);
+        //   } else {
+        //     //console.log("0 ----- looser ");
+        //     await handleLosingBet(bet.betData);
+        //   }
+        // }
 
         if (event) {
           await MarketIDs.findOneAndUpdate(
@@ -1131,22 +1148,33 @@ function scoreChecker() {
       //jotta kali
       if (bet.betData.type === 3) {
         var correctScore;
+
         if (bet.score == -1) {
-          await handleDrawBet(bet.betData);
-          correctScore = -1;
-        } else {
+          correctScore = bet.score;
+        }else{
           correctScore = bet.score % 2;
-          if (bet.betData.runnerName == 'JOTTA' && correctScore == 0) {
-            //console.log("0 ----- winner ");
-            await handleWinningBet(bet.betData);
-          } else if (bet.betData.runnerName == 'KALI' && correctScore == 1) {
-            //console.log("0 ----- winner ");
-            await handleWinningBet(bet.betData);
-          } else {
-            //console.log("0 ----- looser ");
-            await handleLosingBet(bet.betData);
-          }
         }
+        //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
+
+
+        console.log("correctScore-----------------------------------------KALLI,JOTTA------------>>>>",correctScore);
+        
+        // if (bet.score == -1) {
+        //   await handleDrawBet(bet.betData);
+        //   correctScore = -1;
+        // } else {
+        //   correctScore = bet.score % 2;
+        //   if (bet.betData.runnerName == 'JOTTA' && correctScore == 0) {
+        //     //console.log("0 ----- winner ");
+        //     await handleWinningBet(bet.betData);
+        //   } else if (bet.betData.runnerName == 'KALI' && correctScore == 1) {
+        //     //console.log("0 ----- winner ");
+        //     await handleWinningBet(bet.betData);
+        //   } else {
+        //     //console.log("0 ----- looser ");
+        //     await handleLosingBet(bet.betData);
+        //   }
+        // }
 
         if (event) {
           await MarketIDs.findOneAndUpdate(
@@ -1174,24 +1202,36 @@ function scoreChecker() {
       if (bet.betData.type === 4) {
         var correctScore;
         if (bet.score == -1) {
-          await handleDrawBet(bet.betData);
-          correctScore = -1;
-        } else {
+          correctScore = bet.score;
+        }else{
           correctScore = bet.score % 10;
-          if (bet.betData.runnerName == 'BARA' && correctScore == 0) {
-            //console.log("0 ----- winner ");
-            await handleWinningBet(bet.betData);
-          } else if (bet.betData.runnerName == 'CHOTA' && correctScore < 6 && correctScore > 0) {
-            //console.log("0 ----- winner ");
-            await handleWinningBet(bet.betData);
-          } else if (bet.betData.runnerName == 'BARA' && correctScore > 5) {
-            //console.log("0 ----- winner ");
-            await handleWinningBet(bet.betData);
-          } else {
-            //console.log("0 ----- looser ");
-            await handleLosingBet(bet.betData);
-          }
         }
+        console.log("correctScore-----------------------------------------BARA/CHOTA------------>>>>",correctScore);
+
+        //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,correctScore);
+
+
+
+        // if (bet.score == -1) {
+        //   await handleDrawBet(bet.betData);
+        //   correctScore = -1;
+        // } else {
+          
+        //   correctScore = bet.score % 10;
+        //   if (bet.betData.runnerName == 'BARA' && correctScore == 0) {
+        //     //console.log("0 ----- winner ");
+        //     await handleWinningBet(bet.betData);
+        //   } else if (bet.betData.runnerName == 'CHOTA' && correctScore < 6 && correctScore > 0) {
+        //     //console.log("0 ----- winner ");
+        //     await handleWinningBet(bet.betData);
+        //   } else if (bet.betData.runnerName == 'BARA' && correctScore > 5) {
+        //     //console.log("0 ----- winner ");
+        //     await handleWinningBet(bet.betData);
+        //   } else {
+        //     //console.log("0 ----- looser ");
+        //     await handleLosingBet(bet.betData);
+        //   }
+        // }
 
         await MarketIDs.findOneAndUpdate(
           {
