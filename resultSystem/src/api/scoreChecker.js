@@ -1224,7 +1224,7 @@ function scoreChecker() {
         if(correctScore < 6 && correctScore > 0){
           selectionId = 0;
         }
-        console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA AFTER------------>>>>",correctScore);
+        console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA AFTER------------>>>>",selectionId);
         
         //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,selectionId);
 
