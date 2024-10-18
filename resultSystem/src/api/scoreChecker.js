@@ -1219,11 +1219,13 @@ function scoreChecker() {
         }else{
           correctScore = bet.score % 10;
         }
-        console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA------------>>>>",correctScore);
+        console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA BEFORE------------>>>>",correctScore);
         
         if(correctScore < 6 && correctScore > 0){
           selectionId = 0;
         }
+        console.log("--",bet.score,"-",bet.betData._id,"---------BARA/CHOTA AFTER------------>>>>",correctScore);
+        
         //let winningsCalculate = await getAmountOfWinnerFigures(bet.betData,selectionId);
 
 
