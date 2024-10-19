@@ -319,6 +319,9 @@ async function findAndProcessTransactions(user) {
       
               if(differenceDbCr==0){ 
 
+                UpdatedAvailableBalance= user.availableBalance + AccumulativeDebit;
+                //UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount;
+
 
               }
               else if(differenceDbCr<0){ 
