@@ -302,8 +302,10 @@ async function findAndProcessTransactions(user) {
               console.log("loosingShareAmount------------------------------------------------------->>>>>",remainingAmount);    
               //winningsShareAmount mean when bettor WIN so it mean dealer LOST  
               //loosingShareAmount mean when bettor LOST so it mean dealer WON
-  
+                console.log("user.exposure....................,",user.userId,"...................",user.exposure);
+                console.log("winningsShareAmount....................,",user.userId,"...................",winningsShareAmount);
               let UpdatedExposureAmount = user.exposure + winningsShareAmount;
+              console.log("UpdatedExposureAmount....................,",user.userId,"...................",UpdatedExposureAmount);
               console.log("Difference is caclauted and I am shoiwng as hereas..................",differenceDbCr);
               let UpdatedAvailableBalance =  user.availableBalance;
               
