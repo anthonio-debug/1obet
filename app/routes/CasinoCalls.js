@@ -568,6 +568,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
     if (action === 0) {
       let amount = Number(payload.amount) * casinoMultiples;
+      
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 1")
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
       let tempExposure = Number((user.tempExposure + amount).toFixed(3));
@@ -586,6 +587,54 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         },
         { session }
       );
+      
+
+
+      ///exposures for parent users start
+      let parentUsersIds = await getParents(user.userId);
+      const parentUser = await User.find({
+        userId: {
+          $in: [...parentUsersIds]
+        },
+        isDeleted: false
+      }).sort({ userId: -1 });
+
+      
+      let dealerExposures = amount;
+      let UseravailableBalancePrev = 0;
+      for (const user of parentUser) {
+        let current = user.downLineShare;
+          
+        userPrevExposure = user.exposure;
+        UseravailableBalancePrev = user.availableBalance;
+    
+         let commission = current - prev;
+         user['commission'] = commission;
+         prev = current;
+    
+    
+    
+        const ShareAmountInLoss = (user.commission / 100) * dealerExposures;
+        const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
+       // console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
+          console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
+          userexposureNew = user.exposure-finalShareAmountInLoss;
+          UseravailableBalanceNew = UseravailableBalancePrev-finalShareAmountInLoss;
+
+          await users.updateOne(
+            { _id: user._id },
+            {
+              $set: {
+                availableBalance: UseravailableBalanceNew,
+                exposure: userexposureNew
+              }
+            },
+            { session }
+          );
+      }
+      //exposures for parent users end
+      
+      
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
