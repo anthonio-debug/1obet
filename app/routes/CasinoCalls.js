@@ -293,7 +293,7 @@ async function findAndProcessTransactions(user) {
               for (const user of parentUser) {
                 
                 let prevrunnersPosition = false;
-                let runnersPosition = bet.runnersPosition;
+                //let runnersPosition = bet.runnersPosition;
                 let highestAmount = remainingAmount;
                 
               let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
