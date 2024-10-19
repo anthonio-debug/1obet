@@ -193,6 +193,7 @@ async function findAndProcessTransactions(user) {
           //   await session.abortTransaction();  // Abort the transaction if no records found
           //   return;
           // }
+          let userPrevClientPL = userRecord.clientPL;
           totalCreditAmount += totalRollBackAmount;
           differenceDbCr = (totalCreditAmount - totalDebitAmount) * casinoMultiples;
 
@@ -251,6 +252,7 @@ async function findAndProcessTransactions(user) {
               {
                 $set: {
                   balance: updatedAvailableBalance,
+                  clientPL: userPrevClientPL+differenceDbCr,
                   availableBalance: updatedAvailableBalance,
                   exposure: betTransactionData.updatedExposure
                 }
