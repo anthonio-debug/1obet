@@ -291,26 +291,99 @@ async function findAndProcessTransactions(user) {
               }
               let commissionFrom = userRecord.userId;
               for (const user of parentUser) {
-                const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-                const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
-                const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
-                const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
-                const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+                
+                let prevrunnersPosition = false;
+                let runnersPosition = bet.runnersPosition;
+                let highestAmount = remainingAmount;
+                
+              let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
+              let loosingShareAmount = Number(((user.commission / 100) * remainingAmount).toFixed(3));
+              console.log("remainingAmount------------------------------------------------------->>>>>",remainingAmount);
+              console.log("loosingShareAmount------------------------------------------------------->>>>>",remainingAmount);    
+              //winningsShareAmount mean when bettor WIN so it mean dealer LOST  
+              //loosingShareAmount mean when bettor LOST so it mean dealer WON
+  
+              let UpdatedExposureAmount = user.exposure + winningsShareAmount;
+              console.log("Difference is caclauted and I am shoiwng as hereas..................",diff);
+              let UpdatedAvailableBalance =  user.availableBalance;
+              
+              let totalClientPLAmount;
+              let userBalance;
+              let totalBalance;
+              let totalClientPL;
+      
+              if(differenceDbCr<0){ 
+              
+                UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
+                UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount  
+                 totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+                 //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
+                 userBalance = totalClientPLAmount;
+                 //400=400
+                 console.log("differenceDbCr<0", "----------userBalance/totalClientPLAmount----------", userBalance);
+                 totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+  
+  
+  
+                 // suppose user.balance: 0, 0+600=600. .  2) suppose user.balance: 10, 10 + ( 600 ) = 610--- 3) user.balance: -10, -10 + ( 600 ) = 590
+                 // 4) user.balance:
+  
+                 console.log("differenceDbCr<0", "----------totalBalance----------", totalBalance);
+                 totalClientPL = Number((user.clientPL + (-totalClientPLAmount)).toFixed(3));
+                 // suppose user.clientPL: 0, 0+-400=-400. .  2) suppose user.clientPL: 10, 10 + ( -400 ) = -390--- 3) user.clientPL: -10, -10 + ( -400 ) = -410
+                 // 4) user.clientPL: 
+              }else{
+                 totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
+                 //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
+                 
+                 userBalance = totalClientPLAmount;
+                 console.log("Else", "----------userBalance/totalClientPLAmount----------", userBalance);
+                 
+                 totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+                 // suppose user.balance: 0, 0-600=-600. .  2) suppose user.balance: 10, 10 - ( 600 ) = -590--- 3) user.balance: -10, -10 - ( 600 ) = 610
+                 // 4) user.balance:
+  
+                 console.log("Else::", "----------totalBalance----------", totalBalance);
+                 totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
+                 // suppose user.clientPL: 0, 0+400=400. .  2) suppose user.clientPL: 10, 10 + ( 400 ) = 410--- 3) user.clientPL: -10, -10 + ( 400 ) = 390
+                 // 4) user.clientPL: 
+                
+  
+              }
+              console.log("totalBalance:::::::::::::::::::;",totalBalance);
+              console.log("UpdatedExposureAmount:::::::::::::::::::;",UpdatedExposureAmount);
+              console.log("UpdatedAvailableBalance:::::::::::::::::::;",UpdatedAvailableBalance);
+              console.log("totalClientPL:::::::::::::::::::;",totalClientPL);
+              const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
+              //const totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
+              const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
+  
+            
+
+
+
                 await session.startTransaction();
+                
+
                 await User.updateOne(
                   {
                     userId: user.userId,
                     isDeleted: false
                   },
                   {
-                    balance: totalBalance,
-                    exposure: totalExpoisure,
-                    availableBalance: totalavailableBalance,
-                    clientPL: totalClientPL
+                    balance: totalBalance,//P/L Downline
+                    exposure: UpdatedExposureAmount,
+                    availableBalance: UpdatedAvailableBalance,
+                    clientPL: totalClientPL //Balance Upline
                   },{ session }
                 );
+
+
+
+
                 await session.commitTransaction();
                 await session.startTransaction();
+                
                 const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
                   await Cash.create([{
                     userId: user.userId,
@@ -377,6 +450,9 @@ async function findAndProcessTransactions(user) {
     
               
               }
+
+           
+
             }
 
             
