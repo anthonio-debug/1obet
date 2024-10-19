@@ -604,6 +604,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let dealerExposures = amount;
       let UseravailableBalancePrev = 0;
       for (const user of parentUser) {
+        let prev = 0;
         let current = user.downLineShare;
           
         userPrevExposure = user.exposure;
