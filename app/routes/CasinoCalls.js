@@ -321,6 +321,9 @@ async function findAndProcessTransactions(user) {
                  userBalance = totalClientPLAmount;
                  //400=400
                  console.log("differenceDbCr<0", "----------userBalance/totalClientPLAmount----------", userBalance);
+
+                 console.log("user.commission:",user.commission, "----------user.balance:", userBalance);
+
                  totalBalance = Number((user.balance + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
   
   
