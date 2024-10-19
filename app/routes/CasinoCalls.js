@@ -317,7 +317,11 @@ async function findAndProcessTransactions(user) {
               let totalBalance;
               let totalClientPL;
       
-              if(differenceDbCr<=0){ 
+              if(differenceDbCr==0){ 
+
+                
+              }
+              else if(differenceDbCr<0){ 
               
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
                 UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount;
