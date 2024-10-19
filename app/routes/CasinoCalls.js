@@ -627,9 +627,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     
     
     
-        const ShareAmountInLoss = (user.commission / 100) * dealerExposures;
-        console.log("ShareAmountInLoss----------------------------------------------",ShareAmountInLoss);
-        const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
+        let ShareAmountInLoss = (user.commission / 100) * dealerExposures;
+        console.log("ShareAmountInLoss--------",user.commission,"---------",user.userId,"-----------------------------",ShareAmountInLoss);
+        let finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
        // console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
           console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
           userexposureNew = user.exposure-finalShareAmountInLoss;
