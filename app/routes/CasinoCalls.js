@@ -448,7 +448,7 @@ async function findAndProcessTransactions(user) {
                       availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                       maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                       cashOrCredit: 'Commission',
-                      betId: bet._id,
+                      betId: tran._id,
                       cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
                       marketId: tran._id,
                       sportsId: "6",
