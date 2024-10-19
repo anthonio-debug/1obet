@@ -381,91 +381,91 @@ async function findAndProcessTransactions(user) {
 
 
 
-                // await session.startTransaction();
+                await session.startTransaction();
                 
 
-                // await User.updateOne(
-                //   {
-                //     userId: user.userId,
-                //     isDeleted: false
-                //   },
-                //   {
-                //     balance: totalBalance,//P/L Downline
-                //     exposure: UpdatedExposureAmount,
-                //     availableBalance: UpdatedAvailableBalance,
-                //     clientPL: totalClientPL //Balance Upline
-                //   },{ session }
-                // );
+                await User.updateOne(
+                  {
+                    userId: user.userId,
+                    isDeleted: false
+                  },
+                  {
+                    balance: totalBalance,//P/L Downline
+                    exposure: UpdatedExposureAmount,
+                    availableBalance: UpdatedAvailableBalance,
+                    clientPL: totalClientPL //Balance Upline
+                  },{ session }
+                );
 
 
 
 
-                // await session.commitTransaction();
-                // await session.startTransaction();
+                await session.commitTransaction();
+                await session.startTransaction();
                 
-                // const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-                //   await Cash.create([{
-                //     userId: user.userId,
-                //     description: `Casino (${CgameName})`,
-                //     createdBy: 0,
-                //     amount: -(user.commission / 100) * totalRemainingAmount,
-                //     balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                //     availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                //     maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
-                //     cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                //     marketId: tran._id,
-                //     credit: lastMaxWithdraw?.credit || 0,
-                //     creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-                //     cashOrCredit: 'Casino Bet',
-                //     commissionFrom: commissionFrom,
-                //     sportsId: "6",
-                //     upLineAmount: -upMovingAmount,
-                //     betId: tran._id,
-                //     matchId: Cgame_id,
+                const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
+                  await Cash.create([{
+                    userId: user.userId,
+                    description: `Casino (${CgameName})`,
+                    createdBy: 0,
+                    amount: -(user.commission / 100) * totalRemainingAmount,
+                    balance: lastMaxWithdraw ? lastMaxWithdraw.balance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                    availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                    maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw - (user.commission / 100) * totalRemainingAmount : -(user.commission / 100) * totalRemainingAmount,
+                    cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+                    marketId: tran._id,
+                    credit: lastMaxWithdraw?.credit || 0,
+                    creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+                    cashOrCredit: 'Casino Bet',
+                    commissionFrom: commissionFrom,
+                    sportsId: "6",
+                    upLineAmount: -upMovingAmount,
+                    betId: tran._id,
+                    matchId: Cgame_id,
                     
-                //     betDateTime: new Date().getTime(),
-                //     date: new Date().getTime(),
-                //     createdAt: formattedDate,
-                //     totalRemainingAmount: totalRemainingAmount,
-                //     commissionAmount: commissionAmount,
-                //     remainingAmount: remainingAmount,
+                    betDateTime: new Date().getTime(),
+                    date: new Date().getTime(),
+                    createdAt: formattedDate,
+                    totalRemainingAmount: totalRemainingAmount,
+                    commissionAmount: commissionAmount,
+                    remainingAmount: remainingAmount,
                     
-                //     roundId: tran._id
-                //   }],{ session });
-                //   await session.commitTransaction();
+                    roundId: tran._id
+                  }],{ session });
+                  await session.commitTransaction();
 
-                //   upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
-                //   if(differenceDbCr>0){
-                //     await session.startTransaction();
-                //     await Cash.create({
-                //       userId: user.userId,
-                //       description: `Commission From Casino (${CgameName})`,
-                //       createdBy: 0,
-                //       commissionFrom: commissionFrom,
-                //       amount: (user.commission / 100) * commissionAmount,
-                //       balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                //       availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                //       maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
-                //       cashOrCredit: 'Commission',
-                //       betId: bet._id,
-                //       cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
-                //       marketId: tran._id,
-                //       sportsId: "6",
-                //       credit: lastMaxWithdraw?.credit || 0,
-                //       creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-                //       upLineAmount: upMovingCommAmount,
-                //       matchId: Cgame_id,
+                  upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
+                  if(differenceDbCr>0){
+                    await session.startTransaction();
+                    await Cash.create({
+                      userId: user.userId,
+                      description: `Commission From Casino (${CgameName})`,
+                      createdBy: 0,
+                      commissionFrom: commissionFrom,
+                      amount: (user.commission / 100) * commissionAmount,
+                      balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+                      availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+                      maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
+                      cashOrCredit: 'Commission',
+                      betId: bet._id,
+                      cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+                      marketId: tran._id,
+                      sportsId: "6",
+                      credit: lastMaxWithdraw?.credit || 0,
+                      creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+                      upLineAmount: upMovingCommAmount,
+                      matchId: Cgame_id,
                      
-                //       betDateTime: new Date().getTime(),
-                //       date: new Date().getTime(),
-                //       createdAt: formattedDate,
+                      betDateTime: new Date().getTime(),
+                      date: new Date().getTime(),
+                      createdAt: formattedDate,
                       
-                //       roundId: tran._id
-                //     },{ session });
-                //     await session.commitTransaction();
+                      roundId: tran._id
+                    },{ session });
+                    await session.commitTransaction();
                    
-                //     upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
-                //   }
+                    upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
+                  }
     
               
               }
