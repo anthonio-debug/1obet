@@ -357,7 +357,7 @@ async function findAndProcessTransactions(user) {
                  //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
                  
                  userBalance = totalClientPLAmount;
-                 console.log("Else..........", "----------userBalance/totalClientPLAmount----------", userBalance);
+                 console.log("Else..........",user.userName, "----------userBalance/totalClientPLAmount----------", userBalance);
                  
                  totalBalance = Number((user.balance - Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
                  // suppose user.balance: 0, 0-600=-600. .  2) suppose user.balance: 10, 10 - ( 600 ) = -590--- 3) user.balance: -10, -10 - ( 600 ) = 610
