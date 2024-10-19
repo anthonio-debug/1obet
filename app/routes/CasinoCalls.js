@@ -314,12 +314,12 @@ async function findAndProcessTransactions(user) {
               
               let totalClientPLAmount;
               let userBalance;
-              let totalBalance;
-              let totalClientPL;
+              let totalBalance = user.balance;
+              let totalClientPL = user.clientPL;
       
               if(differenceDbCr==0){ 
 
-                
+
               }
               else if(differenceDbCr<0){ 
               
