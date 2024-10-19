@@ -315,7 +315,11 @@ async function findAndProcessTransactions(user) {
               if(differenceDbCr<0){ 
               
                 UpdatedAvailableBalance= user.availableBalance + winningsShareAmount;
-                UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount  
+                UpdatedAvailableBalance =UpdatedAvailableBalance + loosingShareAmount;
+                
+                console.log("----------user.downLineShare:", user.downLineShare);
+
+
                  totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
                  //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
                  userBalance = totalClientPLAmount;
