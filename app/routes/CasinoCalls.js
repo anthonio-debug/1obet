@@ -336,7 +336,7 @@ async function findAndProcessTransactions(user) {
                  //60% .  .. .100-60 = 40% upline share.... 40/100 = .40 * 1000 = 400 ClientPL. . .
                  userBalance = totalClientPLAmount;
                  //400=400
-                 console.log("differenceDbCr<0", "----------userBalance/totalClientPLAmount----------", userBalance);
+                 console.log("differenceDbCr<0", "----....",user.userName, "---------userBalance/totalClientPLAmount----------", userBalance);
 
                  console.log("user.commission:",user.commission, "----------user.balance:", userBalance);
 
