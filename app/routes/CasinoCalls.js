@@ -592,6 +592,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       ///exposures for parent users start
       let parentUsersIds = await getParents(user.userId);
+      console.log("parentUsersIds----------------------------------------------",parentUsersIds);
       const parentUser = await User.find({
         userId: {
           $in: [...parentUsersIds]
@@ -607,7 +608,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           
         userPrevExposure = user.exposure;
         UseravailableBalancePrev = user.availableBalance;
-    
+        console.log("UseravailableBalancePrev----------------------------------------------",UseravailableBalancePrev);
+        console.log("userPrevExposure----------------------------------------------",userPrevExposure);
+
          let commission = current - prev;
          user['commission'] = commission;
          prev = current;
@@ -615,6 +618,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     
     
         const ShareAmountInLoss = (user.commission / 100) * dealerExposures;
+        console.log("ShareAmountInLoss----------------------------------------------",ShareAmountInLoss);
         const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
        // console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
           console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
