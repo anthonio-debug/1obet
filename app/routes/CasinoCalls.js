@@ -222,7 +222,36 @@ async function findAndProcessTransactions(user) {
           await session.startTransaction();
           i++;
           console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
-            const betTransactionData = {
+            // const betTransactionData = {
+            //   userId: userRecord.userId,
+            //   description: `Casino (${tran.game_id})`,
+            //   date: new Date().getTime(),
+            //   amount: differenceDbCr,
+            //   balance: lastMaxWithdraw.balance + differenceDbCr,
+            //   availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
+            //   maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
+            //   roundId: tran._id,
+            //   updatedExposure: userRecord.exposure + AccumulativeDebit,
+            //   credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+            //   creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+            //   cashOrCredit: "Settlement"+i,
+            //   sportsId: "6",
+            //   event: CgameName,
+            //   roundId: tran._id,
+            //   marketId: tran._id,
+            //   matchId: Cgame_id,
+            // };
+            
+            // const deposit = new Cash(betTransactionData);
+            // await deposit.save({ session });
+
+
+
+
+
+
+
+            await Cash.create({
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
               date: new Date().getTime(),
@@ -239,11 +268,23 @@ async function findAndProcessTransactions(user) {
               event: CgameName,
               roundId: tran._id,
               marketId: tran._id,
-              matchId: Cgame_id,
-            };
-            
-            const deposit = new Cash(betTransactionData);
-            await deposit.save({ session });
+              matchId: Cgame_id
+            });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             await session.commitTransaction();
 
             await session.startTransaction();
@@ -254,7 +295,7 @@ async function findAndProcessTransactions(user) {
                   balance: updatedAvailableBalance,
                   clientPL: userPrevClientPL+differenceDbCr,
                   availableBalance: updatedAvailableBalance,
-                  exposure: betTransactionData.updatedExposure
+                  exposure: userRecord.exposure + AccumulativeDebit
                 }
               },
               { session }
