@@ -4,6 +4,7 @@ const router = express.Router();
 const ExpRec = require("../models/ExpRec");
 const CasinoDebits = require('../models/casinoCalls');
 const Cash = require("../../app/models/deposits");
+const expPositive = require("../../app/models/ExpPositive");
 const crypto = require('crypto');
 const config = require('config');
 const { MongoClient } = require('mongodb');
@@ -300,6 +301,31 @@ async function findAndProcessTransactions(user) {
               },
               { session }
             );
+
+
+
+            await session.startTransaction();
+
+            const userExpCheckorg = await user.findOne({ userId:userRecord.userId,exposure: { $gt: 0 } },{ session });
+                  if(userExpCheckorg){
+            
+                    expPositive.create({
+                      userId:userExpCheckorg.userId,
+                      
+                      userRole:userExpCheckorg.role,
+                      source:'casino settlement',
+                      roundId:tran._id,
+                      exposureAmount:userExpCheckorg.exposure
+                      
+                    },{ session });
+
+                  }
+
+                  await session.commitTransaction();
+
+
+
+
             await CasinoCalls.updateMany(
               { round_id: tran._id.toString() },
               { $set: { isProcessing: false } },
@@ -446,7 +472,7 @@ async function findAndProcessTransactions(user) {
                 await session.startTransaction();
                 
                 const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-                  await Cash.create([{
+                  await Cash.create({
                     userId: user.userId,
                     description: `Casino (${CgameName})`,
                     createdBy: 0,
@@ -473,8 +499,30 @@ async function findAndProcessTransactions(user) {
                     remainingAmount: remainingAmount,
                     
                     roundId: tran._id
-                  }],{ session });
+                  },{ session });
                   await session.commitTransaction();
+                  
+                  await session.startTransaction();
+                  
+                  const userExpCheck = await user.findOne({ userId:user.userId,exposure: { $gt: 0 } },{ session });
+                  if(userExpCheck){
+                    
+
+                    expPositive.create({
+                      userId:userExpCheck.userId,
+                      userFrom:userExpCheck.userId,
+                      userRole:userExpCheck.role,
+                      source:'casino settlement',
+                      roundId:tran._id,
+                      exposureAmount:userExpCheck.exposure
+                      
+                    },{ session });
+                    
+
+                  }
+                  await session.commitTransaction();
+                  
+                  
 
                   upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
                   if(differenceDbCr>0){
@@ -639,7 +687,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
 
-      if(user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount){
+      if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
         await users.updateOne(
           { _id: user._id },
           {
@@ -711,8 +759,28 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       ///exposures for parent users start
       
 
-      
-      
+      await session.startTransaction();
+      const userExpCheck = await user.findOne({ userId:user.userId,exposure: { $gt: 0 } },{ session });
+                  if(userExpCheck){
+                    
+
+                    expPositive.create({
+                      userId:userExpCheck.userId,
+                      
+                      userRole:userExpCheck.role,
+                      source:'debitFun',
+                      
+                      exposureAmount:userExpCheck.exposure
+                      
+                    },{ session });
+                    
+                  }
+
+                  await session.commitTransaction();
+
+
+
+
 
       return 0
     } else if (action === 1) {
