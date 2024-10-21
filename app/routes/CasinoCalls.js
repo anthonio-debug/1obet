@@ -302,7 +302,7 @@ async function findAndProcessTransactions(user) {
               { session }
             );
 
-
+            await session.commitTransaction();
             await session.startTransaction();
             const userExpCheckorg = await users.findOne({ userId:userRecord.userId,exposure: { $gt: 0 } },{ session });
             await session.commitTransaction();
