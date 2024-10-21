@@ -112,7 +112,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
       const userExpCheck = await User.findOne({ userId:bet.userId,exposure: { $gt: 0 } });
 
-      if(userExpCheck){
+      if(userExpCheck && userExpCheck.userId!=11000){
           
         expPositive.create({
           userId:bet.userId,
@@ -284,7 +284,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
               const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
 
-      if(userExpCheck){
+      if(userExpCheck && userExpCheck.userId!=11000){
           
         expPositive.create({
           userId:user.userId,
@@ -542,7 +542,7 @@ console.log("userPrevClientPL updated..........................................:
     const userExpCheck = await User.findOne({ userId:bet.userId,exposure: { $gt: 0 } });
                   console.log("userExpCheck---------------------------------------------",userExpCheck);
 
-                  if(userExpCheck){
+                  if(userExpCheck && userExpCheck.userId!=11000){
                     
                     expPositive.create({
                       userId:userExpCheck.userId,
