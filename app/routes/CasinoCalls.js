@@ -504,9 +504,10 @@ async function findAndProcessTransactions(user) {
                   await session.startTransaction();
                   
                   const userExpCheck = await users.findOne({ userId:user.userId,exposure: { $gt: 0 } },{ session });
+                  await session.commitTransaction();
                   if(userExpCheck){
                     
-
+                    await session.startTransaction();
                     expPositive.create([{
                       userId:userExpCheck.userId,
                       userFrom:userExpCheck.userId,
@@ -516,10 +517,10 @@ async function findAndProcessTransactions(user) {
                       exposureAmount:userExpCheck.exposure
                       
                     }],{ session });
-                    
+                    await session.commitTransaction();
 
                   }
-                  await session.commitTransaction();
+                  
                   
                   
 
@@ -760,9 +761,11 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
 
       await session.startTransaction();
       const userExpCheck = await users.findOne({ userId:user.userId,exposure: { $gt: 0 } },{ session });
+      await session.commitTransaction();
+
                   if(userExpCheck){
                     
-
+                    await session.startTransaction();
                     expPositive.create([{
                       userId:userExpCheck.userId,
                       
@@ -772,10 +775,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
                       exposureAmount:userExpCheck.exposure
                       
                     }],{ session });
-                    
+                    await session.commitTransaction();
                   }
 
-                  await session.commitTransaction();
+                  
 
 
 
