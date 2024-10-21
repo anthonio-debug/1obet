@@ -199,10 +199,10 @@ const bet = await Bets.findOne({ _id: betId });
                     
                     expPositive.create({
                       userId:userExpCheck.userId,
-                      userFrom:bet.userId,
+                      
                       userRole:userExpCheck.role,
                       source:'Bet Place',
-                      
+                      betId:bet._id,
                       exposureAmount:userExpCheck.exposure
                       
                     });
