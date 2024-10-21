@@ -128,6 +128,7 @@ const bet = await Bets.findOne({ _id: betId });
     //if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
       await user.save();
       const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
+      console.log("userExpCheck---------------------------------------------",userExpCheck);
                   if(userExpCheck){
                     //await session.startTransaction();
 
@@ -184,14 +185,9 @@ const bet = await Bets.findOne({ _id: betId });
    await user.save();
    //check if  exposure went higher than zero
 
-   
+   const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
+                  console.log("userExpCheck---------------------------------------------",userExpCheck);
 
-   //end of check if exposure went higher than zero
-
-  }
-   
-
-                  const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
                   if(userExpCheck){
                     
                     expPositive.create({
@@ -206,6 +202,14 @@ const bet = await Bets.findOne({ _id: betId });
                     
 
                   }
+   
+
+   //end of check if exposure went higher than zero
+
+  }
+   
+
+                  
 
 
 
