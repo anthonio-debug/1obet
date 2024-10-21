@@ -81,12 +81,12 @@ const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
 const bet = await Bets.findOne({ _id: betId });
   //console.log("the details  for the bet provided............",bet);
   let highestAmount = 0;
-  console.log("runnersPosition:::::::",runnersPosition);
+  //console.log("runnersPosition:::::::",runnersPosition);
   highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
   if(!highestAmount){
     highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
   }
-  console.log("1- highestAmount-------------------------------====",highestAmount);
+  //console.log("1- highestAmount-------------------------------====",highestAmount);
   
   if (Number.isNaN(highestAmount)) {
     highestAmount = 0;
@@ -110,14 +110,14 @@ const bet = await Bets.findOne({ _id: betId });
 
     const ShareAmountInLoss = (user.commission / 100) * highestAmount;
     const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
-    console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
+    //console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
     if(userPrevExposure==0){
-      console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
+      //console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
       user.exposure = -finalShareAmountInLoss;
       user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
       
     }else{
-      console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
+      //console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
       user.exposure = userPrevExposure-finalShareAmountInLoss;
       
     user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
@@ -125,10 +125,10 @@ const bet = await Bets.findOne({ _id: betId });
     }
     
     
-    //if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
+    console.log("for user available balacne..................................................",user);
       await user.save();
       const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
-      console.log("userExpCheck---------------------------------------------",userExpCheck);
+      
                   if(userExpCheck){
                     //await session.startTransaction();
 
@@ -154,7 +154,7 @@ const bet = await Bets.findOne({ _id: betId });
    user['commission'] = commission;
    prev = current;
    let ShareAmountInLossPrev = (user.commission / 100) * prevhighestAmount;
-   console.log("highestAmount-------------------------------====",highestAmount);
+   //console.log("highestAmount-------------------------------====",highestAmount);
    let finalShareAmountInLossPrev = Number(ShareAmountInLossPrev.toFixed(3));
    let ShareAmountInLoss = (user.commission / 100) * highestAmount;
    let finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
@@ -164,24 +164,25 @@ const bet = await Bets.findOne({ _id: betId });
    }else{
     let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
     let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
-    console.log("prevAdjustedExposure:::",prevAdjustedExposure,"::",prevAdjustedAvailableBalance,"::::",user.availableBalance,"::::::::::::::",finalShareAmountInLossPrev,"::::::::::::::::..........................",prevAdjustedExposure);
-    console.log("prevAdjustedExposure---------------------------->",prevAdjustedExposure);
-    console.log("finalShareAmountInLoss---------------------------->",finalShareAmountInLoss);
+    //console.log("prevAdjustedExposure:::",prevAdjustedExposure,"::",prevAdjustedAvailableBalance,"::::",user.availableBalance,"::::::::::::::",finalShareAmountInLossPrev,"::::::::::::::::..........................",prevAdjustedExposure);
+    //console.log("prevAdjustedExposure---------------------------->",prevAdjustedExposure);
+    //console.log("finalShareAmountInLoss---------------------------->",finalShareAmountInLoss);
     prevAdjustedExposure = Number(prevAdjustedExposure.toFixed(3));
     finalShareAmountInLoss = Number(finalShareAmountInLoss.toFixed(3));
     if(prevAdjustedExposure==0){
-      console.log("user ID:::::: in IF Block:",user.userId);
+      //console.log("user ID:::::: in IF Block:",user.userId);
     user.exposure = -finalShareAmountInLoss;
     user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;
     
    }else{
-    console.log("user ID::::::Else block:",user.userId);
+    //console.log("user ID::::::Else block:",user.userId);
     let ultimatefinal = prevAdjustedExposure - finalShareAmountInLoss;
-    console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
-    console.log("ultimatefinal=========>",ultimatefinal);
+    //console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
+    //console.log("ultimatefinal=========>",ultimatefinal);
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
     user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
    }
+   console.log("for user available balacne...........................2.......................",user);
    await user.save();
    //check if  exposure went higher than zero
 
