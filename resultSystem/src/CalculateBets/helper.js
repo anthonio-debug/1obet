@@ -108,6 +108,25 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         }
       );
 
+
+      const userExpCheck = await User.findOne({ userId:bet.userId,exposure: { $gt: 0 } });
+
+      if(userExpCheck){
+          
+        expPositive.create({
+          userId:bet.userId,
+         // userFrom:bet.userId,
+          userRole:userExpCheck.role,
+          source:'bet settlement',
+          betId:bet._id,
+          
+          exposureAmount:userExpCheck.exposure
+          
+        });
+        
+
+      }
+
     await Deposits.create({
         userId: userToUpdate.userId,
         description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -259,6 +278,29 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   clientPL: totalClientPL //Balance Upline
                 }
               );
+
+
+
+              const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
+
+      if(userExpCheck){
+          
+        expPositive.create({
+          userId:user.userId,
+         userFrom:bet.userId,
+          userRole:userExpCheck.role,
+          source:'bet settlement',
+          betId:bet._id,
+          
+          exposureAmount:userExpCheck.exposure
+          
+        });
+        
+
+      }
+
+
+
 
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
               await Deposits.create({
@@ -495,6 +537,28 @@ console.log("userPrevClientPL updated..........................................:
       }
     );
 
+
+    const userExpCheck = await User.findOne({ userId:bet.userId,exposure: { $gt: 0 } });
+                  console.log("userExpCheck---------------------------------------------",userExpCheck);
+
+                  if(userExpCheck){
+                    
+                    expPositive.create({
+                      userId:userExpCheck.userId,
+                      //userFrom:bet.userId,
+                      userRole:userExpCheck.role,
+                      source:'session settlement',
+                      betId:bet._id,
+                      
+                      exposureAmount:userExpCheck.exposure
+                      
+                    });
+                    
+
+                  }
+
+
+
   await Deposits.create({
       userId: userToUpdate.userId,
       description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -649,6 +713,28 @@ console.log("userPrevClientPL updated..........................................:
             clientPL: totalClientPL //Balance Upline
           }
         );
+
+        const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
+        console.log("userExpCheck---------------------------------------------",userExpCheck);
+
+        if(userExpCheck){
+          
+          expPositive.create({
+            userId:userExpCheck.userId,
+            userFrom:bet.userId,
+            userRole:userExpCheck.role,
+            source:'session settlement',
+            betId:bet._id,
+            
+            exposureAmount:userExpCheck.exposure
+            
+          });
+          
+
+        }
+
+
+
 
         const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
         await Deposits.create({
