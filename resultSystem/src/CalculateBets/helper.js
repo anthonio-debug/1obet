@@ -1,5 +1,5 @@
 const Bets = require('../../../app/models/bets');
-const expPositive = require("../../app/models/ExpPositive");
+const expPositive = require("../../../app/models/ExpPositive");
 const User = require('../../../app/models/user');
 const { getParents } = require('../../../app/routes/bets');
 const Events = require('../../../app/models/events');
