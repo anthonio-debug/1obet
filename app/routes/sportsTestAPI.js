@@ -1,7 +1,7 @@
 const express = require('express');
 const Bets = require("../models/bets")
 const Exposure = require('../models/ExpRec');
-
+const expPositive = require("../../app/models/ExpPositive");
 const Users = require("../models/user")
 const InPlayEvents = require("../models/events")
 const MarketIDS = require("../models/marketIds")
@@ -4019,7 +4019,7 @@ async function deleteOdds(req, res) {
   const eventId = req.params.eventId;
 
   try {
-    await Deposits.deleteMany({userId:22580});
+    //await Deposits.deleteMany({userId:22580});
     totalSession = 20;
     //await CasinoCalls.updateMany({},{isProcessing:false})
 
@@ -4035,7 +4035,8 @@ async function deleteOdds(req, res) {
     //   session.save();
     // }
     //await Deposits.deleteMany({userId:22580});
-    await Bets.updateMany({ userId:22580 }, { $set: { status:1 } });
+    //await Bets.updateMany({ userId:22580 }, { $set: { status:1 } });
+    await expPositive.deleteMany({});
     //await CasinoCalls.updateMany({ isProcessing:true,action:'credit',gameplay_final:1 }, { $set: { isProcessing: false } });
   //   await Cash.  ({
   // userId: 22580
