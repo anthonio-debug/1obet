@@ -308,7 +308,7 @@ async function findAndProcessTransactions(user) {
             await session.commitTransaction();
                   if(userExpCheckorg){
                     await session.startTransaction();
-                    expPositive.create({
+                    expPositive.create([{
                       userId:userExpCheckorg.userId,
                       
                       userRole:userExpCheckorg.role,
@@ -316,7 +316,7 @@ async function findAndProcessTransactions(user) {
                       roundId:tran._id,
                       exposureAmount:userExpCheckorg.exposure
                       
-                    },{ session });
+                    }],{ session });
                     await session.commitTransaction();
                   }
 
@@ -507,7 +507,7 @@ async function findAndProcessTransactions(user) {
                   if(userExpCheck){
                     
 
-                    expPositive.create({
+                    expPositive.create([{
                       userId:userExpCheck.userId,
                       userFrom:userExpCheck.userId,
                       userRole:userExpCheck.role,
@@ -515,7 +515,7 @@ async function findAndProcessTransactions(user) {
                       roundId:tran._id,
                       exposureAmount:userExpCheck.exposure
                       
-                    },{ session });
+                    }],{ session });
                     
 
                   }
@@ -763,7 +763,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
                   if(userExpCheck){
                     
 
-                    expPositive.create({
+                    expPositive.create([{
                       userId:userExpCheck.userId,
                       
                       userRole:userExpCheck.role,
@@ -771,7 +771,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
                       
                       exposureAmount:userExpCheck.exposure
                       
-                    },{ session });
+                    }],{ session });
                     
                   }
 
