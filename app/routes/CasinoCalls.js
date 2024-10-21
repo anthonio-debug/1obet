@@ -637,22 +637,21 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
       //console.log("arham updatedavailableBalance ",UpdatedExposure )
 
-      await users.updateOne(
-        { _id: user._id },
-        {
-          $set: {
-            availableBalance: updatedavailableBalance,
-            exposure: UpdatedExposure,
-            tempExposure: tempExposure
-          }
-        },
-        { session }
-      );
-      
+      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
 
-
-      ///exposures for parent users start
-      let parentUsersIds = await getParents(user.userId);
+      if(user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount){
+        await users.updateOne(
+          { _id: user._id },
+          {
+            $set: {
+              availableBalance: updatedavailableBalance,
+              exposure: UpdatedExposure,
+              tempExposure: tempExposure
+            }
+          },
+          { session }
+        );
+        let parentUsersIds = await getParents(user.userId);
       console.log("parentUsersIds----------------------------------------------",parentUsersIds);
       const parentUser = await User.find({
         userId: {
@@ -660,8 +659,6 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         },
         isDeleted: false
       }).sort({ userId: -1 });
-
-      
       let dealerExposures = amount;
       let UseravailableBalancePrev = 0;
       let prev = 0;
@@ -705,6 +702,17 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
+    
+    }// aLLOW ONLY IF USER BALANCES ARE MORE THAN DEBITS
+      
+      
+
+
+      ///exposures for parent users start
+      
+
+      
+      
 
       return 0
     } else if (action === 1) {
