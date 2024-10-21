@@ -185,7 +185,14 @@ const bet = await Bets.findOne({ _id: betId });
    await user.save();
    //check if  exposure went higher than zero
 
-   const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
+   
+
+   //end of check if exposure went higher than zero
+
+  }
+   
+
+                  const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
                   console.log("userExpCheck---------------------------------------------",userExpCheck);
 
                   if(userExpCheck){
@@ -202,14 +209,6 @@ const bet = await Bets.findOne({ _id: betId });
                     
 
                   }
-   
-
-   //end of check if exposure went higher than zero
-
-  }
-   
-
-                  
 
 
 
