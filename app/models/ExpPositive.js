@@ -1,12 +1,12 @@
 const mongoose = require('mongoose');
 // const Schema = mongoose.Schema;
 const expPositiveSchema = new mongoose.Schema({
-    userId: { type: Number, required:false},
-    userFrom: {type: String},
-    userRole: {type: String},
-    source: {type: String, enum: ['bet place', 'settlement']},
-    betId: {type: String},
-    roundId: {type: String},
+    userId: { type: Number, required:false, default: 0},
+    userFrom: {type: String, default: ''},
+    userRole: {type: String, default: ''},
+    source: {type: String, default: ''},
+    betId: {type: String, default: ''},
+    roundId: {type: String, default: ''},
     exposureAmount: {type: Number}
   }, {
     timestamps: true
