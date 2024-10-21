@@ -127,7 +127,7 @@ const bet = await Bets.findOne({ _id: betId });
     
     //if(user.userId!=22385 && user.userId!=22384 && user.userId!=22383 && user.userId!=21663){
       await user.save();
-      const userExpCheck = await user.findOne({ userId:user.userId,exposure: { $gt: 0 } });
+      const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
                   if(userExpCheck){
                     //await session.startTransaction();
 
@@ -191,7 +191,7 @@ const bet = await Bets.findOne({ _id: betId });
   }
    
 
-                  const userExpCheck = await user.findOne({ userId:user.userId,exposure: { $gt: 0 } });
+                  const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
                   if(userExpCheck){
                     
                     expPositive.create({
