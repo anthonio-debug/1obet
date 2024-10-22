@@ -691,6 +691,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
       //await session.commitTransaction();
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee",user,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
+      console.log("hereeeeeeeeeeeeeeeeeeeeeeee",lastMaxWithdraw,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
         await session.startTransaction();
        console.log("debit is successully................................................");
