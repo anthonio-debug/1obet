@@ -677,6 +677,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     const formattedDate = `${year}-${month}-${day}`;
 
     if (action === 0) {
+      const mongoose = require('mongoose');
       let amount = Number(payload.amount) * casinoMultiples;
       
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 1")
