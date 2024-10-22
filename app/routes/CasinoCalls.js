@@ -694,7 +694,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee",lastMaxWithdraw,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
       console.log("amount::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",amount);
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
-        await session.startTransaction();
+        //await session.startTransaction();
        console.log("debit is successully................................................");
         await users.updateOne(
           { _id: user._id },
@@ -707,7 +707,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           },
           { session }
         );
-        await session.commitTransaction();
+        //await session.commitTransaction();
         let parentUsersIds = await getParents(user.userId);
       console.log("parentUsersIds----------------------------------------------",parentUsersIds);
       const parentUser = await User.find({
