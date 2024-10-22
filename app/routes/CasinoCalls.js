@@ -688,10 +688,11 @@ async function findAndProcessTransactions(user) {
       // } else {
       //   throw error; // Re-throw the error after max retries
       // }
+      await session.abortTransaction();
     }finally {
       // End the session
       //await session.abortTransaction();
-      await session.commitTransaction();
+      //await session.commitTransaction();
           
       session.endSession();
     } 
