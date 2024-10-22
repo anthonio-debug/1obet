@@ -252,29 +252,10 @@ async function findAndProcessTransactions(user) {
 
 
 
-        
+            let updatedExposureTrack = 0;
+            let exposureOnlyTrck;
+            let accumulativeDebitTrack;
             if(userRecord.exposure + AccumulativeDebit<=0){
-              await Cash.create({
-                userId: userRecord.userId,
-                description: `----Casino (${tran.game_id})`,
-                date: new Date().getTime(),
-                amount: differenceDbCr,
-                balance: lastMaxWithdraw.balance + differenceDbCr,
-                availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
-                maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
-                roundId: tran._id,
-                updatedExposure: userRecord.exposure + AccumulativeDebit,
-                credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-                creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
-                cashOrCredit: "Settlement"+i,
-                sportsId: "6",
-                event: CgameName,
-                roundId: tran._id,
-                marketId: tran._id,
-                matchId: Cgame_id
-              },
-              { session });
-            }else{
               await Cash.create({
                 userId: userRecord.userId,
                 description: `Casino (${tran.game_id})`,
@@ -295,6 +276,35 @@ async function findAndProcessTransactions(user) {
                 matchId: Cgame_id
               },
               { session });
+            }else{
+              exposureOnlyTrck = userRecord.exposure;
+              accumulativeDebitTrack = AccumulativeDebit;
+              
+              await Cash.create({
+                userId: userRecord.userId,
+                description: `----Casino (${tran.game_id})`,
+                date: new Date().getTime(),
+                amount: differenceDbCr,
+                balance: lastMaxWithdraw.balance + differenceDbCr,
+                availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
+                maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
+                roundId: tran._id,
+                updatedExposure: userRecord.exposure + AccumulativeDebit,
+
+            
+               
+                
+                credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+                creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+                cashOrCredit: "Settlement"+i,
+                sportsId: "6",
+                event: CgameName,
+                roundId: tran._id,
+                marketId: tran._id,
+                matchId: Cgame_id
+              },
+              { session });
+              
             }
 
             
@@ -321,6 +331,8 @@ async function findAndProcessTransactions(user) {
               {
                 $set: {
                   balance: updatedAvailableBalance,
+                  exposureOnlyTrck:exposureOnlyTrck,
+                  accumulativeDebitTrack:accumulativeDebitTrack,
                   clientPL: userPrevClientPL+differenceDbCr,
                   availableBalance: updatedAvailableBalance,
                   exposure: userRecord.exposure + AccumulativeDebit
