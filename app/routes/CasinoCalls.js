@@ -113,7 +113,7 @@ async function findAndProcessTransactions(user) {
         //await session.abortTransaction();
         await session.commitTransaction();
            // Abort the transaction if no records found
-       session.endSession();
+       //session.endSession();
         return;
       }
       
