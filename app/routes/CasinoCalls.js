@@ -219,7 +219,7 @@ async function findAndProcessTransactions(user) {
 
 
           
-          
+          if(userRecord.exposure + AccumulativeDebit<=0){
           await session.startTransaction();
           i++;
           console.log("--------------------------------------------------->>>>",i,">>",differenceDbCr);
@@ -249,7 +249,7 @@ async function findAndProcessTransactions(user) {
 
 
 
-
+        
 
 
             await Cash.create({
@@ -619,7 +619,7 @@ async function findAndProcessTransactions(user) {
 
         
 
-
+      }
 
         //START OF DEPOSITS FOR COMMISSIONS AND SHARES FOR DEALERS
 
