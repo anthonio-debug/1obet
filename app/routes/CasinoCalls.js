@@ -264,6 +264,7 @@ async function findAndProcessTransactions(user) {
             let exposureOnlyTrck;
             let accumulativeDebitTrack;
             let faultymarketId;
+            await new Promise(resolve => setTimeout(resolve, 1000));
             if(userRecord.exposure + AccumulativeDebit<=0){
               await Cash.create({
                 userId: userRecord.userId,
