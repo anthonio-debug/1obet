@@ -266,7 +266,7 @@ async function findAndProcessTransactions(user) {
                 availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
                 maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
                 roundId: tran._id,
-                updatedExposure: userRecord.exposure + AccumulativeDebit,
+                UpdatedExposure: userRecord.exposure + AccumulativeDebit,
                 credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
                 creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
                 cashOrCredit: "Settlement"+i,
@@ -290,7 +290,7 @@ async function findAndProcessTransactions(user) {
                 availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
                 maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
                 roundId: tran._id,
-                updatedExposure: userRecord.exposure + AccumulativeDebit,
+                UpdatedExposure: userRecord.exposure + AccumulativeDebit,
 
             
                
