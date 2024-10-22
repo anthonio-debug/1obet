@@ -324,9 +324,7 @@ async function findAndProcessTransactions(user) {
 
 
 
-            await session.commitTransaction();
-
-            await session.startTransaction();
+         
             await users.updateOne(
               { _id: userRecord._id },
               {
