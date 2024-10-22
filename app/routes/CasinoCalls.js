@@ -295,21 +295,21 @@ async function findAndProcessTransactions(user) {
 
 
          
-            await users.updateOne(
-              { _id: userRecord._id },
-              {
-                $set: {
-                  balance: updatedAvailableBalance,
-                  exposureOnlyTrck:exposureOnlyTrck,
-                  accumulativeDebitTrack:accumulativeDebitTrack,
-                  faultymarketId,faultymarketId,
-                  clientPL: userPrevClientPL+differenceDbCr,
-                  availableBalance: updatedAvailableBalance,
-                  exposure: userRecord.exposure + AccumulativeDebit
-                }
-              },
-              { session }
-            );
+            // await users.updateOne(
+            //   { _id: userRecord._id },
+            //   {
+            //     $set: {
+            //       balance: updatedAvailableBalance,
+            //       exposureOnlyTrck:exposureOnlyTrck,
+            //       accumulativeDebitTrack:accumulativeDebitTrack,
+            //       faultymarketId,faultymarketId,
+            //       clientPL: userPrevClientPL+differenceDbCr,
+            //       availableBalance: updatedAvailableBalance,
+            //       exposure: userRecord.exposure + AccumulativeDebit
+            //     }
+            //   },
+            //   { session }
+            // );
 
             
             const userExpCheckorg = await users.findOne({ userId:userRecord.userId,exposure: { $gt: 0 } },{ session });
@@ -459,19 +459,19 @@ async function findAndProcessTransactions(user) {
            
                 
 
-                await User.updateOne(
-                  {
-                    userId: user.userId,
-                    isDeleted: false
-                  },
-                  {
-                    balance: totalBalance,//P/L Downline
-                    exposure: UpdatedExposureAmount,
-                    //availableBalance: UpdatedAvailableBalance,
-                    availableBalance: totalBalance + UpdatedExposureAmount,
-                    clientPL: totalClientPL //Balance Upline
-                  },{ session }
-                );
+                // await User.updateOne(
+                //   {
+                //     userId: user.userId,
+                //     isDeleted: false
+                //   },
+                //   {
+                //     balance: totalBalance,//P/L Downline
+                //     exposure: UpdatedExposureAmount,
+                //     //availableBalance: UpdatedAvailableBalance,
+                //     availableBalance: totalBalance + UpdatedExposureAmount,
+                //     clientPL: totalClientPL //Balance Upline
+                //   },{ session }
+                // );
 
 
 
