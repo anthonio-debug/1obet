@@ -264,7 +264,7 @@ async function findAndProcessTransactions(user) {
             let exposureOnlyTrck;
             let accumulativeDebitTrack;
             let faultymarketId;
-            await new Promise(resolve => setTimeout(resolve, 1000));
+          
             await Cash.create([{
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
@@ -290,15 +290,6 @@ async function findAndProcessTransactions(user) {
 
 
 
-
-
-
-
-
-
-
-
-            await new Promise(resolve => setTimeout(resolve, 1000));
             
 
 
