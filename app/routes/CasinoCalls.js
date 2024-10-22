@@ -55,9 +55,10 @@ const checkMarketBlocked = async (user) => {
 }
 const mongoose = require('mongoose');
 async function findAndProcessTransactions(user) {
-  await insertMissingTransactions();
+  
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user);
   const session = await mongoose.startSession();
+  await insertMissingTransactions();
   const maxRetries = 1; // Max retries for the transaction
   const now = new Date();
   const year = now.getFullYear().toString();
@@ -1529,7 +1530,8 @@ const insertMissingTransactions = async (req, res) => {
           isProcessing: "$matchedCasinoCallsPayload.isProcessing"
         }
       }
-    ]);
+    ],{ session });
+    
 
     // console.log("!!!!!!!!!!!!!!!!!!!!11", matchedDocs)
     if (!matchedDocs || matchedDocs.length === 0) {
