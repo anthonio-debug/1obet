@@ -283,8 +283,7 @@ async function findAndProcessTransactions(user) {
               roundId: tran._id,
               marketId: tran._id,
               matchId: Cgame_id
-            }],
-            { session });
+            }]);
 
             
 
