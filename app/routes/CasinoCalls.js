@@ -60,7 +60,7 @@ async function findAndProcessTransactions(user) {
   
  // session.endSession();return
   await insertMissingTransactions();
-  return;
+  
   const session = await mongoose.startSession();
   const maxRetries = 1; // Max retries for the transaction
   const now = new Date();
