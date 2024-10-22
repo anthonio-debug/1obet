@@ -680,7 +680,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       //const mongoose = require('mongoose');
       let amount = Number(payload.amount) * casinoMultiples;
       
-      console.log("hereeeeeeeeeeeeeeeeeeeeeeee 1")
+      console.log("hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
       let tempExposure = Number((user.tempExposure + amount).toFixed(3));
       //console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
@@ -692,6 +692,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       await session.commitTransaction();
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
         await session.startTransaction();
+       console.log("debit is successully................................................");
         await users.updateOne(
           { _id: user._id },
           {
