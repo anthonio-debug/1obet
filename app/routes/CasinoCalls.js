@@ -754,9 +754,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       
       
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
+      session.startTransaction(); 
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
-    
+      await session.commitTransaction();
     }// aLLOW ONLY IF USER BALANCES ARE MORE THAN DEBITS
       
       
