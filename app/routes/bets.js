@@ -148,6 +148,7 @@ const bet = await Bets.findOne({ _id: betId });
   }
 }else{
   for (const user of parentUser) {
+    let prevBalance = user.balance; 
   let current = user.downLineShare;
   userPrevExposure = user.exposure;
   UseravailableBalancePrev = user.availableBalance;
