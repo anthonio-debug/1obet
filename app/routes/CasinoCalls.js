@@ -300,9 +300,9 @@ async function findAndProcessTransactions(user) {
               {
                 $set: {
                   balance: updatedAvailableBalance,
-                  exposureOnlyTrck:exposureOnlyTrck,
-                  accumulativeDebitTrack:accumulativeDebitTrack,
-                  faultymarketId,faultymarketId,
+                  // exposureOnlyTrck:exposureOnlyTrck,
+                  // accumulativeDebitTrack:accumulativeDebitTrack,
+                  // faultymarketId,faultymarketId,
                   clientPL: userPrevClientPL+differenceDbCr,
                   availableBalance: updatedAvailableBalance,
                   exposure: userRecord.exposure + AccumulativeDebit
