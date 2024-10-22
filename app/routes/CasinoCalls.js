@@ -74,7 +74,7 @@ async function findAndProcessTransactions(user) {
       
 
       const limitValue = 1; // Set your desired limit here
-      session.startTransaction(); 
+      await session.startTransaction();
       
       //session.endSession();
       const groupedTransactions = await CasinoCalls.aggregate([
@@ -105,7 +105,7 @@ async function findAndProcessTransactions(user) {
           $limit: limitValue // Limit the number of results returned
         }
       ]).session(session);  
-
+      await session.commitTransaction();
       
       
       console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
@@ -264,7 +264,7 @@ async function findAndProcessTransactions(user) {
             let exposureOnlyTrck;
             let accumulativeDebitTrack;
             let faultymarketId;
-          
+            await session.startTransaction();
             await Cash.create([{
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
@@ -285,16 +285,16 @@ async function findAndProcessTransactions(user) {
               matchId: Cgame_id
             }],
             { session });
-
+            await session.commitTransaction();
             
             console.log("deposits.create is passed.......................................");
 
 
             
 
-            await new Promise(resolve => setTimeout(resolve, 100));
+          //  await new Promise(resolve => setTimeout(resolve, 100));
 
-         
+          await session.startTransaction();
             await users.updateOne(
               { _id: userRecord._id },
               {
@@ -310,12 +310,12 @@ async function findAndProcessTransactions(user) {
               },
               { session }
             );
-
+            await session.commitTransaction();
             console.log("users updated is passed.......................................");
             const userExpCheckorg = await users.findOne({ userId:userRecord.userId,exposure: { $gt: 0 } },{ session });
             
                   if(userExpCheckorg && userExpCheckorg.userId!=11000){
-                 
+                    await session.startTransaction();
                     expPositive.create([{
                       userId:userExpCheckorg.userId,
                       
@@ -325,7 +325,7 @@ async function findAndProcessTransactions(user) {
                       exposureAmount:userExpCheckorg.exposure
                       
                     }],{ session });
-                   
+                    await session.commitTransaction();
                   }
 
                   
@@ -458,7 +458,7 @@ async function findAndProcessTransactions(user) {
 
            
                 
-
+              await session.startTransaction();
                 await User.updateOne(
                   {
                     userId: user.userId,
@@ -472,12 +472,13 @@ async function findAndProcessTransactions(user) {
                     clientPL: totalClientPL //Balance Upline
                   },{ session }
                 );
-
+                await session.commitTransaction();
 
 
 
                 
                 const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
+                await session.startTransaction();
                   await Cash.create({
                     userId: user.userId,
                     description: `Casino (${CgameName})`,
@@ -506,7 +507,7 @@ async function findAndProcessTransactions(user) {
                     
                     roundId: tran._id
                   },{ session });
-                 
+                  await session.commitTransaction();
                   
          
                   
@@ -514,7 +515,7 @@ async function findAndProcessTransactions(user) {
               
                   if(userExpCheck && userExpCheck.userId!=11000){
                     
-                 
+                    await session.startTransaction();
                     expPositive.create([{
                       userId:userExpCheck.userId,
                       userFrom:userExpCheck.userId,
@@ -524,7 +525,7 @@ async function findAndProcessTransactions(user) {
                       exposureAmount:userExpCheck.exposure
                       
                     }],{ session });
-                 
+                    await session.commitTransaction();
 
                   }
                   
@@ -533,7 +534,7 @@ async function findAndProcessTransactions(user) {
 
                   upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
                   if(differenceDbCr>0){
-                  
+                    await session.startTransaction();
                     await Cash.create({
                       userId: user.userId,
                       description: `Commission From Casino (${CgameName})`,
@@ -559,7 +560,7 @@ async function findAndProcessTransactions(user) {
                       
                       roundId: tran._id
                     },{ session });
-             
+                    await session.commitTransaction();
                    
                     upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
                   }
