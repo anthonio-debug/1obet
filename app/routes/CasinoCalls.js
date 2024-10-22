@@ -57,9 +57,9 @@ const mongoose = require('mongoose');
 async function findAndProcessTransactions(user) {
   
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user);
-  const session = await mongoose.startSession();
+  
  // session.endSession();return
-  //await insertMissingTransactions();
+  await insertMissingTransactions();
   const maxRetries = 1; // Max retries for the transaction
   const now = new Date();
   const year = now.getFullYear().toString();
@@ -1510,6 +1510,7 @@ async function casinoListing(req, res) {
 
 const insertMissingTransactions = async (req, res) => {
   try {
+
     const matchedDocs = await CasinoCalls.aggregate([
       {
         $match: {
