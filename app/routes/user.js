@@ -921,33 +921,35 @@ function settlePLAccount(req, res) {
       if (result.availableBalance < 0) {
         result.availableBalance += amount;
         result.balance += amount;
-        
+
       } else {
         result.availableBalance -= amount;
         result.balance -= amount;
       }
       if(result.balance < 0){
-        result.cash += amount;
-      }else{
         result.cash -= amount;
+      }else{
+        result.cash += amount;
       }
       result.save();
 
-      if(result.cash<0){
+      if (result.balance < 0) {
         Deposits.create({
-          userId:result.userId,
-          balance:result.balance,
-          availableBalance:result.availableBalance,
-          amount:amount
-          
+          userId: result.userId,
+          balance: result.balance,
+          availableBalance: result.availableBalance,
+          amount: amount,
+          description:"P/L to Cash transfer"
+
         })
-      }else{
+      } else {
         Deposits.create({
-          userId:result.userId,
-          balance:result.balance,
-          availableBalance:result.availableBalance,
-          amount:-amount
-          
+          userId: result.userId,
+          balance: result.balance,
+          availableBalance: result.availableBalance,
+          amount: -amount,
+          description:"P/L to Cash transfer"
+
         })
       }
 
