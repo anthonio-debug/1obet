@@ -398,11 +398,11 @@ function apiRequests() {
     
       const response = await axios.get(oddUrl);
       
-      console.log("cron jobs response ======----- ", response.data);
+      
 
       if (response) {
 
-        
+        console.log("cron jobs response ======----- ", response.data);
         let oddData = response.data;
         try {
           oddData = JSON.parse(oddData);
