@@ -323,7 +323,7 @@ async function findAndProcessTransactions(user) {
                   
 
 
-
+                  await session.startTransaction();
 
             await CasinoCalls.updateMany(
               { round_id: tran._id.toString() },
