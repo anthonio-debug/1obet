@@ -108,7 +108,8 @@ async function findAndProcessTransactions(user) {
       
       if (!groupedTransactions || groupedTransactions.length === 0) {
         console.log('No transactions found for the given round_id and username.');
-       // await session.abortTransaction();  // Abort the transaction if no records found
+        await session.commitTransaction();
+          await session.abortTransaction(); // Abort the transaction if no records found
        session.endSession();
         return;
       }
@@ -123,9 +124,10 @@ async function findAndProcessTransactions(user) {
 
         if (!userRecord) {
           console.log(`User not found for remoteId: ${tran.remote_id}`);
+          await session.commitTransaction();
+          await session.abortTransaction();
           session.endSession();
-          //await session.commitTransaction();
-          //await session.abortTransaction();
+          
           
           continue; // Skip if user not found
         }
@@ -684,6 +686,8 @@ async function findAndProcessTransactions(user) {
       // }
     }finally {
       // End the session
+      await session.commitTransaction();
+          await session.abortTransaction();
       session.endSession();
     } 
   
