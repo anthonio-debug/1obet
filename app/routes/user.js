@@ -916,7 +916,7 @@ function settlePLAccount(req, res) {
       }
       const amount = Math.abs(req.body.amount);
       if (amount > Math.abs(result.availableBalance)) {
-        return res.status(404).send(Max amount to transfer: ${result.availableBalance});
+        return res.status(404).send(`Max amount to transfer: ${result.availableBalance}`);
       }
       if (result.availableBalance < 0) {
         result.availableBalance += amount;
@@ -925,6 +925,7 @@ function settlePLAccount(req, res) {
       } else {
         result.availableBalance -= amount;
         result.balance -= amount;
+        result.cash -= amount;
       }
       if(result.balance < 0){
         result.cash += amount;
