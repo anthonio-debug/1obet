@@ -333,12 +333,13 @@ async function findAndProcessTransactions(user) {
 
                  
                   console.log("exppositives is passed.......................................");
+                  await session.startTransaction();
             await CasinoCalls.updateOne(
               { round_id: tran._id.toString(),gameplay_final:1,action:'credit' },
               { $set: { isProcessing: false } },
               { session }
             );
-           
+            await session.commitTransaction();
             console.log("casiniocalls updated is passed.......................................");
             
 
