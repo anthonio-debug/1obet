@@ -691,6 +691,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 },{session});
       await session.commitTransaction();
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
+        await session.startTransaction();
         await users.updateOne(
           { _id: user._id },
           {
@@ -702,6 +703,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           },
           { session }
         );
+        await session.commitTransaction();
         let parentUsersIds = await getParents(user.userId);
       console.log("parentUsersIds----------------------------------------------",parentUsersIds);
       const parentUser = await User.find({
@@ -735,7 +737,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
           userexposureNew = user.exposure-finalShareAmountInLoss;
           UseravailableBalanceNew = UseravailableBalancePrev-finalShareAmountInLoss;
-
+          session.startTransaction(); 
           await users.updateOne(
             { _id: user._id },
             {
@@ -746,6 +748,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             },
             { session }
           );
+          await session.commitTransaction();
       }
       //exposures for parent users end
       
