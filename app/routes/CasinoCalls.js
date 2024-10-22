@@ -683,7 +683,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       //const mongoose = require('mongoose');
       let amount = Number(payload.amount) * casinoMultiples;
       
-      console.log("hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
+      //console.log("hereeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
       let UpdatedExposure = Number((user.exposure - amount).toFixed(3));
       let tempExposure = Number((user.tempExposure + amount).toFixed(3));
       //console.log("arham exposureeeeeeeeeeeee ",UpdatedExposure )
@@ -693,14 +693,14 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       //await session.startTransaction();
       const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
       //await session.commitTransaction();
-      console.log("hereeeeeeeeeeeeeeeeeeeeeeee",user,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
-      console.log("hereeeeeeeeeeeeeeeeeeeeeeee",lastMaxWithdraw,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
-      console.log("amount::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",amount);
+      //console.log("hereeeeeeeeeeeeeeeeeeeeeeee",user,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
+      //console.log("hereeeeeeeeeeeeeeeeeeeeeeee",lastMaxWithdraw,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
+      //console.log("amount::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",amount);
       //if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
         if(user.exposure<=0 && user.availableBalance>=amount){
           
       //await session.startTransaction();
-       console.log("debit is successully................................................");
+       //console.log("debit is successully................................................");
         await users.updateOne(
           { _id: user._id },
           {
@@ -714,7 +714,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         );
         //await session.commitTransaction();
         let parentUsersIds = await getParents(user.userId);
-      console.log("parentUsersIds----------------------------------------------",parentUsersIds);
+      //console.log("parentUsersIds----------------------------------------------",parentUsersIds);
       const parentUser = await User.find({
         userId: {
           $in: [...parentUsersIds]
