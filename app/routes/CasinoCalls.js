@@ -212,7 +212,7 @@ async function findAndProcessTransactions(user) {
 
 
 
-
+          console.log("userRecord.exposure + AccumulativeDebit----------------",userRecord.exposure + AccumulativeDebit);
 
 
           
