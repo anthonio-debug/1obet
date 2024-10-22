@@ -266,7 +266,7 @@ async function findAndProcessTransactions(user) {
             let faultymarketId;
             await new Promise(resolve => setTimeout(resolve, 1000));
             if(userRecord.exposure + AccumulativeDebit<=0){
-              await Cash.create({
+              await Cash.create([{
                 userId: userRecord.userId,
                 description: `Casino (${tran.game_id})`,
                 date: new Date().getTime(),
@@ -284,13 +284,13 @@ async function findAndProcessTransactions(user) {
                 roundId: tran._id,
                 marketId: tran._id,
                 matchId: Cgame_id
-              },
+              }],
               { session });
             }else{
               exposureOnlyTrck = userRecord.exposure;
               accumulativeDebitTrack = AccumulativeDebit;
               faultymarketId = tran._id,
-              await Cash.create({
+              await Cash.create([{
                 userId: userRecord.userId,
                 description: `----Casino (${tran.game_id})`,
                 date: new Date().getTime(),
@@ -312,7 +312,7 @@ async function findAndProcessTransactions(user) {
                 roundId: tran._id,
                 marketId: tran._id,
                 matchId: Cgame_id
-              },
+              }],
               { session });
               
             }
