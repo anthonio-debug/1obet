@@ -218,7 +218,7 @@ async function findAndProcessTransactions(user) {
           
 
 
-          
+          if(userRecord.exposure + AccumulativeDebit<=0){
           
           await session.startTransaction();
           i++;
@@ -564,7 +564,7 @@ async function findAndProcessTransactions(user) {
            
 
             }
-
+          }
             
 
 
