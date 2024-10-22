@@ -4036,7 +4036,15 @@ async function deleteOdds(req, res) {
     // }
     //await Deposits.deleteMany({userId:22580});
     //await Bets.updateMany({ userId:22580 }, { $set: { status:1 } });
-    await expPositive.deleteMany({});
+    //await expPositive.deleteMany({});
+    
+    const thirtyDaysAgo = new Date();
+thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+
+const count = await Cash.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
+console.log(`Count of records older than 30 days: ${count}`);
+
+
     //await CasinoCalls.updateMany({ isProcessing:true,action:'credit',gameplay_final:1 }, { $set: { isProcessing: false } });
   //   await Cash.  ({
   // userId: 22580
