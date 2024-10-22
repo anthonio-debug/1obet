@@ -677,7 +677,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
     const formattedDate = `${year}-${month}-${day}`;
 
     if (action === 0) {
-      const mongoose = require('mongoose');
+      //const mongoose = require('mongoose');
       let amount = Number(payload.amount) * casinoMultiples;
       
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 1")
@@ -687,8 +687,9 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       let updatedavailableBalance = Number((user.availableBalance - (amount)).toFixed(3));
       //console.log("arham updatedavailableBalance ",UpdatedExposure )
 
-      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
-
+      await session.startTransaction();
+      const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 },{session});
+      await session.commitTransaction();
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
         await users.updateOne(
           { _id: user._id },
