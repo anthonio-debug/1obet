@@ -171,7 +171,7 @@ async function findAndProcessTransactions(user) {
           
 
           console.log("Here I am readched........................1");
-          await session.startTransaction();
+          
           const gamesList = await SelectedCasino.findOne(
             { "games.id": tran.game_id },
             { "games.$": 1 }
