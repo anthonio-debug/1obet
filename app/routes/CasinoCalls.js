@@ -220,7 +220,7 @@ async function findAndProcessTransactions(user) {
           
 
 
-          if(userRecord.exposure + AccumulativeDebit<=0){
+         // if(userRecord.exposure + AccumulativeDebit<=0){
           
           await session.startTransaction();
           i++;
@@ -611,7 +611,7 @@ async function findAndProcessTransactions(user) {
 
         
 
-        }//ends if deposits not have entry
+        //}//ends if deposits not have entry
          else {
          // session.endSession();
           console.log("Duplicate transaction found, skipping insertion.");
