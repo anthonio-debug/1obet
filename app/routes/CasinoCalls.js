@@ -265,57 +265,26 @@ async function findAndProcessTransactions(user) {
             let accumulativeDebitTrack;
             let faultymarketId;
             await new Promise(resolve => setTimeout(resolve, 1000));
-            if(userRecord.exposure + AccumulativeDebit<=0){
-              await Cash.create([{
-                userId: userRecord.userId,
-                description: `Casino (${tran.game_id})`,
-                date: new Date().getTime(),
-                amount: differenceDbCr,
-                balance: lastMaxWithdraw.balance + differenceDbCr,
-                availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
-                maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
-                roundId: tran._id,
-                UpdatedExposure: userRecord.exposure + AccumulativeDebit,
-                credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-                creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
-                cashOrCredit: "Settlement"+i,
-                sportsId: "6",
-                event: CgameName,
-                roundId: tran._id,
-                marketId: tran._id,
-                matchId: Cgame_id
-              }],
-              { session });
-            }else{
-              exposureOnlyTrck = userRecord.exposure;
-              accumulativeDebitTrack = AccumulativeDebit;
-              faultymarketId = tran._id,
-              await Cash.create([{
-                userId: userRecord.userId,
-                description: `----Casino (${tran.game_id})`,
-                date: new Date().getTime(),
-                amount: differenceDbCr,
-                balance: lastMaxWithdraw.balance + differenceDbCr,
-                availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
-                maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
-                roundId: tran._id,
-                UpdatedExposure: userRecord.exposure + AccumulativeDebit,
-
-            
-               
-                
-                credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
-                creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
-                cashOrCredit: "Settlement"+i,
-                sportsId: "6",
-                event: CgameName,
-                roundId: tran._id,
-                marketId: tran._id,
-                matchId: Cgame_id
-              }],
-              { session });
-              
-            }
+            await Cash.create([{
+              userId: userRecord.userId,
+              description: `Casino (${tran.game_id})`,
+              date: new Date().getTime(),
+              amount: differenceDbCr,
+              balance: lastMaxWithdraw.balance + differenceDbCr,
+              availableBalance: lastMaxWithdraw.availableBalance + differenceDbCr,
+              maxWithdraw: lastMaxWithdraw.maxWithdraw + differenceDbCr,
+              roundId: tran._id,
+              UpdatedExposure: userRecord.exposure + AccumulativeDebit,
+              credit: lastMaxWithdraw ? lastMaxWithdraw.credit : 0,
+              creditRemaining: lastMaxWithdraw ? lastMaxWithdraw.creditRemaining : 0,
+              cashOrCredit: "Settlement"+i,
+              sportsId: "6",
+              event: CgameName,
+              roundId: tran._id,
+              marketId: tran._id,
+              matchId: Cgame_id
+            }],
+            { session });
 
             
 
