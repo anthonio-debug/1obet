@@ -871,7 +871,7 @@ async function balanceFun(req, res) {
 
   try {
     const user = await User.findOne({ remoteId: payload.remote_id }).exec();
-   
+    const lastMaxWithdraw = await Cash.findOne({ userId: user.userId }).sort({ _id: -1 });
 
     if (!user) {
       return res.json({ status: 500, msg: 'Internal error no user' });
@@ -883,8 +883,10 @@ async function balanceFun(req, res) {
       return res.json({ status: '500', msg: ' Batting is not allowed ! ' });
     }
 
+    
     const balance = user.availableBalance;
-    if (balance < 0) {
+
+    if (balance < 0 || lastMaxWithdraw.availableBalance <=0 || user.exposure > 0) {
       // //console.log('Balance is negative:', balance); // Log for debugging
       return res.json({ status: 500, msg: 'Negative amount not allowed!' });
     }
