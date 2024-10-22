@@ -212,7 +212,7 @@ async function findAndProcessTransactions(user) {
 
 
 
-
+          console.log(" tran._id----------------",tran._id);
           console.log("userRecord.exposure + AccumulativeDebit----------------",userRecord.exposure + AccumulativeDebit);
 
           console.log(" AccumulativeDebit----------------",AccumulativeDebit);
@@ -1531,7 +1531,7 @@ const insertMissingTransactions = async (req, res) => {
         }
       }
     ],{ session });
-    
+
 
     // console.log("!!!!!!!!!!!!!!!!!!!!11", matchedDocs)
     if (!matchedDocs || matchedDocs.length === 0) {
