@@ -901,6 +901,7 @@ function deactiveUser(req, res) {
 }
 
 function settlePLAccount(req, res) {
+  console.log("api called")
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
@@ -920,12 +921,27 @@ function settlePLAccount(req, res) {
       if (result.availableBalance < 0) {
         result.availableBalance += amount;
         result.balance += amount;
+        
       } else {
         result.availableBalance -= amount;
         result.balance -= amount;
+        result.cash -= amount;
       }
-
+      if(result.balance < 0){
+        result.cash += amount;
+      }else{
+        result.cash -= amount;
+      }
       result.save();
+        console.log("-----------------{{{{{{{{{{{")
+        Deposits.create({
+        userId:result.userId,
+        balance:result.balance,
+        availableBalance:result.availableBalance,
+        cash:amount
+
+      })
+
       return res.send({
         success: true,
         message: 'user account settled successfully',
