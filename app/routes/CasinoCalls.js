@@ -287,7 +287,7 @@ async function findAndProcessTransactions(user) {
             { session });
 
             
-
+            console.log("deposits.create is passed.......................................");
 
 
             
@@ -311,7 +311,7 @@ async function findAndProcessTransactions(user) {
               { session }
             );
 
-            
+            console.log("users updated is passed.......................................");
             const userExpCheckorg = await users.findOne({ userId:userRecord.userId,exposure: { $gt: 0 } },{ session });
             
                   if(userExpCheckorg && userExpCheckorg.userId!=11000){
@@ -332,14 +332,14 @@ async function findAndProcessTransactions(user) {
 
 
                  
-
-            await CasinoCalls.updateOne(
+                  console.log("exppositives is passed.......................................");
+            await CasinoCalls.updateMany(
               { round_id: tran._id.toString() },
               { $set: { isProcessing: false } },
               { session }
             );
            
-          
+            console.log("casiniocalls updated is passed.......................................");
             
 
             const parentUserIds = await getParents(userRecord.userId);
