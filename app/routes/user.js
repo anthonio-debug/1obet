@@ -925,7 +925,6 @@ function settlePLAccount(req, res) {
       } else {
         result.availableBalance -= amount;
         result.balance -= amount;
-        result.cash -= amount;
       }
       if(result.balance < 0){
         result.cash += amount;
