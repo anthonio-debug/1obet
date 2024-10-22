@@ -185,7 +185,7 @@ async function handleLosingBet(bet) {
        
 
             
-/
+
             
 
             calculateExp:bet.calculateExp,
@@ -504,7 +504,7 @@ async function handleWinningBet(bet, winner) {
             UserPrevexposure: userToUpdate.exposure,
             UpdatedExposure: UpdatedExposure,
        
-/
+
   
           
             calculateExp:bet.calculateExp,
