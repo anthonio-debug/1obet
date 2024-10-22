@@ -933,14 +933,24 @@ function settlePLAccount(req, res) {
         result.cash -= amount;
       }
       result.save();
-        console.log("-----------------{{{{{{{{{{{")
-        Deposits.create({
-        userId:result.userId,
-        balance:result.balance,
-        availableBalance:result.availableBalance,
-        cash:amount
 
-      })
+      if(result.cash<0){
+        Deposits.create({
+          userId:result.userId,
+          balance:result.balance,
+          availableBalance:result.availableBalance,
+          amount:amount
+          
+        })
+      }else{
+        Deposits.create({
+          userId:result.userId,
+          balance:result.balance,
+          availableBalance:result.availableBalance,
+          amount:-amount
+          
+        })
+      }
 
       return res.send({
         success: true,
