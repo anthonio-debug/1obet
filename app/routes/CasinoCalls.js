@@ -58,7 +58,7 @@ async function findAndProcessTransactions(user) {
   
   //console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user);
   const session = await mongoose.startSession();
-  await insertMissingTransactions();
+  await insertMissingTransactions(session);
   const maxRetries = 1; // Max retries for the transaction
   const now = new Date();
   const year = now.getFullYear().toString();
@@ -1464,6 +1464,7 @@ async function casinoListing(req, res) {
   }
 }
 
+
 const insertMissingTransactions = async (req, res) => {
   try {
     const matchedDocs = await CasinoCalls.aggregate([
@@ -1530,7 +1531,8 @@ const insertMissingTransactions = async (req, res) => {
           isProcessing: "$matchedCasinoCallsPayload.isProcessing"
         }
       }
-    ],{ session });
+    ]);
+
 
 
     // console.log("!!!!!!!!!!!!!!!!!!!!11", matchedDocs)
