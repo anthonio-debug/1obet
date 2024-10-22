@@ -182,19 +182,14 @@ async function handleLosingBet(bet) {
             addedExpoisureAmount: addExposureAmount,
             UserPrevexposure: userToUpdate.exposure,
             UpdatedExposure: expAmount,
-            sourceCodeBlock: 'handleLosingBet',
-            userAvailableBalanceBFTrans: userToUpdate.availableBalance,
-            userAvailableBalanceAFTrans: lastMaxWithdraw ? lastMaxWithdraw.availableBalance - loosingAmount : -loosingAmount,
-            UserBalanceBFTrans: userToUpdate.balance,
-            UserBalanceAFTrans: updatedBalance,
+       
+
             
-            currentBetAmount:bet.betAmount,
-            currentBetLoosingAmount:bet.loosingAmount,
-            currentBetWinningAmount:bet.winningAmount,
-            currentBetPosition:bet.position,
-            areaCalled:'1',
+/
+            
+
             calculateExp:bet.calculateExp,
-            betExpAmount:bet.betExpAmount
+            
           });
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
@@ -264,7 +259,7 @@ async function handleLosingBet(bet) {
                 UserPrevexposure: user.exposure,
                 UpdatedExposure: totalExpoisure,
                 exposure: 'Number(((user.commission / 100) * remainingAmount).toFixed(3))',
-                sourceCodeBlock: 'handleLosingBet'
+     
               });
 
               upMovingAmount = Number((upMovingAmount - Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
@@ -508,18 +503,12 @@ async function handleWinningBet(bet, winner) {
             addedExpoisureAmount: addExposureAmount,
             UserPrevexposure: userToUpdate.exposure,
             UpdatedExposure: UpdatedExposure,
-            sourceCodeBlock: 'handleWinningBet',
-            userAvailableBalanceBFTrans: userToUpdate.availableBalance,
-            userAvailableBalanceAFTrans: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + remainingAmount : remainingAmount,
-            UserBalanceBFTrans: user_prev_balance,
-            UserBalanceAFTrans: UpdatedBalance,
-            currentBetAmount:bet.betAmount,
-            currentBetLoosingAmount:bet.loosingAmount,
-            currentBetWinningAmount:bet.winningAmount,
-            currentBetPosition:bet.position,
-            areaCalled:'1',
+       
+/
+  
+          
             calculateExp:bet.calculateExp,
-            betExpAmount:bet.betExpAmount
+       
           });
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
@@ -591,7 +580,7 @@ async function handleWinningBet(bet, winner) {
                 UserPrevexposure: user.exposure,
                 UpdatedExposure: totalExpoisure,
                 exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
-                sourceCodeBlock: 'handleWinningBet'
+    
               });
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
 

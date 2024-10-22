@@ -3001,7 +3001,7 @@ const placeBet = async (req, res) => {
             //   addedExpoisureAmount:expAmount ? expAmount.toFixed(3) : 0,
             //   UserPrevexposure:user.exposure,
             //   UpdatedExposure:UserExpAmount,
-            //   sourceCodeBlock:'Bet Place',
+            
             //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
             //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
 

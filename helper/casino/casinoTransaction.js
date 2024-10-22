@@ -146,7 +146,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
           cash: lastMaxWithdraw?.cash || 0,
           credit: lastMaxWithdraw?.credit || 0,
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
-          calledArea: " difference < 0 ",
+        /
           createdBy: 0,
           casinoBetAmount: debit,
           event: game.name,
@@ -332,7 +332,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res) =
           creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
           betId: payload.transaction_id,
           roundId: payload.round_id,
-          calledArea: "difference > 0",
+       /
           event: game.name,
           sportsId: "6",
           marketId: payload.game_id,

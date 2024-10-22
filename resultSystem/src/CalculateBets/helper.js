@@ -153,19 +153,11 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         addedExpoisureAmount: 0,
         UserPrevexposure: 0,
         UpdatedExposure: 0,
-        sourceCodeBlock: 'newsetup',
-        userAvailableBalanceBFTrans: userToUpdate.availableBalance + Math.abs(userToUpdate.exposure),
-        userAvailableBalanceAFTrans: lastMaxWithdraw.availableBalance,
-        UserBalanceBFTrans: userToUpdate.balance,
-        UserBalanceAFTrans: 0,
-        
-        currentBetAmount:bet.betAmount,
-        currentBetLoosingAmount:bet.loosingAmount,
-        currentBetWinningAmount:bet.winningAmount,
-        currentBetPosition:bet.position,
-        areaCalled:'1',
+
+ 
+   
         calculateExp:bet.calculateExp,
-        betExpAmount:bet.betExpAmount
+
       });
 
 
@@ -337,7 +329,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 UserPrevexposure: user.exposure,
                 UpdatedExposure: UpdatedExposureAmount,
                 exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
-                sourceCodeBlock: 'handleWinningBet'
+            
               });
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
 
@@ -586,19 +578,13 @@ console.log("userPrevClientPL updated..........................................:
       addedExpoisureAmount: 0,
       UserPrevexposure: 0,
       UpdatedExposure: 0,
-      sourceCodeBlock: 'newsetup',
-      userAvailableBalanceBFTrans: userToUpdate.availableBalance + Math.abs(userToUpdate.exposure),
-      userAvailableBalanceAFTrans: lastMaxWithdraw.availableBalance,
-      UserBalanceBFTrans: userToUpdate.balance,
-      UserBalanceAFTrans: 0,
+
       
-      currentBetAmount:bet.betAmount,
-      currentBetLoosingAmount:bet.loosingAmount,
-      currentBetWinningAmount:bet.winningAmount,
-      currentBetPosition:bet.position,
-      areaCalled:'1',
+
+  
+
       calculateExp:bet.calculateExp,
-      betExpAmount:bet.betExpAmount
+
     });
 
 
@@ -748,7 +734,7 @@ console.log("userPrevClientPL updated..........................................:
               UserPrevexposure: user.exposure,
               UpdatedExposure: UpdatedExposureAmount,
               exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
-              sourceCodeBlock: 'handleWinningBet'
+            
             });
             upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
 

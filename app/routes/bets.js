@@ -3568,29 +3568,7 @@ const placeBet = async (req, res) => {
             }
           );
           console.log('User balance updated');
-          // Uncomment and debug if necessary
-          // let newDeposit = new Cash({
-          //   userId: userId,
-          //   description: `Bet Place`,
-          //   betId: randomStr,
-          //   addedExpoisureAmount: expAmount ? expAmount.toFixed(3) : 0,
-          //   UserPrevexposure: user.exposure,
-          //   UpdatedExposure: UserExpAmount,
-          //   sourceCodeBlock: 'Bet Place',
-          //   loosingAmount: loosingAmount ? Number(loosingAmount.toFixed(3)) : 0,
-          //   winningAmount: winningAmount ? Number(winningAmount.toFixed(3)) : 0,
-          //   amount: betAmount || 0,
-          //   balance: user.balance,
-          //   availableBalance: UserAvlBalAmount,
-          //   cashOrCredit: "Bet",
-          //   marketId: _3rdPartyMarketId || 0,
-          //   sportsId: marketId || 0,
-          //   matchId: matchId || null,
-          //   betType: type || 0,
-          //   betDateTime: BetTime,
-          // });
-          // await newDeposit.save();
-          // console.log("New deposit saved");
+          
 
 
           const ExpTran = new Exposure({

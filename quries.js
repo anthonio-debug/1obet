@@ -1015,7 +1015,7 @@ const postmanwork = async (req, res) => {
           _id: "$_id",
           price:  { $first: "$betRate" },
           runnersPosition:  { $first: "$runnersPosition" },
-          calculateExp:  { $first: "$calculateExp" },
+         
           runnerId:  { $first: "$runnerName" },
           createdAt:  { $first: "$createdAt" },
           size:  { $first: "$betAmount" }, 
