@@ -276,7 +276,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   balance: totalBalance,//P/L Downline
                   exposure: UpdatedExposureAmount,
                   //availableBalance: UpdatedAvailableBalance,
-                  availableBalance: totalBalance - UpdatedExposureAmount,
+                  availableBalance: totalBalance + UpdatedExposureAmount,
                   clientPL: totalClientPL //Balance Upline
                 }
               );

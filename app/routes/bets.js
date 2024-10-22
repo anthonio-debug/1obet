@@ -115,11 +115,11 @@ const bet = await Bets.findOne({ _id: betId });
       //console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
       user.exposure = -finalShareAmountInLoss;
      // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
-     user.availableBalance = prevBalance -   (-finalShareAmountInLoss)
+     user.availableBalance = prevBalance +   (-finalShareAmountInLoss)
     }else{
       //console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
       user.exposure = userPrevExposure-finalShareAmountInLoss;
-      user.availableBalance = prevBalance -   (userPrevExposure-finalShareAmountInLoss)
+      user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
     
     }
@@ -162,7 +162,7 @@ const bet = await Bets.findOne({ _id: betId });
    if(userPrevExposure==0){
     user.exposure = -finalShareAmountInLoss;
     //user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
-    user.availableBalance = prevBalance - (-finalShareAmountInLoss);
+    user.availableBalance = prevBalance + (-finalShareAmountInLoss);
    }else{
     let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
     let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
@@ -175,7 +175,7 @@ const bet = await Bets.findOne({ _id: betId });
       //console.log("user ID:::::: in IF Block:",user.userId);
     user.exposure = -finalShareAmountInLoss;
     //user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;
-    user.availableBalance = prevBalance - (-finalShareAmountInLoss);
+    user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     
    }else{
     //console.log("user ID::::::Else block:",user.userId);
@@ -184,7 +184,7 @@ const bet = await Bets.findOne({ _id: betId });
     //console.log("ultimatefinal=========>",ultimatefinal);
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
     //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
-    user.availableBalance =prevBalance - (prevAdjustedExposure - finalShareAmountInLoss);
+    user.availableBalance =prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
    }
    console.log("for user available balacne...........................2.......................",user);
    await user.save();
