@@ -695,8 +695,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee",user,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee",lastMaxWithdraw,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
       console.log("amount::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",amount);
-      if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
-        //await session.startTransaction();
+      //if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
+        if(user.exposure<=0 && user.availableBalance>=amount){
+          
+      //await session.startTransaction();
        console.log("debit is successully................................................");
         await users.updateOne(
           { _id: user._id },
@@ -899,7 +901,7 @@ async function balanceFun(req, res) {
     
     const balance = user.availableBalance;
 
-    if (balance < 0 || lastMaxWithdraw.availableBalance <=0 || user.exposure > 0) {
+    if (balance < 0) {
       // //console.log('Balance is negative:', balance); // Log for debugging
       return res.json({ status: 500, msg: 'Negative amount not allowed!' });
     }
