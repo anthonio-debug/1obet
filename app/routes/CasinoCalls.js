@@ -741,7 +741,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
           console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
           userexposureNew = user.exposure-finalShareAmountInLoss;
           UseravailableBalanceNew = UseravailableBalancePrev-finalShareAmountInLoss;
-          session.startTransaction(); 
+          //session.startTransaction(); 
           await users.updateOne(
             { _id: user._id },
             {
@@ -752,16 +752,16 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
             },
             { session }
           );
-          await session.commitTransaction();
+          //await session.commitTransaction();
       }
       //exposures for parent users end
       
       
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
-      session.startTransaction(); 
+      //session.startTransaction(); 
       const casinoDebits = new CasinoDebits(payload);
       await casinoDebits.save();
-      await session.commitTransaction();
+      //await session.commitTransaction();
     }// aLLOW ONLY IF USER BALANCES ARE MORE THAN DEBITS
       
       
