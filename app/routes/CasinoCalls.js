@@ -692,6 +692,7 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       //await session.commitTransaction();
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee",user,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee",lastMaxWithdraw,"eeeeeeeeeeeeeeeeeeeeeeeeeeeee 1")
+      console.log("amount::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::",amount);
       if(user.exposure<=0 && user.availableBalance>=amount && lastMaxWithdraw.availableBalance >=amount && lastMaxWithdraw.availableBalance >0){
         await session.startTransaction();
        console.log("debit is successully................................................");
