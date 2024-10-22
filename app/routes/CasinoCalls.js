@@ -292,7 +292,7 @@ async function findAndProcessTransactions(user) {
 
             
 
-
+            await new Promise(resolve => setTimeout(resolve, 100));
 
          
             await users.updateOne(
