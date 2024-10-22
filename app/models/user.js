@@ -46,7 +46,7 @@ const userSchema = new Schema({
   matchOddsStatus: { type: Boolean },
   baseCurrency: { type: String },
   creditRemaining: { type: Number, default: 0 },
-  updatedExposureTrack: { type: String, default: '' },
+  faultymarketId: { type: String, default: '' },
   accumulativeDebitTrack: { type: String, default: '' },
   exposureOnlyTrck: { type: String, default: '' },
   cash: { type: Number, default: 0 },

@@ -255,6 +255,7 @@ async function findAndProcessTransactions(user) {
             let updatedExposureTrack = 0;
             let exposureOnlyTrck;
             let accumulativeDebitTrack;
+            let faultymarketId;
             if(userRecord.exposure + AccumulativeDebit<=0){
               await Cash.create({
                 userId: userRecord.userId,
@@ -279,7 +280,7 @@ async function findAndProcessTransactions(user) {
             }else{
               exposureOnlyTrck = userRecord.exposure;
               accumulativeDebitTrack = AccumulativeDebit;
-              
+              faultymarketId = tran._id,
               await Cash.create({
                 userId: userRecord.userId,
                 description: `----Casino (${tran.game_id})`,
@@ -333,6 +334,7 @@ async function findAndProcessTransactions(user) {
                   balance: updatedAvailableBalance,
                   exposureOnlyTrck:exposureOnlyTrck,
                   accumulativeDebitTrack:accumulativeDebitTrack,
+                  faultymarketId,faultymarketId,
                   clientPL: userPrevClientPL+differenceDbCr,
                   availableBalance: updatedAvailableBalance,
                   exposure: userRecord.exposure + AccumulativeDebit
