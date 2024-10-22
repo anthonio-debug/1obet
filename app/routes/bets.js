@@ -98,7 +98,7 @@ const bet = await Bets.findOne({ _id: betId });
   if(prevhighestAmount===false){
   for (const user of parentUser) {
     let current = user.downLineShare;
-      
+    let prevBalance = user.balance;  
     userPrevExposure = user.exposure;
     UseravailableBalancePrev = user.availableBalance;
 
@@ -114,19 +114,20 @@ const bet = await Bets.findOne({ _id: betId });
     if(userPrevExposure==0){
       //console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
       user.exposure = -finalShareAmountInLoss;
-      user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
-      
+     // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
+     user.availableBalance = prevBalance -   (-finalShareAmountInLoss)
     }else{
       //console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
       user.exposure = userPrevExposure-finalShareAmountInLoss;
-      
-    user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
+      user.availableBalance = prevBalance -   (userPrevExposure-finalShareAmountInLoss)
+   // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
     
     }
     
     
     console.log("for user available balacne..................................................",user);
-      await user.save();
+    
+    await user.save();
       const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
       
                   if(userExpCheck){
@@ -160,7 +161,8 @@ const bet = await Bets.findOne({ _id: betId });
    let finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
    if(userPrevExposure==0){
     user.exposure = -finalShareAmountInLoss;
-    user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
+    //user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
+    user.availableBalance = prevBalance - (-finalShareAmountInLoss);
    }else{
     let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
     let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
@@ -172,7 +174,8 @@ const bet = await Bets.findOne({ _id: betId });
     if(prevAdjustedExposure==0){
       //console.log("user ID:::::: in IF Block:",user.userId);
     user.exposure = -finalShareAmountInLoss;
-    user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;
+    //user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;
+    user.availableBalance = prevBalance - (-finalShareAmountInLoss);
     
    }else{
     //console.log("user ID::::::Else block:",user.userId);
@@ -180,7 +183,8 @@ const bet = await Bets.findOne({ _id: betId });
     //console.log("prevAdjustedExposure - finalShareAmountInLoss=========>",prevAdjustedExposure - finalShareAmountInLoss);
     //console.log("ultimatefinal=========>",ultimatefinal);
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
-    user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
+    //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
+    user.availableBalance =prevBalance - (prevAdjustedExposure - finalShareAmountInLoss);
    }
    console.log("for user available balacne...........................2.......................",user);
    await user.save();
