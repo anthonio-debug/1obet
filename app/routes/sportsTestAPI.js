@@ -4041,8 +4041,8 @@ async function deleteOdds(req, res) {
     const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-const count = await Cash.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
-console.log(`Count of records older than 30 days: ${count}`);
+// const count = await Cash.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
+// console.log(`Count of records older than 30 days: ${count}`);
 
 
     //await CasinoCalls.updateMany({ isProcessing:true,action:'credit',gameplay_final:1 }, { $set: { isProcessing: false } });
@@ -4088,13 +4088,13 @@ console.log(`Count of records older than 30 days: ${count}`);
 
      await RaceOdds.deleteMany({});
     // await fancyOdds.deleteMany({});
-    //  await MarketIDS.deleteMany({
-    //    $or: [
-    //      { status: 'CLOSED', sportID: 4339 },
-    //      { status: 'CLOSED', sportID: 7 },
+     await MarketIDS.deleteMany({
+       $or: [
+         { status: 'CLOSED', sportID: 4339 },
+         { status: 'CLOSED', sportID: 7 },
 
-    //   ]
-    //  });
+      ]
+     });
     const count1 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 4339 })
     const count3 = await MarketIDS.countDocuments({ status: 'CLOSED', sportID: 7 });
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
