@@ -106,8 +106,7 @@ async function findAndProcessTransactions(user) {
         }
       ]).session(session);  
       
-      session.endSession();
-        return;
+      
       
       console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
       
