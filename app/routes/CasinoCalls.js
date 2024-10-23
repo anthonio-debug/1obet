@@ -642,24 +642,24 @@ async function findAndProcessTransactions(user) {
 
 
 
-      await session.commitTransaction();
+      //await session.commitTransaction();
       
      // return; // Exit the function successfully after committing
 
     } catch (error) {
       console.error('Error processing transactions:', error);
       //await session.abortTransaction();
-      // if (attempt < maxRetries - 1) {
-      //   // Delay before retrying
-      //   await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
-      // } else {
-      //   throw error; // Re-throw the error after max retries
-      // }
+      if (attempt < maxRetries - 1) {
+        // Delay before retrying
+        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
+      } else {
+        throw error; // Re-throw the error after max retries
+      }
       await session.abortTransaction();
     }finally {
       // End the session
       //await session.abortTransaction();
-      //await session.commitTransaction();
+      await session.commitTransaction();
           
       session.endSession();
     } 
