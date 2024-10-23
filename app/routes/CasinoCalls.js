@@ -54,9 +54,9 @@ const checkMarketBlocked = async (user) => {
   }
 }
 const mongoose = require('mongoose');
-async function findAndProcessTransactions(user) {
+async function findAndProcessTransactions() {
   await insertMissingTransactions();
-  console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>",user);
+  console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
   const session = await mongoose.startSession();
   const maxRetries = 1; // Max retries for the transaction
   const now = new Date();
