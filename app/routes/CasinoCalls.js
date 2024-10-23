@@ -205,7 +205,10 @@ async function findAndProcessTransactions() {
           await session.startTransaction();
           const lastMaxWithdraw = await Cash.findOne({ userId: userRecord.userId }).sort({ _id: -1 });
           await session.commitTransaction();
-          console.log("Here I am readched........................2");
+          
+          console.log("userRecord.exposure + AccumulativeDebit........................",userRecord.exposure + AccumulativeDebit);
+          console.log("userRecord.exposure........................",userRecord.exposure);
+          console.log("AccumulativeCredit........................",AccumulativeCredit);
 
 
 
