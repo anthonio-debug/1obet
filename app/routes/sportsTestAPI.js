@@ -11,6 +11,7 @@ const FancyOdds = require('../models/fancyOdds');
 const inPlayEventsLithylapi = require('../models/inPlayEventsLithylapi');
 const useragent = require('express-useragent');
 const Cash = require('../../app/models/deposits');
+const CasinoCallsPayload = require('../models/casinoCallsPayload');
 const axios = require('axios');
 const { SCORE_API_STATUS_BLOCK_LIST } = require('../../helper/api/scoreApiHelper');
 const User = require('../models/user');
@@ -4042,6 +4043,7 @@ async function deleteOdds(req, res) {
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 5);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
  await CasinoCalls.deleteMany({  });
+ await CasinoCallsPayload.deleteMany({  });
 const count = await Cash.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
 // console.log(`Count of records older than 30 days: ${count}`);
 
