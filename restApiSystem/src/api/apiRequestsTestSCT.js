@@ -391,40 +391,40 @@ function apiRequests() {
             console.log('listMarketsByCronJobs is running for marketname: ----------',element.marketName);
           }
           
-          if(remaingTime>time30minuts && element.marketName=='Match Odds'){
-            console.log("cron jobs code running for updating odds ======----- ",element.marketId,"----",sportID);
+      //     if(remaingTime>time30minuts && element.marketName=='Match Odds'){
+      //       console.log("cron jobs code running for updating odds ======----- ",element.marketId,"----",sportID);
 
-            const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportID}&marketId=${element.marketId}`;
+      //       const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportID}&marketId=${element.marketId}`;
     
-      const response = await axios.get(oddUrl);
+      // const response = await axios.get(oddUrl);
       
       
 
-      if (response) {
+      // if (response) {
 
-        console.log("cron jobs response ======----- ", response.data);
-        let oddData = response.data;
-        try {
-          oddData = JSON.parse(oddData);
-      } catch (error) {
-          console.error("Failed to parse oddData:", error);
-          return;
-        }
-        const marketResp= await Odds.findOne({marketId: oddData.marketId})
+      //   console.log("cron jobs response ======----- ", response.data);
+      //   let oddData = response.data;
+      //   try {
+      //     oddData = JSON.parse(oddData);
+      // } catch (error) {
+      //     console.error("Failed to parse oddData:", error);
+      //     return;
+      //   }
+      //   const marketResp= await Odds.findOne({marketId: oddData.marketId})
 
-        console.log("response in cronjobs of odds----- ", marketResp);
+      //   console.log("response in cronjobs of odds----- ", marketResp);
         
 
-        if(marketResp){
+      //   if(marketResp){
 
-          await Odds.findOneAndUpdate({marketId: oddData.marketId},{$set:{totalMatched:oddData.totalMatched}})
-          console.log("odds updated in cronjobs for total matched----- TotalMatched=", marketResp.totalMatched);
+      //     await Odds.findOneAndUpdate({marketId: oddData.marketId},{$set:{totalMatched:oddData.totalMatched}})
+      //     console.log("odds updated in cronjobs for total matched----- TotalMatched=", marketResp.totalMatched);
         
-        }
+      //   }
 
         
-      }
-          }
+      // }
+      //     }
             
           
           //==> compare open date, if its more than half hour then 
