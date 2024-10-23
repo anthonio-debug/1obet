@@ -4039,7 +4039,7 @@ async function deleteOdds(req, res) {
     //await expPositive.deleteMany({});
     
     const thirtyDaysAgo = new Date();
-thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 3);
+thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
  //await Cash.countDelete({ betDateTime: { $lt: thirtyDaysAgo } });
 const count = await Cash.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
 // console.log(`Count of records older than 30 days: ${count}`);
