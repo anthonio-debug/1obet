@@ -4041,7 +4041,7 @@ async function deleteOdds(req, res) {
     const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 5);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
- await CasinoCalls.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
+ await CasinoCalls.deleteMany({  });
 const count = await Cash.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
 // console.log(`Count of records older than 30 days: ${count}`);
 
