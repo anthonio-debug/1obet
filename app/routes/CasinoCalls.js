@@ -335,8 +335,8 @@ async function findAndProcessTransactions(user) {
                  
                   console.log("exppositives is passed.......................................");
                   await session.startTransaction();
-            await CasinoCalls.updateOne(
-              { round_id: tran._id.toString(),gameplay_final:1,action:'credit' },
+            await CasinoCalls.updateMany(
+              { round_id: tran._id.toString() },
               { $set: { isProcessing: false } },
               { session }
             );
