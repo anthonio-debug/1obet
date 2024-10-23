@@ -142,7 +142,7 @@ async function findAndProcessTransactions(user) {
           roundId: tran._id.toString(),
           remote_id:tran.remote_id
         }).session(session);
-        await session.commitTransaction();
+        //await session.commitTransaction();
        
         if (!existingDeposit) {
           let totalCreditAmount = 0;
@@ -265,7 +265,7 @@ async function findAndProcessTransactions(user) {
             let exposureOnlyTrck;
             let accumulativeDebitTrack;
             let faultymarketId;
-            await session.startTransaction();
+            //await session.startTransaction();
             await Cash.create([{
               userId: userRecord.userId,
               description: `Casino (${tran.game_id})`,
@@ -286,7 +286,7 @@ async function findAndProcessTransactions(user) {
               matchId: Cgame_id
             }],
             { session });
-            await session.commitTransaction();
+            //await session.commitTransaction();
             
             console.log("deposits.create is passed.......................................");
 
@@ -295,7 +295,7 @@ async function findAndProcessTransactions(user) {
 
           //  await new Promise(resolve => setTimeout(resolve, 100));
 
-          await session.startTransaction();
+          //await session.startTransaction();
             await users.updateOne(
               { _id: userRecord._id },
               {
@@ -311,7 +311,7 @@ async function findAndProcessTransactions(user) {
               },
               { session }
             );
-            await session.commitTransaction();
+            //await session.commitTransaction();
             console.log("users updated is passed.......................................");
             const userExpCheckorg = await users.findOne({ userId:userRecord.userId,exposure: { $gt: 0 } },{ session });
             
