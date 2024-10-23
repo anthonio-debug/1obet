@@ -769,7 +769,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
       
       console.log("hereeeeeeeeeeeeeeeeeeeeeeee 2")
       //session.startTransaction(); 
-      const casinoDebits = new CasinoDebits(payload);
+      const casinoDebits = new CasinoDebits({
+        ...payload,                // Spread the existing keys from payload
+        createdAt: new Date().getTime(),     // Set the current time for createdAt
+      });
       await casinoDebits.save();
       //await session.commitTransaction();
     }// aLLOW ONLY IF USER BALANCES ARE MORE THAN DEBITS
@@ -829,7 +832,10 @@ const WinLoseTransManagement = async (balance, payload, users123, action, res, s
         return res.status(400).send({ message: "This game is not allowed!!" })
       }
 
-      const casinoDebits = new CasinoDebits(payload);
+      const casinoDebits = new CasinoDebits({
+        ...payload,                // Spread the existing keys from payload
+        createdAt: new Date().getTime(),     // Set the current time for createdAt
+      });
       await casinoDebits.save();
 
 
@@ -1271,7 +1277,10 @@ async function rollbackFun(req, res) {
           //   { session }
           // );
 
-          const casinoDebits = new CasinoDebits(payload);
+          const casinoDebits = new CasinoDebits({
+            ...payload,                // Spread the existing keys from payload
+            createdAt: new Date().getTime(),     // Set the current time for createdAt
+          });
           await casinoDebits.save();
           await session.commitTransaction();
 
