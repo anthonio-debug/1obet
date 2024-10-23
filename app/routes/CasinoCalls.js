@@ -316,7 +316,7 @@ async function findAndProcessTransactions(user) {
             const userExpCheckorg = await users.findOne({ userId:userRecord.userId,exposure: { $gt: 0 } },{ session });
             
                   if(userExpCheckorg && userExpCheckorg.userId!=11000){
-                    await session.startTransaction();
+                    //await session.startTransaction();
                     expPositive.create([{
                       userId:userExpCheckorg.userId,
                       
@@ -326,7 +326,7 @@ async function findAndProcessTransactions(user) {
                       exposureAmount:userExpCheckorg.exposure
                       
                     }],{ session });
-                    await session.commitTransaction();
+                   // await session.commitTransaction();
                   }
 
                   
@@ -334,13 +334,13 @@ async function findAndProcessTransactions(user) {
 
                  
                   console.log("exppositives is passed.......................................");
-                  await session.startTransaction();
+                  //await session.startTransaction();
             await CasinoCalls.updateMany(
               { round_id: tran._id.toString(),gameplay_final:1,action:'credit' },
               { $set: { isProcessing: false } },
               { session }
             );
-            await session.commitTransaction();
+            //await session.commitTransaction();
             console.log("casiniocalls updated is passed.......................................");
             
 
