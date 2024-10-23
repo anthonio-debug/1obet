@@ -73,7 +73,7 @@ async function findAndProcessTransactions(user) {
     try {
       
 
-      const limitValue = 1; // Set your desired limit here
+      const limitValue = 5; // Set your desired limit here
       await session.startTransaction();
       
       //session.endSession();
@@ -649,12 +649,12 @@ async function findAndProcessTransactions(user) {
     } catch (error) {
       console.error('Error processing transactions:', error);
       //await session.abortTransaction();
-      if (attempt < maxRetries - 1) {
-        // Delay before retrying
-        await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
-      } else {
-        throw error; // Re-throw the error after max retries
-      }
+      // if (attempt < maxRetries - 1) {
+      //   // Delay before retrying
+      //   await new Promise(resolve => setTimeout(resolve, 1000)); // Delay for 1 second
+      // } else {
+      //   throw error; // Re-throw the error after max retries
+      // }
       await session.abortTransaction();
     }finally {
       // End the session
