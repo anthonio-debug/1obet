@@ -55,7 +55,7 @@ const checkMarketBlocked = async (user) => {
 }
 const mongoose = require('mongoose');
 async function findAndProcessTransactions() {
-  await insertMissingTransactions();
+  //await insertMissingTransactions();
   console.log("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
   const session = await mongoose.startSession();
   const maxRetries = 1; // Max retries for the transaction
@@ -1465,6 +1465,7 @@ async function casinoListing(req, res) {
 }
 
 const insertMissingTransactions = async (req, res) => {
+
   try {
     const matchedDocs = await CasinoCalls.aggregate([
       {
@@ -1550,35 +1551,88 @@ const insertMissingTransactions = async (req, res) => {
         continue;
       }
 
-      console.log("++===================== going to save data in casinocalls", matchedPayload);
 
-      const newCasinoCall = await new CasinoCalls({
-        transaction_id: matchedPayload.transaction_id,
-        round_id: matchedPayload.round_id,
-        action: matchedPayload.action,
-        callerId: matchedPayload.callerId,
-        callerPassword: matchedPayload.callerPassword,
-        callerPrefix: matchedPayload.callerPrefix,
-        username: matchedPayload.username,
-        remote_id: matchedPayload.remote_id,
-        amount: matchedPayload.amount,
-        provider: matchedPayload.provider,
-        game_id: matchedPayload.game_id,
-        gameplay_final: matchedPayload.gameplay_final,
-        session_id: matchedPayload.session_id,
-        gamesession_id: matchedPayload.gamesession_id,
-        jackpot_contribution_ids: matchedPayload.jackpot_contribution_ids || [],
-        jackpot_contribution_per_id: matchedPayload.jackpot_contribution_per_id || [],
-        game_id_hash: matchedPayload.game_id_hash,
-        jackpot_win_ids: matchedPayload.jackpot_win_ids || [],
-        isProcessing: matchedPayload.isProcessing
-      });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+      const user = await users.findOne({ remoteId: parseInt(matchedPayload.remote_id) }, { session });
+      if (!user) {
+        if (session.inTransaction()) {
+          await session.abortTransaction();
+        }
+        return res.json({ status: 500, msg: 'Internal error: no user' });
+      }
+
+      const checkMarketBlockedResponse = await checkMarketBlocked(user);
+      // if (checkMarketBlockedResponse == 1) {
+      //   if (session.inTransaction()) {
+      //     await session.abortTransaction();
+      //   }
+      //   return res.json({ status: 500, msg: 'Betting is not allowed!' });
+      // }
+
+      let updatedAvailableBalance = user.availableBalance - (parseInt(matchedPayload.amount) * casinoMultiples);
+      if (updatedAvailableBalance < 0) {
+        if (session.inTransaction()) {
+          await session.abortTransaction();
+        }
+        return res.json({ status: 500, msg: 'Insufficient balance' });
+      }
+
+      const balance = user.availableBalance / casinoMultiples;
+
+
+      console.log("++===================== going to save data in casinocalls", matchedPayload);
+      await WinLoseTransManagement(balance, matchedPayload, user, 0, res);
+      // const newCasinoCall = await new CasinoCalls({
+      //   transaction_id: matchedPayload.transaction_id,
+      //   round_id: matchedPayload.round_id,
+      //   action: matchedPayload.action,
+      //   callerId: matchedPayload.callerId,
+      //   callerPassword: matchedPayload.callerPassword,
+      //   callerPrefix: matchedPayload.callerPrefix,
+      //   username: matchedPayload.username,
+      //   remote_id: matchedPayload.remote_id,
+      //   amount: matchedPayload.amount,
+      //   provider: matchedPayload.provider,
+      //   game_id: matchedPayload.game_id,
+      //   gameplay_final: matchedPayload.gameplay_final,
+      //   session_id: matchedPayload.session_id,
+      //   gamesession_id: matchedPayload.gamesession_id,
+      //   jackpot_contribution_ids: matchedPayload.jackpot_contribution_ids || [],
+      //   jackpot_contribution_per_id: matchedPayload.jackpot_contribution_per_id || [],
+      //   game_id_hash: matchedPayload.game_id_hash,
+      //   jackpot_win_ids: matchedPayload.jackpot_win_ids || [],
+      //   isProcessing: matchedPayload.isProcessing
+      // });
 
       console.log('Inserting new casino call:', newCasinoCall);
-      await newCasinoCall.save().then(() => {
+      // await newCasinoCall.save().then(() => {
 
-        console.log('Inserted CasinoCall:', newCasinoCall);
-      });
+      //   console.log('Inserted CasinoCall:', newCasinoCall);
+      // });
     }
 
     return;
