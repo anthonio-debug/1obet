@@ -78,7 +78,8 @@ async function findAndProcessTransactions() {
             isProcessing: true,
             $or: [
               { gameplay_final: 1 },
-              { action: 'rollback' }
+              { action: 'rollback' },
+              //{ provider: 'bf' }
                 ]
           }
         },
@@ -93,7 +94,7 @@ async function findAndProcessTransactions() {
         },
         {
           $sort: {
-            _id: 1 // Sort by round_id (ascending)
+            lastCheckedTime: 1 // Sort by round_id (ascending)
           }
         },
         {
@@ -114,7 +115,11 @@ async function findAndProcessTransactions() {
       
       for (const tran of groupedTransactions) {
        // session.startTransaction(); 
-        
+       await session.startTransaction();
+        await CasinoCalls.updateMany({ round_id: tran._id }, 
+          { $set: { lastCheckedTime: Date.now() } },
+        { session });
+        await session.commitTransaction();
         const userRecord = await users.findOne(
           { remoteId: Number(tran.remote_id) },
           { session }
