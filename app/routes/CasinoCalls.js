@@ -69,7 +69,7 @@ async function findAndProcessTransactions() {
     try {
       
 
-      const limitValue = 3; // Set your desired limit here
+      const limitValue = 8; // Set your desired limit here
       session.startTransaction(); 
       //session.endSession();
       const groupedTransactions = await CasinoCalls.aggregate([
