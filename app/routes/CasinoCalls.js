@@ -105,7 +105,7 @@ async function findAndProcessTransactions(user) {
           $limit: limitValue // Limit the number of results returned
         }
       ]).session(session);  
-      await session.commitTransaction();
+      
       
       
       console.log("groupedTransactions================",groupedTransactions.length,"=============================",groupedTransactions);
@@ -130,18 +130,19 @@ async function findAndProcessTransactions(user) {
         if (!userRecord) {
           console.log(`User not found for remoteId: ${tran.remote_id}`);
           //await session.abortTransaction();
-          await session.commitTransaction();
           
-          session.endSession();
+          //session.endSession();
           
           
           continue; // Skip if user not found
         }
-        
+        await session.commitTransaction();
+        await session.commitTransaction();
         const existingDeposit = await Cash.findOne({
           roundId: tran._id.toString(),
           remote_id:tran.remote_id
         }).session(session);
+        await session.commitTransaction();
        
         if (!existingDeposit) {
           let totalCreditAmount = 0;
