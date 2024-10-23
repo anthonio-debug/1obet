@@ -136,13 +136,13 @@ async function findAndProcessTransactions(user) {
           
           continue; // Skip if user not found
         }
-        await session.commitTransaction();
-        await session.startTransaction();
+        //await session.commitTransaction();
+       // await session.startTransaction();
         const existingDeposit = await Cash.findOne({
           roundId: tran._id.toString(),
           remote_id:tran.remote_id
         }).session(session);
-        await session.commitTransaction();
+        //await session.commitTransaction();
        
         if (!existingDeposit) {
           let totalCreditAmount = 0;
