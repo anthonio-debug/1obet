@@ -1459,8 +1459,11 @@ async function casinoListing(req, res) {
   }
 }
 
+
 const insertMissingTransactions = async (req, res) => {
+  const session = await mongoose.startSession();
   try {
+    await session.startTransaction();
     const matchedDocs = await CasinoCalls.aggregate([
       {
         $match: {
@@ -1525,11 +1528,12 @@ const insertMissingTransactions = async (req, res) => {
           isProcessing: "$matchedCasinoCallsPayload.isProcessing"
         }
       }
-    ]);
+    ]).session(session);
 
     // console.log("!!!!!!!!!!!!!!!!!!!!11", matchedDocs)
     if (!matchedDocs || matchedDocs.length === 0) {
       console.log('No transactions found for the given round_id and username.');
+      await session.abortTransaction();
       return;
     }
 
@@ -1540,7 +1544,7 @@ const insertMissingTransactions = async (req, res) => {
         console.log('No matching payload found for:', doc);
         continue;
       }
-      const idExists = await CasinoCalls.findOne({ transaction_id: matchedPayload.transaction_id })
+      const idExists = await CasinoCalls.findOne({ transaction_id: matchedPayload.transaction_id }).session(session)
       if (idExists) {
         continue;
       }
@@ -1570,12 +1574,13 @@ const insertMissingTransactions = async (req, res) => {
       });
 
       console.log('Inserting new casino call:', newCasinoCall);
-      await newCasinoCall.save().then(() => {
+      await newCasinoCall.save({ session })
+      // .then(() => {
 
-        console.log('Inserted CasinoCall:', newCasinoCall);
-      });
+      //   console.log('Inserted CasinoCall:', newCasinoCall);
+      // });
     }
-
+    await session.commitTransaction();
     return;
     // return res.status(200).json({
     //   success: true,
@@ -1585,7 +1590,10 @@ const insertMissingTransactions = async (req, res) => {
     // console.log('Missing transactions successfully inserted.');
   } catch (error) {
     console.error('Error inserting missing transactions:', error);
-  }
+    await session.abortTransaction();
+  }finally {
+        session.endSession();
+      }
 };
 
 router.post('/track-bet/casinoListing', casinoListing)
