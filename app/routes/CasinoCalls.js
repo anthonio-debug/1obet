@@ -659,7 +659,7 @@ async function findAndProcessTransactions(user) {
     }finally {
       // End the session
       //await session.abortTransaction();
-      await session.commitTransaction();
+      //await session.commitTransaction();
           
       session.endSession();
     } 
