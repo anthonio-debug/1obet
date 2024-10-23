@@ -392,7 +392,7 @@ function apiRequests() {
           }
           
           if(remaingTime>time30minuts && element.marketName=='Match Odds'){
-            console.log("cron jobs code running for updating odds ======----- ");
+            console.log("cron jobs code running for updating odds ======----- ",element.marketId,"----",sportID);
 
             const oddUrl = `http://84.8.153.51/api/v2/getMarketsOdds?EventTypeID=${sportID}&marketId=${element.marketId}`;
     
