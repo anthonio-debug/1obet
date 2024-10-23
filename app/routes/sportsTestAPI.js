@@ -4041,7 +4041,7 @@ async function deleteOdds(req, res) {
     const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
-// const count = await Cash.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
+const count = await Cash.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
 // console.log(`Count of records older than 30 days: ${count}`);
 
 
@@ -4100,7 +4100,7 @@ thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
     const count4 = await MarketIDS.countDocuments({ sportID: 4339 });
     const count5 = await MarketIDS.countDocuments({ sportID: 7 });
     const betCountFotprevios2month = await Bets.countDocuments({ betTime: { $lt: 1711180800000 } })
-    return res.json({ "{status:'CLOSED',sportID:4339 count": count1, "{{ status: 'CLOSED', sportID: 7 } count": count3, "{{ sportID: 4339 } count": count4, "{{ sportID: 7 } count": count5, "betCountFotprevios2month": betCountFotprevios2month })
+    return res.json({ "{status:'CLOSED',sportID:4339 count": count1, "{{ status: 'CLOSED', sportID: 7 } Deposits Old count": count, "{{ status: 'CLOSED', sportID: 7 } count": count3, "{{ sportID: 4339 } count": count4, "{{ sportID: 7 } count": count5, "betCountFotprevios2month": betCountFotprevios2month })
     // await MarketIDS.deleteMany({
     //   marketName: { $regex: /Overs Line|Runs Line/ }
     // });
