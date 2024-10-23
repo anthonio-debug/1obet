@@ -155,7 +155,7 @@ async function findAndProcessTransactions(user) {
           const roundIds = await CasinoCalls.find({ round_id: tran._id }).session(session);
          
           for (const rounds of roundIds) {
-            const session = await mongoose.startSession();
+            
             if (rounds.action === 'credit') {
               totalCreditAmount += Number(rounds.amount);
             }
@@ -336,7 +336,7 @@ async function findAndProcessTransactions(user) {
                   console.log("exppositives is passed.......................................");
                   await session.startTransaction();
             await CasinoCalls.updateMany(
-              { round_id: tran._id.toString() },
+              { round_id: tran._id.toString(),gameplay_final:1,action:'credit' },
               { $set: { isProcessing: false } },
               { session }
             );
