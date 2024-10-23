@@ -210,6 +210,7 @@ async function findAndProcessTransactions() {
           console.log("userRecord.exposure + AccumulativeDebit........................",userRecord.exposure + AccumulativeDebit);
           console.log("userRecord.exposure........................",userRecord.exposure);
           console.log("AccumulativeCredit........................",AccumulativeCredit);
+          console.log("AccumulativeDebit........................",AccumulativeDebit);
 
 
 
