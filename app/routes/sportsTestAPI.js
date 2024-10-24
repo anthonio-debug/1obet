@@ -4044,7 +4044,8 @@ thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
  //await CasinoCalls.deleteMany({  });
  //await CasinoCallsPayload.deleteMany({  });
-const count = await Bets.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
+//const count = await Bets.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
+const count = await Bets.countDocuments({ betTime: { $lt: thirtyDaysAgo } });
 // console.log(`Count of records older than 30 days: ${count}`);
 
 
