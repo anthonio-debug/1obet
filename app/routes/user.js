@@ -933,12 +933,13 @@ function settlePLAccount(req, res) {
       }
       result.save();
 
-      if (result.balance < 0) {
+      if (result.availableBalance < 0) {
         Deposits.create({
           userId: result.userId,
           balance: result.balance,
           availableBalance: result.availableBalance,
           amount: amount,
+          cashOrCredit:"settledAmount",
           description:"P/L to Cash transfer"
 
         })
@@ -948,7 +949,8 @@ function settlePLAccount(req, res) {
           balance: result.balance,
           availableBalance: result.availableBalance,
           amount: -amount,
-          description:"P/L to Cash transfer"
+          cashOrCredit:"settledAmount",
+          description:"P/L to Cash transfer",
 
         })
       }
@@ -961,7 +963,6 @@ function settlePLAccount(req, res) {
     }
   );
 }
-
 function getSettlement(req, res) {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
