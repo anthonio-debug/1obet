@@ -12,23 +12,29 @@ const getMarketPositions = async (req, res) => {
 
   const { userId, betId } = req.body;
 
-  const currentUser = await User.findOne({ userId });
+  if (!betId){
+    return res.status(404).json({ success: false, message: "BetId is not found." });
+  }
+  const currentUser = await User.findOne({ userId }, { userId: 1, createdBy: 1 });
   if (!currentUser) {
-    console.error(`Current user not found for userId: ${userId}`);
     return res.status(404).json({ success: false, message: "Current user not found." });
   }
 
-  const parentUser = await User.findOne({ userId: currentUser.createdBy });
-  const childUserIds = await User.distinct("userId", { createdBy: userId });
-  
-  if (childUserIds.length == 0) return res.status(400).send({ message: "Trader has no child" })
+  const parentUserPromise = User.findOne({ userId: currentUser.createdBy }, { userId: 1 });
+  const childUserIdsPromise = User.distinct("userId", { createdBy: userId });
+
+  const [parentUser, childUserIds] = await Promise.all([parentUserPromise, childUserIdsPromise]);
+
+  if (childUserIds.length === 0) {
+    return res.status(400).send({ message: "Trader has no child" });
+  }
 
   const betNComission = ["Bet", "loosing", "Settlement"];
 
-  const traderResponse = await Deposits.aggregate([
+  const traderResponsePromise = Deposits.aggregate([
     {
       $match: {
-        betId: betId,
+        betId,
         cashOrCredit: { $in: betNComission },
         userId: { $in: childUserIds },
       },
@@ -53,18 +59,14 @@ const getMarketPositions = async (req, res) => {
         amount: { $sum: "$amount" },
       },
     },
-    {
-      $sort: {
-        role: -1
-      }
-    }
+    { $sort: { role: -1 } },
   ]);
 
-  const dealersIds = parentUser === null ? [currentUser.userId] : [currentUser.userId, parentUser?.userId]
-  const dealerResponse = await Deposits.aggregate([
+  const dealersIds = parentUser ? [currentUser.userId, parentUser.userId] : [currentUser.userId];
+  const dealerResponsePromise = Deposits.aggregate([
     {
       $match: {
-        betId: betId,
+        betId,
         cashOrCredit: { $in: betNComission },
         userId: { $in: dealersIds },
       },
@@ -88,16 +90,22 @@ const getMarketPositions = async (req, res) => {
         role: { $first: "$userInfo.role" },
         amount: { $sum: "$amount" },
       },
-    }, {
-      $sort: {
-        role: -1
-      }
-    }
+    },
+    { $sort: { role: -1 } },
   ]);
 
-  const childAmount = dealerResponse.length == 2 ? dealerResponse[0]?.amount + dealerResponse[1]?.amount : dealerResponse[0]?.amount
-  traderResponse[0].amount = - childAmount
-  const response = [...traderResponse, ...dealerResponse]
+  const [traderResponse, dealerResponse] = await Promise.all([traderResponsePromise, dealerResponsePromise]);
+
+  const childAmount = dealerResponse.length === 2
+    ? dealerResponse[0]?.amount + dealerResponse[1]?.amount
+    : dealerResponse[0]?.amount;
+
+  if (traderResponse.length > 0) {
+    traderResponse[0].amount = -childAmount;
+  }
+
+  const response = [...traderResponse, ...dealerResponse];
+
   return res.status(200).json({
     success: true,
     message: "Market Positions Reports!",
