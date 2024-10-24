@@ -18,76 +18,19 @@ const getMarketPositions = async (req, res) => {
     return res.status(404).json({ success: false, message: "Current user not found." });
   }
 
-  let parentUserResponse = [];
   const parentUser = await User.findOne({ userId: currentUser.createdBy });
-
   const childUserIds = await User.distinct("userId", { createdBy: userId });
-  const betNComission = ["Bet", "Commission", "loosing", "Settlement"];
+  
+  if (childUserIds.length == 0) return res.status(400).send({ message: "Trader has no child" })
 
-  const currentUserResponse = await Deposits.aggregate([
+  const betNComission = ["Bet", "loosing", "Settlement"];
+
+  const traderResponse = await Deposits.aggregate([
     {
       $match: {
-        userId: currentUser.userId,
-        cashOrCredit: { $in: betNComission },
         betId: betId,
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "userId",
-        foreignField: "userId",
-        as: "userInfo",
-      },
-    },
-    { $unwind: "$userInfo" },
-    {
-      $group: {
-        _id: "$userId",
-        name: { $first: "$userInfo.userName" },
-        role: { $first: "$userInfo.role" },
-        amount: { $sum: "$amount" },
-      },
-    },
-  ]);
-
-  if (parentUser) {
-    parentUserResponse = await Deposits.aggregate([
-      {
-        $match: {
-          userId: parentUser.userId,
-          cashOrCredit: { $in: betNComission },
-          betId: betId,
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "userId",
-          as: "userInfo",
-        },
-      },
-      { $unwind: "$userInfo" },
-      {
-        $group: {
-          _id: "$userId",
-          name: { $first: "$userInfo.userName" },
-          amount: { $sum: "$upLineAmount" },
-          role: { $first: "$userInfo.role" },
-        },
-      },
-    ]);
-  }
-
-  const childAmount = parentUserResponse[0].amount + currentUserResponse[0].amount
-
-  const childResponse = await Deposits.aggregate([
-    {
-      $match: {
+        cashOrCredit: { $in: betNComission },
         userId: { $in: childUserIds },
-        cashOrCredit: { $in: betNComission },
-        betId: betId,
       },
     },
     {
@@ -96,6 +39,9 @@ const getMarketPositions = async (req, res) => {
         localField: "userId",
         foreignField: "userId",
         as: "userInfo",
+        pipeline: [
+          { $project: { userId: 1, userName: 1, role: 1 } }
+        ],
       },
     },
     { $unwind: "$userInfo" },
@@ -103,16 +49,55 @@ const getMarketPositions = async (req, res) => {
       $group: {
         _id: "$userId",
         name: { $first: "$userInfo.userName" },
-        amount: { $sum: "$amount" },
         role: { $first: "$userInfo.role" },
+        amount: { $sum: "$amount" },
       },
     },
+    {
+      $sort: {
+        role: -1
+      }
+    }
   ]);
-  childResponse[0].amount = - childAmount
-  const response = [...childResponse, ...currentUserResponse, ...parentUserResponse];
 
-  console.log("Final response:", response);
+  const dealersIds = parentUser === null ? [currentUser.userId] : [currentUser.userId, parentUser?.userId]
+  const dealerResponse = await Deposits.aggregate([
+    {
+      $match: {
+        betId: betId,
+        cashOrCredit: { $in: betNComission },
+        userId: { $in: dealersIds },
+      },
+    },
+    {
+      $lookup: {
+        from: "users",
+        localField: "userId",
+        foreignField: "userId",
+        as: "userInfo",
+        pipeline: [
+          { $project: { userId: 1, userName: 1, role: 1 } }
+        ],
+      },
+    },
+    { $unwind: "$userInfo" },
+    {
+      $group: {
+        _id: "$userId",
+        name: { $first: "$userInfo.userName" },
+        role: { $first: "$userInfo.role" },
+        amount: { $sum: "$amount" },
+      },
+    }, {
+      $sort: {
+        role: -1
+      }
+    }
+  ]);
 
+  const childAmount = dealerResponse.length == 2 ? dealerResponse[0]?.amount + dealerResponse[1]?.amount : dealerResponse[0]?.amount
+  traderResponse[0].amount = - childAmount
+  const response = [...traderResponse, ...dealerResponse]
   return res.status(200).json({
     success: true,
     message: "Market Positions Reports!",
