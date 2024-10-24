@@ -4042,9 +4042,9 @@ async function deleteOdds(req, res) {
     const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
- await CasinoCalls.deleteMany({  });
- await CasinoCallsPayload.deleteMany({  });
-const count = await Cash.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
+ //await CasinoCalls.deleteMany({  });
+ //await CasinoCallsPayload.deleteMany({  });
+const count = await Bets.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
 // console.log(`Count of records older than 30 days: ${count}`);
 
 
@@ -4084,12 +4084,12 @@ const count = await Cash.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } })
     // const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_20046"  ,gameplay_final:1}, {
     //   isProcessing:true
     // })
-     await Odds.deleteMany({});
+     //await Odds.deleteMany({});
 
 
 
 
-     await RaceOdds.deleteMany({});
+     //await RaceOdds.deleteMany({});
     // await fancyOdds.deleteMany({});
      await MarketIDS.deleteMany({
        $or: [
