@@ -570,7 +570,7 @@ function getLedgerDetails(req, res) {
 
       const userRole = user.role;
 
-      const cashNCreditnBet = userRole === "5" ? ['Bet', 'Casino Bet', 'Cash', 'Credit'] : ['Bet', 'Casino Bet'];
+      const cashNCreditnBet = userRole === "5" ? ['Bet', 'Casino Bet', 'Cash', 'Credit'] : ['Bet', 'Casino Bet', "settledAmount"];
 
       cashPipeline.push({
         $match: { cashOrCredit: { $in: cashNCreditnBet } }
