@@ -568,8 +568,11 @@ function getLedgerDetails(req, res) {
         }
       }];
 
+      cashPipeline.push({
+        $match: { cashOrCredit: { $in: ['Bet', 'Casino Bet'] } }
+      });
+
       const userRole = user.role;
-      console.log("user role", user);
 
       if (userRole !== '5' && req.body.type) {
         cashPipeline.push({ $match: { cashOrCredit: req.body.type }, });
@@ -614,7 +617,7 @@ function getLedgerDetails(req, res) {
                 matchId: "$matchId",
                 marketId: "$marketId",
                 betSession: "$betSession",
-                roundId: "$roundId"
+                roundId: "$roundId",
               }
             }
           },
@@ -652,7 +655,6 @@ function getLedgerDetails(req, res) {
       Cash.aggregate(cashPipeline, async (err, result) => {
         if (result[0].results && result[0].results.length > 0) {
           for (let i = 0; i < result[0].results.length; i++) {
-            //console.log()
             if (result[0].results[i].betId) {
               try {
                 const betInfo = await Bet.findOne({
@@ -674,12 +676,7 @@ function getLedgerDetails(req, res) {
           }
         }
 
-        if (
-          err ||
-          !result ||
-          result.length === 0 ||
-          result[0].results.length === 0
-        ) {
+        if (err || !result || result.length === 0 || result[0].results.length === 0) {
           return res.status(200).send({ message: 'Deposit record not found' });
         }
 
@@ -691,23 +688,18 @@ function getLedgerDetails(req, res) {
             total: result[0].metadata[0] ? result[0].metadata[0].total : 0,
             limit: limit ? limit : 0,
             page: page ? page : 0,
-            pages:
-              limit && result[0].metadata[0].total
-                ? Number((result[0].metadata[0].total / limit).toFixed(0))
-                : 0,
+            pages: limit && result[0].metadata[0].total ? Number((result[0].metadata[0].total / limit).toFixed(0)) : 0,
           },
         };
 
         return res.send(responseData);
       });
-
-
     });
   } catch (err) {
     res.status(500).json({ success: false, msg: "Failed to get Ledger Detail info" })
   }
-
 }
+
 
 
 function getLedgerDetails2(req, res) {
