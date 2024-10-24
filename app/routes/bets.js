@@ -208,7 +208,7 @@ const bet = await Bets.findOne({ _id: betId });
                       
                       userRole:userExpCheck.role,
                       source:'Bet Place',
-                      betId:bet._id,
+                      betId:bet._id.toString(),
                       exposureAmount:userExpCheck.exposure
                       
                     });

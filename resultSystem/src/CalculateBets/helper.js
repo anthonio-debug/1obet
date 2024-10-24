@@ -119,7 +119,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
          // userFrom:bet.userId,
           userRole:userExpCheck.role,
           source:'bet settlement',
-          betId:bet._id,
+          betId:bet._id.toString(),
           
           exposureAmount:userExpCheck.exposure
           
@@ -284,7 +284,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
          userFrom:bet.userId,
           userRole:userExpCheck.role,
           source:'bet settlement',
-          betId:bet._id,
+          betId:bet._id.toString(),
           
           exposureAmount:userExpCheck.exposure
           
@@ -542,7 +542,7 @@ console.log("userPrevClientPL updated..........................................:
                       //userFrom:bet.userId,
                       userRole:userExpCheck.role,
                       source:'session settlement',
-                      betId:bet._id,
+                      betId:bet._id.toString(),
                       
                       exposureAmount:userExpCheck.exposure
                       
