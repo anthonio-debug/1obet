@@ -83,6 +83,8 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         
     });
 
+    console.log("NaN issue with betexposureAmount: ",betexposureAmount);
+    console.log("NaN issue with selectedRunnerAmount: ",selectedRunnerAmount);
     AmountAddedBacktoUserAB = betexposureAmount + selectedRunnerAmount  // 400 + ( -45 ) = 355, in case of winning we will set it zero
 	TotalWin = Number(AmountAddedBacktoUserAB.toFixed(3)); // in case of winning, we will keep it same
 	
