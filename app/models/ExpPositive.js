@@ -6,7 +6,13 @@ const expPositiveSchema = new mongoose.Schema({
     userRole: {type: String, default: ''},
     source: {type: String, default: ''},
     betId: {type: String, default: ''},
-    roundId: {type: String, default: ''},
+    roundId: {type: String, default: ''},//this can also be marketId
+    expCaptured: {type: String, default: ''},
+    expReleased: {type: String, default: ''},
+    prevExposure: {type: String, default: ''},
+    maxWinningAmount: {type: String, default: ''},
+    finalShareAmountInLossPrev: {type: String, default: ''},
+    prevAdjustedExposure: {type: String, default: ''},
     exposureAmount: {type: Number}
   }, {
     timestamps: true

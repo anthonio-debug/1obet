@@ -700,6 +700,23 @@ console.log("userPrevClientPL updated..........................................:
                 clientPL: totalClientPL //Balance Upline
               }
             );
+            const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
+
+      if(userExpCheck && userExpCheck.userId!=11000){
+          
+        expPositive.create({
+          userId:user.userId,
+         userFrom:bet.userId,
+          userRole:userExpCheck.role,
+          source:'parent bet settlement',
+          betId:bet._id.toString(),
+          
+          exposureAmount:userExpCheck.exposure
+          
+        });
+        
+
+      }
 
             const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
             await Deposits.create({
@@ -737,6 +754,7 @@ console.log("userPrevClientPL updated..........................................:
             
             });
             upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
+
 
             if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });

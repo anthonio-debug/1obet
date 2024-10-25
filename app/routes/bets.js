@@ -66,19 +66,19 @@ const getParents = async (userId) => {
   }
   return parentUserIds;
 };
-const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, Id = 0, runnersPosition,prevhighestAmount) => {
+const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, runnersPosition,prevhighestAmount) => {
   const parentUser = await User.find({
     userId: {
       $in: [...parentUsersIds]
     },
     isDeleted: false
   }).sort({ userId: -1 });
-  const mongoose = require('mongoose');
+//   const mongoose = require('mongoose');
 
-// Assuming Id is a string representation of the ObjectId
-const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
+// // Assuming Id is a string representation of the ObjectId
+// const betId = mongoose.Types.ObjectId(Id); // Convert if necessary
 
-const bet = await Bets.findOne({ _id: betId });
+// const bet = await Bets.findOne({ _id: betId });
   //console.log("the details  for the bet provided............",bet);
   let highestAmount = 0;
   //console.log("runnersPosition:::::::",runnersPosition);
@@ -116,12 +116,38 @@ const bet = await Bets.findOne({ _id: betId });
       user.exposure = -finalShareAmountInLoss;
      // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
      user.availableBalance = prevBalance +   (-finalShareAmountInLoss)
+     expPositive.create({
+      userId:user.userId,
+      userFrom:bet.userId,
+      userRole:user.role,
+      source:'Bet Place Parent',
+      betId:bet._id.toString(),
+      exposureAmount:userPrevExposure-finalShareAmountInLoss,
+      roundId:bet.marketId,
+      
+      prevExposure:userPrevExposure,
+      expCaptured:-finalShareAmountInLoss,
+      
+    });
+
     }else{
       //console.log("userPrevExposure==0 ELSE::::::::::::::::::::::::",userPrevExposure-finalShareAmountInLoss);
       user.exposure = userPrevExposure-finalShareAmountInLoss;
       user.availableBalance = prevBalance +   (userPrevExposure-finalShareAmountInLoss)
    // user.availableBalance = UseravailableBalancePrev - finalShareAmountInLoss;
-    
+        expPositive.create({
+          userId:user.userId,
+          userFrom:bet.userId,
+          userRole:user.role,
+          source:'Bet Place Parent',
+          betId:bet._id.toString(),
+          exposureAmount:userPrevExposure-finalShareAmountInLoss,
+          roundId:bet.marketId,
+          
+          prevExposure:userPrevExposure,
+          expCaptured:-finalShareAmountInLoss,
+          
+        });
     }
     
     
@@ -133,15 +159,7 @@ const bet = await Bets.findOne({ _id: betId });
                   if(userExpCheck){
                     //await session.startTransaction();
 
-                    expPositive.create({
-                      userId:userExpCheck.userId,
-                      userFrom:bet.userId,
-                      userRole:userExpCheck.role,
-                      source:'Bet Place',
-                      
-                      exposureAmount:userExpCheck.exposure
-                      
-                    });
+                    
                     //await session.commitTransaction();
 
                   }
@@ -164,6 +182,23 @@ const bet = await Bets.findOne({ _id: betId });
     user.exposure = -finalShareAmountInLoss;
     //user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
+
+    expPositive.create({
+      userId:user.userId,
+      userFrom:bet.userId,
+      userRole:user.role,
+      source:'Bet Place Parent',
+      betId:bet._id.toString(),
+      exposureAmount:-finalShareAmountInLoss,
+      roundId:bet.marketId,
+      
+      prevExposure:user.exposure,
+      expCaptured:-finalShareAmountInLoss,
+      
+    });
+
+
+
    }else{
     let prevAdjustedExposure = user.exposure + finalShareAmountInLossPrev;
     let prevAdjustedAvailableBalance = user.availableBalance + finalShareAmountInLossPrev;
@@ -178,6 +213,24 @@ const bet = await Bets.findOne({ _id: betId });
     //user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
     
+
+    expPositive.create({
+      userId:user.userId,
+      userFrom:bet.userId,
+      userRole:user.role,
+      source:'Bet Place Parent',
+      betId:bet._id.toString(),
+      exposureAmount:-finalShareAmountInLoss,
+      roundId:bet.marketId,
+      prevAdjustedExposure:prevAdjustedExposure,
+      finalShareAmountInLossPrev:finalShareAmountInLossPrev,
+      prevExposure:user.exposure,
+      expCaptured:-finalShareAmountInLoss,
+      
+    });
+
+
+
    }else{
     //console.log("user ID::::::Else block:",user.userId);
     let ultimatefinal = prevAdjustedExposure - finalShareAmountInLoss;
@@ -186,6 +239,24 @@ const bet = await Bets.findOne({ _id: betId });
     user.exposure = prevAdjustedExposure - finalShareAmountInLoss;
     //user.availableBalance =prevAdjustedAvailableBalance - finalShareAmountInLoss;
     user.availableBalance =prevBalance + (prevAdjustedExposure - finalShareAmountInLoss);
+
+
+    expPositive.create({
+      userId:user.userId,
+      userFrom:bet.userId,
+      userRole:user.role,
+      source:'Bet Place Parent',
+      betId:bet._id.toString(),
+      exposureAmount:-finalShareAmountInLoss,
+      roundId:bet.marketId,
+      prevAdjustedExposure:prevAdjustedExposure,
+      prevExposure:user.exposure,
+      expCaptured:-finalShareAmountInLoss,
+      
+    });
+
+
+
    }
    console.log("for user available balacne...........................2.......................",user);
    await user.save();
@@ -203,15 +274,6 @@ const bet = await Bets.findOne({ _id: betId });
 
                   if(userExpCheck && userExpCheck.userId!=11000){
                     
-                    expPositive.create({
-                      userId:userExpCheck.userId,
-                      
-                      userRole:userExpCheck.role,
-                      source:'Bet Place',
-                      betId:bet._id.toString(),
-                      exposureAmount:userExpCheck.exposure
-                      
-                    });
                     
 
                   }
@@ -3571,29 +3633,34 @@ const placeBet = async (req, res) => {
           
 
 
-          const ExpTran = new Exposure({
-            userId: userId,
-            trans_from: 'Bet Place',
-            trans_from_id: randomStr,
-            user_prev_balance: user_prev_balance,
-            user_prev_availableBalance: user_prev_availableBalance,
-            user_prev_exposure: user_prev_exposure,
-            user_new_balance: nowUser.balance,
-            user_new_availableBalance: UserAvlBalAmount,
-            user_new_exposure: UserExpAmount,
-            marketId: _3rdPartyMarketId || 0,
-            sportsId: marketId || 0,
-            calculatedExp: expAmount ? Number(expAmount.toFixed(3)) : 0,
-            DateTime: new Date(),
-            calculateExp: 1,
-            exposureAmount: expAmount ? Number(expAmount.toFixed(3)) : 0
+          const mongoose = require('mongoose');
+
+          // Assuming Id is a string representation of the ObjectId
+          const betId = mongoose.Types.ObjectId(result._id); // Convert if necessary
+          
+          const bet = await Bets.findOne({ _id: betId });
+
+          expPositive.create({
+            userId:userId,
+            
+            userRole:usnowUserer.role,
+            source:'Bet Place',
+            betId:bet._id.toString(),
+            exposureAmount:prevExpAmount-expAmount,
+            roundId:bet.marketId,
+            
+            prevExposure:prevExpAmount,
+            expCaptured:-expAmount,
+            
           });
 
-          await ExpTran.save();
+
+
+
           console.log('Exposure transaction saved');
           console.log("market id passed::::::::::::::::::::::::;;;",marketId);
          
-            await updateParentUserBalanceTemp(parentUserIds, matchId, result._id, runnersPosition,prevhighestAmount);
+            await updateParentUserBalanceTemp(parentUserIds, matchId, bet, runnersPosition,prevhighestAmount);
           
           
           
