@@ -580,7 +580,7 @@ function scoreChecker() {
         } else {
           for (const bet of bets) {
             if(bet.userId==22977 && bet.calculateExp==true){
-              console.log("here I reced for fancies result............................................................................",result);
+              console.log("here I reced for fancies result.........",result);
               if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
                 continue;
               }
