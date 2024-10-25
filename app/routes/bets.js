@@ -3643,7 +3643,7 @@ const placeBet = async (req, res) => {
           expPositive.create({
             userId:userId,
             
-            userRole:usnowUserer.role,
+            userRole:nowUser.role,
             source:'Bet Place',
             betId:bet._id.toString(),
             exposureAmount:prevExpAmount-expAmount,
