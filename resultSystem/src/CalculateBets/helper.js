@@ -54,7 +54,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     let betexposureAmount = bet.exposureAmount;
     TotalLose = betexposureAmount;
     let userId = bet.userId;
-    let selectedRunnerAmount = 0;
+    
 
 
   
@@ -68,16 +68,17 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   runnerPosition?.forEach(winner => {
     
     if(bet.isfancyOrbookmaker==true && bet.fancyData != null){
+      let selectedRunnerAmount = 0;
       console.log("Winner position for ",winner.runner,"----------------------------------------->",winner.position);
       if (winner.runner == selectionId) {
-           let selectedRunnerAmount=winner.position
+           selectedRunnerAmount=winner.position
           winnerRunner = winner.runner
       }
     }else{
 
       console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
       if (winner.runner == selectionId) {
-         let selectedRunnerAmount=winner.amount
+         selectedRunnerAmount=winner.amount
           winnerRunner = winner.runner
       }
       
