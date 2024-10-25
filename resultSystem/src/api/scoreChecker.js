@@ -580,12 +580,12 @@ function scoreChecker() {
         } else {
           for (const bet of bets) {
             if(bet.userId==22977 && bet.calculateExp==true){
-              console.log("here I reced for fancies result.........",result);
+              console.log("here I reced for fancies result.........",result.result);
               if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
                 continue;
               }
               if (typeof result.manuelClose === 'undefined' && bet.isManuel === true) continue;
-              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.result);
             }else {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
               continue;
