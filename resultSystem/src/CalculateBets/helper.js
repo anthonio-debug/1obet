@@ -73,19 +73,6 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
 
-    if(winner.amount){
-      
-      if (winner.runner == selectionId) {
-          selectedRunnerAmount=winner.amount
-          winnerRunner = winner.runner
-      }
-    }else{
-     
-        if (winner.runner == selectionId) {
-            selectedRunnerAmount=winner.position
-            winnerRunner = winner.runner
-        }
-    }
         
 
 
