@@ -564,7 +564,7 @@ function scoreChecker() {
           console.log("result.winnerSelectionId-====================================================............",result.winnerSelectionId);
           for (const bet of bets) {
 
-            if(bet.userId==22977){
+            if(bet.userId==22977 && bet.calculateExp==true){
               console.log("here I reced for fancies............................................................................",bet);
             
               let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
@@ -579,7 +579,7 @@ function scoreChecker() {
           }
         } else {
           for (const bet of bets) {
-            if(bet.userId==22977){
+            if(bet.userId==22977 && bet.calculateExp==true){
               console.log("here I reced for fancies............................................................................",bet);
             
               let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
