@@ -90,7 +90,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
 
-    if(bet.isFancyOrBookMaker==true && fancyData != null){
+    if(bet.isfancyOrbookmaker==true && fancyData != null){
 
       console.log("Winner  11  position for ",winner.runner,"----------------------------------------->",winner.position);
       if (winner.runner == selectionId) {
