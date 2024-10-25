@@ -4039,6 +4039,7 @@ async function deleteOdds(req, res) {
     //await Bets.updateMany({ userId:22580 }, { $set: { status:1 } });
     await expPositive.deleteMany({});
     
+    
     const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
