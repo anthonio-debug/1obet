@@ -155,16 +155,16 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
       let expPositiveData;
       
-      expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet.betId,roundId:bet.marketId });
+      expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString(),roundId:bet.marketId });
       console.log("-------------------------------------user.............",expPositiveData);
       console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
-      console.log("-------------------------------------bet.betId.............",bet.betId);
+      console.log("-------------------------------------bet.betId.............",bet._id.toString());
       console.log("-------------------------------------bet.marketId.............",bet.marketId);
 
       if(expPositiveData){
         await expPositive.updateOne(
           {
-            userId:userToUpdate.userId,betId:bet.betId,roundId:bet.marketId
+            userId:userToUpdate.userId,betId:bet._id.toString(),roundId:bet.marketId
           },
           {
             expReleased: TotalLose,
@@ -289,17 +289,17 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
               let expPositiveDataP;
-              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet.betId,roundId:bet.marketId });
+              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId });
               
               console.log("-------------------------------------parents.............",expPositiveData);
               console.log("-------------------------------------user.userId.............",user.userId);
-              console.log("-------------------------------------bet.betId.............",bet.betId);
+              console.log("-------------------------------------bet.betId.............",bet._id.toString());
               console.log("-------------------------------------bet.marketId.............",bet.marketId);
               
       if(expPositiveDataP){
         await expPositive.updateOne(
           {
-            userId:user.userId,betId:bet.betId,roundId:bet.marketId
+            userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
           },
           {
             expReleased: winningsShareAmount,
