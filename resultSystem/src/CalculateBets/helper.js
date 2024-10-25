@@ -16,7 +16,7 @@ const config = {
 
 
 async function getAmountOfWinnerTemp(betId, selectionId) {
-    console.log("Reached inside the function..............................");
+    console.log("Reached inside the function..............................",selectionId);
     const mongoose = require('mongoose');
       const session = await mongoose.startSession();
       const maxRetries = 3; // Max retries for the transaction

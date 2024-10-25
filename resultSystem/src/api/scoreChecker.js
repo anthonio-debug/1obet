@@ -580,7 +580,7 @@ function scoreChecker() {
         } else {
           for (const bet of bets) {
             if(bet.userId==22977 && bet.calculateExp==true){
-              console.log("here I reced for fancies............................................................................",bet);
+              console.log("here I reced for fancies result............................................................................",result);
             
               let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
             }else {
