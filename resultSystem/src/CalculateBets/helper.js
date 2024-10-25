@@ -50,7 +50,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     let AmountAddedBacktoUserAB = 0;
     let TotalWin = 0;
     let TotalLose = 0;
-    let calculatedExp = bet.calculatedExp;
+    let calculatedExp = bet.exposureAmount;
     let betexposureAmount = bet.exposureAmount;
     TotalLose = betexposureAmount;
     let userId = bet.userId;
@@ -491,7 +491,7 @@ const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _i
   let AmountAddedBacktoUserAB = 0;
   let TotalWin = 0;
   let TotalLose = 0;
-  let calculatedExp = bet.calculatedExp;
+  let calculatedExp = bet.exposureAmount;
   let betexposureAmount = bet.exposureAmount;
   TotalLose = betexposureAmount;
   let userId = bet.userId;
