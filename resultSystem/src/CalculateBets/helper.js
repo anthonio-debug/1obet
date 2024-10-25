@@ -110,20 +110,12 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       );
 
 
+      
+      
       const userExpCheck = await User.findOne({ userId:bet.userId,exposure: { $gt: 0 } });
 
       if(userExpCheck && userExpCheck.userId!=11000){
-          
-        expPositive.create({
-          userId:bet.userId,
-         // userFrom:bet.userId,
-          userRole:userExpCheck.role,
-          source:'bet settlement',
-          betId:bet._id.toString(),
-          
-          exposureAmount:userExpCheck.exposure
-          
-        });
+   
         
 
       }
@@ -143,7 +135,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         marketId: bet.marketId,
         sportsId: bet.sportsId,
         matchId: bet.matchId,
-        betId: bet._id,
+        betId: bet._id.toString(),
         betType: bet.type,
         betDateTime: bet.betTime,
         date: new Date().getTime(),
@@ -161,6 +153,23 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
       });
 
 
+
+
+      let expPositive = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet.betId,roundId:bet.marketId });
+      if(expPositive){
+        await expPositive.updateOne(
+          {
+            userId:userToUpdate.userId,betId:bet.betId,roundId:bet.marketId
+          },
+          {
+            expReleased: TotalLose,
+            expAfterRelease:users_exposureNewUpdated,
+            AbAtRelease:updatedAvailableBalance,
+            ABForWinAmount:TotalWin,
+            
+          }
+        );
+      }
       /// Follownig are assignments for commissions, downlines, uplines etc to parents...
 
       const parentUserIds = await getParents(userToUpdate.userId);
@@ -275,22 +284,19 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
 
-              const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
-
-      if(userExpCheck && userExpCheck.userId!=11000){
-          
-        expPositive.create({
-          userId:user.userId,
-         userFrom:bet.userId,
-          userRole:userExpCheck.role,
-          source:'bet settlement',
-          betId:bet._id.toString(),
-          
-          exposureAmount:userExpCheck.exposure
-          
-        });
-        
-
+              let expPositive = await expPositive.findOne({ userId:user.userId,betId:bet.betId,roundId:bet.marketId });
+      if(expPositive){
+        await expPositive.updateOne(
+          {
+            userId:user.userId,betId:bet.betId,roundId:bet.marketId
+          },
+          {
+            expReleased: winningsShareAmount,
+            expAfterRelease:UpdatedExposureAmount,
+            AbAtRelease:totalBalance + UpdatedExposureAmount
+            
+          }
+        );
       }
 
 
@@ -313,7 +319,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 commissionFrom: commissionFrom,
                 sportsId: bet.sportsId,
                 upLineAmount: -upMovingAmount,
-                betId: bet._id,
+                betId: bet._id.toString(),
                 matchId: bet.matchId,
                 betType: bet.type,
                 betDateTime: bet.betTime,
@@ -346,7 +352,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                   maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                   cashOrCredit: 'Commission',
-                  betId: bet._id,
+                  betId: bet._id.toString(),
                   cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
                   marketId: bet.marketId,
                   sportsId: bet.sportsId,
@@ -537,16 +543,8 @@ console.log("userPrevClientPL updated..........................................:
 
                   if(userExpCheck && userExpCheck.userId!=11000){
                     
-                    expPositive.create({
-                      userId:userExpCheck.userId,
-                      //userFrom:bet.userId,
-                      userRole:userExpCheck.role,
-                      source:'session settlement',
-                      betId:bet._id.toString(),
-                      
-                      exposureAmount:userExpCheck.exposure
-                      
-                    });
+             
+                    
                     
 
                   }
@@ -568,7 +566,7 @@ console.log("userPrevClientPL updated..........................................:
       marketId: bet.marketId,
       sportsId: bet.sportsId,
       matchId: bet.matchId,
-      betId: bet._id,
+      betId: bet._id.toString(),
       betType: bet.type,
       betDateTime: bet.betTime,
       date: new Date().getTime(),
@@ -704,16 +702,7 @@ console.log("userPrevClientPL updated..........................................:
 
       if(userExpCheck && userExpCheck.userId!=11000){
           
-        expPositive.create({
-          userId:user.userId,
-         userFrom:bet.userId,
-          userRole:userExpCheck.role,
-          source:'parent bet settlement',
-          betId:bet._id.toString(),
-          
-          exposureAmount:userExpCheck.exposure
-          
-        });
+ 
         
 
       }
@@ -735,7 +724,7 @@ console.log("userPrevClientPL updated..........................................:
               commissionFrom: commissionFrom,
               sportsId: bet.sportsId,
               upLineAmount: -upMovingAmount,
-              betId: bet._id,
+              betId: bet._id.toString(),
               matchId: bet.matchId,
               betType: bet.type,
               betDateTime: bet.betTime,
@@ -769,7 +758,7 @@ console.log("userPrevClientPL updated..........................................:
                 availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                 maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                 cashOrCredit: 'Commission',
-                betId: bet._id,
+                betId: bet._id.toString(),
                 cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
                 marketId: bet.marketId,
                 sportsId: bet.sportsId,
