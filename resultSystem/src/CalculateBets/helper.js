@@ -156,6 +156,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
       let expPositive = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet.betId,roundId:bet.marketId });
+      console.log("-------------------------------------parents.............",expPositive);
       if(expPositive){
         await expPositive.updateOne(
           {
@@ -285,6 +286,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
               let expPositive = await expPositive.findOne({ userId:user.userId,betId:bet.betId,roundId:bet.marketId });
+              console.log("-------------------------------------parents.............",expPositive);
       if(expPositive){
         await expPositive.updateOne(
           {
