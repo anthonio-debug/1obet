@@ -67,20 +67,46 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   var winnerRunner = '';
   runnerPosition?.forEach(winner => {
 
+
+
+
+
+
+
     if(winner.amount){
-      console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
+      
       if (winner.runner == selectionId) {
           selectedRunnerAmount=winner.amount
           winnerRunner = winner.runner
       }
     }else{
-      console.log("Winner position for ",winner.runner,"----------------------------------------->",winner.position);
+     
         if (winner.runner == selectionId) {
             selectedRunnerAmount=winner.position
             winnerRunner = winner.runner
         }
     }
         
+
+
+
+    if(bet.isFancyOrBookMaker==true && fancyData != null){
+
+      console.log("Winner  11  position for ",winner.runner,"----------------------------------------->",winner.position);
+      if (winner.runner == selectionId) {
+        selectedRunnerAmount=winner.position
+        winnerRunner = winner.runner
+    }else{
+      console.log("Winner 22 amount for ",winner.runner,"----------------------------------------->",winner.amount);
+      if (winner.runner == selectionId) {
+        selectedRunnerAmount=winner.amount
+        winnerRunner = winner.runner
+    }
+    }
+    }
+
+
+
     });
 
     console.log("NaN issue with betexposureAmount: ",betexposureAmount);
