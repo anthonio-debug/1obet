@@ -38,7 +38,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
     return;
   }
   console.log("userToUpdate----------------------------------------",userToUpdate.availableBalance);
-  console.log("userToUpdate----------------------------------------",userToUpdate);
+  console.log("bet----------------------------------------",bet);
   const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _id: -1 });
     let lastWithdrawalRow_AvailableBalance = lastMaxWithdraw.availableBalance;
     let lastWithdrawalRow_balance = lastMaxWithdraw.balance;
