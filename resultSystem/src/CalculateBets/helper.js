@@ -63,11 +63,21 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
   var amount = 0
   var winnerRunner = '';
   runnerPosition?.forEach(winner => {
-        console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
+
+    if(winner.amount){
+      console.log("Winner amount for ",winner.runner,"----------------------------------------->",winner.amount);
+      if (winner.runner == selectionId) {
+          selectedRunnerAmount=winner.amount
+          winnerRunner = winner.runner
+      }
+    }else{
+      console.log("Winner position for ",winner.runner,"----------------------------------------->",winner.position);
         if (winner.runner == selectionId) {
-            selectedRunnerAmount=winner.amount
+            selectedRunnerAmount=winner.position
             winnerRunner = winner.runner
         }
+    }
+        
     });
 
     AmountAddedBacktoUserAB = betexposureAmount + selectedRunnerAmount  // 400 + ( -45 ) = 355, in case of winning we will set it zero
