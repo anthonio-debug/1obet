@@ -4040,12 +4040,12 @@ async function deleteOdds(req, res) {
     //await expPositive.deleteMany({});
     
     const thirtyDaysAgo = new Date();
-thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 1);
+thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
  //await CasinoCalls.deleteMany({  });
  //await CasinoCallsPayload.deleteMany({  });
 //const count = await Bets.countDocuments({ betDateTime: { $lt: thirtyDaysAgo } });
-const count = await Bets.countDocuments({ betTime: { $lt: thirtyDaysAgo } });
+const count = await Bets.deleteMany({ betTime: { $lt: thirtyDaysAgo } });
 const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyDaysAgo } });
 
 // console.log(`Count of records older than 30 days: ${count}`);
