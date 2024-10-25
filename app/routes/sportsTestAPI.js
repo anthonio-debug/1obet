@@ -7594,7 +7594,225 @@ async function getUserParents(req, res) {
 }
 
 
+async function getOddsFromProvider2(req, res ) {
+  const marketId = req.params.marketId;
+  let tempArray = [];
+  let tempArrayForIDs = [];
+  
+  for (let index = 0; index < marketIdsArray.length; index++) {
+    const el = marketIdsArray[index];
+    tempArray.push({
+      market: el.marketId,
+      eventId: el.eventId,
+      indexID: el.index,
+    });
+    tempArrayForIDs.push(`${el.marketId}`);
+  }
 
+  const requestData = {
+    marketIds: tempArrayForIDs,
+  };
+  const url =`http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
+  // const url = `${config.newThirdURL}/listMarketBook`;
+  axios.post(url, requestData, header).then(
+    async (response) => {
+      if (!response?.data || !Array.isArray(response.data)) return;
+
+      const oddsData = response.data;
+      let checkedMarkets = [];
+
+      if (oddsData.length > 0) {
+        let counter = 0;
+        try {
+          for (let index = 0; index < oddsData.length; index++) {
+            counter = counter + 1;
+            const element = oddsData[index];
+
+            if (typeof element.runners !== undefined) {
+              if (
+                element.runners[0]?.ex.availableToLay.length > 0 ||
+                element.runners[0]?.ex.availableToBack.length > 0 ||
+                element.runners[1]?.ex.availableToLay.length > 0 ||
+                element.runners[1]?.ex.availableToBack.length > 0 ||
+                element.runners[2]?.ex.availableToLay.length > 0 ||
+                element.runners[2]?.ex.availableToBack.length > 0
+              ) {
+                checkedMarkets.push(element.marketId);
+
+                const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
+                  .sort({ lastCheckMarket: 1 })
+                  .limit(1)
+                  .exec();
+                const eventId = marketData.eventId;
+                const marketId = element.marketId;
+
+                const activeRunners = element.runners.filter(
+                  (runner) => runner.status === 'ACTIVE'
+                );
+
+                const numberOfActiveRunners = activeRunners.length;
+
+                let isMarketDataDelayed = false;
+
+                if (config.activeProvider == 'old') {
+                  isMarketDataDelayed = element.isMarketDataDelayed;
+                }
+
+                let tempRunners = [];
+                for (let n = 0; n < element.runners?.length; n++) {
+                  let totalMatched = element.totalMatched;
+
+                  const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
+
+                  let tempElement = {
+                    SelectionId: element.runners[n]?.selectionId,
+                    runnerName: marketData?.runners[n]?.runnerName,
+                    Status: element.runners[n]?.status,
+                    LastPriceTraded: element.runners[n]?.lastPriceTraded,
+                    TotalMatched: totalMatchedStr,
+                    ExchangePrices: {
+                      AvailableToBack: [
+                        {
+                          price: element.runners[n]?.ex.availableToBack[0]?.price,
+                          size: element.runners[n]?.ex.availableToBack[0]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToBack[1]?.price,
+                          size: element.runners[n]?.ex.availableToBack[1]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToBack[2]?.price,
+                          size: element.runners[n]?.ex.availableToBack[2]?.size,
+                        },
+                      ],
+                      AvailableToLay: [
+                        {
+                          price: element.runners[n]?.ex.availableToLay[0]?.price,
+                          size: element.runners[n]?.ex.availableToLay[0]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToLay[1]?.price,
+                          size: element.runners[n]?.ex.availableToLay[1]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToLay[2]?.price,
+                          size: element.runners[n]?.ex.availableToLay[2]?.size,
+                        },
+                      ],
+                    },
+                  };
+
+                  tempRunners.push(tempElement);
+                }
+
+                let totalMatched = element.totalMatched;
+                const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
+
+                let frontData = {
+                  sportsId: marketData.sportID,
+                  runners: tempRunners,
+                  marketId: marketId,
+                  isMarketDataDelayed: isMarketDataDelayed,
+                  status: element.status,
+                  eventId: eventId,
+                  isInplay: element.inplay,
+                  numberOfRunners: element.runners.length,
+                  numberOfActiveRunners: numberOfActiveRunners,
+                  totalMatched: totalMatchedStr,
+                };
+
+                if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
+                  OddsMap.set(marketId, frontData);
+                  let json1 = {
+                    sportsId: marketData.sportID,
+                    runners: tempRunners,
+                    marketId: marketId,
+                    isMarketDataDelayed: isMarketDataDelayed,
+                    status: element.status,
+                    eventId: eventId,
+                    isInplay: element.inplay,
+                    numberOfRunners: element.runners.length,
+                    numberOfActiveRunners: numberOfActiveRunners,
+                    totalMatched: totalMatchedStr,
+                    createdAt: new Date().getTime(),
+                  };
+
+                  if (element.status === 'CLOSED') {
+                    await MarketIDS.updateOne(
+                      { marketId: marketId },
+                      { inPlay: false, status: element.status }
+                    );
+                  } else {
+                    await MarketIDS.updateOne({ marketId: marketId }, { status: element.status });
+                  }
+
+                  if (runnerCheckerArray.indexOf(marketId) === -1) {
+                    let runners = [];
+
+                    for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
+                      const runner = element.runners[ix1];
+                      runners.push({
+                        SelectionId: runner.selectionId,
+                        runnerName: runner.runnerName,
+                      });
+                    }
+
+                    if (runners.length > 0) {
+                      await MarketIDS.updateOne(
+                        { marketId: marketId, runners: null },
+                        { $set: { runners: runners } }
+                      );
+                      runnerCheckerArray.push(marketId);
+                    }
+                  }
+
+                  let el = new Odds(json1);
+                  await el.save();
+
+                  // const ix = _.findIndex(tempArray, function (o) {
+                  //   return o.market == marketId;
+                  // });
+
+                  // if (ix !== -1 && tempArray[ix].indexID === 0) {
+                  //   io.to('homepage').emit('odds', {
+                  //     marketId: marketId,
+                  //     data: el,
+                  //     eventId: element.eventId,
+                  //     status: 'NewOddsHomepage',
+                  //   });
+                  // }
+                  // io.to('#' + eventId).emit('odds', {
+                  //   marketId: marketId,
+                  //   data: el,
+                  //   eventId: eventId,
+                  //   status: 'NewOdds',
+                  // });
+                }
+              }
+            }
+          }
+
+          const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
+
+          for (let index = 0; index < filteredArray.length; index++) {
+            OddsMap.delete(filteredArray[index]?.market);
+            await MarketIDS.updateOne(
+              { marketId: filteredArray[index]?.market },
+              { inPlay: false, status: 'CLOSED-ODDS-EMPTY' }
+            );
+          }
+        } catch (error) {
+          console.error('getOddsFromProvider----->', error);
+        }
+      }
+    },
+    (error) => {
+      console.error('getOddsFromProvider-->', error);
+    }
+  );
+}
+
+router.get('/track-bet/getOddsFromProvider2/marketId', getOddsFromProvider2)
 // //////////////////
 router.get('/track-bet/groups/:username',groupByroundId)
 router.get('/track-bet/lithylAPI/getSeriesList/:sportsId', getSeriesList)

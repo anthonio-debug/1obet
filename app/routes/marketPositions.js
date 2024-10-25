@@ -12,105 +12,120 @@ const getMarketPositions = async (req, res) => {
 
   const { userId, betId } = req.body;
 
-  if (!betId){
-    return res.status(404).json({ success: false, message: "BetId is not found." });
-  }
-  const currentUser = await User.findOne({ userId }, { userId: 1, createdBy: 1 });
-  if (!currentUser) {
-    return res.status(404).json({ success: false, message: "Current user not found." });
+  if (!betId) {
+    return res.status(404).json({ success: false, message: "BetId not found." });
   }
 
-  const parentUserPromise = User.findOne({ userId: currentUser.createdBy }, { userId: 1 });
-  const childUserIdsPromise = User.distinct("userId", { createdBy: userId });
+  try {
+    const currentUser = await User.findOne({ userId });
+    if (!currentUser) {
+      console.error(`Current user not found for userId: ${userId}`);
+      return res.status(404).json({ success: false, message: "Current user not found." });
+    }
 
-  const [parentUser, childUserIds] = await Promise.all([parentUserPromise, childUserIdsPromise]);
+    let parentUserResponse = [];
+    const parentUser = await User.findOne({ userId: currentUser.createdBy });
 
-  if (childUserIds.length === 0) {
-    return res.status(400).send({ message: "Trader has no child" });
+    const childUserIds = await User.distinct("userId", { createdBy: userId });
+    const betNComission = ["Bet", "Commission", "loosing", "Settlement"];
+
+    const currentUserResponse = await Deposits.aggregate([
+      {
+        $match: {
+          userId: currentUser.userId,
+          cashOrCredit: { $in: betNComission },
+          betId: betId,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "userId",
+          as: "userInfo",
+        },
+      },
+      { $unwind: "$userInfo" },
+      {
+        $group: {
+          _id: "$userId",
+          name: { $first: "$userInfo.userName" },
+          role: { $first: "$userInfo.role" },
+          amount: { $sum: "$amount" },
+        },
+      },
+    ]);
+
+    if (parentUser) {
+      parentUserResponse = await Deposits.aggregate([
+        {
+          $match: {
+            userId: parentUser.userId,
+            cashOrCredit: { $in: betNComission },
+            betId: betId,
+          },
+        },
+        {
+          $lookup: {
+            from: "users",
+            localField: "userId",
+            foreignField: "userId",
+            as: "userInfo",
+          },
+        },
+        { $unwind: "$userInfo" },
+        {
+          $group: {
+            _id: "$userId",
+            name: { $first: "$userInfo.userName" },
+            amount: { $sum: "$upLineAmount" },
+            role: { $first: "$userInfo.role" },
+          },
+        },
+      ]);
+    }
+
+
+    const childResponse = await Deposits.aggregate([
+      {
+        $match: {
+          userId: { $in: childUserIds },
+          cashOrCredit: { $in: betNComission },
+          betId: betId,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "userId",
+          as: "userInfo",
+        },
+      },
+      { $unwind: "$userInfo" },
+      {
+        $group: {
+          _id: "$userId",
+          name: { $first: "$userInfo.userName" },
+          amount: { $sum: "$amount" },
+          role: { $first: "$userInfo.role" },
+        },
+      },
+    ]);
+
+    const childAmount = parentUserResponse[0].amount + currentUserResponse[0].amount
+    childResponse[0].amount = - childAmount
+    const response = [...childResponse, ...currentUserResponse, ...parentUserResponse];
+
+    return res.status(200).json({
+      success: true,
+      message: "Market Positions Reports!",
+      results: response,
+    });
+  } catch (error) {
+    console.error("Error fetching market positions:", error);
+    return res.status(500).json({ success: false, message: "An error occurred while fetching market positions" });
   }
-
-  const betNComission = ["Bet", "loosing", "Settlement"];
-
-  const traderResponsePromise = Deposits.aggregate([
-    {
-      $match: {
-        betId,
-        cashOrCredit: { $in: betNComission },
-        userId: { $in: childUserIds },
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "userId",
-        foreignField: "userId",
-        as: "userInfo",
-        pipeline: [
-          { $project: { userId: 1, userName: 1, role: 1 } }
-        ],
-      },
-    },
-    { $unwind: "$userInfo" },
-    {
-      $group: {
-        _id: "$userId",
-        name: { $first: "$userInfo.userName" },
-        role: { $first: "$userInfo.role" },
-        amount: { $sum: "$amount" },
-      },
-    },
-    { $sort: { role: -1 } },
-  ]);
-
-  const dealersIds = parentUser ? [currentUser.userId, parentUser.userId] : [currentUser.userId];
-  const dealerResponsePromise = Deposits.aggregate([
-    {
-      $match: {
-        betId,
-        cashOrCredit: { $in: betNComission },
-        userId: { $in: dealersIds },
-      },
-    },
-    {
-      $lookup: {
-        from: "users",
-        localField: "userId",
-        foreignField: "userId",
-        as: "userInfo",
-        pipeline: [
-          { $project: { userId: 1, userName: 1, role: 1 } }
-        ],
-      },
-    },
-    { $unwind: "$userInfo" },
-    {
-      $group: {
-        _id: "$userId",
-        name: { $first: "$userInfo.userName" },
-        role: { $first: "$userInfo.role" },
-        amount: { $sum: "$upLineAmount" },
-      },
-    },
-    { $sort: { role: -1 } },
-  ]);
-
-  const [traderResponse, dealerResponse] = await Promise.all([traderResponsePromise, dealerResponsePromise]);
-
-  const childAmount = dealerResponse.length === 2
-    ? dealerResponse[0]?.amount + dealerResponse[1]?.amount
-    : dealerResponse[0]?.amount;
-
-  if (traderResponse.length > 0) {
-    traderResponse[0].amount = -childAmount;
-  }
-
-  const response = [...traderResponse, ...dealerResponse];
-
-  return res.status(200).json({
-    success: true,
-    message: "Market Positions Reports!",
-    results: response,
-  });
 };
 
 loginRouter.post("/marketPositions", getMarketPositions);
