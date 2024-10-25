@@ -561,18 +561,29 @@ function scoreChecker() {
         );
 
         if (result.result == -1) {
+          console.log("result.winnerSelectionId-====================================================............",result.winnerSelectionId);
           for (const bet of bets) {
+
+            if(bet.userId==22977){
+              console.log("here I reced for fancies............................................................................",bet);
+            
+              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+            }else {
+
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel === true) continue;
             await handleDrawBet(bet);
+            }
           }
         } else {
           for (const bet of bets) {
             if(bet.userId==22977){
               console.log("here I reced for fancies............................................................................",bet);
-            }
+            
+              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
+            }else {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
               continue;
             }
@@ -589,6 +600,7 @@ function scoreChecker() {
             } else {
               await handleDrawBet(bet);
             }
+          }
           }
         }
       }
