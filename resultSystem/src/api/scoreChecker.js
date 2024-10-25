@@ -470,15 +470,15 @@ function scoreChecker() {
         // const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
         // const dbFancyOdds = DBOddDetails?.data?.data?.t3.filter(item => item.sid === betData.runner);
         // const selectedMarketId = dbFancyOdds[0]?.ssid
-        const selectedMarketId = `${betData.eventId}_${betData.runner}`;
-        if (!selectedMarketId) return;
-        let fancyOdds = await getSessionFancyResult([selectedMarketId]);
-        fancyOdds = fancyOdds.filter((item) => item.id === selectedMarketId);
-        // let url = `https://${API_DOMAIN}:3443/api/fancy_result_multi/${event.Id}/${fancyName}`;
-        // const response = await axios.get(url);
-        // results = response.data;
-        let result = fancyOdds[0]?.result;
-        results = [{ manuelClose: false, result: result }];
+        
+        // const selectedMarketId = `${betData.eventId}_${betData.runner}`;
+        // if (!selectedMarketId) return;
+        // let fancyOdds = await getSessionFancyResult([selectedMarketId]);
+        // fancyOdds = fancyOdds.filter((item) => item.id === selectedMarketId);
+       
+        // let result = fancyOdds[0]?.result;
+        // results = [{ manuelClose: false, result: result }];
+        
       }
 
       if (results.length > 0) {
