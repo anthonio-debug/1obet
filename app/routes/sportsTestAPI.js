@@ -4037,11 +4037,10 @@ async function deleteOdds(req, res) {
     // }
     //await Deposits.deleteMany({userId:22580});
     //await Bets.updateMany({ userId:22580 }, { $set: { status:1 } });
-    await expPositive.deleteMany({});
-    
+    //await expPositive.deleteMany({});
     
     const thirtyDaysAgo = new Date();
-thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 1);
  //await Cash.deleteMany({ betDateTime: { $lt: thirtyDaysAgo } });
  //await CasinoCalls.deleteMany({  });
  //await CasinoCallsPayload.deleteMany({  });
