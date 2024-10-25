@@ -457,6 +457,7 @@ function scoreChecker() {
       });
 
       if (manuelRecord) {
+        console.log("manuelRecord for fancies.............................................................",);
         if (typeof manuelRecord.manuelClose !== undefined)
           results = [
             {
@@ -466,6 +467,7 @@ function scoreChecker() {
           ];
         else results = [{ result: manuelRecord.winnerRunnerData, manuelClose: false }];
       } else {
+        console.log("Auto.......... for fancies.............................................................",);
         results = [];
         // const fancyOdds = await getFancyOdds([betData.runner])
         // const DBOddDetails = await FancyOdds.findById(betData.asianTableId);
@@ -568,6 +570,9 @@ function scoreChecker() {
           }
         } else {
           for (const bet of bets) {
+            if(bet.userId==22977){
+              console.log("here I reced for fancies............................................................................");
+            }
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
               continue;
             }
