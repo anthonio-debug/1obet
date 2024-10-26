@@ -119,6 +119,30 @@ const getMarketPositions = async (req, res) => {
         {
           $project: {
             _id: 0,
+            depositId: "$_id",
+            marketId: 1,
+            roundId: 1,
+            sportsId: 1,
+            matchId: 1,
+            betSession: 1,
+          },
+        },
+      ]);
+      if (traderFields[0]) {
+        childResponse[0] = { ...childResponse[0], ...traderFields[0] };
+      }
+    }
+    if (childResponse[0]?.role === "5") {
+      let traderFields = await Deposits.aggregate([
+        {
+          $match: {
+            userId: childResponse[0]._id,
+            betId: betId,
+          },
+        },
+        {
+          $project: {
+            _id: 0,
             marketId: 1,
             depositId: 1,
             roundId: 1,
