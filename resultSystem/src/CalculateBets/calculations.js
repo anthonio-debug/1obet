@@ -216,7 +216,7 @@ async function handleLosingBet(bet) {
               const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
               const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount).toFixed(3)) : 0;
               const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(3));
-
+              
               await User.updateOne(
                 {
                   _id: user?._id
