@@ -1032,6 +1032,7 @@ function getLedgerDetails2(req, res) {
 
 // }
 
+
 function getdeopsitDetailsCash(req, res) {
   try {
     const errors = validationResult(req);
@@ -1060,11 +1061,11 @@ function getdeopsitDetailsCash(req, res) {
       let cashPipeline = [{
         $match: {
           userId: Number(req.decoded.userId),
-          cashOrCredit: "Cash",
-          $and: [
-            { createdAt: { $gte: req.body.startDate } },
-            { createdAt: { $lte: req.body.endDate } }
-          ]
+          cashOrCredit: { $in: ["Cash", "settledAmount"] },
+          createdAt: {
+            $gte: new Date(req.body.startDate),
+            $lte: new Date(req.body.endDate)
+          }
         }
       }];
 
@@ -1103,12 +1104,13 @@ function getdeopsitDetailsCash(req, res) {
 
       cashPipeline.push({
         $group: {
-          _id: "$_id",  // Use the original ID directly
+          _id: "$_id",
           originalId: { $first: "$_id" },
           description: { $first: "$description" },
           amount: { $sum: "$amount" },
           balance: { $last: "$balance" },
           availableBalance: { $last: "$availableBalance" },
+          cash: { $last: "$cash" },
           maxWithdraw: { $last: "$maxWithdraw" },
           betTime: { $first: "$betDateTime" },
           cashOrCredit: { $first: "$cashOrCredit" },
@@ -1120,7 +1122,6 @@ function getdeopsitDetailsCash(req, res) {
           betId: { $first: "$betId" },
           userId: { $first: "$userId" },
           matchId: { $first: "$matchId" },
-          // Add other fields as necessary
         },
       });
 
@@ -1148,7 +1149,7 @@ function getdeopsitDetailsCash(req, res) {
                 result[0].results[i].fancyData = betInfo?.fancyData;
                 result[0].results[i].isfancyOrbookmaker = betInfo?.isfancyOrbookmaker;
                 result[0].results[i].roundId = betInfo?.roundId;
-                result[0].results[i].subMarketId = betInfo?.subMarketId;
+
               } catch (err) {
                 continue;
               }
@@ -1272,6 +1273,8 @@ function getdepositDetailsCredit(req, res) {
           description: { $first: "$description" },
           amount: { $sum: "$amount" },
           balance: { $last: "$balance" },
+          credit: { $last: "$credit" },
+          creditRemaining: { $last: "$creditRemaining" },
           availableBalance: { $last: "$availableBalance" },
           maxWithdraw: { $last: "$maxWithdraw" },
           betTime: { $first: "$betDateTime" },
