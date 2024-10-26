@@ -25,15 +25,12 @@ const getMarketPositions = async (req, res) => {
 
     let parentUserResponse = [];
     const parentUser = await User.findOne({ userId: currentUser.createdBy });
-
     const childUserIds = await User.distinct("userId", { createdBy: userId });
-    const betNComission = ["Bet", "Commission", "loosing", "Settlement"];
 
     const currentUserResponse = await Deposits.aggregate([
       {
         $match: {
           userId: currentUser.userId,
-          cashOrCredit: { $in: betNComission },
           betId: betId,
         },
       },
@@ -61,7 +58,6 @@ const getMarketPositions = async (req, res) => {
         {
           $match: {
             userId: parentUser.userId,
-            cashOrCredit: { $in: betNComission },
             betId: betId,
           },
         },
@@ -86,11 +82,10 @@ const getMarketPositions = async (req, res) => {
     }
 
 
-    const childResponse = await Deposits.aggregate([
+    let childResponse = await Deposits.aggregate([
       {
         $match: {
           userId: { $in: childUserIds },
-          cashOrCredit: { $in: betNComission },
           betId: betId,
         },
       },
@@ -113,8 +108,39 @@ const getMarketPositions = async (req, res) => {
       },
     ]);
 
-    const childAmount = parentUserResponse[0].amount + currentUserResponse[0].amount
+    if (childResponse[0]?.role === "5") {
+      let traderFields = await Deposits.aggregate([
+        {
+          $match: {
+            userId: childResponse[0]._id,
+            betId: betId,
+          },
+        },
+        {
+          $project: {
+            _id: 0,
+            marketId: 1,
+            depositId: 1,
+            roundId: 1,
+            sportsId: 1,
+            matchId: 1,
+            betSession: 1,
+          },
+        },
+      ]);
+
+      if (traderFields[0]) {
+        childResponse[0] = { ...childResponse[0], ...traderFields[0] };
+      }
+    }
+
+    console.log("childResponse before", childResponse)
+    console.log(childResponse)
+    console.log("parentUserResponse[0].amount", parentUserResponse[0]?.amount ? parentUserResponse[0]?.amount : 0)
+    const childAmount = (parentUserResponse[0]?.amount ? parentUserResponse[0]?.amount : 0) + currentUserResponse[0].amount
+    console.log("childResponse[0].amount Before:", childResponse[0].amount)
     childResponse[0].amount = - childAmount
+    console.log("childResponse[0].amount After:", childResponse[0].amount)
     const response = [...childResponse, ...currentUserResponse, ...parentUserResponse];
 
     return res.status(200).json({
