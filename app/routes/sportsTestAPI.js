@@ -7726,7 +7726,8 @@ async function getOddsFromProvider2(req, res ) {
                   let json1 = {
                     sportsId: marketData.sportID,
                     runners: tempRunners,
-                    marketId: marketId,
+                    // marketId: marketId,
+                    marketId: "2020",
                     isMarketDataDelayed: isMarketDataDelayed,
                     status: element.status,
                     eventId: eventId,
@@ -7736,7 +7737,8 @@ async function getOddsFromProvider2(req, res ) {
                     totalMatched: totalMatchedStr,
                     createdAt: new Date().getTime(),
                   };
-
+                  console.log("=============== ************** json1",json1 );
+                  
                   if (element.status === 'CLOSED') {
                     await MarketIDS.updateOne(
                       { marketId: marketId },
@@ -7767,7 +7769,16 @@ async function getOddsFromProvider2(req, res ) {
                   }
 
                   let el = new Odds(json1);
-                  await el.save();
+
+                  console.log("=============== **************elelelelelele el",el );
+                  await el.save().then(result => {
+                      console.log("RRRRRRRrrrr result", result);
+                  
+                    }).catch(err => {
+                      console.log("EEEEEEEEEEEr errror", err);
+                  
+                    })
+                    console.log("=-=-==-=-=-====-=- odds saved");
 
                   // const ix = _.findIndex(tempArray, function (o) {
                   //   return o.market == marketId;
@@ -7811,6 +7822,7 @@ async function getOddsFromProvider2(req, res ) {
     }
   );
 }
+
 
 router.get('/track-bet/getOddsFromProvider2/marketId', getOddsFromProvider2)
 // //////////////////
