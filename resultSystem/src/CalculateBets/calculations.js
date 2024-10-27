@@ -681,7 +681,7 @@ async function handleWinningBet(bet, winner) {
       
       
           await session.commitTransaction();
-          await session.abortTransaction();
+          //await session.abortTransaction();
           session.endSession();
         }
       
