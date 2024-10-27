@@ -7621,9 +7621,10 @@ return totalMatchedStr;
 ////////////////////////////////////////////------------------
 const OddsMap = new Map();
 let runnerCheckerArray = []
+
 async function getOddsFromProvider2(req, res) {
   const marketId = req.params.marketId;
-  const marketIdsArray=[ marketId]
+  const marketIdsArray = [marketId]
   let tempArray = [];
   let tempArrayForIDs = [];
 
@@ -7637,225 +7638,126 @@ async function getOddsFromProvider2(req, res) {
     tempArrayForIDs.push(`${el.marketId}`);
   }
 
-  const requestData = {
-    marketIds: tempArrayForIDs,
+  const header = {
+    headers: {
+      accept: "application/json",
+      "Content-Type": "application/json",
+      "X-App": process.env.XAPP_NAME,
+      "Cache-Control": "no-cache"
+    },
   };
-  const url =`http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
+
+  // const requestData = {
+  //   marketIds: tempArrayForIDs,
+  // };
+for(let marketId of tempArrayForIDs){
+
+  const url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
   // const url = `${config.newThirdURL}/listMarketBook`;
-  axios.post(url, requestData, header).then(
-  /////////////////////////// static response start
+ 
+  axios.get(url, header).then(
+    // const getOddsAndSave =
+    async (response) => {
+      console.log("************** api respon ", response);
 
-  // response = {
-  //   "success": true,
-  //   "data": [
-  //     {
-  //       "marketId": "1.235040557",
-  //       "updateTime": "2024-10-26T15:51:18.5378078+02:00",
-  //       "status": "OPEN",
-  //       "inplay": false,
-  //       "totalMatched": 56.62,
-  //       "runners": [
-  //         {
-  //           "selectionId": 9627959,
-  //           "handicap": 0,
-  //           "status": "ACTIVE",
-  //           "lastPriceTraded": 1.43,
-  //           "totalMatched": 56.62,
-  //           "adjustmentFactor": 0,
-  //           "ex": {
-  //             "availableToBack": [
-  //               {
-  //                 "price": 1.46,
-  //                 "size": 5.5
-  //               },
-  //               {
-  //                 "price": 1.3,
-  //                 "size": 2
-  //               },
-  //               {
-  //                 "price": 1.15,
-  //                 "size": 41.69
-  //               }
-  //             ],
-  //             "availableToLay": [
-  //               {
-  //                 "price": 1.47,
-  //                 "size": 20
-  //               },
-  //               {
-  //                 "price": 1.48,
-  //                 "size": 17.5
-  //               },
-  //               {
-  //                 "price": 1.53,
-  //                 "size": 3.79
-  //               }
-  //             ]
-  //           }
-  //         },
-  //         {
-  //           "selectionId": 9632330,
-  //           "handicap": 0,
-  //           "status": "ACTIVE",
-  //           "lastPriceTraded": 0,
-  //           "totalMatched": 0,
-  //           "adjustmentFactor": 0,
-  //           "ex": {
-  //             "availableToBack": [
-  //               {
-  //                 "price": 3.1,
-  //                 "size": 9.48
-  //               },
-  //               {
-  //                 "price": 3.05,
-  //                 "size": 8.49
-  //               },
-  //               {
-  //                 "price": 2.9,
-  //                 "size": 2
-  //               }
-  //             ],
-  //             "availableToLay": [
-  //               {
-  //                 "price": 3.15,
-  //                 "size": 2.55
-  //               },
-  //               {
-  //                 "price": 7.8,
-  //                 "size": 6.74
-  //               },
-  //               {
-  //                 "price": 9.4,
-  //                 "size": 12.42
-  //               }
-  //             ]
-  //           }
-  //         }
-  //       ]
-  //     }
-  //   ]
-  // }
+      if (!response?.data || !Array.isArray(response.data)) return;
 
+      const oddsData = response.data;
+      let checkedMarkets = [];
 
-  ////////////////////////////////// static response end
-  // const getOddsAndSave =
-  async (response) => {
+      if (oddsData.length > 0) {
+        let counter = 0;
+        try {
+          for (let index = 0; index < oddsData.length; index++) {
+            counter = counter + 1;
+            const element = oddsData[index];
 
-    if (!response?.data || !Array.isArray(response.data)) return;
+            if (typeof element.runners !== undefined) {
+              if (
+                element.runners[0]?.ex.availableToLay.length > 0 ||
+                element.runners[0]?.ex.availableToBack.length > 0 ||
+                element.runners[1]?.ex.availableToLay.length > 0 ||
+                element.runners[1]?.ex.availableToBack.length > 0 ||
+                element.runners[2]?.ex.availableToLay.length > 0 ||
+                element.runners[2]?.ex.availableToBack.length > 0
+              ) {
+                checkedMarkets.push(element.marketId);
 
-    const oddsData = response.data;
-    let checkedMarkets = [];
+                const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
+                  .sort({ lastCheckMarket: 1 })
+                  .limit(1)
+                  .exec();
+                const eventId = 123445;
+                // const eventId = marketData.eventId;
+                const marketId = element.marketId;
 
-    if (oddsData.length > 0) {
-      let counter = 0;
-      try {
-        for (let index = 0; index < oddsData.length; index++) {
-          counter = counter + 1;
-          const element = oddsData[index];
+                const activeRunners = element.runners.filter(
+                  (runner) => runner.status === 'ACTIVE'
+                );
 
-          if (typeof element.runners !== undefined) {
-            if (
-              element.runners[0]?.ex.availableToLay.length > 0 ||
-              element.runners[0]?.ex.availableToBack.length > 0 ||
-              element.runners[1]?.ex.availableToLay.length > 0 ||
-              element.runners[1]?.ex.availableToBack.length > 0 ||
-              element.runners[2]?.ex.availableToLay.length > 0 ||
-              element.runners[2]?.ex.availableToBack.length > 0
-            ) {
-              checkedMarkets.push(element.marketId);
+                const numberOfActiveRunners = activeRunners.length;
 
-              const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
-                .sort({ lastCheckMarket: 1 })
-                .limit(1)
-                .exec();
-              const eventId = 123445;
-              // const eventId = marketData.eventId;
-              const marketId = element.marketId;
+                let isMarketDataDelayed = false;
 
-              const activeRunners = element.runners.filter(
-                (runner) => runner.status === 'ACTIVE'
-              );
+                if (config.activeProvider == 'old') {
+                  isMarketDataDelayed = element.isMarketDataDelayed;
+                }
 
-              const numberOfActiveRunners = activeRunners.length;
+                let tempRunners = [];
+                for (let n = 0; n < element.runners?.length; n++) {
+                  let totalMatched = element.totalMatched;
 
-              let isMarketDataDelayed = false;
+                  const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
 
-              if (config.activeProvider == 'old') {
-                isMarketDataDelayed = element.isMarketDataDelayed;
-              }
+                  let tempElement = {
+                    SelectionId: element.runners[n]?.selectionId,
+                    runnerName: marketData?.runners[n]?.runnerName,
+                    Status: element.runners[n]?.status,
+                    LastPriceTraded: element.runners[n]?.lastPriceTraded,
+                    TotalMatched: totalMatchedStr,
+                    ExchangePrices: {
+                      AvailableToBack: [
+                        {
+                          price: element.runners[n]?.ex.availableToBack[0]?.price,
+                          size: element.runners[n]?.ex.availableToBack[0]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToBack[1]?.price,
+                          size: element.runners[n]?.ex.availableToBack[1]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToBack[2]?.price,
+                          size: element.runners[n]?.ex.availableToBack[2]?.size,
+                        },
+                      ],
+                      AvailableToLay: [
+                        {
+                          price: element.runners[n]?.ex.availableToLay[0]?.price,
+                          size: element.runners[n]?.ex.availableToLay[0]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToLay[1]?.price,
+                          size: element.runners[n]?.ex.availableToLay[1]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToLay[2]?.price,
+                          size: element.runners[n]?.ex.availableToLay[2]?.size,
+                        },
+                      ],
+                    },
+                  };
 
-              let tempRunners = [];
-              for (let n = 0; n < element.runners?.length; n++) {
+                  tempRunners.push(tempElement);
+                }
+
                 let totalMatched = element.totalMatched;
+                const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
 
-                const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
-
-                let tempElement = {
-                  SelectionId: element.runners[n]?.selectionId,
-                  runnerName: marketData?.runners[n]?.runnerName,
-                  Status: element.runners[n]?.status,
-                  LastPriceTraded: element.runners[n]?.lastPriceTraded,
-                  TotalMatched: totalMatchedStr,
-                  ExchangePrices: {
-                    AvailableToBack: [
-                      {
-                        price: element.runners[n]?.ex.availableToBack[0]?.price,
-                        size: element.runners[n]?.ex.availableToBack[0]?.size,
-                      },
-                      {
-                        price: element.runners[n]?.ex.availableToBack[1]?.price,
-                        size: element.runners[n]?.ex.availableToBack[1]?.size,
-                      },
-                      {
-                        price: element.runners[n]?.ex.availableToBack[2]?.price,
-                        size: element.runners[n]?.ex.availableToBack[2]?.size,
-                      },
-                    ],
-                    AvailableToLay: [
-                      {
-                        price: element.runners[n]?.ex.availableToLay[0]?.price,
-                        size: element.runners[n]?.ex.availableToLay[0]?.size,
-                      },
-                      {
-                        price: element.runners[n]?.ex.availableToLay[1]?.price,
-                        size: element.runners[n]?.ex.availableToLay[1]?.size,
-                      },
-                      {
-                        price: element.runners[n]?.ex.availableToLay[2]?.price,
-                        size: element.runners[n]?.ex.availableToLay[2]?.size,
-                      },
-                    ],
-                  },
-                };
-
-                tempRunners.push(tempElement);
-              }
-
-              let totalMatched = element.totalMatched;
-              const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
-
-              let frontData = {
-                sportsId: "5",
-                // sportsId: marketData.sportID,
-                runners: tempRunners,
-                marketId: marketId,
-                isMarketDataDelayed: isMarketDataDelayed,
-                status: element.status,
-                eventId: eventId,
-                isInplay: element.inplay,
-                numberOfRunners: element.runners.length,
-                numberOfActiveRunners: numberOfActiveRunners,
-                totalMatched: totalMatchedStr,
-              };
-
-              if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
-                OddsMap.set(marketId, frontData);
-                let json1 = {
+                let frontData = {
                   sportsId: "5",
                   // sportsId: marketData.sportID,
                   runners: tempRunners,
-                  // marketId: marketId,
-                  marketId: "2020",
+                  marketId: marketId,
                   isMarketDataDelayed: isMarketDataDelayed,
                   status: element.status,
                   eventId: eventId,
@@ -7863,94 +7765,116 @@ async function getOddsFromProvider2(req, res) {
                   numberOfRunners: element.runners.length,
                   numberOfActiveRunners: numberOfActiveRunners,
                   totalMatched: totalMatchedStr,
-                  createdAt: new Date().getTime(),
                 };
-                console.log("=============== ************** json1", json1);
 
-                if (element.status === 'CLOSED') {
-                  await MarketIDS.updateOne(
-                    { marketId: marketId },
-                    { inPlay: false, status: element.status }
-                  );
-                } else {
-                  await MarketIDS.updateOne({ marketId: marketId }, { status: element.status });
-                }
+                if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
+                  OddsMap.set(marketId, frontData);
+                  let json1 = {
+                    sportsId: "5",
+                    // sportsId: marketData.sportID,
+                    runners: tempRunners,
+                    // marketId: marketId,
+                    marketId: "2020",
+                    isMarketDataDelayed: isMarketDataDelayed,
+                    status: element.status,
+                    eventId: eventId,
+                    isInplay: element.inplay,
+                    numberOfRunners: element.runners.length,
+                    numberOfActiveRunners: numberOfActiveRunners,
+                    totalMatched: totalMatchedStr,
+                    createdAt: new Date().getTime(),
+                  };
+                  console.log("=============== ************** json1", json1);
 
-                if (runnerCheckerArray.indexOf(marketId) === -1) {
-                  let runners = [];
-
-                  for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
-                    const runner = element.runners[ix1];
-                    runners.push({
-                      SelectionId: runner.selectionId,
-                      runnerName: runner.runnerName,
-                    });
-                  }
-
-                  if (runners.length > 0) {
+                  if (element.status === 'CLOSED') {
                     await MarketIDS.updateOne(
-                      { marketId: marketId, runners: null },
-                      { $set: { runners: runners } }
+                      { marketId: marketId },
+                      { inPlay: false, status: element.status }
                     );
-                    runnerCheckerArray.push(marketId);
+                  } else {
+                    await MarketIDS.updateOne({ marketId: marketId }, { status: element.status });
                   }
+
+                  if (runnerCheckerArray.indexOf(marketId) === -1) {
+                    let runners = [];
+
+                    for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
+                      const runner = element.runners[ix1];
+                      runners.push({
+                        SelectionId: runner.selectionId,
+                        runnerName: runner.runnerName,
+                      });
+                    }
+
+                    if (runners.length > 0) {
+                      await MarketIDS.updateOne(
+                        { marketId: marketId, runners: null },
+                        { $set: { runners: runners } }
+                      );
+                      runnerCheckerArray.push(marketId);
+                    }
+                  }
+
+                  let el = new Odds(json1);
+
+                  console.log("=============== **************elelelelelele el", el);
+                  await el.save().then(result => {
+                    console.log("RRRRRRRrrrr result", result);
+
+                  }).catch(err => {
+                    console.log("EEEEEEEEEEEr errror", err);
+
+                  })
+                  console.log("=-=-==-=-=-====-=- odds saved");
+
+                  // const ix = _.findIndex(tempArray, function (o) {
+                  //   return o.market == marketId;
+                  // });
+
+                  // if (ix !== -1 && tempArray[ix].indexID === 0) {
+                  //   io.to('homepage').emit('odds', {
+                  //     marketId: marketId,
+                  //     data: el,
+                  //     eventId: element.eventId,
+                  //     status: 'NewOddsHomepage',
+                  //   });
+                  // }
+                  // io.to('#' + eventId).emit('odds', {
+                  //   marketId: marketId,
+                  //   data: el,
+                  //   eventId: eventId,
+                  //   status: 'NewOdds',
+                  // });
                 }
-
-                let el = new Odds(json1);
-
-                console.log("=============== **************elelelelelele el", el);
-                await el.save().then(result => {
-                  console.log("RRRRRRRrrrr result", result);
-
-                }).catch(err => {
-                  console.log("EEEEEEEEEEEr errror", err);
-
-                })
-                console.log("=-=-==-=-=-====-=- odds saved");
-
-                // const ix = _.findIndex(tempArray, function (o) {
-                //   return o.market == marketId;
-                // });
-
-                // if (ix !== -1 && tempArray[ix].indexID === 0) {
-                //   io.to('homepage').emit('odds', {
-                //     marketId: marketId,
-                //     data: el,
-                //     eventId: element.eventId,
-                //     status: 'NewOddsHomepage',
-                //   });
-                // }
-                // io.to('#' + eventId).emit('odds', {
-                //   marketId: marketId,
-                //   data: el,
-                //   eventId: eventId,
-                //   status: 'NewOdds',
-                // });
               }
             }
           }
-        }
 
-        const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
+          const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
 
-        for (let index = 0; index < filteredArray.length; index++) {
-          OddsMap.delete(filteredArray[index]?.market);
-          await MarketIDS.updateOne(
-            { marketId: filteredArray[index]?.market },
-            { inPlay: false, status: 'CLOSED-ODDS-EMPTY' }
-          );
+          for (let index = 0; index < filteredArray.length; index++) {
+            OddsMap.delete(filteredArray[index]?.market);
+            await MarketIDS.updateOne(
+              { marketId: filteredArray[index]?.market },
+              { inPlay: false, status: 'CLOSED-ODDS-EMPTY' }
+            );
+          }
+        } catch (error) {
+          console.error('getOddsFromProvider----->', error);
         }
-      } catch (error) {
-        console.error('getOddsFromProvider----->', error);
       }
+    },
+    (error) => {
+      console.error('getOddsFromProvider-->', error);
     }
-  },
-  (error) => {
-    console.error('getOddsFromProvider-->', error);
-  }
-  // getOddsAndSave(response)
+    // getOddsAndSave(response)
 
   );
+
+
+}
+
+ 
 }
 
 
