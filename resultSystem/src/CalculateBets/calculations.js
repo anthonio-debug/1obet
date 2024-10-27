@@ -1569,6 +1569,6 @@ module.exports = {
   handleLosingBet,
   handleWinningBet,
   handleLosingBetX,
-  handleWinningBet,
-  handleDrawBet
+  handleWinningBetX,
+  handleDrawBetX
 };
