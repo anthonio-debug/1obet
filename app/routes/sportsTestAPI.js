@@ -7625,18 +7625,20 @@ let runnerCheckerArray = []
 async function getOddsFromProvider2(req, res) {
   const marketId = req.params.marketId;
   const marketIdsArray = [marketId]
+  console.log("---------------- marketIdsArray --------",marketIdsArray);
+  
   let tempArray = [];
   let tempArrayForIDs = [];
 
-  for (let index = 0; index < marketIdsArray.length; index++) {
-    const el = marketIdsArray[index];
-    tempArray.push({
-      market: el.marketId,
-      eventId: el.eventId,
-      indexID: el.index,
-    });
-    tempArrayForIDs.push(`${el.marketId}`);
-  }
+  // for (let index = 0; index < marketIdsArray.length; index++) {
+  //   const el = marketIdsArray[index];
+  //   tempArray.push({
+  //     market: el.marketId,
+  //     eventId: el.eventId,
+  //     indexID: el.index,
+  //   });
+  //   tempArrayForIDs.push(`${el.marketId}`);
+  // }
 
   const header = {
     headers: {
@@ -7650,7 +7652,7 @@ async function getOddsFromProvider2(req, res) {
   // const requestData = {
   //   marketIds: tempArrayForIDs,
   // };
-for(let marketId of tempArrayForIDs){
+for(let marketId of marketIdsArray){
 
   const url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
   // const url = `${config.newThirdURL}/listMarketBook`;
