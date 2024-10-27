@@ -580,35 +580,12 @@ function scoreChecker() {
         } else {
           for (const bet of bets) {
             if((bet.userId==22991 || bet.userId==22977)){
-              
-            if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
-              continue;
-            }
-            if (typeof result.manuelClose === 'undefined' && bet.isManuel === true) continue;
-
-            //check type
-            //for type 0
-            if (bet.type == 0) {
-              if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBet(bet, parseInt(result.result));
-              else await handleLosingBet(bet);
-            } else if (bet.type == 1) {
-              if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBet(bet, parseInt(result.result));
-              else await handleLosingBet(bet);
-            } else {
-              await handleDrawBet(bet);
-            }
-         
-
-
-
-
-
-              // console.log("here I reced for fancies result.........",result.result);
-              // if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
-              //   continue;
-              // }
-              // if (typeof result.manuelClose === 'undefined' && bet.isManuel === true) continue;
-              // let winningsCalculate = await getAmountOfWinnerTemp(bet,result.result);
+              console.log("here I reced for fancies result.........",result.result);
+              if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
+                continue;
+              }
+              if (typeof result.manuelClose === 'undefined' && bet.isManuel === true) continue;
+              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.result);
             }else {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
               continue;
