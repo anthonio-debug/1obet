@@ -809,6 +809,7 @@ const handleDrawBet = async (bet, status = 0) => {
   }
 };
 async function handleWinningBetX(bet, winner) {
+  cnosle.log("I am XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXWinner");
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
@@ -1182,6 +1183,7 @@ async function handleWinningBetX(bet, winner) {
   }
 }
 async function handleLosingBetX(bet) {
+  cnosle.log("I am XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXloser");
   const now = new Date();
   const year = now.getFullYear().toString();
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
