@@ -379,7 +379,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
                   createdBy: 0,
                   commissionFrom: commissionFrom,
-                  amount: (2/100)*( (user.commission / 100) * commissionAmount),
+                  amount: (2/100)*( (user.commission / 100) * totalRemainingAmount),
                   balance: lastMaxWithdraw ? lastMaxWithdraw.balance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                   availableBalance: lastMaxWithdraw ? lastMaxWithdraw.availableBalance + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
                   maxWithdraw: lastMaxWithdraw ? lastMaxWithdraw.maxWithdraw + (user.commission / 100) * commissionAmount : (user.commission / 100) * commissionAmount,
