@@ -7880,7 +7880,7 @@ for(let marketId of marketIdsArray){
 }
 
 
-router.get('/track-bet/getOddsFromProvider2/:marketId', getOddsFromProvider2)
+router.get('/track-bet/getOddsFromProvider2', getOddsFromProvider2)
 // //////////////////
 router.get('/track-bet/groups/:username',groupByroundId)
 router.get('/track-bet/lithylAPI/getSeriesList/:sportsId', getSeriesList)
