@@ -1567,5 +1567,8 @@ module.exports = {
   getAllBets,
   getEndedMatches,
   handleLosingBet,
-  handleWinningBet
+  handleWinningBet,
+  handleLosingBetX,
+  handleWinningBet,
+  handleDrawBet
 };
