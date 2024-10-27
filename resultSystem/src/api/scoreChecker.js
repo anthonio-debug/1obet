@@ -585,7 +585,20 @@ function scoreChecker() {
                 continue;
               }
               if (typeof result.manuelClose === 'undefined' && bet.isManuel === true) continue;
-              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.result);
+
+
+
+              if (bet.type == 0) {
+                if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
+                else await handleLosingBetX(bet);
+              } else if (bet.type == 1) {
+                if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBetX(bet, parseInt(result.result));
+                else await handleLosingBetX(bet);
+              } else {
+                await handleDrawBetX(bet);
+              }
+
+              //let winningsCalculate = await getAmountOfWinnerTemp(bet,result.result);
             }else {
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
               continue;
