@@ -952,7 +952,7 @@ async function handleWinningBetX(bet, winner) {
           );
           const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
 
-          /*
+          
 		  await Deposits.create({
             userId: userToUpdate.userId,
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -985,7 +985,7 @@ async function handleWinningBetX(bet, winner) {
             calculateExp:bet.calculateExp,
        
           });
-		  */
+		  
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
             userId: {
@@ -1030,7 +1030,7 @@ async function handleWinningBetX(bet, winner) {
 			  
 
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
-              /*
+              
 			  await Deposits.create({
                 userId: user.userId,
                 description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -1065,13 +1065,13 @@ async function handleWinningBetX(bet, winner) {
                 exposure: 'Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))',
     
               });
-			  */
+			  
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
 
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin > TotalLose) {
                 const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
-                /*
+                
 				await Deposits.create({
                   userId: user.userId,
                   description: `Commission From Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -1098,7 +1098,7 @@ async function handleWinningBetX(bet, winner) {
                   roundId: bet.roundId
                 });
 				
-				*/
+				
 
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
               }
@@ -1121,7 +1121,7 @@ async function handleWinningBetX(bet, winner) {
               });
               SessionScore = marketInfo?.score;
             }
-            /*await Bets.updateOne(
+            await Bets.updateOne(
               { _id: bet._id },
               {
                 status: 0,
@@ -1133,7 +1133,7 @@ async function handleWinningBetX(bet, winner) {
               }
             );
 			
-			*/
+			
             const betIdString = bet._id.toString();
             await CurrentPosition.deleteMany({ betId: betIdString });
 
@@ -1219,14 +1219,14 @@ async function handleLosingBetX(bet) {
             console.log('=====================handleLosingBet exists=====================');
             console.log(bet._id, bet.status);
             console.log('=====================handleLosingBet exists=====================');
-            // await Bets.updateOne(
-            //   { _id: bet._id },
-            //   {
-            //     status: 0,
-            //     updatedAt: new Date().getTime()
-            //   }
-            // );
-            // await CurrentPosition.deleteMany({ betId: betIdString });
+            await Bets.updateOne(
+              { _id: bet._id },
+              {
+                status: 0,
+                updatedAt: new Date().getTime()
+              }
+            );
+            await CurrentPosition.deleteMany({ betId: betIdString });
             return;
           }
           const user_prev_balance = userToUpdate.balance;
@@ -1244,7 +1244,7 @@ async function handleLosingBetX(bet) {
           }
           const expAmount = Number((userToUpdate.exposure + addExposureAmount).toFixed(3));
           const updatedAvailableBalance = Number(userToUpdate.availableBalance + Number(userToUpdateAvailableBalance.toFixed(3)));
-          /*
+          
 		  await User.updateOne(
             {
               userId: userId,
@@ -1258,9 +1258,9 @@ async function handleLosingBetX(bet) {
             }
           );
 		  
-		  */
+		  
           const lastMaxWithdraw = await Deposits.findOne({ userId: userToUpdate.userId }).sort({ _id: -1 });
-          /*
+          
 		  await Deposits.create({
             userId: userToUpdate.userId,
             description: `Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -1296,7 +1296,7 @@ async function handleLosingBetX(bet) {
             
           });
 		  
-		  */
+		  
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
             userId: { $in: parentUserIds },
@@ -1344,7 +1344,7 @@ async function handleLosingBetX(bet) {
 
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
-              /*
+              
 			  await Deposits.create({
                 userId: user.userId,
                 description: `Paid to Battor for  Event (${bet.event}) Runner (${bet.runnerName})`,
@@ -1375,7 +1375,7 @@ async function handleLosingBetX(bet) {
                 exposure: 'Number(((user.commission / 100) * remainingAmount).toFixed(3))',
      
               });
-			  */
+			  
 
               upMovingAmount = Number((upMovingAmount - Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
               commissionFrom = user.userId;
@@ -1398,7 +1398,7 @@ async function handleLosingBetX(bet) {
               });
               SessionScore = marketInfo?.score;
             }
-            /*
+            
 			await Bets.updateOne(
               {
                 _id: bet._id
@@ -1413,7 +1413,7 @@ async function handleLosingBetX(bet) {
               }
             );
 			
-			*/
+			
             const betIdString = bet._id.toString();
             await CurrentPosition.deleteMany({ betId: betIdString });
             const updatedUser = await User.findOne({
@@ -1477,7 +1477,7 @@ const handleDrawBetX = async (bet, status = 0) => {
 
           if (bet.calculateExp === true) {
             calculatedExp = 1;
-            /*
+            
 			await User.updateOne(
               {
                 userId: userId,
@@ -1488,7 +1488,7 @@ const handleDrawBetX = async (bet, status = 0) => {
                 exposure: updatedUserExp
               }
             );
-			*/
+			
           }
 
           const parentUserIds = await getParents(userId);
@@ -1509,7 +1509,7 @@ const handleDrawBetX = async (bet, status = 0) => {
             for (const user of parentUser) {
               const amountToBeAddedExp = Number((user.exposure + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
               const amountToBeAddedAvlBalance = Number((user.availableBalance + Number(((user.commission / 100) * totalRemainingAmount).toFixed(3))).toFixed(3));
-              /*
+              
 			  await User.updateOne(
                 {
                   _id: user._id
@@ -1519,9 +1519,9 @@ const handleDrawBetX = async (bet, status = 0) => {
                   availableBalance: amountToBeAddedAvlBalance
                 }
               );
-			  */
+			  
             }
-            /*
+            
 			await Bets.updateOne(
               { _id: bet._id },
               {
@@ -1531,7 +1531,7 @@ const handleDrawBetX = async (bet, status = 0) => {
                 updatedAt: new Date().getTime()
               }
             );
-			*/
+			
             const betIdString = bet._id.toString();
             await CurrentPosition.deleteMany({ betId: betIdString });
             const updatedUser = await User.findOne({
