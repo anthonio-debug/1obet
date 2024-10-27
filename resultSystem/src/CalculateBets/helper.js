@@ -159,7 +159,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
         date: new Date().getTime(),
         createdAt: formattedDate,
         betSession: bet.betSession,
-        roundId: bet.roundId,
+        roundId: bet.marketId,
         addedExpoisureAmount: 0,
         UserPrevexposure: 0,
         UpdatedExposure: 0,
@@ -173,7 +173,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
       let expPositiveData;
       
-      expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString(),roundId:bet.marketId });
+      expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString(),marketId:bet.marketId });
       console.log("-------------------------------------user.............",expPositiveData);
       console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
       console.log("-------------------------------------bet.betId.............",bet._id.toString());
@@ -307,26 +307,26 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
               let expPositiveDataP;
-              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId });
+              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),marketId:bet.marketId });
               
               console.log("-------------------------------------parents.............",expPositiveData);
               console.log("-------------------------------------user.userId.............",user.userId);
               console.log("-------------------------------------bet.betId.............",bet._id.toString());
               console.log("-------------------------------------bet.marketId.............",bet.marketId);
               
-      if(expPositiveDataP){
-        await expPositive.updateOne(
-          {
-            userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
-          },
-          {
-            expReleased: winningsShareAmount,
-            expAfterRelease:UpdatedExposureAmount,
-            AbAtRelease:totalBalance + UpdatedExposureAmount
-            
-          }
-        );
-      }
+              if(expPositiveDataP){
+                await expPositive.updateOne(
+                  {
+                    userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
+                  },
+                  {
+                    expReleased: winningsShareAmount,
+                    expAfterRelease:UpdatedExposureAmount,
+                    AbAtRelease:totalBalance + UpdatedExposureAmount
+                    
+                  }
+                );
+              }
 
 
 
@@ -358,7 +358,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 commissionAmount: commissionAmount,
                 remainingAmount: remainingAmount,
                 betSession: bet.betSession,
-                roundId: bet.roundId,
+                roundId: bet.marketId,
 
                 addedExpoisureAmount: Number(((user.commission / 100) * totalRemainingAmount).toFixed(3)),
                 UserPrevexposure: user.exposure,
@@ -397,7 +397,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                   date: new Date().getTime(),
                   createdAt: formattedDate,
                   betSession: bet.betSession,
-                  roundId: bet.roundId
+                  roundId: bet.marketId
                 });
 
                 upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
@@ -604,7 +604,7 @@ console.log("userPrevClientPL updated..........................................:
       date: new Date().getTime(),
       createdAt: formattedDate,
       betSession: bet.betSession,
-      roundId: bet.roundId,
+      roundId: bet.marketId,
       addedExpoisureAmount: 0,
       UserPrevexposure: 0,
       UpdatedExposure: 0,
@@ -766,7 +766,7 @@ console.log("userPrevClientPL updated..........................................:
               commissionAmount: commissionAmount,
               remainingAmount: remainingAmount,
               betSession: bet.betSession,
-              roundId: bet.roundId,
+              roundId: bet.marketId,
 
               addedExpoisureAmount: Number(((user.commission / 100) * totalRemainingAmount).toFixed(3)),
               UserPrevexposure: user.exposure,
@@ -803,7 +803,7 @@ console.log("userPrevClientPL updated..........................................:
                 date: new Date().getTime(),
                 createdAt: formattedDate,
                 betSession: bet.betSession,
-                roundId: bet.roundId
+                roundId: bet.marketId
               });
 
               upMovingCommAmount = Number((upMovingCommAmount - (user.commission / 100) * commissionAmount).toFixed(3));
