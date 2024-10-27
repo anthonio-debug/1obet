@@ -1010,7 +1010,10 @@ async function handleWinningBetX(bet, winner) {
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * commissionAmount).toFixed(3))).toFixed(3));
               const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * remainingAmount).toFixed(3)) : 0;
               const totalClientPL = Number((user.clientPL + totalClientPLAmount).toFixed(3));
-              /*
+              let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3));
+              let UpdatedExposureAmount = user.exposure + winningsShareAmount;
+              
+              
 			  await User.updateOne(
                 {
                   userId: user.userId,
@@ -1018,13 +1021,13 @@ async function handleWinningBetX(bet, winner) {
                 },
                 {
                   balance: totalBalance,
-                  exposure: totalExpoisure,
+                  exposure: UpdatedExposureAmount,
                   availableBalance: totalavailableBalance,
                   clientPL: totalClientPL
                 }
               );
 			  
-			  */
+			  
 
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
               /*
