@@ -1313,14 +1313,18 @@ async function handleLosingBetX(bet) {
             }
             let commissionFrom = userToUpdate.userId;
             let upMovingAmount = TotalLoosingAmount;
+            let kajsldfkjasf = 0;
+            
             for (const user of parentUser) {
               const totalExpoisure = Number((user.exposure + Number(((user.commission / 100) * remainingAmount).toFixed(3))).toFixed(3));
               const totalavailableBalance = Number((user.availableBalance + Number(((user.commission / 100) * remainingAmount + (user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
               const totalBalance = Number((user.balance + Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3))).toFixed(3));
               const totalClientPLAmount = user.downLineShare != 100 ? Number((((100 - user.downLineShare) / 100) * TotalLoosingAmount).toFixed(3)) : 0;
               const totalClientPL = Number((user.clientPL - totalClientPLAmount).toFixed(3));
+              let winningsShareAmount = Number(((user.commission / 100) * TotalLoosingAmount).toFixed(3));
+              let UpdatedExposureAmount = user.exposure + winningsShareAmount;
               
-              /*
+              
 			  await User.updateOne(
                 {
                   _id: user?._id
@@ -1328,12 +1332,12 @@ async function handleLosingBetX(bet) {
                 {
                   balance: totalBalance,
                   clientPL: totalClientPL,
-                  exposure: totalExpoisure,
+                  exposure: UpdatedExposureAmount,
                   availableBalance: totalavailableBalance
                 }
               );
 			  
-			  */
+			  
 
               const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
