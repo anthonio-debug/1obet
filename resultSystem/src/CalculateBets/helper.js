@@ -367,7 +367,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
             
               });
               upMovingAmount = Number((upMovingAmount - (user.commission / 100) * totalRemainingAmount).toFixed(3));
-
+              console.log("bet.type==============================================================",bet.type);
               if (!config.commissionLessSubMarkets.includes(bet.type) && bet.subMarketId != config.Fancy && bet.subMarketId != config.BookMaker && TotalWin < TotalLose) {
                 const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
 
