@@ -16,7 +16,7 @@ const { getSessionFancyResult, getSessionBookmakerResult } = require('../../../h
 
 
 
-const { handleLosingBet, handleWinningBet, handleDrawBet } = require('../CalculateBets/calculations');
+const { handleLosingBet, handleWinningBet, handleDrawBet,handleLosingBetX, handleWinningBetX, handleDrawBetX } = require('../CalculateBets/calculations');
 
 const horseRaceUrl = 'http://136.244.77.249:33333';
 // const sportsAPIUrl = "http://209.250.242.175:33332";
