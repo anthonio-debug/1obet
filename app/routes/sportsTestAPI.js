@@ -7623,7 +7623,7 @@ const OddsMap = new Map();
 let runnerCheckerArray = []
 
 async function getOddsFromProvider2(req, res) {
-  const marketId = req.params.marketId;
+  const marketId = req.query.marketId;
   const marketIdsArray = [marketId]
   console.log("---------------- marketIdsArray --------",marketIdsArray);
   
