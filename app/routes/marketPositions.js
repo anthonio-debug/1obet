@@ -5,167 +5,82 @@ const Deposits = require("../models/deposits");
 const loginRouter = express.Router();
 
 const getMarketPositions = async (req, res) => {
+  
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-
-  const { userId, betId } = req.body;
-
-  if (!betId) {
-    return res.status(404).json({ success: false, message: "BetId not found." });
-  }
-
+  
   try {
+    const { userId, betId } = req.body;
+
+    if (!betId) {
+      console.warn("BetId not provided");
+      return res.status(404).json({ success: false, message: "BetId not found." });
+    }
+
+    const deposit = await Deposits.findOne({ betId });
+    if (!deposit) {
+      console.warn(`No deposit found for betId: ${betId}`);
+      return res.status(404).json({ success: false, message: "No deposit found for BetId." });
+    }
+    const { sportsId, matchId, marketId, betSession, roundId } = deposit;
+
     const currentUser = await User.findOne({ userId });
     if (!currentUser) {
-      console.error(`Current user not found for userId: ${userId}`);
+      console.warn(`User not found for userId: ${userId}`);
       return res.status(404).json({ success: false, message: "Current user not found." });
     }
+    const { userId: currentUserId, createdBy: parentUserId } = currentUser;
 
-    let parentUserResponse = [];
-    const parentUser = await User.findOne({ userId: currentUser.createdBy });
-    const childUserIds = await User.distinct("userId", { createdBy: userId });
-
-    const currentUserResponse = await Deposits.aggregate([
-      {
-        $match: {
-          userId: currentUser.userId,
-          betId: betId,
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "userId",
-          as: "userInfo",
-        },
-      },
-      { $unwind: "$userInfo" },
-      {
-        $group: {
-          _id: "$userId",
-          name: { $first: "$userInfo.userName" },
-          role: { $first: "$userInfo.role" },
-          amount: { $sum: "$amount" },
-        },
-      },
-    ]);
-
-    if (parentUser) {
-      parentUserResponse = await Deposits.aggregate([
-        {
-          $match: {
-            userId: parentUser.userId,
-            betId: betId,
-          },
-        },
-        {
-          $lookup: {
-            from: "users",
-            localField: "userId",
-            foreignField: "userId",
-            as: "userInfo",
-          },
-        },
-        { $unwind: "$userInfo" },
-        {
-          $group: {
-            _id: "$userId",
-            name: { $first: "$userInfo.userName" },
-            amount: { $sum: "$upLineAmount" },
-            role: { $first: "$userInfo.role" },
-          },
-        },
-      ]);
+    const childUserIds = await User.distinct("userId", { createdBy: currentUserId });
+    if (childUserIds.length === 0) {
+      console.info(`No child users found for userId: ${currentUserId}`);
     }
 
-
-    let childResponse = await Deposits.aggregate([
-      {
-        $match: {
-          userId: { $in: childUserIds },
-          betId: betId,
-        },
-      },
-      {
-        $lookup: {
-          from: "users",
-          localField: "userId",
-          foreignField: "userId",
-          as: "userInfo",
-        },
-      },
-      { $unwind: "$userInfo" },
-      {
-        $group: {
-          _id: "$userId",
-          name: { $first: "$userInfo.userName" },
-          amount: { $sum: "$amount" },
-          role: { $first: "$userInfo.role" },
-        },
-      },
-    ]);
-
-    if (childResponse[0]?.role === "5") {
-      let traderFields = await Deposits.aggregate([
-        {
-          $match: {
-            userId: childResponse[0]._id,
-            betId: betId,
+    const marketPositionRecord = async (userIds) => {
+      try {
+        return await Deposits.aggregate([
+          {
+            $match: {
+              userId: { $in: userIds },
+              matchId,
+              marketId,
+              betSession,
+              roundId,
+            },
           },
-        },
-        {
-          $project: {
-            _id: 0,
-            depositId: "$_id",
-            marketId: 1,
-            roundId: 1,
-            sportsId: 1,
-            matchId: 1,
-            betSession: 1,
+          {
+            $lookup: {
+              from: "users",
+              localField: "userId",
+              foreignField: "userId",
+              as: "userInfo",
+            },
           },
-        },
-      ]);
-      if (traderFields[0]) {
-        childResponse[0] = { ...childResponse[0], ...traderFields[0] };
+          { $unwind: "$userInfo" },
+          {
+            $group: {
+              _id: "$userId",
+              name: { $first: "$userInfo.userName" },
+              role: { $first: "$userInfo.role" },
+              amount: { $sum: "$amount" },
+            },
+          },
+        ]);
+      } catch (error) {
+        console.error("Error in marketPositionRecord aggregation:", error);
+        return [];
       }
-    }
-    if (childResponse[0]?.role === "5") {
-      let traderFields = await Deposits.aggregate([
-        {
-          $match: {
-            userId: childResponse[0]._id,
-            betId: betId,
-          },
-        },
-        {
-          $project: {
-            _id: 0,
-            marketId: 1,
-            depositId: 1,
-            roundId: 1,
-            sportsId: 1,
-            matchId: 1,
-            betSession: 1,
-          },
-        },
-      ]);
+    };
 
-      if (traderFields[0]) {
-        childResponse[0] = { ...childResponse[0], ...traderFields[0] };
-      }
-    }
+    const currentUserResponse = await marketPositionRecord([currentUserId]);
+    const parentUserResponse = parentUserId ? await marketPositionRecord([parentUserId]) : [];
+    const childResponse = childUserIds.length > 0 ? await marketPositionRecord(childUserIds) : [];
 
-    console.log("childResponse before", childResponse)
-    console.log(childResponse)
-    console.log("parentUserResponse[0].amount", parentUserResponse[0]?.amount ? parentUserResponse[0]?.amount : 0)
-    const childAmount = (parentUserResponse[0]?.amount ? parentUserResponse[0]?.amount : 0) + currentUserResponse[0].amount
-    console.log("childResponse[0].amount Before:", childResponse[0].amount)
-    childResponse[0].amount = - childAmount
-    console.log("childResponse[0].amount After:", childResponse[0].amount)
     const response = [...childResponse, ...currentUserResponse, ...parentUserResponse];
+
+    console.debug("Final response structure:", JSON.stringify(response, null, 2));
 
     return res.status(200).json({
       success: true,
@@ -174,7 +89,7 @@ const getMarketPositions = async (req, res) => {
     });
   } catch (error) {
     console.error("Error fetching market positions:", error);
-    return res.status(500).json({ success: false, message: "An error occurred while fetching market positions" });
+    return res.status(500).json({ success: false, message: "Internal server error." });
   }
 };
 
