@@ -4071,7 +4071,6 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
   
 
     await expPositive.updateMany({ userFrom:23022 }, { $set: { expReleased:'' } });
-    await Bets.updateMany({ userId:23022,calculateExp:true }, { $set: { status:1 } });
      await User.updateOne({ userId:23022 }, {
       $set: {
       
@@ -4087,7 +4086,8 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
       }
     })
 
-
+    await Bets.updateMany({ userId:23022,calculateExp:true }, { $set: { status:1 } });
+    
 
 
     // const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_20046"  ,gameplay_final:1}, {
