@@ -771,10 +771,10 @@ function apiRequests() {
   
                   let el = new Odds(json1);
                   await el.save().then(result => {
-                    console.log("RRRRRRRrrrr result", result);
+                    //console.log("RRRRRRRrrrr result", result);
   
                   }).catch(err => {
-                    console.log("EEEEEEEEEEEr errror", err);
+                    //console.log("EEEEEEEEEEEr errror", err);
   
                   })
                   console.log("=-=-==-=-=-====-=- ******************* odds saved");
