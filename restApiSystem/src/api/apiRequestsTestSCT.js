@@ -614,7 +614,7 @@ function apiRequests() {
           axios.get(`http://sportzing.in:5505/api/getOdds?market_id=${marketId}`, header)
         )
       );
-        console.log("MMMMMMMMMMMMMMMMMMMMMMM  getOddsFormProveder responses",responses);
+        //console.log("MMMMMMMMMMMMMMMMMMMMMMM  getOddsFormProveder responses",responses);
         
       for (let i = 0; i < responses.length; i++) {
         const response = responses[i];

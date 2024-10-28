@@ -731,6 +731,7 @@ console.log("userPrevClientPL updated..........................................:
               }
             );
             let expPositiveDataP;
+            
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),marketId:bet.marketId });
               
               console.log("-------------------------------------parents.............",expPositiveDataP);
