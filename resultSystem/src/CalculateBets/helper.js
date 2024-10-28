@@ -309,7 +309,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               let expPositiveDataP;
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),marketId:bet.marketId });
               
-              console.log("-------------------------------------parents.............",expPositiveData);
+              console.log("-------------------------------------parents.............",expPositiveDataP);
               console.log("-------------------------------------user.userId.............",user.userId);
               console.log("-------------------------------------bet.betId.............",bet._id.toString());
               console.log("-------------------------------------bet.marketId.............",bet.marketId);
@@ -730,15 +730,27 @@ console.log("userPrevClientPL updated..........................................:
                 clientPL: totalClientPL //Balance Upline
               }
             );
-            const userExpCheck = await User.findOne({ userId:user.userId,exposure: { $gt: 0 } });
-
-      if(userExpCheck && userExpCheck.userId!=11000){
-          
- 
-        
-
-      }
-
+            let expPositiveDataP;
+              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),marketId:bet.marketId });
+              
+              console.log("-------------------------------------parents.............",expPositiveDataP);
+              console.log("-------------------------------------user.userId.............",user.userId);
+              console.log("-------------------------------------bet.betId.............",bet._id.toString());
+              console.log("-------------------------------------bet.marketId.............",bet.marketId);
+              
+              if(expPositiveDataP){
+                await expPositive.updateOne(
+                  {
+                    userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
+                  },
+                  {
+                    expReleased: winningsShareAmount,
+                    expAfterRelease:UpdatedExposureAmount,
+                    AbAtRelease:totalBalance + UpdatedExposureAmount
+                    
+                  }
+                );
+              }
             const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 });
             await Deposits.create({
               userId: user.userId,
