@@ -596,7 +596,7 @@ function apiRequests() {
   async function getOddsFromProvider(marketIdsArray, intervalId) {
     let tempArray = [];
     let tempArrayForIDs = [];
-    
+  
     for (let index = 0; index < marketIdsArray.length; index++) {
       const el = marketIdsArray[index];
       tempArray.push({
@@ -607,11 +607,17 @@ function apiRequests() {
       tempArrayForIDs.push(`${el.marketId}`);
     }
   
-    for (const marketId of tempArrayForIDs) {
-      const url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
+    try {
+      const responses = await Promise.all(
+        tempArrayForIDs.map((marketId) =>
+          axios.get(`http://sportzing.in:5505/api/getOdds?market_id=${marketId}`, header)
+        )
+      );
   
-      try {
-        const response = await axios.get(url,header);
+      for (let i = 0; i < responses.length; i++) {
+        const response = responses[i];
+        const marketId = tempArrayForIDs[i];
+  
         if (!response?.data || !Array.isArray(response.data)) continue;
   
         const oddsData = response.data;
@@ -797,11 +803,12 @@ function apiRequests() {
             );
           }
         }
-      } catch (error) {
-        console.error('getOddsFromProvider for marketId', marketId, '----->', error);
       }
+    } catch (error) {
+      console.error('getOddsFromProvider failed for one or more market IDs:', error);
     }
   }
+  
   ////////////// by mujahid
   async function getOddsFromProviderRahul(marketIdsArray, intervalId) {
     let tempArray = [];
