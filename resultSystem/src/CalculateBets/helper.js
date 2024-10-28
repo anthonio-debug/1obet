@@ -731,13 +731,14 @@ console.log("userPrevClientPL updated..........................................:
               }
             );
             let expPositiveDataP;
-            
+
+            console.log("userId:",user.userId,"------betId:",bet._id.toString(),"======marketId:",bet.marketId);
               expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),marketId:bet.marketId });
               
-              console.log("-------------------------------------parents.............",expPositiveDataP);
-              console.log("-------------------------------------user.userId.............",user.userId);
-              console.log("-------------------------------------bet.betId.............",bet._id.toString());
-              console.log("-------------------------------------bet.marketId.............",bet.marketId);
+              console.log("-------------------------------------parents Figures.............",expPositiveDataP);
+              console.log("-------------------------------------user.userId Figures.............",user.userId);
+              console.log("-------------------------------------bet.betId Figures.............",bet._id.toString());
+              console.log("-------------------------------------bet.marketId Figures.............",bet.marketId);
               
               if(expPositiveDataP){
                 await expPositive.updateOne(
