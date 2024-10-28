@@ -592,138 +592,133 @@ function apiRequests() {
   }
 
 
+  
   async function getOddsFromProvider(marketIdsArray, intervalId) {
     let tempArray = [];
     let tempArrayForIDs = [];
+    
     for (let index = 0; index < marketIdsArray.length; index++) {
       const el = marketIdsArray[index];
-
       tempArray.push({
         market: el.marketId,
         eventId: el.eventId,
-        indexID: el.index
+        indexID: el.index,
       });
-
       tempArrayForIDs.push(`${el.marketId}`);
     }
-
-    const requestData = {
-      marketIds: tempArrayForIDs
-    };
-
-    const url = `${config.newThirdURL}/listMarketBook`;
-    axios.post(url, requestData, header).then(
-      async (response) => {
-        if (!response?.data?.result) return;
-        const oddsData = response.data.result;
+  
+    for (const marketId of tempArrayForIDs) {
+      const url = `http://sportzing.in:5505/api/getOdds?market_id=${marketId}`;
+  
+      try {
+        const response = await axios.get(url,header);
+        if (!response?.data || !Array.isArray(response.data)) continue;
+  
+        const oddsData = response.data;
         let checkedMarkets = [];
-
+  
         if (oddsData.length > 0) {
           let counter = 0;
-          try {
-            for (let index = 0; index < oddsData.length; index++) {
-              counter = counter + 1;
-              const element = oddsData[index];
-
-              if (typeof element.runners !== undefined) {
-                if (
-                  element.runners[0]?.ex.availableToLay.length > 0 ||
-                  element.runners[0]?.ex.availableToBack.length > 0 ||
-                  element.runners[1]?.ex.availableToLay.length > 0 ||
-                  element.runners[1]?.ex.availableToBack.length > 0 ||
-                  element.runners[2]?.ex.availableToLay.length > 0 ||
-                  element.runners[2]?.ex.availableToBack.length > 0
-                ) {
-                  checkedMarkets.push(element.marketId);
-
-                  const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
-                    .sort({ lastCheckMarket: 1 })
-                    .limit(1)
-                    .exec();
-                  const eventId = marketData.eventId;
-                  const marketId = element.marketId;
-
-                  // Filter runners with status "ACTIVE"
-                  const activeRunners = element.runners.filter((runner) => runner.status === 'ACTIVE');
-
-                  // Get the number of active runners
-                  const numberOfActiveRunners = activeRunners.length;
-
-                  // IsMarketDataDelayed
-                  let isMarketDataDelayed = false;
-
-                  if (config.activeProvider == 'old') {
-                    isMarketDataDelayed = element.isMarketDataDelayed;
-                  }
-
-                  let tempRunners = [];
-                  for (let n = 0; n < element.runners?.length; n++) {
-
-                    
-                    let totalMatched = element.totalMatched;
-                    
-
-                    
-                    
-                    // Ensure sentence is a string before using replace
-                  
-                    const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
-
-                   
-
-
-                    let tempElement = {
-                      SelectionId: element.runners[n]?.selectionId,
-                      runnerName: marketData?.runners[n]?.runnerName,
-                      Status: element.runners[n]?.status,
-                      LastPriceTraded: element.runners[n]?.lastPriceTraded,
-                      TotalMatched: totalMatchedStr,
-                      ExchangePrices: {
-                        AvailableToBack: [
-                          {
-                            price: element.runners[n]?.ex.availableToBack[0]?.price,
-                            size: element.runners[n]?.ex.availableToBack[0]?.size
-                          },
-                          {
-                            price: element.runners[n]?.ex.availableToBack[1]?.price,
-                            size: element.runners[n]?.ex.availableToBack[1]?.size
-                          },
-                          {
-                            price: element.runners[n]?.ex.availableToBack[2]?.price,
-                            size: element.runners[n]?.ex.availableToBack[2]?.size
-                          }
-                        ],
-                        AvailableToLay: [
-                          {
-                            price: element.runners[n]?.ex.availableToLay[0]?.price,
-                            size: element.runners[n]?.ex.availableToLay[0]?.size
-                          },
-                          {
-                            price: element.runners[n]?.ex.availableToLay[1]?.price,
-                            size: element.runners[n]?.ex.availableToLay[1]?.size
-                          },
-                          {
-                            price: element.runners[n]?.ex.availableToLay[2]?.price,
-                            size: element.runners[n]?.ex.availableToLay[2]?.size
-                          }
-                        ]
-                      }
-                    };
-
-                    tempRunners.push(tempElement);
-                  }
-                  // let sttr = element.totalMatched;
-                  // const totalMatched = sttr.replace('.','');
-                  
-                  //console.log("------------------------------->" + tempRunners.map(data=>console.log(data)));
-
-
-
+          for (let index = 0; index < oddsData.length; index++) {
+            counter = counter + 1;
+            const element = oddsData[index];
+  
+            if (typeof element.runners !== undefined) {
+              if (
+                element.runners[0]?.ex.availableToLay.length > 0 ||
+                element.runners[0]?.ex.availableToBack.length > 0 ||
+                element.runners[1]?.ex.availableToLay.length > 0 ||
+                element.runners[1]?.ex.availableToBack.length > 0 ||
+                element.runners[2]?.ex.availableToLay.length > 0 ||
+                element.runners[2]?.ex.availableToBack.length > 0
+              ) {
+                checkedMarkets.push(element.marketId);
+  
+                const marketData = await MarketIDS.findOne({ marketId: `${element.marketId}` })
+                  .sort({ lastCheckMarket: 1 })
+                  .limit(1)
+                  .exec();
+                const eventId = marketData.eventId;
+                const marketId = element.marketId;
+  
+                const activeRunners = element.runners.filter(
+                  (runner) => runner.status === 'ACTIVE'
+                );
+  
+                const numberOfActiveRunners = activeRunners.length;
+  
+                let isMarketDataDelayed = false;
+  
+                if (config.activeProvider == 'old') {
+                  isMarketDataDelayed = element.isMarketDataDelayed;
+                }
+  
+                let tempRunners = [];
+                for (let n = 0; n < element.runners?.length; n++) {
                   let totalMatched = element.totalMatched;
-                  
-                  const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
-
-                  let frontData = {
+  
+                  const totalMatchedStr = gettotalMatchedStr(totalMatched.toString());
+  
+                  let tempElement = {
+                    SelectionId: element.runners[n]?.selectionId,
+                    runnerName: marketData?.runners[n]?.runnerName,
+                    Status: element.runners[n]?.status,
+                    LastPriceTraded: element.runners[n]?.lastPriceTraded,
+                    TotalMatched: totalMatchedStr,
+                    ExchangePrices: {
+                      AvailableToBack: [
+                        {
+                          price: element.runners[n]?.ex.availableToBack[0]?.price,
+                          size: element.runners[n]?.ex.availableToBack[0]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToBack[1]?.price,
+                          size: element.runners[n]?.ex.availableToBack[1]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToBack[2]?.price,
+                          size: element.runners[n]?.ex.availableToBack[2]?.size,
+                        },
+                      ],
+                      AvailableToLay: [
+                        {
+                          price: element.runners[n]?.ex.availableToLay[0]?.price,
+                          size: element.runners[n]?.ex.availableToLay[0]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToLay[1]?.price,
+                          size: element.runners[n]?.ex.availableToLay[1]?.size,
+                        },
+                        {
+                          price: element.runners[n]?.ex.availableToLay[2]?.price,
+                          size: element.runners[n]?.ex.availableToLay[2]?.size,
+                        },
+                      ],
+                    },
+                  };
+  
+                  tempRunners.push(tempElement);
+                }
+  
+                let totalMatched = element.totalMatched;
+                const totalMatchedStr = await gettotalMatchedStr(totalMatched.toString());
+  
+                let frontData = {
+                  sportsId: marketData.sportID,
+                  runners: tempRunners,
+                  marketId: marketId,
+                  isMarketDataDelayed: isMarketDataDelayed,
+                  status: element.status,
+                  eventId: eventId,
+                  isInplay: element.inplay,
+                  numberOfRunners: element.runners.length,
+                  numberOfActiveRunners: numberOfActiveRunners,
+                  totalMatched: totalMatchedStr,
+                };
+  
+                if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
+                  OddsMap.set(marketId, frontData);
+                  let json1 = {
                     sportsId: marketData.sportID,
                     runners: tempRunners,
                     marketId: marketId,
@@ -733,90 +728,79 @@ function apiRequests() {
                     isInplay: element.inplay,
                     numberOfRunners: element.runners.length,
                     numberOfActiveRunners: numberOfActiveRunners,
-                    totalMatched: totalMatchedStr
+                    totalMatched: totalMatchedStr,
+                    createdAt: new Date().getTime(),
                   };
-
-                  if (!OddsMap.has(marketId) || !isObjectEqual(OddsMap.get(marketId), frontData)) {
-                    OddsMap.set(marketId, frontData);
-                    let json1 = {
-                      sportsId: marketData.sportID,
-                      runners: tempRunners,
-                      marketId: marketId,
-                      isMarketDataDelayed: isMarketDataDelayed,
-                      status: element.status,
-                      eventId: eventId,
-                      isInplay: element.inplay,
-                      numberOfRunners: element.runners.length,
-                      numberOfActiveRunners: numberOfActiveRunners,
-                      totalMatched: totalMatchedStr,
-                      createdAt: new Date().getTime()
-                    };
-                    //console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>", element.status);
-                    if (element.status === 'CLOSED') {
-                      // clearInterval(intervalId);
-                      await MarketIDS.updateOne({ marketId: marketId }, { inPlay: false, status: element.status });
-                    } else {
-                      await MarketIDS.updateOne({ marketId: marketId }, { status: element.status });
-                    }
-
-                    if (runnerCheckerArray.indexOf(marketId) === -1) {
-                      let runners = [];
-
-                      for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
-                        const runner = element.runners[ix1];
-                        runners.push({
-                          SelectionId: runner.selectionId,
-                          runnerName: runner.runnerName
-                        });
-                      }
-
-                      if (runners.length > 0) {
-                        await MarketIDS.updateOne({ marketId: marketId, runners: null }, { $set: { runners: runners } });
-                        runnerCheckerArray.push(marketId);
-                      }
-                    }
-                    //console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
-                    let el = new Odds(json1);
-                    await el.save();
-
-                    const ix = _.findIndex(tempArray, function (o) {
-                      return o.market == marketId;
-                    });
-
-                    if (ix !== -1 && tempArray[ix].indexID === 0) {
-                      io.to('homepage').emit('odds', {
-                        marketId: marketId,
-                        data: el,
-                        eventId: element.eventId,
-                        status: 'NewOddsHomepage'
+  
+                  if (element.status === 'CLOSED') {
+                    await MarketIDS.updateOne(
+                      { marketId: marketId },
+                      { inPlay: false, status: element.status }
+                    );
+                  } else {
+                    await MarketIDS.updateOne({ marketId: marketId }, { status: element.status });
+                  }
+  
+                  if (runnerCheckerArray.indexOf(marketId) === -1) {
+                    let runners = [];
+  
+                    for (let ix1 = 0; ix1 < element.runners.length; ix1++) {
+                      const runner = element.runners[ix1];
+                      runners.push({
+                        SelectionId: runner.selectionId,
+                        runnerName: runner.runnerName,
                       });
                     }
-                    io.to('#' + eventId).emit('odds', {
+  
+                    if (runners.length > 0) {
+                      await MarketIDS.updateOne(
+                        { marketId: marketId, runners: null },
+                        { $set: { runners: runners } }
+                      );
+                      runnerCheckerArray.push(marketId);
+                    }
+                  }
+  
+                  let el = new Odds(json1);
+                  await el.save();
+  
+                  const ix = _.findIndex(tempArray, function (o) {
+                    return o.market == marketId;
+                  });
+  
+                  if (ix !== -1 && tempArray[ix].indexID === 0) {
+                    io.to('homepage').emit('odds', {
                       marketId: marketId,
                       data: el,
-                      eventId: eventId,
-                      status: 'NewOdds'
+                      eventId: element.eventId,
+                      status: 'NewOddsHomepage',
                     });
                   }
+                  io.to('#' + eventId).emit('odds', {
+                    marketId: marketId,
+                    data: el,
+                    eventId: eventId,
+                    status: 'NewOdds',
+                  });
                 }
               }
             }
-
-            const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
-
-            for (let index = 0; index < filteredArray.length; index++) {
-              OddsMap.delete(filteredArray[index]?.market);
-              await MarketIDS.updateOne({ marketId: filteredArray[index]?.market }, { inPlay: false, status: 'CLOSED-ODDS-EMPTY' });
-            }
-          } catch (error) {
-            console.error('getOddsFromProvider----->', error);
+          }
+  
+          const filteredArray = tempArray.filter((item) => !checkedMarkets.includes(item.market));
+  
+          for (let index = 0; index < filteredArray.length; index++) {
+            OddsMap.delete(filteredArray[index]?.market);
+            await MarketIDS.updateOne(
+              { marketId: filteredArray[index]?.market },
+              { inPlay: false, status: 'CLOSED-ODDS-EMPTY' }
+            );
           }
         }
-      },
-      (error) => {
-        console.error('getOddsFromProvider-->', error);
+      } catch (error) {
+        console.error('getOddsFromProvider for marketId', marketId, '----->', error);
       }
-    );
+    }
   }
   ////////////// by mujahid
   async function getOddsFromProviderRahul(marketIdsArray, intervalId) {
