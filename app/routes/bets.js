@@ -111,7 +111,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     const ShareAmountInLoss = (user.commission / 100) * highestAmount;
     const finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
     //console.log("userId:",user.userId,"------downline share:::",user.downLineShare,"-------commission:::::",user.commission,"====finalShareAmountInLoss=====",finalShareAmountInLoss);
-    if(userPrevExposure==0){
+    if(userPrevExposure==0 || userPrevExposure==''){
       //console.log("userPrevExposure==0::::::::::::::::::::::::",userPrevExposure);
       user.exposure = -finalShareAmountInLoss;
      // user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
@@ -178,7 +178,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
    let finalShareAmountInLossPrev = Number(ShareAmountInLossPrev.toFixed(3));
    let ShareAmountInLoss = (user.commission / 100) * highestAmount;
    let finalShareAmountInLoss = Number(ShareAmountInLoss.toFixed(3));
-   if(userPrevExposure==0){
+   if(userPrevExposure==0 || userPrevExposure==''){
     user.exposure = -finalShareAmountInLoss;
     //user.availableBalance = UseravailableBalancePrev-finalShareAmountInLoss;
     user.availableBalance = prevBalance + (-finalShareAmountInLoss);
@@ -207,7 +207,7 @@ const updateParentUserBalanceTemp = async (parentUsersIds, matchId = 0, bet, run
     //console.log("finalShareAmountInLoss---------------------------->",finalShareAmountInLoss);
     prevAdjustedExposure = Number(prevAdjustedExposure.toFixed(3));
     finalShareAmountInLoss = Number(finalShareAmountInLoss.toFixed(3));
-    if(prevAdjustedExposure==0){
+    if(prevAdjustedExposure==0 || prevAdjustedExposure==''){
       //console.log("user ID:::::: in IF Block:",user.userId);
     user.exposure = -finalShareAmountInLoss;
     //user.availableBalance = prevAdjustedAvailableBalance-finalShareAmountInLoss;

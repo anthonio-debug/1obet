@@ -48,7 +48,7 @@ const userSchema = new Schema({
   creditRemaining: { type: Number, default: 0 },
   faultymarketId: { type: String, default: '' },
   accumulativeDebitTrack: { type: String, default: '' },
-  exposureOnlyTrck: { type: String, default: '' },
+  exposureOnlyTrck: { type: Number, default: 0 },
   cash: { type: Number, default: 0 },
   remoteId: { type: Number },
   data: { type: Object, default: {} },
