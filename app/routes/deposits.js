@@ -577,7 +577,11 @@ function getLedgerDetails(req, res) {
       });
 
       if (userRole !== '5' && req.body.type) {
-        cashPipeline.push({ $match: { cashOrCredit: req.body.type }, });
+        cashPipeline.push({ $match: { cashOrCredit: req.body.type } });
+      } else {
+        cashPipeline.push({
+          $match: { cashOrCredit: { $in: cashNCreditnBet } }
+        });
       }
 
       if (req.body.searchValue) {
