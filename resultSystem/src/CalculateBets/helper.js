@@ -173,7 +173,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
       let expPositiveData;
       
-      expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString(),marketId:bet.marketId });
+      expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString() });
       console.log("-------------------------------------user.............",expPositiveData);
       console.log("-------------------------------------userToUpdate.userId.............",userToUpdate.userId);
       console.log("-------------------------------------bet.betId.............",bet._id.toString());
@@ -307,7 +307,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
 
 
               let expPositiveDataP;
-              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),marketId:bet.marketId });
+              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
               
               console.log("-------------------------------------parents.............",expPositiveDataP);
               console.log("-------------------------------------user.userId.............",user.userId);
@@ -733,7 +733,7 @@ console.log("userPrevClientPL updated..........................................:
             let expPositiveDataP;
 
             console.log("userId:",user.userId,"------betId:",bet._id.toString(),"======marketId:",bet.marketId);
-              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),marketId:bet.marketId });
+              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString()});
               
               console.log("-------------------------------------parents Figures.............",expPositiveDataP);
               console.log("-------------------------------------user.userId Figures.............",user.userId);
