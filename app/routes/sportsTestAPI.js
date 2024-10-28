@@ -4037,7 +4037,7 @@ async function deleteOdds(req, res) {
     // }
     //await Deposits.deleteMany({userId:22580});
     //await Bets.updateMany({ userId:22580 }, { $set: { status:1 } });
-    await expPositive.deleteMany({});
+    //await expPositive.deleteMany({});
     
     const thirtyDaysAgo = new Date();
 thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
@@ -4069,17 +4069,23 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
     //   });
   
   
-  
-  
-    // const userUpdate = await User.updateOne({ userId:20046 }, {
-    //   $set: {
-    //     balance:10000,
-    //     availableBalance:10000,
-    //     clientPL: 10000,
-    //     exposure: -35600,
-    //     tempExposure:35600
-    //   }
-    // })
+
+    await expPositive.updateMany({ userId:23022,calculateExp:true }, { $set: { status:0 } });
+    await Bets.updateMany({ userId:23022,calculateExp:true }, { $set: { status:0 } });
+     await User.updateOne({ userId:23020 }, {
+      $set: {
+      
+        exposure: -16820
+
+      }
+    })
+     await User.updateOne({ userId:23019 }, {
+      $set: {
+      
+        exposure: -2102.5
+
+      }
+    })
 
 
 
