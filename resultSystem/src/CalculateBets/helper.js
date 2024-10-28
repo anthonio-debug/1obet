@@ -347,7 +347,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
                 cashOrCredit: 'Bet',
                 commissionFrom: commissionFrom,
                 sportsId: bet.sportsId,
-                upLineAmount: -upMovingAmount,
+                upLineAmount: -totalClientPLAmount,
                 betId: bet._id.toString(),
                 matchId: bet.matchId,
                 betType: bet.type,
