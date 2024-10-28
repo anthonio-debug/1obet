@@ -740,6 +740,9 @@ console.log("userPrevClientPL updated..........................................:
               console.log("-------------------------------------bet.betId Figures.............",bet._id.toString());
               console.log("-------------------------------------bet.marketId Figures.............",bet.marketId);
               
+
+              console.log(bet._id.toString(),";;;Winning share amount}}}}}}}}}}}}}}}}}}}}::",winningsShareAmount);
+
               if(expPositiveDataP){
                 await expPositive.updateOne(
                   {
