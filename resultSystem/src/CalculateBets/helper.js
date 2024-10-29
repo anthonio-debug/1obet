@@ -889,7 +889,63 @@ console.log("userPrevClientPL updated..........................................:
   
   
 }
+async function returnParentExposure(bet) {
 
+  const parentUserIds = await getParents(bet.userId);
+  const parentUser = await User.find({
+    userId: { $in: parentUserIds },
+    isDeleted: false
+  }).sort({ userId: -1 });
+  if (!parentUser) {
+    console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
+    return;
+  } else {
+    
+   
+    let prev = 0;
+    for (const user of parentUser) {
+      let current = user.downLineShare;
+      user['commission'] = current - prev;
+      prev = current;
+    }
+    
+    for (const user of parentUser) {
+
+    if (bet.isfancyOrbookmaker == true && bet.fancyData !== null) {
+      let runnersPosition = bet.runnersPosition;
+                  runnersPosition = bet.runnersPosition;
+                  highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+    }else{
+
+      let runnersPosition = bet.runnersPosition;
+              let highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+              if(bet.isFancyOrBookMaker==true && bet.fancyData != null){
+                  runnersPosition = bet.runnersPosition;
+                  highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
+              }
+
+              let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
+      let UpdatedExposureAmount = user.exposure + winningsShareAmount;
+      await User.updateOne(
+        {
+          userId: user.userId,
+          isDeleted: false
+        },
+        {
+          
+          exposure: UpdatedExposureAmount,
+          availableBalance: user.availableBalance + winningsShareAmount,
+         
+        }
+      );
+
+
+    
+    }
+  }
+
+  }
+}
 async function casinoSettlement(betId, selectionId) {
     
 
@@ -904,5 +960,6 @@ module.exports = {
    
     casinoSettlement,
     getAmountOfWinnerTemp,
-    getAmountOfWinnerFigures
+    getAmountOfWinnerFigures,
+    returnParentExposure
 }

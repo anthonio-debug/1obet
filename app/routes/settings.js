@@ -1,6 +1,7 @@
 const express = require('express');
 const { validationResult } = require('express-validator');
 const Settings = require('../models/settings');
+const { returnParentExposure } = require('../../resultSystem/src/CalculateBets/helper');
 const CasinoCalls = require('../models/casinoCalls');
 const moment = require('moment');
 const User = require('../models/user');
@@ -28,6 +29,7 @@ const BetPlaceHold = require('../models/betaPlaceHold');
 const AsianTable = require('../models/asianTable');
 const inPlayEvents = require('./../models/events.js');
 const mongoose = require('mongoose');
+
 const { handleDrawBet } = require('../../resultSystem/src/CalculateBets/calculations');
 
 const loginRecord = require('../models/loginRecord');
