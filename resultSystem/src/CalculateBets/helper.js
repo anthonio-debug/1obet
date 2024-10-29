@@ -932,9 +932,12 @@ async function returnParentExposure(bet) {
                   runnersPosition = bet.runnersPosition;
                   highestAmount = Math.max(...runnersPosition.map(runner => runner.position));
               }
-
+              
+              console.log("highestAmount..................................................................",highestAmount);
               let winningsShareAmount = Number(((user.commission / 100) * highestAmount).toFixed(3));
+              console.log("winningsShareAmount..................................................................",winningsShareAmount);
       let UpdatedExposureAmount = user.exposure + winningsShareAmount;
+      console.log("UpdatedExposureAmount..................................................................",UpdatedExposureAmount);
       await User.updateOne(
         {
           userId: user.userId,
