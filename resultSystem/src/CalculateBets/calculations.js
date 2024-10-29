@@ -1027,12 +1027,12 @@ async function handleWinningBetX(bet, winner) {
                 }
               );
               let expPositiveDataP;
-              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),marketId:bet.marketId });
+              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
               
               if(expPositiveDataP){
                 await expPositive.updateOne(
                   {
-                    userId:user.userId,betId:bet._id.toString(),marketId:bet.marketId
+                    userId:user.userId,betId:bet._id.toString()
                   },
                   {
                     expReleased: winningsShareAmount,
@@ -1302,12 +1302,12 @@ async function handleLosingBetX(bet) {
 			  
 
               let expPositiveDataP;
-              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString(),marketId:bet.marketId });
+              expPositiveDataP = await expPositive.findOne({ userId:user.userId,betId:bet._id.toString() });
               
               if(expPositiveDataP){
                 await expPositive.updateOne(
                   {
-                    userId:user.userId,betId:bet._id.toString(),marketId:bet.marketId
+                    userId:user.userId,betId:bet._id.toString()
                   },
                   {
                     expReleased: winningsShareAmount,

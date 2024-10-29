@@ -317,7 +317,7 @@ async function getAmountOfWinnerTemp(betId, selectionId) {
               if(expPositiveDataP){
                 await expPositive.updateOne(
                   {
-                    userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
+                    userId:user.userId,betId:bet._id.toString()
                   },
                   {
                     expReleased: winningsShareAmount,
@@ -744,9 +744,11 @@ console.log("userPrevClientPL updated..........................................:
               console.log(bet._id.toString(),";;;Winning share amount}}}}}}}}}}}}}}}}}}}}::",winningsShareAmount);
 
               if(expPositiveDataP){
+                console.log(bet._id.toString(),";;;Relased Winning share amount}}}}}}}}}}}}}}}}}}}}::",winningsShareAmount);
+
                 await expPositive.updateOne(
                   {
-                    userId:user.userId,betId:bet._id.toString(),roundId:bet.marketId
+                    userId:user.userId,betId:bet._id.toString()
                   },
                   {
                     expReleased: winningsShareAmount,
