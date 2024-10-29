@@ -9,6 +9,7 @@ const AsianResult = require("../models/asianTablesResultsHistory")
 const CasinoCalls = require("../models/casinoCalls")
 const loginRouter = express.Router();
 
+
 const marketGainWithDuplicates = async (req, res) => {
   const errors = validationResult(req);
   if (errors.errors.length !== 0) {
@@ -30,7 +31,7 @@ const marketGainWithDuplicates = async (req, res) => {
   const currentUser = await User.findOne({ userId: userId });
   let depositRes;
 
-  if (currentUser?.role == 5) {
+  if (currentUser?.role == "5") {
     const marketData = await MarketIDS.findOne({
       $or: [
         { marketId: marketId },
@@ -40,6 +41,7 @@ const marketGainWithDuplicates = async (req, res) => {
     const parent = await User.findOne({ userId: currentUser.createdBy });
 
     if (marketId) {
+
       if (sportsId == "6") {
         depositRes = await CashDeposit.find({
           marketId: marketId,
@@ -62,7 +64,6 @@ const marketGainWithDuplicates = async (req, res) => {
           marketId: marketId,
           userId: Number(userId),
           betSession: betSession,
-          roundId: roundId,
           matchId: matchId,
           $or: [
             {
@@ -77,6 +78,7 @@ const marketGainWithDuplicates = async (req, res) => {
           ],
         });
       }
+
     } else {
       depositRes = await CashDeposit.find({
         _id: depositId
@@ -97,6 +99,7 @@ const marketGainWithDuplicates = async (req, res) => {
         betInfo = await CasinoCalls.findOne({
           transaction_id: depositRes[k]?.betId
         });
+        console.log("betInfo1", betInfo)
       } else {
         betInfo = await Bets.findOne({
           _id: depositRes[k]?.betId
