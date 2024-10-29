@@ -1459,6 +1459,7 @@ async function getPositiveRecords(req, res) {
           exposureAmount: 1,
           updatedAt: 1,
           userId: { $arrayElemAt: ["$userData.userId", 0] },
+          UserName: { $arrayElemAt: ["$userData.userName", 0] },
           downLineShare: { $arrayElemAt: ["$userData.downLineShare", 0] }
         }
       }
