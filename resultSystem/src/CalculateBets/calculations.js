@@ -720,20 +720,22 @@ const handleDrawBet = async (bet, status = 0) => {
           const updatedUserAvlBalance = Number((userToUpdate.availableBalance + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
           const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
 
-          if (bet.calculateExp === true) {
-            calculatedExp = 1;
-            await User.updateOne(
-              {
-                userId: userId,
-                isDeleted: false
-              },
-              {
-                availableBalance: updatedUserAvlBalance,
-                exposure: updatedUserExp
-              }
-            );
-          }
+          
           if (bet.isfancyOrbookmaker == true && bet.fancyData !== null) {
+            if (bet.calculateExp === true) {
+              calculatedExp = 1;
+              await User.updateOne(
+                {
+                  userId: userId,
+                  isDeleted: false
+                },
+                {
+                  availableBalance: updatedUserAvlBalance,
+                  exposure: updatedUserExp
+                }
+              );
+            }
+            
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
             userId: { $in: [...parentUserIds] },

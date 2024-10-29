@@ -899,7 +899,29 @@ async function returnParentExposure(bet) {
   console.log("Inside function..................................................................");
   console.log("Inside function..................................................................");
   console.log("Inside function..................................................................");
+   
   
+    calculatedExp = 1;
+    let runnersPosition = bet.runnersPosition;
+    let highestAmount = Math.max(...runnersPosition.map(runner => runner.amount));
+    let pledgedAmount = Math.abs(bet.exposureAmount);
+
+    await User.updateOne(
+      {
+        userId: bet.userId,
+        isDeleted: false
+      },
+      {
+        availableBalance: bet.availableBalance + pledgedAmount,
+        exposure: user.exposure + pledgedAmount
+      }
+    );
+  
+
+
+
+
+
   const parentUserIds = await getParents(bet.userId);
   const parentUser = await User.find({
     userId: { $in: parentUserIds },
