@@ -1427,6 +1427,64 @@ async function getAllDeposits(req, res) {
   });
 }
 
+async function getPositiveRecords(req, res) {
+  const { userId } = req.body;
+  try {
+    const expPositives = await ExpPositive.aggregate([
+      {
+        $match: {
+          $expr: {
+            $or: [
+              { $eq: ["$userId", userId] },
+              { $eq: [userId, null] }
+            ]
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "userId",
+          as: "userData"
+        }
+      },
+      {
+        $project: {
+          source: 1,
+          roundId: 1,
+          createdAt: 1,
+          _id: 1,
+          expReleased: 1,
+          prevExposure: 1,
+          __v: 1,
+          expCaptured: 1,
+          AbAtRelease: 1,
+          finalShareAmountInLossPrev: 1,
+          prevAdjustedExposure: 1,
+          exposureAmount: 1,
+          updatedAt: 1,
+          userId: { $arrayElemAt: ["$userData.userId", 0] },
+          downLineShare: { $arrayElemAt: ["$userData.downLineShare", 0] }
+        }
+      }
+    ])
+
+    return res.status(200).json({
+      success: true,
+      message: "Fetched records successfully",
+      data: expPositives,
+    });
+  } catch (error) {
+    console.error("Error fetching expPositives:", error);
+    return res.status(500).json({
+      success: false,
+      message: "An error occurred while fetching records",
+    });
+  }
+};
+
+
 // const userWithdrawStatusCheck = async (userId) => {
 //   const resp = {
 //     status: 200,
@@ -1448,6 +1506,8 @@ async function getAllDeposits(req, res) {
 //   }
 //   return resp
 // }
+
+loginRouter.post("/positive-exposure", getPositiveRecords)
 
 loginRouter.post(
   '/addCashDeposit',
