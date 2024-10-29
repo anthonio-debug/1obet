@@ -100,19 +100,24 @@ const getMarketPositions = async (req, res) => {
       },
       { $unwind: "$userInfo" },
       {
-        "$group": {
-          "_id": "$userId",
-          "name": { "$first": "$userInfo.userName" },
-          "role": { "$first": "$userInfo.role" },
-          "amount": { "$sum": "$upLineAmount" },
+        $group: {
+          _id: "$userId",
+          name: { $first: "$userInfo.userName" },
+          role: { $first: "$userInfo.role" },
+          amount: { $sum: "$upLineAmount" },
         }
       },
       {
-        "$sort": {
-          "role": -1
+        $project: {
+          _id: 1,
+          name: 1,
+          role: 1,
+          amount: { $multiply: ["$amount", -1] }
         }
-      }
+      },
+      { $sort: { role: -1 } }
     ]);
+
     const currentUserResponse = await marketPositionRecord([currentUserId]);
     const parentUserResponse = parentUserId ? parentUserRecord : [];
     const childResponse = childUserIds.length > 0 ? await marketPositionRecord(childUserIds) : [];
