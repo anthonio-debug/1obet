@@ -574,7 +574,7 @@ function scoreChecker() {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel === true) continue;
-            await handleDrawBet(bet);
+            await handleDrawBetX(bet);
             }
           }
         } else {
