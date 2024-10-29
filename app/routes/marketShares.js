@@ -14,7 +14,7 @@ const marketGainWithDuplicates = async (req, res) => {
   if (errors.errors.length !== 0) {
     return res.status(400).send({ errors: errors.errors });
   }
-  const userId = req.query.userId;
+  const userId = parseInt(req.query.userId);
   const marketId = req.query.marketId;
   const sportsId = req.query.sportsId;
   const betSession = req.query.betSession == "null" ? null : req.query.betSession;
@@ -22,6 +22,7 @@ const marketGainWithDuplicates = async (req, res) => {
   const roundId = req.query.roundId == "null" ? null : req.query.roundId;
   const matchId = req.query.matchId;
   let asianWinner = ''
+
 
   // const condition = { marketId: marketId }
   // "" + marketId == "null" ? [{ sportsId: "6" }, { sportID: 6 }] : { marketId: marketId };
@@ -36,7 +37,6 @@ const marketGainWithDuplicates = async (req, res) => {
         { marketName: marketId },
       ]
     });
-
     const parent = await User.findOne({ userId: currentUser.createdBy });
 
     if (marketId) {
@@ -53,7 +53,7 @@ const marketGainWithDuplicates = async (req, res) => {
               cashOrCredit: { $in: ["Commission"] },
             },
             {
-              cashOrCredit: { $in: ["Settlement"] },
+              cashOrCredit: { $in: ["Casino Bet"] },
             },
           ],
         });
@@ -72,7 +72,7 @@ const marketGainWithDuplicates = async (req, res) => {
               cashOrCredit: { $in: ["Commission"] },
             },
             {
-              cashOrCredit: { $in: ["Settlement"] },
+              cashOrCredit: { $in: ["Casino Bet"] },
             },
           ],
         });
@@ -261,7 +261,7 @@ const marketGainWithDuplicates = async (req, res) => {
   } else {
     const childUsers = await User.distinct("userId", { createdBy: userId });
     const users = [userId, ...childUsers];
-    //console.log(" users ===================  ", users);
+    // console.log(" users ===================  ", users);
 
     const response = await CashDeposit.aggregate([
       {
@@ -270,7 +270,7 @@ const marketGainWithDuplicates = async (req, res) => {
             $in: users,
           },
           ...condition[0],
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
         },
       },
       {
@@ -342,7 +342,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
             cashOrCredit: { $in: ["Commission"] },
           },
           {
-            cashOrCredit: { $in: ["Settlement"] },
+            cashOrCredit: { $in: ["Casino Bet"] },
           },
         ],
       });
@@ -409,8 +409,8 @@ const marketGainWithDuplicates2 = async (req, res) => {
           SessionScore: betRes[k]?.SessionScore,
           winnerRunnerData: betRes[k]?.winnerRunnerData,
           resultData: betRes[k]?.resultData,
-          roundId: betRes[k]?.roundId, 
-          winner: Winner  
+          roundId: betRes[k]?.roundId,
+          winner: Winner
         }
         betsInfo.push(tempBet)
       }
@@ -451,12 +451,12 @@ const marketGainWithDuplicates2 = async (req, res) => {
           SessionScore: betRes[k]?.SessionScore,
           winnerRunnerData: betRes[k]?.winnerRunnerData,
           resultData: betRes[k]?.resultData,
-          roundId: betRes[k]?.roundId, 
-          winner: Winner  
+          roundId: betRes[k]?.roundId,
+          winner: Winner
         }
         betsInfo.push(tempBet)
       }
-      response.betsInfo = betsInfo 
+      response.betsInfo = betsInfo
     }
 
     return res.send({
@@ -481,7 +481,7 @@ const marketGainWithDuplicates2 = async (req, res) => {
             $in: users,
           },
           ...condition[0],
-          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Settlement"] },
+          cashOrCredit: { $in: ["Bet", "Commission", "loosing", "Casino Bet"] },
         },
       },
       {
