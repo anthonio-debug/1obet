@@ -950,7 +950,15 @@ async function returnParentExposure(bet) {
          
         }
       );
-
+      await Bets.updateOne(
+        { _id: bet._id },
+        {
+          position: 0,
+          status: 2,
+          iscalculatedExp: 1,
+          updatedAt: new Date().getTime()
+        }
+      );
 
     
     }
