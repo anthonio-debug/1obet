@@ -733,7 +733,7 @@ const handleDrawBet = async (bet, status = 0) => {
               }
             );
           }
-
+          if (bet.isfancyOrbookmaker == true && bet.fancyData !== null) {
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
             userId: { $in: [...parentUserIds] },
@@ -800,6 +800,9 @@ const handleDrawBet = async (bet, status = 0) => {
               });
             }
           }
+
+        }
+
         }
       }
     }
