@@ -2530,6 +2530,7 @@ const cancelSingleBet = async (req, res) => {
         //console.log(" ============ BET ============ ", bet);
         await handleDrawBet(bet, 2);
         if(bet.calculateExp==true){
+          console.log("Inside condition..................................................................");
           await returnParentExposure(bet);  
         }
         

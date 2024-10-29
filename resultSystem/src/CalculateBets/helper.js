@@ -890,7 +890,8 @@ console.log("userPrevClientPL updated..........................................:
   
 }
 async function returnParentExposure(bet) {
-
+  console.log("Inside function..................................................................");
+          
   const parentUserIds = await getParents(bet.userId);
   const parentUser = await User.find({
     userId: { $in: parentUserIds },
