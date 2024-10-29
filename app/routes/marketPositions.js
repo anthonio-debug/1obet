@@ -5,12 +5,12 @@ const Deposits = require("../models/deposits");
 const loginRouter = express.Router();
 
 const getMarketPositions = async (req, res) => {
-  
+
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     return res.status(400).json({ errors: errors.array() });
   }
-  
+
   try {
     const { userId, betId } = req.body;
 
@@ -44,6 +44,7 @@ const getMarketPositions = async (req, res) => {
           {
             $match: {
               userId: { $in: userIds },
+              cashOrCredit: { $in: ["Bet", "Casino Bet"] },
               matchId,
               marketId,
               betSession,
@@ -60,22 +61,60 @@ const getMarketPositions = async (req, res) => {
           },
           { $unwind: "$userInfo" },
           {
-            $group: {
-              _id: "$userId",
-              name: { $first: "$userInfo.userName" },
-              role: { $first: "$userInfo.role" },
-              amount: { $sum: "$amount" },
-            },
+            "$group": {
+              "_id": "$userId",
+              "name": { "$first": "$userInfo.userName" },
+              "role": { "$first": "$userInfo.role" },
+              "amount": { "$sum": "$amount" },
+            }
           },
+          {
+            "$sort": {
+              "role": -1
+            }
+          }
         ]);
       } catch (error) {
         console.error("Error in marketPositionRecord aggregation:", error);
         return [];
       }
     };
-
+    const parentUserRecord = await Deposits.aggregate([
+      {
+        $match: {
+          userId: parentUserId,
+          cashOrCredit: { $in: ["Bet", "Casino Bet"] },
+          matchId,
+          marketId,
+          betSession,
+          roundId,
+        },
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "userId",
+          foreignField: "userId",
+          as: "userInfo",
+        },
+      },
+      { $unwind: "$userInfo" },
+      {
+        "$group": {
+          "_id": "$userId",
+          "name": { "$first": "$userInfo.userName" },
+          "role": { "$first": "$userInfo.role" },
+          "amount": { "$sum": "$upLineAmount" },
+        }
+      },
+      {
+        "$sort": {
+          "role": -1
+        }
+      }
+    ]);
     const currentUserResponse = await marketPositionRecord([currentUserId]);
-    const parentUserResponse = parentUserId ? await marketPositionRecord([parentUserId]) : [];
+    const parentUserResponse = parentUserId ? parentUserRecord : [];
     const childResponse = childUserIds.length > 0 ? await marketPositionRecord(childUserIds) : [];
 
     const response = [...childResponse, ...currentUserResponse, ...parentUserResponse];
