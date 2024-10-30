@@ -570,16 +570,7 @@ console.log("userPrevClientPL updated..........................................:
     );
 
 
-    const userExpCheck = await User.findOne({ userId:bet.userId,exposure: { $gt: 0 } });
-                  console.log("userExpCheck---------------------------------------------",userExpCheck);
-
-                  if(userExpCheck && userExpCheck.userId!=11000){
-                    
-             
-                    
-                    
-
-                  }
+  
 
 
 
@@ -617,7 +608,34 @@ console.log("userPrevClientPL updated..........................................:
 
     });
 
+    let expPositiveData;
 
+    console.log("userId:",user.userId,"------betId:",bet._id.toString(),"======marketId:",bet.marketId);
+    expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString()});
+      
+      console.log("------------------------------------- Figures.............",expPositiveData);
+      console.log("-------------------------------------user.userId Figures.............",userToUpdate.userId);
+      console.log("-------------------------------------bet.betId Figures.............",bet._id.toString());
+      console.log("-------------------------------------bet.marketId Figures.............",bet.marketId);
+      
+
+  
+
+      if(expPositiveData){
+      
+
+        await expPositive.updateOne(
+          {
+            userId:userToUpdate.userId,betId:bet._id.toString()
+          },
+          {
+            expReleased: TotalLose,
+            expAfterRelease:users_exposureNewUpdated,
+            AbAtRelease:totalBalance + UpdatedExposureAmount
+            
+          }
+        );
+      }
     /// Follownig are assignments for commissions, downlines, uplines etc to parents...
    
 
