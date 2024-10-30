@@ -721,7 +721,7 @@ const handleDrawBet = async (bet, status = 0) => {
           const updatedUserExp = Number((userToUpdate.exposure + Number(bet.exposureAmount.toFixed(3))).toFixed(3));
 
           
-          if (bet.isfancyOrbookmaker == true && bet.fancyData !== null) {
+          if ((bet.isfancyOrbookmaker == true && bet.fancyData !== null) || [2, 3, 4].includes(bet.type)) {
             if (bet.calculateExp === true) {
               calculatedExp = 1;
               await User.updateOne(
@@ -735,7 +735,7 @@ const handleDrawBet = async (bet, status = 0) => {
                 }
               );
             }
-            
+
           const parentUserIds = await getParents(userId);
           const parentUser = await User.find({
             userId: { $in: [...parentUserIds] },
