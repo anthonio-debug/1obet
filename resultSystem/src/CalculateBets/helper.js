@@ -483,7 +483,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       const day = now.getDate().toString().padStart(2, '0');
       const formattedDate = `${year}-${month}-${day}`;
       
-      const bet = await Bets.findOne({ _id: betId._id }, { session });
+      const bet = await Bets.findOne({ _id: betId._id });
       return;const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false }, { session });
       
 
