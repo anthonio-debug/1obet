@@ -482,10 +482,10 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       const month = (now.getMonth() + 1).toString().padStart(2, '0');
       const day = now.getDate().toString().padStart(2, '0');
       const formattedDate = `${year}-${month}-${day}`;
-
+      return;
       const bet = await Bets.findOne({ _id: betId._id }, { session });
       const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false }, { session });
-      return;
+      
 
       if (!userToUpdate) {
         console.error('Error: User Not Found');
