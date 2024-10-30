@@ -610,7 +610,7 @@ console.log("userPrevClientPL updated..........................................:
 
     let expPositiveData;
 
-    console.log("userId:",user.userId,"------betId:",bet._id.toString(),"======marketId:",bet.marketId);
+    console.log("userId:",userToUpdate.userId,"------betId:",bet._id.toString(),"======marketId:",bet.marketId);
     expPositiveData = await expPositive.findOne({ userId:userToUpdate.userId,betId:bet._id.toString()});
       
       console.log("------------------------------------- Figures.............",expPositiveData);
