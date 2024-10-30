@@ -631,7 +631,7 @@ console.log("userPrevClientPL updated..........................................:
           {
             expReleased: TotalLose,
             expAfterRelease:users_exposureNewUpdated,
-            AbAtRelease:totalBalance + UpdatedExposureAmount
+            AbAtRelease:updatedAvailableBalance
             
           }
         );
