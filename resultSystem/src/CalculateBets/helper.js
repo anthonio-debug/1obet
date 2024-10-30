@@ -485,6 +485,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
 
       const bet = await Bets.findOne({ _id: betId._id }, { session });
       const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false }, { session });
+      return;
 
       if (!userToUpdate) {
         console.error('Error: User Not Found');
