@@ -762,7 +762,7 @@ function apiRequests() {
                     //console.log('sportsId:' + json1 + '-->marketId:' + json1.marketId);
                     let el = new Odds(json1);
                     await el.save().then(result => {
-                      console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM saved odds ", result);
+                     // console.log("MMMMMMMMMMMMMMMMMMMMMMMMMMM saved odds ", result);
     
                     }).catch(err => {
                       console.log("EEEEEEEEEEEr errror", err);
