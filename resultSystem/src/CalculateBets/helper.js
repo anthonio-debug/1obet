@@ -703,6 +703,54 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         }
       }
 
+
+
+
+      let winnerRunnerData = 0;
+          let SessionScore = 0;
+          if (bet.isfancyOrbookmaker && bet.fancyData != null) {
+            const marketInfo = await MarketIDS.findOne({
+              sportID: bet.sportsId,
+              marketId: bet.marketId,
+              eventId: bet.eventId
+       
+            });
+            
+            winnerRunnerData = marketInfo?.winnerRunnerData;
+          } else if (config.FigureEvenOddSmallBig.includes(Number(bet.subMarketId))) {
+            const match = await Events.findById(bet.matchId);
+            const marketInfo = await Sessions.findOne({
+              eventId: Number(match.Id),
+              sessionNo: bet.betSession
+            });
+            SessionScore = marketInfo?.score;
+          }
+          await Bets.updateMany(
+            { marketId: bet.marketId,
+              userId: bet.userId,
+              betSession: bet.betSession,
+              eventId: bet.eventId,
+              sportsId: bet.sportsId },
+            {
+              status: 0,
+              position: Number(bet.winningAmount.toFixed(3)),
+              iscalculatedExp: calculatedExp,
+              winnerRunnerData: winnerRunnerData,
+              SessionScore: SessionScore,
+              updatedAt: new Date().getTime()
+            }
+          );
+          const betIdString = bet._id.toString();
+          await CurrentPosition.deleteMany({ betId: betIdString });
+
+          const updatedUser = await User.findOne({
+            userId: userId,
+            isDeleted: false
+          });
+
+
+          
+
       await session.commitTransaction();
       break; // Exit loop if transaction succeeds
     } catch (error) {
