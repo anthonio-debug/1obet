@@ -4048,6 +4048,7 @@ thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 const count = await Bets.countDocuments({ betTime: { $lt: thirtyDaysAgo } });
 const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyDaysAgo } });
 
+
 // console.log(`Count of records older than 30 days: ${count}`);
 
 
@@ -4087,7 +4088,9 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
     })
 
     await Bets.updateMany({ userId:23072,calculateExp:true }, { $set: { status:1 } });
-    
+    await Deposits.deleteMany({
+      userId: 23072
+    })
 
 
     // const casinocallUpdate = await CasinoCalls.updateMany({ username: "user_20046"  ,gameplay_final:1}, {
