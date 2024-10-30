@@ -484,7 +484,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       const formattedDate = `${year}-${month}-${day}`;
       
       const bet = await Bets.findOne({ _id: betId._id });
-      return;const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false }, { session });
+      const userToUpdate = await User.findOne({ userId: bet.userId, isDeleted: false });
       
 
       if (!userToUpdate) {
@@ -492,7 +492,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         return;
       }
 
-      const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _id: -1 }).session(session);
+      const lastMaxWithdraw = await Deposits.findOne({ userId: bet.userId }).sort({ _id: -1 });
       let lastWithdrawalRow_AvailableBalance = lastMaxWithdraw.availableBalance;
       let lastWithdrawalRow_balance = lastMaxWithdraw.balance;
       let lastWithdrawalRow_maxWithdraw = lastMaxWithdraw.maxWithdraw;
@@ -548,7 +548,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
         { session }
       );
 
-      const userExpCheck = await User.findOne({ userId: bet.userId, exposure: { $gt: 0 } }).session(session);
+      const userExpCheck = await User.findOne({ userId: bet.userId, exposure: { $gt: 0 } });
       console.log("userExpCheck---------------------------------------------", userExpCheck);
 
       if (userExpCheck && userExpCheck.userId != 11000) {}
@@ -615,7 +615,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
       const parentUser = await User.find({
         userId: { $in: parentUserIds },
         isDeleted: false
-      }).sort({ userId: -1 }).session(session);
+      }).sort({ userId: -1 });
 
       if (!parentUser) {
         console.error(' Error: Parent Users Not Found Location:(_handle losing bet) ');
