@@ -4082,7 +4082,7 @@ const countCurrentPosition = await Bets.countDocuments({ betTime: { $lt: thirtyD
      await User.updateOne({ userId:23112 }, {
       $set: {
       
-        exposure: -360
+        exposure: -2595
 
       }
     })
