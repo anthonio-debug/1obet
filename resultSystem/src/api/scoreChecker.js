@@ -564,18 +564,14 @@ function scoreChecker() {
           console.log("result.winnerSelectionId-====================================================............",result.winnerSelectionId);
           for (const bet of bets) {
 
-            if((bet.userId==22991 || bet.userId==22977) && bet.calculateExp==true){
-              console.log("here Above I reced for fancies............................................................................",bet);
             
-              let winningsCalculate = await getAmountOfWinnerTemp(bet,result.winnerSelectionId);
-            }else {
 
             if (typeof bet.isManuel !== 'undefined' && bet.isManuel === true && result.manuelClose === false) {
               continue;
             }
             if (typeof result.manuelClose === 'undefined' && bet.isManuel === true) continue;
             await handleDrawBetX(bet);
-            }
+            
           }
         } else {
           for (const bet of bets) {
@@ -609,12 +605,12 @@ function scoreChecker() {
             //for type 0
             if (bet.type == 0) {
               if (parseInt(bet.TargetScore) > parseInt(result.result)) await handleWinningBet(bet, parseInt(result.result));
-              else await handleLosingBet(bet);
+              else await handleLosingBetX(bet);
             } else if (bet.type == 1) {
               if (parseInt(bet.TargetScore) <= parseInt(result.result)) await handleWinningBet(bet, parseInt(result.result));
-              else await handleLosingBet(bet);
+              else await handleLosingBetX(bet);
             } else {
-              await handleDrawBet(bet);
+              await handleDrawBetX(bet);
             }
           }
           }
