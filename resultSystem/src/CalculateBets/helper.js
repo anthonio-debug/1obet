@@ -695,13 +695,67 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
             },
             { session }
           );
+
+
           console.log("totalRemainingAmount------------------: ", totalRemainingAmount);
+          
+          let expPositiveDataP;
+        expPositiveDataP = await expPositive.findOne({ userId: user.userId, betId: bet._id.toString() }).session(session);
+
+        if (expPositiveDataP) {
+          await expPositive.updateOne(
+            { userId: user.userId, betId: bet._id.toString() },
+            {
+              expReleased: winningsShareAmount,
+              expAfterRelease: UpdatedExposureAmount,
+              AbAtRelease: totalBalance + UpdatedExposureAmount
+            },
+            { session }
+          );
+
+          const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
+        await Deposits.create({
+          userId: user.userId,
+          description: `Event (${bet.event}) Runner (${bet.runnerName})`,
+          amount: winningsShareAmount,
+          balance: lastMaxWithdraw.balance + winningsShareAmount,
+          availableBalance: updatedDepositsAvailableBalance,
+          maxWithdraw: lastMaxWithdraw.maxWithdraw,
+          cash: lastMaxWithdraw ? lastMaxWithdraw.cash : 0,
+          credit: lastMaxWithdraw?.credit || 0,
+          creditRemaining: lastMaxWithdraw?.creditRemaining || 0,
+          createdBy: 0,
+          cashOrCredit: 'Bet',
+          marketId: bet.marketId,
+          sportsId: bet.sportsId,
+          matchId: bet.matchId,
+          betId: bet._id.toString(),
+          betType: bet.type,
+          betDateTime: bet.betTime,
+          date: new Date().getTime(),
+          createdAt: formattedDate,
+          betSession: bet.betSession,
+          roundId: bet.marketId,
+          addedExpoisureAmount: 0,
+          UserPrevexposure: 0,
+          UpdatedExposure: 0,
+          calculateExp: bet.calculateExp
+        }, { session });
+
+        
+        }
+        
+        
+          
           if (user.downLineShare != 100) {
             remainingAmount = Number((remainingAmount - winningsShareAmount).toFixed(3));
           }
           commissionAmount = commissionAmount + (user.commission / 100) * totalRemainingAmount;
-        }
-      }
+        
+        
+        
+        }//loop of parents
+      }//else of parents..
 
 
 
