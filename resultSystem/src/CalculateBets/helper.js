@@ -714,7 +714,7 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           );
 
           const lastMaxWithdraw = await Deposits.findOne({ userId: user.userId }).sort({ _id: -1 }).session(session);
-        await Deposits.create({
+        await Deposits.create([{
           userId: user.userId,
           description: `Event (${bet.event}) Runner (${bet.runnerName})`,
           amount: winningsShareAmount,
@@ -740,9 +740,9 @@ async function getAmountOfWinnerFigures(betId, selectionId) {
           UserPrevexposure: 0,
           UpdatedExposure: 0,
           calculateExp: bet.calculateExp
-        }, { session });
+        }], { session });
 
-        
+
         }
         
         
