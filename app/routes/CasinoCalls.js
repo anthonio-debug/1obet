@@ -1609,9 +1609,9 @@ let newCasinoCall;
 
       let updatedAvailableBalance = user.availableBalance - (parseInt(matchedPayload.amount) * casinoMultiples);
       if (updatedAvailableBalance < 0) {
-        if (session.inTransaction()) {
-          await session.abortTransaction();
-        }
+        // if (session.inTransaction()) {
+        //   await session.abortTransaction();
+        // }
         return res.json({ status: 500, msg: 'Insufficient balance' });
       }
 
